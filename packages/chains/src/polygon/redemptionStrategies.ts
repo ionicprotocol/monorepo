@@ -161,6 +161,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.CurveSwapLiquidator,
     underlying(assets, assetSymbols.JEUR),
   ],
+  [underlying(assets, assetSymbols.MAI)]: [
+    RedemptionStrategyContract.UniswapV2LiquidatorFunder,
+    underlying(assets, assetSymbols.USDC),
+  ],
 };
 
 export default redemptionStrategies;

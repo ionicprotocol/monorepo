@@ -3185,13 +3185,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@midas-capital/functions@workspace:packages/functions"
   dependencies:
-    "@netlify/functions": ^1.4.0
-    "@supabase/supabase-js": ^2.7.0
-    axios: ^1.3.0
-    dotenv: ^16.0.3
-    ethers: ^5.7.2
-    typescript: ^4.9.5
-    zod: ^3.20.2
+    "@netlify/functions": ^1.0.0
+    "@supabase/supabase-js": ^1.35.4
+    axios: ^0.27.2
+    dotenv: ^16.0.1
+    ethers: ^5.6.9
+    typescript: ^4.7.4
   languageName: unknown
   linkType: soft
 
@@ -3608,18 +3607,18 @@ __metadata:
   linkType: hard
 
 "@netlify/build@npm:^29.5.2":
-  version: 29.5.2
-  resolution: "@netlify/build@npm:29.5.2"
+  version: 29.5.3
+  resolution: "@netlify/build@npm:29.5.3"
   dependencies:
     "@bugsnag/js": ^7.0.0
     "@netlify/cache-utils": ^5.1.0
     "@netlify/config": ^20.3.2
     "@netlify/edge-bundler": 8.4.0
-    "@netlify/functions-utils": ^5.1.5
+    "@netlify/functions-utils": ^5.1.6
     "@netlify/git-utils": ^5.1.0
     "@netlify/plugins-list": ^6.61.0
     "@netlify/run-utils": ^5.1.0
-    "@netlify/zip-it-and-ship-it": ^8.4.1
+    "@netlify/zip-it-and-ship-it": ^8.5.0
     "@sindresorhus/slugify": ^2.0.0
     ansi-escapes: ^5.0.0
     chalk: ^5.0.0
@@ -3627,7 +3626,7 @@ __metadata:
     execa: ^6.0.0
     figures: ^4.0.0
     filter-obj: ^3.0.0
-    got: ^10.0.0
+    got: ^12.0.0
     hot-shots: 9.3.0
     indent-string: ^5.0.0
     is-plain-obj: ^4.0.0
@@ -3666,7 +3665,7 @@ __metadata:
     yargs: ^17.6.0
   bin:
     netlify-build: bin.js
-  checksum: 0c7a8c217ae7a7c5c53995c152b896c807226e244f17c8131127ff85e49ad3dcadf88b9773892720676095c2e03d2249eb831e1060e3ea756e0e546248469139
+  checksum: 09ec2d255ecb9d08cf1bf10fafd9e60e4cb0b99a78e4079952a970ea38153bd1c072d2584297c5b48bf46eb38b56070fc2eb23df0921e02687eae8f03eb44442
   languageName: node
   linkType: hard
 
@@ -3980,18 +3979,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@netlify/functions-utils@npm:^5.1.5":
-  version: 5.1.5
-  resolution: "@netlify/functions-utils@npm:5.1.5"
+"@netlify/functions-utils@npm:^5.1.6":
+  version: 5.1.6
+  resolution: "@netlify/functions-utils@npm:5.1.6"
   dependencies:
-    "@netlify/zip-it-and-ship-it": ^8.4.1
+    "@netlify/zip-it-and-ship-it": ^8.5.0
     cpy: ^8.1.0
     path-exists: ^5.0.0
-  checksum: 4917f68921bb7af5d6acbe1335d4a6a24a3faa491e3529fa4dc67ba43c24070a5c377920d303467985745f6e53dbe2d575b533465308c727dc92521e202690af
+  checksum: ffcae5d625677268de2b21d1be3bdd8253e4b94ff4cf4df03d01d94a448edf6107ecdb2e06d5550a0c2427d186f1a8350990b294958dfb6d5063c55b061721fb
   languageName: node
   linkType: hard
 
-"@netlify/functions@npm:^1.4.0":
+"@netlify/functions@npm:^1.0.0, @netlify/functions@npm:^1.4.0":
   version: 1.4.0
   resolution: "@netlify/functions@npm:1.4.0"
   dependencies:
@@ -4237,7 +4236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@netlify/zip-it-and-ship-it@npm:^8.4.1":
+"@netlify/zip-it-and-ship-it@npm:^8.4.1, @netlify/zip-it-and-ship-it@npm:^8.5.0":
   version: 8.5.0
   resolution: "@netlify/zip-it-and-ship-it@npm:8.5.0"
   dependencies:
@@ -5605,7 +5604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.4.1, @supabase/supabase-js@npm:^2.7.0":
+"@supabase/supabase-js@npm:^2.4.1":
   version: 2.7.0
   resolution: "@supabase/supabase-js@npm:2.7.0"
   dependencies:
@@ -7046,9 +7045,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@walletconnect/core@npm:2.3.2":
-  version: 2.3.2
-  resolution: "@walletconnect/core@npm:2.3.2"
+"@walletconnect/core@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@walletconnect/core@npm:2.3.3"
   dependencies:
     "@walletconnect/heartbeat": 1.2.0
     "@walletconnect/jsonrpc-provider": ^1.0.6
@@ -7060,13 +7059,13 @@ __metadata:
     "@walletconnect/relay-auth": ^1.0.4
     "@walletconnect/safe-json": ^1.0.1
     "@walletconnect/time": ^1.0.2
-    "@walletconnect/types": 2.3.2
-    "@walletconnect/utils": 2.3.2
+    "@walletconnect/types": 2.3.3
+    "@walletconnect/utils": 2.3.3
     events: ^3.3.0
     lodash.isequal: 4.5.0
     pino: 7.11.0
     uint8arrays: 3.1.0
-  checksum: b3ed954be13a099f8bd8822e5881f5da72f16a5d1dc335dbabc42e498c002bf1b4c8b496e0a68eedf5830630685a3c245ba0edd83a821e341d87d3a1aa0d7583
+  checksum: 231b954404626cd720fdd726d71aaf33691bb776f9d48c387c89a99258fbce24f9c1190dd0ee9a44805fa21aa1cdbd7e63d88939fc776a4ce0b2376b492460ba
   languageName: node
   linkType: hard
 
@@ -7324,22 +7323,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@walletconnect/sign-client@npm:2.3.2":
-  version: 2.3.2
-  resolution: "@walletconnect/sign-client@npm:2.3.2"
+"@walletconnect/sign-client@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@walletconnect/sign-client@npm:2.3.3"
   dependencies:
-    "@walletconnect/core": 2.3.2
+    "@walletconnect/core": 2.3.3
     "@walletconnect/events": ^1.0.1
     "@walletconnect/heartbeat": 1.2.0
     "@walletconnect/jsonrpc-provider": ^1.0.6
     "@walletconnect/jsonrpc-utils": ^1.0.4
     "@walletconnect/logger": ^2.0.1
     "@walletconnect/time": ^1.0.2
-    "@walletconnect/types": 2.3.2
-    "@walletconnect/utils": 2.3.2
+    "@walletconnect/types": 2.3.3
+    "@walletconnect/utils": 2.3.3
     events: ^3.3.0
     pino: 7.11.0
-  checksum: be38a3291943631bbf7e2d9771879cbd47eda9defe1f61ef8761e05913b37e3b833d9b88812e7a225477ca0f212fd65c651a2881e02bb59b0e5db70900196ad9
+  checksum: 1830fbe41057a63da8ecf85f938c88359e1d4f3ad0dfddfed5222ebd7beda1a77af362cc8c1e0d8aca59194fb46b09baeb9fb775c65d7058d489f26fe10bd271
   languageName: node
   linkType: hard
 
@@ -7377,9 +7376,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@walletconnect/types@npm:2.3.2":
-  version: 2.3.2
-  resolution: "@walletconnect/types@npm:2.3.2"
+"@walletconnect/types@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@walletconnect/types@npm:2.3.3"
   dependencies:
     "@walletconnect/events": ^1.0.1
     "@walletconnect/heartbeat": 1.2.0
@@ -7387,7 +7386,7 @@ __metadata:
     "@walletconnect/keyvaluestorage": ^1.0.2
     "@walletconnect/logger": ^2.0.1
     events: ^3.3.0
-  checksum: 375ac13508d84aba947bfaf6f265f520f3f1c67ff80db81dbcdd07a30fe9ac137972bc7b30a3a73559511c57475d1c828c1701ba0f6faa656033ff72be38a3f6
+  checksum: 2c288ad5bde249d8522c1f3168d6dfcae50aac4fda3865919227138a37ac12fd76bbf3c1bf2a9dd176c9782317993fbcc494f85874106715f337547a87ff5e3b
   languageName: node
   linkType: hard
 
@@ -7399,27 +7398,27 @@ __metadata:
   linkType: hard
 
 "@walletconnect/universal-provider@npm:^2.2.1":
-  version: 2.3.2
-  resolution: "@walletconnect/universal-provider@npm:2.3.2"
+  version: 2.3.3
+  resolution: "@walletconnect/universal-provider@npm:2.3.3"
   dependencies:
     "@walletconnect/jsonrpc-http-connection": ^1.0.4
     "@walletconnect/jsonrpc-provider": ^1.0.6
     "@walletconnect/jsonrpc-types": ^1.0.2
     "@walletconnect/jsonrpc-utils": ^1.0.4
     "@walletconnect/logger": ^2.0.1
-    "@walletconnect/sign-client": 2.3.2
-    "@walletconnect/types": 2.3.2
-    "@walletconnect/utils": 2.3.2
+    "@walletconnect/sign-client": 2.3.3
+    "@walletconnect/types": 2.3.3
+    "@walletconnect/utils": 2.3.3
     eip1193-provider: 1.0.1
     events: ^3.3.0
     pino: 7.11.0
-  checksum: 1a319e448476f8b2827680db695a20256476b7e508c3c37d9e8b137d3d6b49db2ed7f87544e9ba3a72fb977d5dfbecc3943668c338fd03e1d2d9d96a641cc9f9
+  checksum: 09b95373219321d9032aa69e5a67a8354634b23be8ce210008ef93f9dfa8bf1feaf410a2fb19ce34e8fc511d610477677a4795a5000e173221d3b1021073c862
   languageName: node
   linkType: hard
 
-"@walletconnect/utils@npm:2.3.2":
-  version: 2.3.2
-  resolution: "@walletconnect/utils@npm:2.3.2"
+"@walletconnect/utils@npm:2.3.3":
+  version: 2.3.3
+  resolution: "@walletconnect/utils@npm:2.3.3"
   dependencies:
     "@stablelib/chacha20poly1305": 1.0.1
     "@stablelib/hkdf": 1.0.1
@@ -7430,13 +7429,13 @@ __metadata:
     "@walletconnect/relay-api": ^1.0.7
     "@walletconnect/safe-json": ^1.0.1
     "@walletconnect/time": ^1.0.2
-    "@walletconnect/types": 2.3.2
+    "@walletconnect/types": 2.3.3
     "@walletconnect/window-getters": ^1.0.1
     "@walletconnect/window-metadata": ^1.0.1
     detect-browser: 5.3.0
     query-string: 7.1.1
     uint8arrays: 3.1.0
-  checksum: fdac3b544cf0eea1505e85adf1ea00035547b5f83813c9b5cc21ae4a7ce0b4a3cd02b3a88cd884ad57ecd76cc840c94a1145ea4be0c59c5f88fc19a65c385f3d
+  checksum: d90420bc00c871e4a955caa7095fad1de607ef31021370601cddf4d917c6f917aba13cb3ba4cb41d7228004a9a198d60f78fee44856cf8d21d82c7367b1eecec
   languageName: node
   linkType: hard
 
@@ -8519,7 +8518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.2.3, axios@npm:^1.3.0":
+"axios@npm:^1.2.3":
   version: 1.3.0
   resolution: "axios@npm:1.3.0"
   dependencies:
@@ -12575,7 +12574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0, dotenv@npm:^16.0.2, dotenv@npm:^16.0.3":
+"dotenv@npm:^16.0.0, dotenv@npm:^16.0.1, dotenv@npm:^16.0.2":
   version: 16.0.3
   resolution: "dotenv@npm:16.0.3"
   checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
@@ -14111,7 +14110,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
+  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
   languageName: node
   linkType: hard
 
@@ -16288,7 +16287,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"got@npm:^10.0.0, got@npm:^10.7.0":
+"got@npm:^10.7.0":
   version: 10.7.0
   resolution: "got@npm:10.7.0"
   dependencies:
@@ -16330,7 +16329,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"got@npm:^12.1.0":
+"got@npm:^12.0.0, got@npm:^12.1.0":
   version: 12.5.3
   resolution: "got@npm:12.5.3"
   dependencies:
@@ -21082,7 +21081,7 @@ __metadata:
     "@tsconfig/recommended": ^1.0.2
     "@typescript-eslint/eslint-plugin": ^5.49.0
     "@typescript-eslint/parser": ^5.49.0
-    netlify-cli: ^12.10.0
+    netlify-cli: ^12.9.1
     ts-node: ^10.9.1
     typescript: ^4.9.4
   languageName: unknown
@@ -21352,7 +21351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"netlify-cli@npm:^12.10.0":
+"netlify-cli@npm:^12.9.1":
   version: 12.10.0
   resolution: "netlify-cli@npm:12.10.0"
   dependencies:
@@ -27937,7 +27936,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.5.5, typescript@npm:^4.7.4, typescript@npm:^4.8.2, typescript@npm:^4.8.4, typescript@npm:^4.9.4, typescript@npm:^4.9.5":
+"typescript@npm:^4.5.5, typescript@npm:^4.7.4, typescript@npm:^4.8.2, typescript@npm:^4.8.4, typescript@npm:^4.9.4":
   version: 4.9.5
   resolution: "typescript@npm:4.9.5"
   bin:
@@ -27967,7 +27966,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=bda367"
   bin:
@@ -29936,13 +29935,6 @@ __metadata:
   peerDependencies:
     ethers: ~5.7.0
   checksum: 613ebe822df1bef0af4d62386f3aaf65917d45dd80932b0ddf5b81eba6b0a46376f3e74263d153915dcfb8be954f730ded2e34d7806b6b199bbc74e0f124a0fb
-  languageName: node
-  linkType: hard
-
-"zod@npm:^3.20.2":
-  version: 3.20.2
-  resolution: "zod@npm:3.20.2"
-  checksum: 04172f7e9350372684ccd298d4716908edc9113751295b6c4e1b3ea84e2af8997e504b33ba36f4741417bb2a5dc90bfd40501f6b0e7389df10e42a63d6d8366c
   languageName: node
   linkType: hard
 

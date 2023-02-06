@@ -215,6 +215,7 @@ export enum assetSymbols {
   DDD = "DDD",
   EPX = "EPX",
   pSTAKE = "pSTAKE",
+  ANKR = "ANKR",
   SD = "SD", // stader labs
 
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",

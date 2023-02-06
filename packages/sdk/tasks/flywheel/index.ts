@@ -1,3 +1,3 @@
 import "./retire";
 import "./deploy";
-import "./debug";
+import "./approve";

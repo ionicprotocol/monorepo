@@ -70,29 +70,14 @@ export const deployConfig: ChainDeployConfig = {
   },
   dynamicFlywheels: [
     {
-      rewardToken: underlying(assets, assetSymbols.GLINT),
-      cycleLength: 1,
-      name: assetSymbols.GLINT,
-    },
-    {
       rewardToken: underlying(assets, assetSymbols.STELLA),
       cycleLength: 1,
       name: assetSymbols.STELLA,
     },
     {
-      rewardToken: underlying(assets, assetSymbols.ATOM),
-      cycleLength: 1,
-      name: assetSymbols.ATOM,
-    },
-    {
       rewardToken: underlying(assets, assetSymbols.WGLMR),
       cycleLength: 1,
       name: assetSymbols.WGLMR,
-    },
-    {
-      rewardToken: underlying(assets, assetSymbols.CELR),
-      cycleLength: 1,
-      name: assetSymbols.CELR,
     },
     {
       rewardToken: underlying(assets, assetSymbols.LDO),

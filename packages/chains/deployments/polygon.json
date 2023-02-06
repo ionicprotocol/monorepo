@@ -68770,6 +68770,108 @@
         }
       ]
     },
+    "UniswapV2LiquidatorFunder": {
+      "address": "0x329eC9aBdA182F1b259e8257afc2DB4f144088ad",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "convert",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "estimateInputAmount",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "redeem",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
     "UniswapV3LiquidatorFunder": {
       "address": "0x2F436d94E3479E78b00fE88c5ac05d2a9c57C3af",
       "abi": [
