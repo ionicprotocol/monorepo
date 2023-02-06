@@ -32,12 +32,12 @@ export const TokenName = ({
   });
   const collateralAssets = useMemo(() => assets.filter((_asset) => _asset.membership), [assets]);
 
-  const { data: borrowCapForAssetForCollateral } = useDebtCeilingForAssetForCollateral(
-    poolAddress,
+  const { data: borrowCapForAssetForCollateral } = useDebtCeilingForAssetForCollateral({
     assets,
-    collateralAssets,
-    poolChainId
-  );
+    collaterals: collateralAssets,
+    comptroller: poolAddress,
+    poolChainId,
+  });
 
   const [restricted, setRestricted] = useState<
     { asset: NativePricedFuseAsset; collateralAsset: NativePricedFuseAsset; borrowCap: number }[]

@@ -22,12 +22,12 @@ export const Alerts = ({
     data: { minBorrowAsset, minBorrowUSD },
   } = useBorrowMinimum(asset, poolChainId);
 
-  const { data: borrowCapsPerCollateral } = useDebtCeilingForAssetForCollateral(
-    comptrollerAddress,
-    [asset],
-    assets,
-    poolChainId
-  );
+  const { data: borrowCapsPerCollateral } = useDebtCeilingForAssetForCollateral({
+    comptroller: comptrollerAddress,
+    assets: [asset],
+    collaterals: assets,
+    poolChainId,
+  });
 
   return (
     <>

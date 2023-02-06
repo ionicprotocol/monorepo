@@ -76,16 +76,16 @@ export const DebtCeilings = ({
     },
   });
 
-  const watchDebtCeilings = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
+  const watchDebtCeiling = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
   const watchCollateralAsset = watch('collateralAsset', assets[0].cToken);
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
-  const { data: debtCeilingPerCollateral } = useDebtCeilingForAssetForCollateral(
-    comptrollerAddress,
-    [selectedAsset],
-    assets,
-    poolChainId
-  );
+  const { data: debtCeilingPerCollateral } = useDebtCeilingForAssetForCollateral({
+    assets: [selectedAsset],
+    collaterals: assets,
+    comptroller: comptrollerAddress,
+    poolChainId,
+  });
   console.log({ debtCeilingPerCollateral, isSubmitting });
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export const DebtCeilings = ({
     setValue('debtCeiling', debtCeilingState ? debtCeilingState.debtCeiling : 0);
   }, [debtCeilingState, setValue]);
 
-  const updateDebtCeilings = useCallback(
+  const updateDebtCeiling = useCallback(
     async ({
       collateralAsset: collateralAssetAddress,
       debtCeiling,
@@ -119,6 +119,15 @@ export const DebtCeilings = ({
       }
 
       const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
+      const myAddress = await currentSdk.signer.getAddress();
+      const [errorCode, liquidity, shortfall] =
+        await comptroller.callStatic.getHypotheticalAccountLiquidity(
+          myAddress,
+          selectedAsset.cToken,
+          0,
+          100
+        );
+      console.log({ errorCode, liquidity, shortfall });
       try {
         if (debtCeiling === -1) {
           const tx = await comptroller._blacklistBorrowingAgainstCollateral(
@@ -187,7 +196,7 @@ export const DebtCeilings = ({
     <Flex
       as="form"
       direction="column"
-      onSubmit={handleSubmit(updateDebtCeilings)}
+      onSubmit={handleSubmit(updateDebtCeiling)}
       px={{ base: 4, md: 8 }}
       py={4}
       w="100%"
@@ -300,7 +309,7 @@ export const DebtCeilings = ({
           <>
             <Button
               isLoading={isSubmitting}
-              isDisabled={isSubmitting || watchDebtCeilings === debtCeilingState?.debtCeiling}
+              isDisabled={isSubmitting || watchDebtCeiling === debtCeilingState?.debtCeiling}
               type="submit"
             >
               Save
