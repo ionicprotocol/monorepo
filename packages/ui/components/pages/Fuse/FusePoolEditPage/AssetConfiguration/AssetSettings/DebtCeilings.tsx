@@ -12,15 +12,13 @@ import {
   NumberInput,
   NumberInputField,
   Select,
-  Skeleton,
   Spacer,
   Text,
 } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
-import LogRocket from 'logrocket';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { CButton } from '@ui/components/shared/Button';
@@ -57,8 +55,7 @@ export const DebtCeilings = ({
   const successToast = useSuccessToast();
   const queryClient = useQueryClient();
   const { cSelect } = useColors();
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const [isEditDebtCeilings, setIsEditDebtCeilings] = useState<boolean>(false);
+  const [isEditDebtCeiling, setIsEditDebtCeiling] = useState<boolean>(false);
   const [debtCeilingState, setDebtCeilingState] = useState<{
     asset: NativePricedFuseAsset;
     collateralAsset: NativePricedFuseAsset;
@@ -71,15 +68,15 @@ export const DebtCeilings = ({
     setValue,
     register,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      debtCeilings: DEBT_CEILING.DEFAULT,
+      debtCeiling: DEBT_CEILING.DEFAULT,
       collateralAsset: assets[0].cToken,
     },
   });
 
-  const watchDebtCeilings = Number(watch('debtCeilings', DEBT_CEILING.DEFAULT));
+  const watchDebtCeilings = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
   const watchCollateralAsset = watch('collateralAsset', assets[0].cToken);
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
@@ -89,6 +86,7 @@ export const DebtCeilings = ({
     assets,
     poolChainId
   );
+  console.log({ debtCeilingPerCollateral, isSubmitting });
 
   useEffect(() => {
     if (debtCeilingPerCollateral && debtCeilingPerCollateral.length > 0) {
@@ -103,76 +101,86 @@ export const DebtCeilings = ({
   }, [debtCeilingPerCollateral, watchCollateralAsset]);
 
   useEffect(() => {
-    setValue('debtCeilings', debtCeilingState ? debtCeilingState.debtCeiling : 0);
+    setValue('debtCeiling', debtCeilingState ? debtCeilingState.debtCeiling : 0);
   }, [debtCeilingState, setValue]);
 
-  const updateDebtCeilings = async ({
-    collateralAsset,
-    debtCeilings,
-  }: {
-    collateralAsset: string;
-    debtCeilings: string | number;
-  }) => {
-    if (!currentSdk) return;
-
-    setIsUpdating(true);
-
-    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
-    try {
-      if (Number(debtCeilings) === -1) {
-        const tx = await comptroller._blacklistBorrowingAgainstCollateral(
-          selectedAsset.cToken,
-          collateralAsset,
-          true
-        );
-
-        await tx.wait();
-      } else {
-        // if it was blacklisted already, then remove from blacklisted first
-        if (debtCeilingState?.debtCeiling === -1) {
-          const txBlacklisted = await comptroller._blacklistBorrowingAgainstCollateral(
-            selectedAsset.cToken,
-            collateralAsset,
-            false
-          );
-
-          await txBlacklisted.wait();
-        }
-
-        const txDebtCeilings = await comptroller._setBorrowCapForAssetForCollateral(
-          selectedAsset.cToken,
-          collateralAsset,
-          utils.parseUnits(debtCeilings.toString(), selectedAsset.underlyingDecimals)
-        );
-
-        await txDebtCeilings.wait();
+  const updateDebtCeilings = useCallback(
+    async ({
+      collateralAsset: collateralAssetAddress,
+      debtCeiling,
+    }: {
+      collateralAsset: string;
+      debtCeiling: number;
+    }) => {
+      if (!currentSdk) return;
+      const collateralAsset = assets.find((asset) => asset.cToken === collateralAssetAddress);
+      if (!collateralAsset) {
+        throw new Error('Collateral asset not found');
       }
 
-      LogRocket.track('Midas-updateDebtCeilings', {
-        comptroller: comptrollerAddress,
-      });
+      const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
+      try {
+        if (debtCeiling === -1) {
+          const tx = await comptroller._blacklistBorrowingAgainstCollateral(
+            selectedAsset.cToken,
+            collateralAssetAddress,
+            true
+          );
 
-      await queryClient.refetchQueries();
+          await tx.wait();
+        } else {
+          // if it was blacklisted already, then remove from blacklisted first
+          if (debtCeilingState?.debtCeiling === -1) {
+            const txBlacklisted = await comptroller._blacklistBorrowingAgainstCollateral(
+              selectedAsset.cToken,
+              collateralAssetAddress,
+              false
+            );
 
-      successToast({ description: 'Successfully updated debt ceilings!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
-      setDebtCeilingsDefault();
-    } finally {
-      setIsEditDebtCeilings(false);
-      setIsUpdating(false);
-    }
-  };
+            await txBlacklisted.wait();
+          }
+
+          const txDebtCeilings = await comptroller._setBorrowCapForAssetForCollateral(
+            selectedAsset.cToken,
+            collateralAssetAddress,
+            utils.parseUnits(debtCeiling.toString(), selectedAsset.underlyingDecimals)
+          );
+
+          await txDebtCeilings.wait();
+        }
+
+        await queryClient.refetchQueries();
+
+        successToast({
+          description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
+        });
+      } catch (e) {
+        handleGenericError(e, errorToast);
+        setDebtCeilingsDefault();
+      } finally {
+        setIsEditDebtCeiling(false);
+      }
+    },
+    [
+      currentSdk,
+      selectedAsset,
+      assets,
+      errorToast,
+      successToast,
+      queryClient,
+      comptrollerAddress,
+      debtCeilingState,
+    ]
+  );
 
   const setDebtCeilingsDefault = () => {
-    setValue('debtCeilings', debtCeilingState ? debtCeilingState.debtCeiling : 0);
+    setValue('debtCeiling', debtCeilingState ? debtCeilingState.debtCeiling : 0);
 
-    setIsEditDebtCeilings(false);
+    setIsEditDebtCeiling(false);
   };
 
   if (!cTokenData) {
-    return <Skeleton />;
-  } else {
+    return null;
   }
 
   return (
@@ -185,7 +193,7 @@ export const DebtCeilings = ({
       w="100%"
     >
       <Flex alignItems="center" direction={{ base: 'column', sm: 'row' }} w="100%" wrap="wrap">
-        <FormLabel htmlFor="debtCeilings" margin={0}>
+        <FormLabel htmlFor="debtCeiling" margin={0}>
           <HStack>
             <Text size="md" width="max-content">
               Debt Ceilings
@@ -227,20 +235,20 @@ export const DebtCeilings = ({
           </FormControl>
           <Controller
             control={control}
-            name="debtCeilings"
+            name="debtCeiling"
             render={({ field: { name, value, ref, onChange } }) => (
               <InputGroup justifyContent="right">
                 <NumberInput
                   allowMouseWheel
                   clampValueOnBlur={false}
-                  isReadOnly={!isEditDebtCeilings}
+                  isReadOnly={!isEditDebtCeiling || isSubmitting}
                   min={BORROW_CAP.MIN}
                   onChange={onChange}
                   value={
                     selectedAsset.cToken === watchCollateralAsset ||
-                    (value === -1 && !isEditDebtCeilings)
+                    (value === -1 && !isEditDebtCeiling)
                       ? 'Blacklisted'
-                      : value === 0 && !isEditDebtCeilings
+                      : value === 0 && !isEditDebtCeiling
                       ? 'Unlimited'
                       : value
                   }
@@ -278,7 +286,7 @@ export const DebtCeilings = ({
             }}
           />
           <FormErrorMessage marginBottom="-10px" maxWidth="200px">
-            {errors.debtCeilings && errors.debtCeilings.message}
+            {errors.debtCeiling && errors.debtCeiling.message}
           </FormErrorMessage>
         </Flex>
       </Flex>
@@ -288,22 +296,23 @@ export const DebtCeilings = ({
         isDisabled={selectedAsset.cToken === watchCollateralAsset}
         mt={2}
       >
-        {isEditDebtCeilings ? (
+        {isEditDebtCeiling ? (
           <>
             <Button
-              disabled={isUpdating || watchDebtCeilings === debtCeilingState?.debtCeiling}
+              isLoading={isSubmitting}
+              isDisabled={isSubmitting || watchDebtCeilings === debtCeilingState?.debtCeiling}
               type="submit"
             >
               Save
             </Button>
-            <Button disabled={isUpdating} onClick={setDebtCeilingsDefault} variant="silver">
+            <Button isDisabled={isSubmitting} onClick={setDebtCeilingsDefault} variant="silver">
               Cancel
             </Button>
           </>
         ) : (
           <CButton
-            disabled={isUpdating || selectedAsset.cToken === watchCollateralAsset}
-            onClick={() => setIsEditDebtCeilings(true)}
+            isDisabled={isSubmitting || selectedAsset.cToken === watchCollateralAsset}
+            onClick={() => setIsEditDebtCeiling(true)}
           >
             Edit
           </CButton>
