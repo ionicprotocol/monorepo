@@ -15,7 +15,7 @@ import { ReserveFactor } from './ReserveFactor';
 import { SupplyAndBorrowCaps } from './SupplyAndBorrowCap';
 import { ToggleBorrow } from './ToggleBorrow';
 
-import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
+import RemoveAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/RemoveAssetButton';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';

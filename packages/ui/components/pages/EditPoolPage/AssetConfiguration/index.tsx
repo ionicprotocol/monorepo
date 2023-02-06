@@ -2,8 +2,8 @@ import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import React, { useMemo, useState } from 'react';
 
-import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
-import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
+import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';
+import EditAssetSettings from '@ui/components/pages/EditPoolPage/AssetConfiguration/EditAssetSettings';
 import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Center, Column } from '@ui/components/shared/Flex';
