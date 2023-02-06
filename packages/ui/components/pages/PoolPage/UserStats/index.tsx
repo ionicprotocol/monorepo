@@ -273,7 +273,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             />
           </Flex>
         </PopoverTrigger>
-        <PopoverContent p={2} width="min-content">
+        <PopoverContent p={2} width="min-content" minW="350px">
           <PopoverArrow
             sx={{
               '--popper-arrow-shadow-color': cPage.primary.borderColor,
