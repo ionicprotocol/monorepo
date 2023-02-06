@@ -53,9 +53,6 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     const { status } = this.beefyVaults.find((vault) => vault.id === beefyID) || {};
 
     if (status != 'active') {
-      console.log([
-        { apy: 0, status, updated_at: new Date().toISOString(), plugin: pluginAddress },
-      ]);
       if (status == 'eol') {
         await functionsAlert(
           `BeefyAPYProvider: ${beefyID}`,
