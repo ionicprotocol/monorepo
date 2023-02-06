@@ -1,33 +1,39 @@
 import { BeefyPlugin, Reward, Strategy } from '@midas-capital/types';
 import axios from 'axios';
-import { functionsAlert } from '../../../alert';
 import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
-interface BeefyAPYResponse {
-  [key: string]: number;
-}
 
-interface BeefyVaultResponse {
-  [key: string]: string | number | string[] | undefined;
-  status?: 'active' | 'eol' | 'paused' | 'unknown';
-}
+import { z } from 'zod';
+import { functionsAlert } from '../../../alert';
+
+const BeefyAPYResponse = z.record(z.union([z.number(), z.null(), z.string()]));
+type BeefyAPYResponse = z.infer<typeof BeefyAPYResponse>;
+
+const BeefyVault = z.object({
+  id: z.string(),
+  status: z.enum(['active', 'eol', 'paused'] as const),
+});
+const BeefyVaultResponse = z.array(BeefyVault);
+type BeefyVaultResponse = z.infer<typeof BeefyVaultResponse>;
 
 class BeefyAPYProvider extends AbstractPluginAPYProvider {
   static apyEndpoint = 'https://api.beefy.finance/apy';
   static vaultsEndpoint = 'https://api.beefy.finance/vaults';
 
   private beefyAPYs: BeefyAPYResponse | undefined;
-  private beefyVaults: BeefyVaultResponse[] | undefined;
+  private beefyVaults: BeefyVaultResponse | undefined;
 
   async init() {
-    this.beefyAPYs = await (await axios.get(BeefyAPYProvider.apyEndpoint)).data;
-    if (!this.beefyAPYs) {
-      throw `BeefyAPYProvider: unexpected Beefy APY response`;
-    }
+    [this.beefyAPYs, this.beefyVaults] = await Promise.all([
+      axios
+        .get(BeefyAPYProvider.apyEndpoint)
+        .then((response) => response.data)
+        .then((data) => BeefyAPYResponse.parse(data)),
 
-    this.beefyVaults = await (await axios.get(BeefyAPYProvider.vaultsEndpoint)).data;
-    if (!this.beefyVaults) {
-      throw `BeefyAPYProvider: unexpected Beefy Vaults response`;
-    }
+      axios
+        .get(BeefyAPYProvider.vaultsEndpoint)
+        .then((response) => response.data)
+        .then((data) => BeefyVaultResponse.parse(data)),
+    ]);
   }
 
   async getApy(pluginAddress: string, pluginData: BeefyPlugin): Promise<Reward[]> {
@@ -43,34 +49,34 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
       throw 'BeefyAPYProvider: Not initialized';
     }
 
-    let apy = this.beefyAPYs![beefyID];
-    let status: 'active' | 'eol' | 'paused' | 'unknown' | undefined = undefined;
-    if (apy === undefined) {
-      status = 'unknown';
+    let apy = this.beefyAPYs[beefyID];
+    const { status } = this.beefyVaults.find((vault) => vault.id === beefyID) || {};
 
-      await functionsAlert(
-        `BeefyAPYProvider: ${beefyID}`,
-        `Beefy ID: "${beefyID}" not included in Beefy APY data`
-      );
+    if (status != 'active') {
+      console.log([
+        { apy: 0, status, updated_at: new Date().toISOString(), plugin: pluginAddress },
+      ]);
+      if (status == 'eol') {
+        await functionsAlert(
+          `BeefyAPYProvider: ${beefyID}`,
+          `Beefy Vault reach EOL status. Please check the vault: ${pluginData.apyDocsUrl}`
+        );
+      }
+      return [{ apy: 0, status, updated_at: new Date().toISOString(), plugin: pluginAddress }];
     } else {
-      const vaultInfo = this.beefyVaults.find((vault) => vault.id === beefyID);
-
-      if (vaultInfo && vaultInfo.status) {
-        status = vaultInfo.status;
-
-        if (vaultInfo.status === 'paused') {
-          apy = 0;
-        }
+      if (apy === null || apy === undefined) {
+        await functionsAlert(
+          `BeefyAPYProvider: ${beefyID}`,
+          `Beefy Vault APY is 'null | undefined' but Vault is 'active'. Please check the vault: ${pluginData.apyDocsUrl}`
+        );
+        apy = 0;
       }
 
-      if (apy === 0) {
-        console.warn(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
-        // Disabled as spamming discord, as beefy is not fixing this.
-        // await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
+      if (typeof apy === 'string') {
+        apy = parseFloat(apy);
       }
+      return [{ apy: apy, status, updated_at: new Date().toISOString(), plugin: pluginAddress }];
     }
-
-    return [{ apy, status, updated_at: new Date().toISOString(), plugin: pluginAddress }];
   }
 }
 
