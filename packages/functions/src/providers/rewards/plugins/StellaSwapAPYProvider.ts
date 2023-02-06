@@ -45,7 +45,6 @@ class StellaSwapAPYProvider extends AbstractPluginAPYProvider {
     if (apyData === undefined) {
       throw `StellaSwapAPYProvider: unable to find APY Data for Plugin  "${pluginAddress}", retire plugin?`;
     }
-    console.log({ apyData });
 
     const rewards: PluginWithFlywheelReward[] = [];
 
@@ -74,7 +73,6 @@ class StellaSwapAPYProvider extends AbstractPluginAPYProvider {
       }
     }
 
-    console.log({ rewards });
     return rewards;
   }
 }
