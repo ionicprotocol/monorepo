@@ -20,12 +20,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/Alerts';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/AmountInput';
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/Balance';
-import { BorrowError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/BorrowError';
-import MaxBorrowSlider from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/MaxBorrowSlider';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/PendingTransaction';
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
@@ -46,6 +40,12 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { Alerts } from './Alerts';
+import { AmountInput } from './AmountInput';
+import { Balance } from './Balance';
+import { BorrowError } from './BorrowError';
+import MaxBorrowSlider from './MaxBorrowSlider';
+import { PendingTransaction } from './PendingTransaction';
 
 interface BorrowModalProps {
   isOpen: boolean;
@@ -335,7 +335,12 @@ export const BorrowModal = ({
                         </Box>
                       )}
 
-                      <Alerts poolChainId={poolChainId} asset={asset} />
+                      <Alerts
+                        poolChainId={poolChainId}
+                        asset={asset}
+                        assets={assets}
+                        comptrollerAddress={comptrollerAddress}
+                      />
                       <Button
                         id="confirmFund"
                         width="100%"

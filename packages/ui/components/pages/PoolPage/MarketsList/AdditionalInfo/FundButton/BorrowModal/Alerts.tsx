@@ -8,21 +8,21 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { toCeil } from '@ui/utils/formatNumber';
 
 export const Alerts = ({
-  poolChainId,
   asset,
   assets,
   comptrollerAddress,
+  poolChainId,
 }: {
-  poolChainId: number;
   asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
+  poolChainId: number;
 }) => {
   const {
     data: { minBorrowAsset, minBorrowUSD },
   } = useBorrowMinimum(asset, poolChainId);
 
-  const { data: borrowCapsPerCollateral } = useDebtCeilingForAssetForCollateral({
+  const { data: debtCeilings } = useDebtCeilingForAssetForCollateral({
     comptroller: comptrollerAddress,
     assets: [asset],
     collaterals: assets,
@@ -55,25 +55,23 @@ export const Alerts = ({
               } for now.`}
             </Text>
           </Alert>
-          {borrowCapsPerCollateral && borrowCapsPerCollateral.length > 0 && (
+          {debtCeilings && debtCeilings.length > 0 && (
             <Alert status="info">
               <AlertIcon />
               <VStack alignItems="flex-start">
                 <Text size="md">Borrow of this asset is restricted.</Text>
-                {borrowCapsPerCollateral.map((borrowCaps) => {
+                {debtCeilings.map((debtCeiling) => {
                   return (
-                    <HStack key={borrowCaps.asset.cToken}>
+                    <HStack key={debtCeiling.asset.cToken}>
                       <Text>For </Text>
                       <TokenIcon
                         size="sm"
-                        address={borrowCaps.collateralAsset.underlyingToken}
+                        address={debtCeiling.collateralAsset.underlyingToken}
                         chainId={poolChainId}
                       />
                       <Text> as Collateral, max borrow is </Text>
-                      <Text fontWeight="bold">
-                        {borrowCaps.borrowCap === -1 ? 0 : borrowCaps.borrowCap}
-                      </Text>
-                      <Text>{borrowCaps.asset.underlyingSymbol}</Text>
+                      <Text fontWeight="bold">{debtCeiling.debtCeiling}</Text>
+                      <Text>{debtCeiling.asset.underlyingSymbol}</Text>
                     </HStack>
                   );
                 })}

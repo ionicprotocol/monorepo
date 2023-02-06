@@ -32,29 +32,14 @@ export const TokenName = ({
   });
   const collateralAssets = useMemo(() => assets.filter((_asset) => _asset.membership), [assets]);
 
-  const { data: borrowCapForAssetForCollateral } = useDebtCeilingForAssetForCollateral({
-    assets,
+  const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({
+    assets: [asset],
     collaterals: collateralAssets,
     comptroller: poolAddress,
     poolChainId,
   });
-
-  const [restricted, setRestricted] = useState<
-    { asset: NativePricedFuseAsset; collateralAsset: NativePricedFuseAsset; borrowCap: number }[]
-  >([]);
-
-  useEffect(() => {
-    if (borrowCapForAssetForCollateral && borrowCapForAssetForCollateral.length > 0) {
-      const _restricted = borrowCapForAssetForCollateral.filter(
-        (obj) => obj.asset.cToken === asset.cToken
-      );
-
-      setRestricted(_restricted);
-    } else {
-      setRestricted([]);
-    }
-  }, [borrowCapForAssetForCollateral, asset.cToken]);
-
+  const restricted = useMemo(() => debtCeilingsOfAsset ?? [], [debtCeilingsOfAsset, asset]);
+  console.log({ restricted });
   return (
     <Row className="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <PopoverTooltip
