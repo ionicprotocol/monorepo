@@ -85,6 +85,11 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
                 Information about the rewards of this plugin are currently not available to us.
                 Please visit the plugins vault strategy directly for the most recent information.
               </Text>
+            ) : reward.status === 'eol' ? (
+              <Text>
+                These rewards reached their end of life and are no longer available. Please visit
+                the rewards provider directly for more information.
+              </Text>
             ) : reward.apy !== undefined ? (
               <HStack justifyContent={'space-between'} width={'100%'}>
                 <div>Current APY:</div>
