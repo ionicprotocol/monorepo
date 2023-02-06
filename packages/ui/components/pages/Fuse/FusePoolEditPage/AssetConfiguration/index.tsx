@@ -57,10 +57,7 @@ const AssetConfiguration = ({
   comptrollerAddress: string;
   poolChainId: number;
 }) => {
-  const sortedAssets = useMemo(() => {
-    return assets.sort((a, b) => a.underlyingSymbol.localeCompare(b.underlyingSymbol));
-  }, [assets]);
-  const [selectedAsset, setSelectedAsset] = useState(sortedAssets[0]);
+  const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   return (
@@ -93,7 +90,7 @@ const AssetConfiguration = ({
               Assets:
             </Text>
             <Flex wrap="wrap">
-              {sortedAssets.map((asset, index) => {
+              {assets.map((asset, index) => {
                 return (
                   <AssetButton
                     key={index}
@@ -115,7 +112,7 @@ const AssetConfiguration = ({
             selectedAsset={selectedAsset}
             poolChainId={poolChainId}
             setSelectedAsset={setSelectedAsset}
-            assets={sortedAssets}
+            assets={assets}
           />
         </>
       ) : null}
