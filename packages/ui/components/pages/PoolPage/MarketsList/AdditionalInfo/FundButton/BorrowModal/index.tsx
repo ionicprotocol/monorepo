@@ -20,6 +20,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
+import { Alerts } from './Alerts';
+import { AmountInput } from './AmountInput';
+import { Balance } from './Balance';
+import { BorrowError } from './BorrowError';
+import MaxBorrowSlider from './MaxBorrowSlider';
+import { PendingTransaction } from './PendingTransaction';
+
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
@@ -40,12 +47,6 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
-import { Alerts } from './Alerts';
-import { AmountInput } from './AmountInput';
-import { Balance } from './Balance';
-import { BorrowError } from './BorrowError';
-import MaxBorrowSlider from './MaxBorrowSlider';
-import { PendingTransaction } from './PendingTransaction';
 
 interface BorrowModalProps {
   isOpen: boolean;

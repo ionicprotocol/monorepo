@@ -1,7 +1,6 @@
 import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
 import { utils } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { GradientButton } from '@ui/components/shared/GradientButton';
@@ -38,8 +37,8 @@ export const TokenName = ({
     comptroller: poolAddress,
     poolChainId,
   });
-  const restricted = useMemo(() => debtCeilingsOfAsset ?? [], [debtCeilingsOfAsset, asset]);
-  console.log({ restricted });
+  const restricted = useMemo(() => debtCeilingsOfAsset ?? [], [debtCeilingsOfAsset]);
+
   return (
     <Row className="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <PopoverTooltip

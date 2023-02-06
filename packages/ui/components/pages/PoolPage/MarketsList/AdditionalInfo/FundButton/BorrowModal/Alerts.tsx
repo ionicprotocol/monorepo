@@ -2,8 +2,8 @@ import { Alert, AlertIcon, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { toCeil } from '@ui/utils/formatNumber';
 

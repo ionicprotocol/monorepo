@@ -18,7 +18,7 @@ import {
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { CButton } from '@ui/components/shared/Button';
@@ -86,7 +86,6 @@ export const DebtCeilings = ({
     comptroller: comptrollerAddress,
     poolChainId,
   });
-  console.log({ debtCeilingPerCollateral, isSubmitting });
 
   useEffect(() => {
     if (debtCeilingPerCollateral && debtCeilingPerCollateral.length > 0) {
@@ -104,83 +103,62 @@ export const DebtCeilings = ({
     setValue('debtCeiling', debtCeilingState ? debtCeilingState.debtCeiling : 0);
   }, [debtCeilingState, setValue]);
 
-  const updateDebtCeiling = useCallback(
-    async ({
-      collateralAsset: collateralAssetAddress,
-      debtCeiling,
-    }: {
-      collateralAsset: string;
-      debtCeiling: number;
-    }) => {
-      if (!currentSdk) return;
-      const collateralAsset = assets.find((asset) => asset.cToken === collateralAssetAddress);
-      if (!collateralAsset) {
-        throw new Error('Collateral asset not found');
-      }
+  const updateDebtCeiling = async ({
+    collateralAsset: collateralAssetAddress,
+    debtCeiling,
+  }: {
+    collateralAsset: string;
+    debtCeiling: number;
+  }) => {
+    if (!currentSdk) return;
+    const collateralAsset = assets.find((asset) => asset.cToken === collateralAssetAddress);
+    if (!collateralAsset) {
+      throw new Error('Collateral asset not found');
+    }
 
-      const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
-      const myAddress = await currentSdk.signer.getAddress();
-      const [errorCode, liquidity, shortfall] =
-        await comptroller.callStatic.getHypotheticalAccountLiquidity(
-          myAddress,
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
+    try {
+      if (debtCeiling === -1) {
+        const tx = await comptroller._blacklistBorrowingAgainstCollateral(
           selectedAsset.cToken,
-          0,
-          100
+          collateralAssetAddress,
+          true
         );
-      console.log({ errorCode, liquidity, shortfall });
-      try {
-        if (debtCeiling === -1) {
-          const tx = await comptroller._blacklistBorrowingAgainstCollateral(
+
+        await tx.wait();
+      } else {
+        // if it was blacklisted already, then remove from blacklisted first
+        if (debtCeilingState?.debtCeiling === -1) {
+          const txBlacklisted = await comptroller._blacklistBorrowingAgainstCollateral(
             selectedAsset.cToken,
             collateralAssetAddress,
-            true
+            false
           );
 
-          await tx.wait();
-        } else {
-          // if it was blacklisted already, then remove from blacklisted first
-          if (debtCeilingState?.debtCeiling === -1) {
-            const txBlacklisted = await comptroller._blacklistBorrowingAgainstCollateral(
-              selectedAsset.cToken,
-              collateralAssetAddress,
-              false
-            );
-
-            await txBlacklisted.wait();
-          }
-
-          const txDebtCeilings = await comptroller._setBorrowCapForAssetForCollateral(
-            selectedAsset.cToken,
-            collateralAssetAddress,
-            utils.parseUnits(debtCeiling.toString(), selectedAsset.underlyingDecimals)
-          );
-
-          await txDebtCeilings.wait();
+          await txBlacklisted.wait();
         }
 
-        await queryClient.refetchQueries();
+        const txDebtCeilings = await comptroller._setBorrowCapForAssetForCollateral(
+          selectedAsset.cToken,
+          collateralAssetAddress,
+          utils.parseUnits(debtCeiling.toString(), selectedAsset.underlyingDecimals)
+        );
 
-        successToast({
-          description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
-        });
-      } catch (e) {
-        handleGenericError(e, errorToast);
-        setDebtCeilingsDefault();
-      } finally {
-        setIsEditDebtCeiling(false);
+        await txDebtCeilings.wait();
       }
-    },
-    [
-      currentSdk,
-      selectedAsset,
-      assets,
-      errorToast,
-      successToast,
-      queryClient,
-      comptrollerAddress,
-      debtCeilingState,
-    ]
-  );
+
+      await queryClient.refetchQueries();
+
+      successToast({
+        description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
+      });
+    } catch (e) {
+      handleGenericError(e, errorToast);
+      setDebtCeilingsDefault();
+    } finally {
+      setIsEditDebtCeiling(false);
+    }
+  };
 
   const setDebtCeilingsDefault = () => {
     setValue('debtCeiling', debtCeilingState ? debtCeilingState.debtCeiling : 0);

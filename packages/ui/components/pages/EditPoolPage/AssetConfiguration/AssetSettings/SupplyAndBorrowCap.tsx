@@ -12,7 +12,6 @@ import {
   InputRightAddon,
   NumberInput,
   NumberInputField,
-  Skeleton,
   Spacer,
   Text,
 } from '@chakra-ui/react';

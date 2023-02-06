@@ -1,6 +1,6 @@
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';
 import EditAssetSettings from '@ui/components/pages/EditPoolPage/AssetConfiguration/EditAssetSettings';

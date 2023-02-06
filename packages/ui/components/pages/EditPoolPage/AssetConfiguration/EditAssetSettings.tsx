@@ -2,6 +2,7 @@ import { Spinner, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 
 import { AssetSettings } from './AssetSettings';
+
 import { Center } from '@ui/components/shared/Flex';
 import { useTokenData } from '@ui/hooks/useTokenData';
 

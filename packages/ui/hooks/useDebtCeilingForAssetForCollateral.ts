@@ -1,6 +1,7 @@
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
+
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useDebtCeilingForAssetForCollateral = ({
