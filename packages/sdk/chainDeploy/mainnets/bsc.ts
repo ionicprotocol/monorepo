@@ -85,6 +85,13 @@ export const deployConfig: ChainDeployConfig = {
         minPeriod: 1800,
         deviationThreshold: "10000000000000000",
       },
+      {
+        token: underlying(assets, assetSymbols.ANKR),
+        pair: "0x3147F98B8f9C53Acdf8F16332eaD12B592a1a4ae", // WBNB-ANKR
+        baseToken: underlying(assets, assetSymbols.WBNB),
+        minPeriod: 1800,
+        deviationThreshold: "70000000000000000",
+      },
     ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WBNB-BUSD"]), // WBNB-BUSD PCS LP
@@ -311,6 +318,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+  //// Uniswap Oracle
+  await deployUniswapOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
 
   // set Native BNB price
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
@@ -354,15 +369,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     chainlinkAssets,
   });
   ////
-
-  //// Uniswap Oracle
-  await deployUniswapOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-  });
 
   //// Uniswap LP Oracle
   await deployUniswapLpOracle({

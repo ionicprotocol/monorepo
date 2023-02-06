@@ -3,8 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { COINGECKO_API, DEFI_LLAMA_API } from '@ui/constants/index';
+import { useCgId } from '@ui/hooks/useChainConfig';
 
-export function useUSDPrice(coingeckoId: string) {
+export function useNativePriceInUSD(chainId?: number) {
+  const coingeckoId = useCgId(chainId);
+
   return useQuery(
     ['useUSDPrice', coingeckoId],
     async () => {

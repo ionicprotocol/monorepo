@@ -1,5 +1,4 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { useState } from 'react';
 
@@ -8,10 +7,8 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const AmountInput = ({
@@ -25,8 +22,7 @@ export const AmountInput = ({
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const errorToast = useErrorToast();
+  const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(asset, poolChainId);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -48,28 +44,13 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !maxWithdrawAmount) return;
 
-    setIsLoading(true);
-
-    try {
-      const maxBN = (await fetchMaxAmount(
-        FundOperationMode.WITHDRAW,
-        currentSdk,
-        address,
-        asset
-      )) as BigNumber;
-
-      if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
-        updateAmount('');
-      } else {
-        const str = utils.formatUnits(maxBN, asset.underlyingDecimals);
-        updateAmount(str);
-      }
-
-      setIsLoading(false);
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    if (maxWithdrawAmount.lt(constants.Zero) || maxWithdrawAmount.isZero()) {
+      updateAmount('');
+    } else {
+      const str = utils.formatUnits(maxWithdrawAmount, asset.underlyingDecimals);
+      updateAmount(str);
     }
   };
 

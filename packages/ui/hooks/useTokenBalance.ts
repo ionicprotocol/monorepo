@@ -6,7 +6,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
-  currentSdk: MidasSdk,
+  sdk: MidasSdk,
   address?: string
 ): Promise<BigNumber> => {
   let balance: BigNumber;
@@ -14,9 +14,9 @@ export const fetchTokenBalance = async (
   if (!address) {
     balance = BigNumber.from(0);
   } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
-    balance = await currentSdk.provider.getBalance(address);
+    balance = await sdk.provider.getBalance(address);
   } else {
-    const contract = currentSdk.createCTokenWithExtensions(tokenAddress);
+    const contract = sdk.createCTokenWithExtensions(tokenAddress);
     balance = (await contract.callStatic.balanceOf(address)) as BigNumber;
   }
 

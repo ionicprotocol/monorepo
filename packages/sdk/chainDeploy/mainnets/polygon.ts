@@ -661,6 +661,18 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 
+  //// custom uniswap v2 redemptions and funding
+  const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (uniswapV2LiquidatorFunder.transactionHash) {
+    await ethers.provider.waitForTransaction(uniswapV2LiquidatorFunder.transactionHash);
+  }
+  console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
+
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const busdAddress = underlying(assets, assetSymbols.BUSD);

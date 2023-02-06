@@ -41,8 +41,7 @@ import {
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
-import { CollateralRatioBar } from '../CollateralRatioBar';
-
+import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar/index';
 import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';

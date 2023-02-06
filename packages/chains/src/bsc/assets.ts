@@ -63,6 +63,7 @@ const EPX = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
 const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
 const SD = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
+const ANKR = "0xf307910A4c7bbc79691fD374889b36d8531B08e3";
 const WOMBATLP_WBNB = "0x74f019A5C4eD2C2950Ce16FaD7Af838549092c5b";
 const HAY = "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5";
 
@@ -499,6 +500,15 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", SD),
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.ANKR,
+    underlying: ANKR,
+    name: "Ankr",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", ANKR),
     disabled: true,
   },
   {
