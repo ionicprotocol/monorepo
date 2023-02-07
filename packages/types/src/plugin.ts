@@ -7,6 +7,7 @@ export enum Strategy {
   Bomb = "BombERC4626",
   CurveGauge = "CurveGaugeERC4626",
   MiniChefV2 = "MiniChefV2",
+  HelioHAY = "HelioHAY",
 }
 
 export interface AbstractPlugin {
@@ -58,6 +59,12 @@ export interface BombPlugin extends AbstractPlugin {
   icon: "https://d1912tcoux65lj.cloudfront.net/plugin/bomb.png";
 }
 
+export interface HelioHAYPlugin extends AbstractPlugin {
+  strategy: Strategy.HelioHAY;
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/helio.png";
+  otherParams: [string]; // JAR address
+}
+
 export interface StellaPlugin extends AbstractPlugin {
   strategy: Strategy.Stella;
   icon: "https://d1912tcoux65lj.cloudfront.net/plugin/stella.png";
@@ -85,7 +92,8 @@ export type SupportedPlugin =
   | StellaPlugin
   | CurveGaugePlugin
   | ArrakisPlugin
-  | DiffusionMiniChefV2Plugin;
+  | DiffusionMiniChefV2Plugin
+  | HelioHAYPlugin;
 
 export declare type DeployedPlugins = {
   [pluginAddress: string]: SupportedPlugin;

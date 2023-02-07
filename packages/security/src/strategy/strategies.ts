@@ -271,6 +271,21 @@ export const strategies: ERC4626Strategy[] = [
     contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
     adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   },
+  {
+    address: "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17",
+    strategy: Strategy.HelioHAY,
+    name: "HAY Staking Vault",
+    complexity: StrategyComplexity.LOW,
+    timeInMarket: StrategyTimeInMarket.NEW,
+    riskIL: AssetRiskIL.NONE,
+    liquidity: AssetRiskLiquidity.LOW,
+    mktCap: AssetRiskMktCap.LARGE,
+    supplyCentralised: AssetRiskSupply.DECENTRALIZED,
+    reputation: PlatformRiskReputation.NEW,
+    audit: PlatformRiskAudit.AUDIT,
+    contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
+    adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
+  },
   // POLYGON
   {
     address: "0xB6a8f36746BcCC1025Ec54eb2c6DCEF8EeE8df2f",
