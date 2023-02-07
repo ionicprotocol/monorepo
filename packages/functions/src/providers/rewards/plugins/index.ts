@@ -23,7 +23,7 @@ export async function getAPYProviders(initObj: APYProviderInitObject): Promise<P
   await Promise.all(
     Object.entries(providerMap).map(([key, provider]) =>
       provider.init(initObj).catch((exception) => {
-        functionsAlert(`Failed to init() provider: ${key}`, exception.message);
+        functionsAlert(`Failed to init() provider: ${key}`, exception.message || exception);
         delete providerMap[key as Strategy];
       })
     )
