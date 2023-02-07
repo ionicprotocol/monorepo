@@ -27,7 +27,8 @@ export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: stri
         try {
           const apyProvider = apyProviders[pluginData.strategy];
           if (!apyProvider) {
-            console.info(
+            await functionsAlert(
+              `Functions.plugin-rewards: Plugin '${pluginAddress}' (${pluginData.strategy}) / Chain '${chainId}'`,
               `No APYProvider available for: '${pluginData.strategy}' of ${pluginAddress}`
             );
             return undefined;

@@ -54,6 +54,11 @@ export const BORROW_CAP = {
   DEFAULT: 0,
 };
 
+export const DEBT_CEILING = {
+  MIN: -1, // -1: blacklisted, 0: unlimited
+  DEFAULT: 0,
+};
+
 export const POOLS_PER_PAGE = 6;
 
 // TODO: We should replace this with NATIVE_DECIMALS from the @midas-capital/chains package

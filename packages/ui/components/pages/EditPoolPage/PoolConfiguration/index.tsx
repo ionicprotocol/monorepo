@@ -26,8 +26,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useSwitchNetwork } from 'wagmi';
 
+import TransferOwnershipModal from '@ui/components/pages/EditPoolPage/PoolConfiguration/TransferOwnershipModal';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
-import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';

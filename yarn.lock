@@ -3461,7 +3461,7 @@ __metadata:
     react-datepicker: ^4.8.0
     react-dom: ^18.2.0
     react-error-boundary: ^3.1.4
-    react-hook-form: ^7.42.1
+    react-hook-form: ^7.43.0
     react-i18next: ^12.1.4
     react-icons: ^4.7.1
     react-jazzicon: ^1.0.4
@@ -24518,7 +24518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.42.1":
+"react-hook-form@npm:^7.43.0":
   version: 7.43.0
   resolution: "react-hook-form@npm:7.43.0"
   peerDependencies:

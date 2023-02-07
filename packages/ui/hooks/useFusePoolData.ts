@@ -34,7 +34,9 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
         }
         const adaptedFusePoolData: PoolData = {
           ...response,
-          assets: assetsWithPrice,
+          assets: assetsWithPrice.sort((a, b) =>
+            a.underlyingSymbol.localeCompare(b.underlyingSymbol)
+          ),
           totalLiquidityFiat: response.totalLiquidityNative * usdPrice,
           totalAvailableLiquidityFiat: response.totalAvailableLiquidityNative * usdPrice,
           totalSuppliedFiat: response.totalSuppliedNative * usdPrice,

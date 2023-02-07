@@ -234,6 +234,18 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xc1beA7B6b749D1f3A812F39afeB8795a97402dfF", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
+  // HelioERC4626_HAY_0xAB7d4760E2c54c0Da1efEC7C358F171d72e14153.json
+  "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17": {
+    market: "0xAB7d4760E2c54c0Da1efEC7C358F171d72e14153",
+    name: "HAY Staking Vault",
+    strategy: Strategy.HelioHAY,
+    apyDocsUrl: "https://helio.money/app/earn",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols.mai3EPS),
+    otherParams: ["0x0a1Fd12F73432928C190CAF0810b3B767A59717e"], // JAR
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/helio.png",
+  },
 };
 
 export default deployedPlugins;
