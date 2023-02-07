@@ -1,5 +1,4 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { useState } from 'react';
 
@@ -8,10 +7,10 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const AmountInput = ({
@@ -31,6 +30,7 @@ export const AmountInput = ({
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();
+  const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, poolChainId);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -52,7 +52,7 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !maxSupplyAmount) return;
 
     setIsLoading(true);
 
@@ -61,12 +61,7 @@ export const AmountInput = ({
       if (optionToWrap) {
         maxBN = await currentSdk.signer.getBalance();
       } else {
-        maxBN = (await fetchMaxAmount(
-          FundOperationMode.SUPPLY,
-          currentSdk,
-          address,
-          asset
-        )) as BigNumber;
+        maxBN = maxSupplyAmount.bigNumber;
       }
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {

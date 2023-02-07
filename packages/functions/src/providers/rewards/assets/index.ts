@@ -7,9 +7,9 @@ type ProviderMap = {
   [key: string]: AbstractAssetAPYProvider;
 };
 
-type ProviderMapForChain = {
-  [key in SupportedChains]?: ProviderMap;
-};
+type ProviderMapForChain = Partial<{
+  [key in SupportedChains]: ProviderMap;
+}>;
 
 const providerMap: ProviderMapForChain = {
   [SupportedChains.bsc]: {

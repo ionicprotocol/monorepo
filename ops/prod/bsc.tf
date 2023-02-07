@@ -50,7 +50,7 @@ module "bsc_mainnet_oracle_feed_verifier" {
 #   schedule_expression = "rate(20 minutes)"
 # }
 
-module "bsc_mainnet_liquidation" {
+module "bsc_mainnet_liquidation_rpc_1" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag
@@ -58,7 +58,7 @@ module "bsc_mainnet_liquidation" {
   environment         = "mainnet"
   chain_id            = local.bsc_mainnet_chain_id
   container_env_vars = merge(
-    local.oracle_price_verifier_lambda_variables,
+    local.liquidation_variables,
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_1 }
   )
   schedule_expression = "rate(4 minutes)"
@@ -66,7 +66,7 @@ module "bsc_mainnet_liquidation" {
   memory_size         = 128
 }
 
-module "bsc_mainnet_liquidation" {
+module "bsc_mainnet_liquidation_rpc_2" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag
@@ -74,7 +74,7 @@ module "bsc_mainnet_liquidation" {
   environment         = "mainnet"
   chain_id            = local.bsc_mainnet_chain_id
   container_env_vars = merge(
-    local.oracle_price_verifier_lambda_variables,
+    local.liquidation_variables,
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_2 }
   )
   schedule_expression = "rate(4 minutes)"

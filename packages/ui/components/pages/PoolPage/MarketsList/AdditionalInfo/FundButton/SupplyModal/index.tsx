@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Divider,
@@ -9,11 +11,12 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
@@ -30,13 +33,15 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SUPPLY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
+import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
+import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
 interface SupplyModalProps {
   isOpen: boolean;
@@ -72,6 +77,7 @@ export const SupplyModal = ({
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Supply');
+  const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
@@ -89,48 +95,28 @@ export const SupplyModal = ({
     myNativeBalance,
   ]);
 
+  const { data: supplyCap } = useSupplyCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
+
+  const { data: maxSupplyAmount, isLoading } = useMaxSupplyAmount(
+    asset,
+    comptrollerAddress,
+    poolChainId
+  );
+
   const queryClient = useQueryClient();
 
-  const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidSupplyAmount', amount, currentSdk.chainId, address, asset.cToken],
-    async () => {
-      if (!currentSdk || !address) return null;
-
-      if (amount.isZero()) {
-        return false;
-      }
-
-      try {
-        const max = optionToWrap
-          ? (myNativeBalance as BigNumber)
-          : ((await fetchMaxAmount(
-              FundOperationMode.SUPPLY,
-              currentSdk,
-              address,
-              asset
-            )) as BigNumber);
-
-        return amount.lte(max);
-      } catch (error) {
-        const sentryProperties = {
-          chainId: currentSdk.chainId,
-          comptroller: comptrollerAddress,
-          token: asset.cToken,
-        };
-        const sentryInfo = {
-          contextName: 'Fetching max supply amount',
-          properties: sentryProperties,
-        };
-        handleGenericError({ error, toast: errorToast, sentryInfo });
-        return false;
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!currentSdk && !!address,
+  useEffect(() => {
+    if (amount.isZero() || !maxSupplyAmount) {
+      setIsAmountValid(false);
+    } else {
+      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
+      setIsAmountValid(amount.lte(max));
     }
-  );
+  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
 
   useEffect(() => {
     if (amount.isZero()) {
@@ -138,13 +124,13 @@ export const SupplyModal = ({
     } else if (isLoading) {
       setBtnStr(`Loading your balance of ${asset.underlyingSymbol}...`);
     } else {
-      if (amountIsValid) {
+      if (isAmountValid) {
         setBtnStr('Supply');
       } else {
         setBtnStr(`You don't have enough ${asset.underlyingSymbol}`);
       }
     }
-  }, [amount, isLoading, amountIsValid, asset.underlyingSymbol]);
+  }, [amount, isLoading, isAmountValid, asset.underlyingSymbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
@@ -433,42 +419,60 @@ export const SupplyModal = ({
                   width="100%"
                   gap={4}
                 >
-                  <Column gap={1} w="100%">
-                    <AmountInput
-                      asset={asset}
-                      optionToWrap={optionToWrap}
-                      poolChainId={poolChainId}
-                      setAmount={setAmount}
-                      comptrollerAddress={comptrollerAddress}
-                    />
+                  {!supplyCap || asset.totalSupplyFiat < supplyCap.usdCap ? (
+                    <>
+                      <Column gap={1} w="100%">
+                        <AmountInput
+                          asset={asset}
+                          optionToWrap={optionToWrap}
+                          poolChainId={poolChainId}
+                          setAmount={setAmount}
+                          comptrollerAddress={comptrollerAddress}
+                        />
 
-                    <Balance asset={asset} />
-                  </Column>
-
-                  <StatsColumn
-                    mode={FundOperationMode.SUPPLY}
-                    amount={amount}
-                    assets={assets}
-                    asset={asset}
-                    enableAsCollateral={enableAsCollateral}
-                    poolChainId={poolChainId}
-                    comptrollerAddress={comptrollerAddress}
-                  />
-                  {!asset.membership && (
-                    <EnableCollateral
-                      enableAsCollateral={enableAsCollateral}
-                      setEnableAsCollateral={setEnableAsCollateral}
-                    />
+                        <Balance asset={asset} />
+                      </Column>
+                      <StatsColumn
+                        mode={FundOperationMode.SUPPLY}
+                        amount={amount}
+                        assets={assets}
+                        asset={asset}
+                        enableAsCollateral={enableAsCollateral}
+                        poolChainId={poolChainId}
+                        comptrollerAddress={comptrollerAddress}
+                      />
+                      {!asset.membership && (
+                        <EnableCollateral
+                          enableAsCollateral={enableAsCollateral}
+                          setEnableAsCollateral={setEnableAsCollateral}
+                        />
+                      )}
+                      <Button
+                        id="confirmFund"
+                        width="100%"
+                        onClick={onConfirm}
+                        isDisabled={!isAmountValid}
+                        height={16}
+                      >
+                        {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
+                      </Button>
+                    </>
+                  ) : (
+                    <Alert status="info">
+                      <AlertIcon />
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">
+                          {smallFormatter.format(supplyCap.tokenCap)} {asset.underlyingSymbol} /{' '}
+                          {smallFormatter.format(supplyCap.tokenCap)} {asset.underlyingSymbol}
+                        </Text>
+                        <Text>
+                          The maximum supply of assets for this asset has been reached. Once assets
+                          are withdrawn or the limit is increased you can again supply to this
+                          market.
+                        </Text>
+                      </VStack>
+                    </Alert>
                   )}
-                  <Button
-                    id="confirmFund"
-                    width="100%"
-                    onClick={onConfirm}
-                    isDisabled={!amountIsValid}
-                    height={16}
-                  >
-                    {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
-                  </Button>
                 </Column>
               </>
             )}

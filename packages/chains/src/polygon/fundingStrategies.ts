@@ -64,6 +64,10 @@ const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } 
     FundingStrategyContract.UniswapV3LiquidatorFunder, // or CurveSwapLiquidatorFunder
     underlying(assets, assetSymbols.USDC),
   ],
+  [underlying(assets, assetSymbols["JEUR-EURT"])]: [
+    FundingStrategyContract.CurveSwapLiquidatorFunder,
+    underlying(assets, assetSymbols.JEUR),
+  ],
 };
 
 export default fundingStrategies;

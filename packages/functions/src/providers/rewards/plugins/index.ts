@@ -5,10 +5,11 @@ import CurveGaugeAPYProvider from './CurveGaugeAPYProvider';
 import DotDotAPYProvider from './DotDotAPYProvider';
 import MimoAPYProvider from './MimoAPYProvider';
 import StellaSwapAPYProvider from './StellaSwapAPYProvider';
+import { functionsAlert } from '../../../alert';
 
-type ProviderMap = {
-  [key in Strategy]?: AbstractPluginAPYProvider;
-};
+type ProviderMap = Partial<{
+  [key in Strategy]: AbstractPluginAPYProvider;
+}>;
 
 const providerMap: ProviderMap = {
   [Strategy.Beefy]: BeefyAPYProvider,
@@ -20,8 +21,11 @@ const providerMap: ProviderMap = {
 
 export async function getAPYProviders(initObj: APYProviderInitObject): Promise<ProviderMap> {
   await Promise.all(
-    Object.values(providerMap).map((provider) =>
-      provider.init(initObj).catch((error) => console.error(`Failed to init() provider: ${error}`))
+    Object.entries(providerMap).map(([key, provider]) =>
+      provider.init(initObj).catch((exception) => {
+        functionsAlert(`Failed to init() provider: ${key}`, exception.message || exception);
+        delete providerMap[key as Strategy];
+      })
     )
   );
   return providerMap;

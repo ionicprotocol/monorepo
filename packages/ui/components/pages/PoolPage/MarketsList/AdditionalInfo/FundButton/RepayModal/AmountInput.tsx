@@ -1,5 +1,4 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { useState } from 'react';
 
@@ -8,10 +7,10 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const AmountInput = ({
@@ -31,6 +30,10 @@ export const AmountInput = ({
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();
+  const { data: maxRepayAmount, isLoading: isMaxRepayLoading } = useMaxRepayAmount(
+    asset,
+    poolChainId
+  );
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -52,7 +55,7 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !maxRepayAmount) return;
 
     setIsLoading(true);
 
@@ -64,12 +67,7 @@ export const AmountInput = ({
         const balance = await currentSdk.signer.getBalance();
         maxBN = balance.gt(debt) ? debt : balance;
       } else {
-        maxBN = (await fetchMaxAmount(
-          FundOperationMode.REPAY,
-          currentSdk,
-          address,
-          asset
-        )) as BigNumber;
+        maxBN = maxRepayAmount;
       }
       if (!maxBN || maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
@@ -127,7 +125,7 @@ export const AmountInput = ({
             height={{ lg: 8, md: 8, sm: 8, base: 8 }}
             px={{ lg: 2, md: 2, sm: 2, base: 2 }}
             onClick={setToMax}
-            isLoading={isLoading}
+            isLoading={isLoading || isMaxRepayLoading}
           >
             MAX
           </Button>

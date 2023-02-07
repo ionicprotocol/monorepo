@@ -2,10 +2,10 @@ import { SupportedChains } from '@midas-capital/types';
 import { ethers } from 'ethers';
 import ERC4626_ABI from '../abi/ERC4626.json';
 import { functionsAlert } from '../alert';
-import { pluginsOfChain } from '../data/plugins';
 import { environment, supabase } from '../config';
+import { pluginsOfChain } from '../data/plugins';
 
-const updatePluginData = async (chainId: SupportedChains, rpcUrl: string) => {
+export const updatePluginData = async (chainId: SupportedChains, rpcUrl: string) => {
   const plugins = pluginsOfChain[chainId];
   if (!plugins) {
     console.warn(`No Plugins available for ${chainId}`);

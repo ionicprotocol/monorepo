@@ -1,6 +1,5 @@
 import { Box, Button, Input } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -20,21 +19,17 @@ export const AmountInput = ({
   userEnteredAmount: string;
   updateAmount: (amount: string) => void;
 }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     data: { minBorrowAsset },
+    isLoading,
   } = useBorrowMinimum(asset, poolChainId);
 
   const setToMin = () => {
-    setIsLoading(true);
-
     if (minBorrowAsset) {
       updateAmount(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals));
     } else {
       updateAmount('');
     }
-
-    setIsLoading(false);
   };
 
   return (
