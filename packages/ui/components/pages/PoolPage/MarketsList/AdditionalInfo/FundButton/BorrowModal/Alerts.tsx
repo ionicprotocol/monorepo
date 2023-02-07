@@ -1,7 +1,6 @@
-import { Alert, AlertIcon, HStack, Text, VStack } from '@chakra-ui/react';
+import { Alert, AlertIcon, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -59,22 +58,10 @@ export const Alerts = ({
             <Alert status="info">
               <AlertIcon />
               <VStack alignItems="flex-start">
-                <Text size="md">Borrow of this asset is restricted.</Text>
-                {debtCeilings.map((debtCeiling) => {
-                  return (
-                    <HStack key={debtCeiling.asset.cToken}>
-                      <Text>For </Text>
-                      <TokenIcon
-                        size="sm"
-                        address={debtCeiling.collateralAsset.underlyingToken}
-                        chainId={poolChainId}
-                      />
-                      <Text> as Collateral, max borrow is </Text>
-                      <Text fontWeight="bold">{debtCeiling.debtCeiling}</Text>
-                      <Text>{debtCeiling.asset.underlyingSymbol}</Text>
-                    </HStack>
-                  );
-                })}
+                <Text size="md">
+                  Use of collateral to borrow this asset is further restricted for the security of
+                  the pool. More information on this soon.
+                </Text>
               </VStack>
             </Alert>
           )}
