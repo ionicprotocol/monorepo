@@ -169,6 +169,8 @@ export default async function getPotentialLiquidation(
         flashSwapFundingToken,
         sdk.chainConfig.chainAddresses.W_BTC_TOKEN
       );
+    } else {
+      sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
     }
   }
 
