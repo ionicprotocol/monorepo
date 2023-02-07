@@ -5,7 +5,6 @@ import CurveGaugeAPYProvider from './CurveGaugeAPYProvider';
 import DotDotAPYProvider from './DotDotAPYProvider';
 import MimoAPYProvider from './MimoAPYProvider';
 import StellaSwapAPYProvider from './StellaSwapAPYProvider';
-import { functionsAlert } from '../../../alert';
 
 type ProviderMap = Partial<{
   [key in Strategy]: AbstractPluginAPYProvider;
@@ -23,7 +22,10 @@ export async function getAPYProviders(initObj: APYProviderInitObject): Promise<P
   await Promise.all(
     Object.entries(providerMap).map(([key, provider]) =>
       provider.init(initObj).catch((exception) => {
-        functionsAlert(`Failed to init() provider: ${key}`, exception.message || exception);
+        console.info(
+          `Unable to init() provider: ${key} for chain ${initObj.chainId}`,
+          exception.message || exception
+        );
         delete providerMap[key as Strategy];
       })
     )
