@@ -58,7 +58,7 @@ module "bsc_mainnet_liquidation" {
   environment         = "mainnet"
   chain_id            = local.bsc_mainnet_chain_id
   container_env_vars = merge(
-    local.oracle_price_verifier_lambda_variables,
+    local.liquidation_variables,
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_1 }
   )
   schedule_expression = "rate(4 minutes)"
@@ -74,7 +74,7 @@ module "bsc_mainnet_liquidation" {
   environment         = "mainnet"
   chain_id            = local.bsc_mainnet_chain_id
   container_env_vars = merge(
-    local.oracle_price_verifier_lambda_variables,
+    local.liquidation_variables,
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_2 }
   )
   schedule_expression = "rate(4 minutes)"
