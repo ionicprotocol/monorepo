@@ -161,7 +161,7 @@ export const TokenName = ({
                 </Badge>
               </SimpleTooltip>
               {restricted.length > 0 && (
-                <SimpleTooltip label="Borrow of this asset is restricted">
+                <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon.">
                   <Badge variant="outline" colorScheme="red" textTransform="capitalize">
                     Restricted
                   </Badge>

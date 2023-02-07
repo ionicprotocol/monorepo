@@ -204,13 +204,22 @@ export const DebtCeilings = ({
                 mt={{ base: 2, sm: 0 }}
               >
                 {assets.map((asset) => {
+                  const debtCeiling = debtCeilingPerCollateral?.find(
+                    (debtCeiling) => debtCeiling.collateralAsset.cToken === asset.cToken
+                  )?.debtCeiling;
+
                   return (
                     <option
                       key={asset.cToken}
                       style={{ color: cSelect.txtColor }}
                       value={asset.cToken}
                     >
-                      {asset.underlyingSymbol}
+                      {asset.underlyingSymbol +
+                        (debtCeiling === -1
+                          ? ' (Blacklisted)'
+                          : debtCeiling === 0 || debtCeiling === undefined
+                          ? ' (Unlimited)'
+                          : ` (Limited)`)}
                     </option>
                   );
                 })}
