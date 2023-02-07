@@ -38,7 +38,7 @@ import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const IRMChart = dynamic(
-  () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
+  () => import('@ui/components/pages/EditPoolPage/AssetConfiguration/IRMChart'),
   {
     ssr: false,
   }

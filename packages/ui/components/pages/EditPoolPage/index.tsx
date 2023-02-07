@@ -2,13 +2,13 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { memo, useEffect } from 'react';
+import { memo, useEffect } from 'react';
 
-import AssetConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration';
-import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
-import AddAssetModal from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetModal';
-import FlywheelEdit from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit';
-import PoolConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration';
+import AssetConfiguration from '@ui/components/pages/EditPoolPage/AssetConfiguration';
+import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';
+import AddAssetModal from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetModal';
+import FlywheelEdit from '@ui/components/pages/EditPoolPage/FlywheelEdit';
+import PoolConfiguration from '@ui/components/pages/EditPoolPage/PoolConfiguration';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { AdminAlert } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
@@ -22,7 +22,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 
-const FusePoolEditPage = memo(() => {
+const EditPoolPage = memo(() => {
   const isMobile = useIsSemiSmallScreen();
 
   const {
@@ -154,4 +154,4 @@ const FusePoolEditPage = memo(() => {
   );
 });
 
-export default FusePoolEditPage;
+export default EditPoolPage;
