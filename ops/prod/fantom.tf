@@ -14,7 +14,7 @@ module "fantom_mainnet_liquidation" {
   environment         = "mainnet"
   chain_id            = local.fantom_mainnet_chain_id
   container_env_vars = merge(
-    local.oracle_price_verifier_lambda_variables,
+    local.liquidation_variables,
     { WEB3_HTTP_PROVIDER_URL = local.fantom_mainnet_rpc_1 }
   )
   schedule_expression = "rate(2 minutes)"
