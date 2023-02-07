@@ -52,7 +52,7 @@ module "polygon_mainnet_oracle_feed_verifier" {
 #   schedule_expression = "rate(20 minutes)"
 # }
 
-module "polygon_mainnet_liquidation" {
+module "polygon_mainnet_liquidation_rpc_2" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag
@@ -68,7 +68,7 @@ module "polygon_mainnet_liquidation" {
   memory_size         = 128
 }
 
-module "polygon_mainnet_liquidation" {
+module "polygon_mainnet_liquidation_rpc_1" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag

@@ -49,7 +49,7 @@ module "moonbeam_mainnet_oracle_feed_verifier" {
 #   schedule_expression = "rate(20 minutes)"
 # }
 
-module "moonbeam_mainnet_liquidation" {
+module "moonbeam_mainnet_liquidation_rpc_1" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag
@@ -66,7 +66,7 @@ module "moonbeam_mainnet_liquidation" {
 }
 
 
-module "moonbeam_mainnet_liquidation" {
+module "moonbeam_mainnet_liquidation_rpc_0" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag
