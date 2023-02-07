@@ -313,4 +313,25 @@ export const STRATEGY_HELP = {
       },
     },
   },
+  [Strategy.HelioHAY]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "Helio HAY strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "Helio HAY strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "Helio HAY strategy is battle tested",
+      },
+    },
+  },
 };

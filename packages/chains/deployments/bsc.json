@@ -242,6 +242,15 @@
     "FuseSafeLiquidator_Proxy": {
       "address": "0xc9C3D317E89f4390A564D56180bBB1842CF3c99C"
     },
+    "HelioERC4626_HAY_0xAB7d4760E2c54c0Da1efEC7C358F171d72e14153": {
+      "address": "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17"
+    },
+    "HelioERC4626_HAY_0xAB7d4760E2c54c0Da1efEC7C358F171d72e14153_Implementation": {
+      "address": "0x40f3704C5b04f015BDE6c2b0222b7e884Ee5b0F5"
+    },
+    "HelioERC4626_HAY_0xAB7d4760E2c54c0Da1efEC7C358F171d72e14153_Proxy": {
+      "address": "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17"
+    },
     "JarvisLiquidatorFunder": {
       "address": "0xC168EAe9F3e900c6b3E0d521ed638b10585A4aFC"
     },
