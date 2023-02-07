@@ -1,11 +1,13 @@
+import { SupportedChains } from '@midas-capital/types';
+import { Handler } from '@netlify/functions';
 import { ethers } from 'ethers';
 import { functionsAlert } from '../alert';
-import { pluginsOfChain } from '../data/plugins';
 import { environment, supabase } from '../config';
+import { pluginsOfChain } from '../data/plugins';
+import { rpcUrls } from '../data/rpcs';
 import { getAPYProviders } from '../providers/rewards/plugins';
-import { SupportedChains } from '@midas-capital/types';
 
-const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => {
+export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const plugins = pluginsOfChain[chainId];
 
@@ -63,4 +65,22 @@ const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => 
   }
 };
 
-export default updatePluginRewards;
+export const createPluginRewardsHandler =
+  (chain: SupportedChains): Handler =>
+  async () => {
+    const rpcURL = rpcUrls[chain];
+    if (!rpcURL) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'RPC not set' }),
+      };
+    }
+    await updatePluginRewards(chain, rpcURL);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'done' }),
+    };
+  };
+
+export default createPluginRewardsHandler;
