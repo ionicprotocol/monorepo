@@ -54,7 +54,7 @@ module "bsc_mainnet_liquidation_rpc_1" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag
-  container_family    = "liquidator-default-rpc"
+  container_family    = "liquidator-rpc-1"
   environment         = "mainnet"
   chain_id            = local.bsc_mainnet_chain_id
   container_env_vars = merge(
@@ -70,7 +70,7 @@ module "bsc_mainnet_liquidation_rpc_2" {
   source              = "../modules/lambda"
   ecr_repository_name = "liquidator"
   docker_image_tag    = var.bots_image_tag
-  container_family    = "liquidator-ankr-rpc"
+  container_family    = "liquidator-rpc-2"
   environment         = "mainnet"
   chain_id            = local.bsc_mainnet_chain_id
   container_env_vars = merge(
