@@ -15,9 +15,13 @@ export const useBorrowLimitTotal = (
   return useQuery(
     [
       'useBorrowLimitTotal',
-      assets.sort((a, b) => a.cToken.localeCompare(b.cToken)),
-      options?.ignoreIsEnabledCheckFor,
-      usdPrice,
+      {
+        assets: assets.map((a) => a.cToken).sort(),
+      },
+      {
+        ignoreIsEnabledCheckFor: !!options?.ignoreIsEnabledCheckFor,
+      },
+      { usdPrice },
     ],
     () => {
       if (!usdPrice) return null;
