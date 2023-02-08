@@ -287,6 +287,12 @@ export const BorrowModal = ({
                   width="100%"
                   gap={4}
                 >
+                  <Alerts
+                    poolChainId={poolChainId}
+                    asset={asset}
+                    assets={assets}
+                    comptrollerAddress={comptrollerAddress}
+                  />
                   {!borrowCaps || asset.totalBorrowFiat < borrowCaps.usdCap ? (
                     <>
                       {maxBorrowAmount &&
@@ -336,12 +342,6 @@ export const BorrowModal = ({
                         </Box>
                       )}
 
-                      <Alerts
-                        poolChainId={poolChainId}
-                        asset={asset}
-                        assets={assets}
-                        comptrollerAddress={comptrollerAddress}
-                      />
                       <Button
                         id="confirmFund"
                         width="100%"
