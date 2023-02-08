@@ -5,7 +5,6 @@ import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { toCeil } from '@ui/utils/formatNumber';
-
 export const Alerts = ({
   asset,
   assets,
@@ -39,28 +38,40 @@ export const Alerts = ({
         </Alert>
       ) : (
         <>
-          <Alert status="info">
+          <Alert status="info" alignItems="flex-start">
             <AlertIcon />
-            <Text size="md">
-              {`For safety reasons, you need to borrow at least a value of $${
-                minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
-              }${
-                minBorrowAsset
-                  ? ` / ${toCeil(
-                      Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
-                      2
-                    )} ${asset.underlyingSymbol}`
-                  : ''
-              } for now.`}
-            </Text>
+            <VStack alignItems="flex-start">
+              <Text fontWeight="bold" size="md">
+                {`Minimum Borrow Amount of`}
+                <br />
+                {`$${minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100}${
+                  minBorrowAsset
+                    ? ` / ${toCeil(
+                        Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
+                        2
+                      )} ${asset.underlyingSymbol}`
+                    : ''
+                }`}
+              </Text>
+            </VStack>
           </Alert>
           {debtCeilings && debtCeilings.length > 0 && (
-            <Alert status="info">
+            <Alert status="info" alignItems="flex-start">
               <AlertIcon />
+
               <VStack alignItems="flex-start">
-                <Text size="md">
+                <Text fontWeight="bold" size="md">
+                  Restricted
+                </Text>
+                <Text size="sm">
                   Use of collateral to borrow this asset is further restricted for the security of
-                  the pool. More information on this soon.
+                  the pool. More detailed information about this soon.{' '}
+                  <a
+                    href="https://discord.com/invite/85YxVuPeMt"
+                    style={{ textDecoration: 'underline' }}
+                  >
+                    Discord↗
+                  </a>
                 </Text>
               </VStack>
             </Alert>

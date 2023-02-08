@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import React, { useState } from 'react';
 
@@ -11,23 +11,26 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
+interface AssetButtonProps extends BoxProps {
+  asset: NativePricedFuseAsset;
+  selectedAsset: NativePricedFuseAsset;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  isEditableAdmin?: boolean | null;
+  poolChainId: number;
+}
+
 const AssetButton = ({
   asset,
   selectedAsset,
   setSelectedAsset,
   isEditableAdmin,
   poolChainId,
-}: {
-  asset: NativePricedFuseAsset;
-  selectedAsset: NativePricedFuseAsset;
-  setSelectedAsset: (value: NativePricedFuseAsset) => void;
-  isEditableAdmin?: boolean | null;
-  poolChainId: number;
-}) => {
+  ...boxProps
+}: AssetButtonProps) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
   return (
-    <Box mr={2} key={asset.cToken} mb={2}>
+    <Box mr={2} mb={2} {...boxProps}>
       <CButton
         variant="filter"
         isSelected={asset.cToken === selectedAsset.cToken}
@@ -90,18 +93,16 @@ const AssetConfiguration = ({
               Assets:
             </Text>
             <Flex wrap="wrap">
-              {assets.map((asset, index) => {
-                return (
-                  <AssetButton
-                    key={index}
-                    asset={asset}
-                    selectedAsset={selectedAsset}
-                    setSelectedAsset={setSelectedAsset}
-                    isEditableAdmin={isEditableAdmin}
-                    poolChainId={poolChainId}
-                  />
-                );
-              })}
+              {assets.map((asset) => (
+                <AssetButton
+                  key={'Select_' + asset.underlyingSymbol}
+                  asset={asset}
+                  selectedAsset={selectedAsset}
+                  setSelectedAsset={setSelectedAsset}
+                  isEditableAdmin={isEditableAdmin}
+                  poolChainId={poolChainId}
+                />
+              ))}
             </Flex>
           </ConfigRow>
 
