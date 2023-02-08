@@ -13,7 +13,6 @@ import {
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
-import LogRocket from 'logrocket';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -87,19 +86,26 @@ export const LoanToValue = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setCollateralFactor(cTokenAddress, bigCollateralFactor);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateCollateralFactor');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated loan-to-Value!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating loan-to-value',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
