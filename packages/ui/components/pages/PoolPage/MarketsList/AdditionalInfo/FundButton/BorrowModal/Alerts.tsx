@@ -1,14 +1,32 @@
-import { Alert, AlertIcon, Text } from '@chakra-ui/react';
+import { Alert, AlertIcon, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { toCeil } from '@ui/utils/formatNumber';
 
-export const Alerts = ({ poolChainId, asset }: { poolChainId: number; asset: MarketData }) => {
+export const Alerts = ({
+  asset,
+  assets,
+  comptrollerAddress,
+  poolChainId,
+}: {
+  asset: MarketData;
+  assets: MarketData[];
+  comptrollerAddress: string;
+  poolChainId: number;
+}) => {
   const {
     data: { minBorrowAsset, minBorrowUSD },
   } = useBorrowMinimum(asset, poolChainId);
+
+  const { data: debtCeilings } = useDebtCeilingForAssetForCollateral({
+    comptroller: comptrollerAddress,
+    assets: [asset],
+    collaterals: assets,
+    poolChainId,
+  });
 
   return (
     <>
@@ -20,21 +38,34 @@ export const Alerts = ({ poolChainId, asset }: { poolChainId: number; asset: Mar
           interest.
         </Alert>
       ) : (
-        <Alert status="info">
-          <AlertIcon />
-          <Text size="md">
-            {`For safety reasons, you need to borrow at least a value of $${
-              minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
-            }${
-              minBorrowAsset
-                ? ` / ${toCeil(
-                    Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
-                    2
-                  )} ${asset.underlyingSymbol}`
-                : ''
-            } for now.`}
-          </Text>
-        </Alert>
+        <>
+          <Alert status="info">
+            <AlertIcon />
+            <Text size="md">
+              {`For safety reasons, you need to borrow at least a value of $${
+                minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
+              }${
+                minBorrowAsset
+                  ? ` / ${toCeil(
+                      Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
+                      2
+                    )} ${asset.underlyingSymbol}`
+                  : ''
+              } for now.`}
+            </Text>
+          </Alert>
+          {debtCeilings && debtCeilings.length > 0 && (
+            <Alert status="info">
+              <AlertIcon />
+              <VStack alignItems="flex-start">
+                <Text size="md">
+                  Use of collateral to borrow this asset is further restricted for the security of
+                  the pool. More information on this soon.
+                </Text>
+              </VStack>
+            </Alert>
+          )}
+        </>
       )}
     </>
   );

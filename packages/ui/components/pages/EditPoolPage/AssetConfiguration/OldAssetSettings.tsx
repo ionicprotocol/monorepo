@@ -32,7 +32,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
+import RemoveAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/RemoveAssetButton';
 import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column, Row } from '@ui/components/shared/Flex';
@@ -63,7 +63,7 @@ import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const IRMChart = dynamic(
-  () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
+  () => import('@ui/components/pages/EditPoolPage/AssetConfiguration/IRMChart'),
   {
     ssr: false,
   }
@@ -410,28 +410,28 @@ export const AssetSettings = ({
 
   return (
     <Column
-      mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
+      height="100%"
+      mainAxisAlignment="flex-start"
       overflowY="auto"
       width="100%"
-      height="100%"
     >
       {cTokenData && (
         <>
           <Flex
             as="form"
-            w="100%"
-            px={{ base: 4, md: 8 }}
-            py={4}
             direction="column"
             onSubmit={handleSubmit(updateSupplyCaps)}
+            px={{ base: 4, md: 8 }}
+            py={4}
+            w="100%"
           >
             <FormControl isInvalid={!!errors.supplyCap}>
               <Flex
+                alignItems="center"
+                direction={{ base: 'column', sm: 'row' }}
                 w="100%"
                 wrap="wrap"
-                direction={{ base: 'column', sm: 'row' }}
-                alignItems="center"
               >
                 <FormLabel htmlFor="supplyCap" margin={0}>
                   <HStack>
@@ -446,35 +446,28 @@ export const AssetSettings = ({
                   </HStack>
                 </FormLabel>
                 <Spacer />
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                   <Controller
                     control={control}
                     name="supplyCap"
-                    rules={{
-                      required: 'Supply caps is required',
-                      min: {
-                        value: SUPPLY_CAP.MIN,
-                        message: `Supply caps must be at least ${SUPPLY_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
-                      },
-                    }}
                     render={({ field: { name, value, ref, onChange } }) => (
                       <InputGroup>
                         <NumberInput
-                          width={100}
-                          clampValueOnBlur={false}
-                          value={value === 0 && !isEditSupplyCap ? 'Unlimited' : value}
-                          onChange={onChange}
-                          min={SUPPLY_CAP.MIN}
                           allowMouseWheel
+                          clampValueOnBlur={false}
                           isDisabled={!isEditableAdmin}
                           isReadOnly={!isEditSupplyCap}
+                          min={SUPPLY_CAP.MIN}
+                          onChange={onChange}
+                          value={value === 0 && !isEditSupplyCap ? 'Unlimited' : value}
+                          width={100}
                         >
                           <NumberInputField
+                            borderRightRadius={0}
+                            name={name}
                             paddingLeft={2}
                             paddingRight={2}
-                            borderRightRadius={0}
                             ref={ref}
-                            name={name}
                             textAlign="center"
                           />
                         </NumberInput>
@@ -492,32 +485,39 @@ export const AssetSettings = ({
                         </InputRightAddon>
                       </InputGroup>
                     )}
+                    rules={{
+                      required: 'Supply caps is required',
+                      min: {
+                        value: SUPPLY_CAP.MIN,
+                        message: `Supply caps must be at least ${SUPPLY_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
+                      },
+                    }}
                   />
-                  <FormErrorMessage maxWidth="200px" marginBottom="-10px">
+                  <FormErrorMessage marginBottom="-10px" maxWidth="200px">
                     {errors.supplyCap && errors.supplyCap.message}
                   </FormErrorMessage>
                 </Column>
               </Flex>
             </FormControl>
             {isEditSupplyCap ? (
-              <ButtonGroup gap={0} mt={2} alignSelf="end">
+              <ButtonGroup alignSelf="end" gap={0} mt={2}>
                 <Button
-                  type="submit"
                   isDisabled={
                     isUpdating ||
                     !cTokenData ||
                     watchSupplyCap ===
                       parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS))
                   }
+                  type="submit"
                 >
                   Save
                 </Button>
-                <Button variant="silver" isDisabled={isUpdating} onClick={setSupplyCapsDefault}>
+                <Button isDisabled={isUpdating} onClick={setSupplyCapsDefault} variant="silver">
                   Cancel
                 </Button>
               </ButtonGroup>
             ) : (
-              <ButtonGroup gap={0} mt={2} alignSelf="end">
+              <ButtonGroup alignSelf="end" gap={0} mt={2}>
                 <CButton
                   isDisabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditSupplyCap(true)}
@@ -530,18 +530,18 @@ export const AssetSettings = ({
           <Divider />
           <Flex
             as="form"
-            w="100%"
-            px={{ base: 4, md: 8 }}
-            py={4}
             direction="column"
             onSubmit={handleSubmit(updateTotalBorrowCaps)}
+            px={{ base: 4, md: 8 }}
+            py={4}
+            w="100%"
           >
             <FormControl isInvalid={!!errors.borrowCap}>
               <Flex
+                alignItems="center"
+                direction={{ base: 'column', sm: 'row' }}
                 w="100%"
                 wrap="wrap"
-                direction={{ base: 'column', sm: 'row' }}
-                alignItems="center"
               >
                 <FormLabel htmlFor="borrowCap" margin={0}>
                   <HStack>
@@ -556,35 +556,28 @@ export const AssetSettings = ({
                   </HStack>
                 </FormLabel>
                 <Spacer />
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                   <Controller
                     control={control}
                     name="borrowCap"
-                    rules={{
-                      required: 'Borrow cap is required',
-                      min: {
-                        value: BORROW_CAP.MIN,
-                        message: `Borrow cap must be at least ${BORROW_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
-                      },
-                    }}
                     render={({ field: { name, value, ref, onChange } }) => (
                       <InputGroup>
                         <NumberInput
-                          width={100}
-                          clampValueOnBlur={false}
-                          value={value === 0 && !isEditBorrowCap ? 'Unlimited' : value}
-                          onChange={onChange}
-                          min={BORROW_CAP.MIN}
                           allowMouseWheel
+                          clampValueOnBlur={false}
                           isDisabled={!isEditableAdmin}
                           isReadOnly={!isEditBorrowCap}
+                          min={BORROW_CAP.MIN}
+                          onChange={onChange}
+                          value={value === 0 && !isEditBorrowCap ? 'Unlimited' : value}
+                          width={100}
                         >
                           <NumberInputField
+                            borderRightRadius={0}
+                            name={name}
                             paddingLeft={2}
                             paddingRight={2}
-                            borderRightRadius={0}
                             ref={ref}
-                            name={name}
                             textAlign="center"
                           />
                         </NumberInput>
@@ -602,36 +595,43 @@ export const AssetSettings = ({
                         </InputRightAddon>
                       </InputGroup>
                     )}
+                    rules={{
+                      required: 'Borrow cap is required',
+                      min: {
+                        value: BORROW_CAP.MIN,
+                        message: `Borrow cap must be at least ${BORROW_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
+                      },
+                    }}
                   />
-                  <FormErrorMessage maxWidth="200px" marginBottom="-10px">
+                  <FormErrorMessage marginBottom="-10px" maxWidth="200px">
                     {errors.borrowCap && errors.borrowCap.message}
                   </FormErrorMessage>
                 </Column>
               </Flex>
             </FormControl>
             {isEditBorrowCap ? (
-              <ButtonGroup gap={0} mt={2} alignSelf="end">
+              <ButtonGroup alignSelf="end" gap={0} mt={2}>
                 <Button
-                  type="submit"
                   isDisabled={
                     isUpdating ||
                     !cTokenData ||
                     watchBorrowCap ===
                       parseInt(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS))
                   }
+                  type="submit"
                 >
                   Save
                 </Button>
                 <Button
-                  variant="silver"
                   isDisabled={isUpdating}
                   onClick={setTotalBorrowCapsDefault}
+                  variant="silver"
                 >
                   Cancel
                 </Button>
               </ButtonGroup>
             ) : (
-              <ButtonGroup gap={0} mt={2} alignSelf="end">
+              <ButtonGroup alignSelf="end" gap={0} mt={2}>
                 <CButton
                   isDisabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditBorrowCaps(true)}
@@ -643,12 +643,12 @@ export const AssetSettings = ({
           </Flex>
           <Divider />
           <Flex
-            w="100%"
-            wrap="wrap"
+            alignItems="center"
             direction={{ base: 'column', sm: 'row' }}
             px={{ base: 4, md: 8 }}
             py={4}
-            alignItems="center"
+            w="100%"
+            wrap="wrap"
           >
             <HStack>
               <Text size="md">Borrowing Possibility </Text>
@@ -659,12 +659,12 @@ export const AssetSettings = ({
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
               <Switch
-                ml="auto"
+                className="switch-borrowing"
                 h="20px"
                 isChecked={!isPaused}
-                onChange={setBorrowingStatus}
-                className="switch-borrowing"
                 isDisabled={!isEditableAdmin}
+                ml="auto"
+                onChange={setBorrowingStatus}
               />
             </Row>
           </Flex>
@@ -672,18 +672,18 @@ export const AssetSettings = ({
           <Divider />
           <Flex
             as="form"
-            w="100%"
-            px={{ base: 4, md: 8 }}
-            py={4}
             direction="column"
             onSubmit={handleSubmit(updateCollateralFactor)}
+            px={{ base: 4, md: 8 }}
+            py={4}
+            w="100%"
           >
             <FormControl isInvalid={!!errors.collateralFactor}>
               <Flex
+                alignItems="center"
+                direction={{ base: 'column', sm: 'row' }}
                 w="100%"
                 wrap="wrap"
-                direction={{ base: 'column', sm: 'row' }}
-                alignItems="center"
               >
                 <FormLabel htmlFor="collateralFactor" margin={0}>
                   <HStack>
@@ -696,10 +696,26 @@ export const AssetSettings = ({
                   </HStack>
                 </FormLabel>
                 <Spacer />
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                   <Controller
                     control={control}
                     name="collateralFactor"
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <SliderWithLabel
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
+                        max={LOAN_TO_VALUE.MAX}
+                        min={LOAN_TO_VALUE.MIN}
+                        mt={{ base: 2, sm: 0 }}
+                        name={name}
+                        onChange={onChange}
+                        reff={ref}
+                        value={value}
+                      />
+                    )}
                     rules={{
                       required: 'Loan-to-Value is required',
                       min: {
@@ -711,24 +727,8 @@ export const AssetSettings = ({
                         message: `Loan-to-Value must be no more than ${LOAN_TO_VALUE.MAX}%`,
                       },
                     }}
-                    render={({ field: { name, value, ref, onChange } }) => (
-                      <SliderWithLabel
-                        min={LOAN_TO_VALUE.MIN}
-                        max={LOAN_TO_VALUE.MAX}
-                        name={name}
-                        value={value}
-                        reff={ref}
-                        onChange={onChange}
-                        mt={{ base: 2, sm: 0 }}
-                        isDisabled={
-                          !poolInfo?.isPowerfulAdmin ||
-                          !currentChain ||
-                          currentChain.id !== poolChainId
-                        }
-                      />
-                    )}
                   />
-                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                  <FormErrorMessage marginBottom="-10px" maxWidth="270px">
                     {errors.collateralFactor && errors.collateralFactor.message}
                   </FormErrorMessage>
                 </Column>
@@ -737,14 +737,14 @@ export const AssetSettings = ({
             {cTokenData &&
               watchCollateralFactor !==
                 parseInt(utils.formatUnits(cTokenData.collateralFactorMantissa, 16)) && (
-                <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" isDisabled={isUpdating}>
+                <ButtonGroup alignSelf="end" gap={0} mt={2}>
+                  <Button isDisabled={isUpdating} type="submit">
                     Save
                   </Button>
                   <Button
-                    variant="silver"
                     isDisabled={isUpdating}
                     onClick={setCollateralFactorDefault}
+                    variant="silver"
                   >
                     Cancel
                   </Button>
@@ -754,18 +754,18 @@ export const AssetSettings = ({
           <Divider />
           <Flex
             as="form"
-            w="100%"
-            px={{ base: 4, md: 8 }}
-            py={4}
             direction="column"
             onSubmit={handleSubmit(updateReserveFactor)}
+            px={{ base: 4, md: 8 }}
+            py={4}
+            w="100%"
           >
             <FormControl isInvalid={!!errors.reserveFactor}>
               <Flex
+                alignItems="center"
+                direction={{ base: 'column', sm: 'row' }}
                 w="100%"
                 wrap="wrap"
-                direction={{ base: 'column', sm: 'row' }}
-                alignItems="center"
               >
                 <FormLabel htmlFor="reserveFactor" margin={0}>
                   <HStack>
@@ -780,10 +780,26 @@ export const AssetSettings = ({
                   </HStack>
                 </FormLabel>
                 <Spacer />
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                   <Controller
                     control={control}
                     name="reserveFactor"
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <SliderWithLabel
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
+                        max={RESERVE_FACTOR.MAX}
+                        min={RESERVE_FACTOR.MIN}
+                        mt={{ base: 2, sm: 0 }}
+                        name={name}
+                        onChange={onChange}
+                        reff={ref}
+                        value={value}
+                      />
+                    )}
                     rules={{
                       required: 'Reserve factor is required',
                       min: {
@@ -795,24 +811,8 @@ export const AssetSettings = ({
                         message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
                       },
                     }}
-                    render={({ field: { name, value, ref, onChange } }) => (
-                      <SliderWithLabel
-                        min={RESERVE_FACTOR.MIN}
-                        max={RESERVE_FACTOR.MAX}
-                        name={name}
-                        value={value}
-                        reff={ref}
-                        onChange={onChange}
-                        mt={{ base: 2, sm: 0 }}
-                        isDisabled={
-                          !poolInfo?.isPowerfulAdmin ||
-                          !currentChain ||
-                          currentChain.id !== poolChainId
-                        }
-                      />
-                    )}
                   />
-                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                  <FormErrorMessage marginBottom="-10px" maxWidth="270px">
                     {errors.reserveFactor && errors.reserveFactor.message}
                   </FormErrorMessage>
                 </Column>
@@ -821,14 +821,14 @@ export const AssetSettings = ({
             {cTokenData &&
               watchReserveFactor !==
                 parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)) && (
-                <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" isDisabled={isUpdating}>
+                <ButtonGroup alignSelf="end" gap={0} mt={2}>
+                  <Button isDisabled={isUpdating} type="submit">
                     Save
                   </Button>
                   <Button
-                    variant="silver"
                     isDisabled={isUpdating}
                     onClick={setReserveFactorDefault}
+                    variant="silver"
                   >
                     Cancel
                   </Button>
@@ -838,18 +838,18 @@ export const AssetSettings = ({
           <Divider />
           <Flex
             as="form"
-            w="100%"
             direction="column"
+            onSubmit={handleSubmit(updateAdminFee)}
             px={{ base: 4, md: 8 }}
             py={4}
-            onSubmit={handleSubmit(updateAdminFee)}
+            w="100%"
           >
             <FormControl isInvalid={!!errors.adminFee}>
               <Flex
+                alignItems="center"
+                direction={{ base: 'column', sm: 'row' }}
                 w="100%"
                 wrap="wrap"
-                direction={{ base: 'column', sm: 'row' }}
-                alignItems="center"
               >
                 <FormLabel htmlFor="adminFee" margin={0}>
                   <HStack>
@@ -860,10 +860,26 @@ export const AssetSettings = ({
                   </HStack>
                 </FormLabel>
                 <Spacer />
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                   <Controller
                     control={control}
                     name="adminFee"
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <SliderWithLabel
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
+                        max={ADMIN_FEE.MAX}
+                        min={ADMIN_FEE.MIN}
+                        mt={{ base: 2, sm: 0 }}
+                        name={name}
+                        onChange={onChange}
+                        reff={ref}
+                        value={value}
+                      />
+                    )}
                     rules={{
                       required: 'Admin fee is required',
                       min: {
@@ -875,24 +891,8 @@ export const AssetSettings = ({
                         message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
                       },
                     }}
-                    render={({ field: { name, value, ref, onChange } }) => (
-                      <SliderWithLabel
-                        min={ADMIN_FEE.MIN}
-                        max={ADMIN_FEE.MAX}
-                        name={name}
-                        value={value}
-                        reff={ref}
-                        onChange={onChange}
-                        mt={{ base: 2, sm: 0 }}
-                        isDisabled={
-                          !poolInfo?.isPowerfulAdmin ||
-                          !currentChain ||
-                          currentChain.id !== poolChainId
-                        }
-                      />
-                    )}
                   />
-                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                  <FormErrorMessage marginBottom="-10px" maxWidth="270px">
                     {errors.adminFee && errors.adminFee.message}
                   </FormErrorMessage>
                 </Column>
@@ -900,11 +900,11 @@ export const AssetSettings = ({
             </FormControl>
             {cTokenData &&
               watchAdminFee !== parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)) && (
-                <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" isDisabled={isUpdating}>
+                <ButtonGroup alignSelf="end" gap={0} mt={2}>
+                  <Button isDisabled={isUpdating} type="submit">
                     Save
                   </Button>
-                  <Button variant="silver" isDisabled={isUpdating} onClick={setAdminFeeDefault}>
+                  <Button isDisabled={isUpdating} onClick={setAdminFeeDefault} variant="silver">
                     Cancel
                   </Button>
                 </ButtonGroup>
@@ -914,7 +914,7 @@ export const AssetSettings = ({
           {/* Plugin */}
           <Divider />
           <ConfigRow>
-            <Flex w="100%" direction={{ base: 'column', sm: 'row' }} alignItems="center">
+            <Flex alignItems="center" direction={{ base: 'column', sm: 'row' }} w="100%">
               <Box>
                 <HStack>
                   <Text size="md">Rewards Plugin </Text>
@@ -924,14 +924,14 @@ export const AssetSettings = ({
                         Token can have{' '}
                         <Link
                           href="https://eips.ethereum.org/EIPS/eip-4626"
-                          variant={'color'}
                           isExternal
+                          variant={'color'}
                         >
                           ERC4626 strategies
                         </Link>{' '}
                         , allowing users to utilize their deposits (e.g. to stake them for rewards)
                         while using them as collateral. To learn mode about it, check out our{' '}
-                        <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
+                        <Link href="https://docs.midascapital.xyz/" isExternal variant={'color'}>
                           docs
                         </Link>
                         .
@@ -952,16 +952,16 @@ export const AssetSettings = ({
           <ConfigRow>
             <Flex
               as="form"
-              w="100%"
               direction="column"
               onSubmit={handleSubmit(updateInterestRateModel)}
+              w="100%"
             >
               <FormControl isInvalid={!!errors.interestRateModel}>
                 <Flex
+                  alignItems="center"
+                  direction={{ base: 'column', sm: 'row' }}
                   w="100%"
                   wrap="wrap"
-                  direction={{ base: 'column', sm: 'row' }}
-                  alignItems="center"
                 >
                   <FormLabel htmlFor="interestRateModel" margin={0}>
                     <HStack>
@@ -976,26 +976,26 @@ export const AssetSettings = ({
                     </HStack>
                   </FormLabel>
                   <Spacer />
-                  <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="center">
+                  <Column crossAxisAlignment="center" mainAxisAlignment="flex-start" maxW="270px">
                     <Select
                       id="interestRateModel"
                       {...register('interestRateModel', {
                         required: 'interestRateModel is required',
                       })}
-                      ml="auto"
                       cursor="pointer"
-                      mt={{ base: 2, sm: 0 }}
                       isDisabled={!isEditableAdmin}
+                      ml="auto"
+                      mt={{ base: 2, sm: 0 }}
                     >
                       <option
-                        value={sdk ? sdk.chainDeployment.JumpRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
+                        value={sdk ? sdk.chainDeployment.JumpRateModel.address : ''}
                       >
                         JumpRateModel
                       </option>
                       <option
-                        value={sdk ? sdk.chainDeployment.WhitePaperInterestRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
+                        value={sdk ? sdk.chainDeployment.WhitePaperInterestRateModel.address : ''}
                       >
                         WhitePaperInterestRateModel
                       </option>
@@ -1009,14 +1009,14 @@ export const AssetSettings = ({
               {cTokenData &&
                 cTokenData.interestRateModelAddress.toLowerCase() !==
                   watchInterestRateModel.toLowerCase() && (
-                  <ButtonGroup gap={0} mt={2} alignSelf="end">
-                    <Button type="submit" isDisabled={isUpdating}>
+                  <ButtonGroup alignSelf="end" gap={0} mt={2}>
+                    <Button isDisabled={isUpdating} type="submit">
                       Save
                     </Button>
                     <Button
-                      variant="silver"
                       isDisabled={isUpdating}
                       onClick={setInterestRateModelDefault}
+                      variant="silver"
                     >
                       Cancel
                     </Button>
@@ -1027,17 +1027,17 @@ export const AssetSettings = ({
 
           <IRMChart
             adminFee={watchAdminFee}
-            reserveFactor={watchReserveFactor}
             interestRateModelAddress={watchInterestRateModel}
             poolChainId={poolChainId}
+            reserveFactor={watchReserveFactor}
           />
           <ConfigRow>
             <RemoveAssetButton
-              comptrollerAddress={comptrollerAddress}
               asset={selectedAsset}
+              assets={assets}
+              comptrollerAddress={comptrollerAddress}
               poolChainId={poolChainId}
               setSelectedAsset={setSelectedAsset}
-              assets={assets}
             />
           </ConfigRow>
         </>
