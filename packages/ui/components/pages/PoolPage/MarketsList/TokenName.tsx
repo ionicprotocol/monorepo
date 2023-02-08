@@ -29,11 +29,10 @@ export const TokenName = ({
     poolAddress,
     assetAddress: asset.cToken,
   });
-  const collateralAssets = useMemo(() => assets.filter((_asset) => _asset.membership), [assets]);
 
   const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({
     assets: [asset],
-    collaterals: collateralAssets,
+    collaterals: assets,
     comptroller: poolAddress,
     poolChainId,
   });
@@ -161,7 +160,7 @@ export const TokenName = ({
                 </Badge>
               </SimpleTooltip>
               {restricted.length > 0 && (
-                <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon.">
+                <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon. Follow us on Twitter and Discord to stay up to date.">
                   <Badge variant="outline" colorScheme="red" textTransform="capitalize">
                     Restricted
                   </Badge>

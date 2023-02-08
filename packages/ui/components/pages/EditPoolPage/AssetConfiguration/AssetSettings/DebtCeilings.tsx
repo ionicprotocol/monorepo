@@ -72,12 +72,15 @@ export const DebtCeilings = ({
   } = useForm({
     defaultValues: {
       debtCeiling: DEBT_CEILING.DEFAULT,
-      collateralAsset: assets[0].cToken,
+      collateralAsset: assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken,
     },
   });
 
   const watchDebtCeiling = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
-  const watchCollateralAsset = watch('collateralAsset', assets[0].cToken);
+  const watchCollateralAsset = watch(
+    'collateralAsset',
+    assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken
+  );
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const { data: debtCeilingPerCollateral } = useDebtCeilingForAssetForCollateral({
@@ -203,26 +206,24 @@ export const DebtCeilings = ({
                 ml="auto"
                 mt={{ base: 2, sm: 0 }}
               >
-                {assets.map((asset) => {
-                  const debtCeiling = debtCeilingPerCollateral?.find(
-                    (debtCeiling) => debtCeiling.collateralAsset.cToken === asset.cToken
-                  )?.debtCeiling;
+                {assets
+                  .filter((a) => a.cToken !== selectedAsset.cToken)
+                  .map((asset) => {
+                    const debtCeiling = debtCeilingPerCollateral?.find(
+                      (debtCeiling) => debtCeiling.collateralAsset.cToken === asset.cToken
+                    )?.debtCeiling;
 
-                  return (
-                    <option
-                      key={asset.cToken}
-                      style={{ color: cSelect.txtColor }}
-                      value={asset.cToken}
-                    >
-                      {asset.underlyingSymbol +
-                        (debtCeiling === -1
-                          ? ' (Blacklisted)'
-                          : debtCeiling === 0 || debtCeiling === undefined
-                          ? ' (Unlimited)'
-                          : ` (Limited)`)}
-                    </option>
-                  );
-                })}
+                    return (
+                      <option
+                        key={asset.cToken}
+                        style={{ color: cSelect.txtColor }}
+                        value={asset.cToken}
+                      >
+                        {asset.underlyingSymbol +
+                          (debtCeiling ? ` (${debtCeiling.toFixed(0)})` : '')}
+                      </option>
+                    );
+                  })}
               </Select>
               <FormErrorMessage marginBottom="-10px">
                 {errors.collateralAsset && errors.collateralAsset.message}
