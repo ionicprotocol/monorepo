@@ -38002,7 +38002,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x655c7e8a2F92898301586C6c5c34eD0a47Ad352b",
+      "address": "0xd0c3fc3a81f009c82cc029e27ade9acf95271bc0",
       "abi": [
         {
           "inputs": [
@@ -39242,7 +39242,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xBe4972b91B798B4d6CEa41b311ffDA1228064813",
+      "address": "0x8f937ab7659e844f34cb05375239c4ca7bf79e46",
       "abi": [
         {
           "inputs": [
@@ -40527,7 +40527,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xd29696d4A5295d6987150B07F47444391b20D539",
+      "address": "0x15Fcb916B269659D9D34b903fe998Aa9FDAbF4ab",
       "abi": [
         {
           "inputs": [
@@ -44219,7 +44219,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xc3D2936EC691cBD02A868bFeCDA1301b6096D0f3",
+      "address": "0x4f1885D25eF219D3D4Fa064809D6D4985FAb9A0b",
       "abi": [
         {
           "inputs": [
@@ -49555,6 +49555,13 @@
         },
         {
           "inputs": [],
+          "name": "liquidateJarvisPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "marketsCounter",
           "outputs": [
             {
@@ -49699,7 +49706,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x59a638381AD65B6DC285Dd47a227B219222d1694",
+      "address": "0x48e83349f0D5C6093AEfa2D3EEE3e9e3DE77cE58",
       "abi": [
         {
           "anonymous": false,
@@ -50536,6 +50543,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "liquidateJarvisPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {

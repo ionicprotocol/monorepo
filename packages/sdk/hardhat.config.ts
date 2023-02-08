@@ -162,6 +162,7 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || `https://rpc-mainnet.maticvigil.com/`,
       accounts: { mnemonic },
       chainId: 137,
+      gasMultiplier: 1.2, // does not work when using ethers
     },
     arbitrum: {
       url: OVERRIDE_RPC_URL || `https://arb1.arbitrum.io/rpc`,

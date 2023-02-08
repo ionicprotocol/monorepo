@@ -29,6 +29,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       newComptrollerImplementations,
       comptrollerArrayOfTrue
     );
+    console.log(`_editComptrollerImplementationWhitelist with tx`, tx.hash);
     await tx.wait();
     console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
 
@@ -50,14 +51,8 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     }
   });
 
-task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on")
-  .addOptionalParam(
-    "oldFirstExtension",
-    "The address of the first comptroller extension to replace",
-    constants.AddressZero,
-    types.string
-  )
-  .setAction(async ({ oldFirstExtension }, { ethers }) => {
+task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on").setAction(
+  async ({}, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
@@ -84,34 +79,9 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
-          if (admin == deployer.address) {
-            {
-              let tx = await unitroller._setPendingImplementation(latestImpl);
-              await tx.wait();
-              console.log(`set pending impl to ${latestImpl} for ${pool.comptroller} with ${tx.hash}`);
-
-              const comptroller = (await ethers.getContractAt(
-                "Comptroller.sol:Comptroller",
-                latestImpl,
-                deployer
-              )) as Comptroller;
-              tx = await comptroller._become(unitroller.address);
-              await tx.wait();
-              console.log(`upgraded to ${latestImpl} pool ${pool.comptroller} with tx ${tx.hash}`);
-            }
-          } else {
-            const autoImplOn = await asComptroller.callStatic.autoImplementation();
-            if (!autoImplOn) {
-              console.log(`cannot upgrade ${pool.comptroller} , AUTO IMPL is off`);
-              continue;
-            }
-
-            console.log(`Making an empty call to upgrade ${pool.comptroller} from ${implBefore} to ${latestImpl}`);
-            const tx = await asComptroller.enterMarkets([]);
-            await tx.wait();
-            const implAfter = await asComptroller.callStatic.comptrollerImplementation();
-            console.log(`Comptroller implementation after ${implAfter}`);
-          }
+          const tx = await fuseFeeDistributor.autoUpgradePool(pool.comptroller);
+          await tx.wait();
+          console.log(`bulk upgraded pool ${pool.comptroller}`);
         }
 
         // check the extensions if the latest impl
@@ -157,7 +127,8 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);
       }
     }
-  });
+  }
+);
 
 task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed pools")
   .addParam("enable", "If autoimplementations should be on or off", true, types.boolean)
@@ -182,6 +153,7 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
       if (autoImplOn != enable) {
         if (admin === signer.address) {
           const tx = await comptroller._toggleAutoImplementations(enable);
+          console.log(`_toggleAutoImplementations ${tx.hash}`);
           const receipt = await tx.wait();
           console.log(`toggled to ${enable} with ${receipt.transactionHash}`);
         } else {
