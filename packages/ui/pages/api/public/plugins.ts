@@ -49,7 +49,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<string
     }
   });
 
-  return response.json("");
+  return response.json('');
 };
 
 export default handler;
