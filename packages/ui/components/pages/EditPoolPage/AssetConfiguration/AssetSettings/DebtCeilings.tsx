@@ -72,14 +72,15 @@ export const DebtCeilings = ({
   } = useForm({
     defaultValues: {
       debtCeiling: DEBT_CEILING.DEFAULT,
-      collateralAsset: assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken,
+      collateralAsset:
+        assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken ?? assets[0].cToken,
     },
   });
 
   const watchDebtCeiling = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
   const watchCollateralAsset = watch(
     'collateralAsset',
-    assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken
+    assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken || assets[0].cToken
   );
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
