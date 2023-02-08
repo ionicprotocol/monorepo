@@ -33,7 +33,7 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.fantom]: fantom.deployedPlugins,
 };
 
-const handler = async (request: NextApiRequest, response: NextApiResponse<string>) => {
+const handler = (request: NextApiRequest, response: NextApiResponse<string[]>) => {
   let validatedQuery: Query | null = null;
   try {
     querySchema.validateSync(request.query);
@@ -43,13 +43,15 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<string
   }
   const { marketAddress, chainId } = validatedQuery;
 
-  Object.entries(deployedPlugins[chainId]).map(([plugin, info]) => {
-    if (info.market === marketAddress) {
-      return response.json(plugin);
+  const plugins = Object.entries(deployedPlugins[chainId]).reduce((plugins, [plugin, info]) => {
+    if (info.market === marketAddress && !!plugin) {
+      return [...plugins, plugin];
+    } else {
+      return [...plugins];
     }
-  });
+  }, [] as string[]);
 
-  return response.json('');
+  return response.json(plugins);
 };
 
 export default handler;
