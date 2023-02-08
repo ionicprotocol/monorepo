@@ -33,7 +33,7 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.fantom]: fantom.deployedPlugins,
 };
 
-const handler = async (request: NextApiRequest, response: NextApiResponse<string | null>) => {
+const handler = async (request: NextApiRequest, response: NextApiResponse<string>) => {
   let validatedQuery: Query | null = null;
   try {
     querySchema.validateSync(request.query);
@@ -49,7 +49,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<string
     }
   });
 
-  return response.json(null);
+  return response.json('');
 };
 
 export default handler;
