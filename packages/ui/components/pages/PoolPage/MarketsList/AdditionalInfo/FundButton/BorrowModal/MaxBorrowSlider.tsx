@@ -102,7 +102,7 @@ function MaxBorrowSlider({
               <SliderMark
                 value={borrowedPercent}
                 mt={4}
-                ml={`-${smallUsdFormatter(borrowBalanceFiat).length * 8.5}px`}
+                ml={`-${smallUsdFormatter(borrowBalanceFiat).length * 5}px`}
                 fontSize="sm"
               >
                 <Text size="md">{smallUsdFormatter(borrowBalanceFiat)}</Text>
