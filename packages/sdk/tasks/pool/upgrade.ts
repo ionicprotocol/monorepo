@@ -12,26 +12,31 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
   .addOptionalParam("newImplementation", "The address of the new comptroller implementation", undefined, types.string)
   .addFlag("setLatest", "Set the new implementation as the latest for the autoimplementations")
   .setAction(async ({ oldImplementation, newImplementation, setLatest }, { ethers }) => {
+    let tx;
     const deployer = await ethers.getNamedSigner("deployer");
     if (!newImplementation) {
       const currentLatestComptroller = await ethers.getContract("Comptroller");
       newImplementation = currentLatestComptroller.address;
     }
-
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
-    const newComptrollerImplementations = [newImplementation];
-    const oldComptrollerImplementations = [oldImplementation];
-    const comptrollerArrayOfTrue = [true];
+    const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(oldImplementation, newImplementation);
+    if (!whitelisted) {
+      const newComptrollerImplementations = [newImplementation];
+      const oldComptrollerImplementations = [oldImplementation];
+      const comptrollerArrayOfTrue = [true];
 
-    let tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
-      oldComptrollerImplementations,
-      newComptrollerImplementations,
-      comptrollerArrayOfTrue
-    );
-    console.log(`_editComptrollerImplementationWhitelist with tx`, tx.hash);
-    await tx.wait();
-    console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
+      tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
+        oldComptrollerImplementations,
+        newComptrollerImplementations,
+        comptrollerArrayOfTrue
+      );
+      console.log(`_editComptrollerImplementationWhitelist with tx`, tx.hash);
+      await tx.wait();
+      console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
+    } else {
+      console.log(`upgrade from ${oldImplementation} to ${newImplementation} is whitelisted already`);
+    }
 
     if (setLatest) {
       const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
@@ -43,6 +48,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       ) {
         console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
         tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
+        console.log("_setLatestComptrollerImplementation", tx.hash);
         await tx.wait();
         console.log("latest impl set", tx.hash);
       } else {
