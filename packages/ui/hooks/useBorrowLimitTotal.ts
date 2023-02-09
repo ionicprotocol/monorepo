@@ -16,7 +16,7 @@ export const useBorrowLimitTotal = (
     [
       'useBorrowLimitTotal',
       {
-        assets: assets.map((a) => a.cToken).sort(),
+        assets,
       },
       {
         ignoreIsEnabledCheckFor: !!options?.ignoreIsEnabledCheckFor,

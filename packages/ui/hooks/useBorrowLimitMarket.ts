@@ -25,7 +25,7 @@ export const useBorrowLimitMarket = (
       'useBorrowLimitMarket',
       poolChainId,
       asset,
-      assets.sort((a, b) => a.cToken.localeCompare(b.cToken)),
+      assets,
       options?.ignoreIsEnabledCheckFor,
       usdPrice,
       borrowCaps,

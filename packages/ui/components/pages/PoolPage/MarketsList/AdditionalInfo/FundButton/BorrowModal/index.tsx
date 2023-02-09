@@ -34,7 +34,6 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { BORROW_STEPS, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
-import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useColors } from '@ui/hooks/useColors';
@@ -84,12 +83,7 @@ export const BorrowModal = ({
   const { cCard } = useColors();
 
   const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
-  const { data: borrowLimitMarket } = useBorrowLimitMarket(
-    asset,
-    assets,
-    poolChainId,
-    comptrollerAddress
-  );
+
   const [isBorrowing, setIsBorrowing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS(asset.underlyingSymbol)]);
@@ -298,8 +292,7 @@ export const BorrowModal = ({
                       {maxBorrowAmount &&
                       maxBorrowAmount.number !== 0 &&
                       borrowLimitTotal &&
-                      borrowLimitTotal !== 0 &&
-                      borrowLimitMarket ? (
+                      borrowLimitTotal !== 0 ? (
                         <MaxBorrowSlider
                           userEnteredAmount={userEnteredAmount}
                           updateAmount={updateAmount}
@@ -308,7 +301,6 @@ export const BorrowModal = ({
                           poolChainId={poolChainId}
                           borrowBalanceFiat={borrowBalanceFiat}
                           borrowLimitTotal={borrowLimitTotal}
-                          borrowLimitMarket={borrowLimitMarket}
                         />
                       ) : null}
                       <Column gap={1} w="100%" mt={4}>

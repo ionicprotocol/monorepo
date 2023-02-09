@@ -27,7 +27,6 @@ interface MaxBorrowSliderProps {
   poolChainId: number;
   borrowBalanceFiat?: number;
   borrowLimitTotal: number;
-  borrowLimitMarket: number;
 }
 
 function MaxBorrowSlider({
@@ -38,48 +37,34 @@ function MaxBorrowSlider({
   poolChainId,
   borrowBalanceFiat = 0,
   borrowLimitTotal,
-  borrowLimitMarket,
 }: MaxBorrowSliderProps) {
   const { data: usdPrice } = useNativePriceInUSD(poolChainId);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
 
-  const {
-    borrowableLimit,
-    borrowedPercent,
-    borrowablePercent,
-    borrowLimitMarketPercent,
-    borrowLimitTotalPercent,
-  } = useMemo(() => {
+  const { borrowableLimit, borrowedPercent, borrowablePercent } = useMemo(() => {
     const borrowableUsd =
       borrowableAmount * Number(utils.formatUnits(asset.underlyingPrice)) * price;
     const borrowableLimit = borrowBalanceFiat + borrowableUsd;
-    const borrowedPercent = Number(((borrowBalanceFiat / borrowLimitTotal) * 100).toFixed(0));
-    const borrowablePercent = Number(((borrowableUsd / borrowLimitTotal) * 100).toFixed(0));
-    const borrowLimitMarketPercent = Number(
-      (((borrowLimitMarket - borrowableLimit) / borrowLimitTotal) * 100).toFixed(0)
-    );
-    const borrowLimitTotalPercent = Number(
-      (((borrowLimitTotal - borrowLimitMarket) / borrowLimitTotal) * 100).toFixed(0)
-    );
+    const borrowedPercent = Number(((borrowBalanceFiat / borrowableLimit) * 100).toFixed(0));
+    const borrowablePercent = Number(((borrowableUsd / borrowableLimit) * 100).toFixed(0));
 
     return {
       borrowableLimit,
       borrowedPercent,
       borrowablePercent,
-      borrowLimitMarketPercent,
-      borrowLimitTotalPercent,
     };
-  }, [
-    asset.underlyingPrice,
-    borrowBalanceFiat,
-    borrowLimitMarket,
-    borrowLimitTotal,
-    borrowableAmount,
-    price,
-  ]);
+  }, [asset.underlyingPrice, borrowBalanceFiat, borrowableAmount, price]);
 
   const [sliderValue, setSliderValue] = useState(borrowedPercent);
+
+  const isRisky = useMemo(() => {
+    if (sliderValue * borrowableLimit > borrowLimitTotal * HIGH_RISK_RATIO * 100) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [borrowLimitTotal, sliderValue, borrowableLimit]);
 
   const { cPage } = useColors();
 
@@ -87,14 +72,14 @@ function MaxBorrowSlider({
     const amountToUsd =
       Number(userEnteredAmount) * Number(utils.formatUnits(asset.underlyingPrice)) * price;
     setSliderValue(
-      Number((((amountToUsd + borrowBalanceFiat) / borrowLimitTotal) * 100).toFixed(0))
+      Number((((amountToUsd + borrowBalanceFiat) / borrowableLimit) * 100).toFixed(0))
     );
-  }, [userEnteredAmount, borrowLimitTotal, asset.underlyingPrice, borrowBalanceFiat, price]);
+  }, [userEnteredAmount, asset.underlyingPrice, borrowableLimit, borrowBalanceFiat, price]);
 
   const handleSliderValueChange = (v: number) => {
     setSliderValue(v);
 
-    const borrowUsd = borrowLimitTotal * ((v - borrowedPercent) / 100);
+    const borrowUsd = borrowableLimit * ((v - borrowedPercent) / 100);
     const borrowToNative = borrowUsd / price;
     const borrowToAsset = borrowToNative / Number(utils.formatUnits(asset.underlyingPrice));
     const borrowAmount = toFixedNoRound(borrowToAsset.toString(), Number(asset.underlyingDecimals));
@@ -141,7 +126,7 @@ function MaxBorrowSlider({
               focusThumbOnChange={false}
             >
               <SliderTrack>
-                <SliderFilledTrack bg={sliderValue > HIGH_RISK_RATIO * 100 ? 'red' : undefined} />
+                <SliderFilledTrack bg={isRisky ? 'red' : undefined} />
               </SliderTrack>
               <SimpleTooltip label={`${sliderValue}%`} isOpen>
                 <SliderThumb zIndex={2} />
@@ -149,43 +134,12 @@ function MaxBorrowSlider({
             </Slider>
           )}
           <Slider value={0} width={1}>
-            <SliderMark
-              value={0}
-              mt={4}
-              ml={`-${smallUsdFormatter(borrowableLimit).length * 0.5}px`}
-              fontSize="sm"
-            >
-              <Text size="md">{smallUsdFormatter(borrowableLimit)}</Text>
-            </SliderMark>
-            <SliderTrack>
-              <SliderFilledTrack bg={cPage.primary.borderColor} opacity={0.3} />
-            </SliderTrack>
-            <SliderThumb width={1} background={cPage.primary.borderColor} />
-          </Slider>
-          {borrowLimitMarketPercent !== 0 && (
-            <Slider
-              value={0}
-              min={0}
-              max={borrowLimitMarketPercent}
-              width={`${borrowLimitMarketPercent}%`}
-            >
-              <SliderTrack>
-                <SliderFilledTrack bg={cPage.primary.borderColor} opacity={0.3} />
-              </SliderTrack>
-            </Slider>
-          )}
-          <Slider
-            value={0}
-            min={0}
-            max={borrowLimitTotalPercent}
-            width={`${borrowLimitTotalPercent}%`}
-          >
             <SliderTrack>
               <SliderFilledTrack bg={cPage.primary.borderColor} opacity={0.3} />
             </SliderTrack>
           </Slider>
         </HStack>
-        <Text size="md">{smallUsdFormatter(borrowLimitTotal)}</Text>
+        <Text size="md">{smallUsdFormatter(borrowableLimit)}</Text>
       </HStack>
     </Box>
   );
