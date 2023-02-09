@@ -24,34 +24,6 @@ export default task("market:unsupport", "Unsupport a market")
     console.log("Unsupported market with status:", receipt.status);
   });
 
-task("boost:tx", "increase the max gas fees to speed up a tx")
-  .addParam("txHash", "tx hash", undefined, types.string)
-  .setAction(async ({ txHash, sender }, { ethers }) => {
-    let tx: providers.TransactionResponse;
-
-    const tr = await ethers.provider.getTransaction(txHash);
-
-    console.log(`tx response ${JSON.stringify(tr)}`);
-
-    // TODO check if already included in a block?
-    // if (!tr.blockNumber) {}
-
-    const signer = await ethers.getSigner(tr.from);
-    tx = await signer.sendTransaction({
-      from: tr.from,
-      to: tr.to,
-      value: tr.value,
-      nonce: tr.nonce,
-      data: tr.data,
-      gasLimit: tr.gasLimit,
-      maxFeePerGas: tr.maxFeePerGas?.mul(120).div(100),
-      maxPriorityFeePerGas: tr.maxPriorityFeePerGas?.mul(120).div(100),
-    });
-    console.log(`new tx hash ${tx.hash}`);
-    await tx.wait();
-    console.log(`tx mined ${tx.hash}`);
-  });
-
 task("market:mint-pause", "Pauses minting on a market")
   .addParam("markets", "The address of the CTokens", undefined, types.string)
   .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
