@@ -20,7 +20,10 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     }
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
-    const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(oldImplementation, newImplementation);
+    const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(
+      oldImplementation,
+      newImplementation
+    );
     if (!whitelisted) {
       const newComptrollerImplementations = [newImplementation];
       const oldComptrollerImplementations = [oldImplementation];

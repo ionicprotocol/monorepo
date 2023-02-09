@@ -82,7 +82,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       await tx.wait();
       console.log("FuseFeeDistributor pool limits set", tx.hash);
     } else {
-      console.log(`current min borrow ${currentMinBorrow} is within 2% of the actual value ${minBorrow} - not updating it`);
+      console.log(
+        `current min borrow ${currentMinBorrow} is within 2% of the actual value ${minBorrow} - not updating it`
+      );
     }
   } catch (e) {
     console.log("error setting the pool limits", e);
