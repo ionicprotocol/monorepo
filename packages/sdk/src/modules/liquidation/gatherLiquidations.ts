@@ -68,7 +68,7 @@ export default async function gatherLiquidations(
       }
     } catch (e) {
       erroredPools.push({
-        msg: "Error while fetching liquidatable users " + e.toString(),
+        msg: "Error while fetching liquidatable users " + (e as Error).toString(),
         comptroller: pool.comptroller,
         error: e,
       });
