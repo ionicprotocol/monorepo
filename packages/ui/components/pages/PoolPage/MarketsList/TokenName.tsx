@@ -1,5 +1,6 @@
 import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
+import { useMemo } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { GradientButton } from '@ui/components/shared/GradientButton';
@@ -8,15 +9,18 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 export const TokenName = ({
   asset,
+  assets,
   poolAddress,
   poolChainId,
 }: {
   asset: MarketData;
+  assets: MarketData[];
   poolAddress: string;
   poolChainId: number;
 }) => {
@@ -25,6 +29,14 @@ export const TokenName = ({
     poolAddress,
     assetAddress: asset.cToken,
   });
+
+  const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({
+    assets: [asset],
+    collaterals: assets,
+    comptroller: poolAddress,
+    poolChainId,
+  });
+  const restricted = useMemo(() => debtCeilingsOfAsset ?? [], [debtCeilingsOfAsset]);
 
   return (
     <Row className="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
@@ -141,11 +153,20 @@ export const TokenName = ({
               </SimpleTooltip>
             )
           ) : (
-            <SimpleTooltip label="This asset can be borrowed">
-              <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
-                Borrowable
-              </Badge>
-            </SimpleTooltip>
+            <>
+              <SimpleTooltip label="This asset can be borrowed">
+                <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
+                  Borrowable
+                </Badge>
+              </SimpleTooltip>
+              {restricted.length > 0 && (
+                <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon. Follow us on Twitter and Discord to stay up to date.">
+                  <Badge variant="outline" colorScheme="red" textTransform="capitalize">
+                    Restricted
+                  </Badge>
+                </SimpleTooltip>
+              )}
+            </>
           )}
         </VStack>
       </VStack>

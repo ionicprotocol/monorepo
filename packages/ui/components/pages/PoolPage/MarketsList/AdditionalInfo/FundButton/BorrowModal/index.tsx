@@ -20,12 +20,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/Alerts';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/AmountInput';
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/Balance';
-import { BorrowError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/BorrowError';
-import MaxBorrowSlider from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/MaxBorrowSlider';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/PendingTransaction';
+import { Alerts } from './Alerts';
+import { AmountInput } from './AmountInput';
+import { Balance } from './Balance';
+import { BorrowError } from './BorrowError';
+import MaxBorrowSlider from './MaxBorrowSlider';
+import { PendingTransaction } from './PendingTransaction';
+
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
@@ -286,6 +287,12 @@ export const BorrowModal = ({
                   width="100%"
                   gap={4}
                 >
+                  <Alerts
+                    poolChainId={poolChainId}
+                    asset={asset}
+                    assets={assets}
+                    comptrollerAddress={comptrollerAddress}
+                  />
                   {!borrowCaps || asset.totalBorrowFiat < borrowCaps.usdCap ? (
                     <>
                       {maxBorrowAmount &&
@@ -335,7 +342,6 @@ export const BorrowModal = ({
                         </Box>
                       )}
 
-                      <Alerts poolChainId={poolChainId} asset={asset} />
                       <Button
                         id="confirmFund"
                         width="100%"

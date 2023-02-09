@@ -19,9 +19,9 @@ import { SupportedChains } from '@midas-capital/types';
 import { utils } from 'ethers';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import AddFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/AddFlywheelModal';
-import CreateFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/CreateFlywheelModal';
-import EditFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/EditFlywheelModal';
+import AddFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/AddFlywheelModal';
+import CreateFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/CreateFlywheelModal';
+import EditFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/EditFlywheelModal';
 import { MidasBox } from '@ui/components/shared/Box';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column } from '@ui/components/shared/Flex';

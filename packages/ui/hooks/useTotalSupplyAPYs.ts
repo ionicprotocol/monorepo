@@ -17,10 +17,10 @@ export const useTotalSupplyAPYs = (
   return useQuery(
     [
       'useTotalSupplyAPYs',
-      assets.sort((a, b) => a.cToken.localeCompare(b.cToken)).toString(),
-      sdk?.chainId,
-      allRewards?.toString(),
-      assetInfos?.toString(),
+      { chain: sdk?.chainId },
+      { assets: assets.map((a) => a.cToken).sort() },
+      { rewards: allRewards ? Object.keys(allRewards).sort() : undefined },
+      { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined },
     ],
     async () => {
       if (!sdk || !assets || !chainId) return null;

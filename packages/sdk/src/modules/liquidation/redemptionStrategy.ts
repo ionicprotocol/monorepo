@@ -25,7 +25,7 @@ export const getRedemptionStrategiesAndDatas = async (
 ): Promise<[StrategiesAndDatas, string[]]> => {
   const strategies: string[] = [];
   const datas: BytesLike[] = [];
-  const tokenPath: string[] = [];
+  const tokenPath: string[] = [inputToken];
 
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
