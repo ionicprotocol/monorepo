@@ -44,10 +44,10 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
 
   return (
     <Grid
-      templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
       gap={4}
-      w="100%"
       my={4}
+      templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+      w="100%"
     >
       <Popover trigger="hover">
         <PopoverTrigger>
@@ -66,7 +66,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
               }}
             />
             <PopoverBody>
-              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
                 <Text fontWeight="bold">Top supplied assets</Text>
                 {topSuppliedAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
@@ -74,9 +74,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                       <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
-                            size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
+                            size="md"
                           />
                         )}
                         <Box ml="3">
@@ -114,7 +114,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
               }}
             />
             <PopoverBody>
-              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
                 <Text fontWeight="bold">Top borrowed assets</Text>
                 {topBorrowedAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
@@ -122,9 +122,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                       <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
-                            size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
+                            size="md"
                           />
                         )}
                         <Box ml="3">
@@ -163,7 +163,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
               }}
             />
             <PopoverBody>
-              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
                 <Text fontWeight="bold">Top liquidity assets</Text>
                 {topLiquidityAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
@@ -171,9 +171,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                       <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
-                            size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
+                            size="md"
                           />
                         )}
                         <Box ml="3">
@@ -212,7 +212,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
               }}
             />
             <PopoverBody>
-              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
                 <Text fontWeight="bold">Top utilization assets</Text>
                 {topUtilizationAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
@@ -220,9 +220,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                       <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
-                            size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
+                            size="md"
                           />
                         )}
                         <Box ml="3">

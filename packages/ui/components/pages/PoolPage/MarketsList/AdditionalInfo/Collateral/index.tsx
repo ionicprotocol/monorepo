@@ -26,31 +26,31 @@ export const Collateral = ({
   const isDisabled = !currentChain || currentChain.unsupported || currentChain.id !== poolChainId;
 
   return (
-    <Row mainAxisAlignment="center" crossAxisAlignment="center">
+    <Row crossAxisAlignment="center" mainAxisAlignment="center">
       <Button
-        variant="unstyled"
-        borderWidth={1}
         borderColor={cPage.primary.borderColor}
+        borderWidth={1}
         onClick={openModal}
+        variant="unstyled"
       >
         <HStack px={4}>
           <Text>Collateral</Text>
           <Switch
-            isChecked={asset.membership}
-            size={isMobile ? 'sm' : 'md'}
             cursor={'pointer'}
-            ml={4}
+            isChecked={asset.membership}
             isDisabled={isDisabled}
+            ml={4}
+            size={isMobile ? 'sm' : 'md'}
           />
         </HStack>
       </Button>
 
       {!isDisabled && (
         <CollateralModal
-          isOpen={isModalOpen}
           asset={asset}
           assets={assets}
           comptrollerAddress={comptrollerAddress}
+          isOpen={isModalOpen}
           onClose={closeModal}
           poolChainId={poolChainId}
         />

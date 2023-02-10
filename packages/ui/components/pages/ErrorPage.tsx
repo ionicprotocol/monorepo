@@ -5,11 +5,11 @@ import { FallbackProps } from 'react-error-boundary';
 const ErrorPage: React.FC<FallbackProps> = ({ error }) => {
   return (
     <Box color="white">
-      <Box bg="red.600" width="100%" p={4}>
+      <Box bg="red.600" p={4} width="100%">
         <Heading>Whoops! Looks like something went wrong!</Heading>
         <Text>
           You can either reload the page, or report this error to us on our{' '}
-          <Link isExternal href="https://github.com/Midas-Protocol/monorepo">
+          <Link href="https://github.com/Midas-Protocol/monorepo" isExternal>
             <u>GitHub</u>
             <ExternalLinkIcon mx="2px" />
           </Link>

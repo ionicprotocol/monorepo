@@ -163,13 +163,13 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
       <VStack width={'100%'}>
         {rewardTokenData?.logoURL && (
           <Image
-            mt={4}
-            src={rewardTokenData.logoURL}
-            boxSize="50px"
-            borderRadius="50%"
+            alt=""
             backgroundImage={`url(${SmallWhiteCircle})`}
             backgroundSize="100% auto"
-            alt=""
+            borderRadius="50%"
+            boxSize="50px"
+            mt={4}
+            src={rewardTokenData.logoURL}
           />
         )}
         <Text alignSelf={'flex-start'}>{`Reward Token: ${
@@ -177,19 +177,19 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
         }`}</Text>
         <InputGroup>
           <Input
-            px={2}
-            textAlign="center"
-            placeholder="Reward Token Address: 0xXX...XX"
-            value={rewardToken}
+            autoFocus
             isInvalid={!!error}
             onChange={(event) => setRewardToken(event.target.value)}
-            autoFocus
+            placeholder="Reward Token Address: 0xXX...XX"
+            px={2}
+            textAlign="center"
+            value={rewardToken}
           />
           <InputRightElement>
             {error ? (
               <CloseIcon color="fail" />
             ) : isLoading ? (
-              <CircularProgress size={'16px'} isIndeterminate color="ecru" />
+              <CircularProgress color="ecru" isIndeterminate size={'16px'} />
             ) : rewardTokenData ? (
               <CheckIcon color="success" />
             ) : null}
@@ -197,17 +197,17 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
         </InputGroup>
       </VStack>
 
-      <Box py={4} w="100%" h="100%">
+      <Box h="100%" py={4} w="100%">
         <TransactionStepper
           activeStep={activeStep}
-          steps={steps}
           failedStep={failedStep}
           isLoading={isLoading}
           poolChainId={Number(poolChainId)}
+          steps={steps}
         />
       </Box>
       <Box px={4} py={2} width="100%">
-        <Button width="100%" isLoading={isDeploying} disabled={true} onClick={handleDeploy}>
+        <Button disabled={true} isLoading={isDeploying} onClick={handleDeploy} width="100%">
           {isDeploying ? steps[activeStep] : 'Deploy Flywheel'}
         </Button>
       </Box>
@@ -221,7 +221,7 @@ const CreateFlywheelModal = ({
   ...createFlywheelProps
 }: CreateFlywheelModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create New Flywheel</ModalHeader>

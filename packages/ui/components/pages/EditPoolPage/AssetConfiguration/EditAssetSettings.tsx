@@ -22,7 +22,7 @@ const EditAssetSettings = ({
   const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken, poolChainId);
   if (isLoading) {
     return (
-      <Center width="100%" height="100%">
+      <Center height="100%" width="100%">
         <Spinner />
       </Center>
     );
@@ -31,17 +31,17 @@ const EditAssetSettings = ({
   if (tokenData) {
     return (
       <AssetSettings
-        comptrollerAddress={comptrollerAddress}
-        selectedAsset={selectedAsset}
         assets={assets}
-        tokenData={tokenData}
+        comptrollerAddress={comptrollerAddress}
         poolChainId={poolChainId}
+        selectedAsset={selectedAsset}
         setSelectedAsset={setSelectedAsset}
+        tokenData={tokenData}
       />
     );
   }
   return (
-    <Center width="100%" height="100%">
+    <Center height="100%" width="100%">
       <Text size="md">Try again later</Text>
     </Center>
   );

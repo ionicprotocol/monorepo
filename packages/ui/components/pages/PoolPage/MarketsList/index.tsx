@@ -275,7 +275,7 @@ export const MarketsList = ({
         accessorFn: (row) => row.supplyApy,
         id: SUPPLY_APY,
         cell: ({ getValue }) => (
-          <SupplyApy asset={getValue<MarketData>()} rewards={rewards} poolChainId={poolChainId} />
+          <SupplyApy asset={getValue<MarketData>()} poolChainId={poolChainId} rewards={rewards} />
         ),
         header: (context) => <TableHeaderCell context={context}>Supply APY</TableHeaderCell>,
 
@@ -462,17 +462,17 @@ export const MarketsList = ({
         <>
           {/* Supply & Borrow Balance */}
           <Flex
-            mx={4}
-            mt={4}
-            gap={4}
             flexDirection="row"
             flexWrap="wrap"
+            gap={4}
             justifyContent={['center', 'center', 'flex-start']}
+            mt={4}
+            mx={4}
           >
             <UserStats poolData={poolData} />
           </Flex>
           {/* Borrow Limit */}
-          <Flex mx={4} mt={4}>
+          <Flex mt={4} mx={4}>
             <CollateralRatioBar
               assets={assets}
               borrowFiat={borrowBalanceFiat}
@@ -484,41 +484,41 @@ export const MarketsList = ({
 
       {/* Table Filter and Search */}
       <Flex
-        justifyContent={['center', 'center', 'space-between']}
-        p={4}
         alignItems={'center'}
         flexDirection={'row'}
         flexWrap="wrap-reverse"
         gap={4}
+        justifyContent={['center', 'center', 'space-between']}
+        p={4}
       >
         <ButtonGroup
-          isAttached={!isSemiSmallScreen ? true : false}
-          gap={isSemiSmallScreen ? 2 : 0}
-          spacing={0}
           flexFlow={'row wrap'}
+          gap={isSemiSmallScreen ? 2 : 0}
+          isAttached={!isSemiSmallScreen ? true : false}
           justifyContent="flex-start"
+          spacing={0}
         >
           <CButton
+            disabled={data.length === 0}
             isSelected={globalFilter.includes(ALL)}
             onClick={() => onFilter(ALL)}
-            disabled={data.length === 0}
+            p={0}
             variant="filter"
             width="80px"
-            p={0}
           >
-            <Center width="100%" height="100%" fontWeight="bold">{`${data.length} All`}</Center>
+            <Center fontWeight="bold" height="100%" width="100%">{`${data.length} All`}</Center>
           </CButton>
           {allClaimableRewards && Object.keys(allClaimableRewards).length !== 0 && (
             <GradientButton
-              isSelected={globalFilter.includes(REWARDS)}
-              onClick={() => onFilter(REWARDS)}
               borderWidth={globalFilter.includes(REWARDS) ? 0 : 2}
-              mr="-px"
-              width="115px"
               height="52px"
+              isSelected={globalFilter.includes(REWARDS)}
+              mr="-px"
+              onClick={() => onFilter(REWARDS)}
+              width="115px"
             >
-              <Center width="100%" height="100%" fontWeight="bold" pt="2px">
-                <GradientText isEnabled={!globalFilter.includes(REWARDS)} color={cCard.bgColor}>
+              <Center fontWeight="bold" height="100%" pt="2px" width="100%">
+                <GradientText color={cCard.bgColor} isEnabled={!globalFilter.includes(REWARDS)}>
                   {`${
                     (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                   } Rewards`}
@@ -528,71 +528,71 @@ export const MarketsList = ({
           )}
           {collateralCounts !== 0 && (
             <CButton
-              isSelected={globalFilter.includes(COLLATERAL)}
-              variant="filter"
               color="cyan"
+              isSelected={globalFilter.includes(COLLATERAL)}
               onClick={() => onFilter(COLLATERAL)}
-              width="125px"
               p={0}
+              variant="filter"
+              width="125px"
             >
-              <Center width="100%" height="100%" fontWeight="bold">
+              <Center fontWeight="bold" height="100%" width="100%">
                 {`${collateralCounts} Collateral`}
               </Center>
             </CButton>
           )}
           {borrowableCounts !== 0 && (
             <CButton
-              isSelected={globalFilter.includes(BORROWABLE)}
-              variant="filter"
               color="orange"
+              isSelected={globalFilter.includes(BORROWABLE)}
               onClick={() => onFilter(BORROWABLE)}
-              width="135px"
               p={0}
+              variant="filter"
+              width="135px"
             >
-              <Center width="100%" height="100%" fontWeight="bold">
+              <Center fontWeight="bold" height="100%" width="100%">
                 {`${borrowableCounts} Borrowable`}
               </Center>
             </CButton>
           )}
           {protectedCounts !== 0 && (
             <CButton
-              isSelected={globalFilter.includes(PROTECTED)}
-              variant="filter"
               color="purple"
+              isSelected={globalFilter.includes(PROTECTED)}
               onClick={() => onFilter(PROTECTED)}
-              width="125px"
               p={0}
+              variant="filter"
+              width="125px"
             >
-              <Center fontWeight="bold" width="100%" height="100%">
+              <Center fontWeight="bold" height="100%" width="100%">
                 {`${protectedCounts} Protected`}
               </Center>
             </CButton>
           )}
           {pausedCounts !== 0 && (
             <CButton
-              isSelected={globalFilter.includes(PAUSED)}
-              variant="filter"
               color="gray"
+              isSelected={globalFilter.includes(PAUSED)}
               onClick={() => onFilter(PAUSED)}
-              width="140px"
               p={0}
+              variant="filter"
+              width="140px"
             >
-              <Center fontWeight="bold" width="100%" height="100%" whiteSpace="nowrap">
+              <Center fontWeight="bold" height="100%" whiteSpace="nowrap" width="100%">
                 {`${pausedCounts} Paused`}
               </Center>
             </CButton>
           )}
         </ButtonGroup>
 
-        <Flex className="searchAsset" justifyContent="flex-start" alignItems="flex-end" gap={2}>
+        <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="flex-start">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
           <Popover placement="bottom-end">
             <PopoverTrigger>
               <IconButton
-                variant="_outline"
-                icon={<SettingsIcon fontSize={20} />}
                 aria-label="Column Settings"
+                icon={<SettingsIcon fontSize={20} />}
                 maxWidth={10}
+                variant="_outline"
               />
             </PopoverTrigger>
             <PopoverContent width="200px">
@@ -609,8 +609,8 @@ export const MarketsList = ({
                     if (column.getCanHide()) {
                       return (
                         <Checkbox
-                          key={column.id}
                           isChecked={column.getIsVisible()}
+                          key={column.id}
                           onChange={column.getToggleVisibilityHandler()}
                         >
                           {column.id}
@@ -624,22 +624,21 @@ export const MarketsList = ({
           </Popover>
           {address ? (
             <SimpleTooltip
-              width={200}
               label="Hide markets you don't supply or borrow from"
               my={3}
               placement="top-end"
+              width={200}
             >
               <span>
                 <CIconButton
-                  aria-label="detail View"
                   alignSelf="flex-end"
-                  variant="filter"
+                  aria-label="detail View"
+                  icon={<ViewOffIcon fontSize={20} />}
                   isSelected={isHidden}
                   onClick={() => {
                     setIsHidden(!isHidden);
                   }}
-                  icon={<ViewOffIcon fontSize={20} />}
-                  // disabled={!canExpand ? true : false}
+                  variant="filter"
                 />
               </span>
             </SimpleTooltip>
@@ -652,21 +651,21 @@ export const MarketsList = ({
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Tr
-              key={headerGroup.id}
-              borderColor={cCard.dividerColor}
               borderBottomWidth={1}
+              borderColor={cCard.dividerColor}
               borderTopWidth={2}
+              key={headerGroup.id}
             >
               {headerGroup.headers.map((header) => {
                 return (
                   <Th
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
                     border="none"
                     color={cCard.txtColor}
-                    textTransform="capitalize"
-                    py={4}
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
                     px={{ base: 1, lg: 2 }}
+                    py={4}
+                    textTransform="capitalize"
                   >
                     <HStack
                       justifyContent={header.column.id === MARKET_LTV ? 'center' : 'flex-end'}
@@ -684,18 +683,18 @@ export const MarketsList = ({
             table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Tr
-                  key={row.id}
-                  className={row.original.market.underlyingSymbol}
-                  borderColor={cCard.dividerColor}
-                  borderBottomWidth={row.getIsExpanded() ? 0 : 1}
-                  background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   _hover={{ bg: cCard.hoverBgColor }}
-                  onClick={() => row.toggleExpanded()}
+                  background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                  borderBottomWidth={row.getIsExpanded() ? 0 : 1}
+                  borderColor={cCard.dividerColor}
+                  className={row.original.market.underlyingSymbol}
                   cursor="pointer"
+                  key={row.id}
+                  onClick={() => row.toggleExpanded()}
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id} border="none" px={{ base: 2, lg: 4 }} py={2}>
+                      <Td border="none" key={cell.id} px={{ base: 2, lg: 4 }} py={2}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     );
@@ -703,22 +702,22 @@ export const MarketsList = ({
                 </Tr>
                 {row.getIsExpanded() && (
                   <Tr
-                    borderColor={cCard.dividerColor}
-                    borderBottomWidth={1}
-                    borderTopWidth={1}
-                    borderTopStyle="dashed"
-                    borderBottomStyle="solid"
                     background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                    borderBottomStyle="solid"
+                    borderBottomWidth={1}
+                    borderColor={cCard.dividerColor}
+                    borderTopStyle="dashed"
+                    borderTopWidth={1}
                   >
                     {/* 2nd row is a custom 1 cell row */}
                     <Td border="none" colSpan={row.getVisibleCells().length}>
                       <AdditionalInfo
+                        borrowBalanceFiat={borrowBalanceFiat}
+                        comptrollerAddress={comptrollerAddress}
+                        poolChainId={poolChainId}
                         row={row}
                         rows={table.getCoreRowModel().rows}
-                        comptrollerAddress={comptrollerAddress}
                         supplyBalanceFiat={supplyBalanceFiat}
-                        borrowBalanceFiat={borrowBalanceFiat}
-                        poolChainId={poolChainId}
                       />
                     </Td>
                   </Tr>
@@ -742,17 +741,17 @@ export const MarketsList = ({
       </Table>
 
       {/* Pagination Elements */}
-      <Flex className="pagination" gap={4} justifyContent="flex-end" alignItems="center" p={4}>
+      <Flex alignItems="center" className="pagination" gap={4} justifyContent="flex-end" p={4}>
         <HStack>
           <Hide below="lg">
             <Text>Markets Per Page</Text>
           </Hide>
           <Select
-            value={pagination.pageSize}
+            maxW="max-content"
             onChange={(e) => {
               table.setPageSize(Number(e.target.value));
             }}
-            maxW="max-content"
+            value={pagination.pageSize}
           >
             {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
               <option key={pageSize} value={pageSize}>
@@ -775,20 +774,20 @@ export const MarketsList = ({
           </Text>
           <HStack>
             <CIconButton
-              variant="_outline"
               aria-label="toPrevious"
               icon={<ChevronLeftIcon fontSize={30} />}
-              onClick={() => table.previousPage()}
               isDisabled={!table.getCanPreviousPage()}
               isRound
+              onClick={() => table.previousPage()}
+              variant="_outline"
             />
             <CIconButton
-              variant="_outline"
               aria-label="toNext"
               icon={<ChevronRightIcon fontSize={30} />}
-              onClick={() => table.nextPage()}
               isDisabled={!table.getCanNextPage()}
               isRound
+              onClick={() => table.nextPage()}
+              variant="_outline"
             />
           </HStack>
         </HStack>
@@ -814,12 +813,12 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
     <HStack width="100%">
       {!isMobile && <Text>Search</Text>}
       <Input
-        type="text"
-        value={searchText}
+        _focusVisible={{}}
+        maxWidth={{ base: '100%', lg: 60, md: 60, sm: 290 }}
         onChange={onSearch}
         placeholder="Token, Name"
-        maxWidth={{ base: '100%', lg: 60, md: 60, sm: 290 }}
-        _focusVisible={{}}
+        type="text"
+        value={searchText}
       />
     </HStack>
   );

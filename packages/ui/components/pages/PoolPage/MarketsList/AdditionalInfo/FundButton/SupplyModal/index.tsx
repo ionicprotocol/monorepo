@@ -344,46 +344,46 @@ export const SupplyModal = ({
 
   return (
     <Modal
-      motionPreset="slideInBottom"
-      isOpen={isOpen}
-      onClose={onModalClose}
-      isCentered
-      closeOnOverlayClick={false}
       closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isCentered
+      isOpen={isOpen}
+      motionPreset="slideInBottom"
+      onClose={onModalClose}
     >
       <ModalOverlay />
       <ModalContent>
         <ModalBody p={0}>
           <Column
+            bg={cCard.bgColor}
+            borderRadius={16}
+            color={cCard.txtColor}
+            crossAxisAlignment="flex-start"
             id="fundOperationModal"
             mainAxisAlignment="flex-start"
-            crossAxisAlignment="flex-start"
-            bg={cCard.bgColor}
-            color={cCard.txtColor}
-            borderRadius={16}
           >
-            {!isSupplying && <ModalCloseButton top={4} right={4} />}
+            {!isSupplying && <ModalCloseButton right={4} top={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}
-                failedStep={failedStep}
-                steps={confirmedSteps}
-                isSupplying={isSupplying}
-                poolChainId={poolChainId}
                 amount={amount}
                 asset={asset}
+                failedStep={failedStep}
+                isSupplying={isSupplying}
+                poolChainId={poolChainId}
+                steps={confirmedSteps}
               />
             ) : (
               <>
-                <HStack width="100%" my={4} justifyContent="center">
+                <HStack justifyContent="center" my={4} width="100%">
                   <Text variant="title">Supply</Text>
-                  <Box height="36px" width="36px" mx={2}>
-                    <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
+                  <Box height="36px" mx={2} width="36px">
+                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
                   </Box>
                   <EllipsisText
-                    variant="title"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
                     maxWidth="100px"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    variant="title"
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
@@ -392,34 +392,34 @@ export const SupplyModal = ({
                 <Divider />
 
                 <Column
-                  mainAxisAlignment="flex-start"
                   crossAxisAlignment="center"
-                  p={4}
-                  height="100%"
-                  width="100%"
                   gap={4}
+                  height="100%"
+                  mainAxisAlignment="flex-start"
+                  p={4}
+                  width="100%"
                 >
                   {!supplyCap || asset.totalSupplyFiat < supplyCap.usdCap ? (
                     <>
                       <Column gap={1} w="100%">
                         <AmountInput
                           asset={asset}
+                          comptrollerAddress={comptrollerAddress}
                           optionToWrap={optionToWrap}
                           poolChainId={poolChainId}
                           setAmount={setAmount}
-                          comptrollerAddress={comptrollerAddress}
                         />
 
                         <Balance asset={asset} />
                       </Column>
                       <StatsColumn
-                        mode={FundOperationMode.SUPPLY}
                         amount={amount}
-                        assets={assets}
                         asset={asset}
-                        enableAsCollateral={enableAsCollateral}
-                        poolChainId={poolChainId}
+                        assets={assets}
                         comptrollerAddress={comptrollerAddress}
+                        enableAsCollateral={enableAsCollateral}
+                        mode={FundOperationMode.SUPPLY}
+                        poolChainId={poolChainId}
                       />
                       {!asset.membership && (
                         <EnableCollateral
@@ -428,11 +428,11 @@ export const SupplyModal = ({
                         />
                       )}
                       <Button
-                        id="confirmFund"
-                        width="100%"
-                        onClick={onConfirm}
-                        isDisabled={!isAmountValid}
                         height={16}
+                        id="confirmFund"
+                        isDisabled={!isAmountValid}
+                        onClick={onConfirm}
+                        width="100%"
                       >
                         {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
                       </Button>

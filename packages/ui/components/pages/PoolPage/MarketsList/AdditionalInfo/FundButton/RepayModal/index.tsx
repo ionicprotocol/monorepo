@@ -265,8 +265,11 @@ export const RepayModal = ({
 
   return (
     <Modal
-      motionPreset="slideInBottom"
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isCentered
       isOpen={isOpen}
+      motionPreset="slideInBottom"
       onClose={() => {
         onClose();
         if (!isRepaying) {
@@ -280,43 +283,40 @@ export const RepayModal = ({
             : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
         }
       }}
-      isCentered
-      closeOnOverlayClick={false}
-      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
         <ModalBody p={0}>
           <Column
+            bg={cCard.bgColor}
+            borderRadius={16}
+            color={cCard.txtColor}
+            crossAxisAlignment="flex-start"
             id="fundOperationModal"
             mainAxisAlignment="flex-start"
-            crossAxisAlignment="flex-start"
-            bg={cCard.bgColor}
-            color={cCard.txtColor}
-            borderRadius={16}
           >
-            {!isRepaying && <ModalCloseButton top={4} right={4} />}
+            {!isRepaying && <ModalCloseButton right={4} top={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}
-                failedStep={failedStep}
-                steps={confirmedSteps}
-                isRepaying={isRepaying}
-                poolChainId={poolChainId}
                 amount={amount}
                 asset={asset}
+                failedStep={failedStep}
+                isRepaying={isRepaying}
+                poolChainId={poolChainId}
+                steps={confirmedSteps}
               />
             ) : (
               <>
-                <HStack width="100%" my={4} justifyContent="center">
+                <HStack justifyContent="center" my={4} width="100%">
                   <Text variant="title">Repay</Text>
-                  <Box height="36px" width="36px" mx={2}>
-                    <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
+                  <Box height="36px" mx={2} width="36px">
+                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
                   </Box>
                   <EllipsisText
-                    variant="title"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
                     maxWidth="100px"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    variant="title"
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
@@ -324,11 +324,11 @@ export const RepayModal = ({
 
                 <Divider />
                 <Column
-                  mainAxisAlignment="flex-start"
                   crossAxisAlignment="center"
-                  p={4}
                   gap={4}
                   height="100%"
+                  mainAxisAlignment="flex-start"
+                  p={4}
                   width="100%"
                 >
                   <Column gap={1} width="100%">
@@ -343,20 +343,20 @@ export const RepayModal = ({
                   </Column>
 
                   <StatsColumn
-                    mode={FundOperationMode.REPAY}
                     amount={amount}
-                    assets={assets}
                     asset={asset}
-                    poolChainId={poolChainId}
+                    assets={assets}
                     comptrollerAddress={comptrollerAddress}
+                    mode={FundOperationMode.REPAY}
+                    poolChainId={poolChainId}
                   />
 
                   <Button
-                    id="confirmFund"
-                    width="100%"
-                    onClick={onConfirm}
-                    isDisabled={!isAmountValid}
                     height={16}
+                    id="confirmFund"
+                    isDisabled={!isAmountValid}
+                    onClick={onConfirm}
+                    width="100%"
                   >
                     {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
                   </Button>

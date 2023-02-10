@@ -76,10 +76,10 @@ export const ToggleBorrow = ({
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
               <Switch
-                isDisabled={isUpdating}
                 className="switch-borrowing"
                 h="20px"
                 isChecked={!isPaused}
+                isDisabled={isUpdating}
                 ml="auto"
                 onChange={toggleBorrowState}
               />
