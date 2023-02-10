@@ -54,7 +54,7 @@
       "address": "0x7ef2A6a6aF8ee090da3a24ea947b3717c4D16D94"
     },
     "Comptroller": {
-      "address": "0x907141328eC613FC13e8fF2FA6D579f21dC9A67E"
+      "address": "0x07354Fe993AC75f034d6d2B04f070aFC9D97e1B1"
     },
     "ComptrollerFirstExtension": {
       "address": "0xB7f6EdB768B6Fd4273b72001612545FF305c3a10"
@@ -142,6 +142,15 @@
     },
     "JarvisLiquidatorFunder": {
       "address": "0xaC64c0391a54Eba34E23429847986D437bE82da0"
+    },
+    "JarvisSafeLiquidator": {
+      "address": "0x6dA2d84d390F12a6C49Afe7B677a6a2B8E0D961a"
+    },
+    "JarvisSafeLiquidator_Implementation": {
+      "address": "0xF8E6076A14D1b79862991cd8aE4b864B1aac4F1b"
+    },
+    "JarvisSafeLiquidator_Proxy": {
+      "address": "0x6dA2d84d390F12a6C49Afe7B677a6a2B8E0D961a"
     },
     "JumpRateModel": {
       "address": "0x79Ebf6D2F3724254f290862A5a0F57044885Cb50"
