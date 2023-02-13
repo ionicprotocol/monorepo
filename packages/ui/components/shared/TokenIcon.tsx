@@ -11,19 +11,19 @@ type PlaceholderIconProps = IconProps;
 const PlaceholderIcon = ({ color, ...restOfProps }: PlaceholderIconProps) => {
   return (
     <Icon
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
       fill="none"
+      height="24"
       stroke={color}
-      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      width="24"
       {...restOfProps}
     >
       <circle cx="12" cy="12" r="10" />
       <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
+      <line x1="12" x2="12.01" y1="17" y2="17" />
     </Icon>
   );
 };
@@ -46,9 +46,9 @@ export const TokenIcon = ({
 
   return (
     <motion.div whileHover={withMotion ? { scale: 1.2 } : undefined}>
-      <SimpleTooltip label={tokenData?.symbol || address} isDisabled={!withTooltip}>
+      <SimpleTooltip isDisabled={!withTooltip} label={tokenData?.symbol || address}>
         <Avatar
-          name={isLoading ? undefined : tokenData?.name ? tokenData.name : address}
+          borderRadius={0}
           icon={
             isLoading ? (
               <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
@@ -56,7 +56,7 @@ export const TokenIcon = ({
               <PlaceholderIcon boxSize={'100%'} color={iconColor} />
             )
           }
-          borderRadius={0}
+          name={isLoading ? undefined : tokenData?.name ? tokenData.name : address}
           src={tokenData?.logoURL}
           {...avatarProps}
         />

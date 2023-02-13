@@ -9,13 +9,13 @@ function LoadingOverlay({ children, isLoading }: { children?: ReactNode; isLoadi
       {children}
       {isLoading && (
         <Center
-          width="100%"
-          height="100%"
+          background="#000000cc"
           color="white"
+          height="100%"
+          left="0"
           position="fixed"
           top="0"
-          left="0"
-          background="#000000cc"
+          width="100%"
           zIndex="9999"
         >
           <Loader />

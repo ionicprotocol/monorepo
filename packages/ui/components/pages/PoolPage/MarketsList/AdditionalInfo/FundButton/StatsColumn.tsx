@@ -106,15 +106,15 @@ export const StatsColumn = ({
   return (
     <MidasBox width="100%">
       <Column
-        mainAxisAlignment="space-between"
         crossAxisAlignment="flex-start"
         expand
+        gap={2}
+        mainAxisAlignment="space-between"
         px={2}
         py={2}
-        gap={2}
       >
-        <HStack width="100%" alignItems={'flex-start'}>
-          <Text size="sm" flexShrink={0}>
+        <HStack alignItems={'flex-start'} width="100%">
+          <Text flexShrink={0} size="sm">
             Market Supply Balance:
           </Text>
           <HStack justifyContent="flex-end" width="100%">
@@ -146,13 +146,12 @@ export const StatsColumn = ({
 
         <Divider />
 
-        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <VStack alignItems={'flex-start'} spacing={0} width="100%">
           <Text flexShrink={0} size="sm">
             Borrowed in Market:
           </Text>
           <HStack justifyContent="flex-end" width="100%">
             <Text
-              variant="tnumber"
               color={
                 updatedAsset?.borrowBalanceFiat &&
                 updatedBorrowLimitMarket &&
@@ -161,6 +160,7 @@ export const StatsColumn = ({
                   : undefined
               }
               textAlign="right"
+              variant="tnumber"
             >
               {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
                 borrowLimitMarket || 0
@@ -169,7 +169,6 @@ export const StatsColumn = ({
             <Text>{'→'}</Text>
             {updatedAssets && updatedAsset ? (
               <Text
-                variant="tnumber"
                 color={
                   updatedAsset?.borrowBalanceFiat &&
                   updatedBorrowLimitMarket &&
@@ -178,6 +177,7 @@ export const StatsColumn = ({
                     : undefined
                 }
                 textAlign="right"
+                variant="tnumber"
               >
                 {`${smallUsdFormatter(
                   Math.max(updatedAsset.borrowBalanceFiat, 0)
@@ -195,13 +195,12 @@ export const StatsColumn = ({
           </HStack>
         </VStack>
 
-        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <VStack alignItems={'flex-start'} spacing={0} width="100%">
           <Text flexShrink={0} size="sm">
             Borrowed in Total:
           </Text>
           <HStack justifyContent="flex-end" width="100%">
             <Text
-              variant="tnumber"
               color={
                 updatedTotalBorrows !== undefined &&
                 updatedBorrowLimitTotal &&
@@ -212,13 +211,13 @@ export const StatsColumn = ({
                   : undefined
               }
               textAlign="right"
+              variant="tnumber"
             >
               {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}
             </Text>
             <Text>{'→'}</Text>
             {updatedAssets && updatedTotalBorrows !== undefined ? (
               <Text
-                variant="tnumber"
                 color={
                   updatedTotalBorrows !== undefined &&
                   updatedBorrowLimitTotal &&
@@ -229,6 +228,7 @@ export const StatsColumn = ({
                     : undefined
                 }
                 textAlign="right"
+                variant="tnumber"
               >
                 {`${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
                   updatedBorrowLimitTotal || 0
@@ -247,11 +247,11 @@ export const StatsColumn = ({
         </VStack>
 
         <Divider />
-        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <HStack alignItems={'flex-start'} spacing={0} width="100%">
           <Text flexShrink={0} size="sm">
             Market Supply APY:
           </Text>
-          <HStack spacing={1} justifyContent="flex-end" width="100%">
+          <HStack justifyContent="flex-end" spacing={1} width="100%">
             <Text variant="tnumber">{supplyAPY.toFixed(2) + '%'}</Text>
             <Text>{'→'}</Text>
             {updatedSupplyAPY !== undefined ? (
@@ -262,11 +262,11 @@ export const StatsColumn = ({
           </HStack>
         </HStack>
 
-        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <HStack alignItems={'flex-start'} spacing={0} width="100%">
           <Text flexShrink={0} size="sm">
             Market Borrow APR:
           </Text>
-          <HStack spacing={1} justifyContent="flex-end" width="100%">
+          <HStack justifyContent="flex-end" spacing={1} width="100%">
             <Text variant="tnumber">{borrowAPR.toFixed(2) + '%'}</Text>
             <Text>{'→'}</Text>
             {updatedBorrowAPR !== undefined ? (

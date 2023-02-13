@@ -141,27 +141,27 @@ export const CreatePoolConfiguration = () => {
   };
 
   return (
-    <Box as="form" alignSelf={'center'} mx="auto" onSubmit={handleSubmit(onDeploy)}>
+    <Box alignSelf={'center'} as="form" mx="auto" onSubmit={handleSubmit(onDeploy)}>
       <MidasBox maxWidth="550px" mx={'auto'}>
-        <Text fontWeight="bold" variant="title" px={4} py={4}>
+        <Text fontWeight="bold" px={4} py={4} variant="title">
           Create Pool
         </Text>
         {address && !isAllowedAddress && (
           <Banner
-            text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
             linkText="please contact us via Discord."
             linkUrl="https://discord.gg/NYqKtJPYAB"
             status="warning"
+            text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
           />
         )}
         <Divider bg={cCard.dividerColor} />
-        <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+        <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
           <FormControl isInvalid={!!errors.name}>
             <OptionRow>
               <FormLabel htmlFor="name">
                 <Text size="md">Name</Text>
               </FormLabel>
-              <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+              <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" width="60%">
                 <Input
                   id="name"
                   placeholder="Type Pool name"
@@ -182,7 +182,7 @@ export const CreatePoolConfiguration = () => {
               <FormLabel htmlFor="oracle">
                 <Text size="md">Oracle</Text>
               </FormLabel>
-              <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+              <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" width="60%">
                 <Select
                   id="oracle"
                   placeholder="Select Oracle"
@@ -217,27 +217,27 @@ export const CreatePoolConfiguration = () => {
                       "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
                     }
                   >
-                    <QuestionIcon ml={1} mb="4px" />
+                    <QuestionIcon mb="4px" ml={1} />
                   </SimpleTooltip>
                 </HStack>
               </FormLabel>
-              <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-end">
+              <Column crossAxisAlignment="flex-end" mainAxisAlignment="flex-start" width="60%">
                 <Controller
                   control={control}
                   name="isWhitelisted"
                   render={({ field: { ref, name, value, onChange } }) => (
                     <Switch
-                      className="switch-whitelist"
-                      id="isWhitelisted"
-                      size={isMobile ? 'sm' : 'md'}
-                      cursor={'pointer'}
                       _focus={{ boxShadow: 'none' }}
                       _hover={{}}
-                      name={name}
-                      ref={ref}
+                      className="switch-whitelist"
+                      cursor={'pointer'}
+                      id="isWhitelisted"
                       isChecked={value}
-                      onChange={onChange}
                       isDisabled={!address || !currentChain || !isAllowedAddress}
+                      name={name}
+                      onChange={onChange}
+                      ref={ref}
+                      size={isMobile ? 'sm' : 'md'}
                     />
                   )}
                 />
@@ -245,16 +245,16 @@ export const CreatePoolConfiguration = () => {
             </OptionRow>
           </FormControl>
           <FormControl display={watchIsWhitelisted ? 'block' : 'none'}>
-            <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+            <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
               <Controller
                 control={control}
                 name="whitelist"
                 render={({ field: { value, onChange } }) => (
                   <WhitelistInfo
-                    value={value}
-                    onChange={onChange}
                     addToWhitelist={addToWhitelist}
+                    onChange={onChange}
                     removeFromWhitelist={removeFromWhitelist}
+                    value={value}
                   />
                 )}
               />
@@ -271,14 +271,26 @@ export const CreatePoolConfiguration = () => {
                       "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
                     }
                   >
-                    <QuestionIcon ml={1} mb="4px" />
+                    <QuestionIcon mb="4px" ml={1} />
                   </SimpleTooltip>
                 </HStack>
               </FormLabel>
-              <Column width="60%" mainAxisAlignment="flex-end" crossAxisAlignment="flex-end">
+              <Column crossAxisAlignment="flex-end" mainAxisAlignment="flex-end" width="60%">
                 <Controller
                   control={control}
                   name="closeFactor"
+                  render={({ field: { name, value, ref, onChange } }) => (
+                    <SliderWithLabel
+                      id="closeFactor"
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
+                      max={CLOSE_FACTOR.MAX}
+                      min={CLOSE_FACTOR.MIN}
+                      name={name}
+                      onChange={onChange}
+                      reff={ref}
+                      value={value}
+                    />
+                  )}
                   rules={{
                     required: 'Close factor is required',
                     min: {
@@ -290,20 +302,8 @@ export const CreatePoolConfiguration = () => {
                       message: `Close Factor must be no more than ${CLOSE_FACTOR.MAX}%`,
                     },
                   }}
-                  render={({ field: { name, value, ref, onChange } }) => (
-                    <SliderWithLabel
-                      id="closeFactor"
-                      min={CLOSE_FACTOR.MIN}
-                      max={CLOSE_FACTOR.MAX}
-                      name={name}
-                      value={value}
-                      reff={ref}
-                      onChange={onChange}
-                      isDisabled={!address || !currentChain || !isAllowedAddress}
-                    />
-                  )}
                 />
-                <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                <FormErrorMessage marginBottom="-10px" maxWidth="270px">
                   {errors.closeFactor && errors.closeFactor.message}
                 </FormErrorMessage>
               </Column>
@@ -320,14 +320,26 @@ export const CreatePoolConfiguration = () => {
                       "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
                     }
                   >
-                    <QuestionIcon ml={1} mb="4px" />
+                    <QuestionIcon mb="4px" ml={1} />
                   </SimpleTooltip>
                 </HStack>
               </FormLabel>
-              <Column mainAxisAlignment="flex-end" crossAxisAlignment="flex-start">
+              <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-end">
                 <Controller
                   control={control}
                   name="liquidationIncentive"
+                  render={({ field: { name, value, ref, onChange } }) => (
+                    <SliderWithLabel
+                      id="liqIncent"
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
+                      max={LIQUIDATION_INCENTIVE.MAX}
+                      min={LIQUIDATION_INCENTIVE.MIN}
+                      name={name}
+                      onChange={onChange}
+                      reff={ref}
+                      value={value}
+                    />
+                  )}
                   rules={{
                     required: 'Liquidation incentive is required',
                     min: {
@@ -339,20 +351,8 @@ export const CreatePoolConfiguration = () => {
                       message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
                     },
                   }}
-                  render={({ field: { name, value, ref, onChange } }) => (
-                    <SliderWithLabel
-                      id="liqIncent"
-                      min={LIQUIDATION_INCENTIVE.MIN}
-                      max={LIQUIDATION_INCENTIVE.MAX}
-                      name={name}
-                      value={value}
-                      reff={ref}
-                      onChange={onChange}
-                      isDisabled={!address || !currentChain || !isAllowedAddress}
-                    />
-                  )}
                 />
-                <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                <FormErrorMessage marginBottom="-10px" maxWidth="270px">
                   {errors.liquidationIncentive && errors.liquidationIncentive.message}
                 </FormErrorMessage>
               </Column>
@@ -363,14 +363,6 @@ export const CreatePoolConfiguration = () => {
       <Center>
         {currentChain?.id && address ? (
           <Button
-            id="createPool"
-            type="submit"
-            isLoading={isCreating}
-            width="100%"
-            height={12}
-            mt={4}
-            fontSize="xl"
-            maxWidth={'550px'}
             disabled={
               !address ||
               isCreating ||
@@ -380,6 +372,14 @@ export const CreatePoolConfiguration = () => {
               !!errors.liquidationIncentive ||
               !isAllowedAddress
             }
+            fontSize="xl"
+            height={12}
+            id="createPool"
+            isLoading={isCreating}
+            maxWidth={'550px'}
+            mt={4}
+            type="submit"
+            width="100%"
           >
             <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
               {!address || !isAllowedAddress ? (
@@ -394,13 +394,13 @@ export const CreatePoolConfiguration = () => {
         ) : (
           openConnectModal && (
             <Button
-              id="connectWalletToCreate"
-              width="100%"
-              height={12}
-              mt={4}
               fontSize="xl"
+              height={12}
+              id="connectWalletToCreate"
               maxWidth={'550px'}
+              mt={4}
               onClick={openConnectModal}
+              width="100%"
             >
               Connect wallet
             </Button>

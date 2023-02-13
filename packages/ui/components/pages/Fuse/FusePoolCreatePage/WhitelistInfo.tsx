@@ -47,24 +47,24 @@ export const WhitelistInfo = ({
 
   return (
     <>
-      <OptionRow my={0} mb={4}>
+      <OptionRow mb={4} my={0}>
         <Input
-          type="text"
-          value={_whitelistInput}
           onChange={(event) => _setWhitelistInput(event.target.value)}
           placeholder="0x0000000000000000000000000000000000000000"
+          type="text"
+          value={_whitelistInput}
         />
         <IconButton
-          flexShrink={0}
+          _active={{}}
+          _hover={{ bg: cSolidBtn.primary.hoverBgColor, color: cSolidBtn.primary.hoverTxtColor }}
           aria-label="add"
-          icon={<AddIcon />}
-          width={35}
-          ml={2}
           bg={cSolidBtn.primary.bgColor}
           color={cSolidBtn.primary.txtColor}
+          flexShrink={0}
+          icon={<AddIcon />}
+          ml={2}
           onClick={add}
-          _hover={{ bg: cSolidBtn.primary.hoverBgColor, color: cSolidBtn.primary.hoverTxtColor }}
-          _active={{}}
+          width={35}
         />
       </OptionRow>
       {value && value.length > 0 && (
@@ -73,11 +73,11 @@ export const WhitelistInfo = ({
           {value.map((user, index, array) => (
             <SimpleTooltip key={user} label={'Click to remove it'} width="auto">
               <Text
+                as="span"
                 className="underline-on-hover"
+                cursor="pointer"
                 onClick={() => remove(user)}
                 width="fit-content"
-                cursor="pointer"
-                as="span"
               >
                 {shortAddress(user, 8, 6)}
                 {array.length - 1 === index ? null : <>,&nbsp;</>}

@@ -18,7 +18,7 @@ const CaptionedStat = ({
   const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as SystemProps['textAlign'];
 
   return (
-    <Column mainAxisAlignment="center" crossAxisAlignment={crossAxisAlignment} gap={2}>
+    <Column crossAxisAlignment={crossAxisAlignment} gap={2} mainAxisAlignment="center">
       <HStack>
         <Caption mt={spacing ?? 0} textAlign={textAlign}>
           {caption}
@@ -41,7 +41,7 @@ const CaptionedStat = ({
 
 const Stat = ({ text }: { text: string }) => {
   return (
-    <Text variant="tnumber" size="sm" fontWeight="bold">
+    <Text fontWeight="bold" size="sm" variant="tnumber">
       {text}
     </Text>
   );
@@ -49,7 +49,7 @@ const Stat = ({ text }: { text: string }) => {
 
 const SecondStat = ({ text }: { text: string }) => {
   return (
-    <Text variant="tnumber" size="sm" fontWeight="bold" opacity={0.6}>
+    <Text fontWeight="bold" opacity={0.6} size="sm" variant="tnumber">
       {'/'} {text}
     </Text>
   );
@@ -58,10 +58,10 @@ const SecondStat = ({ text }: { text: string }) => {
 const Caption = ({ textAlign, children, ...restOfProps }: TextProps) => {
   return (
     <Text
-      textTransform="capitalize"
       letterSpacing="wide"
       size="sm"
       textAlign={textAlign}
+      textTransform="capitalize"
       {...restOfProps}
     >
       {children}

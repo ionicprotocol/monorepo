@@ -27,8 +27,8 @@ export const AdminAlert = ({
   return (
     <Alert
       backgroundColor={cAlert.bgColor}
-      colorScheme={isAdmin ? 'green' : 'red'}
       borderRadius={5}
+      colorScheme={isAdmin ? 'green' : 'red'}
       mt="5"
       {...alertProps}
     >
@@ -50,17 +50,17 @@ interface AlertHeroProps extends AlertProps {
 
 export const AlertHero = ({ title, description, ...alertProps }: AlertHeroProps) => (
   <Alert
-    flexDirection="column"
     alignItems="center"
-    justifyContent="center"
-    textAlign="center"
-    my={4}
     borderRadius={'20px'}
+    flexDirection="column"
     height="2xs"
+    justifyContent="center"
+    my={4}
+    textAlign="center"
     {...alertProps}
   >
     <AlertIcon boxSize="40px" mr={0} />
-    <AlertTitle mt={4} mb={1} fontSize="lg">
+    <AlertTitle fontSize="lg" mb={1} mt={4}>
       {title}
     </AlertTitle>
     <AlertDescription maxWidth="sm">{description}</AlertDescription>

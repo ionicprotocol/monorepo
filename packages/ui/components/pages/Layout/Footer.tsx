@@ -14,21 +14,21 @@ const Footer = () => {
 
   return (
     <Column
-      mainAxisAlignment="center"
       crossAxisAlignment="center"
-      width="100%"
       flexShrink={0}
-      mt={{ base: 4, md: 20 }}
-      mb={4}
       gap={2}
+      mainAxisAlignment="center"
+      mb={4}
+      mt={{ base: 4, md: 20 }}
+      width="100%"
     >
-      <Row mainAxisAlignment="center" crossAxisAlignment="center" width="100%">
+      <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
         <Link href={MIDAS_DOCS_URL} isExternal>
           <Text
+            _hover={{ color: cPage.primary.borderColor }}
             mx={2}
             size="md"
             textDecoration="underline"
-            _hover={{ color: cPage.primary.borderColor }}
           >
             {'Docs'}
           </Text>
@@ -38,11 +38,11 @@ const Footer = () => {
         </Text>
         <Link href={MIDAS_DISCORD_URL} isExternal>
           <Text
+            _hover={{ color: cPage.primary.borderColor }}
             color={cPage.primary.txtColor}
             mx={2}
             size="md"
             textDecoration="underline"
-            _hover={{ color: cPage.primary.borderColor }}
           >
             {'Discord'}
           </Text>
@@ -52,11 +52,11 @@ const Footer = () => {
         </Text>
         <Link href={MIDAS_TELEGRAM_URL} isExternal>
           <Text
+            _hover={{ color: cPage.primary.borderColor }}
             color={cPage.primary.txtColor}
             mx={2}
             size="md"
             textDecoration="underline"
-            _hover={{ color: cPage.primary.borderColor }}
           >
             {'Telegram'}
           </Text>
@@ -66,11 +66,11 @@ const Footer = () => {
         </Text>
         <Link href={MIDAS_TWITTER_URL} isExternal>
           <Text
+            _hover={{ color: cPage.primary.borderColor }}
             color={cPage.primary.txtColor}
             mx={2}
             size="md"
             textDecoration="underline"
-            _hover={{ color: cPage.primary.borderColor }}
           >
             {'Twitter'}
           </Text>

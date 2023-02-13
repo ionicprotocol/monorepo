@@ -39,52 +39,52 @@ const TransactionStepper = ({
 
   return (
     <>
-      <Row mainAxisAlignment="center" crossAxisAlignment="center">
+      <Row crossAxisAlignment="center" mainAxisAlignment="center">
         <Accordion
           allowMultiple
-          width="100%"
-          index={Array.from(Array(activeStep).keys())}
-          borderWidth={1}
           borderColor={cCard.hoverBgColor}
+          borderWidth={1}
+          index={Array.from(Array(activeStep).keys())}
+          width="100%"
         >
           {steps.map((step, index) => {
             return (
-              <AccordionItem key={index} border="none">
+              <AccordionItem border="none" key={index}>
                 <h2>
                   <AccordionButton
-                    bgColor={cCard.hoverBgColor}
                     _hover={{ bgColor: cCard.hoverBgColor }}
+                    bgColor={cCard.hoverBgColor}
                   >
                     <Box
-                      width={30}
-                      height={30}
                       alignItems="center"
-                      justifyContent="center"
-                      borderWidth={3}
                       borderColor={cCard.borderColor}
                       borderRadius="50%"
+                      borderWidth={3}
+                      height={30}
+                      justifyContent="center"
+                      width={30}
                     >
-                      <Text height="100%" color={cCard.borderColor} fontSize={18} fontWeight="bold">
+                      <Text color={cCard.borderColor} fontSize={18} fontWeight="bold" height="100%">
                         {index + 1}
                       </Text>
                     </Box>
 
-                    <Box flex="1" textAlign="left" ml={4}>
-                      <Text variant="mdText" color={cCard.borderColor} fontWeight="bold">
+                    <Box flex="1" ml={4} textAlign="left">
+                      <Text color={cCard.borderColor} fontWeight="bold" variant="mdText">
                         {step.title}
                       </Text>
                     </Box>
 
                     {failedStep - 1 === index ? (
-                      <Icon as={BsFillXCircleFill} width={25} height={25} color={'fail'} />
+                      <Icon as={BsFillXCircleFill} color={'fail'} height={25} width={25} />
                     ) : activeStep - 1 === index ? (
                       isLoading ? (
-                        <Spinner width={30} height={30} borderWidth={3} color={cCard.borderColor} />
+                        <Spinner borderWidth={3} color={cCard.borderColor} height={30} width={30} />
                       ) : (
-                        <Icon as={BsFillCheckCircleFill} width={25} height={25} color={'success'} />
+                        <Icon as={BsFillCheckCircleFill} color={'success'} height={25} width={25} />
                       )
                     ) : activeStep > index ? (
-                      <Icon as={BsFillCheckCircleFill} width={25} height={25} color={'success'} />
+                      <Icon as={BsFillCheckCircleFill} color={'success'} height={25} width={25} />
                     ) : null}
                   </AccordionButton>
                 </h2>
@@ -94,7 +94,7 @@ const TransactionStepper = ({
                     <Flex justifyContent="flex-end" width="100%">
                       {step.txHash ? (
                         <Link href={`${scanUrl}/tx/${step.txHash}`} isExternal rel="noreferrer">
-                          <Button variant={'external'} size="sm" rightIcon={<ExternalLinkIcon />}>
+                          <Button rightIcon={<ExternalLinkIcon />} size="sm" variant={'external'}>
                             Review tx details
                           </Button>
                         </Link>

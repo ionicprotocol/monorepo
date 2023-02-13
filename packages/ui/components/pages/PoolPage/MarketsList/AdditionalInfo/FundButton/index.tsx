@@ -39,48 +39,48 @@ export const FundButton = ({
     <Box>
       <Button
         className={`${tokenData?.symbol ?? asset.underlyingSymbol} ${modeName.toLowerCase()}`}
-        onClick={openModal}
         isDisabled={isDisabled}
+        onClick={openModal}
       >
         {modeName}
       </Button>
       {mode === FundOperationMode.SUPPLY && (
         <SupplyModal
-          isOpen={isModalOpen}
           asset={asset}
           assets={assets}
           comptrollerAddress={comptrollerAddress}
+          isOpen={isModalOpen}
           onClose={closeModal}
           poolChainId={poolChainId}
         />
       )}
       {mode === FundOperationMode.WITHDRAW && (
         <WithdrawModal
-          isOpen={isModalOpen}
           asset={asset}
           assets={assets}
           comptrollerAddress={comptrollerAddress}
+          isOpen={isModalOpen}
           onClose={closeModal}
           poolChainId={poolChainId}
         />
       )}
       {mode === FundOperationMode.BORROW && (
         <BorrowModal
-          isOpen={isModalOpen}
           asset={asset}
           assets={assets}
-          onClose={closeModal}
-          poolChainId={poolChainId}
           borrowBalanceFiat={borrowBalanceFiat}
           comptrollerAddress={comptrollerAddress}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          poolChainId={poolChainId}
         />
       )}
       {mode === FundOperationMode.REPAY && (
         <RepayModal
-          isOpen={isModalOpen}
           asset={asset}
           assets={assets}
           comptrollerAddress={comptrollerAddress}
+          isOpen={isModalOpen}
           onClose={closeModal}
           poolChainId={poolChainId}
         />

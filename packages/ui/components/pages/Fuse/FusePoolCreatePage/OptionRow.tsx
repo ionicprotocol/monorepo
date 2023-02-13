@@ -11,11 +11,11 @@ export const OptionRow = ({
 }) => {
   return (
     <Row
-      mainAxisAlignment="space-between"
       crossAxisAlignment="center"
-      width="100%"
-      p={4}
+      mainAxisAlignment="space-between"
       overflowX="auto"
+      p={4}
+      width="100%"
       {...others}
     >
       {children}

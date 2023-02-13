@@ -65,7 +65,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
 
   return (
     <VStack alignItems={'flex-end'} spacing={0.5}>
-      <Text color={supplyApyColor} fontWeight="medium" variant="tnumber" size="sm">
+      <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
         {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
       </Text>
 
@@ -77,7 +77,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
               key={`asset-reward-${index}`}
               label={`The compounding APY for staking rewards of ${asset.underlyingSymbol}`}
             >
-              <Text color={cCard.txtColor} variant="tnumber" size="sm">
+              <Text color={cCard.txtColor} size="sm" variant="tnumber">
                 + {Number(reward.apy * 100).toFixed(2)}%
               </Text>
             </SimpleTooltip>
@@ -89,7 +89,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         <SimpleTooltip
           label={`The autocompounding APY for staking rewards of ${assetSymbols.ankrBNB}`}
         >
-          <Text color={cCard.txtColor} variant="tnumber" size="sm">
+          <Text color={cCard.txtColor} size="sm" variant="tnumber">
             + {Number(ankrBNBApr).toFixed(2)}%
           </Text>
         </SimpleTooltip>
@@ -98,14 +98,14 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
       {rewardsOfThisMarket.length > 0 ? (
         rewardsOfThisMarket.map((reward, index) => (
           <RewardsInfo
+            asset={asset}
+            chainId={poolChainId}
             key={`reward_${index}`}
             reward={reward}
-            chainId={poolChainId}
-            asset={asset}
           />
         ))
       ) : asset.plugin ? (
-        <NoRewardInfo poolChainId={poolChainId} pluginAddress={asset.plugin} />
+        <NoRewardInfo pluginAddress={asset.plugin} poolChainId={poolChainId} />
       ) : null}
     </VStack>
   );
