@@ -10,7 +10,7 @@ const Center = ({ children, expand, ...others }: CenterProps) => {
   }
 
   return (
-    <Flex justifyContent="center" alignItems="center" {...others}>
+    <Flex alignItems="center" justifyContent="center" {...others}>
       {children}
     </Flex>
   );
@@ -30,9 +30,9 @@ const Column = ({
 
   return (
     <Flex
+      alignItems={crossAxisAlignment}
       flexDirection="column"
       justifyContent={mainAxisAlignment}
-      alignItems={crossAxisAlignment}
       {...others}
     >
       {children}
@@ -54,9 +54,9 @@ const Row = ({
 
   return (
     <Flex
+      alignItems={crossAxisAlignment}
       flexDirection="row"
       justifyContent={mainAxisAlignment}
-      alignItems={crossAxisAlignment}
       {...others}
     >
       {children}
@@ -79,9 +79,9 @@ const RowOrColumn = ({
 
   return (
     <Flex
+      alignItems={crossAxisAlignment}
       flexDirection={isRow ? 'row' : 'column'}
       justifyContent={mainAxisAlignment}
-      alignItems={crossAxisAlignment}
       {...others}
     >
       {children}

@@ -10,11 +10,11 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
 
   return (
     <Flex
-      minH="100vh"
-      flexDir="column"
       alignItems="flex-start"
       bgColor={cPage.primary.bgColor}
+      flexDir="column"
       justifyContent="flex-start"
+      minH="100vh"
     >
       <MidasNavbar />
       {children}

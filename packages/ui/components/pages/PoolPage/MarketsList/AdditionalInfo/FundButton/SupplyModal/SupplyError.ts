@@ -1,5 +1,4 @@
 import { ComptrollerErrorCodes, CTokenErrorCodes } from '@midas-capital/types';
-import LogRocket from 'logrocket';
 
 export function SupplyError(errorCode: number) {
   let err;
@@ -12,8 +11,6 @@ export function SupplyError(errorCode: number) {
   } else {
     err = new Error('CToken Code: ' + CTokenErrorCodes[errorCode]);
   }
-
-  LogRocket.captureException(err);
 
   throw err;
 }

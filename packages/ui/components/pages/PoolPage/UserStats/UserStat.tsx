@@ -15,16 +15,16 @@ import { useColors } from '@ui/hooks/useColors';
 
 const StatLabel = (props: StatLabelProps) => {
   const { cPage } = useColors();
-  return <ChakraStatLabel fontWeight="medium" color={cPage.primary.txtColor} {...props} />;
+  return <ChakraStatLabel color={cPage.primary.txtColor} fontWeight="medium" {...props} />;
 };
 
 const StatNumber = (props: StatNumberProps) => {
   const { cPage } = useColors();
   return (
     <ChakraStatNumber
+      color={cPage.primary.txtColor}
       fontSize={['2xl', '2xl', '3xl', '3xl']}
       fontWeight="bold"
-      color={cPage.primary.txtColor}
       {...props}
     />
   );
@@ -35,8 +35,8 @@ const Stat = (props: StatProps) => {
   return (
     <ChakraStat
       bg={cPage.primary.hoverColor}
-      borderWidth={1}
       borderColor={cPage.primary.borderColor}
+      borderWidth={1}
       rounded="lg"
       {...props}
     />
@@ -61,7 +61,7 @@ export const UserStat = ({
           <StatNumber fontWeight="bold">{value || '0.00%'}</StatNumber>
           {secondValue && (
             <Hide below="lg">
-              <StatHelpText opacity={0.4} m={0}>{`${secondValue} / year`}</StatHelpText>
+              <StatHelpText m={0} opacity={0.4}>{`${secondValue} / year`}</StatHelpText>
             </Hide>
           )}
         </HStack>

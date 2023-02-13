@@ -38,7 +38,6 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
 
   return (
     <PopoverTooltip
-      placement={'top-start'}
       body={
         <>
           {pluginInfo && (
@@ -50,10 +49,10 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
                 <Link
                   href={pluginInfo?.apyDocsUrl}
                   isExternal
-                  variant={'color'}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
+                  variant={'color'}
                 >
                   Vault Details
                 </Link>
@@ -63,10 +62,10 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
                   <Link
                     href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
                     isExternal
-                    variant={'color'}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
+                    variant={'color'}
                   >
                     in our Docs <ExternalLinkIcon mx="2px" />
                   </Link>
@@ -77,7 +76,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
             </>
           )}
 
-          <VStack width={'100%'} alignItems={'flex-start'}>
+          <VStack alignItems={'flex-start'} width={'100%'}>
             {reward.status === 'paused' ? (
               <Text>Strategy is currently paused by strategy provider.</Text>
             ) : reward.status === 'unknown' ? (
@@ -122,34 +121,35 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
           </VStack>
         </>
       }
+      placement={'top-start'}
     >
       <HStack justifyContent={'flex-end'}>
         {(reward as FlywheelReward).token ? (
           <>
-            <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
+            <Text fontWeight={'medium'} mr={-1} size="sm" variant="tnumber">
               +
             </Text>
             <TokenIcon
               address={(reward as FlywheelReward).token}
               chainId={chainId}
               size="xs"
-              withTooltip={false}
               withMotion={false}
+              withTooltip={false}
             />
           </>
         ) : pluginInfo?.icon ? (
           <>
-            <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
+            <Text fontWeight={'medium'} mr={-1} size="sm" variant="tnumber">
               +
             </Text>
-            <Image src={pluginInfo.icon} alt="plugin" height={6} />
+            <Image alt="plugin" height={6} src={pluginInfo.icon} />
           </>
         ) : (
           <Text>+ 🔌</Text>
         )}
 
         {reward.status !== 'paused' && reward.apy !== undefined ? (
-          <Text fontWeight={'medium'} title={reward.apy * 100 + '%'} size="sm" variant="tnumber">
+          <Text fontWeight={'medium'} size="sm" title={reward.apy * 100 + '%'} variant="tnumber">
             {(reward.apy * 100).toFixed(2) + '%'}
           </Text>
         ) : (

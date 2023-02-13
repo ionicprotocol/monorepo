@@ -208,9 +208,19 @@ export const BorrowModal = ({
           description: 'Successfully borrowed!',
         });
       }
-    } catch (e) {
+    } catch (error) {
       setFailedStep(1);
-      handleGenericError(e, errorToast);
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        token: asset.cToken,
+        comptroller: comptrollerAddress,
+        amount,
+      };
+      const sentryInfo = {
+        contextName: 'Borrowing',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsBorrowing(false);
     }
@@ -218,8 +228,11 @@ export const BorrowModal = ({
 
   return (
     <Modal
-      motionPreset="slideInBottom"
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isCentered
       isOpen={isOpen}
+      motionPreset="slideInBottom"
       onClose={() => {
         onClose();
         if (!isBorrowing) {
@@ -229,43 +242,40 @@ export const BorrowModal = ({
           setSteps([...BORROW_STEPS(asset.underlyingSymbol)]);
         }
       }}
-      isCentered
-      closeOnOverlayClick={false}
-      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
         <ModalBody p={0}>
           <Column
+            bg={cCard.bgColor}
+            borderRadius={16}
+            color={cCard.txtColor}
+            crossAxisAlignment="flex-start"
             id="fundOperationModal"
             mainAxisAlignment="flex-start"
-            crossAxisAlignment="flex-start"
-            bg={cCard.bgColor}
-            color={cCard.txtColor}
-            borderRadius={16}
           >
-            {!isBorrowing && <ModalCloseButton top={4} right={4} />}
+            {!isBorrowing && <ModalCloseButton right={4} top={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}
-                failedStep={failedStep}
-                steps={steps}
-                isBorrowing={isBorrowing}
-                poolChainId={poolChainId}
                 amount={amount}
                 asset={asset}
+                failedStep={failedStep}
+                isBorrowing={isBorrowing}
+                poolChainId={poolChainId}
+                steps={steps}
               />
             ) : (
               <>
-                <HStack width="100%" my={4} justifyContent="center">
+                <HStack justifyContent="center" my={4} width="100%">
                   <Text variant="title">Borrow</Text>
-                  <Box height="36px" width="36px" mx={2}>
-                    <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
+                  <Box height="36px" mx={2} width="36px">
+                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
                   </Box>
                   <EllipsisText
-                    variant="title"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
                     maxWidth="100px"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    variant="title"
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
@@ -274,18 +284,18 @@ export const BorrowModal = ({
                 <Divider />
 
                 <Column
-                  mainAxisAlignment="flex-start"
                   crossAxisAlignment="center"
-                  p={4}
-                  height="100%"
-                  width="100%"
                   gap={4}
+                  height="100%"
+                  mainAxisAlignment="flex-start"
+                  p={4}
+                  width="100%"
                 >
                   <Alerts
-                    poolChainId={poolChainId}
                     asset={asset}
                     assets={assets}
                     comptrollerAddress={comptrollerAddress}
+                    poolChainId={poolChainId}
                   />
                   {!borrowCaps || asset.totalBorrowFiat < borrowCaps.usdCap ? (
                     <>
@@ -294,32 +304,32 @@ export const BorrowModal = ({
                       borrowLimitTotal &&
                       borrowLimitTotal !== 0 ? (
                         <MaxBorrowSlider
-                          userEnteredAmount={userEnteredAmount}
-                          updateAmount={updateAmount}
-                          borrowableAmount={maxBorrowAmount.number}
                           asset={asset}
-                          poolChainId={poolChainId}
                           borrowBalanceFiat={borrowBalanceFiat}
                           borrowLimitTotal={borrowLimitTotal}
+                          borrowableAmount={maxBorrowAmount.number}
+                          poolChainId={poolChainId}
+                          updateAmount={updateAmount}
+                          userEnteredAmount={userEnteredAmount}
                         />
                       ) : null}
-                      <Column gap={1} w="100%" mt={4}>
+                      <Column gap={1} mt={4} w="100%">
                         <AmountInput
                           asset={asset}
                           poolChainId={poolChainId}
-                          userEnteredAmount={userEnteredAmount}
                           updateAmount={updateAmount}
+                          userEnteredAmount={userEnteredAmount}
                         />
 
                         <Balance asset={asset} />
                       </Column>
                       <StatsColumn
-                        mode={FundOperationMode.BORROW}
                         amount={amount}
-                        assets={assets}
                         asset={asset}
-                        poolChainId={poolChainId}
+                        assets={assets}
                         comptrollerAddress={comptrollerAddress}
+                        mode={FundOperationMode.BORROW}
+                        poolChainId={poolChainId}
                       />
                       {isAmountValid && isRisky && (
                         <Box pt={4}>
@@ -335,11 +345,11 @@ export const BorrowModal = ({
                       )}
 
                       <Button
-                        id="confirmFund"
-                        width="100%"
-                        onClick={onConfirm}
-                        isDisabled={!isAmountValid || (isRisky && !isRiskyConfirmed)}
                         height={16}
+                        id="confirmFund"
+                        isDisabled={!isAmountValid || (isRisky && !isRiskyConfirmed)}
+                        onClick={onConfirm}
+                        width="100%"
                       >
                         {btnStr}
                       </Button>

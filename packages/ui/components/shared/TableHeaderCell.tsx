@@ -10,7 +10,7 @@ export const TableHeaderCell = ({
   children: ReactNode;
 }) => {
   return (
-    <HStack spacing={1} cursor={context.column.getCanSort() ? 'pointer' : 'default'}>
+    <HStack cursor={context.column.getCanSort() ? 'pointer' : 'default'} spacing={1}>
       <Text
         fontWeight={context.column.getIsSorted() ? 'bold' : 'normal'}
         size="sm"

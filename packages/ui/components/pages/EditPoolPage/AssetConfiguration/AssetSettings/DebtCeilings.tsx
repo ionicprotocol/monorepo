@@ -156,8 +156,19 @@ export const DebtCeilings = ({
       successToast({
         description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
       });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        collateralAsset,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        debtCeiling,
+      };
+      const sentryInfo = {
+        contextName: 'Updating debt ceiling',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
       setDebtCeilingsDefault();
     } finally {
       setIsEditDebtCeiling(false);
@@ -297,8 +308,8 @@ export const DebtCeilings = ({
         {isEditDebtCeiling ? (
           <>
             <Button
-              isLoading={isSubmitting}
               isDisabled={isSubmitting || watchDebtCeiling === debtCeilingState?.debtCeiling}
+              isLoading={isSubmitting}
               type="submit"
             >
               Save

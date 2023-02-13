@@ -14,22 +14,22 @@ export const RewardsBanner = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
+      initial={{ opacity: 0, y: 40 }}
       style={{ width: '100%' }}
     >
-      <GradientButton isSelected width="100%" height="50px" justifyContent="flex-start" mt={4}>
-        <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" h="100%" w="100" p={3}>
-          <Text size="md" ml={2} mt="2px">
+      <GradientButton height="50px" isSelected justifyContent="flex-start" mt={4} width="100%">
+        <Row crossAxisAlignment="center" h="100%" mainAxisAlignment="flex-start" p={3} w="100">
+          <Text ml={2} mt="2px" size="md">
             This pool is offering rewards
           </Text>
           <TokenIconGroup
-            tokenAddresses={tokens}
+            chainId={poolChainId}
             ml={2}
             mr={2}
             popOnHover={true}
-            chainId={poolChainId}
+            tokenAddresses={tokens}
           />
         </Row>
       </GradientButton>

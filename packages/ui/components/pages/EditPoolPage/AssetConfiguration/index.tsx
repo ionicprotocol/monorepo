@@ -30,18 +30,18 @@ const AssetButton = ({
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
   return (
-    <Box mr={2} mb={2} {...boxProps}>
+    <Box mb={2} mr={2} {...boxProps}>
       <CButton
-        variant="filter"
+        isDisabled={!isEditableAdmin}
         isSelected={asset.cToken === selectedAsset.cToken}
         onClick={() => {
           setSelectedAsset(asset);
         }}
         px={2}
-        isDisabled={!isEditableAdmin}
+        variant="filter"
       >
-        <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
-        <Center px={1} fontWeight="bold">
+        <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="sm" />
+        <Center fontWeight="bold" px={1}>
           {tokenData?.symbol ?? asset.underlyingSymbol}
         </Center>
       </CButton>
@@ -65,13 +65,13 @@ const AssetConfiguration = ({
 
   return (
     <Column
-      mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
-      width="100%"
       flexShrink={0}
+      mainAxisAlignment="flex-start"
+      width="100%"
     >
       <ConfigRow mainAxisAlignment="space-between">
-        <Text size="md" fontWeight="bold">
+        <Text fontWeight="bold" size="md">
           Assets Configuration
         </Text>
 
@@ -89,18 +89,18 @@ const AssetConfiguration = ({
       {selectedAsset ? (
         <>
           <ConfigRow>
-            <Text size="md" mr={4}>
+            <Text mr={4} size="md">
               Assets:
             </Text>
             <Flex wrap="wrap">
               {assets.map((asset) => (
                 <AssetButton
-                  key={'Select_' + asset.underlyingSymbol}
                   asset={asset}
+                  isEditableAdmin={isEditableAdmin}
+                  key={'Select_' + asset.underlyingSymbol}
+                  poolChainId={poolChainId}
                   selectedAsset={selectedAsset}
                   setSelectedAsset={setSelectedAsset}
-                  isEditableAdmin={isEditableAdmin}
-                  poolChainId={poolChainId}
                 />
               ))}
             </Flex>
@@ -109,11 +109,11 @@ const AssetConfiguration = ({
           <Divider />
 
           <EditAssetSettings
-            comptrollerAddress={comptrollerAddress}
-            selectedAsset={selectedAsset}
-            poolChainId={poolChainId}
-            setSelectedAsset={setSelectedAsset}
             assets={assets}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+            selectedAsset={selectedAsset}
+            setSelectedAsset={setSelectedAsset}
           />
         </>
       ) : null}

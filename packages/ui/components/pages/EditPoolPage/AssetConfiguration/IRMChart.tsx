@@ -29,11 +29,11 @@ const IRMChart = ({
   );
 
   return (
-    <Center width="100%" height="2xs">
+    <Center height="2xs" width="100%">
       {isLoading && <Spinner />}
       {error && <Text>{"No graph is available for this asset's interest curves."}</Text>}
       {data && (
-        <Box height="200px" width="100%" px={3}>
+        <Box height="200px" px={3} width="100%">
           <UtilizationChart irmToCurve={data} />
         </Box>
       )}

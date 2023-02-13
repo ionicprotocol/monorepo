@@ -89,46 +89,46 @@ function MaxBorrowSlider({
 
   return (
     <Box width="100%">
-      <HStack width="100%" mt={9} spacing={4} mb={4}>
+      <HStack mb={4} mt={9} spacing={4} width="100%">
         <Text size="md">$0.00</Text>
-        <HStack width="100%" spacing={0}>
+        <HStack spacing={0} width="100%">
           {borrowedPercent !== 0 && (
             <Slider
-              value={borrowedPercent}
-              min={0}
               max={borrowedPercent}
+              min={0}
+              value={borrowedPercent}
               width={`${borrowedPercent}%`}
             >
               <SliderMark
-                value={borrowedPercent}
-                mt={4}
-                ml={`-${smallUsdFormatter(borrowBalanceFiat).length * 5}px`}
                 fontSize="sm"
+                ml={`-${smallUsdFormatter(borrowBalanceFiat).length * 5}px`}
+                mt={4}
+                value={borrowedPercent}
               >
                 <Text size="md">{smallUsdFormatter(borrowBalanceFiat)}</Text>
               </SliderMark>
               <SliderTrack>
                 <SliderFilledTrack bg={cPage.primary.borderColor} />
               </SliderTrack>
-              <SliderThumb width={1} background={cPage.primary.borderColor} zIndex={2} />
+              <SliderThumb background={cPage.primary.borderColor} width={1} zIndex={2} />
             </Slider>
           )}
           {borrowablePercent !== 0 && (
             <Slider
-              id="slider"
               defaultValue={borrowedPercent}
-              min={borrowedPercent}
-              max={borrowedPercent + borrowablePercent}
-              onChange={handleSliderValueChange}
-              marginLeft={0}
-              width={`${borrowablePercent}%`}
-              value={sliderValue}
               focusThumbOnChange={false}
+              id="slider"
+              marginLeft={0}
+              max={borrowedPercent + borrowablePercent}
+              min={borrowedPercent}
+              onChange={handleSliderValueChange}
+              value={sliderValue}
+              width={`${borrowablePercent}%`}
             >
               <SliderTrack>
                 <SliderFilledTrack bg={isRisky ? 'red' : undefined} />
               </SliderTrack>
-              <SimpleTooltip label={`${sliderValue}%`} isOpen>
+              <SimpleTooltip isOpen label={`${sliderValue}%`}>
                 <SliderThumb zIndex={2} />
               </SimpleTooltip>
             </Slider>

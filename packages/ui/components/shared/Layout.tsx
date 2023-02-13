@@ -29,21 +29,21 @@ const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <LoadingOverlay isLoading={isGlobalLoading}>
       <Column
-        height="100%"
-        flex={1}
-        mainAxisAlignment="flex-start"
-        crossAxisAlignment="center"
         bgColor={cPage.primary.bgColor}
+        crossAxisAlignment="center"
+        flex={1}
+        height="100%"
+        mainAxisAlignment="flex-start"
       >
         <Container maxWidth="8xl" px={{ base: 2, md: 4 }}>
           <Column
-            width={'98%'}
-            height="100%"
-            flex={1}
-            mx="auto"
-            mainAxisAlignment="center"
             crossAxisAlignment="stretch"
+            flex={1}
+            height="100%"
+            mainAxisAlignment="center"
+            mx="auto"
             position="relative"
+            width={'98%'}
           >
             {isAcceptedTerms !== undefined && <Terms isAcceptedTerms={isAcceptedTerms} />}
             {children}

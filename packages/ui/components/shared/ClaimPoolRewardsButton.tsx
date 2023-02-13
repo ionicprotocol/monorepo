@@ -41,26 +41,26 @@ const ClaimPoolRewardsButton = ({
       {claimableRewards && claimableRewards.length > 0 && (
         <GradientButton
           isSelected
+          justifySelf="center"
           onClick={() => {
             openClaimModal();
             refetchRewards();
           }}
           width="fit-content"
-          justifySelf="center"
         >
           <HStack spacing={1}>
             <Text
-              fontWeight="semibold"
               color={cPage.secondary.txtColor}
-              width="max-content"
+              fontWeight="semibold"
               mt="2px"
+              width="max-content"
             >
               Claim Rewards
             </Text>
             {currentChain && (
-              <AvatarGroup size="xs" max={30} my={2}>
+              <AvatarGroup max={30} my={2} size="xs">
                 {claimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
-                  return <TokenIcon key={index} address={rD.rewardToken} chainId={poolChainId} />;
+                  return <TokenIcon address={rD.rewardToken} chainId={poolChainId} key={index} />;
                 })}
               </AvatarGroup>
             )}
@@ -70,9 +70,9 @@ const ClaimPoolRewardsButton = ({
 
       <Box position="absolute">
         <ClaimRewardsModal
+          claimableRewards={claimableRewardsOfChain}
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
-          claimableRewards={claimableRewardsOfChain}
           refetch={refetchRewards}
         />
       </Box>

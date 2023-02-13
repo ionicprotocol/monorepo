@@ -17,19 +17,19 @@ export const GradientText = ({
 
   return (
     <MotionText
-      initial={
+      animate={
         isEnabled
           ? {
-              background: gradientBackground[0],
+              background: gradientBackground,
               WebkitTextFillColor: 'transparent',
               WebkitBackgroundClip: 'text',
             }
           : {}
       }
-      animate={
+      initial={
         isEnabled
           ? {
-              background: gradientBackground,
+              background: gradientBackground[0],
               WebkitTextFillColor: 'transparent',
               WebkitBackgroundClip: 'text',
             }

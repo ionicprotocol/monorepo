@@ -3,6 +3,7 @@ import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPlug
 import BeefyAPYProvider from './BeefyAPYProvider';
 import CurveGaugeAPYProvider from './CurveGaugeAPYProvider';
 import DotDotAPYProvider from './DotDotAPYProvider';
+import HelioAPYProvider from './HelioAPYProvider';
 import MimoAPYProvider from './MimoAPYProvider';
 import StellaSwapAPYProvider from './StellaSwapAPYProvider';
 
@@ -15,6 +16,7 @@ const providerMap: ProviderMap = {
   [Strategy.Arrakis]: MimoAPYProvider,
   [Strategy.DotDot]: DotDotAPYProvider,
   [Strategy.CurveGauge]: CurveGaugeAPYProvider,
+  [Strategy.HelioHAY]: HelioAPYProvider,
   [Strategy.Stella]: StellaSwapAPYProvider,
 };
 
