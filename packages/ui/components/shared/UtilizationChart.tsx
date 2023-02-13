@@ -62,35 +62,32 @@ const UtilizationChart = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer height="100%" width="100%">
       <AreaChart data={irmToCurve.rates} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
         <CartesianGrid strokeWidth={0} />
         <XAxis
-          ticks={[0, 25, 50, 75, 100]}
           minTickGap={10}
           padding={{ left: 0, right: 10 }}
-          tickFormatter={(label) => `${label}%`}
           tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
+          tickFormatter={(label) => `${label}%`}
+          ticks={[0, 25, 50, 75, 100]}
         >
-          <Label value="Utilization" offset={-10} position="insideBottom" fill={cCard.txtColor} />
+          <Label fill={cCard.txtColor} offset={-10} position="insideBottom" value="Utilization" />
         </XAxis>
         <YAxis
           domain={[0, 110]}
-          ticks={[0, 50, 100]}
-          tickFormatter={(label) => `${label}%`}
           tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
+          tickFormatter={(label) => `${label}%`}
+          ticks={[0, 50, 100]}
         >
-          <Label angle={-90} value="Rate" offset={0} position="insideLeft" fill={cCard.txtColor} />
+          <Label angle={-90} fill={cCard.txtColor} offset={0} position="insideLeft" value="Rate" />
         </YAxis>
         <Tooltip
-          wrapperStyle={{ outline: 'none' }}
           content={<CustomTooltip currentUtilization={currentUtilization} />}
+          wrapperStyle={{ outline: 'none' }}
         />
         {currentUtilization && (
           <ReferenceLine
-            x={Number(currentUtilization)}
-            stroke={cCard.txtColor}
-            strokeOpacity={0.7}
             fill={cCard.txtColor}
             label={{
               value: 'Current',
@@ -98,47 +95,50 @@ const UtilizationChart = ({
               position: 'top',
               fillOpacity: 0.7,
             }}
+            stroke={cCard.txtColor}
+            strokeOpacity={0.7}
+            x={Number(currentUtilization)}
           />
         )}
         {/* <ReferenceLine y={150} label="Max" stroke="red" strokeDasharray="3 3" /> */}
         <Legend
-          verticalAlign="top"
           content={
             <CustomLegend
-              lineProps={lineProps}
-              selectLine={selectLine}
               handleLegendMouseEnter={handleLegendMouseEnter}
               handleLegendMouseLeave={handleLegendMouseLeave}
+              lineProps={lineProps}
+              selectLine={selectLine}
             />
           }
+          verticalAlign="top"
         />
         {keys.length > 0 && (
           <>
             <Area
-              type="monotone"
+              activeDot={{ strokeWidth: 0, r: 5 }}
               dataKey={keys[1]}
+              dot={{ r: 0 }}
+              fill={supplyRateColor}
+              fillOpacity={0.2}
+              hide={lineProps[keys[1]] === true}
+              name="Supply Rate"
+              opacity={Number(lineProps.hover === keys[1] || !lineProps.hover ? 1 : 0.2)}
               stroke={supplyRateColor}
               strokeWidth={3}
-              activeDot={{ strokeWidth: 0, r: 5 }}
-              dot={{ r: 0 }}
-              name="Supply Rate"
-              hide={lineProps[keys[1]] === true}
-              opacity={Number(lineProps.hover === keys[1] || !lineProps.hover ? 1 : 0.2)}
-              fillOpacity={0.2}
-              fill={supplyRateColor}
+              type="monotone"
             />
             <Area
-              type="monotone"
+              activeDot={{ strokeWidth: 0, r: 5 }}
               dataKey={keys[2]}
+              dot={{ r: 0 }}
+              fill={borrowRateColor}
+              fillOpacity={0.2}
+              hide={lineProps[keys[2]] === true}
+              name="Borrow Rate"
+              opacity={Number(lineProps.hover === keys[2] || !lineProps.hover ? 1 : 0.2)}
               stroke={borrowRateColor}
               strokeWidth={3}
-              activeDot={{ strokeWidth: 0, r: 5 }}
-              dot={{ r: 0 }}
-              name="Borrow Rate"
-              hide={lineProps[keys[2]] === true}
-              opacity={Number(lineProps.hover === keys[2] || !lineProps.hover ? 1 : 0.2)}
-              fillOpacity={0.2}
-              fill={borrowRateColor}
+              type="monotone"
             />
           </>
         )}
@@ -154,31 +154,31 @@ const CustomTooltip = (props: any) => {
   if (active && payload && payload.length) {
     return (
       <VStack
-        borderWidth={2}
-        borderColor={cCard.borderColor}
         bgColor={cCard.bgColor}
+        borderColor={cCard.borderColor}
         borderRadius={4}
+        borderWidth={2}
         spacing={0}
       >
         <Text
-          fontWeight="bold"
-          width="100%"
-          p={2}
-          borderBottomWidth={1}
-          borderBottomColor={cCard.borderColor}
-          textAlign="left"
           bgColor="ecru20alpha"
+          borderBottomColor={cCard.borderColor}
+          borderBottomWidth={1}
+          fontWeight="bold"
+          p={2}
+          textAlign="left"
+          width="100%"
         >{`${label}% Utilization${
           label.toString() === currentUtilization ? ' (Current)' : ''
         }`}</Text>
         {payload[0] && (
-          <HStack color={payload[0].color} p={2} alignSelf="flex-start">
+          <HStack alignSelf="flex-start" color={payload[0].color} p={2}>
             <Text>{payload[0].name}: </Text>
             <Text fontWeight="bold">{Number(payload[0].value).toFixed(2)}%</Text>
           </HStack>
         )}
         {payload[1] && (
-          <HStack color={payload[1].color} px={2} pb={2} alignSelf="flex-start">
+          <HStack alignSelf="flex-start" color={payload[1].color} pb={2} px={2}>
             <Text>{payload[1].name}: </Text>
             <Text fontWeight="bold">{Number(payload[1].value).toFixed(2)}%</Text>
           </HStack>
@@ -207,18 +207,18 @@ const CustomLegend = (
         payload.map((item: any, index: number) => {
           return (
             <HStack
-              key={index}
               cursor="pointer"
+              key={index}
               onClick={() => selectLine(item.dataKey)}
               onMouseEnter={() => handleLegendMouseEnter(item.dataKey)}
               onMouseLeave={() => handleLegendMouseLeave()}
               pb={4}
             >
               <AiOutlineLineChart
-                fontSize={20}
                 color={lineProps[item.dataKey] ? cCard.txtColor : item.color}
+                fontSize={20}
               />
-              <Text pt={2} pb={1} color={lineProps[item.dataKey] ? cCard.txtColor : item.color}>
+              <Text color={lineProps[item.dataKey] ? cCard.txtColor : item.color} pb={1} pt={2}>
                 {item.value}
               </Text>
             </HStack>

@@ -308,8 +308,8 @@ export const DebtCeilings = ({
         {isEditDebtCeiling ? (
           <>
             <Button
-              isLoading={isSubmitting}
               isDisabled={isSubmitting || watchDebtCeiling === debtCeilingState?.debtCeiling}
+              isLoading={isSubmitting}
               type="submit"
             >
               Save

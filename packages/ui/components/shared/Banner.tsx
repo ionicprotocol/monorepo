@@ -15,7 +15,7 @@ export const Banner = ({
   status?: string;
 } & AlertProps) => {
   return (
-    <Alert status={status} justifyContent="center" {...alertProps}>
+    <Alert justifyContent="center" status={status} {...alertProps}>
       <AlertIcon />
       <AlertDescription>
         <Text size="md">

@@ -79,15 +79,15 @@ const RemoveAssetButton = ({
 
   return isUpgradeable ? (
     <Box ml="auto">
-      <Button ml={2} onClick={onOpen} isLoading={isRemoving} isDisabled={!isEditableAdmin}>
+      <Button isDisabled={!isEditableAdmin} isLoading={isRemoving} ml={2} onClick={onOpen}>
         Remove {asset.underlyingSymbol}
       </Button>
       <ConfirmDeleteAlert
-        onConfirm={removeAsset}
-        onClose={onClose}
-        isOpen={isOpen}
-        title={`Are you sure to remove ${asset.underlyingSymbol}?`}
         description="You can't undo this action afterwards"
+        isOpen={isOpen}
+        onClose={onClose}
+        onConfirm={removeAsset}
+        title={`Are you sure to remove ${asset.underlyingSymbol}?`}
       />
     </Box>
   ) : null;

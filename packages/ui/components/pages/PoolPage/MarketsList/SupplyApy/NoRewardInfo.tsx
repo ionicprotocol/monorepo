@@ -24,10 +24,10 @@ export const NoRewardInfo = ({
               <ChakraLink
                 href={pluginInfo?.apyDocsUrl}
                 isExternal
-                variant={'color'}
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
+                variant={'color'}
               >
                 {pluginInfo?.apyDocsUrl} <ExternalLinkIcon mx="2px" />
               </ChakraLink>{' '}
@@ -40,10 +40,10 @@ export const NoRewardInfo = ({
       }
     >
       <HStack marginTop="-2px !important">
-        <Text size="md" mr={-1}>
+        <Text mr={-1} size="md">
           +
         </Text>
-        {pluginInfo?.icon ? <Image src={pluginInfo.icon} alt="" height="6" /> : '🔌'}{' '}
+        {pluginInfo?.icon ? <Image alt="" height="6" src={pluginInfo.icon} /> : '🔌'}{' '}
         <InfoOutlineIcon />
       </HStack>
     </PopoverTooltip>

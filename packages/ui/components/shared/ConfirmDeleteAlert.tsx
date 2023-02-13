@@ -26,7 +26,7 @@ export default function ConfirmDeleteAlert({
   const cancelRef = useRef<any>(null);
 
   return (
-    <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose} isCentered>
+    <AlertDialog isCentered isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -36,10 +36,10 @@ export default function ConfirmDeleteAlert({
           <AlertDialogBody>{description}</AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose} variant="_outline">
+            <Button onClick={onClose} ref={cancelRef} variant="_outline">
               Cancel
             </Button>
-            <Button onClick={onConfirm} ml={3}>
+            <Button ml={3} onClick={onConfirm}>
               Remove
             </Button>
           </AlertDialogFooter>

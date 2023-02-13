@@ -90,29 +90,29 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
       {pool && flywheel && (
         <EditFlywheelModal
           flywheel={flywheel}
-          pool={pool}
           isOpen={isEditOpen}
           onClose={closeEdit}
+          pool={pool}
         />
       )}
 
-      <MidasBox w="100%" h="100%" my={4}>
+      <MidasBox h="100%" my={4} w="100%">
         {isLoading && (
-          <Column w="100%" h="100%" mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
+          <Column crossAxisAlignment="center" h="100%" mainAxisAlignment="center" p={4} w="100%">
             <Spinner />
           </Column>
         )}
 
         {pool?.comptroller && isUpgradeable && (
-          <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
+          <Flex direction={{ base: 'column', md: 'row' }} p={4} w="100%">
             <Heading size="md">Flywheels</Heading>
 
-            <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
-              <Button variant="_ghost" onClick={openAdd} ml="auto" isDisabled={!isEditableAdmin}>
+            <Flex flexWrap="wrap" gap={2} ml="auto" mt={{ base: 2, md: 0 }}>
+              <Button isDisabled={!isEditableAdmin} ml="auto" onClick={openAdd} variant="_ghost">
                 Add existing Flywheel
               </Button>
               {config.isFWDeployEnabled ? (
-                <Button onClick={openCreate} ml="auto" isDisabled={!isEditableAdmin}>
+                <Button isDisabled={!isEditableAdmin} ml="auto" onClick={openCreate}>
                   Deploy new Flywheel
                 </Button>
               ) : null}
@@ -139,7 +139,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
                 </Center>
               ) : (
                 flywheels.map((fw, i) => (
-                  <FlywheelRow key={i} flywheel={fw} pool={pool} onClick={onFlywheelEdit} />
+                  <FlywheelRow flywheel={fw} key={i} onClick={onFlywheelEdit} pool={pool} />
                 ))
               )}
             </Tbody>
@@ -188,8 +188,8 @@ const FlywheelRow = ({
   return (
     <Tr
       _hover={{ background: cCard.hoverBgColor, cursor: 'pointer' }}
-      p={4}
       onClick={() => onClick(flywheel)}
+      p={4}
     >
       <Td>
         <ClipboardValue label={shortAddress(flywheel.address)} value={flywheel.address} />
@@ -198,16 +198,16 @@ const FlywheelRow = ({
       <Td>
         <HStack>
           {tokenData?.logoURL ? (
-            <Image alt="" src={tokenData.logoURL} boxSize="30px" borderRadius="50%" />
+            <Image alt="" borderRadius="50%" boxSize="30px" src={tokenData.logoURL} />
           ) : null}
-          <Heading fontSize="22px" color={cCard.txtColor} ml={2}>
+          <Heading color={cCard.txtColor} fontSize="22px" ml={2}>
             {tokenData ? tokenData.symbol ?? 'Invalid Address!' : 'Loading...'}
           </Heading>
         </HStack>
       </Td>
       <Td>
         {!!underlyings.length ? (
-          <TokenIconGroup tokenAddresses={underlyings} popOnHover={true} chainId={pool.chainId} />
+          <TokenIconGroup chainId={pool.chainId} popOnHover={true} tokenAddresses={underlyings} />
         ) : (
           <Badge>None</Badge>
         )}

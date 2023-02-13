@@ -67,7 +67,7 @@ const TransferOwnershipModal = ({
   };
 
   return (
-    <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isCentered isOpen={isOpen} motionPreset="slideInBottom" onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Transfer Ownership</ModalHeader>
@@ -76,16 +76,16 @@ const TransferOwnershipModal = ({
         <VStack m={4}>
           <Center px={4} width="100%">
             <Input
+              autoFocus
+              onChange={(event) => setInputAddress(event.target.value)}
+              placeholder="Transferring Address: 0xXX...XX"
               px={2}
               textAlign="center"
-              placeholder="Transferring Address: 0xXX...XX"
-              variant="outline"
               value={inputAddress}
-              onChange={(event) => setInputAddress(event.target.value)}
-              autoFocus
+              variant="outline"
             />
           </Center>
-          <Button disabled={isTransferring} onClick={transferOwnership} isLoading={isTransferring}>
+          <Button disabled={isTransferring} isLoading={isTransferring} onClick={transferOwnership}>
             Transfer Ownership
           </Button>
         </VStack>

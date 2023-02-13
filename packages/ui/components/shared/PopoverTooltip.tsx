@@ -39,15 +39,15 @@ export const PopoverTooltip = ({
   const { cPage } = useColors();
 
   return (
-    <Box width={width} height={height}>
+    <Box height={height} width={width}>
       <Popover placement={placement ? placement : 'top'} trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
         <PopoverContent
+          maxWidth={maxWidth ? maxWidth : '300px'}
           onClick={(e) => e.stopPropagation()}
           style={{ cursor: 'default' }}
-          width="auto"
-          maxWidth={maxWidth ? maxWidth : '300px'}
           textAlign="start"
+          width="auto"
         >
           {!hideArrow && (
             <PopoverArrow

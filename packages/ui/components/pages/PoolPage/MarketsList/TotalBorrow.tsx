@@ -26,12 +26,13 @@ export const TotalBorrow = ({
     <>
       {asset.totalBorrow.isZero() && asset.isBorrowPaused ? (
         <VStack alignItems="flex-end">
-          <Text size="md" fontWeight="medium" textAlign="center">
+          <Text fontWeight="medium" size="md" textAlign="center">
             -
           </Text>
         </VStack>
       ) : (
         <BalanceCell
+          cap={borrowCap}
           primary={{
             value: asset.totalBorrowFiat,
           }}
@@ -40,7 +41,6 @@ export const TotalBorrow = ({
             symbol: tokenData?.symbol || '',
             decimals: asset.underlyingDecimals.toNumber(),
           }}
-          cap={borrowCap}
         />
       )}
     </>

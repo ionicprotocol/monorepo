@@ -10,15 +10,15 @@ const FusePoolList = () => {
   if (error && error.code !== 'NETWORK_ERROR') {
     return (
       <AlertHero
-        status="warning"
-        variant="subtle"
-        title={error.reason ? error.reason : 'Unexpected Error'}
         description="Unable to retrieve Pools. Please try again later."
+        status="warning"
+        title={error.reason ? error.reason : 'Unexpected Error'}
+        variant="subtle"
       />
     );
   }
 
-  return <PoolsRowList poolsPerChain={poolsPerChain} isLoading={isLoading} />;
+  return <PoolsRowList isLoading={isLoading} poolsPerChain={poolsPerChain} />;
 };
 
 export default FusePoolList;
