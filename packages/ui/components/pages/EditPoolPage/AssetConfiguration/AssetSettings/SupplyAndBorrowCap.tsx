@@ -90,8 +90,18 @@ export const SupplyAndBorrowCaps = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated max supply amount!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        supplyCap,
+      };
+      const sentryInfo = {
+        contextName: 'Updating max supply amount',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsEditSupplyCap(false);
     }
@@ -111,8 +121,18 @@ export const SupplyAndBorrowCaps = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated max total borrow amount!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        borrowCap,
+      };
+      const sentryInfo = {
+        contextName: 'Updating max total borrow amount',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsEditBorrowCap(false);
     }

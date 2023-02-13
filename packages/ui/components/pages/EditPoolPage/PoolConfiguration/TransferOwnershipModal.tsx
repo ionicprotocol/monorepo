@@ -36,9 +36,10 @@ const TransferOwnershipModal = ({
   const transferOwnership = async () => {
     if (!currentSdk) return;
 
+    const verifiedAddress = utils.getAddress(inputAddress);
+
     try {
       setIsTransferring(true);
-      const verifiedAddress = utils.getAddress(inputAddress);
 
       const unitroller = currentSdk.createUnitroller(comptrollerAddress);
 
@@ -48,8 +49,16 @@ const TransferOwnershipModal = ({
       successToast({
         description: `${verifiedAddress} can now become the admin of this pool!`,
       });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        newAdmin: verifiedAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Transferring ownership',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsTransferring(false);
       setInputAddress('');

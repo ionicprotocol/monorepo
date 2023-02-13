@@ -134,8 +134,18 @@ const EditFlywheelModal = ({
       );
       await tx.wait();
       refetchRewardsBalance();
-    } catch (err) {
-      handleGenericError(err, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        rewardToken: flywheel.rewardToken,
+        chainId: currentSdk.chainId,
+        rewards: flywheel.rewards,
+        amount: fundingAmount,
+      };
+      const sentryInfo = {
+        contextName: 'Funding flywheel rewards contract',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setTransactionPending(false);
     }
@@ -151,11 +161,10 @@ const EditFlywheelModal = ({
 
   const updateRewardInfo = useCallback(async () => {
     if (!currentSdk) return;
+    if (!isAdmin) throw new Error('User is not admin of this Flywheel!');
+    if (!selectedMarket) throw new Error('No asset selected!');
 
     try {
-      if (!isAdmin) throw new Error('User is not admin of this Flywheel!');
-      if (!selectedMarket) throw new Error('No asset selected!');
-
       setTransactionPending(true);
 
       const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
@@ -166,8 +175,19 @@ const EditFlywheelModal = ({
 
       await tx.wait();
       refetchRewardsInfo();
-    } catch (err) {
-      handleGenericError(err, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        token: selectedMarket.cToken,
+        rewards: flywheel.rewards,
+        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
+        rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
+      };
+      const sentryInfo = {
+        contextName: 'Updating rewards info',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setTransactionPending(false);
       setDateEditable(false);
@@ -196,8 +216,17 @@ const EditFlywheelModal = ({
         refetchRewardsInfo();
         refetchEnabledMarkets();
         setTransactionPending(false);
-      } catch (err) {
-        handleGenericError(err, errorToast);
+      } catch (error) {
+        const sentryProperties = {
+          chainId: currentSdk.chainId,
+          token: market,
+          flywheel: flywheel.address,
+        };
+        const sentryInfo = {
+          contextName: 'Enabling rewards',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
       } finally {
         setTransactionPending(false);
       }

@@ -214,9 +214,19 @@ export const BorrowModal = ({
           description: 'Successfully borrowed!',
         });
       }
-    } catch (e) {
+    } catch (error) {
       setFailedStep(1);
-      handleGenericError(e, errorToast);
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        token: asset.cToken,
+        comptroller: comptrollerAddress,
+        amount,
+      };
+      const sentryInfo = {
+        contextName: 'Borrowing',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsBorrowing(false);
     }

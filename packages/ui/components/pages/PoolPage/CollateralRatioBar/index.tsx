@@ -1,6 +1,5 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
-import LogRocket from 'logrocket';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { MidasBox, MidasBoxProps } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
@@ -29,12 +28,6 @@ export const CollateralRatioBar = ({
       return 0;
     }
   }, [borrowFiat, maxBorrow]);
-
-  useEffect(() => {
-    if (ratio > 95) {
-      LogRocket.track('Fuse-AtRiskOfLiquidation');
-    }
-  }, [ratio]);
 
   return (
     <MidasBox height="65px" mx="auto" p={4} width={'100%'} {...midasBoxProps}>
