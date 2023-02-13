@@ -21,6 +21,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
+IS_SENTRY_ENABLED = "false"
 
 [context.development.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -30,6 +31,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
+IS_SENTRY_ENABLED = "false"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -39,6 +41,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "false"
 FANTOM = "false"
+IS_SENTRY_ENABLED = "true"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"

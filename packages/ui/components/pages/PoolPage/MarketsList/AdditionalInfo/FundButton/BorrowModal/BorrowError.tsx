@@ -1,5 +1,4 @@
 import { ComptrollerErrorCodes, CTokenErrorCodes } from '@midas-capital/types';
-import LogRocket from 'logrocket';
 
 export function BorrowError(errorCode: number, minBorrowUSD?: number) {
   let err;
@@ -18,8 +17,6 @@ export function BorrowError(errorCode: number, minBorrowUSD?: number) {
   } else {
     err = new Error('CToken Code: ' + CTokenErrorCodes[errorCode]);
   }
-
-  LogRocket.captureException(err);
 
   throw err;
 }

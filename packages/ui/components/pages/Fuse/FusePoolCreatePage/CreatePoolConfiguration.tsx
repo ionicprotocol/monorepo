@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
-import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -119,11 +118,16 @@ export const CreatePoolConfiguration = () => {
         description: 'You may now add assets to it.',
       });
 
-      LogRocket.track('Fuse-CreatePool');
-
       await router.push(`/${currentChain.id}/pool/${poolId}`);
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+      };
+      const sentryInfo = {
+        contextName: 'Creating pool',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
       setIsCreating(false);
     }
   };
