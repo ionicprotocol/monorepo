@@ -21,7 +21,6 @@ import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/typ
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ContractTransaction, utils } from 'ethers';
-import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -112,18 +111,25 @@ const PoolConfiguration = ({
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
-        LogRocket.captureException(err);
         throw err;
       }
       const tx = await comptroller._setWhitelistEnforcement(enforce);
       await tx.wait();
-      LogRocket.track('Fuse-ChangeWhitelistStatus');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully changed whitelist status!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        status: enforce,
+      };
+      const sentryInfo = {
+        contextName: 'Changing whitelist status',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -143,21 +149,28 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setWhitelistStatuses(newList, Array(newList.length).fill(true));
       await tx.wait();
-      LogRocket.track('Fuse-AddToWhitelist');
 
       await queryClient.refetchQueries();
 
       onChange(newList);
 
       successToast({ description: 'Successfully added!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        newUser,
+      };
+      const sentryInfo = {
+        contextName: 'Adding to whitelist',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -181,7 +194,6 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
@@ -190,15 +202,23 @@ const PoolConfiguration = ({
         whitelist?.map((user) => user !== removeUser)
       );
       await tx.wait();
-      LogRocket.track('Fuse-RemoveFromWhitelist');
 
       await queryClient.refetchQueries();
 
       onChange(whitelist.filter((v) => v !== removeUser));
 
       successToast({ description: 'Successfully removed from the whitelist!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        removeUser,
+      };
+      const sentryInfo = {
+        contextName: 'Removing from whitelist',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -212,18 +232,24 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
       const tx: ContractTransaction = await unitroller._toggleAdminRights(false);
       await tx.wait();
-      LogRocket.track('Fuse-RenounceOwnership');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully changed admin rights!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Changing admin rights',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -253,19 +279,26 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setCloseFactor(bigCloseFactor);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateCloseFactor');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated close factor!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        closeFactor: bigCloseFactor,
+      };
+      const sentryInfo = {
+        contextName: 'Updating close factor',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -293,29 +326,32 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setLiquidationIncentive(bigLiquidationIncentive);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateLiquidationIncentive');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated liquidation incentive!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        liquidationIncentive: bigLiquidationIncentive,
+      };
+      const sentryInfo = {
+        contextName: 'Updating liquidation incentive',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
   const onSave = async () => {
-    if (!currentSdk) return;
+    if (!currentSdk || !inputPoolName) return;
 
-    if (!inputPoolName) {
-      handleGenericError('Input pool name', errorToast);
-      return;
-    }
     try {
       setIsSaving(true);
       const FusePoolDirectory = currentSdk.getFusePoolDirectoryInstance(currentSdk.signer);
@@ -323,8 +359,17 @@ const PoolConfiguration = ({
         from: address,
       });
       await tx.wait();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        poolId,
+        poolName: inputPoolName,
+      };
+      const sentryInfo = {
+        contextName: 'Setting pool name',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsSaving(false);
     }

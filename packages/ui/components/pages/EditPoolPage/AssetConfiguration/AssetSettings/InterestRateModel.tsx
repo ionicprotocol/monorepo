@@ -100,9 +100,19 @@ export const InterestRateModel = ({
       await tx.wait();
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated interest rate modal!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+      successToast({ description: 'Successfully updated interest rate model!' });
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        interestRateModel,
+      };
+      const sentryInfo = {
+        contextName: 'Updating interest rate model',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }

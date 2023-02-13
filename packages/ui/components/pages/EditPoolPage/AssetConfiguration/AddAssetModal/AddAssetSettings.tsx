@@ -14,7 +14,6 @@ import {
 import { MarketConfig } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
-import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -151,8 +150,6 @@ export const AddAssetSettings = ({
     try {
       await currentSdk.deployAsset(marketConfig);
 
-      LogRocket.track('Fuse-DeployAsset');
-
       await queryClient.refetchQueries();
       // Wait 2 seconds for refetch and then close modal.
       // We do this instead of waiting the refetch because some fetches take a while or error out and we want to close now.
@@ -164,8 +161,18 @@ export const AddAssetSettings = ({
       });
 
       if (onSuccess) onSuccess();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        underlying: tokenData.address,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        symbol: tokenData.symbol,
+      };
+      const sentryInfo = {
+        contextName: 'Adding asset',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsDeploying(false);
     }

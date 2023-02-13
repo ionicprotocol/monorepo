@@ -72,8 +72,17 @@ export const AmountInput = ({
       }
 
       setIsLoading(false);
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
+      };
+      const sentryInfo = {
+        contextName: 'Fetching max supply amount',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 

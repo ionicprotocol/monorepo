@@ -7,6 +7,8 @@ import { RewardsResponse } from '../pages/api/rewards';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useErrorToast } from '@ui/hooks/useToast';
+import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface UseRewardsProps {
   chainId: number;
@@ -19,6 +21,7 @@ export interface UseRewardsData {
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
   const { data: poolData } = useFusePoolData(poolId, Number(chainId));
   const sdk = useSdk(chainId);
+  const errorToast = useErrorToast();
 
   return useQuery<UseRewardsData>(
     ['useRewards', chainId, poolData?.comptroller],
@@ -30,9 +33,18 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
               console.error('Unable to get onchain Flywheel Rewards with APY', exception);
               return [];
             }),
-            sdk.getFlywheelMarketRewardsByPool(poolData.comptroller).catch((exception) => {
-              // TODO LogRocket, this should never happen.
-              console.error('Unable to get onchain Flywheel Rewards without APY', exception);
+            sdk.getFlywheelMarketRewardsByPool(poolData.comptroller).catch((error) => {
+              const sentryProperties = {
+                chainId: sdk.chainId,
+                comptroller: poolData.comptroller,
+              };
+              const sentryInfo = {
+                contextName: 'getFlywheelMarketRewardsByPool',
+                properties: sentryProperties,
+              };
+              handleGenericError({ error, toast: errorToast, sentryInfo });
+
+              console.error('Unable to get onchain Flywheel Rewards without APY', error);
               return [];
             }),
           ]);
@@ -84,7 +96,6 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
           );
           return rewardsOfMarkets;
         } catch (exception) {
-          // TODO show error toast and send to logrocket
           console.error(exception);
         }
       }
