@@ -351,10 +351,10 @@ export const RepayModal = ({
                   <Column gap={1} width="100%">
                     <AmountInput
                       asset={asset}
+                      comptrollerAddress={comptrollerAddress}
                       optionToWrap={optionToWrap}
                       poolChainId={poolChainId}
                       setAmount={setAmount}
-                      comptrollerAddress={comptrollerAddress}
                     />
 
                     <Balance asset={asset} />
