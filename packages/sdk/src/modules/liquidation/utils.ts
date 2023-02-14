@@ -75,10 +75,11 @@ export const logLiquidation = (
   sdk.logger.info(
     `Gathered transaction data for safeLiquidate a ${liquidationTokenSymbol} borrow of kind ${liquidationStrategy}:
          - Liquidation Amount: ${utils.formatEther(liquidationAmount)}
-         - Underlying Collateral Token: ${borrower.collateral[0].underlyingSymbol}
-         - Underlying Debt Token: ${borrower.debt[0].underlyingSymbol}
+         - Underlying Collateral Token: ${borrower.collateral[0].underlyingSymbol} ${borrower.collateral[0].cToken}
+         - Underlying Debt Token: ${borrower.debt[0].underlyingSymbol} ${borrower.debt[0].cToken}
          - Funding the liquidation with: ${debtFundingStrategies}
          - Exchanging liquidated tokens to: ${exchangeToTokenAddress}
+         - Borrower: ${borrower.account}
          `
   );
 };
