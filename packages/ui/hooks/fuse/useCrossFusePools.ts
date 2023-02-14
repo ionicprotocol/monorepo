@@ -3,7 +3,7 @@ import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useUSDPrices } from '@ui/hooks/useUSDPrices';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
@@ -11,7 +11,7 @@ import { poolSort } from '@ui/utils/sorts';
 
 export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();
-  const { data: prices } = useUSDPrices(chainIds);
+  const { data: prices } = useAllUsdPrices();
 
   const poolsQueries = useQueries({
     queries: chainIds.map((chainId) => {

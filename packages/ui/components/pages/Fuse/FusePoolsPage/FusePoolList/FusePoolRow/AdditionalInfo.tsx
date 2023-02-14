@@ -20,7 +20,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId, getScanUrlByChainId } from '@ui/utils/networkData';
@@ -29,7 +29,14 @@ import { shortAddress } from '@ui/utils/shortAddress';
 export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
   const pool: PoolData = row.original.poolName;
   const { getSdk, address } = useMultiMidas();
-  const { data: usdPrice } = useNativePriceInUSD(pool.chainId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[pool.chainId.toString()]) {
+      return usdPrices[pool.chainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, pool.chainId]);
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
   const poolDetails = usePoolDetails(pool.assets, pool.chainId);
   const sdk = useMemo(() => getSdk(pool.chainId), [getSdk, pool.chainId]);

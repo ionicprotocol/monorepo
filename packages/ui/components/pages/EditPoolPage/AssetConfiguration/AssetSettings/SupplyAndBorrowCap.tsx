@@ -18,7 +18,7 @@ import {
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { CButton } from '@ui/components/shared/Button';
@@ -27,7 +27,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { BORROW_CAP, DEFAULT_DECIMALS, SUPPLY_CAP } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -45,7 +45,14 @@ export const SupplyAndBorrowCaps = ({
   const queryClient = useQueryClient();
   const { cToken: cTokenAddress } = selectedAsset;
   const { currentSdk } = useMultiMidas();
-  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
   const [isEditSupplyCap, setIsEditSupplyCap] = useState<boolean>(false);
   const [isEditBorrowCap, setIsEditBorrowCap] = useState<boolean>(false);
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);

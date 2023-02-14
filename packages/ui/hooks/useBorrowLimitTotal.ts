@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
+import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 export const useBorrowLimitTotal = (
@@ -10,7 +11,14 @@ export const useBorrowLimitTotal = (
   poolChainId: number,
   options?: { ignoreIsEnabledCheckFor?: string }
 ) => {
-  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   return useQuery(
     [

@@ -18,7 +18,7 @@ import {
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { CButton } from '@ui/components/shared/Button';
@@ -27,9 +27,9 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { BORROW_CAP, DEBT_CEILING, DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -49,7 +49,14 @@ export const DebtCeilings = ({
 }: DebtCeilingsProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
   const { currentSdk } = useMultiMidas();
-  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
