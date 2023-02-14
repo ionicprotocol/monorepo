@@ -2,7 +2,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 
 import AssetConfiguration from '@ui/components/pages/EditPoolPage/AssetConfiguration';
 import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';
@@ -17,9 +17,9 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 
 const EditPoolPage = memo(() => {
@@ -37,7 +37,14 @@ const EditPoolPage = memo(() => {
   const poolId = router.query.poolId as string;
   const poolChainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(poolChainId));
-  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
   const isAdmin = useIsComptrollerAdmin(data?.comptroller, data?.chainId);
   const isEditableAdmin = useIsEditableAdmin(data?.comptroller, Number(poolChainId));
   const { cPage } = useColors();

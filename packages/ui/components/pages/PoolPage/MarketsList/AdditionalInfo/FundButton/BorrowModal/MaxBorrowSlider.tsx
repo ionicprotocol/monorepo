@@ -13,8 +13,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { HIGH_RISK_RATIO } from '@ui/constants/index';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
@@ -40,7 +40,14 @@ function MaxBorrowSlider({
   borrowLimitTotal,
   borrowLimitMarket,
 }: MaxBorrowSliderProps) {
-  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
 

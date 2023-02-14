@@ -4,11 +4,18 @@ import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
   const { currentSdk } = useMultiMidas();
-  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   const response = useQuery(
     [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],
