@@ -12,7 +12,6 @@ import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
