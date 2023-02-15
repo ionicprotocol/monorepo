@@ -312,8 +312,6 @@ export const BorrowModal = ({
                       borrowLimitTotal !== 0 ? (
                         <MaxBorrowSlider
                           asset={asset}
-                          borrowBalanceFiat={borrowBalanceFiat}
-                          borrowLimitTotal={borrowLimitTotal}
                           borrowableAmount={maxBorrowAmount.number}
                           poolChainId={poolChainId}
                           updateAmount={updateAmount}
