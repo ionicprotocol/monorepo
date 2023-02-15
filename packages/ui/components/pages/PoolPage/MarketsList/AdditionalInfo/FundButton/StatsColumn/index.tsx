@@ -3,6 +3,12 @@ import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, utils } from 'ethers';
 import { useMemo } from 'react';
 
+import { BorrowAPY } from './BorrowAPY';
+import { BorrowsMarket } from './BorrowsMarket';
+import { BorrowsTotal } from './BorrowsTotal';
+import { Supplied } from './Supplied';
+import { SupplyAPY } from './SupplyAPY';
+
 import { MidasBox } from '@ui/components/shared/Box';
 import { Column } from '@ui/components/shared/Flex';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -11,11 +17,6 @@ import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { BorrowAPY } from './BorrowAPY';
-import { BorrowsMarket } from './BorrowsMarket';
-import { BorrowsTotal } from './BorrowsTotal';
-import { Supplied } from './Supplied';
-import { SupplyAPY } from './SupplyAPY';
 
 interface StatsColumnProps {
   mode: FundOperationMode;
@@ -116,22 +117,22 @@ export const StatsColumn = ({
         px={2}
         py={2}
       >
-        <Supplied current={supplyBalanceFrom} new={supplyBalanceTo} asset={asset} />
+        <Supplied asset={asset} current={supplyBalanceFrom} new={supplyBalanceTo} />
 
         <Divider />
 
         <BorrowsMarket
           asset={asset}
-          updatedAsset={updatedAsset}
           borrowLimitMarket={borrowLimitMarket}
+          updatedAsset={updatedAsset}
           updatedBorrowLimitMarket={updatedBorrowLimitMarket}
         />
 
         <BorrowsTotal
-          totalBorrows={totalBorrows}
-          updatedTotalBorrows={updatedTotalBorrows}
           borrowLimitTotal={borrowLimitTotal}
+          totalBorrows={totalBorrows}
           updatedBorrowLimitTotal={updatedBorrowLimitTotal}
+          updatedTotalBorrows={updatedTotalBorrows}
         />
 
         <Divider />

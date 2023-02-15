@@ -3,10 +3,10 @@ import { HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 interface BorrowsTotalProps {
-  borrowLimitTotal: any;
-  totalBorrows: any;
-  updatedBorrowLimitTotal: any;
-  updatedTotalBorrows: any;
+  borrowLimitTotal: number;
+  totalBorrows: number;
+  updatedBorrowLimitTotal?: number;
+  updatedTotalBorrows?: number;
 }
 
 export const BorrowsTotal = ({
