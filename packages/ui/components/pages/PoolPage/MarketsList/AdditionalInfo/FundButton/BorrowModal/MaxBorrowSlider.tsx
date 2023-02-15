@@ -12,7 +12,6 @@ import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -25,8 +24,6 @@ interface MaxBorrowSliderProps {
   borrowableAmount: number;
   asset: MarketData;
   poolChainId: number;
-  borrowBalanceFiat?: number;
-  borrowLimitTotal: number;
 }
 
 function MaxBorrowSlider({
@@ -35,13 +32,12 @@ function MaxBorrowSlider({
   borrowableAmount,
   asset,
   poolChainId,
-  borrowBalanceFiat = 0,
-  borrowLimitTotal,
 }: MaxBorrowSliderProps) {
   const { data: usdPrice } = useNativePriceInUSD(poolChainId);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
 
+  const borrowBalanceFiat = asset.borrowBalanceFiat;
   const { borrowableLimit, borrowedPercent, borrowablePercent } = useMemo(() => {
     const borrowableUsd =
       borrowableAmount * Number(utils.formatUnits(asset.underlyingPrice)) * price;
@@ -57,14 +53,6 @@ function MaxBorrowSlider({
   }, [asset.underlyingPrice, borrowBalanceFiat, borrowableAmount, price]);
 
   const [sliderValue, setSliderValue] = useState(borrowedPercent);
-
-  const isRisky = useMemo(() => {
-    if (sliderValue * borrowableLimit > borrowLimitTotal * HIGH_RISK_RATIO * 100) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [borrowLimitTotal, sliderValue, borrowableLimit]);
 
   const { cPage } = useColors();
 
@@ -126,7 +114,7 @@ function MaxBorrowSlider({
               width={`${borrowablePercent}%`}
             >
               <SliderTrack>
-                <SliderFilledTrack bg={isRisky ? 'red' : undefined} />
+                <SliderFilledTrack />
               </SliderTrack>
               <SimpleTooltip isOpen label={`${sliderValue}%`}>
                 <SliderThumb zIndex={2} />
