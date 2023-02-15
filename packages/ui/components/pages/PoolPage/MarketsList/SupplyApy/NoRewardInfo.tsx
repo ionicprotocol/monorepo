@@ -14,8 +14,8 @@ export const NoRewardInfo = ({
 
   return (
     <HStack justifyContent={'flex-start'}>
-      <HStack width="60px" justifyContent="flex-end">
-        {pluginInfo?.icon ? <Image src={pluginInfo.icon} alt="" height="6" /> : '🔌'}{' '}
+      <HStack justifyContent="flex-end" width="60px">
+        {pluginInfo?.icon ? <Image alt="" height="6" src={pluginInfo.icon} /> : '🔌'}{' '}
       </HStack>
       <InfoOutlineIcon />
       <Text>Check later</Text>

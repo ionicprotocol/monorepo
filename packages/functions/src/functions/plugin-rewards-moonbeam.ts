@@ -1,4 +1,4 @@
 import { SupportedChains } from '@midas-capital/types';
-import { createHandler } from './plugin-rewards';
+import { createPluginRewardsHandler } from '../controllers/plugin-rewards';
 
-export const handler = createHandler(SupportedChains.moonbeam);
+export const handler = createPluginRewardsHandler(SupportedChains.moonbeam);

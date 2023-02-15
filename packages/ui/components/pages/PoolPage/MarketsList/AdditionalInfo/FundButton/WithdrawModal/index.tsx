@@ -14,7 +14,6 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
-import LogRocket from 'logrocket';
 import { useEffect, useState } from 'react';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
@@ -141,11 +140,20 @@ export const WithdrawModal = ({
           description: 'Successfully borrowed!',
         });
       }
-
-      LogRocket.track('Fuse-Withdraw');
-    } catch (e) {
+    } catch (error) {
       setFailedStep(1);
-      handleGenericError(e, errorToast);
+
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
+        amount,
+      };
+      const sentryInfo = {
+        contextName: 'Withdrawing',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsWithdrawing(false);
     }
@@ -153,8 +161,11 @@ export const WithdrawModal = ({
 
   return (
     <Modal
-      motionPreset="slideInBottom"
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isCentered
       isOpen={isOpen}
+      motionPreset="slideInBottom"
       onClose={() => {
         onClose();
         if (!isWithdrawing) {
@@ -163,43 +174,40 @@ export const WithdrawModal = ({
           setSteps([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
         }
       }}
-      isCentered
-      closeOnOverlayClick={false}
-      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
         <ModalBody p={0}>
           <Column
+            bg={cCard.bgColor}
+            borderRadius={16}
+            color={cCard.txtColor}
+            crossAxisAlignment="flex-start"
             id="fundOperationModal"
             mainAxisAlignment="flex-start"
-            crossAxisAlignment="flex-start"
-            bg={cCard.bgColor}
-            color={cCard.txtColor}
-            borderRadius={16}
           >
-            {!isWithdrawing && <ModalCloseButton top={4} right={4} />}
+            {!isWithdrawing && <ModalCloseButton right={4} top={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}
-                failedStep={failedStep}
-                steps={steps}
-                isWithdrawing={isWithdrawing}
-                poolChainId={poolChainId}
                 amount={amount}
                 asset={asset}
+                failedStep={failedStep}
+                isWithdrawing={isWithdrawing}
+                poolChainId={poolChainId}
+                steps={steps}
               />
             ) : (
               <>
-                <HStack width="100%" my={4} justifyContent="center">
+                <HStack justifyContent="center" my={4} width="100%">
                   <Text variant="title">Withdraw</Text>
-                  <Box height="36px" width="36px" mx={2}>
-                    <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
+                  <Box height="36px" mx={2} width="36px">
+                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
                   </Box>
                   <EllipsisText
-                    variant="title"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
                     maxWidth="100px"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    variant="title"
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
@@ -207,11 +215,11 @@ export const WithdrawModal = ({
 
                 <Divider />
                 <Column
-                  mainAxisAlignment="flex-start"
                   crossAxisAlignment="center"
-                  p={4}
                   gap={4}
                   height="100%"
+                  mainAxisAlignment="flex-start"
+                  p={4}
                   width="100%"
                 >
                   <Column gap={1} width="100%">
@@ -221,19 +229,19 @@ export const WithdrawModal = ({
                   </Column>
 
                   <StatsColumn
-                    mode={FundOperationMode.WITHDRAW}
                     amount={amount}
-                    assets={assets}
                     asset={asset}
-                    poolChainId={poolChainId}
+                    assets={assets}
                     comptrollerAddress={comptrollerAddress}
+                    mode={FundOperationMode.WITHDRAW}
+                    poolChainId={poolChainId}
                   />
                   <Button
-                    id="confirmWithdraw"
-                    width="100%"
-                    onClick={onConfirm}
-                    isDisabled={!isAmountValid}
                     height={16}
+                    id="confirmWithdraw"
+                    isDisabled={!isAmountValid}
+                    onClick={onConfirm}
+                    width="100%"
                   >
                     {btnStr}
                   </Button>

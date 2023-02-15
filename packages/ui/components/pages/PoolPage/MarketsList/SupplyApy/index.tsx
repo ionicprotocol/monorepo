@@ -84,7 +84,7 @@ export const SupplyApy = ({
     <HStack justifyContent="flex-end">
       <VStack alignItems={'flex-end'} spacing={0.5}>
         {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
-          <Text color={supplyApyColor} fontWeight="medium" variant="tnumber" size="sm">
+          <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
             {(totalSupplyApyPerAsset[asset.cToken] * 100).toFixed(2)}%
           </Text>
         )}
@@ -93,16 +93,14 @@ export const SupplyApy = ({
         ankrBNBApr ||
         rewardsOfThisMarket.length > 0) && (
         <PopoverTooltip
-          placement={'top-end'}
-          hideArrow
           body={
             <VStack alignItems={'flex-start'} spacing={1}>
               {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
                 <VStack alignItems="flex-end" width="100%">
-                  <Text fontWeight="medium" variant="tnumber" size="sm">
+                  <Text fontWeight="medium" size="sm" variant="tnumber">
                     Total APY
                   </Text>
-                  <Text fontWeight="medium" variant="tnumber" size="sm">
+                  <Text fontWeight="medium" size="sm" variant="tnumber">
                     {(totalSupplyApyPerAsset[asset.cToken] * 100).toFixed(2)}%
                   </Text>
                 </VStack>
@@ -112,11 +110,11 @@ export const SupplyApy = ({
               {supplyAPY !== undefined && (
                 <HStack justifyContent="flex-start">
                   <Text
-                    width="60px"
                     fontWeight="medium"
-                    variant="tnumber"
                     size="sm"
                     textAlign="right"
+                    variant="tnumber"
+                    width="60px"
                   >
                     {supplyAPY.toFixed(2)}%
                   </Text>
@@ -131,11 +129,11 @@ export const SupplyApy = ({
                   return (
                     <HStack justifyContent="flex-start" key={`asset-reward-${index}`}>
                       <Text
-                        width="60px"
                         fontWeight="medium"
-                        variant="tnumber"
                         size="sm"
                         textAlign="right"
+                        variant="tnumber"
+                        width="60px"
                       >
                         {Number(reward.apy * 100).toFixed(2)}%
                       </Text>
@@ -148,11 +146,11 @@ export const SupplyApy = ({
               {ankrBNBApr && (
                 <HStack justifyContent="flex-start">
                   <Text
-                    width="60px"
                     fontWeight="medium"
-                    variant="tnumber"
                     size="sm"
                     textAlign="right"
+                    variant="tnumber"
+                    width="60px"
                   >
                     {Number(ankrBNBApr).toFixed(2)}%
                   </Text>
@@ -164,11 +162,11 @@ export const SupplyApy = ({
                 <VStack alignItems="flex-start" spacing={1}>
                   <HStack justifyContent="flex-start">
                     <Text
-                      width="60px"
                       fontWeight="medium"
-                      variant="tnumber"
                       size="sm"
                       textAlign="right"
+                      variant="tnumber"
+                      width="60px"
                     >
                       {totalRewardApy.toFixed(2)}%
                     </Text>
@@ -176,10 +174,10 @@ export const SupplyApy = ({
                       <Link
                         href={pluginInfo.apyDocsUrl}
                         isExternal
-                        variant={'color'}
                         onClick={(e) => {
                           e.stopPropagation();
                         }}
+                        variant={'color'}
                       >
                         {pluginInfo.name}
                       </Link>
@@ -189,18 +187,20 @@ export const SupplyApy = ({
                   </HStack>
                   {rewardsOfThisMarket.map((reward, index) => (
                     <RewardsInfo
+                      asset={asset}
+                      chainId={poolChainId}
                       key={`reward_${index}`}
                       reward={reward}
-                      chainId={poolChainId}
-                      asset={asset}
                     />
                   ))}
                 </VStack>
               ) : asset.plugin ? (
-                <NoRewardInfo poolChainId={poolChainId} pluginAddress={asset.plugin} />
+                <NoRewardInfo pluginAddress={asset.plugin} poolChainId={poolChainId} />
               ) : null}
             </VStack>
           }
+          hideArrow
+          placement={'top-end'}
         >
           <HStack>
             <BsStars color={supplyApyColor} size={18} />

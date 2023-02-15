@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useUSDPrices } from '@ui/hooks/useUSDPrices';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
   const tvlNative = await midasSdk.getTotalValueLocked(false);
@@ -22,11 +22,16 @@ type CrossChainTVL = Map<
 >;
 
 export const useTVL = () => {
-  const { sdks, chainIds } = useMultiMidas();
-  const { data: prices, isLoading, error } = useUSDPrices(chainIds);
+  const { sdks } = useMultiMidas();
+  const { data: prices, isLoading, error } = useAllUsdPrices();
 
   return useQuery<CrossChainTVL | null | undefined>(
-    ['useTVL', ...chainIds, prices && Object.values(prices).sort(), isLoading],
+    [
+      'useTVL',
+      prices && Object.values(prices).sort(),
+      isLoading,
+      sdks.map((sdk) => sdk.chainId).sort(),
+    ],
     async () => {
       if (!isLoading && error) throw new Error('Could not get USD price');
       if (!isLoading && prices) {

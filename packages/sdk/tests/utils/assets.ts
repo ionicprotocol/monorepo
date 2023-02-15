@@ -104,7 +104,8 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
   const busd = bsc.assets.find((b) => b.symbol === assetSymbols.BUSD);
   const wbnb = bsc.assets.find((b) => b.symbol === assetSymbols.WBNB);
   const eth = bsc.assets.find((b) => b.symbol === assetSymbols.ETH);
-  const assets = [btc, busd, eth, wbnb];
+  const usdc = bsc.assets.find((b) => b.symbol === assetSymbols.USDC);
+  const assets = [btc, busd, eth, wbnb, usdc];
 
   return assets.map((a) => {
     return {

@@ -1,4 +1,4 @@
 import { SupportedChains } from '@midas-capital/types';
-import { createHandler } from './asset-apys';
+import { createAssetApyHandler } from '../controllers/asset-apy';
 
-export const handler = createHandler(SupportedChains.bsc);
+export const handler = createAssetApyHandler(SupportedChains.bsc);

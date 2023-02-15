@@ -4,7 +4,7 @@ import { rpcUrls } from '../data/rpcs';
 
 import { updatePluginData } from '../controllers';
 
-const handler: Handler = async (event, context) => {
+const handler: Handler = async () => {
   const rpcURL = rpcUrls[SupportedChains.moonbeam];
   if (!rpcURL) {
     return {

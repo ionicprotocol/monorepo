@@ -279,9 +279,9 @@ const PoolsRowList = ({
         cell: ({ row }) => {
           return (
             <ExpanderArrow
+              canExpand={row.getCanExpand()}
               getToggleExpandedHandler={row.getToggleExpandedHandler()}
               isExpanded={row.getIsExpanded()}
-              canExpand={row.getCanExpand()}
             />
           );
         },
@@ -407,51 +407,51 @@ const PoolsRowList = ({
   return (
     <>
       <Flex
-        justifyContent={['center', 'center', 'space-between']}
         alignItems="center"
         flexWrap="wrap-reverse"
-        mb={3}
         gap={4}
+        justifyContent={['center', 'center', 'space-between']}
+        mb={3}
         width="100%"
       >
         <ButtonGroup
-          isAttached
-          gap={0}
-          spacing={0}
           flexFlow={'row wrap'}
+          gap={0}
+          isAttached
           justifyContent="flex-start"
+          spacing={0}
         >
           <CButton
+            disabled={isLoading}
             isSelected={globalFilter.includes(ALL)}
             onClick={() => onFilter(ALL)}
-            variant="filter"
-            disabled={isLoading}
             px={4}
+            variant="filter"
           >
             <Text>{isSmallScreen ? 'All' : 'All Chains'}</Text>
           </CButton>
           {enabledChains.map((chainId) => {
             return (
               <ChainFilterButton
-                key={chainId}
                 chainId={chainId}
                 globalFilter={globalFilter}
-                onFilter={onFilter}
                 isLoading={poolsPerChain[chainId.toString()].isLoading}
+                key={chainId}
+                onFilter={onFilter}
               />
             );
           })}
         </ButtonGroup>
 
-        <Flex className="searchAsset" justifyContent="center" alignItems="flex-end" gap={2}>
+        <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="center">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
           <Popover placement="bottom-end">
             <PopoverTrigger>
               <IconButton
-                variant="_outline"
-                icon={<SettingsIcon fontSize={20} />}
                 aria-label="Column Settings"
+                icon={<SettingsIcon fontSize={20} />}
                 maxWidth={10}
+                variant="_outline"
               />
             </PopoverTrigger>
             <PopoverContent width="200px">
@@ -468,8 +468,8 @@ const PoolsRowList = ({
                     if (column.getCanHide()) {
                       return (
                         <Checkbox
-                          key={column.id}
                           isChecked={column.getIsVisible()}
+                          key={column.id}
                           onChange={column.getToggleVisibilityHandler()}
                         >
                           {column.id}
@@ -488,18 +488,18 @@ const PoolsRowList = ({
           <Table>
             <Thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <Tr key={headerGroup.id} borderColor={cCard.dividerColor} borderBottomWidth={1}>
+                <Tr borderBottomWidth={1} borderColor={cCard.dividerColor} key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
                       <Th
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
                         border="none"
                         color={cCard.txtColor}
-                        textTransform="capitalize"
                         height={16}
-                        py={4}
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
                         px={{ base: 1, lg: 2 }}
+                        py={4}
+                        textTransform="capitalize"
                       >
                         <HStack
                           justifyContent={
@@ -521,10 +521,10 @@ const PoolsRowList = ({
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
                     <AlertHero
-                      status="warning"
-                      variant="subtle"
-                      title={err.reason ? err.reason : 'Unexpected Error'}
                       description="Unable to retrieve Pools. Please try again later."
+                      status="warning"
+                      title={err.reason ? err.reason : 'Unexpected Error'}
+                      variant="subtle"
                     />
                   </Td>
                 </Tr>
@@ -532,12 +532,12 @@ const PoolsRowList = ({
                 table.getRowModel().rows.map((row) => (
                   <Fragment key={row.id}>
                     <Tr
-                      key={row.id}
-                      borderColor={cCard.dividerColor}
-                      borderBottomWidth={row.getIsExpanded() ? 0 : 1}
-                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                       _hover={{ bg: cCard.hoverBgColor }}
+                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                      borderBottomWidth={row.getIsExpanded() ? 0 : 1}
+                      borderColor={cCard.dividerColor}
                       cursor="pointer"
+                      key={row.id}
                       onClick={() => {
                         setGlobalLoading(true);
                         router.push(
@@ -548,12 +548,12 @@ const PoolsRowList = ({
                       {row.getVisibleCells().map((cell) => {
                         return (
                           <Td
-                            key={cell.id}
                             border="none"
+                            height={16}
+                            key={cell.id}
+                            minW={10}
                             px={{ base: cell.column.id === 'Pool Name' ? 0 : 2 }}
                             py={0}
-                            height={16}
-                            minW={10}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </Td>
@@ -562,12 +562,12 @@ const PoolsRowList = ({
                     </Tr>
                     {row.getIsExpanded() && (
                       <Tr
-                        borderColor={cCard.dividerColor}
-                        borderBottomWidth={1}
-                        borderTopWidth={1}
-                        borderTopStyle="dashed"
-                        borderBottomStyle="solid"
                         background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                        borderBottomStyle="solid"
+                        borderBottomWidth={1}
+                        borderColor={cCard.dividerColor}
+                        borderTopStyle="dashed"
+                        borderTopWidth={1}
                       >
                         {/* 2nd row is a custom 1 cell row */}
                         <Td border="none" colSpan={row.getVisibleCells().length}>
@@ -599,24 +599,24 @@ const PoolsRowList = ({
           </Stack>
         )}
         <Flex
+          alignItems="center"
           className="pagination"
           gap={4}
           justifyContent="flex-end"
-          alignItems="center"
-          width={'100%'}
-          py={4}
           px={3}
+          py={4}
+          width={'100%'}
         >
           <HStack>
             <Hide below="lg">
               <Text size="md">Pools Per Page</Text>
             </Hide>
             <Select
-              value={pagination.pageSize}
+              maxW="max-content"
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value));
               }}
-              maxW="max-content"
+              value={pagination.pageSize}
             >
               {POOLS_COUNT_PER_PAGE.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
@@ -639,20 +639,20 @@ const PoolsRowList = ({
             </Text>
             <HStack>
               <CIconButton
-                variant="_outline"
                 aria-label="toPrevious"
                 icon={<ChevronLeftIcon fontSize={30} />}
-                onClick={() => table.previousPage()}
                 isDisabled={!table.getCanPreviousPage()}
                 isRound
+                onClick={() => table.previousPage()}
+                variant="_outline"
               />
               <CIconButton
-                variant="_outline"
                 aria-label="toNext"
                 icon={<ChevronRightIcon fontSize={30} />}
-                onClick={() => table.nextPage()}
                 isDisabled={!table.getCanNextPage()}
                 isRound
+                onClick={() => table.nextPage()}
+                variant="_outline"
               />
             </HStack>
           </HStack>
@@ -696,12 +696,12 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
     <HStack>
       {!isMobile && <Text>Search</Text>}
       <Input
-        type="text"
-        value={searchText}
+        _focusVisible={{}}
+        maxW={80}
         onChange={onSearch}
         placeholder="Asset, Pool Name"
-        maxW={80}
-        _focusVisible={{}}
+        type="text"
+        value={searchText}
       />
     </HStack>
   );
@@ -723,23 +723,23 @@ const ChainFilterButton = ({
 
   return chainConfig ? (
     <CButton
-      isSelected={globalFilter.includes(chainId)}
-      onClick={() => onFilter(chainId)}
-      variant="filter"
       disabled={isLoading}
-      px={4}
+      isSelected={globalFilter.includes(chainId)}
       mx={'-1px'}
+      onClick={() => onFilter(chainId)}
+      px={4}
+      variant="filter"
     >
       <HStack>
         {isLoading ? (
           <Spinner />
         ) : (
           <Img
-            width={6}
-            height={6}
-            borderRadius="50%"
-            src={chainConfig.specificParams.metadata.img}
             alt=""
+            borderRadius="50%"
+            height={6}
+            src={chainConfig.specificParams.metadata.img}
+            width={6}
           />
         )}
         {!isSmallScreen && <Text pt="2px">{chainConfig.specificParams.metadata.shortName}</Text>}

@@ -16,13 +16,15 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const sdk = await midasSdkModule.getOrCreateMidas(signer);
 
     const comptroller = sdk.createComptroller(comptrollerAddress, signer);
 
     const allMarkets = await comptroller.callStatic.getAllMarkets();
 
-    const cTokenInstances = allMarkets.map((marketAddress) => sdk.createCErc20PluginRewardsDelegate(marketAddress));
+    const cTokenInstances = allMarkets.map((marketAddress) =>
+      sdk.createCErc20PluginRewardsDelegate(marketAddress, signer)
+    );
 
     let cTokenInstance = undefined;
 

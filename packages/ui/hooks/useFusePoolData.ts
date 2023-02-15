@@ -1,14 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string, poolChainId: number) => {
   const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
-  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
+
   return useQuery(
     ['useFusePoolData', poolId, address, sdk?.chainId, usdPrice],
     async () => {
@@ -34,7 +43,9 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
         }
         const adaptedFusePoolData: PoolData = {
           ...response,
-          assets: assetsWithPrice,
+          assets: assetsWithPrice.sort((a, b) =>
+            a.underlyingSymbol.localeCompare(b.underlyingSymbol)
+          ),
           totalLiquidityFiat: response.totalLiquidityNative * usdPrice,
           totalAvailableLiquidityFiat: response.totalAvailableLiquidityNative * usdPrice,
           totalSuppliedFiat: response.totalSuppliedNative * usdPrice,

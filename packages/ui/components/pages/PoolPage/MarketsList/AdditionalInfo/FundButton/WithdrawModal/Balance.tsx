@@ -23,12 +23,12 @@ export const Balance = ({ asset, poolChainId }: { asset: MarketData; poolChainId
   }, [asset.underlyingDecimals, maxWithdrawAmount]);
 
   return (
-    <HStack width="100%" justifyContent={'flex-end'}>
+    <HStack justifyContent={'flex-end'} width="100%">
       <Text mr={2} size="sm">
         Available To Withdraw:
       </Text>
       <SimpleTooltip label={`${availableToWithdraw} ${asset.underlyingSymbol}`}>
-        <Text maxWidth="250px" textOverflow={'ellipsis'} whiteSpace="nowrap" overflow="hidden">
+        <Text maxWidth="250px" overflow="hidden" textOverflow={'ellipsis'} whiteSpace="nowrap">
           {`${availableToWithdraw} ${asset.underlyingSymbol}`}
         </Text>
       </SimpleTooltip>

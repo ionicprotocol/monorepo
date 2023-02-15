@@ -45,25 +45,25 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
 
   return (
     <HStack justifyContent={'flex-start'}>
-      <HStack width="60px" justifyContent="flex-end">
+      <HStack justifyContent="flex-end" width="60px">
         {(reward as FlywheelReward).token ? (
           <TokenIcon
             address={(reward as FlywheelReward).token}
             chainId={chainId}
             size="xs"
-            withTooltip={false}
             withMotion={false}
+            withTooltip={false}
           />
         ) : pluginInfo?.icon ? (
-          <Image src={pluginInfo.icon} alt="plugin" height={6} />
+          <Image alt="plugin" height={6} src={pluginInfo.icon} />
         ) : (
           <Text>🔌</Text>
         )}
       </HStack>
 
-      <HStack width="60px" justifyContent="flex-end">
+      <HStack justifyContent="flex-end" width="60px">
         {reward.status !== 'paused' && reward.apy !== undefined ? (
-          <Text fontWeight={'medium'} title={reward.apy * 100 + '%'} size="sm" variant="tnumber">
+          <Text fontWeight={'medium'} size="sm" title={reward.apy * 100 + '%'} variant="tnumber">
             {(reward.apy * 100).toFixed(2) + '%'}
           </Text>
         ) : (
@@ -72,7 +72,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
           </Box>
         )}
       </HStack>
-      <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
+      <Text fontWeight={'medium'} mr={-1} size="sm" variant="tnumber">
         {rewardAsset?.symbol}
       </Text>
       {endDate ? (

@@ -21,9 +21,9 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
     !myNativeBalance?.isZero();
 
   return (
-    <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%">
-      <Row width="100%" mainAxisAlignment="flex-end" crossAxisAlignment="center">
-        <Text size="sm" mr={2}>
+    <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" width="100%">
+      <Row crossAxisAlignment="center" mainAxisAlignment="flex-end" width="100%">
+        <Text mr={2} size="sm">
           Wallet Balance:
         </Text>
         <SimpleTooltip
@@ -31,14 +31,14 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
             asset.underlyingSymbol
           }`}
         >
-          <Text maxWidth="300px" textOverflow={'ellipsis'} whiteSpace="nowrap" overflow="hidden">
+          <Text maxWidth="300px" overflow="hidden" textOverflow={'ellipsis'} whiteSpace="nowrap">
             {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
             {asset.underlyingSymbol}
           </Text>
         </SimpleTooltip>
       </Row>
       {optionToWrap && (
-        <Row width="100%" mt={1} mainAxisAlignment="flex-end" crossAxisAlignment="center">
+        <Row crossAxisAlignment="center" mainAxisAlignment="flex-end" mt={1} width="100%">
           <Text mr={2}>Native Token Balance:</Text>
           <Text>
             {myNativeBalance ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals) : 0}{' '}
