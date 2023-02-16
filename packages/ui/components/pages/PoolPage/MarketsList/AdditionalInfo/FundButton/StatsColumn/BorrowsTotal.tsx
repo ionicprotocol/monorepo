@@ -3,7 +3,7 @@ import { HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 interface BorrowsTotalProps {
-  borrowLimitTotal: number;
+  borrowLimitTotal?: number;
   totalBorrows: number;
   updatedBorrowLimitTotal?: number;
   updatedTotalBorrows?: number;

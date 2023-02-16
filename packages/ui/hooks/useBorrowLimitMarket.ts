@@ -39,7 +39,7 @@ export const useBorrowLimitMarket = (
       borrowCaps,
     ],
     async () => {
-      if (!usdPrice) return null;
+      if (!usdPrice) return undefined;
 
       let _maxBorrow = 0;
 

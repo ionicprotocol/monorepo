@@ -46,7 +46,7 @@ export const StatsColumn = ({
     poolChainId,
   });
 
-  const updatedAsset = updatedAssets ? updatedAssets[index] : null;
+  const updatedAsset = updatedAssets ? updatedAssets[index] : undefined;
 
   const { currentSdk, currentChain } = useMultiMidas();
   if (!currentSdk || !currentChain) throw new Error("SDK doesn't exist!");
