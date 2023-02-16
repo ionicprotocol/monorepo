@@ -46,6 +46,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
   return (
     <HStack justifyContent={'flex-start'}>
       <HStack justifyContent="flex-end" width="60px">
+        <Text>↳</Text>
         {(reward as FlywheelReward).token ? (
           <TokenIcon
             address={(reward as FlywheelReward).token}
