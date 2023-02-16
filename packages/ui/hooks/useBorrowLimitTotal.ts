@@ -24,7 +24,7 @@ export const useBorrowLimitTotal = (
     [
       'useBorrowLimitTotal',
       {
-        assets: assets.map((a) => a.cToken).sort(),
+        assets,
       },
       {
         ignoreIsEnabledCheckFor: !!options?.ignoreIsEnabledCheckFor,
@@ -32,7 +32,7 @@ export const useBorrowLimitTotal = (
       { usdPrice },
     ],
     () => {
-      if (!usdPrice) return null;
+      if (!usdPrice) return undefined;
 
       let _maxBorrow = 0;
 
