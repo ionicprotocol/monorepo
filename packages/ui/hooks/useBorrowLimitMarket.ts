@@ -33,13 +33,13 @@ export const useBorrowLimitMarket = (
       'useBorrowLimitMarket',
       poolChainId,
       asset,
-      assets.sort((a, b) => a.cToken.localeCompare(b.cToken)),
+      assets,
       options?.ignoreIsEnabledCheckFor,
       usdPrice,
       borrowCaps,
     ],
     async () => {
-      if (!usdPrice) return null;
+      if (!usdPrice) return undefined;
 
       let _maxBorrow = 0;
 
