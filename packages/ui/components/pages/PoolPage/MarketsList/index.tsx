@@ -275,7 +275,12 @@ export const MarketsList = ({
         accessorFn: (row) => row.supplyApy,
         id: SUPPLY_APY,
         cell: ({ getValue }) => (
-          <SupplyApy asset={getValue<MarketData>()} poolChainId={poolChainId} rewards={rewards} />
+          <SupplyApy
+            asset={getValue<MarketData>()}
+            poolChainId={poolChainId}
+            rewards={rewards}
+            totalSupplyApyPerAsset={totalSupplyApyPerAsset}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Supply APY</TableHeaderCell>,
 
