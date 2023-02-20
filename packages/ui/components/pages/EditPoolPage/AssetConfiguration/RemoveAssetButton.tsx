@@ -1,7 +1,6 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
-import LogRocket from 'logrocket';
 import { useState } from 'react';
 
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
@@ -47,15 +46,12 @@ const RemoveAssetButton = ({
 
     if (!response.eq(0)) {
       const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
-
-      LogRocket.captureException(err);
       throw err;
     }
 
     try {
       const tx = await comptroller._unsupportMarket(asset.cToken);
       await tx.wait();
-      LogRocket.track('Fuse-RemoveAsset');
 
       await queryClient.refetchQueries();
       setSelectedAsset(assets[0]);
@@ -63,8 +59,18 @@ const RemoveAssetButton = ({
       successToast({
         description: 'You have successfully removed an asset from this pool!',
       });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: asset.cToken,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Removing asset',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+
       return;
     }
 
@@ -73,15 +79,15 @@ const RemoveAssetButton = ({
 
   return isUpgradeable ? (
     <Box ml="auto">
-      <Button ml={2} onClick={onOpen} isLoading={isRemoving} isDisabled={!isEditableAdmin}>
+      <Button isDisabled={!isEditableAdmin} isLoading={isRemoving} ml={2} onClick={onOpen}>
         Remove {asset.underlyingSymbol}
       </Button>
       <ConfirmDeleteAlert
-        onConfirm={removeAsset}
-        onClose={onClose}
-        isOpen={isOpen}
-        title={`Are you sure to remove ${asset.underlyingSymbol}?`}
         description="You can't undo this action afterwards"
+        isOpen={isOpen}
+        onClose={onClose}
+        onConfirm={removeAsset}
+        title={`Are you sure to remove ${asset.underlyingSymbol}?`}
       />
     </Box>
   ) : null;

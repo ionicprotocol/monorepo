@@ -13,7 +13,7 @@ export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChain
       {asset.isBorrowPaused ? (
         <VStack alignItems="flex-end">
           <SimpleTooltip label="This asset can not be borrowed.">
-            <Text size="md" fontWeight="medium" textAlign="center">
+            <Text fontWeight="medium" size="md" textAlign="center">
               -
             </Text>
           </SimpleTooltip>

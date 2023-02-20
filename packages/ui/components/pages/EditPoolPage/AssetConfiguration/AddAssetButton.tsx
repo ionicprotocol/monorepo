@@ -17,7 +17,7 @@ const AddAssetButton = ({
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   return isUpgradeable ? (
-    <Button onClick={openAddAssetModal} isDisabled={!isEditableAdmin}>
+    <Button isDisabled={!isEditableAdmin} onClick={openAddAssetModal}>
       Add Asset
     </Button>
   ) : null;

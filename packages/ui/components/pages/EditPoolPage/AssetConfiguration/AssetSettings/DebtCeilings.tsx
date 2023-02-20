@@ -18,7 +18,7 @@ import {
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { CButton } from '@ui/components/shared/Button';
@@ -27,9 +27,9 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { BORROW_CAP, DEBT_CEILING, DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -49,7 +49,14 @@ export const DebtCeilings = ({
 }: DebtCeilingsProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
   const { currentSdk } = useMultiMidas();
-  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
@@ -72,12 +79,16 @@ export const DebtCeilings = ({
   } = useForm({
     defaultValues: {
       debtCeiling: DEBT_CEILING.DEFAULT,
-      collateralAsset: assets[0].cToken,
+      collateralAsset:
+        assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken ?? assets[0].cToken,
     },
   });
 
   const watchDebtCeiling = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
-  const watchCollateralAsset = watch('collateralAsset', assets[0].cToken);
+  const watchCollateralAsset = watch(
+    'collateralAsset',
+    assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken || assets[0].cToken
+  );
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const { data: debtCeilingPerCollateral } = useDebtCeilingForAssetForCollateral({
@@ -152,8 +163,19 @@ export const DebtCeilings = ({
       successToast({
         description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
       });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        collateralAsset,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        debtCeiling,
+      };
+      const sentryInfo = {
+        contextName: 'Updating debt ceiling',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
       setDebtCeilingsDefault();
     } finally {
       setIsEditDebtCeiling(false);
@@ -203,26 +225,24 @@ export const DebtCeilings = ({
                 ml="auto"
                 mt={{ base: 2, sm: 0 }}
               >
-                {assets.map((asset) => {
-                  const debtCeiling = debtCeilingPerCollateral?.find(
-                    (debtCeiling) => debtCeiling.collateralAsset.cToken === asset.cToken
-                  )?.debtCeiling;
+                {assets
+                  .filter((a) => a.cToken !== selectedAsset.cToken)
+                  .map((asset) => {
+                    const debtCeiling = debtCeilingPerCollateral?.find(
+                      (debtCeiling) => debtCeiling.collateralAsset.cToken === asset.cToken
+                    )?.debtCeiling;
 
-                  return (
-                    <option
-                      key={asset.cToken}
-                      style={{ color: cSelect.txtColor }}
-                      value={asset.cToken}
-                    >
-                      {asset.underlyingSymbol +
-                        (debtCeiling === -1
-                          ? ' (Blacklisted)'
-                          : debtCeiling === 0 || debtCeiling === undefined
-                          ? ' (Unlimited)'
-                          : ` (Limited)`)}
-                    </option>
-                  );
-                })}
+                    return (
+                      <option
+                        key={asset.cToken}
+                        style={{ color: cSelect.txtColor }}
+                        value={asset.cToken}
+                      >
+                        {asset.underlyingSymbol +
+                          (debtCeiling ? ` (${debtCeiling.toFixed(0)})` : '')}
+                      </option>
+                    );
+                  })}
               </Select>
               <FormErrorMessage marginBottom="-10px">
                 {errors.collateralAsset && errors.collateralAsset.message}
@@ -295,8 +315,8 @@ export const DebtCeilings = ({
         {isEditDebtCeiling ? (
           <>
             <Button
-              isLoading={isSubmitting}
               isDisabled={isSubmitting || watchDebtCeiling === debtCeilingState?.debtCeiling}
+              isLoading={isSubmitting}
               type="submit"
             >
               Save

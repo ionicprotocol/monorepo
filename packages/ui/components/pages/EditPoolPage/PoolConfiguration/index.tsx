@@ -21,7 +21,6 @@ import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/typ
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ContractTransaction, utils } from 'ethers';
-import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -112,18 +111,25 @@ const PoolConfiguration = ({
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
-        LogRocket.captureException(err);
         throw err;
       }
       const tx = await comptroller._setWhitelistEnforcement(enforce);
       await tx.wait();
-      LogRocket.track('Fuse-ChangeWhitelistStatus');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully changed whitelist status!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        status: enforce,
+      };
+      const sentryInfo = {
+        contextName: 'Changing whitelist status',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -143,21 +149,28 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setWhitelistStatuses(newList, Array(newList.length).fill(true));
       await tx.wait();
-      LogRocket.track('Fuse-AddToWhitelist');
 
       await queryClient.refetchQueries();
 
       onChange(newList);
 
       successToast({ description: 'Successfully added!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        newUser,
+      };
+      const sentryInfo = {
+        contextName: 'Adding to whitelist',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -181,7 +194,6 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
@@ -190,15 +202,23 @@ const PoolConfiguration = ({
         whitelist?.map((user) => user !== removeUser)
       );
       await tx.wait();
-      LogRocket.track('Fuse-RemoveFromWhitelist');
 
       await queryClient.refetchQueries();
 
       onChange(whitelist.filter((v) => v !== removeUser));
 
       successToast({ description: 'Successfully removed from the whitelist!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        removeUser,
+      };
+      const sentryInfo = {
+        contextName: 'Removing from whitelist',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -212,18 +232,24 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
       const tx: ContractTransaction = await unitroller._toggleAdminRights(false);
       await tx.wait();
-      LogRocket.track('Fuse-RenounceOwnership');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully changed admin rights!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Changing admin rights',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -253,19 +279,26 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setCloseFactor(bigCloseFactor);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateCloseFactor');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated close factor!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        closeFactor: bigCloseFactor,
+      };
+      const sentryInfo = {
+        contextName: 'Updating close factor',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -293,29 +326,32 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setLiquidationIncentive(bigLiquidationIncentive);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateLiquidationIncentive');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated liquidation incentive!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        liquidationIncentive: bigLiquidationIncentive,
+      };
+      const sentryInfo = {
+        contextName: 'Updating liquidation incentive',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
   const onSave = async () => {
-    if (!currentSdk) return;
+    if (!currentSdk || !inputPoolName) return;
 
-    if (!inputPoolName) {
-      handleGenericError('Input pool name', errorToast);
-      return;
-    }
     try {
       setIsSaving(true);
       const FusePoolDirectory = currentSdk.getFusePoolDirectoryInstance(currentSdk.signer);
@@ -323,8 +359,17 @@ const PoolConfiguration = ({
         from: address,
       });
       await tx.wait();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        poolId,
+        poolName: inputPoolName,
+      };
+      const sentryInfo = {
+        contextName: 'Setting pool name',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsSaving(false);
     }
@@ -354,16 +399,16 @@ const PoolConfiguration = ({
     <Column height="100%">
       <ConfigRow>
         <Flex alignItems="center" justifyContent="space-between" width="100%">
-          <Text size="md" fontWeight="bold">{`Pool ${poolId} Configuration`}</Text>
+          <Text fontWeight="bold" size="md">{`Pool ${poolId} Configuration`}</Text>
           {!currentChain ? (
             <Box>
-              <Button variant="_solid" onClick={openConnectModal}>
+              <Button onClick={openConnectModal} variant="_solid">
                 Connect Wallet
               </Button>
             </Box>
           ) : currentChain.id !== poolChainId ? (
             <Box>
-              <Button variant="_solid" onClick={handleSwitch}>
+              <Button onClick={handleSwitch} variant="_solid">
                 Switch{chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
               </Button>
             </Box>
@@ -373,41 +418,41 @@ const PoolConfiguration = ({
       <Divider />
       {data ? (
         <Column expand overflowY="auto">
-          <Flex px={{ base: 4, md: 8 }} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
+          <Flex direction={{ base: 'column', md: 'row' }} px={{ base: 4, md: 8 }} py={4} w="100%">
             <InputGroup width="100%">
               <InputLeftElement>
                 <Text size="md">Pool Name:</Text>
               </InputLeftElement>
               <Input
-                value={inputPoolName}
-                onChange={(e) => setInputPoolName(e.target.value)}
-                readOnly={!isEditable}
                 borderWidth={isEditable ? 1 : 0}
                 ml="110px"
+                onChange={(e) => setInputPoolName(e.target.value)}
+                readOnly={!isEditable}
+                value={inputPoolName}
               />
             </InputGroup>
             {isEditable ? (
-              <ButtonGroup mt={{ base: 2, md: 0 }} ml="auto">
+              <ButtonGroup ml="auto" mt={{ base: 2, md: 0 }}>
                 <Button
-                  ml={4}
-                  px={6}
-                  onClick={onSave}
-                  isLoading={isSaving}
                   isDisabled={poolName === inputPoolName}
+                  isLoading={isSaving}
+                  ml={4}
+                  onClick={onSave}
+                  px={6}
                 >
                   <Center fontWeight="bold">Save</Center>
                 </Button>
-                <Button variant="silver" ml={2} px={6} onClick={onCancel} isDisabled={isSaving}>
+                <Button isDisabled={isSaving} ml={2} onClick={onCancel} px={6} variant="silver">
                   <Center fontWeight="bold">Cancel</Center>
                 </Button>
               </ButtonGroup>
             ) : (
               <Button
+                isDisabled={!isEditableAdmin}
                 ml="auto"
                 mt={{ base: 2, sm: 0 }}
-                px={6}
                 onClick={() => setIsEditable(true)}
-                isDisabled={!isEditableAdmin}
+                px={6}
               >
                 <Center fontWeight="bold">Edit</Center>
               </Button>
@@ -415,19 +460,19 @@ const PoolConfiguration = ({
           </Flex>
           <Divider />
           <ConfigRow>
-            <Text size="md" mr={2}>
+            <Text mr={2} size="md">
               Assets:
             </Text>
             {assets.length > 0 ? (
               <>
-                <AvatarGroup size="sm" max={30}>
+                <AvatarGroup max={30} size="sm">
                   {assets.map(({ underlyingToken, cToken }) => {
                     return (
-                      <TokenIcon key={cToken} address={underlyingToken} chainId={poolChainId} />
+                      <TokenIcon address={underlyingToken} chainId={poolChainId} key={cToken} />
                     );
                   })}
                 </AvatarGroup>
-                <Text ml={2} flexShrink={0}>
+                <Text flexShrink={0} ml={2}>
                   {assets.map(({ underlyingSymbol }, index, array) => {
                     return underlyingSymbol + (index !== array.length - 1 ? ' / ' : '');
                   })}
@@ -441,31 +486,31 @@ const PoolConfiguration = ({
           <ConfigRow>
             <Text size="md">Whitelist:</Text>
             <Switch
-              ml="auto"
+              className="switch-whitelist"
+              disabled={!isEditableAdmin}
               h="20px"
-              isDisabled={!data.upgradeable}
               isChecked={data.enforceWhitelist}
+              isDisabled={!data.upgradeable}
+              ml="auto"
               onChange={() => {
                 changeWhitelistStatus(!data.enforceWhitelist);
               }}
-              className="switch-whitelist"
-              disabled={!isEditableAdmin}
             />
           </ConfigRow>
           {data.enforceWhitelist && (
             <ConfigRow>
-              <Flex as="form" w="100%" direction={{ base: 'column', md: 'row' }}>
+              <Flex as="form" direction={{ base: 'column', md: 'row' }} w="100%">
                 <FormControl>
-                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                     <Controller
                       control={control}
                       name="whitelist"
                       render={({ field: { value, onChange } }) => (
                         <WhitelistInfo
-                          value={value}
-                          onChange={onChange}
                           addToWhitelist={addToWhitelist}
+                          onChange={onChange}
                           removeFromWhitelist={removeFromWhitelist}
+                          value={value}
                         />
                       )}
                     />
@@ -485,28 +530,28 @@ const PoolConfiguration = ({
           <Divider />
 
           <ConfigRow>
-            <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
+            <Flex direction={{ base: 'column', md: 'row' }} w="100%">
               <Text size="md">Ownable:</Text>
               {data.upgradeable ? (
-                <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
+                <Flex flexWrap="wrap" gap={2} ml="auto" mt={{ base: 2, md: 0 }}>
                   <Button
                     height="35px"
+                    isDisabled={!isEditableAdmin}
                     ml="auto"
                     onClick={openTransferOwnershipModalOpen}
-                    isDisabled={!isEditableAdmin}
                   >
                     <Center fontWeight="bold">Transfer Ownership</Center>
                   </Button>
                   <TransferOwnershipModal
+                    comptrollerAddress={comptrollerAddress}
                     isOpen={isTransferOwnershipModalOpen}
                     onClose={closeTransferOwnershipModalOpen}
-                    comptrollerAddress={comptrollerAddress}
                   />
                   <Button
                     height="35px"
-                    onClick={renounceOwnership}
-                    ml="auto"
                     isDisabled={!isEditableAdmin}
+                    ml="auto"
+                    onClick={renounceOwnership}
                   >
                     <Center fontWeight="bold">Renounce Ownership</Center>
                   </Button>
@@ -522,25 +567,41 @@ const PoolConfiguration = ({
           <ConfigRow>
             <Flex
               as="form"
-              w="100%"
               direction={'column'}
               onSubmit={handleSubmit(updateCloseFactor)}
+              w="100%"
             >
               <FormControl isInvalid={!!errors.closeFactor}>
                 <Flex
+                  alignItems="center"
+                  direction={{ base: 'column', sm: 'row' }}
                   w="100%"
                   wrap="wrap"
-                  direction={{ base: 'column', sm: 'row' }}
-                  alignItems="center"
                 >
                   <FormLabel htmlFor="closeFactor" margin={0}>
                     <Text size="md">Close Factor:</Text>
                   </FormLabel>
                   <Spacer />
-                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                     <Controller
                       control={control}
                       name="closeFactor"
+                      render={({ field: { name, value, ref, onChange } }) => (
+                        <SliderWithLabel
+                          isDisabled={
+                            !data.isPowerfulAdmin ||
+                            !currentChain ||
+                            currentChain.id !== poolChainId
+                          }
+                          max={CLOSE_FACTOR.MAX}
+                          min={CLOSE_FACTOR.MIN}
+                          mt={{ base: 2, sm: 0 }}
+                          name={name}
+                          onChange={onChange}
+                          reff={ref}
+                          value={value}
+                        />
+                      )}
                       rules={{
                         required: 'Close factor is required',
                         min: {
@@ -552,35 +613,19 @@ const PoolConfiguration = ({
                           message: `Close factor must be no more than ${CLOSE_FACTOR.MAX}%`,
                         },
                       }}
-                      render={({ field: { name, value, ref, onChange } }) => (
-                        <SliderWithLabel
-                          min={CLOSE_FACTOR.MIN}
-                          max={CLOSE_FACTOR.MAX}
-                          name={name}
-                          value={value}
-                          reff={ref}
-                          onChange={onChange}
-                          mt={{ base: 2, sm: 0 }}
-                          isDisabled={
-                            !data.isPowerfulAdmin ||
-                            !currentChain ||
-                            currentChain.id !== poolChainId
-                          }
-                        />
-                      )}
                     />
-                    <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                    <FormErrorMessage marginBottom="-10px" maxWidth="270px">
                       {errors.closeFactor && errors.closeFactor.message}
                     </FormErrorMessage>
                   </Column>
                 </Flex>
               </FormControl>
               {data && watchCloseFactor !== parseInt(utils.formatUnits(data.closeFactor, 16)) && (
-                <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" disabled={isUpdating}>
+                <ButtonGroup alignSelf="end" gap={0} mt={2}>
+                  <Button disabled={isUpdating} type="submit">
                     Save
                   </Button>
-                  <Button variant="silver" disabled={isUpdating} onClick={setCloseFactorDefault}>
+                  <Button disabled={isUpdating} onClick={setCloseFactorDefault} variant="silver">
                     Cancel
                   </Button>
                 </ButtonGroup>
@@ -591,25 +636,41 @@ const PoolConfiguration = ({
           <ConfigRow>
             <Flex
               as="form"
-              w="100%"
               direction={'column'}
               onSubmit={handleSubmit(updateLiquidationIncentive)}
+              w="100%"
             >
               <FormControl isInvalid={!!errors.liquidationIncentive}>
                 <Flex
+                  alignItems="center"
+                  direction={{ base: 'column', sm: 'row' }}
                   w="100%"
                   wrap="wrap"
-                  direction={{ base: 'column', sm: 'row' }}
-                  alignItems="center"
                 >
                   <FormLabel htmlFor="liquidationIncentive" margin={0}>
                     <Text size="md">Liquidation Incentive:</Text>
                   </FormLabel>
                   <Spacer />
-                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
                     <Controller
                       control={control}
                       name="liquidationIncentive"
+                      render={({ field: { name, value, ref, onChange } }) => (
+                        <SliderWithLabel
+                          isDisabled={
+                            !data.isPowerfulAdmin ||
+                            !currentChain ||
+                            currentChain.id !== poolChainId
+                          }
+                          max={LIQUIDATION_INCENTIVE.MAX}
+                          min={LIQUIDATION_INCENTIVE.MIN}
+                          mt={{ base: 2, sm: 0 }}
+                          name={name}
+                          onChange={onChange}
+                          reff={ref}
+                          value={value}
+                        />
+                      )}
                       rules={{
                         required: 'Liquidation incentive is required',
                         min: {
@@ -621,24 +682,8 @@ const PoolConfiguration = ({
                           message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
                         },
                       }}
-                      render={({ field: { name, value, ref, onChange } }) => (
-                        <SliderWithLabel
-                          min={LIQUIDATION_INCENTIVE.MIN}
-                          max={LIQUIDATION_INCENTIVE.MAX}
-                          name={name}
-                          value={value}
-                          reff={ref}
-                          onChange={onChange}
-                          mt={{ base: 2, sm: 0 }}
-                          isDisabled={
-                            !data.isPowerfulAdmin ||
-                            !currentChain ||
-                            currentChain.id !== poolChainId
-                          }
-                        />
-                      )}
                     />
-                    <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                    <FormErrorMessage marginBottom="-10px" maxWidth="270px">
                       {errors.liquidationIncentive && errors.liquidationIncentive.message}
                     </FormErrorMessage>
                   </Column>
@@ -647,14 +692,14 @@ const PoolConfiguration = ({
               {data &&
                 watchLiquidationIncentive !==
                   parseInt(utils.formatUnits(data.liquidationIncentive, 16)) - 100 && (
-                  <ButtonGroup gap={0} mt={2} alignSelf="end">
-                    <Button type="submit" disabled={isUpdating}>
+                  <ButtonGroup alignSelf="end" gap={0} mt={2}>
+                    <Button disabled={isUpdating} type="submit">
                       Save
                     </Button>
                     <Button
-                      variant="silver"
                       disabled={isUpdating}
                       onClick={setLiquidationIncentiveDefault}
+                      variant="silver"
                     >
                       Cancel
                     </Button>
@@ -664,7 +709,7 @@ const PoolConfiguration = ({
           </ConfigRow>
         </Column>
       ) : (
-        <Center width="100%" height="100%">
+        <Center height="100%" width="100%">
           <Spinner />
         </Center>
       )}

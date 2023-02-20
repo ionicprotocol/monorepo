@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import React, { useState } from 'react';
 
@@ -11,34 +11,37 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
+interface AssetButtonProps extends BoxProps {
+  asset: NativePricedFuseAsset;
+  selectedAsset: NativePricedFuseAsset;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  isEditableAdmin?: boolean | null;
+  poolChainId: number;
+}
+
 const AssetButton = ({
   asset,
   selectedAsset,
   setSelectedAsset,
   isEditableAdmin,
   poolChainId,
-}: {
-  asset: NativePricedFuseAsset;
-  selectedAsset: NativePricedFuseAsset;
-  setSelectedAsset: (value: NativePricedFuseAsset) => void;
-  isEditableAdmin?: boolean | null;
-  poolChainId: number;
-}) => {
+  ...boxProps
+}: AssetButtonProps) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
   return (
-    <Box mr={2} key={asset.cToken} mb={2}>
+    <Box mb={2} mr={2} {...boxProps}>
       <CButton
-        variant="filter"
+        isDisabled={!isEditableAdmin}
         isSelected={asset.cToken === selectedAsset.cToken}
         onClick={() => {
           setSelectedAsset(asset);
         }}
         px={2}
-        isDisabled={!isEditableAdmin}
+        variant="filter"
       >
-        <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
-        <Center px={1} fontWeight="bold">
+        <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="sm" />
+        <Center fontWeight="bold" px={1}>
           {tokenData?.symbol ?? asset.underlyingSymbol}
         </Center>
       </CButton>
@@ -62,13 +65,13 @@ const AssetConfiguration = ({
 
   return (
     <Column
-      mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
-      width="100%"
       flexShrink={0}
+      mainAxisAlignment="flex-start"
+      width="100%"
     >
       <ConfigRow mainAxisAlignment="space-between">
-        <Text size="md" fontWeight="bold">
+        <Text fontWeight="bold" size="md">
           Assets Configuration
         </Text>
 
@@ -86,33 +89,31 @@ const AssetConfiguration = ({
       {selectedAsset ? (
         <>
           <ConfigRow>
-            <Text size="md" mr={4}>
+            <Text mr={4} size="md">
               Assets:
             </Text>
             <Flex wrap="wrap">
-              {assets.map((asset, index) => {
-                return (
-                  <AssetButton
-                    key={index}
-                    asset={asset}
-                    selectedAsset={selectedAsset}
-                    setSelectedAsset={setSelectedAsset}
-                    isEditableAdmin={isEditableAdmin}
-                    poolChainId={poolChainId}
-                  />
-                );
-              })}
+              {assets.map((asset) => (
+                <AssetButton
+                  asset={asset}
+                  isEditableAdmin={isEditableAdmin}
+                  key={'Select_' + asset.underlyingSymbol}
+                  poolChainId={poolChainId}
+                  selectedAsset={selectedAsset}
+                  setSelectedAsset={setSelectedAsset}
+                />
+              ))}
             </Flex>
           </ConfigRow>
 
           <Divider />
 
           <EditAssetSettings
-            comptrollerAddress={comptrollerAddress}
-            selectedAsset={selectedAsset}
-            poolChainId={poolChainId}
-            setSelectedAsset={setSelectedAsset}
             assets={assets}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+            selectedAsset={selectedAsset}
+            setSelectedAsset={setSelectedAsset}
           />
         </>
       ) : null}

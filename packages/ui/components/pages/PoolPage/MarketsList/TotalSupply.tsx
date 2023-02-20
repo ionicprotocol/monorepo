@@ -21,6 +21,7 @@ export const TotalSupply = ({
 
   return (
     <BalanceCell
+      cap={supplyCaps}
       primary={{
         value: asset.totalSupplyFiat,
       }}
@@ -29,7 +30,6 @@ export const TotalSupply = ({
         symbol: tokenData?.symbol || '',
         decimals: asset.underlyingDecimals.toNumber(),
       }}
-      cap={supplyCaps}
     />
   );
 };

@@ -67,19 +67,19 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
     <VStack width="100%">
       <InputGroup>
         <Input
-          px={2}
-          textAlign="center"
-          placeholder="Flywheel Address: 0xXX...XX"
-          value={flywheelAddress}
+          autoFocus
           isInvalid={!!error}
           onChange={(event) => setFlywheelAddress(event.target.value)}
-          autoFocus
+          placeholder="Flywheel Address: 0xXX...XX"
+          px={2}
+          textAlign="center"
+          value={flywheelAddress}
         />
         <InputRightElement>
           {error ? (
             <CloseIcon color="fail" />
           ) : isLoading ? (
-            <CircularProgress size={'16px'} isIndeterminate color="ecru" />
+            <CircularProgress color="ecru" isIndeterminate size={'16px'} />
           ) : flywheel ? (
             <CheckIcon color="success" />
           ) : null}
@@ -88,19 +88,19 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
 
       {flywheel && (
         <VStack width={'100%'}>
-          <HStack width={'100%'} justify={'space-between'}>
+          <HStack justify={'space-between'} width={'100%'}>
             <Text>Owner:</Text>
             <ClipboardValue label={shortAddress(flywheel.owner)} value={flywheel.address} />
           </HStack>
-          <HStack width={'100%'} justify={'space-between'}>
+          <HStack justify={'space-between'} width={'100%'}>
             <Text>Reward Token:</Text>
             <ClipboardValue label={shortAddress(flywheel.rewardToken)} value={flywheel.address} />
           </HStack>
-          <HStack width={'100%'} justify={'space-between'}>
+          <HStack justify={'space-between'} width={'100%'}>
             <Text>Rewards Contract:</Text>
             <ClipboardValue label={shortAddress(flywheel.rewards)} value={flywheel.address} />
           </HStack>
-          <HStack width={'100%'} justify={'space-between'}>
+          <HStack justify={'space-between'} width={'100%'}>
             <Text>Booster:</Text>
             <ClipboardValue label={shortAddress(flywheel.booster)} value={flywheel.address} />
           </HStack>
@@ -108,10 +108,10 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
       )}
       <Box px={4} py={2} width="100%">
         <Button
-          width="100%"
-          isLoading={isAdding}
           disabled={isAdding || !isReady}
+          isLoading={isAdding}
           onClick={addFlywheel}
+          width="100%"
         >
           Add to Pool
         </Button>
@@ -122,7 +122,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
 
 const AddFlywheelModal = ({ isOpen, onClose, ...rest }: AddFlywheelModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add Existing Flywheel</ModalHeader>

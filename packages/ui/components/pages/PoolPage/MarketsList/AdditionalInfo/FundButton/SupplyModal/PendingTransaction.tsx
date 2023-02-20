@@ -42,39 +42,39 @@ export const PendingTransaction = ({
   });
 
   return (
-    <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
+    <Column crossAxisAlignment="center" expand mainAxisAlignment="center" p={4} pt={12}>
       {isSupplying ? (
         <Loader />
       ) : failedStep === 0 ? (
         <VStack width="100%">
-          <Icon as={BsFillCheckCircleFill} width={70} height={70} color={'success'} />
-          <Text variant="mdText" fontWeight="bold">
+          <Icon as={BsFillCheckCircleFill} color={'success'} height={70} width={70} />
+          <Text fontWeight="bold" variant="mdText">
             All Done!
           </Text>
-          <Text variant="mdText" fontWeight="bold">
+          <Text fontWeight="bold" variant="mdText">
             You supplied {amountNum} {asset.underlyingSymbol}
           </Text>
-          <Flex width="100%" justifyContent="flex-end">
-            <Button onClick={addToken} variant={'ghost'} size="sm">
+          <Flex justifyContent="flex-end" width="100%">
+            <Button onClick={addToken} size="sm" variant={'ghost'}>
               Add {asset.underlyingSymbol} to wallet
             </Button>
           </Flex>
         </VStack>
       ) : (
         <VStack>
-          <Icon as={BsFillXCircleFill} width={70} height={70} color={'fail'} />
-          <Text variant="mdText" fontWeight="bold">
+          <Icon as={BsFillXCircleFill} color={'fail'} height={70} width={70} />
+          <Text fontWeight="bold" variant="mdText">
             Failed!
           </Text>
         </VStack>
       )}
-      <Box py={4} w="100%" h="100%">
+      <Box h="100%" py={4} w="100%">
         <TransactionStepper
           activeStep={activeStep}
-          steps={steps}
           failedStep={failedStep}
           isLoading={isSupplying}
           poolChainId={poolChainId}
+          steps={steps}
         />
       </Box>
       {isSupplying ? (
@@ -82,7 +82,7 @@ export const PendingTransaction = ({
           <Text textAlign="center" variant="smText">
             Check your wallet to submit the transactions
           </Text>
-          <Text variant="smText" textAlign="center">
+          <Text textAlign="center" variant="smText">
             Do not close this modal until you submit all transactions!
           </Text>
         </VStack>

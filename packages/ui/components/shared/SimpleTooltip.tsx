@@ -13,11 +13,11 @@ export const SimpleTooltip = ({
   return (
     <Box>
       <Tooltip
-        hasArrow
-        bg={cPage.primary.bgColor}
-        placement={'top'}
         aria-label={label}
+        bg={cPage.primary.bgColor}
+        hasArrow
         label={label}
+        placement={'top'}
         sx={{
           '--popper-arrow-shadow-color': `${cPage.primary.borderColor}`,
         }}

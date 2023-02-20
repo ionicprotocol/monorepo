@@ -53,38 +53,38 @@ const ClaimAllRewardsButton: React.FC = () => {
     <>
       {currentChain && (
         <ClaimRewardsModal
+          claimableRewards={allClaimableRewards}
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
-          claimableRewards={allClaimableRewards}
           refetch={refetch}
         />
       )}
       {currentChain && Object.values(allClaimableRewards).length > 0 && (
         <GradientButton
           isSelected
+          justifySelf="center"
           onClick={() => {
             openClaimModal();
             refetch();
           }}
           width="fit-content"
-          justifySelf="center"
         >
           <HStack spacing={1}>
             {!isMobile && (
               <Text
+                color={cPage.secondary.txtColor}
+                fontWeight="semibold"
                 ml={1}
                 mr={1}
-                fontWeight="semibold"
-                color={cPage.secondary.txtColor}
                 width="max-content"
               >
                 All Rewards
               </Text>
             )}
-            <AvatarGroup size="xs" max={30}>
+            <AvatarGroup max={30} size="xs">
               {Object.entries(allClaimableRewards).map(([key, value]) => {
                 return value.map((rD: FlywheelClaimableRewards, index: number) => {
-                  return <TokenIcon key={index} address={rD.rewardToken} chainId={Number(key)} />;
+                  return <TokenIcon address={rD.rewardToken} chainId={Number(key)} key={index} />;
                 });
               })}
             </AvatarGroup>

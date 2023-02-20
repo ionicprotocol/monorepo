@@ -36,9 +36,10 @@ const TransferOwnershipModal = ({
   const transferOwnership = async () => {
     if (!currentSdk) return;
 
+    const verifiedAddress = utils.getAddress(inputAddress);
+
     try {
       setIsTransferring(true);
-      const verifiedAddress = utils.getAddress(inputAddress);
 
       const unitroller = currentSdk.createUnitroller(comptrollerAddress);
 
@@ -48,8 +49,16 @@ const TransferOwnershipModal = ({
       successToast({
         description: `${verifiedAddress} can now become the admin of this pool!`,
       });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        newAdmin: verifiedAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Transferring ownership',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsTransferring(false);
       setInputAddress('');
@@ -58,7 +67,7 @@ const TransferOwnershipModal = ({
   };
 
   return (
-    <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isCentered isOpen={isOpen} motionPreset="slideInBottom" onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Transfer Ownership</ModalHeader>
@@ -67,16 +76,16 @@ const TransferOwnershipModal = ({
         <VStack m={4}>
           <Center px={4} width="100%">
             <Input
+              autoFocus
+              onChange={(event) => setInputAddress(event.target.value)}
+              placeholder="Transferring Address: 0xXX...XX"
               px={2}
               textAlign="center"
-              placeholder="Transferring Address: 0xXX...XX"
-              variant="outline"
               value={inputAddress}
-              onChange={(event) => setInputAddress(event.target.value)}
-              autoFocus
+              variant="outline"
             />
           </Center>
-          <Button disabled={isTransferring} onClick={transferOwnership} isLoading={isTransferring}>
+          <Button disabled={isTransferring} isLoading={isTransferring} onClick={transferOwnership}>
             Transfer Ownership
           </Button>
         </VStack>

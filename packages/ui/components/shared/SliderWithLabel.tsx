@@ -39,24 +39,24 @@ export const SliderWithLabel = ({
   const { cSlider } = useColors();
 
   return (
-    <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" {...others}>
+    <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" {...others}>
       <InputGroup width="120px">
         <NumberInput
-          maxW="70px"
-          clampValueOnBlur={false}
-          value={value}
-          onChange={onChange}
-          min={min}
-          max={max}
           allowMouseWheel
+          clampValueOnBlur={false}
           isDisabled={isDisabled}
+          max={max}
+          maxW="70px"
+          min={min}
+          onChange={onChange}
+          value={value}
         >
           <NumberInputField
+            borderRightRadius={0}
+            name={name}
             paddingLeft={2}
             paddingRight={7}
-            borderRightRadius={0}
             ref={reff}
-            name={name}
             textAlign="center"
           />
           <NumberInputStepper>
@@ -67,24 +67,24 @@ export const SliderWithLabel = ({
         <InputRightAddon px={2}>%</InputRightAddon>
       </InputGroup>
       <Slider
-        width="150px"
         focusThumbOnChange={false}
-        onChange={onChange}
-        value={value}
-        name={name}
-        min={min}
-        max={max}
-        step={1}
         isDisabled={isDisabled}
+        max={max}
+        min={min}
+        name={name}
+        onChange={onChange}
+        step={1}
+        value={value}
+        width="150px"
       >
         <SliderTrack backgroundColor={cSlider.trackBgColor}>
           <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />
         </SliderTrack>
         <SliderThumb
-          boxSize={4}
           bgColor={cSlider.thumbBgColor}
-          borderWidth={2}
           borderColor={cSlider.thumbBorderColor}
+          borderWidth={2}
+          boxSize={4}
         />
       </Slider>
     </Row>
