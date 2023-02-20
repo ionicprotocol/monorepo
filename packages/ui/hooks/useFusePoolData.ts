@@ -8,7 +8,7 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
   const { poolsPerChain } = useCrossFusePools([...enabledChains]);
 
   return useQuery(
-    ['useFusePoolData', poolId, poolChainId, poolsPerChain],
+    ['useFusePoolData', poolId, poolChainId, poolsPerChain[poolChainId.toString()]],
     () => {
       if (poolsPerChain[poolChainId.toString()] && poolsPerChain[poolChainId.toString()].data) {
         const pool = poolsPerChain[poolChainId.toString()].data?.find(
@@ -23,7 +23,11 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!poolId && !!poolChainId && !!poolsPerChain,
+      enabled:
+        !!poolId &&
+        !!poolChainId &&
+        !!poolsPerChain[poolChainId.toString()] &&
+        !poolsPerChain[poolChainId.toString()].isLoading,
     }
   );
 };
