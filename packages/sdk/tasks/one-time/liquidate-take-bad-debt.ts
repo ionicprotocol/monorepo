@@ -10,18 +10,6 @@ import { MidasSafeLiquidator } from "../../typechain/MidasSafeLiquidator";
 import { WETH } from "../../typechain/WETH";
 import {FuseFeeDistributor} from "../../typechain";
 
-task("trigger:liquidations", "").setAction(async ({}, { ethers }) => {
-  let tx: providers.TransactionResponse;
-  const signer = await ethers.getNamedSigner("deployer");
-
-  const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
-
-  tx = await fuseFeeDistributor.liquidateJarvisPool();
-  console.log(`triggering the liquidations with ${tx.hash}`);
-  await tx.wait();
-  console.log(`tx mined`);
-});
-
 task("boost:tx", "increase the max gas fees to speed up a tx")
   .addParam("txHash", "tx hash", undefined, types.string)
   .addParam("nonce", "nonce", undefined, types.int)
@@ -53,10 +41,11 @@ task("boost:tx", "increase the max gas fees to speed up a tx")
 
 task("cancel:tx", "cancel a tx with the same nonce")
   .addParam("nonce", "nonce", undefined, types.int)
+  .addParam("sender", "sender address", "deployer", types.string)
   .setAction(async ({ nonce, sender }, { ethers }) => {
     let tx: providers.TransactionResponse;
 
-    const signer = await ethers.getNamedSigner("deployer");
+    const signer = await ethers.getNamedSigner(sender);
     tx = await signer.sendTransaction({
       from: signer.address,
       to: signer.address,

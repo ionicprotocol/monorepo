@@ -57,7 +57,7 @@ export type PublicPoolUserWithData = {
 
 export async function fetchGasLimitForTransaction(sdk: MidasBase, method: string, tx: TransactionRequest) {
   try {
-    return await sdk.provider.estimateGas(tx);
+    return (await sdk.provider.estimateGas(tx)).mul(11).div(10);
   } catch (error) {
     throw `Failed to estimate gas before signing and sending ${method} transaction: ${error}`;
   }
