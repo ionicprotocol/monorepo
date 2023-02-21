@@ -36,10 +36,10 @@
       "address": "0x7b7fa6D93f8ca69724d98E0d563e868Ce342eB51"
     },
     "CErc20Delegate": {
-      "address": "0x73B6f1B5B344A9981E312e7DBF64A5C4C587ac38"
+      "address": "0x19cF1dbB4Ac896E0c36480D30cd2Bc1A249Fb46d"
     },
     "CErc20PluginDelegate": {
-      "address": "0x2Bab79bdbaDd0Ad06bf7F4bd3a03385cc604829d"
+      "address": "0xb44d10C8Ef98995Fb91d38D22570575BAf270933"
     },
     "CErc20PluginRewardsDelegate": {
       "address": "0x09E87c2d75E9613a277f29F4cFd47dc67cdf4398"
@@ -48,16 +48,16 @@
       "address": "0xA6BDC4e098b6b14f4fCA2906B0a51e2798BA5777"
     },
     "CTokenFirstExtension": {
-      "address": "0xb5d857D48FFb8E6C58Aa9734A4D27c18358fCDdb"
+      "address": "0x5733Ddf4211ce37329bbdD1054Eae130385eb382"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x7ef2A6a6aF8ee090da3a24ea947b3717c4D16D94"
     },
     "Comptroller": {
-      "address": "0x8541AdeC48bE64A3AeBaB92B725638BdF7FFd7a3"
+      "address": "0x957B5c015Dbc1B2409bFD2a0532faE3Dc20Bc0Be"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xB7f6EdB768B6Fd4273b72001612545FF305c3a10"
+      "address": "0x013A0cC8509E691fdd0DEb6C796546Fd1D1d9fC8"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
       "address": "0x9F5DaC5Aa35a55bCb84A7AdFcdA71e7b4bc0DaF7"
@@ -90,7 +90,7 @@
       "address": "0xf656D243a23A0987329ac6522292f4104A7388e1"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x48e83349f0D5C6093AEfa2D3EEE3e9e3DE77cE58"
+      "address": "0x1233e6E2d61F5315867bc3F0cbfd13B54654bDEc"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xf656D243a23A0987329ac6522292f4104A7388e1"

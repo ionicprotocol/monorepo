@@ -35,7 +35,7 @@ task("market:set:ltv", "Set the LTV (loan to value / collateral factor) of a mar
     const pool = (await ethers.getContractAt("Comptroller.sol:Comptroller", poolAddress, signer)) as Comptroller;
 
     const ltvMantissa = ethers.utils.parseUnits(ltv, 18);
-    console.log(`will set the LTV of market ${marketAddress} to ${ltvMantissa}`)
+    console.log(`will set the LTV of market ${marketAddress} to ${ltvMantissa}`);
 
     const tx = await pool._setCollateralFactor(marketAddress, ltvMantissa);
     console.log(`_setCollateralFactor tx ${tx.hash}`);

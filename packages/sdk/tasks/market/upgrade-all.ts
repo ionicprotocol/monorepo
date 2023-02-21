@@ -75,7 +75,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     await tx.wait();
     console.log("_editCErc20DelegateWhitelist with tx:", tx.hash);
 
-    const cfe = await ethers.getContract("CTokenFirstExtension") as CTokenFirstExtension;
+    const cfe = (await ethers.getContract("CTokenFirstExtension")) as CTokenFirstExtension;
     {
       const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Delegate.address);
       if (!exts.length) {
@@ -105,12 +105,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     if (setLatest) {
       const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
       if (oldErc20Delegate) {
-        tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-          oldErc20Delegate,
-          erc20Delegate.address,
-          false,
-          "0x00"
-        );
+        tx = await fuseFeeDistributor._setLatestCErc20Delegate(oldErc20Delegate, erc20Delegate.address, false, "0x00");
         console.log("_setLatestCErc20Delegate:", tx.hash);
         await tx.wait();
       }

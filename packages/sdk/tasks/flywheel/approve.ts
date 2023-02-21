@@ -1,8 +1,8 @@
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
-import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { JarvisSafeLiquidator } from "../../typechain/JarvisSafeLiquidator";
+import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 
 task("approve-market-flywheel")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
@@ -30,8 +30,7 @@ task("approve-market-flywheel")
     }
   });
 
-task("deploy-jsl")
-.setAction(async ( {}, { ethers, deployments } ) => {
+task("deploy-jsl").setAction(async ({}, { ethers, deployments }) => {
   const deployer = await ethers.getNamedSigner("deployer");
 
   const jsl = await deployments.deploy("JarvisSafeLiquidator", {

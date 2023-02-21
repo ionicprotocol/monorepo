@@ -1,6 +1,6 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { task, types } from "hardhat/config";
-import {CErc20PluginDelegate} from "../../typechain";
+import { CErc20PluginDelegate } from "../../typechain";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("comptroller", "address of comptroller", undefined, types.string) // TODO I would rather use id or comptroller address directly.
@@ -78,7 +78,11 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    let cTokenInstance = await ethers.getContractAt("CErc20PluginDelegate", marketAddress, signer) as CErc20PluginDelegate;
+    const cTokenInstance = (await ethers.getContractAt(
+      "CErc20PluginDelegate",
+      marketAddress,
+      signer
+    )) as CErc20PluginDelegate;
 
     const impl = await cTokenInstance.callStatic.implementation();
     if (impl.toLowerCase() != implementationAddress.toLowerCase()) {
