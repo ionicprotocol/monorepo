@@ -143,7 +143,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     async getFlywheelClaimableRewardsForAsset(poolAddress: string, market: string, account: string) {
       const pool = this.createComptroller(poolAddress, this.provider);
       const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
-      const flywheels = rewardDistributorsOfPool.map((address) => this.createMidasFlywheel(address));
+      const flywheels = rewardDistributorsOfPool.map((address) => this.createMidasFlywheel(address, this.provider));
       const flywheelWithRewards: FlywheelClaimableRewards[] = [];
 
       for (const flywheel of flywheels) {
