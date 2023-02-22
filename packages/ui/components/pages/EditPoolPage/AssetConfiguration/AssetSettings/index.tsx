@@ -6,15 +6,14 @@ import {
 } from '@midas-capital/types';
 import { BigNumber, ContractFunction } from 'ethers';
 
-import { AdminFee } from './AdminFee';
-import { DebtCeilings } from './DebtCeilings';
-import { InterestRateModel } from './InterestRateModel';
-import { LoanToValue } from './LoanToValue';
-import { Plugin } from './Plugin';
-import { ReserveFactor } from './ReserveFactor';
-import { SupplyAndBorrowCaps } from './SupplyAndBorrowCap';
-import { ToggleBorrow } from './ToggleBorrow';
-
+import { AdminFee } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/AdminFee';
+import { DebtCeilings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/DebtCeilings';
+import { InterestRateModel } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/InterestRateModel';
+import { LoanToValue } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/LoanToValue';
+import { Plugin } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/Plugin';
+import { ReserveFactor } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/ReserveFactor';
+import { SupplyAndBorrowCaps } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/SupplyAndBorrowCap';
+import { ToggleBorrow } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/ToggleBorrow';
 import RemoveAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/RemoveAssetButton';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';

@@ -20,13 +20,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Alerts } from './Alerts';
-import { AmountInput } from './AmountInput';
-import { Balance } from './Balance';
-import { BorrowError } from './BorrowError';
-import MaxBorrowSlider from './MaxBorrowSlider';
-import { PendingTransaction } from './PendingTransaction';
-
+import { Alerts } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/BorrowModal/Alerts';
+import { AmountInput } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/BorrowModal/AmountInput';
+import { Balance } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/BorrowModal/Balance';
+import { BorrowError } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/BorrowModal/BorrowError';
+import MaxBorrowSlider from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/BorrowModal/MaxBorrowSlider';
+import { PendingTransaction } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/BorrowModal/PendingTransaction';
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';

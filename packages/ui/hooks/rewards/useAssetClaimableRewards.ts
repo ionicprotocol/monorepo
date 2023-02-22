@@ -8,17 +8,20 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export const useAssetClaimableRewards = ({
   poolAddress,
   assetAddress,
+  poolChainId,
 }: {
   poolAddress: string;
   assetAddress: string;
+  poolChainId: number;
 }) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { address } = useMultiMidas();
+  const sdk = useSdk(poolChainId);
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
-    ['useAssetClaimableRewards', poolAddress, assetAddress, address, currentSdk?.chainId],
+    ['useAssetClaimableRewards', poolAddress, assetAddress, address, sdk?.chainId],
     () => {
-      if (currentSdk && address) {
-        return currentSdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
+      if (sdk && address) {
+        return sdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
       }
 
       return null;
@@ -26,7 +29,7 @@ export const useAssetClaimableRewards = ({
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!poolAddress && !!address && !!currentSdk,
+      enabled: !!poolAddress && !!address && !!sdk,
     }
   );
 };

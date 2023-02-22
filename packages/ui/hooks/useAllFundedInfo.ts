@@ -4,13 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { utils } from 'ethers';
 
-import { aprDays } from '../constants';
-
-import { getAssetsClaimableRewards } from './rewards/useAssetClaimableRewards';
-import { UseAssetsData } from './useAssets';
-
+import { aprDays } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
+import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { UseAssetsData } from '@ui/hooks/useAssets';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { fetchRewards, UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';

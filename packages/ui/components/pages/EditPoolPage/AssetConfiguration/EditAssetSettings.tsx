@@ -1,8 +1,7 @@
 import { Spinner, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 
-import { AssetSettings } from './AssetSettings';
-
+import { AssetSettings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/index';
 import { Center } from '@ui/components/shared/Flex';
 import { useTokenData } from '@ui/hooks/useTokenData';
 

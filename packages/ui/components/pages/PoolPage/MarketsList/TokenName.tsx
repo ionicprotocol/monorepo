@@ -28,6 +28,7 @@ export const TokenName = ({
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
+    poolChainId,
   });
 
   const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({

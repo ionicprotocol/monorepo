@@ -3,12 +3,11 @@ import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { BorrowAPY } from './BorrowAPY';
-import { BorrowsMarket } from './BorrowsMarket';
-import { BorrowsTotal } from './BorrowsTotal';
-import { Supplied } from './Supplied';
-import { SupplyAPY } from './SupplyAPY';
-
+import { BorrowAPY } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/StatsColumn/BorrowAPY';
+import { BorrowsMarket } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/StatsColumn/BorrowsMarket';
+import { BorrowsTotal } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/StatsColumn/BorrowsTotal';
+import { Supplied } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/StatsColumn/Supplied';
+import { SupplyAPY } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/FundButton/StatsColumn/SupplyAPY';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Column } from '@ui/components/shared/Flex';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
