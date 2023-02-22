@@ -41,12 +41,14 @@ export const getAssetsClaimableRewards = async (
   address: string
 ) => {
   const allRewards = await Promise.all(
-    assetsAddress.map((assetAddress) =>
-      sdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address).catch((error) => {
+    assetsAddress.map((assetAddress) => {
+      try {
+        return sdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
+      } catch (error) {
         console.warn(`Unable to fetch claimable rewards for asset: '${assetAddress}'`, error);
         return undefined;
-      })
-    )
+      }
+    })
   );
 
   const res: { [key: string]: FlywheelClaimableRewards[] } = {};

@@ -103,7 +103,7 @@ export function useAllFundedInfo() {
                       //get rewards
                       const rewards = await fetchRewards(
                         pool.comptroller,
-                        fundedAssets,
+                        assets,
                         Number(chainId),
                         sdk
                       );
@@ -112,7 +112,7 @@ export function useAllFundedInfo() {
 
                       const assetsClaimableRewards = await getAssetsClaimableRewards(
                         pool.comptroller,
-                        fundedAssets.map((asset) => asset.cToken),
+                        assets.map((asset) => asset.cToken),
                         sdk,
                         address
                       );
@@ -127,7 +127,7 @@ export function useAllFundedInfo() {
                         Number(chainId) as SupportedChains
                       ].find((asset) => asset.symbol === assetSymbols.ankrBNB);
 
-                      const isEnabled = !!fundedAssets.find(
+                      const isEnabled = !!assets.find(
                         (asset) => asset.underlyingSymbol === assetSymbols.ankrBNB
                       );
 
@@ -141,7 +141,7 @@ export function useAllFundedInfo() {
                         ankrBNBApr = Number(utils.formatUnits(apr));
                       }
 
-                      for (const asset of fundedAssets) {
+                      for (const asset of assets) {
                         let marketTotalAPY =
                           sdk.ratePerBlockToAPY(
                             asset.supplyRatePerBlock,
@@ -170,7 +170,7 @@ export function useAllFundedInfo() {
 
                       // get borrowAPYs
 
-                      for (const asset of fundedAssets) {
+                      for (const asset of assets) {
                         const marketBorrowApy =
                           sdk.ratePerBlockToAPY(
                             asset.borrowRatePerBlock,
