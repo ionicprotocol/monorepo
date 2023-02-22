@@ -84,9 +84,12 @@ export function useAllFundedInfo() {
                     (pool.totalSupplyBalanceFiat > 0 || pool.totalBorrowBalanceFiat > 0)
                   ) {
                     // get assets which user funded
+                    const assets = pool.assets.filter(
+                      (asset) => asset.supplyBalanceFiat > 0 || asset.borrowBalanceFiat > 0
+                    );
 
-                    pool.assets.map((asset) => {
-                      if (asset.supplyBalanceFiat > 0 || asset.borrowBalanceFiat > 0) {
+                    if (assets.length > 0) {
+                      assets.map((asset) => {
                         fundedAssets.push({
                           ...asset,
                           poolId: pool.id.toString(),
@@ -97,87 +100,87 @@ export function useAllFundedInfo() {
                           totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
                           chainId,
                         });
-                      }
-                    });
+                      });
 
-                    //get rewards
-                    const rewards = await fetchRewards(
-                      pool.comptroller,
-                      fundedAssets,
-                      Number(chainId),
-                      sdk
-                    );
-
-                    // get claimable rewards
-
-                    const assetsClaimableRewards = await getAssetsClaimableRewards(
-                      pool.comptroller,
-                      fundedAssets.map((asset) => asset.cToken),
-                      sdk,
-                      address
-                    );
-
-                    allClaimableRewards = { ...allClaimableRewards, ...assetsClaimableRewards };
-
-                    // get totalSupplyApys
-
-                    let ankrBNBApr = 0;
-
-                    const ankrAsset = ChainSupportedAssets[Number(chainId) as SupportedChains].find(
-                      (asset) => asset.symbol === assetSymbols.ankrBNB
-                    );
-
-                    const isEnabled = !!fundedAssets.find(
-                      (asset) => asset.underlyingSymbol === assetSymbols.ankrBNB
-                    );
-
-                    if (ankrAsset && isEnabled) {
-                      const contract = getAnkrBNBContract(sdk);
-                      const apr = await contract.callStatic.averagePercentageRate(
-                        ankrAsset.underlying,
-                        aprDays
+                      //get rewards
+                      const rewards = await fetchRewards(
+                        pool.comptroller,
+                        fundedAssets,
+                        Number(chainId),
+                        sdk
                       );
 
-                      ankrBNBApr = Number(utils.formatUnits(apr));
-                    }
+                      // get claimable rewards
 
-                    for (const asset of fundedAssets) {
-                      let marketTotalAPY =
-                        sdk.ratePerBlockToAPY(
-                          asset.supplyRatePerBlock,
-                          getBlockTimePerMinuteByChainId(Number(chainId))
-                        ) / 100;
+                      const assetsClaimableRewards = await getAssetsClaimableRewards(
+                        pool.comptroller,
+                        fundedAssets.map((asset) => asset.cToken),
+                        sdk,
+                        address
+                      );
 
-                      if (asset.underlyingSymbol === assetSymbols.ankrBNB && ankrBNBApr) {
-                        marketTotalAPY += Number(ankrBNBApr) / 100;
-                      }
+                      allClaimableRewards = { ...allClaimableRewards, ...assetsClaimableRewards };
 
-                      if (rewards && rewards[asset.cToken]) {
-                        marketTotalAPY += rewards[asset.cToken].reduce(
-                          (acc, cur) => (cur.apy ? acc + cur.apy : acc),
-                          0
+                      // get totalSupplyApys
+
+                      let ankrBNBApr = 0;
+
+                      const ankrAsset = ChainSupportedAssets[
+                        Number(chainId) as SupportedChains
+                      ].find((asset) => asset.symbol === assetSymbols.ankrBNB);
+
+                      const isEnabled = !!fundedAssets.find(
+                        (asset) => asset.underlyingSymbol === assetSymbols.ankrBNB
+                      );
+
+                      if (ankrAsset && isEnabled) {
+                        const contract = getAnkrBNBContract(sdk);
+                        const apr = await contract.callStatic.averagePercentageRate(
+                          ankrAsset.underlying,
+                          aprDays
                         );
+
+                        ankrBNBApr = Number(utils.formatUnits(apr));
                       }
 
-                      if (assetInfos && assetInfos[asset.underlyingToken.toLowerCase()]) {
-                        assetInfos[asset.underlyingToken.toLowerCase()].map((reward) => {
-                          if (reward.apy) marketTotalAPY += reward.apy;
-                        });
+                      for (const asset of fundedAssets) {
+                        let marketTotalAPY =
+                          sdk.ratePerBlockToAPY(
+                            asset.supplyRatePerBlock,
+                            getBlockTimePerMinuteByChainId(Number(chainId))
+                          ) / 100;
+
+                        if (asset.underlyingSymbol === assetSymbols.ankrBNB && ankrBNBApr) {
+                          marketTotalAPY += Number(ankrBNBApr) / 100;
+                        }
+
+                        if (rewards && rewards[asset.cToken]) {
+                          marketTotalAPY += rewards[asset.cToken].reduce(
+                            (acc, cur) => (cur.apy ? acc + cur.apy : acc),
+                            0
+                          );
+                        }
+
+                        if (assetInfos && assetInfos[asset.underlyingToken.toLowerCase()]) {
+                          assetInfos[asset.underlyingToken.toLowerCase()].map((reward) => {
+                            if (reward.apy) marketTotalAPY += reward.apy;
+                          });
+                        }
+
+                        totalSupplyAPYs[asset.cToken] = marketTotalAPY;
                       }
 
-                      totalSupplyAPYs[asset.cToken] = marketTotalAPY;
-                    }
+                      // get borrowAPYs
 
-                    // get borrowAPYs
+                      for (const asset of fundedAssets) {
+                        const marketBorrowApy =
+                          sdk.ratePerBlockToAPY(
+                            asset.borrowRatePerBlock,
+                            getBlockTimePerMinuteByChainId(Number(chainId))
+                          ) / 100;
 
-                    for (const asset of fundedAssets) {
-                      const marketBorrowApy =
-                        sdk.ratePerBlockToAPY(
-                          asset.borrowRatePerBlock,
-                          getBlockTimePerMinuteByChainId(Number(chainId))
-                        ) / 100;
-
-                      borrowAPYs[asset.cToken] = marketBorrowApy;
+                        borrowAPYs[asset.cToken] = marketBorrowApy;
+                      }
                     }
                   }
                 })
