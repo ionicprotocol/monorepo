@@ -16,9 +16,9 @@ export const Assets = ({ pool }: { pool: PoolData }) => {
 
   return (
     <HStack spacing={0} width="240px">
-      <AvatarGroup size="sm" max={30}>
+      <AvatarGroup max={30} size="sm">
         {tokens.slice(0, SHRINK_ASSETS).map((token, i) => (
-          <TokenIcon key={i} address={token.address} chainId={pool.chainId} />
+          <TokenIcon address={token.address} chainId={pool.chainId} key={i} />
         ))}
       </AvatarGroup>
       {/* TODO list hidden assets in tooltip */}

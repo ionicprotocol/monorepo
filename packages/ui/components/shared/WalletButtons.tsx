@@ -12,7 +12,7 @@ export const WalletButtons = memo(() => {
   const isMobile = useIsSmallScreen();
 
   return (
-    <Row mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
+    <Row crossAxisAlignment="center" gap={2} mainAxisAlignment="center">
       <ClaimAllRewardsButton />
       <ConnectButton.Custom>
         {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
@@ -45,14 +45,14 @@ export const WalletButtons = memo(() => {
                       {chain.iconUrl && (
                         <Img
                           alt={chain.name ?? 'Chain icon'}
+                          borderRadius="50%"
+                          height={6}
                           src={chain.iconUrl}
                           width={6}
-                          height={6}
-                          borderRadius="50%"
                         />
                       )}
                       {!isMobile && (
-                        <Text ml={2} color="raisinBlack">
+                        <Text color="raisinBlack" ml={2}>
                           {chain.name}
                         </Text>
                       )}
@@ -61,7 +61,7 @@ export const WalletButtons = memo(() => {
                       {account.hasPendingTransactions ? (
                         <HStack>
                           <Center height="100%">
-                            <Spinner size="md" thickness="4px" speed="1s" />
+                            <Spinner size="md" speed="1s" thickness="4px" />
                           </Center>
                           {!isMobile && <Text color="raisinBlack">Pending</Text>}
                         </HStack>

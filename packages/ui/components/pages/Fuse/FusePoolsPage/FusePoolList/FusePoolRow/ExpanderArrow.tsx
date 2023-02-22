@@ -15,16 +15,16 @@ export const ExpanderArrow = ({
   return (
     <HStack justifyContent="center">
       <CIconButton
-        aria-label="detail View"
         alignSelf="flex-end"
-        variant="_outline"
+        aria-label="detail View"
+        borderRadius="50%"
+        disabled={!canExpand ? true : false}
+        icon={!isExpanded ? <ChevronDownIcon fontSize={30} /> : <ChevronUpIcon fontSize={30} />}
         onClick={(e) => {
           e.stopPropagation();
           getToggleExpandedHandler();
         }}
-        icon={!isExpanded ? <ChevronDownIcon fontSize={30} /> : <ChevronUpIcon fontSize={30} />}
-        borderRadius="50%"
-        disabled={!canExpand ? true : false}
+        variant="_outline"
       />
     </HStack>
   );

@@ -2,7 +2,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 
 import AssetConfiguration from '@ui/components/pages/EditPoolPage/AssetConfiguration';
 import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';
@@ -17,9 +17,9 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 
 const EditPoolPage = memo(() => {
@@ -37,7 +37,14 @@ const EditPoolPage = memo(() => {
   const poolId = router.query.poolId as string;
   const poolChainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(poolChainId));
-  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
   const isAdmin = useIsComptrollerAdmin(data?.comptroller, data?.chainId);
   const isEditableAdmin = useIsEditableAdmin(data?.comptroller, Number(poolChainId));
   const { cPage } = useColors();
@@ -65,33 +72,33 @@ const EditPoolPage = memo(() => {
         <FusePageLayout>
           <AddAssetModal
             comptrollerAddress={data.comptroller}
-            poolName={data.name}
-            poolID={poolId}
             isOpen={isAddAssetModalOpen}
             onClose={closeAddAssetModal}
             poolChainId={Number(poolChainId)}
+            poolID={poolId}
+            poolName={data.name}
           />
 
           <Flex
-            flexDir="column"
             alignItems="flex-start"
             bgColor={cPage.primary.bgColor}
-            justifyContent="flex-start"
             color={cPage.primary.txtColor}
+            flexDir="column"
+            justifyContent="flex-start"
             mx="auto"
             width="100%"
           >
-            <HStack width="100%" mx="auto" spacing={6}>
+            <HStack mx="auto" spacing={6} width="100%">
               <ArrowBackIcon
+                cursor="pointer"
                 fontSize="2xl"
                 fontWeight="extrabold"
-                cursor="pointer"
                 onClick={() => {
                   setGlobalLoading(true);
                   router.back();
                 }}
               />
-              <Text textAlign="left" size="lg" fontWeight="bold">
+              <Text fontWeight="bold" size="lg" textAlign="left">
                 Back
               </Text>
             </HStack>
@@ -104,19 +111,19 @@ const EditPoolPage = memo(() => {
             )}
 
             <RowOrColumn
-              width="100%"
-              mainAxisAlignment="flex-start"
+              alignItems="stretch"
               crossAxisAlignment="flex-start"
               isRow={!isMobile}
-              alignItems="stretch"
+              mainAxisAlignment="flex-start"
+              width="100%"
             >
-              <MidasBox width={isMobile ? '100%' : '50%'} mt={4}>
+              <MidasBox mt={4} width={isMobile ? '100%' : '50%'}>
                 {data ? (
                   <PoolConfiguration
                     assets={data.assets}
                     comptrollerAddress={data.comptroller}
-                    poolName={data.name}
                     poolChainId={data.chainId}
+                    poolName={data.name}
                   />
                 ) : (
                   <Center height="100%" py={48}>
@@ -125,16 +132,16 @@ const EditPoolPage = memo(() => {
                 )}
               </MidasBox>
 
-              <MidasBox width={isMobile ? '100%' : '50%'} mt={4} ml={isMobile ? 0 : 4}>
+              <MidasBox ml={isMobile ? 0 : 4} mt={4} width={isMobile ? '100%' : '50%'}>
                 {data.assets.length > 0 ? (
                   <AssetConfiguration
-                    openAddAssetModal={openAddAssetModal}
                     assets={data.assets}
                     comptrollerAddress={data.comptroller}
+                    openAddAssetModal={openAddAssetModal}
                     poolChainId={data.chainId}
                   />
                 ) : (
-                  <Column expand mainAxisAlignment="center" crossAxisAlignment="center" py={4}>
+                  <Column crossAxisAlignment="center" expand mainAxisAlignment="center" py={4}>
                     <Text mb={4}>There are no assets in this pool.</Text>
 
                     <AddAssetButton

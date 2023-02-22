@@ -14,50 +14,50 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <meta charSet="utf-8" />
-          <meta name="robots" content="index,follow" />
+          <meta content="index,follow" name="robots" />
           <meta
-            name="description"
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
+            name="description"
           />
 
-          <meta name="twitter:card" content="summary_large_image" key="twcard" />
+          <meta content="summary_large_image" key="twcard" name="twitter:card" />
           <meta
-            name="twitter:title"
             content="Midas - Money markets for all. Lending and borrowing pools for any asset."
             key="twtitle"
+            name="twitter:title"
           />
           <meta
-            name="twitter:description"
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
             key="twdesc"
+            name="twitter:description"
           />
-          <meta name="twitter:url" content="https://app.midascapital.xyz/" key="twurl" />
+          <meta content="https://app.midascapital.xyz/" key="twurl" name="twitter:url" />
           <meta
-            name="twitter:image"
             content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
             key="twimage"
+            name="twitter:image"
           />
 
-          <meta property="og:type" content="website" key="ogtype" />
-          <meta property="og:site_name" content="Midas Capital" key="ogsitename" />
+          <meta content="website" key="ogtype" property="og:type" />
+          <meta content="Midas Capital" key="ogsitename" property="og:site_name" />
           <meta
-            property="og:image"
             content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
             key="ogimage"
+            property="og:image"
           />
           <meta
-            property="og:title"
             content="Midas - Money markets for all. Lending and borrowing pools for any asset."
             key="ogtitle"
+            property="og:title"
           />
           <meta
-            property="og:description"
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
             key="ogdesc"
+            property="og:description"
           />
 
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com" rel="preconnect" />
+          <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
           <link
             href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
             rel="stylesheet"
@@ -67,22 +67,22 @@ class MyDocument extends Document {
             rel="stylesheet"
           ></link>
 
-          <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
-          <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+          <link href="/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+          <link href="/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" />
+          <link href="/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
           <link
-            rel="shortcut icon"
-            type="image/png"
-            sizes="32x32"
             href="/favicon/favicon-32x32.png"
+            rel="shortcut icon"
+            sizes="32x32"
+            type="image/png"
           />
           <link
-            rel="shortcut icon"
-            type="image/png"
-            sizes="16x16"
             href="/favicon/favicon-16x16.png"
+            rel="shortcut icon"
+            sizes="16x16"
+            type="image/png"
           />
-          <link rel="manifest" href="/favicon/site.webmanifest" />
+          <link href="/favicon/site.webmanifest" rel="manifest" />
         </Head>
         <body>
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />

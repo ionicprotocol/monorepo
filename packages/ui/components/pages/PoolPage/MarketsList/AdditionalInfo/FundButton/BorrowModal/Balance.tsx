@@ -10,8 +10,8 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
 
   return (
-    <Row width="100%" mainAxisAlignment="flex-end" crossAxisAlignment="center">
-      <Text size="sm" mr={2}>
+    <Row crossAxisAlignment="center" mainAxisAlignment="flex-end" width="100%">
+      <Text mr={2} size="sm">
         Wallet Balance:
       </Text>
       <SimpleTooltip
@@ -19,7 +19,7 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
           asset.underlyingSymbol
         }`}
       >
-        <Text maxWidth="300px" textOverflow={'ellipsis'} whiteSpace="nowrap" overflow="hidden">
+        <Text maxWidth="300px" overflow="hidden" textOverflow={'ellipsis'} whiteSpace="nowrap">
           {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
           {asset.underlyingSymbol}
         </Text>

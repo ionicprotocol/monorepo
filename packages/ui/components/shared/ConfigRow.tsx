@@ -11,13 +11,13 @@ export const ConfigRow = ({
 }) => {
   return (
     <Row
-      mainAxisAlignment="flex-start"
       crossAxisAlignment="center"
-      width="100%"
+      flexShrink={0}
+      mainAxisAlignment="flex-start"
+      overflowX="auto"
       px={{ md: 8, base: 4 }}
       py={4}
-      overflowX="auto"
-      flexShrink={0}
+      width="100%"
       {...others}
     >
       {children}

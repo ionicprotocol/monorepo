@@ -164,7 +164,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
   const { cPage, cCard } = useColors();
 
   return (
-    <Grid templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} gap={4} w="100%">
+    <Grid gap={4} templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} w="100%">
       <Popover trigger="hover">
         <PopoverTrigger>
           <Flex>
@@ -182,7 +182,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
               }}
             />
             <PopoverBody>
-              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
                 <Text fontWeight="bold">Top supplied assets</Text>
                 {topSuppliedAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
@@ -190,9 +190,9 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                       <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
-                            size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
+                            size="md"
                           />
                         )}
                         <Box ml="3">
@@ -230,7 +230,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
               }}
             />
             <PopoverBody>
-              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
                 <Text fontWeight="bold">Top borrowed assets</Text>
                 {topBorrowedAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
@@ -238,9 +238,9 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                       <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
-                            size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
+                            size="md"
                           />
                         )}
                         <Box ml="3">
@@ -266,14 +266,14 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           <Flex>
             <UserStat
               label="Effective Supply APY"
-              value={totalSupplyApy ? totalSupplyApy.totalApy.toFixed(2) + '%' : '-'}
               secondValue={
                 totalSupplyApy ? '~ ' + smallUsdFormatter(totalSupplyApy.estimatedUsd) : ''
               }
+              value={totalSupplyApy ? totalSupplyApy.totalApy.toFixed(2) + '%' : '-'}
             />
           </Flex>
         </PopoverTrigger>
-        <PopoverContent p={2} width="min-content" minW="350px">
+        <PopoverContent minW="350px" p={2} width="min-content">
           <PopoverArrow
             sx={{
               '--popper-arrow-shadow-color': cPage.primary.borderColor,
@@ -296,9 +296,9 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                       return (
                         <HStack key={data.underlying}>
                           <TokenIcon
-                            size="sm"
                             address={data.underlying}
                             chainId={poolData.chainId}
+                            size="sm"
                           />
                           <Text whiteSpace="nowrap">
                             {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
@@ -329,14 +329,14 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           <Flex>
             <UserStat
               label="Effective Borrow APY"
-              value={totalBorrowApy ? totalBorrowApy.totalApy.toFixed(2) + '%' : '-'}
               secondValue={
                 totalBorrowApy ? '~ ' + smallUsdFormatter(totalBorrowApy.estimatedUsd) : ''
               }
+              value={totalBorrowApy ? totalBorrowApy.totalApy.toFixed(2) + '%' : '-'}
             />
           </Flex>
         </PopoverTrigger>
-        <PopoverContent p={2} width="min-content" minW="350px">
+        <PopoverContent minW="350px" p={2} width="min-content">
           <PopoverArrow
             sx={{
               '--popper-arrow-shadow-color': cPage.primary.borderColor,
@@ -359,9 +359,9 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                       return (
                         <HStack key={data.underlying}>
                           <TokenIcon
-                            size="sm"
                             address={data.underlying}
                             chainId={poolData.chainId}
+                            size="sm"
                           />
                           <Text whiteSpace="nowrap">
                             {data.borrowed} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
