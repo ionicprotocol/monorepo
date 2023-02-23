@@ -134,8 +134,18 @@ const EditFlywheelModal = ({
       );
       await tx.wait();
       refetchRewardsBalance();
-    } catch (err) {
-      handleGenericError(err, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        rewardToken: flywheel.rewardToken,
+        chainId: currentSdk.chainId,
+        rewards: flywheel.rewards,
+        amount: fundingAmount,
+      };
+      const sentryInfo = {
+        contextName: 'Funding flywheel rewards contract',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setTransactionPending(false);
     }
@@ -151,11 +161,10 @@ const EditFlywheelModal = ({
 
   const updateRewardInfo = useCallback(async () => {
     if (!currentSdk) return;
+    if (!isAdmin) throw new Error('User is not admin of this Flywheel!');
+    if (!selectedMarket) throw new Error('No asset selected!');
 
     try {
-      if (!isAdmin) throw new Error('User is not admin of this Flywheel!');
-      if (!selectedMarket) throw new Error('No asset selected!');
-
       setTransactionPending(true);
 
       const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
@@ -166,8 +175,19 @@ const EditFlywheelModal = ({
 
       await tx.wait();
       refetchRewardsInfo();
-    } catch (err) {
-      handleGenericError(err, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        token: selectedMarket.cToken,
+        rewards: flywheel.rewards,
+        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
+        rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
+      };
+      const sentryInfo = {
+        contextName: 'Updating rewards info',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setTransactionPending(false);
       setDateEditable(false);
@@ -196,8 +216,17 @@ const EditFlywheelModal = ({
         refetchRewardsInfo();
         refetchEnabledMarkets();
         setTransactionPending(false);
-      } catch (err) {
-        handleGenericError(err, errorToast);
+      } catch (error) {
+        const sentryProperties = {
+          chainId: currentSdk.chainId,
+          token: market,
+          flywheel: flywheel.address,
+        };
+        const sentryInfo = {
+          contextName: 'Enabling rewards',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
       } finally {
         setTransactionPending(false);
       }
@@ -206,7 +235,7 @@ const EditFlywheelModal = ({
   );
 
   return (
-    <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isCentered isOpen={isOpen} motionPreset="slideInBottom" onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Edit Flywheel</ModalHeader>
@@ -216,14 +245,14 @@ const EditFlywheelModal = ({
         <VStack alignItems={'flex-start'} p={4}>
           {tokenData?.logoURL ? (
             <Image
-              mt={4}
-              src={tokenData.logoURL}
-              boxSize="50px"
               alignSelf={'center'}
-              borderRadius="50%"
+              alt={tokenData.symbol}
               backgroundImage={`url(${SmallWhiteCircle})`}
               backgroundSize="100% auto"
-              alt={tokenData.symbol}
+              borderRadius="50%"
+              boxSize="50px"
+              mt={4}
+              src={tokenData.logoURL}
             />
           ) : (
             <Skeleton alignSelf={'center'} height="50px" width="50px"></Skeleton>
@@ -240,9 +269,9 @@ const EditFlywheelModal = ({
               )}
 
               <ClipboardValue
-                value={flywheel.rewardToken}
-                label={shortAddress(flywheel.rewardToken)}
                 component={StatHelpText}
+                label={shortAddress(flywheel.rewardToken)}
+                value={flywheel.rewardToken}
               />
             </Stat>
 
@@ -258,9 +287,9 @@ const EditFlywheelModal = ({
                 </Skeleton>
               )}
               <ClipboardValue
-                value={flywheel.rewards}
-                label={shortAddress(flywheel.rewards)}
                 component={StatHelpText}
+                label={shortAddress(flywheel.rewards)}
+                value={flywheel.rewards}
               />
             </Stat>
           </StatGroup>
@@ -269,7 +298,7 @@ const EditFlywheelModal = ({
 
         {/* Funding */}
         <VStack alignItems="flex-start">
-          <VStack alignItems={'flex-start'} width="100%" p={4}>
+          <VStack alignItems={'flex-start'} p={4} width="100%">
             <Heading fontSize={'xl'} mb={2}>
               Fund Flywheel Rewards Contract
             </Heading>
@@ -277,22 +306,21 @@ const EditFlywheelModal = ({
               <HStack width={'100%'}>
                 <InputGroup flex={1} variant="outlineRightAddon">
                   <NumberInput
+                    flex={1}
                     min={0}
                     onChange={(valueString: string) => {
                       setTransactionPendingAmount(parseFloat(valueString));
                     }}
-                    flex={1}
                   >
                     <NumberInputField
-                      borderTopRightRadius={0}
                       borderBottomRightRadius={0}
+                      borderTopRightRadius={0}
                       placeholder={'0.00'}
                     />
                   </NumberInput>
                   <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
                 </InputGroup>
                 <Button
-                  onClick={fund}
                   disabled={
                     isTransactionPending ||
                     (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
@@ -301,6 +329,7 @@ const EditFlywheelModal = ({
                     fundingAmount < 0
                   }
                   ml={4}
+                  onClick={fund}
                   width="15%"
                 >
                   {isTransactionPending ? <Spinner /> : 'Send'}
@@ -341,11 +370,11 @@ const EditFlywheelModal = ({
               {selectedMarket &&
                 enabledMarkets &&
                 !enabledMarkets.includes(selectedMarket.cToken) && (
-                  <Center width={'100%'} p={4}>
+                  <Center p={4} width={'100%'}>
                     <Button
-                      onClick={enableForRewards(selectedMarket.cToken)}
                       disabled={isTransactionPending}
                       ml={2}
+                      onClick={enableForRewards(selectedMarket.cToken)}
                       width="100%"
                     >
                       {isTransactionPending ? (
@@ -365,46 +394,46 @@ const EditFlywheelModal = ({
                     <HStack width="100%">
                       <InputGroup variant="outlineRightAddon">
                         <NumberInput
-                          value={supplySpeed}
-                          step={0.1}
+                          flex={1}
+                          isReadOnly={!isSpeedEditable}
                           min={0}
                           onChange={(newSupplySpeed: string) => {
                             setSupplySpeed(newSupplySpeed);
                           }}
-                          flex={1}
-                          isReadOnly={!isSpeedEditable}
+                          step={0.1}
+                          value={supplySpeed}
                         >
                           <NumberInputField
-                            borderTopRightRadius={0}
                             borderBottomRightRadius={0}
-                            placeholder={'0.00'}
+                            borderTopRightRadius={0}
                             disabled={!isSpeedEditable}
+                            placeholder={'0.00'}
                           />
                         </NumberInput>
                         <InputRightAddon>{`${tokenData?.symbol} / sec`}</InputRightAddon>
                       </InputGroup>
                       <Button
-                        onClick={() => setSpeedEditable(true)}
-                        ml={2}
-                        width="15%"
                         hidden={isSpeedEditable}
+                        ml={2}
+                        onClick={() => setSpeedEditable(true)}
+                        width="15%"
                       >
                         Edit
                       </Button>
                       <Button
-                        onClick={updateRewardInfo}
                         disabled={isTransactionPending || rewardsSpeed === Number(supplySpeed)}
-                        ml={2}
                         hidden={!isSpeedEditable}
+                        ml={2}
+                        onClick={updateRewardInfo}
                       >
                         {isTransactionPending ? <Spinner /> : 'Save'}
                       </Button>
                       <Button
-                        variant="silver"
-                        onClick={() => setSpeedEditable(false)}
                         disabled={isTransactionPending}
-                        ml={2}
                         hidden={!isSpeedEditable}
+                        ml={2}
+                        onClick={() => setSpeedEditable(false)}
+                        variant="silver"
                       >
                         Cancel
                       </Button>
@@ -438,28 +467,28 @@ const EditFlywheelModal = ({
                         <Text width={'100%'}>End Time/Date Has Not Yet Been Set</Text>
                       ) : (
                         <DatePicker
-                          selected={endDate}
-                          onChange={(date) => setEndDate(date)}
-                          timeInputLabel="Time:"
                           dateFormat="MM/dd/yyyy h:mm aa"
-                          showTimeInput
+                          onChange={(date) => setEndDate(date)}
                           readOnly={!isDateEditable}
+                          selected={endDate}
+                          showTimeInput
+                          timeInputLabel="Time:"
                         />
                       )}
                       <Button
-                        onClick={() => setDateEditable(true)}
                         disabled={isTransactionPending}
-                        ml={2}
                         hidden={isDateEditable}
+                        ml={2}
+                        onClick={() => setDateEditable(true)}
                         width="15%"
                       >
                         Edit
                       </Button>
                       <Button
-                        onClick={updateRewardInfo}
                         disabled={isTransactionPending}
-                        ml={2}
                         hidden={!isDateEditable}
+                        ml={2}
+                        onClick={updateRewardInfo}
                         width="15%"
                       >
                         {isTransactionPending ? <Spinner /> : 'Save'}

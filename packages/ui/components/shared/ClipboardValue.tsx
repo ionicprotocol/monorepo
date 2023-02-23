@@ -69,13 +69,13 @@ export const ClipboardValueIconButton = ({
 
   return (
     <Button
-      variant="_link"
-      minW={0}
-      mt="-8px !important"
-      p={0}
-      onClick={onClick}
       fontSize={18}
       height="auto"
+      minW={0}
+      mt="-8px !important"
+      onClick={onClick}
+      p={0}
+      variant="_link"
       {...props}
     >
       {hasCopied ? (

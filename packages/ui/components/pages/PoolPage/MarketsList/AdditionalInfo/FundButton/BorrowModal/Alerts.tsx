@@ -38,7 +38,7 @@ export const Alerts = ({
         </Alert>
       ) : (
         <>
-          <Alert status="info" alignItems="flex-start">
+          <Alert alignItems="flex-start" status="info">
             <AlertIcon />
             <VStack alignItems="flex-start">
               <Text fontWeight="bold" size="md">
@@ -56,7 +56,7 @@ export const Alerts = ({
             </VStack>
           </Alert>
           {debtCeilings && debtCeilings.length > 0 && (
-            <Alert status="info" alignItems="flex-start">
+            <Alert alignItems="flex-start" status="info">
               <AlertIcon />
 
               <VStack alignItems="flex-start">

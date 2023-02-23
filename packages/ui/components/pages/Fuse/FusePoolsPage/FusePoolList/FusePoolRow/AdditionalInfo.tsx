@@ -20,7 +20,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId, getScanUrlByChainId } from '@ui/utils/networkData';
@@ -29,7 +29,14 @@ import { shortAddress } from '@ui/utils/shortAddress';
 export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
   const pool: PoolData = row.original.poolName;
   const { getSdk, address } = useMultiMidas();
-  const { data: usdPrice } = useNativePriceInUSD(pool.chainId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[pool.chainId.toString()]) {
+      return usdPrices[pool.chainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, pool.chainId]);
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
   const poolDetails = usePoolDetails(pool.assets, pool.chainId);
   const sdk = useMemo(() => getSdk(pool.chainId), [getSdk, pool.chainId]);
@@ -60,23 +67,23 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
   return (
     <Box>
       <Grid
+        alignItems="stretch"
+        gap={4}
         templateColumns={{
           base: 'repeat(1, 1fr)',
           lg: 'repeat(2, 1fr)',
         }}
         w="100%"
-        gap={4}
-        alignItems="stretch"
       >
-        <VStack spacing={{ base: 4, lg: 8 }} ml={{ base: 0, lg: 24 }}>
+        <VStack ml={{ base: 0, lg: 24 }} spacing={{ base: 4, lg: 8 }}>
           <Grid
+            alignItems="flex-start"
+            gap={4}
             templateColumns={{
               base: 'repeat(1, 1fr)',
               lg: 'repeat(2, 1fr)',
             }}
             w="100%"
-            gap={4}
-            alignItems="flex-start"
           >
             <VStack>
               <Text size="md" textAlign="center">
@@ -91,7 +98,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 </SimpleTooltip>
               ) : (
                 <SimpleTooltip label="Connect your wallet">
-                  <Text size="md" fontWeight="bold" textAlign="center">
+                  <Text fontWeight="bold" size="md" textAlign="center">
                     -
                   </Text>
                 </SimpleTooltip>
@@ -110,7 +117,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 </SimpleTooltip>
               ) : (
                 <SimpleTooltip label="Connect your wallet">
-                  <Text size="md" fontWeight="bold" textAlign="center">
+                  <Text fontWeight="bold" size="md" textAlign="center">
                     -
                   </Text>
                 </SimpleTooltip>
@@ -118,22 +125,22 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             </VStack>
           </Grid>
           <Grid
+            alignItems="flex-start"
+            gap={4}
             templateColumns={{
               base: 'repeat(1, 1fr)',
               lg: 'repeat(2, 1fr)',
             }}
             w="100%"
-            gap={4}
-            alignItems="flex-start"
           >
             {rewardTokens.length > 0 && (
               <VStack>
-                <Text size="md" textAlign="center" mr={4}>
+                <Text mr={4} size="md" textAlign="center">
                   Offering Rewards
                 </Text>
-                <AvatarGroup size="sm" max={30}>
+                <AvatarGroup max={30} size="sm">
                   {rewardTokens.map((token, i) => (
-                    <TokenIcon key={i} address={token} chainId={pool.chainId} />
+                    <TokenIcon address={token} chainId={pool.chainId} key={i} />
                   ))}
                 </AvatarGroup>
               </VStack>
@@ -143,14 +150,14 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
         </VStack>
         <VStack>
           <Grid
+            gap={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
               lg: 'repeat(13, 1fr)',
             }}
             w="100%"
-            gap={2}
           >
-            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+            <GridItem alignSelf="center" colSpan={6} justifyContent="flex-end">
               <Text size="md" textAlign="end">
                 Most Supplied Asset
               </Text>
@@ -160,14 +167,14 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 <TokenIcon
                   address={poolDetails.mostSuppliedAsset.underlyingToken}
                   chainId={pool.chainId}
-                  width={35}
                   height={35}
+                  width={35}
                 />
               ) : (
                 <Text>-</Text>
               )}
             </GridItem>
-            <GridItem colSpan={6} alignSelf="center">
+            <GridItem alignSelf="center" colSpan={6}>
               <Text size="md" textAlign="left">
                 {poolDetails?.mostSuppliedAsset &&
                   usdPrice &&
@@ -176,14 +183,14 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             </GridItem>
           </Grid>
           <Grid
+            gap={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
               lg: 'repeat(13, 1fr)',
             }}
             w="100%"
-            gap={2}
           >
-            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+            <GridItem alignSelf="center" colSpan={6} justifyContent="flex-end">
               <Text size="md" textAlign="end">
                 Top Lending APY
               </Text>
@@ -193,28 +200,28 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 <TokenIcon
                   address={poolDetails.topLendingAPYAsset.underlyingToken}
                   chainId={pool.chainId}
-                  width={35}
                   height={35}
+                  width={35}
                 />
               ) : (
                 <Text>-</Text>
               )}
             </GridItem>
-            <GridItem colSpan={6} alignSelf="center">
+            <GridItem alignSelf="center" colSpan={6}>
               <Text size="md" textAlign="left">
                 {topLendingApy && `${topLendingApy}% APY`}
               </Text>
             </GridItem>
           </Grid>
           <Grid
+            gap={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
               lg: 'repeat(13, 1fr)',
             }}
             w="100%"
-            gap={2}
           >
-            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+            <GridItem alignSelf="center" colSpan={6} justifyContent="flex-end">
               <Text size="md" textAlign="end">
                 Top Stable Borrow APR
               </Text>
@@ -224,29 +231,29 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 <TokenIcon
                   address={poolDetails.topBorrowAPRAsset.underlyingToken}
                   chainId={pool.chainId}
-                  width={35}
                   height={35}
+                  width={35}
                 />
               ) : (
                 <Text>-</Text>
               )}
             </GridItem>
-            <GridItem colSpan={6} alignSelf="center">
+            <GridItem alignSelf="center" colSpan={6}>
               <Text size="md" textAlign="left">
                 {topBorrowApr && `${topBorrowApr}% APR`}
               </Text>
             </GridItem>
           </Grid>
           <Grid
+            gap={4}
+            py={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
               lg: 'repeat(13, 1fr)',
             }}
             w="100%"
-            gap={4}
-            py={2}
           >
-            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+            <GridItem alignSelf="center" colSpan={6} justifyContent="flex-end">
               <Text size="md" textAlign="end">
                 Pool Address
               </Text>
@@ -256,15 +263,15 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 <HStack>
                   <SimpleTooltip label={`${scanUrl}/address/${pool.comptroller}`}>
                     <Button
-                      minWidth={6}
-                      m={0}
-                      p={0}
-                      variant="_link"
                       as={Link}
-                      href={`${scanUrl}/address/${pool.comptroller}`}
-                      isExternal
                       fontSize={{ base: 14, md: 16 }}
                       height="auto"
+                      href={`${scanUrl}/address/${pool.comptroller}`}
+                      isExternal
+                      m={0}
+                      minWidth={6}
+                      p={0}
+                      variant="_link"
                     >
                       {shortAddress(pool.comptroller, 6, 4)}
                     </Button>
@@ -272,7 +279,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                   <ClipboardValueIconButton value={pool.comptroller} />
                 </HStack>
               ) : (
-                <Text size="md" fontWeight="bold">
+                <Text fontWeight="bold" size="md">
                   ?
                 </Text>
               )}

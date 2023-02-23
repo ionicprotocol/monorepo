@@ -13,12 +13,10 @@ import {
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { ContractTransaction, utils } from 'ethers';
-import LogRocket from 'logrocket';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { testForCTokenErrorAndSend } from '.';
-
+import { testForCTokenErrorAndSend } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/index';
 import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
@@ -87,13 +85,21 @@ export const ReserveFactor = ({
         ''
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateReserveFactor');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated reserve factor!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating reserve factor',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }

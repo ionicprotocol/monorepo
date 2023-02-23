@@ -27,9 +27,8 @@ import {
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ContractFunction, ContractTransaction, utils } from 'ethers';
-import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import RemoveAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/RemoveAssetButton';
@@ -54,8 +53,8 @@ import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
@@ -93,8 +92,6 @@ export async function testForCTokenErrorAndSend(
       err = new Error(failMessage + ' CToken Code: ' + CTokenErrorCodes[response]);
     }
 
-    LogRocket.captureException(err);
-
     throw err;
   }
 
@@ -121,7 +118,14 @@ export const AssetSettings = ({
   const { currentSdk, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const sdk = useSdk(poolChainId);
-  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
@@ -188,13 +192,21 @@ export const AssetSettings = ({
         [utils.parseUnits(supplyCap.toString(), selectedAsset.underlyingDecimals)]
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateSupplyCaps');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated max supply amount!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating supply cap',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsEditSupplyCap(false);
       setIsUpdating(false);
@@ -211,13 +223,21 @@ export const AssetSettings = ({
         [utils.parseUnits(borrowCap.toString(), selectedAsset.underlyingDecimals)]
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateTotalBorrowCaps');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated max total borrow amount!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating borrow cap',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsEditBorrowCaps(false);
       setIsUpdating(false);
@@ -240,19 +260,26 @@ export const AssetSettings = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setCollateralFactor(cTokenAddress, bigCollateralFactor);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateCollateralFactor');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated loan-to-Value!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating loan-to-value',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -274,13 +301,21 @@ export const AssetSettings = ({
         ''
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateReserveFactor');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated reserve factor!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating reserve factor',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -302,13 +337,21 @@ export const AssetSettings = ({
         ''
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateAdminFee');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated admin fee!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating admin fee',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -327,13 +370,21 @@ export const AssetSettings = ({
         ''
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateInterestRateModel');
 
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated interest rate modal!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating interest rate',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -350,10 +401,17 @@ export const AssetSettings = ({
       addRecentTransaction({ hash: tx.hash, description: 'Set borrowing status' });
       await tx.wait();
       await queryClient.refetchQueries();
-
-      LogRocket.track('Midas-setBorrowingStatus');
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating borrowing status',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
