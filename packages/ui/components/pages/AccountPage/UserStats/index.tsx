@@ -43,7 +43,6 @@ export const UserStats = ({
     totalSupplyBalanceFiat,
     totalBorrowBalanceNative,
     totalBorrowBalanceFiat,
-    chainId,
   ] = useMemo(() => {
     if (assets.length > 0) {
       return [
@@ -53,7 +52,6 @@ export const UserStats = ({
         assets[0].totalSupplyBalanceFiat,
         assets[0].totalBorrowBalanceNative,
         assets[0].totalBorrowBalanceFiat,
-        Number(assets[0].chainId),
       ];
     } else {
       return [[], [], 0, 0, 0, 0, 0];
@@ -72,6 +70,7 @@ export const UserStats = ({
         supplied: string;
         estimated: number;
         apy: number;
+        chainId: number;
       }[] = [];
 
       assets.map((asset) => {
@@ -90,6 +89,7 @@ export const UserStats = ({
             apy: totalSupplyApyPerAsset[asset.cToken] * 100,
             estimated: totalSupplyApyPerAsset[asset.cToken] * suppliedNum,
             symbol: asset.underlyingSymbol,
+            chainId: Number(asset.chainId),
           });
         }
       });
@@ -119,6 +119,7 @@ export const UserStats = ({
         borrowed: string;
         estimated: number;
         apy: number;
+        chainId: number;
       }[] = [];
 
       assets.map((asset) => {
@@ -135,6 +136,7 @@ export const UserStats = ({
             apy: borrowApyPerAsset[asset.cToken] * 100,
             estimated: borrowApyPerAsset[asset.cToken] * borrowedNum,
             symbol: asset.underlyingSymbol,
+            chainId: Number(asset.chainId),
           });
         }
       });
@@ -176,7 +178,11 @@ export const UserStats = ({
                   <Flex key={index}>
                     {asset.supplyBalanceFiat > 0 && (
                       <HStack mt={1}>
-                        <TokenIcon address={asset.underlyingToken} chainId={chainId} size="md" />
+                        <TokenIcon
+                          address={asset.underlyingToken}
+                          chainId={Number(asset.chainId)}
+                          size="md"
+                        />
                         <Box ml="3">
                           <Text fontWeight="bold" mt={1}>
                             {smallUsdFormatter(asset.supplyBalanceFiat)}
@@ -215,7 +221,11 @@ export const UserStats = ({
                   <Flex key={index}>
                     {asset.borrowBalanceFiat > 0 && (
                       <HStack mt={1}>
-                        <TokenIcon address={asset.underlyingToken} chainId={chainId} size="md" />
+                        <TokenIcon
+                          address={asset.underlyingToken}
+                          chainId={Number(asset.chainId)}
+                          size="md"
+                        />
                         <Box ml="3">
                           <Text fontWeight="bold" mt={1}>
                             {smallUsdFormatter(asset.borrowBalanceFiat)}
@@ -268,7 +278,7 @@ export const UserStats = ({
                     {totalSupplyApy.estimatedPerAsset.map((data, index) => {
                       return (
                         <HStack key={index}>
-                          <TokenIcon address={data.underlying} chainId={chainId} size="sm" />
+                          <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
                           <Text whiteSpace="nowrap">
                             {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
                             <b>
@@ -327,7 +337,7 @@ export const UserStats = ({
                     {totalBorrowApy.estimatedPerAsset.map((data, index) => {
                       return (
                         <HStack key={index}>
-                          <TokenIcon address={data.underlying} chainId={chainId} size="sm" />
+                          <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
                           <Text whiteSpace="nowrap">
                             {data.borrowed} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
                             <b>
