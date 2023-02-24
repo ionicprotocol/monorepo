@@ -109,6 +109,10 @@ export type BalancerLpAsset = {
   lpTokenAddress: string;
 };
 
+export type SolidlyLpAsset = {
+  lpTokenAddress: string;
+};
+
 export type CurvePoolConfig = {
   lpToken: string;
   pool: string;
@@ -177,6 +181,11 @@ export type WombatDeployFnParams = ChainDeployFnParams & {
 
 export type UniswapDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
+};
+
+export type SolidlyDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  solidlyLps: SolidlyLpAsset[];
 };
 
 export type UniswaV3DeployFnParams = ChainDeployFnParams & {

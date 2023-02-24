@@ -60,6 +60,7 @@ export enum OracleTypes {
   AdrastiaPriceOracle = "AdrastiaPriceOracle",
   NativeUSDPriceOracle = "NativeUSDPriceOracle",
   SaddleLpPriceOracle = "SaddleLpPriceOracle",
+  SolidlyLpTokenPriceOracle = "SolidlyLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -218,6 +219,8 @@ export enum assetSymbols {
   ANKR = "ANKR",
   SD = "SD", // stader labs
 
+  // thena
+  "sAMM-jBRL/BRZ" = "sAMM-jBRL/BRZ",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
