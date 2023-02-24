@@ -68,7 +68,7 @@ const AccountPage = memo(() => {
         <FusePageLayout>
           {address ? (
             <>
-              <HStack mx="auto" spacing={4} width={'100%'}>
+              <HStack mb={4} mx="auto" spacing={4} width={'100%'}>
                 <ArrowBackIcon
                   cursor="pointer"
                   fontSize="2xl"
