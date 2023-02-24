@@ -117,13 +117,13 @@ export const TokenName = ({
                     Follow Midas Capital on any outlet for more information.
                     "
               >
-                <Badge colorScheme="gray" textTransform="capitalize" variant="outline" px={1}>
+                <Badge colorScheme="gray" px={1} textTransform="capitalize" variant="outline">
                   Paused
                 </Badge>
               </SimpleTooltip>
             ) : (
               <SimpleTooltip label="This asset cannot be borrowed">
-                <Badge colorScheme="purple" textTransform="capitalize" variant="outline" px={1}>
+                <Badge colorScheme="purple" px={1} textTransform="capitalize" variant="outline">
                   Protected
                 </Badge>
               </SimpleTooltip>
@@ -131,13 +131,13 @@ export const TokenName = ({
           ) : (
             <>
               <SimpleTooltip label="This asset can be borrowed">
-                <Badge colorScheme="orange" textTransform="capitalize" variant="outline" px={1}>
+                <Badge colorScheme="orange" px={1} textTransform="capitalize" variant="outline">
                   Borrowable
                 </Badge>
               </SimpleTooltip>
               {restricted.length > 0 && (
                 <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon. Follow us on Twitter and Discord to stay up to date.">
-                  <Badge colorScheme="red" textTransform="capitalize" variant="outline" px={1}>
+                  <Badge colorScheme="red" px={1} textTransform="capitalize" variant="outline">
                     Restricted
                   </Badge>
                 </SimpleTooltip>
@@ -147,7 +147,7 @@ export const TokenName = ({
 
           {asset.membership && (
             <SimpleTooltip label="This asset is deposited and can thereby be used as collateral">
-              <Badge colorScheme="cyan" textTransform="capitalize" variant="outline" px={1}>
+              <Badge colorScheme="cyan" px={1} textTransform="capitalize" variant="outline">
                 Collateral
               </Badge>
             </SimpleTooltip>
