@@ -1,5 +1,6 @@
 import { AvatarGroup, Box, Button, HStack, Link, Stack, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 import { GradientText } from '@ui/components/shared/GradientText';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -21,6 +22,8 @@ export const PoolName = ({ asset }: { asset: FundedAsset }) => {
   const { setGlobalLoading } = useMultiMidas();
   const { cCard } = useColors();
 
+  const [isHovering, setIsHovering] = useState<boolean>(false);
+
   return (
     <VStack alignItems={'flex-start'} height="100%" justifyContent="center" spacing={0}>
       <Stack maxWidth={'300px'} minWidth={'200px'}>
@@ -35,6 +38,12 @@ export const PoolName = ({ asset }: { asset: FundedAsset }) => {
               setGlobalLoading(true);
               router.push(`/${asset.chainId}/pool/${asset.poolId}`);
             }}
+            onMouseEnter={() => {
+              setIsHovering(true);
+            }}
+            onMouseLeave={() => {
+              setIsHovering(false);
+            }}
             p={0}
             variant="_link"
           >
@@ -42,7 +51,9 @@ export const PoolName = ({ asset }: { asset: FundedAsset }) => {
               <GradientText
                 _hover={{ color: cCard.borderColor }}
                 fontWeight="bold"
-                isEnabled={claimableRewards && claimableRewards.length > 0 ? true : false}
+                isEnabled={
+                  claimableRewards && claimableRewards.length > 0 && !isHovering ? true : false
+                }
                 maxWidth="100%"
                 size="lg"
                 textOverflow="ellipsis"
