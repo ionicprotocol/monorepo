@@ -102,6 +102,19 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
       }
     }
 
+    {
+      const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginRewardsDelegate.address);
+      if (!exts.length) {
+        console.log(`setting the extension for plugin rewards delegate ${erc20PluginRewardsDelegate.address}`);
+        tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDelegate.address, [cfe.address]);
+        console.log(`tx ${tx.hash}`);
+        await tx.wait();
+        console.log(`mined ${tx.hash}`);
+      } else {
+        console.log(`extensions for plugin delegate ${erc20PluginRewardsDelegate.address} already configured`);
+      }
+    }
+
     if (setLatest) {
       const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
       if (oldErc20Delegate) {
