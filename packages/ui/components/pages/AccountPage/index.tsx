@@ -106,7 +106,6 @@ const AccountPage = memo(() => {
                             <UserStat label="Effective Supply APY" />
                             <UserStat label="Effective Borrow APY" />
                           </Grid>
-                          <Skeleton borderRadius={'xl'} height={'60px'} mb={4} width="100%" />
                         </>
                       ) : null}
 
