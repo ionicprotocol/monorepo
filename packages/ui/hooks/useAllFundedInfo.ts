@@ -18,6 +18,7 @@ import { ChainSupportedAssets, getBlockTimePerMinuteByChainId } from '@ui/utils/
 export interface FundedAsset extends MarketData {
   chainId: string;
   poolId: string;
+  poolName: string;
   comptroller: string;
   totalSupplyBalanceFiat: number;
   totalBorrowBalanceFiat: number;
@@ -92,6 +93,7 @@ export function useAllFundedInfo() {
                           ...asset,
                           poolId: pool.id.toString(),
                           comptroller: pool.comptroller,
+                          poolName: pool.name,
                           totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
                           totalBorrowBalanceFiat: pool.totalBorrowBalanceFiat,
                           totalSupplyBalanceNative: pool.totalSupplyBalanceNative,

@@ -8,7 +8,7 @@ export const Chain = ({ asset }: { asset: FundedAsset }) => {
   const chainConfig = useChainConfig(Number(asset.chainId));
 
   return (
-    <HStack height="100%" justifyContent="center" width="100">
+    <HStack height="100%" justifyContent="center" width="55px">
       {chainConfig && (
         <SimpleTooltip label={chainConfig.specificParams.metadata.name}>
           <Img

@@ -46,6 +46,7 @@ import { BorrowApy } from '@ui/components/pages/AccountPage/FundedMarketsList/Bo
 import { BorrowBalance } from '@ui/components/pages/AccountPage/FundedMarketsList/BorrowBalance';
 import { Chain } from '@ui/components/pages/AccountPage/FundedMarketsList/Chain';
 import { Liquidity } from '@ui/components/pages/AccountPage/FundedMarketsList/Liquidity';
+import { PoolName } from '@ui/components/pages/AccountPage/FundedMarketsList/PoolName';
 import { SupplyApy } from '@ui/components/pages/AccountPage/FundedMarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/AccountPage/FundedMarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/AccountPage/FundedMarketsList/TokenName';
@@ -69,6 +70,7 @@ import {
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
   PAUSED,
+  POOL_NAME,
   PROTECTED,
   REWARDS,
   SEARCH,
@@ -86,6 +88,7 @@ import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
   chain: FundedAsset;
+  poolName: FundedAsset;
   market: FundedAsset;
   supplyApy: FundedAsset;
   supplyBalance: FundedAsset;
@@ -164,6 +167,8 @@ export const FundedMarketsList = ({
         return rowB.original.market.underlyingSymbol.localeCompare(
           rowA.original.market.underlyingSymbol
         );
+      } else if (columnId === POOL_NAME) {
+        return rowB.original.market.poolName.localeCompare(rowA.original.market.poolName);
       } else if (columnId === SUPPLY_APY) {
         const rowASupplyAPY = totalSupplyApyPerAsset
           ? totalSupplyApyPerAsset[rowA.original.market.cToken]
@@ -213,6 +218,7 @@ export const FundedMarketsList = ({
     return sortAssets(assets).map((asset) => {
       return {
         chain: asset,
+        poolName: asset,
         market: asset,
         supplyApy: asset,
         supplyBalance: asset,
@@ -234,6 +240,15 @@ export const FundedMarketsList = ({
         cell: ({ getValue }) => <Chain asset={getValue<FundedAsset>()} />,
         footer: (props) => props.column.id,
         enableSorting: false,
+        enableHiding: false,
+      },
+      {
+        accessorFn: (row) => row.poolName,
+        id: POOL_NAME,
+        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
+        cell: ({ getValue }) => <PoolName asset={getValue<FundedAsset>()} />,
+        footer: (props) => props.column.id,
+        sortingFn: assetSort,
         enableHiding: false,
       },
       {
@@ -583,7 +598,7 @@ export const FundedMarketsList = ({
                     onClick={header.column.getToggleSortingHandler()}
                     px={{
                       base: header.column.id === MARKET_LTV ? 4 : 1,
-                      lg: header.column.id === MARKET_LTV ? 70 : 2,
+                      lg: header.column.id === MARKET_LTV ? 4 : 2,
                     }}
                     py={4}
                     textTransform="capitalize"
@@ -592,7 +607,7 @@ export const FundedMarketsList = ({
                       justifyContent={
                         header.column.id === CHAIN
                           ? 'center'
-                          : header.column.id === MARKET_LTV
+                          : header.column.id === MARKET_LTV || header.column.id === POOL_NAME
                           ? 'flex-start'
                           : 'flex-end'
                       }
