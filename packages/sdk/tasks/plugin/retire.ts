@@ -1,17 +1,15 @@
 import { constants } from "ethers";
-import { task } from "hardhat/config";
+import { task, types } from "hardhat/config";
 
 import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 import { MidasERC4626 } from "../../typechain/MidasERC4626";
 
-task("plugins:beefy:retire", "Retires a Beefy plugin that is marked as EOL").setAction(
-  async ({}, { ethers, getChainId }) => {
-    const chainid = parseInt(await getChainId());
-
+export default task("plugin:retire", "Retires a plugin from its market")
+  .addParam("market", "The address of the market whose plugin to retire", undefined, types.string)
+  .setAction(async ({ market }, { ethers }) => {
     let tx;
     const deployer = await ethers.getNamedSigner("deployer");
-    console.log({ deployer: deployer.address });
 
     const pluginDelegate = await ethers.getContract("CErc20PluginDelegate");
     const simpleDelegate = await ethers.getContract("CErc20Delegate");
@@ -30,6 +28,34 @@ task("plugins:beefy:retire", "Retires a Beefy plugin that is marked as EOL").set
       console.log(`whitelisted`);
     }
 
+    const pluginMarket = (await ethers.getContractAt("CErc20PluginDelegate", market)) as CErc20PluginDelegate;
+    const pluginAddress = await pluginMarket.callStatic.plugin();
+
+    const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
+    tx = await plugin.emergencyWithdrawAndPause();
+    console.log(`pausing the plugin with tx ${tx.hash}`);
+    await tx.wait();
+    console.log(`paused the plugin`);
+
+    tx = await plugin.shutdown(market);
+    await tx.wait();
+    console.log(`shut down the plugin ${plugin.address} and transferred the assets back to the market ${market} `);
+
+    const implBefore = await pluginMarket.callStatic.implementation();
+
+    const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
+    tx = await pluginMarket._setImplementationSafe(simpleDelegate.address, false, becomeImplementationData);
+    console.log(`downgrading with tx ${tx.hash}`);
+    await tx.wait();
+
+    const implAfter = await pluginMarket.callStatic.implementation();
+    console.log(`downgraded market ${market} from plugin delegate ${implBefore} to simple delegate ${implAfter}`);
+  });
+
+task("plugins:beefy:retire", "Retires the Beefy plugin that are marked as EOL").setAction(
+  async ({}, { run, getChainId }) => {
+    const chainid = parseInt(await getChainId());
+
     const markets = [];
     if (chainid == 56) {
       //bsc
@@ -43,31 +69,12 @@ task("plugins:beefy:retire", "Retires a Beefy plugin that is marked as EOL").set
       markets.push("0x9b5D86F4e7A45f4b458A2B673B4A3b43D15428A7"); // jarvis-2eur
       markets.push("0x1792046890b99ae36756Fd00f135dc5F80D41dfA"); // jarvis-2jpy2
     }
-    const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
 
     for (let i = 0; i < markets.length; i++) {
       const market = markets[i];
-      const pluginMarket = (await ethers.getContractAt("CErc20PluginDelegate", market)) as CErc20PluginDelegate;
-      const pluginAddress = await pluginMarket.callStatic.plugin();
-
-      const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
-      tx = await plugin.emergencyWithdrawAndPause();
-      console.log(`pausing the plugin with tx ${tx.hash}`);
-      await tx.wait();
-      console.log(`paused the plugin`);
-
-      tx = await plugin.shutdown(market);
-      await tx.wait();
-      console.log(`shut down the plugin ${plugin.address} and transferred the assets back to the market ${market} `);
-
-      const implBefore = await pluginMarket.callStatic.implementation();
-
-      tx = await pluginMarket._setImplementationSafe(simpleDelegate.address, false, becomeImplementationData);
-      console.log(`downgrading with tx ${tx.hash}`);
-      await tx.wait();
-
-      const implAfter = await pluginMarket.callStatic.implementation();
-      console.log(`downgraded market ${market} from plugin delegate ${implBefore} to simple delegate ${implAfter}`);
+      await run("retire:plugin", {
+        market,
+      });
     }
   }
 );
