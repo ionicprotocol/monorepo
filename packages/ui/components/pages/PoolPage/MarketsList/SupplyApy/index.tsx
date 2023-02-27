@@ -185,14 +185,14 @@ export const SupplyApy = ({
         header={
           <>
             {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
-              <VStack alignItems="flex-end" width="100%">
-                <Text fontWeight="bold" size="sm" variant="tnumber">
-                  Total APY
-                </Text>
+              <HStack justifyContent="flex-start" width="100%">
                 <Text fontWeight="bold" size="sm" variant="tnumber">
                   {(totalSupplyApyPerAsset[asset.cToken] * 100).toFixed(2)}%
                 </Text>
-              </VStack>
+                <Text fontWeight="bold" size="sm" variant="tnumber">
+                  Total APY
+                </Text>
+              </HStack>
             )}
           </>
         }
