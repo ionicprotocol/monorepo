@@ -18,7 +18,7 @@ export const GradientText = ({
   return (
     <MotionText
       animate={
-        isEnabled
+        isEnabled && !props._hover
           ? {
               background: gradientBackground,
               WebkitTextFillColor: 'transparent',
@@ -27,7 +27,7 @@ export const GradientText = ({
           : {}
       }
       initial={
-        isEnabled
+        isEnabled && !props._hover
           ? {
               background: gradientBackground[0],
               WebkitTextFillColor: 'transparent',
