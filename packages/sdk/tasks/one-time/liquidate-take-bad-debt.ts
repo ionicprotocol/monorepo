@@ -2,7 +2,6 @@ import { BigNumber, constants, providers } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
-import { FuseFeeDistributor } from "../../typechain";
 import { CErc20 } from "../../typechain/CErc20";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { IUniswapV2Factory } from "../../typechain/IUniswapV2Factory";
@@ -231,7 +230,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
         minProfitAmount: 0,
         redemptionStrategies,
         redemptionStrategiesData,
-        repayAmountBN,
+        repayAmount: repayAmountBN,
         stableCollateralMarket,
         uniswapV2RouterForBorrow: chainDeployParams.uniswap.uniswapV2RouterAddress,
         uniswapV2RouterForCollateral: chainDeployParams.uniswap.uniswapV2RouterAddress,
