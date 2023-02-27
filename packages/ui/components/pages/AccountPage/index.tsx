@@ -11,7 +11,14 @@ import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { MARKET_COLUMNS, MARKET_LTV, MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
+import {
+  LIQUIDITY,
+  MARKET_COLUMNS,
+  MARKET_LTV,
+  MIDAS_LOCALSTORAGE_KEYS,
+  TOTAL_BORROW,
+  TOTAL_SUPPLY,
+} from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
 
@@ -51,7 +58,11 @@ const AccountPage = memo(() => {
       });
     } else {
       MARKET_COLUMNS.map((columnId) => {
-        columnVisibility[columnId] = true;
+        if (columnId === TOTAL_SUPPLY || columnId === TOTAL_BORROW || columnId === LIQUIDITY) {
+          columnVisibility[columnId] = false;
+        } else {
+          columnVisibility[columnId] = true;
+        }
       });
     }
 
