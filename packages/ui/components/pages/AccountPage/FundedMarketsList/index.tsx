@@ -251,6 +251,7 @@ export const FundedMarketsList = ({
         header: (context) => <TableHeaderCell context={context}>Chain</TableHeaderCell>,
         cell: ({ getValue }) => <Chain asset={getValue<FundedAsset>()} />,
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
         enableHiding: false,
       },
       {
