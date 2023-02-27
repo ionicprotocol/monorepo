@@ -107,31 +107,7 @@ export const TokenName = ({
             </Text>
           </PopoverTooltip>
         </HStack>
-        <VStack alignItems={'flex-start'} ml={2} spacing={1}>
-          {claimableRewards && claimableRewards.length > 0 && (
-            <SimpleTooltip label="This asset has rewards!">
-              <Box>
-                <GradientButton
-                  borderRadius={8}
-                  borderWidth="1px"
-                  height="20px"
-                  isSelected={false}
-                  px={2}
-                >
-                  <GradientText fontSize={12} isEnabled>
-                    Rewards
-                  </GradientText>
-                </GradientButton>
-              </Box>
-            </SimpleTooltip>
-          )}
-          {asset.membership && (
-            <SimpleTooltip label="This asset can be deposited as collateral">
-              <Badge colorScheme="cyan" textTransform="capitalize" variant="outline">
-                Collateral
-              </Badge>
-            </SimpleTooltip>
-          )}
+        <HStack alignItems={'center'} mt={1} spacing={1}>
           {asset.isBorrowPaused ? (
             asset.isSupplyPaused ? (
               <SimpleTooltip
@@ -142,13 +118,13 @@ export const TokenName = ({
                     Follow Midas Capital on any outlet for more information.
                     "
               >
-                <Badge colorScheme="gray" textTransform="capitalize" variant="outline">
+                <Badge colorScheme="gray" px={1} textTransform="capitalize" variant="outline">
                   Paused
                 </Badge>
               </SimpleTooltip>
             ) : (
               <SimpleTooltip label="This asset cannot be borrowed">
-                <Badge colorScheme="purple" textTransform="capitalize" variant="outline">
+                <Badge colorScheme="purple" px={1} textTransform="capitalize" variant="outline">
                   Protected
                 </Badge>
               </SimpleTooltip>
@@ -156,20 +132,46 @@ export const TokenName = ({
           ) : (
             <>
               <SimpleTooltip label="This asset can be borrowed">
-                <Badge colorScheme="orange" textTransform="capitalize" variant="outline">
+                <Badge colorScheme="orange" px={1} textTransform="capitalize" variant="outline">
                   Borrowable
                 </Badge>
               </SimpleTooltip>
               {restricted.length > 0 && (
                 <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon. Follow us on Twitter and Discord to stay up to date.">
-                  <Badge colorScheme="red" textTransform="capitalize" variant="outline">
+                  <Badge colorScheme="red" px={1} textTransform="capitalize" variant="outline">
                     Restricted
                   </Badge>
                 </SimpleTooltip>
               )}
             </>
           )}
-        </VStack>
+
+          {asset.membership && (
+            <SimpleTooltip label="This asset is deposited and can thereby be used as collateral">
+              <Badge colorScheme="cyan" px={1} textTransform="capitalize" variant="outline">
+                Collateral
+              </Badge>
+            </SimpleTooltip>
+          )}
+
+          {claimableRewards && claimableRewards.length > 0 && (
+            <SimpleTooltip label="This asset has rewards available for you!">
+              <Box>
+                <GradientButton
+                  borderRadius={8}
+                  borderWidth="1px"
+                  height="20px"
+                  isSelected={false}
+                  px={1}
+                >
+                  <GradientText fontSize={12} isEnabled>
+                    Rewards
+                  </GradientText>
+                </GradientButton>
+              </Box>
+            </SimpleTooltip>
+          )}
+        </HStack>
       </VStack>
     </Row>
   );
