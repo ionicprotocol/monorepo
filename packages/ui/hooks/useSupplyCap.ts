@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
+import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { Cap } from '@ui/hooks/useBorrowCap';
-import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseSupplyCapParams {
@@ -17,7 +18,14 @@ export const useSupplyCap = ({
   chainId,
   market,
 }: UseSupplyCapParams) => {
-  const { data: usdPrice } = useNativePriceInUSD(Number(chainId));
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[chainId.toString()]) {
+      return usdPrices[chainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, chainId]);
   const sdk = useSdk(chainId);
 
   return useQuery<Cap | null | undefined>(

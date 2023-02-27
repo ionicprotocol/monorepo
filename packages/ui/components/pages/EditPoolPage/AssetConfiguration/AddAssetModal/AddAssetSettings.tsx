@@ -14,7 +14,6 @@ import {
 import { MarketConfig } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
-import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -151,8 +150,6 @@ export const AddAssetSettings = ({
     try {
       await currentSdk.deployAsset(marketConfig);
 
-      LogRocket.track('Fuse-DeployAsset');
-
       await queryClient.refetchQueries();
       // Wait 2 seconds for refetch and then close modal.
       // We do this instead of waiting the refetch because some fetches take a while or error out and we want to close now.
@@ -164,36 +161,59 @@ export const AddAssetSettings = ({
       });
 
       if (onSuccess) onSuccess();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        underlying: tokenData.address,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        symbol: tokenData.symbol,
+      };
+      const sentryInfo = {
+        contextName: 'Adding asset',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsDeploying(false);
     }
   };
 
   return (
-    <VStack as="form" width="100%" height="100%" onSubmit={handleSubmit(deploy)}>
+    <VStack as="form" height="100%" onSubmit={handleSubmit(deploy)} width="100%">
       <Divider />
       <FormControl isInvalid={!!errors.collateralFactor}>
-        <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
+        <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
           <FormLabel htmlFor="collateralFactor">
             <SimpleTooltip label={LOAN_TO_VALUE_TOOLTIP}>
               <Text fontWeight="bold">
                 Loan-to-Value{' '}
                 <QuestionIcon
-                  color={cCard.txtColor}
                   bg={cCard.bgColor}
                   borderRadius={'50%'}
-                  ml={1}
+                  color={cCard.txtColor}
                   mb="4px"
+                  ml={1}
                 />
               </Text>
             </SimpleTooltip>
           </FormLabel>
-          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+          <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
             <Controller
               control={control}
               name="collateralFactor"
+              render={({ field: { name, value, ref, onChange } }) => (
+                <SliderWithLabel
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
+                  max={LOAN_TO_VALUE.MAX}
+                  min={LOAN_TO_VALUE.MIN}
+                  name={name}
+                  onChange={onChange}
+                  reff={ref}
+                  value={value}
+                />
+              )}
               rules={{
                 required: 'Loan-to-Value is required',
                 min: {
@@ -205,21 +225,8 @@ export const AddAssetSettings = ({
                   message: `Loan-to-Value must be no more than ${LOAN_TO_VALUE.MAX}%`,
                 },
               }}
-              render={({ field: { name, value, ref, onChange } }) => (
-                <SliderWithLabel
-                  min={LOAN_TO_VALUE.MIN}
-                  max={LOAN_TO_VALUE.MAX}
-                  name={name}
-                  value={value}
-                  reff={ref}
-                  onChange={onChange}
-                  isDisabled={
-                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
-                  }
-                />
-              )}
             />
-            <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+            <FormErrorMessage marginBottom="-10px" maxWidth="270px">
               {errors.collateralFactor && errors.collateralFactor.message}
             </FormErrorMessage>
           </Column>
@@ -227,7 +234,7 @@ export const AddAssetSettings = ({
       </FormControl>
       <Divider />
       <FormControl isInvalid={!!errors.reserveFactor}>
-        <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
+        <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
           <FormLabel htmlFor="reserveFactor">
             <SimpleTooltip
               label={
@@ -237,19 +244,32 @@ export const AddAssetSettings = ({
               <Text fontWeight="bold">
                 Reserve Factor{' '}
                 <QuestionIcon
-                  color={cCard.txtColor}
                   bg={cCard.bgColor}
                   borderRadius={'50%'}
-                  ml={1}
+                  color={cCard.txtColor}
                   mb="4px"
+                  ml={1}
                 />
               </Text>
             </SimpleTooltip>
           </FormLabel>
-          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+          <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
             <Controller
               control={control}
               name="reserveFactor"
+              render={({ field: { name, value, ref, onChange } }) => (
+                <SliderWithLabel
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
+                  max={RESERVE_FACTOR.MAX}
+                  min={RESERVE_FACTOR.MIN}
+                  name={name}
+                  onChange={onChange}
+                  reff={ref}
+                  value={value}
+                />
+              )}
               rules={{
                 required: 'Reserve factor is required',
                 min: {
@@ -261,21 +281,8 @@ export const AddAssetSettings = ({
                   message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
                 },
               }}
-              render={({ field: { name, value, ref, onChange } }) => (
-                <SliderWithLabel
-                  min={RESERVE_FACTOR.MIN}
-                  max={RESERVE_FACTOR.MAX}
-                  name={name}
-                  value={value}
-                  reff={ref}
-                  onChange={onChange}
-                  isDisabled={
-                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
-                  }
-                />
-              )}
             />
-            <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+            <FormErrorMessage marginBottom="-10px" maxWidth="270px">
               {errors.reserveFactor && errors.reserveFactor.message}
             </FormErrorMessage>
           </Column>
@@ -283,25 +290,38 @@ export const AddAssetSettings = ({
       </FormControl>
       <Divider />
       <FormControl isInvalid={!!errors.adminFee}>
-        <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
+        <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
           <FormLabel htmlFor="adminFee">
             <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
               <Text fontWeight="bold">
                 Admin Fee{' '}
                 <QuestionIcon
-                  color={cCard.txtColor}
                   bg={cCard.bgColor}
                   borderRadius={'50%'}
-                  ml={1}
+                  color={cCard.txtColor}
                   mb="4px"
+                  ml={1}
                 />
               </Text>
             </SimpleTooltip>
           </FormLabel>
-          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+          <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
             <Controller
               control={control}
               name="adminFee"
+              render={({ field: { name, value, ref, onChange } }) => (
+                <SliderWithLabel
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
+                  max={ADMIN_FEE.MAX}
+                  min={ADMIN_FEE.MIN}
+                  name={name}
+                  onChange={onChange}
+                  reff={ref}
+                  value={value}
+                />
+              )}
               rules={{
                 required: 'Admin fee is required',
                 min: {
@@ -313,21 +333,8 @@ export const AddAssetSettings = ({
                   message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
                 },
               }}
-              render={({ field: { name, value, ref, onChange } }) => (
-                <SliderWithLabel
-                  min={ADMIN_FEE.MIN}
-                  max={ADMIN_FEE.MAX}
-                  name={name}
-                  value={value}
-                  reff={ref}
-                  onChange={onChange}
-                  isDisabled={
-                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
-                  }
-                />
-              )}
             />
-            <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+            <FormErrorMessage marginBottom="-10px" maxWidth="270px">
               {errors.adminFee && errors.adminFee.message}
             </FormErrorMessage>
           </Column>
@@ -335,18 +342,18 @@ export const AddAssetSettings = ({
       </FormControl>
       <Divider />
       <FormControl isInvalid={!!errors.pluginIndex}>
-        <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
+        <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
           <FormLabel htmlFor="oracle">
             <PopoverTooltip
               body={
                 <>
                   This token has{' '}
-                  <Link href="https://eips.ethereum.org/EIPS/eip-4626" variant={'color'} isExternal>
+                  <Link href="https://eips.ethereum.org/EIPS/eip-4626" isExternal variant={'color'}>
                     ERC4626 strategies
                   </Link>{' '}
                   implemented, allowing users to utilize their deposits (e.g. to stake them for
                   rewards) while using them as collateral. To learn mode about it, check out our{' '}
-                  <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
+                  <Link href="https://docs.midascapital.xyz/" isExternal variant={'color'}>
                     docs
                   </Link>
                   .
@@ -356,27 +363,27 @@ export const AddAssetSettings = ({
               <HStack>
                 <Text fontWeight="bold">Rewards Plugin </Text>
                 <QuestionIcon
-                  color={cCard.txtColor}
                   bg={cCard.bgColor}
                   borderRadius={'50%'}
-                  ml={1}
+                  color={cCard.txtColor}
                   mb="4px"
+                  ml={1}
                 />
               </HStack>
             </PopoverTooltip>
           </FormLabel>
-          <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+          <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" maxW="270px">
             <Select
               id="pluginIndex"
               {...register('pluginIndex', {
                 required: 'Plugin is required',
               })}
             >
-              <option value={-1} style={{ color: cSelect.txtColor }}>
+              <option style={{ color: cSelect.txtColor }} value={-1}>
                 No plugin
               </option>
               {availablePlugins.map((plugin, index) => (
-                <option key={plugin} value={index} style={{ color: cSelect.txtColor }}>
+                <option key={plugin} style={{ color: cSelect.txtColor }} value={index}>
                   {plugin}
                 </option>
               ))}
@@ -389,7 +396,7 @@ export const AddAssetSettings = ({
       </FormControl>
       <Divider />
       <FormControl isInvalid={!!errors.interestRateModel}>
-        <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
+        <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
           <FormLabel htmlFor="interestRateModel">
             <SimpleTooltip
               label={
@@ -399,34 +406,34 @@ export const AddAssetSettings = ({
               <Text fontWeight="bold">
                 Interest Model{' '}
                 <QuestionIcon
-                  color={cCard.txtColor}
                   bg={cCard.bgColor}
                   borderRadius={'50%'}
-                  ml={1}
+                  color={cCard.txtColor}
                   mb="4px"
+                  ml={1}
                 />
               </Text>
             </SimpleTooltip>
           </FormLabel>
-          <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+          <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" maxW="270px">
             <Select
               id="interestRateModel"
               {...register('interestRateModel', {
                 required: 'interestRateModel is required',
               })}
-              ml="auto"
               cursor="pointer"
+              ml="auto"
               mt={{ base: 2, md: 0 }}
             >
               <option
-                value={currentSdk.chainDeployment.JumpRateModel.address}
                 style={{ color: cSelect.txtColor }}
+                value={currentSdk.chainDeployment.JumpRateModel.address}
               >
                 JumpRateModel
               </option>
               <option
-                value={currentSdk.chainDeployment.WhitePaperInterestRateModel.address}
                 style={{ color: cSelect.txtColor }}
+                value={currentSdk.chainDeployment.WhitePaperInterestRateModel.address}
               >
                 WhitePaperInterestRateModel
               </option>
@@ -439,16 +446,16 @@ export const AddAssetSettings = ({
       </FormControl>
       <IRMChart
         adminFee={watchAdminFee}
-        reserveFactor={watchReserveFactor}
         interestRateModelAddress={watchInterestRateModel}
         poolChainId={poolChainId}
+        reserveFactor={watchReserveFactor}
       />
-      <Center px={4} mt={4} width="100%">
+      <Center mt={4} px={4} width="100%">
         <Button
-          type="submit"
-          width={'100%'}
           disabled={isDeploying || !isPossible}
           isLoading={isDeploying}
+          type="submit"
+          width={'100%'}
         >
           Add Asset
         </Button>

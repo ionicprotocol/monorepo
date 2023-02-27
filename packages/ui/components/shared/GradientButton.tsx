@@ -29,15 +29,15 @@ export const GradientButton = ({
 
   return (
     <MotionButton
-      initial={{
-        background: gradientBackground[0],
-      }}
       animate={{
         background: gradientBackground,
       }}
-      borderWidth={isSelected ? 0 : 2}
       borderColor="transparent"
+      borderWidth={isSelected ? 0 : 2}
       boxShadow={isSelected ? 'none' : `0px 1000px 0px ${cCard.bgColor} inset`}
+      initial={{
+        background: gradientBackground[0],
+      }}
       transition={{
         duration: 3,
         ease: 'linear',

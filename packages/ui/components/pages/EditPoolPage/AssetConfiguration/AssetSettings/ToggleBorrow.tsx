@@ -42,8 +42,17 @@ export const ToggleBorrow = ({
       addRecentTransaction({ hash: tx.hash, description: 'Set borrowing status' });
       await tx.wait();
       await queryClient.refetchQueries();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating borrow status',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -76,10 +85,10 @@ export const ToggleBorrow = ({
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
               <Switch
-                isDisabled={isUpdating}
                 className="switch-borrowing"
                 h="20px"
                 isChecked={!isPaused}
+                isDisabled={isUpdating}
                 ml="auto"
                 onChange={toggleBorrowState}
               />

@@ -25,53 +25,53 @@ export const MidasNavbar = () => {
 
   return (
     <>
-      <HStack alignSelf="flex-start" alignItems="flex-start" justifyContent="space-between">
+      <HStack alignItems="flex-start" alignSelf="flex-start" justifyContent="space-between">
         <Box
-          position={'absolute'}
-          top={2}
-          pt={{ md: 1, base: 3 }}
-          pr={{ md: 0, base: 1 }}
+          _hover={{ cursor: 'pointer' }}
           onClick={() => {
             if (router.pathname !== '/') {
               setGlobalLoading(true);
               router.push('/', undefined, { shallow: true });
             }
           }}
-          _hover={{ cursor: 'pointer' }}
+          position={'absolute'}
+          pr={{ md: 0, base: 1 }}
+          pt={{ md: 1, base: 3 }}
+          top={2}
         >
           <Image
-            src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
             alt="Midas Capital"
             height={'60px'}
+            src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
           />
         </Box>
       </HStack>
 
       <HStack
-        mb={10}
         alignItems={'flex-start'}
-        justifySelf={'flex-start'}
         alignSelf={'flex-end'}
-        position="sticky"
-        top={0}
-        right={0}
-        zIndex={1}
         background={cPage.primary.bgColor}
-        justifyContent="flex-end"
-        p={2}
         border={'solid'}
-        borderWidth={2}
-        borderRadius="xl"
         borderColor={scrollPos > 40 ? 'ecru' : cPage.primary.bgColor}
+        borderRadius="xl"
         borderTop={0}
         borderTopRadius={0}
+        borderWidth={2}
+        justifyContent="flex-end"
+        justifySelf={'flex-start'}
+        mb={10}
+        p={2}
+        position="sticky"
+        right={0}
+        top={0}
+        zIndex={1}
       >
         <WalletButtons />
-        <Button variant="_solid" ml={2} px={2} onClick={toggleColorMode}>
+        <Button ml={2} onClick={toggleColorMode} px={2} variant="_solid">
           {colorMode === 'light' ? (
-            <MoonIcon color="gray.700" w={5} h={5} />
+            <MoonIcon color="gray.700" h={5} w={5} />
           ) : (
-            <SunIcon color={cPage.secondary.txtColor} w={5} h={5} />
+            <SunIcon color={cPage.secondary.txtColor} h={5} w={5} />
           )}
         </Button>
       </HStack>
