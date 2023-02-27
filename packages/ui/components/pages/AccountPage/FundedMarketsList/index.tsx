@@ -44,6 +44,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AdditionalInfo } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/AccountPage/FundedMarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/AccountPage/FundedMarketsList/BorrowBalance';
+import { Chain } from '@ui/components/pages/AccountPage/FundedMarketsList/Chain';
 import { Liquidity } from '@ui/components/pages/AccountPage/FundedMarketsList/Liquidity';
 import { SupplyApy } from '@ui/components/pages/AccountPage/FundedMarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/AccountPage/FundedMarketsList/SupplyBalance';
@@ -60,6 +61,7 @@ import {
   BORROW_APY,
   BORROW_BALANCE,
   BORROWABLE,
+  CHAIN,
   COLLATERAL,
   HIDDEN,
   LIQUIDITY,
@@ -83,6 +85,7 @@ import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
+  chain: FundedAsset;
   market: FundedAsset;
   supplyApy: FundedAsset;
   supplyBalance: FundedAsset;
@@ -209,6 +212,7 @@ export const FundedMarketsList = ({
   const data: Market[] = useMemo(() => {
     return sortAssets(assets).map((asset) => {
       return {
+        chain: asset,
         market: asset,
         supplyApy: asset,
         supplyBalance: asset,
@@ -223,6 +227,15 @@ export const FundedMarketsList = ({
 
   const columns: ColumnDef<Market>[] = useMemo(() => {
     return [
+      {
+        accessorFn: (row) => row.chain,
+        id: CHAIN,
+        header: (context) => <TableHeaderCell context={context}>Chain</TableHeaderCell>,
+        cell: ({ getValue }) => <Chain asset={getValue<FundedAsset>()} />,
+        footer: (props) => props.column.id,
+        enableSorting: false,
+        enableHiding: false,
+      },
       {
         accessorFn: (row) => row.market,
         id: MARKET_LTV,
@@ -568,12 +581,21 @@ export const FundedMarketsList = ({
                     color={cCard.txtColor}
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    px={{ base: 1, lg: 2 }}
+                    px={{
+                      base: header.column.id === MARKET_LTV ? 4 : 1,
+                      lg: header.column.id === MARKET_LTV ? 70 : 2,
+                    }}
                     py={4}
                     textTransform="capitalize"
                   >
                     <HStack
-                      justifyContent={header.column.id === MARKET_LTV ? 'center' : 'flex-end'}
+                      justifyContent={
+                        header.column.id === CHAIN
+                          ? 'center'
+                          : header.column.id === MARKET_LTV
+                          ? 'flex-start'
+                          : 'flex-end'
+                      }
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </HStack>
