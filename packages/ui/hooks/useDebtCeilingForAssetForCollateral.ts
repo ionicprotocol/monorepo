@@ -52,7 +52,7 @@ export const useDebtCeilingForAssetForCollateral = ({
                     debtCeiling: -1,
                   });
                 } else {
-                  const debtCeiling = await comptroller.callStatic.borrowCapForAssetForCollateral(
+                  const debtCeiling = await comptroller.callStatic.borrowCapForCollateral(
                     asset.cToken,
                     collateralAsset.cToken
                   );
