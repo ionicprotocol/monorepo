@@ -13,8 +13,6 @@ task("boost:tx", "increase the max gas fees to speed up a tx")
   .addParam("txHash", "tx hash", undefined, types.string)
   .addParam("nonce", "nonce", undefined, types.int)
   .setAction(async ({ txHash, nonce }, { ethers }) => {
-    let tx: providers.TransactionResponse;
-
     const tr = await ethers.provider.getTransaction(txHash);
 
     console.log(`tx response ${JSON.stringify(tr)}`);
@@ -23,7 +21,7 @@ task("boost:tx", "increase the max gas fees to speed up a tx")
     // if (!tr.blockNumber) {}
 
     const signer = await ethers.getSigner(tr.from);
-    tx = await signer.sendTransaction({
+    const tx = await signer.sendTransaction({
       from: tr.from,
       to: tr.to,
       value: tr.value,
@@ -42,13 +40,11 @@ task("cancel:tx", "cancel a tx with the same nonce")
   .addParam("nonce", "nonce", undefined, types.int)
   .addParam("sender", "sender address", "deployer", types.string)
   .setAction(async ({ nonce, sender }, { ethers, getChainId }) => {
-    let tx: providers.TransactionResponse;
-
     const chainid = parseInt(await getChainId());
     if (chainid != 137) throw new Error(`configure the max gas fees for the chain`);
 
     const signer = await ethers.getNamedSigner(sender);
-    tx = await signer.sendTransaction({
+    const tx = await signer.sendTransaction({
       from: signer.address,
       to: signer.address,
       value: 0,
