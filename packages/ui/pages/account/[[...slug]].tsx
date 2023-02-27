@@ -23,7 +23,7 @@ const AccountPage = ({ forgeAddress }: { forgeAddress: string }) => {
       utils.isAddress(forgeAddress) &&
       forgeAddress !== address
     ) {
-      setAddress(forgeAddress);
+      setAddress(utils.getAddress(forgeAddress));
     }
   }, [forgeAddress, setAddress, address]);
 
