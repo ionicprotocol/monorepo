@@ -7,8 +7,7 @@ import { MidasERC4626 } from "../../typechain/MidasERC4626";
 
 export default task("plugin:retire", "Retires a plugin from its market")
   .addParam("market", "The address of the market whose plugin to retire", undefined, types.string)
-  .setAction(
-  async ({ market }, { ethers }) => {
+  .setAction(async ({ market }, { ethers }) => {
     let tx;
     const deployer = await ethers.getNamedSigner("deployer");
 
@@ -54,7 +53,7 @@ export default task("plugin:retire", "Retires a plugin from its market")
   });
 
 task("plugins:beefy:retire", "Retires the Beefy plugin that are marked as EOL").setAction(
-      async ({}, { run, getChainId }) => {
+  async ({}, { run, getChainId }) => {
     const chainid = parseInt(await getChainId());
 
     const markets = [];
@@ -74,7 +73,7 @@ task("plugins:beefy:retire", "Retires the Beefy plugin that are marked as EOL").
     for (let i = 0; i < markets.length; i++) {
       const market = markets[i];
       await run("retire:plugin", {
-        market
+        market,
       });
     }
   }
