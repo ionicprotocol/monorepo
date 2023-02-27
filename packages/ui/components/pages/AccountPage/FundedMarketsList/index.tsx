@@ -167,6 +167,8 @@ export const FundedMarketsList = ({
         return rowB.original.market.underlyingSymbol.localeCompare(
           rowA.original.market.underlyingSymbol
         );
+      } else if (columnId === CHAIN) {
+        return Number(rowB.original.market.chainId) > Number(rowA.original.market.chainId) ? 1 : -1;
       } else if (columnId === POOL_NAME) {
         return rowB.original.market.poolName.localeCompare(rowA.original.market.poolName);
       } else if (columnId === SUPPLY_APY) {
@@ -234,12 +236,21 @@ export const FundedMarketsList = ({
   const columns: ColumnDef<Market>[] = useMemo(() => {
     return [
       {
+        accessorFn: (row) => row.market,
+        id: MARKET_LTV,
+        header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
+        cell: ({ getValue }) => <TokenName asset={getValue<FundedAsset>()} assets={assets} />,
+        footer: (props) => props.column.id,
+        filterFn: assetFilter,
+        sortingFn: assetSort,
+        enableHiding: false,
+      },
+      {
         accessorFn: (row) => row.chain,
         id: CHAIN,
         header: (context) => <TableHeaderCell context={context}>Chain</TableHeaderCell>,
         cell: ({ getValue }) => <Chain asset={getValue<FundedAsset>()} />,
         footer: (props) => props.column.id,
-        enableSorting: false,
         enableHiding: false,
       },
       {
@@ -248,16 +259,6 @@ export const FundedMarketsList = ({
         header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
         cell: ({ getValue }) => <PoolName asset={getValue<FundedAsset>()} />,
         footer: (props) => props.column.id,
-        sortingFn: assetSort,
-        enableHiding: false,
-      },
-      {
-        accessorFn: (row) => row.market,
-        id: MARKET_LTV,
-        header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
-        cell: ({ getValue }) => <TokenName asset={getValue<FundedAsset>()} assets={assets} />,
-        footer: (props) => props.column.id,
-        filterFn: assetFilter,
         sortingFn: assetSort,
         enableHiding: false,
       },
@@ -598,7 +599,7 @@ export const FundedMarketsList = ({
                     onClick={header.column.getToggleSortingHandler()}
                     px={{
                       base: header.column.id === MARKET_LTV ? 4 : 1,
-                      lg: header.column.id === MARKET_LTV ? 4 : 2,
+                      lg: header.column.id === MARKET_LTV ? 70 : 2,
                     }}
                     py={4}
                     textTransform="capitalize"
