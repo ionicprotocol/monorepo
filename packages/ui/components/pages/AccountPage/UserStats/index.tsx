@@ -31,30 +31,24 @@ export const UserStats = ({
   assets,
   totalSupplyApyPerAsset,
   borrowApyPerAsset,
+  totalSupplyBalanceNative,
+  totalSupplyBalanceFiat,
+  totalBorrowBalanceNative,
+  totalBorrowBalanceFiat,
 }: {
   assets: FundedAsset[];
   totalSupplyApyPerAsset: { [market: string]: number };
   borrowApyPerAsset: { [market: string]: number };
+  totalSupplyBalanceNative: number;
+  totalSupplyBalanceFiat: number;
+  totalBorrowBalanceNative: number;
+  totalBorrowBalanceFiat: number;
 }) => {
-  const [
-    topSuppliedAssets,
-    topBorrowedAssets,
-    totalSupplyBalanceNative,
-    totalSupplyBalanceFiat,
-    totalBorrowBalanceNative,
-    totalBorrowBalanceFiat,
-  ] = useMemo(() => {
+  const [topSuppliedAssets, topBorrowedAssets] = useMemo(() => {
     if (assets.length > 0) {
-      return [
-        sortTopUserSuppliedAssets(assets),
-        sortTopUserBorrowedAssets(assets),
-        assets[0].totalSupplyBalanceNative,
-        assets[0].totalSupplyBalanceFiat,
-        assets[0].totalBorrowBalanceNative,
-        assets[0].totalBorrowBalanceFiat,
-      ];
+      return [sortTopUserSuppliedAssets(assets), sortTopUserBorrowedAssets(assets)];
     } else {
-      return [[], [], 0, 0, 0, 0, 0];
+      return [[], []];
     }
   }, [assets]);
 

@@ -114,6 +114,10 @@ export const FundedMarketsList = ({
     totalSupplyAPYs: totalSupplyApyPerAsset,
     borrowAPYs: borrowApyPerAsset,
     rewards,
+    totalSupplyBalanceNative,
+    totalSupplyBalanceFiat,
+    totalBorrowBalanceNative,
+    totalBorrowBalanceFiat,
   } = info;
 
   const { address } = useMultiMidas();
@@ -432,7 +436,11 @@ export const FundedMarketsList = ({
             <UserStats
               assets={assets}
               borrowApyPerAsset={borrowApyPerAsset}
+              totalBorrowBalanceFiat={totalBorrowBalanceFiat}
+              totalBorrowBalanceNative={totalBorrowBalanceNative}
               totalSupplyApyPerAsset={totalSupplyApyPerAsset}
+              totalSupplyBalanceFiat={totalSupplyBalanceFiat}
+              totalSupplyBalanceNative={totalSupplyBalanceNative}
             />
           </Flex>
         </>

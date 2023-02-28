@@ -20,10 +20,10 @@ export interface FundedAsset extends MarketData {
   poolId: string;
   poolName: string;
   comptroller: string;
-  totalSupplyBalanceFiat: number;
-  totalBorrowBalanceFiat: number;
   totalSupplyBalanceNative: number;
+  totalSupplyBalanceFiat: number;
   totalBorrowBalanceNative: number;
+  totalBorrowBalanceFiat: number;
 }
 
 export interface resQuery {
@@ -34,6 +34,10 @@ export interface resQuery {
   rewards: UseRewardsData;
   totalSupplyAPYs: { [market: string]: number };
   borrowAPYs: { [market: string]: number };
+  totalSupplyBalanceNative: number;
+  totalSupplyBalanceFiat: number;
+  totalBorrowBalanceNative: number;
+  totalBorrowBalanceFiat: number;
 }
 
 export function useAllFundedInfo() {
@@ -58,6 +62,7 @@ export function useAllFundedInfo() {
         const totalSupplyAPYs: { [market: string]: number } = {};
         const borrowAPYs: { [market: string]: number } = {};
         const rewards: UseRewardsData = {};
+
         let totalSupplyBalanceFiat = 0;
         let totalBorrowBalanceFiat = 0;
         let totalSupplyBalanceNative = 0;
@@ -102,11 +107,11 @@ export function useAllFundedInfo() {
                           poolId: pool.id.toString(),
                           comptroller: pool.comptroller,
                           poolName: pool.name,
-                          totalSupplyBalanceFiat: totalSupplyBalanceFiat,
-                          totalBorrowBalanceFiat: totalBorrowBalanceFiat,
-                          totalSupplyBalanceNative: totalSupplyBalanceNative,
-                          totalBorrowBalanceNative: totalBorrowBalanceNative,
                           chainId,
+                          totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
+                          totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
+                          totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
+                          totalBorrowBalanceFiat: pool.totalBorrowBalanceFiat,
                         });
                       });
 
@@ -197,7 +202,17 @@ export function useAllFundedInfo() {
           })
         );
 
-        return { fundedAssets, allClaimableRewards, rewards, totalSupplyAPYs, borrowAPYs };
+        return {
+          fundedAssets,
+          allClaimableRewards,
+          rewards,
+          totalSupplyAPYs,
+          borrowAPYs,
+          totalSupplyBalanceNative,
+          totalSupplyBalanceFiat,
+          totalBorrowBalanceNative,
+          totalBorrowBalanceFiat,
+        };
       }
 
       return null;
