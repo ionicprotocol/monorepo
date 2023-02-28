@@ -101,11 +101,13 @@ function getStrategyData(
     case FundingStrategyContract.XBombLiquidatorFunder:
       return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
     case FundingStrategyContract.CurveSwapLiquidatorFunder:
-      const curveV1Oracle = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
-      const curveV2Oracle = midasSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address;
+      const curveV1Oracle = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry;
+      const curveV2Oracle = midasSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry;
+      const curveV1OracleAddress = curveV1Oracle ? curveV1Oracle.address : constants.AddressZero;
+      const curveV2OracleAddress = curveV2Oracle ? curveV2Oracle.address : constants.AddressZero;
       return new ethers.utils.AbiCoder().encode(
         ["address", "address", "address", "address", "address"],
-        [curveV1Oracle, curveV2Oracle, inputToken, fundingToken, midasSdk.chainSpecificAddresses.W_TOKEN]
+        [curveV1OracleAddress, curveV2OracleAddress, inputToken, fundingToken, midasSdk.chainSpecificAddresses.W_TOKEN]
       );
     default:
       return "";
