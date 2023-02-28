@@ -58,6 +58,10 @@ export function useAllFundedInfo() {
         const totalSupplyAPYs: { [market: string]: number } = {};
         const borrowAPYs: { [market: string]: number } = {};
         const rewards: UseRewardsData = {};
+        let totalSupplyBalanceFiat = 0;
+        let totalBorrowBalanceFiat = 0;
+        let totalSupplyBalanceNative = 0;
+        let totalBorrowBalanceNative = 0;
 
         await Promise.all(
           Object.entries(poolsPerChain).map(async ([chainId, poolsQuery]) => {
@@ -82,6 +86,10 @@ export function useAllFundedInfo() {
                     sdk &&
                     (pool.totalSupplyBalanceFiat > 0 || pool.totalBorrowBalanceFiat > 0)
                   ) {
+                    totalSupplyBalanceFiat += pool.totalSupplyBalanceFiat;
+                    totalBorrowBalanceFiat += pool.totalBorrowBalanceFiat;
+                    totalSupplyBalanceNative += pool.totalSupplyBalanceNative;
+                    totalBorrowBalanceNative += pool.totalBorrowBalanceNative;
                     // get assets which user funded
                     const assets = pool.assets.filter(
                       (asset) => asset.supplyBalanceFiat > 0 || asset.borrowBalanceFiat > 0
@@ -94,10 +102,10 @@ export function useAllFundedInfo() {
                           poolId: pool.id.toString(),
                           comptroller: pool.comptroller,
                           poolName: pool.name,
-                          totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
-                          totalBorrowBalanceFiat: pool.totalBorrowBalanceFiat,
-                          totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
-                          totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
+                          totalSupplyBalanceFiat: totalSupplyBalanceFiat,
+                          totalBorrowBalanceFiat: totalBorrowBalanceFiat,
+                          totalSupplyBalanceNative: totalSupplyBalanceNative,
+                          totalBorrowBalanceNative: totalBorrowBalanceNative,
                           chainId,
                         });
                       });
