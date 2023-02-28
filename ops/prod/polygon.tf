@@ -61,7 +61,10 @@ module "polygon_mainnet_liquidation_rpc_2" {
   chain_id            = local.polygon_mainnet_chain_id
   container_env_vars = merge(
     local.liquidation_variables,
-    { WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_2 }
+    {
+      WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_2,
+      EXCLUDED_COMPTROLLERS  = "0xD265ff7e5487E9DD556a4BB900ccA6D087Eb3AD2"
+    }
   )
   schedule_expression = "rate(2 minutes)"
   timeout             = 450
