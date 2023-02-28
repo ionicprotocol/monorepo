@@ -36,13 +36,13 @@
       "address": "0x70B6f26755e2594a714a931f21C3d29bcb424757"
     },
     "CErc20Delegate": {
-      "address": "0x7F90F0E96909513c80334bC7e3Fc6E92cca3CDCe"
+      "address": "0xC8cfBfCE1D07b8017659AED821836a4Fafb4CF4E"
     },
     "CErc20PluginDelegate": {
-      "address": "0x5a6dB8ACA7BF203e5c87a3f239cf7E4d87aaA3f4"
+      "address": "0x535CFc504C37C74948430392dC3E18d90d63e8e2"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x4c818340e841969a5EAcDe5DE17F61a64f636f2E"
+      "address": "0xF2dcd9116Ef2974C1536be3C9a0Cb5EC3CaB9D60"
     },
     "CTokenFirstExtension": {
       "address": "0xd994ece732aC32a92a575268f4FaBF2025C83F1a"
