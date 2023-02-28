@@ -149,7 +149,7 @@ export const DebtCeilings = ({
           await txBlacklisted.wait();
         }
 
-        const txDebtCeilings = await comptroller._setBorrowCapForAssetForCollateral(
+        const txDebtCeilings = await comptroller._setBorrowCapForCollateral(
           selectedAsset.cToken,
           collateralAssetAddress,
           utils.parseUnits(debtCeiling.toString(), selectedAsset.underlyingDecimals)
