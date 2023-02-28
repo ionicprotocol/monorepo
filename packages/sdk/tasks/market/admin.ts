@@ -24,6 +24,25 @@ export default task("market:unsupport", "Unsupport a market")
     console.log("Unsupported market with status:", receipt.status);
   });
 
+task("market:set:ltv", "Set the LTV (loan to value / collateral factor) of a market")
+  .addParam("marketAddress", "Address of the market", undefined, types.string)
+  .addParam("ltv", "The LTV as a floating point value between 0 and 1", undefined, types.float)
+  .setAction(async ({ marketAddress, ltv }, { ethers }) => {
+    const signer = await ethers.getNamedSigner("deployer");
+
+    const market: CToken = (await ethers.getContractAt("CToken.sol:CToken", marketAddress)) as CToken;
+    const poolAddress = await market.callStatic.comptroller();
+    const pool = (await ethers.getContractAt("Comptroller.sol:Comptroller", poolAddress, signer)) as Comptroller;
+
+    const ltvMantissa = ethers.utils.parseUnits(ltv, 18);
+    console.log(`will set the LTV of market ${marketAddress} to ${ltvMantissa}`);
+
+    const tx = await pool._setCollateralFactor(marketAddress, ltvMantissa);
+    console.log(`_setCollateralFactor tx ${tx.hash}`);
+    await tx.wait();
+    console.log(`mined tx ${tx.hash}`);
+  });
+
 task("market:mint-pause", "Pauses minting on a market")
   .addParam("markets", "The address of the CTokens", undefined, types.string)
   .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
@@ -92,6 +111,7 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
       )) as ComptrollerFirstExtension;
 
       const currentPauseGuardian = await pool.callStatic.pauseGuardian();
+      console.log(`pool ${pool.address} guardian ${currentPauseGuardian}`);
       if (currentPauseGuardian === constants.AddressZero) {
         tx = await poolExtension._setPauseGuardian(admin.address);
         await tx.wait();
@@ -100,7 +120,9 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
 
       const isPaused: boolean = await pool.callStatic.borrowGuardianPaused(market.address);
       if (isPaused != taskArgs.paused) {
+        console.log(`setting market ${market.address} pause to ${taskArgs.paused}`);
         tx = await poolExtension._setBorrowPaused(market.address, taskArgs.paused);
+        console.log(`waiting for tx ${tx.hash}`);
         await tx.wait();
 
         console.log(`Market borrow pause tx ${tx.hash}`);
