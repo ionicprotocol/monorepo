@@ -650,8 +650,8 @@ export const FundedMarketsList = ({
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     px={{
-                      base: header.column.id === MARKET_LTV ? 4 : 1,
-                      lg: header.column.id === MARKET_LTV ? 70 : 2,
+                      base: header.column.id === MARKET_LTV ? 2 : 1,
+                      lg: header.column.id === MARKET_LTV ? 4 : 2,
                     }}
                     py={4}
                     textTransform="capitalize"
