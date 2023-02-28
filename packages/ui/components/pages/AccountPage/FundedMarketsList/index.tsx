@@ -243,7 +243,9 @@ export const FundedMarketsList = ({
         accessorFn: (row) => row.chain,
         id: CHAIN,
         header: (context) => <TableHeaderCell context={context}>Chain</TableHeaderCell>,
-        cell: ({ getValue }) => <Chain chainId={Number(getValue<FundedAsset>().chainId)} />,
+        cell: ({ getValue }) => (
+          <Chain chainId={Number(getValue<FundedAsset>().chainId)} height="50px" width="50px" />
+        ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
         enableHiding: false,
@@ -273,6 +275,7 @@ export const FundedMarketsList = ({
           <PoolName
             chainId={Number(getValue<FundedAsset>().chainId)}
             comptroller={getValue<FundedAsset>().comptroller}
+            poolId={Number(getValue<FundedAsset>().poolId)}
             poolName={getValue<FundedAsset>().poolName}
           />
         ),

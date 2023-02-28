@@ -231,6 +231,7 @@ const PoolsRowList = ({
           <PoolName
             chainId={getValue<PoolData>().chainId}
             comptroller={getValue<PoolData>().comptroller}
+            poolId={getValue<PoolData>().id}
             poolName={getValue<PoolData>().name}
           />
         ),
