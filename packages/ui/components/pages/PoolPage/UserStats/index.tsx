@@ -165,7 +165,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
 
   return (
     <Grid gap={4} templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} w="100%">
-      <Popover trigger="hover">
+      <Popover placement="bottom-end" trigger="hover">
         <PopoverTrigger>
           <Flex>
             <UserStat
@@ -213,7 +213,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           </PopoverContent>
         )}
       </Popover>
-      <Popover trigger="hover">
+      <Popover placement="bottom-end" trigger="hover">
         <PopoverTrigger>
           <Flex>
             <UserStat
@@ -261,7 +261,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           </PopoverContent>
         )}
       </Popover>
-      <Popover trigger="hover">
+      <Popover placement="bottom-end" trigger="hover">
         <PopoverTrigger>
           <Flex>
             <UserStat
@@ -273,12 +273,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             />
           </Flex>
         </PopoverTrigger>
-        <PopoverContent minW="350px" p={2} width="min-content">
-          <PopoverArrow
-            sx={{
-              '--popper-arrow-shadow-color': cPage.primary.borderColor,
-            }}
-          />
+        <PopoverContent minW={{ base: '250px', sm: '350px' }} p={2} width="min-content">
           <PopoverBody>
             <VStack alignItems="flex-start">
               <Text fontWeight="bold">Effective Supply APY</Text>
@@ -324,7 +319,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-      <Popover trigger="hover">
+      <Popover placement="bottom-end" trigger="hover">
         <PopoverTrigger>
           <Flex>
             <UserStat
@@ -336,12 +331,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             />
           </Flex>
         </PopoverTrigger>
-        <PopoverContent minW="350px" p={2} width="min-content">
-          <PopoverArrow
-            sx={{
-              '--popper-arrow-shadow-color': cPage.primary.borderColor,
-            }}
-          />
+        <PopoverContent minW={{ base: '250px', sm: '350px' }} p={2} width="min-content">
           <PopoverBody>
             <VStack alignItems="flex-start">
               <Text fontWeight="bold">Effective Borrow APY</Text>
