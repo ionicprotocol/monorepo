@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -92,23 +92,26 @@ const PoolPage = memo(() => {
 
       <PageTransitionLayout>
         <FusePageLayout>
-          <HStack mx="auto" spacing={4} width={'100%'}>
-            <ArrowBackIcon
-              cursor="pointer"
-              fontSize="2xl"
-              fontWeight="extrabold"
-              onClick={() => {
-                setGlobalLoading(true);
-                router.back();
-              }}
-            />
-            {data ? (
-              <Text fontWeight="bold" size="2xl" textAlign="left">
-                {data.name}
-              </Text>
-            ) : (
-              <Skeleton height="54px">Pool Name</Skeleton>
-            )}
+          <Stack direction={{ base: 'column', sm: 'row' }} mx="auto" spacing={4} width={'100%'}>
+            <HStack spacing={4}>
+              <ArrowBackIcon
+                cursor="pointer"
+                fontSize="2xl"
+                fontWeight="extrabold"
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.back();
+                }}
+              />
+              {data ? (
+                <Text fontWeight="bold" size="2xl" textAlign="left">
+                  {data.name}
+                </Text>
+              ) : (
+                <Skeleton height="54px">Pool Name</Skeleton>
+              )}
+            </HStack>
+
             {data?.assets && data.assets.length > 0 ? (
               <HStack spacing={0}>
                 <AvatarGroup max={30} size="sm">
@@ -155,7 +158,7 @@ const PoolPage = memo(() => {
                 )}
               </HStack>
             ) : null}
-          </HStack>
+          </Stack>
 
           {rewardTokens.length > 0 && data && (
             <RewardsBanner poolChainId={data.chainId} tokens={rewardTokens} />
