@@ -240,21 +240,21 @@ export const FundedMarketsList = ({
   const columns: ColumnDef<Market>[] = useMemo(() => {
     return [
       {
+        accessorFn: (row) => row.chain,
+        id: CHAIN,
+        header: (context) => <TableHeaderCell context={context}>Chain</TableHeaderCell>,
+        cell: ({ getValue }) => <Chain asset={getValue<FundedAsset>()} />,
+        footer: (props) => props.column.id,
+        sortingFn: assetSort,
+        enableHiding: false,
+      },
+      {
         accessorFn: (row) => row.market,
         id: MARKET_LTV,
         header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
         cell: ({ getValue }) => <TokenName asset={getValue<FundedAsset>()} assets={assets} />,
         footer: (props) => props.column.id,
         filterFn: assetFilter,
-        sortingFn: assetSort,
-        enableHiding: false,
-      },
-      {
-        accessorFn: (row) => row.chain,
-        id: CHAIN,
-        header: (context) => <TableHeaderCell context={context}>Chain</TableHeaderCell>,
-        cell: ({ getValue }) => <Chain asset={getValue<FundedAsset>()} />,
-        footer: (props) => props.column.id,
         sortingFn: assetSort,
         enableHiding: false,
       },
