@@ -5,19 +5,26 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
-import { PoolData } from '@ui/types/TokensDataMap';
 
-export const PoolName = ({ pool }: { pool: PoolData }) => {
-  const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
+export const PoolName = ({
+  comptroller,
+  chainId,
+  poolName,
+}: {
+  comptroller: string;
+  chainId: number;
+  poolName: string;
+}) => {
+  const rewardTokens = useRewardTokensOfPool(comptroller, chainId);
   const { data: claimableRewards } = usePoolClaimableRewards({
-    poolAddress: pool.comptroller,
-    poolChainId: pool.chainId,
+    poolAddress: comptroller,
+    poolChainId: chainId,
   });
 
   return (
     <VStack alignItems={'flex-start'} height="100%" justifyContent="center" spacing={0}>
       <Stack maxWidth={'300px'} minWidth={'240px'}>
-        <SimpleTooltip label={pool.name}>
+        <SimpleTooltip label={poolName}>
           <Box maxWidth="100%" width="fit-content">
             <GradientText
               fontWeight="bold"
@@ -28,7 +35,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
               whiteSpace="nowrap"
               width="fit-content"
             >
-              {pool.name}
+              {poolName}
             </GradientText>
           </Box>
         </SimpleTooltip>
@@ -38,7 +45,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
           <Text>Earn Rewards</Text>
           <AvatarGroup max={5} size="xs">
             {rewardTokens.map((token) => (
-              <TokenIcon address={token} chainId={pool.chainId} key={token} />
+              <TokenIcon address={token} chainId={chainId} key={token} />
             ))}
           </AvatarGroup>
         </HStack>

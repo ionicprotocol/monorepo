@@ -38,21 +38,21 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 
-import { AdditionalInfo } from '@ui/components/pages/AccountPage/FundedMarketsList/AdditionalInfo/index';
-import { BorrowApy } from '@ui/components/pages/AccountPage/FundedMarketsList/BorrowApy';
-import { BorrowBalance } from '@ui/components/pages/AccountPage/FundedMarketsList/BorrowBalance';
-import { Chain } from '@ui/components/pages/AccountPage/FundedMarketsList/Chain';
-import { Liquidity } from '@ui/components/pages/AccountPage/FundedMarketsList/Liquidity';
-import { PoolName } from '@ui/components/pages/AccountPage/FundedMarketsList/PoolName';
-import { SupplyApy } from '@ui/components/pages/AccountPage/FundedMarketsList/SupplyApy';
-import { SupplyBalance } from '@ui/components/pages/AccountPage/FundedMarketsList/SupplyBalance';
-import { TokenName } from '@ui/components/pages/AccountPage/FundedMarketsList/TokenName';
-import { TotalBorrow } from '@ui/components/pages/AccountPage/FundedMarketsList/TotalBorrow';
-import { TotalSupply } from '@ui/components/pages/AccountPage/FundedMarketsList/TotalSupply';
 import { UserStats } from '@ui/components/pages/AccountPage/UserStats/index';
+import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
+import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/PoolName';
+import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
+import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
+import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
+import { Liquidity } from '@ui/components/pages/PoolPage/MarketsList/Liquidity';
+import { SupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
+import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
+import { TokenName } from '@ui/components/pages/PoolPage/MarketsList/TokenName';
+import { TotalBorrow } from '@ui/components/pages/PoolPage/MarketsList/TotalBorrow';
+import { TotalSupply } from '@ui/components/pages/PoolPage/MarketsList/TotalSupply';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
@@ -243,7 +243,7 @@ export const FundedMarketsList = ({
         accessorFn: (row) => row.chain,
         id: CHAIN,
         header: (context) => <TableHeaderCell context={context}>Chain</TableHeaderCell>,
-        cell: ({ getValue }) => <Chain asset={getValue<FundedAsset>()} />,
+        cell: ({ getValue }) => <Chain chainId={Number(getValue<FundedAsset>().chainId)} />,
         footer: (props) => props.column.id,
         sortingFn: assetSort,
         enableHiding: false,
@@ -252,7 +252,14 @@ export const FundedMarketsList = ({
         accessorFn: (row) => row.market,
         id: MARKET_LTV,
         header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
-        cell: ({ getValue }) => <TokenName asset={getValue<FundedAsset>()} assets={assets} />,
+        cell: ({ getValue }) => (
+          <TokenName
+            asset={getValue<FundedAsset>()}
+            assets={assets}
+            poolAddress={getValue<FundedAsset>().comptroller}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
+        ),
         footer: (props) => props.column.id,
         filterFn: assetFilter,
         sortingFn: assetSort,
@@ -262,7 +269,13 @@ export const FundedMarketsList = ({
         accessorFn: (row) => row.poolName,
         id: POOL_NAME,
         header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
-        cell: ({ getValue }) => <PoolName asset={getValue<FundedAsset>()} />,
+        cell: ({ getValue }) => (
+          <PoolName
+            chainId={Number(getValue<FundedAsset>().chainId)}
+            comptroller={getValue<FundedAsset>().comptroller}
+            poolName={getValue<FundedAsset>().poolName}
+          />
+        ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
         enableHiding: false,
@@ -273,6 +286,7 @@ export const FundedMarketsList = ({
         cell: ({ getValue }) => (
           <SupplyApy
             asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
             rewards={rewards}
             totalSupplyApyPerAsset={totalSupplyApyPerAsset}
           />
@@ -296,7 +310,12 @@ export const FundedMarketsList = ({
       {
         accessorFn: (row) => row.supplyBalance,
         id: SUPPLY_BALANCE,
-        cell: ({ getValue }) => <SupplyBalance asset={getValue<FundedAsset>()} />,
+        cell: ({ getValue }) => (
+          <SupplyBalance
+            asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
+        ),
         header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
 
         footer: (props) => props.column.id,
@@ -305,7 +324,12 @@ export const FundedMarketsList = ({
       {
         accessorFn: (row) => row.borrowBalance,
         id: BORROW_BALANCE,
-        cell: ({ getValue }) => <BorrowBalance asset={getValue<FundedAsset>()} />,
+        cell: ({ getValue }) => (
+          <BorrowBalance
+            asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
+        ),
         header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
 
         footer: (props) => props.column.id,
@@ -314,7 +338,13 @@ export const FundedMarketsList = ({
       {
         accessorFn: (row) => row.totalSupply,
         id: TOTAL_SUPPLY,
-        cell: ({ getValue }) => <TotalSupply asset={getValue<FundedAsset>()} />,
+        cell: ({ getValue }) => (
+          <TotalSupply
+            asset={getValue<FundedAsset>()}
+            comptrollerAddress={getValue<FundedAsset>().comptroller}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
+        ),
         header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
 
         footer: (props) => props.column.id,
@@ -323,7 +353,13 @@ export const FundedMarketsList = ({
       {
         accessorFn: (row) => row.totalBorrow,
         id: TOTAL_BORROW,
-        cell: ({ getValue }) => <TotalBorrow asset={getValue<FundedAsset>()} />,
+        cell: ({ getValue }) => (
+          <TotalBorrow
+            asset={getValue<FundedAsset>()}
+            comptrollerAddress={getValue<FundedAsset>().comptroller}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
+        ),
         header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
 
         footer: (props) => props.column.id,
@@ -332,7 +368,12 @@ export const FundedMarketsList = ({
       {
         accessorFn: (row) => row.liquidity,
         id: LIQUIDITY,
-        cell: ({ getValue }) => <Liquidity asset={getValue<FundedAsset>()} />,
+        cell: ({ getValue }) => (
+          <Liquidity
+            asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
+        ),
         header: (context) => <TableHeaderCell context={context}>Liquidity</TableHeaderCell>,
 
         footer: (props) => props.column.id,

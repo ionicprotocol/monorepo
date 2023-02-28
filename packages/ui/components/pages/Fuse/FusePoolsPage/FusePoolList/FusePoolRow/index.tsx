@@ -218,7 +218,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.chain,
         id: CHAIN,
         header: () => null,
-        cell: ({ getValue }) => <Chain pool={getValue<PoolData>()} />,
+        cell: ({ getValue }) => <Chain chainId={getValue<PoolData>().chainId} />,
         footer: (props) => props.column.id,
         enableSorting: false,
         enableHiding: false,
@@ -227,7 +227,13 @@ const PoolsRowList = ({
         accessorFn: (row) => row.poolName,
         id: POOL_NAME,
         header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
-        cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
+        cell: ({ getValue }) => (
+          <PoolName
+            chainId={getValue<PoolData>().chainId}
+            comptroller={getValue<PoolData>().comptroller}
+            poolName={getValue<PoolData>().name}
+          />
+        ),
         footer: (props) => props.column.id,
         filterFn: poolFilter,
         sortingFn: poolSort,

@@ -2,10 +2,9 @@ import { HStack, Img } from '@chakra-ui/react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
-import { PoolData } from '@ui/types/TokensDataMap';
 
-export const Chain = ({ pool }: { pool: PoolData }) => {
-  const chainConfig = useChainConfig(pool.chainId);
+export const Chain = ({ chainId }: { chainId: number }) => {
+  const chainConfig = useChainConfig(chainId);
 
   return (
     <HStack height="100%" justifyContent="center">
