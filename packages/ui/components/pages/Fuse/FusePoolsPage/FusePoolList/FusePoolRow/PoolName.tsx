@@ -15,11 +15,13 @@ export const PoolName = ({
   chainId,
   poolName,
   poolId,
+  isDisabledTooltip,
 }: {
   comptroller: string;
   chainId: number;
   poolName: string;
   poolId: number;
+  isDisabledTooltip?: boolean;
 }) => {
   const { setGlobalLoading } = useMultiMidas();
   const rewardTokens = useRewardTokensOfPool(comptroller, chainId);
@@ -34,7 +36,7 @@ export const PoolName = ({
   return (
     <VStack alignItems={'flex-start'} height="100%" justifyContent="center" spacing={0}>
       <Stack maxWidth={'300px'} minWidth={'240px'}>
-        <SimpleTooltip label={poolName}>
+        <SimpleTooltip label={!isDisabledTooltip ? poolName : ''}>
           <Button
             as={Link}
             height="auto"
