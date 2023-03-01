@@ -1,21 +1,9 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Grid,
-  HStack,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Divider, Flex, Grid, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { FundedAsset } from '@ui/hooks/useAllFundedInfo';
 import { useColors } from '@ui/hooks/useColors';
@@ -148,214 +136,189 @@ export const UserStats = ({
     return undefined;
   }, [assets, totalBorrowBalanceNative, totalBorrowBalanceFiat, borrowApyPerAsset]);
 
-  const { cPage, cCard } = useColors();
+  const { cCard } = useColors();
 
   return (
     <Grid gap={4} templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} w="100%">
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <Flex>
-            <UserStat label="Your Supply" value={midUsdFormatter(totalSupplyBalanceFiat)} />
-          </Flex>
-        </PopoverTrigger>
-        {topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0 && (
-          <PopoverContent p={2} width="fit-content">
-            <PopoverArrow
-              sx={{
-                '--popper-arrow-shadow-color': cPage.primary.borderColor,
-              }}
-            />
-            <PopoverBody>
-              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
-                <Text fontWeight="bold">Top supplied assets</Text>
-                {topSuppliedAssets.slice(0, 3).map((asset, index) => (
-                  <Flex key={index}>
-                    {asset.supplyBalanceFiat > 0 && (
-                      <HStack mt={1}>
-                        <TokenIcon
-                          address={asset.underlyingToken}
-                          chainId={Number(asset.chainId)}
-                          size="md"
-                        />
-                        <Box ml="3">
-                          <Text fontWeight="bold" mt={1}>
-                            {smallUsdFormatter(asset.supplyBalanceFiat)}
-                          </Text>
-                          <Text>
-                            {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}{' '}
-                            {asset.underlyingSymbol}
-                          </Text>
-                        </Box>
-                      </HStack>
-                    )}
-                  </Flex>
-                ))}
-              </VStack>
-            </PopoverBody>
-          </PopoverContent>
-        )}
-      </Popover>
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <Flex>
-            <UserStat label="Your Borrow" value={midUsdFormatter(totalBorrowBalanceFiat)} />
-          </Flex>
-        </PopoverTrigger>
-        {topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0 && (
-          <PopoverContent p={2} width="fit-content">
-            <PopoverArrow
-              sx={{
-                '--popper-arrow-shadow-color': cPage.primary.borderColor,
-              }}
-            />
-            <PopoverBody>
-              <VStack alignItems="flex-start" spacing={0} width={'100%'}>
-                <Text fontWeight="bold">Top borrowed assets</Text>
-                {topBorrowedAssets.slice(0, 3).map((asset, index) => (
-                  <Flex key={index}>
-                    {asset.borrowBalanceFiat > 0 && (
-                      <HStack mt={1}>
-                        <TokenIcon
-                          address={asset.underlyingToken}
-                          chainId={Number(asset.chainId)}
-                          size="md"
-                        />
-                        <Box ml="3">
-                          <Text fontWeight="bold" mt={1}>
-                            {smallUsdFormatter(asset.borrowBalanceFiat)}
-                          </Text>
-                          <Text>
-                            {tokenFormatter(asset.borrowBalance, asset.underlyingDecimals)}{' '}
-                            {asset.underlyingSymbol}
-                          </Text>
-                        </Box>
-                      </HStack>
-                    )}
-                  </Flex>
-                ))}
-              </VStack>
-            </PopoverBody>
-          </PopoverContent>
-        )}
-      </Popover>
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <Flex>
-            <UserStat
-              label="Effective Supply APY"
-              secondValue={
-                totalSupplyApy ? '~ ' + smallUsdFormatter(totalSupplyApy.estimatedUsd) : ''
-              }
-              value={totalSupplyApy ? totalSupplyApy.totalApy.toFixed(2) + '%' : '-'}
-            />
-          </Flex>
-        </PopoverTrigger>
-        <PopoverContent minW="350px" p={2} width="min-content">
-          <PopoverArrow
-            sx={{
-              '--popper-arrow-shadow-color': cPage.primary.borderColor,
-            }}
-          />
-          <PopoverBody>
-            <VStack alignItems="flex-start">
-              <Text fontWeight="bold">Effective Supply APY</Text>
-              <Text>
-                The expected annual percentage yield(APY) on supplied assets received by this
-                account, assuming the current variable interest rates on all supplied assets remains
-                constant
-              </Text>
-              {totalSupplyApy && totalSupplyApy.estimatedPerAsset.length > 0 ? (
-                <VStack pt={2}>
-                  <Divider bg={cCard.dividerColor} />
-
-                  <VStack alignItems="flex-start" pt={2}>
-                    {totalSupplyApy.estimatedPerAsset.map((data, index) => {
-                      return (
-                        <HStack key={index}>
-                          <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
-                          <Text whiteSpace="nowrap">
-                            {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
-                            <b>
-                              {smallFormatter.format(data.estimated)} {data.symbol}/year
-                            </b>
-                          </Text>
-                        </HStack>
-                      );
-                    })}
-                    <Divider bg={cCard.borderColor} />
-                    <HStack alignSelf="self-end">
-                      <Text whiteSpace="nowrap">
-                        {smallFormatter.format(totalSupplyApy.totalSupplied)} USD at{' '}
-                        {totalSupplyApy.totalApy.toFixed(2)}% APY yield{' '}
-                        <b>{smallFormatter.format(totalSupplyApy.estimatedUsd)} USD/year</b>
-                      </Text>
+      <PopoverTooltip
+        body={
+          topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0 ? (
+            <VStack alignItems="flex-start" spacing={0} width={'100%'}>
+              <Text fontWeight="bold">Top supplied assets</Text>
+              {topSuppliedAssets.slice(0, 3).map((asset, index) => (
+                <Flex key={index}>
+                  {asset.supplyBalanceFiat > 0 && (
+                    <HStack mt={1}>
+                      <TokenIcon
+                        address={asset.underlyingToken}
+                        chainId={Number(asset.chainId)}
+                        size="md"
+                      />
+                      <Box ml="3">
+                        <Text fontWeight="bold" mt={1}>
+                          {smallUsdFormatter(asset.supplyBalanceFiat)}
+                        </Text>
+                        <Text>
+                          {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}{' '}
+                          {asset.underlyingSymbol}
+                        </Text>
+                      </Box>
                     </HStack>
-                  </VStack>
-                </VStack>
-              ) : null}
+                  )}
+                </Flex>
+              ))}
             </VStack>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <Flex>
-            <UserStat
-              label="Effective Borrow APY"
-              secondValue={
-                totalBorrowApy ? '~ ' + smallUsdFormatter(totalBorrowApy.estimatedUsd) : ''
-              }
-              value={totalBorrowApy ? totalBorrowApy.totalApy.toFixed(2) + '%' : '-'}
-            />
-          </Flex>
-        </PopoverTrigger>
-        <PopoverContent minW="350px" p={2} width="min-content">
-          <PopoverArrow
-            sx={{
-              '--popper-arrow-shadow-color': cPage.primary.borderColor,
-            }}
-          />
-          <PopoverBody>
-            <VStack alignItems="flex-start">
-              <Text fontWeight="bold">Effective Borrow APY</Text>
-              <Text>
-                The expected annual percentage yield(APY) on borrowed assets received by this
-                account, assuming the current variable interest rates on all borrowed assets remains
-                constant
-              </Text>
-              {totalBorrowApy && totalBorrowApy.estimatedPerAsset.length > 0 ? (
-                <VStack pt={2}>
-                  <Divider bg={cCard.dividerColor} />
+          ) : null
+        }
+        contentProps={{ p: 2, width: 'fit-content' }}
+        visible={topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0}
+      >
+        <Flex>
+          <UserStat label="Your Supply" value={midUsdFormatter(totalSupplyBalanceFiat)} />
+        </Flex>
+      </PopoverTooltip>
 
-                  <VStack alignItems="flex-start" pt={2}>
-                    {totalBorrowApy.estimatedPerAsset.map((data, index) => {
-                      return (
-                        <HStack key={index}>
-                          <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
-                          <Text whiteSpace="nowrap">
-                            {data.borrowed} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
-                            <b>
-                              {smallFormatter.format(data.estimated)} {data.symbol}/year
-                            </b>
-                          </Text>
-                        </HStack>
-                      );
-                    })}
-                    <Divider bg={cCard.borderColor} />
-                    <HStack alignSelf="self-end">
-                      <Text whiteSpace="nowrap">
-                        {smallFormatter.format(totalBorrowApy.totalBorrowed)} USD at{' '}
-                        {totalBorrowApy.totalApy.toFixed(2)}% APY yield{' '}
-                        <b>{smallFormatter.format(totalBorrowApy.estimatedUsd)} USD/year</b>
-                      </Text>
+      <PopoverTooltip
+        body={
+          topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0 ? (
+            <VStack alignItems="flex-start" spacing={0} width={'100%'}>
+              <Text fontWeight="bold">Top borrowed assets</Text>
+              {topBorrowedAssets.slice(0, 3).map((asset, index) => (
+                <Flex key={index}>
+                  {asset.borrowBalanceFiat > 0 && (
+                    <HStack mt={1}>
+                      <TokenIcon
+                        address={asset.underlyingToken}
+                        chainId={Number(asset.chainId)}
+                        size="md"
+                      />
+                      <Box ml="3">
+                        <Text fontWeight="bold" mt={1}>
+                          {smallUsdFormatter(asset.borrowBalanceFiat)}
+                        </Text>
+                        <Text>
+                          {tokenFormatter(asset.borrowBalance, asset.underlyingDecimals)}{' '}
+                          {asset.underlyingSymbol}
+                        </Text>
+                      </Box>
                     </HStack>
-                  </VStack>
-                </VStack>
-              ) : null}
+                  )}
+                </Flex>
+              ))}
             </VStack>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
+          ) : null
+        }
+        contentProps={{ p: 2, width: 'fit-content' }}
+        visible={topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0}
+      >
+        <Flex>
+          <UserStat label="Your Borrow" value={midUsdFormatter(totalBorrowBalanceFiat)} />
+        </Flex>
+      </PopoverTooltip>
+
+      <PopoverTooltip
+        body={
+          <VStack alignItems="flex-start">
+            <Text fontWeight="bold">Effective Supply APY</Text>
+            <Text>
+              The expected annual percentage yield(APY) on supplied assets received by this account,
+              assuming the current variable interest rates on all supplied assets remains constant
+            </Text>
+            {totalSupplyApy && totalSupplyApy.estimatedPerAsset.length > 0 ? (
+              <VStack pt={2}>
+                <Divider bg={cCard.dividerColor} />
+
+                <VStack alignItems="flex-start" pt={2}>
+                  {totalSupplyApy.estimatedPerAsset.map((data, index) => {
+                    return (
+                      <HStack key={index}>
+                        <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
+                        <Text whiteSpace="nowrap">
+                          {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
+                          <b>
+                            {smallFormatter.format(data.estimated)} {data.symbol}/year
+                          </b>
+                        </Text>
+                      </HStack>
+                    );
+                  })}
+                  <Divider bg={cCard.borderColor} />
+                  <HStack alignSelf="self-end">
+                    <Text whiteSpace="nowrap">
+                      {smallFormatter.format(totalSupplyApy.totalSupplied)} USD at{' '}
+                      {totalSupplyApy.totalApy.toFixed(2)}% APY yield{' '}
+                      <b>{smallFormatter.format(totalSupplyApy.estimatedUsd)} USD/year</b>
+                    </Text>
+                  </HStack>
+                </VStack>
+              </VStack>
+            ) : null}
+          </VStack>
+        }
+        contentProps={{ p: 2, minW: { base: '300px', sm: '350px' } }}
+      >
+        <Flex>
+          <UserStat
+            label="Effective Supply APY"
+            secondValue={
+              totalSupplyApy ? '~ ' + smallUsdFormatter(totalSupplyApy.estimatedUsd) : ''
+            }
+            value={totalSupplyApy ? totalSupplyApy.totalApy.toFixed(2) + '%' : '-'}
+          />
+        </Flex>
+      </PopoverTooltip>
+
+      <PopoverTooltip
+        body={
+          <VStack alignItems="flex-start">
+            <Text fontWeight="bold">Effective Borrow APY</Text>
+            <Text>
+              The expected annual percentage yield(APY) on borrowed assets received by this account,
+              assuming the current variable interest rates on all borrowed assets remains constant
+            </Text>
+            {totalBorrowApy && totalBorrowApy.estimatedPerAsset.length > 0 ? (
+              <VStack pt={2}>
+                <Divider bg={cCard.dividerColor} />
+
+                <VStack alignItems="flex-start" pt={2}>
+                  {totalBorrowApy.estimatedPerAsset.map((data, index) => {
+                    return (
+                      <HStack key={index}>
+                        <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
+                        <Text whiteSpace="nowrap">
+                          {data.borrowed} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
+                          <b>
+                            {smallFormatter.format(data.estimated)} {data.symbol}/year
+                          </b>
+                        </Text>
+                      </HStack>
+                    );
+                  })}
+                  <Divider bg={cCard.borderColor} />
+                  <HStack alignSelf="self-end">
+                    <Text whiteSpace="nowrap">
+                      {smallFormatter.format(totalBorrowApy.totalBorrowed)} USD at{' '}
+                      {totalBorrowApy.totalApy.toFixed(2)}% APY yield{' '}
+                      <b>{smallFormatter.format(totalBorrowApy.estimatedUsd)} USD/year</b>
+                    </Text>
+                  </HStack>
+                </VStack>
+              </VStack>
+            ) : null}
+          </VStack>
+        }
+        contentProps={{ p: 2, minW: { base: '300px', sm: '350px' } }}
+      >
+        <Flex>
+          <UserStat
+            label="Effective Borrow APY"
+            secondValue={
+              totalBorrowApy ? '~ ' + smallUsdFormatter(totalBorrowApy.estimatedUsd) : ''
+            }
+            value={totalBorrowApy ? totalBorrowApy.totalApy.toFixed(2) + '%' : '-'}
+          />
+        </Flex>
+      </PopoverTooltip>
     </Grid>
   );
 };
