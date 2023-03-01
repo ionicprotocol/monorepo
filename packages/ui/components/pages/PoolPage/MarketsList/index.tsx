@@ -9,10 +9,6 @@ import {
   HStack,
   IconButton,
   Input,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   Table,
   Tbody,
@@ -55,6 +51,7 @@ import { UserStats } from '@ui/components/pages/PoolPage/UserStats';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -591,42 +588,41 @@ export const MarketsList = ({
 
         <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="flex-start">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
-          <Popover placement="bottom-end">
-            <PopoverTrigger>
-              <IconButton
-                aria-label="Column Settings"
-                icon={<SettingsIcon fontSize={20} />}
-                maxWidth={10}
-                variant="_outline"
-              />
-            </PopoverTrigger>
-            <PopoverContent width="200px">
-              <PopoverBody>
-                <VStack alignItems="flex-start">
-                  <Text>Show/Hide Columns</Text>
-                  <Checkbox
-                    isChecked={table.getIsAllColumnsVisible()}
-                    onChange={table.getToggleAllColumnsVisibilityHandler()}
-                  >
-                    All
-                  </Checkbox>
-                  {table.getAllColumns().map((column) => {
-                    if (column.getCanHide()) {
-                      return (
-                        <Checkbox
-                          isChecked={column.getIsVisible()}
-                          key={column.id}
-                          onChange={column.getToggleVisibilityHandler()}
-                        >
-                          {column.id}
-                        </Checkbox>
-                      );
-                    }
-                  })}
-                </VStack>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+          <PopoverTooltip
+            body={
+              <VStack alignItems="flex-start">
+                <Text>Show/Hide Columns</Text>
+                <Checkbox
+                  isChecked={table.getIsAllColumnsVisible()}
+                  onChange={table.getToggleAllColumnsVisibilityHandler()}
+                >
+                  All
+                </Checkbox>
+                {table.getAllColumns().map((column) => {
+                  if (column.getCanHide()) {
+                    return (
+                      <Checkbox
+                        isChecked={column.getIsVisible()}
+                        key={column.id}
+                        onChange={column.getToggleVisibilityHandler()}
+                      >
+                        {column.id}
+                      </Checkbox>
+                    );
+                  }
+                })}
+              </VStack>
+            }
+            contentProps={{ width: '200px' }}
+          >
+            <IconButton
+              aria-label="Column Settings"
+              icon={<SettingsIcon fontSize={20} />}
+              maxWidth={10}
+              variant="_outline"
+            />
+          </PopoverTooltip>
+
           {address ? (
             <SimpleTooltip
               label="Hide markets you don't supply or borrow from"

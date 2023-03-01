@@ -7,9 +7,6 @@ import {
   FlexProps,
   HStack,
   Link,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Spinner,
   Text,
   VStack,
@@ -20,6 +17,7 @@ import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   FEATURE_REQUESTS_URL,
@@ -136,38 +134,9 @@ const MidasHero = () => {
         </HStack>
       </Flex>
 
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <MotionFlex
-            alignItems="center"
-            bg={cPage.secondary.bgColor}
-            borderRadius="20px"
-            boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
-            color={cPage.secondary.txtColor}
-            flexDir="column"
-            h={{ base: '10rem', lg: '15rem' }}
-            justifyContent="center"
-            overflow="hidden"
-            position="relative"
-            px={{ lg: '10vw' }}
-            w={{ base: '100%', lg: '50%' }}
-          >
-            {isLoading || totalTVL === undefined ? (
-              <Spinner />
-            ) : (
-              <>
-                <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
-                  {smallUsdFormatter(totalTVL)}
-                </Text>
-              </>
-            )}
-            <Text color="raisinBlack" size="md" whiteSpace="nowrap">
-              Total value supplied across Midas
-            </Text>
-          </MotionFlex>
-        </PopoverTrigger>
-        {tvlData && (
-          <PopoverContent p={2}>
+      <PopoverTooltip
+        body={
+          tvlData ? (
             <VStack alignItems="flex-start" spacing={0} width={'100%'}>
               {[...tvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
@@ -181,9 +150,38 @@ const MidasHero = () => {
                 </Flex>
               ))}
             </VStack>
-          </PopoverContent>
-        )}
-      </Popover>
+          ) : null
+        }
+        popoverProps={{ placement: 'bottom' }}
+        width={{ base: '100%', lg: '40%' }}
+      >
+        <MotionFlex
+          alignItems="center"
+          bg={cPage.secondary.bgColor}
+          borderRadius="20px"
+          boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
+          color={cPage.secondary.txtColor}
+          flexDir="column"
+          h={{ base: '10rem', lg: '15rem' }}
+          justifyContent="center"
+          overflow="hidden"
+          position="relative"
+          px={{ lg: '10vw' }}
+        >
+          {isLoading || totalTVL === undefined ? (
+            <Spinner />
+          ) : (
+            <>
+              <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
+                {smallUsdFormatter(totalTVL)}
+              </Text>
+            </>
+          )}
+          <Text color="raisinBlack" size="md" whiteSpace="nowrap">
+            Total value supplied across Midas
+          </Text>
+        </MotionFlex>
+      </PopoverTooltip>
     </Flex>
   );
 };
