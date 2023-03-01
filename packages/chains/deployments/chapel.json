@@ -24,16 +24,16 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0x728bA61465BA5d90DC5E51dFdA522AC912868306"
+      "address": "0xa0CCF94FD5eaC93269988a5f610D5e2A3Bf0Ba24"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x9c55d77E1f46622f5171Dc0eB03461FdCCD92836"
     },
     "Comptroller": {
-      "address": "0x684873B5c1DA3AE5474BEE8C8e0Dd1d25ddedA09"
+      "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xdA4b73c0E3d12803065F9668da936A4A935460e0"
+      "address": "0xF073bc39fC443d13F402D559cF115768Faff7a47"
     },
     "DefaultProxyAdmin": {
       "address": "0x0C64dEFA0125678C77dDa2287FDD6000699737Cc"
@@ -45,7 +45,7 @@
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x92e8E05fe8579D607520684E74cE0B2ce15266c5"
+      "address": "0x1Fe3e112fC2CbB0f45436F056f83019B138B3575"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
@@ -69,7 +69,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolLens": {
-      "address": "0x8a27e76a81c8B1248c27C2c02F57C07EB3bFe092"
+      "address": "0xeAA782fA732FEf5A5B127EA70d1b656216717353"
     },
     "FusePoolLensSecondary": {
       "address": "0x8c70FDE00F64E5F3835D247E6742447074017128"
