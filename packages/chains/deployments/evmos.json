@@ -30,13 +30,13 @@
       "address": "0xAce1BCbB8512F0ACe7a86B0e390a5edB25A29E0E"
     },
     "CTokenFirstExtension": {
-      "address": "0xB7DBfBbcb3074a7Ad490B3EEED454D2335be9e58"
+      "address": "0xeAA782fA732FEf5A5B127EA70d1b656216717353"
     },
     "Comptroller": {
-      "address": "0x6c66030a8431C7e2973D63340F5fF95889dce5f9"
+      "address": "0xCE375FCbbd13FaDBc534b670aD70d2ccdA740C1E"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xb412cE162dE2168C92bbdB80A2c74c771e5D91dD"
+      "address": "0x506E21A470ff22dF5DDAb03C0149b3234b4B0d4A"
     },
     "DefaultProxyAdmin": {
       "address": "0xb6C070BFDFbbc081F2da688d3e0527A5B5EfCB0C"
@@ -57,7 +57,7 @@
       "address": "0xA21eB35869C4aafeB55a931Db7F56267a59dB620"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x9c55d77E1f46622f5171Dc0eB03461FdCCD92836"
+      "address": "0xbF60bDf4bc95d84fB9a6b40792C5465D491B2023"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xA21eB35869C4aafeB55a931Db7F56267a59dB620"
@@ -81,7 +81,7 @@
       "address": "0x68e8f59eA33FbccA716f56f89F47e53C73d47830"
     },
     "FusePoolLens": {
-      "address": "0x840D8E074b5f5def94c9A1AE58c79a45f9a7CF7B"
+      "address": "0x198aB16ebe3cB3F119f6aD0c1390695512D619cb"
     },
     "FusePoolLensSecondary": {
       "address": "0x87AC87AC80c179532D057D3AC66223D4b952Da77"
