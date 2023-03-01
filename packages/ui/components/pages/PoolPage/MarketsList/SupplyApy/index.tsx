@@ -196,8 +196,7 @@ export const SupplyApy = ({
             )}
           </>
         }
-        hideArrow
-        placement={'top-end'}
+        popoverProps={{ placement: 'top-end' }}
         visible={hasRewardTooltip}
       >
         <HStack>
