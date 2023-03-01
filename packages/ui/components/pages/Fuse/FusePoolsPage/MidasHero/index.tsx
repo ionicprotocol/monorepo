@@ -164,6 +164,7 @@ const MidasHero = () => {
             </VStack>
           ) : null
         }
+        popoverProps={{ placement: 'bottom' }}
         width={{ base: '100%', lg: '40%' }}
       >
         <MotionFlex
