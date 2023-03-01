@@ -63,7 +63,6 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
           ) : null}
         </VStack>
       }
-      maxWidth="400px"
       popoverProps={{ placement: 'top-end' }}
     >
       <VStack alignItems="flex-end" spacing={1}>

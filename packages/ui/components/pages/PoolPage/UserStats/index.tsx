@@ -149,7 +149,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
     borrowApyPerAsset,
   ]);
 
-  const { cPage, cCard } = useColors();
+  const { cCard } = useColors();
 
   return (
     <Grid gap={4} templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} w="100%">
@@ -186,6 +186,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           ) : null
         }
         contentProps={{ p: 2, width: 'fit-content' }}
+        visible={topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0}
       >
         <Flex>
           <UserStat
@@ -228,6 +229,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           ) : null
         }
         contentProps={{ p: 2, width: 'fit-content' }}
+        visible={topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0}
       >
         <Flex>
           <UserStat
@@ -239,49 +241,42 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
 
       <PopoverTooltip
         body={
-          topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0 ? (
-            <VStack alignItems="flex-start">
-              <Text fontWeight="bold">Effective Supply APY</Text>
-              <Text>
-                The expected annual percentage yield(APY) on supplied assets received by this
-                account, assuming the current variable interest rates on all supplied assets remains
-                constant
-              </Text>
-              {totalSupplyApy && totalSupplyApy.estimatedPerAsset.length > 0 ? (
-                <VStack pt={2}>
-                  <Divider bg={cCard.dividerColor} />
+          <VStack alignItems="flex-start">
+            <Text fontWeight="bold">Effective Supply APY</Text>
+            <Text>
+              The expected annual percentage yield(APY) on supplied assets received by this account,
+              assuming the current variable interest rates on all supplied assets remains constant
+            </Text>
+            {totalSupplyApy && totalSupplyApy.estimatedPerAsset.length > 0 ? (
+              <VStack pt={2}>
+                <Divider bg={cCard.dividerColor} />
 
-                  <VStack alignItems="flex-start" pt={2}>
-                    {totalSupplyApy.estimatedPerAsset.map((data) => {
-                      return (
-                        <HStack key={data.underlying}>
-                          <TokenIcon
-                            address={data.underlying}
-                            chainId={poolData.chainId}
-                            size="sm"
-                          />
-                          <Text whiteSpace="nowrap">
-                            {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
-                            <b>
-                              {smallFormatter.format(data.estimated)} {data.symbol}/year
-                            </b>
-                          </Text>
-                        </HStack>
-                      );
-                    })}
-                    <Divider bg={cCard.borderColor} />
-                    <HStack alignSelf="self-end">
-                      <Text whiteSpace="nowrap">
-                        {smallFormatter.format(totalSupplyApy.totalSupplied)} USD at{' '}
-                        {totalSupplyApy.totalApy.toFixed(2)}% APY yield{' '}
-                        <b>{smallFormatter.format(totalSupplyApy.estimatedUsd)} USD/year</b>
-                      </Text>
-                    </HStack>
-                  </VStack>
+                <VStack alignItems="flex-start" pt={2}>
+                  {totalSupplyApy.estimatedPerAsset.map((data) => {
+                    return (
+                      <HStack key={data.underlying}>
+                        <TokenIcon address={data.underlying} chainId={poolData.chainId} size="sm" />
+                        <Text whiteSpace="nowrap">
+                          {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
+                          <b>
+                            {smallFormatter.format(data.estimated)} {data.symbol}/year
+                          </b>
+                        </Text>
+                      </HStack>
+                    );
+                  })}
+                  <Divider bg={cCard.borderColor} />
+                  <HStack alignSelf="self-end">
+                    <Text whiteSpace="nowrap">
+                      {smallFormatter.format(totalSupplyApy.totalSupplied)} USD at{' '}
+                      {totalSupplyApy.totalApy.toFixed(2)}% APY yield{' '}
+                      <b>{smallFormatter.format(totalSupplyApy.estimatedUsd)} USD/year</b>
+                    </Text>
+                  </HStack>
                 </VStack>
-              ) : null}
-            </VStack>
-          ) : null
+              </VStack>
+            ) : null}
+          </VStack>
         }
         contentProps={{ minW: { base: '250px', sm: '350px' }, p: 2, width: 'min-content' }}
       >
@@ -298,49 +293,42 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
 
       <PopoverTooltip
         body={
-          topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0 ? (
-            <VStack alignItems="flex-start">
-              <Text fontWeight="bold">Effective Borrow APY</Text>
-              <Text>
-                The expected annual percentage yield(APY) on borrowed assets received by this
-                account, assuming the current variable interest rates on all borrowed assets remains
-                constant
-              </Text>
-              {totalBorrowApy && totalBorrowApy.estimatedPerAsset.length > 0 ? (
-                <VStack pt={2}>
-                  <Divider bg={cCard.dividerColor} />
+          <VStack alignItems="flex-start">
+            <Text fontWeight="bold">Effective Borrow APY</Text>
+            <Text>
+              The expected annual percentage yield(APY) on borrowed assets received by this account,
+              assuming the current variable interest rates on all borrowed assets remains constant
+            </Text>
+            {totalBorrowApy && totalBorrowApy.estimatedPerAsset.length > 0 ? (
+              <VStack pt={2}>
+                <Divider bg={cCard.dividerColor} />
 
-                  <VStack alignItems="flex-start" pt={2}>
-                    {totalBorrowApy.estimatedPerAsset.map((data) => {
-                      return (
-                        <HStack key={data.underlying}>
-                          <TokenIcon
-                            address={data.underlying}
-                            chainId={poolData.chainId}
-                            size="sm"
-                          />
-                          <Text whiteSpace="nowrap">
-                            {data.borrowed} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
-                            <b>
-                              {smallFormatter.format(data.estimated)} {data.symbol}/year
-                            </b>
-                          </Text>
-                        </HStack>
-                      );
-                    })}
-                    <Divider bg={cCard.borderColor} />
-                    <HStack alignSelf="self-end">
-                      <Text whiteSpace="nowrap">
-                        {smallFormatter.format(totalBorrowApy.totalBorrowed)} USD at{' '}
-                        {totalBorrowApy.totalApy.toFixed(2)}% APY yield{' '}
-                        <b>{smallFormatter.format(totalBorrowApy.estimatedUsd)} USD/year</b>
-                      </Text>
-                    </HStack>
-                  </VStack>
+                <VStack alignItems="flex-start" pt={2}>
+                  {totalBorrowApy.estimatedPerAsset.map((data) => {
+                    return (
+                      <HStack key={data.underlying}>
+                        <TokenIcon address={data.underlying} chainId={poolData.chainId} size="sm" />
+                        <Text whiteSpace="nowrap">
+                          {data.borrowed} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
+                          <b>
+                            {smallFormatter.format(data.estimated)} {data.symbol}/year
+                          </b>
+                        </Text>
+                      </HStack>
+                    );
+                  })}
+                  <Divider bg={cCard.borderColor} />
+                  <HStack alignSelf="self-end">
+                    <Text whiteSpace="nowrap">
+                      {smallFormatter.format(totalBorrowApy.totalBorrowed)} USD at{' '}
+                      {totalBorrowApy.totalApy.toFixed(2)}% APY yield{' '}
+                      <b>{smallFormatter.format(totalBorrowApy.estimatedUsd)} USD/year</b>
+                    </Text>
+                  </HStack>
                 </VStack>
-              ) : null}
-            </VStack>
-          ) : null
+              </VStack>
+            ) : null}
+          </VStack>
         }
         contentProps={{ minW: { base: '250px', sm: '350px' }, p: 2, width: 'min-content' }}
       >

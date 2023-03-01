@@ -24,7 +24,6 @@ export const PopoverTooltip = ({
   footer,
   width,
   height,
-  maxWidth,
   hideArrow = true,
   visible = true,
   contentProps,
@@ -36,7 +35,6 @@ export const PopoverTooltip = ({
   footer?: PopoverFooterProps['children'];
   width?: BoxProps['width'];
   height?: BoxProps['height'];
-  maxWidth?: string;
   hideArrow?: boolean;
   visible?: boolean;
   contentProps?: PopoverContentProps;
@@ -53,8 +51,9 @@ export const PopoverTooltip = ({
       <Popover placement="bottom-end" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
         <PopoverContent
-          maxWidth={maxWidth ? maxWidth : '300px'}
+          maxWidth={{ base: '300px', sm: '400px' }}
           onClick={(e) => e.stopPropagation()}
+          overflowX="auto"
           style={{ cursor: 'default' }}
           textAlign="start"
           width="auto"
