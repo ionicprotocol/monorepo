@@ -498,7 +498,7 @@ const PoolsRowList = ({
                         height={16}
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        px={{ base: 1, lg: 2 }}
+                        px={0}
                         py={4}
                         textTransform="capitalize"
                       >
@@ -553,7 +553,10 @@ const PoolsRowList = ({
                             height={16}
                             key={cell.id}
                             minW={10}
-                            px={{ base: cell.column.id === 'Pool Name' ? 0 : 2 }}
+                            px={{
+                              base:
+                                cell.column.id === POOL_NAME || cell.column.id === ASSETS ? 0 : 2,
+                            }}
                             py={0}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
