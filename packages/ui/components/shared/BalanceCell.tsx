@@ -63,9 +63,8 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
           ) : null}
         </VStack>
       }
-      hideArrow={true}
       maxWidth="400px"
-      placement="top-end"
+      popoverProps={{ placement: 'top-end' }}
     >
       <VStack alignItems="flex-end" spacing={1}>
         <HStack spacing={2}>

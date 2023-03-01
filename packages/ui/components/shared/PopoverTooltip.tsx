@@ -1,10 +1,12 @@
 import {
   Box,
+  BoxProps,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverBodyProps,
   PopoverContent,
+  PopoverContentProps,
   PopoverFooter,
   PopoverFooterProps,
   PopoverHeader,
@@ -20,37 +22,43 @@ export const PopoverTooltip = ({
   header,
   body,
   footer,
-  placement,
   width,
   height,
   maxWidth,
-  hideArrow,
+  hideArrow = true,
   visible = true,
-  ...popoverProps
+  contentProps,
+  popoverProps,
 }: {
+  children: PopoverProps['children'];
   header?: PopoverHeaderProps['children'];
   body?: PopoverBodyProps['children'];
   footer?: PopoverFooterProps['children'];
-  placement?: string;
-  width?: string;
-  height?: string;
+  width?: BoxProps['width'];
+  height?: BoxProps['height'];
   maxWidth?: string;
   hideArrow?: boolean;
   visible?: boolean;
-} & PopoverProps) => {
+  contentProps?: PopoverContentProps;
+  popoverProps?: PopoverProps;
+  headerProps?: PopoverHeaderProps;
+  bodyProps?: PopoverBodyProps;
+  footerProps?: PopoverFooterProps;
+}) => {
   const { cPage } = useColors();
   if (!visible) return <>{children}</>;
+
   return (
     <Box height={height} width={width}>
-      <Popover placement={placement ? placement : 'top'} trigger="hover" {...popoverProps}>
+      <Popover placement="bottom-end" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
         <PopoverContent
           maxWidth={maxWidth ? maxWidth : '300px'}
           onClick={(e) => e.stopPropagation()}
           style={{ cursor: 'default' }}
           textAlign="start"
-          visibility={visible ? 'visible' : 'hidden'}
           width="auto"
+          {...contentProps}
         >
           {!hideArrow && (
             <PopoverArrow
