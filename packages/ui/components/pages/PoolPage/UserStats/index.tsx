@@ -278,7 +278,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             ) : null}
           </VStack>
         }
-        contentProps={{ width: { base: '300px', sm: '350px' }, p: 2 }}
+        contentProps={{ minWidth: { base: '300px', sm: '350px' }, p: 2 }}
       >
         <Flex>
           <UserStat
@@ -330,7 +330,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             ) : null}
           </VStack>
         }
-        contentProps={{ minW: { base: '250px', sm: '350px' }, p: 2, width: 'min-content' }}
+        contentProps={{ minW: { base: '300px', sm: '350px' }, p: 2 }}
       >
         <Flex>
           <UserStat
