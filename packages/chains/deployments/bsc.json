@@ -84,16 +84,16 @@
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
     },
     "CTokenFirstExtension": {
-      "address": "0x622542c2e1204C8F87432cF0674e5eee736779dE"
+      "address": "0x74b7e07A245562A2a8efdc995F256045Eefb1DAa"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
     },
     "Comptroller": {
-      "address": "0xcC07A2f0625958768Fa8f990d0c0a11976c9EC05"
+      "address": "0x789eA0BDC85D385CD728e9ff261aF5738667d6e0"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xEF75F50af7aA4579Af754F838f0400dE6C97231D"
+      "address": "0xBB9A827f23c1352f33Be91160c36b2eE05a13C9a"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
       "address": "0xB83AC269cbCeb97105D216305954f170C1fca5fD"
@@ -170,6 +170,9 @@
     "FlywheelStaticRewards_ANKR_Ankr_BNB_Pool": {
       "address": "0x8Ad591EC60292B395376Fc4617859645b08EB185"
     },
+    "FlywheelStaticRewards_ANKR_Ankr_BNB_Pool2": {
+      "address": "0x990FD62a1F1b77F410E89d3BA499039D544c74C1"
+    },
     "FuseFeeDistributor": {
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
     },
@@ -216,7 +219,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolLens": {
-      "address": "0x47246c2e75409284b6409534d410245Ee48002c7"
+      "address": "0x8C893a86aA48C4aB390670273742178aC34b5c52"
     },
     "FusePoolLensSecondary": {
       "address": "0x96f0A348D31C6e6d86c5Fca5cf657D6c592AAff6"
