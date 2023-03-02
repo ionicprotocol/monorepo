@@ -54,7 +54,7 @@ const MidasHero = () => {
       justifyContent="center"
       marginLeft="auto"
       marginRight="auto"
-      pb={{ base: 6, md: 6 }}
+      pb={{ base: 3, md: 3 }}
       pt={{ base: '72px', md: '0px' }}
       px={{ base: 0, lg: 0 }}
       w="100%"

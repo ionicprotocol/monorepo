@@ -413,7 +413,7 @@ const PoolsRowList = ({
       <Flex
         alignItems="center"
         flexWrap="wrap-reverse"
-        gap={4}
+        gap={3}
         justifyContent={['center', 'center', 'space-between']}
         mb={3}
         width="100%"
