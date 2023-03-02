@@ -85,13 +85,10 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         const implBefore = await unitroller.callStatic.comptrollerImplementation();
         const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
         console.log(`current impl ${implBefore} latest ${latestImpl}`);
-        if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
-          console.log(`No auto upgrade with latest implementation ${latestImpl}`);
-        } else {
-          const tx = await fuseFeeDistributor.autoUpgradePool(pool.comptroller);
-          await tx.wait();
-          console.log(`bulk upgraded pool ${pool.comptroller}`);
-        }
+
+        const tx = await fuseFeeDistributor.autoUpgradePool(pool.comptroller);
+        await tx.wait();
+        console.log(`bulk upgraded pool ${pool.comptroller}`);
 
         // check the extensions if the latest impl
         const implAfter = await unitroller.callStatic.comptrollerImplementation();

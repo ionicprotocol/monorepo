@@ -648,10 +648,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
 
   // upgrade any of the pools if necessary
+  // the markets are also autoupgraded with this task
   await run("pools:all:upgrade");
-
-  // upgrade any of the markets if necessary
-  await run("markets:all:upgrade");
 
   const gasUsed = deployments.getGasUsed();
 
