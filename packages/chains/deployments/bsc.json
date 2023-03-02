@@ -72,19 +72,19 @@
       "address": "0x23B1ff27D97eF804fC0F100af7Bc5911D07f79d3"
     },
     "CErc20Delegate": {
-      "address": "0x88d90463b4689aA9a622b711B0FA73c936E04B55"
+      "address": "0x9c2C420dF7cb5F89F6EBFf8503122D01aBF950a3"
     },
     "CErc20PluginDelegate": {
-      "address": "0x7e894731D898146259798b17F88B4C6612000598"
+      "address": "0x4DD40654A6d84759783cB32a8bE7e904720730D0"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x854D310AB51763Ba6cccFb391BdAAF5aB514F824"
+      "address": "0x4b74A4046f0E8dB18c6683258bc1beDf0c9602Fe"
     },
     "CEtherDelegate": {
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
     },
     "CTokenFirstExtension": {
-      "address": "0x74b7e07A245562A2a8efdc995F256045Eefb1DAa"
+      "address": "0x7C08f2f8B53D13d55710D6a8549B96DDB2ca0503"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
@@ -177,7 +177,7 @@
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xb51c785933715530eDAE9EAfbBd51D4a7fc7F3b6"
+      "address": "0xF688761AD33223994be4Aea4263c286B9751685b"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
