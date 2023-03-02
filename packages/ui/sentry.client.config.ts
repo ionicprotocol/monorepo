@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/nextjs';
 import { config } from '@ui/config/index';
 
 const SENTRY_DSN = process.env.IS_SENTRY_ENABLED === 'true' ? process.env.SENTRY_DSN : undefined;
-console.warn(config.supabasePublicKey);
+console.warn(config.supabasePublicKey, config.supabaseUrl);
 console.warn(
   'client; ',
   process.env.SUPABASE_KEY,
