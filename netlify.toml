@@ -21,7 +21,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
-IS_SENTRY_ENABLED = "true"
+IS_SENTRY_ENABLED = "false"
 
 [context.development.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
