@@ -45,7 +45,7 @@
       "address": "0xF2dcd9116Ef2974C1536be3C9a0Cb5EC3CaB9D60"
     },
     "CTokenFirstExtension": {
-      "address": "0xd994ece732aC32a92a575268f4FaBF2025C83F1a"
+      "address": "0xb80f124Bbec5BF0973b496a2BC5653B21a7808E4"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x8E9f21C59A6E63e5F08a6688a02b55042158f0B5"
@@ -93,7 +93,7 @@
       "address": "0xA2938d28D26F5D0aA86ffdC9BED815F184A7b1bD"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xd3F09E3ae160178A29588E57B6ba582fb0d643b4"
+      "address": "0xE9217d14850153CD878Fb1Ac1277Ee2Cd38961cC"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xA2938d28D26F5D0aA86ffdC9BED815F184A7b1bD"
