@@ -1,7 +1,8 @@
 import { Avatar, AvatarProps } from '@chakra-ui/avatar';
 import { SpinnerIcon } from '@chakra-ui/icons';
-import { Icon, IconProps, SkeletonCircle, useColorModeValue } from '@chakra-ui/react';
+import { Icon, IconProps, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { RiCheckboxBlankCircleFill } from 'react-icons/ri';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -47,29 +48,27 @@ export const TokenIcon = ({
   return (
     <motion.div whileHover={withMotion ? { scale: 1.2 } : undefined}>
       <SimpleTooltip isDisabled={!withTooltip} label={tokenData?.symbol || address}>
-        {!isLoading && !tokenData?.logoURL ? (
-          <SkeletonCircle size="10" speed={0} startColor={iconColor} />
-        ) : (
-          <Avatar
-            borderRadius={0}
-            icon={
-              isLoading || !tokenData?.logoURL ? (
-                <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
-              ) : (
-                <PlaceholderIcon boxSize={'100%'} color={iconColor} />
-              )
-            }
-            name={
-              isLoading || !tokenData?.logoURL
-                ? undefined
-                : tokenData?.name
-                ? tokenData.name
-                : address
-            }
-            src={tokenData?.logoURL}
-            {...avatarProps}
-          />
-        )}
+        <Avatar
+          borderRadius={0}
+          icon={
+            isLoading ? (
+              <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
+            ) : !tokenData?.logoURL ? (
+              <Icon as={RiCheckboxBlankCircleFill} boxSize={'120%'} color={iconColor} />
+            ) : (
+              <PlaceholderIcon boxSize={'100%'} color={iconColor} />
+            )
+          }
+          name={
+            isLoading || !tokenData?.logoURL
+              ? undefined
+              : tokenData?.name
+              ? tokenData.name
+              : address
+          }
+          src={tokenData?.logoURL}
+          {...avatarProps}
+        />
       </SimpleTooltip>
     </motion.div>
   );
