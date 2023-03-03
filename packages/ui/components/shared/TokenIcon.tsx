@@ -1,6 +1,6 @@
 import { Avatar, AvatarProps } from '@chakra-ui/avatar';
 import { SpinnerIcon } from '@chakra-ui/icons';
-import { Icon, IconProps, useColorModeValue } from '@chakra-ui/react';
+import { Icon, IconProps, SkeletonCircle, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -47,25 +47,29 @@ export const TokenIcon = ({
   return (
     <motion.div whileHover={withMotion ? { scale: 1.2 } : undefined}>
       <SimpleTooltip isDisabled={!withTooltip} label={tokenData?.symbol || address}>
-        <Avatar
-          borderRadius={0}
-          icon={
-            isLoading || !tokenData?.logoURL ? (
-              <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
-            ) : (
-              <PlaceholderIcon boxSize={'100%'} color={iconColor} />
-            )
-          }
-          name={
-            isLoading || !tokenData?.logoURL
-              ? undefined
-              : tokenData?.name
-              ? tokenData.name
-              : address
-          }
-          src={tokenData?.logoURL}
-          {...avatarProps}
-        />
+        {!isLoading && !tokenData?.logoURL ? (
+          <SkeletonCircle size="10" speed={0} startColor={iconColor} />
+        ) : (
+          <Avatar
+            borderRadius={0}
+            icon={
+              isLoading || !tokenData?.logoURL ? (
+                <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
+              ) : (
+                <PlaceholderIcon boxSize={'100%'} color={iconColor} />
+              )
+            }
+            name={
+              isLoading || !tokenData?.logoURL
+                ? undefined
+                : tokenData?.name
+                ? tokenData.name
+                : address
+            }
+            src={tokenData?.logoURL}
+            {...avatarProps}
+          />
+        )}
       </SimpleTooltip>
     </motion.div>
   );
