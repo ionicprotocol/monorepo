@@ -673,7 +673,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
 
-  /// Addresses Provider - set bUSD
+  /// Addresses Provider
+  /// set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const busdAddress = underlying(assets, assetSymbols.BUSD);
   const busdAddressAp = await addressesProvider.callStatic.getAddress("bUSD");
@@ -681,6 +682,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     const tx = await addressesProvider.setAddress("bUSD", busdAddress);
     await tx.wait();
     console.log("setAddress bUSD: ", tx.hash);
+  }
+  /// set BalancerLpStablePoolPriceOracle
+  const balancerLpStablePoolPriceOracle = await ethers.getContract("BalancerLpStablePoolPriceOracle", deployer);
+  const balancerLpStablePoolPriceOracleAp = await addressesProvider.callStatic.getAddress("BalancerLpStablePoolPriceOracle");
+  if (balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address) {
+    const tx = await addressesProvider.setAddress("BalancerLpStablePoolPriceOracle", balancerLpStablePoolPriceOracle.address);
+    console.log("setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
+    await tx.wait();
+    console.log("mined setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
   }
   ////
 };
