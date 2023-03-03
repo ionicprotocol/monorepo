@@ -685,9 +685,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   /// set BalancerLpStablePoolPriceOracle
   const balancerLpStablePoolPriceOracle = await ethers.getContract("BalancerLpStablePoolPriceOracle", deployer);
-  const balancerLpStablePoolPriceOracleAp = await addressesProvider.callStatic.getAddress("BalancerLpStablePoolPriceOracle");
+  const balancerLpStablePoolPriceOracleAp = await addressesProvider.callStatic.getAddress(
+    "BalancerLpStablePoolPriceOracle"
+  );
   if (balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address) {
-    const tx = await addressesProvider.setAddress("BalancerLpStablePoolPriceOracle", balancerLpStablePoolPriceOracle.address);
+    const tx = await addressesProvider.setAddress(
+      "BalancerLpStablePoolPriceOracle",
+      balancerLpStablePoolPriceOracle.address
+    );
     console.log("setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
     await tx.wait();
     console.log("mined setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
