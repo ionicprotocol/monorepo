@@ -50,13 +50,19 @@ export const TokenIcon = ({
         <Avatar
           borderRadius={0}
           icon={
-            isLoading ? (
+            isLoading || !tokenData?.logoURL ? (
               <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
             ) : (
               <PlaceholderIcon boxSize={'100%'} color={iconColor} />
             )
           }
-          name={isLoading ? undefined : tokenData?.name ? tokenData.name : address}
+          name={
+            isLoading || !tokenData?.logoURL
+              ? undefined
+              : tokenData?.name
+              ? tokenData.name
+              : address
+          }
           src={tokenData?.logoURL}
           {...avatarProps}
         />

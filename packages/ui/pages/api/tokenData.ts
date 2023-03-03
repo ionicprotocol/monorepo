@@ -54,8 +54,9 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
         symbol: data[1] || data[0] || 'Undefined',
         decimals: data[2],
         address: addresses[i],
-        logoURL:
-          config.iconServerURL + '/token/96x96/' + (data[1] || 'help').toLowerCase() + '.png',
+        logoURL: data[1]
+          ? config.iconServerURL + '/token/96x96/' + data[1].toLowerCase() + '.png'
+          : undefined,
       });
     });
   } catch {
