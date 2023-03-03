@@ -42,7 +42,7 @@ export const TokenIcon = ({
   withMotion = true,
   ...avatarProps
 }: TokenIconProps) => {
-  const iconColor = useColorModeValue('#333', '#ddd');
+  const iconColor = useColorModeValue('#A0AEC0', '#4A5568');
   const { data: tokenData, isLoading } = useTokenData(address, chainId);
 
   return (
@@ -54,7 +54,7 @@ export const TokenIcon = ({
             isLoading ? (
               <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
             ) : !tokenData?.logoURL ? (
-              <Icon as={RiCheckboxBlankCircleFill} boxSize={'120%'} color={iconColor} />
+              <Icon as={RiCheckboxBlankCircleFill} boxSize="120%" color={iconColor} size="120%" />
             ) : (
               <PlaceholderIcon boxSize={'100%'} color={iconColor} />
             )
