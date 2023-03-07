@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon, SettingsIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
   Box,
   ButtonGroup,
@@ -34,10 +34,12 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 
-import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar/index';
+import { UserStats } from '@ui/components/pages/AccountPage/UserStats/index';
+import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
+import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/PoolName';
 import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
@@ -47,18 +49,17 @@ import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyB
 import { TokenName } from '@ui/components/pages/PoolPage/MarketsList/TokenName';
 import { TotalBorrow } from '@ui/components/pages/PoolPage/MarketsList/TotalBorrow';
 import { TotalSupply } from '@ui/components/pages/PoolPage/MarketsList/TotalSupply';
-import { UserStats } from '@ui/components/pages/PoolPage/UserStats';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
   BORROW_APY,
   BORROW_BALANCE,
   BORROWABLE,
+  CHAIN,
   COLLATERAL,
   HIDDEN,
   LIQUIDITY,
@@ -66,6 +67,7 @@ import {
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
   PAUSED,
+  POOL_NAME,
   PROTECTED,
   REWARDS,
   SEARCH,
@@ -75,61 +77,47 @@ import {
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
-import { useAssets } from '@ui/hooks/useAssets';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import { FundedAsset, resQuery } from '@ui/hooks/useAllFundedInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
-import { UseRewardsData } from '@ui/hooks/useRewards';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
-  market: MarketData;
-  supplyApy: MarketData;
-  supplyBalance: MarketData;
-  borrowApy: MarketData;
-  borrowBalance: MarketData;
-  totalSupply: MarketData;
-  totalBorrow: MarketData;
-  liquidity: MarketData;
+  chain: FundedAsset;
+  poolName: FundedAsset;
+  market: FundedAsset;
+  supplyApy: FundedAsset;
+  supplyBalance: FundedAsset;
+  borrowApy: FundedAsset;
+  borrowBalance: FundedAsset;
+  totalSupply: FundedAsset;
+  totalBorrow: FundedAsset;
+  liquidity: FundedAsset;
 };
 
-export const MarketsList = ({
-  poolData,
-  rewards = {},
+export const FundedMarketsList = ({
+  info,
   initSorting,
   initColumnVisibility,
-  initHidden,
 }: {
-  poolData: PoolData;
-  rewards?: UseRewardsData;
+  info: resQuery;
   initSorting: SortingState;
   initColumnVisibility: VisibilityState;
-  initHidden: boolean;
 }) => {
   const {
-    assets,
-    comptroller: comptrollerAddress,
-    totalSupplyBalanceFiat: supplyBalanceFiat,
-    totalBorrowBalanceFiat: borrowBalanceFiat,
-    chainId: poolChainId,
-  } = poolData;
-  const sdk = useSdk(poolChainId);
+    fundedAssets: assets,
+    allClaimableRewards,
+    totalSupplyAPYs: totalSupplyApyPerAsset,
+    borrowAPYs: borrowApyPerAsset,
+    rewards,
+    totalSupplyBalanceNative,
+    totalSupplyBalanceFiat,
+    totalBorrowBalanceNative,
+    totalBorrowBalanceFiat,
+  } = info;
+
   const { address } = useMultiMidas();
-  const [isHidden, setIsHidden] = useState<boolean>(initHidden);
-
-  const { data: allClaimableRewards } = useAssetsClaimableRewards({
-    poolAddress: comptrollerAddress,
-    assetsAddress: assets.map((asset) => asset.cToken),
-    poolChainId,
-  });
-
-  const { data: assetInfos } = useAssets(poolChainId);
-
   const [collateralCounts, protectedCounts, borrowableCounts, pausedCounts] = useMemo(() => {
     return [
       assets.filter((asset) => asset.membership).length,
@@ -138,14 +126,6 @@ export const MarketsList = ({
       assets.filter((asset) => asset.isBorrowPaused && asset.isSupplyPaused).length,
     ];
   }, [assets]);
-
-  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
-    assets,
-    poolChainId,
-    rewards,
-    assetInfos
-  );
-  const { data: borrowApyPerAsset } = useBorrowAPYs(assets, poolChainId);
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
@@ -184,12 +164,14 @@ export const MarketsList = ({
 
   const assetSort: SortingFn<Market> = React.useCallback(
     (rowA, rowB, columnId) => {
-      if (!sdk) return 0;
-
       if (columnId === MARKET_LTV) {
         return rowB.original.market.underlyingSymbol.localeCompare(
           rowA.original.market.underlyingSymbol
         );
+      } else if (columnId === CHAIN) {
+        return Number(rowB.original.market.chainId) > Number(rowA.original.market.chainId) ? 1 : -1;
+      } else if (columnId === POOL_NAME) {
+        return rowB.original.market.poolName.localeCompare(rowA.original.market.poolName);
       } else if (columnId === SUPPLY_APY) {
         const rowASupplyAPY = totalSupplyApyPerAsset
           ? totalSupplyApyPerAsset[rowA.original.market.cToken]
@@ -232,12 +214,14 @@ export const MarketsList = ({
         return 0;
       }
     },
-    [totalSupplyApyPerAsset, borrowApyPerAsset, sdk]
+    [totalSupplyApyPerAsset, borrowApyPerAsset]
   );
 
   const data: Market[] = useMemo(() => {
     return sortAssets(assets).map((asset) => {
       return {
+        chain: asset,
+        poolName: asset,
         market: asset,
         supplyApy: asset,
         supplyBalance: asset,
@@ -253,15 +237,24 @@ export const MarketsList = ({
   const columns: ColumnDef<Market>[] = useMemo(() => {
     return [
       {
+        accessorFn: (row) => row.chain,
+        id: CHAIN,
+        header: () => null,
+        cell: ({ getValue }) => <Chain chainId={Number(getValue<FundedAsset>().chainId)} />,
+        footer: (props) => props.column.id,
+        sortingFn: assetSort,
+        enableHiding: false,
+      },
+      {
         accessorFn: (row) => row.market,
         id: MARKET_LTV,
         header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
         cell: ({ getValue }) => (
           <TokenName
-            asset={getValue<MarketData>()}
+            asset={getValue<FundedAsset>()}
             assets={assets}
-            poolAddress={comptrollerAddress}
-            poolChainId={poolChainId}
+            poolAddress={getValue<FundedAsset>().comptroller}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
         footer: (props) => props.column.id,
@@ -270,12 +263,29 @@ export const MarketsList = ({
         enableHiding: false,
       },
       {
+        accessorFn: (row) => row.poolName,
+        id: POOL_NAME,
+        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
+        cell: ({ getValue }) => (
+          <PoolName
+            chainId={Number(getValue<FundedAsset>().chainId)}
+            comptroller={getValue<FundedAsset>().comptroller}
+            isDisabledTooltip={true}
+            poolId={Number(getValue<FundedAsset>().poolId)}
+            poolName={getValue<FundedAsset>().poolName}
+          />
+        ),
+        footer: (props) => props.column.id,
+        sortingFn: assetSort,
+        enableHiding: false,
+      },
+      {
         accessorFn: (row) => row.supplyApy,
         id: SUPPLY_APY,
         cell: ({ getValue }) => (
           <SupplyApy
-            asset={getValue<MarketData>()}
-            poolChainId={poolChainId}
+            asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
             rewards={rewards}
             totalSupplyApyPerAsset={totalSupplyApyPerAsset}
           />
@@ -290,7 +300,7 @@ export const MarketsList = ({
         accessorFn: (row) => row.borrowApy,
         id: BORROW_APY,
         cell: ({ getValue }) => (
-          <BorrowApy asset={getValue<MarketData>()} borrowApyPerAsset={borrowApyPerAsset} />
+          <BorrowApy asset={getValue<FundedAsset>()} borrowApyPerAsset={borrowApyPerAsset} />
         ),
         header: (context) => <TableHeaderCell context={context}>Borrow APY</TableHeaderCell>,
         footer: (props) => props.column.id,
@@ -300,7 +310,10 @@ export const MarketsList = ({
         accessorFn: (row) => row.supplyBalance,
         id: SUPPLY_BALANCE,
         cell: ({ getValue }) => (
-          <SupplyBalance asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <SupplyBalance
+            asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
 
@@ -311,7 +324,10 @@ export const MarketsList = ({
         accessorFn: (row) => row.borrowBalance,
         id: BORROW_BALANCE,
         cell: ({ getValue }) => (
-          <BorrowBalance asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <BorrowBalance
+            asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
 
@@ -323,9 +339,9 @@ export const MarketsList = ({
         id: TOTAL_SUPPLY,
         cell: ({ getValue }) => (
           <TotalSupply
-            asset={getValue<MarketData>()}
-            comptrollerAddress={comptrollerAddress}
-            poolChainId={poolChainId}
+            asset={getValue<FundedAsset>()}
+            comptrollerAddress={getValue<FundedAsset>().comptroller}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
         header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
@@ -338,9 +354,9 @@ export const MarketsList = ({
         id: TOTAL_BORROW,
         cell: ({ getValue }) => (
           <TotalBorrow
-            asset={getValue<MarketData>()}
-            comptrollerAddress={comptrollerAddress}
-            poolChainId={poolChainId}
+            asset={getValue<FundedAsset>()}
+            comptrollerAddress={getValue<FundedAsset>().comptroller}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
         header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
@@ -352,7 +368,10 @@ export const MarketsList = ({
         accessorFn: (row) => row.liquidity,
         id: LIQUIDITY,
         cell: ({ getValue }) => (
-          <Liquidity asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <Liquidity
+            asset={getValue<FundedAsset>()}
+            poolChainId={Number(getValue<FundedAsset>().chainId)}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Liquidity</TableHeaderCell>,
 
@@ -361,7 +380,7 @@ export const MarketsList = ({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, comptrollerAddress, totalSupplyApyPerAsset, assets, borrowApyPerAsset, poolChainId]);
+  }, [rewards, totalSupplyApyPerAsset, assets, borrowApyPerAsset]);
 
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
@@ -426,24 +445,6 @@ export const MarketsList = ({
   }, [searchText]);
 
   useEffect(() => {
-    if (isHidden) {
-      setGlobalFilter([...globalFilter, HIDDEN]);
-    } else {
-      setGlobalFilter(globalFilter.filter((f) => f !== HIDDEN));
-    }
-
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
-    let oldObj;
-    if (oldData) {
-      oldObj = JSON.parse(oldData);
-    }
-
-    const data = { ...oldObj, isHidden };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHidden]);
-
-  useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
     let oldObj;
     if (oldData) {
@@ -455,7 +456,7 @@ export const MarketsList = ({
         arr.push(key);
       }
     });
-    const data = { ...oldObj, marketSorting: sorting, marketColumnVisibility: arr };
+    const data = { ...oldObj, userMarketSorting: sorting, userMarketColumnVisibility: arr };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 
@@ -472,14 +473,14 @@ export const MarketsList = ({
             mt={4}
             mx={4}
           >
-            <UserStats poolData={poolData} />
-          </Flex>
-          {/* Borrow Limit */}
-          <Flex mt={4} mx={4}>
-            <CollateralRatioBar
+            <UserStats
               assets={assets}
-              borrowFiat={borrowBalanceFiat}
-              poolChainId={poolChainId}
+              borrowApyPerAsset={borrowApyPerAsset}
+              totalBorrowBalanceFiat={totalBorrowBalanceFiat}
+              totalBorrowBalanceNative={totalBorrowBalanceNative}
+              totalSupplyApyPerAsset={totalSupplyApyPerAsset}
+              totalSupplyBalanceFiat={totalSupplyBalanceFiat}
+              totalSupplyBalanceNative={totalSupplyBalanceNative}
             />
           </Flex>
         </>
@@ -623,28 +624,6 @@ export const MarketsList = ({
               variant="_outline"
             />
           </PopoverTooltip>
-
-          {address ? (
-            <SimpleTooltip
-              label="Hide markets you don't supply or borrow from"
-              my={3}
-              placement="top-end"
-              width={200}
-            >
-              <span>
-                <CIconButton
-                  alignSelf="flex-end"
-                  aria-label="detail View"
-                  icon={<ViewOffIcon fontSize={20} />}
-                  isSelected={isHidden}
-                  onClick={() => {
-                    setIsHidden(!isHidden);
-                  }}
-                  variant="filter"
-                />
-              </span>
-            </SimpleTooltip>
-          ) : null}
         </Flex>
       </Flex>
 
@@ -665,12 +644,21 @@ export const MarketsList = ({
                     color={cCard.txtColor}
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    px={{ base: 1, lg: 2 }}
+                    px={{
+                      base: header.column.id === MARKET_LTV ? 2 : 1,
+                      lg: header.column.id === MARKET_LTV ? 4 : 2,
+                    }}
                     py={4}
                     textTransform="capitalize"
                   >
                     <HStack
-                      justifyContent={header.column.id === MARKET_LTV ? 'center' : 'flex-end'}
+                      justifyContent={
+                        header.column.id === CHAIN
+                          ? 'center'
+                          : header.column.id === MARKET_LTV || header.column.id === POOL_NAME
+                          ? 'flex-start'
+                          : 'flex-end'
+                      }
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </HStack>
@@ -714,12 +702,12 @@ export const MarketsList = ({
                     {/* 2nd row is a custom 1 cell row */}
                     <Td border="none" colSpan={row.getVisibleCells().length}>
                       <AdditionalInfo
-                        borrowBalanceFiat={borrowBalanceFiat}
-                        comptrollerAddress={comptrollerAddress}
-                        poolChainId={poolChainId}
+                        borrowBalanceFiat={row.original.market.totalBorrowBalanceFiat}
+                        comptrollerAddress={row.original.market.comptroller}
+                        poolChainId={Number(row.original.market.chainId)}
                         row={row}
                         rows={table.getCoreRowModel().rows}
-                        supplyBalanceFiat={supplyBalanceFiat}
+                        supplyBalanceFiat={row.original.market.totalSupplyBalanceFiat}
                       />
                     </Td>
                   </Tr>

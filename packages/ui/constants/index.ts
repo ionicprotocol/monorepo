@@ -174,7 +174,6 @@ export const MARKET_COLUMNS = [
   TOTAL_SUPPLY,
   TOTAL_BORROW,
   LIQUIDITY,
-  COLLATERAL,
 ];
 
 export const POOL_NAME = 'Pool Name';

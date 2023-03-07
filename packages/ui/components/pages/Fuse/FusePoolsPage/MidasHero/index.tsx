@@ -36,7 +36,7 @@ const MotionFlex = motion<FlexProps>(Flex);
 const MidasHero = () => {
   const { data: tvlData, isLoading } = useTVL();
   const router = useRouter();
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading, address } = useMultiMidas();
 
   const totalTVL = useMemo(() => {
     if (tvlData) {
@@ -54,7 +54,7 @@ const MidasHero = () => {
       justifyContent="center"
       marginLeft="auto"
       marginRight="auto"
-      pb={{ base: 6, md: 6 }}
+      pb={{ base: 3, md: 3 }}
       pt={{ base: '72px', md: '0px' }}
       px={{ base: 0, lg: 0 }}
       w="100%"
@@ -81,37 +81,49 @@ const MidasHero = () => {
           justifyContent={['center', 'center', 'flex-start']}
           width={'100%'}
         >
-          <HStack px={4} spacing={{ base: 2, md: 4, xl: 6 }}>
-            <Link href={MIDAS_DOCS_URL} isExternal>
-              <SimpleTooltip label="Documentation">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <SiGitbook color={cPage.primary.borderColor} fontSize={30} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_DISCORD_URL} isExternal>
-              <SimpleTooltip label="Discord">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaDiscord color={cPage.primary.borderColor} fontSize={28} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_TELEGRAM_URL} isExternal>
-              <SimpleTooltip label="Telegram">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaTelegram color={cPage.primary.borderColor} fontSize={24} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_TWITTER_URL} isExternal>
-              <SimpleTooltip label="Twitter">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaTwitter color={cPage.primary.borderColor} fontSize={24} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-          </HStack>
+          {!address ? (
+            <HStack px={4} spacing={{ base: 2, md: 4, xl: 6 }}>
+              <Link href={MIDAS_DOCS_URL} isExternal>
+                <SimpleTooltip label="Documentation">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <SiGitbook color={cPage.primary.borderColor} fontSize={30} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_DISCORD_URL} isExternal>
+                <SimpleTooltip label="Discord">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaDiscord color={cPage.primary.borderColor} fontSize={28} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_TELEGRAM_URL} isExternal>
+                <SimpleTooltip label="Telegram">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaTelegram color={cPage.primary.borderColor} fontSize={24} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_TWITTER_URL} isExternal>
+                <SimpleTooltip label="Twitter">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaTwitter color={cPage.primary.borderColor} fontSize={24} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+            </HStack>
+          ) : null}
           <HStack gap={2}>
+            {address ? (
+              <Button
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/account');
+                }}
+              >
+                Account
+              </Button>
+            ) : null}
             <Button
               leftIcon={<AddIcon boxSize={3} />}
               onClick={() => {

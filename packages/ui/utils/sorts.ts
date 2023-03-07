@@ -2,7 +2,7 @@ import { FusePoolData, SupportedAsset } from '@midas-capital/types';
 
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
-export const sortAssets = (assets: MarketData[]) => {
+export const sortAssets = <T extends MarketData>(assets: T[]) => {
   return assets.sort((a, b) => {
     return a.underlyingSymbol.localeCompare(b.underlyingSymbol);
   });
@@ -61,13 +61,13 @@ export const poolSortByAddress = (pools: PoolData[]) => {
   });
 };
 
-export const sortTopUserSuppliedAssets = (assets: MarketData[]) => {
+export const sortTopUserSuppliedAssets = <T extends MarketData>(assets: T[]) => {
   return [...assets].sort((a, b) => {
     return b.supplyBalanceFiat - a.supplyBalanceFiat;
   });
 };
 
-export const sortTopUserBorrowedAssets = (assets: MarketData[]) => {
+export const sortTopUserBorrowedAssets = <T extends MarketData>(assets: T[]) => {
   return [...assets].sort((a, b) => {
     return b.borrowBalanceFiat - a.borrowBalanceFiat;
   });
