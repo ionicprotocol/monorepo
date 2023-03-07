@@ -125,7 +125,12 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
       if (oldErc20Delegate) {
         const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate);
         if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Delegate.address) {
-          tx = await fuseFeeDistributor._setLatestCErc20Delegate(oldErc20Delegate, erc20Delegate.address, false, "0x00");
+          tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+            oldErc20Delegate,
+            erc20Delegate.address,
+            false,
+            "0x00"
+          );
           console.log("_setLatestCErc20Delegate:", tx.hash);
           await tx.wait();
         } else {
@@ -135,8 +140,13 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
 
       if (oldErc20PluginDelegate) {
         // CErc20PluginDelegate
-        const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20PluginDelegate);
-        if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDelegate.address) {
+        const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
+          oldErc20PluginDelegate
+        );
+        if (
+          latestCErc20PluginDelegate === constants.AddressZero ||
+          latestCErc20PluginDelegate !== erc20PluginDelegate.address
+        ) {
           tx = await fuseFeeDistributor._setLatestCErc20Delegate(
             oldErc20PluginDelegate,
             erc20PluginDelegate.address,
@@ -167,7 +177,9 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
           console.log("_setLatestCErc20Delegate (plugin rewards):", tx.hash);
           await tx.wait();
         } else {
-          console.log(`latest impl for plugin rewards delegate ${erc20PluginRewardsDelegate.address} already configured`);
+          console.log(
+            `latest impl for plugin rewards delegate ${erc20PluginRewardsDelegate.address} already configured`
+          );
         }
       }
     }
