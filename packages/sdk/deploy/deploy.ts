@@ -242,7 +242,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   if (oldErc20Delegate) {
     // CErc20Delegate
-    const [latestCErc20Delegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20Delegate.address);
+    const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate.address);
     if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
       tx = await fuseFeeDistributor._setLatestCErc20Delegate(
         oldErc20Delegate.address,
@@ -270,7 +270,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   if (oldErc20PluginDelegate) {
     // CErc20PluginDelegate
-    const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20PluginDelegate.address);
+    const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20PluginDelegate.address);
     if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
       tx = await fuseFeeDistributor._setLatestCErc20Delegate(
         oldErc20PluginDelegate.address,
@@ -305,7 +305,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   if (oldErc20PluginRewardsDelegate) {
     // CErc20PluginRewardsDelegate
-    const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
+    const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
       oldErc20PluginRewardsDelegate.address
     );
     if (
