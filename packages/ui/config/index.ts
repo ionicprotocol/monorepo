@@ -16,6 +16,7 @@ type CONFIG = {
   supabasePluginTableName: string;
   supabasePublicKey: string;
   supabaseUrl: string;
+  isFWDeployEnabled: boolean;
 };
 
 const config: CONFIG = {
@@ -38,6 +39,7 @@ const config: CONFIG = {
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabaseUrl: process.env.SUPABASE_URL ?? '',
+  isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
 };
 
 export { config };

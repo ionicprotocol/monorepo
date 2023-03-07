@@ -65,7 +65,7 @@ export const useTokenData = (address: string, chainId?: number) => {
       if (chainId && validAddress) {
         const res = await fetchTokenData([validAddress], chainId);
 
-        return res[0];
+        return res[0] ? res[0] : null;
       } else {
         return null;
       }

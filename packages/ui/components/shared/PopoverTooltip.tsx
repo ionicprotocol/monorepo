@@ -50,26 +50,28 @@ export const PopoverTooltip = ({
     <Box height={height} width={width}>
       <Popover placement="bottom-end" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
-        <PopoverContent
-          maxWidth={{ base: '300px', sm: '400px' }}
-          onClick={(e) => e.stopPropagation()}
-          overflowX="auto"
-          style={{ cursor: 'default' }}
-          textAlign="start"
-          width="auto"
-          {...contentProps}
-        >
-          {!hideArrow && (
-            <PopoverArrow
-              sx={{
-                '--popper-arrow-shadow-color': cPage.primary.borderColor,
-              }}
-            />
-          )}
-          {header && <PopoverHeader>{header}</PopoverHeader>}
-          {body && <PopoverBody>{body}</PopoverBody>}
-          {footer && <PopoverFooter>{footer}</PopoverFooter>}
-        </PopoverContent>
+        {header || body || footer ? (
+          <PopoverContent
+            maxWidth={{ base: '300px', sm: '400px', md: '500px' }}
+            onClick={(e) => e.stopPropagation()}
+            overflowX="auto"
+            style={{ cursor: 'default' }}
+            textAlign="start"
+            width="auto"
+            {...contentProps}
+          >
+            {!hideArrow && (
+              <PopoverArrow
+                sx={{
+                  '--popper-arrow-shadow-color': cPage.primary.borderColor,
+                }}
+              />
+            )}
+            {header && <PopoverHeader>{header}</PopoverHeader>}
+            {body && <PopoverBody>{body}</PopoverBody>}
+            {footer && <PopoverFooter>{footer}</PopoverFooter>}
+          </PopoverContent>
+        ) : null}
       </Popover>
     </Box>
   );

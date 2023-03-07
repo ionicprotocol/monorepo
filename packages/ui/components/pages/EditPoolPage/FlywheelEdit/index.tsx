@@ -26,6 +26,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
+import { config } from '@ui/config/index';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
@@ -77,7 +78,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
           />
           <CreateFlywheelModal
             comptrollerAddress={pool.comptroller}
-            isOpen={isCreateOpen}
+            isOpen={config.isFWDeployEnabled && isCreateOpen}
             onClose={() => {
               closeCreate();
               refetchFlywheels();
@@ -110,9 +111,11 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
               <Button isDisabled={!isEditableAdmin} ml="auto" onClick={openAdd} variant="_ghost">
                 Add existing Flywheel
               </Button>
-              <Button isDisabled={!isEditableAdmin} ml="auto" onClick={openCreate}>
-                Deploy new Flywheel
-              </Button>
+              {config.isFWDeployEnabled ? (
+                <Button isDisabled={!isEditableAdmin} ml="auto" onClick={openCreate}>
+                  Deploy new Flywheel
+                </Button>
+              ) : null}
             </Flex>
           </Flex>
         )}
