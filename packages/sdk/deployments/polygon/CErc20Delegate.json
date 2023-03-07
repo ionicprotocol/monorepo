@@ -1237,7 +1237,6 @@
       "type": "function"
     }
   ],
-  "transactionHash": "0x69f7a8c27130313b5b9eab8a5cefbe41c1b4628df75654fbeb02614d61c0890a",
   "receipt": {
     "to": null,
     "from": "0x27521eae4ee4153214cadc3ecd703b9b0326c908",
