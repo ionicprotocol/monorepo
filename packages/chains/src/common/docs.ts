@@ -37,6 +37,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapName: "SpookySwap",
       swapAddress: "https://spooky.fi/#/swap",
     },
+    [SupportedChains.basegoerli]: {
+      swapName: "BaseSwap",
+      swapAddress: "",
+    },
   }[chainId];
 
   return `
