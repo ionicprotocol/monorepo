@@ -109,6 +109,11 @@ export type BalancerLpAsset = {
   lpTokenAddress: string;
 };
 
+export type BalancerStableLpAsset = {
+  lpTokenAddress: string;
+  baseToken: string;
+};
+
 export type SolidlyLpAsset = {
   lpTokenAddress: string;
 };
@@ -214,6 +219,11 @@ export type DiaStDotFnParams = ChainDeployFnParams & {
 export type BalancerLpFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   balancerLpAssets: BalancerLpAsset[];
+};
+
+export type BalancerStableLpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  balancerStableLpAssets: BalancerStableLpAsset[];
 };
 
 export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
