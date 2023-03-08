@@ -50,11 +50,13 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
 
     res.map((data, i) => {
       basicTokenInfos.push({
-        name: data[0] || data[1],
-        symbol: data[1],
+        name: data[0] || data[1] || 'Undefined',
+        symbol: data[1] || data[0] || 'Undefined',
         decimals: data[2],
         address: addresses[i],
-        logoURL: config.iconServerURL + '/token/96x96/' + data[1].toLowerCase() + '.png',
+        logoURL: data[1]
+          ? config.iconServerURL + '/token/96x96/' + data[1].toLowerCase() + '.png'
+          : undefined,
       });
     });
   } catch {

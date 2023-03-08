@@ -7,9 +7,6 @@ import {
   FlexProps,
   HStack,
   Link,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Spinner,
   Text,
   VStack,
@@ -20,6 +17,7 @@ import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   FEATURE_REQUESTS_URL,
@@ -38,7 +36,7 @@ const MotionFlex = motion<FlexProps>(Flex);
 const MidasHero = () => {
   const { data: tvlData, isLoading } = useTVL();
   const router = useRouter();
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading, address } = useMultiMidas();
 
   const totalTVL = useMemo(() => {
     if (tvlData) {
@@ -56,7 +54,7 @@ const MidasHero = () => {
       justifyContent="center"
       marginLeft="auto"
       marginRight="auto"
-      pb={{ base: 6, md: 6 }}
+      pb={{ base: 3, md: 3 }}
       pt={{ base: '72px', md: '0px' }}
       px={{ base: 0, lg: 0 }}
       w="100%"
@@ -83,37 +81,49 @@ const MidasHero = () => {
           justifyContent={['center', 'center', 'flex-start']}
           width={'100%'}
         >
-          <HStack px={4} spacing={{ base: 2, md: 4, xl: 6 }}>
-            <Link href={MIDAS_DOCS_URL} isExternal>
-              <SimpleTooltip label="Documentation">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <SiGitbook color={cPage.primary.borderColor} fontSize={30} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_DISCORD_URL} isExternal>
-              <SimpleTooltip label="Discord">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaDiscord color={cPage.primary.borderColor} fontSize={28} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_TELEGRAM_URL} isExternal>
-              <SimpleTooltip label="Telegram">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaTelegram color={cPage.primary.borderColor} fontSize={24} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_TWITTER_URL} isExternal>
-              <SimpleTooltip label="Twitter">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaTwitter color={cPage.primary.borderColor} fontSize={24} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-          </HStack>
+          {!address ? (
+            <HStack px={4} spacing={{ base: 2, md: 4, xl: 6 }}>
+              <Link href={MIDAS_DOCS_URL} isExternal>
+                <SimpleTooltip label="Documentation">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <SiGitbook color={cPage.primary.borderColor} fontSize={30} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_DISCORD_URL} isExternal>
+                <SimpleTooltip label="Discord">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaDiscord color={cPage.primary.borderColor} fontSize={28} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_TELEGRAM_URL} isExternal>
+                <SimpleTooltip label="Telegram">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaTelegram color={cPage.primary.borderColor} fontSize={24} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_TWITTER_URL} isExternal>
+                <SimpleTooltip label="Twitter">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaTwitter color={cPage.primary.borderColor} fontSize={24} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+            </HStack>
+          ) : null}
           <HStack gap={2}>
+            {address ? (
+              <Button
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/account');
+                }}
+              >
+                Account
+              </Button>
+            ) : null}
             <Button
               leftIcon={<AddIcon boxSize={3} />}
               onClick={() => {
@@ -136,38 +146,9 @@ const MidasHero = () => {
         </HStack>
       </Flex>
 
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <MotionFlex
-            alignItems="center"
-            bg={cPage.secondary.bgColor}
-            borderRadius="20px"
-            boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
-            color={cPage.secondary.txtColor}
-            flexDir="column"
-            h={{ base: '10rem', lg: '15rem' }}
-            justifyContent="center"
-            overflow="hidden"
-            position="relative"
-            px={{ lg: '10vw' }}
-            w={{ base: '100%', lg: '50%' }}
-          >
-            {isLoading || totalTVL === undefined ? (
-              <Spinner />
-            ) : (
-              <>
-                <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
-                  {smallUsdFormatter(totalTVL)}
-                </Text>
-              </>
-            )}
-            <Text color="raisinBlack" size="md" whiteSpace="nowrap">
-              Total value supplied across Midas
-            </Text>
-          </MotionFlex>
-        </PopoverTrigger>
-        {tvlData && (
-          <PopoverContent p={2}>
+      <PopoverTooltip
+        body={
+          tvlData ? (
             <VStack alignItems="flex-start" spacing={0} width={'100%'}>
               {[...tvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
@@ -181,9 +162,38 @@ const MidasHero = () => {
                 </Flex>
               ))}
             </VStack>
-          </PopoverContent>
-        )}
-      </Popover>
+          ) : null
+        }
+        popoverProps={{ placement: 'bottom' }}
+        width={{ base: '100%', lg: '40%' }}
+      >
+        <MotionFlex
+          alignItems="center"
+          bg={cPage.secondary.bgColor}
+          borderRadius="20px"
+          boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
+          color={cPage.secondary.txtColor}
+          flexDir="column"
+          h={{ base: '10rem', lg: '15rem' }}
+          justifyContent="center"
+          overflow="hidden"
+          position="relative"
+          px={{ lg: '10vw' }}
+        >
+          {isLoading || totalTVL === undefined ? (
+            <Spinner />
+          ) : (
+            <>
+              <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
+                {smallUsdFormatter(totalTVL)}
+              </Text>
+            </>
+          )}
+          <Text color="raisinBlack" size="md" whiteSpace="nowrap">
+            Total value supplied across Midas
+          </Text>
+        </MotionFlex>
+      </PopoverTooltip>
     </Flex>
   );
 };

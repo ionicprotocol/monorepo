@@ -5,12 +5,8 @@ import { useMemo } from 'react';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useAssets } from '@ui/hooks/useAssets';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import { FundedAsset } from '@ui/hooks/useAllFundedInfo';
 import { useColors } from '@ui/hooks/useColors';
-import { useRewards } from '@ui/hooks/useRewards';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { PoolData } from '@ui/types/TokensDataMap';
 import {
   midUsdFormatter,
   smallFormatter,
@@ -19,36 +15,34 @@ import {
 } from '@ui/utils/bigUtils';
 import { sortTopUserBorrowedAssets, sortTopUserSuppliedAssets } from '@ui/utils/sorts';
 
-export const UserStats = ({ poolData }: { poolData: PoolData }) => {
+export const UserStats = ({
+  assets,
+  totalSupplyApyPerAsset,
+  borrowApyPerAsset,
+  totalSupplyBalanceNative,
+  totalSupplyBalanceFiat,
+  totalBorrowBalanceNative,
+  totalBorrowBalanceFiat,
+}: {
+  assets: FundedAsset[];
+  totalSupplyApyPerAsset: { [market: string]: number };
+  borrowApyPerAsset: { [market: string]: number };
+  totalSupplyBalanceNative: number;
+  totalSupplyBalanceFiat: number;
+  totalBorrowBalanceNative: number;
+  totalBorrowBalanceFiat: number;
+}) => {
   const [topSuppliedAssets, topBorrowedAssets] = useMemo(() => {
-    if (poolData && poolData.assets.length > 0) {
-      return [
-        sortTopUserSuppliedAssets(poolData.assets),
-        sortTopUserBorrowedAssets(poolData.assets),
-      ];
+    if (assets.length > 0) {
+      return [sortTopUserSuppliedAssets(assets), sortTopUserBorrowedAssets(assets)];
     } else {
       return [[], []];
     }
-  }, [poolData]);
-
-  const { data: assetInfos } = useAssets(poolData.chainId);
-  const { data: allRewards } = useRewards({
-    poolId: poolData.id.toString(),
-    chainId: poolData.chainId,
-  });
-
-  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
-    poolData.assets,
-    poolData.chainId,
-    allRewards,
-    assetInfos
-  );
-
-  const { data: borrowApyPerAsset } = useBorrowAPYs(poolData.assets, poolData.chainId);
+  }, [assets]);
 
   const totalSupplyApy = useMemo(() => {
     if (totalSupplyApyPerAsset) {
-      if (poolData.totalSupplyBalanceNative === 0)
+      if (totalSupplyBalanceNative === 0)
         return { totalApy: 0, totalSupplied: 0, estimatedUsd: 0, estimatedPerAsset: [] };
 
       let _totalApy = 0;
@@ -58,12 +52,13 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         supplied: string;
         estimated: number;
         apy: number;
+        chainId: number;
       }[] = [];
 
-      poolData.assets.map((asset) => {
+      assets.map((asset) => {
         _totalApy +=
           (totalSupplyApyPerAsset[asset.cToken] * asset.supplyBalanceNative) /
-          poolData.totalSupplyBalanceNative;
+          totalSupplyBalanceNative;
 
         if (asset.supplyBalanceNative !== 0) {
           const suppliedNum = parseFloat(
@@ -76,31 +71,27 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             apy: totalSupplyApyPerAsset[asset.cToken] * 100,
             estimated: totalSupplyApyPerAsset[asset.cToken] * suppliedNum,
             symbol: asset.underlyingSymbol,
+            chainId: Number(asset.chainId),
           });
         }
       });
 
-      const _estimatedUsd = poolData.totalSupplyBalanceFiat * _totalApy;
+      const _estimatedUsd = totalSupplyBalanceFiat * _totalApy;
 
       return {
         totalApy: _totalApy * 100,
-        totalSupplied: poolData.totalSupplyBalanceFiat,
+        totalSupplied: totalSupplyBalanceFiat,
         estimatedUsd: _estimatedUsd,
         estimatedPerAsset: _estimatedPerAsset,
       };
     }
 
     return undefined;
-  }, [
-    poolData.assets,
-    poolData.totalSupplyBalanceNative,
-    poolData.totalSupplyBalanceFiat,
-    totalSupplyApyPerAsset,
-  ]);
+  }, [assets, totalSupplyBalanceNative, totalSupplyBalanceFiat, totalSupplyApyPerAsset]);
 
   const totalBorrowApy = useMemo(() => {
     if (borrowApyPerAsset) {
-      if (poolData.totalBorrowBalanceNative === 0)
+      if (totalBorrowBalanceNative === 0)
         return { totalApy: 0, totalBorrowed: 0, estimatedUsd: 0, estimatedPerAsset: [] };
 
       let _totalApy = 0;
@@ -110,12 +101,12 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         borrowed: string;
         estimated: number;
         apy: number;
+        chainId: number;
       }[] = [];
 
-      poolData.assets.map((asset) => {
+      assets.map((asset) => {
         _totalApy +=
-          (borrowApyPerAsset[asset.cToken] * asset.borrowBalanceNative) /
-          poolData.totalBorrowBalanceNative;
+          (borrowApyPerAsset[asset.cToken] * asset.borrowBalanceNative) / totalBorrowBalanceNative;
 
         if (asset.borrowBalanceNative !== 0) {
           const borrowedNum = parseFloat(
@@ -127,27 +118,23 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             apy: borrowApyPerAsset[asset.cToken] * 100,
             estimated: borrowApyPerAsset[asset.cToken] * borrowedNum,
             symbol: asset.underlyingSymbol,
+            chainId: Number(asset.chainId),
           });
         }
       });
 
-      const _estimatedUsd = poolData.totalBorrowBalanceFiat * _totalApy;
+      const _estimatedUsd = totalBorrowBalanceFiat * _totalApy;
 
       return {
         totalApy: _totalApy * 100,
-        totalBorrowed: poolData.totalBorrowBalanceFiat,
+        totalBorrowed: totalBorrowBalanceFiat,
         estimatedUsd: _estimatedUsd,
         estimatedPerAsset: _estimatedPerAsset,
       };
     }
 
     return undefined;
-  }, [
-    poolData.assets,
-    poolData.totalBorrowBalanceNative,
-    poolData.totalBorrowBalanceFiat,
-    borrowApyPerAsset,
-  ]);
+  }, [assets, totalBorrowBalanceNative, totalBorrowBalanceFiat, borrowApyPerAsset]);
 
   const { cCard } = useColors();
 
@@ -162,13 +149,11 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                 <Flex key={index}>
                   {asset.supplyBalanceFiat > 0 && (
                     <HStack mt={1}>
-                      {poolData && (
-                        <TokenIcon
-                          address={asset.underlyingToken}
-                          chainId={poolData.chainId}
-                          size="md"
-                        />
-                      )}
+                      <TokenIcon
+                        address={asset.underlyingToken}
+                        chainId={Number(asset.chainId)}
+                        size="md"
+                      />
                       <Box ml="3">
                         <Text fontWeight="bold" mt={1}>
                           {smallUsdFormatter(asset.supplyBalanceFiat)}
@@ -189,10 +174,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         visible={topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0}
       >
         <Flex>
-          <UserStat
-            label="Your Supply"
-            value={poolData ? midUsdFormatter(poolData.totalSupplyBalanceFiat) : undefined}
-          />
+          <UserStat label="Your Supply" value={midUsdFormatter(totalSupplyBalanceFiat)} />
         </Flex>
       </PopoverTooltip>
 
@@ -205,13 +187,11 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                 <Flex key={index}>
                   {asset.borrowBalanceFiat > 0 && (
                     <HStack mt={1}>
-                      {poolData && (
-                        <TokenIcon
-                          address={asset.underlyingToken}
-                          chainId={poolData.chainId}
-                          size="md"
-                        />
-                      )}
+                      <TokenIcon
+                        address={asset.underlyingToken}
+                        chainId={Number(asset.chainId)}
+                        size="md"
+                      />
                       <Box ml="3">
                         <Text fontWeight="bold" mt={1}>
                           {smallUsdFormatter(asset.borrowBalanceFiat)}
@@ -232,10 +212,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         visible={topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0}
       >
         <Flex>
-          <UserStat
-            label="Your Borrow"
-            value={poolData ? midUsdFormatter(poolData?.totalBorrowBalanceFiat) : undefined}
-          />
+          <UserStat label="Your Borrow" value={midUsdFormatter(totalBorrowBalanceFiat)} />
         </Flex>
       </PopoverTooltip>
 
@@ -252,10 +229,10 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                 <Divider bg={cCard.dividerColor} />
 
                 <VStack alignItems="flex-start" pt={2}>
-                  {totalSupplyApy.estimatedPerAsset.map((data) => {
+                  {totalSupplyApy.estimatedPerAsset.map((data, index) => {
                     return (
-                      <HStack key={data.underlying}>
-                        <TokenIcon address={data.underlying} chainId={poolData.chainId} size="sm" />
+                      <HStack key={index}>
+                        <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
                         <Text whiteSpace="nowrap">
                           {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
                           <b>
@@ -278,7 +255,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             ) : null}
           </VStack>
         }
-        contentProps={{ minWidth: { base: '300px', sm: '350px' }, p: 2 }}
+        contentProps={{ p: 2, minW: { base: '300px', sm: '350px' } }}
       >
         <Flex>
           <UserStat
@@ -304,10 +281,10 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                 <Divider bg={cCard.dividerColor} />
 
                 <VStack alignItems="flex-start" pt={2}>
-                  {totalBorrowApy.estimatedPerAsset.map((data) => {
+                  {totalBorrowApy.estimatedPerAsset.map((data, index) => {
                     return (
-                      <HStack key={data.underlying}>
-                        <TokenIcon address={data.underlying} chainId={poolData.chainId} size="sm" />
+                      <HStack key={index}>
+                        <TokenIcon address={data.underlying} chainId={data.chainId} size="sm" />
                         <Text whiteSpace="nowrap">
                           {data.borrowed} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
                           <b>
@@ -330,7 +307,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             ) : null}
           </VStack>
         }
-        contentProps={{ minW: { base: '300px', sm: '350px' }, p: 2 }}
+        contentProps={{ p: 2, minW: { base: '300px', sm: '350px' } }}
       >
         <Flex>
           <UserStat

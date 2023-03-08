@@ -28,6 +28,7 @@ const ClaimAssetRewardsButton = ({
   const { data: claimableRewards, refetch: refetchRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress,
+    poolChainId,
   });
 
   const claimableRewardsOfChain: { [chainId: string]: FlywheelClaimableRewards[] } =

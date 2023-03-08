@@ -28,6 +28,7 @@ export const TokenName = ({
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
+    poolChainId,
   });
 
   const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({
@@ -42,20 +43,22 @@ export const TokenName = ({
     <Row className="marketName" crossAxisAlignment="center" mainAxisAlignment="flex-start">
       <PopoverTooltip
         body={
-          <VStack>
-            <Heading alignSelf="flex-start" mb={2} size="md" textAlign={'left'}>
+          <VStack spacing={0}>
+            <Heading alignSelf="flex-start" size="md" textAlign={'left'}>
               {tokenData?.symbol ?? asset.underlyingSymbol}
             </Heading>
-
-            <Text
-              dangerouslySetInnerHTML={{
-                __html: asset.extraDocs || asset.underlyingSymbol,
-              }}
-              wordBreak="break-word"
-            />
+            {asset.extraDocs || asset.underlyingSymbol ? (
+              <Text
+                dangerouslySetInnerHTML={{
+                  __html: asset.extraDocs || asset.underlyingSymbol,
+                }}
+                pt={4}
+                wordBreak="break-word"
+              />
+            ) : null}
           </VStack>
         }
-        placement="top-start"
+        popoverProps={{ placement: 'top-start' }}
       >
         <Center>
           <TokenIcon
@@ -70,19 +73,22 @@ export const TokenName = ({
         <HStack>
           <PopoverTooltip
             body={
-              <VStack>
-                <Heading alignSelf="flex-start" mb={2} size="md" textAlign={'left'}>
+              <VStack spacing={0}>
+                <Heading alignSelf="flex-start" size="md" textAlign={'left'}>
                   {tokenData?.symbol ?? asset.underlyingSymbol}
                 </Heading>
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html: asset.extraDocs || asset.underlyingSymbol,
-                  }}
-                  wordBreak="break-word"
-                />
+                {asset.extraDocs || asset.underlyingSymbol ? (
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html: asset.extraDocs || asset.underlyingSymbol,
+                    }}
+                    pt={4}
+                    wordBreak="break-word"
+                  />
+                ) : null}
               </VStack>
             }
-            placement="top-start"
+            popoverProps={{ placement: 'top-start' }}
           >
             <Text
               fontWeight="bold"
@@ -99,7 +105,7 @@ export const TokenName = ({
             body={
               'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
             }
-            placement="top-start"
+            popoverProps={{ placement: 'top-start' }}
           >
             <Text opacity={0.6} size="xs" variant="tnumber">
               {parseFloat(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0)}% LTV

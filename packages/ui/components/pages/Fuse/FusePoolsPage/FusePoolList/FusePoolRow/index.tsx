@@ -9,10 +9,6 @@ import {
   IconButton,
   Img,
   Input,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   Skeleton,
   Spinner,
@@ -58,6 +54,7 @@ import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolLis
 import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
@@ -218,7 +215,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.chain,
         id: CHAIN,
         header: () => null,
-        cell: ({ getValue }) => <Chain pool={getValue<PoolData>()} />,
+        cell: ({ getValue }) => <Chain chainId={getValue<PoolData>().chainId} />,
         footer: (props) => props.column.id,
         enableSorting: false,
         enableHiding: false,
@@ -227,7 +224,14 @@ const PoolsRowList = ({
         accessorFn: (row) => row.poolName,
         id: POOL_NAME,
         header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
-        cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
+        cell: ({ getValue }) => (
+          <PoolName
+            chainId={getValue<PoolData>().chainId}
+            comptroller={getValue<PoolData>().comptroller}
+            poolId={getValue<PoolData>().id}
+            poolName={getValue<PoolData>().name}
+          />
+        ),
         footer: (props) => props.column.id,
         filterFn: poolFilter,
         sortingFn: poolSort,
@@ -409,7 +413,7 @@ const PoolsRowList = ({
       <Flex
         alignItems="center"
         flexWrap="wrap-reverse"
-        gap={4}
+        gap={3}
         justifyContent={['center', 'center', 'space-between']}
         mb={3}
         width="100%"
@@ -445,42 +449,39 @@ const PoolsRowList = ({
 
         <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="center">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
-          <Popover placement="bottom-end">
-            <PopoverTrigger>
-              <IconButton
-                aria-label="Column Settings"
-                icon={<SettingsIcon fontSize={20} />}
-                maxWidth={10}
-                variant="_outline"
-              />
-            </PopoverTrigger>
-            <PopoverContent width="200px">
-              <PopoverBody>
-                <VStack alignItems="flex-start">
-                  <Text>Show/Hide Columns</Text>
-                  <Checkbox
-                    isChecked={table.getIsAllColumnsVisible()}
-                    onChange={table.getToggleAllColumnsVisibilityHandler()}
-                  >
-                    All
-                  </Checkbox>
-                  {table.getAllColumns().map((column) => {
-                    if (column.getCanHide()) {
-                      return (
-                        <Checkbox
-                          isChecked={column.getIsVisible()}
-                          key={column.id}
-                          onChange={column.getToggleVisibilityHandler()}
-                        >
-                          {column.id}
-                        </Checkbox>
-                      );
-                    }
-                  })}
-                </VStack>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+          <PopoverTooltip
+            body={
+              <VStack alignItems="flex-start">
+                <Text>Show/Hide Columns</Text>
+                <Checkbox
+                  isChecked={table.getIsAllColumnsVisible()}
+                  onChange={table.getToggleAllColumnsVisibilityHandler()}
+                >
+                  All
+                </Checkbox>
+                {table.getAllColumns().map((column) => {
+                  if (column.getCanHide()) {
+                    return (
+                      <Checkbox
+                        isChecked={column.getIsVisible()}
+                        key={column.id}
+                        onChange={column.getToggleVisibilityHandler()}
+                      >
+                        {column.id}
+                      </Checkbox>
+                    );
+                  }
+                })}
+              </VStack>
+            }
+          >
+            <IconButton
+              aria-label="Column Settings"
+              icon={<SettingsIcon fontSize={20} />}
+              maxWidth={10}
+              variant="_outline"
+            />
+          </PopoverTooltip>
         </Flex>
       </Flex>
       <MidasBox overflowX="auto" width="100%">
@@ -497,7 +498,7 @@ const PoolsRowList = ({
                         height={16}
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        px={{ base: 1, lg: 2 }}
+                        px={0}
                         py={4}
                         textTransform="capitalize"
                       >
@@ -552,7 +553,10 @@ const PoolsRowList = ({
                             height={16}
                             key={cell.id}
                             minW={10}
-                            px={{ base: cell.column.id === 'Pool Name' ? 0 : 2 }}
+                            px={{
+                              base:
+                                cell.column.id === POOL_NAME || cell.column.id === ASSETS ? 0 : 2,
+                            }}
                             py={0}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
