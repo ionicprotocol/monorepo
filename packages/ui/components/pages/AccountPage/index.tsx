@@ -8,7 +8,7 @@ import { memo, useEffect, useState } from 'react';
 import { FundedMarketsList } from '@ui/components/pages/AccountPage/FundedMarketsList/index';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
-import { AlertHero } from '@ui/components/shared/Alert';
+import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import {
@@ -145,11 +145,24 @@ const AccountPage = memo(() => {
               </MidasBox>
             </>
           ) : (
-            <AlertHero
-              description="Please connect your wallet."
-              status="warning"
-              title={'Wallet not detected!'}
-              variant="subtle"
+            <Banner
+              alertDescriptionProps={{ fontSize: 'lg' }}
+              alertIconProps={{ boxSize: 12 }}
+              alertProps={{
+                status: 'warning',
+                flexDirection: 'column',
+                height: '2xs',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                gap: 4,
+              }}
+              descriptions={[
+                {
+                  text: `Please connect your wallet.`,
+                },
+              ]}
+              title="Wallet not detected!"
             />
           )}
         </FusePageLayout>

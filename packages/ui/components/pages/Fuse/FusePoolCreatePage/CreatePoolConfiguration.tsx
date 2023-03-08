@@ -148,12 +148,17 @@ export const CreatePoolConfiguration = () => {
         </Text>
         {address && !isAllowedAddress && (
           <Banner
-            linkText="please contact us via Discord."
-            linkUrl="https://discord.gg/NYqKtJPYAB"
-            status="warning"
-            text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
+            alertDescriptionProps={{ fontSize: 'lg' }}
+            alertProps={{ status: 'warning' }}
+            descriptions={[
+              {
+                text: 'We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, ',
+              },
+              { text: 'please contact us via Discord.', url: 'https://discord.gg/NYqKtJPYAB' },
+            ]}
           />
         )}
+
         <Divider bg={cCard.dividerColor} />
         <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
           <FormControl isInvalid={!!errors.name}>

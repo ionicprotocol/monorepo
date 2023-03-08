@@ -10,7 +10,7 @@ import AddAssetModal from '@ui/components/pages/EditPoolPage/AssetConfiguration/
 import FlywheelEdit from '@ui/components/pages/EditPoolPage/FlywheelEdit';
 import PoolConfiguration from '@ui/components/pages/EditPoolPage/PoolConfiguration';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
-import { AdminAlert } from '@ui/components/shared/Alert';
+import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
@@ -103,10 +103,14 @@ const EditPoolPage = memo(() => {
               </Text>
             </HStack>
             {!!data && (
-              <AdminAlert
-                isAdmin={isAdmin}
-                isAdminText="You are the admin of this Pool!"
-                isNotAdminText="You are not the admin of this Pool!"
+              <Banner
+                alertDescriptionProps={{ fontSize: 'lg' }}
+                alertProps={{ status: isAdmin ? 'info' : 'warning', mt: 2 }}
+                descriptions={[
+                  {
+                    text: `You are ${isAdmin ? '' : 'not'} the admin of this Pool!`,
+                  },
+                ]}
               />
             )}
 
