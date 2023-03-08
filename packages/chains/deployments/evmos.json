@@ -21,16 +21,16 @@
       "address": "0xdD8d4e09Acb39C2B4DE9A84384389B79850f3271"
     },
     "CErc20Delegate": {
-      "address": "0xe7D2541b61ca417fB069b883f976C16Ae9E01Ba6"
+      "address": "0x1F8e3bcD247674EcB7B6ef97771c2C98b5e2b5Fa"
     },
     "CErc20PluginDelegate": {
-      "address": "0xBcd94906C8c630222260aD414c36a7B10B1d31e0"
+      "address": "0x4b4FED36346D9a7F25C4ECCCC65D10f1ed814D00"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xAce1BCbB8512F0ACe7a86B0e390a5edB25A29E0E"
+      "address": "0xF1264D7F0F88ae2EfE5f83Ce37E949e60d6a84d1"
     },
     "CTokenFirstExtension": {
-      "address": "0xeAA782fA732FEf5A5B127EA70d1b656216717353"
+      "address": "0xB5ea8d2913ccF26380a6690fA59C7631403c7d65"
     },
     "Comptroller": {
       "address": "0xCE375FCbbd13FaDBc534b670aD70d2ccdA740C1E"
