@@ -46,7 +46,6 @@ interface SupplyModalProps {
   asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
-  isBorrowPaused?: boolean;
   onClose: () => void;
   poolChainId: number;
 }
