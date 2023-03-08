@@ -18,19 +18,19 @@
       "address": "0x27Db2518FB95C30B75094317349e1C5BCC241cf9"
     },
     "CErc20Delegate": {
-      "address": "0xa3560984920dB870FDBb9f12095Dda1e028d64d0"
+      "address": "0xE82C29AC5f6dd9363a36ef78a6881134c4664011"
     },
     "CErc20PluginDelegate": {
-      "address": "0x004e3a2b754045609738aB6f44DdB696A1d447df"
+      "address": "0x8e459eF954d41B563B3b19687005b9a8b3A975fC"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x1db2793348a457aBDE5385ae6B7f3746cdDAB286"
+      "address": "0x48c54C108E065211D170da1957c9503fc1F554fa"
     },
     "CEtherDelegate": {
       "address": "0x7698198376DAAB5097c9A327250BD07062118626"
     },
     "CTokenFirstExtension": {
-      "address": "0x6684b0A4B8363A43fbF4f6D022436B4554F8B4B2"
+      "address": "0x88f577F832932d86b5Da355c5293643F5E6A6066"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0xcE49eeAa20E08eFfFf403C6d8E7A595a5ce301c6"

@@ -1,8 +1,9 @@
-import { constants, Contract } from "ethers";
+import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 import { Unitroller } from "../../typechain/Unitroller";
@@ -85,10 +86,34 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         const implBefore = await unitroller.callStatic.comptrollerImplementation();
         const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
         console.log(`current impl ${implBefore} latest ${latestImpl}`);
-        if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
-          console.log(`No auto upgrade with latest implementation ${latestImpl}`);
-        } else {
+
+        let shouldUpgrade = implBefore != latestImpl;
+        if (!shouldUpgrade) {
+          const comptrollerAsExtension = (await ethers.getContractAt(
+            "ComptrollerFirstExtension",
+            pool.comptroller,
+            deployer
+          )) as ComptrollerFirstExtension;
+          const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
+          for (let j = 0; j < markets.length; j++) {
+            const market = markets[j];
+            console.log(`market address ${market}`);
+            const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
+            const implBefore = await cTokenInstance.callStatic.implementation();
+            const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
+            if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
+              console.log(`No auto upgrade with latest implementation ${latestImpl}`);
+            } else {
+              console.log(`will upgrade ${market} to ${latestImpl}`);
+              shouldUpgrade = true;
+              break;
+            }
+          }
+        }
+
+        if (shouldUpgrade) {
           const tx = await fuseFeeDistributor.autoUpgradePool(pool.comptroller);
+          console.log(`bulk upgrading pool with tx ${tx.hash}`);
           await tx.wait();
           console.log(`bulk upgraded pool ${pool.comptroller}`);
         }
