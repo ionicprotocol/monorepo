@@ -684,11 +684,11 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     console.log("setAddress bUSD: ", tx.hash);
   }
   /// set BalancerLpStablePoolPriceOracle
-  const balancerLpStablePoolPriceOracle = await ethers.getContract("BalancerLpStablePoolPriceOracle", deployer);
+  const balancerLpStablePoolPriceOracle = await ethers.getContractOrNull("BalancerLpStablePoolPriceOracle", deployer);
   const balancerLpStablePoolPriceOracleAp = await addressesProvider.callStatic.getAddress(
     "BalancerLpStablePoolPriceOracle"
   );
-  if (balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address) {
+  if (balancerLpStablePoolPriceOracle && balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address) {
     const tx = await addressesProvider.setAddress(
       "BalancerLpStablePoolPriceOracle",
       balancerLpStablePoolPriceOracle.address
