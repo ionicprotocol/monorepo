@@ -688,7 +688,10 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const balancerLpStablePoolPriceOracleAp = await addressesProvider.callStatic.getAddress(
     "BalancerLpStablePoolPriceOracle"
   );
-  if (balancerLpStablePoolPriceOracle && balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address) {
+  if (
+    balancerLpStablePoolPriceOracle &&
+    balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address
+  ) {
     const tx = await addressesProvider.setAddress(
       "BalancerLpStablePoolPriceOracle",
       balancerLpStablePoolPriceOracle.address
