@@ -1,6 +1,4 @@
 import {
-  Alert,
-  AlertIcon,
   Box,
   Button,
   Checkbox,
@@ -12,7 +10,6 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
-  VStack,
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -27,6 +24,7 @@ import { BorrowError } from '@ui/components/pages/PoolPage/MarketsList/Additiona
 import MaxBorrowSlider from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/MaxBorrowSlider';
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/PendingTransaction';
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
+import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -359,20 +357,23 @@ export const BorrowModal = ({
                       </Button>
                     </>
                   ) : (
-                    <Alert status="info">
-                      <AlertIcon />
-                      <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">
-                          {smallFormatter.format(borrowCaps.tokenCap)} {asset.underlyingSymbol} /{' '}
-                          {smallFormatter.format(borrowCaps.tokenCap)} {asset.underlyingSymbol}
-                        </Text>
-                        <Text>
-                          The maximum borrow of assets for this asset has been reached. Once assets
-                          are repaid or the limit is increased you can again borrow from this
-                          market.
-                        </Text>
-                      </VStack>
-                    </Alert>
+                    <Banner
+                      alertDescriptionProps={{ fontSize: 'lg' }}
+                      alertProps={{ status: 'info' }}
+                      descriptions={[
+                        {
+                          text: `${smallFormatter.format(borrowCaps.tokenCap)} ${
+                            asset.underlyingSymbol
+                          } / ${smallFormatter.format(borrowCaps.tokenCap)} ${
+                            asset.underlyingSymbol
+                          }`,
+                          textProps: { display: 'block', fontWeight: 'bold' },
+                        },
+                        {
+                          text: 'The maximum borrow of assets for this asset has been reached. Once assets are repaid or the limit is increased you can again borrow from this market.',
+                        },
+                      ]}
+                    />
                   )}
                 </Column>
               </>
