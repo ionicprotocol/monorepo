@@ -50,6 +50,8 @@ const aMATICc = "0x0E9b89007eEE9c958c0EDA24eF70723C2C93dD58";
 const MIMO_PAR_80_20 = "0x82d7f08026e21c7713CfAd1071df7C8271B17Eae";
 const WMATIC_STMATIC_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
 const WMATIC_MATICX_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
+const BRZ_JBRL_STABLE_BLP = "0xE22483774bd8611bE2Ad2F4194078DaC9159F4bA";
+const WMATIC_STMATIC_STABLE_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
@@ -537,6 +539,32 @@ export const assets: SupportedAsset[] = [
       "0xb20fc01d21a50d2c734c4a1262b4404d41fa7bf000000000000000000000075c",
       "WMATIC-MATIX BLP",
       WMATIC_MATICX_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.BRZ_JBRL_STABLE_BLP,
+    underlying: BRZ_JBRL_STABLE_BLP,
+    name: "BRZ-jBRL Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0xe22483774bd8611be2ad2f4194078dac9159f4ba0000000000000000000008f0",
+      "BRZ-jBRL Stable BLP",
+      BRZ_JBRL_STABLE_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.WMATIC_STMATIC_STABLE_BLP,
+    underlying: WMATIC_STMATIC_STABLE_BLP,
+    name: "WMATIC-stMATIC Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
+      "WMATIC-stMATIC Stable BLP",
+      WMATIC_STMATIC_STABLE_BLP
     ),
   },
   // stable forex

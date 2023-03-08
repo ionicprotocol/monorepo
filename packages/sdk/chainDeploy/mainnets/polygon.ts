@@ -7,16 +7,18 @@ import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
   deployAnkrCertificateTokenPriceOracle,
+  deployBalancerLpPriceOracle,
+  deployBalancerStableLpPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
+  deployGelatoGUniPriceOracle,
   deployUniswapLpOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { deployBalancerLpPriceOracle } from "../helpers/oracles/balancerLp";
-import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import {
   BalancerLpAsset,
+  BalancerStableLpAsset,
   ChainDeployFnParams,
   ChainlinkAsset,
   CurvePoolConfig,
@@ -466,6 +468,17 @@ const balancerLpAssets: BalancerLpAsset[] = [
   },
 ];
 
+const balancerStableLpAssets: BalancerStableLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.BRZ_JBRL_STABLE_BLP),
+    baseToken: underlying(assets, assetSymbols.jBRL),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_STABLE_BLP),
+    baseToken: underlying(assets, assetSymbols.stMATIC),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -540,6 +553,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     balancerLpAssets,
+  });
+
+  /// Balancer Stable LP Price Oracle
+  await deployBalancerStableLpPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerStableLpAssets,
   });
 
   /// Ankr Certificate Price Oracle

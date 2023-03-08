@@ -55,11 +55,14 @@ export enum OracleTypes {
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
+  BalancerLpStablePoolPriceOracle = "BalancerLpStablePoolPriceOracle",
+  BalancerLpTokenPriceOracleNTokens = "BalancerLpTokenPriceOracleNTokens",
   StkBNBPriceOracle = "StkBNBPriceOracle",
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
   AdrastiaPriceOracle = "AdrastiaPriceOracle",
   NativeUSDPriceOracle = "NativeUSDPriceOracle",
   SaddleLpPriceOracle = "SaddleLpPriceOracle",
+  SolidlyLpTokenPriceOracle = "SolidlyLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -218,6 +221,8 @@ export enum assetSymbols {
   ANKR = "ANKR",
   SD = "SD", // stader labs
 
+  // thena
+  "sAMM-jBRL/BRZ" = "sAMM-jBRL/BRZ",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
@@ -355,6 +360,8 @@ export enum assetSymbols {
   MIMO_PAR_75_25 = "MIMO75-PAR25 BLP",
   WMATIC_STMATIC_BLP = "WMATIC_STMATIC BLP",
   WMATIC_MATICX_BLP = "WMATIC_MATICX BLP",
+  BRZ_JBRL_STABLE_BLP = "BRZ_JBRL STABLE BLP",
+  WMATIC_STMATIC_STABLE_BLP = "WMATIC_STMATIC STABLE BLP",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",
