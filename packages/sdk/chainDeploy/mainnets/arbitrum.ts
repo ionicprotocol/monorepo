@@ -8,7 +8,6 @@ import {
   deployCurveLpOracle,
   deploySaddleLpOracle,
   deployUniswapLpOracle,
-  deployUniswapOracle,
   deployUniswapV3Oracle,
 } from "../helpers";
 import {
@@ -110,7 +109,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.WBTC,
-    aggregator: "0xc5a90A6d7e4Af242dA238FFe279e9f2BA0c64B2e",
+    aggregator: "0x6ce185860a4963106506C203335A2910413708e9",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
