@@ -1,5 +1,6 @@
 import {
   arbitrum,
+  basegoerli,
   bsc,
   chainIdToConfig,
   chapel,
@@ -84,6 +85,7 @@ export function getEnabledChains() {
   if (config.isTestnetEnabled) {
     enabledChains.push(SupportedChains.neon_devnet);
     enabledChains.push(SupportedChains.chapel);
+    enabledChains.push(SupportedChains.basegoerli);
   }
 
   return enabledChains;
@@ -99,6 +101,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.fantom]: fantom.assets,
+  [SupportedChains.basegoerli]: basegoerli.assets,
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -111,4 +114,5 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.fantom]: fantom.deployedPlugins,
+  [SupportedChains.basegoerli]: basegoerli.deployedPlugins,
 };
