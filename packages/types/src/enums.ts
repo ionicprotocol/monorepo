@@ -8,6 +8,7 @@ export enum SupportedChains {
   polygon = 137,
   arbitrum = 42161,
   fantom = 250,
+  basegoerli = 84531,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)

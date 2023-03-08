@@ -1,6 +1,7 @@
 import { ChainConfig } from "@midas-capital/types";
 
 import { default as arbitrum } from "./arbitrum";
+import { default as basegoerli } from "./basegoerli";
 import { default as bsc } from "./bsc";
 import { default as chapel } from "./chapel";
 import { default as evmos } from "./evmos";
@@ -10,7 +11,7 @@ import { default as moonbeam } from "./moonbeam";
 import { default as neondevnet } from "./neondevnet";
 import { default as polygon } from "./polygon";
 
-export { bsc, polygon, moonbeam, arbitrum, evmos, chapel, ganache, neondevnet, fantom };
+export { bsc, polygon, moonbeam, arbitrum, evmos, chapel, ganache, neondevnet, fantom, basegoerli };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -22,4 +23,5 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ganache.chainId]: ganache,
   [neondevnet.chainId]: neondevnet,
   [fantom.chainId]: fantom,
+  [basegoerli.chainId]: basegoerli,
 };
