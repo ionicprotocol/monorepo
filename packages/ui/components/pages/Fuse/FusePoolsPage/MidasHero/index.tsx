@@ -125,6 +125,14 @@ const MidasHero = () => {
               </Button>
             ) : null}
             <Button
+              onClick={() => {
+                setGlobalLoading(true);
+                router.push('/vaults');
+              }}
+            >
+              Vaults
+            </Button>
+            <Button
               leftIcon={<AddIcon boxSize={3} />}
               onClick={() => {
                 setGlobalLoading(true);
