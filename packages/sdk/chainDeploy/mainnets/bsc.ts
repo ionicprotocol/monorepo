@@ -11,6 +11,7 @@ import {
   deployCurveLpOracle,
   deployCurveV2LpOracle,
   deployDiaOracle,
+  deploySolidlyLpOracle,
   deployStkBNBOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
@@ -23,6 +24,7 @@ import {
   CurvePoolConfig,
   CurveV2PoolConfig,
   DiaAsset,
+  SolidlyLpAsset,
   WombatAsset,
 } from "../helpers/types";
 
@@ -314,6 +316,8 @@ const wombatAssets: WombatAsset[] = [
   },
 ];
 
+const solidlyLps: SolidlyLpAsset[] = [{ lpTokenAddress: underlying(assets, assetSymbols["sAMM-jBRL/BRZ"]) }];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -377,6 +381,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
+  });
+
+  //// Solidly LP Oracle
+  await deploySolidlyLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    solidlyLps,
   });
 
   //// Curve LP Oracle
