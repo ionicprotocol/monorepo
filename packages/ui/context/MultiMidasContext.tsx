@@ -35,6 +35,7 @@ export interface MultiMidasContextData {
   disconnect: () => void;
   isConnected: boolean;
   signer?: FetchSignerResult<Signer>;
+  setAddress: Dispatch<string>;
 }
 
 export const MultiMidasContext = createContext<MultiMidasContextData | undefined>(undefined);
@@ -147,6 +148,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
       disconnect,
       isConnected,
       signer,
+      setAddress,
     };
   }, [
     sdks,
@@ -162,6 +164,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     disconnect,
     isConnected,
     signer,
+    setAddress,
   ]);
 
   return <MultiMidasContext.Provider value={value}>{children}</MultiMidasContext.Provider>;

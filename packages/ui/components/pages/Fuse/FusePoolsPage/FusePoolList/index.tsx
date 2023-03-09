@@ -1,5 +1,5 @@
 import PoolsRowList from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
-import { AlertHero } from '@ui/components/shared/Alert';
+import { Banner } from '@ui/components/shared/Banner';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
@@ -9,11 +9,24 @@ const FusePoolList = () => {
 
   if (error && error.code !== 'NETWORK_ERROR') {
     return (
-      <AlertHero
-        description="Unable to retrieve Pools. Please try again later."
-        status="warning"
+      <Banner
+        alertDescriptionProps={{ fontSize: 'lg' }}
+        alertIconProps={{ boxSize: 12 }}
+        alertProps={{
+          status: 'warning',
+          flexDirection: 'column',
+          height: '2xs',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          gap: 4,
+        }}
+        descriptions={[
+          {
+            text: `Unable to retrieve Pools. Please try again later.`,
+          },
+        ]}
         title={error.reason ? error.reason : 'Unexpected Error'}
-        variant="subtle"
       />
     );
   }

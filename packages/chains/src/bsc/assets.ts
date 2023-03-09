@@ -9,8 +9,10 @@ import {
   pancakeSwapDocs,
   StaderXDocs,
   stkBNBDocs,
+  thenaDocs,
+  wombatDocs,
+  wrappedAssetDocs,
 } from "../common";
-import { wombatDocs, wrappedAssetDocs } from "../common/docs";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 export const BNB = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
@@ -45,6 +47,8 @@ const BNBx = "0x1bdd3Cf7F79cfB8EdbB955f20ad99211551BA275";
 const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
 const jCHF = "0x7c869b5A294b1314E985283d01C702B62224a05f";
 const jEUR = "0x23b8683Ff98F9E4781552DFE6f12Aa32814924e8";
+const jGBP = "0x048E9b1ddF9EBbb224812372280e94Ccac443f9e";
+const jMXN = "0x47b19Af93d0bC33805269Af02B5CA953Aa145127";
 const BRZ = "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb";
 const BRZw = "0x5b1a9850f55d9282a7C4Bf23A2a21B050e3Beb2f";
 const BTCB_BOMB = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6";
@@ -66,6 +70,8 @@ const SD = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
 const ANKR = "0xf307910A4c7bbc79691fD374889b36d8531B08e3";
 const WOMBATLP_WBNB = "0x74f019A5C4eD2C2950Ce16FaD7Af838549092c5b";
 const HAY = "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5";
+// solidly
+const solidlyStableAMM_jBRL_BRZ = "0xA0695f78AF837F570bcc50f53e58Cda300798B65";
 
 const assets: SupportedAsset[] = [
   {
@@ -361,6 +367,22 @@ const assets: SupportedAsset[] = [
     extraDocs: jarvisDocs("v1"),
   },
   {
+    symbol: assetSymbols.JGBP,
+    underlying: jGBP,
+    name: "Jarvis Synthetic British Pound",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
+  },
+  {
+    symbol: assetSymbols.JMXN,
+    underlying: jMXN,
+    name: "Jarvis Synthetic Mexican Peso",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
+  },
+  {
     symbol: assetSymbols.BRZ,
     underlying: BRZ,
     name: "BRZ Token",
@@ -518,6 +540,15 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.WombatLpTokenPriceOracle,
     extraDocs: wombatDocs("BNB", "WBNB"),
+  },
+  // Thena
+  {
+    symbol: assetSymbols["sAMM-jBRL/BRZ"],
+    underlying: solidlyStableAMM_jBRL_BRZ,
+    name: "StableV1 AMM - jBRL/BRZ",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: thenaDocs(solidlyStableAMM_jBRL_BRZ),
   },
 ];
 

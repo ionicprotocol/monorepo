@@ -35,9 +35,9 @@ export const deployChainlinkOracle = async ({
       usdBasedFeeds.map((c) => c.aggregator),
       feedCurrency
     );
-    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
+    console.log(`Set ${feedCurrency} USD price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
     await tx.wait();
-    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
+    console.log(`Set ${feedCurrency} USD price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
   }
   if (ethBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.ETH;
@@ -46,9 +46,9 @@ export const deployChainlinkOracle = async ({
       usdBasedFeeds.map((c) => c.aggregator),
       feedCurrency
     );
-    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
+    console.log(`Set ${feedCurrency} native price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
     await tx.wait();
-    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
+    console.log(`Set ${feedCurrency} native price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
   }
 
   const underlyings = chainlinkAssets.map((c) => underlying(assets, c.symbol));

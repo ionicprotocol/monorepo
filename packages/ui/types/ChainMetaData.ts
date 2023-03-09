@@ -1,5 +1,6 @@
 import {
   arbitrum,
+  basegoerli,
   bsc,
   chapel,
   evmos,
@@ -24,6 +25,10 @@ export const supportedChainIdToConfig: {
     supported: config.isDevelopment || config.isTestnetEnabled,
   },
   [neondevnet.chainId]: {
+    enabled: true,
+    supported: config.isDevelopment || config.isTestnetEnabled,
+  },
+  [basegoerli.chainId]: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled,
   },

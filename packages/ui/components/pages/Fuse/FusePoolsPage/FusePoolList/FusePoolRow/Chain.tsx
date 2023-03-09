@@ -1,11 +1,11 @@
 import { HStack, Img } from '@chakra-ui/react';
+import { ReactNode } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
-import { PoolData } from '@ui/types/TokensDataMap';
 
-export const Chain = ({ pool }: { pool: PoolData }) => {
-  const chainConfig = useChainConfig(pool.chainId);
+export const Chain = ({ chainId, ...props }: { chainId: number; [key: string]: ReactNode }) => {
+  const chainConfig = useChainConfig(chainId);
 
   return (
     <HStack height="100%" justifyContent="center">
@@ -19,6 +19,7 @@ export const Chain = ({ pool }: { pool: PoolData }) => {
             minWidth="25px"
             src={chainConfig.specificParams.metadata.img}
             width="25px"
+            {...props}
           />
         </SimpleTooltip>
       )}

@@ -51,7 +51,7 @@ import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/F
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/SupplyBalance';
 import { TotalBorrow } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalBorrow';
 import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalSupply';
-import { AlertHero } from '@ui/components/shared/Alert';
+import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -215,7 +215,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.chain,
         id: CHAIN,
         header: () => null,
-        cell: ({ getValue }) => <Chain pool={getValue<PoolData>()} />,
+        cell: ({ getValue }) => <Chain chainId={getValue<PoolData>().chainId} />,
         footer: (props) => props.column.id,
         enableSorting: false,
         enableHiding: false,
@@ -224,7 +224,14 @@ const PoolsRowList = ({
         accessorFn: (row) => row.poolName,
         id: POOL_NAME,
         header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
-        cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
+        cell: ({ getValue }) => (
+          <PoolName
+            chainId={getValue<PoolData>().chainId}
+            comptroller={getValue<PoolData>().comptroller}
+            poolId={getValue<PoolData>().id}
+            poolName={getValue<PoolData>().name}
+          />
+        ),
         footer: (props) => props.column.id,
         filterFn: poolFilter,
         sortingFn: poolSort,
@@ -406,7 +413,7 @@ const PoolsRowList = ({
       <Flex
         alignItems="center"
         flexWrap="wrap-reverse"
-        gap={4}
+        gap={3}
         justifyContent={['center', 'center', 'space-between']}
         mb={3}
         width="100%"
@@ -514,11 +521,24 @@ const PoolsRowList = ({
               {err && err.code !== 'NETWORK_ERROR' ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <AlertHero
-                      description="Unable to retrieve Pools. Please try again later."
-                      status="warning"
+                    <Banner
+                      alertDescriptionProps={{ fontSize: 'lg' }}
+                      alertIconProps={{ boxSize: 12 }}
+                      alertProps={{
+                        status: 'warning',
+                        flexDirection: 'column',
+                        height: '2xs',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        gap: 4,
+                      }}
+                      descriptions={[
+                        {
+                          text: `Unable to retrieve Pools. Please try again later.`,
+                        },
+                      ]}
                       title={err.reason ? err.reason : 'Unexpected Error'}
-                      variant="subtle"
                     />
                   </Td>
                 </Tr>

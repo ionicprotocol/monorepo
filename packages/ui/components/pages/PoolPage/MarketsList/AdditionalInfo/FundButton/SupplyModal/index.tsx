@@ -1,6 +1,4 @@
 import {
-  Alert,
-  AlertIcon,
   Box,
   Button,
   Divider,
@@ -11,7 +9,6 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
-  VStack,
 } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
@@ -27,6 +24,7 @@ import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInf
 import { EnableCollateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/EnableCollateral';
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
 import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
+import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -48,7 +46,6 @@ interface SupplyModalProps {
   asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
-  isBorrowPaused?: boolean;
   onClose: () => void;
   poolChainId: number;
 }
@@ -458,20 +455,23 @@ export const SupplyModal = ({
                       </Button>
                     </>
                   ) : (
-                    <Alert status="info">
-                      <AlertIcon />
-                      <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">
-                          {smallFormatter.format(supplyCap.tokenCap)} {asset.underlyingSymbol} /{' '}
-                          {smallFormatter.format(supplyCap.tokenCap)} {asset.underlyingSymbol}
-                        </Text>
-                        <Text>
-                          The maximum supply of assets for this asset has been reached. Once assets
-                          are withdrawn or the limit is increased you can again supply to this
-                          market.
-                        </Text>
-                      </VStack>
-                    </Alert>
+                    <Banner
+                      alertDescriptionProps={{ fontSize: 'lg' }}
+                      alertProps={{ status: 'info' }}
+                      descriptions={[
+                        {
+                          text: `${smallFormatter.format(supplyCap.tokenCap)} ${
+                            asset.underlyingSymbol
+                          } / ${smallFormatter.format(supplyCap.tokenCap)} ${
+                            asset.underlyingSymbol
+                          }`,
+                          textProps: { display: 'block', fontWeight: 'bold' },
+                        },
+                        {
+                          text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.',
+                        },
+                      ]}
+                    />
                   )}
                 </Column>
               </>

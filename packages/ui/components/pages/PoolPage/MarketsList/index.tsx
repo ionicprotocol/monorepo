@@ -125,6 +125,7 @@ export const MarketsList = ({
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
     assetsAddress: assets.map((asset) => asset.cToken),
+    poolChainId,
   });
 
   const { data: assetInfos } = useAssets(poolChainId);
