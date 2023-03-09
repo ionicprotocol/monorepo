@@ -16,11 +16,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from 'react';
 
-import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/WithdrawModal/AmountInput';
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/WithdrawModal/Balance';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/WithdrawModal/PendingTransaction';
-import { WithdrawError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/WithdrawModal/WithdrawError';
+import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/PendingTransaction';
+import { WithdrawError } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/WithdrawError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -33,6 +30,9 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import { StatsColumn } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/index';
+import { AmountInput } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/AmountInput';
+import { Balance } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/Balance';
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -232,7 +232,6 @@ export const WithdrawModal = ({
                     amount={amount}
                     asset={asset}
                     assets={assets}
-                    comptrollerAddress={comptrollerAddress}
                     mode={FundOperationMode.WITHDRAW}
                     poolChainId={poolChainId}
                   />

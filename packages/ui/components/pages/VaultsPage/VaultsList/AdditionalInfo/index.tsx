@@ -23,39 +23,30 @@ import { useMemo } from 'react';
 import { BsTriangleFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
-import { Market } from '@ui/components/pages/PoolPage/MarketsList';
-import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/index';
-import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/index';
+import { Market } from '@ui/components/pages/VaultsPage/VaultsList/index';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   ADMIN_FEE_TOOLTIP,
-  ASSET_BORROWED_TOOLTIP,
   ASSET_SUPPLIED_TOOLTIP,
-  LOAN_TO_VALUE_TOOLTIP,
   MIDAS_SECURITY_DOCS_URL,
-  PERFORMANCE_FEE_TOOLTIP,
-  RESERVE_FACTOR_TOOLTIP,
   SCORE_LIMIT,
   SCORE_RANGE_MAX,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useIRM } from '@ui/hooks/fuse/useIRM';
-import { useOracle } from '@ui/hooks/fuse/useOracle';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
-import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
-import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
 import { deployedPlugins, getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
+import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
 
-const UtilizationChart = dynamic(() => import('@ui/components/shared/UtilizationChart'), {
+const HistoricalAPYChart = dynamic(() => import('@ui/components/shared/HistoricalAPYChart'), {
   ssr: false,
 });
 
@@ -63,20 +54,16 @@ export const AdditionalInfo = ({
   row,
   rows,
   comptrollerAddress,
-  supplyBalanceFiat,
-  borrowBalanceFiat,
   poolChainId,
 }: {
   row: Row<Market>;
   rows: Row<Market>[];
   comptrollerAddress: string;
-  supplyBalanceFiat: number;
-  borrowBalanceFiat: number;
   poolChainId: number;
 }) => {
   const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
-  const asset: MarketData = row.original.market;
-  const assets: MarketData[] = rows.map((row) => row.original.market);
+  const asset: MarketData = row.original.vault;
+  const assets: MarketData[] = rows.map((row) => row.original.vault);
 
   const { data } = useChartData(asset.cToken, poolChainId);
   const { currentChain } = useMultiMidas();
@@ -107,19 +94,11 @@ export const AdditionalInfo = ({
     return score >= 0.8 ? greenColor : score >= 0.6 ? yellowColor : redColor;
   };
 
-  const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
   const { data: supplyCaps } = useSupplyCap({
     comptroller: comptrollerAddress,
     chainId: poolChainId,
     market: asset,
   });
-  const { data: borrowCaps } = useBorrowCap({
-    comptroller: comptrollerAddress,
-    chainId: poolChainId,
-    market: asset,
-  });
-  const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);
-  const { data: irm } = useIRM(asset.cToken, poolChainId);
 
   return (
     <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
@@ -162,29 +141,6 @@ export const AdditionalInfo = ({
               comptrollerAddress={comptrollerAddress}
               isDisabled={asset.supplyBalanceFiat === 0}
               mode={FundOperationMode.WITHDRAW}
-              poolChainId={poolChainId}
-            />
-            <FundButton
-              asset={asset}
-              assets={assets}
-              borrowBalanceFiat={borrowBalanceFiat}
-              comptrollerAddress={comptrollerAddress}
-              isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
-              mode={FundOperationMode.BORROW}
-              poolChainId={poolChainId}
-            />
-            <FundButton
-              asset={asset}
-              assets={assets}
-              comptrollerAddress={comptrollerAddress}
-              isDisabled={asset.borrowBalanceFiat === 0}
-              mode={FundOperationMode.REPAY}
-              poolChainId={poolChainId}
-            />
-            <Collateral
-              asset={asset}
-              assets={assets}
-              comptrollerAddress={comptrollerAddress}
               poolChainId={poolChainId}
             />
           </HStack>
@@ -715,15 +671,8 @@ export const AdditionalInfo = ({
               width="100%"
             >
               <Flex alignItems="center" height="100%" justifyContent="space-between">
-                <Text>Market Details</Text>
+                <Text>Vault Details</Text>
                 <HStack>
-                  {oracle && (
-                    <Link href={`${scanUrl}/address/${oracle}`} isExternal rel="noreferrer">
-                      <Button rightIcon={<ExternalLinkIcon />} size="xs" variant={'external'}>
-                        Oracle Contract
-                      </Button>
-                    </Link>
-                  )}
                   <Link
                     href={`${scanUrl}/address/${asset.underlyingToken}`}
                     isExternal
@@ -735,70 +684,53 @@ export const AdditionalInfo = ({
                   </Link>
                   <Link href={`${scanUrl}/address/${asset.cToken}`} isExternal rel="noreferrer">
                     <Button rightIcon={<ExternalLinkIcon />} size="xs" variant={'external'}>
-                      Market Contract
+                      Vault Contract
                     </Button>
                   </Link>
                 </HStack>
               </Flex>
             </Box>
             <Box borderColor={cCard.headingBgColor} borderWidth={2} height="250px" width="100%">
-              <Grid
-                gap={0}
-                height="100%"
-                templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
-                width="100%"
-              >
-                <CaptionedStat
-                  caption={'Asset Supplied'}
-                  crossAxisAlignment="center"
-                  secondStat={supplyCaps ? midUsdFormatter(supplyCaps.usdCap) : undefined}
-                  stat={midUsdFormatter(asset.totalSupplyFiat)}
-                  tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
-                />
-                <CaptionedStat
-                  caption={'Asset Borrowed'}
-                  crossAxisAlignment="center"
-                  secondStat={
-                    !asset.isBorrowPaused && borrowCaps
-                      ? midUsdFormatter(borrowCaps.usdCap)
-                      : undefined
-                  }
-                  stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
-                  tooltip={borrowCaps ? ASSET_BORROWED_TOOLTIP : undefined}
-                />
-                <CaptionedStat
-                  caption={'Asset Utilization'}
-                  crossAxisAlignment="center"
-                  stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
-                />
-                <CaptionedStat
-                  caption={'Loan-to-Value'}
-                  crossAxisAlignment="center"
-                  stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
-                  tooltip={LOAN_TO_VALUE_TOOLTIP}
-                />
-
-                <CaptionedStat
-                  caption={'Reserve Factor'}
-                  crossAxisAlignment="center"
-                  stat={Number(utils.formatUnits(asset.reserveFactor, 16)).toFixed(0) + '%'}
-                  tooltip={RESERVE_FACTOR_TOOLTIP}
-                />
-                <CaptionedStat
-                  caption={'Admin Fee'}
-                  crossAxisAlignment="center"
-                  stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
-                  tooltip={ADMIN_FEE_TOOLTIP}
-                />
-                {performanceFee !== undefined ? (
+              <VStack height="100%" spacing={0}>
+                <Grid
+                  gap={0}
+                  my={8}
+                  templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+                  width="100%"
+                >
                   <CaptionedStat
-                    caption={'Performance Fee'}
+                    caption={'Asset Supplied'}
                     crossAxisAlignment="center"
-                    stat={`${performanceFee}%`}
-                    tooltip={PERFORMANCE_FEE_TOOLTIP}
+                    secondStat={supplyCaps ? midUsdFormatter(supplyCaps.usdCap) : undefined}
+                    stat={midUsdFormatter(asset.totalSupplyFiat)}
+                    tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
                   />
-                ) : null}
-              </Grid>
+                  <CaptionedStat
+                    caption={'APY'}
+                    crossAxisAlignment="center"
+                    stat={'5%'}
+                    tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
+                  />
+                  <CaptionedStat
+                    caption={'Daily'}
+                    crossAxisAlignment="center"
+                    stat={'0.05%'}
+                    tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
+                  />
+                  <CaptionedStat
+                    caption={'Admin Fee'}
+                    crossAxisAlignment="center"
+                    stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
+                    tooltip={ADMIN_FEE_TOOLTIP}
+                  />
+                </Grid>
+                <VStack>
+                  <Text>Vault Composition</Text>
+                  <Text>Midas Pool 1 : 23%</Text>
+                  <Text>Midas Pool 2 : 19%</Text>
+                  <Text>Midas Pool 3 : 37%</Text>
+                </VStack>
+              </VStack>
             </Box>
           </VStack>
         </GridItem>
@@ -813,14 +745,7 @@ export const AdditionalInfo = ({
               width="100%"
             >
               <Flex alignItems="center" height="100%" justifyContent="space-between">
-                <Text py={0.5}>Utilization Rate</Text>
-                {irm && (!asset.isBorrowPaused || !asset.totalBorrow.isZero()) && (
-                  <Link href={`${scanUrl}/address/${irm}`} isExternal rel="noreferrer">
-                    <Button rightIcon={<ExternalLinkIcon />} size="xs" variant={'external'}>
-                      IRM Contract
-                    </Button>
-                  </Link>
-                )}
+                <Text py={0.5}>Historical APY</Text>
               </Flex>
             </Box>
             <Box
@@ -830,19 +755,15 @@ export const AdditionalInfo = ({
               pb={4}
               width="100%"
             >
-              {asset.isBorrowPaused && asset.totalBorrow.isZero() ? (
-                <Center height="100%">
-                  <Text size="md">This asset is not borrowable.</Text>
-                </Center>
-              ) : data ? (
+              {data ? (
                 data.rates === null ? (
                   <Center height="100%">
                     <Text size="md">
-                      No graph is available for this asset(&apos)s interest curves.
+                      No graph is available for this vault(&apos)s interest curves.
                     </Text>
                   </Center>
                 ) : (
-                  <UtilizationChart
+                  <HistoricalAPYChart
                     currentUtilization={asset.utilization.toFixed(0)}
                     irmToCurve={data}
                   />

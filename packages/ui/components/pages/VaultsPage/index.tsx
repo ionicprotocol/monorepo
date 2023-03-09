@@ -14,10 +14,10 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import {
   LIQUIDITY,
   MARKET_COLUMNS,
-  MARKET_LTV,
   MIDAS_LOCALSTORAGE_KEYS,
   TOTAL_BORROW,
   TOTAL_SUPPLY,
+  VAULT,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
@@ -39,7 +39,7 @@ const VaultsPage = memo(() => {
     ) {
       setInitSorting(JSON.parse(oldData).userMarketSorting);
     } else {
-      setInitSorting([{ id: MARKET_LTV, desc: true }]);
+      setInitSorting([{ id: VAULT, desc: true }]);
     }
 
     const columnVisibility: VisibilityState = {};

@@ -19,6 +19,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
+import { SupportedChains } from '@midas-capital/types';
 import {
   ColumnDef,
   FilterFn,
@@ -37,10 +38,8 @@ import {
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { ChainFilterButton } from '../../Fuse/FusePoolsPage/FusePoolList/FusePoolRow';
-
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
-import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
+import { ChainFilterButton } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
 import { SupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/PoolPage/MarketsList/TokenName';
@@ -50,14 +49,10 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
-  BORROW_APY,
-  BORROW_BALANCE,
   BORROWABLE,
   CHAIN,
   COLLATERAL,
   HIDDEN,
-  LIQUIDITY,
-  MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
   PAUSED,
@@ -67,8 +62,7 @@ import {
   SEARCH,
   SUPPLY_APY,
   SUPPLY_BALANCE,
-  TOTAL_BORROW,
-  TOTAL_SUPPLY,
+  VAULT,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { FundedAsset, resQuery } from '@ui/hooks/useAllFundedInfo';
@@ -77,18 +71,13 @@ import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 import { sortAssets } from '@ui/utils/sorts';
+import { AdditionalInfo } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/index';
 
 export type Market = {
   chain: FundedAsset;
-  poolName: FundedAsset;
-  market: FundedAsset;
+  vault: FundedAsset;
   supplyApy: FundedAsset;
   supplyBalance: FundedAsset;
-  borrowApy: FundedAsset;
-  borrowBalance: FundedAsset;
-  totalSupply: FundedAsset;
-  totalBorrow: FundedAsset;
-  liquidity: FundedAsset;
 };
 
 export const VaultsList = ({
@@ -116,27 +105,27 @@ export const VaultsList = ({
     if (
       (!searchText ||
         (value.includes(SEARCH) &&
-          (row.original.market.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.original.market.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.original.market.cToken.toLowerCase().includes(searchText.toLowerCase())))) &&
+          (row.original.vault.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
+            row.original.vault.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
+            row.original.vault.cToken.toLowerCase().includes(searchText.toLowerCase())))) &&
       (!value.includes(HIDDEN) ||
         (value.includes(HIDDEN) &&
-          (!row.original.market.supplyBalance.isZero() ||
-            !row.original.market.borrowBalance.isZero())))
+          (!row.original.vault.supplyBalance.isZero() ||
+            !row.original.vault.borrowBalance.isZero())))
     ) {
       if (
         value.includes(ALL) ||
         (value.includes(REWARDS) &&
           allClaimableRewards &&
-          allClaimableRewards[row.original.market.cToken]) ||
-        (value.includes(COLLATERAL) && row.original.market.membership) ||
+          allClaimableRewards[row.original.vault.cToken]) ||
+        (value.includes(COLLATERAL) && row.original.vault.membership) ||
         (value.includes(PROTECTED) &&
-          row.original.market.isBorrowPaused &&
-          !row.original.market.isSupplyPaused) ||
-        (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused) ||
+          row.original.vault.isBorrowPaused &&
+          !row.original.vault.isSupplyPaused) ||
+        (value.includes(BORROWABLE) && !row.original.vault.isBorrowPaused) ||
         (value.includes(PAUSED) &&
-          row.original.market.isBorrowPaused &&
-          row.original.market.isSupplyPaused)
+          row.original.vault.isBorrowPaused &&
+          row.original.vault.isSupplyPaused)
       ) {
         return true;
       } else {
@@ -149,72 +138,38 @@ export const VaultsList = ({
 
   const assetSort: SortingFn<Market> = React.useCallback(
     (rowA, rowB, columnId) => {
-      if (columnId === MARKET_LTV) {
-        return rowB.original.market.underlyingSymbol.localeCompare(
-          rowA.original.market.underlyingSymbol
+      if (columnId === VAULT) {
+        return rowB.original.vault.underlyingSymbol.localeCompare(
+          rowA.original.vault.underlyingSymbol
         );
       } else if (columnId === CHAIN) {
-        return Number(rowB.original.market.chainId) > Number(rowA.original.market.chainId) ? 1 : -1;
-      } else if (columnId === POOL_NAME) {
-        return rowB.original.market.poolName.localeCompare(rowA.original.market.poolName);
+        return Number(rowB.original.vault.chainId) > Number(rowA.original.vault.chainId) ? 1 : -1;
       } else if (columnId === SUPPLY_APY) {
         const rowASupplyAPY = totalSupplyApyPerAsset
-          ? totalSupplyApyPerAsset[rowA.original.market.cToken]
+          ? totalSupplyApyPerAsset[rowA.original.vault.cToken]
           : 0;
         const rowBSupplyAPY = totalSupplyApyPerAsset
-          ? totalSupplyApyPerAsset[rowB.original.market.cToken]
+          ? totalSupplyApyPerAsset[rowB.original.vault.cToken]
           : 0;
         return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
-      } else if (columnId === BORROW_APY) {
-        const rowABorrowAPY =
-          !rowA.original.market.isBorrowPaused && borrowApyPerAsset
-            ? borrowApyPerAsset[rowA.original.market.cToken]
-            : -1;
-        const rowBBorrowAPY =
-          !rowB.original.market.isBorrowPaused && borrowApyPerAsset
-            ? borrowApyPerAsset[rowB.original.market.cToken]
-            : -1;
-        return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
       } else if (columnId === SUPPLY_BALANCE) {
-        return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
+        return rowA.original.vault.supplyBalanceFiat > rowB.original.vault.supplyBalanceFiat
           ? 1
           : -1;
-      } else if (columnId === BORROW_BALANCE) {
-        return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
-          ? 1
-          : -1;
-      } else if (columnId === TOTAL_SUPPLY) {
-        return rowA.original.market.totalSupplyFiat > rowB.original.market.totalSupplyFiat ? 1 : -1;
-      } else if (columnId === TOTAL_BORROW) {
-        return rowA.original.market.totalBorrowFiat > rowB.original.market.totalBorrowFiat ? 1 : -1;
-      } else if (columnId === LIQUIDITY) {
-        const liquidityA = !rowA.original.market.isBorrowPaused
-          ? rowA.original.market.liquidityFiat
-          : -1;
-        const liquidityB = !rowB.original.market.isBorrowPaused
-          ? rowB.original.market.liquidityFiat
-          : -1;
-        return liquidityA > liquidityB ? 1 : -1;
       } else {
         return 0;
       }
     },
-    [totalSupplyApyPerAsset, borrowApyPerAsset]
+    [totalSupplyApyPerAsset]
   );
 
   const data: Market[] = useMemo(() => {
     return sortAssets(assets).map((asset) => {
       return {
         chain: asset,
-        poolName: asset,
-        market: asset,
+        vault: asset,
         supplyApy: asset,
         supplyBalance: asset,
-        borrowApy: asset,
-        borrowBalance: asset,
-        totalSupply: asset,
-        totalBorrow: asset,
-        liquidity: asset,
       };
     });
   }, [assets]);
@@ -231,9 +186,9 @@ export const VaultsList = ({
         enableHiding: false,
       },
       {
-        accessorFn: (row) => row.market,
-        id: MARKET_LTV,
-        header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
+        accessorFn: (row) => row.vault,
+        id: VAULT,
+        header: (context) => <TableHeaderCell context={context}>Vault</TableHeaderCell>,
         cell: ({ getValue }) => (
           <TokenName
             asset={getValue<FundedAsset>()}
@@ -289,7 +244,7 @@ export const VaultsList = ({
   });
   const isSemiSmallScreen = useIsSemiSmallScreen();
 
-  const [globalFilter, setGlobalFilter] = useState<string[]>([ALL]);
+  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
   const [searchText, setSearchText] = useState('');
 
@@ -321,7 +276,7 @@ export const VaultsList = ({
 
   const enabledChains = useEnabledChains();
 
-  const onFilter = (filter: string) => {
+  const onFilter = (filter: SupportedChains | string) => {
     if (globalFilter.includes(SEARCH) && globalFilter.includes(HIDDEN)) {
       setGlobalFilter([filter, SEARCH, HIDDEN]);
     } else if (globalFilter.includes(SEARCH)) {
@@ -422,7 +377,7 @@ export const VaultsList = ({
                 <ChainFilterButton
                   chainId={chainId}
                   globalFilter={globalFilter}
-                  isLoading={poolsPerChain[chainId.toString()].isLoading}
+                  isLoading={false}
                   key={chainId}
                   onFilter={onFilter}
                 />
@@ -467,44 +422,6 @@ export const VaultsList = ({
             </PopoverTooltip>
           </Flex>
         </Flex>
-
-        <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="flex-start">
-          <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
-          <PopoverTooltip
-            body={
-              <VStack alignItems="flex-start">
-                <Text>Show/Hide Columns</Text>
-                <Checkbox
-                  isChecked={table.getIsAllColumnsVisible()}
-                  onChange={table.getToggleAllColumnsVisibilityHandler()}
-                >
-                  All
-                </Checkbox>
-                {table.getAllColumns().map((column) => {
-                  if (column.getCanHide()) {
-                    return (
-                      <Checkbox
-                        isChecked={column.getIsVisible()}
-                        key={column.id}
-                        onChange={column.getToggleVisibilityHandler()}
-                      >
-                        {column.id}
-                      </Checkbox>
-                    );
-                  }
-                })}
-              </VStack>
-            }
-            contentProps={{ width: '200px' }}
-          >
-            <IconButton
-              aria-label="Column Settings"
-              icon={<SettingsIcon fontSize={20} />}
-              maxWidth={10}
-              variant="_outline"
-            />
-          </PopoverTooltip>
-        </Flex>
       </Flex>
 
       {/* Market Table */}
@@ -525,8 +442,8 @@ export const VaultsList = ({
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     px={{
-                      base: header.column.id === MARKET_LTV ? 2 : 1,
-                      lg: header.column.id === MARKET_LTV ? 4 : 2,
+                      base: header.column.id === VAULT ? 2 : 1,
+                      lg: header.column.id === VAULT ? 4 : 2,
                     }}
                     py={4}
                     textTransform="capitalize"
@@ -535,7 +452,7 @@ export const VaultsList = ({
                       justifyContent={
                         header.column.id === CHAIN
                           ? 'center'
-                          : header.column.id === MARKET_LTV || header.column.id === POOL_NAME
+                          : header.column.id === VAULT || header.column.id === POOL_NAME
                           ? 'flex-start'
                           : 'flex-end'
                       }
@@ -557,7 +474,7 @@ export const VaultsList = ({
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                   borderColor={cCard.dividerColor}
-                  className={row.original.market.underlyingSymbol}
+                  className={row.original.vault.underlyingSymbol}
                   cursor="pointer"
                   key={row.id}
                   onClick={() => row.toggleExpanded()}
@@ -582,12 +499,10 @@ export const VaultsList = ({
                     {/* 2nd row is a custom 1 cell row */}
                     <Td border="none" colSpan={row.getVisibleCells().length}>
                       <AdditionalInfo
-                        borrowBalanceFiat={row.original.market.totalBorrowBalanceFiat}
-                        comptrollerAddress={row.original.market.comptroller}
-                        poolChainId={Number(row.original.market.chainId)}
+                        comptrollerAddress={row.original.vault.comptroller}
+                        poolChainId={Number(row.original.vault.chainId)}
                         row={row}
                         rows={table.getCoreRowModel().rows}
-                        supplyBalanceFiat={row.original.market.totalSupplyBalanceFiat}
                       />
                     </Td>
                   </Tr>

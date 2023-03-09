@@ -18,12 +18,8 @@ import { BigNumber, constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
-import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/AmountInput';
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/Balance';
-import { EnableCollateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/EnableCollateral';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
-import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
+import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
+import { SupplyError } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
 import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
@@ -40,6 +36,9 @@ import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import { StatsColumn } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/index';
+import { AmountInput } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/AmountInput';
+import { Balance } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/Balance';
 
 interface SupplyModalProps {
   isOpen: boolean;
@@ -65,7 +64,6 @@ export const SupplyModal = ({
   const errorToast = useErrorToast();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
-  const [enableAsCollateral, setEnableAsCollateral] = useState(!asset.membership);
   const { cCard } = useColors();
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
@@ -236,46 +234,9 @@ export const SupplyModal = ({
       handleGenericError({ error, toast: errorToast, sentryInfo });
       setFailedStep(optionToWrap ? 2 : 1);
     }
-    if (enableAsCollateral) {
-      try {
-        setActiveStep(optionToWrap ? 3 : 2);
-        const tx = await currentSdk.enterMarkets(asset.cToken, comptrollerAddress);
-        addRecentTransaction({
-          hash: tx.hash,
-          description: `Entered ${asset.underlyingSymbol} market`,
-        });
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
-          txHash: tx.hash,
-        };
-        setConfirmedSteps([..._steps]);
-
-        await tx.wait();
-
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
-          done: true,
-          txHash: tx.hash,
-        };
-        setConfirmedSteps([..._steps]);
-        successToast({
-          id: 'collateralEnabled',
-          description: 'Collateral enabled!',
-        });
-      } catch (error) {
-        const sentryInfo = {
-          contextName: 'Supply - Entering market',
-          properties: sentryProperties,
-        };
-        handleGenericError({ error, toast: errorToast, sentryInfo });
-        setFailedStep(optionToWrap ? 3 : 2);
-      }
-    }
 
     try {
-      setActiveStep(
-        optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
-      );
+      setActiveStep(optionToWrap ? 3 : 2);
       const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
       if (errorCode !== null) {
         SupplyError(errorCode);
@@ -284,12 +245,8 @@ export const SupplyModal = ({
           hash: tx.hash,
           description: `${asset.underlyingSymbol} Token Supply`,
         });
-        _steps[
-          optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-        ] = {
-          ..._steps[
-            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-          ],
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
           txHash: tx.hash,
         };
         setConfirmedSteps([..._steps]);
@@ -297,12 +254,8 @@ export const SupplyModal = ({
         await tx.wait();
         await queryClient.refetchQueries();
 
-        _steps[
-          optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-        ] = {
-          ..._steps[
-            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-          ],
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
           done: true,
           txHash: tx.hash,
         };
@@ -314,9 +267,7 @@ export const SupplyModal = ({
         properties: sentryProperties,
       };
       handleGenericError({ error, toast: errorToast, sentryInfo });
-      setFailedStep(
-        optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
-      );
+      setFailedStep(optionToWrap ? 3 : 2);
     }
 
     setIsSupplying(false);
@@ -329,10 +280,6 @@ export const SupplyModal = ({
       setAmount(constants.Zero);
       setIsConfirmed(false);
       let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
-
-      if (!enableAsCollateral) {
-        _steps.splice(1, 1);
-      }
 
       if (optionToWrap) {
         _steps = [
@@ -348,16 +295,12 @@ export const SupplyModal = ({
   useEffect(() => {
     let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
 
-    if (!enableAsCollateral) {
-      _steps.splice(1, 1);
-    }
-
     if (optionToWrap) {
       _steps = [{ title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false }, ..._steps];
     }
 
     setSteps(_steps);
-  }, [optionToWrap, enableAsCollateral, asset.underlyingSymbol]);
+  }, [optionToWrap, asset.underlyingSymbol]);
 
   return (
     <Modal
@@ -433,17 +376,9 @@ export const SupplyModal = ({
                         amount={amount}
                         asset={asset}
                         assets={assets}
-                        comptrollerAddress={comptrollerAddress}
-                        enableAsCollateral={enableAsCollateral}
                         mode={FundOperationMode.SUPPLY}
                         poolChainId={poolChainId}
                       />
-                      {!asset.membership && (
-                        <EnableCollateral
-                          enableAsCollateral={enableAsCollateral}
-                          setEnableAsCollateral={setEnableAsCollateral}
-                        />
-                      )}
                       <Button
                         height={16}
                         id="confirmFund"
