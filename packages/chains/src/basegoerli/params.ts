@@ -9,7 +9,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0x14A33",
     name: "Base Goerli",
     shortName: "Base Goerli",
-    img: "https://d1912tcoux65lj.cloudfront.net/network/base-goerli.png",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/base-goerli-testnet.png",
     rpcUrls: {
       default: { http: ["https://goerli.base.org/"] },
       public: { http: ["https://goerli.base.org/"] },
@@ -29,7 +29,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/base-goerli.png",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/base-goerli-testnet.png",
     },
     testnet: true,
   },

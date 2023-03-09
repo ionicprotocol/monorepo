@@ -136,8 +136,8 @@ export const WithdrawModal = ({
         };
         setSteps([..._steps]);
         successToast({
-          id: 'Borrow',
-          description: 'Successfully borrowed!',
+          id: 'Withdraw',
+          description: 'Successfully withdrew!',
         });
       }
     } catch (error) {
