@@ -47,6 +47,8 @@ const BNBx = "0x1bdd3Cf7F79cfB8EdbB955f20ad99211551BA275";
 const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
 const jCHF = "0x7c869b5A294b1314E985283d01C702B62224a05f";
 const jEUR = "0x23b8683Ff98F9E4781552DFE6f12Aa32814924e8";
+const jGBP = "0x048E9b1ddF9EBbb224812372280e94Ccac443f9e";
+const jMXN = "0x47b19Af93d0bC33805269Af02B5CA953Aa145127";
 const BRZ = "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb";
 const BRZw = "0x5b1a9850f55d9282a7C4Bf23A2a21B050e3Beb2f";
 const BTCB_BOMB = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6";
@@ -360,6 +362,22 @@ const assets: SupportedAsset[] = [
     symbol: assetSymbols.JEUR,
     underlying: jEUR,
     name: "Jarvis Synthetic Euro",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
+  },
+  {
+    symbol: assetSymbols.JGBP,
+    underlying: jGBP,
+    name: "Jarvis Synthetic British Pound",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
+  },
+  {
+    symbol: assetSymbols.JMXN,
+    underlying: jMXN,
+    name: "Jarvis Synthetic Mexican Peso",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: jarvisDocs("v1"),
