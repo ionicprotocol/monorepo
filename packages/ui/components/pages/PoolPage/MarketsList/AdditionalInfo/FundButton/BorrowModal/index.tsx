@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Divider,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Checkbox, Divider, HStack, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
@@ -27,6 +15,7 @@ import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/Additiona
 import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { BORROW_STEPS, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -231,12 +220,139 @@ export const BorrowModal = ({
   };
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isCentered
+    <MidasModal
+      body={
+        <Column
+          bg={cCard.bgColor}
+          borderRadius={16}
+          color={cCard.txtColor}
+          crossAxisAlignment="flex-start"
+          id="fundOperationModal"
+          mainAxisAlignment="flex-start"
+        >
+          {isConfirmed ? (
+            <PendingTransaction
+              activeStep={activeStep}
+              amount={amount}
+              asset={asset}
+              failedStep={failedStep}
+              isBorrowing={isBorrowing}
+              poolChainId={poolChainId}
+              steps={steps}
+            />
+          ) : (
+            <>
+              <HStack justifyContent="center" my={4} width="100%">
+                <Text variant="title">Borrow</Text>
+                <Box height="36px" mx={2} width="36px">
+                  <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                </Box>
+                <EllipsisText
+                  maxWidth="100px"
+                  tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                  variant="title"
+                >
+                  {tokenData?.symbol || asset.underlyingSymbol}
+                </EllipsisText>
+              </HStack>
+
+              <Divider />
+
+              <Column
+                crossAxisAlignment="center"
+                gap={4}
+                height="100%"
+                mainAxisAlignment="flex-start"
+                p={4}
+                width="100%"
+              >
+                <Alerts
+                  asset={asset}
+                  assets={assets}
+                  comptrollerAddress={comptrollerAddress}
+                  poolChainId={poolChainId}
+                />
+                {!borrowCaps || asset.totalBorrowFiat < borrowCaps.usdCap ? (
+                  <>
+                    {maxBorrowAmount &&
+                    maxBorrowAmount.number !== 0 &&
+                    borrowLimitTotal &&
+                    borrowLimitTotal !== 0 ? (
+                      <MaxBorrowSlider
+                        asset={asset}
+                        borrowableAmount={maxBorrowAmount.number}
+                        poolChainId={poolChainId}
+                        updateAmount={updateAmount}
+                        userEnteredAmount={userEnteredAmount}
+                      />
+                    ) : null}
+                    <Column gap={1} mt={4} w="100%">
+                      <AmountInput
+                        asset={asset}
+                        poolChainId={poolChainId}
+                        updateAmount={updateAmount}
+                        userEnteredAmount={userEnteredAmount}
+                      />
+
+                      <Balance asset={asset} />
+                    </Column>
+                    <StatsColumn
+                      amount={amount}
+                      asset={asset}
+                      assets={assets}
+                      comptrollerAddress={comptrollerAddress}
+                      mode={FundOperationMode.BORROW}
+                      poolChainId={poolChainId}
+                    />
+                    {isAmountValid && isRisky && (
+                      <Box pt={4}>
+                        <Checkbox
+                          isChecked={isRiskyConfirmed}
+                          onChange={() => setIsRiskyConfirmed(!isRiskyConfirmed)}
+                        >
+                          {
+                            "I'm aware that I'm entering >80% of my borrow limit and thereby have a high risk of getting liquidated."
+                          }
+                        </Checkbox>
+                      </Box>
+                    )}
+
+                    <Button
+                      height={16}
+                      id="confirmFund"
+                      isDisabled={!isAmountValid || (isRisky && !isRiskyConfirmed)}
+                      onClick={onConfirm}
+                      width="100%"
+                    >
+                      {btnStr}
+                    </Button>
+                  </>
+                ) : (
+                  <Banner
+                    alertDescriptionProps={{ fontSize: 'lg' }}
+                    alertProps={{ status: 'info' }}
+                    descriptions={[
+                      {
+                        text: `${smallFormatter.format(borrowCaps.tokenCap)} ${
+                          asset.underlyingSymbol
+                        } / ${smallFormatter.format(borrowCaps.tokenCap)} ${
+                          asset.underlyingSymbol
+                        }`,
+                        textProps: { display: 'block', fontWeight: 'bold' },
+                      },
+                      {
+                        text: 'The maximum borrow of assets for this asset has been reached. Once assets are repaid or the limit is increased you can again borrow from this market.',
+                      },
+                    ]}
+                  />
+                )}
+              </Column>
+            </>
+          )}
+        </Column>
+      }
       isOpen={isOpen}
-      motionPreset="slideInBottom"
+      modalCloseButtonProps={{ hidden: isBorrowing }}
       onClose={() => {
         onClose();
         if (!isBorrowing) {
@@ -246,141 +362,6 @@ export const BorrowModal = ({
           setSteps([...BORROW_STEPS(asset.underlyingSymbol)]);
         }
       }}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={0}>
-          <Column
-            bg={cCard.bgColor}
-            borderRadius={16}
-            color={cCard.txtColor}
-            crossAxisAlignment="flex-start"
-            id="fundOperationModal"
-            mainAxisAlignment="flex-start"
-          >
-            {!isBorrowing && <ModalCloseButton right={4} top={4} />}
-            {isConfirmed ? (
-              <PendingTransaction
-                activeStep={activeStep}
-                amount={amount}
-                asset={asset}
-                failedStep={failedStep}
-                isBorrowing={isBorrowing}
-                poolChainId={poolChainId}
-                steps={steps}
-              />
-            ) : (
-              <>
-                <HStack justifyContent="center" my={4} width="100%">
-                  <Text variant="title">Borrow</Text>
-                  <Box height="36px" mx={2} width="36px">
-                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
-                  </Box>
-                  <EllipsisText
-                    maxWidth="100px"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
-                    variant="title"
-                  >
-                    {tokenData?.symbol || asset.underlyingSymbol}
-                  </EllipsisText>
-                </HStack>
-
-                <Divider />
-
-                <Column
-                  crossAxisAlignment="center"
-                  gap={4}
-                  height="100%"
-                  mainAxisAlignment="flex-start"
-                  p={4}
-                  width="100%"
-                >
-                  <Alerts
-                    asset={asset}
-                    assets={assets}
-                    comptrollerAddress={comptrollerAddress}
-                    poolChainId={poolChainId}
-                  />
-                  {!borrowCaps || asset.totalBorrowFiat < borrowCaps.usdCap ? (
-                    <>
-                      {maxBorrowAmount &&
-                      maxBorrowAmount.number !== 0 &&
-                      borrowLimitTotal &&
-                      borrowLimitTotal !== 0 ? (
-                        <MaxBorrowSlider
-                          asset={asset}
-                          borrowableAmount={maxBorrowAmount.number}
-                          poolChainId={poolChainId}
-                          updateAmount={updateAmount}
-                          userEnteredAmount={userEnteredAmount}
-                        />
-                      ) : null}
-                      <Column gap={1} mt={4} w="100%">
-                        <AmountInput
-                          asset={asset}
-                          poolChainId={poolChainId}
-                          updateAmount={updateAmount}
-                          userEnteredAmount={userEnteredAmount}
-                        />
-
-                        <Balance asset={asset} />
-                      </Column>
-                      <StatsColumn
-                        amount={amount}
-                        asset={asset}
-                        assets={assets}
-                        comptrollerAddress={comptrollerAddress}
-                        mode={FundOperationMode.BORROW}
-                        poolChainId={poolChainId}
-                      />
-                      {isAmountValid && isRisky && (
-                        <Box pt={4}>
-                          <Checkbox
-                            isChecked={isRiskyConfirmed}
-                            onChange={() => setIsRiskyConfirmed(!isRiskyConfirmed)}
-                          >
-                            {
-                              "I'm aware that I'm entering >80% of my borrow limit and thereby have a high risk of getting liquidated."
-                            }
-                          </Checkbox>
-                        </Box>
-                      )}
-
-                      <Button
-                        height={16}
-                        id="confirmFund"
-                        isDisabled={!isAmountValid || (isRisky && !isRiskyConfirmed)}
-                        onClick={onConfirm}
-                        width="100%"
-                      >
-                        {btnStr}
-                      </Button>
-                    </>
-                  ) : (
-                    <Banner
-                      alertDescriptionProps={{ fontSize: 'lg' }}
-                      alertProps={{ status: 'info' }}
-                      descriptions={[
-                        {
-                          text: `${smallFormatter.format(borrowCaps.tokenCap)} ${
-                            asset.underlyingSymbol
-                          } / ${smallFormatter.format(borrowCaps.tokenCap)} ${
-                            asset.underlyingSymbol
-                          }`,
-                          textProps: { display: 'block', fontWeight: 'bold' },
-                        },
-                        {
-                          text: 'The maximum borrow of assets for this asset has been reached. Once assets are repaid or the limit is increased you can again borrow from this market.',
-                        },
-                      ]}
-                    />
-                  )}
-                </Column>
-              </>
-            )}
-          </Column>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    />
   );
 };

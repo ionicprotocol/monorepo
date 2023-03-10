@@ -1,20 +1,7 @@
-import {
-  Button,
-  Flex,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Spacer,
-  Text,
-  UnorderedList,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, Flex, ListItem, Spacer, Text, UnorderedList, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
+import { MidasModal } from '@ui/components/shared/Modal';
 import { MIDAS_T_AND_C_ACCEPTED } from '@ui/constants/index';
 
 const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
@@ -29,26 +16,9 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
   }, [hasAcceptedTerms]);
 
   return (
-    <Modal
-      closeOnOverlayClick={false}
-      isOpen={!hasAcceptedTerms}
-      onClose={accept}
-      scrollBehavior="inside"
-      size={'6xl'}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader alignSelf="center" width="100%">
-          <Flex alignItems="flex-end">
-            <Text variant="title">Terms & Conditions</Text>
-            <Spacer />
-            <VStack spacing={0}>
-              <Text>Last Revised: </Text>
-              <Text>7/16/2022</Text>
-            </VStack>
-          </Flex>
-        </ModalHeader>
-        <ModalBody maxHeight="60vh">
+    <MidasModal
+      body={
+        <>
           <Text fontWeight="bold" size="lg">
             1. Acceptance of Terms
           </Text>
@@ -505,8 +475,10 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
               </ListItem>
             </UnorderedList>
           </Text>
-        </ModalBody>
-        <ModalFooter>
+        </>
+      }
+      footer={
+        <>
           <Button id="termsAcceptBtn" onClick={accept}>
             Accept
           </Button>
@@ -518,9 +490,24 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           >
             Decline
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </>
+      }
+      header={
+        <Flex alignItems="flex-end">
+          <Text variant="title">Terms & Conditions</Text>
+          <Spacer />
+          <VStack spacing={0}>
+            <Text>Last Revised: </Text>
+            <Text>7/16/2022</Text>
+          </VStack>
+        </Flex>
+      }
+      isOpen={!hasAcceptedTerms}
+      modalBodyProps={{ maxHeight: '60vh' }}
+      modalHeaderProps={{ alignSelf: 'center', width: '100%' }}
+      modalProps={{ size: '6xl' }}
+      onClose={accept}
+    />
   );
 };
 

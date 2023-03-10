@@ -1,18 +1,9 @@
-import {
-  Button,
-  Divider,
-  Input,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, Input, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -67,12 +58,8 @@ const TransferOwnershipModal = ({
   };
 
   return (
-    <Modal isCentered isOpen={isOpen} motionPreset="slideInBottom" onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Transfer Ownership</ModalHeader>
-        <ModalCloseButton top={4} />
-        <Divider />
+    <MidasModal
+      body={
         <VStack m={4}>
           <Center px={4} width="100%">
             <Input
@@ -89,8 +76,11 @@ const TransferOwnershipModal = ({
             Transfer Ownership
           </Button>
         </VStack>
-      </ModalContent>
-    </Modal>
+      }
+      header="Transfer Ownership"
+      isOpen={isOpen}
+      onClose={onClose}
+    />
   );
 };
 
