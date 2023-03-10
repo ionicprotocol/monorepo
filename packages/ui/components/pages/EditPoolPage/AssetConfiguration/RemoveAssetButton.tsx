@@ -3,7 +3,7 @@ import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/typ
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
+import ConfirmDeleteModal from '@ui/components/shared/ConfirmDeleteModal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
@@ -82,7 +82,7 @@ const RemoveAssetButton = ({
       <Button isDisabled={!isEditableAdmin} isLoading={isRemoving} ml={2} onClick={onOpen}>
         Remove {asset.underlyingSymbol}
       </Button>
-      <ConfirmDeleteAlert
+      <ConfirmDeleteModal
         description="You can't undo this action afterwards"
         isOpen={isOpen}
         onClose={onClose}
