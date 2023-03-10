@@ -3,16 +3,10 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   HStack,
   Input,
   InputGroup,
   InputRightElement,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -20,6 +14,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheel } from '@ui/hooks/rewards/useFlywheel';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -122,17 +117,16 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
 
 const AddFlywheelModal = ({ isOpen, onClose, ...rest }: AddFlywheelModalProps) => {
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Add Existing Flywheel</ModalHeader>
-        <ModalCloseButton top={4} />
-        <Divider />
+    <MidasModal
+      body={
         <Center p={4}>
           <AddFlywheel {...rest} onSuccess={onClose} />
         </Center>
-      </ModalContent>
-    </Modal>
+      }
+      header="Add Existing Flywheel"
+      isOpen={isOpen}
+      onClose={onClose}
+    />
   );
 };
 

@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -25,6 +14,7 @@ import { RepayError } from '@ui/components/pages/PoolPage/MarketsList/Additional
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { REPAY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -281,12 +271,88 @@ export const RepayModal = ({
   }, [optionToWrap, asset.underlyingSymbol]);
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isCentered
+    <MidasModal
+      body={
+        <Column
+          bg={cCard.bgColor}
+          borderRadius={16}
+          color={cCard.txtColor}
+          crossAxisAlignment="flex-start"
+          id="fundOperationModal"
+          mainAxisAlignment="flex-start"
+        >
+          {isConfirmed ? (
+            <PendingTransaction
+              activeStep={activeStep}
+              amount={amount}
+              asset={asset}
+              failedStep={failedStep}
+              isRepaying={isRepaying}
+              poolChainId={poolChainId}
+              steps={confirmedSteps}
+            />
+          ) : (
+            <>
+              <HStack justifyContent="center" my={4} width="100%">
+                <Text variant="title">Repay</Text>
+                <Box height="36px" mx={2} width="36px">
+                  <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                </Box>
+                <EllipsisText
+                  maxWidth="100px"
+                  tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                  variant="title"
+                >
+                  {tokenData?.symbol || asset.underlyingSymbol}
+                </EllipsisText>
+              </HStack>
+
+              <Divider />
+              <Column
+                crossAxisAlignment="center"
+                gap={4}
+                height="100%"
+                mainAxisAlignment="flex-start"
+                p={4}
+                width="100%"
+              >
+                <Column gap={1} width="100%">
+                  <AmountInput
+                    asset={asset}
+                    comptrollerAddress={comptrollerAddress}
+                    optionToWrap={optionToWrap}
+                    poolChainId={poolChainId}
+                    setAmount={setAmount}
+                  />
+
+                  <Balance asset={asset} />
+                </Column>
+
+                <StatsColumn
+                  amount={amount}
+                  asset={asset}
+                  assets={assets}
+                  comptrollerAddress={comptrollerAddress}
+                  mode={FundOperationMode.REPAY}
+                  poolChainId={poolChainId}
+                />
+
+                <Button
+                  height={16}
+                  id="confirmFund"
+                  isDisabled={!isAmountValid}
+                  onClick={onConfirm}
+                  width="100%"
+                >
+                  {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
+                </Button>
+              </Column>
+            </>
+          )}
+        </Column>
+      }
       isOpen={isOpen}
-      motionPreset="slideInBottom"
+      modalCloseButtonProps={{ hidden: isRepaying }}
       onClose={() => {
         onClose();
         if (!isRepaying) {
@@ -300,90 +366,6 @@ export const RepayModal = ({
             : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
         }
       }}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={0}>
-          <Column
-            bg={cCard.bgColor}
-            borderRadius={16}
-            color={cCard.txtColor}
-            crossAxisAlignment="flex-start"
-            id="fundOperationModal"
-            mainAxisAlignment="flex-start"
-          >
-            {!isRepaying && <ModalCloseButton right={4} top={4} />}
-            {isConfirmed ? (
-              <PendingTransaction
-                activeStep={activeStep}
-                amount={amount}
-                asset={asset}
-                failedStep={failedStep}
-                isRepaying={isRepaying}
-                poolChainId={poolChainId}
-                steps={confirmedSteps}
-              />
-            ) : (
-              <>
-                <HStack justifyContent="center" my={4} width="100%">
-                  <Text variant="title">Repay</Text>
-                  <Box height="36px" mx={2} width="36px">
-                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
-                  </Box>
-                  <EllipsisText
-                    maxWidth="100px"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
-                    variant="title"
-                  >
-                    {tokenData?.symbol || asset.underlyingSymbol}
-                  </EllipsisText>
-                </HStack>
-
-                <Divider />
-                <Column
-                  crossAxisAlignment="center"
-                  gap={4}
-                  height="100%"
-                  mainAxisAlignment="flex-start"
-                  p={4}
-                  width="100%"
-                >
-                  <Column gap={1} width="100%">
-                    <AmountInput
-                      asset={asset}
-                      comptrollerAddress={comptrollerAddress}
-                      optionToWrap={optionToWrap}
-                      poolChainId={poolChainId}
-                      setAmount={setAmount}
-                    />
-
-                    <Balance asset={asset} />
-                  </Column>
-
-                  <StatsColumn
-                    amount={amount}
-                    asset={asset}
-                    assets={assets}
-                    comptrollerAddress={comptrollerAddress}
-                    mode={FundOperationMode.REPAY}
-                    poolChainId={poolChainId}
-                  />
-
-                  <Button
-                    height={16}
-                    id="confirmFund"
-                    isDisabled={!isAmountValid}
-                    onClick={onConfirm}
-                    width="100%"
-                  >
-                    {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
-                  </Button>
-                </Column>
-              </>
-            )}
-          </Column>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    />
   );
 };
