@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Img,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { SupportedAsset } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
@@ -22,6 +9,7 @@ import { useSwitchNetwork } from 'wagmi';
 
 import { PendingTransaction } from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal/PendingTransaction';
 import { Center } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -263,28 +251,8 @@ const ClaimRewardsModal = ({
   );
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen={isOpen}
-      motionPreset="slideInBottom"
-      onClose={() => {
-        onClose();
-
-        if (claimingRewardTokens.length === 0) {
-          setIsConfirmed(false);
-          setSteps([]);
-        }
-      }}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          <Text variant="title">Claim Rewards</Text>
-        </ModalHeader>
-        {claimingRewardTokens.length === 0 && <ModalCloseButton right={4} top={4} />}
-        <Divider />
+    <MidasModal
+      body={
         <VStack m={4} maxHeight="450px" overflowY="auto">
           {Object.values(claimableRewards).length === 0 ? (
             <Center>
@@ -346,8 +314,19 @@ const ClaimRewardsModal = ({
             />
           ) : null}
         </VStack>
-      </ModalContent>
-    </Modal>
+      }
+      header="Claim Rewards"
+      isOpen={isOpen}
+      modalCloseButtonProps={{ hidden: claimingRewardTokens.length !== 0, right: 4, top: 4 }}
+      onClose={() => {
+        onClose();
+
+        if (claimingRewardTokens.length === 0) {
+          setIsConfirmed(false);
+          setSteps([]);
+        }
+      }}
+    />
   );
 };
 

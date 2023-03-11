@@ -6,11 +6,6 @@ import {
   Image,
   InputGroup,
   InputRightAddon,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   NumberInput,
   NumberInputField,
   Select,
@@ -32,6 +27,7 @@ import DatePicker from 'react-datepicker';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheelEnabledMarkets } from '@ui/hooks/rewards/useFlywheelEnabledMarkets';
@@ -235,218 +231,216 @@ const EditFlywheelModal = ({
   );
 
   return (
-    <Modal isCentered isOpen={isOpen} motionPreset="slideInBottom" onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Edit Flywheel</ModalHeader>
-        <ModalCloseButton top={4} />
-        <Divider />
-
-        <VStack alignItems={'flex-start'} p={4}>
-          {tokenData?.logoURL ? (
-            <Image
-              alignSelf={'center'}
-              alt={tokenData.symbol}
-              backgroundImage={`url(${SmallWhiteCircle})`}
-              backgroundSize="100% auto"
-              borderRadius="50%"
-              boxSize="50px"
-              mt={4}
-              src={tokenData.logoURL}
-            />
-          ) : (
-            <Skeleton alignSelf={'center'} height="50px" width="50px"></Skeleton>
-          )}
-          <StatGroup width="100%">
-            <Stat>
-              <StatLabel>Reward Token</StatLabel>
-              {tokenData ? (
-                <StatNumber title={tokenData.name}>{tokenData.symbol}</StatNumber>
-              ) : (
-                <Skeleton>
-                  <StatNumber>Token Name</StatNumber>
-                </Skeleton>
-              )}
-
-              <ClipboardValue
-                component={StatHelpText}
-                label={shortAddress(flywheel.rewardToken)}
-                value={flywheel.rewardToken}
+    <MidasModal
+      body={
+        <>
+          <VStack alignItems={'flex-start'} p={4}>
+            {tokenData?.logoURL ? (
+              <Image
+                alignSelf={'center'}
+                alt={tokenData.symbol}
+                backgroundImage={`url(${SmallWhiteCircle})`}
+                backgroundSize="100% auto"
+                borderRadius="50%"
+                boxSize="50px"
+                mt={4}
+                src={tokenData.logoURL}
               />
-            </Stat>
+            ) : (
+              <Skeleton alignSelf={'center'} height="50px" width="50px"></Skeleton>
+            )}
+            <StatGroup width="100%">
+              <Stat>
+                <StatLabel>Reward Token</StatLabel>
+                {tokenData ? (
+                  <StatNumber title={tokenData.name}>{tokenData.symbol}</StatNumber>
+                ) : (
+                  <Skeleton>
+                    <StatNumber>Token Name</StatNumber>
+                  </Skeleton>
+                )}
 
-            <Stat>
-              <StatLabel>Rewards Contract</StatLabel>
-              {flywheelRewardsBalance && tokenData ? (
-                <StatNumber title={formatUnits(flywheelRewardsBalance, tokenData.decimals)}>
-                  {formatUnits(flywheelRewardsBalance, tokenData.decimals)}
-                </StatNumber>
-              ) : (
-                <Skeleton>
-                  <StatNumber>0.0000</StatNumber>
-                </Skeleton>
-              )}
-              <ClipboardValue
-                component={StatHelpText}
-                label={shortAddress(flywheel.rewards)}
-                value={flywheel.rewards}
-              />
-            </Stat>
-          </StatGroup>
-        </VStack>
-        <Divider />
+                <ClipboardValue
+                  component={StatHelpText}
+                  label={shortAddress(flywheel.rewardToken)}
+                  value={flywheel.rewardToken}
+                />
+              </Stat>
 
-        {/* Funding */}
-        <VStack alignItems="flex-start">
-          <VStack alignItems={'flex-start'} p={4} width="100%">
-            <Heading fontSize={'xl'} mb={2}>
-              Fund Flywheel Rewards Contract
-            </Heading>
-            <VStack>
-              <HStack width={'100%'}>
-                <InputGroup flex={1} variant="outlineRightAddon">
-                  <NumberInput
-                    flex={1}
-                    min={0}
-                    onChange={(valueString: string) => {
-                      setTransactionPendingAmount(parseFloat(valueString));
-                    }}
-                  >
-                    <NumberInputField
-                      borderBottomRightRadius={0}
-                      borderTopRightRadius={0}
-                      placeholder={'0.00'}
-                    />
-                  </NumberInput>
-                  <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
-                </InputGroup>
-                <Button
-                  disabled={
-                    isTransactionPending ||
-                    (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
-                    fundingAmount === 0 ||
-                    isNaN(fundingAmount) ||
-                    fundingAmount < 0
-                  }
-                  ml={4}
-                  onClick={fund}
-                  width="15%"
-                >
-                  {isTransactionPending ? <Spinner /> : 'Send'}
-                </Button>
-              </HStack>
-            </VStack>
-            <Text fontSize="md" mt={2}>
-              Your balance:{' '}
-              {myBalance ? Number(utils.formatUnits(myBalance, rewardTokenDecimal)).toFixed(4) : 0}{' '}
-              {tokenData?.symbol}
-            </Text>
+              <Stat>
+                <StatLabel>Rewards Contract</StatLabel>
+                {flywheelRewardsBalance && tokenData ? (
+                  <StatNumber title={formatUnits(flywheelRewardsBalance, tokenData.decimals)}>
+                    {formatUnits(flywheelRewardsBalance, tokenData.decimals)}
+                  </StatNumber>
+                ) : (
+                  <Skeleton>
+                    <StatNumber>0.0000</StatNumber>
+                  </Skeleton>
+                )}
+                <ClipboardValue
+                  component={StatHelpText}
+                  label={shortAddress(flywheel.rewards)}
+                  value={flywheel.rewards}
+                />
+              </Stat>
+            </StatGroup>
           </VStack>
           <Divider />
 
-          {/* Rewards */}
-          {pool.assets.length ? (
-            <VStack alignItems="flex-start" p={4} width="100%">
+          {/* Funding */}
+          <VStack alignItems="flex-start">
+            <VStack alignItems={'flex-start'} p={4} width="100%">
               <Heading fontSize={'xl'} mb={2}>
-                Set Speed and End Time for Market Suppliers
+                Fund Flywheel Rewards Contract
               </Heading>
-              <Select
-                onChange={(e) => {
-                  const assetIndex = parseInt(e.target.value);
-                  selectMarket(pool.assets[assetIndex]);
-                  setDateEditable(false);
-                  setSpeedEditable(false);
-                }}
-              >
-                {pool.assets.map((asset, index) => (
-                  <option key={index} value={index}>
-                    {`${asset.underlyingSymbol} ${
-                      enabledMarkets?.includes(asset.cToken) ? '(enabled)' : ''
-                    }`}
-                  </option>
-                ))}
-              </Select>
-
-              {selectedMarket &&
-                enabledMarkets &&
-                !enabledMarkets.includes(selectedMarket.cToken) && (
-                  <Center p={4} width={'100%'}>
-                    <Button
-                      disabled={isTransactionPending}
-                      ml={2}
-                      onClick={enableForRewards(selectedMarket.cToken)}
-                      width="100%"
+              <VStack>
+                <HStack width={'100%'}>
+                  <InputGroup flex={1} variant="outlineRightAddon">
+                    <NumberInput
+                      flex={1}
+                      min={0}
+                      onChange={(valueString: string) => {
+                        setTransactionPendingAmount(parseFloat(valueString));
+                      }}
                     >
-                      {isTransactionPending ? (
-                        <Spinner />
-                      ) : (
-                        `Enable ${selectedMarket?.underlyingSymbol} for Rewards`
-                      )}
-                    </Button>
-                  </Center>
-                )}
-              {rewardsInfo && rewardsInfo?.enabled && (
-                <>
-                  <VStack alignItems="flex-start" width="100%">
-                    <Heading fontSize={'lg'} mt={4}>
-                      Current Speed
-                    </Heading>
-                    <HStack width="100%">
-                      <InputGroup variant="outlineRightAddon">
-                        <NumberInput
-                          flex={1}
-                          isReadOnly={!isSpeedEditable}
-                          min={0}
-                          onChange={(newSupplySpeed: string) => {
-                            setSupplySpeed(newSupplySpeed);
-                          }}
-                          step={0.1}
-                          value={supplySpeed}
-                        >
-                          <NumberInputField
-                            borderBottomRightRadius={0}
-                            borderTopRightRadius={0}
-                            disabled={!isSpeedEditable}
-                            placeholder={'0.00'}
-                          />
-                        </NumberInput>
-                        <InputRightAddon>{`${tokenData?.symbol} / sec`}</InputRightAddon>
-                      </InputGroup>
-                      <Button
-                        hidden={isSpeedEditable}
-                        ml={2}
-                        onClick={() => setSpeedEditable(true)}
-                        width="15%"
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        disabled={isTransactionPending || rewardsSpeed === Number(supplySpeed)}
-                        hidden={!isSpeedEditable}
-                        ml={2}
-                        onClick={updateRewardInfo}
-                      >
-                        {isTransactionPending ? <Spinner /> : 'Save'}
-                      </Button>
+                      <NumberInputField
+                        borderBottomRightRadius={0}
+                        borderTopRightRadius={0}
+                        placeholder={'0.00'}
+                      />
+                    </NumberInput>
+                    <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
+                  </InputGroup>
+                  <Button
+                    disabled={
+                      isTransactionPending ||
+                      (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
+                      fundingAmount === 0 ||
+                      isNaN(fundingAmount) ||
+                      fundingAmount < 0
+                    }
+                    ml={4}
+                    onClick={fund}
+                    width="15%"
+                  >
+                    {isTransactionPending ? <Spinner /> : 'Send'}
+                  </Button>
+                </HStack>
+              </VStack>
+              <Text fontSize="md" mt={2}>
+                Your balance:{' '}
+                {myBalance
+                  ? Number(utils.formatUnits(myBalance, rewardTokenDecimal)).toFixed(4)
+                  : 0}{' '}
+                {tokenData?.symbol}
+              </Text>
+            </VStack>
+            <Divider />
+
+            {/* Rewards */}
+            {pool.assets.length ? (
+              <VStack alignItems="flex-start" p={4} width="100%">
+                <Heading fontSize={'xl'} mb={2}>
+                  Set Speed and End Time for Market Suppliers
+                </Heading>
+                <Select
+                  onChange={(e) => {
+                    const assetIndex = parseInt(e.target.value);
+                    selectMarket(pool.assets[assetIndex]);
+                    setDateEditable(false);
+                    setSpeedEditable(false);
+                  }}
+                >
+                  {pool.assets.map((asset, index) => (
+                    <option key={index} value={index}>
+                      {`${asset.underlyingSymbol} ${
+                        enabledMarkets?.includes(asset.cToken) ? '(enabled)' : ''
+                      }`}
+                    </option>
+                  ))}
+                </Select>
+
+                {selectedMarket &&
+                  enabledMarkets &&
+                  !enabledMarkets.includes(selectedMarket.cToken) && (
+                    <Center p={4} width={'100%'}>
                       <Button
                         disabled={isTransactionPending}
-                        hidden={!isSpeedEditable}
                         ml={2}
-                        onClick={() => setSpeedEditable(false)}
-                        variant="silver"
+                        onClick={enableForRewards(selectedMarket.cToken)}
+                        width="100%"
                       >
-                        Cancel
+                        {isTransactionPending ? (
+                          <Spinner />
+                        ) : (
+                          `Enable ${selectedMarket?.underlyingSymbol} for Rewards`
+                        )}
                       </Button>
-                    </HStack>
-                  </VStack>
+                    </Center>
+                  )}
+                {rewardsInfo && rewardsInfo?.enabled && (
+                  <>
+                    <VStack alignItems="flex-start" width="100%">
+                      <Heading fontSize={'lg'} mt={4}>
+                        Current Speed
+                      </Heading>
+                      <HStack width="100%">
+                        <InputGroup variant="outlineRightAddon">
+                          <NumberInput
+                            flex={1}
+                            isReadOnly={!isSpeedEditable}
+                            min={0}
+                            onChange={(newSupplySpeed: string) => {
+                              setSupplySpeed(newSupplySpeed);
+                            }}
+                            step={0.1}
+                            value={supplySpeed}
+                          >
+                            <NumberInputField
+                              borderBottomRightRadius={0}
+                              borderTopRightRadius={0}
+                              disabled={!isSpeedEditable}
+                              placeholder={'0.00'}
+                            />
+                          </NumberInput>
+                          <InputRightAddon>{`${tokenData?.symbol} / sec`}</InputRightAddon>
+                        </InputGroup>
+                        <Button
+                          hidden={isSpeedEditable}
+                          ml={2}
+                          onClick={() => setSpeedEditable(true)}
+                          width="15%"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          disabled={isTransactionPending || rewardsSpeed === Number(supplySpeed)}
+                          hidden={!isSpeedEditable}
+                          ml={2}
+                          onClick={updateRewardInfo}
+                        >
+                          {isTransactionPending ? <Spinner /> : 'Save'}
+                        </Button>
+                        <Button
+                          disabled={isTransactionPending}
+                          hidden={!isSpeedEditable}
+                          ml={2}
+                          onClick={() => setSpeedEditable(false)}
+                          variant="silver"
+                        >
+                          Cancel
+                        </Button>
+                      </HStack>
+                    </VStack>
 
-                  <VStack alignItems="flex-start" width="100%">
-                    <Heading fontSize={'lg'} mt={4}>
-                      End Time
-                    </Heading>
-                    <HStack width="100%">
-                      <style>
-                        {`.react-datepicker__input-container input:focus-visible {
+                    <VStack alignItems="flex-start" width="100%">
+                      <Heading fontSize={'lg'} mt={4}>
+                        End Time
+                      </Heading>
+                      <HStack width="100%">
+                        <style>
+                          {`.react-datepicker__input-container input:focus-visible {
                         outline: none;
                       }
                       .react-datepicker__input-container input {
@@ -462,50 +456,54 @@ const EditFlywheelModal = ({
                         border: none;
                         cursor: auto;
                     }`}
-                      </style>
-                      {rewardsInfo?.rewardsEndTimestamp === 0 && !isDateEditable ? (
-                        <Text width={'100%'}>End Time/Date Has Not Yet Been Set</Text>
-                      ) : (
-                        <DatePicker
-                          dateFormat="MM/dd/yyyy h:mm aa"
-                          onChange={(date) => setEndDate(date)}
-                          readOnly={!isDateEditable}
-                          selected={endDate}
-                          showTimeInput
-                          timeInputLabel="Time:"
-                        />
-                      )}
-                      <Button
-                        disabled={isTransactionPending}
-                        hidden={isDateEditable}
-                        ml={2}
-                        onClick={() => setDateEditable(true)}
-                        width="15%"
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        disabled={isTransactionPending}
-                        hidden={!isDateEditable}
-                        ml={2}
-                        onClick={updateRewardInfo}
-                        width="15%"
-                      >
-                        {isTransactionPending ? <Spinner /> : 'Save'}
-                      </Button>
-                    </HStack>
-                  </VStack>
-                </>
-              )}
-            </VStack>
-          ) : (
-            <Center p={4}>
-              <Text fontWeight="bold">Add Assets to this pool to configure their rewards.</Text>
-            </Center>
-          )}
-        </VStack>
-      </ModalContent>
-    </Modal>
+                        </style>
+                        {rewardsInfo?.rewardsEndTimestamp === 0 && !isDateEditable ? (
+                          <Text width={'100%'}>End Time/Date Has Not Yet Been Set</Text>
+                        ) : (
+                          <DatePicker
+                            dateFormat="MM/dd/yyyy h:mm aa"
+                            onChange={(date) => setEndDate(date)}
+                            readOnly={!isDateEditable}
+                            selected={endDate}
+                            showTimeInput
+                            timeInputLabel="Time:"
+                          />
+                        )}
+                        <Button
+                          disabled={isTransactionPending}
+                          hidden={isDateEditable}
+                          ml={2}
+                          onClick={() => setDateEditable(true)}
+                          width="15%"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          disabled={isTransactionPending}
+                          hidden={!isDateEditable}
+                          ml={2}
+                          onClick={updateRewardInfo}
+                          width="15%"
+                        >
+                          {isTransactionPending ? <Spinner /> : 'Save'}
+                        </Button>
+                      </HStack>
+                    </VStack>
+                  </>
+                )}
+              </VStack>
+            ) : (
+              <Center p={4}>
+                <Text fontWeight="bold">Add Assets to this pool to configure their rewards.</Text>
+              </Center>
+            )}
+          </VStack>
+        </>
+      }
+      header="Edit Flywheel"
+      isOpen={isOpen}
+      onClose={onClose}
+    />
   );
 };
 
