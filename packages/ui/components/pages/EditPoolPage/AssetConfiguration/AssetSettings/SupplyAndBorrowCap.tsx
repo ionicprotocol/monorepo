@@ -27,6 +27,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { BORROW_CAP, DEFAULT_DECIMALS, SUPPLY_CAP } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -72,6 +73,8 @@ export const SupplyAndBorrowCaps = ({
       borrowCap: BORROW_CAP.DEFAULT,
     },
   });
+
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   const watchSupplyCap = Number(watch('supplyCap', SUPPLY_CAP.DEFAULT));
   const watchBorrowCap = Number(watch('borrowCap', BORROW_CAP.DEFAULT));
@@ -215,7 +218,7 @@ export const SupplyAndBorrowCaps = ({
                       <NumberInput
                         allowMouseWheel
                         clampValueOnBlur={false}
-                        isDisabled={isSubmitting}
+                        isDisabled={isSubmitting || !isEditableAdmin}
                         isReadOnly={!isEditSupplyCap}
                         min={SUPPLY_CAP.MIN}
                         onChange={onChange}
@@ -264,6 +267,7 @@ export const SupplyAndBorrowCaps = ({
               <Button
                 isDisabled={
                   isSubmitting ||
+                  !isEditableAdmin ||
                   !cTokenData ||
                   watchSupplyCap ===
                     parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS))
@@ -272,13 +276,20 @@ export const SupplyAndBorrowCaps = ({
               >
                 Save
               </Button>
-              <Button isDisabled={isSubmitting} onClick={setSupplyCapsDefault} variant="silver">
+              <Button
+                isDisabled={isSubmitting || !isEditableAdmin}
+                onClick={setSupplyCapsDefault}
+                variant="silver"
+              >
                 Cancel
               </Button>
             </ButtonGroup>
           ) : (
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
-              <CButton isDisabled={isSubmitting} onClick={() => setIsEditSupplyCap(true)}>
+              <CButton
+                isDisabled={isSubmitting || !isEditableAdmin}
+                onClick={() => setIsEditSupplyCap(true)}
+              >
                 Edit
               </CButton>
             </ButtonGroup>
@@ -322,7 +333,7 @@ export const SupplyAndBorrowCaps = ({
                       <NumberInput
                         allowMouseWheel
                         clampValueOnBlur={false}
-                        isDisabled={isSubmitting}
+                        isDisabled={isSubmitting || !isEditableAdmin}
                         isReadOnly={!isEditBorrowCap}
                         min={BORROW_CAP.MIN}
                         onChange={onChange}
@@ -371,6 +382,7 @@ export const SupplyAndBorrowCaps = ({
               <Button
                 isDisabled={
                   isSubmitting ||
+                  !isEditableAdmin ||
                   !cTokenData ||
                   watchBorrowCap ===
                     parseFloat(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS))
@@ -380,7 +392,7 @@ export const SupplyAndBorrowCaps = ({
                 Save
               </Button>
               <Button
-                isDisabled={isSubmitting}
+                isDisabled={isSubmitting || !isEditableAdmin}
                 onClick={setTotalBorrowCapsDefault}
                 variant="silver"
               >
@@ -389,7 +401,10 @@ export const SupplyAndBorrowCaps = ({
             </ButtonGroup>
           ) : (
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
-              <CButton isDisabled={isSubmitting} onClick={() => setIsEditBorrowCap(true)}>
+              <CButton
+                isDisabled={isSubmitting || !isEditableAdmin}
+                onClick={() => setIsEditBorrowCap(true)}
+              >
                 Edit
               </CButton>
             </ButtonGroup>
