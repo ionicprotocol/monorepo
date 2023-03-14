@@ -27,6 +27,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { BORROW_CAP, DEBT_CEILING, DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
@@ -83,6 +84,7 @@ export const DebtCeilings = ({
         assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken ?? assets[0].cToken,
     },
   });
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   const watchDebtCeiling = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
   const watchCollateralAsset = watch(
@@ -222,6 +224,7 @@ export const DebtCeilings = ({
                   required: 'collateralAsset is required',
                 })}
                 cursor="pointer"
+                isDisabled={!isEditableAdmin}
                 ml="auto"
                 mt={{ base: 2, sm: 0 }}
               >
@@ -257,6 +260,7 @@ export const DebtCeilings = ({
                 <NumberInput
                   allowMouseWheel
                   clampValueOnBlur={false}
+                  isDisabled={!isEditableAdmin}
                   isReadOnly={!isEditDebtCeiling || isSubmitting}
                   min={BORROW_CAP.MIN}
                   onChange={onChange}
@@ -315,19 +319,29 @@ export const DebtCeilings = ({
         {isEditDebtCeiling ? (
           <>
             <Button
-              isDisabled={isSubmitting || watchDebtCeiling === debtCeilingState?.debtCeiling}
+              isDisabled={
+                isSubmitting ||
+                !isEditableAdmin ||
+                watchDebtCeiling === debtCeilingState?.debtCeiling
+              }
               isLoading={isSubmitting}
               type="submit"
             >
               Save
             </Button>
-            <Button isDisabled={isSubmitting} onClick={setDebtCeilingsDefault} variant="silver">
+            <Button
+              isDisabled={isSubmitting || !isEditableAdmin}
+              onClick={setDebtCeilingsDefault}
+              variant="silver"
+            >
               Cancel
             </Button>
           </>
         ) : (
           <CButton
-            isDisabled={isSubmitting || selectedAsset.cToken === watchCollateralAsset}
+            isDisabled={
+              isSubmitting || !isEditableAdmin || selectedAsset.cToken === watchCollateralAsset
+            }
             onClick={() => setIsEditDebtCeiling(true)}
           >
             Edit

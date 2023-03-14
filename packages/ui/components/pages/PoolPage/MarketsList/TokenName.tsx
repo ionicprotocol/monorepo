@@ -58,6 +58,7 @@ export const TokenName = ({
             ) : null}
           </VStack>
         }
+        contentProps={{ maxWidth: '300px' }}
         popoverProps={{ placement: 'top-start' }}
       >
         <Center>
@@ -88,6 +89,7 @@ export const TokenName = ({
                 ) : null}
               </VStack>
             }
+            contentProps={{ maxWidth: '300px' }}
             popoverProps={{ placement: 'top-start' }}
           >
             <Text
