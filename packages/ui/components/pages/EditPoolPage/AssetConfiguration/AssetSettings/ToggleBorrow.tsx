@@ -9,6 +9,7 @@ import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -30,6 +31,7 @@ export const ToggleBorrow = ({
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   const toggleBorrowState = async () => {
     if (!cTokenAddress || !currentSdk) return;
@@ -88,7 +90,7 @@ export const ToggleBorrow = ({
                 className="switch-borrowing"
                 h="20px"
                 isChecked={!isPaused}
-                isDisabled={isUpdating}
+                isDisabled={isUpdating || !isEditableAdmin}
                 ml="auto"
                 onChange={toggleBorrowState}
               />
