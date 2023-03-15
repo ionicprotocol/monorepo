@@ -67,7 +67,6 @@ export class TestHelper {
     let browser: DappeteerBrowser;
     const options: DappeteerLaunchOptions = {
       metaMaskVersion: RECOMMENDED_METAMASK_VERSION,
-      browser: 'chrome',
     };
 
     try {
