@@ -2,6 +2,8 @@ import { providers } from "ethers";
 
 import { BalancerLpFnParams, BalancerRateProviderFnParams } from "../types";
 
+import { addUnderlyingsToMpo } from "./utils";
+
 export const deployBalancerLpPriceOracle = async ({
   ethers,
   getNamedAccounts,
@@ -70,6 +72,7 @@ export const deployBalancerLinearLpPriceOracle = async ({
 
   const blpOracle = await ethers.getContract("BalancerLpLinearPoolPriceOracle", deployer);
   const registeredUnderlyings = await blpOracle.getAllUnderlyings();
+
   for (const token of balancerLpAssets) {
     if (!registeredUnderlyings.includes(token.lpTokenAddress)) {
       const tx: providers.TransactionResponse = await blpOracle.registerToken(token.lpTokenAddress);
@@ -78,11 +81,7 @@ export const deployBalancerLinearLpPriceOracle = async ({
     }
   }
 
-  const oracles = Array(balancerLpAssets.length).fill(blpOracle.address);
-  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, blpOracle.address);
 };
 
 export const deployBalancerStableLpPriceOracle = async ({
@@ -124,11 +123,7 @@ export const deployBalancerStableLpPriceOracle = async ({
     }
   }
 
-  const oracles = Array(balancerLpAssets.length).fill(blpOracle.address);
-  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, blpOracle.address);
 };
 
 export const deployBalancerRateProviderPriceOracle = async ({
@@ -179,12 +174,5 @@ export const deployBalancerRateProviderPriceOracle = async ({
       );
     }
   }
-
-  const underlyings = balancerRateProviderAssets.map((d) => d.tokenAddress);
-  const oracles = Array(balancerRateProviderAssets.length).fill(brpo.address);
-
-  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, tokens, blpOracle.address);
 };

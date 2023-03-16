@@ -2,6 +2,8 @@ import { constants, providers } from "ethers";
 
 import { SaddleLpFnParams } from "../types";
 
+import { addUnderlyingsToMpo } from "./utils";
+
 export const deploySaddleLpOracle = async ({
   ethers,
   getNamedAccounts,
@@ -48,11 +50,6 @@ export const deploySaddleLpOracle = async ({
   }
 
   const underlyings = saddlePools.map((c) => c.lpToken);
-  const oracles = Array(saddlePools.length).fill(saddleLpOracle.address);
-
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
-  tx = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, saddleLpOracle.address);
 };
