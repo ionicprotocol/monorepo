@@ -199,8 +199,12 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     case RedemptionStrategyContract.CurveSwapLiquidator: {
-      const curveV1Oracle = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry ? fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address : constants.AddressZero;
-      const curveV2Oracle = fuse.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry ? fuse.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address : constants.AddressZero;
+      const curveV1Oracle = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry
+        ? fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address
+        : constants.AddressZero;
+      const curveV2Oracle = fuse.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry
+        ? fuse.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address
+        : constants.AddressZero;
 
       const strategyData = new ethers.utils.AbiCoder().encode(
         ["address", "address", "address", "address", "address"],
