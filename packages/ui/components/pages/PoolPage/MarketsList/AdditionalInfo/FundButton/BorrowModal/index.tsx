@@ -333,11 +333,9 @@ export const BorrowModal = ({
                     alertProps={{ status: 'info' }}
                     descriptions={[
                       {
-                        text: `${smallFormatter.format(borrowCaps.tokenCap)} ${
+                        text: `${smallFormatter(borrowCaps.tokenCap)} ${
                           asset.underlyingSymbol
-                        } / ${smallFormatter.format(borrowCaps.tokenCap)} ${
-                          asset.underlyingSymbol
-                        }`,
+                        } / ${smallFormatter(borrowCaps.tokenCap)} ${asset.underlyingSymbol}`,
                         textProps: { display: 'block', fontWeight: 'bold' },
                       },
                       {

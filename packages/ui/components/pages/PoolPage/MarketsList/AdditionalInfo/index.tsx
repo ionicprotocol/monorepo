@@ -52,7 +52,7 @@ import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { midUsdFormatter } from '@ui/utils/bigUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { deployedPlugins, getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 
 const UtilizationChart = dynamic(() => import('@ui/components/shared/UtilizationChart'), {
@@ -751,8 +751,8 @@ export const AdditionalInfo = ({
                 <CaptionedStat
                   caption={'Asset Supplied'}
                   crossAxisAlignment="center"
-                  secondStat={supplyCaps ? midUsdFormatter(supplyCaps.usdCap) : undefined}
-                  stat={midUsdFormatter(asset.totalSupplyFiat)}
+                  secondStat={supplyCaps ? smallUsdFormatter(supplyCaps.usdCap, true) : undefined}
+                  stat={smallUsdFormatter(asset.totalSupplyFiat, true)}
                   tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
                 />
                 <CaptionedStat
@@ -760,10 +760,10 @@ export const AdditionalInfo = ({
                   crossAxisAlignment="center"
                   secondStat={
                     !asset.isBorrowPaused && borrowCaps
-                      ? midUsdFormatter(borrowCaps.usdCap)
+                      ? smallUsdFormatter(borrowCaps.usdCap, true)
                       : undefined
                   }
-                  stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
+                  stat={asset.isBorrowPaused ? '-' : smallUsdFormatter(asset.totalBorrowFiat, true)}
                   tooltip={borrowCaps ? ASSET_BORROWED_TOOLTIP : undefined}
                 />
                 <CaptionedStat
