@@ -665,12 +665,13 @@ export const MarketsList = ({
                     color={cCard.txtColor}
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    px={{ base: 1, lg: 2 }}
+                    pl={header.column.id === MARKET_LTV ? '70px' : { base: 1, lg: 2 }}
+                    pr={{ base: 1, lg: 2 }}
                     py={4}
                     textTransform="capitalize"
                   >
                     <HStack
-                      justifyContent={header.column.id === MARKET_LTV ? 'center' : 'flex-end'}
+                      justifyContent={header.column.id === MARKET_LTV ? 'flex-start' : 'flex-end'}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </HStack>
