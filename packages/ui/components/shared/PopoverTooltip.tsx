@@ -52,7 +52,7 @@ export const PopoverTooltip = ({
         <PopoverTrigger>{children}</PopoverTrigger>
         {header || body || footer ? (
           <PopoverContent
-            maxWidth={{ base: '300px', sm: '400px', md: '500px' }}
+            maxWidth={{ base: '300px', sm: '400px', md: '450px' }}
             onClick={(e) => e.stopPropagation()}
             overflowX="auto"
             style={{ cursor: 'default' }}
