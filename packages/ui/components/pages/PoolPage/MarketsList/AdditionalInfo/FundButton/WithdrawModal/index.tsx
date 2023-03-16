@@ -1,20 +1,8 @@
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
-import LogRocket from 'logrocket';
 import { useEffect, useState } from 'react';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
@@ -24,16 +12,17 @@ import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/Ad
 import { WithdrawError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/WithdrawModal/WithdrawError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { WITHDRAW_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -67,39 +56,19 @@ export const WithdrawModal = ({
   const [steps, setSteps] = useState<TxStep[]>([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
+  const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
   const successToast = useSuccessToast();
+  const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(asset, poolChainId);
 
-  const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidWithdrawAmount', amount, currentSdk.chainId, address, asset.cToken],
-    async () => {
-      if (!currentSdk || !address) return null;
-
-      if (amount.isZero()) {
-        return false;
-      }
-
-      try {
-        const max = (await fetchMaxAmount(
-          FundOperationMode.WITHDRAW,
-          currentSdk,
-          address,
-          asset
-        )) as BigNumber;
-
-        return amount.lte(max);
-      } catch (e) {
-        handleGenericError(e, errorToast);
-        return false;
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!currentSdk && !!address,
+  useEffect(() => {
+    if (amount.isZero() || !maxWithdrawAmount) {
+      setIsAmountValid(false);
+    } else {
+      setIsAmountValid(amount.lte(maxWithdrawAmount));
     }
-  );
+  }, [amount, maxWithdrawAmount]);
 
   useEffect(() => {
     if (amount.isZero()) {
@@ -107,16 +76,16 @@ export const WithdrawModal = ({
     } else if (isLoading) {
       setBtnStr(`Loading available balance of ${asset.underlyingSymbol}...`);
     } else {
-      if (amountIsValid) {
+      if (isAmountValid) {
         setBtnStr('Withdraw');
       } else {
         setBtnStr(`You cannot withdraw this much!`);
       }
     }
-  }, [amount, isLoading, amountIsValid, asset.underlyingSymbol]);
+  }, [amount, isLoading, isAmountValid, asset.underlyingSymbol]);
 
   const onConfirm = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !maxWithdrawAmount) return;
 
     setIsConfirmed(true);
     const _steps = [...steps];
@@ -126,14 +95,8 @@ export const WithdrawModal = ({
       setActiveStep(1);
       setFailedStep(0);
 
-      const maxAmount = await fetchMaxAmount(
-        FundOperationMode.WITHDRAW,
-        currentSdk,
-        address,
-        asset
-      );
       let resp;
-      if (maxAmount.eq(amount)) {
+      if (maxWithdrawAmount.eq(amount)) {
         resp = await currentSdk.withdraw(asset.cToken, constants.MaxUint256);
       } else {
         resp = await currentSdk.withdraw(asset.cToken, amount);
@@ -163,24 +126,105 @@ export const WithdrawModal = ({
         };
         setSteps([..._steps]);
         successToast({
-          id: 'Borrow',
-          description: 'Successfully borrowed!',
+          id: 'Withdraw',
+          description: 'Successfully withdrew!',
         });
       }
-
-      LogRocket.track('Fuse-Withdraw');
-    } catch (e) {
+    } catch (error) {
       setFailedStep(1);
-      handleGenericError(e, errorToast);
+
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
+        amount,
+      };
+      const sentryInfo = {
+        contextName: 'Withdrawing',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsWithdrawing(false);
     }
   };
 
   return (
-    <Modal
-      motionPreset="slideInBottom"
+    <MidasModal
+      body={
+        <Column
+          bg={cCard.bgColor}
+          borderRadius={16}
+          color={cCard.txtColor}
+          crossAxisAlignment="flex-start"
+          id="fundOperationModal"
+          mainAxisAlignment="flex-start"
+        >
+          {isConfirmed ? (
+            <PendingTransaction
+              activeStep={activeStep}
+              amount={amount}
+              asset={asset}
+              failedStep={failedStep}
+              isWithdrawing={isWithdrawing}
+              poolChainId={poolChainId}
+              steps={steps}
+            />
+          ) : (
+            <>
+              <HStack justifyContent="center" my={4} width="100%">
+                <Text variant="title">Withdraw</Text>
+                <Box height="36px" mx={2} width="36px">
+                  <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                </Box>
+                <EllipsisText
+                  maxWidth="100px"
+                  tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                  variant="title"
+                >
+                  {tokenData?.symbol || asset.underlyingSymbol}
+                </EllipsisText>
+              </HStack>
+
+              <Divider />
+              <Column
+                crossAxisAlignment="center"
+                gap={4}
+                height="100%"
+                mainAxisAlignment="flex-start"
+                p={4}
+                width="100%"
+              >
+                <Column gap={1} width="100%">
+                  <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
+
+                  <Balance asset={asset} poolChainId={poolChainId} />
+                </Column>
+
+                <StatsColumn
+                  amount={amount}
+                  asset={asset}
+                  assets={assets}
+                  comptrollerAddress={comptrollerAddress}
+                  mode={FundOperationMode.WITHDRAW}
+                  poolChainId={poolChainId}
+                />
+                <Button
+                  height={16}
+                  id="confirmWithdraw"
+                  isDisabled={!isAmountValid}
+                  onClick={onConfirm}
+                  width="100%"
+                >
+                  {btnStr}
+                </Button>
+              </Column>
+            </>
+          )}
+        </Column>
+      }
       isOpen={isOpen}
+      modalCloseButtonProps={{ hidden: isWithdrawing }}
       onClose={() => {
         onClose();
         if (!isWithdrawing) {
@@ -189,86 +233,6 @@ export const WithdrawModal = ({
           setSteps([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
         }
       }}
-      isCentered
-      closeOnOverlayClick={false}
-      closeOnEsc={false}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={0}>
-          <Column
-            id="fundOperationModal"
-            mainAxisAlignment="flex-start"
-            crossAxisAlignment="flex-start"
-            bg={cCard.bgColor}
-            color={cCard.txtColor}
-            borderRadius={16}
-          >
-            {!isWithdrawing && <ModalCloseButton top={4} right={4} />}
-            {isConfirmed ? (
-              <PendingTransaction
-                activeStep={activeStep}
-                failedStep={failedStep}
-                steps={steps}
-                isWithdrawing={isWithdrawing}
-                poolChainId={poolChainId}
-                amount={amount}
-                asset={asset}
-              />
-            ) : (
-              <>
-                <HStack width="100%" my={4} justifyContent="center">
-                  <Text variant="title">Withdraw</Text>
-                  <Box height="36px" width="36px" mx={2}>
-                    <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
-                  </Box>
-                  <EllipsisText
-                    variant="title"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
-                    maxWidth="100px"
-                  >
-                    {tokenData?.symbol || asset.underlyingSymbol}
-                  </EllipsisText>
-                </HStack>
-
-                <Divider />
-                <Column
-                  mainAxisAlignment="flex-start"
-                  crossAxisAlignment="center"
-                  p={4}
-                  gap={4}
-                  height="100%"
-                  width="100%"
-                >
-                  <Column gap={1} width="100%">
-                    <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
-
-                    <Balance asset={asset} />
-                  </Column>
-
-                  <StatsColumn
-                    mode={FundOperationMode.WITHDRAW}
-                    amount={amount}
-                    assets={assets}
-                    asset={asset}
-                    poolChainId={poolChainId}
-                    comptrollerAddress={comptrollerAddress}
-                  />
-                  <Button
-                    id="confirmWithdraw"
-                    width="100%"
-                    onClick={onConfirm}
-                    isDisabled={!amountIsValid}
-                    height={16}
-                  >
-                    {btnStr}
-                  </Button>
-                </Column>
-              </>
-            )}
-          </Column>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    />
   );
 };

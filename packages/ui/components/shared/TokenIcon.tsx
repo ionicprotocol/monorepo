@@ -1,32 +1,11 @@
 import { Avatar, AvatarProps } from '@chakra-ui/avatar';
 import { SpinnerIcon } from '@chakra-ui/icons';
-import { Icon, IconProps, useColorModeValue } from '@chakra-ui/react';
+import { Icon, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { RiCheckboxBlankCircleFill } from 'react-icons/ri';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTokenData } from '@ui/hooks/useTokenData';
-
-type PlaceholderIconProps = IconProps;
-
-const PlaceholderIcon = ({ color, ...restOfProps }: PlaceholderIconProps) => {
-  return (
-    <Icon
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...restOfProps}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
-    </Icon>
-  );
-};
 
 interface TokenIconProps extends AvatarProps {
   address: string;
@@ -41,22 +20,28 @@ export const TokenIcon = ({
   withMotion = true,
   ...avatarProps
 }: TokenIconProps) => {
-  const iconColor = useColorModeValue('#333', '#ddd');
+  const iconColor = useColorModeValue('#A0AEC0', '#4A5568');
   const { data: tokenData, isLoading } = useTokenData(address, chainId);
 
   return (
     <motion.div whileHover={withMotion ? { scale: 1.2 } : undefined}>
-      <SimpleTooltip label={tokenData?.symbol || address} isDisabled={!withTooltip}>
+      <SimpleTooltip isDisabled={!withTooltip} label={tokenData?.symbol || address}>
         <Avatar
-          name={isLoading ? undefined : tokenData?.name ? tokenData.name : address}
+          borderRadius={0}
           icon={
             isLoading ? (
               <SpinnerIcon boxSize={'85%'} color={iconColor} opacity={0.3} />
-            ) : (
-              <PlaceholderIcon boxSize={'100%'} color={iconColor} />
-            )
+            ) : !tokenData?.logoURL ? (
+              <Icon as={RiCheckboxBlankCircleFill} boxSize="120%" color={iconColor} size="120%" />
+            ) : undefined
           }
-          borderRadius={0}
+          name={
+            isLoading || !tokenData?.logoURL
+              ? undefined
+              : tokenData?.name
+              ? tokenData.name
+              : address
+          }
           src={tokenData?.logoURL}
           {...avatarProps}
         />

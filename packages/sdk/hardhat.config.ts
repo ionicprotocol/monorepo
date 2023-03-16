@@ -173,6 +173,11 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 250,
     },
+    basegoerli: {
+      url: OVERRIDE_RPC_URL || `https://goerli.base.org`,
+      accounts: { mnemonic },
+      chainId: 84531,
+    },
   },
 };
 

@@ -7,9 +7,6 @@ import {
   FlexProps,
   HStack,
   Link,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Spinner,
   Text,
   VStack,
@@ -20,6 +17,7 @@ import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   FEATURE_REQUESTS_URL,
@@ -38,7 +36,7 @@ const MotionFlex = motion<FlexProps>(Flex);
 const MidasHero = () => {
   const { data: tvlData, isLoading } = useTVL();
   const router = useRouter();
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading, address } = useMultiMidas();
 
   const totalTVL = useMemo(() => {
     if (tvlData) {
@@ -49,71 +47,83 @@ const MidasHero = () => {
 
   return (
     <Flex
-      id="stats-bar"
-      marginRight="auto"
-      marginLeft="auto"
-      flexDir={{ base: 'column', lg: 'row' }}
       alignItems="flex-end"
+      flexDir={{ base: 'column', lg: 'row' }}
+      gridGap="1.5rem"
+      id="stats-bar"
       justifyContent="center"
+      marginLeft="auto"
+      marginRight="auto"
+      pb={{ base: 3, md: 3 }}
       pt={{ base: '72px', md: '0px' }}
-      pb={{ base: 6, md: 6 }}
       px={{ base: 0, lg: 0 }}
       w="100%"
-      gridGap="1.5rem"
     >
       <Flex
         flexDir="column"
-        w={{ base: '100%' }}
         fontSize="sm"
         marginRight={{ base: '0px', lg: '84.5px' }}
+        w={{ base: '100%' }}
       >
-        <Text size="2xl" fontWeight="bold">
+        <Text fontWeight="bold" size="2xl">
           Unleash the Power of Your Assets
         </Text>
-        <Text size="md" mt={4} mb={8} lineHeight={8}>
+        <Text lineHeight={8} mb={8} mt={4} size="md">
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
         </Text>
 
         <HStack
-          gap={[6, 6, 0]}
           alignContent="center"
+          flexWrap="wrap"
+          gap={[6, 6, 0]}
           justifyContent={['center', 'center', 'flex-start']}
           width={'100%'}
-          flexWrap="wrap"
         >
-          <HStack spacing={{ base: 2, md: 4, xl: 6 }} px={4}>
-            <Link href={MIDAS_DOCS_URL} isExternal>
-              <SimpleTooltip label="Documentation">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <SiGitbook fontSize={30} color={cPage.primary.borderColor} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_DISCORD_URL} isExternal>
-              <SimpleTooltip label="Discord">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaDiscord fontSize={28} color={cPage.primary.borderColor} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_TELEGRAM_URL} isExternal>
-              <SimpleTooltip label="Telegram">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaTelegram fontSize={24} color={cPage.primary.borderColor} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-            <Link href={MIDAS_TWITTER_URL} isExternal>
-              <SimpleTooltip label="Twitter">
-                <motion.div whileHover={{ scale: 1.2 }}>
-                  <FaTwitter fontSize={24} color={cPage.primary.borderColor} />
-                </motion.div>
-              </SimpleTooltip>
-            </Link>
-          </HStack>
+          {!address ? (
+            <HStack px={4} spacing={{ base: 2, md: 4, xl: 6 }}>
+              <Link href={MIDAS_DOCS_URL} isExternal>
+                <SimpleTooltip label="Documentation">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <SiGitbook color={cPage.primary.borderColor} fontSize={30} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_DISCORD_URL} isExternal>
+                <SimpleTooltip label="Discord">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaDiscord color={cPage.primary.borderColor} fontSize={28} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_TELEGRAM_URL} isExternal>
+                <SimpleTooltip label="Telegram">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaTelegram color={cPage.primary.borderColor} fontSize={24} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+              <Link href={MIDAS_TWITTER_URL} isExternal>
+                <SimpleTooltip label="Twitter">
+                  <motion.div whileHover={{ scale: 1.2 }}>
+                    <FaTwitter color={cPage.primary.borderColor} fontSize={24} />
+                  </motion.div>
+                </SimpleTooltip>
+              </Link>
+            </HStack>
+          ) : null}
           <HStack gap={2}>
+            {address ? (
+              <Button
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/account');
+                }}
+              >
+                Account
+              </Button>
+            ) : null}
             <Button
               leftIcon={<AddIcon boxSize={3} />}
               onClick={() => {
@@ -124,11 +134,11 @@ const MidasHero = () => {
               Create Pool
             </Button>
             <Button
-              leftIcon={<ChatIcon boxSize={4} />}
-              variant={'_ghost'}
               as={Link}
               href={FEATURE_REQUESTS_URL}
               isExternal
+              leftIcon={<ChatIcon boxSize={4} />}
+              variant={'_ghost'}
             >
               Request Feature
             </Button>
@@ -136,40 +146,10 @@ const MidasHero = () => {
         </HStack>
       </Flex>
 
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <MotionFlex
-            flexDir="column"
-            h={{ base: '10rem', lg: '15rem' }}
-            w={{ base: '100%', lg: '50%' }}
-            px={{ lg: '10vw' }}
-            alignItems="center"
-            justifyContent="center"
-            position="relative"
-            overflow="hidden"
-            boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
-            borderRadius="20px"
-            bg={cPage.secondary.bgColor}
-            color={cPage.secondary.txtColor}
-            // whileHover={{ scale: 1.06 }}
-          >
-            {isLoading || totalTVL === undefined ? (
-              <Spinner />
-            ) : (
-              <>
-                <Text size="3xl" fontWeight="bold" lineHeight={['60px']} color="raisinBlack">
-                  {smallUsdFormatter(totalTVL)}
-                </Text>
-              </>
-            )}
-            <Text whiteSpace="nowrap" size="md" color="raisinBlack">
-              Total value supplied across Midas
-            </Text>
-          </MotionFlex>
-        </PopoverTrigger>
-        {tvlData && (
-          <PopoverContent p={2}>
-            <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+      <PopoverTooltip
+        body={
+          tvlData ? (
+            <VStack alignItems="flex-start" spacing={0} width={'100%'}>
               {[...tvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
@@ -182,9 +162,38 @@ const MidasHero = () => {
                 </Flex>
               ))}
             </VStack>
-          </PopoverContent>
-        )}
-      </Popover>
+          ) : null
+        }
+        popoverProps={{ placement: 'bottom' }}
+        width={{ base: '100%', lg: '40%' }}
+      >
+        <MotionFlex
+          alignItems="center"
+          bg={cPage.secondary.bgColor}
+          borderRadius="20px"
+          boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
+          color={cPage.secondary.txtColor}
+          flexDir="column"
+          h={{ base: '10rem', lg: '15rem' }}
+          justifyContent="center"
+          overflow="hidden"
+          position="relative"
+          px={{ lg: '10vw' }}
+        >
+          {isLoading || totalTVL === undefined ? (
+            <Spinner />
+          ) : (
+            <>
+              <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
+                {smallUsdFormatter(totalTVL)}
+              </Text>
+            </>
+          )}
+          <Text color="raisinBlack" size="md" whiteSpace="nowrap">
+            Total value supplied across Midas
+          </Text>
+        </MotionFlex>
+      </PopoverTooltip>
     </Flex>
   );
 };

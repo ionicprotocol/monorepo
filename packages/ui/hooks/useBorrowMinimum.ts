@@ -3,15 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { useCgId } from './useChainConfig';
-
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
   const { currentSdk } = useMultiMidas();
-  const coingeckoId = useCgId(poolChainId);
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   const response = useQuery(
     [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],

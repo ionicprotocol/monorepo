@@ -3,8 +3,8 @@ import { chainIdToConfig } from '@midas-capital/chains';
 import { MidasSdk } from '@midas-capital/sdk';
 import Security from '@midas-capital/security';
 import { SupportedChains } from '@midas-capital/types';
+import * as Sentry from '@sentry/browser';
 import { FetchSignerResult, Signer } from '@wagmi/core';
-import LogRocket from 'logrocket';
 import {
   createContext,
   Dispatch,
@@ -35,6 +35,7 @@ export interface MultiMidasContextData {
   disconnect: () => void;
   isConnected: boolean;
   signer?: FetchSignerResult<Signer>;
+  setAddress: Dispatch<string>;
 }
 
 export const MultiMidasContext = createContext<MultiMidasContextData | undefined>(undefined);
@@ -121,15 +122,10 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [signer, sdks]);
 
   useEffect(() => {
-    if (window.location.hostname === 'app.midascapital.xyz') {
-      console.info('LogRocket initialized');
-      LogRocket.init('ylr02p/midas-ui');
-    } else {
-      console.info('LogRocket not initialized');
+    if (wagmiAddress) {
+      Sentry.setUser({ id: wagmiAddress });
     }
-  }, []);
 
-  useEffect(() => {
     setAddress(wagmiAddress);
   }, [wagmiAddress]);
 
@@ -152,6 +148,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
       disconnect,
       isConnected,
       signer,
+      setAddress,
     };
   }, [
     sdks,
@@ -167,6 +164,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     disconnect,
     isConnected,
     signer,
+    setAddress,
   ]);
 
   return <MultiMidasContext.Provider value={value}>{children}</MultiMidasContext.Provider>;

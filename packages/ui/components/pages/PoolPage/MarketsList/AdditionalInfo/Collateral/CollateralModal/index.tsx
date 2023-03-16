@@ -1,19 +1,7 @@
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { ContractTransaction } from 'ethers';
-import LogRocket from 'logrocket';
 import { useState } from 'react';
 
 import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/CollateralModal/Alerts';
@@ -21,6 +9,7 @@ import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/Ad
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
@@ -89,68 +78,70 @@ export const CollateralModal = ({
     const _steps = [...steps];
     try {
       setIsLoading(true);
-      setActiveStep(0);
       setFailedStep(0);
+      setActiveStep(1);
 
-      try {
-        setActiveStep(1);
-        const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
+      const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
-        let call: ContractTransaction;
+      let call: ContractTransaction;
 
-        if (asset.membership) {
-          const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
+      if (asset.membership) {
+        const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
 
-          if (!exitCode.eq(0)) {
-            throw { message: errorCodeToMessage(exitCode.toNumber()) };
-          }
-          call = await comptroller.exitMarket(asset.cToken);
-        } else {
-          call = await comptroller.enterMarkets([asset.cToken]);
+        if (!exitCode.eq(0)) {
+          throw { message: errorCodeToMessage(exitCode.toNumber()) };
         }
-
-        if (!call) {
-          if (asset.membership) {
-            errorToast({
-              title: 'Error! Code: ' + call,
-              description:
-                'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
-            });
-          } else {
-            errorToast({
-              title: 'Error! Code: ' + call,
-              description: 'You cannot enable this asset as collateral at this time.',
-            });
-          }
-
-          return;
-        }
-
-        addRecentTransaction({ hash: call.hash, description: 'Toggle collateral' });
-        _steps[0] = {
-          ..._steps[0],
-          txHash: call.hash,
-        };
-        setConfirmedSteps([..._steps]);
-        await call.wait();
-        await queryClient.refetchQueries();
-        LogRocket.track('Fuse-ToggleCollateral');
-
-        _steps[0] = {
-          ..._steps[0],
-          done: true,
-          txHash: call.hash,
-        };
-        setConfirmedSteps([..._steps]);
-      } catch (error) {
-        setFailedStep(1);
-        throw error;
+        call = await comptroller.exitMarket(asset.cToken);
+      } else {
+        call = await comptroller.enterMarkets([asset.cToken]);
       }
+
+      if (!call) {
+        if (asset.membership) {
+          errorToast({
+            title: 'Error! Code: ' + call,
+            description:
+              'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
+          });
+        } else {
+          errorToast({
+            title: 'Error! Code: ' + call,
+            description: 'You cannot enable this asset as collateral at this time.',
+          });
+        }
+
+        return;
+      }
+
+      addRecentTransaction({ hash: call.hash, description: 'Toggle collateral' });
+      _steps[0] = {
+        ..._steps[0],
+        txHash: call.hash,
+      };
+      setConfirmedSteps([..._steps]);
+      await call.wait();
+      await queryClient.refetchQueries();
+
+      _steps[0] = {
+        ..._steps[0],
+        done: true,
+        txHash: call.hash,
+      };
+      setConfirmedSteps([..._steps]);
     } catch (error) {
-      handleGenericError(error, errorToast);
-    } finally {
-      setIsLoading(false);
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        token: asset.cToken,
+      };
+      const sentryInfo = {
+        contextName: 'Toggle collateral',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+      setFailedStep(1);
     }
+
+    setIsLoading(false);
   };
 
   const onModalClose = async () => {
@@ -173,99 +164,86 @@ export const CollateralModal = ({
   };
 
   return (
-    <Modal
-      motionPreset="slideInBottom"
-      isOpen={isOpen}
-      onClose={onModalClose}
-      isCentered
-      closeOnOverlayClick={false}
-      closeOnEsc={false}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={0}>
-          <Column
-            id="CollateralModal"
-            mainAxisAlignment="flex-start"
-            crossAxisAlignment="flex-start"
-            bg={cCard.bgColor}
-            color={cCard.txtColor}
-            borderRadius={16}
-          >
-            {!isLoading && <ModalCloseButton top={4} right={4} />}
-            {isConfirmed ? (
-              <PendingTransaction
-                activeStep={activeStep}
-                failedStep={failedStep}
-                steps={confirmedSteps}
-                isLoading={isLoading}
-                poolChainId={poolChainId}
-                asset={asset}
-              />
-            ) : (
-              <>
-                <HStack width="100%" p={4} justifyContent="center">
-                  <Text variant="title">{!asset.membership ? 'Enable' : 'Disable'}</Text>
-                  <Box height="36px" width="36px" mx={3}>
-                    <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
-                  </Box>
-                  <EllipsisText
-                    variant="title"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
-                    maxWidth="100px"
-                  >
-                    {tokenData?.symbol || asset.underlyingSymbol}
-                  </EllipsisText>
-                  <Text variant="title">As Collateral</Text>
-                </HStack>
-
-                <Divider />
-
-                <Column
-                  mainAxisAlignment="flex-start"
-                  crossAxisAlignment="center"
-                  p={4}
-                  height="100%"
-                  width="100%"
-                  gap={4}
+    <MidasModal
+      body={
+        <Column
+          bg={cCard.bgColor}
+          borderRadius={16}
+          color={cCard.txtColor}
+          crossAxisAlignment="flex-start"
+          id="CollateralModal"
+          mainAxisAlignment="flex-start"
+        >
+          {isConfirmed ? (
+            <PendingTransaction
+              activeStep={activeStep}
+              asset={asset}
+              failedStep={failedStep}
+              isLoading={isLoading}
+              poolChainId={poolChainId}
+              steps={confirmedSteps}
+            />
+          ) : (
+            <>
+              <HStack justifyContent="center" p={4} width="100%">
+                <Text variant="title">{!asset.membership ? 'Enable' : 'Disable'}</Text>
+                <Box height="36px" mx={3} width="36px">
+                  <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                </Box>
+                <EllipsisText
+                  maxWidth="100px"
+                  tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                  variant="title"
                 >
-                  <Alerts asset={asset} />
-                  <MidasBox width="100%">
-                    <Column
-                      mainAxisAlignment="space-between"
-                      crossAxisAlignment="flex-start"
-                      expand
-                      p={4}
-                      gap={2}
-                    >
-                      <Row
-                        mainAxisAlignment="space-between"
-                        crossAxisAlignment="center"
-                        width="100%"
-                      >
-                        <Text flexShrink={0} variant="smText">
-                          Total Borrow Limit:
+                  {tokenData?.symbol || asset.underlyingSymbol}
+                </EllipsisText>
+                <Text variant="title">As Collateral</Text>
+              </HStack>
+
+              <Divider />
+
+              <Column
+                crossAxisAlignment="center"
+                gap={4}
+                height="100%"
+                mainAxisAlignment="flex-start"
+                p={4}
+                width="100%"
+              >
+                <Alerts asset={asset} />
+                <MidasBox width="100%">
+                  <Column
+                    crossAxisAlignment="flex-start"
+                    expand
+                    gap={2}
+                    mainAxisAlignment="space-between"
+                    p={4}
+                  >
+                    <Row crossAxisAlignment="center" mainAxisAlignment="space-between" width="100%">
+                      <Text flexShrink={0} variant="smText">
+                        Total Borrow Limit:
+                      </Text>
+                      <HStack spacing={1}>
+                        <Text variant={'smText'}>{smallUsdFormatter(borrowLimitTotal || 0)}</Text>
+                        <Text>{'→'}</Text>
+                        <Text variant={'smText'}>
+                          {smallUsdFormatter(updatedBorrowLimitTotal || 0)}
                         </Text>
-                        <HStack spacing={1}>
-                          <Text variant={'smText'}>{smallUsdFormatter(borrowLimitTotal || 0)}</Text>
-                          <Text>{'→'}</Text>
-                          <Text variant={'smText'}>
-                            {smallUsdFormatter(updatedBorrowLimitTotal || 0)}
-                          </Text>
-                        </HStack>
-                      </Row>
-                    </Column>
-                  </MidasBox>
-                  <Button id="confirmCollateral" width="100%" onClick={onConfirm} height={16}>
-                    {!asset.membership ? 'Enable' : 'Disable'} {asset.underlyingSymbol} as
-                    collateral
-                  </Button>
-                </Column>
-              </>
-            )}
-          </Column>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+                      </HStack>
+                    </Row>
+                  </Column>
+                </MidasBox>
+                <Button height={16} id="confirmCollateral" onClick={onConfirm} width="100%">
+                  {!asset.membership ? 'Enable' : 'Disable'} {asset.underlyingSymbol} as collateral
+                </Button>
+              </Column>
+            </>
+          )}
+        </Column>
+      }
+      isOpen={isOpen}
+      modalCloseButtonProps={{ hidden: isLoading }}
+      onClose={onModalClose}
+    />
   );
 };

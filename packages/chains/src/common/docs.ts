@@ -37,6 +37,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapName: "SpookySwap",
       swapAddress: "https://spooky.fi/#/swap",
     },
+    [SupportedChains.basegoerli]: {
+      swapName: "BaseSwap",
+      swapAddress: "",
+    },
   }[chainId];
 
   return `
@@ -256,7 +260,7 @@ export const arrakisDocs = (networkName: string, chainId: number, vaultAddress: 
   <p><b>How to acquire this Arrakis Vault token</b><p/><br /><p> 1. Make sure you are connected to ${networkName} Network on your browser wallet.</p><br />
   <p> 2. Head to the <a href="https://beta.arrakis.finance/vaults/${chainId}/${vaultAddress}/add" target="_blank" style="color: #BCAC83;">Arrakis Finance Vault</a> and deposit the desired amount of token pairs.</p>
   <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Arrakis to spend them. </p><br />
-  <p> 3. Click on "Deposit & Stake".</p>
+  <p> 3. Click on "Deposit".</p>
   <p>This will credit your wallet with the Arrakis Vault Tokens.</p><br />
   <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
@@ -266,6 +270,17 @@ export const wombatDocs = (pool: string, tokenName: string) => {
   return `
   <p><b>How to acquire this token</b></p><br />
   <p>You can acquire this asset on the <a href="https://app.wombat.exchange/pool?pool=${pool}&token=${tokenName}&action=DEPOSIT"> Wombat Exchange </a> website</p>`;
+};
+
+export const thenaDocs = (poolAddress: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br /><p> 1. Make sure you are connected to BNB Network on your browser wallet.</p><br />
+  <p> 2. Head to the <a href="https://thena.fi/liquidity/manage/${poolAddress}"> Thena.fi Exchange </a> and deposit the desired amount of token pairs.</p>
+  <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Thena to spend them. </p><br />
+  <p> 3. Click on "Add Liquidty".</p>
+  <p>This will credit your wallet with the Thena LP Tokens.</p><br />
+  <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
 };
 
 export const lidoFinanceDocs = (chainName: string, baseToken: string, returnToken: string) => {

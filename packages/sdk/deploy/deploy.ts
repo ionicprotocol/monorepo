@@ -16,7 +16,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
-  const MIN_BORROW_USD = chainId === 97 ? 0 : 100;
+  const MIN_BORROW_USD = chainId === 97 || chainId === 245022926 ? 0 : 100;
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
   const balance = await ethers.provider.getBalance(deployer);
@@ -71,18 +71,25 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
 
   try {
-    console.log(
-      `setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`
-    );
-    tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
-    await tx.wait();
-    console.log("FuseFeeDistributor pool limits set", tx.hash);
+    const currentMinBorrow = await fuseFeeDistributor.callStatic.minBorrowEth();
+    const currentMinBorrowPercent = currentMinBorrow.mul(100).div(minBorrow);
+    if (currentMinBorrowPercent.gt(102) || currentMinBorrowPercent.lt(98)) {
+      console.log(
+        `setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`
+      );
+      tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
+      await tx.wait();
+      console.log("FuseFeeDistributor pool limits set", tx.hash);
+    } else {
+      console.log(
+        `current min borrow ${currentMinBorrow} is within 2% of the actual value ${minBorrow} - not updating it`
+      );
+    }
   } catch (e) {
     console.log("error setting the pool limits", e);
   }
 
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
-  const oldFirstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
 
   const comp = await deployments.deploy("Comptroller", {
     contract: "Comptroller.sol:Comptroller",
@@ -235,7 +242,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   if (oldErc20Delegate) {
     // CErc20Delegate
-    const [latestCErc20Delegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20Delegate.address);
+    const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate.address);
     if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
       tx = await fuseFeeDistributor._setLatestCErc20Delegate(
         oldErc20Delegate.address,
@@ -263,7 +270,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   if (oldErc20PluginDelegate) {
     // CErc20PluginDelegate
-    const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20PluginDelegate.address);
+    const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
+      oldErc20PluginDelegate.address
+    );
     if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
       tx = await fuseFeeDistributor._setLatestCErc20Delegate(
         oldErc20PluginDelegate.address,
@@ -298,7 +307,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   if (oldErc20PluginRewardsDelegate) {
     // CErc20PluginRewardsDelegate
-    const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
+    const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
       oldErc20PluginRewardsDelegate.address
     );
     if (
@@ -387,7 +396,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (booster.transactionHash) await ethers.provider.waitForTransaction(booster.transactionHash);
   console.log("LooplessFlywheelBooster: ", booster.address);
 
-  await tx.wait();
   const erc20Delegate = await ethers.getContract("CErc20Delegate", deployer);
   const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", deployer);
   const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", deployer);
@@ -641,10 +649,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
 
   // upgrade any of the pools if necessary
-  await run("pools:all:upgrade", { oldFirstExtension: oldFirstExtension?.address || constants.AddressZero });
-
-  // upgrade any of the markets if necessary
-  await run("markets:all:upgrade");
+  // the markets are also autoupgraded with this task
+  await run("pools:all:upgrade");
 
   const gasUsed = deployments.getGasUsed();
 

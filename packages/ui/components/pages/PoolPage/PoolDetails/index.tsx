@@ -14,7 +14,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { midUsdFormatter } from '@ui/utils/bigUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -57,35 +57,35 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   return (
     <MidasBox height="auto" width="100%">
       <Column
-        mainAxisAlignment="flex-start"
         crossAxisAlignment="flex-start"
         height="100%"
+        mainAxisAlignment="flex-start"
         width="100%"
       >
         <Row
-          mainAxisAlignment="space-between"
           crossAxisAlignment="center"
-          width="100%"
-          px={4}
-          height="60px"
           flexShrink={0}
+          height="60px"
+          mainAxisAlignment="space-between"
+          px={4}
+          width="100%"
         >
-          <Text size="md" fontWeight="bold">{`Pool Details`}</Text>
+          <Text fontWeight="bold" size="md">{`Pool Details`}</Text>
 
           {data?.isPowerfulAdmin ? (
             <Center
-              px={2}
-              fontWeight="bold"
               cursor="pointer"
+              fontWeight="bold"
               onClick={() => {
                 setGlobalLoading(true);
                 router.push(`/${poolData?.chainId}/pool/${poolId}/edit`);
               }}
+              px={2}
             >
               Edit
             </Center>
           ) : data?.isPendingAdmin ? (
-            <Button onClick={acceptOwnership} isLoading={isLoading} isDisabled={isLoading}>
+            <Button isDisabled={isLoading} isLoading={isLoading} onClick={acceptOwnership}>
               Accept Ownership
             </Button>
           ) : null}
@@ -93,6 +93,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
 
         {poolData ? (
           <Grid
+            gridArea={{ borderTopWidth: 1, borderColor: 'red' }}
             templateColumns={{
               base: 'repeat(1, 1fr)',
               sm: 'repeat(2, 1fr)',
@@ -100,56 +101,55 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
               lg: 'repeat(4, 1fr)',
             }}
             width="100%"
-            gridArea={{ borderTopWidth: 1, borderColor: 'red' }}
           >
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Total Supplied</Text>
-              <Text size="md" fontWeight="bold">
-                {midUsdFormatter(totalSuppliedFiat)}
+              <Text fontWeight="bold" size="md">
+                {smallUsdFormatter(totalSuppliedFiat, true)}
               </Text>
             </HStack>
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Total Borrowed</Text>
-              <Text size="md" fontWeight="bold">
-                {midUsdFormatter(totalBorrowedFiat)}
+              <Text fontWeight="bold" size="md">
+                {smallUsdFormatter(totalBorrowedFiat, true)}
               </Text>
             </HStack>
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Available Liquidity</Text>
-              <Text size="md" fontWeight="bold">
-                {midUsdFormatter(totalAvailableLiquidityFiat)}
+              <Text fontWeight="bold" size="md">
+                {smallUsdFormatter(totalAvailableLiquidityFiat, true)}
               </Text>
             </HStack>
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Pool Utilization</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {totalSuppliedFiat.toString() === '0'
                   ? '0%'
                   : poolData.utilization.toFixed(2) + '%'}
               </Text>
             </HStack>
 
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Upgradeable</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {data ? (data.upgradeable ? 'Yes' : 'No') : '?'}
               </Text>
             </HStack>
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Admin</Text>
               {data?.admin ? (
                 <HStack>
                   <SimpleTooltip label={`${scanUrl}/address/${data.admin}`}>
                     <Button
-                      minWidth={6}
-                      m={0}
-                      p={0}
-                      variant="_link"
                       as={Link}
-                      href={`${scanUrl}/address/${data.admin}`}
-                      isExternal
                       fontSize={{ base: 14, md: 16 }}
                       height="auto"
+                      href={`${scanUrl}/address/${data.admin}`}
+                      isExternal
+                      m={0}
+                      minWidth={6}
+                      p={0}
+                      variant="_link"
                     >
                       {shortAddress(data.admin, 6, 4)}
                     </Button>
@@ -158,22 +158,22 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
                   <ClipboardValueIconButton value={data.admin} />
                 </HStack>
               ) : (
-                <Text size="md" fontWeight="bold">
+                <Text fontWeight="bold" size="md">
                   ?
                 </Text>
               )}
             </HStack>
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Platform Fee</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {assets.length > 0
                   ? Number(utils.formatUnits(assets[0].fuseFee, 16)).toPrecision(2) + '%'
                   : '10%'}
               </Text>
             </HStack>
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Average Admin Fee</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {assets
                   .reduce(
                     (a, b, _, { length }) => a + Number(utils.formatUnits(b.adminFee, 16)) / length,
@@ -183,59 +183,59 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
               </Text>
             </HStack>
 
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Close Factor</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {data?.closeFactor
                   ? data.closeFactor.div(parseUnits('1', 16)).toNumber() + '%'
                   : '?%'}
               </Text>
             </HStack>
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Liquidation Incentive</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {data?.liquidationIncentive
                   ? data.liquidationIncentive.div(parseUnits('1', 16)).toNumber() - 100 + '%'
                   : '?%'}
               </Text>
             </HStack>
 
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Oracle</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {data ? data.oracle : '?'}
               </Text>
             </HStack>
 
-            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Whitelist</Text>
-              <Text size="md" fontWeight="bold">
+              <Text fontWeight="bold" size="md">
                 {data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
               </Text>
             </HStack>
             <GridItem colSpan={{ base: 1, sm: 2, md: 2, lg: 4 }}>
               <HStack
                 aria-colspan={4}
-                px={4}
-                pt={4}
-                pb={3}
-                wrap="wrap"
-                borderTopWidth={1}
                 borderColor={cCard.dividerColor}
+                borderTopWidth={1}
+                pb={3}
+                pt={4}
+                px={4}
+                wrap="wrap"
               >
                 <Text size="md">Pool Address:</Text>
                 <HStack>
                   <SimpleTooltip label={`${scanUrl}/address/${comptroller}`}>
                     <Button
-                      minWidth={6}
-                      m={0}
-                      p={0}
-                      variant="_link"
                       as={Link}
-                      href={`${scanUrl}/address/${comptroller}`}
-                      isExternal
                       fontSize={{ base: 14, md: 16 }}
                       height="auto"
+                      href={`${scanUrl}/address/${comptroller}`}
+                      isExternal
+                      m={0}
+                      minWidth={6}
+                      p={0}
+                      variant="_link"
                     >
                       {shortAddress(comptroller, 6, 4)}
                     </Button>
@@ -247,13 +247,13 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
           </Grid>
         ) : (
           <Column
-            mainAxisAlignment="flex-start"
             crossAxisAlignment="flex-start"
             height="100%"
-            width="100%"
+            mainAxisAlignment="flex-start"
             pb={1}
+            width="100%"
           >
-            <Skeleton width="100%" height={200}></Skeleton>
+            <Skeleton height={200} width="100%"></Skeleton>
           </Column>
         )}
       </Column>

@@ -1,14 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
-
-import { MarketData } from '../types/TokensDataMap';
-
-import { Cap } from './useBorrowCap';
+import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useCgId } from '@ui/hooks/useChainConfig';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { Cap } from '@ui/hooks/useBorrowCap';
+import { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseSupplyCapParams {
   comptroller: string;
@@ -20,8 +18,14 @@ export const useSupplyCap = ({
   chainId,
   market,
 }: UseSupplyCapParams) => {
-  const cgId = useCgId(Number(chainId));
-  const { data: usdPrice } = useUSDPrice(cgId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[chainId.toString()]) {
+      return usdPrices[chainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, chainId]);
   const sdk = useSdk(chainId);
 
   return useQuery<Cap | null | undefined>(

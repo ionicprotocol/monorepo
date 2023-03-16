@@ -1,15 +1,15 @@
 import { SupportedChains } from '@midas-capital/types';
+import { functionsAlert } from '../../../alert';
 import { AbstractAssetAPYProvider, APYProviderInitObject } from './AbstractAssetAPYProvider';
 import LidoStakedDotAPYProvider from './LidoStakedDotAPYProvider';
 import MockAPYProvider from './MockAPYProvider';
-
 type ProviderMap = {
   [key: string]: AbstractAssetAPYProvider;
 };
 
-type ProviderMapForChain = {
-  [key in SupportedChains]?: ProviderMap;
-};
+type ProviderMapForChain = Partial<{
+  [key in SupportedChains]: ProviderMap;
+}>;
 
 const providerMap: ProviderMapForChain = {
   [SupportedChains.bsc]: {
@@ -29,12 +29,23 @@ export async function getAPYProviders(
   const providersOfChain = providerMap[chainId];
 
   if (!providersOfChain) {
+    console.info(`No APY Providers available for ${chainId}`);
     throw new Error(`No APY Providers available for ${chainId}`);
   }
 
   await Promise.all(
-    Object.values(providersOfChain).map((provider) =>
-      provider.init(initObj).catch((error) => console.error(`Failed to init() provider: ${error}`))
+    Object.entries(providersOfChain).map(([key, provider]) =>
+      provider.init(initObj).catch((error) => {
+        functionsAlert(
+          `Failed to init Asset APY provider`,
+          `asset ${key} on chain: ${chainId}, ${error.message || error}`
+        );
+        console.error(
+          `Failed to init() provider for asset ${key} on chain: ${chainId} ${
+            error.message || error
+          }`
+        );
+      })
     )
   );
 

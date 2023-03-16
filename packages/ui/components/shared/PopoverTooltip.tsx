@@ -1,10 +1,12 @@
 import {
   Box,
+  BoxProps,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverBodyProps,
   PopoverContent,
+  PopoverContentProps,
   PopoverFooter,
   PopoverFooterProps,
   PopoverHeader,
@@ -20,46 +22,56 @@ export const PopoverTooltip = ({
   header,
   body,
   footer,
-  placement,
   width,
   height,
-  maxWidth,
-  hideArrow,
-  ...popoverProps
+  hideArrow = true,
+  visible = true,
+  contentProps,
+  popoverProps,
 }: {
+  children: PopoverProps['children'];
   header?: PopoverHeaderProps['children'];
   body?: PopoverBodyProps['children'];
   footer?: PopoverFooterProps['children'];
-  placement?: string;
-  width?: string;
-  height?: string;
-  maxWidth?: string;
+  width?: BoxProps['width'];
+  height?: BoxProps['height'];
   hideArrow?: boolean;
-} & PopoverProps) => {
+  visible?: boolean;
+  contentProps?: PopoverContentProps;
+  popoverProps?: PopoverProps;
+  headerProps?: PopoverHeaderProps;
+  bodyProps?: PopoverBodyProps;
+  footerProps?: PopoverFooterProps;
+}) => {
   const { cPage } = useColors();
+  if (!visible) return <>{children}</>;
 
   return (
-    <Box width={width} height={height}>
-      <Popover placement={placement ? placement : 'top'} trigger="hover" {...popoverProps}>
+    <Box height={height} width={width}>
+      <Popover placement="bottom-end" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
-        <PopoverContent
-          onClick={(e) => e.stopPropagation()}
-          style={{ cursor: 'default' }}
-          width="auto"
-          maxWidth={maxWidth ? maxWidth : '300px'}
-          textAlign="start"
-        >
-          {!hideArrow && (
-            <PopoverArrow
-              sx={{
-                '--popper-arrow-shadow-color': cPage.primary.borderColor,
-              }}
-            />
-          )}
-          {header && <PopoverHeader>{header}</PopoverHeader>}
-          {body && <PopoverBody>{body}</PopoverBody>}
-          {footer && <PopoverFooter>{footer}</PopoverFooter>}
-        </PopoverContent>
+        {header || body || footer ? (
+          <PopoverContent
+            maxWidth={{ base: '300px', sm: '400px', md: '500px' }}
+            onClick={(e) => e.stopPropagation()}
+            overflowX="auto"
+            style={{ cursor: 'default' }}
+            textAlign="start"
+            width="auto"
+            {...contentProps}
+          >
+            {!hideArrow && (
+              <PopoverArrow
+                sx={{
+                  '--popper-arrow-shadow-color': cPage.primary.borderColor,
+                }}
+              />
+            )}
+            {header && <PopoverHeader>{header}</PopoverHeader>}
+            {body && <PopoverBody>{body}</PopoverBody>}
+            {footer && <PopoverFooter>{footer}</PopoverFooter>}
+          </PopoverContent>
+        ) : null}
       </Popover>
     </Box>
   );

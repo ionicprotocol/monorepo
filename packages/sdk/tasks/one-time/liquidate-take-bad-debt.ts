@@ -4,7 +4,6 @@ import { task, types } from "hardhat/config";
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
 import { CErc20 } from "../../typechain/CErc20";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
-import { ERC20 } from "../../typechain/ERC20";
 import { IUniswapV2Factory } from "../../typechain/IUniswapV2Factory";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasSafeLiquidator } from "../../typechain/MidasSafeLiquidator";
@@ -179,7 +178,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
         minProfitAmount: 0,
         redemptionStrategies,
         redemptionStrategiesData,
-        repayAmountBN,
+        repayAmount: repayAmountBN,
         stableCollateralMarket,
         uniswapV2RouterForBorrow: chainDeployParams.uniswap.uniswapV2RouterAddress,
         uniswapV2RouterForCollateral: chainDeployParams.uniswap.uniswapV2RouterAddress,

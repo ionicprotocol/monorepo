@@ -20,8 +20,8 @@ export const BorrowBalance = ({
     <>
       {!address || (asset.borrowBalance.isZero() && asset.isBorrowPaused) ? (
         <VStack alignItems="flex-end">
-          <SimpleTooltip label="Connect your wallet">
-            <Text size="md" fontWeight="medium" textAlign="center">
+          <SimpleTooltip isDisabled={!!address} label="Connect your wallet">
+            <Text fontWeight="medium" size="md" textAlign="center">
               -
             </Text>
           </SimpleTooltip>

@@ -1,36 +1,34 @@
 import { HStack, Text } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
 import { utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
-export const Balance = ({ asset }: { asset: MarketData }) => {
+export const Balance = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
   const { currentSdk, currentChain, address } = useMultiMidas();
 
   if (!currentChain || !currentSdk || !address) throw new Error('Connect your wallet');
 
-  const [availableToWithdraw, setAvailableToWithdraw] = useState('0.0');
+  const { data: maxWithdrawAmount } = useMaxWithdrawAmount(asset, poolChainId);
 
-  useEffect(() => {
-    const func = async () => {
-      const max = await fetchMaxAmount(FundOperationMode.WITHDRAW, currentSdk, address, asset);
-      setAvailableToWithdraw(utils.formatUnits(max, asset.underlyingDecimals));
-    };
-
-    func();
-  }, [address, asset, currentSdk]);
+  const availableToWithdraw = useMemo(() => {
+    if (maxWithdrawAmount) {
+      return utils.formatUnits(maxWithdrawAmount, asset.underlyingDecimals);
+    } else {
+      return '0.0';
+    }
+  }, [asset.underlyingDecimals, maxWithdrawAmount]);
 
   return (
-    <HStack width="100%" justifyContent={'flex-end'}>
+    <HStack justifyContent={'flex-end'} width="100%">
       <Text mr={2} size="sm">
         Available To Withdraw:
       </Text>
       <SimpleTooltip label={`${availableToWithdraw} ${asset.underlyingSymbol}`}>
-        <Text maxWidth="250px" textOverflow={'ellipsis'} whiteSpace="nowrap" overflow="hidden">
+        <Text maxWidth="250px" overflow="hidden" textOverflow={'ellipsis'} whiteSpace="nowrap">
           {`${availableToWithdraw} ${asset.underlyingSymbol}`}
         </Text>
       </SimpleTooltip>

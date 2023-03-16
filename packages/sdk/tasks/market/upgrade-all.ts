@@ -44,70 +44,143 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     const arrayOfFalse = [false, false, false];
     const arrayOfTrue = [true, true, true];
 
-    if (oldErc20Delegate) {
+    if (oldErc20Delegate && oldErc20Delegate != erc20Delegate.address) {
       oldImplementations.push(oldErc20Delegate);
       newImplementations.push(erc20Delegate.address);
       arrayOfFalse.push(false);
       arrayOfTrue.push(true);
     }
 
-    if (oldErc20PluginDelegate) {
+    if (oldErc20PluginDelegate && oldErc20PluginDelegate != erc20PluginDelegate.address) {
       oldImplementations.push(oldErc20PluginDelegate);
       newImplementations.push(erc20PluginDelegate.address);
       arrayOfFalse.push(false);
       arrayOfTrue.push(true);
     }
 
-    if (oldErc20PluginRewardsDelegate) {
+    if (oldErc20PluginRewardsDelegate && oldErc20PluginRewardsDelegate != erc20PluginRewardsDelegate.address) {
       oldImplementations.push(oldErc20PluginRewardsDelegate);
       newImplementations.push(erc20PluginRewardsDelegate.address);
       arrayOfFalse.push(false);
       arrayOfTrue.push(true);
     }
 
-    const tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
-      oldImplementations,
-      newImplementations,
-      arrayOfFalse,
-      arrayOfTrue
-    );
+    let tx;
+    if (oldImplementations.length) {
+      tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
+        oldImplementations,
+        newImplementations,
+        arrayOfFalse,
+        arrayOfTrue
+      );
 
-    await tx.wait();
-    console.log("_editCErc20DelegateWhitelist with tx:", tx.hash);
-    const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
+      await tx.wait();
+      console.log("_editCErc20DelegateWhitelist with tx:", tx.hash);
+    } else {
+      console.log(`implementations already whitelisted`);
+    }
+
+    const cfe = (await ethers.getContract("CTokenFirstExtension")) as CTokenFirstExtension;
+    {
+      const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Delegate.address);
+      if (!exts.length) {
+        console.log(`setting the extension for delegate ${erc20Delegate.address}`);
+        tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20Delegate.address, [cfe.address]);
+        console.log(`tx ${tx.hash}`);
+        await tx.wait();
+        console.log(`mined ${tx.hash}`);
+      } else {
+        console.log(`extensions for delegate ${erc20Delegate.address} already configured`);
+      }
+    }
+
+    {
+      const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginDelegate.address);
+      if (!exts.length) {
+        console.log(`setting the extension for plugin delegate ${erc20PluginDelegate.address}`);
+        tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginDelegate.address, [cfe.address]);
+        console.log(`tx ${tx.hash}`);
+        await tx.wait();
+        console.log(`mined ${tx.hash}`);
+      } else {
+        console.log(`extensions for plugin delegate ${erc20PluginDelegate.address} already configured`);
+      }
+    }
+
+    {
+      const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginRewardsDelegate.address);
+      if (!exts.length) {
+        console.log(`setting the extension for plugin rewards delegate ${erc20PluginRewardsDelegate.address}`);
+        tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDelegate.address, [cfe.address]);
+        console.log(`tx ${tx.hash}`);
+        await tx.wait();
+        console.log(`mined ${tx.hash}`);
+      } else {
+        console.log(`extensions for plugin rewards delegate ${erc20PluginRewardsDelegate.address} already configured`);
+      }
+    }
 
     if (setLatest) {
+      const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
       if (oldErc20Delegate) {
-        const tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-          oldErc20Delegate,
-          erc20Delegate.address,
-          false,
-          "0x00"
-        );
-        await tx.wait();
-        console.log("_setLatestCErc20Delegate:", tx.hash);
+        const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate);
+        if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Delegate.address) {
+          tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+            oldErc20Delegate,
+            erc20Delegate.address,
+            false,
+            "0x00"
+          );
+          console.log("_setLatestCErc20Delegate:", tx.hash);
+          await tx.wait();
+        } else {
+          console.log(`latest impl for delegate ${erc20Delegate.address} already configured`);
+        }
       }
 
       if (oldErc20PluginDelegate) {
-        const tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-          oldErc20PluginDelegate,
-          erc20PluginDelegate.address,
-          false,
-          becomeImplementationData
+        // CErc20PluginDelegate
+        const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
+          oldErc20PluginDelegate
         );
-        await tx.wait();
-        console.log("_setLatestCErc20Delegate (plugin):", tx.hash);
+        if (
+          latestCErc20PluginDelegate === constants.AddressZero ||
+          latestCErc20PluginDelegate !== erc20PluginDelegate.address
+        ) {
+          tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+            oldErc20PluginDelegate,
+            erc20PluginDelegate.address,
+            false,
+            becomeImplementationData
+          );
+          console.log("_setLatestCErc20Delegate (plugin):", tx.hash);
+          await tx.wait();
+        } else {
+          console.log(`latest impl for plugin delegate ${erc20PluginDelegate.address} already configured`);
+        }
       }
 
       if (oldErc20PluginRewardsDelegate) {
-        const tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-          oldErc20PluginRewardsDelegate,
-          erc20PluginRewardsDelegate.address,
-          false,
-          becomeImplementationData
+        const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
+          oldErc20PluginRewardsDelegate
         );
-        await tx.wait();
-        console.log("_setLatestCErc20Delegate (plugin rewards):", tx.hash);
+        if (
+          latestCErc20PluginRewardsDelegate === constants.AddressZero ||
+          latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDelegate.address
+        ) {
+          tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+            oldErc20PluginRewardsDelegate,
+            erc20PluginRewardsDelegate.address,
+            false,
+            becomeImplementationData
+          );
+          console.log("_setLatestCErc20Delegate (plugin rewards):", tx.hash);
+          await tx.wait();
+        } else {
+          console.log(
+            `latest impl for plugin rewards delegate ${erc20PluginRewardsDelegate.address} already configured`
+          );
+        }
       }
     }
   });

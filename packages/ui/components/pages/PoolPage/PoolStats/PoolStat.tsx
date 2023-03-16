@@ -12,16 +12,16 @@ import { useColors } from '@ui/hooks/useColors';
 
 const StatLabel = (props: StatLabelProps) => {
   const { cPage } = useColors();
-  return <ChakraStatLabel fontWeight="medium" color={cPage.secondary.txtColor} {...props} />;
+  return <ChakraStatLabel color={cPage.secondary.txtColor} fontWeight="medium" {...props} />;
 };
 
 const StatNumber = (props: StatNumberProps) => {
   const { cPage } = useColors();
   return (
     <ChakraStatNumber
+      color={cPage.secondary.txtColor}
       fontSize={['2xl', '2xl', '3xl', '3xl']}
       fontWeight="bold"
-      color={cPage.secondary.txtColor}
       {...props}
     />
   );
@@ -31,11 +31,11 @@ const Stat = (props: StatProps) => {
   const { cPage } = useColors();
   return (
     <ChakraStat
+      bg={cPage.secondary.bgColor}
       px={{ base: 4, sm: 6 }}
       py="5"
-      bg={cPage.secondary.bgColor}
-      shadow="base"
       rounded="lg"
+      shadow="base"
       {...props}
     />
   );

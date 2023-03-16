@@ -1,5 +1,4 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { useState } from 'react';
 
@@ -8,10 +7,8 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const AmountInput = ({
@@ -25,8 +22,7 @@ export const AmountInput = ({
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const errorToast = useErrorToast();
+  const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(asset, poolChainId);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -48,66 +44,51 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !maxWithdrawAmount) return;
 
-    setIsLoading(true);
-
-    try {
-      const maxBN = (await fetchMaxAmount(
-        FundOperationMode.WITHDRAW,
-        currentSdk,
-        address,
-        asset
-      )) as BigNumber;
-
-      if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
-        updateAmount('');
-      } else {
-        const str = utils.formatUnits(maxBN, asset.underlyingDecimals);
-        updateAmount(str);
-      }
-
-      setIsLoading(false);
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    if (maxWithdrawAmount.lt(constants.Zero) || maxWithdrawAmount.isZero()) {
+      updateAmount('');
+    } else {
+      const str = utils.formatUnits(maxWithdrawAmount, asset.underlyingDecimals);
+      updateAmount(str);
     }
   };
 
   return (
     <MidasBox width="100%">
-      <Row width="100%" p={4} mainAxisAlignment="space-between" crossAxisAlignment="center" expand>
+      <Row crossAxisAlignment="center" expand mainAxisAlignment="space-between" p={4} width="100%">
         <Input
-          id="fundInput"
-          type="number"
-          inputMode="decimal"
-          fontSize={22}
-          variant="unstyled"
-          placeholder="0.0"
-          value={userEnteredAmount}
-          onChange={(event) => updateAmount(event.target.value)}
-          mr={4}
           autoFocus
+          fontSize={22}
+          id="fundInput"
+          inputMode="decimal"
+          mr={4}
+          onChange={(event) => updateAmount(event.target.value)}
+          placeholder="0.0"
+          type="number"
+          value={userEnteredAmount}
+          variant="unstyled"
         />
-        <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
-          <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-            <Box height={8} width={8} mr={1}>
-              <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
+        <Row crossAxisAlignment="center" flexShrink={0} mainAxisAlignment="flex-start">
+          <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
+            <Box height={8} mr={1} width={8}>
+              <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="sm" />
             </Box>
             <EllipsisText
+              fontWeight="bold"
+              maxWidth="80px"
+              mr={2}
               size="md"
               tooltip={asset.underlyingSymbol}
-              maxWidth="80px"
-              fontWeight="bold"
-              mr={2}
             >
               {asset.underlyingSymbol}
             </EllipsisText>
           </Row>
           <Button
             height={{ lg: 8, md: 8, sm: 8, base: 8 }}
-            px={{ lg: 2, md: 2, sm: 2, base: 2 }}
-            onClick={setToMax}
             isLoading={isLoading}
+            onClick={setToMax}
+            px={{ lg: 2, md: 2, sm: 2, base: 2 }}
           >
             MAX
           </Button>

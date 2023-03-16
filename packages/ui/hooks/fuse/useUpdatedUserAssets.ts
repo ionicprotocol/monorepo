@@ -1,10 +1,10 @@
 import { FundOperationMode } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useCgId } from '@ui/hooks/useChainConfig';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 // TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
@@ -23,8 +23,14 @@ const useUpdatedUserAssets = <T extends MarketData>({
   poolChainId,
 }: UseUpdatedUserAssetsResult<T>) => {
   const { currentSdk, currentChain } = useMultiMidas();
-  const coingeckoId = useCgId(poolChainId);
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[poolChainId.toString()]) {
+      return usdPrices[poolChainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, poolChainId]);
 
   return useQuery(
     [

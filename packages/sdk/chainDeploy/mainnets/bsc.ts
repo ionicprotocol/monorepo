@@ -11,6 +11,7 @@ import {
   deployCurveLpOracle,
   deployCurveV2LpOracle,
   deployDiaOracle,
+  deploySolidlyLpOracle,
   deployStkBNBOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
@@ -23,6 +24,7 @@ import {
   CurvePoolConfig,
   CurveV2PoolConfig,
   DiaAsset,
+  SolidlyLpAsset,
   WombatAsset,
 } from "../helpers/types";
 
@@ -84,6 +86,13 @@ export const deployConfig: ChainDeployConfig = {
         baseToken: underlying(assets, assetSymbols.WBNB),
         minPeriod: 1800,
         deviationThreshold: "10000000000000000",
+      },
+      {
+        token: underlying(assets, assetSymbols.ANKR),
+        pair: "0x3147F98B8f9C53Acdf8F16332eaD12B592a1a4ae", // WBNB-ANKR
+        baseToken: underlying(assets, assetSymbols.WBNB),
+        minPeriod: 1800,
+        deviationThreshold: "70000000000000000",
       },
     ],
     uniswapOracleLpTokens: [
@@ -204,6 +213,16 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.JMXN,
+    aggregator: "0x16c0C1f971b1780F952572670A9d5ce4123582a1",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JGBP,
+    aggregator: "0x8FAf16F710003E538189334541F5D4a391Da46a0",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.BRZ,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -307,10 +326,31 @@ const wombatAssets: WombatAsset[] = [
   },
 ];
 
+const solidlyLps: SolidlyLpAsset[] = [{ lpTokenAddress: underlying(assets, assetSymbols["sAMM-jBRL/BRZ"]) }];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+  //// ChainLinkV2 Oracle
+  await deployChainlinkOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: assets,
+    chainlinkAssets,
+  });
+
+  //// Uniswap Oracle
+  await deployUniswapOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
 
   // set Native BNB price
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
@@ -343,26 +383,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     diaNativeFeed: { feed: constants.AddressZero, key: "BNB/USD" },
   });
 
-  //// ChainLinkV2 Oracle
-  await deployChainlinkOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    assets: assets,
-    chainlinkAssets,
-  });
   ////
-
-  //// Uniswap Oracle
-  await deployUniswapOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-  });
 
   //// Uniswap LP Oracle
   await deployUniswapLpOracle({
@@ -371,6 +392,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
+  });
+
+  //// Solidly LP Oracle
+  await deploySolidlyLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    solidlyLps,
   });
 
   //// Curve LP Oracle

@@ -6,7 +6,7 @@ import { ChainDeployConfig } from "../helpers";
 
 const assets = neondevnet.assets;
 const BN = ethers.utils.parseEther("1");
-const NEON_FIXED_PRICE_USD_BN = BN.mul(5).div(100);
+const NEON_FIXED_PRICE_USD_BN = BN.mul(88).div(100);
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: underlying(assets, assetSymbols.WNEON),
@@ -61,8 +61,8 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise
     if (a.symbol === assetSymbols.USDC) {
       price = BN.mul(1).mul(BN).div(NEON_FIXED_PRICE_USD_BN);
     } else if (a.symbol === assetSymbols.MORA) {
-      // MORA's price: 0.000587
-      price = BN.mul(6).div(10000).mul(BN).div(NEON_FIXED_PRICE_USD_BN);
+      // MORA's price: 17,09
+      price = BN.mul(1709).div(100).mul(BN).div(NEON_FIXED_PRICE_USD_BN);
     }
 
     tx = await simplePriceOracle.setDirectPrice(a.underlying, price);

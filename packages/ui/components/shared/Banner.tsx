@@ -1,32 +1,57 @@
-import { Alert, AlertDescription, AlertIcon, AlertProps } from '@chakra-ui/alert';
-import { Link, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertDescription,
+  AlertDescriptionProps,
+  AlertIcon,
+  AlertIconProps,
+  AlertProps,
+  AlertTitleProps,
+} from '@chakra-ui/alert';
+import { AlertTitle, Box, Link, Stack, Text, TextProps } from '@chakra-ui/react';
 import React from 'react';
 
 export const Banner = ({
-  text,
-  linkText,
-  linkUrl,
-  status = 'warning',
-  ...alertProps
+  title,
+  descriptions,
+  alertProps,
+  alertIconProps,
+  alertTitleProps,
+  alertDescriptionProps,
 }: {
-  text: string;
-  linkText?: string;
-  linkUrl?: string;
-  status?: string;
-} & AlertProps) => {
+  title?: string;
+  descriptions: { text: string; url?: string; textProps?: TextProps }[];
+  alertProps?: AlertProps;
+  alertIconProps?: AlertIconProps;
+  alertTitleProps?: AlertTitleProps;
+  alertDescriptionProps?: AlertDescriptionProps;
+}) => {
   return (
-    <Alert status={status} justifyContent="center" {...alertProps}>
-      <AlertIcon />
-      <AlertDescription>
-        <Text size="md">
-          {text}
-          {linkText && linkUrl && (
-            <Link fontWeight="bold" href={linkUrl} isExternal>
-              {linkText}
-            </Link>
-          )}
-        </Text>
-      </AlertDescription>
+    <Alert borderRadius={8} status="warning" variant="subtle" {...alertProps}>
+      <AlertIcon {...alertIconProps} />
+      <Box>
+        {title && (
+          <AlertTitle fontSize={20} mb={2} {...alertTitleProps}>
+            {title}
+          </AlertTitle>
+        )}
+        <AlertDescription fontSize="md" {...alertDescriptionProps}>
+          <Stack display="inline-block">
+            {descriptions.map((desc, i) =>
+              desc.url ? (
+                <Text display="inline" key={i} {...desc.textProps}>
+                  <Link fontWeight="bold" href={desc.url ? desc.url : undefined} isExternal>
+                    {desc.text}
+                  </Link>
+                </Text>
+              ) : (
+                <Text display="inline" key={i} {...desc.textProps}>
+                  {desc.text}
+                </Text>
+              )
+            )}
+          </Stack>
+        </AlertDescription>
+      </Box>
     </Alert>
   );
 };

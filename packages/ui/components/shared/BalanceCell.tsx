@@ -2,11 +2,10 @@ import { Divider, HStack, Progress, Text, VStack } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { Cap } from '../../hooks/useBorrowCap';
-
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { Cap } from '@ui/hooks/useBorrowCap';
 import { useColors } from '@ui/hooks/useColors';
-import { midFormat, smallFormatter } from '@ui/utils/bigUtils';
+import { smallFormatter } from '@ui/utils/bigUtils';
 
 interface BalanceCellProps {
   primary: {
@@ -32,18 +31,18 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
       body={
         <VStack alignItems="flex-start">
           <HStack>
-            <Text variant="tnumber">$ {smallFormatter.format(primary.value)}</Text>
-            {cap && <Text variant="tnumber">/ $ {smallFormatter.format(cap.usdCap)}</Text>}
+            <Text variant="tnumber">$ {smallFormatter(primary.value)}</Text>
+            {cap && <Text variant="tnumber">/ $ {smallFormatter(cap.usdCap)}</Text>}
           </HStack>
           {secondary && (
             <HStack>
               <Text variant="tnumber">
-                {`${smallFormatter.format(
+                {`${smallFormatter(
                   parseFloat(utils.formatUnits(secondary.value, secondary.decimals))
                 )} ${secondary.symbol}`}
               </Text>
               {cap && (
-                <Text variant="tnumber">{`/ ${smallFormatter.format(cap.tokenCap)} ${
+                <Text variant="tnumber">{`/ ${smallFormatter(cap.tokenCap)} ${
                   secondary.symbol
                 }`}</Text>
               )}
@@ -64,27 +63,25 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
           ) : null}
         </VStack>
       }
-      maxWidth="400px"
-      placement="top-end"
-      hideArrow={true}
+      popoverProps={{ placement: 'top-end' }}
     >
       <VStack alignItems="flex-end" spacing={1}>
         <HStack spacing={2}>
           <HStack spacing={0.5}>
-            <Text color={cCard.txtColor} size="sm" fontWeight={'medium'} variant="tnumber">
+            <Text color={cCard.txtColor} fontWeight={'medium'} size="sm" variant="tnumber">
               {'$'}
             </Text>
-            <Text color={cCard.txtColor} size="sm" fontWeight={'medium'} variant="tnumber">
-              {smallFormatter.format(primary.value)}
+            <Text color={cCard.txtColor} fontWeight={'medium'} size="sm" variant="tnumber">
+              {smallFormatter(primary.value)}
             </Text>
           </HStack>
           {cap && (
             <Text
               color={cCard.txtColor}
-              size="sm"
               fontWeight={'medium'}
-              variant="tnumber"
               opacity={0.6}
+              size="sm"
+              variant="tnumber"
             >
               {'/'}
             </Text>
@@ -93,21 +90,21 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
             <HStack spacing={0.5}>
               <Text
                 color={cCard.txtColor}
-                size="xs"
                 fontWeight={'medium'}
-                variant="tnumber"
                 opacity={0.6}
+                size="xs"
+                variant="tnumber"
               >
                 {'$'}
               </Text>
               <Text
                 color={cCard.txtColor}
-                size="xs"
                 fontWeight={'medium'}
-                variant="tnumber"
                 opacity={0.6}
+                size="xs"
+                variant="tnumber"
               >
-                {midFormat(cap.usdCap)}
+                {smallFormatter(cap.usdCap, true)}
               </Text>
             </HStack>
           )}
@@ -115,18 +112,21 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
         {secondary && (
           <HStack spacing={1}>
             <HStack spacing={0.5}>
-              <Text variant="tnumber" size="xs" opacity={0.6}>
-                {midFormat(Number(utils.formatUnits(secondary.value, secondary.decimals)))}
+              <Text opacity={0.6} size="xs" variant="tnumber">
+                {smallFormatter(
+                  Number(utils.formatUnits(secondary.value, secondary.decimals)),
+                  true
+                )}
               </Text>
               <Text
-                variant="tnumber"
+                align="right"
+                maxWidth={'55px'}
+                opacity={0.6}
+                overflow="hidden"
                 size="xs"
                 textOverflow="ellipsis"
-                align="right"
+                variant="tnumber"
                 whiteSpace="nowrap"
-                maxWidth={'55px'}
-                overflow="hidden"
-                opacity={0.6}
               >
                 {secondary.symbol}
               </Text>
@@ -135,28 +135,28 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
             {cap && (
               <Text
                 color={cCard.txtColor}
-                size="sm"
                 fontWeight={'medium'}
-                variant="tnumber"
                 opacity={0.6}
+                size="sm"
+                variant="tnumber"
               >
                 {'/'}
               </Text>
             )}
             {cap && (
               <HStack spacing={0.5}>
-                <Text variant="tnumber" size="xs" opacity={0.6}>
-                  {midFormat(cap.tokenCap)}
+                <Text opacity={0.6} size="xs" variant="tnumber">
+                  {smallFormatter(cap.tokenCap, true)}
                 </Text>
                 <Text
-                  variant="tnumber"
+                  align="right"
+                  maxWidth={'55px'}
+                  opacity={0.6}
+                  overflow="hidden"
                   size="xs"
                   textOverflow="ellipsis"
-                  align="right"
+                  variant="tnumber"
                   whiteSpace="nowrap"
-                  maxWidth={'55px'}
-                  overflow="hidden"
-                  opacity={0.6}
                 >
                   {secondary.symbol}
                 </Text>
@@ -167,11 +167,11 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
 
         {capRatio != undefined ? (
           <Progress
-            width="100%"
-            height={1}
             borderRadius="2px"
-            value={capRatio}
             colorScheme={capRatio <= 75 ? 'green' : capRatio <= 90 ? 'yellow' : 'red'}
+            height={1}
+            value={capRatio}
+            width="100%"
           />
         ) : null}
       </VStack>

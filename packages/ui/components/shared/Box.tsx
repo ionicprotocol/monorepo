@@ -6,12 +6,13 @@ export type MidasBoxProps = BoxProps;
 
 export const MidasBox = ({ children, ...props }: MidasBoxProps) => {
   const { cCard } = useColors();
+
   return (
     <Box
       backgroundColor={cCard.bgColor}
+      borderColor={cCard.borderColor}
       borderRadius={'xl'}
       borderWidth={2}
-      borderColor={cCard.borderColor}
       color={cCard.txtColor}
       {...props}
     >

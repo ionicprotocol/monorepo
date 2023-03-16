@@ -1,9 +1,11 @@
+import { assetSymbols } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
-import { useSdk } from './fuse/useSdk';
-import { UseAssetsData } from './useAssets';
-import { UseRewardsData } from './useRewards';
-
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
+import { UseAssetsData } from '@ui/hooks/useAssets';
+import { UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -14,14 +16,19 @@ export const useTotalSupplyAPYs = (
   assetInfos?: UseAssetsData
 ) => {
   const sdk = useSdk(chainId);
+  const isEnabled = useMemo(() => {
+    return !!assets.find((asset) => asset.underlyingSymbol === assetSymbols.ankrBNB);
+  }, [assets]);
+
+  const { data: ankrBNBApr } = useAnkrBNBApr(isEnabled, chainId);
 
   return useQuery(
     [
       'useTotalSupplyAPYs',
-      assets.sort((a, b) => a.cToken.localeCompare(b.cToken)).toString(),
-      sdk?.chainId,
-      allRewards?.toString(),
-      assetInfos?.toString(),
+      { chain: sdk?.chainId },
+      { assets: assets.map((a) => a.cToken).sort() },
+      { rewards: allRewards ? Object.keys(allRewards).sort() : undefined },
+      { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined },
     ],
     async () => {
       if (!sdk || !assets || !chainId) return null;
@@ -32,6 +39,10 @@ export const useTotalSupplyAPYs = (
         let marketTotalAPY =
           sdk.ratePerBlockToAPY(asset.supplyRatePerBlock, getBlockTimePerMinuteByChainId(chainId)) /
           100;
+
+        if (asset.underlyingSymbol === assetSymbols.ankrBNB && ankrBNBApr) {
+          marketTotalAPY += Number(ankrBNBApr) / 100;
+        }
 
         if (allRewards && allRewards[asset.cToken]) {
           marketTotalAPY += allRewards[asset.cToken].reduce(

@@ -1,2 +1,2 @@
-export { default as updatePluginData } from './plugin-data';
-export { default as updatePluginRewards } from './plugin-rewards';
+export * from './plugin-data';
+export * from './plugin-rewards';

@@ -1,17 +1,16 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
-
-import { UserStat } from './UserStats/UserStat';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MarketsList } from '@ui/components/pages/PoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner';
+import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -93,26 +92,29 @@ const PoolPage = memo(() => {
 
       <PageTransitionLayout>
         <FusePageLayout>
-          <HStack width={'100%'} mx="auto" spacing={4}>
-            <ArrowBackIcon
-              fontSize="2xl"
-              fontWeight="extrabold"
-              cursor="pointer"
-              onClick={() => {
-                setGlobalLoading(true);
-                router.back();
-              }}
-            />
-            {data ? (
-              <Text textAlign="left" size="2xl" fontWeight="bold">
-                {data.name}
-              </Text>
-            ) : (
-              <Skeleton height="54px">Pool Name</Skeleton>
-            )}
+          <Stack direction={{ base: 'column', sm: 'row' }} mx="auto" spacing={4} width={'100%'}>
+            <HStack spacing={4}>
+              <ArrowBackIcon
+                cursor="pointer"
+                fontSize="2xl"
+                fontWeight="extrabold"
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.back();
+                }}
+              />
+              {data ? (
+                <Text fontWeight="bold" size="2xl" textAlign="left">
+                  {data.name}
+                </Text>
+              ) : (
+                <Skeleton height="54px">Pool Name</Skeleton>
+              )}
+            </HStack>
+
             {data?.assets && data.assets.length > 0 ? (
               <HStack spacing={0}>
-                <AvatarGroup size="sm" max={30}>
+                <AvatarGroup max={30} size="sm">
                   {!isMobile
                     ? data.assets.map(
                         ({
@@ -123,9 +125,9 @@ const PoolPage = memo(() => {
                           cToken: string;
                         }) => (
                           <TokenIcon
-                            key={cToken}
                             address={underlyingToken}
                             chainId={data.chainId}
+                            key={cToken}
                           />
                         )
                       )
@@ -141,9 +143,9 @@ const PoolPage = memo(() => {
                           }) => {
                             return (
                               <TokenIcon
-                                key={cToken}
                                 address={underlyingToken}
                                 chainId={data.chainId}
+                                key={cToken}
                               />
                             );
                           }
@@ -156,61 +158,61 @@ const PoolPage = memo(() => {
                 )}
               </HStack>
             ) : null}
-          </HStack>
+          </Stack>
 
           {rewardTokens.length > 0 && data && (
-            <RewardsBanner tokens={rewardTokens} poolChainId={data.chainId} />
+            <RewardsBanner poolChainId={data.chainId} tokens={rewardTokens} />
           )}
 
           <PoolStats poolData={data} />
 
-          <MidasBox overflowX="auto" width="100%" mb="4">
+          <MidasBox mb="4" overflowX="auto" width="100%">
             {data &&
             initSorting &&
             initColumnVisibility &&
             allRewards &&
             initHidden !== undefined ? (
               <MarketsList
-                poolData={data}
-                rewards={allRewards}
-                initSorting={initSorting}
                 initColumnVisibility={initColumnVisibility}
                 initHidden={initHidden}
+                initSorting={initSorting}
+                poolData={data}
+                rewards={allRewards}
               />
             ) : (
               <>
-                <Box p={4} gap={4}>
+                <Box gap={4} p={4}>
                   {address ? (
                     <>
                       <Grid
-                        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
                         gap={4}
-                        w="100%"
                         mb={4}
+                        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+                        w="100%"
                       >
                         <UserStat label="Your Supply" />
                         <UserStat label="Your Borrow" />
                         <UserStat label="Effective Supply APY" />
                         <UserStat label="Effective Borrow APY" />
                       </Grid>
-                      <Skeleton height={'60px'} width="100%" borderRadius={'xl'} mb={4} />
+                      <Skeleton borderRadius={'xl'} height={'60px'} mb={4} width="100%" />
                     </>
                   ) : null}
 
                   <Flex alignItems="center" justifyContent={'space-between'}>
                     <Flex flexDirection={['row']} gap={0}>
                       <Skeleton
+                        borderEndRadius={0}
+                        borderStartRadius={'xl'}
                         height={'52px'}
                         width={'72px'}
-                        borderStartRadius={'xl'}
-                        borderEndRadius={0}
                       />
-                      <Skeleton height={'52px'} width={'120px'} borderRadius={0} />
+                      <Skeleton borderRadius={0} height={'52px'} width={'120px'} />
                       <Skeleton
+                        borderEndRadius={'xl'}
+                        borderStartRadius={0}
                         height={'52px'}
                         width={'120px'}
-                        borderStartRadius={0}
-                        borderEndRadius={'xl'}
                       />
                     </Flex>
                     <Skeleton height={'40px'} width={'320px'} />

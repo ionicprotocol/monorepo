@@ -7,16 +7,18 @@ import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
   deployAnkrCertificateTokenPriceOracle,
+  deployBalancerLpPriceOracle,
+  deployBalancerStableLpPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
+  deployGelatoGUniPriceOracle,
   deployUniswapLpOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { deployBalancerLpPriceOracle } from "../helpers/oracles/balancerLp";
-import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import {
   BalancerLpAsset,
+  BalancerStableLpAsset,
   ChainDeployFnParams,
   ChainlinkAsset,
   CurvePoolConfig,
@@ -466,6 +468,17 @@ const balancerLpAssets: BalancerLpAsset[] = [
   },
 ];
 
+const balancerStableLpAssets: BalancerStableLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.BRZ_JBRL_STABLE_BLP),
+    baseToken: underlying(assets, assetSymbols.jBRL),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_STABLE_BLP),
+    baseToken: underlying(assets, assetSymbols.stMATIC),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -540,6 +553,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     balancerLpAssets,
+  });
+
+  /// Balancer Stable LP Price Oracle
+  await deployBalancerStableLpPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerStableLpAssets,
   });
 
   /// Ankr Certificate Price Oracle
@@ -661,7 +684,20 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 
-  /// Addresses Provider - set bUSD
+  //// custom uniswap v2 redemptions and funding
+  const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (uniswapV2LiquidatorFunder.transactionHash) {
+    await ethers.provider.waitForTransaction(uniswapV2LiquidatorFunder.transactionHash);
+  }
+  console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
+
+  /// Addresses Provider
+  /// set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const busdAddress = underlying(assets, assetSymbols.BUSD);
   const busdAddressAp = await addressesProvider.callStatic.getAddress("bUSD");
@@ -669,6 +705,23 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     const tx = await addressesProvider.setAddress("bUSD", busdAddress);
     await tx.wait();
     console.log("setAddress bUSD: ", tx.hash);
+  }
+  /// set BalancerLpStablePoolPriceOracle
+  const balancerLpStablePoolPriceOracle = await ethers.getContractOrNull("BalancerLpStablePoolPriceOracle", deployer);
+  const balancerLpStablePoolPriceOracleAp = await addressesProvider.callStatic.getAddress(
+    "BalancerLpStablePoolPriceOracle"
+  );
+  if (
+    balancerLpStablePoolPriceOracle &&
+    balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address
+  ) {
+    const tx = await addressesProvider.setAddress(
+      "BalancerLpStablePoolPriceOracle",
+      balancerLpStablePoolPriceOracle.address
+    );
+    console.log("setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
+    await tx.wait();
+    console.log("mined setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
   }
   ////
 };

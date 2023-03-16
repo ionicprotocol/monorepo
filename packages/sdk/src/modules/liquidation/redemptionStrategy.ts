@@ -1,5 +1,5 @@
 import { RedemptionStrategyContract } from "@midas-capital/types";
-import { BytesLike, Contract, ethers } from "ethers";
+import { BytesLike, constants, Contract, ethers } from "ethers";
 
 import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";
 import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
@@ -25,7 +25,7 @@ export const getRedemptionStrategiesAndDatas = async (
 ): Promise<[StrategiesAndDatas, string[]]> => {
   const strategies: string[] = [];
   const datas: BytesLike[] = [];
-  const tokenPath: string[] = [];
+  const tokenPath: string[] = [inputToken];
 
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
@@ -114,7 +114,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
-          ["address", "address", "address", "address"],
+          ["address", "address", "address"],
           [preferredOutputToken, fuse.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
         ),
         outputToken: actualOutputToken,
@@ -199,8 +199,8 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     case RedemptionStrategyContract.CurveSwapLiquidator: {
-      const curveV1Oracle = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
-      const curveV2Oracle = fuse.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address;
+      const curveV1Oracle = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry ? fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address : constants.AddressZero;
+      const curveV2Oracle = fuse.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry ? fuse.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address : constants.AddressZero;
 
       const strategyData = new ethers.utils.AbiCoder().encode(
         ["address", "address", "address", "address", "address"],

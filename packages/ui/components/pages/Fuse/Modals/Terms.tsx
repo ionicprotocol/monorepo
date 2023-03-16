@@ -1,20 +1,7 @@
-import {
-  Button,
-  Flex,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Spacer,
-  Text,
-  UnorderedList,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, Flex, ListItem, Spacer, Text, UnorderedList, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
+import { MidasModal } from '@ui/components/shared/Modal';
 import { MIDAS_T_AND_C_ACCEPTED } from '@ui/constants/index';
 
 const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
@@ -29,27 +16,10 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
   }, [hasAcceptedTerms]);
 
   return (
-    <Modal
-      isOpen={!hasAcceptedTerms}
-      closeOnOverlayClick={false}
-      onClose={accept}
-      scrollBehavior="inside"
-      size={'6xl'}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader alignSelf="center" width="100%">
-          <Flex alignItems="flex-end">
-            <Text variant="title">Terms & Conditions</Text>
-            <Spacer />
-            <VStack spacing={0}>
-              <Text>Last Revised: </Text>
-              <Text>7/16/2022</Text>
-            </VStack>
-          </Flex>
-        </ModalHeader>
-        <ModalBody maxHeight="60vh">
-          <Text size="lg" fontWeight="bold">
+    <MidasModal
+      body={
+        <>
+          <Text fontWeight="bold" size="lg">
             1. Acceptance of Terms
           </Text>
           <Text>
@@ -68,7 +38,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             additional terms, rules and conditions of participation issued from time to time. If you
             do not agree to the Terms, then you may not access or use the Content or Site.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             2. Modification of Terms of Use
           </Text>
           <Text>
@@ -82,7 +52,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             Terms constitutes your acceptance of the Terms as modified. If you do not agree to the
             Terms in effect when you access or use the Interface, you must stop using the Interface.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             3. Eligibility
           </Text>
           <Text>
@@ -99,7 +69,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             for your compliance with such laws. Finally, you represent and warrant that you will not
             use the Service for any illegal activity.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             4. Representations, Warranties, and Risks
           </Text>
           <Text textDecoration={'underline'}>4.1. No Representation or Warranty.</Text>
@@ -231,7 +201,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             appreciate inherent risks, including those listed above. You represent and warrant that
             you possess relevant knowledge and skills.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             5. Indemnity
           </Text>
           <Text>
@@ -248,7 +218,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             matter otherwise subject to indemnification by you and, in such case, you agree to
             cooperate with Midas Labs Ltd. & Midas Labs FZE LLC in the defense of such matter.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             6. Limitation on liability
           </Text>
           <Text>
@@ -279,7 +249,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             OR THE LIMITATION OR EXCLUSION OF LIABILITY FOR INCIDENTAL OR CONSEQUENTIAL DAMAGES.
             ACCORDINGLY, SOME OF THE ABOVE LIMITATIONS MAY NOT APPLY TO YOU.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             7. Proprietary Rights
           </Text>
           <Text>
@@ -292,7 +262,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             perform, display or create derivative works based on the Midas Capital Protocol,
             Interface and Content, in whole or in part.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             8. Links
           </Text>
           <Text>
@@ -308,7 +278,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             to be caused by or in connection with use of or reliance on any such content, goods or
             services available on or through any such site or resource.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             9. Termination and Suspension
           </Text>
           <Text>
@@ -320,14 +290,14 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             OUR PROPRIETARY RIGHTS; LINKS; TERMINATION; NO THIRD-PARTY BENEFICIARIES; BINDING
             ARBITRATION AND CLASS ACTION WAIVER; GENERAL INFORMATION.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             10. No Third-Party Beneficiaries
           </Text>
           <Text>
             You agree that, except as otherwise expressly provided in these Terms, there shall be no
             third party beneficiaries to the Terms.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             11. Notice and Procedure For Making Claims of Copyright Infringement
           </Text>
           <Text>
@@ -364,7 +334,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
               authorized to act on the copyright or intellectual property owner&apos;s behalf.
             </ListItem>
           </UnorderedList>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             12. Arbitration and Class Action Waiver
           </Text>
           <Text textDecoration={'underline'}>12.1. Initial Dispute Resolution</Text>
@@ -416,7 +386,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             Midas Labs FZE LLC shall be governed by the laws of BVI without regard to conflict of
             law provisions.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             13. General Provisions
           </Text>
           <Text textDecoration={'underline'}>13.1. Entire Agreement</Text>
@@ -455,7 +425,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             Users with questions, complaints or claims with respect to the Service may contact us
             using the relevant contact information set forth above and at contact@midaslabsltd.xyz.
           </Text>
-          <Text size="lg" fontWeight="bold">
+          <Text fontWeight="bold" size="lg">
             14. Prohibited Use
           </Text>
           <Text>
@@ -505,8 +475,10 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
               </ListItem>
             </UnorderedList>
           </Text>
-        </ModalBody>
-        <ModalFooter>
+        </>
+      }
+      footer={
+        <>
           <Button id="termsAcceptBtn" onClick={accept}>
             Accept
           </Button>
@@ -518,9 +490,24 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           >
             Decline
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </>
+      }
+      header={
+        <Flex alignItems="flex-end">
+          <Text variant="title">Terms & Conditions</Text>
+          <Spacer />
+          <VStack spacing={0}>
+            <Text>Last Revised: </Text>
+            <Text>7/16/2022</Text>
+          </VStack>
+        </Flex>
+      }
+      isOpen={!hasAcceptedTerms}
+      modalBodyProps={{ maxHeight: '60vh' }}
+      modalHeaderProps={{ alignSelf: 'center', width: '100%' }}
+      modalProps={{ size: '6xl' }}
+      onClose={accept}
+    />
   );
 };
 

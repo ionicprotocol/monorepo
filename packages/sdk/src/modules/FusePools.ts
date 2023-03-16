@@ -1,4 +1,15 @@
-import { arbitrum, bsc, chapel, evmos, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import {
+  arbitrum,
+  basegoerli,
+  bsc,
+  chapel,
+  evmos,
+  fantom,
+  ganache,
+  moonbeam,
+  neondevnet,
+  polygon,
+} from "@midas-capital/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   FusePoolData,
@@ -30,6 +41,7 @@ const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.fantom]: fantom.assets,
+  [SupportedChains.basegoerli]: basegoerli.assets,
 };
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
