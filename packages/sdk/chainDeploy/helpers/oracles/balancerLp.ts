@@ -74,7 +74,7 @@ export const deployBalancerLinearLpPriceOracle = async ({
     if (!registeredUnderlyings.includes(token.lpTokenAddress)) {
       const tx: providers.TransactionResponse = await blpOracle.registerToken(token.lpTokenAddress);
       await tx.wait();
-      console.log(`BalancerLpStablePoolPriceOracle registered token ${token.lpTokenAddress}`);
+      console.log(`BalancerLpLinearPoolPriceOracle registered token ${token.lpTokenAddress}`);
     }
   }
 
@@ -175,7 +175,7 @@ export const deployBalancerRateProviderPriceOracle = async ({
       );
       await tx.wait();
       console.log(
-        `BalancerLpStablePoolPriceOracle registered for token ${token.tokenAddress} with base token: ${token.baseToken}`
+        `BalancerRateProviderOracle registered for token ${token.tokenAddress} with base token: ${token.baseToken}`
       );
     }
   }
