@@ -5,7 +5,7 @@ import { PoolStat } from '@ui/components/pages/PoolPage/PoolStats/PoolStat';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { PoolData } from '@ui/types/TokensDataMap';
-import { midFormat, midUsdFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
+import { smallFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import {
   sortTopBorrowedAssets,
   sortTopLiquidityAssets,
@@ -56,8 +56,11 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           {smallUsdFormatter(asset.totalSupplyFiat)}
                         </Text>
                         <Text>
-                          {tokenFormatter(asset.totalSupply, asset.underlyingDecimals)}{' '}
-                          {asset.underlyingSymbol}
+                          {tokenFormatter(
+                            asset.totalSupply,
+                            asset.underlyingDecimals,
+                            asset.underlyingSymbol
+                          )}
                         </Text>
                       </Box>
                     </HStack>
@@ -72,7 +75,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         <Flex>
           <PoolStat
             label="Total Supply"
-            value={poolData ? midUsdFormatter(poolData.totalSuppliedFiat) : undefined}
+            value={poolData ? smallUsdFormatter(poolData.totalSuppliedFiat, true) : undefined}
           />
         </Flex>
       </PopoverTooltip>
@@ -98,8 +101,11 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           {smallUsdFormatter(asset.totalBorrowFiat)}
                         </Text>
                         <Text>
-                          {tokenFormatter(asset.totalBorrow, asset.underlyingDecimals)}{' '}
-                          {asset.underlyingSymbol}
+                          {tokenFormatter(
+                            asset.totalBorrow,
+                            asset.underlyingDecimals,
+                            asset.underlyingSymbol
+                          )}
                         </Text>
                       </Box>
                     </HStack>
@@ -114,7 +120,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         <Flex>
           <PoolStat
             label="Total Borrow"
-            value={poolData ? midUsdFormatter(poolData?.totalBorrowedFiat) : undefined}
+            value={poolData ? smallUsdFormatter(poolData?.totalBorrowedFiat, true) : undefined}
           />
         </Flex>
       </PopoverTooltip>
@@ -140,8 +146,11 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           {smallUsdFormatter(asset.liquidityFiat)}
                         </Text>
                         <Text>
-                          {tokenFormatter(asset.liquidity, asset.underlyingDecimals)}{' '}
-                          {asset.underlyingSymbol}
+                          {tokenFormatter(
+                            asset.liquidity,
+                            asset.underlyingDecimals,
+                            asset.underlyingSymbol
+                          )}
                         </Text>
                       </Box>
                     </HStack>
@@ -156,7 +165,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         <Flex>
           <PoolStat
             label="Total Liquidity"
-            value={poolData ? midUsdFormatter(poolData?.totalAvailableLiquidityFiat) : undefined}
+            value={
+              poolData ? smallUsdFormatter(poolData?.totalAvailableLiquidityFiat, true) : undefined
+            }
           />
         </Flex>
       </PopoverTooltip>
@@ -179,7 +190,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                       )}
                       <Box ml="3">
                         <Text fontWeight="bold" mt={1}>
-                          {midFormat(asset.utilization)}%
+                          {smallFormatter(asset.utilization, true)}%
                         </Text>
                         <Text>{asset.underlyingSymbol}</Text>
                       </Box>

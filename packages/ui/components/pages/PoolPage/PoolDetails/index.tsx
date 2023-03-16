@@ -14,7 +14,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { midUsdFormatter } from '@ui/utils/bigUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -105,19 +105,19 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Total Supplied</Text>
               <Text fontWeight="bold" size="md">
-                {midUsdFormatter(totalSuppliedFiat)}
+                {smallUsdFormatter(totalSuppliedFiat, true)}
               </Text>
             </HStack>
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Total Borrowed</Text>
               <Text fontWeight="bold" size="md">
-                {midUsdFormatter(totalBorrowedFiat)}
+                {smallUsdFormatter(totalBorrowedFiat, true)}
               </Text>
             </HStack>
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Available Liquidity</Text>
               <Text fontWeight="bold" size="md">
-                {midUsdFormatter(totalAvailableLiquidityFiat)}
+                {smallUsdFormatter(totalAvailableLiquidityFiat, true)}
               </Text>
             </HStack>
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>

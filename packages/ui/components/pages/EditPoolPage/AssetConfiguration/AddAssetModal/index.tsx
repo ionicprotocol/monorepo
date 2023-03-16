@@ -4,17 +4,11 @@ import {
   Button,
   Center,
   CircularProgress,
-  Divider,
   Flex,
   Heading,
   Input,
   InputGroup,
   InputRightElement,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Spacer,
   Text,
   VStack,
@@ -25,6 +19,7 @@ import { SupportedAsset } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetModal/AddAssetSettings';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -280,19 +275,12 @@ const AddAssetModal = ({
   onClose: () => void;
 } & AddAssetProps) => {
   return (
-    <Modal isCentered isOpen={isOpen} motionPreset="slideInBottom" onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          <Text fontWeight="bold" variant="title">
-            Add Asset
-          </Text>
-        </ModalHeader>
-        <ModalCloseButton top={4} />
-        <Divider />
-        <AddAsset onSuccess={onClose} poolChainId={poolChainId} {...addAssetProps} />
-      </ModalContent>
-    </Modal>
+    <MidasModal
+      body={<AddAsset onSuccess={onClose} poolChainId={poolChainId} {...addAssetProps} />}
+      header="Add Asset"
+      isOpen={isOpen}
+      onClose={onClose}
+    />
   );
 };
 

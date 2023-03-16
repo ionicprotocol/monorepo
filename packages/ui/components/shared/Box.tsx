@@ -6,6 +6,7 @@ export type MidasBoxProps = BoxProps;
 
 export const MidasBox = ({ children, ...props }: MidasBoxProps) => {
   const { cCard } = useColors();
+
   return (
     <Box
       backgroundColor={cCard.bgColor}

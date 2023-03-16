@@ -41,7 +41,7 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "false"
-FANTOM = "false"
+FANTOM = "true"
 IS_SENTRY_ENABLED = "true"
 
 [functions]

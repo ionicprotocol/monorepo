@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { ContractTransaction } from 'ethers';
@@ -20,6 +9,7 @@ import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/Ad
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
@@ -174,99 +164,86 @@ export const CollateralModal = ({
   };
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen={isOpen}
-      motionPreset="slideInBottom"
-      onClose={onModalClose}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={0}>
-          <Column
-            bg={cCard.bgColor}
-            borderRadius={16}
-            color={cCard.txtColor}
-            crossAxisAlignment="flex-start"
-            id="CollateralModal"
-            mainAxisAlignment="flex-start"
-          >
-            {!isLoading && <ModalCloseButton right={4} top={4} />}
-            {isConfirmed ? (
-              <PendingTransaction
-                activeStep={activeStep}
-                asset={asset}
-                failedStep={failedStep}
-                isLoading={isLoading}
-                poolChainId={poolChainId}
-                steps={confirmedSteps}
-              />
-            ) : (
-              <>
-                <HStack justifyContent="center" p={4} width="100%">
-                  <Text variant="title">{!asset.membership ? 'Enable' : 'Disable'}</Text>
-                  <Box height="36px" mx={3} width="36px">
-                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
-                  </Box>
-                  <EllipsisText
-                    maxWidth="100px"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
-                    variant="title"
-                  >
-                    {tokenData?.symbol || asset.underlyingSymbol}
-                  </EllipsisText>
-                  <Text variant="title">As Collateral</Text>
-                </HStack>
-
-                <Divider />
-
-                <Column
-                  crossAxisAlignment="center"
-                  gap={4}
-                  height="100%"
-                  mainAxisAlignment="flex-start"
-                  p={4}
-                  width="100%"
+    <MidasModal
+      body={
+        <Column
+          bg={cCard.bgColor}
+          borderRadius={16}
+          color={cCard.txtColor}
+          crossAxisAlignment="flex-start"
+          id="CollateralModal"
+          mainAxisAlignment="flex-start"
+        >
+          {isConfirmed ? (
+            <PendingTransaction
+              activeStep={activeStep}
+              asset={asset}
+              failedStep={failedStep}
+              isLoading={isLoading}
+              poolChainId={poolChainId}
+              steps={confirmedSteps}
+            />
+          ) : (
+            <>
+              <HStack justifyContent="center" p={4} width="100%">
+                <Text variant="title">{!asset.membership ? 'Enable' : 'Disable'}</Text>
+                <Box height="36px" mx={3} width="36px">
+                  <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                </Box>
+                <EllipsisText
+                  maxWidth="100px"
+                  tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                  variant="title"
                 >
-                  <Alerts asset={asset} />
-                  <MidasBox width="100%">
-                    <Column
-                      crossAxisAlignment="flex-start"
-                      expand
-                      gap={2}
-                      mainAxisAlignment="space-between"
-                      p={4}
-                    >
-                      <Row
-                        crossAxisAlignment="center"
-                        mainAxisAlignment="space-between"
-                        width="100%"
-                      >
-                        <Text flexShrink={0} variant="smText">
-                          Total Borrow Limit:
+                  {tokenData?.symbol || asset.underlyingSymbol}
+                </EllipsisText>
+                <Text variant="title">As Collateral</Text>
+              </HStack>
+
+              <Divider />
+
+              <Column
+                crossAxisAlignment="center"
+                gap={4}
+                height="100%"
+                mainAxisAlignment="flex-start"
+                p={4}
+                width="100%"
+              >
+                <Alerts asset={asset} />
+                <MidasBox width="100%">
+                  <Column
+                    crossAxisAlignment="flex-start"
+                    expand
+                    gap={2}
+                    mainAxisAlignment="space-between"
+                    p={4}
+                  >
+                    <Row crossAxisAlignment="center" mainAxisAlignment="space-between" width="100%">
+                      <Text flexShrink={0} variant="smText">
+                        Total Borrow Limit:
+                      </Text>
+                      <HStack spacing={1}>
+                        <Text variant={'smText'}>{smallUsdFormatter(borrowLimitTotal || 0)}</Text>
+                        <Text>{'→'}</Text>
+                        <Text variant={'smText'}>
+                          {smallUsdFormatter(updatedBorrowLimitTotal || 0)}
                         </Text>
-                        <HStack spacing={1}>
-                          <Text variant={'smText'}>{smallUsdFormatter(borrowLimitTotal || 0)}</Text>
-                          <Text>{'→'}</Text>
-                          <Text variant={'smText'}>
-                            {smallUsdFormatter(updatedBorrowLimitTotal || 0)}
-                          </Text>
-                        </HStack>
-                      </Row>
-                    </Column>
-                  </MidasBox>
-                  <Button height={16} id="confirmCollateral" onClick={onConfirm} width="100%">
-                    {!asset.membership ? 'Enable' : 'Disable'} {asset.underlyingSymbol} as
-                    collateral
-                  </Button>
-                </Column>
-              </>
-            )}
-          </Column>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+                      </HStack>
+                    </Row>
+                  </Column>
+                </MidasBox>
+                <Button height={16} id="confirmCollateral" onClick={onConfirm} width="100%">
+                  {!asset.membership ? 'Enable' : 'Disable'} {asset.underlyingSymbol} as collateral
+                </Button>
+              </Column>
+            </>
+          )}
+        </Column>
+      }
+      isOpen={isOpen}
+      modalCloseButtonProps={{ hidden: isLoading }}
+      onClose={onModalClose}
+    />
   );
 };

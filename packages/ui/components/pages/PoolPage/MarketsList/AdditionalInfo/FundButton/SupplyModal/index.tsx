@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -27,6 +16,7 @@ import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/Additiona
 import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SUPPLY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -360,125 +350,115 @@ export const SupplyModal = ({
   }, [optionToWrap, enableAsCollateral, asset.underlyingSymbol]);
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen={isOpen}
-      motionPreset="slideInBottom"
-      onClose={onModalClose}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={0}>
-          <Column
-            bg={cCard.bgColor}
-            borderRadius={16}
-            color={cCard.txtColor}
-            crossAxisAlignment="flex-start"
-            id="fundOperationModal"
-            mainAxisAlignment="flex-start"
-          >
-            {!isSupplying && <ModalCloseButton right={4} top={4} />}
-            {isConfirmed ? (
-              <PendingTransaction
-                activeStep={activeStep}
-                amount={amount}
-                asset={asset}
-                failedStep={failedStep}
-                isSupplying={isSupplying}
-                poolChainId={poolChainId}
-                steps={confirmedSteps}
-              />
-            ) : (
-              <>
-                <HStack justifyContent="center" my={4} width="100%">
-                  <Text variant="title">Supply</Text>
-                  <Box height="36px" mx={2} width="36px">
-                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
-                  </Box>
-                  <EllipsisText
-                    maxWidth="100px"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
-                    variant="title"
-                  >
-                    {tokenData?.symbol || asset.underlyingSymbol}
-                  </EllipsisText>
-                </HStack>
-
-                <Divider />
-
-                <Column
-                  crossAxisAlignment="center"
-                  gap={4}
-                  height="100%"
-                  mainAxisAlignment="flex-start"
-                  p={4}
-                  width="100%"
+    <MidasModal
+      body={
+        <Column
+          bg={cCard.bgColor}
+          borderRadius={16}
+          color={cCard.txtColor}
+          crossAxisAlignment="flex-start"
+          id="fundOperationModal"
+          mainAxisAlignment="flex-start"
+        >
+          {isConfirmed ? (
+            <PendingTransaction
+              activeStep={activeStep}
+              amount={amount}
+              asset={asset}
+              failedStep={failedStep}
+              isSupplying={isSupplying}
+              poolChainId={poolChainId}
+              steps={confirmedSteps}
+            />
+          ) : (
+            <>
+              <HStack justifyContent="center" my={4} width="100%">
+                <Text variant="title">Supply</Text>
+                <Box height="36px" mx={2} width="36px">
+                  <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                </Box>
+                <EllipsisText
+                  maxWidth="100px"
+                  tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                  variant="title"
                 >
-                  {!supplyCap || asset.totalSupplyFiat < supplyCap.usdCap ? (
-                    <>
-                      <Column gap={1} w="100%">
-                        <AmountInput
-                          asset={asset}
-                          comptrollerAddress={comptrollerAddress}
-                          optionToWrap={optionToWrap}
-                          poolChainId={poolChainId}
-                          setAmount={setAmount}
-                        />
+                  {tokenData?.symbol || asset.underlyingSymbol}
+                </EllipsisText>
+              </HStack>
 
-                        <Balance asset={asset} />
-                      </Column>
-                      <StatsColumn
-                        amount={amount}
+              <Divider />
+
+              <Column
+                crossAxisAlignment="center"
+                gap={4}
+                height="100%"
+                mainAxisAlignment="flex-start"
+                p={4}
+                width="100%"
+              >
+                {!supplyCap || asset.totalSupplyFiat < supplyCap.usdCap ? (
+                  <>
+                    <Column gap={1} w="100%">
+                      <AmountInput
                         asset={asset}
-                        assets={assets}
                         comptrollerAddress={comptrollerAddress}
-                        enableAsCollateral={enableAsCollateral}
-                        mode={FundOperationMode.SUPPLY}
+                        optionToWrap={optionToWrap}
                         poolChainId={poolChainId}
+                        setAmount={setAmount}
                       />
-                      {!asset.membership && (
-                        <EnableCollateral
-                          enableAsCollateral={enableAsCollateral}
-                          setEnableAsCollateral={setEnableAsCollateral}
-                        />
-                      )}
-                      <Button
-                        height={16}
-                        id="confirmFund"
-                        isDisabled={!isAmountValid}
-                        onClick={onConfirm}
-                        width="100%"
-                      >
-                        {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
-                      </Button>
-                    </>
-                  ) : (
-                    <Banner
-                      alertDescriptionProps={{ fontSize: 'lg' }}
-                      alertProps={{ status: 'info' }}
-                      descriptions={[
-                        {
-                          text: `${smallFormatter.format(supplyCap.tokenCap)} ${
-                            asset.underlyingSymbol
-                          } / ${smallFormatter.format(supplyCap.tokenCap)} ${
-                            asset.underlyingSymbol
-                          }`,
-                          textProps: { display: 'block', fontWeight: 'bold' },
-                        },
-                        {
-                          text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.',
-                        },
-                      ]}
+
+                      <Balance asset={asset} />
+                    </Column>
+                    <StatsColumn
+                      amount={amount}
+                      asset={asset}
+                      assets={assets}
+                      comptrollerAddress={comptrollerAddress}
+                      enableAsCollateral={enableAsCollateral}
+                      mode={FundOperationMode.SUPPLY}
+                      poolChainId={poolChainId}
                     />
-                  )}
-                </Column>
-              </>
-            )}
-          </Column>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+                    {!asset.membership && (
+                      <EnableCollateral
+                        enableAsCollateral={enableAsCollateral}
+                        setEnableAsCollateral={setEnableAsCollateral}
+                      />
+                    )}
+                    <Button
+                      height={16}
+                      id="confirmFund"
+                      isDisabled={!isAmountValid}
+                      onClick={onConfirm}
+                      width="100%"
+                    >
+                      {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
+                    </Button>
+                  </>
+                ) : (
+                  <Banner
+                    alertDescriptionProps={{ fontSize: 'lg' }}
+                    alertProps={{ status: 'info' }}
+                    descriptions={[
+                      {
+                        text: `${smallFormatter(supplyCap.tokenCap)} ${
+                          asset.underlyingSymbol
+                        } / ${smallFormatter(supplyCap.tokenCap)} ${asset.underlyingSymbol}`,
+                        textProps: { display: 'block', fontWeight: 'bold' },
+                      },
+                      {
+                        text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.',
+                      },
+                    ]}
+                  />
+                )}
+              </Column>
+            </>
+          )}
+        </Column>
+      }
+      isOpen={isOpen}
+      modalCloseButtonProps={{ hidden: isSupplying }}
+      onClose={onModalClose}
+    />
   );
 };

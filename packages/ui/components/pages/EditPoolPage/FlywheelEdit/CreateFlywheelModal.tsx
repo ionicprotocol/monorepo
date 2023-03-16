@@ -3,16 +3,10 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   Image,
   Input,
   InputGroup,
   InputRightElement,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -22,6 +16,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
+import { MidasModal } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -221,17 +216,16 @@ const CreateFlywheelModal = ({
   ...createFlywheelProps
 }: CreateFlywheelModalProps) => {
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create New Flywheel</ModalHeader>
-        <ModalCloseButton top={4} />
-        <Divider />
+    <MidasModal
+      body={
         <Center p={4}>
           <CreateFlywheel {...createFlywheelProps} onSuccess={onClose} />
         </Center>
-      </ModalContent>
-    </Modal>
+      }
+      header="Create New Flywheel"
+      isOpen={isOpen}
+      onClose={onClose}
+    />
   );
 };
 export default CreateFlywheelModal;
