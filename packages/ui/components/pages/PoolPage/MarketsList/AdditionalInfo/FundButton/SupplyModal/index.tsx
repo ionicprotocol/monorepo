@@ -440,9 +440,9 @@ export const SupplyModal = ({
                     alertProps={{ status: 'info' }}
                     descriptions={[
                       {
-                        text: `${smallFormatter.format(supplyCap.tokenCap)} ${
+                        text: `${smallFormatter(supplyCap.tokenCap)} ${
                           asset.underlyingSymbol
-                        } / ${smallFormatter.format(supplyCap.tokenCap)} ${asset.underlyingSymbol}`,
+                        } / ${smallFormatter(supplyCap.tokenCap)} ${asset.underlyingSymbol}`,
                         textProps: { display: 'block', fontWeight: 'bold' },
                       },
                       {
