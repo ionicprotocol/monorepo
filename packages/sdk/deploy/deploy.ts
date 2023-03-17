@@ -550,6 +550,28 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   ///
 
+  //// OPTIMIZED VAULTS
+  //// Deploy vaults registry
+  console.log("Deploying the optimized APR vaults registry");
+  const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
+    from: deployer,
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [],
+        },
+      },
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: deployer,
+    },
+    waitConfirmations: 1,
+  });
+  if (vaultsRegistry.transactionHash) await ethers.provider.waitForTransaction(vaultsRegistry.transactionHash);
+  console.log("OptimizedVaultsRegistry: ", vaultsRegistry.address);
+  ////
+
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
   /// EXTERNAL ADDRESSES
