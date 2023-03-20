@@ -724,7 +724,7 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
   );
 };
 
-const ChainFilterButton = ({
+export const ChainFilterButton = ({
   chainId,
   onFilter,
   globalFilter,

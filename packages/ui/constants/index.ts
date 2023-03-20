@@ -175,6 +175,7 @@ export const MARKET_COLUMNS = [
   TOTAL_BORROW,
   LIQUIDITY,
 ];
+export const VAULT = 'Vault';
 
 export const POOL_NAME = 'Pool Name';
 export const ASSETS = 'Assets';
