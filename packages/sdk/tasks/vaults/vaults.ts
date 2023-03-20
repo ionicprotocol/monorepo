@@ -2,11 +2,11 @@ import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
+import { CErc20 } from "../../typechain/CErc20";
+import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
 import { IERC20MetadataUpgradeable as IERC20 } from "../../typechain/IERC20MetadataUpgradeable";
 import { OptimizedAPRVault } from "../../typechain/OptimizedAPRVault";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
-import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
-import { CErc20 } from "../../typechain/CErc20";
 
 export default task("optimized-vault:add")
   .addParam("vaultAddress", "Address of the vault to add", undefined, types.string)
@@ -147,7 +147,6 @@ task("optimized-adapters:change")
     console.log(`changed the adapters of vault ${vaultAddress}`);
   });
 
-
 task("deploy-optimized:all")
   .addParam("marketsAddresses", "Comma-separated addresses of the markets", undefined, types.string)
   .setAction(async ({ marketsAddresses }, { ethers, run, getNamedAccounts }) => {
@@ -166,15 +165,18 @@ task("deploy-optimized:all")
     for (let i = 0; i < markets; i++) {
       const marketAddress = markets[i];
       await run("optimized-adapters:deploy", {
-        marketAddress
+        marketAddress,
       });
 
-      const adapter = (await ethers.getContract(`CompoundMarketERC4626_${marketAddress}`, deployer)) as CompoundMarketERC4626;
+      const adapter = (await ethers.getContract(
+        `CompoundMarketERC4626_${marketAddress}`,
+        deployer
+      )) as CompoundMarketERC4626;
       adapters.push(adapter.address);
     }
 
     await run("optimized-vault:deploy", {
       assetAddress: asset,
-      adaptersAddresses: adapters.join(",")
+      adaptersAddresses: adapters.join(","),
     });
   });
