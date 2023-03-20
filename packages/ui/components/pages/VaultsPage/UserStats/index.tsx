@@ -7,12 +7,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { FundedAsset } from '@ui/hooks/useAllFundedInfo';
 import { useColors } from '@ui/hooks/useColors';
-import {
-  midUsdFormatter,
-  smallFormatter,
-  smallUsdFormatter,
-  tokenFormatter,
-} from '@ui/utils/bigUtils';
+import { smallFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { sortTopUserSuppliedAssets } from '@ui/utils/sorts';
 
 export const UserStats = ({
@@ -61,7 +56,7 @@ export const UserStats = ({
 
           _estimatedPerAsset.push({
             underlying: asset.underlyingToken,
-            supplied: smallFormatter.format(suppliedNum),
+            supplied: smallFormatter(suppliedNum),
             apy: totalSupplyApyPerAsset[asset.cToken] * 100,
             estimated: totalSupplyApyPerAsset[asset.cToken] * suppliedNum,
             symbol: asset.underlyingSymbol,
@@ -121,7 +116,7 @@ export const UserStats = ({
         visible={topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0}
       >
         <Flex>
-          <UserStat label="Your Supply" value={midUsdFormatter(totalSupplyBalanceFiat)} />
+          <UserStat label="Your Supply" value={smallUsdFormatter(totalSupplyBalanceFiat, true)} />
         </Flex>
       </PopoverTooltip>
 
@@ -145,7 +140,7 @@ export const UserStats = ({
                         <Text whiteSpace="nowrap">
                           {data.supplied} {data.symbol} at {data.apy.toFixed(2)}% APY yield{' '}
                           <b>
-                            {smallFormatter.format(data.estimated)} {data.symbol}/year
+                            {smallFormatter(data.estimated)} {data.symbol}/year
                           </b>
                         </Text>
                       </HStack>
@@ -154,9 +149,9 @@ export const UserStats = ({
                   <Divider bg={cCard.borderColor} />
                   <HStack alignSelf="self-end">
                     <Text whiteSpace="nowrap">
-                      {smallFormatter.format(totalSupplyApy.totalSupplied)} USD at{' '}
+                      {smallFormatter(totalSupplyApy.totalSupplied)} USD at{' '}
                       {totalSupplyApy.totalApy.toFixed(2)}% APY yield{' '}
-                      <b>{smallFormatter.format(totalSupplyApy.estimatedUsd)} USD/year</b>
+                      <b>{smallFormatter(totalSupplyApy.estimatedUsd)} USD/year</b>
                     </Text>
                   </HStack>
                 </VStack>
