@@ -21,6 +21,8 @@ import {
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
+import { useEnabledChains } from '@ui/hooks/useChainConfig';
+import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
 
 const VaultsPage = memo(() => {
   const { setGlobalLoading, address } = useMultiMidas();
@@ -28,6 +30,10 @@ const VaultsPage = memo(() => {
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
   const { data: info } = useAllFundedInfo();
+  const enabledChains = useEnabledChains();
+  const { vaultsPerChain } = useVaultsPerChain([...enabledChains]);
+
+  console.log(vaultsPerChain);
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);

@@ -24,6 +24,7 @@ import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
 import FuseSafeLiquidatorABI from "../../abis/FuseSafeLiquidator";
 import MidasERC4626ABI from "../../abis/MidasERC4626";
 import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
+import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
 import UnitrollerABI from "../../abis/Unitroller";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
@@ -33,6 +34,7 @@ import { FusePoolLensSecondary } from "../../typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
 import { MidasERC4626 } from "../../typechain/MidasERC4626";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
+import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { Unitroller } from "../../typechain/Unitroller";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -43,6 +45,7 @@ import { withFusePoolLens } from "../modules/FusePoolLens";
 import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
+import { withVaults } from "../modules/Vaults";
 
 import { CTOKEN_ERROR_CODES } from "./config";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
@@ -64,6 +67,7 @@ export type StaticContracts = {
   FusePoolLens: FusePoolLens;
   FusePoolLensSecondary: FusePoolLensSecondary;
   FuseSafeLiquidator: FuseSafeLiquidator;
+  OptimizedVaultsRegistry: OptimizedVaultsRegistry;
   [contractName: string]: Contract;
 };
 
@@ -153,6 +157,11 @@ export class MidasBase {
         MidasFlywheelLensRouterABI,
         this.provider
       ) as MidasFlywheelLensRouter,
+      OptimizedVaultsRegistry: new Contract(
+        this.chainDeployment.OptimizedVaultsRegistry.address,
+        OptimizedVaultsRegistryABI,
+        this.provider
+      ) as OptimizedVaultsRegistry,
       ...this._contracts,
     };
   }
@@ -347,7 +356,9 @@ export class MidasBase {
 
 const MidasBaseWithModules = withFusePoolLens(
   withFundOperations(
-    withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(withConvertMantissa(MidasBase))))))
+    withSafeLiquidator(
+      withFusePools(withAsset(withFlywheel(withVaults(withCreateContracts(withConvertMantissa(MidasBase))))))
+    )
   )
 );
 export class MidasSdk extends MidasBaseWithModules {}

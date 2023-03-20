@@ -5,7 +5,7 @@ import { QueryObserverResult } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { ReactNode } from 'react';
 
-import { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
+import { PoolData, TokensDataMap, VaultData } from '@ui/types/TokensDataMap';
 
 export type FusePageLayoutProps = {
   children?: ReactNode;
@@ -247,6 +247,14 @@ export type PoolsPerChainStatus = {
     isLoading: boolean;
     error: Error | undefined;
     data?: PoolData[] | null | undefined;
+  };
+};
+
+export type VaultsPerChainStatus = {
+  [chainId: string]: {
+    isLoading: boolean;
+    error: Error | undefined;
+    data?: VaultData[] | null | undefined;
   };
 };
 

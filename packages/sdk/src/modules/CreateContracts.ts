@@ -10,6 +10,7 @@ import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
+import OptimizedAPRVaultABI from "../../abis/OptimizedAPRVault";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
@@ -20,6 +21,7 @@ import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { OptimizedAPRVault } from "../../typechain/OptimizedAPRVault";
 import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../MidasSdk";
 
@@ -76,6 +78,10 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         MasterPriceOracleABI,
         signerOrProvider
       ) as MasterPriceOracle;
+    }
+
+    createOptimizedAPRVault(vaultAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(vaultAddress, OptimizedAPRVaultABI, signerOrProvider) as OptimizedAPRVault;
     }
   };
 }
