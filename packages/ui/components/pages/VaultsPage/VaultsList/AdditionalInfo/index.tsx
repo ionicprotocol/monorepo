@@ -42,7 +42,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { midUsdFormatter } from '@ui/utils/bigUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { deployedPlugins, getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
 
@@ -701,8 +701,8 @@ export const AdditionalInfo = ({
                   <CaptionedStat
                     caption={'Asset Supplied'}
                     crossAxisAlignment="center"
-                    secondStat={supplyCaps ? midUsdFormatter(supplyCaps.usdCap) : undefined}
-                    stat={midUsdFormatter(asset.totalSupplyFiat)}
+                    secondStat={supplyCaps ? smallUsdFormatter(supplyCaps.usdCap) : undefined}
+                    stat={smallUsdFormatter(asset.totalSupplyFiat)}
                     tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
                   />
                   <CaptionedStat
