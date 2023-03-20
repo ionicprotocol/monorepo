@@ -59,12 +59,18 @@ task("optimized-vault:deploy")
     };
 
     // start with an even allocations distribution
-    const adapters = adaptersAddresses.split(",").map((adapterAddress) => {
+    const adaptersAddressesArray = adaptersAddresses.split(",");
+    const adapters = adaptersAddressesArray.map((adapterAddress) => {
       return {
         adapter: adapterAddress,
-        allocation: constants.WeiPerEther.div(adaptersAddresses.length)
+        allocation: constants.WeiPerEther.div(adaptersAddressesArray.length)
       }
     });
+
+    const tenAdapters = adapters.concat(new Array(10 - adapters.length).fill({
+      adapter: constants.AddressZero,
+      allocation: 0
+    }));
 
     const optimizedVault = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
       contract: "OptimizedAPRVault",
@@ -76,7 +82,7 @@ task("optimized-vault:deploy")
             methodName: "initialize",
             args: [
               assetAddress,
-              adapters, // initial adapters
+              tenAdapters, // initial adapters
               adapters.length, // adapters count
               fees,
               deployer, // fee recipient
@@ -105,7 +111,7 @@ task("optimized-adapters:deploy")
     const chainId = await getChainId();
     const { config: deployConfig }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
-    console.log("Deploying market ERC4626");
+    console.log(`Deploying an ERC4626 for market ${marketAddress}`);
     const marketERC4626Deployment = await deployments.deploy(`CompoundMarketERC4626_${marketAddress}`, {
       contract: "CompoundMarketERC4626",
       from: deployer,
@@ -160,7 +166,7 @@ task("deploy-optimized:all")
 
     let asset;
     const markets = marketsAddresses.split(",");
-    for (let i = 0; i < markets; i++) {
+    for (let i = 0; i < markets.length; i++) {
       const cErc20 = (await ethers.getContractAt("CErc20", markets[i])) as CErc20;
       const marketUnderlying = await cErc20.callStatic.underlying();
       if (!asset) asset = marketUnderlying;
@@ -168,7 +174,7 @@ task("deploy-optimized:all")
     }
 
     const adapters = [];
-    for (let i = 0; i < markets; i++) {
+    for (let i = 0; i < markets.length; i++) {
       const marketAddress = markets[i];
       await run("optimized-adapters:deploy", {
         marketAddress,
