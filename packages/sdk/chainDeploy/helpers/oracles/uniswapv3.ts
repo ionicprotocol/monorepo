@@ -3,6 +3,8 @@ import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { UniswapV3PriceOracle } from "../../../typechain/UniswapV3PriceOracle";
 import { UniswaV3DeployFnParams } from "../types";
 
+import { addUnderlyingsToMpo } from "./utils";
+
 export const deployUniswapV3Oracle = async ({
   ethers,
   getNamedAccounts,
@@ -63,10 +65,7 @@ export const deployUniswapV3Oracle = async ({
 
   // set mpo addresses
   const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
-  const oracles = Array(underlyings.length).fill(uniswapV3Oracle.address);
-  const tx = await mpo.add(underlyings, oracles);
-  await tx.wait();
-  console.log(`Master Price Oracle updated for tokens: ${underlyings.join(",")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, uniswapV3Oracle.address);
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const uniswapV3PriceOracleAddress = await addressesProvider.callStatic.getAddress("UniswapV3PriceOracle");

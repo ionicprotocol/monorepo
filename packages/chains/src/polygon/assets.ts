@@ -9,7 +9,7 @@ import {
   quickSwapDocs,
   wrappedAssetDocs,
 } from "../common";
-import { ankrCertificateDocs, lidoFinanceDocs, oneInchDocs, StaderXDocs } from "../common/docs";
+import { ankrCertificateDocs, clayStackDocs, lidoFinanceDocs, oneInchDocs, StaderXDocs } from "../common/docs";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
 export const WMATIC = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
@@ -45,6 +45,7 @@ const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
 const stMATIC = "0x3A58a54C066FdC0f2D55FC9C89F0415C92eBf3C4";
 const aMATICc = "0x0E9b89007eEE9c958c0EDA24eF70723C2C93dD58";
+const csMATIC = "0xFcBB00dF1d663eeE58123946A30AB2138bF9eb2A";
 
 // Balancer
 const MIMO_PAR_80_20 = "0x82d7f08026e21c7713CfAd1071df7C8271B17Eae";
@@ -373,6 +374,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
     extraDocs: ankrCertificateDocs("aMATICc", "MATIC"),
+  },
+  {
+    symbol: assetSymbols.csMATIC,
+    underlying: csMATIC,
+    name: "ClayStack Staked MATIC",
+    decimals: 18,
+    oracle: OracleTypes.BalancerRateProviderOracle,
+    extraDocs: clayStackDocs("MATIC", "polygon"),
   },
 
   // QuickSwap LPs

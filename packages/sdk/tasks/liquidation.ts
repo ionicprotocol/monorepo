@@ -116,30 +116,43 @@ task("liquidate", "Liquidate a position without a flash loan")
     console.log(`Liquidated ${receipt.transactionHash}`);
   });
 
+task("liquidate:nonfl:hardcoded").setAction(async ({}, { run }) => {
+  await run("liquidate", {
+    borrower: "0xF93A5F0A4925EeC32cD585641c88a498523f383C",
+    repayAmount: "1372091245495",
+    debtCerc20: "0xa9736bA05de1213145F688e4619E5A7e0dcf4C72",
+    collateralCerc20: "0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563",
+    exchangeSeizedTo: "0x191cf2602Ca2e534c5Ccae7BCBF4C46a704bb949",
+    uniswapV2Router: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
+    redemptionStrategies: [],
+    strategyData: [],
+  });
+});
+
 // npx hardhat liquidate:hardcoded --network bsc
 
 task("liquidate:hardcoded", "Liquidate a position without a flash loan").setAction(async (taskArgs, hre) => {
   const signer = await hre.ethers.getNamedSigner("deployer");
   const fuseSafeLiquidator = (await hre.ethers.getContract("FuseSafeLiquidator", signer)) as FuseSafeLiquidator;
 
-  console.log(`big num ${BigNumber.from("20853697380464596")}`);
-
   console.log(`Liquidating...`);
   const vars: FuseSafeLiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
-    borrower: "0x02E7b714fae84e4BA80f3CDa5508553e7CF5042A",
-    repayAmount: BigNumber.from("1036500101199996"),
-    cErc20: "0x38982105A2F81dc5dBDEA6c131bB4bF5a416513A",
-    cTokenCollateral: "0xdB1C2240004a3Fd33BF71B2D66b1662604168eAc",
-    flashSwapPair: "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16",
+    borrower: "0xF93A5F0A4925EeC32cD585641c88a498523f383C",
+    repayAmount: "1372091245495",
+    cErc20: "0xa9736bA05de1213145F688e4619E5A7e0dcf4C72",
+    cTokenCollateral: "0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563",
+    flashSwapPair: "0xa927E1e1E044CA1D9fe1854585003477331fE2Af",
     minProfitAmount: BigNumber.from("0"),
     exchangeProfitTo: hre.ethers.constants.AddressZero,
-    uniswapV2RouterForBorrow: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-    uniswapV2RouterForCollateral: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+    uniswapV2RouterForBorrow: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
+    uniswapV2RouterForCollateral: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
     redemptionStrategies: [],
     strategyData: [],
     ethToCoinbase: BigNumber.from(0),
-    debtFundingStrategies: [],
-    debtFundingStrategiesData: [],
+    debtFundingStrategies: ["0xB8423EE8aa0476a909786D079dF5C0766cB09142"],
+    debtFundingStrategiesData: [
+      "0x00000000000000000000000070085a09d30d6f8c4ecf6ee10120d1847383bb5700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000002000000000000000000000000931715FEE2d06333043d11F658C8CE934aC61D0c000000000000000000000000ffffffff1fcacbd218edc0eba20fc2308c778080",
+    ],
   };
   const tx: providers.TransactionResponse = await fuseSafeLiquidator.safeLiquidateToTokensWithFlashLoan(vars, {
     gasLimit: 2100000,

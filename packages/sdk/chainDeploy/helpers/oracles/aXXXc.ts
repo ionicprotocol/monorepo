@@ -1,7 +1,8 @@
 import { underlying } from "@midas-capital/types";
-import { providers } from "ethers";
 
 import { aXXXcDeployParams } from "../types";
+
+import { addUnderlyingsToMpo } from "./utils";
 
 export const deployAnkrCertificateTokenPriceOracle = async ({
   ethers,
@@ -35,7 +36,7 @@ export const deployAnkrCertificateTokenPriceOracle = async ({
     await ethers.provider.waitForTransaction(ankrCertificateTokenPriceOracle.transactionHash);
   console.log("ankrCertificateTokenPriceOracle: ", ankrCertificateTokenPriceOracle.address);
 
-  const tx: providers.TransactionResponse = await mpo.add([aXXXc], [ankrCertificateTokenPriceOracle.address]);
-  await tx.wait();
+  await addUnderlyingsToMpo(mpo, [aXXXc], ankrCertificateTokenPriceOracle.address);
+
   return { ankrCertificateTokenPriceOracle };
 };
