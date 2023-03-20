@@ -209,7 +209,11 @@ export const DebtCeilings = ({
             <Text size="md" width="max-content">
               Debt Ceilings
             </Text>
-            <SimpleTooltip label={'It shows the market debt ceilings.'}>
+            <SimpleTooltip
+              label={
+                'The amount of an asset that can be borrowed against collateral from the drop down menu.'
+              }
+            >
               <InfoOutlineIcon ml={1} />
             </SimpleTooltip>
           </HStack>

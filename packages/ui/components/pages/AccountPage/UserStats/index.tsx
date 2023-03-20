@@ -226,10 +226,10 @@ export const UserStats = ({
               assuming the current variable interest rates on all supplied assets remains constant
             </Text>
             {totalSupplyApy && totalSupplyApy.estimatedPerAsset.length > 0 ? (
-              <VStack pt={2}>
+              <VStack pt={2} width="100%">
                 <Divider bg={cCard.dividerColor} />
 
-                <VStack alignItems="flex-start" pt={2}>
+                <VStack alignItems="flex-start" pt={2} width="100%">
                   {totalSupplyApy.estimatedPerAsset.map((data, index) => {
                     return (
                       <HStack key={index}>
@@ -278,10 +278,10 @@ export const UserStats = ({
               assuming the current variable interest rates on all borrowed assets remains constant
             </Text>
             {totalBorrowApy && totalBorrowApy.estimatedPerAsset.length > 0 ? (
-              <VStack pt={2}>
+              <VStack pt={2} width="100%">
                 <Divider bg={cCard.dividerColor} />
 
-                <VStack alignItems="flex-start" pt={2}>
+                <VStack alignItems="flex-start" pt={2} width="100%">
                   {totalBorrowApy.estimatedPerAsset.map((data, index) => {
                     return (
                       <HStack key={index}>
