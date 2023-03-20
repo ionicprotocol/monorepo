@@ -58,7 +58,13 @@ task("optimized-vault:deploy")
       performance: 0,
     };
 
-    const adapters = adaptersAddresses.split(",");
+    // start with an even allocations distribution
+    const adapters = adaptersAddresses.split(",").map((adapterAddress) => {
+      return {
+        adapter: adapterAddress,
+        allocation: constants.WeiPerEther.div(adaptersAddresses.length)
+      }
+    });
 
     const optimizedVault = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
       contract: "OptimizedAPRVault",
@@ -178,5 +184,12 @@ task("deploy-optimized:all")
     await run("optimized-vault:deploy", {
       assetAddress: asset,
       adaptersAddresses: adapters.join(","),
+    });
+  });
+
+task("deploy-optimized:all:chapel")
+  .setAction(async ({ }, { ethers, run, getNamedAccounts }) => {
+    await run("deploy-optimized:all", {
+      marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830"
     });
   });
