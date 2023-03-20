@@ -213,13 +213,19 @@ export const MarketsList = ({
           ? 1
           : -1;
       } else if (columnId === BORROW_BALANCE) {
-        return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
-          ? 1
-          : -1;
+        return (rowA.original.market.borrowBalance.isZero() &&
+          rowA.original.market.isBorrowPaused) ||
+          rowA.original.market.borrowBalanceFiat < rowB.original.market.borrowBalanceFiat
+          ? -1
+          : 1;
       } else if (columnId === TOTAL_SUPPLY) {
         return rowA.original.market.totalSupplyFiat > rowB.original.market.totalSupplyFiat ? 1 : -1;
       } else if (columnId === TOTAL_BORROW) {
-        return rowA.original.market.totalBorrowFiat > rowB.original.market.totalBorrowFiat ? 1 : -1;
+        return (rowA.original.market.totalBorrowFiat === 0 &&
+          rowA.original.market.isBorrowPaused) ||
+          rowA.original.market.totalBorrowFiat < rowB.original.market.totalBorrowFiat
+          ? -1
+          : 1;
       } else if (columnId === LIQUIDITY) {
         const liquidityA = !rowA.original.market.isBorrowPaused
           ? rowA.original.market.liquidityFiat
