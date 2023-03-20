@@ -63,14 +63,16 @@ task("optimized-vault:deploy")
     const adapters = adaptersAddressesArray.map((adapterAddress) => {
       return {
         adapter: adapterAddress,
-        allocation: constants.WeiPerEther.div(adaptersAddressesArray.length)
-      }
+        allocation: constants.WeiPerEther.div(adaptersAddressesArray.length),
+      };
     });
 
-    const tenAdapters = adapters.concat(new Array(10 - adapters.length).fill({
-      adapter: constants.AddressZero,
-      allocation: 0
-    }));
+    const tenAdapters = adapters.concat(
+      new Array(10 - adapters.length).fill({
+        adapter: constants.AddressZero,
+        allocation: 0,
+      })
+    );
 
     const optimizedVault = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
       contract: "OptimizedAPRVault",
@@ -193,9 +195,8 @@ task("deploy-optimized:all")
     });
   });
 
-task("deploy-optimized:all:chapel")
-  .setAction(async ({ }, { ethers, run, getNamedAccounts }) => {
-    await run("deploy-optimized:all", {
-      marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830"
-    });
+task("deploy-optimized:all:chapel").setAction(async ({}, { ethers, run, getNamedAccounts }) => {
+  await run("deploy-optimized:all", {
+    marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830",
   });
+});
