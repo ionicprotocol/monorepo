@@ -12,19 +12,19 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "CErc20Delegate": {
-      "address": "0xfFb6aB7931ACa7927D1459a1De1E0Ba2905CC69E"
+      "address": "0xEB63CE86Caf06CbB6387F9822c13c629B31b6064"
     },
     "CErc20PluginDelegate": {
-      "address": "0x70d836dBcEa409caFeAe9DF84a2C01B509351E25"
+      "address": "0xE2740f47C26f43e56bE3EeCe7c01a5187C766FB9"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xA65390E2AeAd32cFa4AecD06A1819826D81b9488"
+      "address": "0x0a6ad1A578A1E3bbd954168FF819B7C73674FfD0"
     },
     "CEtherDelegate": {
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0xa0CCF94FD5eaC93269988a5f610D5e2A3Bf0Ba24"
+      "address": "0x198aB16ebe3cB3F119f6aD0c1390695512D619cb"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x9c55d77E1f46622f5171Dc0eB03461FdCCD92836"
@@ -45,7 +45,7 @@
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x1Fe3e112fC2CbB0f45436F056f83019B138B3575"
+      "address": "0xc344A9B6F3d829264fbD3e27DE5da6E97BbFf850"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
@@ -63,7 +63,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x820488884eF6d686005F03C31017556F3CD5c8cD"
+      "address": "0xb4E5077C8461fBD5454296Cd40fD1361d5D166Ce"
     },
     "FusePoolDirectory_Proxy": {
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
@@ -116,11 +116,20 @@
     "MockERC4626_Mock_BUSD": {
       "address": "0x865058A4aF2f70671C10333f21e2B3A8Ce9fB032"
     },
+    "OptimizedVaultsRegistry": {
+      "address": "0x5AaD5938520A9b045898D9815d26C9bfCE6355E1"
+    },
+    "OptimizedVaultsRegistry_Implementation": {
+      "address": "0xdA2A0f6Bc88d5A023A04b8E59C36DE8CC2f828a4"
+    },
+    "OptimizedVaultsRegistry_Proxy": {
+      "address": "0x5AaD5938520A9b045898D9815d26C9bfCE6355E1"
+    },
     "SimplePriceOracle": {
       "address": "0xDdD3cf9407a12A6360281d244cb100ABe7fB561f"
     },
     "SimplePriceOracle_Implementation": {
-      "address": "0xa3cf8e3603B7bdf99DB179e378e8883a5d3dd5cb"
+      "address": "0x1DFB70941e7f2Df56af515012B3537a2239F637A"
     },
     "SimplePriceOracle_Proxy": {
       "address": "0xDdD3cf9407a12A6360281d244cb100ABe7fB561f"

@@ -5,6 +5,8 @@ import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
 import { IERC20MetadataUpgradeable as IERC20 } from "../../typechain/IERC20MetadataUpgradeable";
 import { OptimizedAPRVault } from "../../typechain/OptimizedAPRVault";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
+import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
+import { CErc20 } from "../../typechain/CErc20";
 
 export default task("optimized-vault:add")
   .addParam("vaultAddress", "Address of the vault to add", undefined, types.string)
@@ -42,7 +44,8 @@ task("optimized-vault:remove")
 
 task("optimized-vault:deploy")
   .addParam("assetAddress", "Address of the underlying asset token", undefined, types.string)
-  .setAction(async ({ assetAddress }, { ethers, deployments, run, getNamedAccounts }) => {
+  .addParam("adaptersAddresses", "Comma-separated list of the addresses of the adapters", undefined, types.string)
+  .setAction(async ({ assetAddress, adaptersAddresses }, { ethers, deployments, run, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
 
     const asset = (await ethers.getContractAt("IERC20MetadataUpgradeable", assetAddress)) as IERC20;
@@ -55,7 +58,10 @@ task("optimized-vault:deploy")
       performance: 0,
     };
 
+    const adapters = adaptersAddresses.split(",");
+
     const optimizedVault = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
+      contract: "OptimizedAPRVault",
       from: deployer,
       log: true,
       proxy: {
@@ -64,8 +70,8 @@ task("optimized-vault:deploy")
             methodName: "initialize",
             args: [
               assetAddress,
-              [], // initial adapters
-              0, // adapters count
+              adapters, // initial adapters
+              adapters.length, // adapters count
               fees,
               deployer, // fee recipient
               constants.MaxUint256, // deposit limit
@@ -87,15 +93,15 @@ task("optimized-vault:deploy")
   });
 
 task("optimized-adapters:deploy")
-  .addParam("marketAddress", "Address of the vault to add the adapter to", undefined, types.string)
-  .addParam("vaultAddress", "Address of the vault to add the adapter to", undefined, types.string)
-  .setAction(async ({ marketAddress, vaultAddress }, { ethers, getChainId, deployments, run, getNamedAccounts }) => {
+  .addParam("marketAddress", "Address of the market that the adapter will deposit to", undefined, types.string)
+  .setAction(async ({ marketAddress }, { ethers, getChainId, deployments, run, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const chainId = await getChainId();
     const { config: deployConfig }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
     console.log("Deploying market ERC4626");
     const marketERC4626Deployment = await deployments.deploy(`CompoundMarketERC4626_${marketAddress}`, {
+      contract: "CompoundMarketERC4626",
       from: deployer,
       log: true,
       proxy: {
@@ -139,4 +145,36 @@ task("optimized-adapters:change")
     console.log(`waiting to mine tx ${tx.hash}`);
     await tx.wait();
     console.log(`changed the adapters of vault ${vaultAddress}`);
+  });
+
+
+task("deploy-optimized:all")
+  .addParam("marketsAddresses", "Comma-separated addresses of the markets", undefined, types.string)
+  .setAction(async ({ marketsAddresses }, { ethers, run, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+
+    let asset;
+    const markets = marketsAddresses.split(",");
+    for (let i = 0; i < markets; i++) {
+      const cErc20 = (await ethers.getContractAt("CErc20", markets[i])) as CErc20;
+      const marketUnderlying = await cErc20.callStatic.underlying();
+      if (!asset) asset = marketUnderlying;
+      if (asset != marketUnderlying) throw new Error(`The vault adapters should be for the same underlying`);
+    }
+
+    const adapters = [];
+    for (let i = 0; i < markets; i++) {
+      const marketAddress = markets[i];
+      await run("optimized-adapters:deploy", {
+        marketAddress
+      });
+
+      const adapter = (await ethers.getContract(`CompoundMarketERC4626_${marketAddress}`, deployer)) as CompoundMarketERC4626;
+      adapters.push(adapter.address);
+    }
+
+    await run("optimized-vault:deploy", {
+      assetAddress: asset,
+      adaptersAddresses: adapters.join(",")
+    });
   });
