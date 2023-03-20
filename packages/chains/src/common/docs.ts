@@ -66,6 +66,13 @@ export const ankrCertificateDocs = (variant: string, chain: string) => {
   `;
 };
 
+export const clayStackDocs = (tokenName: string, chain: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p>Head over to <a href="https://app.claystack.com/stake/${chain.toLowerCase()}" target="_blank" style="color: #BCAC83;">ClayStack ${chain} Staking</a>, where you can acquire cs${tokenName} by depositing ${tokenName}</p>
+  `;
+};
+
 export const stkBNBDocs = () => {
   return `
   <p><b>How to acquire this token</b><p/><br />

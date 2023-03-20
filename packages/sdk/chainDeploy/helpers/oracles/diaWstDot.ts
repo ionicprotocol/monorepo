@@ -1,8 +1,9 @@
 import { moonbeam } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
-import { providers } from "ethers";
 
 import { DiaStDotFnParams } from "../types";
+
+import { addUnderlyingsToMpo } from "./utils";
 
 export const deployDiaWstDotPriceOracle = async ({
   ethers,
@@ -37,10 +38,5 @@ export const deployDiaWstDotPriceOracle = async ({
   console.log("DiaStDotPriceOracle: ", dspo.address);
 
   const underlyings = [stDot, wstDot];
-  const oracles = [dspo.address, dspo.address];
-
-  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, dspo.address);
 };

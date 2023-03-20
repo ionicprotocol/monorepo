@@ -1,7 +1,8 @@
 import { assetSymbols, underlying } from "@midas-capital/types";
-import { providers } from "ethers";
 
 import { stkBNBOracleDeployParams } from "../types";
+
+import { addUnderlyingsToMpo } from "./utils";
 
 export const deployStkBNBOracle = async ({
   ethers,
@@ -33,7 +34,6 @@ export const deployStkBNBOracle = async ({
   if (stkBNBOracle.transactionHash) await ethers.provider.waitForTransaction(stkBNBOracle.transactionHash);
   console.log("stkBNBOracle: ", stkBNBOracle.address);
 
-  const tx: providers.TransactionResponse = await mpo.add([stkBNB], [stkBNBOracle.address]);
-  await tx.wait();
+  await addUnderlyingsToMpo(mpo, [stkBNB], stkBNBOracle.address);
   return { stkBNBOracle };
 };
