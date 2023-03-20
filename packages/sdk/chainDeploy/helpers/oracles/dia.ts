@@ -3,6 +3,8 @@ import { constants, providers } from "ethers";
 import { DiaPriceOracle } from "../../../typechain/DiaPriceOracle";
 import { DiaDeployFnParams } from "../types";
 
+import { addUnderlyingsToMpo } from "./utils";
+
 export const deployDiaOracle = async ({
   ethers,
   getNamedAccounts,
@@ -12,8 +14,6 @@ export const deployDiaOracle = async ({
   diaNativeFeed,
 }: DiaDeployFnParams): Promise<{ diaOracle: DiaPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
-  let tx: providers.TransactionResponse;
-
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
   //// Dia Oracle
@@ -34,7 +34,7 @@ export const deployDiaOracle = async ({
   console.log("DiaPriceOracle: ", dia.address);
 
   const diaOracle = (await ethers.getContract("DiaPriceOracle", deployer)) as DiaPriceOracle;
-  tx = await diaOracle.setPriceFeeds(
+  const tx: providers.TransactionResponse = await diaOracle.setPriceFeeds(
     diaAssets.map((d) => d.underlying),
     diaAssets.map((d) => d.feed),
     diaAssets.map((d) => d.key)
@@ -44,12 +44,7 @@ export const deployDiaOracle = async ({
   console.log(`Set price feeds for DiaPriceOracle mined: ${tx.hash}`);
 
   const underlyings = diaAssets.map((d) => d.underlying);
-  const oracles = Array(diaAssets.length).fill(diaOracle.address);
-
-  tx = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, diaOracle.address);
 
   return { diaOracle };
 };

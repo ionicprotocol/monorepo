@@ -1,7 +1,7 @@
-import { providers } from "ethers";
-
 import { GelatoGUniPriceOracle } from "../../../typechain/GelatoGUniPriceOracle";
 import { gelatoGUniPriceOracleDeployParams } from "../types";
+
+import { addUnderlyingsToMpo } from "./utils";
 
 export const deployGelatoGUniPriceOracle = async ({
   ethers,
@@ -29,12 +29,7 @@ export const deployGelatoGUniPriceOracle = async ({
   const gUniOracle = (await ethers.getContract("GelatoGUniPriceOracle", deployer)) as GelatoGUniPriceOracle;
 
   const underlyings = gelatoAssets.map((d) => d.vaultAddress);
-  const oracles = Array(gelatoAssets.length).fill(gUniOracle.address);
-
-  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, gUniOracle.address);
 
   return { gUniOracle };
 };
