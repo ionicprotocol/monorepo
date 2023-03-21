@@ -224,7 +224,7 @@ export enum assetSymbols {
   SD = "SD", // stader labs
 
   // thena
-  "sAMM-jBRL/BRZ" = "sAMM-jBRL/BRZ",
+  "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
