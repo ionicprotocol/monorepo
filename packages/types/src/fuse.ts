@@ -1,5 +1,7 @@
 import { BigNumber } from "ethers";
 
+import { SupportedChains } from "./enums";
+
 export interface FuseAsset {
   cToken: string;
   plugin?: string;
@@ -92,4 +94,20 @@ export interface FusePool {
   comptroller: string;
   blockPosted: number;
   timestampPosted: number;
+}
+
+export interface VaultData {
+  chainId: SupportedChains;
+  estimatedTotalAssets: BigNumber;
+  asset: string;
+  symbol: string;
+  estimatedAPR: BigNumber;
+  adapterCount: number;
+  emergencyExit: boolean;
+  adapters: {
+    adapter: string;
+    allocation: BigNumber;
+  }[];
+  decimals: number;
+  underlyingPrice: BigNumber;
 }

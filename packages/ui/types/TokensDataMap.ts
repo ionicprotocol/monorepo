@@ -1,5 +1,4 @@
 import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/types';
-import { BigNumber } from 'ethers';
 
 export type MidasApiTokenData = {
   symbol: string;
@@ -29,11 +28,4 @@ export interface PoolData extends SDKFusePoolData {
   totalBorrowedFiat: number;
   totalSupplyBalanceFiat: number;
   totalBorrowBalanceFiat: number;
-}
-
-export interface VaultData {
-  asset: string;
-  chainId: number;
-  estimatedTotalAssets: BigNumber;
-  symbol: string;
 }

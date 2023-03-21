@@ -99,6 +99,7 @@ export const ankrBNBContractABI = [
 ];
 
 export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
+export const VAULTS_COUNT_PER_PAGE = [25, 50, 75];
 export const POOLS_COUNT_PER_PAGE = [25, 50, 75];
 
 export const REWARDS = 'Rewards';
@@ -175,7 +176,9 @@ export const MARKET_COLUMNS = [
   TOTAL_BORROW,
   LIQUIDITY,
 ];
+
 export const VAULT = 'Vault';
+export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
 
 export const POOL_NAME = 'Pool Name';
 export const ASSETS = 'Assets';

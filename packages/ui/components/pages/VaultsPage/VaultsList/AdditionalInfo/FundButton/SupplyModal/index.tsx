@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
-import { FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode, VaultData } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
@@ -27,13 +27,10 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SUPPLY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { StatsColumn } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/index';
@@ -42,30 +39,20 @@ import { Balance } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInf
 
 interface SupplyModalProps {
   isOpen: boolean;
-  asset: MarketData;
-  assets: MarketData[];
-  comptrollerAddress: string;
   onClose: () => void;
-  poolChainId: number;
+  vault: VaultData;
 }
 
-export const SupplyModal = ({
-  isOpen,
-  asset,
-  assets,
-  comptrollerAddress,
-  onClose,
-  poolChainId,
-}: SupplyModalProps) => {
+export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
   const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
-  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
+  const { data: tokenData } = useTokenData(vault.asset, Number(vault.chainId));
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const { cCard } = useColors();
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken);
+  const { data: myBalance } = useTokenBalance(vault.asset);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSupplying, setIsSupplying] = useState(false);
@@ -73,34 +60,17 @@ export const SupplyModal = ({
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Supply');
   const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
-  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
+  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(vault.symbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap = useMemo(() => {
     return (
-      asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+      vault.asset === currentSdk.chainSpecificAddresses.W_TOKEN &&
       myBalance?.isZero() &&
       !myNativeBalance?.isZero()
     );
-  }, [
-    asset.underlyingToken,
-    currentSdk.chainSpecificAddresses.W_TOKEN,
-    myBalance,
-    myNativeBalance,
-  ]);
-
-  const { data: supplyCap } = useSupplyCap({
-    comptroller: comptrollerAddress,
-    market: asset,
-    chainId: poolChainId,
-  });
-
-  const { data: maxSupplyAmount, isLoading } = useMaxSupplyAmount(
-    asset,
-    comptrollerAddress,
-    poolChainId
-  );
+  }, [vault.asset, currentSdk.chainSpecificAddresses.W_TOKEN, myBalance, myNativeBalance]);
 
   const queryClient = useQueryClient();
 

@@ -1,40 +1,28 @@
-import { SupportedChains } from "@midas-capital/types";
-import { BigNumber } from "ethers";
+import { VaultData } from "@midas-capital/types";
 
 import { CreateContractsModule } from "./CreateContracts";
 
-export type VaultType = {
-  chainId: SupportedChains;
-  estimatedTotalAssets: BigNumber;
-  asset: string;
-  symbol: string;
-  estimatedAPR: BigNumber;
-  adapterCount: number;
-  emergencyExit: boolean;
-  adapters: ([string, BigNumber] & {
-    adapter: string;
-    allocation: BigNumber;
-  })[];
-};
-
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
-    async getAllVaults(): Promise<VaultType[]> {
+    async getAllVaults(): Promise<VaultData[]> {
       try {
         const vaults = await this.contracts.OptimizedVaultsRegistry.callStatic.getAllVaults();
 
         return await Promise.all(
           vaults.map(async (vault) => {
             const optimizedAPRVault = this.createOptimizedAPRVault(vault);
+            const mpo = this.createMasterPriceOracle();
 
-            const [asset, symbol, estimatedTotalAssets, estimatedAPR, adapterCount, emergencyExit] = await Promise.all([
-              optimizedAPRVault.callStatic.asset(),
-              optimizedAPRVault.callStatic.symbol(),
-              optimizedAPRVault.callStatic.estimatedTotalAssets(),
-              optimizedAPRVault.callStatic["estimatedAPR()"](),
-              optimizedAPRVault.callStatic.adapterCount(),
-              optimizedAPRVault.callStatic.emergencyExit(),
-            ]);
+            const [asset, symbol, estimatedTotalAssets, estimatedAPR, adapterCount, emergencyExit, decimals] =
+              await Promise.all([
+                optimizedAPRVault.callStatic.asset(),
+                optimizedAPRVault.callStatic.symbol(),
+                optimizedAPRVault.callStatic.estimatedTotalAssets(),
+                optimizedAPRVault.callStatic["estimatedAPR()"](),
+                optimizedAPRVault.callStatic.adapterCount(),
+                optimizedAPRVault.callStatic.emergencyExit(),
+                optimizedAPRVault.callStatic.decimals(),
+              ]);
 
             const adapters =
               adapterCount > 0
@@ -42,6 +30,8 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                     Array.from(Array(adapterCount).keys()).map((i) => optimizedAPRVault.callStatic.adapters(i))
                   )
                 : [];
+
+            const underlyingPrice = await mpo.callStatic.price(asset);
 
             return {
               chainId: this.chainId,
@@ -52,6 +42,8 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
               adapterCount,
               emergencyExit,
               adapters,
+              decimals,
+              underlyingPrice,
             };
           })
         );

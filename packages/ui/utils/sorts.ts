@@ -1,4 +1,4 @@
-import { FusePoolData, SupportedAsset } from '@midas-capital/types';
+import { FusePoolData, SupportedAsset, VaultData } from '@midas-capital/types';
 
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
@@ -70,5 +70,11 @@ export const sortTopUserSuppliedAssets = <T extends MarketData>(assets: T[]) => 
 export const sortTopUserBorrowedAssets = <T extends MarketData>(assets: T[]) => {
   return [...assets].sort((a, b) => {
     return b.borrowBalanceFiat - a.borrowBalanceFiat;
+  });
+};
+
+export const sortVaults = <T extends VaultData>(vaults: T[]) => {
+  return vaults.sort((a, b) => {
+    return a.asset.localeCompare(b.asset);
   });
 };

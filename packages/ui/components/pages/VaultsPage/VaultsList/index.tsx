@@ -19,7 +19,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { SupportedChains } from '@midas-capital/types';
+import { SupportedChains, VaultData } from '@midas-capital/types';
 import {
   ColumnDef,
   FilterFn,
@@ -38,95 +38,109 @@ import {
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { ChainFilterButton } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
-import { SupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
-import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
-import { TokenName } from '@ui/components/pages/PoolPage/MarketsList/TokenName';
-import { UserStats } from '@ui/components/pages/VaultsPage/UserStats/index';
+import { Chain } from '@ui/components/pages/VaultsPage/VaultsList/Chain';
+import { SupplyApy } from '@ui/components/pages/VaultsPage/VaultsList/SupplyApy';
+import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
+import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
-  BORROWABLE,
   CHAIN,
-  COLLATERAL,
   HIDDEN,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
-  PAUSED,
   POOL_NAME,
-  PROTECTED,
-  REWARDS,
   SEARCH,
   SUPPLY_APY,
-  SUPPLY_BALANCE,
+  TOTAL_SUPPLY,
   VAULT,
+  VAULTS_COUNT_PER_PAGE,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { FundedAsset, resQuery } from '@ui/hooks/useAllFundedInfo';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
-import { sortAssets } from '@ui/utils/sorts';
+import { VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
+import { sortVaults } from '@ui/utils/sorts';
 import { AdditionalInfo } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/index';
 
-export type Market = {
-  chain: FundedAsset;
-  vault: FundedAsset;
-  supplyApy: FundedAsset;
-  supplyBalance: FundedAsset;
+export type VaultRowData = {
+  chain: VaultData;
+  vault: VaultData;
+  supplyApy: VaultData;
+  totalSupply: VaultData;
 };
 
 export const VaultsList = ({
-  info,
+  vaultsPerChain,
   initSorting,
   initColumnVisibility,
+  isLoading,
 }: {
-  info: resQuery;
+  vaultsPerChain: VaultsPerChainStatus;
   initSorting: SortingState;
   initColumnVisibility: VisibilityState;
+  isLoading: boolean;
 }) => {
-  const {
-    fundedAssets: assets,
-    allClaimableRewards,
-    totalSupplyAPYs: totalSupplyApyPerAsset,
-    borrowAPYs: borrowApyPerAsset,
-    rewards,
-    totalSupplyBalanceNative,
-    totalSupplyBalanceFiat,
-  } = info;
-
   const { address } = useMultiMidas();
+  const enabledChains = useEnabledChains();
+  const [err, setErr] = useState<Err | undefined>();
+  const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
+  const [selectedFilteredVaults, setSelectedFilteredVaults] = useState<VaultData[]>([]);
 
-  const assetFilter: FilterFn<Market> = (row, columnId, value) => {
+  const [sorting, setSorting] = useState<SortingState>(initSorting);
+  const [pagination, onPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: VAULTS_COUNT_PER_PAGE[0],
+  });
+  const isSemiSmallScreen = useIsSemiSmallScreen();
+
+  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
+  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
+  const [searchText, setSearchText] = useState('');
+
+  const allVaults = useMemo(() => {
+    return Object.values(vaultsPerChain).reduce((res, vaults) => {
+      if (vaults.data && vaults.data.length > 0) {
+        res.push(...vaults.data);
+      }
+
+      return res;
+    }, [] as VaultData[]);
+  }, [vaultsPerChain]);
+
+  useEffect(() => {
+    const vaults: VaultData[] = [];
+
+    if (globalFilter.includes(ALL)) {
+      setSelectedFilteredVaults([...allVaults]);
+    } else {
+      globalFilter.map((filter) => {
+        const data = vaultsPerChain[filter.toString()]?.data;
+
+        if (data) {
+          vaults.push(...data);
+        }
+      });
+
+      setSelectedFilteredVaults(vaults);
+    }
+  }, [globalFilter, vaultsPerChain, allVaults]);
+
+  const vaultFilter: FilterFn<VaultRowData> = (row, columnId, value) => {
     if (
       (!searchText ||
         (value.includes(SEARCH) &&
-          (row.original.vault.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.original.vault.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.original.vault.cToken.toLowerCase().includes(searchText.toLowerCase())))) &&
+          (row.original.vault.symbol.toLowerCase().includes(searchText.toLowerCase()) ||
+            row.original.vault.asset.toLowerCase().includes(searchText.toLowerCase())))) &&
       (!value.includes(HIDDEN) ||
-        (value.includes(HIDDEN) &&
-          (!row.original.vault.supplyBalance.isZero() ||
-            !row.original.vault.borrowBalance.isZero())))
+        (value.includes(HIDDEN) && !row.original.vault.estimatedTotalAssets.isZero()))
     ) {
-      if (
-        value.includes(ALL) ||
-        (value.includes(REWARDS) &&
-          allClaimableRewards &&
-          allClaimableRewards[row.original.vault.cToken]) ||
-        (value.includes(COLLATERAL) && row.original.vault.membership) ||
-        (value.includes(PROTECTED) &&
-          row.original.vault.isBorrowPaused &&
-          !row.original.vault.isSupplyPaused) ||
-        (value.includes(BORROWABLE) && !row.original.vault.isBorrowPaused) ||
-        (value.includes(PAUSED) &&
-          row.original.vault.isBorrowPaused &&
-          row.original.vault.isSupplyPaused)
-      ) {
+      if (value.includes(ALL) || value.includes(row.original.vault.chainId)) {
         return true;
       } else {
         return false;
@@ -136,117 +150,77 @@ export const VaultsList = ({
     }
   };
 
-  const assetSort: SortingFn<Market> = React.useCallback(
-    (rowA, rowB, columnId) => {
-      if (columnId === VAULT) {
-        return rowB.original.vault.underlyingSymbol.localeCompare(
-          rowA.original.vault.underlyingSymbol
-        );
-      } else if (columnId === CHAIN) {
-        return Number(rowB.original.vault.chainId) > Number(rowA.original.vault.chainId) ? 1 : -1;
-      } else if (columnId === SUPPLY_APY) {
-        const rowASupplyAPY = totalSupplyApyPerAsset
-          ? totalSupplyApyPerAsset[rowA.original.vault.cToken]
-          : 0;
-        const rowBSupplyAPY = totalSupplyApyPerAsset
-          ? totalSupplyApyPerAsset[rowB.original.vault.cToken]
-          : 0;
-        return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
-      } else if (columnId === SUPPLY_BALANCE) {
-        return rowA.original.vault.supplyBalanceFiat > rowB.original.vault.supplyBalanceFiat
-          ? 1
-          : -1;
-      } else {
-        return 0;
-      }
-    },
-    [totalSupplyApyPerAsset]
-  );
+  const vaultSort: SortingFn<VaultRowData> = React.useCallback((rowA, rowB, columnId) => {
+    if (columnId === VAULT) {
+      return rowB.original.vault.symbol.localeCompare(rowA.original.vault.symbol);
+    } else if (columnId === CHAIN) {
+      return Number(rowB.original.vault.chainId) > Number(rowA.original.vault.chainId) ? 1 : -1;
+    } else if (columnId === SUPPLY_APY) {
+      return Number(rowB.original.vault.estimatedAPR) > Number(rowA.original.vault.estimatedAPR)
+        ? 1
+        : -1;
+    } else if (columnId === TOTAL_SUPPLY) {
+      return rowB.original.vault.estimatedTotalAssets.gt(rowA.original.vault.estimatedTotalAssets)
+        ? 1
+        : -1;
+    } else {
+      return 0;
+    }
+  }, []);
 
-  const data: Market[] = useMemo(() => {
-    return sortAssets(assets).map((asset) => {
+  const data: VaultRowData[] = useMemo(() => {
+    return sortVaults(allVaults).map((vault) => {
       return {
-        chain: asset,
-        vault: asset,
-        supplyApy: asset,
-        supplyBalance: asset,
+        chain: vault,
+        vault: vault,
+        supplyApy: vault,
+        totalSupply: vault,
       };
     });
-  }, [assets]);
+  }, [allVaults]);
 
-  const columns: ColumnDef<Market>[] = useMemo(() => {
+  const columns: ColumnDef<VaultRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.chain,
         id: CHAIN,
         header: () => null,
-        cell: ({ getValue }) => <Chain chainId={Number(getValue<FundedAsset>().chainId)} />,
+        cell: ({ getValue }) => <Chain chainId={Number(getValue<VaultData>().chainId)} />,
         footer: (props) => props.column.id,
-        sortingFn: assetSort,
+        sortingFn: vaultSort,
         enableHiding: false,
       },
       {
         accessorFn: (row) => row.vault,
         id: VAULT,
-        header: (context) => <TableHeaderCell context={context}>Vault</TableHeaderCell>,
-        cell: ({ getValue }) => (
-          <TokenName
-            asset={getValue<FundedAsset>()}
-            assets={assets}
-            poolAddress={getValue<FundedAsset>().comptroller}
-            poolChainId={Number(getValue<FundedAsset>().chainId)}
-          />
-        ),
+        header: (context) => <TableHeaderCell context={context}>{VAULT}</TableHeaderCell>,
+        cell: ({ getValue }) => <TokenName vault={getValue<VaultData>()} />,
         footer: (props) => props.column.id,
-        filterFn: assetFilter,
-        sortingFn: assetSort,
+        filterFn: vaultFilter,
+        sortingFn: vaultSort,
         enableHiding: false,
       },
       {
         accessorFn: (row) => row.supplyApy,
         id: SUPPLY_APY,
-        cell: ({ getValue }) => (
-          <SupplyApy
-            asset={getValue<FundedAsset>()}
-            poolChainId={Number(getValue<FundedAsset>().chainId)}
-            rewards={rewards}
-            totalSupplyApyPerAsset={totalSupplyApyPerAsset}
-          />
-        ),
-        header: (context) => <TableHeaderCell context={context}>Supply APY</TableHeaderCell>,
+        cell: ({ getValue }) => <SupplyApy vault={getValue<VaultData>()} />,
+        header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
 
         footer: (props) => props.column.id,
-        sortingFn: assetSort,
-        enableSorting: !!totalSupplyApyPerAsset,
+        sortingFn: vaultSort,
       },
       {
-        accessorFn: (row) => row.supplyBalance,
-        id: SUPPLY_BALANCE,
-        cell: ({ getValue }) => (
-          <SupplyBalance
-            asset={getValue<FundedAsset>()}
-            poolChainId={Number(getValue<FundedAsset>().chainId)}
-          />
-        ),
-        header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
+        accessorFn: (row) => row.totalSupply,
+        id: TOTAL_SUPPLY,
+        cell: ({ getValue }) => <TotalSupply vault={getValue<VaultData>()} />,
+        header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
 
         footer: (props) => props.column.id,
-        sortingFn: assetSort,
+        sortingFn: vaultSort,
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, totalSupplyApyPerAsset, assets, borrowApyPerAsset]);
-
-  const [sorting, setSorting] = useState<SortingState>(initSorting);
-  const [pagination, onPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: MARKETS_COUNT_PER_PAGE[0],
-  });
-  const isSemiSmallScreen = useIsSemiSmallScreen();
-
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
-  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
-  const [searchText, setSearchText] = useState('');
+  }, []);
 
   const table = useReactTable({
     columns,
@@ -261,7 +235,7 @@ export const VaultsList = ({
     enableSortingRemoval: false,
     getExpandedRowModel: getExpandedRowModel(),
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: assetFilter,
+    globalFilterFn: vaultFilter,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     state: {
@@ -273,8 +247,6 @@ export const VaultsList = ({
   });
 
   const { cCard } = useColors();
-
-  const enabledChains = useEnabledChains();
 
   const onFilter = (filter: SupportedChains | string) => {
     if (globalFilter.includes(SEARCH) && globalFilter.includes(HIDDEN)) {
@@ -313,7 +285,7 @@ export const VaultsList = ({
         arr.push(key);
       }
     });
-    const data = { ...oldObj, userMarketSorting: sorting, userMarketColumnVisibility: arr };
+    const data = { ...oldObj, vaultSorting: sorting, vaultColumnVisibility: arr };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 
@@ -330,12 +302,12 @@ export const VaultsList = ({
             mt={4}
             mx={4}
           >
-            <UserStats
+            {/* <UserStats
               assets={assets}
               totalSupplyApyPerAsset={totalSupplyApyPerAsset}
               totalSupplyBalanceFiat={totalSupplyBalanceFiat}
               totalSupplyBalanceNative={totalSupplyBalanceNative}
-            />
+            /> */}
           </Flex>
         </>
       ) : null}
@@ -474,7 +446,7 @@ export const VaultsList = ({
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                   borderColor={cCard.dividerColor}
-                  className={row.original.vault.underlyingSymbol}
+                  className={row.original.vault.symbol}
                   cursor="pointer"
                   key={row.id}
                   onClick={() => row.toggleExpanded()}
@@ -498,18 +470,13 @@ export const VaultsList = ({
                   >
                     {/* 2nd row is a custom 1 cell row */}
                     <Td border="none" colSpan={row.getVisibleCells().length}>
-                      <AdditionalInfo
-                        comptrollerAddress={row.original.vault.comptroller}
-                        poolChainId={Number(row.original.vault.chainId)}
-                        row={row}
-                        rows={table.getCoreRowModel().rows}
-                      />
+                      <AdditionalInfo row={row} />
                     </Td>
                   </Tr>
                 )}
               </Fragment>
             ))
-          ) : assets.length === 0 ? (
+          ) : selectedFilteredVaults.length === 0 ? (
             <Tr>
               <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
                 <Center py={8}>No vaults in this chain.</Center>

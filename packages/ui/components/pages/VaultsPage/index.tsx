@@ -3,7 +3,7 @@ import { Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
@@ -11,50 +11,28 @@ import { VaultsList } from '@ui/components/pages/VaultsPage/VaultsList/index';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import {
-  LIQUIDITY,
-  MARKET_COLUMNS,
-  MIDAS_LOCALSTORAGE_KEYS,
-  TOTAL_BORROW,
-  TOTAL_SUPPLY,
-  VAULT,
-} from '@ui/constants/index';
+import { MIDAS_LOCALSTORAGE_KEYS, TOTAL_SUPPLY, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
-import { VaultData } from '@ui/types/TokensDataMap';
 
 const VaultsPage = memo(() => {
   const { setGlobalLoading, address } = useMultiMidas();
   const router = useRouter();
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
-  const { data: info } = useAllFundedInfo();
   const enabledChains = useEnabledChains();
   const { isLoading, vaultsPerChain, error } = useVaultsPerChain([...enabledChains]);
-
-  const allVaults = useMemo(() => {
-    return Object.values(vaultsPerChain).reduce((res, vaults) => {
-      if (vaults.data && vaults.data.length > 0) {
-        res.push(...vaults.data);
-      }
-
-      return res;
-    }, [] as VaultData[]);
-  }, [vaultsPerChain]);
-
-  console.log(allVaults);
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
 
     if (
       oldData &&
-      JSON.parse(oldData).userMarketSorting &&
-      MARKET_COLUMNS.includes(JSON.parse(oldData).userMarketSorting[0].id)
+      JSON.parse(oldData).vaultSorting &&
+      VAULT_COLUMNS.includes(JSON.parse(oldData).vaultSorting[0].id)
     ) {
-      setInitSorting(JSON.parse(oldData).userMarketSorting);
+      setInitSorting(JSON.parse(oldData).vaultSorting);
     } else {
       setInitSorting([{ id: VAULT, desc: true }]);
     }
@@ -63,19 +41,19 @@ const VaultsPage = memo(() => {
 
     if (
       oldData &&
-      JSON.parse(oldData).userMarketColumnVisibility &&
-      JSON.parse(oldData).userMarketColumnVisibility.length > 0
+      JSON.parse(oldData).vaultColumnVisibility &&
+      JSON.parse(oldData).vaultColumnVisibility.length > 0
     ) {
-      MARKET_COLUMNS.map((columnId) => {
-        if (JSON.parse(oldData).userMarketColumnVisibility.includes(columnId)) {
+      VAULT_COLUMNS.map((columnId) => {
+        if (JSON.parse(oldData).vaultColumnVisibility.includes(columnId)) {
           columnVisibility[columnId] = true;
         } else {
           columnVisibility[columnId] = false;
         }
       });
     } else {
-      MARKET_COLUMNS.map((columnId) => {
-        if (columnId === TOTAL_SUPPLY || columnId === TOTAL_BORROW || columnId === LIQUIDITY) {
+      VAULT_COLUMNS.map((columnId) => {
+        if (columnId === TOTAL_SUPPLY) {
           columnVisibility[columnId] = false;
         } else {
           columnVisibility[columnId] = true;
@@ -94,29 +72,49 @@ const VaultsPage = memo(() => {
 
       <PageTransitionLayout>
         <FusePageLayout>
-          {address ? (
+          <HStack mb={4} mx="auto" spacing={4} width={'100%'}>
+            <ArrowBackIcon
+              cursor="pointer"
+              fontSize="2xl"
+              fontWeight="extrabold"
+              onClick={() => {
+                setGlobalLoading(true);
+                router.push('/');
+              }}
+            />
+            <Text fontWeight="bold" size="xl" textAlign="left">
+              Vaults
+            </Text>
+          </HStack>
+          {error && error.code !== 'NETWORK_ERROR' ? (
+            <Banner
+              alertDescriptionProps={{ fontSize: 'lg' }}
+              alertIconProps={{ boxSize: 12 }}
+              alertProps={{
+                status: 'warning',
+                flexDirection: 'column',
+                height: '2xs',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                gap: 4,
+              }}
+              descriptions={[
+                {
+                  text: `Unable to retrieve Pools. Please try again later.`,
+                },
+              ]}
+              title={error.reason ? error.reason : 'Unexpected Error'}
+            />
+          ) : (
             <>
-              <HStack mb={4} mx="auto" spacing={4} width={'100%'}>
-                <ArrowBackIcon
-                  cursor="pointer"
-                  fontSize="2xl"
-                  fontWeight="extrabold"
-                  onClick={() => {
-                    setGlobalLoading(true);
-                    router.push('/');
-                  }}
-                />
-                <Text fontWeight="bold" size="xl" textAlign="left">
-                  Vaults
-                </Text>
-              </HStack>
-
               <MidasBox mb="4" overflowX="auto" width="100%">
-                {info && initSorting && initColumnVisibility ? (
+                {vaultsPerChain && initSorting && initColumnVisibility ? (
                   <VaultsList
-                    info={info}
                     initColumnVisibility={initColumnVisibility}
                     initSorting={initSorting}
+                    isLoading={isLoading}
+                    vaultsPerChain={vaultsPerChain}
                   />
                 ) : (
                   <>
@@ -159,26 +157,6 @@ const VaultsPage = memo(() => {
                 )}
               </MidasBox>
             </>
-          ) : (
-            <Banner
-              alertDescriptionProps={{ fontSize: 'lg' }}
-              alertIconProps={{ boxSize: 12 }}
-              alertProps={{
-                status: 'warning',
-                flexDirection: 'column',
-                height: '2xs',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                gap: 4,
-              }}
-              descriptions={[
-                {
-                  text: `Please connect your wallet.`,
-                },
-              ]}
-              title="Wallet not detected!"
-            />
           )}
         </FusePageLayout>
       </PageTransitionLayout>
