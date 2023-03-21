@@ -3,7 +3,7 @@ import { Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
@@ -23,6 +23,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
+import { VaultData } from '@ui/types/TokensDataMap';
 
 const VaultsPage = memo(() => {
   const { setGlobalLoading, address } = useMultiMidas();
@@ -31,9 +32,19 @@ const VaultsPage = memo(() => {
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
   const { data: info } = useAllFundedInfo();
   const enabledChains = useEnabledChains();
-  const { vaultsPerChain } = useVaultsPerChain([...enabledChains]);
+  const { isLoading, vaultsPerChain, error } = useVaultsPerChain([...enabledChains]);
 
-  console.log(vaultsPerChain);
+  const allVaults = useMemo(() => {
+    return Object.values(vaultsPerChain).reduce((res, vaults) => {
+      if (vaults.data && vaults.data.length > 0) {
+        res.push(...vaults.data);
+      }
+
+      return res;
+    }, [] as VaultData[]);
+  }, [vaultsPerChain]);
+
+  console.log(allVaults);
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
