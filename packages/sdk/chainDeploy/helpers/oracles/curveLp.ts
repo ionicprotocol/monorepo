@@ -2,6 +2,8 @@ import { constants, providers } from "ethers";
 
 import { CurveLpFnParams, CurveV2LpFnParams } from "../types";
 
+import { addUnderlyingsToMpo } from "./utils";
+
 export const deployCurveLpOracle = async ({
   ethers,
   getNamedAccounts,
@@ -52,13 +54,8 @@ export const deployCurveLpOracle = async ({
   }
 
   const underlyings = curvePools.map((c) => c.lpToken);
-  const oracles = Array(curvePools.length).fill(curveOracle.address);
-
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
-  tx = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, curveOracle.address);
 };
 
 export const deployCurveV2LpOracle = async ({
@@ -113,10 +110,5 @@ export const deployCurveV2LpOracle = async ({
   }
 
   const underlyings = curveV2Pools.map((c) => c.lpToken);
-  const oracles = Array(curveV2Pools.length).fill(curveOracle.address);
-
-  tx = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, curveOracle.address);
 };

@@ -332,6 +332,9 @@
     "SimplePriceOracle_Proxy": {
       "address": "0x5425F12dD3Fbc16deB3c6693d85B52b77fb59eaE"
     },
+    "SolidlyLpTokenPriceOracle": {
+      "address": "0xf12BF362779D3F728644DC33a5D594F0E57a85F2"
+    },
     "StkBNBPriceOracle": {
       "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE"
     },
@@ -345,7 +348,7 @@
       "address": "0xE1B50506e2fE039ED593FBbde14608559aE97d27"
     },
     "UniswapLpTokenPriceOracle": {
-      "address": "0xcf164682B2B7Ee119EF108065547c0fc9011f0aa"
+      "address": "0x1023bc3990C45E39Ba8B74D158bE391CA04a18b1"
     },
     "UniswapTwapPriceOracleV2": {
       "address": "0xF0e16261c4820f40eB322dcE5DC1203Ef417D60E"

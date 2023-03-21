@@ -286,6 +286,21 @@ export const strategies: ERC4626Strategy[] = [
     contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
     adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   },
+  {
+    address: "0x33395bbe8fcA14368003f9aCE2Deb0Ba5103c670",
+    strategy: Strategy.Beefy,
+    name: "Beefy sAMM jBRL-BRZ LP Vault",
+    complexity: StrategyComplexity.LOW,
+    timeInMarket: StrategyTimeInMarket.BATTLE_TESTED,
+    riskIL: AssetRiskIL.NONE,
+    liquidity: AssetRiskLiquidity.HIGH,
+    mktCap: AssetRiskMktCap.LARGE,
+    supplyCentralised: AssetRiskSupply.DECENTRALIZED,
+    reputation: PlatformRiskReputation.ESTABLISHED,
+    audit: PlatformRiskAudit.AUDIT,
+    contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
+    adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
+  },
   // POLYGON
   {
     address: "0xB6a8f36746BcCC1025Ec54eb2c6DCEF8EeE8df2f",

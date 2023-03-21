@@ -3,6 +3,8 @@ import { constants } from "ethers";
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { UniswapDeployFnParams } from "../../helpers/types";
 
+import { addUnderlyingsToMpo } from "./utils";
+
 export const deployUniswapLpOracle = async ({
   ethers,
   getNamedAccounts,
@@ -19,18 +21,11 @@ export const deployUniswapLpOracle = async ({
   console.log("UniswapLpTokenPriceOracle: ", lpTokenPriceOralce.address);
 
   const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
-  const oracles = [];
   const underlyings = [];
   for (const lpToken of deployConfig.uniswap.uniswapOracleLpTokens) {
     if ((await mpo.callStatic.oracles(lpToken)) === constants.AddressZero) {
-      oracles.push(lpTokenPriceOralce.address);
       underlyings.push(lpToken);
     }
   }
-
-  if (underlyings.length) {
-    const tx = await mpo.add(underlyings, oracles);
-    await tx.wait();
-    console.log(`Master Price Oracle updated for token ${underlyings.join(",")}`);
-  }
+  await addUnderlyingsToMpo(mpo, underlyings, lpTokenPriceOralce.address);
 };

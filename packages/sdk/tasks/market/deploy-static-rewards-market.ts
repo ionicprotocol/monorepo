@@ -47,9 +47,8 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
 
     // STEP 1: deploy plugins
     console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);
-    const artifact = await deployments.getArtifact(contractName);
     const deployment = await deployments.deploy(`${contractName}_${symbol}_${marketAddress}`, {
-      contract: artifact,
+      contract: contractName,
       from: signer.address,
       proxy: {
         proxyContract: "OpenZeppelinTransparentProxy",

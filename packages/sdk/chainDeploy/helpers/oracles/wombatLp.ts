@@ -1,7 +1,7 @@
-import { providers } from "ethers";
-
 import { WombatLpTokenPriceOracle } from "../../../typechain/WombatLpTokenPriceOracle";
 import { WombatDeployFnParams } from "../types";
+
+import { addUnderlyingsToMpo } from "./utils";
 
 export const deployWombatOracle = async ({
   ethers,
@@ -30,12 +30,6 @@ export const deployWombatOracle = async ({
   )) as WombatLpTokenPriceOracle;
 
   const underlyings = wombatAssets.map((w) => w.underlying);
-  const oracles = Array(wombatAssets.length).fill(wombatOracle.address);
-
-  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
-
+  await addUnderlyingsToMpo(mpo, underlyings, wombatOracle.address);
   return { wombatOracle };
 };

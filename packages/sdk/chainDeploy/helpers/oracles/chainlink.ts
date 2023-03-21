@@ -4,6 +4,8 @@ import { providers } from "ethers";
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
 
+import { addUnderlyingsToMpo } from "./utils";
+
 export const deployChainlinkOracle = async ({
   ethers,
   getNamedAccounts,
@@ -52,11 +54,9 @@ export const deployChainlinkOracle = async ({
   }
 
   const underlyings = chainlinkAssets.map((c) => underlying(assets, c.symbol));
-  const oracles = Array(chainlinkAssets.length).fill(chainLinkv2.address);
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
-  tx = await mpo.add(underlyings, oracles);
-  await tx.wait();
+  await addUnderlyingsToMpo(mpo, underlyings, chainLinkv2.address);
 
   console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
 

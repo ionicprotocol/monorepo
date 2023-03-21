@@ -1,6 +1,7 @@
 import "./create";
 import "./set-plugin";
 import "./admin";
+import "./fund";
 import "./upgrade";
 import "./upgrade-all";
 import "./deploy-dynamic-rewards-market";

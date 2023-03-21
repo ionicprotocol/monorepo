@@ -18,3 +18,4 @@ export { deploySaddleLpOracle } from "./oracles/saddleLp";
 export { deploySolidlyLpOracle } from "./oracles/solidlyLp";
 export { deployBalancerLpPriceOracle } from "./oracles/balancerLp";
 export { deployBalancerStableLpPriceOracle } from "./oracles/balancerLp";
+export { deployBalancerRateProviderPriceOracle } from "./oracles/balancerLp";

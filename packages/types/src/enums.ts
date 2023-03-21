@@ -57,6 +57,7 @@ export enum OracleTypes {
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   BalancerLpStablePoolPriceOracle = "BalancerLpStablePoolPriceOracle",
+  BalancerRateProviderOracle = "BalancerRateProviderOracle",
   BalancerLpTokenPriceOracleNTokens = "BalancerLpTokenPriceOracleNTokens",
   StkBNBPriceOracle = "StkBNBPriceOracle",
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
@@ -223,7 +224,7 @@ export enum assetSymbols {
   SD = "SD", // stader labs
 
   // thena
-  "sAMM-jBRL/BRZ" = "sAMM-jBRL/BRZ",
+  "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
@@ -355,6 +356,7 @@ export enum assetSymbols {
   aMATICc = "aMATICc",
   MATICx = "MATICx",
   stMATIC = "stMATIC",
+  csMATIC = "csMATIC",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
