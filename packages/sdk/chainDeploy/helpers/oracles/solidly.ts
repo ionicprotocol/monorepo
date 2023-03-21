@@ -38,10 +38,20 @@ export const deploySolidlyPriceOracle = async ({
   const { deployer } = await getNamedAccounts();
   const solidlyPriceOracle = await deployments.deploy("SolidlyPriceOracle", {
     from: deployer,
-    args: [deployConfig.wtoken, supportedBaseTokens],
+    args: [],
     log: true,
-    waitConfirmations: 1,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [deployConfig.wtoken, supportedBaseTokens],
+        },
+      },
+      owner: deployer,
+      proxyContract: "OpenZeppelinTransparentProxy",
+    },
   });
+  if (solidlyPriceOracle.transactionHash) await ethers.provider.waitForTransaction(solidlyPriceOracle.transactionHash);
   console.log("SolidlyPriceOracle: ", solidlyPriceOracle.address);
 
   const solidlyOracle = await ethers.getContract("SolidlyPriceOracle", deployer);
