@@ -246,6 +246,18 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0x0a1Fd12F73432928C190CAF0810b3B767A59717e"], // JAR
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/helio.png",
   },
+  // BeefyERC4626_sAMM-jBRL-BRZ_0x9C170d5c6264b04419a06492bf4FbC65ecd63f4D.json
+  "0x33395bbe8fcA14368003f9aCE2Deb0Ba5103c670": {
+    market: "0x9C170d5c6264b04419a06492bf4FbC65ecd63f4D",
+    name: "Beefy sAMM jBRL-BRZ LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-jbrl-brz",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
+    underlying: underlying(assets, assetSymbols["sAMM-jBRL/BRZ"]),
+    otherParams: ["0xb36fffD0174B2eC18D82d21BB2e24b132ecBA5b0", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
 };
 
 export default deployedPlugins;
