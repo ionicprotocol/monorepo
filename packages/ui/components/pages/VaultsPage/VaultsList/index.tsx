@@ -10,6 +10,8 @@ import {
   IconButton,
   Input,
   Select,
+  Skeleton,
+  Stack,
   Table,
   Tbody,
   Td,
@@ -19,21 +21,23 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { SupportedChains, VaultData } from '@midas-capital/types';
-import {
+import type { SupportedChains, VaultData } from '@midas-capital/types';
+import type {
   ColumnDef,
   FilterFn,
+  PaginationState,
+  SortingFn,
+  SortingState,
+  VisibilityState,
+} from '@tanstack/react-table';
+import {
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  PaginationState,
-  SortingFn,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from '@tanstack/react-table';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
@@ -43,6 +47,7 @@ import { Chain } from '@ui/components/pages/VaultsPage/VaultsList/Chain';
 import { SupplyApy } from '@ui/components/pages/VaultsPage/VaultsList/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
+import { Banner } from '@ui/components/shared/Banner';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
@@ -64,15 +69,15 @@ import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
-import { VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
+import type { Err, VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { sortVaults } from '@ui/utils/sorts';
 import { AdditionalInfo } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/index';
 
 export type VaultRowData = {
   chain: VaultData;
-  vault: VaultData;
   supplyApy: VaultData;
   totalSupply: VaultData;
+  vault: VaultData;
 };
 
 export const VaultsList = ({
@@ -81,10 +86,10 @@ export const VaultsList = ({
   initColumnVisibility,
   isLoading,
 }: {
-  vaultsPerChain: VaultsPerChainStatus;
-  initSorting: SortingState;
   initColumnVisibility: VisibilityState;
+  initSorting: SortingState;
   isLoading: boolean;
+  vaultsPerChain: VaultsPerChainStatus;
 }) => {
   const { address } = useMultiMidas();
   const enabledChains = useEnabledChains();
@@ -138,7 +143,7 @@ export const VaultsList = ({
           (row.original.vault.symbol.toLowerCase().includes(searchText.toLowerCase()) ||
             row.original.vault.asset.toLowerCase().includes(searchText.toLowerCase())))) &&
       (!value.includes(HIDDEN) ||
-        (value.includes(HIDDEN) && !row.original.vault.estimatedTotalAssets.isZero()))
+        (value.includes(HIDDEN) && !row.original.vault.totalSupply.isZero()))
     ) {
       if (value.includes(ALL) || value.includes(row.original.vault.chainId)) {
         return true;
@@ -156,13 +161,9 @@ export const VaultsList = ({
     } else if (columnId === CHAIN) {
       return Number(rowB.original.vault.chainId) > Number(rowA.original.vault.chainId) ? 1 : -1;
     } else if (columnId === SUPPLY_APY) {
-      return Number(rowB.original.vault.estimatedAPR) > Number(rowA.original.vault.estimatedAPR)
-        ? 1
-        : -1;
+      return Number(rowB.original.vault.supplyApy) > Number(rowA.original.vault.supplyApy) ? 1 : -1;
     } else if (columnId === TOTAL_SUPPLY) {
-      return rowB.original.vault.estimatedTotalAssets.gt(rowA.original.vault.estimatedTotalAssets)
-        ? 1
-        : -1;
+      return rowB.original.vault.totalSupply.gt(rowA.original.vault.totalSupply) ? 1 : -1;
     } else {
       return 0;
     }
@@ -172,9 +173,9 @@ export const VaultsList = ({
     return sortVaults(allVaults).map((vault) => {
       return {
         chain: vault,
-        vault: vault,
         supplyApy: vault,
         totalSupply: vault,
+        vault: vault,
       };
     });
   }, [allVaults]);
@@ -183,39 +184,37 @@ export const VaultsList = ({
     return [
       {
         accessorFn: (row) => row.chain,
-        id: CHAIN,
-        header: () => null,
         cell: ({ getValue }) => <Chain chainId={Number(getValue<VaultData>().chainId)} />,
-        footer: (props) => props.column.id,
-        sortingFn: vaultSort,
         enableHiding: false,
+        footer: (props) => props.column.id,
+        header: () => null,
+        id: CHAIN,
+        sortingFn: vaultSort,
       },
       {
         accessorFn: (row) => row.vault,
-        id: VAULT,
-        header: (context) => <TableHeaderCell context={context}>{VAULT}</TableHeaderCell>,
         cell: ({ getValue }) => <TokenName vault={getValue<VaultData>()} />,
-        footer: (props) => props.column.id,
-        filterFn: vaultFilter,
-        sortingFn: vaultSort,
         enableHiding: false,
+        filterFn: vaultFilter,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{VAULT}</TableHeaderCell>,
+        id: VAULT,
+        sortingFn: vaultSort,
       },
       {
         accessorFn: (row) => row.supplyApy,
-        id: SUPPLY_APY,
         cell: ({ getValue }) => <SupplyApy vault={getValue<VaultData>()} />,
-        header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
-
         footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
+        id: SUPPLY_APY,
         sortingFn: vaultSort,
       },
       {
         accessorFn: (row) => row.totalSupply,
-        id: TOTAL_SUPPLY,
         cell: ({ getValue }) => <TotalSupply vault={getValue<VaultData>()} />,
-        header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
-
         footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
+        id: TOTAL_SUPPLY,
         sortingFn: vaultSort,
       },
     ];
@@ -225,24 +224,24 @@ export const VaultsList = ({
   const table = useReactTable({
     columns,
     data,
-    getRowCanExpand: () => true,
-    getColumnCanGlobalFilter: () => true,
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: onPagination,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     enableSortingRemoval: false,
+    getColumnCanGlobalFilter: () => true,
+    getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: vaultFilter,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getRowCanExpand: () => true,
+    getSortedRowModel: getSortedRowModel(),
+    globalFilterFn: vaultFilter,
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: onPagination,
+    onSortingChange: setSorting,
     state: {
-      sorting,
-      pagination,
-      globalFilter,
       columnVisibility,
+      globalFilter,
+      pagination,
+      sorting,
     },
   });
 
@@ -285,9 +284,22 @@ export const VaultsList = ({
         arr.push(key);
       }
     });
-    const data = { ...oldObj, vaultSorting: sorting, vaultColumnVisibility: arr };
+    const data = { ...oldObj, vaultColumnVisibility: arr, vaultSorting: sorting };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
+
+  useEffect(() => {
+    const selectedChainId = Object.keys(vaultsPerChain).find((chainId) =>
+      globalFilter.includes(Number(chainId))
+    );
+    if (selectedChainId) {
+      setErr(vaultsPerChain[selectedChainId].error);
+      setIsLoadingPerChain(vaultsPerChain[selectedChainId].isLoading);
+    } else {
+      setErr(undefined);
+      setIsLoadingPerChain(false);
+    }
+  }, [globalFilter, vaultsPerChain]);
 
   return (
     <Box>
@@ -349,7 +361,7 @@ export const VaultsList = ({
                 <ChainFilterButton
                   chainId={chainId}
                   globalFilter={globalFilter}
-                  isLoading={false}
+                  isLoading={vaultsPerChain[chainId.toString()].isLoading}
                   key={chainId}
                   onFilter={onFilter}
                 />
@@ -395,102 +407,127 @@ export const VaultsList = ({
           </Flex>
         </Flex>
       </Flex>
-
-      {/* Market Table */}
-      <Table>
-        <Thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Tr
-              borderBottomWidth={1}
-              borderColor={cCard.dividerColor}
-              borderTopWidth={2}
-              key={headerGroup.id}
-            >
-              {headerGroup.headers.map((header) => {
-                return (
-                  <Th
-                    border="none"
-                    color={cCard.txtColor}
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    px={{
-                      base: header.column.id === VAULT ? 2 : 1,
-                      lg: header.column.id === VAULT ? 4 : 2,
-                    }}
-                    py={4}
-                    textTransform="capitalize"
-                  >
-                    <HStack
-                      justifyContent={
-                        header.column.id === CHAIN
-                          ? 'center'
-                          : header.column.id === VAULT || header.column.id === POOL_NAME
-                          ? 'flex-start'
-                          : 'flex-end'
-                      }
+      {err && err.code !== 'NETWORK_ERROR' ? (
+        <Banner
+          alertDescriptionProps={{ fontSize: 'lg' }}
+          alertIconProps={{ boxSize: 12 }}
+          alertProps={{
+            alignItems: 'center',
+            flexDirection: 'column',
+            gap: 4,
+            height: '2xs',
+            justifyContent: 'center',
+            status: 'warning',
+            textAlign: 'center',
+          }}
+          descriptions={[
+            {
+              text: `Unable to retrieve Pools. Please try again later.`,
+            },
+          ]}
+          title={err.reason ? err.reason : 'Unexpected Error'}
+        />
+      ) : !isLoading && !isLoadingPerChain ? (
+        <Table>
+          <Thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr
+                borderBottomWidth={1}
+                borderColor={cCard.dividerColor}
+                borderTopWidth={2}
+                key={headerGroup.id}
+              >
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <Th
+                      border="none"
+                      color={cCard.txtColor}
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      px={{
+                        base: header.column.id === VAULT ? 2 : 1,
+                        lg: header.column.id === VAULT ? 4 : 2,
+                      }}
+                      py={4}
+                      textTransform="capitalize"
                     >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </HStack>
-                  </Th>
-                );
-              })}
-            </Tr>
-          ))}
-        </Thead>
-        <Tbody>
-          {table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <Fragment key={row.id}>
-                <Tr
-                  _hover={{ bg: cCard.hoverBgColor }}
-                  background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                  borderBottomWidth={row.getIsExpanded() ? 0 : 1}
-                  borderColor={cCard.dividerColor}
-                  className={row.original.vault.symbol}
-                  cursor="pointer"
-                  key={row.id}
-                  onClick={() => row.toggleExpanded()}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <Td border="none" key={cell.id} px={{ base: 2, lg: 4 }} py={2}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Td>
-                    );
-                  })}
-                </Tr>
-                {row.getIsExpanded() && (
+                      <HStack
+                        justifyContent={
+                          header.column.id === CHAIN
+                            ? 'center'
+                            : header.column.id === VAULT || header.column.id === POOL_NAME
+                            ? 'flex-start'
+                            : 'flex-end'
+                        }
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </HStack>
+                    </Th>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody>
+            {table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <Fragment key={row.id}>
                   <Tr
+                    _hover={{ bg: cCard.hoverBgColor }}
                     background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                    borderBottomStyle="solid"
-                    borderBottomWidth={1}
+                    borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                     borderColor={cCard.dividerColor}
-                    borderTopStyle="dashed"
-                    borderTopWidth={1}
+                    className={row.original.vault.symbol}
+                    cursor="pointer"
+                    key={row.id}
+                    onClick={() => row.toggleExpanded()}
                   >
-                    {/* 2nd row is a custom 1 cell row */}
-                    <Td border="none" colSpan={row.getVisibleCells().length}>
-                      <AdditionalInfo row={row} />
-                    </Td>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <Td border="none" key={cell.id} px={{ base: 2, lg: 4 }} py={2}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Td>
+                      );
+                    })}
                   </Tr>
-                )}
-              </Fragment>
-            ))
-          ) : selectedFilteredVaults.length === 0 ? (
-            <Tr>
-              <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                <Center py={8}>No vaults in this chain.</Center>
-              </Td>
-            </Tr>
-          ) : (
-            <Tr>
-              <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                <Center py={8}>No results</Center>
-              </Td>
-            </Tr>
-          )}
-        </Tbody>
-      </Table>
+                  {row.getIsExpanded() && (
+                    <Tr
+                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                      borderBottomStyle="solid"
+                      borderBottomWidth={1}
+                      borderColor={cCard.dividerColor}
+                      borderTopStyle="dashed"
+                      borderTopWidth={1}
+                    >
+                      {/* 2nd row is a custom 1 cell row */}
+                      <Td border="none" colSpan={row.getVisibleCells().length}>
+                        <AdditionalInfo row={row} />
+                      </Td>
+                    </Tr>
+                  )}
+                </Fragment>
+              ))
+            ) : selectedFilteredVaults.length === 0 ? (
+              <Tr>
+                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                  <Center py={8}>No vaults in this chain.</Center>
+                </Td>
+              </Tr>
+            ) : (
+              <Tr>
+                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                  <Center py={8}>No results</Center>
+                </Td>
+              </Tr>
+            )}
+          </Tbody>
+        </Table>
+      ) : (
+        <Stack>
+          <Skeleton height={16} />
+          <Skeleton height={60} />
+        </Stack>
+      )}
 
       {/* Pagination Elements */}
       <Flex alignItems="center" className="pagination" gap={4} justifyContent="flex-end" p={4}>

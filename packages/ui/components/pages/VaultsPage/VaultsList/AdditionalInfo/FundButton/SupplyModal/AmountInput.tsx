@@ -1,5 +1,7 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import { BigNumber, constants, utils } from 'ethers';
+import type { VaultData } from '@midas-capital/types';
+import type { BigNumber } from 'ethers';
+import { constants, utils } from 'ethers';
 import { useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
@@ -7,30 +9,24 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useErrorToast } from '@ui/hooks/useToast';
-import { MarketData } from '@ui/types/TokensDataMap';
+import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const AmountInput = ({
-  asset,
   optionToWrap,
-  poolChainId,
   setAmount,
-  comptrollerAddress,
+  vault,
 }: {
-  asset: MarketData;
   optionToWrap?: boolean;
-  poolChainId: number;
   setAmount: (amount: BigNumber) => void;
-  comptrollerAddress: string;
+  vault: VaultData;
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, poolChainId);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -41,10 +37,7 @@ export const AmountInput = ({
     }
     try {
       setUserEnteredAmount(newAmount);
-      const bigAmount = utils.parseUnits(
-        toFixedNoRound(newAmount, Number(asset.underlyingDecimals)),
-        Number(asset.underlyingDecimals)
-      );
+      const bigAmount = utils.parseUnits(toFixedNoRound(newAmount, vault.decimals), vault.decimals);
       setAmount(bigAmount);
     } catch (e) {
       setAmount(constants.Zero);
@@ -52,7 +45,7 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address || !maxSupplyAmount) return;
+    if (!currentSdk || !address) return;
 
     setIsLoading(true);
 
@@ -61,28 +54,27 @@ export const AmountInput = ({
       if (optionToWrap) {
         maxBN = await currentSdk.signer.getBalance();
       } else {
-        maxBN = maxSupplyAmount.bigNumber;
+        maxBN = await fetchTokenBalance(vault.asset, currentSdk, address);
       }
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
       } else {
-        const str = utils.formatUnits(maxBN, asset.underlyingDecimals);
+        const str = utils.formatUnits(maxBN, vault.decimals);
         updateAmount(str);
       }
 
       setIsLoading(false);
     } catch (error) {
       const sentryProperties = {
-        chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
-        token: asset.cToken,
+        asset: vault.asset,
+        vault: vault.vault,
       };
       const sentryInfo = {
-        contextName: 'Fetching max supply amount',
+        contextName: 'Fetching max vault supply amount',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     }
   };
 
@@ -104,23 +96,23 @@ export const AmountInput = ({
         <Row crossAxisAlignment="center" flexShrink={0} mainAxisAlignment="flex-start">
           <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
             <Box height={8} mr={1} width={8}>
-              <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="sm" />
+              <TokenIcon address={vault.asset} chainId={Number(vault.chainId)} size="sm" />
             </Box>
             <EllipsisText
               fontWeight="bold"
               maxWidth="80px"
               mr={2}
               size="md"
-              tooltip={optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+              tooltip={optionToWrap ? vault.symbol.slice(1) : vault.symbol}
             >
-              {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+              {optionToWrap ? vault.symbol.slice(1) : vault.symbol}
             </EllipsisText>
           </Row>
           <Button
-            height={{ lg: 8, md: 8, sm: 8, base: 8 }}
+            height={{ base: 8, lg: 8, md: 8, sm: 8 }}
             isLoading={isLoading}
             onClick={setToMax}
-            px={{ lg: 2, md: 2, sm: 2, base: 2 }}
+            px={{ base: 2, lg: 2, md: 2, sm: 2 }}
           >
             MAX
           </Button>

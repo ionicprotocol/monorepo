@@ -98,10 +98,11 @@ export interface FusePool {
 
 export interface VaultData {
   chainId: SupportedChains;
-  estimatedTotalAssets: BigNumber;
+  totalSupply: BigNumber;
+  totalSupplyNative: number;
   asset: string;
   symbol: string;
-  estimatedAPR: BigNumber;
+  supplyApy: BigNumber;
   adapterCount: number;
   emergencyExit: boolean;
   adapters: {
@@ -110,4 +111,5 @@ export interface VaultData {
   }[];
   decimals: number;
   underlyingPrice: BigNumber;
+  vault: string;
 }

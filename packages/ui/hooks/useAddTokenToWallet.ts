@@ -1,6 +1,6 @@
-import { ToastId, UseToastOptions } from '@chakra-ui/react';
+import type { ToastId, UseToastOptions } from '@chakra-ui/react';
 import { useCallback } from 'react';
-import { Address } from 'wagmi';
+import type { Address } from 'wagmi';
 
 export const useAddTokenToWallet = ({
   underlyingAddress,

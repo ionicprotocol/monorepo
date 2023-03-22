@@ -12,16 +12,16 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { FundOperationMode, VaultData } from '@midas-capital/types';
+import type { VaultData } from '@midas-capital/types';
+import { FundOperationMode } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import { Row } from '@tanstack/react-table';
-import { utils } from 'ethers';
+import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { VaultRowData } from '@ui/components/pages/VaultsPage/VaultsList/index';
+import type { VaultRowData } from '@ui/components/pages/VaultsPage/VaultsList/index';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
-import { ADMIN_FEE_TOOLTIP, DEFAULT_DECIMALS } from '@ui/constants/index';
+import { ADMIN_FEE_TOOLTIP } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
@@ -136,11 +136,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                   <CaptionedStat
                     caption={'Asset Supplied'}
                     crossAxisAlignment="center"
-                    stat={smallUsdFormatter(
-                      Number(utils.formatUnits(vault.estimatedTotalAssets, vault.decimals)) *
-                        Number(utils.formatUnits(vault.underlyingPrice, DEFAULT_DECIMALS)) *
-                        usdPrice
-                    )}
+                    stat={smallUsdFormatter(vault.totalSupplyNative * usdPrice)}
                   />
                   <CaptionedStat caption={'APY'} crossAxisAlignment="center" stat={'5%'} />
                   <CaptionedStat caption={'Daily'} crossAxisAlignment="center" stat={'0.05%'} />

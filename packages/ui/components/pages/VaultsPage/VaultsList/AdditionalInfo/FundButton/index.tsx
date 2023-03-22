@@ -1,9 +1,9 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import { FundOperationMode, VaultData } from '@midas-capital/types';
+import type { VaultData } from '@midas-capital/types';
+import { FundOperationMode } from '@midas-capital/types';
 import { useMemo } from 'react';
 
 import { SupplyModal } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/index';
-import { WithdrawModal } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/index';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
 export const FundButton = ({ mode, vault }: { mode: FundOperationMode; vault: VaultData }) => {
@@ -27,9 +27,9 @@ export const FundButton = ({ mode, vault }: { mode: FundOperationMode; vault: Va
       {mode === FundOperationMode.SUPPLY && (
         <SupplyModal isOpen={isModalOpen} onClose={closeModal} vault={vault} />
       )}
-      {mode === FundOperationMode.WITHDRAW && (
+      {/* {mode === FundOperationMode.WITHDRAW && (
         <WithdrawModal isOpen={isModalOpen} onClose={closeModal} vault={vault} />
-      )}
+      )} */}
     </Box>
   );
 };

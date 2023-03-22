@@ -1,5 +1,5 @@
 import { Center, HStack, Text, VStack } from '@chakra-ui/react';
-import { VaultData } from '@midas-capital/types';
+import type { VaultData } from '@midas-capital/types';
 
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';

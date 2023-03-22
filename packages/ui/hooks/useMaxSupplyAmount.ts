@@ -1,6 +1,7 @@
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber, constants, utils } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { constants, utils } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';

@@ -1,9 +1,9 @@
-import { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@midas-capital/types';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { Err, VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
+import type { Err, VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
 
 export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();

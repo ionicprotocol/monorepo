@@ -1,5 +1,5 @@
 import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import { VaultData } from '@midas-capital/types';
+import type { VaultData } from '@midas-capital/types';
 import { utils } from 'ethers';
 
 export const SupplyApy = ({ vault }: { vault: VaultData }) => {
@@ -9,7 +9,7 @@ export const SupplyApy = ({ vault }: { vault: VaultData }) => {
     <HStack justifyContent="flex-end">
       <VStack alignItems={'flex-end'} spacing={0.5}>
         <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
-          {(Number(utils.formatUnits(vault.estimatedAPR)) * 100).toFixed(2)}%
+          {(Number(utils.formatUnits(vault.supplyApy)) * 100).toFixed(2)}%
         </Text>
       </VStack>
     </HStack>

@@ -1,9 +1,7 @@
-import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { VaultData } from 'types/dist';
+import type { VaultData } from 'types/dist';
 
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
-import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
@@ -21,10 +19,7 @@ export const TotalSupply = ({ vault }: { vault: VaultData }) => {
 
   useEffect(() => {
     if (usdPrice) {
-      const usdBalance =
-        Number(utils.formatUnits(vault.estimatedTotalAssets, vault.decimals)) *
-        Number(utils.formatUnits(vault.underlyingPrice, DEFAULT_DECIMALS)) *
-        usdPrice;
+      const usdBalance = vault.totalSupplyNative * usdPrice;
 
       setUsdBalance(usdBalance);
     } else {
@@ -38,9 +33,9 @@ export const TotalSupply = ({ vault }: { vault: VaultData }) => {
         value: usdBalance,
       }}
       secondary={{
-        value: vault.estimatedTotalAssets,
-        symbol: tokenData?.symbol || '',
         decimals: vault.decimals,
+        symbol: tokenData?.symbol || '',
+        value: vault.totalSupply,
       }}
     />
   );

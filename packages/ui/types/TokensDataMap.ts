@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/types';
+import type { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/types';
 
 export type MidasApiTokenData = {
   symbol: string;

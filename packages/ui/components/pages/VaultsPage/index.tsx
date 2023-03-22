@@ -11,7 +11,7 @@ import { VaultsList } from '@ui/components/pages/VaultsPage/VaultsList/index';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { MIDAS_LOCALSTORAGE_KEYS, TOTAL_SUPPLY, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
+import { MIDAS_LOCALSTORAGE_KEYS, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
@@ -49,14 +49,6 @@ const VaultsPage = memo(() => {
           columnVisibility[columnId] = true;
         } else {
           columnVisibility[columnId] = false;
-        }
-      });
-    } else {
-      VAULT_COLUMNS.map((columnId) => {
-        if (columnId === TOTAL_SUPPLY) {
-          columnVisibility[columnId] = false;
-        } else {
-          columnVisibility[columnId] = true;
         }
       });
     }

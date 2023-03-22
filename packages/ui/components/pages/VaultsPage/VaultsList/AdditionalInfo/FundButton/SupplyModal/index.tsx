@@ -11,16 +11,17 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
-import { FundOperationMode, VaultData } from '@midas-capital/types';
+import type { VaultData } from '@midas-capital/types';
+import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber, constants } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
 import { SupplyError } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
-import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -28,10 +29,9 @@ import { SUPPLY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { useTokenBalance } from '@ui/hooks/useTokenBalance';
+import { fetchTokenBalance, useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { smallFormatter } from '@ui/utils/bigUtils';
+import type { TxStep } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { StatsColumn } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/index';
 import { AmountInput } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/AmountInput';
@@ -75,35 +75,40 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
-      setIsAmountValid(false);
-    } else {
-      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-      setIsAmountValid(amount.lte(max));
-    }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+    const func = async () => {
+      if (amount.isZero()) {
+        setIsAmountValid(false);
+      } else {
+        const max = optionToWrap
+          ? (myNativeBalance as BigNumber)
+          : await fetchTokenBalance(vault.asset, currentSdk, address);
+        setIsAmountValid(amount.lte(max));
+      }
+    };
+
+    func();
+  }, [amount, optionToWrap, myNativeBalance, vault.asset, address, currentSdk]);
 
   useEffect(() => {
     if (amount.isZero()) {
       setBtnStr('Enter a valid amount to supply');
-    } else if (isLoading) {
-      setBtnStr(`Loading your balance of ${asset.underlyingSymbol}...`);
     } else {
       if (isAmountValid) {
         setBtnStr('Supply');
       } else {
-        setBtnStr(`You don't have enough ${asset.underlyingSymbol}`);
+        setBtnStr(`You don't have enough ${vault.symbol}`);
       }
     }
-  }, [amount, isLoading, isAmountValid, asset.underlyingSymbol]);
+  }, [amount, isAmountValid, vault.symbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
 
     const sentryProperties = {
-      token: asset.cToken,
-      chainId: currentSdk.chainId,
-      comptroller: comptrollerAddress,
+      amount: amount,
+      asset: vault.asset,
+      chainId: vault.chainId,
+      vault: vault.vault,
     };
 
     setIsConfirmed(true);
@@ -113,6 +118,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
     setIsSupplying(true);
     setActiveStep(0);
     setFailedStep(0);
+
     if (optionToWrap) {
       try {
         setActiveStep(1);
@@ -124,8 +130,8 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
         const tx = await WToken.deposit({ from: address, value: amount });
 
         addRecentTransaction({
-          hash: tx.hash,
           description: `Wrap ${nativeSymbol}`,
+          hash: tx.hash,
         });
         _steps[0] = {
           ..._steps[0],
@@ -140,35 +146,32 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
         };
         setConfirmedSteps([..._steps]);
         successToast({
-          id: 'wrapped',
           description: 'Successfully Wrapped!',
+          id: 'wrapped',
         });
       } catch (error) {
         const sentryInfo = {
-          contextName: 'Supply - Wrapping native token',
+          contextName: 'Vault Supply - Wrapping native token',
           properties: sentryProperties,
         };
-        handleGenericError({ error, toast: errorToast, sentryInfo });
+        handleGenericError({ error, sentryInfo, toast: errorToast });
         setFailedStep(1);
       }
     }
 
     try {
       setActiveStep(optionToWrap ? 2 : 1);
-      const token = currentSdk.getEIP20RewardTokenInstance(
-        asset.underlyingToken,
-        currentSdk.signer
-      );
-      const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+      const token = currentSdk.getEIP20TokenInstance(vault.asset, currentSdk.signer);
+      const hasApprovedEnough = (await token.callStatic.allowance(address, vault.vault)).gte(
         amount
       );
 
       if (!hasApprovedEnough) {
-        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
+        const tx = await currentSdk.vaultApprove(vault.vault, vault.asset);
 
         addRecentTransaction({
+          description: `Approve ${vault.symbol}`,
           hash: tx.hash,
-          description: `Approve ${asset.underlyingSymbol}`,
         });
         _steps[optionToWrap ? 1 : 0] = {
           ..._steps[optionToWrap ? 1 : 0],
@@ -185,8 +188,8 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
         };
         setConfirmedSteps([..._steps]);
         successToast({
-          id: 'approved',
           description: 'Successfully Approved!',
+          id: 'approved',
         });
       } else {
         _steps[optionToWrap ? 1 : 0] = {
@@ -198,22 +201,23 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
       }
     } catch (error) {
       const sentryInfo = {
-        contextName: 'Supply - Approving',
+        contextName: 'Vault Supply - Approving',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(optionToWrap ? 2 : 1);
     }
 
     try {
       setActiveStep(optionToWrap ? 3 : 2);
-      const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
+      const { tx, errorCode } = await currentSdk.vaultDeposit(vault.vault, amount);
+
       if (errorCode !== null) {
         SupplyError(errorCode);
       } else {
         addRecentTransaction({
+          description: `${vault.symbol} Vault Supply`,
           hash: tx.hash,
-          description: `${asset.underlyingSymbol} Token Supply`,
         });
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
@@ -233,10 +237,10 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
       }
     } catch (error) {
       const sentryInfo = {
-        contextName: 'Supply - Minting',
+        contextName: 'Vault Supply - Depositing',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(optionToWrap ? 3 : 2);
     }
 
@@ -249,11 +253,11 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
     if (!isSupplying) {
       setAmount(constants.Zero);
       setIsConfirmed(false);
-      let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
+      let _steps = [...SUPPLY_STEPS(vault.symbol)];
 
       if (optionToWrap) {
         _steps = [
-          { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
+          { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
           ..._steps,
         ];
       }
@@ -263,14 +267,14 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
   };
 
   useEffect(() => {
-    let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
+    let _steps = [...SUPPLY_STEPS(vault.symbol)];
 
     if (optionToWrap) {
-      _steps = [{ title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false }, ..._steps];
+      _steps = [{ desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' }, ..._steps];
     }
 
     setSteps(_steps);
-  }, [optionToWrap, asset.underlyingSymbol]);
+  }, [optionToWrap, vault.symbol]);
 
   return (
     <Modal
@@ -297,25 +301,25 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
               <PendingTransaction
                 activeStep={activeStep}
                 amount={amount}
-                asset={asset}
                 failedStep={failedStep}
                 isSupplying={isSupplying}
-                poolChainId={poolChainId}
+                poolChainId={Number(vault.chainId)}
                 steps={confirmedSteps}
+                vault={vault}
               />
             ) : (
               <>
                 <HStack justifyContent="center" my={4} width="100%">
                   <Text variant="title">Supply</Text>
                   <Box height="36px" mx={2} width="36px">
-                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                    <TokenIcon address={vault.asset} chainId={Number(vault.chainId)} size="36" />
                   </Box>
                   <EllipsisText
                     maxWidth="100px"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    tooltip={tokenData?.symbol || vault.symbol}
                     variant="title"
                   >
-                    {tokenData?.symbol || asset.underlyingSymbol}
+                    {tokenData?.symbol || vault.symbol}
                   </EllipsisText>
                 </HStack>
 
@@ -329,53 +333,21 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
                   p={4}
                   width="100%"
                 >
-                  {!supplyCap || asset.totalSupplyFiat < supplyCap.usdCap ? (
-                    <>
-                      <Column gap={1} w="100%">
-                        <AmountInput
-                          asset={asset}
-                          comptrollerAddress={comptrollerAddress}
-                          optionToWrap={optionToWrap}
-                          poolChainId={poolChainId}
-                          setAmount={setAmount}
-                        />
+                  <Column gap={1} w="100%">
+                    <AmountInput optionToWrap={optionToWrap} setAmount={setAmount} vault={vault} />
 
-                        <Balance asset={asset} />
-                      </Column>
-                      <StatsColumn
-                        amount={amount}
-                        asset={asset}
-                        assets={assets}
-                        mode={FundOperationMode.SUPPLY}
-                        poolChainId={poolChainId}
-                      />
-                      <Button
-                        height={16}
-                        id="confirmFund"
-                        isDisabled={!isAmountValid}
-                        onClick={onConfirm}
-                        width="100%"
-                      >
-                        {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
-                      </Button>
-                    </>
-                  ) : (
-                    <Banner
-                      alertDescriptionProps={{ fontSize: 'lg' }}
-                      alertProps={{ status: 'info' }}
-                      descriptions={[
-                        {
-                          text: `${smallFormatter(supplyCap.tokenCap)} ${
-                            asset.underlyingSymbol
-                          } / ${smallFormatter(supplyCap.tokenCap)} ${asset.underlyingSymbol}`,
-                          textProps: { display: 'block', fontWeight: 'bold' },
-                        },
-                        {
-                          text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.',
-                        },
-                      ]}
-                    />
-                  )}
+                    <Balance vault={vault} />
+                  </Column>
+                  <StatsColumn amount={amount} mode={FundOperationMode.SUPPLY} vault={vault} />
+                  <Button
+                    height={16}
+                    id="confirmFund"
+                    isDisabled={!isAmountValid}
+                    onClick={onConfirm}
+                    width="100%"
+                  >
+                    {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
+                  </Button>
                 </Column>
               </>
             )}

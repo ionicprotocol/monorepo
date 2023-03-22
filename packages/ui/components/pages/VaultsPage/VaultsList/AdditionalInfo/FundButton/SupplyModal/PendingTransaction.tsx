@@ -1,5 +1,7 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
+import type { VaultData } from '@midas-capital/types';
+import type { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';
@@ -7,8 +9,7 @@ import Loader from '@ui/components/shared/Loader';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { TxStep } from '@ui/types/ComponentPropsType';
 
 export const PendingTransaction = ({
   activeStep,
@@ -17,28 +18,27 @@ export const PendingTransaction = ({
   isSupplying,
   poolChainId,
   amount,
-  asset,
+  vault,
 }: {
   activeStep: number;
+  amount: BigNumber;
   failedStep: number;
-  steps: TxStep[];
   isSupplying: boolean;
   poolChainId: number;
-  amount: BigNumber;
-  asset: MarketData;
+  steps: TxStep[];
+  vault: VaultData;
 }) => {
-  const amountNum = utils.formatUnits(amount, asset.underlyingDecimals);
+  const amountNum = utils.formatUnits(amount, vault.decimals);
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
   const addToken = useAddTokenToWallet({
-    underlyingAddress: asset.underlyingToken,
-    underlyingSymbol: asset.underlyingSymbol,
-    underlyingDecimals: Number(asset.underlyingDecimals),
-    logoUrl: asset.logoUrl,
-    successToast,
     errorToast,
+    successToast,
+    underlyingAddress: vault.asset,
+    underlyingDecimals: vault.decimals,
+    underlyingSymbol: vault.symbol,
   });
 
   return (
@@ -52,11 +52,11 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text fontWeight="bold" variant="mdText">
-            You supplied {amountNum} {asset.underlyingSymbol}
+            You supplied {amountNum} {vault.symbol}
           </Text>
           <Flex justifyContent="flex-end" width="100%">
             <Button onClick={addToken} size="sm" variant={'ghost'}>
-              Add {asset.underlyingSymbol} to wallet
+              Add {vault.symbol} to wallet
             </Button>
           </Flex>
         </VStack>

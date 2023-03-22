@@ -337,7 +337,7 @@ export class MidasBase {
     return oracle;
   }
 
-  getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+  getEIP20TokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(address, EIP20InterfaceABI, signerOrProvider) as EIP20Interface;
   }
 

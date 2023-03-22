@@ -1,16 +1,16 @@
 import { HStack, Skeleton, Text } from '@chakra-ui/react';
+import type { VaultData } from '@midas-capital/types';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { MarketData } from '@ui/types/TokensDataMap';
 
 export const Supplied = ({
-  asset,
-  current: supplyBalanceFrom,
-  new: supplyBalanceTo,
+  current: totalSupplyFrom,
+  new: totalSupplyTo,
+  vault,
 }: {
-  asset: MarketData;
   current: string;
   new?: string;
+  vault: VaultData;
 }) => (
   <HStack alignItems={'flex-start'} width="100%">
     <Text flexShrink={0} size="sm">
@@ -18,26 +18,26 @@ export const Supplied = ({
     </Text>
     <HStack justifyContent="flex-end" width="100%">
       <HStack spacing={1}>
-        <EllipsisText maxWidth="65px" tooltip={supplyBalanceFrom}>
-          {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
+        <EllipsisText maxWidth="65px" tooltip={totalSupplyFrom}>
+          {totalSupplyFrom.slice(0, totalSupplyFrom.indexOf('.') + 3)}
         </EllipsisText>
-        <EllipsisText maxWidth="45px" tooltip={asset.underlyingSymbol}>
-          {asset.underlyingSymbol}
+        <EllipsisText maxWidth="45px" tooltip={vault.symbol}>
+          {vault.symbol}
         </EllipsisText>
       </HStack>
       <Text>{'→'}</Text>
-      {supplyBalanceTo ? (
+      {totalSupplyTo ? (
         <HStack spacing={1}>
-          <EllipsisText maxWidth="65px" tooltip={supplyBalanceTo}>
-            {supplyBalanceTo.slice(0, supplyBalanceTo.indexOf('.') + 3)}
+          <EllipsisText maxWidth="65px" tooltip={totalSupplyTo}>
+            {totalSupplyTo.slice(0, totalSupplyTo.indexOf('.') + 3)}
           </EllipsisText>
-          <EllipsisText maxWidth="45px" tooltip={asset.underlyingSymbol}>
-            {asset.underlyingSymbol}
+          <EllipsisText maxWidth="45px" tooltip={vault.symbol}>
+            {vault.symbol}
           </EllipsisText>
         </HStack>
       ) : (
         <Skeleton display="inline">
-          {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
+          {totalSupplyFrom.slice(0, totalSupplyFrom.indexOf('.') + 3)}
         </Skeleton>
       )}
     </HStack>
