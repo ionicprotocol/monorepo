@@ -20,8 +20,8 @@ export const usePerformanceFee = (poolChainId: number, pluginAddress?: string) =
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!pluginAddress && !!sdk,
+      staleTime: Infinity,
     }
   );
 };

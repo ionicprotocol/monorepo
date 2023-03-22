@@ -1,4 +1,5 @@
-import { Box, Tooltip, TooltipProps } from '@chakra-ui/react';
+import type { TooltipProps } from '@chakra-ui/react';
+import { Box, Tooltip } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
 
@@ -6,9 +7,9 @@ export const SimpleTooltip = ({
   label,
   children,
   ...tooltipProps
-}: {
+}: TooltipProps & {
   label: string;
-} & TooltipProps) => {
+}) => {
   const { cPage } = useColors();
   return (
     <Box>

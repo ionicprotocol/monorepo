@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { Flywheel } from '@ui/types/ComponentPropsType';
+import type { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
@@ -29,10 +29,10 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
           return {
             address: flywheel.address,
             booster,
-            owner,
-            rewards,
-            rewardToken,
             markets,
+            owner,
+            rewardToken,
+            rewards,
           };
         })
       );
@@ -41,8 +41,8 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!comptrollerAddress && !!sdk,
+      staleTime: Infinity,
     }
   );
   return queryResult;

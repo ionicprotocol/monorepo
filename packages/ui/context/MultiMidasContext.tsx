@@ -2,40 +2,33 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { chainIdToConfig } from '@midas-capital/chains';
 import { MidasSdk } from '@midas-capital/sdk';
 import Security from '@midas-capital/security';
-import { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@midas-capital/types';
 import * as Sentry from '@sentry/browser';
-import { FetchSignerResult, Signer } from '@wagmi/core';
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { Chain, useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
+import type { FetchSignerResult, Signer } from '@wagmi/core';
+import type { Dispatch, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { Chain } from 'wagmi';
+import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 export interface MultiMidasContextData {
-  sdks: MidasSdk[];
-  securities: Security[];
-  getSecurity: (chainId: number) => Security | undefined;
+  address?: string;
   chainIds: SupportedChains[];
-  isGlobalLoading: boolean;
-  setGlobalLoading: Dispatch<boolean>;
   currentChain?: Chain & {
     unsupported?: boolean | undefined;
   };
   currentSdk?: MidasSdk;
-  getSdk: (chainId: number) => MidasSdk | undefined;
-  address?: string;
   disconnect: () => void;
+  getSdk: (chainId: number) => MidasSdk | undefined;
+  getSecurity: (chainId: number) => Security | undefined;
   isConnected: boolean;
-  signer?: FetchSignerResult<Signer>;
+  isGlobalLoading: boolean;
+  sdks: MidasSdk[];
+  securities: Security[];
   setAddress: Dispatch<string>;
+  setGlobalLoading: Dispatch<boolean>;
+  signer?: FetchSignerResult<Signer>;
 }
 
 export const MultiMidasContext = createContext<MultiMidasContextData | undefined>(undefined);
@@ -135,20 +128,20 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
 
   const value = useMemo(() => {
     return {
-      sdks,
-      securities,
-      getSecurity,
+      address,
       chainIds,
-      isGlobalLoading,
-      setGlobalLoading,
       currentChain,
       currentSdk,
-      getSdk,
-      address,
       disconnect,
+      getSdk,
+      getSecurity,
       isConnected,
-      signer,
+      isGlobalLoading,
+      sdks,
+      securities,
       setAddress,
+      setGlobalLoading,
+      signer,
     };
   }, [
     sdks,

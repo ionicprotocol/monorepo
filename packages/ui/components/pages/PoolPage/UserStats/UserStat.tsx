@@ -1,3 +1,4 @@
+import type { StatLabelProps, StatNumberProps, StatProps } from '@chakra-ui/react';
 import {
   Stat as ChakraStat,
   StatLabel as ChakraStatLabel,
@@ -6,9 +7,6 @@ import {
   HStack,
   Skeleton,
   StatHelpText,
-  StatLabelProps,
-  StatNumberProps,
-  StatProps,
 } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
@@ -48,9 +46,9 @@ export const UserStat = ({
   secondValue,
   label,
 }: {
-  value?: string;
-  secondValue?: string;
   label: string;
+  secondValue?: string;
+  value?: string;
 }) => {
   return (
     <Stat borderRadius={12} px={6} py={2}>

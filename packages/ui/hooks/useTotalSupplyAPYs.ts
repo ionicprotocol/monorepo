@@ -4,9 +4,9 @@ import { useMemo } from 'react';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
-import { UseAssetsData } from '@ui/hooks/useAssets';
-import { UseRewardsData } from '@ui/hooks/useRewards';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { UseAssetsData } from '@ui/hooks/useAssets';
+import type { UseRewardsData } from '@ui/hooks/useRewards';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const useTotalSupplyAPYs = (
@@ -62,6 +62,6 @@ export const useTotalSupplyAPYs = (
 
       return result;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!sdk && !!assets && !!chainId }
+    { cacheTime: Infinity, enabled: !!sdk && !!assets && !!chainId, staleTime: Infinity }
   );
 };

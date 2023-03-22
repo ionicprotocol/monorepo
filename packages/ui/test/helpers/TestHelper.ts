@@ -1,20 +1,18 @@
-import {
+import type {
   Dappeteer,
   DappeteerBrowser,
   DappeteerLaunchOptions,
   DappeteerPage,
-  launch,
-  RECOMMENDED_METAMASK_VERSION,
-  setupMetaMask,
 } from '@chainsafe/dappeteer';
+import { launch, RECOMMENDED_METAMASK_VERSION, setupMetaMask } from '@chainsafe/dappeteer';
 
 import { BASE_URL } from '@ui/test/constants/index';
 import { App } from '@ui/test/pages/App';
 
 export type Network = {
+  chainId: number;
   networkName: string;
   rpc: string;
-  chainId: number;
   symbol: string;
 };
 
@@ -52,7 +50,7 @@ export class TestHelper {
     let metamask: Dappeteer;
 
     try {
-      metamask = await setupMetaMask(browser, { seed: seed, password: pass });
+      metamask = await setupMetaMask(browser, { password: pass, seed: seed });
       if (network) {
         await metamask.switchNetwork(network.networkName);
       }

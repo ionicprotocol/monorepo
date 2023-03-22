@@ -1,6 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Stack, Text } from '@chakra-ui/react';
-import { SortingState, VisibilityState } from '@tanstack/react-table';
+import type { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
@@ -33,7 +33,7 @@ const PoolPage = memo(() => {
   const poolId = router.query.poolId as string;
   const chainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(chainId));
-  const { data: allRewards } = useRewards({ poolId: poolId, chainId: Number(chainId) });
+  const { data: allRewards } = useRewards({ chainId: Number(chainId), poolId: poolId });
   const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
   const isMobile = useIsMobile();
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
@@ -50,7 +50,7 @@ const PoolPage = memo(() => {
     ) {
       setInitSorting(JSON.parse(oldData).marketSorting);
     } else {
-      setInitSorting([{ id: MARKET_LTV, desc: true }]);
+      setInitSorting([{ desc: true, id: MARKET_LTV }]);
     }
 
     const columnVisibility: VisibilityState = {};
@@ -121,8 +121,8 @@ const PoolPage = memo(() => {
                           underlyingToken,
                           cToken,
                         }: {
-                          underlyingToken: string;
                           cToken: string;
+                          underlyingToken: string;
                         }) => (
                           <TokenIcon
                             address={underlyingToken}
@@ -138,8 +138,8 @@ const PoolPage = memo(() => {
                             underlyingToken,
                             cToken,
                           }: {
-                            underlyingToken: string;
                             cToken: string;
+                            underlyingToken: string;
                           }) => {
                             return (
                               <TokenIcon

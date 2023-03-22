@@ -4,7 +4,7 @@ import { utils } from 'ethers';
 import { Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Balance = ({ asset }: { asset: MarketData }) => {
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);

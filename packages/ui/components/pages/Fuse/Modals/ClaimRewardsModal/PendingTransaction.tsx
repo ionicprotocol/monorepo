@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import { SupportedAsset } from '@midas-capital/types';
+import type { SupportedAsset } from '@midas-capital/types';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';
@@ -7,7 +7,7 @@ import Loader from '@ui/components/shared/Loader';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { TxStep } from '@ui/types/ComponentPropsType';
+import type { TxStep } from '@ui/types/ComponentPropsType';
 
 export const PendingTransaction = ({
   activeStep,
@@ -18,11 +18,11 @@ export const PendingTransaction = ({
   assetPerRewardToken,
 }: {
   activeStep: number;
+  assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined };
   failedStep: number;
-  steps: TxStep[];
   isClaiming: boolean;
   poolChainId: number;
-  assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined };
+  steps: TxStep[];
 }) => {
   return (
     <Column crossAxisAlignment="center" expand mainAxisAlignment="center" pt={2}>
@@ -85,11 +85,11 @@ const AddTokenToWalletButton = ({ asset }: { asset: SupportedAsset }) => {
   const errorToast = useErrorToast();
 
   const addToken = useAddTokenToWallet({
-    underlyingAddress: asset.underlying,
-    underlyingSymbol: asset.symbol,
-    underlyingDecimals: asset.decimals,
-    successToast,
     errorToast,
+    successToast,
+    underlyingAddress: asset.underlying,
+    underlyingDecimals: asset.decimals,
+    underlyingSymbol: asset.symbol,
   });
 
   return (

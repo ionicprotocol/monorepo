@@ -19,7 +19,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -37,8 +37,8 @@ import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
-import { Flywheel } from '@ui/types/ComponentPropsType';
-import { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import type { Flywheel } from '@ui/types/ComponentPropsType';
+import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
@@ -52,9 +52,9 @@ const EditFlywheelModal = ({
   onClose,
 }: {
   flywheel: Flywheel;
-  pool: PoolData;
   isOpen: boolean;
   onClose: () => void;
+  pool: PoolData;
 }) => {
   const { currentSdk, address } = useMultiMidas();
 
@@ -132,16 +132,16 @@ const EditFlywheelModal = ({
       refetchRewardsBalance();
     } catch (error) {
       const sentryProperties = {
-        rewardToken: flywheel.rewardToken,
-        chainId: currentSdk.chainId,
-        rewards: flywheel.rewards,
         amount: fundingAmount,
+        chainId: currentSdk.chainId,
+        rewardToken: flywheel.rewardToken,
+        rewards: flywheel.rewards,
       };
       const sentryInfo = {
         contextName: 'Funding flywheel rewards contract',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setTransactionPending(false);
     }
@@ -164,9 +164,9 @@ const EditFlywheelModal = ({
       setTransactionPending(true);
 
       const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
-        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
         // TODO enable in UI
         rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
+        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
       });
 
       await tx.wait();
@@ -174,16 +174,16 @@ const EditFlywheelModal = ({
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        token: selectedMarket.cToken,
         rewards: flywheel.rewards,
-        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
         rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
+        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
+        token: selectedMarket.cToken,
       };
       const sentryInfo = {
         contextName: 'Updating rewards info',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setTransactionPending(false);
       setDateEditable(false);
@@ -215,14 +215,14 @@ const EditFlywheelModal = ({
       } catch (error) {
         const sentryProperties = {
           chainId: currentSdk.chainId,
-          token: market,
           flywheel: flywheel.address,
+          token: market,
         };
         const sentryInfo = {
           contextName: 'Enabling rewards',
           properties: sentryProperties,
         };
-        handleGenericError({ error, toast: errorToast, sentryInfo });
+        handleGenericError({ error, sentryInfo, toast: errorToast });
       } finally {
         setTransactionPending(false);
       }
@@ -247,7 +247,7 @@ const EditFlywheelModal = ({
                 src={tokenData.logoURL}
               />
             ) : (
-              <Skeleton alignSelf={'center'} height="50px" width="50px"></Skeleton>
+              <Skeleton alignSelf={'center'} height="50px" width="50px" />
             )}
             <StatGroup width="100%">
               <Stat>

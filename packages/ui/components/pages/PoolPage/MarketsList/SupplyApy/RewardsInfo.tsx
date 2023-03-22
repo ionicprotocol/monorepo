@@ -1,18 +1,19 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, HStack, Image, Text } from '@chakra-ui/react';
-import { FlywheelReward, isFlywheelReward, Reward, SupportedChains } from '@midas-capital/types';
+import type { FlywheelReward, Reward, SupportedChains } from '@midas-capital/types';
+import { isFlywheelReward } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 interface RewardsInfoProps {
-  reward: Reward;
-  chainId: number;
   asset: MarketData;
+  chainId: number;
+  reward: Reward;
 }
 
 export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
@@ -81,11 +82,11 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
           <Text>{'(Ending: '}</Text>
           <Text>
             {`${endDate.toLocaleDateString(undefined, {
-              year: 'numeric',
-              month: 'numeric',
               day: 'numeric',
               hour: '2-digit',
               minute: '2-digit',
+              month: 'numeric',
+              year: 'numeric',
             })}`}
             {')'}
           </Text>

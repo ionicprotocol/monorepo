@@ -15,10 +15,10 @@ export const WhitelistInfo = ({
   addToWhitelist,
   removeFromWhitelist,
 }: {
-  value: string[];
-  onChange: (v: string[]) => void;
   addToWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
+  onChange: (v: string[]) => void;
   removeFromWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
+  value: string[];
 }) => {
   const [_whitelistInput, _setWhitelistInput] = useState('');
 

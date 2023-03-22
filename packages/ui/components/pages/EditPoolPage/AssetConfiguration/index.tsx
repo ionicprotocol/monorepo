@@ -1,5 +1,6 @@
-import { Box, BoxProps, Divider, Flex, Text } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { BoxProps } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import React, { useState } from 'react';
 
 import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';
@@ -13,10 +14,10 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 
 interface AssetButtonProps extends BoxProps {
   asset: NativePricedFuseAsset;
-  selectedAsset: NativePricedFuseAsset;
-  setSelectedAsset: (value: NativePricedFuseAsset) => void;
   isEditableAdmin?: boolean | null;
   poolChainId: number;
+  selectedAsset: NativePricedFuseAsset;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
 }
 
 const AssetButton = ({
@@ -55,9 +56,9 @@ const AssetConfiguration = ({
   comptrollerAddress,
   poolChainId,
 }: {
-  openAddAssetModal: () => void;
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
+  openAddAssetModal: () => void;
   poolChainId: number;
 }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);

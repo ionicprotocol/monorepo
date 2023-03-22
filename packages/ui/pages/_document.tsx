@@ -1,5 +1,6 @@
 import { ColorModeScript } from '@chakra-ui/react';
-import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
+import type { DocumentContext } from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 
 import { theme } from '@ui/theme/index';
 
@@ -65,7 +66,7 @@ class MyDocument extends Document {
           <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap"
             rel="stylesheet"
-          ></link>
+          />
 
           <link href="/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
           <link href="/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" />

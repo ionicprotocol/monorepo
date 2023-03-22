@@ -15,7 +15,7 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { SupportedAsset } from '@midas-capital/types';
+import type { SupportedAsset } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetModal/AddAssetSettings';
@@ -30,9 +30,9 @@ import { sortSupportedAssets } from '@ui/utils/sorts';
 interface AddAssetProps {
   comptrollerAddress: string;
   onSuccess?: () => void;
+  poolChainId: number;
   poolID: string;
   poolName: string;
-  poolChainId: number;
 }
 
 const AddAsset = ({
@@ -144,18 +144,18 @@ const AddAsset = ({
               css={{
                 '&::-webkit-scrollbar': {
                   display: 'block',
-                  width: '4px',
                   height: '4px',
+                  width: '4px',
                 },
-                '&::-webkit-scrollbar-track': {
-                  width: '4px',
-                  height: '4px',
+                '&::-webkit-scrollbar-corner': {
+                  display: 'none',
                 },
                 '&::-webkit-scrollbar-thumb': {
                   background: cPage.primary.borderColor,
                 },
-                '&::-webkit-scrollbar-corner': {
-                  display: 'none',
+                '&::-webkit-scrollbar-track': {
+                  height: '4px',
+                  width: '4px',
                 },
               }}
               justify="flex-start"
@@ -199,18 +199,18 @@ const AddAsset = ({
                   css={{
                     '&::-webkit-scrollbar': {
                       display: 'block',
-                      width: '4px',
                       height: '4px',
+                      width: '4px',
                     },
-                    '&::-webkit-scrollbar-track': {
-                      width: '4px',
-                      height: '4px',
+                    '&::-webkit-scrollbar-corner': {
+                      display: 'none',
                     },
                     '&::-webkit-scrollbar-thumb': {
                       background: cPage.primary.borderColor,
                     },
-                    '&::-webkit-scrollbar-corner': {
-                      display: 'none',
+                    '&::-webkit-scrollbar-track': {
+                      height: '4px',
+                      width: '4px',
                     },
                   }}
                   direction="column"
@@ -269,11 +269,11 @@ const AddAssetModal = ({
   onClose,
   poolChainId,
   ...addAssetProps
-}: {
+}: AddAssetProps & {
   isOpen: boolean;
-  poolChainId: number;
   onClose: () => void;
-} & AddAssetProps) => {
+  poolChainId: number;
+}) => {
   return (
     <MidasModal
       body={<AddAsset onSuccess={onClose} poolChainId={poolChainId} {...addAssetProps} />}

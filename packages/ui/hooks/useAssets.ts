@@ -1,4 +1,4 @@
-import { AssetReward } from '@midas-capital/types';
+import type { AssetReward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 

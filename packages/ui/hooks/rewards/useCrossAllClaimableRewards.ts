@@ -1,5 +1,5 @@
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { SupportedChains } from '@midas-capital/types';
+import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -39,8 +39,8 @@ export const useCrossAllClaimableRewards = (chainIds: SupportedChains[]) => {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: chainIds.length > 0 && !!address,
+      staleTime: Infinity,
     }
   );
 };

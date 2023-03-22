@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const useBorrowAPYs = (assets: MarketData[], chainId?: number) => {

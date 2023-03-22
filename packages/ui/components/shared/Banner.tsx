@@ -1,13 +1,12 @@
-import {
-  Alert,
-  AlertDescription,
+import type {
   AlertDescriptionProps,
-  AlertIcon,
   AlertIconProps,
   AlertProps,
   AlertTitleProps,
 } from '@chakra-ui/alert';
-import { AlertTitle, Box, Link, Stack, Text, TextProps } from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon } from '@chakra-ui/alert';
+import type { TextProps } from '@chakra-ui/react';
+import { AlertTitle, Box, Link, Stack, Text } from '@chakra-ui/react';
 import React from 'react';
 
 export const Banner = ({
@@ -18,12 +17,12 @@ export const Banner = ({
   alertTitleProps,
   alertDescriptionProps,
 }: {
-  title?: string;
-  descriptions: { text: string; url?: string; textProps?: TextProps }[];
-  alertProps?: AlertProps;
-  alertIconProps?: AlertIconProps;
-  alertTitleProps?: AlertTitleProps;
   alertDescriptionProps?: AlertDescriptionProps;
+  alertIconProps?: AlertIconProps;
+  alertProps?: AlertProps;
+  alertTitleProps?: AlertTitleProps;
+  descriptions: { text: string; textProps?: TextProps; url?: string }[];
+  title?: string;
 }) => {
   return (
     <Alert borderRadius={8} status="warning" variant="subtle" {...alertProps}>

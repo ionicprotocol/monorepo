@@ -1,7 +1,7 @@
 import { HStack, Skeleton, Text } from '@chakra-ui/react';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Supplied = ({
   asset,

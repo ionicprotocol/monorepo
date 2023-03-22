@@ -9,7 +9,8 @@ import {
   neondevnet,
   polygon,
 } from '@midas-capital/chains';
-import { DeployedPlugins as DeployedPluginsType, SupportedChains } from '@midas-capital/types';
+import type { DeployedPlugins as DeployedPluginsType } from '@midas-capital/types';
+import { SupportedChains } from '@midas-capital/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 

@@ -20,8 +20,8 @@ export const useRewardsInfoForMarket = (
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!flywheelAddress && !!marketAddress && !!sdk,
+      staleTime: Infinity,
     }
   );
 };

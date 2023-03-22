@@ -1,5 +1,5 @@
 import { Box, Center } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import Loader from '@ui/components/shared/Loader';
 

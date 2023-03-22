@@ -3,7 +3,7 @@ import { Text, VStack } from '@chakra-ui/react';
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const TotalBorrow = ({
   asset,
@@ -17,9 +17,9 @@ export const TotalBorrow = ({
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
   const { data: borrowCap } = useBorrowCap({
+    chainId: poolChainId,
     comptroller: comptrollerAddress,
     market: asset,
-    chainId: poolChainId,
   });
 
   return (
@@ -37,9 +37,9 @@ export const TotalBorrow = ({
             value: asset.totalBorrowFiat,
           }}
           secondary={{
-            value: asset.totalBorrow,
-            symbol: tokenData?.symbol || '',
             decimals: asset.underlyingDecimals.toNumber(),
+            symbol: tokenData?.symbol || '',
+            value: asset.totalBorrow,
           }}
         />
       )}

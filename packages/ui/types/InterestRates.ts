@@ -1,9 +1,9 @@
 export type InterestRatesType = {
-  lending: number;
   borrowing: number;
+  lending: number;
 };
 
 export type MarketInfo = {
-  tokenAddress: string;
   rates: InterestRatesType;
+  tokenAddress: string;
 };

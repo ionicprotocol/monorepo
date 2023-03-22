@@ -1,4 +1,5 @@
-import { assetSymbols, SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@midas-capital/types';
+import { assetSymbols } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
@@ -28,8 +29,8 @@ export const useAnkrBNBApr = (isEnabled: boolean, poolChainId?: number) => {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!sdk && !!poolChainId && isEnabled,
+      staleTime: Infinity,
     }
   );
 };

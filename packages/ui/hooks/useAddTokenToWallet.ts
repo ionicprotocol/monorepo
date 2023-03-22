@@ -1,6 +1,6 @@
-import { ToastId, UseToastOptions } from '@chakra-ui/react';
+import type { ToastId, UseToastOptions } from '@chakra-ui/react';
 import { useCallback } from 'react';
-import { Address } from 'wagmi';
+import type { Address } from 'wagmi';
 
 export const useAddTokenToWallet = ({
   underlyingAddress,
@@ -10,18 +10,18 @@ export const useAddTokenToWallet = ({
   errorToast,
   successToast,
 }: {
-  underlyingAddress: string;
-  underlyingSymbol: string;
-  underlyingDecimals: number;
-  logoUrl?: string;
   errorToast: (options?: UseToastOptions | undefined) => ToastId;
+  logoUrl?: string;
   successToast: (options?: UseToastOptions | undefined) => ToastId;
+  underlyingAddress: string;
+  underlyingDecimals: number;
+  underlyingSymbol: string;
 }) =>
   useCallback(async () => {
     const ethereum = window.ethereum;
 
     if (!ethereum) {
-      errorToast({ title: 'Error', description: 'Wallet could not be found!' });
+      errorToast({ description: 'Wallet could not be found!', title: 'Error' });
 
       return false;
     }
@@ -30,26 +30,26 @@ export const useAddTokenToWallet = ({
       const added = await ethereum.request({
         method: 'wallet_watchAsset',
         params: {
-          type: 'ERC20',
           options: {
             address: underlyingAddress,
-            symbol: underlyingSymbol,
             decimals: underlyingDecimals,
             image: logoUrl,
+            symbol: underlyingSymbol,
           },
+          type: 'ERC20',
         } as {
-          type: 'ERC20';
           options: {
             address: Address;
             decimals: number;
-            symbol: string;
             image?: string;
+            symbol: string;
           };
+          type: 'ERC20';
         },
       });
 
       if (added) {
-        successToast({ title: 'Added', description: 'Token is successfully added to wallet' });
+        successToast({ description: 'Token is successfully added to wallet', title: 'Added' });
       }
 
       return added;

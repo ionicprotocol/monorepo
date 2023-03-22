@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 
@@ -6,8 +6,8 @@ export const ConfigRow = ({
   children,
   ...others
 }: {
-  children: ReactNode;
   [key: string]: ReactNode;
+  children: ReactNode;
 }) => {
   return (
     <Row
@@ -15,7 +15,7 @@ export const ConfigRow = ({
       flexShrink={0}
       mainAxisAlignment="flex-start"
       overflowX="auto"
-      px={{ md: 8, base: 4 }}
+      px={{ base: 4, md: 8 }}
       py={4}
       width="100%"
       {...others}

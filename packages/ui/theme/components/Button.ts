@@ -6,80 +6,72 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
   ...theme.components.Button,
   baseStyle: {
     ...theme.components.Button.baseStyle,
-    fontWeight: 'bold',
-    borderRadius: 'xl',
-    fontFamily: 'heading',
-    display: 'inline-flex',
     alignItems: 'center',
+    borderRadius: 'xl',
+    display: 'inline-flex',
+    fontFamily: 'heading',
+    fontWeight: 'bold',
     justifyContent: 'center',
+  },
+  defaultProps: {
+    ...theme.components.Button.defaultProps,
+    variant: '_solid',
   },
   variants: {
     ...theme.components.Button.variants,
     _ghost: (props) => ({
       ...theme.components.Button.variants?.ghost,
       _hover: {
-        textDecoration: 'unset',
         bg: mode('ecru', 'ecru')(props),
         color: mode('raisinBlack', 'raisinBlack')(props),
+        textDecoration: 'unset',
       },
+    }),
+    _link: (props) => ({
+      ...theme.components.Button.variants?.link,
+      _hover: {
+        color: mode('ecru', 'ecru')(props),
+      },
+      color: mode('raisinBlack', 'whiteBg')(props),
+    }),
+    _outline: (props) => ({
+      ...theme.components.Button.variants?.outline,
+      _hover: {
+        bg: mode('ecru', 'ecru')(props),
+        color: mode('raisinBlack', 'raisinBlack')(props),
+        textDecoration: 'unset',
+      },
+      bg: mode('whiteBg', 'raisinBlack')(props),
+      borderColor: mode('ecru', 'ecru')(props),
+      borderWidth: 2,
+      color: mode('raisinBlack', 'ecru')(props),
     }),
     _solid: (props) => ({
       ...theme.components.Button.variants?.solid,
-      bg: mode('ecru', 'ecru')(props),
-      color: mode('raisinBlack', 'raisinBlack')(props),
+      _active: { opacity: 0.8 },
       _hover: {
-        bg: mode('ecru80', 'ecru80')(props),
-        color: mode('raisinBlack', 'raisinBlack')(props),
         _disabled: {
           bg: mode('ecru', 'ecru')(props),
           color: mode('raisinBlack', 'raisinBlack')(props),
         },
+        bg: mode('ecru80', 'ecru80')(props),
+        color: mode('raisinBlack', 'raisinBlack')(props),
       },
-      _active: { opacity: 0.8 },
-    }),
-    silver: (props) => ({
-      ...theme.components.Button.variants?.solid,
-      bg: mode('silverMetallic', 'silverMetallic')(props),
+      bg: mode('ecru', 'ecru')(props),
       color: mode('raisinBlack', 'raisinBlack')(props),
-      _hover: {
-        bg: mode('silverMetallic80', 'silverMetallic80')(props),
-        color: mode('raisinBlack', 'raisinBlack')(props),
-      },
-      _active: { opacity: 0.8 },
     }),
-    _outline: (props) => ({
-      ...theme.components.Button.variants?.outline,
-      bg: mode('whiteBg', 'raisinBlack')(props),
-      color: mode('raisinBlack', 'ecru')(props),
-      borderWidth: 2,
-      borderColor: mode('ecru', 'ecru')(props),
+    external: (props) => ({
+      ...theme.components.Button.variants?.solid,
       _hover: {
-        textDecoration: 'unset',
-        bg: mode('ecru', 'ecru')(props),
-        color: mode('raisinBlack', 'raisinBlack')(props),
+        bg: mode('bone', 'raisinBlack80')(props),
+        color: mode('raisinBlack', 'bone')(props),
       },
+      bg: mode('whiteBg', 'raisinBlack')(props),
+      borderRadius: 'md',
+      color: mode('raisinBlack', 'bone')(props),
     }),
     filter: (props) => ({
       ...theme.components.Button.variants?.solid,
-      height: '52px',
-      bg: props.isSelected
-        ? mode(
-            props.color ? `${props.color}.600` : 'ecru',
-            props.color ? `${props.color}.200` : 'ecru'
-          )(props)
-        : mode('whiteBg', 'raisinBlack')(props),
-      color: props.isSelected
-        ? mode(props.color ? 'whiteBg' : 'raisinBlack', 'raisinBlack')(props)
-        : mode(
-            props.color ? `${props.color}.600` : 'gunmetal',
-            props.color ? `${props.color}.200` : 'ecru'
-          )(props),
-      borderWidth: 2,
-      borderColor: mode(
-        props.color ? `${props.color}.600` : 'ecru',
-        props.color ? `${props.color}.200` : 'ecru'
-      )(props),
-      mr: '-px',
       _active: { opacity: 0.8 },
       _hover: {
         bg: props.isSelected
@@ -91,56 +83,64 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
               props.color ? `${props.color}.600Alpha200` : 'ecru80alpha',
               props.color ? `${props.color}.200Alpha200` : 'ecru80alpha'
             )(props),
+        borderColor: mode(
+          props.color ? `${props.color}.500` : 'ecru',
+          props.color ? `${props.color}.200` : 'ecru'
+        )(props),
         color: props.isSelected
           ? mode('whiteBg', 'raisinBlack')(props)
           : mode(
               props.color ? `${props.color}.600` : 'raisinBlack',
               props.color ? `${props.color}.200` : 'raisinBlack'
             )(props),
-        borderColor: mode(
-          props.color ? `${props.color}.500` : 'ecru',
-          props.color ? `${props.color}.200` : 'ecru'
-        )(props),
       },
-    }),
-    _link: (props) => ({
-      ...theme.components.Button.variants?.link,
-      color: mode('raisinBlack', 'whiteBg')(props),
-      _hover: {
-        color: mode('ecru', 'ecru')(props),
-      },
-    }),
-    panelLink: (props) => ({
-      ...theme.components.Button.variants?.link,
-      color: mode('whiteBg', 'raisinBlack')(props),
-      _hover: {
-        color: mode('ecru', 'ecru')(props),
-      },
+      bg: props.isSelected
+        ? mode(
+            props.color ? `${props.color}.600` : 'ecru',
+            props.color ? `${props.color}.200` : 'ecru'
+          )(props)
+        : mode('whiteBg', 'raisinBlack')(props),
+      borderColor: mode(
+        props.color ? `${props.color}.600` : 'ecru',
+        props.color ? `${props.color}.200` : 'ecru'
+      )(props),
+      borderWidth: 2,
+      color: props.isSelected
+        ? mode(props.color ? 'whiteBg' : 'raisinBlack', 'raisinBlack')(props)
+        : mode(
+            props.color ? `${props.color}.600` : 'gunmetal',
+            props.color ? `${props.color}.200` : 'ecru'
+          )(props),
+      height: '52px',
+      mr: '-px',
     }),
     listed: (props) => ({
       ...theme.components.Button.variants?.solid,
-      color: mode('raisinBlack', 'whiteBg')(props),
-      bg: mode('whiteBg', 'raisinBlack')(props),
-      _hover: {
-        bg: mode('silverMetallic30', 'ecru30')(props),
-      },
       _active: {
         bg: mode('silverMetallic80', 'ecru80')(props),
       },
-    }),
-    external: (props) => ({
-      ...theme.components.Button.variants?.solid,
-      bg: mode('whiteBg', 'raisinBlack')(props),
-      color: mode('raisinBlack', 'bone')(props),
-      borderRadius: 'md',
       _hover: {
-        bg: mode('bone', 'raisinBlack80')(props),
-        color: mode('raisinBlack', 'bone')(props),
+        bg: mode('silverMetallic30', 'ecru30')(props),
       },
+      bg: mode('whiteBg', 'raisinBlack')(props),
+      color: mode('raisinBlack', 'whiteBg')(props),
     }),
-  },
-  defaultProps: {
-    ...theme.components.Button.defaultProps,
-    variant: '_solid',
+    panelLink: (props) => ({
+      ...theme.components.Button.variants?.link,
+      _hover: {
+        color: mode('ecru', 'ecru')(props),
+      },
+      color: mode('whiteBg', 'raisinBlack')(props),
+    }),
+    silver: (props) => ({
+      ...theme.components.Button.variants?.solid,
+      _active: { opacity: 0.8 },
+      _hover: {
+        bg: mode('silverMetallic80', 'silverMetallic80')(props),
+        color: mode('raisinBlack', 'raisinBlack')(props),
+      },
+      bg: mode('silverMetallic', 'silverMetallic')(props),
+      color: mode('raisinBlack', 'raisinBlack')(props),
+    }),
   },
 };
