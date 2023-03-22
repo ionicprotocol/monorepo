@@ -15656,8 +15656,8 @@ __metadata:
   linkType: hard
 
 "framer-motion@npm:^10.3.1":
-  version: 10.8.4
-  resolution: "framer-motion@npm:10.8.4"
+  version: 10.8.5
+  resolution: "framer-motion@npm:10.8.5"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -15672,7 +15672,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 08e89025e766278c2ee1dd60c8978a16d03c9cc95169c15b8b10b0f0b0b2fa3ef458e67726aa5153178934bdfd00fcd2f019b579274a6b853449ba21234a4300
+  checksum: d35f017564e35a46d327d010c7a0fdaeb69f3e534b9dc8d83e29aab11b2f27c91fd523de645494cf876ceda835289841d2e21f28148b9bf26a475dc6b9600d45
   languageName: node
   linkType: hard
 
@@ -21557,8 +21557,8 @@ __metadata:
   linkType: hard
 
 "netlify-cli@npm:^13.1.6":
-  version: 13.2.0
-  resolution: "netlify-cli@npm:13.2.0"
+  version: 13.2.1
+  resolution: "netlify-cli@npm:13.2.1"
   dependencies:
     "@fastify/static": ^6.6.0
     "@netlify/build": ^29.7.1
@@ -21669,7 +21669,7 @@ __metadata:
   bin:
     netlify: bin/run.mjs
     ntl: bin/run.mjs
-  checksum: 74ce252cfa1dfedb8b7434f3c3011f207c2baf1a6df658ceeb358a03730dfe8ae01fe048e1ecf78fdd03d57f427ae30006dadc83174973b78360b761f4d992fb
+  checksum: 11fa9ce4eebb964689ef40436596f99a1b76e69a6539c6de2684e5bf88535760aeb608c56597f9a325144eb80aa8d35ca4747417736aa40c492488123694e1b3
   languageName: node
   linkType: hard
 
