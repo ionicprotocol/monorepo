@@ -335,6 +335,15 @@
     "SolidlyLpTokenPriceOracle": {
       "address": "0xf12BF362779D3F728644DC33a5D594F0E57a85F2"
     },
+    "SolidlyPriceOracle": {
+      "address": "0xf78A8fbBD89Bb01bA273565eb80f6D8425F63f1d"
+    },
+    "SolidlyPriceOracle_Implementation": {
+      "address": "0xaA592ef92FD62BCCDAf22B9A18b56d3CcE63e132"
+    },
+    "SolidlyPriceOracle_Proxy": {
+      "address": "0xf78A8fbBD89Bb01bA273565eb80f6D8425F63f1d"
+    },
     "StkBNBPriceOracle": {
       "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE"
     },
