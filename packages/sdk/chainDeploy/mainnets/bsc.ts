@@ -68,20 +68,6 @@ export const deployConfig: ChainDeployConfig = {
         minPeriod: 1800,
         deviationThreshold: "50000000000000000", // 5%
       },
-      {
-        token: underlying(assets, assetSymbols.HAY),
-        pair: "0xb84348b32E5C83856c6e31C227639cd678163719", // WBNB-HAY
-        baseToken: underlying(assets, assetSymbols.WBNB),
-        minPeriod: 1800,
-        deviationThreshold: "10000000000000000",
-      },
-      {
-        token: underlying(assets, assetSymbols.ANKR),
-        pair: "0x3147F98B8f9C53Acdf8F16332eaD12B592a1a4ae", // WBNB-ANKR
-        baseToken: underlying(assets, assetSymbols.WBNB),
-        minPeriod: 1800,
-        deviationThreshold: "30000000000000000", // 3%
-      },
     ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WBNB-BUSD"]), // WBNB-BUSD PCS LP
@@ -321,13 +307,22 @@ const solidlyLps: SolidlyLpAsset[] = [
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"]) },
 ];
 
-const solidlyOracleSupportedStables: string[] = [deployConfig.stableToken!, underlying(assets, assetSymbols.USDC)];
+const solidlyOracleSupportedStables: string[] = [
+  deployConfig.stableToken!,
+  underlying(assets, assetSymbols.USDC),
+  underlying(assets, assetSymbols.ankrBNB),
+];
 
 const solidlyOracles: SolidlyOracleAssetConfig[] = [
   {
     underlying: underlying(assets, assetSymbols.HAY),
     poolAddress: "0x93B32a8dfE10e9196403dd111974E325219aec24", // sAMM-HAY-BUSD
     baseToken: underlying(assets, assetSymbols.BUSD),
+  },
+  {
+    underlying: underlying(assets, assetSymbols.ANKR),
+    poolAddress: "0x7ef540f672Cd643B79D2488344944499F7518b1f", // vAMM-ankrBNB-ANKR
+    baseToken: underlying(assets, assetSymbols.ankrBNB),
   },
 ];
 
