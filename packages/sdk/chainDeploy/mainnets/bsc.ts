@@ -80,7 +80,7 @@ export const deployConfig: ChainDeployConfig = {
         pair: "0x3147F98B8f9C53Acdf8F16332eaD12B592a1a4ae", // WBNB-ANKR
         baseToken: underlying(assets, assetSymbols.WBNB),
         minPeriod: 1800,
-        deviationThreshold: "30000000000000000", // 2%
+        deviationThreshold: "30000000000000000", // 3%
       },
     ],
     uniswapOracleLpTokens: [
@@ -99,8 +99,8 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["BTCB-ETH"]), // BTCB-ETH PCS LP
       underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
       underlying(assets, assetSymbols["asBNBx-WBNB"]), // BNBx-WBNB ApeSwap LP
-      underlying(assets, assetSymbols["asANKR-ankrBNB"]), // BNBx-WBNB ApeSwap LP
-      underlying(assets, assetSymbols["ANKR-ankrBNB"]), // BNBx-WBNB ApeSwap LP
+      underlying(assets, assetSymbols["ANKR-ankrBNB"]), // ANKR-ankrBNB PCS LP
+      underlying(assets, assetSymbols["asANKR-ankrBNB"]), // ANKR-ankrBNB ApeSwap LP
     ],
     flashSwapFee: 25,
   },
