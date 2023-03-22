@@ -1,4 +1,4 @@
-import { MidasSdk } from '@midas-capital/sdk';
+import type { MidasSdk } from '@midas-capital/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
@@ -15,9 +15,9 @@ export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
 type CrossChainTVL = Map<
   string,
   {
-    value: number;
-    name: string;
     logo: string;
+    name: string;
+    value: number;
   }
 >;
 
@@ -40,9 +40,9 @@ export const useTVL = () => {
           sdks.map(async (sdk) => {
             try {
               chainTVLs.set(sdk.chainId.toString(), {
-                value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
-                name: sdk.chainSpecificParams.metadata.name,
                 logo: sdk.chainSpecificParams.metadata.img,
+                name: sdk.chainSpecificParams.metadata.name,
+                value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
               });
             } catch (e) {
               console.warn(`Unable to fetch TVL for chain ${sdk.chainId}`, e);
@@ -57,6 +57,6 @@ export const useTVL = () => {
 
       return null;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!prices && !isLoading }
+    { cacheTime: Infinity, enabled: !!prices && !isLoading, staleTime: Infinity }
   );
 };

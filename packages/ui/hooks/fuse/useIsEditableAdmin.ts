@@ -29,9 +29,9 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled:
         !!comptrollerAddress && !!poolInfo?.isPowerfulAdmin && !!currentChain?.id && !!poolChainId,
+      staleTime: Infinity,
     }
   );
 

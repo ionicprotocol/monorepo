@@ -7,13 +7,13 @@ export const SwitchConfigStyle: ComponentStyleConfig = {
   baseStyle: (props) => ({
     ...theme.components.Switch.baseStyle,
     container: {},
+    thumb: {
+      backgroundColor: mode('whiteBg', 'whiteBg')(props),
+    },
     track: {
       _checked: {
         backgroundColor: mode('ecru', 'ecru')(props),
       },
-    },
-    thumb: {
-      backgroundColor: mode('whiteBg', 'whiteBg')(props),
     },
   }),
 };

@@ -3,7 +3,7 @@ import { Flex } from '@chakra-ui/react';
 import Footer from '@ui/components/pages/Layout/Footer';
 import { MidasNavbar } from '@ui/components/pages/Layout/MidasNavbar';
 import { useColors } from '@ui/hooks/useColors';
-import { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
+import type { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
 
 const FusePageLayout = ({ children }: FusePageLayoutProps) => {
   const { cPage } = useColors();

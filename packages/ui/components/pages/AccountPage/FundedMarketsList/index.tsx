@@ -19,20 +19,22 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import {
+import type {
   ColumnDef,
   FilterFn,
+  PaginationState,
+  SortingFn,
+  SortingState,
+  VisibilityState,
+} from '@tanstack/react-table';
+import {
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  PaginationState,
-  SortingFn,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from '@tanstack/react-table';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
@@ -77,23 +79,23 @@ import {
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { FundedAsset, resQuery } from '@ui/hooks/useAllFundedInfo';
+import type { FundedAsset, resQuery } from '@ui/hooks/useAllFundedInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
-  chain: FundedAsset;
-  poolName: FundedAsset;
-  market: FundedAsset;
-  supplyApy: FundedAsset;
-  supplyBalance: FundedAsset;
   borrowApy: FundedAsset;
   borrowBalance: FundedAsset;
-  totalSupply: FundedAsset;
-  totalBorrow: FundedAsset;
+  chain: FundedAsset;
   liquidity: FundedAsset;
+  market: FundedAsset;
+  poolName: FundedAsset;
+  supplyApy: FundedAsset;
+  supplyBalance: FundedAsset;
+  totalBorrow: FundedAsset;
+  totalSupply: FundedAsset;
 };
 
 export const FundedMarketsList = ({
@@ -102,8 +104,8 @@ export const FundedMarketsList = ({
   initColumnVisibility,
 }: {
   info: resQuery;
-  initSorting: SortingState;
   initColumnVisibility: VisibilityState;
+  initSorting: SortingState;
 }) => {
   const {
     fundedAssets: assets,
@@ -220,16 +222,16 @@ export const FundedMarketsList = ({
   const data: Market[] = useMemo(() => {
     return sortAssets(assets).map((asset) => {
       return {
-        chain: asset,
-        poolName: asset,
-        market: asset,
-        supplyApy: asset,
-        supplyBalance: asset,
         borrowApy: asset,
         borrowBalance: asset,
-        totalSupply: asset,
-        totalBorrow: asset,
+        chain: asset,
         liquidity: asset,
+        market: asset,
+        poolName: asset,
+        supplyApy: asset,
+        supplyBalance: asset,
+        totalBorrow: asset,
+        totalSupply: asset,
       };
     });
   }, [assets]);
@@ -238,17 +240,15 @@ export const FundedMarketsList = ({
     return [
       {
         accessorFn: (row) => row.chain,
-        id: CHAIN,
-        header: () => null,
         cell: ({ getValue }) => <Chain chainId={Number(getValue<FundedAsset>().chainId)} />,
-        footer: (props) => props.column.id,
-        sortingFn: assetSort,
         enableHiding: false,
+        footer: (props) => props.column.id,
+        header: () => null,
+        id: CHAIN,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.market,
-        id: MARKET_LTV,
-        header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
         cell: ({ getValue }) => (
           <TokenName
             asset={getValue<FundedAsset>()}
@@ -257,15 +257,15 @@ export const FundedMarketsList = ({
             poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
-        footer: (props) => props.column.id,
-        filterFn: assetFilter,
-        sortingFn: assetSort,
         enableHiding: false,
+        filterFn: assetFilter,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
+        id: MARKET_LTV,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.poolName,
-        id: POOL_NAME,
-        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
         cell: ({ getValue }) => (
           <PoolName
             chainId={Number(getValue<FundedAsset>().chainId)}
@@ -275,13 +275,14 @@ export const FundedMarketsList = ({
             poolName={getValue<FundedAsset>().poolName}
           />
         ),
-        footer: (props) => props.column.id,
-        sortingFn: assetSort,
         enableHiding: false,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
+        id: POOL_NAME,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.supplyApy,
-        id: SUPPLY_APY,
         cell: ({ getValue }) => (
           <SupplyApy
             asset={getValue<FundedAsset>()}
@@ -290,53 +291,53 @@ export const FundedMarketsList = ({
             totalSupplyApyPerAsset={totalSupplyApyPerAsset}
           />
         ),
-        header: (context) => <TableHeaderCell context={context}>Supply APY</TableHeaderCell>,
-
-        footer: (props) => props.column.id,
-        sortingFn: assetSort,
         enableSorting: !!totalSupplyApyPerAsset,
+        footer: (props) => props.column.id,
+
+        header: (context) => <TableHeaderCell context={context}>Supply APY</TableHeaderCell>,
+        id: SUPPLY_APY,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.borrowApy,
-        id: BORROW_APY,
         cell: ({ getValue }) => (
           <BorrowApy asset={getValue<FundedAsset>()} borrowApyPerAsset={borrowApyPerAsset} />
         ),
-        header: (context) => <TableHeaderCell context={context}>Borrow APY</TableHeaderCell>,
         footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Borrow APY</TableHeaderCell>,
+        id: BORROW_APY,
         sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.supplyBalance,
-        id: SUPPLY_BALANCE,
         cell: ({ getValue }) => (
           <SupplyBalance
             asset={getValue<FundedAsset>()}
             poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
+        footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
 
-        footer: (props) => props.column.id,
+        id: SUPPLY_BALANCE,
         sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.borrowBalance,
-        id: BORROW_BALANCE,
         cell: ({ getValue }) => (
           <BorrowBalance
             asset={getValue<FundedAsset>()}
             poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
+        footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
 
-        footer: (props) => props.column.id,
+        id: BORROW_BALANCE,
         sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.totalSupply,
-        id: TOTAL_SUPPLY,
         cell: ({ getValue }) => (
           <TotalSupply
             asset={getValue<FundedAsset>()}
@@ -344,14 +345,14 @@ export const FundedMarketsList = ({
             poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
+        footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
 
-        footer: (props) => props.column.id,
+        id: TOTAL_SUPPLY,
         sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.totalBorrow,
-        id: TOTAL_BORROW,
         cell: ({ getValue }) => (
           <TotalBorrow
             asset={getValue<FundedAsset>()}
@@ -359,23 +360,24 @@ export const FundedMarketsList = ({
             poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
+        footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
 
-        footer: (props) => props.column.id,
+        id: TOTAL_BORROW,
         sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.liquidity,
-        id: LIQUIDITY,
         cell: ({ getValue }) => (
           <Liquidity
             asset={getValue<FundedAsset>()}
             poolChainId={Number(getValue<FundedAsset>().chainId)}
           />
         ),
+        footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Liquidity</TableHeaderCell>,
 
-        footer: (props) => props.column.id,
+        id: LIQUIDITY,
         sortingFn: assetSort,
       },
     ];
@@ -396,24 +398,24 @@ export const FundedMarketsList = ({
   const table = useReactTable({
     columns,
     data,
-    getRowCanExpand: () => true,
-    getColumnCanGlobalFilter: () => true,
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: onPagination,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     enableSortingRemoval: false,
+    getColumnCanGlobalFilter: () => true,
+    getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: assetFilter,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getRowCanExpand: () => true,
+    getSortedRowModel: getSortedRowModel(),
+    globalFilterFn: assetFilter,
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: onPagination,
+    onSortingChange: setSorting,
     state: {
-      sorting,
-      pagination,
-      globalFilter,
       columnVisibility,
+      globalFilter,
+      pagination,
+      sorting,
     },
   });
 
@@ -456,7 +458,7 @@ export const FundedMarketsList = ({
         arr.push(key);
       }
     });
-    const data = { ...oldObj, userMarketSorting: sorting, userMarketColumnVisibility: arr };
+    const data = { ...oldObj, userMarketColumnVisibility: arr, userMarketSorting: sorting };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 

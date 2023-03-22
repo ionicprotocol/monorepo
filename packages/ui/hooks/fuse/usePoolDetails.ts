@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -38,8 +38,8 @@ export const usePoolDetails = (assets?: NativePricedFuseAsset[], poolChainId?: n
 
       return {
         mostSuppliedAsset,
-        topLendingAPYAsset,
         topBorrowAPRAsset,
+        topLendingAPYAsset,
       };
     } else {
       return null;

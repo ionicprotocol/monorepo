@@ -9,11 +9,11 @@ export default function ConfirmDeleteModal({
   title = 'Are you sure?',
   description = "You can't undo this action afterwards.",
 }: {
-  onConfirm: () => void;
-  onClose: () => void;
-  isOpen: boolean;
-  title: string;
   description: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
 }) {
   return (
     <MidasModal

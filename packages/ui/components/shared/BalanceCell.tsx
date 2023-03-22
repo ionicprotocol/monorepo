@@ -1,22 +1,23 @@
 import { Divider, HStack, Progress, Text, VStack } from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { Cap } from '@ui/hooks/useBorrowCap';
+import type { Cap } from '@ui/hooks/useBorrowCap';
 import { useColors } from '@ui/hooks/useColors';
 import { smallFormatter } from '@ui/utils/bigUtils';
 
 interface BalanceCellProps {
+  cap?: Cap | null;
   primary: {
     value: number;
   };
   secondary?: {
-    value: BigNumber;
     decimals: number;
     symbol: string;
+    value: BigNumber;
   };
-  cap?: Cap | null;
 }
 
 export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {

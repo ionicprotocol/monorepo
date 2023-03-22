@@ -11,7 +11,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const TokenName = ({
   asset,
@@ -26,8 +26,8 @@ export const TokenName = ({
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const { data: claimableRewards } = useAssetClaimableRewards({
-    poolAddress,
     assetAddress: asset.cToken,
+    poolAddress,
     poolChainId,
   });
 

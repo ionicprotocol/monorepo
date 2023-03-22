@@ -19,11 +19,7 @@ import { TextStyleConfig } from '@ui/theme/components/Text';
 import { TooltipStyleConfig } from '@ui/theme/components/Tooltip';
 
 export const COLOR_PALETTE = {
-  success: '#48BB78',
-  fail: '#F56565',
-  warn: '#ECC94B',
-  grullo: '#B29E84',
-  grullo30: '#B29E844d',
+  bone: '#EBE6E0',
   ecru: '#BCAC83',
   ecru10: '#373532',
   ecru10alpha: '#bcac831a',
@@ -33,10 +29,13 @@ export const COLOR_PALETTE = {
   ecru30alpha: '#bcac834d',
   ecru80: '#9e9173',
   ecru80alpha: '#bcac83cc',
-  bone: '#EBE6E0',
-  white: '#FFFFFF',
-  white50: '#FFFFFF80',
-  whiteBg: '#F6F4F1',
+  fail: '#F56565',
+  grullo: '#B29E84',
+  grullo30: '#B29E844d',
+  gunmetal: '#253439',
+  gunmetal80: '#253439CC',
+  raisinBlack: '#282828',
+  raisinBlack80: '#282828CC',
   silverMetallic: '#A5ADB4',
   silverMetallic10: '#eeedea',
   silverMetallic10Alpha: '#a5adb41a',
@@ -45,43 +44,15 @@ export const COLOR_PALETTE = {
   silverMetallic40: '#d6d7d9',
   silverMetallic50: '#ced1d2',
   silverMetallic80: '#8c9298',
-  gunmetal: '#253439',
-  gunmetal80: '#253439CC',
-  raisinBlack: '#282828',
-  raisinBlack80: '#282828CC',
+  success: '#48BB78',
+  warn: '#ECC94B',
+  white: '#FFFFFF',
+  white50: '#FFFFFF80',
+  whiteBg: '#F6F4F1',
 };
 
 export const theme = extendTheme({
-  styles: {
-    global: {
-      body: {
-        // bg: COLOR_PALETTE.bone,
-        // color: COLOR_PALETTE.raisinBlack,
-      },
-    },
-  },
-  config: {
-    initialColorMode: 'light',
-    useSystemColorMode: false,
-  },
-  fonts: {
-    heading: 'Poppins, sans-serif',
-    body: 'Poppins, sans-serif',
-    mono: 'monospace',
-  },
   colors: {
-    nav: {
-      50: '#F0FFF4',
-      100: '#41C143',
-      200: '#9AE6B4',
-      300: '#68D391',
-      400: '#48BB78',
-      500: '#38A169',
-      600: '#2F855A',
-      700: '#276749',
-      800: '#22543D',
-      900: '#1C4532',
-    },
     cyan: {
       ...DefaultTheme.colors.cyan,
       '200Alpha100': '#9decf91a',
@@ -95,6 +66,18 @@ export const theme = extendTheme({
       '200Alpha200': '#e2e8f033',
       '600Alpha100': '#4a55681a',
       '600Alpha200': '#4a556833',
+    },
+    nav: {
+      100: '#41C143',
+      200: '#9AE6B4',
+      300: '#68D391',
+      400: '#48BB78',
+      50: '#F0FFF4',
+      500: '#38A169',
+      600: '#2F855A',
+      700: '#276749',
+      800: '#22543D',
+      900: '#1C4532',
     },
     orange: {
       ...DefaultTheme.colors.orange,
@@ -114,23 +97,40 @@ export const theme = extendTheme({
   },
   components: {
     Avatar: AvatarStyleConfig,
+    Badge: BadgeStyleConfig,
     Button: ButtonStyleConfig,
+    Checkbox: CheckboxStyleConfig,
+    Divider: DividierStyleConfig,
     IconButton: IconButtonStyleConfig,
     Input: InputConfigStyle,
     Link: LinkStyleConfig,
+    Menu: MenuStyleConfig,
     Modal: ModalStyleConfig,
     NumberInput: InputConfigStyle,
     Popover: PopoverStyleConfig,
     Select: SelectConfigStyle,
     Stat: StatStyleConfig,
-    Tooltip: TooltipStyleConfig,
-    Badge: BadgeStyleConfig,
-    Text: TextStyleConfig,
     Switch: SwitchConfigStyle,
-    Menu: MenuStyleConfig,
-    Checkbox: CheckboxStyleConfig,
-    Divider: DividierStyleConfig,
     Tabs: TabsStyleConfig,
+    Text: TextStyleConfig,
+    Tooltip: TooltipStyleConfig,
+  },
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+  fonts: {
+    body: 'Poppins, sans-serif',
+    heading: 'Poppins, sans-serif',
+    mono: 'monospace',
+  },
+  styles: {
+    global: {
+      body: {
+        // bg: COLOR_PALETTE.bone,
+        // color: COLOR_PALETTE.raisinBlack,
+      },
+    },
   },
 });
 

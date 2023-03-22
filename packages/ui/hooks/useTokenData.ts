@@ -1,11 +1,11 @@
-import { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
-import { TokenData } from '@ui/types/ComponentPropsType';
+import type { TokenData } from '@ui/types/ComponentPropsType';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 export const fetchTokenData = async (
@@ -25,10 +25,10 @@ export const fetchTokenData = async (
       if (asset) {
         data.push({
           address: asset.underlying,
-          symbol: asset.symbol,
           decimals: asset.decimals,
-          name: asset.name,
           logoURL: config.iconServerURL + '/token/96x96/' + asset.symbol.toLowerCase() + '.png',
+          name: asset.name,
+          symbol: asset.symbol,
         });
       } else {
         apiAddresses.push(address);
@@ -37,8 +37,8 @@ export const fetchTokenData = async (
 
     if (apiAddresses.length !== 0) {
       const res = await axios.post('/api/tokenData', {
-        chain: chainId,
         addresses: apiAddresses,
+        chain: chainId,
       });
 
       data = [...data, ...res.data];
@@ -70,6 +70,6 @@ export const useTokenData = (address: string, chainId?: number) => {
         return null;
       }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!chainId }
+    { cacheTime: Infinity, enabled: !!chainId, staleTime: Infinity }
   );
 };

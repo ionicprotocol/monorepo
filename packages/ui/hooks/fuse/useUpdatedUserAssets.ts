@@ -1,18 +1,18 @@
-import { FundOperationMode } from '@midas-capital/types';
+import type { FundOperationMode } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 // TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
 interface UseUpdatedUserAssetsResult<T> {
-  mode: FundOperationMode;
+  amount: BigNumber;
   assets: Array<T> | undefined;
   index: number;
-  amount: BigNumber;
+  mode: FundOperationMode;
   poolChainId: number;
 }
 const useUpdatedUserAssets = <T extends MarketData>({
@@ -52,18 +52,18 @@ const useUpdatedUserAssets = <T extends MarketData>({
         resAssets.map((asset) => {
           assetsWithPrice.push({
             ...asset,
-            supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
             borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
-            totalSupplyFiat: asset.totalSupplyNative * usdPrice,
-            totalBorrowFiat: asset.totalBorrowNative * usdPrice,
             liquidityFiat: asset.liquidityNative * usdPrice,
+            supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
+            totalBorrowFiat: asset.totalBorrowNative * usdPrice,
+            totalSupplyFiat: asset.totalSupplyNative * usdPrice,
           });
         });
       }
 
       return assetsWithPrice;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!assets && !!usdPrice && !!currentSdk }
+    { cacheTime: Infinity, enabled: !!assets && !!usdPrice && !!currentSdk, staleTime: Infinity }
   );
 };
 

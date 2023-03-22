@@ -1,7 +1,7 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { ContractTransaction } from 'ethers';
+import type { ContractTransaction } from 'ethers';
 import { useState } from 'react';
 
 import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/CollateralModal/Alerts';
@@ -16,17 +16,17 @@ import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { TxStep } from '@ui/types/ComponentPropsType';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface CollateralModalProps {
-  isOpen: boolean;
   asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
+  isOpen: boolean;
   onClose: () => void;
   poolChainId: number;
 }
@@ -53,11 +53,11 @@ export const CollateralModal = ({
 
   const [steps, setSteps] = useState<TxStep[]>([
     {
-      title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral',
       desc: `${asset.membership ? 'Disallows' : 'Allows'} ${
         asset.underlyingSymbol
       } to be used as collateral`,
       done: false,
+      title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral',
     },
   ]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
@@ -99,21 +99,21 @@ export const CollateralModal = ({
       if (!call) {
         if (asset.membership) {
           errorToast({
-            title: 'Error! Code: ' + call,
             description:
               'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
+            title: 'Error! Code: ' + call,
           });
         } else {
           errorToast({
-            title: 'Error! Code: ' + call,
             description: 'You cannot enable this asset as collateral at this time.',
+            title: 'Error! Code: ' + call,
           });
         }
 
         return;
       }
 
-      addRecentTransaction({ hash: call.hash, description: 'Toggle collateral' });
+      addRecentTransaction({ description: 'Toggle collateral', hash: call.hash });
       _steps[0] = {
         ..._steps[0],
         txHash: call.hash,
@@ -137,7 +137,7 @@ export const CollateralModal = ({
         contextName: 'Toggle collateral',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(1);
     }
 
@@ -151,11 +151,11 @@ export const CollateralModal = ({
       setIsConfirmed(false);
       const _steps = [
         {
-          title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral',
           desc: `${asset.membership ? 'Disallows' : 'Allows'} ${
             asset.underlyingSymbol
           } to be used as collateral`,
           done: false,
+          title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral',
         },
       ];
 

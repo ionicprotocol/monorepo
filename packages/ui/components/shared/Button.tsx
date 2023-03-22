@@ -1,4 +1,5 @@
-import { Button, ButtonProps, IconButton, IconButtonProps, useStyleConfig } from '@chakra-ui/react';
+import type { ButtonProps, IconButtonProps } from '@chakra-ui/react';
+import { Button, IconButton, useStyleConfig } from '@chakra-ui/react';
 import React from 'react';
 
 export const CButton = ({
@@ -8,11 +9,11 @@ export const CButton = ({
   variant,
   color,
   ...props
-}: {
-  isSelected?: boolean;
+}: ButtonProps & {
   color?: string;
-} & ButtonProps) => {
-  const styles = useStyleConfig('Button', { isSelected, variant, color });
+  isSelected?: boolean;
+}) => {
+  const styles = useStyleConfig('Button', { color, isSelected, variant });
 
   return (
     <Button __css={styles} onClick={onClick} {...props}>
@@ -25,10 +26,10 @@ export const CIconButton = ({
   isSelected,
   variant,
   ...props
-}: {
+}: IconButtonProps & {
   isSelected?: boolean;
   variant?: string;
-} & IconButtonProps) => {
+}) => {
   const styles = useStyleConfig('IconButton', { isSelected, variant });
 
   return <IconButton __css={styles} {...props} />;

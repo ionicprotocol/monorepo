@@ -1,10 +1,7 @@
 import { Divider } from '@chakra-ui/react';
-import {
-  ComptrollerErrorCodes,
-  CTokenErrorCodes,
-  NativePricedFuseAsset,
-} from '@midas-capital/types';
-import { BigNumber, ContractFunction } from 'ethers';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
+import { ComptrollerErrorCodes, CTokenErrorCodes } from '@midas-capital/types';
+import type { BigNumber, ContractFunction } from 'ethers';
 
 import { AdminFee } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/AdminFee';
 import { DebtCeilings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/DebtCeilings';
@@ -18,7 +15,7 @@ import RemoveAssetButton from '@ui/components/pages/EditPoolPage/AssetConfigurat
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { TokenData } from '@ui/types/ComponentPropsType';
+import type { TokenData } from '@ui/types/ComponentPropsType';
 
 export async function testForCTokenErrorAndSend(
   txObjectStaticCall: ContractFunction, // for static calls
@@ -53,12 +50,12 @@ export async function testForCTokenErrorAndSend(
 }
 
 interface AssetSettingsProps {
-  comptrollerAddress: string;
-  selectedAsset: NativePricedFuseAsset;
   assets: NativePricedFuseAsset[];
-  tokenData: TokenData;
+  comptrollerAddress: string;
   poolChainId: number;
+  selectedAsset: NativePricedFuseAsset;
   setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  tokenData: TokenData;
 }
 
 export const AssetSettings = ({

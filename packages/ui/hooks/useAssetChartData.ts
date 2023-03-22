@@ -44,13 +44,13 @@ export function useAssetChartData(
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled:
         !!interestRateModelAddress &&
         !!adminFee.toString() &&
         !!reserveFactor.toString() &&
         !!sdk &&
         !!poolChainId,
+      staleTime: Infinity,
     }
   );
 }

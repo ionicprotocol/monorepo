@@ -7,16 +7,16 @@ function Loader({ width }: { width?: string }) {
 
   useEffect(() => {
     controls.start((i) => ({
+      fillOpacity: [0, 0, 1, 1, 0, 0],
       opacity: [0, 1, 1, 1, 1, 0],
       pathLength: [0, 1, 1, 1, 1, 0],
-      fillOpacity: [0, 0, 1, 1, 0, 0],
       transition: {
         delay: i * 0.2,
-        repeatDelay: 0.5,
-        repeatType: 'reverse',
+        duration: 2,
         ease: 'easeIn',
         repeat: Infinity,
-        duration: 2,
+        repeatDelay: 0.5,
+        repeatType: 'reverse',
       },
     }));
   }, [controls]);

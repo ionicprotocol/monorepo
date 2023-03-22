@@ -21,7 +21,7 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "unused-imports"],
+  "plugins": ["@typescript-eslint", "unused-imports", "typescript-sort-keys", "sort-keys"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -41,7 +41,10 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/sort-type-constituents": "error",
+    "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "type-imports" }],
     "no-console": ["error", { "allow": ["warn", "error"] }],
+    "react/self-closing-comp": ["error", { "component": true, "html": true }],
     "react-hooks/exhaustive-deps": "error",
     "react/display-name": "off",
     "react/jsx-sort-props": "error",
@@ -51,6 +54,8 @@
       "warn",
       { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
     ],
+    "typescript-sort-keys/interface": "error",
+    "typescript-sort-keys/string-enum": "error",
     "sort-imports": [
       "error",
       {
@@ -60,6 +65,8 @@
         "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
         "allowSeparatedGroups": false
       }
-    ]
+    ],
+    "sort-keys": 0, // disable default eslint sort-keys
+    "sort-keys/sort-keys-fix": 2
   }
 }

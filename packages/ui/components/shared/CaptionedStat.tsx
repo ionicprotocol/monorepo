@@ -1,10 +1,11 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { HStack, SystemProps, Text, TextProps } from '@chakra-ui/react';
+import type { SystemProps, TextProps } from '@chakra-ui/react';
+import { HStack, Text } from '@chakra-ui/react';
 
 import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMaybeResponsiveProp } from '@ui/hooks/useMaybeResponsiveProp';
-import { CaptionedStatProps } from '@ui/types/ComponentPropsType';
+import type { CaptionedStatProps } from '@ui/types/ComponentPropsType';
 
 const CaptionedStat = ({
   stat,

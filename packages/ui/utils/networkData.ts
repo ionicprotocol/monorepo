@@ -11,12 +11,12 @@ import {
   neondevnet,
   polygon,
 } from '@midas-capital/chains';
-import {
+import type {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
   DeployedPlugins as DeployedPluginsType,
-  SupportedChains,
 } from '@midas-capital/types';
+import { SupportedChains } from '@midas-capital/types';
 import { BigNumber } from 'ethers';
 
 import { config } from '@ui/config/index';
@@ -43,7 +43,7 @@ export function getChainConfig(chainId: number): ChainConfig | undefined {
   return chainIdToConfig[chainId];
 }
 
-export function getScanUrlByChainId(chainId: number | SupportedChains): string | null {
+export function getScanUrlByChainId(chainId: SupportedChains | number): string | null {
   const chain = chainIdToConfig[chainId];
 
   return chain && chain.specificParams.metadata.blockExplorerUrls.default

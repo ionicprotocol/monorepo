@@ -2,7 +2,8 @@ import { Box, Button, Checkbox, Divider, HStack, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber, constants, utils } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/BorrowModal/Alerts';
@@ -27,20 +28,20 @@ import { useColors } from '@ui/hooks/useColors';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { TxStep } from '@ui/types/ComponentPropsType';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 interface BorrowModalProps {
-  isOpen: boolean;
   asset: MarketData;
   assets: MarketData[];
-  onClose: () => void;
-  poolChainId: number;
   borrowBalanceFiat?: number;
   comptrollerAddress: string;
+  isOpen: boolean;
+  onClose: () => void;
+  poolChainId: number;
 }
 
 export const BorrowModal = ({
@@ -88,9 +89,9 @@ export const BorrowModal = ({
   const queryClient = useQueryClient();
   const successToast = useSuccessToast();
   const { data: borrowCaps } = useBorrowCap({
+    chainId: poolChainId,
     comptroller: comptrollerAddress,
     market: asset,
-    chainId: poolChainId,
   });
   const { data: maxBorrowAmount } = useMaxBorrowAmount(asset, comptrollerAddress, poolChainId);
 
@@ -178,8 +179,8 @@ export const BorrowModal = ({
       } else {
         const tx = resp.tx;
         addRecentTransaction({
-          hash: tx.hash,
           description: `${asset.underlyingSymbol} Token Borrow`,
+          hash: tx.hash,
         });
         _steps[0] = {
           ..._steps[0],
@@ -197,23 +198,23 @@ export const BorrowModal = ({
         };
         setSteps([..._steps]);
         successToast({
-          id: 'Borrow',
           description: 'Successfully borrowed!',
+          id: 'Borrow',
         });
       }
     } catch (error) {
       setFailedStep(1);
       const sentryProperties = {
-        chainId: currentSdk.chainId,
-        token: asset.cToken,
-        comptroller: comptrollerAddress,
         amount,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
       };
       const sentryInfo = {
         contextName: 'Borrowing',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsBorrowing(false);
     }

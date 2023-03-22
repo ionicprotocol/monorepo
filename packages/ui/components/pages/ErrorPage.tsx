@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Code, Heading, Link, Text } from '@chakra-ui/react';
-import { FallbackProps } from 'react-error-boundary';
+import type { FallbackProps } from 'react-error-boundary';
 
 const ErrorPage: React.FC<FallbackProps> = ({ error }) => {
   return (

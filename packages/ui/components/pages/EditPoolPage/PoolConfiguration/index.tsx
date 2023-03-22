@@ -17,10 +17,12 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
+import { ComptrollerErrorCodes } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber, ContractTransaction, utils } from 'ethers';
+import type { BigNumber, ContractTransaction } from 'ethers';
+import { utils } from 'ethers';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -48,8 +50,8 @@ const PoolConfiguration = ({
 }: {
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
-  poolName: string;
   poolChainId: number;
+  poolName: string;
 }) => {
   const router = useRouter();
   const poolId = router.query.poolId as string;
@@ -129,7 +131,7 @@ const PoolConfiguration = ({
         contextName: 'Changing whitelist status',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     }
   };
 
@@ -170,7 +172,7 @@ const PoolConfiguration = ({
         contextName: 'Adding to whitelist',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     }
   };
 
@@ -218,7 +220,7 @@ const PoolConfiguration = ({
         contextName: 'Removing from whitelist',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     }
   };
 
@@ -249,7 +251,7 @@ const PoolConfiguration = ({
         contextName: 'Changing admin rights',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     }
   };
 
@@ -291,14 +293,14 @@ const PoolConfiguration = ({
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
         closeFactor: bigCloseFactor,
+        comptroller: comptrollerAddress,
       };
       const sentryInfo = {
         contextName: 'Updating close factor',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
     }
@@ -345,7 +347,7 @@ const PoolConfiguration = ({
         contextName: 'Updating liquidation incentive',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     }
   };
 
@@ -369,7 +371,7 @@ const PoolConfiguration = ({
         contextName: 'Setting pool name',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsSaving(false);
     }
@@ -603,15 +605,15 @@ const PoolConfiguration = ({
                         />
                       )}
                       rules={{
-                        required: 'Close factor is required',
-                        min: {
-                          value: CLOSE_FACTOR.MIN,
-                          message: `Close factor must be at least ${CLOSE_FACTOR.MIN}%`,
-                        },
                         max: {
-                          value: CLOSE_FACTOR.MAX,
                           message: `Close factor must be no more than ${CLOSE_FACTOR.MAX}%`,
+                          value: CLOSE_FACTOR.MAX,
                         },
+                        min: {
+                          message: `Close factor must be at least ${CLOSE_FACTOR.MIN}%`,
+                          value: CLOSE_FACTOR.MIN,
+                        },
+                        required: 'Close factor is required',
                       }}
                     />
                     <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -672,15 +674,15 @@ const PoolConfiguration = ({
                         />
                       )}
                       rules={{
-                        required: 'Liquidation incentive is required',
-                        min: {
-                          value: LIQUIDATION_INCENTIVE.MIN,
-                          message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
-                        },
                         max: {
-                          value: LIQUIDATION_INCENTIVE.MAX,
                           message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
+                          value: LIQUIDATION_INCENTIVE.MAX,
                         },
+                        min: {
+                          message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
+                          value: LIQUIDATION_INCENTIVE.MIN,
+                        },
+                        required: 'Liquidation incentive is required',
                       }}
                     />
                     <FormErrorMessage marginBottom="-10px" maxWidth="270px">

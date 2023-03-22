@@ -9,8 +9,8 @@ const AddAssetButton = ({
   comptrollerAddress,
   poolChainId,
 }: {
-  openAddAssetModal: () => void;
   comptrollerAddress: string;
+  openAddAssetModal: () => void;
   poolChainId: number;
 }) => {
   const isUpgradeable = useIsUpgradeable(comptrollerAddress, poolChainId);

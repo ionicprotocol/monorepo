@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
@@ -73,6 +73,6 @@ export const useDebtCeilingForAssetForCollateral = ({
 
       return debtCeilingPerCollateral;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!sdk && collaterals.length > 0 }
+    { cacheTime: Infinity, enabled: !!sdk && collaterals.length > 0, staleTime: Infinity }
   );
 };

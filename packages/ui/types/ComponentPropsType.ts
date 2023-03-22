@@ -1,11 +1,11 @@
-import { BoxProps, FlexProps } from '@chakra-ui/react';
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { NativePricedFuseAsset } from '@midas-capital/types';
-import { QueryObserverResult } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { ReactNode } from 'react';
+import type { BoxProps, FlexProps } from '@chakra-ui/react';
+import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
+import type { QueryObserverResult } from '@tanstack/react-query';
+import type { BigNumber } from 'ethers';
+import type { ReactNode } from 'react';
 
-import { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
+import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 
 export type FusePageLayoutProps = {
   children?: ReactNode;
@@ -14,52 +14,52 @@ export type FusePageLayoutProps = {
 export type ExtendedBoxProps = BoxProps & { glow?: boolean };
 
 export type RefetchMovingStatProps = Omit<CaptionedStatProps, 'stat'> & {
-  queryKey: string;
+  fetch: () => Promise<string>;
   /** In milliseconds like: 1000, 500, 20, 10, 221 */
   interval: number;
-  fetch: () => Promise<string>;
   loadingPlaceholder: string;
+  queryKey: string;
 };
 
 export type MainAxisAlignmentStrings =
-  | 'space-between'
-  | 'space-around'
-  | 'space-evenly'
-  | 'flex-start'
   | 'center'
-  | 'flex-end';
+  | 'flex-end'
+  | 'flex-start'
+  | 'space-around'
+  | 'space-between'
+  | 'space-evenly';
 
 export type MainAxisAlignment =
   | MainAxisAlignmentStrings
-  | { md: MainAxisAlignmentStrings; base: MainAxisAlignmentStrings };
+  | { base: MainAxisAlignmentStrings; md: MainAxisAlignmentStrings };
 
-export type CrossAxisAlignmentStrings = 'flex-start' | 'center' | 'flex-end' | 'stretch';
+export type CrossAxisAlignmentStrings = 'center' | 'flex-end' | 'flex-start' | 'stretch';
 
 export type CrossAxisAlignment =
   | CrossAxisAlignmentStrings
   | {
-      md: CrossAxisAlignmentStrings;
       base: CrossAxisAlignmentStrings;
+      md: CrossAxisAlignmentStrings;
     };
 
-export type CenterProps = {
+export type CenterProps = FlexProps & {
   children: React.ReactNode;
   expand?: boolean;
-} & FlexProps;
+};
 
-export type ColumnProps = {
-  mainAxisAlignment?: MainAxisAlignment;
-  crossAxisAlignment?: CrossAxisAlignment;
+export type ColumnProps = FlexProps & {
   children?: React.ReactNode;
+  crossAxisAlignment?: CrossAxisAlignment;
   expand?: boolean;
-} & FlexProps;
+  mainAxisAlignment?: MainAxisAlignment;
+};
 
-export type RowProps = {
-  mainAxisAlignment?: MainAxisAlignment;
-  crossAxisAlignment?: CrossAxisAlignment;
+export type RowProps = FlexProps & {
   children?: React.ReactNode;
+  crossAxisAlignment?: CrossAxisAlignment;
   expand?: boolean;
-} & FlexProps;
+  mainAxisAlignment?: MainAxisAlignment;
+};
 
 export type AssetsMapWithTokenDataReturn = {
   assetsArrayWithTokenData: NativePricedFuseAssetWithTokenData[][] | null; // Fuse Asset with additional info about the token appended on
@@ -68,7 +68,7 @@ export type AssetsMapWithTokenDataReturn = {
 
 export type CTokenDataForRewards = Pick<
   NativePricedFuseAsset,
-  'underlyingToken' | 'cToken' | 'totalSupply' | 'underlyingPrice'
+  'cToken' | 'totalSupply' | 'underlyingPrice' | 'underlyingToken'
 >;
 
 export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
@@ -80,21 +80,21 @@ export interface NativePricedFuseAssetWithTokenData extends NativePricedFuseAsse
 }
 
 export interface TokenData {
-  name: string;
-  symbol: string;
   address: string;
-  decimals: number;
   color: string;
-  overlayTextColor: string;
-  logoURL: string;
+  decimals: number;
   extraData: ExtraData;
+  logoURL: string;
+  name: string;
+  overlayTextColor: string;
+  symbol: string;
 }
 
 export interface ExtraData {
-  partnerURL: string;
-  hasAPY: boolean;
-  shortName: string;
   apy: number;
+  hasAPY: boolean;
+  partnerURL: string;
+  shortName: string;
 }
 
 export interface AssetHash {
@@ -105,13 +105,13 @@ export interface TokensDataHash {
 }
 
 export interface CaptionedStatProps {
-  crossAxisAlignment: CrossAxisAlignment;
-  stat: string;
-  secondStat?: string;
   caption: string;
-  spacing?: string | number;
-  captionFirst?: boolean;
   captionColor?: string;
+  captionFirst?: boolean;
+  crossAxisAlignment: CrossAxisAlignment;
+  secondStat?: string;
+  spacing?: number | string;
+  stat: string;
   tooltip?: string;
 }
 
@@ -141,16 +141,16 @@ export interface CreateFlywheelModalProps extends CreateFlywheelProps {
 export interface Flywheel {
   address: string;
   booster: string;
-  owner: string;
-  rewards: string;
-  rewardToken: string;
   markets: string[];
+  owner: string;
+  rewardToken: string;
+  rewards: string;
 }
 
 export interface CTokenRewardsDistributorIncentives {
-  rewardsDistributorAddress: string;
-  rewardToken: string;
   borrowSpeed: number;
+  rewardToken: string;
+  rewardsDistributorAddress: string;
   supplySpeed: number;
 }
 
@@ -166,8 +166,8 @@ export interface RewardsDistributorCTokensMap {
 export interface IncentivesData {
   hasIncentives: boolean;
   incentives: CTokenRewardsDistributorIncentivesWithRatesMap;
-  rewardsDistributorCtokens: RewardsDistributorCTokensMap;
   rewardTokensData: TokensDataMap;
+  rewardsDistributorCtokens: RewardsDistributorCTokensMap;
 }
 
 export interface CTokensUnderlyingMap {
@@ -176,10 +176,10 @@ export interface CTokensUnderlyingMap {
 
 export interface CTokenRewardsDistributorIncentivesWithRates
   extends CTokenRewardsDistributorIncentives {
-  supplyAPY: number;
+  borrowAPR: number;
   borrowAPY: number;
   supplyAPR: number;
-  borrowAPR: number;
+  supplyAPY: number;
 }
 
 export interface CTokenRewardsDistributorIncentivesWithRatesMap {
@@ -188,10 +188,10 @@ export interface CTokenRewardsDistributorIncentivesWithRatesMap {
 
 export interface RewardsDataForMantissa {
   cTokenAddress: string;
-  rewardSpeed: number;
   rewardEthPrice: number;
-  underlyingTotalSupply: BigNumber;
+  rewardSpeed: number;
   underlyingEthPrice: number;
+  underlyingTotalSupply: BigNumber;
 }
 
 export interface TokenPricesMap {
@@ -208,19 +208,19 @@ export interface TokenPrices {
 
 export interface RewardsDistributor {
   address: string;
-  rewardToken: string;
   admin: string;
+  rewardToken: string;
 }
 
 export interface CoinGeckoResponse {
   decimals: number;
-  name: string;
-  symbol: string;
   image: {
     large: string;
     small: string;
     thumb: string;
   };
+  name: string;
+  symbol: string;
 }
 
 export interface TokenDataResponse {
@@ -236,25 +236,25 @@ export interface TokenDataResponse {
 export type APYResponse = {
   apy?: number;
   averageAPY?: number;
-  timeDelta?: number;
-  externalAPY?: number;
-  updatedAt?: string;
   error?: string;
+  externalAPY?: number;
+  timeDelta?: number;
+  updatedAt?: string;
 };
 
 export type PoolsPerChainStatus = {
   [chainId: string]: {
-    isLoading: boolean;
-    error: Error | undefined;
     data?: PoolData[] | null | undefined;
+    error: Error | undefined;
+    isLoading: boolean;
   };
 };
 
 export type RewardsPerChainProps = {
   [chainId: string]: {
-    isLoading: boolean;
-    error: Error | undefined;
     data?: FlywheelClaimableRewards[] | null | undefined;
+    error: Error | undefined;
+    isLoading: boolean;
     refetch: () => Promise<
       QueryObserverResult<FlywheelClaimableRewards[] | null | undefined, unknown>
     >;
@@ -267,11 +267,11 @@ export type IRMToCurveData = {
   rates: UtilizationChartData[];
 };
 
-export type UtilizationChartData = { utilization: number; depositRate: number; borrowRate: number };
+export type UtilizationChartData = { borrowRate: number; depositRate: number; utilization: number };
 
 export type TxStep = {
-  title: string;
   desc: string;
   done: boolean;
+  title: string;
   txHash?: string;
 };
