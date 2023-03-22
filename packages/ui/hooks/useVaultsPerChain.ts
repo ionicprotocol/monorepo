@@ -11,7 +11,8 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
   const vaultsQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
-        queryKey: ['useVaultsPerChain', chainId, address],
+        cacheTime: Infinity,
+        enabled: !!chainId,
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
 
@@ -21,9 +22,8 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        cacheTime: Infinity,
+        queryKey: ['useVaultsPerChain', chainId, address],
         staleTime: Infinity,
-        enabled: !!chainId,
       };
     }),
   });
@@ -41,14 +41,14 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
       error = isError ? (vaults.error as Err) : undefined;
       const _chainId = chainIds[index];
       _vaultsPerChain[_chainId.toString()] = {
-        isLoading: vaults.isLoading,
-        error: vaults.error as Err | undefined,
         data: vaults.data,
+        error: vaults.error as Err | undefined,
+        isLoading: vaults.isLoading,
       };
     });
 
     return [_vaultsPerChain, isLoading, error];
   }, [vaultsQueries, chainIds]);
 
-  return { vaultsPerChain, isLoading, error };
+  return { error, isLoading, vaultsPerChain };
 };

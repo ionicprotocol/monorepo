@@ -1,6 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
-import { SortingState, VisibilityState } from '@tanstack/react-table';
+import type { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
@@ -34,7 +34,7 @@ const VaultsPage = memo(() => {
     ) {
       setInitSorting(JSON.parse(oldData).vaultSorting);
     } else {
-      setInitSorting([{ id: VAULT, desc: true }]);
+      setInitSorting([{ desc: true, id: VAULT }]);
     }
 
     const columnVisibility: VisibilityState = {};
@@ -83,13 +83,13 @@ const VaultsPage = memo(() => {
               alertDescriptionProps={{ fontSize: 'lg' }}
               alertIconProps={{ boxSize: 12 }}
               alertProps={{
-                status: 'warning',
-                flexDirection: 'column',
-                height: '2xs',
                 alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
+                flexDirection: 'column',
                 gap: 4,
+                height: '2xs',
+                justifyContent: 'center',
+                status: 'warning',
+                textAlign: 'center',
               }}
               descriptions={[
                 {

@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 
 import { useColors } from '@ui/hooks/useColors';
-import { IRMToCurveData } from '@ui/types/ComponentPropsType';
+import type { IRMToCurveData } from '@ui/types/ComponentPropsType';
 
 type LineProps = {
   [key: string]: boolean | string | null;
@@ -25,8 +25,8 @@ const HistoricalAPYChart = ({
   irmToCurve,
   currentUtilization,
 }: {
-  irmToCurve: IRMToCurveData;
   currentUtilization?: string;
+  irmToCurve: IRMToCurveData;
 }) => {
   const keys = irmToCurve.rates.length > 0 ? Object.keys(irmToCurve.rates[0]) : [];
   const supplyRateColor = useColorModeValue('#00B5D8', 'cyan'); // #00B5D8 = cyan.500
@@ -45,8 +45,8 @@ const HistoricalAPYChart = ({
   const selectLine = (key: string) => {
     setLineProps({
       ...lineProps,
-      [key]: !lineProps[key],
       hover: null,
+      [key]: !lineProps[key],
     });
   };
 
@@ -62,7 +62,7 @@ const HistoricalAPYChart = ({
 
   return (
     <ResponsiveContainer height="100%" width="100%">
-      <AreaChart data={irmToCurve.rates} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
+      <AreaChart data={irmToCurve.rates} margin={{ bottom: 10, left: 20, right: 20, top: 10 }}>
         <CartesianGrid strokeWidth={0} />
         <XAxis
           minTickGap={10}
@@ -107,7 +107,7 @@ const HistoricalAPYChart = ({
         {keys.length > 0 && (
           <>
             <Area
-              activeDot={{ strokeWidth: 0, r: 5 }}
+              activeDot={{ r: 5, strokeWidth: 0 }}
               dataKey={keys[1]}
               dot={{ r: 0 }}
               fill={supplyRateColor}
@@ -120,7 +120,7 @@ const HistoricalAPYChart = ({
               type="monotone"
             />
             <Area
-              activeDot={{ strokeWidth: 0, r: 5 }}
+              activeDot={{ r: 5, strokeWidth: 0 }}
               dataKey={keys[2]}
               dot={{ r: 0 }}
               fill={borrowRateColor}
@@ -184,10 +184,10 @@ const CustomTooltip = (props: any) => {
 
 const CustomLegend = (
   props: any & {
-    lineProps: LineProps;
-    selectLine: (key: string) => void;
     handleLegendMouseEnter: (key: string) => void;
     handleLegendMouseLeave: () => void;
+    lineProps: LineProps;
+    selectLine: (key: string) => void;
   }
 ) => {
   const { payload, lineProps, selectLine, handleLegendMouseEnter, handleLegendMouseLeave } = props;

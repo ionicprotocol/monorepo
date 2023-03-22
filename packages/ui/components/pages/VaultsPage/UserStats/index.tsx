@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { FundedAsset } from '@ui/hooks/useAllFundedInfo';
+import type { FundedAsset } from '@ui/hooks/useAllFundedInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { smallFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { sortTopUserSuppliedAssets } from '@ui/utils/sorts';
@@ -18,8 +18,8 @@ export const UserStats = ({
 }: {
   assets: FundedAsset[];
   totalSupplyApyPerAsset: { [market: string]: number };
-  totalSupplyBalanceNative: number;
   totalSupplyBalanceFiat: number;
+  totalSupplyBalanceNative: number;
 }) => {
   const [topSuppliedAssets] = useMemo(() => {
     if (assets.length > 0) {
@@ -32,16 +32,16 @@ export const UserStats = ({
   const totalSupplyApy = useMemo(() => {
     if (totalSupplyApyPerAsset) {
       if (totalSupplyBalanceNative === 0)
-        return { totalApy: 0, totalSupplied: 0, estimatedUsd: 0, estimatedPerAsset: [] };
+        return { estimatedPerAsset: [], estimatedUsd: 0, totalApy: 0, totalSupplied: 0 };
 
       let _totalApy = 0;
       const _estimatedPerAsset: {
-        underlying: string;
-        symbol: string;
-        supplied: string;
-        estimated: number;
         apy: number;
         chainId: number;
+        estimated: number;
+        supplied: string;
+        symbol: string;
+        underlying: string;
       }[] = [];
 
       assets.map((asset) => {
@@ -55,12 +55,12 @@ export const UserStats = ({
           );
 
           _estimatedPerAsset.push({
-            underlying: asset.underlyingToken,
-            supplied: smallFormatter(suppliedNum),
             apy: totalSupplyApyPerAsset[asset.cToken] * 100,
-            estimated: totalSupplyApyPerAsset[asset.cToken] * suppliedNum,
-            symbol: asset.underlyingSymbol,
             chainId: Number(asset.chainId),
+            estimated: totalSupplyApyPerAsset[asset.cToken] * suppliedNum,
+            supplied: smallFormatter(suppliedNum),
+            symbol: asset.underlyingSymbol,
+            underlying: asset.underlyingToken,
           });
         }
       });
@@ -68,10 +68,10 @@ export const UserStats = ({
       const _estimatedUsd = totalSupplyBalanceFiat * _totalApy;
 
       return {
+        estimatedPerAsset: _estimatedPerAsset,
+        estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
         totalSupplied: totalSupplyBalanceFiat,
-        estimatedUsd: _estimatedUsd,
-        estimatedPerAsset: _estimatedPerAsset,
       };
     }
 
@@ -159,7 +159,7 @@ export const UserStats = ({
             ) : null}
           </VStack>
         }
-        contentProps={{ p: 2, minW: { base: '300px', sm: '350px' } }}
+        contentProps={{ minW: { base: '300px', sm: '350px' }, p: 2 }}
       >
         <Flex>
           <UserStat
