@@ -42,6 +42,7 @@ const ankrBNB = "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827";
 const stkBNB_WBNB = "0xaA2527ff1893e0D40d4a454623d362B79E8bb7F1";
 const stkBNB = "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16";
 const asBNBx_WBNB = "0xB88F211EC9ecfc2931Ae1DE53ea28Da76B9Ed37A";
+const asANKR_ankrBNB = "0x653D51dbB4CC8B9Bcd884BB0c0795b4BE672AA4c";
 const epsBNBx_BNB = "0x5c73804FeDd39f3388E03F4aa1fE06a1C0e60c8e";
 const BNBx = "0x1bdd3Cf7F79cfB8EdbB955f20ad99211551BA275";
 const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
@@ -63,6 +64,7 @@ const USDC_BUSD = "0x2354ef4DF11afacb85a5C7f98B624072ECcddbB1";
 const USDC_ETH = "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0";
 const CAKE_WBNB = "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0";
 const BTCB_ETH = "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D";
+const ANKR_ankrBNB = "0x8028AC1195B6469de22929C4f329f96B06d65F25";
 const EPX = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
 const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
@@ -72,6 +74,7 @@ const WOMBATLP_WBNB = "0x74f019A5C4eD2C2950Ce16FaD7Af838549092c5b";
 const HAY = "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5";
 // solidly
 const solidlyStableAMM_jBRL_BRZ = "0xA0695f78AF837F570bcc50f53e58Cda300798B65";
+const solidlyVolatileAMM_ANKR_ankrBNB = "0x7ef540f672Cd643B79D2488344944499F7518b1f";
 
 const assets: SupportedAsset[] = [
   {
@@ -338,8 +341,24 @@ const assets: SupportedAsset[] = [
     underlying: stkBNB_WBNB,
     name: "stkBNB-WBNB PCS LP",
     decimals: 18,
-    oracle: OracleTypes.StkBNBPriceOracle,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: pancakeSwapDocs(WBNB, stkBNB, "stkBNB-WBNB", stkBNB_WBNB),
+  },
+  {
+    symbol: assetSymbols["ANKR-ankrBNB"],
+    underlying: ANKR_ankrBNB,
+    name: "ANKR-ankrBNB PCS LP",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(ANKR, ankrBNB, "ANKR-ankrBNB", ANKR_ankrBNB),
+  },
+  {
+    symbol: assetSymbols["asANKR-ankrBNB"],
+    underlying: asANKR_ankrBNB,
+    name: "ANKR-ankrBNB ApeSwap LP",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: apeSwapDocs(ANKR, ankrBNB, "ANKR-ankrBNB", asANKR_ankrBNB),
   },
   // Jarvis
   {
@@ -545,10 +564,18 @@ const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols["sAMM-jBRL/BRZ"],
     underlying: solidlyStableAMM_jBRL_BRZ,
-    name: "StableV1 AMM - jBRL/BRZ",
+    name: "Stable V1 AMM - jBRL/BRZ",
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_jBRL_BRZ),
+  },
+  {
+    symbol: assetSymbols["vAMM-ANKR/ankrBNB"],
+    underlying: solidlyVolatileAMM_ANKR_ankrBNB,
+    name: "Volatile V1 AMM - ANKR/ankrBNB",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_ankrBNB),
   },
 ];
 
