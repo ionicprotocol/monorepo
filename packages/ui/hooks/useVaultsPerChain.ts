@@ -28,17 +28,13 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
     }),
   });
 
-  const [vaultsPerChain, isLoading, error] = useMemo(() => {
+  const [vaultsPerChain, isLoading] = useMemo(() => {
     const _vaultsPerChain: VaultsPerChainStatus = {};
 
     let isLoading = true;
-    let isError = true;
-    let error: Err | undefined;
 
     vaultsQueries.map((vaults, index) => {
       isLoading = isLoading && vaults.isLoading;
-      isError = isError && vaults.isError;
-      error = isError ? (vaults.error as Err) : undefined;
       const _chainId = chainIds[index];
       _vaultsPerChain[_chainId.toString()] = {
         data: vaults.data,
@@ -47,8 +43,8 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
       };
     });
 
-    return [_vaultsPerChain, isLoading, error];
+    return [_vaultsPerChain, isLoading];
   }, [vaultsQueries, chainIds]);
 
-  return { error, isLoading, vaultsPerChain };
+  return { isLoading, vaultsPerChain };
 };
