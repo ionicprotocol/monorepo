@@ -2,23 +2,23 @@ import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { mode } from '@chakra-ui/theme-tools';
 
 export const TabsStyleConfig: ComponentStyleConfig = {
-  parts: ['root', 'tab', 'tablist', 'tabpanel', 'tabpanels'],
   baseStyle: {
     tab: {},
     tablist: {},
     tabpanel: {},
   },
+  defaultProps: {},
+  parts: ['root', 'tab', 'tablist', 'tabpanel', 'tabpanels'],
+  sizes: {},
   variants: {
     line: (props) => ({
       tab: {
-        color: mode('whiteBg', 'raisinBlack')(props),
         borderBottomWidth: 2,
+        color: mode('whiteBg', 'raisinBlack')(props),
       },
       tablist: {
         borderBottomWidth: 0,
       },
     }),
   },
-  sizes: {},
-  defaultProps: {},
 };

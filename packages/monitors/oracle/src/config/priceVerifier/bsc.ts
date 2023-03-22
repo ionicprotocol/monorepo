@@ -11,10 +11,6 @@ const chainAssets = chainIdToConfig[SupportedChains.bsc].assets.filter(
 
 const assets: PriceVerifierAsset[] = [
   {
-    ...assetFilter(chainAssets, assetSymbols.HAY),
-    maxPriceDeviation: 2,
-  },
-  {
     ...assetFilter(chainAssets, assetSymbols.stkBNB),
     maxPriceDeviation: priceDeviations.LSD,
   },

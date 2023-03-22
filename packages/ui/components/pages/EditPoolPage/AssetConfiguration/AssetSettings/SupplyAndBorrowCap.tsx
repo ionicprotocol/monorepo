@@ -15,7 +15,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -69,8 +69,8 @@ export const SupplyAndBorrowCaps = ({
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      supplyCap: SUPPLY_CAP.DEFAULT,
       borrowCap: BORROW_CAP.DEFAULT,
+      supplyCap: SUPPLY_CAP.DEFAULT,
     },
   });
 
@@ -102,16 +102,16 @@ export const SupplyAndBorrowCaps = ({
       successToast({ description: 'Successfully updated max supply amount!' });
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         supplyCap,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating max supply amount',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsEditSupplyCap(false);
     }
@@ -133,16 +133,16 @@ export const SupplyAndBorrowCaps = ({
       successToast({ description: 'Successfully updated max total borrow amount!' });
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
+        borrowCap,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        borrowCap,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating max total borrow amount',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsEditBorrowCap(false);
     }
@@ -249,11 +249,11 @@ export const SupplyAndBorrowCaps = ({
                     </InputGroup>
                   )}
                   rules={{
-                    required: 'Supply caps is required',
                     min: {
-                      value: SUPPLY_CAP.MIN,
                       message: `Supply caps must be at least ${SUPPLY_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
+                      value: SUPPLY_CAP.MIN,
                     },
+                    required: 'Supply caps is required',
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="200px">
@@ -364,11 +364,11 @@ export const SupplyAndBorrowCaps = ({
                     </InputGroup>
                   )}
                   rules={{
-                    required: 'Borrow cap is required',
                     min: {
-                      value: BORROW_CAP.MIN,
                       message: `Borrow cap must be at least ${BORROW_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
+                      value: BORROW_CAP.MIN,
                     },
+                    required: 'Borrow cap is required',
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="200px">

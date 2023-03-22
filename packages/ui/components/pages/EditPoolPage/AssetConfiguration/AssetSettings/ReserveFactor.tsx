@@ -10,9 +10,10 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
-import { ContractTransaction, utils } from 'ethers';
+import type { ContractTransaction } from 'ethers';
+import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -91,15 +92,15 @@ export const ReserveFactor = ({
       successToast({ description: 'Successfully updated reserve factor!' });
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating reserve factor',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
     }
@@ -170,15 +171,15 @@ export const ReserveFactor = ({
                       />
                     )}
                     rules={{
-                      required: 'Reserve factor is required',
-                      min: {
-                        value: RESERVE_FACTOR.MIN,
-                        message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
-                      },
                       max: {
-                        value: RESERVE_FACTOR.MAX,
                         message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
+                        value: RESERVE_FACTOR.MAX,
                       },
+                      min: {
+                        message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
+                        value: RESERVE_FACTOR.MIN,
+                      },
+                      required: 'Reserve factor is required',
                     }}
                   />
                   <FormErrorMessage marginBottom="-10px" maxWidth="270px">

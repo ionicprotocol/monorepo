@@ -1,6 +1,6 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Spacer, Switch, Text } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -15,8 +15,8 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface ToggleBorrowProps {
   comptrollerAddress: string;
-  selectedAsset: NativePricedFuseAsset;
   poolChainId: number;
+  selectedAsset: NativePricedFuseAsset;
 }
 
 export const ToggleBorrow = ({
@@ -41,20 +41,20 @@ export const ToggleBorrow = ({
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
-      addRecentTransaction({ hash: tx.hash, description: 'Set borrowing status' });
+      addRecentTransaction({ description: 'Set borrowing status', hash: tx.hash });
       await tx.wait();
       await queryClient.refetchQueries();
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating borrow status',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
     }

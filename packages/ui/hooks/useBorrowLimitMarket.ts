@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const useBorrowLimitMarket = (
   asset: MarketData,
@@ -23,9 +23,9 @@ export const useBorrowLimitMarket = (
     }
   }, [usdPrices, poolChainId]);
   const { data: borrowCaps } = useBorrowCap({
+    chainId: poolChainId,
     comptroller: comptrollerAddress,
     market: asset,
-    chainId: poolChainId,
   });
 
   return useQuery(
@@ -59,6 +59,6 @@ export const useBorrowLimitMarket = (
 
       return borrowCaps && borrowCaps.usdCap < _maxBorrow ? borrowCaps.usdCap : _maxBorrow;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!usdPrice }
+    { cacheTime: Infinity, enabled: !!usdPrice, staleTime: Infinity }
   );
 };

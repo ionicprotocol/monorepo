@@ -12,7 +12,7 @@ import {
   SliderThumb,
   SliderTrack,
 } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
@@ -27,14 +27,14 @@ export const SliderWithLabel = ({
   isDisabled,
   ...others
 }: {
-  min: number;
-  max: number;
-  name: string;
-  value: number;
-  reff: any;
-  onChange: (...event: any[]) => void;
-  isDisabled?: boolean;
   [key: string]: ReactNode;
+  isDisabled?: boolean;
+  max: number;
+  min: number;
+  name: string;
+  onChange: (...event: any[]) => void;
+  reff: any;
+  value: number;
 }) => {
   const { cSlider } = useColors();
 

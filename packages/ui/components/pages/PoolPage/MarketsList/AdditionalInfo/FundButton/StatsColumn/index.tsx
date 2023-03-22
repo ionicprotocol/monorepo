@@ -1,6 +1,7 @@
 import { Divider } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
-import { BigNumber, utils } from 'ethers';
+import type { FundOperationMode } from '@midas-capital/types';
+import type { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { BorrowAPY } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn/BorrowAPY';
@@ -14,17 +15,17 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface StatsColumnProps {
-  mode: FundOperationMode;
-  assets: MarketData[];
-  asset: MarketData;
   amount: BigNumber;
-  enableAsCollateral?: boolean;
-  poolChainId: number;
+  asset: MarketData;
+  assets: MarketData[];
   comptrollerAddress: string;
+  enableAsCollateral?: boolean;
+  mode: FundOperationMode;
+  poolChainId: number;
 }
 export const StatsColumn = ({
   mode,
@@ -38,10 +39,10 @@ export const StatsColumn = ({
   const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
   const { data: updatedAssets } = useUpdatedUserAssets({
-    mode,
+    amount,
     assets,
     index,
-    amount,
+    mode,
     poolChainId,
   });
 
@@ -62,14 +63,8 @@ export const StatsColumn = ({
   } = useMemo(() => {
     const blocksPerMinute = getBlockTimePerMinuteByChainId(currentChain.id);
     return {
-      supplyAPY: currentSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute),
       borrowAPR: currentSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute),
-      updatedSupplyAPY: updatedAsset
-        ? currentSdk.ratePerBlockToAPY(updatedAsset.supplyRatePerBlock, blocksPerMinute)
-        : undefined,
-      updatedBorrowAPR: updatedAsset
-        ? currentSdk.ratePerBlockToAPY(updatedAsset.borrowRatePerBlock, blocksPerMinute)
-        : undefined,
+      supplyAPY: currentSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute),
       supplyBalanceFrom: utils.commify(
         utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)
       ),
@@ -79,6 +74,12 @@ export const StatsColumn = ({
           )
         : undefined,
       totalBorrows: assets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0),
+      updatedBorrowAPR: updatedAsset
+        ? currentSdk.ratePerBlockToAPY(updatedAsset.borrowRatePerBlock, blocksPerMinute)
+        : undefined,
+      updatedSupplyAPY: updatedAsset
+        ? currentSdk.ratePerBlockToAPY(updatedAsset.supplyRatePerBlock, blocksPerMinute)
+        : undefined,
       updatedTotalBorrows: updatedAssets
         ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
         : undefined,

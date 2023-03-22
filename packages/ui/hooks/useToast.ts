@@ -1,20 +1,21 @@
-import { useToast, UseToastOptions } from '@chakra-ui/react';
+import type { UseToastOptions } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
 const useSuccessToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     const _options = options ? options : {};
     return {
-      id: 'success',
-      title: 'Success!',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'bottom-right',
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
       },
+      duration: 5000,
+      id: 'success',
+      isClosable: true,
+      position: 'bottom-right',
+      status: 'success',
+      title: 'Success!',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -25,16 +26,16 @@ const useErrorToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     const _options = options ? options : {};
     return {
-      id: 'error',
-      title: 'Error!',
-      status: 'error',
-      duration: 10000,
-      isClosable: true,
-      position: 'bottom-right',
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
       },
+      duration: 10000,
+      id: 'error',
+      isClosable: true,
+      position: 'bottom-right',
+      status: 'error',
+      title: 'Error!',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -45,16 +46,16 @@ const useWarningToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     const _options = options ? options : {};
     return {
-      id: 'warning',
-      title: 'Warning!',
-      status: 'warning',
-      duration: 10000,
-      isClosable: true,
-      position: 'bottom-right',
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
       },
+      duration: 10000,
+      id: 'warning',
+      isClosable: true,
+      position: 'bottom-right',
+      status: 'warning',
+      title: 'Warning!',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -65,16 +66,16 @@ const useInfoToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     const _options = options ? options : {};
     return {
-      id: 'info',
-      title: 'Info!',
-      status: 'info',
-      duration: 5000,
-      isClosable: true,
-      position: 'bottom-right',
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
       },
+      duration: 5000,
+      id: 'info',
+      isClosable: true,
+      position: 'bottom-right',
+      status: 'info',
+      title: 'Info!',
       ..._options,
     } as UseToastOptions;
   }, [options]);

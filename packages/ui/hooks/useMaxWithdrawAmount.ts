@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -25,8 +25,8 @@ export function useMaxWithdrawAmount(asset: NativePricedFuseAsset, chainId: numb
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!address && !!asset && !!sdk,
+      staleTime: Infinity,
     }
   );
 }

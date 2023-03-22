@@ -3,7 +3,7 @@ import { Text, VStack } from '@chakra-ui/react';
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
@@ -24,9 +24,9 @@ export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChain
             value: asset.liquidityFiat,
           }}
           secondary={{
-            value: asset.liquidity,
-            symbol: tokenData?.symbol || '',
             decimals: asset.underlyingDecimals.toNumber(),
+            symbol: tokenData?.symbol || '',
+            value: asset.liquidity,
           }}
         />
       )}

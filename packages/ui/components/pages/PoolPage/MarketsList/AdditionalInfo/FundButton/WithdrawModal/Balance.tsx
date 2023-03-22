@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Balance = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
   const { currentSdk, currentChain, address } = useMultiMidas();

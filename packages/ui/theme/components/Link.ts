@@ -4,6 +4,7 @@ import { mode } from '@chakra-ui/theme-tools';
 
 export const LinkStyleConfig: ComponentStyleConfig = {
   ...theme.components.Link,
+  defaultProps: {},
   variants: {
     ...theme.components.Link.variants,
     color: (props) => ({
@@ -11,5 +12,4 @@ export const LinkStyleConfig: ComponentStyleConfig = {
       textDecoration: 'underline',
     }),
   },
-  defaultProps: {},
 };

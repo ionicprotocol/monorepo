@@ -10,9 +10,10 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
-import { ContractTransaction, utils } from 'ethers';
+import type { ContractTransaction } from 'ethers';
+import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -87,15 +88,15 @@ export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: Adm
       successToast({ description: 'Successfully updated admin fee!' });
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating admin fee',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
     }
@@ -162,15 +163,15 @@ export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: Adm
                       />
                     )}
                     rules={{
-                      required: 'Admin fee is required',
-                      min: {
-                        value: ADMIN_FEE.MIN,
-                        message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
-                      },
                       max: {
-                        value: ADMIN_FEE.MAX,
                         message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
+                        value: ADMIN_FEE.MAX,
                       },
+                      min: {
+                        message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
+                        value: ADMIN_FEE.MIN,
+                      },
+                      required: 'Admin fee is required',
                     }}
                   />
                   <FormErrorMessage marginBottom="-10px" maxWidth="270px">

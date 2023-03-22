@@ -18,7 +18,7 @@ import { MidasModal } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheel } from '@ui/hooks/rewards/useFlywheel';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { AddFlywheelModalProps, AddFlywheelProps } from '@ui/types/ComponentPropsType';
+import type { AddFlywheelModalProps, AddFlywheelProps } from '@ui/types/ComponentPropsType';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {

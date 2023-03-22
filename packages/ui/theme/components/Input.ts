@@ -4,147 +4,147 @@ import { mode } from '@chakra-ui/theme-tools';
 export const InputConfigStyle: ComponentStyleConfig = {
   baseStyle: {
     field: {
-      minWidth: 0,
-      outline: 0,
-      position: 'relative',
-      appearance: 'none',
-      transitionProperty: 'common',
-      transitionDuration: 'normal',
       _disabled: {
-        opacity: 0.4,
         cursor: 'not-allowed',
+        opacity: 0.4,
       },
       _focusVisible: {
         boxShadow: 'none',
         outline: 'none',
       },
+      appearance: 'none',
+      minWidth: 0,
+      outline: 0,
+      position: 'relative',
+      transitionDuration: 'normal',
+      transitionProperty: 'common',
     },
+  },
+  defaultProps: {
+    variant: 'outline',
   },
   parts: ['field', 'element', 'addon'],
   variants: {
-    outlineLeftAddon: (props) => ({
-      element: {
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-        width: 'auto',
-        pointerEvents: 'none',
-      },
-      field: {
-        borderColor: 'ecru',
-        borderRadius: 'xl',
-        color: mode('raisinBlack', 'white')(props),
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderWidth: '2px',
-        fontSize: '16px',
-        _hover: {
-          borderColor: 'ecru',
-        },
-        _focus: {
-          borderColor: 'ecru',
-        },
-        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
-        borderLeft: 'none',
-        paddingLeft: 0,
-        _focusVisible: {
-          boxShadow: 'none',
-          outline: 'none',
-        },
-      },
-      addon: {
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        pointerEvents: 'none',
-        borderColor: 'ecru',
-        borderRadius: 'xl',
-        color: mode('raisinBlack', 'whiteBg')(props),
-        borderWidth: '2px',
-      },
-    }),
-    outlineRightAddon: (props) => ({
-      element: {
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-        width: 'auto',
-        pointerEvents: 'none',
-      },
-      field: {
-        borderColor: 'ecru',
-        borderRadius: 'xl',
-        color: mode('raisinBlack', 'white')(props),
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderWidth: '2px',
-        fontSize: '16px',
-        _hover: {
-          borderColor: 'ecru',
-        },
-        _focus: {
-          borderColor: 'ecru',
-        },
-        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
-        _readOnly: {
-          borderColor: 'ecru30',
-        },
-        _focusVisible: {
-          boxShadow: 'none',
-          outline: 'none',
-        },
-      },
-      addon: {
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        pointerEvents: 'none',
-        borderColor: 'ecru30',
-        borderRadius: 'xl',
-        color: mode('raisinBlack', 'whiteBg')(props),
-        borderWidth: '2px',
-      },
-    }),
     outline: (props) => ({
       element: {
         color: mode('raisinBlack', 'white')(props),
         fontSize: '16px',
-        width: 'auto',
         pointerEvents: 'none',
+        width: 'auto',
       },
       field: {
-        borderColor: 'ecru',
-        borderRadius: 'xl',
-        color: mode('raisinBlack', 'white')(props),
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderWidth: '2px',
-        fontSize: '16px',
-        paddingInline: '20px',
+        _focus: {
+          borderColor: 'ecru',
+        },
+        _focusVisible: {
+          boxShadow: 'none',
+          outline: 'none',
+        },
         _hover: {
           borderColor: 'ecru',
         },
+        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
+        _readOnly: {
+          _focus: { borderColor: 'ecru30' },
+          borderColor: 'ecru30',
+          cursor: 'auto',
+          outline: 'none',
+        },
+        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
+        borderColor: 'ecru',
+        borderRadius: 'xl',
+        borderWidth: '2px',
+        color: mode('raisinBlack', 'white')(props),
+        fontSize: '16px',
+        paddingInline: '20px',
+      },
+    }),
+    outlineLeftAddon: (props) => ({
+      addon: {
+        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
+        borderColor: 'ecru',
+        borderRadius: 'xl',
+        borderWidth: '2px',
+        color: mode('raisinBlack', 'whiteBg')(props),
+        pointerEvents: 'none',
+      },
+      element: {
+        color: mode('raisinBlack', 'white')(props),
+        fontSize: '16px',
+        pointerEvents: 'none',
+        width: 'auto',
+      },
+      field: {
         _focus: {
+          borderColor: 'ecru',
+        },
+        _focusVisible: {
+          boxShadow: 'none',
+          outline: 'none',
+        },
+        _hover: {
+          borderColor: 'ecru',
+        },
+        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
+        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
+        borderColor: 'ecru',
+        borderLeft: 'none',
+        borderRadius: 'xl',
+        borderWidth: '2px',
+        color: mode('raisinBlack', 'white')(props),
+        fontSize: '16px',
+        paddingLeft: 0,
+      },
+    }),
+    outlineRightAddon: (props) => ({
+      addon: {
+        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
+        borderColor: 'ecru30',
+        borderRadius: 'xl',
+        borderWidth: '2px',
+        color: mode('raisinBlack', 'whiteBg')(props),
+        pointerEvents: 'none',
+      },
+      element: {
+        color: mode('raisinBlack', 'white')(props),
+        fontSize: '16px',
+        pointerEvents: 'none',
+        width: 'auto',
+      },
+      field: {
+        _focus: {
+          borderColor: 'ecru',
+        },
+        _focusVisible: {
+          boxShadow: 'none',
+          outline: 'none',
+        },
+        _hover: {
           borderColor: 'ecru',
         },
         _placeholder: { color: mode('silverMetallic', 'white50')(props) },
         _readOnly: {
           borderColor: 'ecru30',
-          _focus: { borderColor: 'ecru30' },
-          cursor: 'auto',
-          outline: 'none',
         },
-        _focusVisible: {
-          boxShadow: 'none',
-          outline: 'none',
-        },
+        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
+        borderColor: 'ecru',
+        borderRadius: 'xl',
+        borderWidth: '2px',
+        color: mode('raisinBlack', 'white')(props),
+        fontSize: '16px',
       },
     }),
     unstyled: (props) => ({
       field: {
-        color: mode('raisinBlack', 'white')(props),
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        fontSize: '16px',
-        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
         _focusVisible: {
           boxShadow: 'none',
           outline: 'none',
         },
+        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
+        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
+        color: mode('raisinBlack', 'white')(props),
+        fontSize: '16px',
       },
     }),
-  },
-  defaultProps: {
-    variant: 'outline',
   },
 };

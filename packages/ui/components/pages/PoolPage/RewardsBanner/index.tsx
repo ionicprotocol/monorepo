@@ -9,8 +9,8 @@ export const RewardsBanner = ({
   tokens = [],
   poolChainId,
 }: {
-  tokens: string[];
   poolChainId: number;
+  tokens: string[];
 }) => {
   return (
     <motion.div

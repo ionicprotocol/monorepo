@@ -18,7 +18,7 @@ import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
-import { TxStep } from '@ui/types/ComponentPropsType';
+import type { TxStep } from '@ui/types/ComponentPropsType';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 const TransactionStepper = ({
@@ -28,11 +28,11 @@ const TransactionStepper = ({
   isLoading,
   poolChainId,
 }: {
-  steps: TxStep[];
   activeStep: number;
   failedStep: number;
   isLoading: boolean;
   poolChainId: number;
+  steps: TxStep[];
 }) => {
   const { cCard } = useColors();
   const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);

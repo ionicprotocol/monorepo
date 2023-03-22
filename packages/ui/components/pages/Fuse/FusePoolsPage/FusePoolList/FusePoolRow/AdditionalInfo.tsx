@@ -9,10 +9,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Row } from '@tanstack/react-table';
+import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
-import { PoolRowData } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
+import type { PoolRowData } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
 import ClaimPoolRewardsButton from '@ui/components/shared/ClaimPoolRewardsButton';
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -21,7 +21,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { PoolData } from '@ui/types/TokensDataMap';
+import type { PoolData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId, getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';

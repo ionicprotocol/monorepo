@@ -14,7 +14,6 @@ const ankrBNB = assetFilter(chainAssets, assetSymbols.ankrBNB);
 
 // Stables
 const MAI = assetFilter(chainAssets, assetSymbols.MAI);
-const HAY = assetFilter(chainAssets, assetSymbols.HAY);
 
 const assets: PriceChangeVerifierAsset[] = [
   // LSD
@@ -31,10 +30,6 @@ const assets: PriceChangeVerifierAsset[] = [
     ...lsdPriceChangeDefaults,
   },
   // Stables
-  {
-    ...HAY,
-    ...stablePriceChangeDefaults,
-  },
   {
     ...MAI,
     ...stablePriceChangeDefaults,

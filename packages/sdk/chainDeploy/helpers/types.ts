@@ -196,6 +196,18 @@ export type SolidlyDeployFnParams = ChainDeployFnParams & {
   solidlyLps: SolidlyLpAsset[];
 };
 
+export type SolidlyOracleAssetConfig = {
+  underlying: string;
+  poolAddress: string;
+  baseToken: string;
+};
+
+export type SolidlyOracleDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  supportedBaseTokens: string[];
+  assets: SolidlyOracleAssetConfig[];
+};
+
 export type UniswaV3DeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };

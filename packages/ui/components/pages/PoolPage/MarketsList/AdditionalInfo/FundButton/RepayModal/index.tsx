@@ -3,7 +3,8 @@ import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber, constants } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
@@ -23,17 +24,17 @@ import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { TxStep } from '@ui/types/ComponentPropsType';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface RepayModalProps {
-  isOpen: boolean;
   asset: MarketData;
   assets: MarketData[];
+  comptrollerAddress: string;
+  isOpen: boolean;
   onClose: () => void;
   poolChainId: number;
-  comptrollerAddress: string;
 }
 
 export const RepayModal = ({
@@ -126,8 +127,8 @@ export const RepayModal = ({
         );
         const tx = await WToken.deposit({ from: address, value: amount });
         addRecentTransaction({
-          hash: tx.hash,
           description: `Wrap ${nativeSymbol}`,
+          hash: tx.hash,
         });
         _steps[0] = {
           ..._steps[0],
@@ -142,8 +143,8 @@ export const RepayModal = ({
         };
         setConfirmedSteps([..._steps]);
         successToast({
-          id: 'wrapped',
           description: 'Successfully Wrapped!',
+          id: 'wrapped',
         });
       } catch (error) {
         setFailedStep(1);
@@ -162,8 +163,8 @@ export const RepayModal = ({
         const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
 
         addRecentTransaction({
-          hash: tx.hash,
           description: `Approve ${asset.underlyingSymbol}`,
+          hash: tx.hash,
         });
         _steps[optionToWrap ? 1 : 0] = {
           ..._steps[optionToWrap ? 1 : 0],
@@ -180,8 +181,8 @@ export const RepayModal = ({
         };
         setConfirmedSteps([..._steps]);
         successToast({
-          id: 'approved',
           description: 'Successfully Approved!',
+          id: 'approved',
         });
       } else {
         _steps[optionToWrap ? 1 : 0] = {
@@ -201,7 +202,7 @@ export const RepayModal = ({
         contextName: 'Repay - Approving',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
 
       setFailedStep(optionToWrap ? 2 : 1);
     }
@@ -216,8 +217,8 @@ export const RepayModal = ({
       } else {
         const tx = resp.tx;
         addRecentTransaction({
-          hash: tx.hash,
           description: `${asset.underlyingSymbol} Token Repay`,
+          hash: tx.hash,
         });
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
@@ -236,21 +237,21 @@ export const RepayModal = ({
         setConfirmedSteps([..._steps]);
       }
       successToast({
-        id: 'repaid',
         description: 'Repaid!',
+        id: 'repaid',
       });
     } catch (error) {
       const sentryProperties = {
+        amount,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         token: asset.cToken,
-        amount,
       };
       const sentryInfo = {
         contextName: 'Repaying',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
 
       setFailedStep(optionToWrap ? 3 : 2);
     }
@@ -261,7 +262,7 @@ export const RepayModal = ({
   useEffect(() => {
     optionToWrap
       ? setSteps([
-          { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
+          { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
           ...REPAY_STEPS(asset.underlyingSymbol),
         ])
       : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
@@ -357,7 +358,7 @@ export const RepayModal = ({
           setIsConfirmed(false);
           optionToWrap
             ? setSteps([
-                { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
+                { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
                 ...REPAY_STEPS(asset.underlyingSymbol),
               ])
             : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);

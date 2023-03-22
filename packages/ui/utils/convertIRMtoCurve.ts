@@ -1,8 +1,8 @@
-import { MidasSdk } from '@midas-capital/sdk';
-import { InterestRateModel } from '@midas-capital/types';
+import type { MidasSdk } from '@midas-capital/sdk';
+import type { InterestRateModel } from '@midas-capital/types';
 import { utils } from 'ethers';
 
-import { UtilizationChartData } from '@ui/types/ComponentPropsType';
+import type { UtilizationChartData } from '@ui/types/ComponentPropsType';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const convertIRMtoCurve = (
@@ -25,7 +25,7 @@ export const convertIRMtoCurve = (
       blocksPerMin
     );
 
-    rates.push({ utilization: i, depositRate: supplyAPY, borrowRate: borrowAPY });
+    rates.push({ borrowRate: borrowAPY, depositRate: supplyAPY, utilization: i });
   }
 
   return { rates };

@@ -1,4 +1,4 @@
-import { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
+import type { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
 import { FundOperationMode } from '@midas-capital/types';
 
 import { AppPage } from '@ui/test/pages/AppPage';

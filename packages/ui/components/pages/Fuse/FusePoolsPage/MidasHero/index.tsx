@@ -1,16 +1,6 @@
 import { AddIcon, ChatIcon } from '@chakra-ui/icons';
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  FlexProps,
-  HStack,
-  Link,
-  Spinner,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import type { FlexProps } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, HStack, Link, Spinner, Text, VStack } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';

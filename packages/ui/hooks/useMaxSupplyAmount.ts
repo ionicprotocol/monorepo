@@ -57,8 +57,8 @@ export function useMaxSupplyAmount(
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!address && !!asset && !!sdk && !!comptrollerAddress,
+      staleTime: Infinity,
     }
   );
 }

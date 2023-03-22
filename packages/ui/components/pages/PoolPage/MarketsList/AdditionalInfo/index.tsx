@@ -14,16 +14,17 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { STRATEGY_HELP } from '@midas-capital/security';
-import { FundOperationMode, Strategy } from '@midas-capital/types';
+import type { Strategy } from '@midas-capital/types';
+import { FundOperationMode } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import { Row } from '@tanstack/react-table';
+import type { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { BsTriangleFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
-import { Market } from '@ui/components/pages/PoolPage/MarketsList';
+import type { Market } from '@ui/components/pages/PoolPage/MarketsList';
 import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/index';
 import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/index';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
@@ -51,7 +52,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { deployedPlugins, getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 
@@ -67,12 +68,12 @@ export const AdditionalInfo = ({
   borrowBalanceFiat,
   poolChainId,
 }: {
+  borrowBalanceFiat: number;
+  comptrollerAddress: string;
+  poolChainId: number;
   row: Row<Market>;
   rows: Row<Market>[];
-  comptrollerAddress: string;
   supplyBalanceFiat: number;
-  borrowBalanceFiat: number;
-  poolChainId: number;
 }) => {
   const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
   const asset: MarketData = row.original.market;
@@ -109,13 +110,13 @@ export const AdditionalInfo = ({
 
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
   const { data: supplyCaps } = useSupplyCap({
-    comptroller: comptrollerAddress,
     chainId: poolChainId,
+    comptroller: comptrollerAddress,
     market: asset,
   });
   const { data: borrowCaps } = useBorrowCap({
-    comptroller: comptrollerAddress,
     chainId: poolChainId,
+    comptroller: comptrollerAddress,
     market: asset,
   });
   const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);

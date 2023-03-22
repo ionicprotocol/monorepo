@@ -1,5 +1,5 @@
 import { utils } from 'ethers';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 

@@ -1,18 +1,20 @@
+import type {
+  ModalBodyProps,
+  ModalCloseButtonProps,
+  ModalContentProps,
+  ModalFooterProps,
+  ModalHeaderProps,
+  ModalProps,
+} from '@chakra-ui/react';
 import {
   Divider,
   Modal,
   ModalBody,
-  ModalBodyProps,
   ModalCloseButton,
-  ModalCloseButtonProps,
   ModalContent,
-  ModalContentProps,
   ModalFooter,
-  ModalFooterProps,
   ModalHeader,
-  ModalHeaderProps,
   ModalOverlay,
-  ModalProps,
 } from '@chakra-ui/react';
 
 export const MidasModal = ({
@@ -28,17 +30,17 @@ export const MidasModal = ({
   body,
   footer,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  modalProps?: Omit<ModalProps, 'children' | 'isOpen' | 'onClose'>;
-  modalContentProps?: ModalContentProps;
-  modalBodyProps?: ModalBodyProps;
-  modalHeaderProps?: ModalHeaderProps;
-  modalCloseButtonProps?: ModalCloseButtonProps;
-  modalFooterProps?: ModalFooterProps;
-  header?: ModalHeaderProps['children'];
   body: ModalBodyProps['children'];
   footer?: ModalFooterProps['children'];
+  header?: ModalHeaderProps['children'];
+  isOpen: boolean;
+  modalBodyProps?: ModalBodyProps;
+  modalCloseButtonProps?: ModalCloseButtonProps;
+  modalContentProps?: ModalContentProps;
+  modalFooterProps?: ModalFooterProps;
+  modalHeaderProps?: ModalHeaderProps;
+  modalProps?: Omit<ModalProps, 'children' | 'isOpen' | 'onClose'>;
+  onClose: () => void;
 }) => {
   return (
     <Modal

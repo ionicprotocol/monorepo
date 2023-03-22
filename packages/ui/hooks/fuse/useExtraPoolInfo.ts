@@ -42,21 +42,21 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
 
       return {
         admin,
-        upgradeable,
-        enforceWhitelist,
-        whitelist: whitelist as string[],
-        isPowerfulAdmin: admin.toLowerCase() === address?.toLowerCase() && upgradeable,
-        oracle,
         closeFactor,
-        liquidationIncentive,
-        pendingAdmin,
+        enforceWhitelist,
         isPendingAdmin: pendingAdmin.toLowerCase() === address?.toLowerCase(),
+        isPowerfulAdmin: admin.toLowerCase() === address?.toLowerCase() && upgradeable,
+        liquidationIncentive,
+        oracle,
+        pendingAdmin,
+        upgradeable,
+        whitelist: whitelist as string[],
       };
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
+      staleTime: Infinity,
     }
   );
 };

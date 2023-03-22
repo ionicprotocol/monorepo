@@ -14,9 +14,9 @@ export const MidasNavbar = () => {
   const logoPrefix = useBreakpointValue(
     {
       base: '/images/midas-mobile-',
-      sm: '/images/midas-mobile-',
-      md: '/images/midas-',
       lg: '/images/midas-',
+      md: '/images/midas-',
+      sm: '/images/midas-mobile-',
     },
     { fallback: 'lg' }
   );
@@ -35,8 +35,8 @@ export const MidasNavbar = () => {
             }
           }}
           position={'absolute'}
-          pr={{ md: 0, base: 1 }}
-          pt={{ md: 1, base: 3 }}
+          pr={{ base: 1, md: 0 }}
+          pt={{ base: 3, md: 1 }}
           top={2}
         >
           <Image

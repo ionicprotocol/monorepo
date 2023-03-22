@@ -105,7 +105,7 @@ const EditPoolPage = memo(() => {
             {!!data && (
               <Banner
                 alertDescriptionProps={{ fontSize: 'lg' }}
-                alertProps={{ status: isAdmin ? 'info' : 'warning', mt: 2 }}
+                alertProps={{ mt: 2, status: isAdmin ? 'info' : 'warning' }}
                 descriptions={[
                   {
                     text: `You are ${isAdmin ? '' : 'not'} the admin of this Pool!`,

@@ -11,7 +11,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { MarketConfig } from '@midas-capital/types';
+import type { MarketConfig } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
 import dynamic from 'next/dynamic';
@@ -33,7 +33,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { TokenData } from '@ui/types/ComponentPropsType';
+import type { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const IRMChart = dynamic(
@@ -44,11 +44,11 @@ const IRMChart = dynamic(
 );
 
 type AddAssetFormData = {
-  collateralFactor: number;
-  reserveFactor: number;
   adminFee: number;
-  pluginIndex: number;
+  collateralFactor: number;
   interestRateModel: string;
+  pluginIndex: number;
+  reserveFactor: number;
 };
 
 export const AddAssetSettings = ({
@@ -61,10 +61,10 @@ export const AddAssetSettings = ({
 }: {
   comptrollerAddress: string;
   onSuccess?: () => void;
+  poolChainId: number;
   poolID: string;
   poolName: string;
   tokenData: TokenData;
-  poolChainId: number;
 }) => {
   const { currentSdk, currentChain } = useMultiMidas();
   const successToast = useSuccessToast();
@@ -86,11 +86,11 @@ export const AddAssetSettings = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      collateralFactor: LOAN_TO_VALUE.DEFAULT,
-      reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
-      pluginIndex: -1,
+      collateralFactor: LOAN_TO_VALUE.DEFAULT,
       interestRateModel: currentSdk.chainDeployment.JumpRateModel.address,
+      pluginIndex: -1,
+      reserveFactor: RESERVE_FACTOR.DEFAULT,
     },
   });
 
@@ -134,17 +134,17 @@ export const AddAssetSettings = ({
     setIsDeploying(true);
 
     const marketConfig: MarketConfig = {
-      underlying: tokenData.address,
-      comptroller: comptrollerAddress,
       adminFee: adminFee,
-      collateralFactor: collateralFactor,
-      interestRateModel: interestRateModel,
-      reserveFactor: reserveFactor,
-      plugin: plugin,
       bypassPriceFeedCheck: true,
+      collateralFactor: collateralFactor,
+      comptroller: comptrollerAddress,
       fuseFeeDistributor: currentSdk.chainDeployment.FuseFeeDistributor.address,
-      symbol: 'f' + tokenData.symbol + '-' + poolID,
+      interestRateModel: interestRateModel,
       name: poolName + ' ' + tokenData.name,
+      plugin: plugin,
+      reserveFactor: reserveFactor,
+      symbol: 'f' + tokenData.symbol + '-' + poolID,
+      underlying: tokenData.address,
     };
 
     try {
@@ -156,23 +156,23 @@ export const AddAssetSettings = ({
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       successToast({
-        title: 'You have successfully added an asset to this pool!',
         description: 'You may now lend and borrow with this asset.',
+        title: 'You have successfully added an asset to this pool!',
       });
 
       if (onSuccess) onSuccess();
     } catch (error) {
       const sentryProperties = {
-        underlying: tokenData.address,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         symbol: tokenData.symbol,
+        underlying: tokenData.address,
       };
       const sentryInfo = {
         contextName: 'Adding asset',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsDeploying(false);
     }
@@ -215,15 +215,15 @@ export const AddAssetSettings = ({
                 />
               )}
               rules={{
-                required: 'Loan-to-Value is required',
-                min: {
-                  value: LOAN_TO_VALUE.MIN,
-                  message: `Loan-to-Value must be at least ${LOAN_TO_VALUE.MIN}%`,
-                },
                 max: {
-                  value: LOAN_TO_VALUE.MAX,
                   message: `Loan-to-Value must be no more than ${LOAN_TO_VALUE.MAX}%`,
+                  value: LOAN_TO_VALUE.MAX,
                 },
+                min: {
+                  message: `Loan-to-Value must be at least ${LOAN_TO_VALUE.MIN}%`,
+                  value: LOAN_TO_VALUE.MIN,
+                },
+                required: 'Loan-to-Value is required',
               }}
             />
             <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -271,15 +271,15 @@ export const AddAssetSettings = ({
                 />
               )}
               rules={{
-                required: 'Reserve factor is required',
-                min: {
-                  value: RESERVE_FACTOR.MIN,
-                  message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
-                },
                 max: {
-                  value: RESERVE_FACTOR.MAX,
                   message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
+                  value: RESERVE_FACTOR.MAX,
                 },
+                min: {
+                  message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
+                  value: RESERVE_FACTOR.MIN,
+                },
+                required: 'Reserve factor is required',
               }}
             />
             <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -323,15 +323,15 @@ export const AddAssetSettings = ({
                 />
               )}
               rules={{
-                required: 'Admin fee is required',
-                min: {
-                  value: ADMIN_FEE.MIN,
-                  message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
-                },
                 max: {
-                  value: ADMIN_FEE.MAX,
                   message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
+                  value: ADMIN_FEE.MAX,
                 },
+                min: {
+                  message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
+                  value: ADMIN_FEE.MIN,
+                },
+                required: 'Admin fee is required',
               }}
             />
             <FormErrorMessage marginBottom="-10px" maxWidth="270px">

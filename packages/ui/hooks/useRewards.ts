@@ -1,14 +1,14 @@
-import { MidasSdk } from '@midas-capital/sdk';
-import { FlywheelReward, Reward } from '@midas-capital/types';
+import type { MidasSdk } from '@midas-capital/sdk';
+import type { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { utils } from 'ethers';
 
-import { RewardsResponse } from '../pages/api/rewards';
+import type { RewardsResponse } from '../pages/api/rewards';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseRewardsProps {
   chainId: number;
@@ -71,12 +71,12 @@ export const fetchRewards = async (
           for (const info of flywheelRewards.rewardsInfo) {
             if (!flywheelsInPluginResponse.includes(info.flywheel.toLowerCase())) {
               allRewards.push({
-                flywheel: info.flywheel,
-                updated_at: new Date().toISOString(),
                 apy: info.formattedAPR
                   ? parseFloat(utils.formatUnits(info.formattedAPR, 18))
                   : undefined,
+                flywheel: info.flywheel,
                 token: info.rewardToken,
+                updated_at: new Date().toISOString(),
               } as FlywheelReward);
             }
           }
@@ -108,8 +108,8 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!poolData,
+      staleTime: Infinity,
     }
   );
 }

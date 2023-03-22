@@ -1,17 +1,19 @@
+import type {
+  BoxProps,
+  PopoverBodyProps,
+  PopoverContentProps,
+  PopoverFooterProps,
+  PopoverHeaderProps,
+  PopoverProps,
+} from '@chakra-ui/react';
 import {
   Box,
-  BoxProps,
   Popover,
   PopoverArrow,
   PopoverBody,
-  PopoverBodyProps,
   PopoverContent,
-  PopoverContentProps,
   PopoverFooter,
-  PopoverFooterProps,
   PopoverHeader,
-  PopoverHeaderProps,
-  PopoverProps,
   PopoverTrigger,
 } from '@chakra-ui/react';
 
@@ -29,19 +31,19 @@ export const PopoverTooltip = ({
   contentProps,
   popoverProps,
 }: {
-  children: PopoverProps['children'];
-  header?: PopoverHeaderProps['children'];
   body?: PopoverBodyProps['children'];
+  bodyProps?: PopoverBodyProps;
+  children: PopoverProps['children'];
+  contentProps?: PopoverContentProps;
   footer?: PopoverFooterProps['children'];
-  width?: BoxProps['width'];
+  footerProps?: PopoverFooterProps;
+  header?: PopoverHeaderProps['children'];
+  headerProps?: PopoverHeaderProps;
   height?: BoxProps['height'];
   hideArrow?: boolean;
-  visible?: boolean;
-  contentProps?: PopoverContentProps;
   popoverProps?: PopoverProps;
-  headerProps?: PopoverHeaderProps;
-  bodyProps?: PopoverBodyProps;
-  footerProps?: PopoverFooterProps;
+  visible?: boolean;
+  width?: BoxProps['width'];
 }) => {
   const { cPage } = useColors();
   if (!visible) return <>{children}</>;
@@ -52,7 +54,7 @@ export const PopoverTooltip = ({
         <PopoverTrigger>{children}</PopoverTrigger>
         {header || body || footer ? (
           <PopoverContent
-            maxWidth={{ base: '300px', sm: '400px', md: '450px' }}
+            maxWidth={{ base: '300px', md: '450px', sm: '400px' }}
             onClick={(e) => e.stopPropagation()}
             overflowX="auto"
             style={{ cursor: 'default' }}

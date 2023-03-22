@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { useColors } from '@ui/hooks/useColors';
 
@@ -20,9 +20,9 @@ export const GradientButton = ({
   isSelected,
   ...props
 }: {
+  [key: string]: ReactNode;
   children: ReactNode;
   isSelected: boolean;
-  [key: string]: ReactNode;
 }) => {
   const MotionButton = motion(Button);
   const { cCard } = useColors();

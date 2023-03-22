@@ -15,7 +15,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -79,9 +79,9 @@ export const DebtCeilings = ({
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      debtCeiling: DEBT_CEILING.DEFAULT,
       collateralAsset:
         assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken ?? assets[0].cToken,
+      debtCeiling: DEBT_CEILING.DEFAULT,
     },
   });
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
@@ -167,17 +167,17 @@ export const DebtCeilings = ({
       });
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
-        collateralAsset,
         chainId: currentSdk.chainId,
+        collateralAsset,
         comptroller: comptrollerAddress,
         debtCeiling,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating debt ceiling',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
       setDebtCeilingsDefault();
     } finally {
       setIsEditDebtCeiling(false);
@@ -302,11 +302,11 @@ export const DebtCeilings = ({
               </InputGroup>
             )}
             rules={{
-              required: 'Debt ceiling is required',
               min: {
-                value: DEBT_CEILING.MIN,
                 message: `Debt ceiling must be at least ${DEBT_CEILING.MIN} ${selectedAsset.underlyingSymbol}`,
+                value: DEBT_CEILING.MIN,
               },
+              required: 'Debt ceiling is required',
             }}
           />
           <FormErrorMessage marginBottom="-10px" maxWidth="200px">

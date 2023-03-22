@@ -1,6 +1,6 @@
 import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { SupportedAsset } from '@midas-capital/types';
+import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { SupportedAsset } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
@@ -16,7 +16,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { TxStep } from '@ui/types/ComponentPropsType';
+import type { TxStep } from '@ui/types/ComponentPropsType';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
@@ -27,9 +27,9 @@ const ClaimableToken = ({
   claimingRewardTokens,
   rewardChainId,
 }: {
+  claimingRewardTokens: string[];
   data: FlywheelClaimableRewards;
   onClaim: () => void;
-  claimingRewardTokens: string[];
   rewardChainId: string;
 }) => {
   const { currentChain } = useMultiMidas();
@@ -77,8 +77,8 @@ const ClaimableToken = ({
             width="fit-content"
           >
             {dynamicFormatter(Number(totalRewardsString), {
-              minimumFractionDigits: 4,
               maximumFractionDigits: 8,
+              minimumFractionDigits: 4,
             })}
           </Text>
         </SimpleTooltip>
@@ -148,9 +148,9 @@ const ClaimRewardsModal = ({
   claimableRewards,
   refetch,
 }: {
+  claimableRewards: { [chainId: string]: FlywheelClaimableRewards[] };
   isOpen: boolean;
   onClose: () => void;
-  claimableRewards: { [chainId: string]: FlywheelClaimableRewards[] };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: () => Promise<any>;
 }) => {
@@ -186,9 +186,9 @@ const ClaimRewardsModal = ({
         _assetPerRewardToken[reward.rewardToken] = asset;
 
         _steps.push({
-          title: `Claim ${asset?.symbol}`,
           desc: `Claims ${asset?.symbol} rewards from Midas`,
           done: false,
+          title: `Claim ${asset?.symbol}`,
         });
       });
 
@@ -211,8 +211,8 @@ const ClaimRewardsModal = ({
             .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true]);
 
           addRecentTransaction({
-            hash: tx.hash,
             description: `${_assetPerRewardToken[reward.rewardToken]?.symbol} Reward Claim`,
+            hash: tx.hash,
           });
 
           _steps[index] = {
@@ -239,7 +239,7 @@ const ClaimRewardsModal = ({
             contextName: 'Claiming rewards',
             properties: sentryProperties,
           };
-          handleGenericError({ error, toast: errorToast, sentryInfo });
+          handleGenericError({ error, sentryInfo, toast: errorToast });
           setFailedStep(index + 1);
         }
       }

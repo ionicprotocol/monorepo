@@ -10,7 +10,6 @@ const chainAssets = chainIdToConfig[SupportedChains.bsc].assets.filter(
 );
 
 const MAI = assetFilter(chainAssets, assetSymbols.MAI);
-const HAY = assetFilter(chainAssets, assetSymbols.HAY);
 const chainLinkSupportedAssets = chainAssets.filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2);
 
 // Dia Assets
@@ -22,13 +21,7 @@ const diaAssets: FeedVerifierAsset[] = [
   },
 ];
 
-const uniswapV2Assets: FeedVerifierAsset[] = [
-  {
-    ...HAY,
-    deviationThreshold: 0.01,
-    maxObservationDelay: defaultMaxObservationDelay,
-  },
-];
+const uniswapV2Assets: FeedVerifierAsset[] = [];
 
 const chainLinkAssets: FeedVerifierAsset[] = chainLinkSupportedAssets.map((asset) => {
   return {

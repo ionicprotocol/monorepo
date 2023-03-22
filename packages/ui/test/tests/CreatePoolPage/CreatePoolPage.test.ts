@@ -1,4 +1,4 @@
-import { Dappeteer, DappeteerBrowser, DappeteerPage } from '@chainsafe/dappeteer';
+import type { Dappeteer, DappeteerBrowser, DappeteerPage } from '@chainsafe/dappeteer';
 import dotenv from 'dotenv';
 
 import { JEST_EXE_TIME } from '@ui/test/constants';
@@ -23,9 +23,9 @@ jest.setTimeout(JEST_EXE_TIME);
 describe('Create Pool:', () => {
   beforeAll(async () => {
     [metamask, page, browser] = await TestHelper.initDappeteer({
+      chainId,
       networkName,
       rpc,
-      chainId,
       symbol,
     });
 

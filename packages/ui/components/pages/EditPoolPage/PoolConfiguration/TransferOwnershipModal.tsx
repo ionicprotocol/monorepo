@@ -13,9 +13,9 @@ const TransferOwnershipModal = ({
   onClose,
   comptrollerAddress,
 }: {
+  comptrollerAddress: string;
   isOpen: boolean;
   onClose: () => void;
-  comptrollerAddress: string;
 }) => {
   const { currentSdk } = useMultiMidas();
   const successToast = useSuccessToast();
@@ -49,7 +49,7 @@ const TransferOwnershipModal = ({
         contextName: 'Transferring ownership',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsTransferring(false);
       setInputAddress('');
