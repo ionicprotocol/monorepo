@@ -67,7 +67,6 @@ export type StaticContracts = {
   FusePoolLens: FusePoolLens;
   FusePoolLensSecondary: FusePoolLensSecondary;
   FuseSafeLiquidator: FuseSafeLiquidator;
-  OptimizedVaultsRegistry: OptimizedVaultsRegistry;
   [contractName: string]: Contract;
 };
 
@@ -157,11 +156,6 @@ export class MidasBase {
         MidasFlywheelLensRouterABI,
         this.provider
       ) as MidasFlywheelLensRouter,
-      OptimizedVaultsRegistry: new Contract(
-        this.chainDeployment.OptimizedVaultsRegistry.address,
-        OptimizedVaultsRegistryABI,
-        this.provider
-      ) as OptimizedVaultsRegistry,
       ...this._contracts,
     };
   }

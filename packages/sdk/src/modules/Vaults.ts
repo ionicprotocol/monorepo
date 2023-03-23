@@ -1,7 +1,9 @@
 import { FundOperationMode, VaultData } from "@midas-capital/types";
-import { BigNumber, constants, ContractTransaction, utils } from "ethers";
+import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
+import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
@@ -10,7 +12,13 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
       try {
-        const vaults = await this.contracts.OptimizedVaultsRegistry.callStatic.getAllVaults();
+        const optimizedVaultsRegistry = new Contract(
+          this.chainDeployment.OptimizedVaultsRegistry.address,
+          OptimizedVaultsRegistryABI,
+          this.provider
+        ) as OptimizedVaultsRegistry;
+
+        const vaults = await optimizedVaultsRegistry.callStatic.getAllVaults();
 
         return await Promise.all(
           vaults.map(async (vault) => {
