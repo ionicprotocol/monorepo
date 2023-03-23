@@ -42,7 +42,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 (ass) => ass.underlying === asset
               );
 
-              let extraDocs: string | undefined = undefined;
+              let extraDocs: string | undefined;
 
               if (_asset) {
                 symbol = _asset.symbol;

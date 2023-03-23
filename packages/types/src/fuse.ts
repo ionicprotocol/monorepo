@@ -112,5 +112,5 @@ export interface VaultData {
   decimals: number;
   underlyingPrice: BigNumber;
   vault: string;
-  extraDocs?: string;
+  extraDocs: string | undefined;
 }
