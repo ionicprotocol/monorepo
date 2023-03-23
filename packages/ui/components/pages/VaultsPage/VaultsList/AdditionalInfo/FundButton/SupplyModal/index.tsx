@@ -303,7 +303,6 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
                 amount={amount}
                 failedStep={failedStep}
                 isSupplying={isSupplying}
-                poolChainId={Number(vault.chainId)}
                 steps={confirmedSteps}
                 vault={vault}
               />

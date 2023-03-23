@@ -141,5 +141,17 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
 
       return updatedVault;
     }
+
+    async getMaxWithdrawVault(vault: string) {
+      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
+
+      return await optimizedAPRVault.callStatic.maxWithdraw(await this.signer.getAddress());
+    }
+
+    async getMaxDepositVault(vault: string) {
+      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
+
+      return await optimizedAPRVault.callStatic.maxDeposit(await this.signer.getAddress());
+    }
   };
 }

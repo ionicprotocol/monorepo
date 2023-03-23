@@ -9,8 +9,8 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMaxDepositVault } from '@ui/hooks/useMaxDepositVault';
 import { useErrorToast } from '@ui/hooks/useToast';
-import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
@@ -27,6 +27,7 @@ export const AmountInput = ({
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();
+  const { data: maxDepositVault } = useMaxDepositVault(vault.vault);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -37,7 +38,10 @@ export const AmountInput = ({
     }
     try {
       setUserEnteredAmount(newAmount);
-      const bigAmount = utils.parseUnits(toFixedNoRound(newAmount, vault.decimals), vault.decimals);
+      const bigAmount = utils.parseUnits(
+        toFixedNoRound(newAmount, Number(vault.decimals)),
+        Number(vault.decimals)
+      );
       setAmount(bigAmount);
     } catch (e) {
       setAmount(constants.Zero);
@@ -45,7 +49,7 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !maxDepositVault) return;
 
     setIsLoading(true);
 
@@ -54,7 +58,7 @@ export const AmountInput = ({
       if (optionToWrap) {
         maxBN = await currentSdk.signer.getBalance();
       } else {
-        maxBN = await fetchTokenBalance(vault.asset, currentSdk, address);
+        maxBN = maxDepositVault;
       }
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
@@ -68,10 +72,11 @@ export const AmountInput = ({
     } catch (error) {
       const sentryProperties = {
         asset: vault.asset,
+        chainId: vault.chainId,
         vault: vault.vault,
       };
       const sentryInfo = {
-        contextName: 'Fetching max vault supply amount',
+        contextName: 'Fetching max supply vault',
         properties: sentryProperties,
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });

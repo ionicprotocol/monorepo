@@ -16,7 +16,6 @@ export const PendingTransaction = ({
   failedStep,
   steps,
   isSupplying,
-  poolChainId,
   amount,
   vault,
 }: {
@@ -24,7 +23,6 @@ export const PendingTransaction = ({
   amount: BigNumber;
   failedStep: number;
   isSupplying: boolean;
-  poolChainId: number;
   steps: TxStep[];
   vault: VaultData;
 }) => {
@@ -73,7 +71,7 @@ export const PendingTransaction = ({
           activeStep={activeStep}
           failedStep={failedStep}
           isLoading={isSupplying}
-          poolChainId={poolChainId}
+          poolChainId={Number(vault.chainId)}
           steps={steps}
         />
       </Box>

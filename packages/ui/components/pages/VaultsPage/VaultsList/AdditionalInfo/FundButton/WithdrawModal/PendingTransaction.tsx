@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
+import type { VaultData } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
@@ -9,37 +10,33 @@ import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import type { TxStep } from '@ui/types/ComponentPropsType';
-import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const PendingTransaction = ({
   activeStep,
   failedStep,
   steps,
   isWithdrawing,
-  poolChainId,
   amount,
-  asset,
+  vault,
 }: {
   activeStep: number;
   amount: BigNumber;
-  asset: MarketData;
   failedStep: number;
   isWithdrawing: boolean;
-  poolChainId: number;
   steps: TxStep[];
+  vault: VaultData;
 }) => {
-  const amountNum = utils.formatUnits(amount, asset.underlyingDecimals);
+  const amountNum = utils.formatUnits(amount, vault.decimals);
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
   const addToken = useAddTokenToWallet({
     errorToast,
-    logoUrl: asset.logoUrl,
     successToast,
-    underlyingAddress: asset.underlyingToken,
-    underlyingDecimals: Number(asset.underlyingDecimals),
-    underlyingSymbol: asset.underlyingSymbol,
+    underlyingAddress: vault.asset,
+    underlyingDecimals: vault.decimals,
+    underlyingSymbol: vault.symbol,
   });
 
   return (
@@ -53,11 +50,11 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text fontWeight="bold" variant="mdText">
-            You withdrew {amountNum} {asset.underlyingSymbol}
+            You withdrew {amountNum} {vault.symbol}
           </Text>
           <Flex justifyContent="flex-end" width="100%">
             <Button onClick={addToken} size="sm" variant={'ghost'}>
-              Add {asset.underlyingSymbol} to wallet
+              Add {vault.symbol} to wallet
             </Button>
           </Flex>
         </VStack>
@@ -74,7 +71,7 @@ export const PendingTransaction = ({
           activeStep={activeStep}
           failedStep={failedStep}
           isLoading={isWithdrawing}
-          poolChainId={poolChainId}
+          poolChainId={Number(vault.chainId)}
           steps={steps}
         />
       </Box>

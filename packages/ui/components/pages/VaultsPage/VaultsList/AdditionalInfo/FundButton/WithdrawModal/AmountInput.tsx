@@ -1,4 +1,5 @@
 import { Box, Button, Input } from '@chakra-ui/react';
+import type { VaultData } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';
@@ -8,22 +9,19 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import type { MarketData } from '@ui/types/TokensDataMap';
+import { useMaxWithdrawVault } from '@ui/hooks/useMaxWithdrawVault';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const AmountInput = ({
-  asset,
-  poolChainId,
   setAmount,
+  vault,
 }: {
-  asset: MarketData;
-  poolChainId: number;
   setAmount: (amount: BigNumber) => void;
+  vault: VaultData;
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
-  const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(asset, poolChainId);
+  const { data: maxWithdrawVault, isLoading } = useMaxWithdrawVault(vault.vault);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -35,8 +33,8 @@ export const AmountInput = ({
     try {
       setUserEnteredAmount(newAmount);
       const bigAmount = utils.parseUnits(
-        toFixedNoRound(newAmount, Number(asset.underlyingDecimals)),
-        Number(asset.underlyingDecimals)
+        toFixedNoRound(newAmount, Number(vault.decimals)),
+        Number(vault.decimals)
       );
       setAmount(bigAmount);
     } catch (e) {
@@ -45,12 +43,12 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address || !maxWithdrawAmount) return;
+    if (!currentSdk || !address || !maxWithdrawVault) return;
 
-    if (maxWithdrawAmount.lt(constants.Zero) || maxWithdrawAmount.isZero()) {
+    if (maxWithdrawVault.lte(constants.Zero)) {
       updateAmount('');
     } else {
-      const str = utils.formatUnits(maxWithdrawAmount, asset.underlyingDecimals);
+      const str = utils.formatUnits(maxWithdrawVault, vault.decimals);
       updateAmount(str);
     }
   };
@@ -73,16 +71,10 @@ export const AmountInput = ({
         <Row crossAxisAlignment="center" flexShrink={0} mainAxisAlignment="flex-start">
           <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
             <Box height={8} mr={1} width={8}>
-              <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="sm" />
+              <TokenIcon address={vault.asset} chainId={Number(vault.chainId)} size="sm" />
             </Box>
-            <EllipsisText
-              fontWeight="bold"
-              maxWidth="80px"
-              mr={2}
-              size="md"
-              tooltip={asset.underlyingSymbol}
-            >
-              {asset.underlyingSymbol}
+            <EllipsisText fontWeight="bold" maxWidth="80px" mr={2} size="md" tooltip={vault.symbol}>
+              {vault.symbol}
             </EllipsisText>
           </Row>
           <Button

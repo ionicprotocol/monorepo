@@ -10,6 +10,7 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
+import type { VaultData } from '@midas-capital/types';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
@@ -25,67 +26,54 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { WITHDRAW_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import type { TxStep } from '@ui/types/ComponentPropsType';
-import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { StatsColumn } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/index';
 import { AmountInput } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/AmountInput';
 import { Balance } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/Balance';
 
 interface WithdrawModalProps {
-  asset: MarketData;
-  assets: MarketData[];
-  comptrollerAddress: string;
   isOpen: boolean;
   onClose: () => void;
-  poolChainId: number;
+  vault: VaultData;
 }
 
-export const WithdrawModal = ({
-  isOpen,
-  asset,
-  assets,
-  onClose,
-  poolChainId,
-  comptrollerAddress,
-}: WithdrawModalProps) => {
+export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) => {
   const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
 
-  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
+  const { data: tokenData } = useTokenData(vault.asset, Number(vault.chainId));
   const [btnStr, setBtnStr] = useState<string>('Withdraw');
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const { cCard } = useColors();
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [steps, setSteps] = useState<TxStep[]>([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
+  const [steps, setSteps] = useState<TxStep[]>([
+    ...WITHDRAW_STEPS(tokenData?.symbol || vault.symbol),
+  ]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
   const successToast = useSuccessToast();
-  const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(asset, poolChainId);
 
   useEffect(() => {
-    if (amount.isZero() || !maxWithdrawAmount) {
+    if (amount.isZero()) {
       setIsAmountValid(false);
     } else {
-      setIsAmountValid(amount.lte(maxWithdrawAmount));
+      setIsAmountValid(true);
     }
-  }, [amount, maxWithdrawAmount]);
+  }, [amount]);
 
   useEffect(() => {
     if (amount.isZero()) {
       setBtnStr('Enter a valid amount to withdraw');
-    } else if (isLoading) {
-      setBtnStr(`Loading available balance of ${asset.underlyingSymbol}...`);
     } else {
       if (isAmountValid) {
         setBtnStr('Withdraw');
@@ -93,10 +81,10 @@ export const WithdrawModal = ({
         setBtnStr(`You cannot withdraw this much!`);
       }
     }
-  }, [amount, isLoading, isAmountValid, asset.underlyingSymbol]);
+  }, [amount, isAmountValid]);
 
   const onConfirm = async () => {
-    if (!currentSdk || !address || !maxWithdrawAmount) return;
+    if (!currentSdk || !address) return;
 
     setIsConfirmed(true);
     const _steps = [...steps];
@@ -106,19 +94,14 @@ export const WithdrawModal = ({
       setActiveStep(1);
       setFailedStep(0);
 
-      let resp;
-      if (maxWithdrawAmount.eq(amount)) {
-        resp = await currentSdk.withdraw(asset.cToken, constants.MaxUint256);
-      } else {
-        resp = await currentSdk.withdraw(asset.cToken, amount);
-      }
+      const resp = await currentSdk.vaultWithdraw(vault.vault, amount);
 
       if (resp.errorCode !== null) {
         WithdrawError(resp.errorCode);
       } else {
         const tx = resp.tx;
         addRecentTransaction({
-          description: `${asset.underlyingSymbol} Token Withdraw`,
+          description: `${tokenData?.symbol || vault.symbol} Token Withdraw`,
           hash: tx.hash,
         });
         _steps[0] = {
@@ -137,8 +120,8 @@ export const WithdrawModal = ({
         };
         setSteps([..._steps]);
         successToast({
-          description: 'Successfully borrowed!',
-          id: 'Borrow',
+          description: 'Successfully withdrew!',
+          id: 'Withdraw',
         });
       }
     } catch (error) {
@@ -146,9 +129,9 @@ export const WithdrawModal = ({
 
       const sentryProperties = {
         amount,
-        chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
-        token: asset.cToken,
+        asset: vault.asset,
+        chainId: vault.chainId,
+        vault: vault.vault,
       };
       const sentryInfo = {
         contextName: 'Withdrawing',
@@ -172,7 +155,7 @@ export const WithdrawModal = ({
         if (!isWithdrawing) {
           setAmount(constants.Zero);
           setIsConfirmed(false);
-          setSteps([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
+          setSteps([...WITHDRAW_STEPS(tokenData?.symbol || vault.symbol)]);
         }
       }}
     >
@@ -192,25 +175,24 @@ export const WithdrawModal = ({
               <PendingTransaction
                 activeStep={activeStep}
                 amount={amount}
-                asset={asset}
                 failedStep={failedStep}
                 isWithdrawing={isWithdrawing}
-                poolChainId={poolChainId}
                 steps={steps}
+                vault={vault}
               />
             ) : (
               <>
                 <HStack justifyContent="center" my={4} width="100%">
                   <Text variant="title">Withdraw</Text>
                   <Box height="36px" mx={2} width="36px">
-                    <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
+                    <TokenIcon address={vault.asset} chainId={Number(vault.chainId)} size="36" />
                   </Box>
                   <EllipsisText
                     maxWidth="100px"
-                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    tooltip={tokenData?.symbol || vault.symbol}
                     variant="title"
                   >
-                    {tokenData?.symbol || asset.underlyingSymbol}
+                    {tokenData?.symbol || vault.symbol}
                   </EllipsisText>
                 </HStack>
 
@@ -224,18 +206,12 @@ export const WithdrawModal = ({
                   width="100%"
                 >
                   <Column gap={1} width="100%">
-                    <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
+                    <AmountInput setAmount={setAmount} vault={vault} />
 
-                    <Balance asset={asset} poolChainId={poolChainId} />
+                    <Balance vault={vault} />
                   </Column>
 
-                  <StatsColumn
-                    amount={amount}
-                    asset={asset}
-                    assets={assets}
-                    mode={FundOperationMode.WITHDRAW}
-                    poolChainId={poolChainId}
-                  />
+                  <StatsColumn amount={amount} mode={FundOperationMode.WITHDRAW} vault={vault} />
                   <Button
                     height={16}
                     id="confirmWithdraw"
