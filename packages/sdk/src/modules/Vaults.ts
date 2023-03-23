@@ -1,4 +1,4 @@
-import { FundOperationMode, VaultData } from "@midas-capital/types";
+import { FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
 import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
@@ -11,63 +11,67 @@ import { CreateContractsModule } from "./CreateContracts";
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
-      try {
-        const optimizedVaultsRegistry = new Contract(
-          this.chainDeployment.OptimizedVaultsRegistry.address,
-          OptimizedVaultsRegistryABI,
-          this.provider
-        ) as OptimizedVaultsRegistry;
+      if (this.chainId === SupportedChains.chapel) {
+        try {
+          const optimizedVaultsRegistry = new Contract(
+            this.chainDeployment.OptimizedVaultsRegistry.address,
+            OptimizedVaultsRegistryABI,
+            this.provider
+          ) as OptimizedVaultsRegistry;
 
-        const vaults = await optimizedVaultsRegistry.callStatic.getAllVaults();
+          const vaults = await optimizedVaultsRegistry.callStatic.getAllVaults();
 
-        return await Promise.all(
-          vaults.map(async (vault) => {
-            const optimizedAPRVault = this.createOptimizedAPRVault(vault);
-            const mpo = this.createMasterPriceOracle();
+          return await Promise.all(
+            vaults.map(async (vault) => {
+              const optimizedAPRVault = this.createOptimizedAPRVault(vault);
+              const mpo = this.createMasterPriceOracle();
 
-            const [asset, symbol, totalSupply, supplyApy, adapterCount, emergencyExit, decimals] = await Promise.all([
-              optimizedAPRVault.callStatic.asset(),
-              optimizedAPRVault.callStatic.symbol(),
-              optimizedAPRVault.callStatic.estimatedTotalAssets(),
-              optimizedAPRVault.callStatic.supplyAPY(constants.Zero),
-              optimizedAPRVault.callStatic.adapterCount(),
-              optimizedAPRVault.callStatic.emergencyExit(),
-              optimizedAPRVault.callStatic.decimals(),
-            ]);
+              const [asset, symbol, totalSupply, supplyApy, adapterCount, emergencyExit, decimals] = await Promise.all([
+                optimizedAPRVault.callStatic.asset(),
+                optimizedAPRVault.callStatic.symbol(),
+                optimizedAPRVault.callStatic.estimatedTotalAssets(),
+                optimizedAPRVault.callStatic["estimatedAPR()"](), // TODO: replace supplyAPY()
+                optimizedAPRVault.callStatic.adapterCount(),
+                optimizedAPRVault.callStatic.emergencyExit(),
+                optimizedAPRVault.callStatic.decimals(),
+              ]);
 
-            const adapters =
-              adapterCount > 0
-                ? await Promise.all(
-                    Array.from(Array(adapterCount).keys()).map((i) => optimizedAPRVault.callStatic.adapters(i))
-                  )
-                : [];
+              const adapters =
+                adapterCount > 0
+                  ? await Promise.all(
+                      Array.from(Array(adapterCount).keys()).map((i) => optimizedAPRVault.callStatic.adapters(i))
+                    )
+                  : [];
 
-            const underlyingPrice = await mpo.callStatic.price(asset);
-            const totalSupplyNative =
-              Number(utils.formatUnits(totalSupply, decimals)) * Number(utils.formatUnits(underlyingPrice, 18));
+              const underlyingPrice = await mpo.callStatic.price(asset);
+              const totalSupplyNative =
+                Number(utils.formatUnits(totalSupply, decimals)) * Number(utils.formatUnits(underlyingPrice, 18));
 
-            return {
-              vault,
-              chainId: this.chainId,
-              totalSupply,
-              totalSupplyNative,
-              asset,
-              symbol,
-              supplyApy,
-              adapterCount,
-              emergencyExit,
-              adapters,
-              decimals,
-              underlyingPrice,
-            };
-          })
-        );
-      } catch (error) {
-        this.logger.error(`get vaults error in chain ${this.chainId}:  ${error}`);
+              return {
+                vault,
+                chainId: this.chainId,
+                totalSupply,
+                totalSupplyNative,
+                asset,
+                symbol,
+                supplyApy,
+                adapterCount,
+                emergencyExit,
+                adapters,
+                decimals,
+                underlyingPrice,
+              };
+            })
+          );
+        } catch (error) {
+          this.logger.error(`get vaults error in chain ${this.chainId}:  ${error}`);
 
-        throw Error(
-          `Getting vaults failed in chain ${this.chainId}: ` + (error instanceof Error ? error.message : error)
-        );
+          throw Error(
+            `Getting vaults failed in chain ${this.chainId}: ` + (error instanceof Error ? error.message : error)
+          );
+        }
+      } else {
+        return [];
       }
     }
 
