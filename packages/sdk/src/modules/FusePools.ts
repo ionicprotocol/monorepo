@@ -31,7 +31,7 @@ export type LensPoolsWithData = [
   errors: boolean[]
 ];
 
-const ChainSupportedAssets: ChainSupportedAssetsType = {
+export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.bsc]: bsc.assets,
   [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: ganache.assets,
