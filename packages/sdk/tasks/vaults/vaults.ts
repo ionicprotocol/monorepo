@@ -55,7 +55,7 @@ task("optimized-vault:deploy")
       deposit: 0,
       withdrawal: 0,
       management: 0,
-      performance: 0,
+      performance: 0, // TODO
     };
 
     // start with an even allocations distribution
@@ -74,6 +74,8 @@ task("optimized-vault:deploy")
       })
     );
 
+    const registry = await ethers.getContract("OptimizedVaultsRegistry");
+
     const optimizedVault = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
       contract: "OptimizedAPRVault",
       from: deployer,
@@ -81,7 +83,7 @@ task("optimized-vault:deploy")
       proxy: {
         execute: {
           init: {
-            methodName: "initialize",
+            methodName: "initializeWithRegistry",
             args: [
               assetAddress,
               tenAdapters, // initial adapters
@@ -89,7 +91,14 @@ task("optimized-vault:deploy")
               fees,
               deployer, // fee recipient
               constants.MaxUint256, // deposit limit
-              deployer, // owner
+              deployer, // owner,
+              registry.address
+            ],
+          },
+          onUpgrade: {
+            methodName: "reinitialize",
+            args: [
+              registry.address
             ],
           },
         },
@@ -113,6 +122,8 @@ task("optimized-adapters:deploy")
     const chainId = await getChainId();
     const { config: deployConfig }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
+    const registry = await ethers.getContract("OptimizedVaultsRegistry");
+
     console.log(`Deploying an ERC4626 for market ${marketAddress}`);
     const marketERC4626Deployment = await deployments.deploy(`CompoundMarketERC4626_${marketAddress}`, {
       contract: "CompoundMarketERC4626",
@@ -124,6 +135,12 @@ task("optimized-adapters:deploy")
             methodName: "initialize",
             args: [marketAddress, deployConfig.blocksPerYear],
           },
+          onUpgrade: {
+            methodName: "reinitialize",
+            args: [
+              registry.address
+            ],
+          }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
         owner: deployer,
