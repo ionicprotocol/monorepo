@@ -33,7 +33,7 @@
       "address": "0xF1264D7F0F88ae2EfE5f83Ce37E949e60d6a84d1"
     },
     "CompoundMarketERC4626_0xc436c7848C6144cf04fa241ac8311864F8572ed3_Implementation": {
-      "address": "0x4b4FED36346D9a7F25C4ECCCC65D10f1ed814D00"
+      "address": "0x2F475CbCdeDbCcb010aF1a7A2E49DC7AadE5c423"
     },
     "CompoundMarketERC4626_0xc436c7848C6144cf04fa241ac8311864F8572ed3_Proxy": {
       "address": "0xF1264D7F0F88ae2EfE5f83Ce37E949e60d6a84d1"
@@ -42,7 +42,7 @@
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
     },
     "CompoundMarketERC4626_0xddA148e5917A1c2DCfF98139aBBaa41636840830_Implementation": {
-      "address": "0x923fcFd41e755DfECD8CA36a5e53AA05Ea1c357f"
+      "address": "0x58d7840319ab12fFE1f4A43741F6ad30288DD3Ad"
     },
     "CompoundMarketERC4626_0xddA148e5917A1c2DCfF98139aBBaa41636840830_Proxy": {
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
@@ -138,7 +138,7 @@
       "address": "0x489B57744223e80Fbd5a7C4dD45F9fbd04333962"
     },
     "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd_Implementation": {
-      "address": "0x2a664207F499496498546aDc9B73d5663171e5D4"
+      "address": "0x1cCb35F33096a116D498f2745aef1303B5450363"
     },
     "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd_Proxy": {
       "address": "0x489B57744223e80Fbd5a7C4dD45F9fbd04333962"
