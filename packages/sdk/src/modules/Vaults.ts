@@ -7,6 +7,7 @@ import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry
 import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
+import { ChainSupportedAssets } from "./FusePools";
 
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
@@ -26,15 +27,28 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
               const optimizedAPRVault = this.createOptimizedAPRVault(vault);
               const mpo = this.createMasterPriceOracle();
 
-              const [asset, symbol, totalSupply, supplyApy, adapterCount, emergencyExit, decimals] = await Promise.all([
+              const [asset, totalSupply, supplyApy, adapterCount, emergencyExit] = await Promise.all([
                 optimizedAPRVault.callStatic.asset(),
-                optimizedAPRVault.callStatic.symbol(),
                 optimizedAPRVault.callStatic.estimatedTotalAssets(),
-                optimizedAPRVault.callStatic["estimatedAPR()"](), // TODO: replace supplyAPY()
+                optimizedAPRVault.callStatic.supplyAPY(0),
                 optimizedAPRVault.callStatic.adapterCount(),
                 optimizedAPRVault.callStatic.emergencyExit(),
-                optimizedAPRVault.callStatic.decimals(),
               ]);
+
+              const cToken = this.createCTokenWithExtensions(asset);
+              let [symbol, decimals] = await Promise.all([cToken.callStatic.symbol(), cToken.callStatic.decimals()]);
+
+              const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+                (ass) => ass.underlying === asset
+              );
+
+              let extraDocs: string | undefined;
+
+              if (_asset) {
+                symbol = _asset.symbol;
+                decimals = _asset.decimals;
+                extraDocs = _asset.extraDocs;
+              }
 
               const adapters =
                 adapterCount > 0
@@ -60,6 +74,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 adapters,
                 decimals,
                 underlyingPrice,
+                extraDocs,
               };
             })
           );
