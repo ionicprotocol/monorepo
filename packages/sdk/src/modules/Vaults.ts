@@ -30,7 +30,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 optimizedAPRVault.callStatic.asset(),
                 optimizedAPRVault.callStatic.symbol(),
                 optimizedAPRVault.callStatic.estimatedTotalAssets(),
-                optimizedAPRVault.callStatic["estimatedAPR()"](), // TODO: replace supplyAPY()
+                optimizedAPRVault.callStatic.supplyAPY(0),
                 optimizedAPRVault.callStatic.adapterCount(),
                 optimizedAPRVault.callStatic.emergencyExit(),
                 optimizedAPRVault.callStatic.decimals(),
