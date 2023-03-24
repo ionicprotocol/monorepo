@@ -664,6 +664,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
+  const ovr = await ethers.getContract("OptimizedVaultsRegistry");
+  const ovrAddress = await addressesProvider.callStatic.getAddress("OptimizedVaultsRegistry");
+  if (ovrAddress !== ovr.address) {
+    tx = await addressesProvider.setAddress("OptimizedVaultsRegistry", ovr.address);
+    await tx.wait();
+    console.log("setAddress OptimizedVaultsRegistry: ", tx.hash);
+  }
+
   await configureAddressesProviderStrategies({
     ethers,
     getNamedAccounts,
