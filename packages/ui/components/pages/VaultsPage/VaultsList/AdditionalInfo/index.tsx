@@ -149,7 +149,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                   <CaptionedStat
                     caption={'Admin Fee'}
                     crossAxisAlignment="center"
-                    stat={'10%'}
+                    stat={`${utils.formatUnits(vault.performanceFee)}%`}
                     tooltip={ADMIN_FEE_TOOLTIP}
                   />
                 </Grid>

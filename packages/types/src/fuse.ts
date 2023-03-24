@@ -113,4 +113,5 @@ export interface VaultData {
   underlyingPrice: BigNumber;
   vault: string;
   extraDocs: string | undefined;
+  performanceFee: BigNumber;
 }

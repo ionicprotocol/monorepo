@@ -27,13 +27,15 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
               const optimizedAPRVault = this.createOptimizedAPRVault(vault);
               const mpo = this.createMasterPriceOracle();
 
-              const [asset, totalSupply, supplyApy, adapterCount, emergencyExit] = await Promise.all([
-                optimizedAPRVault.callStatic.asset(),
-                optimizedAPRVault.callStatic.estimatedTotalAssets(),
-                optimizedAPRVault.callStatic.supplyAPY(0),
-                optimizedAPRVault.callStatic.adapterCount(),
-                optimizedAPRVault.callStatic.emergencyExit(),
-              ]);
+              const [asset, totalSupply, supplyApy, adapterCount, emergencyExit, { performance: performanceFee }] =
+                await Promise.all([
+                  optimizedAPRVault.callStatic.asset(),
+                  optimizedAPRVault.callStatic.estimatedTotalAssets(),
+                  optimizedAPRVault.callStatic.supplyAPY(0),
+                  optimizedAPRVault.callStatic.adapterCount(),
+                  optimizedAPRVault.callStatic.emergencyExit(),
+                  optimizedAPRVault.callStatic.fees(),
+                ]);
 
               const cToken = this.createCTokenWithExtensions(asset);
               let [symbol, decimals] = await Promise.all([cToken.callStatic.symbol(), cToken.callStatic.decimals()]);
@@ -75,6 +77,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 decimals,
                 underlyingPrice,
                 extraDocs,
+                performanceFee,
               };
             })
           );
