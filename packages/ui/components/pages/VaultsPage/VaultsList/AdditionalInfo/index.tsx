@@ -16,6 +16,7 @@ import type { VaultData } from '@midas-capital/types';
 import { FundOperationMode } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
+import { utils } from 'ethers';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -31,13 +32,14 @@ import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
 
 export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
-  const chainId = Number(row.original.vault.chainId);
+  const vault: VaultData = row.original.vault;
+
+  const chainId = Number(vault.chainId);
 
   const [scanUrl, chainConfig] = useMemo(
     () => [getScanUrlByChainId(chainId), getChainConfig(chainId)],
     [chainId]
   );
-  const vault: VaultData = row.original.vault;
 
   const { currentChain } = useMultiMidas();
   const windowWidth = useWindowSize();
@@ -138,7 +140,11 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                     crossAxisAlignment="center"
                     stat={smallUsdFormatter(vault.totalSupplyNative * usdPrice)}
                   />
-                  <CaptionedStat caption={'APY'} crossAxisAlignment="center" stat={'5%'} />
+                  <CaptionedStat
+                    caption={'APY'}
+                    crossAxisAlignment="center"
+                    stat={`${utils.formatUnits(vault.supplyApy)}%`}
+                  />
                   <CaptionedStat caption={'Daily'} crossAxisAlignment="center" stat={'0.05%'} />
                   <CaptionedStat
                     caption={'Admin Fee'}
