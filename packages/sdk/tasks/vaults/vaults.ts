@@ -1,4 +1,4 @@
-import { constants } from "ethers";
+import { BigNumber, constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
@@ -55,12 +55,12 @@ task("optimized-vault:deploy")
       deposit: 0,
       withdrawal: 0,
       management: 0,
-      performance: 0, // TODO
+      performance: BigNumber.from("5e16"), // 1e18 == 100%, 5e16 = 5%
     };
 
     // start with an even allocations distribution
     const adaptersAddressesArray = adaptersAddresses.split(",");
-    const adapters = adaptersAddressesArray.map((adapterAddress) => {
+    const adapters = adaptersAddressesArray.map((adapterAddress: string) => {
       return {
         adapter: adapterAddress,
         allocation: constants.WeiPerEther.div(adaptersAddressesArray.length),
@@ -92,14 +92,12 @@ task("optimized-vault:deploy")
               deployer, // fee recipient
               constants.MaxUint256, // deposit limit
               deployer, // owner,
-              registry.address
+              registry.address,
             ],
           },
           onUpgrade: {
             methodName: "reinitialize",
-            args: [
-              registry.address
-            ],
+            args: [registry.address],
           },
         },
         proxyContract: "OpenZeppelinTransparentProxy",
@@ -119,7 +117,7 @@ task("optimized-adapters:deploy")
   .addParam("marketAddress", "Address of the market that the adapter will deposit to", undefined, types.string)
   .setAction(async ({ marketAddress }, { ethers, getChainId, deployments, run, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const chainId = await getChainId();
+    const chainId = parseInt(await getChainId());
     const { config: deployConfig }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
     const registry = await ethers.getContract("OptimizedVaultsRegistry");
@@ -137,10 +135,8 @@ task("optimized-adapters:deploy")
           },
           onUpgrade: {
             methodName: "reinitialize",
-            args: [
-              registry.address
-            ],
-          }
+            args: [registry.address],
+          },
         },
         proxyContract: "OpenZeppelinTransparentProxy",
         owner: deployer,
