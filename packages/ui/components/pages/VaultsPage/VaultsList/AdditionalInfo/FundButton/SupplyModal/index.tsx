@@ -25,7 +25,7 @@ import { SupplyError } from '@ui/components/pages/VaultsPage/VaultsList/Addition
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { SUPPLY_STEPS } from '@ui/constants/index';
+import { VAULT_SUPPLY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -60,7 +60,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Supply');
   const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
-  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(vault.symbol)]);
+  const [steps, setSteps] = useState<TxStep[]>([...VAULT_SUPPLY_STEPS(vault.symbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
@@ -253,7 +253,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
     if (!isSupplying) {
       setAmount(constants.Zero);
       setIsConfirmed(false);
-      let _steps = [...SUPPLY_STEPS(vault.symbol)];
+      let _steps = [...VAULT_SUPPLY_STEPS(vault.symbol)];
 
       if (optionToWrap) {
         _steps = [
@@ -267,7 +267,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
   };
 
   useEffect(() => {
-    let _steps = [...SUPPLY_STEPS(vault.symbol)];
+    let _steps = [...VAULT_SUPPLY_STEPS(vault.symbol)];
 
     if (optionToWrap) {
       _steps = [{ desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' }, ..._steps];

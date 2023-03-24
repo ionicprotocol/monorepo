@@ -11,6 +11,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxDepositVault } from '@ui/hooks/useMaxDepositVault';
 import { useErrorToast } from '@ui/hooks/useToast';
+import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
@@ -28,6 +29,7 @@ export const AmountInput = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();
   const { data: maxDepositVault } = useMaxDepositVault(vault.vault);
+  const { data: myBalance } = useTokenBalance(vault.asset);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -49,7 +51,7 @@ export const AmountInput = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address || !maxDepositVault) return;
+    if (!currentSdk || !address || !maxDepositVault || !myBalance) return;
 
     setIsLoading(true);
 
@@ -58,8 +60,10 @@ export const AmountInput = ({
       if (optionToWrap) {
         maxBN = await currentSdk.signer.getBalance();
       } else {
-        maxBN = maxDepositVault;
+        maxBN = myBalance;
       }
+
+      maxBN = maxBN.lt(maxDepositVault) ? maxBN : maxDepositVault;
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
