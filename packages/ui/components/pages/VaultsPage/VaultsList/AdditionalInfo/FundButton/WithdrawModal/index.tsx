@@ -23,7 +23,7 @@ import { WithdrawError } from '@ui/components/pages/VaultsPage/VaultsList/Additi
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { WITHDRAW_STEPS } from '@ui/constants/index';
+import { VAULT_WITHDRAW_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -54,7 +54,7 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [steps, setSteps] = useState<TxStep[]>([
-    ...WITHDRAW_STEPS(tokenData?.symbol || vault.symbol),
+    ...VAULT_WITHDRAW_STEPS(tokenData?.symbol || vault.symbol),
   ]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
@@ -155,7 +155,7 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
         if (!isWithdrawing) {
           setAmount(constants.Zero);
           setIsConfirmed(false);
-          setSteps([...WITHDRAW_STEPS(tokenData?.symbol || vault.symbol)]);
+          setSteps([...VAULT_WITHDRAW_STEPS(tokenData?.symbol || vault.symbol)]);
         }
       }}
     >
