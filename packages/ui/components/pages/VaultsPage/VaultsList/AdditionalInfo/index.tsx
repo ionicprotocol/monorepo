@@ -235,7 +235,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                       );
                     })
                   ) : (
-                    <Center>
+                    <Center width="100%">
                       <Spinner />
                     </Center>
                   )}
