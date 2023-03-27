@@ -230,7 +230,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                             </SimpleTooltip>
                           </Stack>
                           <Text>:</Text>
-                          <Text>{info.allocation * 100}%</Text>
+                          <Text fontWeight="bold">{info.allocation * 100}%</Text>
                         </HStack>
                       );
                     })
@@ -266,7 +266,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
               width="100%"
             >
               <Center height="100%">
-                <Spinner />
+                <Text>Historical APY</Text>
               </Center>
             </Box>
           </VStack>
