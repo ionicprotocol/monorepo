@@ -120,7 +120,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
       const response = await optimizedAPRVault.callStatic["deposit(uint256)"](amount);
 
-      if (response.toString() !== "0") {
+      if (!response.eq(amount.mul(utils.parseUnits("1", 9)))) {
         const errorCode = parseInt(response.toString());
 
         return { errorCode };
