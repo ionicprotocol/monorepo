@@ -116,6 +116,6 @@ export interface VaultData {
 export interface Adapter {
   adapter: string;
   allocation: BigNumber;
-  market?: string;
-  comptroller?: string;
+  market: string;
+  comptroller: string;
 }

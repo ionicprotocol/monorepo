@@ -9,28 +9,37 @@ import {
   HStack,
   Link,
   Spinner,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
+import type { Adapter, VaultData } from '@midas-capital/types';
 import { FundOperationMode } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
+import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
 import type { VaultRowData } from '@ui/components/pages/VaultsPage/VaultsList/index';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
+import { GradientText } from '@ui/components/shared/GradientText';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { ADMIN_FEE_TOOLTIP } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useAdaptersInfo } from '@ui/hooks/useAdaptersInfo';
+import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
+
+export interface ComptrollerToPool {
+  [comptroller: string]: { allocation: number; chainId: number; poolId: number; poolName: string };
+}
 
 export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   const vault: VaultData = row.original.vault;
@@ -42,13 +51,16 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
     [chainId]
   );
 
-  const { currentChain } = useMultiMidas();
+  const { currentChain, setGlobalLoading } = useMultiMidas();
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const { cCard } = useColors();
   const { switchNetworkAsync } = useSwitchNetwork();
   const { data: usdPrices } = useAllUsdPrices();
+  const enabledChains = useEnabledChains();
+  const { allPools } = useCrossFusePools([...enabledChains]);
+  const router = useRouter();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[vault.chainId.toString()]) {
       return usdPrices[vault.chainId.toString()].value;
@@ -65,7 +77,27 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
     }
   };
 
-  const { data: adaptersInfo } = useAdaptersInfo(vault.adapters, Number(vault.chainId));
+  const comptrollerToPool = useMemo(() => {
+    const adapters = vault.adapters.reduce((res, adapter) => {
+      res[adapter.comptroller] = adapter;
+
+      return res;
+    }, {} as { [comp: string]: Adapter });
+
+    const _comptrollerToPool: ComptrollerToPool = {};
+    allPools.map((pool) => {
+      if (Object.keys(adapters).includes(pool.comptroller)) {
+        _comptrollerToPool[pool.comptroller] = {
+          allocation: Number(utils.formatUnits(adapters[pool.comptroller].allocation)),
+          chainId: Number(vault.chainId),
+          poolId: pool.id,
+          poolName: pool.name,
+        };
+      }
+    });
+
+    return _comptrollerToPool;
+  }, [allPools, vault.adapters, vault.chainId]);
 
   return (
     <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
@@ -156,15 +188,49 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                     tooltip={ADMIN_FEE_TOOLTIP}
                   />
                 </Grid>
-                <VStack>
+                <VStack alignItems="flex-end">
                   <Text>Vault Composition</Text>
-                  {adaptersInfo && adaptersInfo.length > 0 ? (
-                    adaptersInfo.map((adapter) => {
+                  {Object.values(comptrollerToPool).length > 0 ? (
+                    Object.values(comptrollerToPool).map((info, i) => {
                       return (
-                        <HStack key={adapter.adapter}>
-                          <Text>{adapter.market}</Text>
+                        <HStack key={i}>
+                          <Stack alignItems="flex-end" maxWidth={'300px'} minWidth={'150px'}>
+                            <SimpleTooltip label={info.poolName}>
+                              <Button
+                                as={Link}
+                                height="auto"
+                                m={0}
+                                maxWidth="100%"
+                                minWidth={6}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setGlobalLoading(true);
+                                  router.push(`/${chainId}/pool/${info.poolId}`);
+                                }}
+                                p={0}
+                                variant="_link"
+                                width="fit-content"
+                              >
+                                <Box maxWidth="100%" width="fit-content">
+                                  <GradientText
+                                    _hover={{ color: cCard.borderColor }}
+                                    fontWeight="bold"
+                                    isEnabled={false}
+                                    maxWidth="100%"
+                                    overflow="hidden"
+                                    size="lg"
+                                    textOverflow="ellipsis"
+                                    whiteSpace="nowrap"
+                                    width="fit-content"
+                                  >
+                                    {info.poolName}
+                                  </GradientText>
+                                </Box>
+                              </Button>
+                            </SimpleTooltip>
+                          </Stack>
                           <Text>:</Text>
-                          <Text>{Number(utils.formatUnits(adapter.allocation)) * 100}%</Text>
+                          <Text>{info.allocation * 100}%</Text>
                         </HStack>
                       );
                     })

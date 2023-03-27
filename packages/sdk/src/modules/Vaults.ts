@@ -52,12 +52,28 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 extraDocs = _asset.extraDocs;
               }
 
-              const adapters =
+              const _adapters =
                 adapterCount > 0
                   ? await Promise.all(
                       Array.from(Array(adapterCount).keys()).map((i) => optimizedAPRVault.callStatic.adapters(i))
                     )
                   : [];
+
+              const adapters = await Promise.all(
+                _adapters.map(async (adapter) => {
+                  const adapterInstance = this.createCompoundMarketERC4626(adapter.adapter);
+                  const marketAddress = await adapterInstance.callStatic.market();
+                  const cTokenInstance = this.createCTokenWithExtensions(marketAddress);
+                  const comptrollerAddress = await cTokenInstance.callStatic.comptroller();
+
+                  return {
+                    adapter: adapter.adapter,
+                    allocation: adapter.allocation,
+                    market: marketAddress,
+                    comptroller: comptrollerAddress,
+                  };
+                })
+              );
 
               const underlyingPrice = await mpo.callStatic.price(asset);
               const totalSupplyNative =
@@ -170,23 +186,6 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
 
       return await optimizedAPRVault.callStatic.maxDeposit(await this.signer.getAddress());
-    }
-
-    async getInfoFromAdapters(adapters: Adapter[]): Promise<Adapter[]> {
-      const info = await Promise.all(
-        adapters.map(async (adapter) => {
-          const adapterInstance = this.createCompoundMarketERC4626(adapter.adapter);
-          const marketAddress = await adapterInstance.callStatic.market();
-
-          return {
-            adapter: adapter.adapter,
-            allocation: adapter.allocation,
-            market: marketAddress,
-          };
-        })
-      );
-
-      return info;
     }
   };
 }
