@@ -105,13 +105,17 @@ export interface VaultData {
   supplyApy: BigNumber;
   adapterCount: number;
   emergencyExit: boolean;
-  adapters: {
-    adapter: string;
-    allocation: BigNumber;
-  }[];
+  adapters: Adapter[];
   decimals: number;
   underlyingPrice: BigNumber;
   vault: string;
   extraDocs: string | undefined;
   performanceFee: BigNumber;
+}
+
+export interface Adapter {
+  adapter: string;
+  allocation: BigNumber;
+  market?: string;
+  comptroller?: string;
 }

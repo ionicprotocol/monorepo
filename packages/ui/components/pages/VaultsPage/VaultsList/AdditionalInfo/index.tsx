@@ -24,6 +24,7 @@ import type { VaultRowData } from '@ui/components/pages/VaultsPage/VaultsList/in
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { ADMIN_FEE_TOOLTIP } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useAdaptersInfo } from '@ui/hooks/useAdaptersInfo';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
@@ -63,6 +64,8 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
       openChainModal();
     }
   };
+
+  const { data: adaptersInfo } = useAdaptersInfo(vault.adapters, Number(vault.chainId));
 
   return (
     <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
@@ -155,9 +158,21 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                 </Grid>
                 <VStack>
                   <Text>Vault Composition</Text>
-                  <Text>Midas Pool 1 : 23%</Text>
-                  <Text>Midas Pool 2 : 19%</Text>
-                  <Text>Midas Pool 3 : 37%</Text>
+                  {adaptersInfo && adaptersInfo.length > 0 ? (
+                    adaptersInfo.map((adapter) => {
+                      return (
+                        <HStack key={adapter.adapter}>
+                          <Text>{adapter.market}</Text>
+                          <Text>:</Text>
+                          <Text>{Number(utils.formatUnits(adapter.allocation)) * 100}%</Text>
+                        </HStack>
+                      );
+                    })
+                  ) : (
+                    <Center>
+                      <Spinner />
+                    </Center>
+                  )}
                 </VStack>
               </VStack>
             </Box>

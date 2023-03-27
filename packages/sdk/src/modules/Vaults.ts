@@ -1,4 +1,4 @@
-import { FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
+import { Adapter, FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
 import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
@@ -170,6 +170,23 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
 
       return await optimizedAPRVault.callStatic.maxDeposit(await this.signer.getAddress());
+    }
+
+    async getInfoFromAdapters(adapters: Adapter[]): Promise<Adapter[]> {
+      const info = await Promise.all(
+        adapters.map(async (adapter) => {
+          const adapterInstance = this.createCompoundMarketERC4626(adapter.adapter);
+          const marketAddress = await adapterInstance.callStatic.market();
+
+          return {
+            adapter: adapter.adapter,
+            allocation: adapter.allocation,
+            market: marketAddress,
+          };
+        })
+      );
+
+      return info;
     }
   };
 }

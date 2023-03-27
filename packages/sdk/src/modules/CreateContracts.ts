@@ -3,6 +3,7 @@ import { Contract, ContractInterface } from "ethers";
 import { MidasBaseConstructor } from "..";
 import CErc20DelegateABI from "../../abis/CErc20Delegate";
 import CErc20PluginRewardsDelegateABI from "../../abis/CErc20PluginRewardsDelegate";
+import CompoundMarketERC4626ABI from "../../abis/CompoundMarketERC4626";
 import ComptrollerABI from "../../abis/Comptroller";
 import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
 import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
@@ -14,6 +15,7 @@ import OptimizedAPRVaultABI from "../../abis/OptimizedAPRVault";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
+import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
@@ -82,6 +84,10 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
 
     createOptimizedAPRVault(vaultAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(vaultAddress, OptimizedAPRVaultABI, signerOrProvider) as OptimizedAPRVault;
+    }
+
+    createCompoundMarketERC4626(adapterAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(adapterAddress, CompoundMarketERC4626ABI, signerOrProvider) as CompoundMarketERC4626;
     }
   };
 }
