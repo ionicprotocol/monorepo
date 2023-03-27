@@ -33,7 +33,7 @@ import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
 
@@ -178,7 +178,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                   <CaptionedStat
                     caption={'APY'}
                     crossAxisAlignment="center"
-                    stat={`${utils.formatUnits(vault.supplyApy)}%`}
+                    stat={`${smallFormatter(Number(utils.formatUnits(vault.supplyApy)) * 100)}%`}
                   />
                   <CaptionedStat caption={'Daily'} crossAxisAlignment="center" stat={'0.05%'} />
                   <CaptionedStat
