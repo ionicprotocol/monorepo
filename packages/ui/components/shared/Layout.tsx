@@ -1,5 +1,6 @@
 import { Container } from '@chakra-ui/react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Terms from '@ui/components/pages/Fuse/Modals/Terms';
 import { Column } from '@ui/components/shared/Flex';

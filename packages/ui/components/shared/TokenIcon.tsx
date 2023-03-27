@@ -1,4 +1,5 @@
-import { Avatar, AvatarProps } from '@chakra-ui/avatar';
+import type { AvatarProps } from '@chakra-ui/avatar';
+import { Avatar } from '@chakra-ui/avatar';
 import { SpinnerIcon } from '@chakra-ui/icons';
 import { Icon, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
@@ -10,8 +11,8 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 interface TokenIconProps extends AvatarProps {
   address: string;
   chainId: number;
-  withTooltip?: boolean;
   withMotion?: boolean;
+  withTooltip?: boolean;
 }
 export const TokenIcon = ({
   address,

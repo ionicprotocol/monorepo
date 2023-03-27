@@ -10,14 +10,14 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import { useAssets } from '@ui/hooks/useAssets';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
-import { UseRewardsData } from '@ui/hooks/useRewards';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { UseRewardsData } from '@ui/hooks/useRewards';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface SupplyApyProps {
   asset: MarketData;
-  rewards: UseRewardsData;
   poolChainId: number;
+  rewards: UseRewardsData;
   totalSupplyApyPerAsset?: {
     [market: string]: number;
   } | null;

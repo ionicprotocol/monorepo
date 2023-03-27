@@ -1,4 +1,4 @@
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -15,6 +15,6 @@ export const useAllClaimableRewards = () => {
         return null;
       }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!address && !!currentSdk }
+    { cacheTime: Infinity, enabled: !!address && !!currentSdk, staleTime: Infinity }
   );
 };

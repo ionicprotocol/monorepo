@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from 'ethers';
+import type { BigNumber, BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 
 export const dynamicFormatter = (value: number, options: Intl.NumberFormatOptions) =>
@@ -6,8 +6,8 @@ export const dynamicFormatter = (value: number, options: Intl.NumberFormatOption
 
 export const smallFormatter = (num: number, isCompacted?: boolean) => {
   return dynamicFormatter(num, {
-    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
     notation: isCompacted ? 'compact' : undefined,
   });
 };

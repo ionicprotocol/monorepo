@@ -6,7 +6,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const AmountInput = ({
   asset,
@@ -16,8 +16,8 @@ export const AmountInput = ({
 }: {
   asset: MarketData;
   poolChainId: number;
-  userEnteredAmount: string;
   updateAmount: (amount: string) => void;
+  userEnteredAmount: string;
 }) => {
   const {
     data: { minBorrowAsset },
@@ -63,10 +63,10 @@ export const AmountInput = ({
             </EllipsisText>
           </Row>
           <Button
-            height={{ lg: 8, md: 8, sm: 8, base: 8 }}
+            height={{ base: 8, lg: 8, md: 8, sm: 8 }}
             isLoading={isLoading}
             onClick={setToMin}
-            px={{ lg: 2, md: 2, sm: 2, base: 2 }}
+            px={{ base: 2, lg: 2, md: 2, sm: 2 }}
           >
             MIN
           </Button>

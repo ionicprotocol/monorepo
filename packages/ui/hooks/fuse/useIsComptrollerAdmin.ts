@@ -19,7 +19,7 @@ export const useIsComptrollerAdmin = (
 
       return await comptroller.callStatic.admin();
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress && !!sdk }
+    { cacheTime: Infinity, enabled: !!comptrollerAddress && !!sdk, staleTime: Infinity }
   );
 
   return address === data;

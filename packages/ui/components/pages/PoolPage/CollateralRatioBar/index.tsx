@@ -1,10 +1,11 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
-import { MidasBox, MidasBoxProps } from '@ui/components/shared/Box';
+import type { MidasBoxProps } from '@ui/components/shared/Box';
+import { MidasBox } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 interface CollateralRatioBarProps {

@@ -10,15 +10,15 @@ import {
   neondevnet,
   polygon,
 } from '@midas-capital/chains';
-import { FusePoolData } from '@midas-capital/types';
+import type { FusePoolData } from '@midas-capital/types';
 
 import { config } from '@ui/config/index';
 
 export const supportedChainIdToConfig: {
-  [chainId: number]: { supported: boolean; enabled: boolean };
+  [chainId: number]: { enabled: boolean; supported: boolean };
 } = {
   [bsc.chainId]: { enabled: config.isBscEnabled, supported: config.isBscEnabled },
-  [polygon.chainId]: { supported: true, enabled: config.isBscEnabled },
+  [polygon.chainId]: { enabled: config.isBscEnabled, supported: true },
   [moonbeam.chainId]: { enabled: config.isMoonbeamEnabled, supported: config.isMoonbeamEnabled },
   [arbitrum.chainId]: {
     enabled: true,

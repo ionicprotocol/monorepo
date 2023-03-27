@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { Flywheel } from '@ui/types/ComponentPropsType';
+import type { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheel = (flywheelAddress?: string) => {
   const { currentSdk } = useMultiMidas();
@@ -25,17 +25,17 @@ export const useFlywheel = (flywheelAddress?: string) => {
       return {
         address: flywheel.address,
         booster,
-        owner,
-        rewards,
-        rewardToken,
         markets,
+        owner,
+        rewardToken,
+        rewards,
       } as Flywheel;
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
-      initialData: undefined,
       enabled: !!flywheelAddress && !!currentSdk,
+      initialData: undefined,
+      staleTime: Infinity,
     }
   );
 };

@@ -1,6 +1,6 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Link, Spacer, Text } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';
@@ -8,8 +8,8 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 
 interface PluginProps {
-  selectedAsset: NativePricedFuseAsset;
   poolChainId: number;
+  selectedAsset: NativePricedFuseAsset;
 }
 
 export const Plugin = ({ selectedAsset, poolChainId }: PluginProps) => {

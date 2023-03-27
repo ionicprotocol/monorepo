@@ -15,7 +15,7 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@midas-capital/types';
 import { utils } from 'ethers';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -36,8 +36,8 @@ import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
 import { useColors } from '@ui/hooks/useColors';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { Flywheel } from '@ui/types/ComponentPropsType';
-import { PoolData } from '@ui/types/TokensDataMap';
+import type { Flywheel } from '@ui/types/ComponentPropsType';
+import type { PoolData } from '@ui/types/TokensDataMap';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -156,8 +156,8 @@ const FlywheelRow = ({
   onClick,
 }: {
   flywheel: Flywheel;
-  pool: PoolData;
   onClick: (fw: Flywheel) => void;
+  pool: PoolData;
 }) => {
   const { address, currentSdk } = useMultiMidas();
 

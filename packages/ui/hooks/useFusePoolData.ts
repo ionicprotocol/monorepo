@@ -22,12 +22,12 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled:
         !!poolId &&
         !!poolChainId &&
         !!poolsPerChain[poolChainId.toString()] &&
         !poolsPerChain[poolChainId.toString()].isLoading,
+      staleTime: Infinity,
     }
   );
 };

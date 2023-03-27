@@ -7,8 +7,8 @@ import { COINGECKO_API, DEFI_LLAMA_API } from '@ui/constants/index';
 import { getSupportedChainIds } from '@ui/utils/networkData';
 
 interface Price {
-  value: number;
   symbol: string;
+  value: number;
 }
 
 export function useAllUsdPrices() {
@@ -28,15 +28,15 @@ export function useAllUsdPrices() {
               const { data } = await axios.get(`${COINGECKO_API}${_cgId}`);
 
               if (data[_cgId] && data[_cgId].usd) {
-                prices[id.toString()] = { value: data[_cgId].usd, symbol: '$' };
+                prices[id.toString()] = { symbol: '$', value: data[_cgId].usd };
               }
             } catch (e) {
               const { data } = await axios.get(`${DEFI_LLAMA_API}coingecko:${_cgId}`);
 
               if (data.coins[`coingecko:${_cgId}`] && data.coins[`coingecko:${_cgId}`].price) {
                 prices[id.toString()] = {
-                  value: data.coins[`coingecko:${_cgId}`].price,
                   symbol: '$',
+                  value: data.coins[`coingecko:${_cgId}`].price,
                 };
               }
             }
@@ -44,13 +44,13 @@ export function useAllUsdPrices() {
             if (!prices[id.toString()]) {
               if (config.chainId === chainIdToConfig[SupportedChains.neon_devnet].chainId) {
                 prices[id.toString()] = {
-                  value: 0.05,
                   symbol: config.specificParams.metadata.nativeCurrency.symbol,
+                  value: 0.05,
                 };
               } else {
                 prices[id.toString()] = {
-                  value: 1,
                   symbol: config.specificParams.metadata.nativeCurrency.symbol,
+                  value: 1,
                 };
               }
             }
@@ -60,6 +60,6 @@ export function useAllUsdPrices() {
 
       return prices;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!chainIds && chainIds.length > 0 }
+    { cacheTime: Infinity, enabled: !!chainIds && chainIds.length > 0, staleTime: Infinity }
   );
 }

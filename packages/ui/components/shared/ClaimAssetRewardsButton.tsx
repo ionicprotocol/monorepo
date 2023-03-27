@@ -1,5 +1,5 @@
 import { AvatarGroup, Box, HStack, Text, useDisclosure } from '@chakra-ui/react';
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';
@@ -13,8 +13,8 @@ const ClaimAssetRewardsButton = ({
   assetAddress,
   poolChainId,
 }: {
-  poolAddress: string;
   assetAddress: string;
+  poolAddress: string;
   poolChainId: number;
 }) => {
   const {
@@ -26,8 +26,8 @@ const ClaimAssetRewardsButton = ({
   const { currentChain } = useMultiMidas();
 
   const { data: claimableRewards, refetch: refetchRewards } = useAssetClaimableRewards({
-    poolAddress,
     assetAddress,
+    poolAddress,
     poolChainId,
   });
 

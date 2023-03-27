@@ -1,5 +1,6 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
+import { ComptrollerErrorCodes } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -17,11 +18,11 @@ const RemoveAssetButton = ({
   setSelectedAsset,
   assets,
 }: {
-  comptrollerAddress: string;
   asset: NativePricedFuseAsset;
+  assets: NativePricedFuseAsset[];
+  comptrollerAddress: string;
   poolChainId: number;
   setSelectedAsset: (value: NativePricedFuseAsset) => void;
-  assets: NativePricedFuseAsset[];
 }) => {
   const { currentSdk } = useMultiMidas();
   const errorToast = useErrorToast();
@@ -61,15 +62,15 @@ const RemoveAssetButton = ({
       });
     } catch (error) {
       const sentryProperties = {
-        token: asset.cToken,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
+        token: asset.cToken,
       };
       const sentryInfo = {
         contextName: 'Removing asset',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
 
       return;
     }

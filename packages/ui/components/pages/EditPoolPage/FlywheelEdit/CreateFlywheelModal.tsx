@@ -22,28 +22,28 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
-import { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/ComponentPropsType';
+import type { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/ComponentPropsType';
 
 const steps = [
   {
-    title: 'Deploying Flywheel Core',
     desc: 'Deploying Flywheel Core',
     done: false,
+    title: 'Deploying Flywheel Core',
   },
   {
-    title: 'Deploying Flywheel Rewards',
     desc: 'Deploying Flywheel Rewards',
     done: false,
+    title: 'Deploying Flywheel Rewards',
   },
   {
-    title: 'Adding Rewards to Flywheel',
     desc: 'Adding Rewards to Flywheel',
     done: false,
+    title: 'Adding Rewards to Flywheel',
   },
   {
-    title: 'Adding Flywheel to Pool',
     desc: 'Adding Flywheel to Pool',
     done: false,
+    title: 'Adding Flywheel to Pool',
   },
 ];
 

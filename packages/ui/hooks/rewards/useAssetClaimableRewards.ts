@@ -1,5 +1,5 @@
-import { MidasSdk } from '@midas-capital/sdk';
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { MidasSdk } from '@midas-capital/sdk';
+import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -10,8 +10,8 @@ export const useAssetClaimableRewards = ({
   assetAddress,
   poolChainId,
 }: {
-  poolAddress: string;
   assetAddress: string;
+  poolAddress: string;
   poolChainId: number;
 }) => {
   const { address } = useMultiMidas();
@@ -28,8 +28,8 @@ export const useAssetClaimableRewards = ({
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!poolAddress && !!address && !!sdk,
+      staleTime: Infinity,
     }
   );
 };
@@ -66,8 +66,8 @@ export const useAssetsClaimableRewards = ({
   assetsAddress,
   poolChainId,
 }: {
-  poolAddress: string;
   assetsAddress: string[];
+  poolAddress: string;
   poolChainId: number;
 }) => {
   const { address } = useMultiMidas();
@@ -84,8 +84,8 @@ export const useAssetsClaimableRewards = ({
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!poolAddress && !!address && !!sdk,
+      staleTime: Infinity,
     }
   );
 };

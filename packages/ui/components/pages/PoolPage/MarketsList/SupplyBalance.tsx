@@ -4,7 +4,7 @@ import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const SupplyBalance = ({
   asset,
@@ -32,9 +32,9 @@ export const SupplyBalance = ({
             value: asset.supplyBalanceFiat,
           }}
           secondary={{
-            value: asset.supplyBalance,
-            symbol: tokenData?.symbol || '',
             decimals: asset.underlyingDecimals.toNumber(),
+            symbol: tokenData?.symbol || '',
+            value: asset.supplyBalance,
           }}
         />
       )}

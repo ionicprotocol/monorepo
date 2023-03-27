@@ -5,12 +5,12 @@ import { useMemo } from 'react';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { Cap } from '@ui/hooks/useBorrowCap';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { Cap } from '@ui/hooks/useBorrowCap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseSupplyCapParams {
-  comptroller: string;
   chainId: number;
+  comptroller: string;
   market: MarketData;
 }
 export const useSupplyCap = ({
@@ -52,7 +52,7 @@ export const useSupplyCap = ({
               usdPrice;
             const tokenCap = Number(utils.formatUnits(supplyCap, market.underlyingDecimals));
 
-            return { usdCap, tokenCap, type: 'supply' };
+            return { tokenCap, type: 'supply', usdCap };
           }
         } catch (e) {
           console.warn(
@@ -68,8 +68,8 @@ export const useSupplyCap = ({
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!sdk && !!usdPrice && !!market,
+      staleTime: Infinity,
     }
   );
 };

@@ -1,11 +1,12 @@
-import { AvatarGroup, AvatarGroupProps } from '@chakra-ui/avatar';
+import type { AvatarGroupProps } from '@chakra-ui/avatar';
+import { AvatarGroup } from '@chakra-ui/avatar';
 
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 
 interface TokenIconGroupProps extends Partial<AvatarGroupProps> {
-  tokenAddresses: string[];
-  popOnHover: boolean;
   chainId: number;
+  popOnHover: boolean;
+  tokenAddresses: string[];
 }
 export const TokenIconGroup = ({
   tokenAddresses,

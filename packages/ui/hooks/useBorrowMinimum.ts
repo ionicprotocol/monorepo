@@ -1,4 +1,4 @@
-import { FuseAsset } from '@midas-capital/types';
+import type { FuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
@@ -30,26 +30,26 @@ export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!currentSdk,
+      staleTime: Infinity,
     }
   );
 
   const data = useMemo(() => {
     if (!response.data || !usdPrice) {
       return {
-        minBorrowUSD: undefined,
-        minBorrowNative: undefined,
         minBorrowAsset: undefined,
+        minBorrowNative: undefined,
+        minBorrowUSD: undefined,
       };
     }
 
     return {
-      minBorrowUSD: Number(utils.formatUnits(response.data, 18)) * usdPrice,
-      minBorrowNative: response.data,
       minBorrowAsset: response.data
         .mul(utils.parseUnits('1', asset.underlyingDecimals))
         .div(asset.underlyingPrice),
+      minBorrowNative: response.data,
+      minBorrowUSD: Number(utils.formatUnits(response.data, 18)) * usdPrice,
     };
   }, [response, usdPrice, asset]);
 

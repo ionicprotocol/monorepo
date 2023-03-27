@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { PoolStat } from '@ui/components/pages/PoolPage/PoolStats/PoolStat';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { PoolData } from '@ui/types/TokensDataMap';
+import type { PoolData } from '@ui/types/TokensDataMap';
 import { smallFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import {
   sortTopBorrowedAssets,

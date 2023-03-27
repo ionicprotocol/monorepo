@@ -1,11 +1,9 @@
+import type { StatLabelProps, StatNumberProps, StatProps } from '@chakra-ui/react';
 import {
   Stat as ChakraStat,
   StatLabel as ChakraStatLabel,
   StatNumber as ChakraStatNumber,
   Skeleton,
-  StatLabelProps,
-  StatNumberProps,
-  StatProps,
 } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
@@ -41,7 +39,7 @@ const Stat = (props: StatProps) => {
   );
 };
 
-export const PoolStat = ({ value, label }: { value?: string; label: string }) => (
+export const PoolStat = ({ value, label }: { label: string; value?: string }) => (
   <Stat borderRadius={12}>
     <StatLabel>{label}</StatLabel>
     <StatNumber fontWeight="bold">{value ? value : <Skeleton mt="2">Num</Skeleton>}</StatNumber>

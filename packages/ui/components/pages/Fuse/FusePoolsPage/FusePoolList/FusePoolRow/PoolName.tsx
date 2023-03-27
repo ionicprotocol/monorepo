@@ -17,11 +17,11 @@ export const PoolName = ({
   poolId,
   isDisabledTooltip,
 }: {
-  comptroller: string;
   chainId: number;
-  poolName: string;
-  poolId: number;
+  comptroller: string;
   isDisabledTooltip?: boolean;
+  poolId: number;
+  poolName: string;
 }) => {
   const { setGlobalLoading } = useMultiMidas();
   const rewardTokens = useRewardTokensOfPool(comptroller, chainId);

@@ -21,9 +21,9 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!poolAddress && !!sdk,
       placeholderData: [],
+      staleTime: Infinity,
     }
   );
 

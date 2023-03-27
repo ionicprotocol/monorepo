@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { CTokensUnderlyingMap } from '@ui/types/ComponentPropsType';
+import type { CTokensUnderlyingMap } from '@ui/types/ComponentPropsType';
 
 export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyingMap => {
   const { currentSdk } = useMultiMidas();
@@ -23,8 +23,8 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: cTokenAddresses.length > 0 && !!currentSdk,
+      staleTime: Infinity,
     }
   );
 

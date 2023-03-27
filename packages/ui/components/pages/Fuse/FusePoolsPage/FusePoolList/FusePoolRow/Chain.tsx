@@ -1,10 +1,10 @@
 import { HStack, Img } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 
-export const Chain = ({ chainId, ...props }: { chainId: number; [key: string]: ReactNode }) => {
+export const Chain = ({ chainId, ...props }: { [key: string]: ReactNode; chainId: number }) => {
   const chainConfig = useChainConfig(chainId);
 
   return (

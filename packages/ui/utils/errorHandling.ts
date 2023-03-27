@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CreateToastFnReturn } from '@chakra-ui/react';
+import type { CreateToastFnReturn } from '@chakra-ui/react';
 import * as Sentry from '@sentry/nextjs';
 
 export const handleGenericError = ({
@@ -8,8 +8,8 @@ export const handleGenericError = ({
   sentryInfo,
 }: {
   error: any;
-  toast?: CreateToastFnReturn;
   sentryInfo: { contextName: string; properties: { [key: string]: any } };
+  toast?: CreateToastFnReturn;
 }) => {
   console.error('Raw Error', error);
 
@@ -33,18 +33,18 @@ export const handleGenericError = ({
   if (toast) {
     if (error.code === 'ACTION_REJECTED') {
       toast({
-        id: `error-${new Date().getTime()}`,
-        title: 'Action Rejected!',
-        status: 'warning',
         description: 'Your transaction has been rejected!',
+        id: `error-${new Date().getTime()}`,
+        status: 'warning',
+        title: 'Action Rejected!',
       });
     } else if (error.method === 'estimateGas') {
       toast({
-        id: `error-${new Date().getTime()}`,
         description: 'Gas cannot be estimated!',
+        id: `error-${new Date().getTime()}`,
       });
     } else {
-      toast({ id: `error-${new Date().getTime()}`, description: message });
+      toast({ description: message, id: `error-${new Date().getTime()}` });
     }
   }
 };

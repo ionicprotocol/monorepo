@@ -1,7 +1,7 @@
 import { Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import * as React from 'react';
 
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const BorrowApy = ({
   asset,

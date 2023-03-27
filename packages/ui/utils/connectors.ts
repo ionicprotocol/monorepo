@@ -1,7 +1,8 @@
 import '@rainbow-me/rainbowkit/styles.css';
 
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { Chain, configureChains } from 'wagmi';
+import type { Chain } from 'wagmi';
+import { configureChains } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -9,17 +10,17 @@ import { getSupportedChains } from '@ui/utils/networkData';
 
 const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) => {
   return {
+    blockExplorers: data.specificParams.metadata.blockExplorerUrls,
+    iconUrl: data.specificParams.metadata.img,
     id: data.chainId,
     name: data.specificParams.metadata.name,
-    network: data.specificParams.metadata.name,
-    iconUrl: data.specificParams.metadata.img,
     nativeCurrency: {
+      decimals: 18,
       name: data.specificParams.metadata.nativeCurrency.name,
       symbol: data.specificParams.metadata.nativeCurrency.symbol,
-      decimals: 18,
     },
+    network: data.specificParams.metadata.name,
     rpcUrls: data.specificParams.metadata.rpcUrls,
-    blockExplorers: data.specificParams.metadata.blockExplorerUrls,
     testnet: data.specificParams.metadata.testnet,
   };
 });

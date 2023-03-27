@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SHRINK_ASSETS } from '@ui/constants/index';
-import { PoolData } from '@ui/types/TokensDataMap';
+import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const Assets = ({ pool }: { pool: PoolData }) => {
   const tokens = useMemo(() => {

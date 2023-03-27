@@ -12,11 +12,11 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
         return pluginAddress && sdk.deployedPlugins[pluginAddress]
           ? sdk.deployedPlugins[pluginAddress]
           : {
-              name: `Unnamed (${pluginAddress})`,
-              market: '',
               apyDocsUrl: '',
-              strategyDocsUrl: '',
               icon: '',
+              market: '',
+              name: `Unnamed (${pluginAddress})`,
+              strategyDocsUrl: '',
             };
       } else {
         return null;
@@ -24,8 +24,8 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!pluginAddress && !!sdk,
+      staleTime: Infinity,
     }
   );
 };

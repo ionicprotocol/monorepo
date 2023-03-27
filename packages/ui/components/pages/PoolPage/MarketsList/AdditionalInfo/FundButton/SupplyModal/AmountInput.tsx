@@ -1,5 +1,6 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import { BigNumber, constants, utils } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { constants, utils } from 'ethers';
 import { useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
@@ -9,7 +10,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useErrorToast } from '@ui/hooks/useToast';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
@@ -21,10 +22,10 @@ export const AmountInput = ({
   comptrollerAddress,
 }: {
   asset: MarketData;
+  comptrollerAddress: string;
   optionToWrap?: boolean;
   poolChainId: number;
   setAmount: (amount: BigNumber) => void;
-  comptrollerAddress: string;
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
@@ -82,7 +83,7 @@ export const AmountInput = ({
         contextName: 'Fetching max supply amount',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     }
   };
 
@@ -117,10 +118,10 @@ export const AmountInput = ({
             </EllipsisText>
           </Row>
           <Button
-            height={{ lg: 8, md: 8, sm: 8, base: 8 }}
+            height={{ base: 8, lg: 8, md: 8, sm: 8 }}
             isLoading={isLoading}
             onClick={setToMax}
-            px={{ lg: 2, md: 2, sm: 2, base: 2 }}
+            px={{ base: 2, lg: 2, md: 2, sm: 2 }}
           >
             MAX
           </Button>
