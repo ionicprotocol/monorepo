@@ -168,7 +168,8 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       const shares = await this.convertToShares(amount, vault);
       const feeShares = shares.mul(withdrawalFee).div(utils.parseUnits("1").sub(withdrawalFee));
 
-      if (!response.eq(shares.add(feeShares))) {
+      // if rounded up, then should add "1"
+      if (!(response.eq(shares.add(feeShares)) || response.eq(shares.add("1").add(feeShares)))) {
         const errorCode = parseInt(response.toString());
 
         return { errorCode };
