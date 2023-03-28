@@ -53,3 +53,6 @@ schedule = "@hourly"
 
 [functions."asset-apys-*"]
 schedule = "@hourly"
+
+[functions."vault-data-*"]
+schedule = "@hourly"
