@@ -111,6 +111,9 @@ export interface VaultData {
   vault: string;
   extraDocs: string | undefined;
   performanceFee: BigNumber;
+  depositFee: BigNumber;
+  withdrawalFee: BigNumber;
+  managementFee: BigNumber;
 }
 
 export interface Adapter {

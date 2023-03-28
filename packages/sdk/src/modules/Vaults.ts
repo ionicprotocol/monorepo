@@ -10,6 +10,7 @@ import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./FusePools";
 
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+  const DECIMAL_OFFSET = 9;
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
       if (this.chainId === SupportedChains.chapel) {
@@ -27,15 +28,26 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
               const optimizedAPRVault = this.createOptimizedAPRVault(vault);
               const mpo = this.createMasterPriceOracle();
 
-              const [asset, totalSupply, supplyApy, adapterCount, emergencyExit, { performance: performanceFee }] =
-                await Promise.all([
-                  optimizedAPRVault.callStatic.asset(),
-                  optimizedAPRVault.callStatic.estimatedTotalAssets(),
-                  optimizedAPRVault.callStatic.supplyAPY(0),
-                  optimizedAPRVault.callStatic.adapterCount(),
-                  optimizedAPRVault.callStatic.emergencyExit(),
-                  optimizedAPRVault.callStatic.fees(),
-                ]);
+              const [
+                asset,
+                totalSupply,
+                supplyApy,
+                adapterCount,
+                emergencyExit,
+                {
+                  performance: performanceFee,
+                  deposit: depositFee,
+                  withdrawal: withdrawalFee,
+                  management: managementFee,
+                },
+              ] = await Promise.all([
+                optimizedAPRVault.callStatic.asset(),
+                optimizedAPRVault.callStatic.estimatedTotalAssets(),
+                optimizedAPRVault.callStatic.supplyAPY(0),
+                optimizedAPRVault.callStatic.adapterCount(),
+                optimizedAPRVault.callStatic.emergencyExit(),
+                optimizedAPRVault.callStatic.fees(),
+              ]);
 
               const cToken = this.createCTokenWithExtensions(asset);
               let [symbol, decimals] = await Promise.all([cToken.callStatic.symbol(), cToken.callStatic.decimals()]);
@@ -94,6 +106,9 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 underlyingPrice,
                 extraDocs,
                 performanceFee,
+                depositFee,
+                withdrawalFee,
+                managementFee,
               };
             })
           );
@@ -116,11 +131,25 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       return tx;
     }
 
+    async convertToShares(amount: BigNumber, vault: string) {
+      const optimizedAPRVault = this.createOptimizedAPRVault(vault);
+
+      const totalSupply = await optimizedAPRVault.callStatic.totalSupply();
+      const totalAssets = await optimizedAPRVault.callStatic.totalAssets();
+
+      return amount.mul(totalSupply.add(utils.parseUnits("1", DECIMAL_OFFSET))).div(totalAssets.add("1"));
+    }
+
     async vaultDeposit(vault: string, amount: BigNumber) {
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
       const response = await optimizedAPRVault.callStatic["deposit(uint256)"](amount);
+      const { deposit: depositFee } = await optimizedAPRVault.callStatic.fees();
 
-      if (!response.eq(amount.mul(utils.parseUnits("1", 9)))) {
+      const feeShares = await this.convertToShares(amount.mul(depositFee).div(utils.parseUnits("1")), vault);
+
+      const shares = (await this.convertToShares(amount, vault)).sub(feeShares);
+
+      if (!response.eq(shares)) {
         const errorCode = parseInt(response.toString());
 
         return { errorCode };
@@ -134,8 +163,12 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
     async vaultWithdraw(vault: string, amount: BigNumber) {
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
       const response = await optimizedAPRVault.callStatic["withdraw(uint256)"](amount);
+      const { withdrawal: withdrawalFee } = await optimizedAPRVault.callStatic.fees();
 
-      if (response.toString() !== "0") {
+      const shares = await this.convertToShares(amount, vault);
+      const feeShares = shares.mul(withdrawalFee).div(utils.parseUnits("1").sub(withdrawalFee));
+
+      if (!response.eq(shares.add(feeShares))) {
         const errorCode = parseInt(response.toString());
 
         return { errorCode };
