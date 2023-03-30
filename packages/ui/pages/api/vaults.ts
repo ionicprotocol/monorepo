@@ -5,10 +5,7 @@ import * as yup from 'yup';
 
 import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX } from '@ui/constants/index';
-
-export type VaultsResponse = {
-  [vault: string]: VaultApy;
-};
+import type { VaultsResponse } from '@ui/hooks/useAllVaultsApyInfo';
 
 const querySchema = yup.object().shape({
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
