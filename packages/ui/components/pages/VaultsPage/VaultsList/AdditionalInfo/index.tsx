@@ -30,6 +30,7 @@ import { ADMIN_FEE_TOOLTIP } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useVaultApyInfo } from '@ui/hooks/useAllVaultsApyInfo';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
@@ -60,6 +61,8 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   const { data: usdPrices } = useAllUsdPrices();
   const enabledChains = useEnabledChains();
   const { allPools } = useCrossFusePools([...enabledChains]);
+  const { data: vaultApyInfo } = useVaultApyInfo(vault.vault, Number(vault.chainId));
+  console.warn(vaultApyInfo);
   const router = useRouter();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[vault.chainId.toString()]) {
