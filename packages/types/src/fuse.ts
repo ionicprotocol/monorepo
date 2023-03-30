@@ -125,6 +125,5 @@ export interface Adapter {
 
 export interface VaultApy {
   supplyApy: string;
-  totalSupply: BigNumber;
-  updated_at: string;
+  totalSupply: string;
 }

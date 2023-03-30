@@ -16,9 +16,8 @@ export const updateVaultData = async (chainId: SupportedChains) => {
       new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
       config
     );
-
     const optimizedVaultsRegistry = new ethers.Contract(
-      sdk.chainDeployment.optimizedVaultsRegistry.address,
+      sdk.chainDeployment.OptimizedVaultsRegistry.address,
       OptimizedVaultsRegistryABI,
       sdk.provider
     ) as OptimizedVaultsRegistry;
@@ -39,8 +38,7 @@ export const updateVaultData = async (chainId: SupportedChains) => {
             vault,
             info: {
               supplyApy: ethers.utils.formatUnits(supplyApy),
-              totalSupply,
-              updated_at: new Date().toISOString(),
+              totalSupply: totalSupply.toString(),
             },
           };
         } catch (exception) {
@@ -59,13 +57,12 @@ export const updateVaultData = async (chainId: SupportedChains) => {
         chain_id: chainId,
         vault_address: r?.vault.toLowerCase(),
         info: r?.info,
-        updated_at: new Date().toISOString(),
       }));
 
     const { error } = await supabase.from(environment.supabaseVaultApyTableName).insert(rows);
 
     if (error) {
-      throw `Error occurred during saving plugin reward results to database: ${error.message}`;
+      throw `Error occurred during saving vault results to database: ${error.message}`;
     }
   } catch (err) {
     await functionsAlert('Functions.vault-data: Generic Error', JSON.stringify(err));
