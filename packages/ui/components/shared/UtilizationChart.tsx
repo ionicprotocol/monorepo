@@ -129,13 +129,13 @@ const UtilizationChart = ({
             />
             <Area
               activeDot={{ r: 5, strokeWidth: 0 }}
-              dataKey={keys[2]}
+              dataKey={keys[0]}
               dot={{ r: 0 }}
               fill={borrowRateColor}
               fillOpacity={0.2}
-              hide={lineProps[keys[2]] === true}
+              hide={lineProps[keys[0]] === true}
               name="Borrow Rate"
-              opacity={Number(lineProps.hover === keys[2] || !lineProps.hover ? 1 : 0.2)}
+              opacity={Number(lineProps.hover === keys[0] || !lineProps.hover ? 1 : 0.2)}
               stroke={borrowRateColor}
               strokeWidth={3}
               type="monotone"
