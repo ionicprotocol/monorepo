@@ -4,15 +4,15 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 
 import { config } from '@ui/config/index';
-import { SUPPORTED_NETWORKS_REGEX } from '@ui/constants/index';
-import type { VaultsResponse } from '@ui/hooks/useAllVaultsApyInfo';
+import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
 
 const querySchema = yup.object().shape({
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
+  vaultAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid plugin address').required(),
 });
 type Query = yup.InferType<typeof querySchema>;
 
-const handler = async (request: NextApiRequest, response: NextApiResponse<VaultsResponse>) => {
+const handler = async (request: NextApiRequest, response: NextApiResponse<VaultApy[]>) => {
   let validatedQuery: Query | null = null;
   try {
     querySchema.validateSync(request.query);
@@ -20,28 +20,25 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Vaults
   } catch (error) {
     return response.status(400);
   }
-  const { chainId } = validatedQuery;
+  const { vaultAddress, chainId } = validatedQuery;
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
 
   const databaseResponse = await client
     .from(config.supabaseVaultApyTableName)
-    .select<'vault_address,info', { info: VaultApy; vault_address: string }>('vault_address,info')
-    .eq('chain_id', parseInt(chainId as string, 10));
+    .select<'info', { info: VaultApy }>('info')
+    .eq('chain_id', parseInt(chainId as string, 10))
+    .eq('vault_address', (vaultAddress as string).toLowerCase())
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   if (databaseResponse.error) {
     return response.status(500);
   }
 
   if (databaseResponse.data && databaseResponse.data.length > 0) {
-    return response.json(
-      databaseResponse.data.reduce((acc: VaultsResponse, cur) => {
-        acc[cur.vault_address] = cur.info;
-
-        return acc;
-      }, {})
-    );
+    return response.json(databaseResponse.data.map((data) => data.info));
   } else {
-    return response.json({});
+    return response.json([]);
   }
 };
 

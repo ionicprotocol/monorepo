@@ -1,47 +1,66 @@
 import type { VaultApy } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import type { BigNumber } from 'ethers';
+import { useMemo } from 'react';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
+import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
 
-export type VaultsResponse = {
-  [vault: string]: VaultApy;
-};
+export type VaultInfo = (VaultApy & {
+  decimals: number;
+  underlyingPrice: BigNumber;
+  usdPrice: number;
+})[];
 
-export function useAllVaultsApyInfo() {
+export function useVaultApyInfo(vaultAddress: string, chainId: number) {
   const enabledChains = useEnabledChains();
-  const { address } = useMultiMidas();
+  const { vaultsPerChain } = useVaultsPerChain([...enabledChains]);
 
-  return useQuery<VaultsResponse | null>(
-    ['useAllVaultsApyInfo', enabledChains, address],
+  const { data: usdPrices } = useAllUsdPrices();
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[chainId.toString()]) {
+      return usdPrices[chainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, chainId]);
+
+  return useQuery<VaultInfo | null>(
+    ['useVaultApyInfo', chainId, vaultAddress, vaultsPerChain, usdPrice],
     async () => {
-      if (enabledChains.length > 0) {
-        let vaultInfos: VaultsResponse = {};
+      const data = vaultsPerChain[chainId].data;
 
-        await Promise.all(
-          enabledChains.map(async (chainId) => {
-            const _vaultInfos: VaultsResponse = await axios
-              .get(`/api/vaults?chainId=${chainId}`)
-              .then((response) => response.data)
-              .catch((error) => {
-                console.error(`Unable to fetch vaults apy of chain \`${chainId}\``, error);
+      if (data && data.length > 0 && usdPrice) {
+        const vault = data.find((_vault) => _vault.vault === vaultAddress);
 
-                return {};
-              });
+        if (vault) {
+          const _vaultInfo: VaultApy[] = await axios
+            .get(`/api/vaultApy?chainId=${chainId}&vaultAddress=${vaultAddress}`)
+            .then((response) => response.data)
+            .catch((error) => {
+              console.error(`Unable to fetch vaults apy of chain \`${chainId}\``, error);
 
-            vaultInfos = { ...vaultInfos, ..._vaultInfos };
-          })
-        );
+              return [];
+            });
 
-        return vaultInfos;
+          return _vaultInfo.map((info) => ({
+            ...info,
+            decimals: vault.decimals,
+            underlyingPrice: vault.underlyingPrice,
+            usdPrice,
+          }));
+        } else {
+          return null;
+        }
       }
 
       return null;
     },
     {
       cacheTime: Infinity,
-      enabled: enabledChains.length > 0,
+      enabled: Object.keys(vaultsPerChain).length > 0,
       staleTime: Infinity,
     }
   );
