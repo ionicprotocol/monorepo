@@ -122,3 +122,9 @@ export interface Adapter {
   market: string;
   comptroller: string;
 }
+
+export interface VaultApy {
+  supplyApy: string;
+  totalSupply: BigNumber;
+  updated_at: string;
+}
