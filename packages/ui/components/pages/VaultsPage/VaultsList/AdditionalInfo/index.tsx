@@ -18,6 +18,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
@@ -37,6 +38,10 @@ import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
+
+const VaultChart = dynamic(() => import('@ui/components/shared/VaultChart'), {
+  ssr: false,
+});
 
 export interface ComptrollerToPool {
   [comptroller: string]: { allocation: number; chainId: number; poolId: number; poolName: string };
@@ -62,7 +67,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   const enabledChains = useEnabledChains();
   const { allPools } = useCrossFusePools([...enabledChains]);
   const { data: vaultApyInfo } = useVaultApyInfo(vault.vault, Number(vault.chainId));
-  console.warn(vaultApyInfo);
+
   const router = useRouter();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[vault.chainId.toString()]) {
@@ -268,9 +273,13 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
               pb={4}
               width="100%"
             >
-              <Center height="100%">
-                <Text>Historical APY</Text>
-              </Center>
+              {vaultApyInfo ? (
+                <VaultChart vaultApyInfo={vaultApyInfo} />
+              ) : (
+                <Center height="100%">
+                  <Spinner />
+                </Center>
+              )}
             </Box>
           </VStack>
         </GridItem>

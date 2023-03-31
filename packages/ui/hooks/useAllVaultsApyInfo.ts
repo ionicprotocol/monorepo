@@ -1,18 +1,21 @@
 import type { VaultApy } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import type { BigNumber } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
 
-export type VaultInfo = (VaultApy & {
+export type VaultInfo = {
   decimals: number;
+  supplyApy: number;
+  totalSupply: BigNumber;
+  totalSupplyRated: number;
   underlyingPrice: BigNumber;
   usdPrice: number;
-})[];
+}[];
 
 export function useVaultApyInfo(vaultAddress: string, chainId: number) {
   const enabledChains = useEnabledChains();
@@ -45,12 +48,30 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
               return [];
             });
 
-          return _vaultInfo.map((info) => ({
-            ...info,
-            decimals: vault.decimals,
-            underlyingPrice: vault.underlyingPrice,
-            usdPrice,
-          }));
+          const maxSupply = _vaultInfo.reduce((_max, info) => {
+            if (BigNumber.from(info.totalSupply).gt(_max)) {
+              _max = BigNumber.from(info.totalSupply);
+            }
+
+            return _max;
+          }, constants.Zero);
+
+          return _vaultInfo.map((info, i) => {
+            const supplyApy = Number((Number(info.supplyApy) * 100).toFixed(2));
+            const totalSupplyRated =
+              (Number(utils.formatUnits(info.totalSupply)) / Number(utils.formatUnits(maxSupply))) *
+              100;
+
+            return {
+              decimals: vault.decimals,
+              supplyApy,
+              totalSupply: BigNumber.from(info.totalSupply),
+              totalSupplyRated,
+              underlyingPrice: vault.underlyingPrice,
+              usdPrice,
+              xAxis: i,
+            };
+          });
         } else {
           return null;
         }
