@@ -19,7 +19,6 @@ import { constants } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/PendingTransaction';
-import { WithdrawError } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/WithdrawModal/WithdrawError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -96,34 +95,30 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
 
       const resp = await currentSdk.vaultWithdraw(vault.vault, amount);
 
-      if (resp.errorCode !== null) {
-        WithdrawError(resp.errorCode);
-      } else {
-        const tx = resp.tx;
-        addRecentTransaction({
-          description: `${tokenData?.symbol || vault.symbol} Token Withdraw`,
-          hash: tx.hash,
-        });
-        _steps[0] = {
-          ..._steps[0],
-          txHash: tx.hash,
-        };
-        setSteps([..._steps]);
+      const tx = resp.tx;
+      addRecentTransaction({
+        description: `${tokenData?.symbol || vault.symbol} Token Withdraw`,
+        hash: tx.hash,
+      });
+      _steps[0] = {
+        ..._steps[0],
+        txHash: tx.hash,
+      };
+      setSteps([..._steps]);
 
-        await tx.wait();
-        await queryClient.refetchQueries();
+      await tx.wait();
+      await queryClient.refetchQueries();
 
-        _steps[0] = {
-          ..._steps[0],
-          done: true,
-          txHash: tx.hash,
-        };
-        setSteps([..._steps]);
-        successToast({
-          description: 'Successfully withdrew!',
-          id: 'Withdraw',
-        });
-      }
+      _steps[0] = {
+        ..._steps[0],
+        done: true,
+        txHash: tx.hash,
+      };
+      setSteps([..._steps]);
+      successToast({
+        description: 'Successfully withdrew!',
+        id: 'Withdraw',
+      });
     } catch (error) {
       setFailedStep(1);
 

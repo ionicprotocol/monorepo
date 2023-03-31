@@ -21,7 +21,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
-import { SupplyError } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -210,31 +209,27 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
 
     try {
       setActiveStep(optionToWrap ? 3 : 2);
-      const { tx, errorCode } = await currentSdk.vaultDeposit(vault.vault, amount);
+      const { tx } = await currentSdk.vaultDeposit(vault.vault, amount);
 
-      if (errorCode !== null) {
-        SupplyError(errorCode);
-      } else {
-        addRecentTransaction({
-          description: `${vault.symbol} Vault Supply`,
-          hash: tx.hash,
-        });
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
-          txHash: tx.hash,
-        };
-        setConfirmedSteps([..._steps]);
+      addRecentTransaction({
+        description: `${vault.symbol} Vault Supply`,
+        hash: tx.hash,
+      });
+      _steps[optionToWrap ? 2 : 1] = {
+        ..._steps[optionToWrap ? 2 : 1],
+        txHash: tx.hash,
+      };
+      setConfirmedSteps([..._steps]);
 
-        await tx.wait();
-        await queryClient.refetchQueries();
+      await tx.wait();
+      await queryClient.refetchQueries();
 
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
-          done: true,
-          txHash: tx.hash,
-        };
-        setConfirmedSteps([..._steps]);
-      }
+      _steps[optionToWrap ? 2 : 1] = {
+        ..._steps[optionToWrap ? 2 : 1],
+        done: true,
+        txHash: tx.hash,
+      };
+      setConfirmedSteps([..._steps]);
     } catch (error) {
       const sentryInfo = {
         contextName: 'Vault Supply - Depositing',
