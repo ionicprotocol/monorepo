@@ -131,52 +131,18 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       return tx;
     }
 
-    async convertToShares(amount: BigNumber, vault: string) {
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault);
-
-      const totalSupply = await optimizedAPRVault.callStatic.totalSupply();
-      const totalAssets = await optimizedAPRVault.callStatic.totalAssets();
-
-      return amount.mul(totalSupply.add(utils.parseUnits("1", DECIMAL_OFFSET))).div(totalAssets.add("1"));
-    }
-
     async vaultDeposit(vault: string, amount: BigNumber) {
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
-      const response = await optimizedAPRVault.callStatic["deposit(uint256)"](amount);
-      const { deposit: depositFee } = await optimizedAPRVault.callStatic.fees();
-
-      const feeShares = await this.convertToShares(amount.mul(depositFee).div(utils.parseUnits("1")), vault);
-
-      const shares = (await this.convertToShares(amount, vault)).sub(feeShares);
-
-      if (!response.eq(shares)) {
-        const errorCode = parseInt(response.toString());
-
-        return { errorCode };
-      }
-
       const tx: ContractTransaction = await optimizedAPRVault["deposit(uint256)"](amount);
 
-      return { tx, errorCode: null };
+      return { tx };
     }
 
     async vaultWithdraw(vault: string, amount: BigNumber) {
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
-      const response = await optimizedAPRVault.callStatic["withdraw(uint256)"](amount);
-      const { withdrawal: withdrawalFee } = await optimizedAPRVault.callStatic.fees();
-
-      const shares = await this.convertToShares(amount, vault);
-      const feeShares = shares.mul(withdrawalFee).div(utils.parseUnits("1").sub(withdrawalFee));
-
-      // if rounded up, then should add "1"
-      if (!(response.eq(shares.add(feeShares)) || response.eq(shares.add("1").add(feeShares)))) {
-        const errorCode = parseInt(response.toString());
-
-        return { errorCode };
-      }
       const tx: ContractTransaction = await optimizedAPRVault["withdraw(uint256)"](amount);
 
-      return { tx, errorCode: null };
+      return { tx };
     }
 
     async getUpdatedVault(mode: FundOperationMode, vault: VaultData, amount: BigNumber) {
