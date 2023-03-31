@@ -93,11 +93,8 @@ task("optimized-vault:deploy")
               constants.MaxUint256, // deposit limit
               deployer, // owner,
               registry.address,
+              [], // reward tokens
             ],
-          },
-          onUpgrade: {
-            methodName: "reinitialize",
-            args: [registry.address],
           },
         },
         proxyContract: "OpenZeppelinTransparentProxy",
@@ -131,12 +128,12 @@ task("optimized-adapters:deploy")
         execute: {
           init: {
             methodName: "initialize",
-            args: [marketAddress, deployConfig.blocksPerYear],
+            args: [marketAddress, deployConfig.blocksPerYear, registry.address],
           },
           onUpgrade: {
             methodName: "reinitialize",
-            args: [registry.address],
-          },
+            args: [registry.address]
+          }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
         owner: deployer,
@@ -212,4 +209,22 @@ task("deploy-optimized:all:chapel").setAction(async ({}, { ethers, run, getNamed
   await run("deploy-optimized:all", {
     marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830",
   });
+});
+
+task("deploy-vault-flywheel")
+  .addParam("vaultAddress", "Address of the vault", undefined, types.string)
+  .addParam("rewardToken", "Address of the reward token to add a flywheel for", undefined, types.string)
+.setAction(async ( { vaultAddress, rewardToken }, { ethers, getNamedAccounts } ) => {
+  const { deployer } = await getNamedAccounts();
+
+  const vault = await ethers.getContractAt("OptimizedAPRVault", vaultAddress, deployer) as OptimizedAPRVault;
+  const flywheelForRewardToken = vault.callStatic.flywheelForRewardToken(rewardToken);
+  if (flywheelForRewardToken != constants.AddressZero) {
+    console.log(`there is already a flywheel ${flywheelForRewardToken} for reward token ${rewardToken} in the vault at ${vaultAddress}`);
+  } else {
+    const tx = await vault.addRewardToken(rewardToken);
+    console.log(`mining tx ${tx.hash}`);
+    await tx.wait();
+    console.log(`added a flywheel for reward token ${rewardToken} in the vault at ${vaultAddress}`);
+  }
 });
