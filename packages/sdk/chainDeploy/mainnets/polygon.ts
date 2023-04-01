@@ -26,6 +26,7 @@ import {
   CurvePoolConfig,
   DiaAsset,
   GelatoGUniAsset,
+  UniswapV3BaseCurrency,
 } from "../helpers/types";
 
 const assets = polygon.assets;
@@ -72,6 +73,15 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["WETH-WBTC"]),
       underlying(assets, assetSymbols["MAI-USDC"]),
       underlying(assets, assetSymbols["WMATIC-MATICx"]),
+      underlying(assets, assetSymbols["DAI-GNS"]),
+    ],
+    uniswapV3OracleTokens: [
+      {
+        assetAddress: underlying(assets, assetSymbols.GNS),
+        poolAddress: "0xEFa98Fdf168f372E5e9e9b910FcDfd65856f3986",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+        baseCurrency: UniswapV3BaseCurrency.NATIVE,
+      },
     ],
     flashSwapFee: 30,
   },

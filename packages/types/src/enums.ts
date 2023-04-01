@@ -361,6 +361,9 @@ export enum assetSymbols {
   MATICx = "MATICx",
   stMATIC = "stMATIC",
   csMATIC = "csMATIC",
+  IXT = "IXT",
+  GNS = "GNS",
+  "DAI-GNS" = "DAI-GNS",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
