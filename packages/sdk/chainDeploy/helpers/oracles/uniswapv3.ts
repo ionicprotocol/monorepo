@@ -23,7 +23,7 @@ export const deployUniswapV3Oracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, deployConfig.stableToken],
+          args: [deployConfig.wtoken, [deployConfig.stableToken]],
         },
       },
       owner: deployer,
@@ -37,24 +37,34 @@ export const deployUniswapV3Oracle = async ({
   const uniswapV3Oracle = (await ethers.getContract("UniswapV3PriceOracle", deployer)) as UniswapV3PriceOracle;
 
   const assetsToAdd = [];
-  for (const assetConfig of deployConfig.uniswap.uniswapV3OracleTokens) {
+  for (const assetConfig of deployConfig.uniswap.uniswapV3OracleTokens!) {
     const existingOracleAssetConfig: UniswapV3PriceOracle.AssetConfigStruct =
       await uniswapV3Oracle.callStatic.poolFeeds(assetConfig.assetAddress);
     if (
       existingOracleAssetConfig.poolAddress != assetConfig.poolAddress ||
-      existingOracleAssetConfig.twapWindow != assetConfig.twapWindowSeconds ||
+      existingOracleAssetConfig.twapWindow != assetConfig.twapWindow ||
       existingOracleAssetConfig.baseCurrency != assetConfig.baseCurrency
     ) {
       assetsToAdd.push(assetConfig);
     }
   }
+
   // set pool feeds
   if (assetsToAdd.length > 0) {
+    const baseTokens = assetsToAdd.map((assetConfig) => assetConfig.baseCurrency);
+    const supportedBaseTokens = await uniswapV3Oracle.callStatic.getSupportedBaseTokens();
+    const baseTokensToAdd = baseTokens.filter(
+      (baseToken) => !supportedBaseTokens.includes(baseToken) && baseToken !== deployConfig.wtoken
+    );
+    if (baseTokensToAdd.length > 0) {
+      const tx = await uniswapV3Oracle._setSupportedBaseTokens([...baseTokensToAdd, ...supportedBaseTokens]);
+      await tx.wait();
+    }
     const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
     const feedConfigs = assetsToAdd.map((assetConfig) => {
       return {
         poolAddress: assetConfig.poolAddress,
-        twapWindow: assetConfig.twapWindowSeconds,
+        twapWindow: assetConfig.twapWindow,
         baseCurrency: assetConfig.baseCurrency,
       };
     });

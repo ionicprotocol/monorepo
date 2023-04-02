@@ -15,6 +15,7 @@ import {
   deployDiaOracle,
   deployGelatoGUniPriceOracle,
   deployUniswapLpOracle,
+  deployUniswapV3Oracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import {
@@ -26,7 +27,6 @@ import {
   CurvePoolConfig,
   DiaAsset,
   GelatoGUniAsset,
-  UniswapV3BaseCurrency,
 } from "../helpers/types";
 
 const assets = polygon.assets;
@@ -79,8 +79,8 @@ export const deployConfig: ChainDeployConfig = {
       {
         assetAddress: underlying(assets, assetSymbols.GNS),
         poolAddress: "0xEFa98Fdf168f372E5e9e9b910FcDfd65856f3986",
-        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
-        baseCurrency: UniswapV3BaseCurrency.NATIVE,
+        twapWindow: ethers.BigNumber.from(30 * 60),
+        baseCurrency: underlying(assets, assetSymbols.WMATIC),
       },
     ],
     flashSwapFee: 30,
@@ -501,6 +501,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+  //// deploy uniswap v3 price oracle
+  await deployUniswapV3Oracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
 
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({
