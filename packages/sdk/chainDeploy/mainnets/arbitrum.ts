@@ -10,7 +10,13 @@ import {
   deployUniswapLpOracle,
   deployUniswapV3Oracle,
 } from "../helpers";
-import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, CurvePoolConfig } from "../helpers/types";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  ChainlinkFeedBaseCurrency,
+  ConcentratedLiquidityOracleConfig,
+  CurvePoolConfig,
+} from "../helpers/types";
 
 const assets = arbitrum.assets;
 const USDC = underlying(assets, assetSymbols.USDC);
@@ -33,24 +39,25 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [],
     flashSwapFee: 25,
-    uniswapV3OracleTokens: [
-      {
-        assetAddress: underlying(assets, assetSymbols.GMX),
-        poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
-        twapWindow: ethers.BigNumber.from(30 * 60),
-        baseToken: WETH,
-      },
-      {
-        assetAddress: underlying(assets, assetSymbols.USDs),
-        poolAddress: "0x50450351517117Cb58189edBa6bbaD6284D45902",
-        twapWindow: ethers.BigNumber.from(30 * 60),
-        baseToken: USDC,
-      },
-    ],
   },
   dynamicFlywheels: [],
   cgId: arbitrum.specificParams.cgId,
 };
+
+const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
+  {
+    assetAddress: underlying(assets, assetSymbols.GMX),
+    poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: WETH,
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.USDs),
+    poolAddress: "0x50450351517117Cb58189edBa6bbaD6284D45902",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: USDC,
+  },
+];
 
 const chainlinkAssets: ChainlinkAsset[] = [
   {
@@ -158,6 +165,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
+    concentratedLiquidityOracleTokens: uniswapV3OracleTokens,
   });
 
   //// ORACLES
