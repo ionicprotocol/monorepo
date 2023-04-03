@@ -80,7 +80,7 @@ export const deployConfig: ChainDeployConfig = {
         assetAddress: underlying(assets, assetSymbols.GNS),
         poolAddress: "0xEFa98Fdf168f372E5e9e9b910FcDfd65856f3986",
         twapWindow: ethers.BigNumber.from(30 * 60),
-        baseCurrency: underlying(assets, assetSymbols.WMATIC),
+        baseToken: underlying(assets, assetSymbols.WMATIC),
       },
     ],
     flashSwapFee: 30,
