@@ -1,7 +1,8 @@
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
+import { ConcentratedLiquidityBasePriceOracle } from "../../../typechain/ConcentratedLiquidityBasePriceOracle";
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { UniswapV3PriceOracle } from "../../../typechain/UniswapV3PriceOracle";
-import { UniswaV3DeployFnParams } from "../types";
+import { UniswapV3OracleConfig, UniswaV3DeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
@@ -36,14 +37,14 @@ export const deployUniswapV3Oracle = async ({
 
   const uniswapV3Oracle = (await ethers.getContract("UniswapV3PriceOracle", deployer)) as UniswapV3PriceOracle;
 
-  const assetsToAdd = [];
+  const assetsToAdd: UniswapV3OracleConfig[] = [];
   for (const assetConfig of deployConfig.uniswap.uniswapV3OracleTokens!) {
-    const existingOracleAssetConfig: UniswapV3PriceOracle.AssetConfigStruct =
+    const existingOracleAssetConfig: ConcentratedLiquidityBasePriceOracle.AssetConfigStruct =
       await uniswapV3Oracle.callStatic.poolFeeds(assetConfig.assetAddress);
     if (
       existingOracleAssetConfig.poolAddress != assetConfig.poolAddress ||
       existingOracleAssetConfig.twapWindow != assetConfig.twapWindow ||
-      existingOracleAssetConfig.baseCurrency != assetConfig.baseCurrency
+      existingOracleAssetConfig.baseToken != assetConfig.baseToken
     ) {
       assetsToAdd.push(assetConfig);
     }
@@ -51,12 +52,15 @@ export const deployUniswapV3Oracle = async ({
 
   // set pool feeds
   if (assetsToAdd.length > 0) {
-    const baseTokens = assetsToAdd.map((assetConfig) => assetConfig.baseCurrency);
+    // Check the base tokens
+    const baseTokens = assetsToAdd.map((assetConfig) => assetConfig.baseToken);
     const supportedBaseTokens = await uniswapV3Oracle.callStatic.getSupportedBaseTokens();
     const baseTokensToAdd = baseTokens.filter(
       (baseToken) => !supportedBaseTokens.includes(baseToken) && baseToken !== deployConfig.wtoken
     );
     if (baseTokensToAdd.length > 0) {
+      // set them if needed
+      console.log("Adding base tokens to UniswapV3 Oracle: ", baseTokensToAdd.join(", "));
       const tx = await uniswapV3Oracle._setSupportedBaseTokens([...baseTokensToAdd, ...supportedBaseTokens]);
       await tx.wait();
     }
@@ -65,7 +69,7 @@ export const deployUniswapV3Oracle = async ({
       return {
         poolAddress: assetConfig.poolAddress,
         twapWindow: assetConfig.twapWindow,
-        baseCurrency: assetConfig.baseCurrency,
+        baseToken: assetConfig.baseToken,
       };
     });
     const tx = await uniswapV3Oracle.setPoolFeeds(underlyings, feedConfigs);

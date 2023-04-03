@@ -24,7 +24,7 @@ export type UniswapV3OracleConfig = {
   assetAddress: string;
   poolAddress: string;
   twapWindow: BigNumber; // In seconds
-  baseCurrency: string;
+  baseToken: string;
 };
 
 export type ChainDeployConfig = {
