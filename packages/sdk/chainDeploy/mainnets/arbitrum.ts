@@ -14,17 +14,19 @@ import {
   ChainDeployFnParams,
   ChainlinkAsset,
   ChainlinkFeedBaseCurrency,
+  ConcentratedLiquidityOracleConfig,
   CurvePoolConfig,
-  UniswapV3BaseCurrency,
 } from "../helpers/types";
 
 const assets = arbitrum.assets;
+const USDC = underlying(assets, assetSymbols.USDC);
+const WETH = underlying(assets, assetSymbols.WETH);
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: underlying(assets, assetSymbols.WETH),
+  wtoken: WETH,
   nativeTokenName: "Wrapped ETH",
   nativeTokenSymbol: "ETH",
-  stableToken: underlying(assets, assetSymbols.USDC),
+  stableToken: USDC,
   nativeTokenUsdChainlinkFeed: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
   blocksPerYear: arbitrum.specificParams.blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
   uniswap: {
@@ -37,24 +39,25 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [],
     flashSwapFee: 25,
-    uniswapV3OracleTokens: [
-      {
-        assetAddress: underlying(assets, assetSymbols.GMX),
-        poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
-        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
-        baseCurrency: UniswapV3BaseCurrency.NATIVE,
-      },
-      {
-        assetAddress: underlying(assets, assetSymbols.USDs),
-        poolAddress: "0x50450351517117Cb58189edBa6bbaD6284D45902",
-        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
-        baseCurrency: UniswapV3BaseCurrency.USD,
-      },
-    ],
   },
   dynamicFlywheels: [],
   cgId: arbitrum.specificParams.cgId,
 };
+
+const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
+  {
+    assetAddress: underlying(assets, assetSymbols.GMX),
+    poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: WETH,
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.USDs),
+    poolAddress: "0x50450351517117Cb58189edBa6bbaD6284D45902",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: USDC,
+  },
+];
 
 const chainlinkAssets: ChainlinkAsset[] = [
   {
@@ -129,7 +132,7 @@ const curvePools: CurvePoolConfig[] = [
   {
     lpToken: underlying(assets, assetSymbols["2pool"]),
     pool: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
-    underlyings: [underlying(assets, assetSymbols.USDC), underlying(assets, assetSymbols.USDT)],
+    underlyings: [USDC, underlying(assets, assetSymbols.USDT)],
   },
 ];
 
@@ -138,7 +141,7 @@ const saddlePools: CurvePoolConfig[] = [
   {
     lpToken: underlying(assets, assetSymbols.saddleFraxBP),
     pool: "0x401AFbc31ad2A3Bc0eD8960d63eFcDEA749b4849",
-    underlyings: [underlying(assets, assetSymbols.USDC), underlying(assets, assetSymbols.FRAX)],
+    underlyings: [USDC, underlying(assets, assetSymbols.FRAX)],
   },
   {
     lpToken: underlying(assets, assetSymbols.saddleFraxUsdsBP),
@@ -162,6 +165,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
+    concentratedLiquidityOracleTokens: uniswapV3OracleTokens,
   });
 
   //// ORACLES
