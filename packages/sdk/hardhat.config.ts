@@ -5,7 +5,7 @@ import { config as dotEnvConfig } from "dotenv";
 import "hardhat-abi-exporter";
 import "hardhat-deploy";
 import "hardhat-tracer";
-import { HardhatUserConfig } from "hardhat/types";
+import { HardhatUserConfig } from "hardhat/types/config";
 
 import "./tasks/fork";
 import "./tasks/irm";
