@@ -34,13 +34,13 @@ export const useCTokenData = (
         ]);
 
         return {
-          reserveFactorMantissa,
           adminFeeMantissa,
-          decimals,
-          collateralFactorMantissa,
-          interestRateModelAddress,
-          supplyCap,
           borrowCap,
+          collateralFactorMantissa,
+          decimals,
+          interestRateModelAddress,
+          reserveFactorMantissa,
+          supplyCap,
         };
       } else {
         return null;
@@ -48,8 +48,8 @@ export const useCTokenData = (
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk,
+      staleTime: Infinity,
     }
   );
 };

@@ -10,10 +10,10 @@ const UtilizationChart = dynamic(() => import('@ui/components/shared/Utilization
 });
 
 interface IRMChartProps {
-  interestRateModelAddress: string;
-  reserveFactor: number;
   adminFee: number;
+  interestRateModelAddress: string;
   poolChainId: number;
+  reserveFactor: number;
 }
 const IRMChart = ({
   interestRateModelAddress,

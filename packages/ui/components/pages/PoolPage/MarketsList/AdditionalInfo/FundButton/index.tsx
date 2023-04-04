@@ -7,7 +7,7 @@ import { RepayModal } from '@ui/components/pages/PoolPage/MarketsList/Additional
 import { SupplyModal } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/index';
 import { WithdrawModal } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/WithdrawModal/index';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const FundButton = ({
   comptrollerAddress,
@@ -18,13 +18,13 @@ export const FundButton = ({
   poolChainId,
   borrowBalanceFiat,
 }: {
-  comptrollerAddress: string;
-  assets: MarketData[];
   asset: MarketData;
-  mode: FundOperationMode;
-  isDisabled?: boolean;
-  poolChainId: number;
+  assets: MarketData[];
   borrowBalanceFiat?: number;
+  comptrollerAddress: string;
+  isDisabled?: boolean;
+  mode: FundOperationMode;
+  poolChainId: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);

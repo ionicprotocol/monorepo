@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const useBorrowLimitTotal = (
   assets: MarketData[],
@@ -48,6 +48,6 @@ export const useBorrowLimitTotal = (
 
       return _maxBorrow;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!usdPrice }
+    { cacheTime: Infinity, enabled: !!usdPrice, staleTime: Infinity }
   );
 };

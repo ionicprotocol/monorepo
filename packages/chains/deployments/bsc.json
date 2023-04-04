@@ -57,7 +57,7 @@
       "address": "0x1D5Db1b87bb5Ca37d0091c0c884C1F961524E5EA"
     },
     "AnkrCertificateTokenPriceOracle_Implementation": {
-      "address": "0x9c81E7eF039FC944eDFF1Cf7207aE2eECCC96246"
+      "address": "0xeF9035D4553124398BE71508D944729a4dB1d65C"
     },
     "AnkrCertificateTokenPriceOracle_Proxy": {
       "address": "0x1D5Db1b87bb5Ca37d0091c0c884C1F961524E5EA"
@@ -72,19 +72,19 @@
       "address": "0x23B1ff27D97eF804fC0F100af7Bc5911D07f79d3"
     },
     "CErc20Delegate": {
-      "address": "0x9c2C420dF7cb5F89F6EBFf8503122D01aBF950a3"
+      "address": "0x62473df8c6c72Fe2Ec6ed9FB47BA1E408379F64c"
     },
     "CErc20PluginDelegate": {
-      "address": "0x4DD40654A6d84759783cB32a8bE7e904720730D0"
+      "address": "0x64D5aB4aeF497B85Aa57EefD4DA828743e6972F2"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x4b74A4046f0E8dB18c6683258bc1beDf0c9602Fe"
+      "address": "0xD9E1BAbd308e56835C4F0234A0582A0CAaA18D07"
     },
     "CEtherDelegate": {
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
     },
     "CTokenFirstExtension": {
-      "address": "0x114A6c1F308D44c8D2CA6cc8162CC8F82F97FF93"
+      "address": "0x3f9d37FC82D53F24d20Ee2F588573A837294Eb98"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
@@ -102,7 +102,7 @@
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x0ad440C8cbAE4428E530530C5273469843455587"
+      "address": "0x161FbE0943Af4A39a50262026A81a243B635982d"
     },
     "CurveLpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
@@ -117,7 +117,7 @@
       "address": "0x461fc4600c4e1B2e99886E9564a223E76C87e336"
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x427C9dEaa2629809A954Ae2e150e541fe1Ee0ef2"
+      "address": "0x5ffD348899aD28761d0C30574FdD9c066ecA0bcb"
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0x461fc4600c4e1B2e99886E9564a223E76C87e336"
@@ -177,7 +177,7 @@
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xF688761AD33223994be4Aea4263c286B9751685b"
+      "address": "0xBa1B21e12410123D7A8E5b78389670A407c3fa69"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
@@ -213,7 +213,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x24F20feb61CF461cFB4C8187bBAea08a8f1a8Bbb"
+      "address": "0x680421b9773e8Ad6937378BEB5b8E9D506B414FC"
     },
     "FusePoolDirectory_Proxy": {
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
@@ -291,7 +291,7 @@
       "address": "0xEfF15E27eea8bA87C93D972145730165366A935E"
     },
     "MidasFlywheel_AUTOv2_Implementation": {
-      "address": "0x85367388Db4Be737c7a79A26b258b392De9cBb3E"
+      "address": "0x613b8fA09ccF7a045f66dA5Ac27b8451496d35c6"
     },
     "MidasFlywheel_AUTOv2_Proxy": {
       "address": "0xEfF15E27eea8bA87C93D972145730165366A935E"
@@ -300,7 +300,7 @@
       "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5"
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0xbe39dAFb317016f9a9fcF1087f7ae7A5cae62310"
+      "address": "0x4BaAD5cf3D4a5EF5898f32996AeaA497Cd5deb78"
     },
     "MidasFlywheel_DDD_Proxy": {
       "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5"
@@ -309,7 +309,7 @@
       "address": "0xF2E46295c684C541d618243558a0af17fb4a6862"
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0xA8fE6E47A28e556634d16bb8c9323F9Fac0f81a6"
+      "address": "0x572417380ecE5de92e1157a3721E2B532e26b8BD"
     },
     "MidasFlywheel_EPX_Proxy": {
       "address": "0xF2E46295c684C541d618243558a0af17fb4a6862"
@@ -327,7 +327,7 @@
       "address": "0x5425F12dD3Fbc16deB3c6693d85B52b77fb59eaE"
     },
     "SimplePriceOracle_Implementation": {
-      "address": "0x94Df0eBbc7e6264F9970A961DA81A6dBEa28a904"
+      "address": "0x63e6D9785b98F6A2DBA65C29aA412CACb49E9815"
     },
     "SimplePriceOracle_Proxy": {
       "address": "0x5425F12dD3Fbc16deB3c6693d85B52b77fb59eaE"
@@ -335,11 +335,20 @@
     "SolidlyLpTokenPriceOracle": {
       "address": "0xf12BF362779D3F728644DC33a5D594F0E57a85F2"
     },
+    "SolidlyPriceOracle": {
+      "address": "0xf78A8fbBD89Bb01bA273565eb80f6D8425F63f1d"
+    },
+    "SolidlyPriceOracle_Implementation": {
+      "address": "0xa76EB186573ed7561B43aDA3adAd35a6c0bcb8c1"
+    },
+    "SolidlyPriceOracle_Proxy": {
+      "address": "0xf78A8fbBD89Bb01bA273565eb80f6D8425F63f1d"
+    },
     "StkBNBPriceOracle": {
       "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE"
     },
     "StkBNBPriceOracle_Implementation": {
-      "address": "0x6c69516aE8C3CA00cA3122e4e7E97426e1dFD974"
+      "address": "0x65b122FCB7cCa699342146e5e16aA685cAD4BE85"
     },
     "StkBNBPriceOracle_Proxy": {
       "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE"

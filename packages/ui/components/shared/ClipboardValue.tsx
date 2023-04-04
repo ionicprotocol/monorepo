@@ -1,6 +1,8 @@
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
-import { Button, ComponentWithAs, Text, useClipboard } from '@chakra-ui/react';
-import { ReactNode, useCallback, useEffect } from 'react';
+import type { ComponentWithAs } from '@chakra-ui/react';
+import { Button, Text, useClipboard } from '@chakra-ui/react';
+import type { ReactNode } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useInfoToast } from '@ui/hooks/useToast';
@@ -11,11 +13,11 @@ const ClipboardValue = ({
   component: Component = Text,
   ...props
 }: {
-  value: string;
-  label?: string;
+  [key: string]: ReactNode;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component?: ComponentWithAs<any>;
-  [key: string]: ReactNode;
+  label?: string;
+  value: string;
 }) => {
   const { hasCopied, onCopy } = useClipboard(value);
   const onClick = useCallback(
@@ -50,8 +52,8 @@ export const ClipboardValueIconButton = ({
   value = '',
   ...props
 }: {
-  value: string;
   [key: string]: ReactNode;
+  value: string;
 }) => {
   const { hasCopied, onCopy } = useClipboard(value);
   const onClick = useCallback(() => {

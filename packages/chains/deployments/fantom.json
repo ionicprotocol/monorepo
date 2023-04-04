@@ -15,7 +15,7 @@
       "address": "0x66ceEB3AA6fC5d67f478b56B475fF930bacf7E03"
     },
     "AnkrCertificateTokenPriceOracle_Implementation": {
-      "address": "0xFe85a28755D9210BDC0D00c53F7873015cAbAd5d"
+      "address": "0x4ab7cAEfb78D6EA8Bc62cAa6F9788ca873869dA1"
     },
     "AnkrCertificateTokenPriceOracle_Proxy": {
       "address": "0x66ceEB3AA6fC5d67f478b56B475fF930bacf7E03"
@@ -30,22 +30,22 @@
       "address": "0x70B6f26755e2594a714a931f21C3d29bcb424757"
     },
     "BalancerLpTokenPriceOracle_Implementation": {
-      "address": "0x61E91F52103f91C29c629DE62850a9b85AB9Fb74"
+      "address": "0xae3Bd2b302aa78c64B711B4fDBb77f636eE7fcF5"
     },
     "BalancerLpTokenPriceOracle_Proxy": {
       "address": "0x70B6f26755e2594a714a931f21C3d29bcb424757"
     },
     "CErc20Delegate": {
-      "address": "0xC8cfBfCE1D07b8017659AED821836a4Fafb4CF4E"
+      "address": "0xc4be936Dc3122b307d68b04D30ef3FFb5a11adaD"
     },
     "CErc20PluginDelegate": {
-      "address": "0x535CFc504C37C74948430392dC3E18d90d63e8e2"
+      "address": "0xb4A9ebf1A0dcf58e0EF936cF1ca49067Ba49228B"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xF2dcd9116Ef2974C1536be3C9a0Cb5EC3CaB9D60"
+      "address": "0x813bBF660F249E42069225Ac5EFdb1494d5a4429"
     },
     "CTokenFirstExtension": {
-      "address": "0x1421d167d38f01c66215F3c5e10649059f2F2e86"
+      "address": "0x692dC6003D4692751346F56309Dd622b9ACb75d1"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x8E9f21C59A6E63e5F08a6688a02b55042158f0B5"
@@ -63,7 +63,7 @@
       "address": "0xbF60bDf4bc95d84fB9a6b40792C5465D491B2023"
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x8A180Fd239E15652CE574e3601e43621FB9C0D94"
+      "address": "0x7b8098F7809C1eC2C05F96AE17ca3c80fF2521C8"
     },
     "CurveLpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0xbF60bDf4bc95d84fB9a6b40792C5465D491B2023"
@@ -75,7 +75,7 @@
       "address": "0x506E21A470ff22dF5DDAb03C0149b3234b4B0d4A"
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0xB5ea8d2913ccF26380a6690fA59C7631403c7d65"
+      "address": "0xC06B90F4f4d9EaDcb70648Eec256E3EBDa33B502"
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0x506E21A470ff22dF5DDAb03C0149b3234b4B0d4A"
@@ -93,7 +93,7 @@
       "address": "0xA2938d28D26F5D0aA86ffdC9BED815F184A7b1bD"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xE9217d14850153CD878Fb1Ac1277Ee2Cd38961cC"
+      "address": "0x135E1132c8c55577cF6E1677c4B55547B328DA3e"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xA2938d28D26F5D0aA86ffdC9BED815F184A7b1bD"
@@ -102,7 +102,7 @@
       "address": "0xE622c2967E2885ED04436075889C88696328aBE8"
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xB335eC6826848b3745356B9D0F849E355a70C616"
+      "address": "0xAc151c50a20d8c36759E81f02e642F6a53854a9F"
     },
     "FusePoolDirectory_Proxy": {
       "address": "0xE622c2967E2885ED04436075889C88696328aBE8"
@@ -144,7 +144,7 @@
       "address": "0x863D4F7FA3618fb1D4A94F28B5b74a30c337b9C7"
     },
     "SimplePriceOracle_Implementation": {
-      "address": "0x0e9AF6E9211d643fBF7413a65dB240f2cBfC5299"
+      "address": "0xE31844E11168A3c99D164F36eeA162a79e542B6F"
     },
     "SimplePriceOracle_Proxy": {
       "address": "0x863D4F7FA3618fb1D4A94F28B5b74a30c337b9C7"

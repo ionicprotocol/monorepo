@@ -1,4 +1,4 @@
-import { Dappeteer, DappeteerBrowser, DappeteerPage } from '@chainsafe/dappeteer';
+import type { Dappeteer, DappeteerBrowser, DappeteerPage } from '@chainsafe/dappeteer';
 import { FundOperationMode } from '@midas-capital/types';
 
 import { Config } from '@ui/test//helpers/Config';
@@ -20,9 +20,9 @@ jest.setTimeout(JEST_EXE_TIME);
 describe.skip('Fund Operation:', () => {
   beforeAll(async () => {
     [metamask, page, browser] = await TestHelper.initDappeteer({
+      chainId,
       networkName,
       rpc,
-      chainId,
       symbol,
     });
 

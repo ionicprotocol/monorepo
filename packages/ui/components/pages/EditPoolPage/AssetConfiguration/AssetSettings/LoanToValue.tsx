@@ -10,7 +10,8 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
+import { ComptrollerErrorCodes } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -97,15 +98,15 @@ export const LoanToValue = ({
       successToast({ description: 'Successfully updated loan-to-Value!' });
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating loan-to-value',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
     }
@@ -177,15 +178,15 @@ export const LoanToValue = ({
                       />
                     )}
                     rules={{
-                      required: 'Loan-to-Value is required',
-                      min: {
-                        value: LOAN_TO_VALUE.MIN,
-                        message: `Loan-to-Value must be at least ${LOAN_TO_VALUE.MIN}%`,
-                      },
                       max: {
-                        value: LOAN_TO_VALUE.MAX,
                         message: `Loan-to-Value must be no more than ${LOAN_TO_VALUE.MAX}%`,
+                        value: LOAN_TO_VALUE.MAX,
                       },
+                      min: {
+                        message: `Loan-to-Value must be at least ${LOAN_TO_VALUE.MIN}%`,
+                        value: LOAN_TO_VALUE.MIN,
+                      },
+                      required: 'Loan-to-Value is required',
                     }}
                   />
                   <FormErrorMessage marginBottom="-10px" maxWidth="270px">

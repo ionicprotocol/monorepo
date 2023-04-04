@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 
 import { useColors } from '@ui/hooks/useColors';
-import { IRMToCurveData } from '@ui/types/ComponentPropsType';
+import type { IRMToCurveData } from '@ui/types/ComponentPropsType';
 
 type LineProps = {
   [key: string]: boolean | string | null;
@@ -26,8 +26,8 @@ const UtilizationChart = ({
   irmToCurve,
   currentUtilization,
 }: {
-  irmToCurve: IRMToCurveData;
   currentUtilization?: string;
+  irmToCurve: IRMToCurveData;
 }) => {
   const keys = irmToCurve.rates.length > 0 ? Object.keys(irmToCurve.rates[0]) : [];
   const supplyRateColor = useColorModeValue('#00B5D8', 'cyan'); // #00B5D8 = cyan.500
@@ -46,8 +46,8 @@ const UtilizationChart = ({
   const selectLine = (key: string) => {
     setLineProps({
       ...lineProps,
-      [key]: !lineProps[key],
       hover: null,
+      [key]: !lineProps[key],
     });
   };
 
@@ -63,7 +63,7 @@ const UtilizationChart = ({
 
   return (
     <ResponsiveContainer height="100%" width="100%">
-      <AreaChart data={irmToCurve.rates} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
+      <AreaChart data={irmToCurve.rates} margin={{ bottom: 10, left: 20, right: 20, top: 10 }}>
         <CartesianGrid strokeWidth={0} />
         <XAxis
           minTickGap={10}
@@ -90,10 +90,10 @@ const UtilizationChart = ({
           <ReferenceLine
             fill={cCard.txtColor}
             label={{
-              value: 'Current',
               fill: cCard.txtColor,
-              position: 'top',
               fillOpacity: 0.7,
+              position: 'top',
+              value: 'Current',
             }}
             stroke={cCard.txtColor}
             strokeOpacity={0.7}
@@ -115,7 +115,7 @@ const UtilizationChart = ({
         {keys.length > 0 && (
           <>
             <Area
-              activeDot={{ strokeWidth: 0, r: 5 }}
+              activeDot={{ r: 5, strokeWidth: 0 }}
               dataKey={keys[1]}
               dot={{ r: 0 }}
               fill={supplyRateColor}
@@ -128,14 +128,14 @@ const UtilizationChart = ({
               type="monotone"
             />
             <Area
-              activeDot={{ strokeWidth: 0, r: 5 }}
-              dataKey={keys[2]}
+              activeDot={{ r: 5, strokeWidth: 0 }}
+              dataKey={keys[0]}
               dot={{ r: 0 }}
               fill={borrowRateColor}
               fillOpacity={0.2}
-              hide={lineProps[keys[2]] === true}
+              hide={lineProps[keys[0]] === true}
               name="Borrow Rate"
-              opacity={Number(lineProps.hover === keys[2] || !lineProps.hover ? 1 : 0.2)}
+              opacity={Number(lineProps.hover === keys[0] || !lineProps.hover ? 1 : 0.2)}
               stroke={borrowRateColor}
               strokeWidth={3}
               type="monotone"
@@ -192,10 +192,10 @@ const CustomTooltip = (props: any) => {
 
 const CustomLegend = (
   props: any & {
-    lineProps: LineProps;
-    selectLine: (key: string) => void;
     handleLegendMouseEnter: (key: string) => void;
     handleLegendMouseLeave: () => void;
+    lineProps: LineProps;
+    selectLine: (key: string) => void;
   }
 ) => {
   const { payload, lineProps, selectLine, handleLegendMouseEnter, handleLegendMouseLeave } = props;

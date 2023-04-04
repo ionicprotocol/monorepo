@@ -8,9 +8,9 @@ export const ExpanderArrow = ({
   isExpanded,
   canExpand,
 }: {
+  canExpand: boolean;
   getToggleExpandedHandler: () => void;
   isExpanded: boolean;
-  canExpand: boolean;
 }) => {
   return (
     <HStack justifyContent="center">

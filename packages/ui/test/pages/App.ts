@@ -1,4 +1,4 @@
-import { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
+import type { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
 
 import { CreatePoolPage } from '@ui/test/pages/pools/CreatePoolPage';
 import { PoolDetailPage } from '@ui/test/pages/pools/PoolDetailPage';

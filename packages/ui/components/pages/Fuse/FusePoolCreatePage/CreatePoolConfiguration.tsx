@@ -36,12 +36,12 @@ import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useTo
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 type FormData = {
+  closeFactor: number;
+  isWhitelisted: boolean;
+  liquidationIncentive: number;
   name: string;
   oracle: string;
-  isWhitelisted: boolean;
   whitelist: string[];
-  closeFactor: number;
-  liquidationIncentive: number;
 };
 
 export const CreatePoolConfiguration = () => {
@@ -69,11 +69,11 @@ export const CreatePoolConfiguration = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      closeFactor: 50,
+      isWhitelisted: false,
+      liquidationIncentive: 8,
       name: '',
       oracle: '',
-      isWhitelisted: false,
-      closeFactor: 50,
-      liquidationIncentive: 8,
       whitelist: [],
     },
   });
@@ -114,8 +114,8 @@ export const CreatePoolConfiguration = () => {
       const poolId = deployResult.pop();
 
       successToast({
-        title: 'Your pool has been deployed!',
         description: 'You may now add assets to it.',
+        title: 'Your pool has been deployed!',
       });
 
       await router.push(`/${currentChain.id}/pool/${poolId}`);
@@ -127,7 +127,7 @@ export const CreatePoolConfiguration = () => {
         contextName: 'Creating pool',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
       setIsCreating(false);
     }
   };
@@ -297,15 +297,15 @@ export const CreatePoolConfiguration = () => {
                     />
                   )}
                   rules={{
-                    required: 'Close factor is required',
-                    min: {
-                      value: CLOSE_FACTOR.MIN,
-                      message: `Close Factor must be at least ${CLOSE_FACTOR.MIN}%`,
-                    },
                     max: {
-                      value: CLOSE_FACTOR.MAX,
                       message: `Close Factor must be no more than ${CLOSE_FACTOR.MAX}%`,
+                      value: CLOSE_FACTOR.MAX,
                     },
+                    min: {
+                      message: `Close Factor must be at least ${CLOSE_FACTOR.MIN}%`,
+                      value: CLOSE_FACTOR.MIN,
+                    },
+                    required: 'Close factor is required',
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -346,15 +346,15 @@ export const CreatePoolConfiguration = () => {
                     />
                   )}
                   rules={{
-                    required: 'Liquidation incentive is required',
-                    min: {
-                      value: LIQUIDATION_INCENTIVE.MIN,
-                      message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
-                    },
                     max: {
-                      value: LIQUIDATION_INCENTIVE.MAX,
                       message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
+                      value: LIQUIDATION_INCENTIVE.MAX,
                     },
+                    min: {
+                      message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
+                      value: LIQUIDATION_INCENTIVE.MIN,
+                    },
+                    required: 'Liquidation incentive is required',
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="270px">

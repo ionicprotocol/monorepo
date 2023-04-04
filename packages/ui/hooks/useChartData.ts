@@ -23,8 +23,8 @@ export function useChartData(market: string, poolChainId: number) {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!sdk && !!market,
+      staleTime: Infinity,
     }
   );
 }

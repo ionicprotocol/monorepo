@@ -6,6 +6,7 @@ import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  deployAlgebraPriceOracle,
   deployAnkrCertificateTokenPriceOracle,
   deployBalancerLpPriceOracle,
   deployBalancerRateProviderPriceOracle,
@@ -15,6 +16,7 @@ import {
   deployDiaOracle,
   deployGelatoGUniPriceOracle,
   deployUniswapLpOracle,
+  deployUniswapV3Oracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import {
@@ -23,6 +25,7 @@ import {
   BalancerStableLpAsset,
   ChainDeployFnParams,
   ChainlinkAsset,
+  ConcentratedLiquidityOracleConfig,
   CurvePoolConfig,
   DiaAsset,
   GelatoGUniAsset,
@@ -72,6 +75,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["WETH-WBTC"]),
       underlying(assets, assetSymbols["MAI-USDC"]),
       underlying(assets, assetSymbols["WMATIC-MATICx"]),
+      underlying(assets, assetSymbols["DAI-GNS"]),
     ],
     flashSwapFee: 30,
   },
@@ -84,6 +88,24 @@ export const deployConfig: ChainDeployConfig = {
   ],
   cgId: polygon.specificParams.cgId,
 };
+
+const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
+  {
+    assetAddress: underlying(assets, assetSymbols.GNS),
+    poolAddress: "0xEFa98Fdf168f372E5e9e9b910FcDfd65856f3986",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.WMATIC),
+  },
+];
+
+const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
+  {
+    assetAddress: underlying(assets, assetSymbols.IXT),
+    poolAddress: "0xD6e486c197606559946384AE2624367d750A160f",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.USDT),
+  },
+];
 
 const chainlinkAssets: ChainlinkAsset[] = [
   //
@@ -491,6 +513,25 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+  //// deploy uniswap v3 price oracle
+  await deployUniswapV3Oracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    concentratedLiquidityOracleTokens: uniswapV3OracleTokens,
+  });
+
+  //// deploy algebra price oracle
+  await deployAlgebraPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    concentratedLiquidityOracleTokens: algebraOracleTokens,
+  });
 
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({

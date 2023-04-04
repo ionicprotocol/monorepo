@@ -1,4 +1,4 @@
-import { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
+import type { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
 
 export abstract class AppPage {
   public Metamask: Dappeteer;

@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import React from 'react';
 
-import { CenterProps, ColumnProps, RowProps } from '@ui/types/ComponentPropsType';
+import type { CenterProps, ColumnProps, RowProps } from '@ui/types/ComponentPropsType';
 
 const Center = ({ children, expand, ...others }: CenterProps) => {
   if (expand) {

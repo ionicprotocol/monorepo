@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';
@@ -7,8 +8,8 @@ import Loader from '@ui/components/shared/Loader';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { TxStep } from '@ui/types/ComponentPropsType';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const PendingTransaction = ({
   activeStep,
@@ -20,12 +21,12 @@ export const PendingTransaction = ({
   asset,
 }: {
   activeStep: number;
-  failedStep: number;
-  steps: TxStep[];
-  isRepaying: boolean;
-  poolChainId: number;
   amount: BigNumber;
   asset: MarketData;
+  failedStep: number;
+  isRepaying: boolean;
+  poolChainId: number;
+  steps: TxStep[];
 }) => {
   const amountNum = utils.formatUnits(amount, asset.underlyingDecimals);
 
@@ -33,12 +34,12 @@ export const PendingTransaction = ({
   const errorToast = useErrorToast();
 
   const addToken = useAddTokenToWallet({
-    underlyingAddress: asset.underlyingToken,
-    underlyingSymbol: asset.underlyingSymbol,
-    underlyingDecimals: Number(asset.underlyingDecimals),
+    errorToast,
     logoUrl: asset.logoUrl,
     successToast,
-    errorToast,
+    underlyingAddress: asset.underlyingToken,
+    underlyingDecimals: Number(asset.underlyingDecimals),
+    underlyingSymbol: asset.underlyingSymbol,
   });
 
   return (

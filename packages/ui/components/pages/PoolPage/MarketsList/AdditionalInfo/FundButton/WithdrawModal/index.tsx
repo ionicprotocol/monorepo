@@ -2,7 +2,8 @@ import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber, constants } from 'ethers';
+import type { BigNumber } from 'ethers';
+import { constants } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
@@ -20,17 +21,17 @@ import { useColors } from '@ui/hooks/useColors';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { TxStep } from '@ui/types/ComponentPropsType';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface WithdrawModalProps {
-  isOpen: boolean;
   asset: MarketData;
   assets: MarketData[];
+  comptrollerAddress: string;
+  isOpen: boolean;
   onClose: () => void;
   poolChainId: number;
-  comptrollerAddress: string;
 }
 
 export const WithdrawModal = ({
@@ -107,8 +108,8 @@ export const WithdrawModal = ({
       } else {
         const tx = resp.tx;
         addRecentTransaction({
-          hash: tx.hash,
           description: `${asset.underlyingSymbol} Token Withdraw`,
+          hash: tx.hash,
         });
         _steps[0] = {
           ..._steps[0],
@@ -126,24 +127,24 @@ export const WithdrawModal = ({
         };
         setSteps([..._steps]);
         successToast({
-          id: 'Withdraw',
           description: 'Successfully withdrew!',
+          id: 'Withdraw',
         });
       }
     } catch (error) {
       setFailedStep(1);
 
       const sentryProperties = {
+        amount,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         token: asset.cToken,
-        amount,
       };
       const sentryInfo = {
         contextName: 'Withdrawing',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsWithdrawing(false);
     }

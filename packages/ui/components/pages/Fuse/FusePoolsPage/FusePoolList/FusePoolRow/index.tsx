@@ -22,21 +22,23 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { SupportedChains } from '@midas-capital/types';
-import {
+import type { SupportedChains } from '@midas-capital/types';
+import type {
   ColumnDef,
   FilterFn,
+  PaginationState,
+  SortingFn,
+  SortingState,
+  VisibilityState,
+} from '@tanstack/react-table';
+import {
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  PaginationState,
-  SortingFn,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -76,26 +78,26 @@ import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile, useIsSmallScreen } from '@ui/hooks/useScreenSize';
-import { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
-import { PoolData } from '@ui/types/TokensDataMap';
+import type { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
+import type { PoolData } from '@ui/types/TokensDataMap';
 import { poolSortByAddress } from '@ui/utils/sorts';
 
 export type PoolRowData = {
+  assets: PoolData;
+  borrowBalance: PoolData;
   chain: PoolData;
   poolName: PoolData;
-  assets: PoolData;
   supplyBalance: PoolData;
-  borrowBalance: PoolData;
-  totalSupply: PoolData;
   totalBorrow: PoolData;
+  totalSupply: PoolData;
 };
 
 const PoolsRowList = ({
   poolsPerChain,
   isLoading,
 }: {
-  poolsPerChain: PoolsPerChainStatus;
   isLoading: boolean;
+  poolsPerChain: PoolsPerChainStatus;
 }) => {
   const enabledChains = useEnabledChains();
   const { address, setGlobalLoading } = useMultiMidas();
@@ -103,7 +105,7 @@ const PoolsRowList = ({
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
-    { id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY, desc: true },
+    { desc: true, id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY },
   ]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -198,13 +200,13 @@ const PoolsRowList = ({
   const data: PoolRowData[] = useMemo(() => {
     return poolSortByAddress(allPools).map((pool) => {
       return {
+        assets: pool,
+        borrowBalance: pool,
         chain: pool,
         poolName: pool,
-        assets: pool,
         supplyBalance: pool,
-        borrowBalance: pool,
-        totalSupply: pool,
         totalBorrow: pool,
+        totalSupply: pool,
       };
     });
   }, [allPools]);
@@ -213,17 +215,15 @@ const PoolsRowList = ({
     return [
       {
         accessorFn: (row) => row.chain,
-        id: CHAIN,
-        header: () => null,
         cell: ({ getValue }) => <Chain chainId={getValue<PoolData>().chainId} />,
-        footer: (props) => props.column.id,
-        enableSorting: false,
         enableHiding: false,
+        enableSorting: false,
+        footer: (props) => props.column.id,
+        header: () => null,
+        id: CHAIN,
       },
       {
         accessorFn: (row) => row.poolName,
-        id: POOL_NAME,
-        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
         cell: ({ getValue }) => (
           <PoolName
             chainId={getValue<PoolData>().chainId}
@@ -232,54 +232,54 @@ const PoolsRowList = ({
             poolName={getValue<PoolData>().name}
           />
         ),
-        footer: (props) => props.column.id,
-        filterFn: poolFilter,
-        sortingFn: poolSort,
         enableHiding: false,
+        filterFn: poolFilter,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
+        id: POOL_NAME,
+        sortingFn: poolSort,
       },
       {
         accessorFn: (row) => row.assets,
-        id: ASSETS,
         cell: ({ getValue }) => <Assets pool={getValue<PoolData>()} />,
-        header: (context) => <TableHeaderCell context={context}>Assets</TableHeaderCell>,
-        footer: (props) => props.column.id,
         enableSorting: false,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Assets</TableHeaderCell>,
+        id: ASSETS,
       },
       {
         accessorFn: (row) => row.supplyBalance,
-        id: SUPPLY_BALANCE,
         cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
-        header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
         footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
+        id: SUPPLY_BALANCE,
         sortingFn: poolSort,
       },
       {
         accessorFn: (row) => row.borrowBalance,
-        id: BORROW_BALANCE,
         cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
-        header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
         footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
+        id: BORROW_BALANCE,
         sortingFn: poolSort,
       },
       {
         accessorFn: (row) => row.totalSupply,
-        id: TOTAL_SUPPLY,
         cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
-        header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
         footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
+        id: TOTAL_SUPPLY,
         sortingFn: poolSort,
       },
       {
         accessorFn: (row) => row.totalBorrow,
-        id: TOTAL_BORROW,
         cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
-        header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
         footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
+        id: TOTAL_BORROW,
         sortingFn: poolSort,
       },
       {
-        id: EXPANDER,
-        header: () => null,
         cell: ({ row }) => {
           return (
             <ExpanderArrow
@@ -290,6 +290,8 @@ const PoolsRowList = ({
           );
         },
         enableHiding: false,
+        header: () => null,
+        id: EXPANDER,
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -298,24 +300,24 @@ const PoolsRowList = ({
   const table = useReactTable({
     columns,
     data,
-    getRowCanExpand: () => true,
-    getColumnCanGlobalFilter: () => true,
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: onPagination,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     enableSortingRemoval: false,
+    getColumnCanGlobalFilter: () => true,
+    getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: poolFilter,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getRowCanExpand: () => true,
+    getSortedRowModel: getSortedRowModel(),
+    globalFilterFn: poolFilter,
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: onPagination,
+    onSortingChange: setSorting,
     state: {
-      sorting,
-      pagination,
-      globalFilter,
       columnVisibility,
+      globalFilter,
+      pagination,
+      sorting,
     },
   });
 
@@ -351,7 +353,7 @@ const PoolsRowList = ({
           arr.push(key);
         }
       });
-      const data = { ...oldObj, searchText, globalFilter, sorting, poolsListColumnVisibility: arr };
+      const data = { ...oldObj, globalFilter, poolsListColumnVisibility: arr, searchText, sorting };
       localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
   }, [searchText, globalFilter, sorting, columnVisibility]);
@@ -375,13 +377,13 @@ const PoolsRowList = ({
     const data = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
     if (data && mounted.current) {
       const obj = JSON.parse(data);
-      const _globalFilter = (obj.globalFilter as (string | SupportedChains)[]) || [ALL];
+      const _globalFilter = (obj.globalFilter as (SupportedChains | string)[]) || [ALL];
       setGlobalFilter(_globalFilter);
 
       if (obj && obj.sorting && POOLS_COLUMNS.includes(obj.sorting[0].id)) {
         setSorting(obj.sorting);
       } else {
-        setSorting([{ id: TOTAL_SUPPLY, desc: true }]);
+        setSorting([{ desc: true, id: TOTAL_SUPPLY }]);
       }
 
       const columnVisibility: VisibilityState = {};
@@ -525,13 +527,13 @@ const PoolsRowList = ({
                       alertDescriptionProps={{ fontSize: 'lg' }}
                       alertIconProps={{ boxSize: 12 }}
                       alertProps={{
-                        status: 'warning',
-                        flexDirection: 'column',
-                        height: '2xs',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        textAlign: 'center',
+                        flexDirection: 'column',
                         gap: 4,
+                        height: '2xs',
+                        justifyContent: 'center',
+                        status: 'warning',
+                        textAlign: 'center',
                       }}
                       descriptions={[
                         {
@@ -731,9 +733,9 @@ const ChainFilterButton = ({
   isLoading,
 }: {
   chainId: SupportedChains;
-  onFilter: (chainId: SupportedChains) => void;
-  globalFilter: (string | SupportedChains)[];
+  globalFilter: (SupportedChains | string)[];
   isLoading: boolean;
+  onFilter: (chainId: SupportedChains) => void;
 }) => {
   const chainConfig = useChainConfig(chainId);
   const isSmallScreen = useIsSmallScreen();

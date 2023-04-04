@@ -1,4 +1,4 @@
-import { MidasSdk } from '@midas-capital/sdk';
+import type { MidasSdk } from '@midas-capital/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 
@@ -39,8 +39,8 @@ export function useTokenBalance(tokenAddress: string, customAddress?: string) {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!currentChain && !!tokenAddress && !!addressToCheck && !!currentSdk,
+      staleTime: Infinity,
     }
   );
 }

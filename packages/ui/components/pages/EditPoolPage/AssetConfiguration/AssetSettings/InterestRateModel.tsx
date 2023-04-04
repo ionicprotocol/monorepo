@@ -11,9 +11,10 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
-import { ContractTransaction, utils } from 'ethers';
+import type { ContractTransaction } from 'ethers';
+import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -40,8 +41,8 @@ const IRMChart = dynamic(
 
 interface InterestRateModelProps {
   comptrollerAddress: string;
-  selectedAsset: NativePricedFuseAsset;
   poolChainId: number;
+  selectedAsset: NativePricedFuseAsset;
 }
 
 export const InterestRateModel = ({
@@ -103,16 +104,16 @@ export const InterestRateModel = ({
       successToast({ description: 'Successfully updated interest rate model!' });
     } catch (error) {
       const sentryProperties = {
-        token: cTokenAddress,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         interestRateModel,
+        token: cTokenAddress,
       };
       const sentryInfo = {
         contextName: 'Updating interest rate model',
         properties: sentryProperties,
       };
-      handleGenericError({ error, toast: errorToast, sentryInfo });
+      handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
     }

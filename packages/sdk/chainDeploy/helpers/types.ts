@@ -7,11 +7,6 @@ export enum ChainlinkFeedBaseCurrency {
   USD,
 }
 
-export enum UniswapV3BaseCurrency {
-  NATIVE,
-  USD,
-}
-
 export type TokenPair = {
   token: string;
   baseToken: string;
@@ -25,11 +20,11 @@ export type UniswapOracleDeployConfig = {
   deviationThreshold: string;
 };
 
-export type UniswapV3OracleConfig = {
+export type ConcentratedLiquidityOracleConfig = {
   assetAddress: string;
   poolAddress: string;
-  twapWindowSeconds: BigNumber;
-  baseCurrency: UniswapV3BaseCurrency;
+  twapWindow: BigNumber; // In seconds
+  baseToken: string;
 };
 
 export type ChainDeployConfig = {
@@ -43,7 +38,6 @@ export type ChainDeployConfig = {
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
     uniswapOracleLpTokens?: Array<string>;
     flashSwapFee: number;
-    uniswapV3OracleTokens?: Array<UniswapV3OracleConfig>;
   };
   wtoken: string;
   nativeTokenUsdChainlinkFeed?: string;
@@ -196,8 +190,21 @@ export type SolidlyDeployFnParams = ChainDeployFnParams & {
   solidlyLps: SolidlyLpAsset[];
 };
 
-export type UniswaV3DeployFnParams = ChainDeployFnParams & {
+export type SolidlyOracleAssetConfig = {
+  underlying: string;
+  poolAddress: string;
+  baseToken: string;
+};
+
+export type SolidlyOracleDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
+  supportedBaseTokens: string[];
+  assets: SolidlyOracleAssetConfig[];
+};
+
+export type ConcentratedLiquidityDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  concentratedLiquidityOracleTokens: ConcentratedLiquidityOracleConfig[];
 };
 
 export type CurveLpFnParams = ChainDeployFnParams & {

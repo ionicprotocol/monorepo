@@ -14,16 +14,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 interface MaxBorrowSliderProps {
-  userEnteredAmount: string;
-  updateAmount: (amount: string) => void;
-  borrowableAmount: number;
   asset: MarketData;
+  borrowableAmount: number;
   poolChainId: number;
+  updateAmount: (amount: string) => void;
+  userEnteredAmount: string;
 }
 
 function MaxBorrowSlider({
@@ -54,8 +54,8 @@ function MaxBorrowSlider({
 
     return {
       borrowableLimit,
-      borrowedPercent,
       borrowablePercent,
+      borrowedPercent,
     };
   }, [asset.underlyingPrice, borrowBalanceFiat, borrowableAmount, price]);
 

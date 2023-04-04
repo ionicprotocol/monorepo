@@ -1,5 +1,5 @@
 import { Banner } from '@ui/components/shared/Banner';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Alerts = ({ asset }: { asset: MarketData }) => {
   return (

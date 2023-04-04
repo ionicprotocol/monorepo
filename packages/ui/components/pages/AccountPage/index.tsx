@@ -1,6 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
-import { SortingState, VisibilityState } from '@tanstack/react-table';
+import type { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
@@ -39,7 +39,7 @@ const AccountPage = memo(() => {
     ) {
       setInitSorting(JSON.parse(oldData).userMarketSorting);
     } else {
-      setInitSorting([{ id: MARKET_LTV, desc: true }]);
+      setInitSorting([{ desc: true, id: MARKET_LTV }]);
     }
 
     const columnVisibility: VisibilityState = {};
@@ -149,13 +149,13 @@ const AccountPage = memo(() => {
               alertDescriptionProps={{ fontSize: 'lg' }}
               alertIconProps={{ boxSize: 12 }}
               alertProps={{
-                status: 'warning',
-                flexDirection: 'column',
-                height: '2xs',
                 alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
+                flexDirection: 'column',
                 gap: 4,
+                height: '2xs',
+                justifyContent: 'center',
+                status: 'warning',
+                textAlign: 'center',
               }}
               descriptions={[
                 {

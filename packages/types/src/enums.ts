@@ -212,10 +212,13 @@ export enum assetSymbols {
   "BTCB-ETH" = "BTCB-ETH",
 
   "CAKE-WBNB" = "CAKE-WBNB",
+  "ANKR-ankrBNB" = "ANKR-ankrBNB",
+
   "stkBNB-WBNB" = "stkBNB-WBNB",
   BNBx = "BNBx",
   "epsBNBx-BNB" = "epsBNBx-BNB",
   "asBNBx-WBNB" = "ApeSwap BNBx-WBNB LP",
+  "asANKR-ankrBNB" = "ApeSwap ANKR-ankrBNB LP",
 
   DDD = "DDD",
   EPX = "EPX",
@@ -225,6 +228,7 @@ export enum assetSymbols {
 
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
+  "vAMM-ANKR/ankrBNB" = "vAMM-ANKR-ankrBNB",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
@@ -357,6 +361,9 @@ export enum assetSymbols {
   MATICx = "MATICx",
   stMATIC = "stMATIC",
   csMATIC = "csMATIC",
+  IXT = "IXT",
+  GNS = "GNS",
+  "DAI-GNS" = "DAI-GNS",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",

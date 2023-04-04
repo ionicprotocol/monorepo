@@ -28,7 +28,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Assets
 
   const databaseResponse = await client
     .from(config.supabaseAssetApyTableName)
-    .select<'rewards,address', { rewards: AssetReward[]; address: string }>('rewards,address')
+    .select<'rewards,address', { address: string; rewards: AssetReward[] }>('rewards,address')
     .eq('chain_id', parseInt(chainId as string, 10));
 
   if (databaseResponse.error) {

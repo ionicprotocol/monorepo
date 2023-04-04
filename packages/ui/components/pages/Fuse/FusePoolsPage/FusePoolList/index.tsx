@@ -13,13 +13,13 @@ const FusePoolList = () => {
         alertDescriptionProps={{ fontSize: 'lg' }}
         alertIconProps={{ boxSize: 12 }}
         alertProps={{
-          status: 'warning',
-          flexDirection: 'column',
-          height: '2xs',
           alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
+          flexDirection: 'column',
           gap: 4,
+          height: '2xs',
+          justifyContent: 'center',
+          status: 'warning',
+          textAlign: 'center',
         }}
         descriptions={[
           {

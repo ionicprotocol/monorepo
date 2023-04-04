@@ -2,10 +2,10 @@ import type { ComponentStyleConfig } from '@chakra-ui/theme';
 
 export const BadgeStyleConfig: ComponentStyleConfig = {
   baseStyle: {
-    borderRadius: 'lg',
-    fontFamily: 'heading',
-    display: 'inline-flex',
     alignItems: 'center',
+    borderRadius: 'lg',
+    display: 'inline-flex',
+    fontFamily: 'heading',
     justifyContent: 'center',
     px: '2',
   },

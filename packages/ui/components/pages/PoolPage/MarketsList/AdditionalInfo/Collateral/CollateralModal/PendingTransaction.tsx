@@ -4,8 +4,8 @@ import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 import { Column } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { TxStep } from '@ui/types/ComponentPropsType';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const PendingTransaction = ({
   activeStep,
@@ -16,11 +16,11 @@ export const PendingTransaction = ({
   asset,
 }: {
   activeStep: number;
+  asset: MarketData;
   failedStep: number;
-  steps: TxStep[];
   isLoading: boolean;
   poolChainId: number;
-  asset: MarketData;
+  steps: TxStep[];
 }) => {
   return (
     <Column crossAxisAlignment="center" expand mainAxisAlignment="center" p={4} pt={12}>

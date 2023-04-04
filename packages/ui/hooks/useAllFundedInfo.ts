@@ -1,5 +1,6 @@
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { assetSymbols, SupportedChains } from '@midas-capital/types';
+import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { SupportedChains } from '@midas-capital/types';
+import { assetSymbols } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { utils } from 'ethers';
@@ -8,36 +9,37 @@ import { aprDays } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
-import { UseAssetsData } from '@ui/hooks/useAssets';
+import type { UseAssetsData } from '@ui/hooks/useAssets';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { fetchRewards, UseRewardsData } from '@ui/hooks/useRewards';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { UseRewardsData } from '@ui/hooks/useRewards';
+import { fetchRewards } from '@ui/hooks/useRewards';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getAnkrBNBContract } from '@ui/utils/contracts';
 import { ChainSupportedAssets, getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export interface FundedAsset extends MarketData {
   chainId: string;
+  comptroller: string;
   poolId: string;
   poolName: string;
-  comptroller: string;
-  totalSupplyBalanceNative: number;
-  totalSupplyBalanceFiat: number;
-  totalBorrowBalanceNative: number;
   totalBorrowBalanceFiat: number;
+  totalBorrowBalanceNative: number;
+  totalSupplyBalanceFiat: number;
+  totalSupplyBalanceNative: number;
 }
 
 export interface resQuery {
-  fundedAssets: FundedAsset[];
   allClaimableRewards: {
     [key: string]: FlywheelClaimableRewards[];
   };
-  rewards: UseRewardsData;
-  totalSupplyAPYs: { [market: string]: number };
   borrowAPYs: { [market: string]: number };
-  totalSupplyBalanceNative: number;
-  totalSupplyBalanceFiat: number;
-  totalBorrowBalanceNative: number;
+  fundedAssets: FundedAsset[];
+  rewards: UseRewardsData;
   totalBorrowBalanceFiat: number;
+  totalBorrowBalanceNative: number;
+  totalSupplyAPYs: { [market: string]: number };
+  totalSupplyBalanceFiat: number;
+  totalSupplyBalanceNative: number;
 }
 
 export function useAllFundedInfo() {
@@ -104,14 +106,14 @@ export function useAllFundedInfo() {
                       assets.map((asset) => {
                         fundedAssets.push({
                           ...asset,
-                          poolId: pool.id.toString(),
-                          comptroller: pool.comptroller,
-                          poolName: pool.name,
                           chainId,
-                          totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
-                          totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
-                          totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
+                          comptroller: pool.comptroller,
+                          poolId: pool.id.toString(),
+                          poolName: pool.name,
                           totalBorrowBalanceFiat: pool.totalBorrowBalanceFiat,
+                          totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
+                          totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
+                          totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
                         });
                       });
 
@@ -203,15 +205,15 @@ export function useAllFundedInfo() {
         );
 
         return {
-          fundedAssets,
           allClaimableRewards,
-          rewards,
-          totalSupplyAPYs,
           borrowAPYs,
-          totalSupplyBalanceNative,
-          totalSupplyBalanceFiat,
-          totalBorrowBalanceNative,
+          fundedAssets,
+          rewards,
           totalBorrowBalanceFiat,
+          totalBorrowBalanceNative,
+          totalSupplyAPYs,
+          totalSupplyBalanceFiat,
+          totalSupplyBalanceNative,
         };
       }
 
@@ -219,8 +221,8 @@ export function useAllFundedInfo() {
     },
     {
       cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: enabledChains.length > 0 && !!poolsPerChain,
+      staleTime: Infinity,
     }
   );
 }

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 
@@ -6,8 +6,8 @@ export const OptionRow = ({
   children,
   ...others
 }: {
-  children: ReactNode;
   [key: string]: ReactNode;
+  children: ReactNode;
 }) => {
   return (
     <Row

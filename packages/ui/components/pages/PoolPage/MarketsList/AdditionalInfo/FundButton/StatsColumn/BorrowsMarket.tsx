@@ -1,11 +1,11 @@
 import { HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 interface BorrowsMarketProps {
   asset: MarketData;
-  updatedAsset?: MarketData;
   borrowLimitMarket?: number;
+  updatedAsset?: MarketData;
   updatedBorrowLimitMarket?: number;
 }
 
