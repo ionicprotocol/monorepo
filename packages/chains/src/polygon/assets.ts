@@ -254,9 +254,8 @@ export const assets: SupportedAsset[] = [
     underlying: IXT,
     name: "PlanetIX",
     decimals: 18,
-    oracle: OracleTypes.UniswapV3PriceOracle,
+    oracle: OracleTypes.AlgebraPriceOracle,
     extraDocs: defaultDocs("https://polygonscan.com", IXT),
-    disabled: true,
   },
   {
     symbol: assetSymbols.LINK,

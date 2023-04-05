@@ -14,6 +14,15 @@
     "AdjustableJumpRateModel_JARVIS_jEUR": {
       "address": "0x1802F7FBc8CBE9D23E106CA5BfFaDb1c95ab0BBD"
     },
+    "AlgebraPriceOracle": {
+      "address": "0x7f3597b369610cCFf34C181c0A19d4480aCe1eEa"
+    },
+    "AlgebraPriceOracle_Implementation": {
+      "address": "0x8Ed68aec909477c6Fae8e479A19C69C0fece09ab"
+    },
+    "AlgebraPriceOracle_Proxy": {
+      "address": "0x7f3597b369610cCFf34C181c0A19d4480aCe1eEa"
+    },
     "AnkrCertificateTokenPriceOracle": {
       "address": "0x4Be947BaA3C038aac1097EDF845080c4b2C1130e"
     },

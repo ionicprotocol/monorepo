@@ -11,6 +11,9 @@ const oracles: OracleTypes[] = [
   OracleTypes.UniswapTwapPriceOracleV2,
   OracleTypes.GelatoGUniPriceOracle,
   OracleTypes.BalancerLpTokenPriceOracle,
+  OracleTypes.BalancerLpStablePoolPriceOracle,
+  OracleTypes.BalancerRateProviderOracle,
+  OracleTypes.AlgebraPriceOracle,
 ];
 
 export default oracles;
