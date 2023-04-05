@@ -3721,8 +3721,8 @@ __metadata:
     "@midas-capital/types": "workspace:*"
     "@netlify/plugin-nextjs": latest
     "@next/bundle-analyzer": ^13.2.4
-    "@rainbow-me/rainbowkit": ^0.12.6
-    "@sentry/nextjs": ^7.46.0
+    "@rainbow-me/rainbowkit": ^0.12.7
+    "@sentry/nextjs": ^7.47.0
     "@supabase/supabase-js": ^2.14.0
     "@tanstack/react-query": ^4.28.0
     "@tanstack/react-query-devtools": ^4.29.0
@@ -5291,7 +5291,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rainbow-me/rainbowkit@npm:^0.12.6":
+"@rainbow-me/rainbowkit@npm:^0.12.7":
   version: 0.12.7
   resolution: "@rainbow-me/rainbowkit@npm:0.12.7"
   dependencies:
@@ -5588,7 +5588,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/nextjs@npm:^7.46.0":
+"@sentry/nextjs@npm:^7.47.0":
   version: 7.47.0
   resolution: "@sentry/nextjs@npm:7.47.0"
   dependencies:
