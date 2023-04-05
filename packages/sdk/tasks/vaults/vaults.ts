@@ -13,6 +13,7 @@ import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { OptimizedAPRVault } from "../../typechain/OptimizedAPRVault";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 
 export default task("optimized-vault:add")
   .addParam("vaultAddress", "Address of the vault to add", undefined, types.string)
@@ -315,7 +316,11 @@ task("deploy-market-with-rewards").setAction(async ({}, { ethers, getChainId, de
     const ffd = await ethers.getContract("FuseFeeDistributor");
     const jrm = await ethers.getContract("JumpRateModel");
     const rewardsDelegate = await ethers.getContract("CErc20RewardsDelegate");
-    const spo = (await ethers.getContract("SimplePriceOracle")) as SimplePriceOracle;
+    const spo = (await ethers.getContract("SimplePriceOracle", deployer)) as SimplePriceOracle;
+    const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
+    tx = await mpo.add([testingBombErc20.address], [spo.address]);
+    await tx.wait();
+    console.log(`added the SPO to the MPO for the testing BOMB token`);
 
     tx = await spo.setDirectPrice(testingBombErc20.address, ethers.utils.parseEther("0.0003"));
     await tx.wait();
@@ -331,7 +336,7 @@ task("deploy-market-with-rewards").setAction(async ({}, { ethers, getChainId, de
         "M Testing BOMB",
         "MTB",
         rewardsDelegate.address,
-        "",
+        new ethers.utils.AbiCoder().encode([], []),
         0,
         0,
       ]
@@ -372,7 +377,7 @@ task("deploy-market-with-rewards").setAction(async ({}, { ethers, getChainId, de
           execute: {
             init: {
               methodName: "initialize",
-              args: [rewardsErc20.address, deployer, constants.AddressZero, deployer],
+              args: [rewardsErc20.address, constants.AddressZero, constants.AddressZero, deployer],
             },
           },
           proxyContract: "OpenZeppelinTransparentProxy",
