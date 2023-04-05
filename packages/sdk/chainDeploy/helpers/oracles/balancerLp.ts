@@ -33,12 +33,7 @@ export const deployBalancerLpPriceOracle = async ({
   console.log("BalancerLpTokenPriceOracle: ", blpo.address);
 
   const underlyings = balancerLpAssets.map((d) => d.lpTokenAddress);
-  const oracles = Array(balancerLpAssets.length).fill(blpo.address);
-
-  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
-  await tx.wait();
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+  await addUnderlyingsToMpo(mpo, underlyings, blpo.address);
 };
 
 export const deployBalancerLinearLpPriceOracle = async ({
@@ -103,7 +98,7 @@ export const deployBalancerStableLpPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [underlyings],
+          args: [],
         },
       },
       owner: deployer,
@@ -114,14 +109,6 @@ export const deployBalancerStableLpPriceOracle = async ({
   console.log("BalancerLpStablePoolPriceOracle: ", blpso.address);
 
   const blpOracle = await ethers.getContract("BalancerLpStablePoolPriceOracle", deployer);
-  const registeredUnderlyings = await blpOracle.getAllUnderlyings();
-  for (const token of balancerLpAssets) {
-    if (!registeredUnderlyings.includes(token.lpTokenAddress)) {
-      const tx: providers.TransactionResponse = await blpOracle.registerToken(token.lpTokenAddress);
-      await tx.wait();
-      console.log(`BalancerLpStablePoolPriceOracle registered token ${token.lpTokenAddress}`);
-    }
-  }
 
   await addUnderlyingsToMpo(mpo, underlyings, blpOracle.address);
 };

@@ -51,10 +51,11 @@ const csMATIC = "0xFcBB00dF1d663eeE58123946A30AB2138bF9eb2A";
 
 // Balancer
 const MIMO_PAR_80_20 = "0x82d7f08026e21c7713CfAd1071df7C8271B17Eae";
-const WMATIC_STMATIC_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
-const WMATIC_MATICX_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
 const BRZ_JBRL_STABLE_BLP = "0xE22483774bd8611bE2Ad2F4194078DaC9159F4bA";
+const JEUR_PAR_STABLE_BLP = "0x513CdEE00251F39DE280d9E5f771A6eaFebCc88E";
 const WMATIC_STMATIC_STABLE_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
+const WMATIC_CSMATIC_STABLE_BLP = "0x02d2e2D7a89D6c5CB3681cfCb6F7dAC02A55eDA4";
+const WMATIC_MATICX_STABLE_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
@@ -552,29 +553,42 @@ export const assets: SupportedAsset[] = [
     ),
   },
   {
-    symbol: assetSymbols.WMATIC_STMATIC_BLP,
-    underlying: WMATIC_STMATIC_BLP,
-    name: "WMATIC-STMATIC BLP",
+    symbol: assetSymbols.WMATIC_MATICX_STABLE_BLP,
+    underlying: WMATIC_MATICX_STABLE_BLP,
+    name: "WMATIC-MATICX Stable BLP",
     decimals: 18,
-    oracle: OracleTypes.BalancerLpTokenPriceOracle,
-    extraDocs: balancerDocs(
-      "polygon",
-      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
-      "WMATIC-STMATIC BLP",
-      WMATIC_STMATIC_BLP
-    ),
-  },
-  {
-    symbol: assetSymbols.WMATIC_MATICX_BLP,
-    underlying: WMATIC_MATICX_BLP,
-    name: "WMATIC-MATICX BLP",
-    decimals: 18,
-    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
     extraDocs: balancerDocs(
       "polygon",
       "0xb20fc01d21a50d2c734c4a1262b4404d41fa7bf000000000000000000000075c",
-      "WMATIC-MATIX BLP",
-      WMATIC_MATICX_BLP
+      "WMATIC-MATICx BLP",
+      WMATIC_MATICX_STABLE_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.WMATIC_CSMATIC_STABLE_BLP,
+    underlying: WMATIC_CSMATIC_STABLE_BLP,
+    name: "WMATIC-csMATIC Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0x02d2e2d7a89d6c5cb3681cfcb6f7dac02a55eda400000000000000000000088f",
+      "WMATIC-csMATIC BLP",
+      WMATIC_CSMATIC_STABLE_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.WMATIC_STMATIC_STABLE_BLP,
+    underlying: WMATIC_STMATIC_STABLE_BLP,
+    name: "WMATIC-stMATIC Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
+      "WMATIC-stMATIC Stable BLP",
+      WMATIC_STMATIC_STABLE_BLP
     ),
   },
   {
@@ -591,18 +605,19 @@ export const assets: SupportedAsset[] = [
     ),
   },
   {
-    symbol: assetSymbols.WMATIC_STMATIC_STABLE_BLP,
-    underlying: WMATIC_STMATIC_STABLE_BLP,
-    name: "WMATIC-stMATIC Stable BLP",
+    symbol: assetSymbols.JEUR_PAR_STABLE_BLP,
+    underlying: JEUR_PAR_STABLE_BLP,
+    name: "jEUR-PAR Stable BLP",
     decimals: 18,
     oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
     extraDocs: balancerDocs(
       "polygon",
-      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
-      "WMATIC-stMATIC Stable BLP",
-      WMATIC_STMATIC_STABLE_BLP
+      "0x513cdee00251f39de280d9e5f771a6eafebcc88e000000000000000000000a6b",
+      "jEUR-PAR Stable BLP",
+      JEUR_PAR_STABLE_BLP
     ),
   },
+
   // stable forex
   {
     symbol: assetSymbols.AGEUR,

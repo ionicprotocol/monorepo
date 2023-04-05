@@ -484,12 +484,6 @@ const balancerLpAssets: BalancerLpAsset[] = [
   {
     lpTokenAddress: underlying(assets, assetSymbols.MIMO_PAR_80_20),
   },
-  {
-    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_MATICX_BLP),
-  },
-  {
-    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_BLP),
-  },
 ];
 
 const balancerStableLpAssets: BalancerStableLpAsset[] = [
@@ -497,7 +491,16 @@ const balancerStableLpAssets: BalancerStableLpAsset[] = [
     lpTokenAddress: underlying(assets, assetSymbols.BRZ_JBRL_STABLE_BLP),
   },
   {
+    lpTokenAddress: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+  },
+  {
     lpTokenAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_STABLE_BLP),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_CSMATIC_STABLE_BLP),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP),
   },
 ];
 
