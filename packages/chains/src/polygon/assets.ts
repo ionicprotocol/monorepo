@@ -40,6 +40,8 @@ const YFI = "0xDA537104D6A5edd53c6fBba9A898708E465260b6";
 const USDT = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
+const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
+const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -72,6 +74,7 @@ const JNZD_NZDS = "0x976A750168801F58E8AEdbCfF9328138D544cc09";
 const JEUR_EURT = "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1";
 const EURE_JEUR = "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4";
 const MAI_USDC = "0x160532D2536175d65C03B97b0630A9802c274daD";
+const DAI_GNS = "0x6E53cB6942e518376E9e763554dB1A45DDCd25c4";
 
 // stable forex
 const AGEUR = "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4";
@@ -236,6 +239,23 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", GRT),
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.GNS,
+    underlying: GNS,
+    name: "Gains Network Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapV3PriceOracle,
+    extraDocs: defaultDocs("https://polygonscan.com", GNS),
+  },
+  {
+    symbol: assetSymbols.IXT,
+    underlying: IXT,
+    name: "PlanetIX",
+    decimals: 18,
+    oracle: OracleTypes.UniswapV3PriceOracle,
+    extraDocs: defaultDocs("https://polygonscan.com", IXT),
     disabled: true,
   },
   {
@@ -436,6 +456,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(MAI, USDC, "MAI-USDC", MAI_USDC),
+  },
+  {
+    symbol: assetSymbols["DAI-GNS"],
+    underlying: DAI_GNS,
+    name: "DAI-GNS LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: quickSwapDocs(DAI, GNS, "DAI-GNS", DAI_GNS),
   },
   // curve.fi LP tokens
   {
