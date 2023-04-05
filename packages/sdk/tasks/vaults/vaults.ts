@@ -62,7 +62,7 @@ task("optimized-vault:deploy")
       deposit: 0,
       withdrawal: 0,
       management: 0,
-      performance: BigNumber.from("5e16"), // 1e18 == 100%, 5e16 = 5%
+      performance: ethers.utils.parseEther("0.05"), // 1e18 == 100%, 5e16 = 5%
     };
 
     // start with an even allocations distribution
@@ -80,6 +80,16 @@ task("optimized-vault:deploy")
         allocation: 0,
       })
     );
+
+    const flywheelLogic = await deployments.deploy("MidasFlywheel_Implementation", {
+      contract: "MidasFlywheel",
+      from: deployer,
+      args: [],
+      log: true,
+      waitConfirmations: 1,
+      skipIfAlreadyDeployed: true
+    });
+    //const flywheelLogic = await ethers.getContract("MidasFlywheel_Implementation");
 
     const registry = await ethers.getContract("OptimizedVaultsRegistry");
 
@@ -100,7 +110,8 @@ task("optimized-vault:deploy")
               constants.MaxUint256, // deposit limit
               deployer, // owner,
               registry.address,
-              [], // reward tokens
+              [], // reward tokens,
+              flywheelLogic.address
             ],
           },
         },
@@ -212,7 +223,7 @@ task("deploy-optimized:all")
     });
   });
 
-task("deploy-optimized:all:chapel").setAction(async ({}, { ethers, run, getNamedAccounts }) => {
+task("deploy-optimized:all:chapel").setAction(async ({}, { run }) => {
   await run("deploy-optimized:all", {
     marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830",
   });
@@ -225,7 +236,7 @@ task("deploy-vault-flywheel")
     const { deployer } = await getNamedAccounts();
 
     const vault = (await ethers.getContractAt("OptimizedAPRVault", vaultAddress, deployer)) as OptimizedAPRVault;
-    const flywheelForRewardToken = vault.callStatic.flywheelForRewardToken(rewardToken);
+    const flywheelForRewardToken = await vault.callStatic.flywheelForRewardToken(rewardToken);
     if (flywheelForRewardToken != constants.AddressZero) {
       console.log(
         `there is already a flywheel ${flywheelForRewardToken} for reward token ${rewardToken} in the vault at ${vaultAddress}`
