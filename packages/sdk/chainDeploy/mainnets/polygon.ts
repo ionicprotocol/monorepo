@@ -8,6 +8,7 @@ import {
   ChainlinkFeedBaseCurrency,
   deployAlgebraPriceOracle,
   deployAnkrCertificateTokenPriceOracle,
+  deployBalancerLinearPoolPriceOracle,
   deployBalancerLpPriceOracle,
   deployBalancerRateProviderPriceOracle,
   deployBalancerStableLpPriceOracle,
@@ -20,6 +21,7 @@ import {
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import {
+  BalancerLinearPoolAsset,
   BalancerLpAsset,
   BalancerRateProviderAsset,
   BalancerStableLpAsset,
@@ -507,6 +509,18 @@ const balancerStableLpAssets: BalancerStableLpAsset[] = [
   },
 ];
 
+const balancerLinerPoolAssets: BalancerLinearPoolAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_LINEAR_USDT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_LINEAR_DAI),
+  },
+];
+
 const balancerRateProviderAssets: BalancerRateProviderAsset[] = [
   {
     tokenAddress: underlying(assets, assetSymbols.csMATIC),
@@ -628,6 +642,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     balancerLpAssets: balancerStableLpAssets,
+  });
+
+  /// Balancer Stable LP Price Oracle
+  await deployBalancerLinearPoolPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLinerPoolAssets,
   });
 
   /// Ankr Certificate Price Oracle

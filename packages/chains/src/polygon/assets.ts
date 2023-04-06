@@ -58,6 +58,11 @@ const WMATIC_CSMATIC_STABLE_BLP = "0x02d2e2D7a89D6c5CB3681cfCb6F7dAC02A55eDA4";
 const WMATIC_MATICX_STABLE_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
 const TETU_BOOSTED_STABLE_BLP = "0xb3d658d5b95BF04E2932370DD1FF976fe18dd66A";
 
+// Balancer - linear pools
+const TETU_LINEAR_USDT = "0x7c82A23B4C48D796dee36A9cA215b641C6a8709d";
+const TETU_LINEAR_USDC = "0xae646817e458C0bE890b81e8d880206710E3c44e";
+const TETU_LINEAR_DAI = "0xDa1CD1711743e57Dd57102E9e61b75f3587703da";
+
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
 
@@ -630,6 +635,30 @@ export const assets: SupportedAsset[] = [
       "jEUR-PAR Stable BLP",
       JEUR_PAR_STABLE_BLP
     ),
+  },
+  {
+    symbol: assetSymbols.TETU_LINEAR_USDT,
+    underlying: TETU_LINEAR_USDT,
+    name: "bb-t-USDT Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLinearPoolAsset,
+    extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
+  },
+  {
+    symbol: assetSymbols.TETU_LINEAR_USDC,
+    underlying: TETU_LINEAR_USDC,
+    name: "bb-t-USDC Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLinearPoolAsset,
+    extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
+  },
+  {
+    symbol: assetSymbols.TETU_LINEAR_DAI,
+    underlying: TETU_LINEAR_DAI,
+    name: "bb-t-DAI Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLinearPoolAsset,
+    extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
   },
 
   // stable forex
