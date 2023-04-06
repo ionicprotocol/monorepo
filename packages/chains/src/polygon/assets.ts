@@ -56,6 +56,7 @@ const JEUR_PAR_STABLE_BLP = "0x513CdEE00251F39DE280d9E5f771A6eaFebCc88E";
 const WMATIC_STMATIC_STABLE_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
 const WMATIC_CSMATIC_STABLE_BLP = "0x02d2e2D7a89D6c5CB3681cfCb6F7dAC02A55eDA4";
 const WMATIC_MATICX_STABLE_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
+const TETU_BOOSTED_STABLE_BLP = "0xb3d658d5b95BF04E2932370DD1FF976fe18dd66A";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
@@ -602,6 +603,19 @@ export const assets: SupportedAsset[] = [
       "0xe22483774bd8611be2ad2f4194078dac9159f4ba0000000000000000000008f0",
       "BRZ-jBRL Stable BLP",
       BRZ_JBRL_STABLE_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.TETU_BOOSTED_STABLE_BLP,
+    underlying: TETU_BOOSTED_STABLE_BLP,
+    name: "DAI-USDT-USDC Boosted Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0xb3d658d5b95bf04e2932370dd1ff976fe18dd66a000000000000000000000ace",
+      "Tetu Boosted Stable BLP",
+      TETU_BOOSTED_STABLE_BLP
     ),
   },
   {

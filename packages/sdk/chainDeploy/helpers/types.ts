@@ -104,6 +104,7 @@ export type BalancerLpAsset = {
 };
 
 export type BalancerStableLpAsset = BalancerLpAsset;
+export type BalancerLinearPoolAsset = BalancerLpAsset;
 
 export type BalancerRateProviderAsset = {
   tokenAddress: string;
@@ -234,6 +235,11 @@ export type BalancerLpFnParams = ChainDeployFnParams & {
 export type BalancerRateProviderFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   balancerRateProviderAssets: BalancerRateProviderAsset[];
+};
+
+export type BalancerLinearPoolFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  balancerLinerPoolAssets: BalancerLinearPoolAsset[];
 };
 
 export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {

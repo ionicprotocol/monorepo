@@ -502,6 +502,9 @@ const balancerStableLpAssets: BalancerStableLpAsset[] = [
   {
     lpTokenAddress: underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP),
   },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP),
+  },
 ];
 
 const balancerRateProviderAssets: BalancerRateProviderAsset[] = [
