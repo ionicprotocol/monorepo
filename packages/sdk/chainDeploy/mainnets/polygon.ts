@@ -8,6 +8,7 @@ import {
   ChainlinkFeedBaseCurrency,
   deployAlgebraPriceOracle,
   deployAnkrCertificateTokenPriceOracle,
+  deployBalancerLinearPoolPriceOracle,
   deployBalancerLpPriceOracle,
   deployBalancerRateProviderPriceOracle,
   deployBalancerStableLpPriceOracle,
@@ -20,6 +21,7 @@ import {
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import {
+  BalancerLinearPoolAsset,
   BalancerLpAsset,
   BalancerRateProviderAsset,
   BalancerStableLpAsset,
@@ -484,12 +486,6 @@ const balancerLpAssets: BalancerLpAsset[] = [
   {
     lpTokenAddress: underlying(assets, assetSymbols.MIMO_PAR_80_20),
   },
-  {
-    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_MATICX_BLP),
-  },
-  {
-    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_BLP),
-  },
 ];
 
 const balancerStableLpAssets: BalancerStableLpAsset[] = [
@@ -497,7 +493,31 @@ const balancerStableLpAssets: BalancerStableLpAsset[] = [
     lpTokenAddress: underlying(assets, assetSymbols.BRZ_JBRL_STABLE_BLP),
   },
   {
+    lpTokenAddress: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+  },
+  {
     lpTokenAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_STABLE_BLP),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_CSMATIC_STABLE_BLP),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP),
+  },
+];
+
+const balancerLinerPoolAssets: BalancerLinearPoolAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_LINEAR_USDT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.TETU_LINEAR_DAI),
   },
 ];
 
@@ -622,6 +642,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     balancerLpAssets: balancerStableLpAssets,
+  });
+
+  /// Balancer Stable LP Price Oracle
+  await deployBalancerLinearPoolPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLinerPoolAssets,
   });
 
   /// Ankr Certificate Price Oracle
