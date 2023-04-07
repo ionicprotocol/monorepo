@@ -188,7 +188,7 @@ const FlywheelRow = ({
   return (
     <Tr
       _hover={{ background: cCard.hoverBgColor, cursor: 'pointer' }}
-      onClick={() => onClick(flywheel)}
+      onClick={() => (isAdmin ? onClick(flywheel) : {})}
       p={4}
     >
       <Td>
