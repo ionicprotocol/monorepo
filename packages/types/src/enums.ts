@@ -59,6 +59,7 @@ export enum OracleTypes {
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   BalancerLpStablePoolPriceOracle = "BalancerLpStablePoolPriceOracle",
   BalancerRateProviderOracle = "BalancerRateProviderOracle",
+  BalancerLpLinearPoolPriceOracle = "BalancerLpLinearPoolPriceOracle",
   BalancerLpTokenPriceOracleNTokens = "BalancerLpTokenPriceOracleNTokens",
   StkBNBPriceOracle = "StkBNBPriceOracle",
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",

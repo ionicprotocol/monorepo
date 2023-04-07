@@ -622,6 +622,7 @@ export const assets: SupportedAsset[] = [
       "Tetu Boosted Stable BLP",
       TETU_BOOSTED_STABLE_BLP
     ),
+    disabled: true,
   },
   {
     symbol: assetSymbols.JEUR_PAR_STABLE_BLP,
@@ -641,7 +642,7 @@ export const assets: SupportedAsset[] = [
     underlying: TETU_LINEAR_USDT,
     name: "bb-t-USDT Linear BLP",
     decimals: 18,
-    oracle: OracleTypes.BalancerLinearPoolAsset,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
   },
   {
@@ -649,7 +650,7 @@ export const assets: SupportedAsset[] = [
     underlying: TETU_LINEAR_USDC,
     name: "bb-t-USDC Linear BLP",
     decimals: 18,
-    oracle: OracleTypes.BalancerLinearPoolAsset,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
   },
   {
@@ -657,7 +658,7 @@ export const assets: SupportedAsset[] = [
     underlying: TETU_LINEAR_DAI,
     name: "bb-t-DAI Linear BLP",
     decimals: 18,
-    oracle: OracleTypes.BalancerLinearPoolAsset,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
   },
 
