@@ -25,6 +25,7 @@ export enum RedemptionStrategyContract {
   CurveSwapLiquidator = "CurveSwapLiquidator",
   SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
   BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
+  BalancerSwapLiquidator = "BalancerSwapLiquidator",
 }
 
 export enum FundingStrategyContract {
@@ -231,6 +232,7 @@ export enum assetSymbols {
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
   "vAMM-ANKR/ankrBNB" = "vAMM-ANKR-ankrBNB",
+  "vAMM-ANKR/HAY" = "vAMM-ANKR-HAY",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
