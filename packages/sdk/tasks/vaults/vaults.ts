@@ -9,11 +9,11 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { IERC20MetadataUpgradeable as IERC20 } from "../../typechain/IERC20MetadataUpgradeable";
 import { IERC20Mintable } from "../../typechain/IERC20Mintable";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { OptimizedAPRVault } from "../../typechain/OptimizedAPRVault";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
-import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 
 export default task("optimized-vault:add")
   .addParam("vaultAddress", "Address of the vault to add", undefined, types.string)
@@ -87,7 +87,7 @@ task("optimized-vault:deploy")
       args: [],
       log: true,
       waitConfirmations: 1,
-      skipIfAlreadyDeployed: true
+      skipIfAlreadyDeployed: true,
     });
     //const flywheelLogic = await ethers.getContract("MidasFlywheel_Implementation");
 
@@ -111,7 +111,7 @@ task("optimized-vault:deploy")
               deployer, // owner,
               registry.address,
               [], // reward tokens,
-              flywheelLogic.address
+              flywheelLogic.address,
             ],
           },
         },

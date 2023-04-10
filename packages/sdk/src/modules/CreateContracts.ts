@@ -45,7 +45,10 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsABI);
     createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelABI);
     createCompoundMarketERC4626 = this.createContractInstance<CompoundMarketERC4626>(CompoundMarketERC4626ABI);
-    createOptimizedAPRVault = this.createContractInstance<OptimizedAPRVaultWithExtensions>([...OptimizedAPRVaultFirstExtensionABI, ...OptimizedAPRVaultSecondExtensionABI]);
+    createOptimizedAPRVault = this.createContractInstance<OptimizedAPRVaultWithExtensions>([
+      ...OptimizedAPRVaultFirstExtensionABI,
+      ...OptimizedAPRVaultSecondExtensionABI,
+    ]);
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
       if (this.chainDeployment.ComptrollerFirstExtension) {
