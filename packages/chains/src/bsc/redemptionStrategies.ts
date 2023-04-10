@@ -88,6 +88,18 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols["CAKE-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["stkBNB-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
+  [underlying(assets, assetSymbols["sAMM-jBRL/BRZ"])]: [
+    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    underlying(assets, assetSymbols.jBRL),
+  ],
+  [underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"])]: [
+    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
+  [underlying(assets, assetSymbols["vAMM-ANKR/HAY"])]: [
+    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    underlying(assets, assetSymbols.HAY),
+  ],
   [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
 };
 

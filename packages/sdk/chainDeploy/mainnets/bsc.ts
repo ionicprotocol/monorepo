@@ -305,6 +305,7 @@ const wombatAssets: WombatAsset[] = [
 const solidlyLps: SolidlyLpAsset[] = [
   { lpTokenAddress: underlying(assets, assetSymbols["sAMM-jBRL/BRZ"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/HAY"]) },
 ];
 
 const solidlyOracleSupportedStables: string[] = [
