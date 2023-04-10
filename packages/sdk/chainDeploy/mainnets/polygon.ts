@@ -698,6 +698,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(balancerLpTokenLiquidator.transactionHash);
   console.log("BalancerLpTokenLiquidator: ", balancerLpTokenLiquidator.address);
 
+  //// Balancer Swap token liquidator
+  const balancerSwapTokenLiquidator = await deployments.deploy("BalancerSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (balancerSwapTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerSwapTokenLiquidator.transactionHash);
+  console.log("BalancerSwapLiquidator: ", balancerSwapTokenLiquidator.address);
+
   //// CurveLPLiquidator
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,

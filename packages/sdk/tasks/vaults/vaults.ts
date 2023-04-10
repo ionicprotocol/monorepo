@@ -1,4 +1,4 @@
-import { BigNumber, constants } from "ethers";
+import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
@@ -59,6 +59,15 @@ task("optimized-vault:deploy")
 
     const asset = (await ethers.getContractAt("IERC20MetadataUpgradeable", assetAddress)) as IERC20;
     const symbol = await asset.callStatic.symbol();
+    const optimizedVaultDep = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
+      contract: "OptimizedAPRVaultBase",
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      args: [],
+    });
+    if (optimizedVaultDep.transactionHash) await ethers.provider.waitForTransaction(optimizedVaultDep.transactionHash);
+    console.log("OptimizedAPRVault: ", optimizedVaultDep.address);
 
     const fees = {
       deposit: 0,
@@ -82,7 +91,6 @@ task("optimized-vault:deploy")
         allocation: 0,
       })
     );
-
     const flywheelLogic = await deployments.deploy("MidasFlywheel_Implementation", {
       contract: "MidasFlywheel",
       from: deployer,
@@ -91,39 +99,51 @@ task("optimized-vault:deploy")
       waitConfirmations: 1,
       skipIfAlreadyDeployed: true,
     });
-    //const flywheelLogic = await ethers.getContract("MidasFlywheel_Implementation");
-
     const registry = await ethers.getContract("OptimizedVaultsRegistry");
-
-    const optimizedVault = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
-      contract: "OptimizedAPRVaultBase",
+    const vaultFirstExtDep = await deployments.deploy("OptimizedAPRVaultFirstExtension", {
       from: deployer,
       log: true,
-      proxy: {
-        execute: {
-          init: {
-            methodName: "initializeWithRegistry",
-            args: [
-              assetAddress,
-              tenAdapters, // initial adapters
-              adapters.length, // adapters count
-              fees,
-              deployer, // fee recipient
-              constants.MaxUint256, // deposit limit
-              deployer, // owner,
-              registry.address,
-              [], // reward tokens,
-              flywheelLogic.address,
-            ],
-          },
-        },
-        proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer,
-      },
       waitConfirmations: 1,
+      args: [],
     });
-    if (optimizedVault.transactionHash) await ethers.provider.waitForTransaction(optimizedVault.transactionHash);
-    console.log("OptimizedAPRVault: ", optimizedVault.address);
+    const vaultSecondExtDep = await deployments.deploy("OptimizedAPRVaultSecondExtension", {
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      args: [],
+    });
+    const initData = new ethers.utils.AbiCoder().encode(
+      [
+        "address",
+        "tuple(address adapter, uint64 allocation)[10]",
+        "uint8",
+        "tuple(uint64 deposit, uint64 withdrawal, uint64 management, uint64 performance)",
+        "address",
+        "uint256",
+        "address",
+        "address",
+      ],
+      [
+        assetAddress,
+        tenAdapters, // initial adapters
+        adapters.length, // adapters count
+        fees,
+        deployer, // fee recipient
+        constants.MaxUint256, // deposit limit
+        registry.address,
+        flywheelLogic.address,
+      ]
+    );
+
+    const optimizedVault = (await ethers.getContractAt(
+      "OptimizedAPRVaultBase",
+      optimizedVaultDep.address,
+      deployer
+    )) as OptimizedAPRVaultBase;
+
+    const tx = await optimizedVault.initialize([vaultFirstExtDep.address, vaultSecondExtDep.address], initData);
+    await tx.wait();
+    console.log(`initialized the vault at ${optimizedVault.address}`);
 
     await run("optimized-vault:add", {
       vaultAddress: optimizedVault.address,
