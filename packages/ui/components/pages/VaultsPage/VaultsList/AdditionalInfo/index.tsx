@@ -97,7 +97,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
 
   const comptrollerToPool = useMemo(() => {
     const adapters = vault.adapters.reduce((res, adapter) => {
-      res[adapter.comptroller] = adapter;
+      res[adapter.pool] = adapter;
 
       return res;
     }, {} as { [comp: string]: Adapter });
