@@ -11,7 +11,9 @@ import { IERC20MetadataUpgradeable as IERC20 } from "../../typechain/IERC20Metad
 import { IERC20Mintable } from "../../typechain/IERC20Mintable";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
-import { OptimizedAPRVault } from "../../typechain/OptimizedAPRVault";
+import { OptimizedAPRVaultBase } from "../../typechain/OptimizedAPRVaultBase";
+import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
+import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
@@ -94,7 +96,7 @@ task("optimized-vault:deploy")
     const registry = await ethers.getContract("OptimizedVaultsRegistry");
 
     const optimizedVault = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
-      contract: "OptimizedAPRVault",
+      contract: "OptimizedAPRVaultBase",
       from: deployer,
       log: true,
       proxy: {
@@ -168,10 +170,14 @@ task("optimized-adapters:propose")
   .addParam("vaultAddress", "Address of the vault to add the adapter to", undefined, types.string)
   .setAction(async ({ newAdaptersAddresses, vaultAddress }, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const vault = (await ethers.getContractAt("OptimizedAPRVault", vaultAddress, deployer)) as OptimizedAPRVault;
+    const vaultFirstExt = (await ethers.getContractAt(
+      "OptimizedAPRVaultFirstExtension",
+      vaultAddress,
+      deployer
+    )) as OptimizedAPRVaultFirstExtension;
     const adapters = newAdaptersAddresses.split(",");
 
-    const tx = await vault.proposeAdapters(adapters, adapters.length);
+    const tx = await vaultFirstExt.proposeAdapters(adapters, adapters.length);
     console.log(`waiting to mine tx ${tx.hash}`);
     await tx.wait();
     console.log(`proposed adapters ${adapters} to vault ${vaultAddress}`);
@@ -181,9 +187,13 @@ task("optimized-adapters:change")
   .addParam("vaultAddress", "Address of the vault to add the adapter to", undefined, types.string)
   .setAction(async ({ vaultAddress }, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const vault = (await ethers.getContractAt("OptimizedAPRVault", vaultAddress, deployer)) as OptimizedAPRVault;
+    const vaultFirstExt = (await ethers.getContractAt(
+      "OptimizedAPRVaultFirstExtension",
+      vaultAddress,
+      deployer
+    )) as OptimizedAPRVaultFirstExtension;
 
-    const tx = await vault.changeAdapters();
+    const tx = await vaultFirstExt.changeAdapters();
     console.log(`waiting to mine tx ${tx.hash}`);
     await tx.wait();
     console.log(`changed the adapters of vault ${vaultAddress}`);
@@ -235,14 +245,23 @@ task("deploy-vault-flywheel")
   .setAction(async ({ vaultAddress, rewardToken }, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
 
-    const vault = (await ethers.getContractAt("OptimizedAPRVault", vaultAddress, deployer)) as OptimizedAPRVault;
-    const flywheelForRewardToken = await vault.callStatic.flywheelForRewardToken(rewardToken);
+    const vaultFirstExt = (await ethers.getContractAt(
+      "OptimizedAPRVaultFirstExtension",
+      vaultAddress,
+      deployer
+    )) as OptimizedAPRVaultFirstExtension;
+    const vaultSecondExt = (await ethers.getContractAt(
+      "OptimizedAPRVaultSecondExtension",
+      vaultAddress,
+      deployer
+    )) as OptimizedAPRVaultSecondExtension;
+    const flywheelForRewardToken = await vaultSecondExt.callStatic.flywheelForRewardToken(rewardToken);
     if (flywheelForRewardToken != constants.AddressZero) {
       console.log(
         `there is already a flywheel ${flywheelForRewardToken} for reward token ${rewardToken} in the vault at ${vaultAddress}`
       );
     } else {
-      const tx = await vault.addRewardToken(rewardToken);
+      const tx = await vaultFirstExt.addRewardToken(rewardToken);
       console.log(`mining tx ${tx.hash}`);
       await tx.wait();
       console.log(`added a flywheel for reward token ${rewardToken} in the vault at ${vaultAddress}`);
