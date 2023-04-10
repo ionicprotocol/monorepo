@@ -66,7 +66,7 @@
       "address": "0xF1264D7F0F88ae2EfE5f83Ce37E949e60d6a84d1"
     },
     "CompoundMarketERC4626_0xc436c7848C6144cf04fa241ac8311864F8572ed3_Implementation": {
-      "address": "0xc1ceF17a9277a85052073Ffc723f10edEd896305"
+      "address": "0xE40C30FB469edE8d7F188Ec49300d283f544C09A"
     },
     "CompoundMarketERC4626_0xc436c7848C6144cf04fa241ac8311864F8572ed3_Proxy": {
       "address": "0xF1264D7F0F88ae2EfE5f83Ce37E949e60d6a84d1"
@@ -75,7 +75,7 @@
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
     },
     "CompoundMarketERC4626_0xddA148e5917A1c2DCfF98139aBBaa41636840830_Implementation": {
-      "address": "0x827DEcC51Bfe882a846DCceecF131B052299Ee28"
+      "address": "0x6684b0A4B8363A43fbF4f6D022436B4554F8B4B2"
     },
     "CompoundMarketERC4626_0xddA148e5917A1c2DCfF98139aBBaa41636840830_Proxy": {
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
@@ -164,14 +164,26 @@
     "MidasFlywheelLensRouter": {
       "address": "0x621887Ef01ab3140145909525eF61EE0dD7907A6"
     },
+    "MidasFlywheel_Implementation": {
+      "address": "0x7b08D19832eD5Ec09b4898eA928991ea7b145457"
+    },
     "MockERC4626_Mock_BUSD": {
       "address": "0x865058A4aF2f70671C10333f21e2B3A8Ce9fB032"
+    },
+    "OptimizedAPRVaultFirstExtension": {
+      "address": "0x571CFc376566231E2592Fc9Bf998469ea49A604F"
+    },
+    "OptimizedAPRVaultSecondExtension": {
+      "address": "0x1F718D4221b2D6b65aDca2077f661E70071D8F0A"
+    },
+    "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd": {
+      "address": "0x6204027E412F7102E03d72C53a36B2C188d7048D"
     },
     "OptimizedVaultsRegistry": {
       "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
     },
     "OptimizedVaultsRegistry_Implementation": {
-      "address": "0xD5341D499980237012e16F430Ff6E266c4d472e4"
+      "address": "0x5fb164146Cda6c735c2c8eBeaEd602fE217a881a"
     },
     "OptimizedVaultsRegistry_Proxy": {
       "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
