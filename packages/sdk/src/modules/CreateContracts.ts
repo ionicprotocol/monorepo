@@ -11,7 +11,8 @@ import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
-import OptimizedAPRVaultABI from "../../abis/OptimizedAPRVault";
+import OptimizedAPRVaultFirstExtensionABI from "../../abis/OptimizedAPRVaultFirstExtension";
+import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSecondExtension";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
@@ -23,12 +24,14 @@ import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
-import { OptimizedAPRVault } from "../../typechain/OptimizedAPRVault";
+import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
+import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../MidasSdk";
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
 type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
+type OptimizedAPRVaultWithExtensions = OptimizedAPRVaultFirstExtension & OptimizedAPRVaultSecondExtension;
 
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
@@ -41,6 +44,8 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createMidasFlywheel = this.createContractInstance<MidasFlywheel>(MidasFlywheelABI);
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsABI);
     createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelABI);
+    createCompoundMarketERC4626 = this.createContractInstance<CompoundMarketERC4626>(CompoundMarketERC4626ABI);
+    createOptimizedAPRVault = this.createContractInstance<OptimizedAPRVaultWithExtensions>([...OptimizedAPRVaultFirstExtensionABI, ...OptimizedAPRVaultSecondExtensionABI]);
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
       if (this.chainDeployment.ComptrollerFirstExtension) {
@@ -80,14 +85,6 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         MasterPriceOracleABI,
         signerOrProvider
       ) as MasterPriceOracle;
-    }
-
-    createOptimizedAPRVault(vaultAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(vaultAddress, OptimizedAPRVaultABI, signerOrProvider) as OptimizedAPRVault;
-    }
-
-    createCompoundMarketERC4626(adapterAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(adapterAddress, CompoundMarketERC4626ABI, signerOrProvider) as CompoundMarketERC4626;
     }
   };
 }

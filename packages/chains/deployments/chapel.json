@@ -20,6 +20,9 @@
     "CErc20PluginRewardsDelegate": {
       "address": "0x0a6ad1A578A1E3bbd954168FF819B7C73674FfD0"
     },
+    "CErc20RewardsDelegate": {
+      "address": "0x99d485eF4425862D90C8301725DF670c4b8B71EC"
+    },
     "CEtherDelegate": {
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
@@ -29,11 +32,41 @@
     "ChainlinkPriceOracleV2": {
       "address": "0x9c55d77E1f46622f5171Dc0eB03461FdCCD92836"
     },
+    "ChapelBombERC20": {
+      "address": "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"
+    },
+    "ChapelBombERC20_Implementation": {
+      "address": "0x54fc377a81D624bDB46e20c025EDa5E8379dced1"
+    },
+    "ChapelBombERC20_Proxy": {
+      "address": "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"
+    },
+    "ChapelRewardsContract": {
+      "address": "0x535CFc504C37C74948430392dC3E18d90d63e8e2"
+    },
+    "ChapelRewardsERC20": {
+      "address": "0xf97e8F094c4428e6436b3bf86264D176A2606bC4"
+    },
+    "ChapelRewardsERC20_Implementation": {
+      "address": "0xE024e3fF90fE820002c2Ff6CA7c2Fb7fA97BE289"
+    },
+    "ChapelRewardsERC20_Proxy": {
+      "address": "0xf97e8F094c4428e6436b3bf86264D176A2606bC4"
+    },
+    "ChapelRewardsFlywheel": {
+      "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38"
+    },
+    "ChapelRewardsFlywheel_Implementation": {
+      "address": "0xC8cfBfCE1D07b8017659AED821836a4Fafb4CF4E"
+    },
+    "ChapelRewardsFlywheel_Proxy": {
+      "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38"
+    },
     "CompoundMarketERC4626_0xc436c7848C6144cf04fa241ac8311864F8572ed3": {
       "address": "0xF1264D7F0F88ae2EfE5f83Ce37E949e60d6a84d1"
     },
     "CompoundMarketERC4626_0xc436c7848C6144cf04fa241ac8311864F8572ed3_Implementation": {
-      "address": "0x2F475CbCdeDbCcb010aF1a7A2E49DC7AadE5c423"
+      "address": "0xc1ceF17a9277a85052073Ffc723f10edEd896305"
     },
     "CompoundMarketERC4626_0xc436c7848C6144cf04fa241ac8311864F8572ed3_Proxy": {
       "address": "0xF1264D7F0F88ae2EfE5f83Ce37E949e60d6a84d1"
@@ -42,7 +75,7 @@
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
     },
     "CompoundMarketERC4626_0xddA148e5917A1c2DCfF98139aBBaa41636840830_Implementation": {
-      "address": "0x58d7840319ab12fFE1f4A43741F6ad30288DD3Ad"
+      "address": "0x827DEcC51Bfe882a846DCceecF131B052299Ee28"
     },
     "CompoundMarketERC4626_0xddA148e5917A1c2DCfF98139aBBaa41636840830_Proxy": {
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
@@ -134,29 +167,20 @@
     "MockERC4626_Mock_BUSD": {
       "address": "0x865058A4aF2f70671C10333f21e2B3A8Ce9fB032"
     },
-    "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd": {
-      "address": "0x489B57744223e80Fbd5a7C4dD45F9fbd04333962"
-    },
-    "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd_Implementation": {
-      "address": "0x1cCb35F33096a116D498f2745aef1303B5450363"
-    },
-    "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd_Proxy": {
-      "address": "0x489B57744223e80Fbd5a7C4dD45F9fbd04333962"
-    },
     "OptimizedVaultsRegistry": {
-      "address": "0x5AaD5938520A9b045898D9815d26C9bfCE6355E1"
+      "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
     },
     "OptimizedVaultsRegistry_Implementation": {
-      "address": "0xdA2A0f6Bc88d5A023A04b8E59C36DE8CC2f828a4"
+      "address": "0xD5341D499980237012e16F430Ff6E266c4d472e4"
     },
     "OptimizedVaultsRegistry_Proxy": {
-      "address": "0x5AaD5938520A9b045898D9815d26C9bfCE6355E1"
+      "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
     },
     "SimplePriceOracle": {
       "address": "0xDdD3cf9407a12A6360281d244cb100ABe7fB561f"
     },
     "SimplePriceOracle_Implementation": {
-      "address": "0x1DFB70941e7f2Df56af515012B3537a2239F637A"
+      "address": "0xcC07A2f0625958768Fa8f990d0c0a11976c9EC05"
     },
     "SimplePriceOracle_Proxy": {
       "address": "0xDdD3cf9407a12A6360281d244cb100ABe7fB561f"
