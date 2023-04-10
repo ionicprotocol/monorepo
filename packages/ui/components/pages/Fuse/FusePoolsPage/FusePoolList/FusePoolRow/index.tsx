@@ -500,7 +500,9 @@ const PoolsRowList = ({
                         height={16}
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        px={0}
+                        px={
+                          table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? 0 : 3
+                        }
                         py={4}
                         textTransform="capitalize"
                       >

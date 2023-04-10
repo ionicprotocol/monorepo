@@ -25,6 +25,7 @@ export enum RedemptionStrategyContract {
   CurveSwapLiquidator = "CurveSwapLiquidator",
   SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
   BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
+  BalancerSwapLiquidator = "BalancerSwapLiquidator",
 }
 
 export enum FundingStrategyContract {
@@ -52,12 +53,14 @@ export enum OracleTypes {
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
   UniswapV3PriceOracle = "UniswapV3PriceOracle",
+  AlgebraPriceOracle = "AlgebraPriceOracle",
   AnkrCertificateTokenPriceOracle = "AnkrCertificateTokenPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   BalancerLpStablePoolPriceOracle = "BalancerLpStablePoolPriceOracle",
   BalancerRateProviderOracle = "BalancerRateProviderOracle",
+  BalancerLpLinearPoolPriceOracle = "BalancerLpLinearPoolPriceOracle",
   BalancerLpTokenPriceOracleNTokens = "BalancerLpTokenPriceOracleNTokens",
   StkBNBPriceOracle = "StkBNBPriceOracle",
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
@@ -229,6 +232,7 @@ export enum assetSymbols {
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
   "vAMM-ANKR/ankrBNB" = "vAMM-ANKR-ankrBNB",
+  "vAMM-ANKR/HAY" = "vAMM-ANKR-HAY",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
@@ -368,10 +372,15 @@ export enum assetSymbols {
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
   MIMO_PAR_75_25 = "MIMO75-PAR25 BLP",
-  WMATIC_STMATIC_BLP = "WMATIC_STMATIC BLP",
-  WMATIC_MATICX_BLP = "WMATIC_MATICX BLP",
   BRZ_JBRL_STABLE_BLP = "BRZ_JBRL STABLE BLP",
+  JEUR_PAR_STABLE_BLP = "JEUR_PAR STABLE BLP",
   WMATIC_STMATIC_STABLE_BLP = "WMATIC_STMATIC STABLE BLP",
+  WMATIC_CSMATIC_STABLE_BLP = "WMATIC_CSMATIC STABLE BLP",
+  WMATIC_MATICX_STABLE_BLP = "WMATIC_MATICX STABLE BLP",
+  TETU_BOOSTED_STABLE_BLP = "TETU_BOOSTED STABLE BLP",
+  TETU_LINEAR_USDT = "TETU_LINEAR USDT",
+  TETU_LINEAR_USDC = "TETU_LINEAR USDC",
+  TETU_LINEAR_DAI = "TETU_LINEAR DAI",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",
