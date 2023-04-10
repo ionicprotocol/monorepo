@@ -10,7 +10,6 @@ import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./FusePools";
 
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
-  const DECIMAL_OFFSET = 9;
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
       if (this.chainId === SupportedChains.chapel) {

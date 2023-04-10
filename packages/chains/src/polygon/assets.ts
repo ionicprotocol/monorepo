@@ -40,6 +40,8 @@ const YFI = "0xDA537104D6A5edd53c6fBba9A898708E465260b6";
 const USDT = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
+const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
+const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -49,10 +51,17 @@ const csMATIC = "0xFcBB00dF1d663eeE58123946A30AB2138bF9eb2A";
 
 // Balancer
 const MIMO_PAR_80_20 = "0x82d7f08026e21c7713CfAd1071df7C8271B17Eae";
-const WMATIC_STMATIC_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
-const WMATIC_MATICX_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
 const BRZ_JBRL_STABLE_BLP = "0xE22483774bd8611bE2Ad2F4194078DaC9159F4bA";
+const JEUR_PAR_STABLE_BLP = "0x513CdEE00251F39DE280d9E5f771A6eaFebCc88E";
 const WMATIC_STMATIC_STABLE_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
+const WMATIC_CSMATIC_STABLE_BLP = "0x02d2e2D7a89D6c5CB3681cfCb6F7dAC02A55eDA4";
+const WMATIC_MATICX_STABLE_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
+const TETU_BOOSTED_STABLE_BLP = "0xb3d658d5b95BF04E2932370DD1FF976fe18dd66A";
+
+// Balancer - linear pools
+const TETU_LINEAR_USDT = "0x7c82A23B4C48D796dee36A9cA215b641C6a8709d";
+const TETU_LINEAR_USDC = "0xae646817e458C0bE890b81e8d880206710E3c44e";
+const TETU_LINEAR_DAI = "0xDa1CD1711743e57Dd57102E9e61b75f3587703da";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
@@ -72,6 +81,7 @@ const JNZD_NZDS = "0x976A750168801F58E8AEdbCfF9328138D544cc09";
 const JEUR_EURT = "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1";
 const EURE_JEUR = "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4";
 const MAI_USDC = "0x160532D2536175d65C03B97b0630A9802c274daD";
+const DAI_GNS = "0x6E53cB6942e518376E9e763554dB1A45DDCd25c4";
 
 // stable forex
 const AGEUR = "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4";
@@ -237,6 +247,22 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", GRT),
     disabled: true,
+  },
+  {
+    symbol: assetSymbols.GNS,
+    underlying: GNS,
+    name: "Gains Network Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapV3PriceOracle,
+    extraDocs: defaultDocs("https://polygonscan.com", GNS),
+  },
+  {
+    symbol: assetSymbols.IXT,
+    underlying: IXT,
+    name: "PlanetIX",
+    decimals: 18,
+    oracle: OracleTypes.AlgebraPriceOracle,
+    extraDocs: defaultDocs("https://polygonscan.com", IXT),
   },
   {
     symbol: assetSymbols.LINK,
@@ -437,6 +463,14 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(MAI, USDC, "MAI-USDC", MAI_USDC),
   },
+  {
+    symbol: assetSymbols["DAI-GNS"],
+    underlying: DAI_GNS,
+    name: "DAI-GNS LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: quickSwapDocs(DAI, GNS, "DAI-GNS", DAI_GNS),
+  },
   // curve.fi LP tokens
   {
     symbol: assetSymbols["AGEUR-JEUR"],
@@ -525,29 +559,42 @@ export const assets: SupportedAsset[] = [
     ),
   },
   {
-    symbol: assetSymbols.WMATIC_STMATIC_BLP,
-    underlying: WMATIC_STMATIC_BLP,
-    name: "WMATIC-STMATIC BLP",
+    symbol: assetSymbols.WMATIC_MATICX_STABLE_BLP,
+    underlying: WMATIC_MATICX_STABLE_BLP,
+    name: "WMATIC-MATICX Stable BLP",
     decimals: 18,
-    oracle: OracleTypes.BalancerLpTokenPriceOracle,
-    extraDocs: balancerDocs(
-      "polygon",
-      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
-      "WMATIC-STMATIC BLP",
-      WMATIC_STMATIC_BLP
-    ),
-  },
-  {
-    symbol: assetSymbols.WMATIC_MATICX_BLP,
-    underlying: WMATIC_MATICX_BLP,
-    name: "WMATIC-MATICX BLP",
-    decimals: 18,
-    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
     extraDocs: balancerDocs(
       "polygon",
       "0xb20fc01d21a50d2c734c4a1262b4404d41fa7bf000000000000000000000075c",
-      "WMATIC-MATIX BLP",
-      WMATIC_MATICX_BLP
+      "WMATIC-MATICx BLP",
+      WMATIC_MATICX_STABLE_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.WMATIC_CSMATIC_STABLE_BLP,
+    underlying: WMATIC_CSMATIC_STABLE_BLP,
+    name: "WMATIC-csMATIC Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0x02d2e2d7a89d6c5cb3681cfcb6f7dac02a55eda400000000000000000000088f",
+      "WMATIC-csMATIC BLP",
+      WMATIC_CSMATIC_STABLE_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.WMATIC_STMATIC_STABLE_BLP,
+    underlying: WMATIC_STMATIC_STABLE_BLP,
+    name: "WMATIC-stMATIC Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
+      "WMATIC-stMATIC Stable BLP",
+      WMATIC_STMATIC_STABLE_BLP
     ),
   },
   {
@@ -564,18 +611,57 @@ export const assets: SupportedAsset[] = [
     ),
   },
   {
-    symbol: assetSymbols.WMATIC_STMATIC_STABLE_BLP,
-    underlying: WMATIC_STMATIC_STABLE_BLP,
-    name: "WMATIC-stMATIC Stable BLP",
+    symbol: assetSymbols.TETU_BOOSTED_STABLE_BLP,
+    underlying: TETU_BOOSTED_STABLE_BLP,
+    name: "DAI-USDT-USDC Boosted Stable BLP",
     decimals: 18,
     oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
     extraDocs: balancerDocs(
       "polygon",
-      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
-      "WMATIC-stMATIC Stable BLP",
-      WMATIC_STMATIC_STABLE_BLP
+      "0xb3d658d5b95bf04e2932370dd1ff976fe18dd66a000000000000000000000ace",
+      "Tetu Boosted Stable BLP",
+      TETU_BOOSTED_STABLE_BLP
+    ),
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.JEUR_PAR_STABLE_BLP,
+    underlying: JEUR_PAR_STABLE_BLP,
+    name: "jEUR-PAR Stable BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0x513cdee00251f39de280d9e5f771a6eafebcc88e000000000000000000000a6b",
+      "jEUR-PAR Stable BLP",
+      JEUR_PAR_STABLE_BLP
     ),
   },
+  {
+    symbol: assetSymbols.TETU_LINEAR_USDT,
+    underlying: TETU_LINEAR_USDT,
+    name: "bb-t-USDT Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
+    extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
+  },
+  {
+    symbol: assetSymbols.TETU_LINEAR_USDC,
+    underlying: TETU_LINEAR_USDC,
+    name: "bb-t-USDC Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
+    extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
+  },
+  {
+    symbol: assetSymbols.TETU_LINEAR_DAI,
+    underlying: TETU_LINEAR_DAI,
+    name: "bb-t-DAI Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
+    extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
+  },
+
   // stable forex
   {
     symbol: assetSymbols.AGEUR,

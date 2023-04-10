@@ -77,6 +77,16 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
     }
   }, [usdPrices, vault.chainId]);
 
+  const dailyApy = useMemo(() => {
+    if (vaultApyInfo && vaultApyInfo.length > 0) {
+      return (
+        vaultApyInfo.reduce((_dailyApy, info) => {
+          return (_dailyApy += info.supplyApy);
+        }, 0) / vaultApyInfo.length
+      ).toFixed(2);
+    }
+  }, [vaultApyInfo]);
+
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
       await switchNetworkAsync(chainConfig.chainId);
@@ -188,7 +198,11 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                     crossAxisAlignment="center"
                     stat={`${smallFormatter(Number(utils.formatUnits(vault.supplyApy)) * 100)}%`}
                   />
-                  <CaptionedStat caption={'Daily'} crossAxisAlignment="center" stat={'0.05%'} />
+                  <CaptionedStat
+                    caption={'Daily'}
+                    crossAxisAlignment="center"
+                    stat={dailyApy ? `${dailyApy}%` : '-'}
+                  />
                   <CaptionedStat
                     caption={'Admin Fee'}
                     crossAxisAlignment="center"
