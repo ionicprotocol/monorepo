@@ -103,7 +103,7 @@ export interface VaultData {
   asset: string;
   symbol: string;
   supplyApy: BigNumber;
-  adapterCount: number;
+  adaptersCount: number;
   emergencyExit: boolean;
   adapters: Adapter[];
   decimals: number;
