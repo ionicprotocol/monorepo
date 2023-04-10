@@ -1,5 +1,5 @@
 import { FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
-import { BigNumber, constants/*, Contract*/, ContractTransaction, utils } from "ethers";
+import { BigNumber, constants /*, Contract*/, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
 // import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
