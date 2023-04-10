@@ -213,6 +213,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
+    case RedemptionStrategyContract.BalancerSwapLiquidator:
     case RedemptionStrategyContract.BalancerLpTokenLiquidator: {
       const strategyData = new ethers.utils.AbiCoder().encode(["address"], [outputToken]);
 
