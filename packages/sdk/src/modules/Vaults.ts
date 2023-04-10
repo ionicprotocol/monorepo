@@ -1,28 +1,28 @@
 import { FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
-import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
+import { BigNumber, constants/*, Contract*/, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
-import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
+// import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
+// import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
-import { ChainSupportedAssets } from "./FusePools";
+// import { ChainSupportedAssets } from "./FusePools";
 
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
       if (this.chainId === SupportedChains.chapel) {
         try {
-          const optimizedVaultsRegistry = new Contract(
-            this.chainDeployment.OptimizedVaultsRegistry.address,
-            OptimizedVaultsRegistryABI,
-            this.provider
-          ) as OptimizedVaultsRegistry;
-
-          const vaults = await optimizedVaultsRegistry.callStatic.getAllVaults();
-
           return [];
+          // const optimizedVaultsRegistry = new Contract(
+          //   this.chainDeployment.OptimizedVaultsRegistry.address,
+          //   OptimizedVaultsRegistryABI,
+          //   this.provider
+          // ) as OptimizedVaultsRegistry;
+          //
+          // const vaults = await optimizedVaultsRegistry.callStatic.getAllVaults();
+          //
           // return await Promise.all(
           //   vaults.map(async (vault) => {
           //     const optimizedAPRVault = this.createOptimizedAPRVault(vault);
