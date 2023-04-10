@@ -5,7 +5,7 @@ import EIP20InterfaceABI from "../../abis/EIP20Interface";
 import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
-// import { ChainSupportedAssets } from "./FusePools";
+import { ChainSupportedAssets } from "./FusePools";
 
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
@@ -14,9 +14,6 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
         try {
           const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
           const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
-
-          console.log({ vaultsData });
-
           const mpo = this.createMasterPriceOracle();
 
           return await Promise.all(
