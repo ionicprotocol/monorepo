@@ -13,6 +13,7 @@ import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
 import OptimizedAPRVaultFirstExtensionABI from "../../abis/OptimizedAPRVaultFirstExtension";
 import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSecondExtension";
+import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
@@ -26,6 +27,7 @@ import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
 import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
+import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../MidasSdk";
 
@@ -95,6 +97,14 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         [...OptimizedAPRVaultFirstExtensionABI, ...OptimizedAPRVaultSecondExtensionABI],
         signerOrProvider
       ) as OptimizedAPRVaultWithExtensions;
+    }
+
+    createOptimizedVaultsRegistry(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.OptimizedVaultsRegistry.address,
+        OptimizedVaultsRegistryABI,
+        signerOrProvider
+      ) as OptimizedVaultsRegistry;
     }
   };
 }

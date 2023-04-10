@@ -104,7 +104,7 @@ export interface VaultData {
   symbol: string;
   supplyApy: BigNumber;
   adaptersCount: number;
-  emergencyExit: boolean;
+  isEmergencyStopped: boolean;
   adapters: Adapter[];
   decimals: number;
   underlyingPrice: BigNumber;
@@ -120,7 +120,7 @@ export interface Adapter {
   adapter: string;
   allocation: BigNumber;
   market: string;
-  comptroller: string;
+  pool: string;
 }
 
 export interface VaultApy {
