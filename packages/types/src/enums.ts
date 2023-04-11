@@ -231,6 +231,7 @@ export enum assetSymbols {
 
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
+  "sAMM-HAY/BUSD" = "sAMM-HAY-BUSD",
   "vAMM-ANKR/ankrBNB" = "vAMM-ANKR-ankrBNB",
   "vAMM-ANKR/HAY" = "vAMM-ANKR-HAY",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
