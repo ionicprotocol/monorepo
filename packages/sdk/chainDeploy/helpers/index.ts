@@ -21,4 +21,5 @@ export { deploySolidlyPriceOracle } from "./oracles/solidly";
 export { deployBalancerLpPriceOracle } from "./oracles/balancerLp";
 export { deployBalancerStableLpPriceOracle } from "./oracles/balancerLp";
 export { deployBalancerRateProviderPriceOracle } from "./oracles/balancerLp";
+export { deployBalancerLinearPoolPriceOracle } from "./oracles/balancerLp";
 export { deployFlywheelWithDynamicRewards } from "./dynamicFlywheels";

@@ -32,17 +32,26 @@
     "AnkrCertificateTokenPriceOracle_Proxy": {
       "address": "0x4Be947BaA3C038aac1097EDF845080c4b2C1130e"
     },
+    "BalancerLpLinearPoolPriceOracle": {
+      "address": "0x966C8998962A0c5472b9DB8e865dcba3c100Ac40"
+    },
+    "BalancerLpLinearPoolPriceOracle_Implementation": {
+      "address": "0x6690c7aA8BF3612a43305De17A56b149F4b2027b"
+    },
+    "BalancerLpLinearPoolPriceOracle_Proxy": {
+      "address": "0x966C8998962A0c5472b9DB8e865dcba3c100Ac40"
+    },
     "BalancerLpStablePoolPriceOracle": {
-      "address": "0x0d624F20939F77a5D1E5f829cd1B312BE2B149C7"
+      "address": "0x73472dD551E2991574a1132D29438033123A64D4"
     },
     "BalancerLpStablePoolPriceOracle_Implementation": {
-      "address": "0x02706A482fc9f6B20238157B56763391a45bE60E"
+      "address": "0x771E646370F67EC1bB2c1125cEb1126013531ea3"
     },
     "BalancerLpStablePoolPriceOracle_Proxy": {
-      "address": "0x0d624F20939F77a5D1E5f829cd1B312BE2B149C7"
+      "address": "0x73472dD551E2991574a1132D29438033123A64D4"
     },
     "BalancerLpTokenLiquidator": {
-      "address": "0x58eB8b2d41be29Eb46c75Db6fa1D494975B3D6bC"
+      "address": "0x57dafD7C3CB6D13f4190af69c6B755E7972fc282"
     },
     "BalancerLpTokenPriceOracle": {
       "address": "0x7b7fa6D93f8ca69724d98E0d563e868Ce342eB51"
@@ -57,10 +66,13 @@
       "address": "0x0C3397c084F373C11B9f39341f03316d9109DCE7"
     },
     "BalancerRateProviderOracle_Implementation": {
-      "address": "0xF91357Ef0A73746f5728AA947Ed15fEb80713CD6"
+      "address": "0xce33F40554A6059b80fA09AF86367aa804915F0c"
     },
     "BalancerRateProviderOracle_Proxy": {
       "address": "0x0C3397c084F373C11B9f39341f03316d9109DCE7"
+    },
+    "BalancerSwapLiquidator": {
+      "address": "0x7EeC2d629e281A4dcE670269b7290cA430787C7E"
     },
     "CErc20Delegate": {
       "address": "0x587906620D627fe75C4d1288C6A584089780959c"

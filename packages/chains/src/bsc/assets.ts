@@ -18,6 +18,8 @@ export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 export const BNB = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 export const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
 export const BTCB = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c";
+export const HAY = "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5";
+export const ankrBNB = "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827";
 const DAI = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
 const ETH = "0x2170Ed0880ac9A755fd29B2688956BD959F933F8";
 const BETH = "0x250632378E573c6Be1AC2f97Fcdf00515d0Aa91B";
@@ -38,7 +40,7 @@ const valdai3EPS = "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC";
 const epsBUSD_jCHF = "0x5887cEa5e2bb7dD36F0C06Da47A8Df918c289A29";
 const BOMB = "0x522348779DCb2911539e76A1042aA922F9C47Ee3";
 const xBOMB = "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b";
-const ankrBNB = "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827";
+
 const stkBNB_WBNB = "0xaA2527ff1893e0D40d4a454623d362B79E8bb7F1";
 const stkBNB = "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16";
 const asBNBx_WBNB = "0xB88F211EC9ecfc2931Ae1DE53ea28Da76B9Ed37A";
@@ -71,10 +73,11 @@ const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
 const SD = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
 const ANKR = "0xf307910A4c7bbc79691fD374889b36d8531B08e3";
 const WOMBATLP_WBNB = "0x74f019A5C4eD2C2950Ce16FaD7Af838549092c5b";
-const HAY = "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5";
+
 // solidly
 const solidlyStableAMM_jBRL_BRZ = "0xA0695f78AF837F570bcc50f53e58Cda300798B65";
 const solidlyVolatileAMM_ANKR_ankrBNB = "0x7ef540f672Cd643B79D2488344944499F7518b1f";
+const solidlyVolatileAMM_ANKR_HAY = "0xa2C2C08AFEFD3CC69B9aab797dEe5a1886388783";
 
 const assets: SupportedAsset[] = [
   {
@@ -576,6 +579,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_ankrBNB),
+  },
+  {
+    symbol: assetSymbols["vAMM-ANKR/HAY"],
+    underlying: solidlyVolatileAMM_ANKR_HAY,
+    name: "Volatile V1 AMM - ANKR/HAY",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_HAY),
   },
 ];
 

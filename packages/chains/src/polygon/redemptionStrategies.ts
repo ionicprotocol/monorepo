@@ -3,6 +3,10 @@ import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-cap
 import { assets, USDC, WMATIC } from "./assets";
 
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
+  [underlying(assets, assetSymbols.jBRL)]: [
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
+    underlying(assets, assetSymbols.USDC),
+  ],
   [underlying(assets, assetSymbols.JAUD)]: [
     RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
@@ -163,6 +167,34 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
   [underlying(assets, assetSymbols.MAI)]: [
     RedemptionStrategyContract.UniswapV2LiquidatorFunder,
+    underlying(assets, assetSymbols.USDC),
+  ],
+  [underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.JEUR),
+  ],
+  [underlying(assets, assetSymbols.BRZ_JBRL_STABLE_BLP)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.jBRL),
+  ],
+  [underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.WMATIC),
+  ],
+  [underlying(assets, assetSymbols.WMATIC_CSMATIC_STABLE_BLP)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.WMATIC),
+  ],
+  [underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.WMATIC),
+  ],
+  [underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP)]: [
+    RedemptionStrategyContract.BalancerSwapLiquidator,
+    underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+  ],
+  [underlying(assets, assetSymbols.TETU_LINEAR_USDC)]: [
+    RedemptionStrategyContract.BalancerSwapLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
 };
