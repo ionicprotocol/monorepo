@@ -2,7 +2,6 @@ import { FlywheelRewardsInfoForVault, FundOperationMode, SupportedChains, VaultD
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
