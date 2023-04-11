@@ -1,25 +1,33 @@
-import type { FlywheelRewardsInfoForVault } from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useClaimableRewardsForVaults = ({ poolChainId }: { poolChainId: number }) => {
-  const { address } = useMultiMidas();
-  const sdk = useSdk(poolChainId);
+export const useClaimableRewardsForVaults = (chainIds: SupportedChains[]) => {
+  const { address, getSdk } = useMultiMidas();
 
   return useQuery<FlywheelRewardsInfoForVault[] | null | undefined>(
-    ['useClaimableRewardsForVaults', address, sdk?.chainId],
+    ['useClaimableRewardsForVaults', address],
     async () => {
-      if (sdk && address) {
-        return await sdk.getClaimableRewardsForVaults(address);
-      }
+      const res: FlywheelRewardsInfoForVault[] = [];
+
+      await Promise.all(
+        chainIds.map(async (chainId) => {
+          const sdk = getSdk(Number(chainId));
+
+          if (sdk && address) {
+            const rewardsOfChain = await sdk.getClaimableRewardsForVaults(address);
+
+            res.push(...rewardsOfChain);
+          }
+        })
+      );
 
       return null;
     },
     {
       cacheTime: Infinity,
-      enabled: !!address && !!sdk,
+      enabled: !!address,
       staleTime: Infinity,
     }
   );

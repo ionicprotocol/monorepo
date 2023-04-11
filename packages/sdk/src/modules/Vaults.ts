@@ -77,13 +77,9 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
 
           claimableRewards.rewards_.map((reward, index) => {
             if (reward.gt(0)) {
-              // TODO
-              // const vault = claimableRewards.vaults_[index];
-              const vault = "";
+              const vault = claimableRewards.vaults_[index];
               const rewardsInfo = {
-                // TODO
-                // rewardToken: claimableRewards.rewardToken_[index],
-                rewardToken: "",
+                rewardToken: claimableRewards.rewardToken_[index],
                 flywheel: claimableRewards.flywheels_[index],
                 rewards: claimableRewards.rewards_[index],
               };
