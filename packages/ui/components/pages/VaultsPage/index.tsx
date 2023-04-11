@@ -13,6 +13,7 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { MIDAS_LOCALSTORAGE_KEYS, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
+import { useClaimableRewardsForVaults } from '@ui/hooks/vault/useClaimableRewardsForVaults';
 import { useVaultsPerChain } from '@ui/hooks/vault/useVaultsPerChain';
 
 const VaultsPage = memo(() => {
@@ -22,6 +23,9 @@ const VaultsPage = memo(() => {
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
   const enabledChains = useEnabledChains();
   const { isLoading, vaultsPerChain } = useVaultsPerChain([...enabledChains]);
+  const { data: claimableRewardsForVaults } = useClaimableRewardsForVaults([...enabledChains]);
+
+  console.log({ claimableRewardsForVaults });
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
