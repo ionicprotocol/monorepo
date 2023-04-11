@@ -1,7 +1,8 @@
-import { FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
+import { FlywheelRewardsInfoForVault, FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
@@ -61,6 +62,51 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
 
           throw Error(
             `Getting vaults failed in chain ${this.chainId}: ` + (error instanceof Error ? error.message : error)
+          );
+        }
+      } else {
+        return [];
+      }
+    }
+
+    async getClaimableRewardsForVaults(account: string): Promise<FlywheelRewardsInfoForVault[]> {
+      if (this.chainId === SupportedChains.chapel) {
+        try {
+          const rewardsInfoForVaults: FlywheelRewardsInfoForVault[] = [];
+          const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
+          const claimableRewards = await optimizedVaultsRegistry.callStatic.getClaimableRewards(account);
+
+          claimableRewards.rewards_.map((reward, index) => {
+            if (reward.gt(0)) {
+              // TODO
+              // const vault = claimableRewards.vaults_[index];
+              const vault = "";
+              const rewardsInfo = {
+                // TODO
+                // rewardToken: claimableRewards.rewardToken_[index],
+                rewardToken: "",
+                flywheel: claimableRewards.flywheels_[index],
+                rewards: claimableRewards.rewards_[index],
+              };
+
+              const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
+              if (rewardsAdded) {
+                rewardsAdded.rewardsInfo.push(rewardsInfo);
+              } else {
+                rewardsInfoForVaults.push({ vault, rewardsInfo: [rewardsInfo] });
+              }
+            }
+          });
+
+          return rewardsInfoForVaults;
+        } catch (error) {
+          this.logger.error(
+            `get claimable rewards of vaults error for account ${account} in chain ${this.chainId}:  ${error}`
+          );
+
+          throw Error(
+            `get claimable rewards of vaults error for account ${account} in chain ${this.chainId}: ` +
+              (error instanceof Error ? error.message : error)
           );
         }
       } else {
