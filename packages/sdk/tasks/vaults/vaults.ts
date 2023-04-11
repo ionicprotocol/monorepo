@@ -469,3 +469,40 @@ task("deploy-market-with-rewards").setAction(async ({}, { ethers, getChainId, de
     console.log(`funded the market with reward tokens`);
   }
 });
+
+task("optimized-vault:upgrade")
+  .addParam("vault")
+  .setAction(async ( { vault }, { ethers, deployments, getNamedAccounts } ) => {
+    const { deployer } = await getNamedAccounts();
+
+    const registry = await ethers.getContract("OptimizedVaultsRegistry") as OptimizedVaultsRegistry;
+
+    console.log(`redeploying the extensions...`);
+    const vaultFirstExtDep = await deployments.deploy("OptimizedAPRVaultFirstExtension", {
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      args: [],
+    });
+    const vaultSecondExtDep = await deployments.deploy("OptimizedAPRVaultSecondExtension", {
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      args: [],
+    });
+
+    console.log(`configuring the latest extensions in the registry...`);
+    let tx = await registry.setLatestVaultExtensions(vault, [vaultFirstExtDep.address, vaultSecondExtDep.address]);
+    await tx.wait();
+    console.log(`configured the latest extensions for vault ${vault}`);
+
+    const vaultAsFirstExt = (await ethers.getContractAt(
+      "OptimizedAPRVaultFirstExtension",
+      vault,
+      deployer
+    )) as OptimizedAPRVaultFirstExtension;
+
+    tx = await vaultAsFirstExt.upgradeVault();
+    await tx.wait();
+    console.log(`upgraded the vault at ${vault} to the latest extensions`);
+  });

@@ -174,7 +174,7 @@
       "address": "0x571CFc376566231E2592Fc9Bf998469ea49A604F"
     },
     "OptimizedAPRVaultSecondExtension": {
-      "address": "0x1F718D4221b2D6b65aDca2077f661E70071D8F0A"
+      "address": "0xAD42dEf8FD3A1E1124B5643Ba6d1efEa62F924B4"
     },
     "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd": {
       "address": "0x6204027E412F7102E03d72C53a36B2C188d7048D"
@@ -183,7 +183,7 @@
       "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
     },
     "OptimizedVaultsRegistry_Implementation": {
-      "address": "0x5fb164146Cda6c735c2c8eBeaEd602fE217a881a"
+      "address": "0x62a1F5e36FaBb1f409FdC951672F04cAeBE11BF1"
     },
     "OptimizedVaultsRegistry_Proxy": {
       "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
