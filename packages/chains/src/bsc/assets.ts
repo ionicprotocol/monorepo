@@ -78,6 +78,7 @@ const WOMBATLP_WBNB = "0x74f019A5C4eD2C2950Ce16FaD7Af838549092c5b";
 const solidlyStableAMM_jBRL_BRZ = "0xA0695f78AF837F570bcc50f53e58Cda300798B65";
 const solidlyVolatileAMM_ANKR_ankrBNB = "0x7ef540f672Cd643B79D2488344944499F7518b1f";
 const solidlyVolatileAMM_ANKR_HAY = "0xa2C2C08AFEFD3CC69B9aab797dEe5a1886388783";
+const solidlyStableAMM_HAY_BUSD = "0x93B32a8dfE10e9196403dd111974E325219aec24";
 
 const assets: SupportedAsset[] = [
   {
@@ -587,6 +588,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_HAY),
+  },
+  {
+    symbol: assetSymbols["sAMM-HAY/BUSD"],
+    underlying: solidlyStableAMM_HAY_BUSD,
+    name: "Stable V1 AMM - HAY/BUSD",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: thenaDocs(solidlyStableAMM_HAY_BUSD),
   },
 ];
 
