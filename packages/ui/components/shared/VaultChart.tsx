@@ -14,8 +14,8 @@ import {
   YAxis,
 } from 'recharts';
 
-import type { VaultInfo } from '@ui/hooks/useAllVaultsApyInfo';
 import { useColors } from '@ui/hooks/useColors';
+import type { VaultInfo } from '@ui/hooks/vault/useAllVaultsApyInfo';
 
 type LineProps = {
   [key: string]: boolean | string | null;

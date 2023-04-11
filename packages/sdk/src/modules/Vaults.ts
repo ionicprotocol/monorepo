@@ -1,122 +1,111 @@
-import { FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
-import { BigNumber, constants /*, Contract*/, ContractTransaction, utils } from "ethers";
+import { FlywheelRewardsInfoForVault, FundOperationMode, SupportedChains, VaultData } from "@midas-capital/types";
+import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
-// import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
-// import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
-// import { ChainSupportedAssets } from "./FusePools";
+import { ChainSupportedAssets } from "./FusePools";
 
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
       if (this.chainId === SupportedChains.chapel) {
         try {
-          return [];
-          // const optimizedVaultsRegistry = new Contract(
-          //   this.chainDeployment.OptimizedVaultsRegistry.address,
-          //   OptimizedVaultsRegistryABI,
-          //   this.provider
-          // ) as OptimizedVaultsRegistry;
-          //
-          // const vaults = await optimizedVaultsRegistry.callStatic.getAllVaults();
-          //
-          // return await Promise.all(
-          //   vaults.map(async (vault) => {
-          //     const optimizedAPRVault = this.createOptimizedAPRVault(vault);
-          //     const mpo = this.createMasterPriceOracle();
-          //
-          //     const [
-          //       asset,
-          //       totalSupply,
-          //       supplyApy,
-          //       adapterCount,
-          //       emergencyExit,
-          //       {
-          //         performance: performanceFee,
-          //         deposit: depositFee,
-          //         withdrawal: withdrawalFee,
-          //         management: managementFee,
-          //       },
-          //     ] = await Promise.all([
-          //       optimizedAPRVault.callStatic.asset(),
-          //       optimizedAPRVault.callStatic.estimatedTotalAssets(),
-          //       optimizedAPRVault.callStatic.supplyAPY(0),
-          //       optimizedAPRVault.callStatic.adaptersCount(),
-          //       optimizedAPRVault.callStatic.emergencyExit(),
-          //       optimizedAPRVault.callStatic.fees(),
-          //     ]);
-          //
-          //     const cToken = this.createCTokenWithExtensions(asset);
-          //     let [symbol, decimals] = await Promise.all([cToken.callStatic.symbol(), cToken.callStatic.decimals()]);
-          //
-          //     const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
-          //       (ass) => ass.underlying === asset
-          //     );
-          //
-          //     let extraDocs: string | undefined;
-          //
-          //     if (_asset) {
-          //       symbol = _asset.symbol;
-          //       decimals = _asset.decimals;
-          //       extraDocs = _asset.extraDocs;
-          //     }
-          //
-          //     const _adapters =
-          //       adapterCount > 0
-          //         ? await Promise.all(
-          //             Array.from(Array(adapterCount).keys()).map((i) => optimizedAPRVault.callStatic.adapters(i))
-          //           )
-          //         : [];
-          //
-          //     const adapters = await Promise.all(
-          //       _adapters.map(async (adapter) => {
-          //         const adapterInstance = this.createCompoundMarketERC4626(adapter.adapter);
-          //         const marketAddress = await adapterInstance.callStatic.market();
-          //         const cTokenInstance = this.createCTokenWithExtensions(marketAddress);
-          //         const comptrollerAddress = await cTokenInstance.callStatic.comptroller();
-          //
-          //         return {
-          //           adapter: adapter.adapter,
-          //           allocation: adapter.allocation,
-          //           market: marketAddress,
-          //           comptroller: comptrollerAddress,
-          //         };
-          //       })
-          //     );
-          //
-          //     const underlyingPrice = await mpo.callStatic.price(asset);
-          //     const totalSupplyNative =
-          //       Number(utils.formatUnits(totalSupply, decimals)) * Number(utils.formatUnits(underlyingPrice, 18));
-          //
-          //     return {
-          //       vault,
-          //       chainId: this.chainId,
-          //       totalSupply,
-          //       totalSupplyNative,
-          //       asset,
-          //       symbol,
-          //       supplyApy,
-          //       adapterCount,
-          //       emergencyExit,
-          //       adapters,
-          //       decimals,
-          //       underlyingPrice,
-          //       extraDocs,
-          //       performanceFee,
-          //       depositFee,
-          //       withdrawalFee,
-          //       managementFee,
-          //     };
-          //   })
-          // );
+          const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
+          const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
+          const mpo = this.createMasterPriceOracle();
+
+          return await Promise.all(
+            vaultsData.map(async (data) => {
+              let symbol = data.assetSymbol;
+              let extraDocs: string | undefined;
+
+              const asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+                (ass) => ass.underlying === data.asset
+              );
+
+              if (asset) {
+                symbol = asset.symbol;
+                extraDocs = asset.extraDocs;
+              }
+
+              const underlyingPrice = await mpo.callStatic.price(data.asset);
+              const totalSupplyNative =
+                Number(utils.formatUnits(data.estimatedTotalAssets, data.assetDecimals)) *
+                Number(utils.formatUnits(underlyingPrice, 18));
+
+              return {
+                vault: data.vault,
+                chainId: this.chainId,
+                totalSupply: data.estimatedTotalAssets,
+                totalSupplyNative,
+                asset: data.asset,
+                symbol,
+                supplyApy: data.apr,
+                adaptersCount: Number(data.adaptersCount),
+                isEmergencyStopped: data.isEmergencyStopped,
+                adapters: data.adaptersData,
+                decimals: data.assetDecimals,
+                underlyingPrice,
+                extraDocs,
+                performanceFee: data.performanceFee,
+                depositFee: data.depositFee,
+                withdrawalFee: data.withdrawalFee,
+                managementFee: data.managementFee,
+              };
+            })
+          );
         } catch (error) {
           this.logger.error(`get vaults error in chain ${this.chainId}:  ${error}`);
 
           throw Error(
             `Getting vaults failed in chain ${this.chainId}: ` + (error instanceof Error ? error.message : error)
+          );
+        }
+      } else {
+        return [];
+      }
+    }
+
+    async getClaimableRewardsForVaults(account: string): Promise<FlywheelRewardsInfoForVault[]> {
+      if (this.chainId === SupportedChains.chapel) {
+        try {
+          const rewardsInfoForVaults: FlywheelRewardsInfoForVault[] = [];
+          const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
+          const claimableRewards = await optimizedVaultsRegistry.callStatic.getClaimableRewards(account);
+
+          claimableRewards.rewards_.map((reward, index) => {
+            if (reward.gt(0)) {
+              // TODO
+              // const vault = claimableRewards.vaults_[index];
+              const vault = "";
+              const rewardsInfo = {
+                // TODO
+                // rewardToken: claimableRewards.rewardToken_[index],
+                rewardToken: "",
+                flywheel: claimableRewards.flywheels_[index],
+                rewards: claimableRewards.rewards_[index],
+              };
+
+              const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
+              if (rewardsAdded) {
+                rewardsAdded.rewardsInfo.push(rewardsInfo);
+              } else {
+                rewardsInfoForVaults.push({ vault, rewardsInfo: [rewardsInfo] });
+              }
+            }
+          });
+
+          return rewardsInfoForVaults;
+        } catch (error) {
+          this.logger.error(
+            `get claimable rewards of vaults error for account ${account} in chain ${this.chainId}:  ${error}`
+          );
+
+          throw Error(
+            `get claimable rewards of vaults error for account ${account} in chain ${this.chainId}: ` +
+              (error instanceof Error ? error.message : error)
           );
         }
       } else {

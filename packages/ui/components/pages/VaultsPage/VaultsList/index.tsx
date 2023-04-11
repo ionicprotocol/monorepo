@@ -422,7 +422,7 @@ export const VaultsList = ({
           }}
           descriptions={[
             {
-              text: `Unable to retrieve Pools. Please try again later.`,
+              text: `Unable to retrieve Vaults. Please try again later.`,
             },
           ]}
           title={err.reason ? err.reason : 'Unexpected Error'}

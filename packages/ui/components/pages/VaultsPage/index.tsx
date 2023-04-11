@@ -13,7 +13,7 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { MIDAS_LOCALSTORAGE_KEYS, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
+import { useVaultsPerChain } from '@ui/hooks/vault/useVaultsPerChain';
 
 const VaultsPage = memo(() => {
   const { setGlobalLoading, address } = useMultiMidas();

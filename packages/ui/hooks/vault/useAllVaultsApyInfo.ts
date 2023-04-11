@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { useVaultsPerChain } from '@ui/hooks/useVaultsPerChain';
+import { useVaultsPerChain } from '@ui/hooks/vault/useVaultsPerChain';
 
 export type VaultInfo = {
   decimals: number;
