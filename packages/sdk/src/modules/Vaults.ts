@@ -75,20 +75,30 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
           const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
           const claimableRewards = await optimizedVaultsRegistry.callStatic.getClaimableRewards(account);
 
-          claimableRewards.rewards_.map((reward, index) => {
-            if (reward.gt(0)) {
-              const vault = claimableRewards.vaults_[index];
+          claimableRewards.map((reward) => {
+            if (reward.rewards.gt(0)) {
+              const vault = reward.vault;
+              const chainId = Number(this.chainId);
+
+              // trying to get reward token symbol from defined assets list in sdk
+              const asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+                (ass) => ass.underlying === reward.rewardToken
+              );
+              const rewardTokenSymbol = asset ? asset.symbol : reward.rewardTokenSymbol;
+
               const rewardsInfo = {
-                rewardToken: claimableRewards.rewardToken_[index],
-                flywheel: claimableRewards.flywheels_[index],
-                rewards: claimableRewards.rewards_[index],
+                rewardToken: reward.rewardToken,
+                flywheel: reward.flywheel,
+                rewards: reward.rewards,
+                rewardTokenDecimals: reward.rewardTokenDecimals,
+                rewardTokenSymbol,
               };
 
               const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
               if (rewardsAdded) {
                 rewardsAdded.rewardsInfo.push(rewardsInfo);
               } else {
-                rewardsInfoForVaults.push({ vault, rewardsInfo: [rewardsInfo] });
+                rewardsInfoForVaults.push({ vault, chainId, rewardsInfo: [rewardsInfo] });
               }
             }
           });
