@@ -81,7 +81,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: wrappedAssetDocs(SupportedChains.arbitrum),
+    extraDocs: wrappedAssetDocs(SupportedChains.ethereum),
   },
   {
     symbol: assetSymbols.wstETH,

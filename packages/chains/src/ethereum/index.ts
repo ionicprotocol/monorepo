@@ -13,7 +13,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.arbitrum,
+  chainId: SupportedChains.ethereum,
   chainAddresses,
   assets,
   irms,
