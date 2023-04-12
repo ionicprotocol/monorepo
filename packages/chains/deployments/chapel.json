@@ -96,7 +96,7 @@
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xc344A9B6F3d829264fbD3e27DE5da6E97BbFf850"
+      "address": "0xEfD814A57A5072b99ed217355d2E1d7f9492ad7A"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
@@ -114,7 +114,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xb4E5077C8461fBD5454296Cd40fD1361d5D166Ce"
+      "address": "0x96Ad77A1CA8A6c878744C44911Cc3129C5B5F85d"
     },
     "FusePoolDirectory_Proxy": {
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
@@ -192,7 +192,7 @@
       "address": "0xDdD3cf9407a12A6360281d244cb100ABe7fB561f"
     },
     "SimplePriceOracle_Implementation": {
-      "address": "0xcC07A2f0625958768Fa8f990d0c0a11976c9EC05"
+      "address": "0xEc9046F78d82054063a97dd9bB634b86BD674440"
     },
     "SimplePriceOracle_Proxy": {
       "address": "0xDdD3cf9407a12A6360281d244cb100ABe7fB561f"
@@ -201,7 +201,7 @@
       "address": "0x6f2928475E15D49B2467126146A866b509789946"
     },
     "UniswapLpTokenPriceOracle": {
-      "address": "0xFD8EC6e37182CA30FE51FC4381E5f2F3B58B677A"
+      "address": "0x457B2dc7CEd1956B6f97136cB70fc45F40865b1A"
     },
     "UniswapTwapPriceOracleV2": {
       "address": "0xCCC61892Ea823e04F06Ee8b170C10C427b45BaA9"

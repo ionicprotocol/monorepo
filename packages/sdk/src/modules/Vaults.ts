@@ -73,25 +73,25 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
         try {
           const rewardsInfoForVaults: FlywheelRewardsInfoForVault[] = [];
           const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
-          const claimableRewards = await optimizedVaultsRegistry.callStatic.getClaimableRewards(account);
-
-          claimableRewards.rewards_.map((reward, index) => {
-            if (reward.gt(0)) {
-              const vault = claimableRewards.vaults_[index];
-              const rewardsInfo = {
-                rewardToken: claimableRewards.rewardToken_[index],
-                flywheel: claimableRewards.flywheels_[index],
-                rewards: claimableRewards.rewards_[index],
-              };
-
-              const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
-              if (rewardsAdded) {
-                rewardsAdded.rewardsInfo.push(rewardsInfo);
-              } else {
-                rewardsInfoForVaults.push({ vault, rewardsInfo: [rewardsInfo] });
-              }
-            }
-          });
+          // const claimableRewards = await optimizedVaultsRegistry.callStatic.getClaimableRewards(account);
+          //
+          // claimableRewards.rewards_.map((reward, index) => {
+          //   if (reward.gt(0)) {
+          //     const vault = claimableRewards.vaults_[index];
+          //     const rewardsInfo = {
+          //       rewardToken: claimableRewards.rewardToken_[index],
+          //       flywheel: claimableRewards.flywheels_[index],
+          //       rewards: claimableRewards.rewards_[index],
+          //     };
+          //
+          //     const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
+          //     if (rewardsAdded) {
+          //       rewardsAdded.rewardsInfo.push(rewardsInfo);
+          //     } else {
+          //       rewardsInfoForVaults.push({ vault, rewardsInfo: [rewardsInfo] });
+          //     }
+          //   }
+          // });
 
           return rewardsInfoForVaults;
         } catch (error) {
