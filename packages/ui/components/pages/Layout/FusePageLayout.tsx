@@ -1,12 +1,15 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Drawer, DrawerContent, Flex, useDisclosure } from '@chakra-ui/react';
+
+import { Header } from './Header';
+import { Sidebar } from './Sidebar';
 
 import Footer from '@ui/components/pages/Layout/Footer';
-import { MidasNavbar } from '@ui/components/pages/Layout/MidasNavbar';
 import { useColors } from '@ui/hooks/useColors';
 import type { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
 
 const FusePageLayout = ({ children }: FusePageLayoutProps) => {
   const { cPage } = useColors();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Flex
@@ -16,8 +19,24 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
       justifyContent="flex-start"
       minH="100vh"
     >
-      <MidasNavbar />
-      {children}
+      <Sidebar onClose={() => onClose} />
+      <Drawer
+        autoFocus={false}
+        isOpen={isOpen}
+        onClose={onClose}
+        onOverlayClick={onClose}
+        placement="left"
+        returnFocusOnClose={false}
+        size="full"
+      >
+        <DrawerContent>
+          <Sidebar onClose={onClose} />
+        </DrawerContent>
+      </Drawer>
+      <Header onOpen={onOpen} />
+      <Box ml={{ base: 0, md: 60 }} transition=".3s ease" width={'calc(100% - 240px)'}>
+        {children}
+      </Box>
       <Footer />
     </Flex>
   );
