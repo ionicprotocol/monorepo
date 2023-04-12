@@ -472,10 +472,10 @@ task("deploy-market-with-rewards").setAction(async ({}, { ethers, getChainId, de
 
 task("optimized-vault:upgrade")
   .addParam("vault")
-  .setAction(async ( { vault }, { ethers, deployments, getNamedAccounts } ) => {
+  .setAction(async ({ vault }, { ethers, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
 
-    const registry = await ethers.getContract("OptimizedVaultsRegistry") as OptimizedVaultsRegistry;
+    const registry = (await ethers.getContract("OptimizedVaultsRegistry")) as OptimizedVaultsRegistry;
 
     console.log(`redeploying the extensions...`);
     const vaultFirstExtDep = await deployments.deploy("OptimizedAPRVaultFirstExtension", {
@@ -507,24 +507,23 @@ task("optimized-vault:upgrade")
     console.log(`upgraded the vault at ${vault} to the latest extensions`);
   });
 
-task("optimized-vaults-registry:upgrade")
-  .setAction(async ( {}, { deployments, getNamedAccounts } ) => {
-    const { deployer } = await getNamedAccounts();
-    const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
-      from: deployer,
-      log: true,
-      proxy: {
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [],
-          },
+task("optimized-vaults-registry:upgrade").setAction(async ({}, { deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
+    from: deployer,
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [],
         },
-        proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer,
       },
-      waitConfirmations: 1,
-    });
-
-    console.log(`upgraded the optimized vaults registry at ${vaultsRegistry.address}`);
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: deployer,
+    },
+    waitConfirmations: 1,
   });
+
+  console.log(`upgraded the optimized vaults registry at ${vaultsRegistry.address}`);
+});
