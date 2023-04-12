@@ -1,4 +1,5 @@
 export enum SupportedChains {
+  ethereum = 1,
   bsc = 56,
   chapel = 97,
   ganache = 1337,
@@ -26,6 +27,7 @@ export enum RedemptionStrategyContract {
   SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
   BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
   BalancerSwapLiquidator = "BalancerSwapLiquidator",
+  ERC4626Liquidator = "ERC4626Liquidator",
 }
 
 export enum FundingStrategyContract {
@@ -68,6 +70,8 @@ export enum OracleTypes {
   NativeUSDPriceOracle = "NativeUSDPriceOracle",
   SaddleLpPriceOracle = "SaddleLpPriceOracle",
   SolidlyLpTokenPriceOracle = "SolidlyLpTokenPriceOracle",
+  WSTEthPriceOracle = "WSTEthPriceOracle",
+  ERC4626Oracle = "ERC4626Oracle",
 }
 
 export enum IrmTypes {
@@ -417,6 +421,12 @@ export enum assetSymbols {
   PAR_USDC_CURVE = "PAR_USDC CURVE",
   fUSDT = "fUSDT",
   triCrypto = "triCrypto",
+
+  // Mainnet
+  realYieldUSD = "realYieldUSD",
+  ethBtcTrend = "ethBtcTrend",
+  ethBtcMomentum = "ethBtcMomentum",
+  wstETH = "wstETH",
 }
 
 export default assetSymbols;

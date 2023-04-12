@@ -3,6 +3,7 @@ import {
   basegoerli,
   bsc,
   chapel,
+  ethereum,
   evmos,
   fantom,
   ganache,
@@ -36,6 +37,7 @@ export const supportedChainIdToConfig: {
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
   [fantom.chainId]: { enabled: true, supported: config.isFantomEnabled },
   [evmos.chainId]: { enabled: true, supported: config.isEvmosEnabled },
+  [ethereum.chainId]: { enabled: true, supported: config.isEthereumEnabled },
 };
 
 export interface FusePoolsPerChain {

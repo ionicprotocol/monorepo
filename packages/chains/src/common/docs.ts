@@ -297,3 +297,11 @@ export const lidoFinanceDocs = (chainName: string, baseToken: string, returnToke
     chainName.charAt(0).toUpperCase() + chainName.slice(1)
   }</a></p>`;
 };
+
+export const sommFinanceMainnetDocs = (strategyName: string, returnToken: string, supplyTokens: string[]) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p>You can get <code>${returnToken}</code> by supplying any of your on the <code>${supplyTokens.join(
+    ", "
+  )}</code> on <a href="https://app.sommelier.finance/strategies/${strategyName}" target="_blank" style="color: #BCAC83; cursor="pointer">Sommelier strategy</a></p>`;
+};
