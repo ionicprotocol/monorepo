@@ -137,7 +137,7 @@ const config: HardhatUserConfig = {
       chainId: 97,
       url: OVERRIDE_RPC_URL || "https://data-seed-prebsc-1-s1.binance.org:8545/",
     },
-    mainnet: {
+    ethereum: {
       accounts: { mnemonic },
       chainId: 1,
       url: OVERRIDE_RPC_URL || "https://rpc.ankr.com/eth",
