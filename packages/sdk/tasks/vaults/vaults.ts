@@ -207,13 +207,13 @@ task("optimized-adapters:change")
   .addParam("vaultAddress", "Address of the vault to add the adapter to", undefined, types.string)
   .setAction(async ({ vaultAddress }, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const vaultFirstExt = (await ethers.getContractAt(
-      "OptimizedAPRVaultFirstExtension",
+    const vaultSecondExt = (await ethers.getContractAt(
+      "OptimizedAPRVaultSecondExtension",
       vaultAddress,
       deployer
-    )) as OptimizedAPRVaultFirstExtension;
+    )) as OptimizedAPRVaultSecondExtension;
 
-    const tx = await vaultFirstExt.changeAdapters();
+    const tx = await vaultSecondExt.changeAdapters();
     console.log(`waiting to mine tx ${tx.hash}`);
     await tx.wait();
     console.log(`changed the adapters of vault ${vaultAddress}`);
@@ -253,9 +253,15 @@ task("deploy-optimized:all")
     });
   });
 
-task("deploy-optimized:all:chapel").setAction(async ({}, { run }) => {
+task("deploy-optimized:wbnb:chapel").setAction(async ({}, { run }) => {
   await run("deploy-optimized:all", {
     marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830",
+  });
+});
+
+task("deploy-optimized:bomb:chapel").setAction(async ({}, { run }) => {
+  await run("deploy-optimized:all", {
+    marketsAddresses: "0xfa60851E76728eb31EFeA660937cD535C887fDbD",
   });
 });
 
@@ -469,6 +475,56 @@ task("deploy-market-with-rewards").setAction(async ({}, { ethers, getChainId, de
     console.log(`funded the market with reward tokens`);
   }
 });
+
+task("supply-chapel-market-with-rewards")
+  .setAction(async ({ vault }, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const rewardsToken = await ethers.getContract("ChapelRewardsERC20") as IERC20;
+
+    const market = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
+    const ownerRewardsBalance = await rewardsToken.callStatic.balanceOf(deployer);
+
+    const tx = await rewardsToken.transfer(market, ownerRewardsBalance.div(2000));
+    await tx.wait();
+    console.log(`transferred some rewards to the market`);
+  });
+
+task("claim-chapel-rewards")
+  .setAction(async ({ }, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const bombToken = await ethers.getContract("ChapelBombERC20") as IERC20;
+    const rewardsToken = await ethers.getContract("ChapelRewardsERC20") as IERC20;
+    const symbol = await bombToken.callStatic.symbol();
+    const market = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
+
+    const vault = await ethers.getContract(`OptimizedAPRVault_${symbol}_${bombToken.address}`);
+    const registry = (await ethers.getContract("OptimizedVaultsRegistry")) as OptimizedVaultsRegistry;
+
+    const claimable = await registry.callStatic.getClaimableRewards(deployer);
+    console.log(`claimable ${JSON.stringify(claimable)}`);
+
+    const vaultAsFirstExt = (await ethers.getContractAt(
+      "OptimizedAPRVaultFirstExtension",
+      vault.address,
+      deployer
+    )) as OptimizedAPRVaultFirstExtension;
+
+    let tx = await vaultAsFirstExt.claimRewards();
+    await tx.wait();
+    console.log(`claimed the rewards for the vault`);
+
+    const flywheels = await vaultAsFirstExt.getAllFlywheels();
+    for (const flywheelAddress of flywheels) {
+      const flywheel = await ethers.getContractAt("MidasFlywheel", flywheelAddress, deployer) as MidasFlywheel;
+      tx = await flywheel["accrue(address,address)"](market, deployer);
+      await tx.wait();
+      console.log(`accrued in the vault fw`);
+
+      tx = await flywheel.claimRewards(deployer);
+      await tx.wait();
+      console.log(`claimed the rewards from the vault fw`);
+    }
+  });
 
 task("optimized-vault:upgrade")
   .addParam("vault")

@@ -80,6 +80,15 @@
     "CompoundMarketERC4626_0xddA148e5917A1c2DCfF98139aBBaa41636840830_Proxy": {
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
     },
+    "CompoundMarketERC4626_0xfa60851E76728eb31EFeA660937cD535C887fDbD": {
+      "address": "0x3379523a4ef49B19f411123053D455D5eC21C0aA"
+    },
+    "CompoundMarketERC4626_0xfa60851E76728eb31EFeA660937cD535C887fDbD_Implementation": {
+      "address": "0xbbfBF2aa74c469282fFA087Dc6b15E30934f4A44"
+    },
+    "CompoundMarketERC4626_0xfa60851E76728eb31EFeA660937cD535C887fDbD_Proxy": {
+      "address": "0x3379523a4ef49B19f411123053D455D5eC21C0aA"
+    },
     "Comptroller": {
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
     },
@@ -171,10 +180,13 @@
       "address": "0x865058A4aF2f70671C10333f21e2B3A8Ce9fB032"
     },
     "OptimizedAPRVaultFirstExtension": {
-      "address": "0x571CFc376566231E2592Fc9Bf998469ea49A604F"
+      "address": "0xB8423EE8aa0476a909786D079dF5C0766cB09142"
     },
     "OptimizedAPRVaultSecondExtension": {
       "address": "0xAD42dEf8FD3A1E1124B5643Ba6d1efEa62F924B4"
+    },
+    "OptimizedAPRVault_TBOMB_0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768": {
+      "address": "0x2dDa49e54e9EccaE1a1B7E493b787310483Dbb71"
     },
     "OptimizedAPRVault_WBNB_0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd": {
       "address": "0x6204027E412F7102E03d72C53a36B2C188d7048D"
@@ -183,7 +195,7 @@
       "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
     },
     "OptimizedVaultsRegistry_Implementation": {
-      "address": "0xb80f124Bbec5BF0973b496a2BC5653B21a7808E4"
+      "address": "0x41dF5341e0F44C225b9cfaa723787A29DBe6b5c4"
     },
     "OptimizedVaultsRegistry_Proxy": {
       "address": "0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5"
