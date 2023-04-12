@@ -108,12 +108,13 @@ export const assets: SupportedAsset[] = [
     ]),
   },
   {
-    symbol: assetSymbols.ethBtcMomentum,
-    underlying: realYieldUSD,
+    symbol: assetSymbols.ethBtcTrend,
+    underlying: ethBtcTrend,
     name: "Sommelier Finance ETH/BTC Trend",
     decimals: 18,
     oracle: OracleTypes.ERC4626Oracle,
     extraDocs: sommFinanceMainnetDocs("ETH-BTC-Trend", ethBtcTrend, [assetSymbols.WETH, assetSymbols.WBTC]),
+    disabled: true,
   },
 ];
 
