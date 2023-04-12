@@ -6,6 +6,7 @@ import {
   Icon,
   Image,
   Link,
+  Text,
   useBreakpointValue,
   useColorMode,
 } from '@chakra-ui/react';
@@ -42,7 +43,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
       <Flex
         _hover={{
           bg: cCard.bgColor,
-          color: cCard.borderColor,
+          color: cCard.txtColor,
         }}
         align="center"
         borderRadius="lg"
@@ -52,17 +53,10 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
         role="group"
         {...rest}
       >
-        {icon && (
-          <Icon
-            _groupHover={{
-              color: 'white',
-            }}
-            as={icon}
-            fontSize="16"
-            mr="4"
-          />
-        )}
-        {children}
+        {icon && <Icon as={icon} fontSize="20" mr="4" />}
+        <Text fontSize={16} fontWeight={'bold'}>
+          {children}
+        </Text>
       </Flex>
     </Link>
   );
