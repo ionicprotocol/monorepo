@@ -23,6 +23,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
+import ClaimVaultRewardsButton from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/ClaimVaultRewardsButton/index';
 import type { VaultRowData } from '@ui/components/pages/VaultsPage/VaultsList/index';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { GradientText } from '@ui/components/shared/GradientText';
@@ -35,6 +36,7 @@ import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { useVaultApyInfo } from '@ui/hooks/vault/useAllVaultsApyInfo';
+import { useClaimableRewardsForVaults } from '@ui/hooks/vault/useClaimableRewardsForVaults';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
@@ -67,6 +69,15 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   const enabledChains = useEnabledChains();
   const { allPools } = useCrossFusePools([...enabledChains]);
   const { data: vaultApyInfo } = useVaultApyInfo(vault.vault, Number(vault.chainId));
+  const { data: claimableRewardsForVaults } = useClaimableRewardsForVaults([...enabledChains]);
+
+  const reward = useMemo(() => {
+    if (claimableRewardsForVaults) {
+      return claimableRewardsForVaults.find((reward) => reward.vault === vault.vault);
+    }
+
+    return undefined;
+  }, [claimableRewardsForVaults, vault.vault]);
 
   const router = useRouter();
   const usdPrice = useMemo(() => {
@@ -139,6 +150,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
           </Box>
         ) : (
           <HStack>
+            {reward ? <ClaimVaultRewardsButton chainId={chainId} reward={reward} /> : null}
             <FundButton mode={FundOperationMode.SUPPLY} vault={vault} />
             <FundButton mode={FundOperationMode.WITHDRAW} vault={vault} />
           </HStack>

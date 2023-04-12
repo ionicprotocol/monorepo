@@ -36,6 +36,7 @@ export interface VaultApy {
 
 export type FlywheelRewardsInfoForVault = {
   vault: string;
+  chainId: number;
   rewardsInfo: RewardsInfo[];
 };
 
@@ -43,7 +44,6 @@ export interface RewardsInfo {
   rewardToken: string;
   flywheel: string;
   rewards: BigNumber;
-  rewardSpeedPerSecondPerToken?: BigNumber;
-  rewardTokenPrice?: BigNumber;
-  formattedAPR?: BigNumber;
+  rewardTokenDecimals: number;
+  rewardTokenSymbol: string;
 }

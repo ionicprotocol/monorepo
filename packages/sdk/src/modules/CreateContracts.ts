@@ -11,6 +11,7 @@ import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
+import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
 import OptimizedAPRVaultFirstExtensionABI from "../../abis/OptimizedAPRVaultFirstExtension";
 import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSecondExtension";
 import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
@@ -25,6 +26,7 @@ import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
 import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
@@ -105,6 +107,14 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         OptimizedVaultsRegistryABI,
         signerOrProvider
       ) as OptimizedVaultsRegistry;
+    }
+
+    createMidasFlywheelLensRouter(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.MidasFlywheelLensRouter.address,
+        MidasFlywheelLensRouterABI,
+        signerOrProvider
+      ) as MidasFlywheelLensRouter;
     }
   };
 }
