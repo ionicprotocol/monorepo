@@ -19,8 +19,9 @@ const Footer = () => {
       gap={2}
       mainAxisAlignment="center"
       mb={4}
+      ml={{ base: 0, md: 60 }}
       mt={{ base: 4, md: 20 }}
-      width="100%"
+      width={'calc(100% - 240px)'}
     >
       <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
         <Link href={MIDAS_DOCS_URL} isExternal>

@@ -16,17 +16,18 @@ import type { IconType } from 'react-icons';
 import { FiCompass, FiHome, FiSettings, FiStar, FiTrendingUp } from 'react-icons/fi';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useColors } from '@ui/hooks/useColors';
 
 interface LinkItemProps {
   icon: IconType;
   name: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { icon: FiHome, name: 'Home' },
-  { icon: FiTrendingUp, name: 'Trending' },
-  { icon: FiCompass, name: 'Explore' },
-  { icon: FiStar, name: 'Favourites' },
-  { icon: FiSettings, name: 'Settings' },
+  { icon: FiHome, name: 'Pools' },
+  { icon: FiTrendingUp, name: 'Vaults' },
+  { icon: FiCompass, name: 'Account' },
+  { icon: FiStar, name: 'Create Pool' },
+  { icon: FiSettings, name: 'Request Feature' },
 ];
 
 interface NavItemProps extends FlexProps {
@@ -34,12 +35,14 @@ interface NavItemProps extends FlexProps {
   icon: IconType;
 }
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+  const { cCard } = useColors();
+
   return (
     <Link _focus={{ boxShadow: 'none' }} href="#" style={{ textDecoration: 'none' }}>
       <Flex
         _hover={{
-          bg: 'cyan.400',
-          color: 'white',
+          bg: cCard.bgColor,
+          color: cCard.borderColor,
         }}
         align="center"
         borderRadius="lg"
@@ -68,6 +71,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 export const Sidebar = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
+  const { cCard } = useColors();
   const { setGlobalLoading } = useMultiMidas();
   const logoPrefix = useBreakpointValue(
     {
@@ -80,7 +84,14 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
   );
 
   return (
-    <Box display={{ base: 'none', md: 'block' }} h="full" pos="fixed" w={{ base: 'full', md: 60 }}>
+    <Box
+      bg={cCard.hoverBgColor}
+      display={{ base: 'none', md: 'block' }}
+      h="full"
+      left={0}
+      pos="fixed"
+      w={{ base: 'full', md: 60 }}
+    >
       <Flex alignItems="center" h="20" justifyContent="space-between" mx="8">
         <Box
           _hover={{ cursor: 'pointer' }}
