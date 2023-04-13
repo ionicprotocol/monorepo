@@ -116,6 +116,10 @@ export type SolidlyLpAsset = {
   lpTokenAddress: string;
 };
 
+export type ERC4626Asset = {
+  assetAddress: string;
+};
+
 export type CurvePoolConfig = {
   lpToken: string;
   pool: string;
@@ -260,4 +264,8 @@ export type BNBxOracleDeployParams = stkBNBOracleDeployParams;
 export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   gelatoAssets: GelatoGUniAsset[];
+};
+
+export type Erc4626OracleFnParams = ChainDeployFnParams & {
+  erc4626Assets: ERC4626Asset[];
 };

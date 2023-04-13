@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { bsc, chapel, evmos, ethereum, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig } from "@midas-capital/types";
 import { Signer } from "ethers";
@@ -11,6 +11,9 @@ const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [neondevnet.chainId]: neondevnet,
   [chapel.chainId]: chapel,
   [ganache.chainId]: ganache,
+  [evmos.chainId]: evmos,
+  [fantom.chainId]: fantom,
+  [ethereum.chainId]: ethereum,
 };
 
 const setUpSdk = (chainId: number, provider: Signer | JsonRpcProvider) => {
