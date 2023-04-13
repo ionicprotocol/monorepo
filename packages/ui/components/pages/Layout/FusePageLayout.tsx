@@ -34,7 +34,12 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
         </DrawerContent>
       </Drawer>
       <Header onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} transition=".3s ease" width={'calc(100% - 240px)'}>
+      <Box
+        ml={{ base: 0, md: 60 }}
+        p={{ base: 4, md: 8 }}
+        transition=".3s ease"
+        width={'calc(100% - 240px)'}
+      >
         {children}
       </Box>
       <Footer />

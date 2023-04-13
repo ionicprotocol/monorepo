@@ -36,7 +36,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         height="100%"
         mainAxisAlignment="flex-start"
       >
-        <Container maxWidth="1600px" px={{ base: 2, md: 4 }}>
+        <Container maxWidth="100%" px={0}>
           <Column
             crossAxisAlignment="stretch"
             flex={1}
@@ -44,7 +44,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             mainAxisAlignment="center"
             mx="auto"
             position="relative"
-            width={'98%'}
+            // width={'98%'}
           >
             {isAcceptedTerms !== undefined && <Terms isAcceptedTerms={isAcceptedTerms} />}
             {children}

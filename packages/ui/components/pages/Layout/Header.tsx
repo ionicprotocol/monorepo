@@ -5,12 +5,10 @@ import { FiMenu } from 'react-icons/fi';
 
 import { WalletButtons } from '@ui/components/shared/WalletButtons';
 import { useColors } from '@ui/hooks/useColors';
-import useScrollPosition from '@ui/hooks/useScrollPosition';
 
 export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { cPage } = useColors();
-  const scrollPos = useScrollPosition();
 
   return (
     <HStack
@@ -18,36 +16,31 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
       alignSelf={'flex-end'}
       background={cPage.primary.bgColor}
       border={'solid'}
-      borderColor={scrollPos > 40 ? 'ecru' : cPage.primary.bgColor}
-      borderRadius="xl"
+      borderColor={cPage.primary.hoverColor}
       borderTop={0}
-      borderTopRadius={0}
-      borderWidth={2}
-      justifyContent="flex-end"
+      borderWidth={1}
+      borderX={0}
+      justifyContent="space-between"
       justifySelf={'flex-start'}
-      mb={10}
-      p={2}
       position="sticky"
+      px={{ base: 4, md: 8 }}
+      py={2}
       right={0}
       top={0}
-      w="fit-content"
+      w={'calc(100% - 240px)'}
       zIndex={1}
     >
-      <IconButton
-        aria-label="open menu"
-        display={{ base: 'flex', md: 'none' }}
-        icon={<FiMenu />}
-        onClick={onOpen}
-        variant="outline"
-      />
-      <WalletButtons />
-      <Button ml={2} onClick={toggleColorMode} px={2} variant="_solid">
-        {colorMode === 'light' ? (
-          <MoonIcon color="gray.700" h={5} w={5} />
-        ) : (
-          <SunIcon color={cPage.secondary.txtColor} h={5} w={5} />
-        )}
-      </Button>
+      <IconButton aria-label="open sidebar" icon={<FiMenu />} onClick={onOpen} variant="_outline" />
+      <HStack>
+        <WalletButtons />
+        <Button ml={2} onClick={toggleColorMode} px={2} variant="_solid">
+          {colorMode === 'light' ? (
+            <MoonIcon color="gray.700" h={5} w={5} />
+          ) : (
+            <SunIcon color={cPage.secondary.txtColor} h={5} w={5} />
+          )}
+        </Button>
+      </HStack>
     </HStack>
   );
 };

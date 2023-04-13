@@ -65,7 +65,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 export const Sidebar = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { cCard } = useColors();
+  const { cPage } = useColors();
   const { setGlobalLoading } = useMultiMidas();
   const logoPrefix = useBreakpointValue(
     {
@@ -79,10 +79,10 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <Box
-      bg={cCard.hoverBgColor}
+      borderColor={cPage.primary.hoverColor}
+      borderRightWidth={1}
       display={{ base: 'none', md: 'block' }}
       h="full"
-      left={0}
       pos="fixed"
       w={{ base: 'full', md: 60 }}
     >
@@ -102,8 +102,8 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
         >
           <Image
             alt="Midas Capital"
-            height={'60px'}
             src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
+            width={44}
           />
         </Box>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
