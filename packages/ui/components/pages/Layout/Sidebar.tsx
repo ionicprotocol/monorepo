@@ -1,4 +1,3 @@
-import type { FlexProps } from '@chakra-ui/react';
 import {
   Box,
   CloseButton,
@@ -12,63 +11,18 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import type { ReactText } from 'react';
-import type { IconType } from 'react-icons';
-import { FiCompass, FiHome, FiSettings, FiStar, FiTrendingUp } from 'react-icons/fi';
+import { BsChatLeftTextFill, BsFillHouseFill, BsHouseAddFill } from 'react-icons/bs';
+import { ImUser } from 'react-icons/im';
+import { SiVault } from 'react-icons/si';
 
+import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
-
-interface LinkItemProps {
-  icon: IconType;
-  name: string;
-}
-const LinkItems: Array<LinkItemProps> = [
-  { icon: FiHome, name: 'Pools' },
-  { icon: FiTrendingUp, name: 'Vaults' },
-  { icon: FiCompass, name: 'Account' },
-  { icon: FiStar, name: 'Create Pool' },
-  { icon: FiSettings, name: 'Request Feature' },
-];
-
-interface NavItemProps extends FlexProps {
-  children: ReactText;
-  icon: IconType;
-}
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
-  const { cCard } = useColors();
-  const { isSidebarCollapsed } = useMultiMidas();
-
-  return (
-    <Link _focus={{ boxShadow: 'none' }} href="#" style={{ textDecoration: 'none' }}>
-      <Flex
-        _hover={{
-          bg: cCard.hoverBgColor,
-          color: cCard.txtColor,
-        }}
-        align="center"
-        borderRadius="lg"
-        cursor="pointer"
-        mx="4"
-        p="4"
-        role="group"
-        {...rest}
-      >
-        <Icon as={icon} fontSize="20" mr="4" />
-        {!isSidebarCollapsed ? (
-          <Text fontSize={16} fontWeight={'bold'}>
-            {children}
-          </Text>
-        ) : null}
-      </Flex>
-    </Link>
-  );
-};
 
 export const Sidebar = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { cPage } = useColors();
+  const { cPage, cCard, cSolidBtn } = useColors();
   const { setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
   const logoPrefix = useBreakpointValue(
     {
@@ -111,11 +65,132 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
         </Box>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
-        <NavItem icon={link.icon} key={link.name}>
-          {link.name}
-        </NavItem>
-      ))}
+      <Flex
+        _hover={{
+          bg: cCard.hoverBgColor,
+          color: cCard.txtColor,
+        }}
+        align="center"
+        bg={
+          router.pathname === '/' || router.pathname.includes('/pool/')
+            ? cSolidBtn.primary.bgColor
+            : undefined
+        }
+        borderRadius="lg"
+        cursor="pointer"
+        mx="4"
+        onClick={() => {
+          setGlobalLoading(true);
+          router.push('/');
+        }}
+        p="4"
+        role="group"
+      >
+        <Icon as={BsFillHouseFill} fontSize="20" mr="4" />
+        {!isSidebarCollapsed ? (
+          <Text fontSize={16} fontWeight={'bold'}>
+            Pools
+          </Text>
+        ) : null}
+      </Flex>
+      <Flex
+        _hover={{
+          bg: cCard.hoverBgColor,
+          color: cCard.txtColor,
+        }}
+        align="center"
+        bg={router.pathname === '/vaults' ? cSolidBtn.primary.bgColor : undefined}
+        borderRadius="lg"
+        cursor="pointer"
+        mx="4"
+        onClick={() => {
+          setGlobalLoading(true);
+          router.push('/vaults');
+        }}
+        p="4"
+        role="group"
+      >
+        <Icon as={SiVault} fontSize="20" mr="4" />
+        {!isSidebarCollapsed ? (
+          <Text fontSize={16} fontWeight={'bold'}>
+            Vaults
+          </Text>
+        ) : null}
+      </Flex>
+      <Flex
+        _hover={{
+          bg: cCard.hoverBgColor,
+          color: cCard.txtColor,
+        }}
+        align="center"
+        bg={router.pathname.includes('/account') ? cSolidBtn.primary.bgColor : undefined}
+        borderRadius="lg"
+        cursor="pointer"
+        mx="4"
+        onClick={() => {
+          setGlobalLoading(true);
+          router.push('/');
+        }}
+        p="4"
+        role="group"
+      >
+        <Icon as={ImUser} fontSize="20" mr="4" />
+        {!isSidebarCollapsed ? (
+          <Text fontSize={16} fontWeight={'bold'}>
+            Account
+          </Text>
+        ) : null}
+      </Flex>
+      <Flex
+        _hover={{
+          bg: cCard.hoverBgColor,
+          color: cCard.txtColor,
+        }}
+        align="center"
+        bg={router.pathname === '/create-pool' ? cSolidBtn.primary.bgColor : undefined}
+        borderRadius="lg"
+        cursor="pointer"
+        mx="4"
+        onClick={() => {
+          setGlobalLoading(true);
+          router.push('/');
+        }}
+        p="4"
+        role="group"
+      >
+        <Icon as={BsHouseAddFill} fontSize="20" mr="4" />
+        {!isSidebarCollapsed ? (
+          <Text fontSize={16} fontWeight={'bold'}>
+            Create Pool
+          </Text>
+        ) : null}
+      </Flex>
+      <Link
+        _focus={{ boxShadow: 'none' }}
+        href={FEATURE_REQUESTS_URL}
+        isExternal
+        style={{ textDecoration: 'none' }}
+      >
+        <Flex
+          _hover={{
+            bg: cCard.hoverBgColor,
+            color: cCard.txtColor,
+          }}
+          align="center"
+          borderRadius="lg"
+          cursor="pointer"
+          mx="4"
+          p="4"
+          role="group"
+        >
+          <Icon as={BsChatLeftTextFill} fontSize="20" mr="4" />
+          {!isSidebarCollapsed ? (
+            <Text fontSize={16} fontWeight={'bold'}>
+              Request Feature
+            </Text>
+          ) : null}
+        </Flex>
+      </Link>
     </Box>
   );
 };
