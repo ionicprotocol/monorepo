@@ -1,12 +1,12 @@
 import {
   Box,
+  CloseButton,
   Flex,
   Icon,
   Image,
   Link,
   Stack,
   Text,
-  useBreakpointValue,
   useColorMode,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -20,36 +20,15 @@ import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 
-export const Sidebar = () => {
+export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { cPage, cCard, cSolidBtn } = useColors();
+  const { cCard, cSolidBtn } = useColors();
   const { address, setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
-  const logoPrefix = useBreakpointValue(
-    {
-      base: '/images/midas-mobile-',
-      lg: isSidebarCollapsed ? '/images/midas-logo-' : '/images/midas-',
-      md: isSidebarCollapsed ? '/images/midas-logo-' : '/images/midas-',
-      sm: '/images/midas-mobile-',
-    },
-    { fallback: 'lg' }
-  );
 
   return (
-    <Box
-      borderColor={cPage.primary.hoverColor}
-      borderRightWidth={2}
-      display={{ base: 'none', md: 'block' }}
-      h="full"
-      pos="fixed"
-      w={{ base: 'full', md: isSidebarCollapsed ? '86px' : '240px' }}
-    >
-      <Flex
-        alignItems="center"
-        h="20"
-        justifyContent="space-between"
-        mx={isSidebarCollapsed ? 5 : 8}
-      >
+    <Box h="full" pos="fixed" w="full">
+      <Flex alignItems="center" h="20" justifyContent="space-between" mx={8}>
         <Box
           _hover={{ cursor: 'pointer' }}
           onClick={() => {
@@ -58,17 +37,15 @@ export const Sidebar = () => {
               router.push('/', undefined, { shallow: true });
             }
           }}
-          position={'absolute'}
-          pr={{ base: 1, md: 0 }}
-          pt={{ base: 3, md: 1 }}
           top={2}
         >
           <Image
             alt="Midas Capital"
-            src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
-            width={isSidebarCollapsed ? 12 : 44}
+            src={colorMode === 'light' ? '/images/midas-light.svg' : '/images/midas-dark.svg'}
+            width={44}
           />
         </Box>
+        <CloseButton onClick={onClose} />
       </Flex>
       <Flex
         _hover={{

@@ -25,7 +25,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
       justifyContent="space-between"
       justifySelf={'flex-start'}
       position="sticky"
-      px={{ base: 4, md: 8 }}
+      px={{ base: 2, md: 8 }}
       py={2}
       right={0}
       top={0}
@@ -43,6 +43,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
         aria-label="open sidebar"
         display={{ base: 'flex', md: 'none' }}
         icon={<FiMenu />}
+        ml="0px !important"
         onClick={onOpen}
         variant="_outline"
       />

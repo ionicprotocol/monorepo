@@ -2,8 +2,8 @@ import { Box, Drawer, DrawerContent, Flex, useDisclosure } from '@chakra-ui/reac
 
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
+import { SidebarMobile } from './SidebarMobile';
 
-import Footer from '@ui/components/pages/Layout/Footer';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import type { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
@@ -21,7 +21,7 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
       justifyContent="flex-start"
       minH="100vh"
     >
-      <Sidebar onClose={() => onClose} />
+      <Sidebar />
       <Drawer
         autoFocus={false}
         isOpen={isOpen}
@@ -31,8 +31,8 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
         returnFocusOnClose={false}
         size="full"
       >
-        <DrawerContent>
-          <Sidebar onClose={onClose} />
+        <DrawerContent bg={cPage.primary.bgColor}>
+          <SidebarMobile onClose={onClose} />
         </DrawerContent>
       </Drawer>
       <Header onOpen={onOpen} />
@@ -47,7 +47,7 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
       >
         {children}
       </Box>
-      <Footer />
+      {/* <Footer /> */}
     </Flex>
   );
 };
