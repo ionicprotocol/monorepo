@@ -2,7 +2,7 @@ import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
 import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsFillArrowRightCircleFill, BsFillGiftFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -62,9 +62,12 @@ const ClaimVaultRewardsModal = ({
   isOpen,
   onClose,
   reward,
+  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  refetch: any;
   reward: FlywheelRewardsInfoForVault;
 }) => {
   const { currentSdk, address, currentChain } = useMultiMidas();
@@ -79,6 +82,12 @@ const ClaimVaultRewardsModal = ({
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
   const chainConfig = useChainConfig(reward.chainId);
+
+  useEffect(() => {
+    if (isOpen) {
+      refetch();
+    }
+  }, [isOpen, refetch]);
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -129,6 +138,7 @@ const ClaimVaultRewardsModal = ({
           txHash: tx.hash,
         };
         setSteps([..._steps]);
+        refetch();
       } catch (error) {
         const sentryProperties = {
           chainId: reward.chainId,
@@ -145,7 +155,7 @@ const ClaimVaultRewardsModal = ({
 
       setIsClaiming(false);
     },
-    [address, currentSdk, errorToast, addRecentTransaction, reward]
+    [address, currentSdk, errorToast, addRecentTransaction, reward, refetch]
   );
 
   return (

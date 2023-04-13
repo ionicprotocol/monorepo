@@ -9,8 +9,11 @@ import { useColors } from '@ui/hooks/useColors';
 const ClaimVaultRewardsButton = ({
   chainId,
   reward,
+  refetch,
 }: {
   chainId: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  refetch: any;
   reward: FlywheelRewardsInfoForVault;
 }) => {
   const {
@@ -39,6 +42,7 @@ const ClaimVaultRewardsButton = ({
         <ClaimVaultRewardsModal
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
+          refetch={refetch}
           reward={reward}
         />
       </Box>

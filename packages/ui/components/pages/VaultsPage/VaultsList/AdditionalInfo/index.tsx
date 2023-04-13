@@ -69,7 +69,9 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   const enabledChains = useEnabledChains();
   const { allPools } = useCrossFusePools([...enabledChains]);
   const { data: vaultApyInfo } = useVaultApyInfo(vault.vault, Number(vault.chainId));
-  const { data: claimableRewardsForVaults } = useClaimableRewardsForVaults([...enabledChains]);
+  const { data: claimableRewardsForVaults, refetch } = useClaimableRewardsForVaults([
+    ...enabledChains,
+  ]);
 
   const reward = useMemo(() => {
     if (claimableRewardsForVaults) {
@@ -150,7 +152,9 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
           </Box>
         ) : (
           <HStack>
-            {reward ? <ClaimVaultRewardsButton chainId={chainId} reward={reward} /> : null}
+            {reward ? (
+              <ClaimVaultRewardsButton chainId={chainId} refetch={refetch} reward={reward} />
+            ) : null}
             <FundButton mode={FundOperationMode.SUPPLY} vault={vault} />
             <FundButton mode={FundOperationMode.WITHDRAW} vault={vault} />
           </HStack>
