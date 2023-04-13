@@ -4,11 +4,13 @@ import React from 'react';
 import { FiMenu } from 'react-icons/fi';
 
 import { WalletButtons } from '@ui/components/shared/WalletButtons';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 
 export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { cPage } = useColors();
+  const { isSidebarCollapsed, setIsSidebarCollapsed } = useMultiMidas();
 
   return (
     <HStack
@@ -18,7 +20,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
       border={'solid'}
       borderColor={cPage.primary.hoverColor}
       borderTop={0}
-      borderWidth={1}
+      borderWidth={2}
       borderX={0}
       justifyContent="space-between"
       justifySelf={'flex-start'}
@@ -27,10 +29,23 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
       py={2}
       right={0}
       top={0}
-      w={'calc(100% - 240px)'}
+      w={{ base: '100%', md: isSidebarCollapsed ? 'calc(100% - 86px)' : 'calc(100% - 240px)' }}
       zIndex={1}
     >
-      <IconButton aria-label="open sidebar" icon={<FiMenu />} onClick={onOpen} variant="_outline" />
+      <IconButton
+        aria-label="open sidebar"
+        display={{ base: 'none', md: 'flex' }}
+        icon={<FiMenu />}
+        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        variant="_outline"
+      />
+      <IconButton
+        aria-label="open sidebar"
+        display={{ base: 'flex', md: 'none' }}
+        icon={<FiMenu />}
+        onClick={onOpen}
+        variant="_outline"
+      />
       <HStack>
         <WalletButtons />
         <Button ml={2} onClick={toggleColorMode} px={2} variant="_solid">

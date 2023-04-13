@@ -37,12 +37,13 @@ interface NavItemProps extends FlexProps {
 }
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   const { cCard } = useColors();
+  const { isSidebarCollapsed } = useMultiMidas();
 
   return (
     <Link _focus={{ boxShadow: 'none' }} href="#" style={{ textDecoration: 'none' }}>
       <Flex
         _hover={{
-          bg: cCard.bgColor,
+          bg: cCard.hoverBgColor,
           color: cCard.txtColor,
         }}
         align="center"
@@ -53,10 +54,12 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
         role="group"
         {...rest}
       >
-        {icon && <Icon as={icon} fontSize="20" mr="4" />}
-        <Text fontSize={16} fontWeight={'bold'}>
-          {children}
-        </Text>
+        <Icon as={icon} fontSize="20" mr="4" />
+        {!isSidebarCollapsed ? (
+          <Text fontSize={16} fontWeight={'bold'}>
+            {children}
+          </Text>
+        ) : null}
       </Flex>
     </Link>
   );
@@ -66,7 +69,7 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
   const { cPage } = useColors();
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
   const logoPrefix = useBreakpointValue(
     {
       base: '/images/midas-mobile-',
@@ -80,11 +83,11 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
   return (
     <Box
       borderColor={cPage.primary.hoverColor}
-      borderRightWidth={1}
+      borderRightWidth={2}
       display={{ base: 'none', md: 'block' }}
       h="full"
       pos="fixed"
-      w={{ base: 'full', md: 60 }}
+      w={{ base: 'full', md: isSidebarCollapsed ? '86px' : '240px' }}
     >
       <Flex alignItems="center" h="20" justifyContent="space-between" mx="8">
         <Box

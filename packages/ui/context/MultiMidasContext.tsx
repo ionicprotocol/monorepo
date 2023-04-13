@@ -24,10 +24,12 @@ export interface MultiMidasContextData {
   getSecurity: (chainId: number) => Security | undefined;
   isConnected: boolean;
   isGlobalLoading: boolean;
+  isSidebarCollapsed: boolean;
   sdks: MidasSdk[];
   securities: Security[];
   setAddress: Dispatch<string>;
   setGlobalLoading: Dispatch<boolean>;
+  setIsSidebarCollapsed: Dispatch<boolean>;
   signer?: FetchSignerResult<Signer>;
 }
 
@@ -54,6 +56,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     | undefined
   >();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   const [sdks, securities, chainIds] = useMemo(() => {
     const _sdks: MidasSdk[] = [];
@@ -137,10 +140,12 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
       getSecurity,
       isConnected,
       isGlobalLoading,
+      isSidebarCollapsed,
       sdks,
       securities,
       setAddress,
       setGlobalLoading,
+      setIsSidebarCollapsed,
       signer,
     };
   }, [
@@ -158,6 +163,8 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     isConnected,
     signer,
     setAddress,
+    isSidebarCollapsed,
+    setIsSidebarCollapsed,
   ]);
 
   return <MultiMidasContext.Provider value={value}>{children}</MultiMidasContext.Provider>;
