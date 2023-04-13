@@ -25,28 +25,28 @@ const Footer = () => {
           <Link href={MIDAS_DOCS_URL} isExternal>
             <SimpleTooltip label="Documentation">
               <motion.div whileHover={{ scale: 1.2 }}>
-                <SiGitbook color={cPage.primary.borderColor} fontSize={30} />
+                <SiGitbook color={cPage.primary.borderColor} fontSize={26} />
               </motion.div>
             </SimpleTooltip>
           </Link>
           <Link href={MIDAS_DISCORD_URL} isExternal>
             <SimpleTooltip label="Discord">
               <motion.div whileHover={{ scale: 1.2 }}>
-                <FaDiscord color={cPage.primary.borderColor} fontSize={28} />
+                <FaDiscord color={cPage.primary.borderColor} fontSize={24} />
               </motion.div>
             </SimpleTooltip>
           </Link>
           <Link href={MIDAS_TELEGRAM_URL} isExternal>
             <SimpleTooltip label="Telegram">
               <motion.div whileHover={{ scale: 1.2 }}>
-                <FaTelegram color={cPage.primary.borderColor} fontSize={24} />
+                <FaTelegram color={cPage.primary.borderColor} fontSize={20} />
               </motion.div>
             </SimpleTooltip>
           </Link>
           <Link href={MIDAS_TWITTER_URL} isExternal>
             <SimpleTooltip label="Twitter">
               <motion.div whileHover={{ scale: 1.2 }}>
-                <FaTwitter color={cPage.primary.borderColor} fontSize={24} />
+                <FaTwitter color={cPage.primary.borderColor} fontSize={20} />
               </motion.div>
             </SimpleTooltip>
           </Link>
