@@ -22,6 +22,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
+ETHEREUM = "true"
 IS_SENTRY_ENABLED = "false"
 
 [context.development.environment]
@@ -32,6 +33,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
+ETHEREUM = "true"
 IS_SENTRY_ENABLED = "false"
 
 [context.production.environment]

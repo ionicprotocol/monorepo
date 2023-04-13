@@ -4,6 +4,7 @@ type CONFIG = {
   isArbitrumEnabled: boolean;
   isBscEnabled: boolean;
   isDevelopment: boolean;
+  isEthereumEnabled: boolean;
   isEvmosEnabled: boolean;
   isFWDeployEnabled: boolean;
   isFantomEnabled: boolean;
@@ -28,6 +29,7 @@ const config: CONFIG = {
   isArbitrumEnabled: process.env.ARBITRUM === 'true',
   isBscEnabled: process.env.BSC === 'true',
   isDevelopment: process.env.NODE_ENV === 'development',
+  isEthereumEnabled: process.env.ETHEREUM === 'true',
   isEvmosEnabled: process.env.EVMOS === 'true',
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
   isFantomEnabled: process.env.FANTOM === 'true',

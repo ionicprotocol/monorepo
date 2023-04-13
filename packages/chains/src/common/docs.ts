@@ -41,6 +41,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapName: "BaseSwap",
       swapAddress: "",
     },
+    [SupportedChains.ethereum]: {
+      swapName: "Uniswap",
+      swapAddress: "https://app.uniswap.org/#/swap?outputCurrency=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    },
   }[chainId];
 
   return `
@@ -296,4 +300,12 @@ export const lidoFinanceDocs = (chainName: string, baseToken: string, returnToke
   <p>You can get <code>${returnToken}</code> by staking your <code>${baseToken}</code> on <a href="https://${chainName}.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on ${
     chainName.charAt(0).toUpperCase() + chainName.slice(1)
   }</a></p>`;
+};
+
+export const sommFinanceMainnetDocs = (strategyName: string, returnToken: string, supplyTokens: string[]) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p>You can get <code>${returnToken}</code> by supplying any of your on the <code>${supplyTokens.join(
+    ", "
+  )}</code> on <a href="https://app.sommelier.finance/strategies/${strategyName}" target="_blank" style="color: #BCAC83; cursor="pointer">Sommelier strategy</a></p>`;
 };

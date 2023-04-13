@@ -2,6 +2,7 @@ import {
   arbitrum,
   bsc,
   chapel,
+  ethereum,
   evmos,
   fantom,
   ganache,
@@ -32,6 +33,7 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.fantom]: fantom.deployedPlugins,
+  [SupportedChains.ethereum]: ethereum.deployedPlugins,
 };
 
 const handler = (request: NextApiRequest, response: NextApiResponse<string>) => {

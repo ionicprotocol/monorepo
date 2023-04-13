@@ -4,6 +4,7 @@ import {
   bsc,
   chainIdToConfig,
   chapel,
+  ethereum,
   evmos,
   fantom,
   ganache,
@@ -102,6 +103,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.fantom]: fantom.assets,
   [SupportedChains.basegoerli]: basegoerli.assets,
+  [SupportedChains.ethereum]: ethereum.assets,
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -115,4 +117,5 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.fantom]: fantom.deployedPlugins,
   [SupportedChains.basegoerli]: basegoerli.deployedPlugins,
+  [SupportedChains.ethereum]: ethereum.deployedPlugins,
 };
