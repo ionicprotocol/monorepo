@@ -1,14 +1,4 @@
-import {
-  Box,
-  Flex,
-  Icon,
-  Image,
-  Link,
-  Stack,
-  Text,
-  useBreakpointValue,
-  useColorMode,
-} from '@chakra-ui/react';
+import { Box, Flex, Icon, Image, Link, Stack, Text, useColorMode } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { BsChatLeftTextFill, BsFillHouseFill, BsHouseAddFill } from 'react-icons/bs';
@@ -25,15 +15,6 @@ export const Sidebar = () => {
   const { colorMode } = useColorMode();
   const { cPage, cCard, cSolidBtn } = useColors();
   const { address, setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
-  const logoPrefix = useBreakpointValue(
-    {
-      base: '/images/midas-mobile-',
-      lg: isSidebarCollapsed ? '/images/midas-logo-' : '/images/midas-',
-      md: isSidebarCollapsed ? '/images/midas-logo-' : '/images/midas-',
-      sm: '/images/midas-mobile-',
-    },
-    { fallback: 'lg' }
-  );
 
   return (
     <Box
@@ -46,27 +27,27 @@ export const Sidebar = () => {
     >
       <Flex
         alignItems="center"
-        h="20"
+        h="16"
         justifyContent="space-between"
         mx={isSidebarCollapsed ? 5 : 8}
       >
         <Box
           _hover={{ cursor: 'pointer' }}
+          maxWidth={isSidebarCollapsed ? '50px' : '190px'}
           onClick={() => {
             if (router.pathname !== '/') {
               setGlobalLoading(true);
               router.push('/', undefined, { shallow: true });
             }
           }}
+          overflow={'hidden'}
           position={'absolute'}
-          pr={{ base: 1, md: 0 }}
-          pt={{ base: 3, md: 1 }}
           top={2}
         >
           <Image
             alt="Midas Capital"
-            src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
-            width={isSidebarCollapsed ? 12 : 44}
+            minWidth={isSidebarCollapsed ? '220px' : '190px'}
+            src={colorMode === 'light' ? '/images/midas-light.svg' : '/images/midas-dark.svg'}
           />
         </Box>
       </Flex>
