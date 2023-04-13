@@ -71,6 +71,7 @@ const ClaimVaultRewardsModal = ({
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const [isClaiming, setIsClaiming] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
@@ -104,6 +105,7 @@ const ClaimVaultRewardsModal = ({
       setIsConfirmed(true);
       setFailedStep(0);
       setActiveStep(1);
+      setIsClaiming(true);
 
       try {
         const { tx } = await currentSdk.claimRewardsForVault(vault);
@@ -141,7 +143,7 @@ const ClaimVaultRewardsModal = ({
         setFailedStep(1);
       }
 
-      setIsConfirmed(false);
+      setIsClaiming(false);
     },
     [address, currentSdk, errorToast, addRecentTransaction, reward]
   );
@@ -210,7 +212,7 @@ const ClaimVaultRewardsModal = ({
             <PendingTransaction
               activeStep={activeStep}
               failedStep={failedStep}
-              isClaiming={isConfirmed}
+              isClaiming={isClaiming}
               poolChainId={Number(currentSdk.chainId)}
               reward={reward}
               steps={steps}
@@ -220,11 +222,11 @@ const ClaimVaultRewardsModal = ({
       }
       header="Claim Rewards"
       isOpen={isOpen}
-      modalCloseButtonProps={{ hidden: isConfirmed, right: 4, top: 4 }}
+      modalCloseButtonProps={{ hidden: isClaiming, right: 4, top: 4 }}
       onClose={() => {
         onClose();
 
-        if (!isConfirmed) {
+        if (!isClaiming) {
           setIsConfirmed(false);
           setSteps([]);
         }
