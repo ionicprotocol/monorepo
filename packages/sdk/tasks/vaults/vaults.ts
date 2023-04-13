@@ -550,13 +550,13 @@ task("optimized-vault:upgrade")
     await tx.wait();
     console.log(`configured the latest extensions for vault ${vault}`);
 
-    const vaultAsFirstExt = (await ethers.getContractAt(
-      "OptimizedAPRVaultFirstExtension",
+    const optimizedVault = (await ethers.getContractAt(
+      "OptimizedAPRVaultBase",
       vault,
       deployer
-    )) as OptimizedAPRVaultFirstExtension;
+    )) as OptimizedAPRVaultBase;
 
-    tx = await vaultAsFirstExt.upgradeVault();
+    tx = await optimizedVault.upgradeVault();
     await tx.wait();
     console.log(`upgraded the vault at ${vault} to the latest extensions`);
   });
