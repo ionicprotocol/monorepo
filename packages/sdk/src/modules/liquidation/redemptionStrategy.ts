@@ -242,6 +242,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
             underlying(ethereum.assets, assetSymbols.DAI),
             underlying(ethereum.assets, assetSymbols.USDT),
           ];
+          break;
         }
         case underlying(ethereum.assets, assetSymbols.ethBtcMomentum):
         case underlying(ethereum.assets, assetSymbols.ethBtcTrend): {
@@ -251,6 +252,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
             underlying(ethereum.assets, assetSymbols.WBTC),
           ];
           fee = 500;
+          break;
         }
         default: {
           fee = 300;
