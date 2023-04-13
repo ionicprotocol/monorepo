@@ -23,12 +23,12 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
   const { cPage, cCard, cSolidBtn } = useColors();
-  const { setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
+  const { address, setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
   const logoPrefix = useBreakpointValue(
     {
       base: '/images/midas-mobile-',
-      lg: '/images/midas-',
-      md: '/images/midas-',
+      lg: isSidebarCollapsed ? '/images/midas-logo-' : '/images/midas-',
+      md: isSidebarCollapsed ? '/images/midas-logo-' : '/images/midas-',
       sm: '/images/midas-mobile-',
     },
     { fallback: 'lg' }
@@ -43,7 +43,12 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
       pos="fixed"
       w={{ base: 'full', md: isSidebarCollapsed ? '86px' : '240px' }}
     >
-      <Flex alignItems="center" h="20" justifyContent="space-between" mx="8">
+      <Flex
+        alignItems="center"
+        h="20"
+        justifyContent="space-between"
+        mx={isSidebarCollapsed ? 5 : 8}
+      >
         <Box
           _hover={{ cursor: 'pointer' }}
           onClick={() => {
@@ -60,7 +65,7 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
           <Image
             alt="Midas Capital"
             src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
-            width={44}
+            width={isSidebarCollapsed ? 12 : 44}
           />
         </Box>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
@@ -117,30 +122,32 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
           </Text>
         ) : null}
       </Flex>
-      <Flex
-        _hover={{
-          bg: cCard.hoverBgColor,
-          color: cCard.txtColor,
-        }}
-        align="center"
-        bg={router.pathname.includes('/account') ? cSolidBtn.primary.bgColor : undefined}
-        borderRadius="lg"
-        cursor="pointer"
-        mx="4"
-        onClick={() => {
-          setGlobalLoading(true);
-          router.push('/');
-        }}
-        p="4"
-        role="group"
-      >
-        <Icon as={ImUser} fontSize="20" mr="4" />
-        {!isSidebarCollapsed ? (
-          <Text fontSize={16} fontWeight={'bold'}>
-            Account
-          </Text>
-        ) : null}
-      </Flex>
+      {address ? (
+        <Flex
+          _hover={{
+            bg: cCard.hoverBgColor,
+            color: cCard.txtColor,
+          }}
+          align="center"
+          bg={router.pathname.includes('/account') ? cSolidBtn.primary.bgColor : undefined}
+          borderRadius="lg"
+          cursor="pointer"
+          mx="4"
+          onClick={() => {
+            setGlobalLoading(true);
+            router.push('/account');
+          }}
+          p="4"
+          role="group"
+        >
+          <Icon as={ImUser} fontSize="20" mr="4" />
+          {!isSidebarCollapsed ? (
+            <Text fontSize={16} fontWeight={'bold'}>
+              Account
+            </Text>
+          ) : null}
+        </Flex>
+      ) : null}
       <Flex
         _hover={{
           bg: cCard.hoverBgColor,
@@ -153,7 +160,7 @@ export const Sidebar = ({ onClose }: { onClose: () => void }) => {
         mx="4"
         onClick={() => {
           setGlobalLoading(true);
-          router.push('/');
+          router.push('/create-pool');
         }}
         p="4"
         role="group"
