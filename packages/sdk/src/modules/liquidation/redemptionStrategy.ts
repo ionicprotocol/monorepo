@@ -253,8 +253,8 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
           fee = 500;
         }
         default: {
-          fee = 1000;
-          underlyingTokens = [inputToken];
+          fee = 300;
+          underlyingTokens = [outputToken];
         }
       }
 
