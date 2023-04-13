@@ -23,7 +23,7 @@ export const useClaimableRewardsForVaults = (chainIds: SupportedChains[]) => {
         })
       );
 
-      return null;
+      return res;
     },
     {
       cacheTime: Infinity,

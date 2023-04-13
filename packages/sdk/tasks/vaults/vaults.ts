@@ -476,55 +476,53 @@ task("deploy-market-with-rewards").setAction(async ({}, { ethers, getChainId, de
   }
 });
 
-task("supply-chapel-market-with-rewards")
-  .setAction(async ({ vault }, { ethers, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const rewardsToken = await ethers.getContract("ChapelRewardsERC20") as IERC20;
+task("supply-chapel-market-with-rewards").setAction(async ({ vault }, { ethers, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const rewardsToken = (await ethers.getContract("ChapelRewardsERC20")) as IERC20;
 
-    const market = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
-    const ownerRewardsBalance = await rewardsToken.callStatic.balanceOf(deployer);
+  const market = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
+  const ownerRewardsBalance = await rewardsToken.callStatic.balanceOf(deployer);
 
-    const tx = await rewardsToken.transfer(market, ownerRewardsBalance.div(2000));
+  const tx = await rewardsToken.transfer(market, ownerRewardsBalance.div(2000));
+  await tx.wait();
+  console.log(`transferred some rewards to the market`);
+});
+
+task("claim-chapel-rewards").setAction(async ({}, { ethers, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const bombToken = (await ethers.getContract("ChapelBombERC20")) as IERC20;
+  const rewardsToken = (await ethers.getContract("ChapelRewardsERC20")) as IERC20;
+  const symbol = await bombToken.callStatic.symbol();
+  const market = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
+
+  const vault = await ethers.getContract(`OptimizedAPRVault_${symbol}_${bombToken.address}`);
+  const registry = (await ethers.getContract("OptimizedVaultsRegistry")) as OptimizedVaultsRegistry;
+
+  const claimable = await registry.callStatic.getClaimableRewards(deployer);
+  console.log(`claimable ${JSON.stringify(claimable)}`);
+
+  const vaultAsFirstExt = (await ethers.getContractAt(
+    "OptimizedAPRVaultFirstExtension",
+    vault.address,
+    deployer
+  )) as OptimizedAPRVaultFirstExtension;
+
+  let tx = await vaultAsFirstExt.claimRewards();
+  await tx.wait();
+  console.log(`claimed the rewards for the vault`);
+
+  const flywheels = await vaultAsFirstExt.getAllFlywheels();
+  for (const flywheelAddress of flywheels) {
+    const flywheel = (await ethers.getContractAt("MidasFlywheel", flywheelAddress, deployer)) as MidasFlywheel;
+    tx = await flywheel["accrue(address,address)"](market, deployer);
     await tx.wait();
-    console.log(`transferred some rewards to the market`);
-  });
+    console.log(`accrued in the vault fw`);
 
-task("claim-chapel-rewards")
-  .setAction(async ({ }, { ethers, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const bombToken = await ethers.getContract("ChapelBombERC20") as IERC20;
-    const rewardsToken = await ethers.getContract("ChapelRewardsERC20") as IERC20;
-    const symbol = await bombToken.callStatic.symbol();
-    const market = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
-
-    const vault = await ethers.getContract(`OptimizedAPRVault_${symbol}_${bombToken.address}`);
-    const registry = (await ethers.getContract("OptimizedVaultsRegistry")) as OptimizedVaultsRegistry;
-
-    const claimable = await registry.callStatic.getClaimableRewards(deployer);
-    console.log(`claimable ${JSON.stringify(claimable)}`);
-
-    const vaultAsFirstExt = (await ethers.getContractAt(
-      "OptimizedAPRVaultFirstExtension",
-      vault.address,
-      deployer
-    )) as OptimizedAPRVaultFirstExtension;
-
-    let tx = await vaultAsFirstExt.claimRewards();
+    tx = await flywheel.claimRewards(deployer);
     await tx.wait();
-    console.log(`claimed the rewards for the vault`);
-
-    const flywheels = await vaultAsFirstExt.getAllFlywheels();
-    for (const flywheelAddress of flywheels) {
-      const flywheel = await ethers.getContractAt("MidasFlywheel", flywheelAddress, deployer) as MidasFlywheel;
-      tx = await flywheel["accrue(address,address)"](market, deployer);
-      await tx.wait();
-      console.log(`accrued in the vault fw`);
-
-      tx = await flywheel.claimRewards(deployer);
-      await tx.wait();
-      console.log(`claimed the rewards from the vault fw`);
-    }
-  });
+    console.log(`claimed the rewards from the vault fw`);
+  }
+});
 
 task("optimized-vault:upgrade")
   .addParam("vault")

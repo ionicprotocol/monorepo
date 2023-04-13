@@ -3,8 +3,8 @@ import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../typechain/Comptroller";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { Unitroller } from "../../typechain/Unitroller";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { Unitroller } from "../../typechain/Unitroller";
 
 task("non-owner-pool:upgrade")
   .addParam("comptrollerAddress", "The comptroller implementation address", undefined, types.string)
@@ -97,7 +97,7 @@ task("non-owner-pool:upgrade")
 
 task("non-owner-pool:toggle-autoimpl:all")
   .addParam("enable", "If autoimpl should be enabled", false, types.boolean)
-  .setAction(async ( { enable }, { ethers, run } ) => {
+  .setAction(async ({ enable }, { ethers, run }) => {
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory")) as FusePoolDirectory;
     const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
@@ -106,7 +106,7 @@ task("non-owner-pool:toggle-autoimpl:all")
 
       await run("non-owner-pool:toggle-autoimpl", {
         poolAddress: pool.comptroller,
-        enable: enable
+        enable: enable,
       });
     }
   });

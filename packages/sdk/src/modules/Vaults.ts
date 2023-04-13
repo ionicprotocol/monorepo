@@ -73,35 +73,35 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
         try {
           const rewardsInfoForVaults: FlywheelRewardsInfoForVault[] = [];
           const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
-          // const claimableRewards = await optimizedVaultsRegistry.callStatic.getClaimableRewards(account);
-          //
-          // claimableRewards.map((reward) => {
-          //   if (reward.rewards.gt(0)) {
-          //     const vault = reward.vault;
-          //     const chainId = Number(this.chainId);
-          //
-          //     // trying to get reward token symbol from defined assets list in sdk
-          //     const asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
-          //       (ass) => ass.underlying === reward.rewardToken
-          //     );
-          //     const rewardTokenSymbol = asset ? asset.symbol : reward.rewardTokenSymbol;
-          //
-          //     const rewardsInfo = {
-          //       rewardToken: reward.rewardToken,
-          //       flywheel: reward.flywheel,
-          //       rewards: reward.rewards,
-          //       rewardTokenDecimals: reward.rewardTokenDecimals,
-          //       rewardTokenSymbol,
-          //     };
-          //
-          //     const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
-          //     if (rewardsAdded) {
-          //       rewardsAdded.rewardsInfo.push(rewardsInfo);
-          //     } else {
-          //       rewardsInfoForVaults.push({ vault, chainId, rewardsInfo: [rewardsInfo] });
-          //     }
-          //   }
-          // });
+          const claimableRewards = await optimizedVaultsRegistry.callStatic.getClaimableRewards(account);
+
+          claimableRewards.map((reward) => {
+            if (reward.rewards.gt(0)) {
+              const vault = reward.vault;
+              const chainId = Number(this.chainId);
+
+              // trying to get reward token symbol from defined assets list in sdk
+              const asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+                (ass) => ass.underlying === reward.rewardToken
+              );
+              const rewardTokenSymbol = asset ? asset.symbol : reward.rewardTokenSymbol;
+
+              const rewardsInfo = {
+                rewardToken: reward.rewardToken,
+                flywheel: reward.flywheel,
+                rewards: reward.rewards,
+                rewardTokenDecimals: reward.rewardTokenDecimals,
+                rewardTokenSymbol,
+              };
+
+              const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
+              if (rewardsAdded) {
+                rewardsAdded.rewardsInfo.push(rewardsInfo);
+              } else {
+                rewardsInfoForVaults.push({ vault, chainId, rewardsInfo: [rewardsInfo] });
+              }
+            }
+          });
 
           return rewardsInfoForVaults;
         } catch (error) {
@@ -181,6 +181,13 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
 
       return await optimizedAPRVault.callStatic.maxDeposit(await this.signer.getAddress());
+    }
+
+    async claimRewardsForVault(vault: string) {
+      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
+      const tx: ContractTransaction = await optimizedAPRVault.claimRewards();
+
+      return { tx };
     }
   };
 }

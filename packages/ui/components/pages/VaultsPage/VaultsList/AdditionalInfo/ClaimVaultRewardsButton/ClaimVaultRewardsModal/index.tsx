@@ -1,16 +1,12 @@
 import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
-import type {
-  FlywheelRewardsInfoForVault,
-  RewardsInfo,
-  SupportedAsset,
-} from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { BsFillArrowRightCircleFill, BsFillGiftFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
-import { PendingTransaction } from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal/PendingTransaction';
+import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/ClaimVaultRewardsButton/ClaimVaultRewardsModal/PendingTransaction';
 import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -21,36 +17,14 @@ import { useErrorToast } from '@ui/hooks/useToast';
 import type { TxStep } from '@ui/types/ComponentPropsType';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { ChainSupportedAssets } from '@ui/utils/networkData';
 
-const ClaimableToken = ({
-  data,
-  onClaim,
-  claimingRewardTokens,
-  rewardChainId,
-}: {
-  claimingRewardTokens: string[];
-  data: RewardsInfo;
-  onClaim: () => void;
-  rewardChainId: number;
-}) => {
+const ClaimableToken = ({ data, rewardChainId }: { data: RewardsInfo; rewardChainId: number }) => {
   const { currentChain } = useMultiMidas();
-  const { openChainModal } = useChainModal();
-  const { switchNetworkAsync } = useSwitchNetwork();
-  const chainConfig = useChainConfig(rewardChainId);
 
   const totalRewardsString = useMemo(
     () => utils.formatUnits(data.rewards, data.rewardTokenDecimals),
     [data.rewards, data.rewardTokenDecimals]
   );
-
-  const handleSwitch = async () => {
-    if (chainConfig && switchNetworkAsync) {
-      await switchNetworkAsync(chainConfig.chainId);
-    } else if (openChainModal) {
-      openChainModal();
-    }
-  };
 
   return (
     <HStack justify="space-between" width="90%">
@@ -79,61 +53,7 @@ const ClaimableToken = ({
           </Text>
         </SimpleTooltip>
       </Box>
-
       <Text minW="80px">{data.rewardTokenSymbol}</Text>
-      <Box width="150px">
-        {currentChain?.id !== Number(rewardChainId) ? (
-          <Button
-            disabled={claimingRewardTokens.length > 0}
-            onClick={handleSwitch}
-            variant="silver"
-            whiteSpace="normal"
-          >
-            {chainConfig ? (
-              <>
-                <Img
-                  alt=""
-                  borderRadius="50%"
-                  height={6}
-                  src={chainConfig.specificParams.metadata.img}
-                  width={6}
-                />
-                <Text color="raisinBlack" ml={2}>
-                  {chainConfig.specificParams.metadata.shortName}
-                </Text>
-              </>
-            ) : (
-              <>
-                <BsFillArrowRightCircleFill size={24} />
-                <Text color="raisinBlack" ml={2}>
-                  Switch Network
-                </Text>
-              </>
-            )}
-          </Button>
-        ) : (
-          <Button
-            disabled={claimingRewardTokens.length > 0}
-            isLoading={claimingRewardTokens.includes(data.rewardToken)}
-            onClick={onClaim}
-          >
-            {chainConfig ? (
-              <Img
-                alt=""
-                borderRadius="50%"
-                height={6}
-                src={chainConfig.specificParams.metadata.img}
-                width={6}
-              />
-            ) : (
-              <BsFillGiftFill size={24} />
-            )}
-            <Text color="raisinBlack" ml={2}>
-              Claim
-            </Text>
-          </Button>
-        )}
-      </Box>
     </HStack>
   );
 };
@@ -147,99 +67,83 @@ const ClaimVaultRewardsModal = ({
   onClose: () => void;
   reward: FlywheelRewardsInfoForVault;
 }) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
-  const [claimingRewardTokens, setClaimingRewardTokens] = useState<string[]>([]);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
-  const [assetPerRewardToken, setAssetPerRewardToken] = useState<{
-    [rewardToken: string]: SupportedAsset | undefined;
-  }>({});
 
-  // const chainConfig = useChainConfig(Number(currentSdk?.chainId));
+  const { openChainModal } = useChainModal();
+  const { switchNetworkAsync } = useSwitchNetwork();
+  const chainConfig = useChainConfig(reward.chainId);
+
+  const handleSwitch = async () => {
+    if (chainConfig && switchNetworkAsync) {
+      await switchNetworkAsync(chainConfig.chainId);
+    } else if (openChainModal) {
+      openChainModal();
+    }
+  };
 
   const claimRewards = useCallback(
-    (rewards: RewardsInfo[] | null) => async () => {
-      if (!currentSdk || !address || !rewards || rewards.length === 0) return;
+    (vault: string) => async () => {
+      if (!currentSdk || !address) return;
 
-      const _steps: TxStep[] = [];
-      const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
-
-      rewards.map((reward) => {
-        const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
-          return asset.underlying === reward.rewardToken;
-        });
-
-        _assetPerRewardToken[reward.rewardToken] = asset;
-
-        _steps.push({
-          desc: `Claims ${asset?.symbol} rewards from Midas`,
+      const symbols = reward.rewardsInfo.map((info) => info.rewardTokenSymbol).join(',');
+      const _steps: TxStep[] = [
+        {
+          desc: `Claims ${symbols} rewards from Midas`,
           done: false,
-          title: `Claim ${asset?.symbol}`,
-        });
-      });
+          title: `Claim ${symbols}`,
+        },
+      ];
 
       setSteps(_steps);
-      setAssetPerRewardToken(_assetPerRewardToken);
-
       setIsConfirmed(true);
-      setClaimingRewardTokens(rewards.map((reward) => reward.rewardToken));
-      const fwLensRouter = currentSdk.createMidasFlywheelLensRouter(currentSdk.signer);
-
       setFailedStep(0);
+      setActiveStep(1);
 
-      for (const [index, reward] of rewards.entries()) {
-        setActiveStep(index + 1);
-        const markets: string[] = []; // reward.rewards.map((reward) => reward.market);
+      try {
+        const { tx } = await currentSdk.claimRewardsForVault(vault);
 
-        try {
-          const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
-            address,
-            markets,
-            [reward.flywheel],
-            [true]
-          );
+        addRecentTransaction({
+          description: `Claims ${symbols} rewards`,
+          hash: tx.hash,
+        });
 
-          addRecentTransaction({
-            description: `${_assetPerRewardToken[reward.rewardToken]?.symbol} Reward Claim`,
-            hash: tx.hash,
-          });
+        _steps[0] = {
+          ..._steps[0],
+          txHash: tx.hash,
+        };
+        setSteps([..._steps]);
 
-          _steps[index] = {
-            ..._steps[index],
-            txHash: tx.hash,
-          };
-          setSteps([..._steps]);
+        await tx.wait();
 
-          await tx.wait();
-
-          _steps[index] = {
-            ..._steps[index],
-            done: true,
-            txHash: tx.hash,
-          };
-          setSteps([..._steps]);
-        } catch (error) {
-          const sentryProperties = {
-            chainId: currentSdk.chainId,
-            flywheel: reward.flywheel,
-            markets: markets.toString(),
-          };
-          const sentryInfo = {
-            contextName: 'Claiming rewards',
-            properties: sentryProperties,
-          };
-          handleGenericError({ error, sentryInfo, toast: errorToast });
-          setFailedStep(index + 1);
-        }
+        _steps[0] = {
+          ..._steps[0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setSteps([..._steps]);
+      } catch (error) {
+        const sentryProperties = {
+          chainId: reward.chainId,
+          rewards: reward.rewardsInfo,
+          vault: reward.vault,
+        };
+        const sentryInfo = {
+          contextName: 'Claiming rewards for vault',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, sentryInfo, toast: errorToast });
+        setFailedStep(1);
       }
 
-      setClaimingRewardTokens([]);
+      setIsConfirmed(false);
     },
-    [address, currentSdk, errorToast, addRecentTransaction]
+    [address, currentSdk, errorToast, addRecentTransaction, reward]
   );
 
   return (
@@ -255,26 +159,35 @@ const ClaimVaultRewardsModal = ({
           ) : !isConfirmed ? (
             <>
               {reward.rewardsInfo.map((info, index) => {
-                return (
-                  <ClaimableToken
-                    claimingRewardTokens={claimingRewardTokens}
-                    data={info}
-                    key={index}
-                    onClaim={claimRewards(currentSdk ? [info] : null)}
-                    rewardChainId={reward.chainId}
-                  />
-                );
+                return <ClaimableToken data={info} key={index} rewardChainId={reward.chainId} />;
               })}
-              {/* <Center pt={4}>
-                {claimableRewardsOfCurrentChain && claimableRewardsOfCurrentChain.length > 0 && (
-                  <Button
-                    disabled={claimingRewardTokens.length > 0}
-                    isLoading={
-                      claimingRewardTokens.length === claimableRewardsOfCurrentChain.length
-                    }
-                    onClick={claimRewards(claimableRewardsOfCurrentChain)}
-                    width="100%"
-                  >
+              <Box width="150px">
+                {currentChain?.id !== Number(reward.chainId) ? (
+                  <Button onClick={handleSwitch} variant="silver" whiteSpace="normal">
+                    {chainConfig ? (
+                      <>
+                        <Img
+                          alt=""
+                          borderRadius="50%"
+                          height={6}
+                          src={chainConfig.specificParams.metadata.img}
+                          width={6}
+                        />
+                        <Text color="raisinBlack" ml={2}>
+                          {chainConfig.specificParams.metadata.shortName}
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <BsFillArrowRightCircleFill size={24} />
+                        <Text color="raisinBlack" ml={2}>
+                          Switch Network
+                        </Text>
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button onClick={claimRewards(reward.vault)}>
                     {chainConfig ? (
                       <Img
                         alt=""
@@ -287,19 +200,19 @@ const ClaimVaultRewardsModal = ({
                       <BsFillGiftFill size={24} />
                     )}
                     <Text color="raisinBlack" ml={2}>
-                      Claim All
+                      Claim
                     </Text>
                   </Button>
                 )}
-              </Center> */}
+              </Box>
             </>
           ) : currentSdk ? (
             <PendingTransaction
               activeStep={activeStep}
-              assetPerRewardToken={assetPerRewardToken}
               failedStep={failedStep}
-              isClaiming={claimingRewardTokens.length > 0}
+              isClaiming={isConfirmed}
               poolChainId={Number(currentSdk.chainId)}
+              reward={reward}
               steps={steps}
             />
           ) : null}
@@ -307,11 +220,11 @@ const ClaimVaultRewardsModal = ({
       }
       header="Claim Rewards"
       isOpen={isOpen}
-      modalCloseButtonProps={{ hidden: claimingRewardTokens.length !== 0, right: 4, top: 4 }}
+      modalCloseButtonProps={{ hidden: isConfirmed, right: 4, top: 4 }}
       onClose={() => {
         onClose();
 
-        if (claimingRewardTokens.length === 0) {
+        if (!isConfirmed) {
           setIsConfirmed(false);
           setSteps([]);
         }

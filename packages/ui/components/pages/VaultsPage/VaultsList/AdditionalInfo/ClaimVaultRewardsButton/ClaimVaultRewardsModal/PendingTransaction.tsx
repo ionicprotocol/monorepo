@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import type { SupportedAsset } from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, SupportedAsset } from '@midas-capital/types';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';
@@ -15,13 +15,13 @@ export const PendingTransaction = ({
   steps,
   isClaiming,
   poolChainId,
-  assetPerRewardToken,
+  reward,
 }: {
   activeStep: number;
-  assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined };
   failedStep: number;
   isClaiming: boolean;
   poolChainId: number;
+  reward: FlywheelRewardsInfoForVault;
   steps: TxStep[];
 }) => {
   return (
@@ -35,16 +35,21 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text fontWeight="bold" variant="mdText">
-            You claimed{' '}
-            {Object.values(assetPerRewardToken)
-              .map((asset) => asset?.symbol)
-              .join(',')}
+            You claimed {reward.rewardsInfo.map((info) => info.rewardTokenSymbol).join(',')}
           </Text>
           <VStack width="100%">
-            {Object.values(assetPerRewardToken).map((asset) => {
-              if (asset) {
-                return <AddTokenToWalletButton asset={asset} key={asset.underlying} />;
-              }
+            {Object.values(reward.rewardsInfo).map((info) => {
+              return (
+                <AddTokenToWalletButton
+                  asset={{
+                    decimals: info.rewardTokenDecimals,
+                    name: info.rewardTokenSymbol,
+                    symbol: info.rewardTokenSymbol,
+                    underlying: info.rewardToken,
+                  }}
+                  key={info.rewardToken}
+                />
+              );
             })}
           </VStack>
         </VStack>
