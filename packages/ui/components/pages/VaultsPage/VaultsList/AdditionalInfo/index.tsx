@@ -207,7 +207,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                   <CaptionedStat
                     caption={'Asset Supplied'}
                     crossAxisAlignment="center"
-                    stat={smallUsdFormatter(vault.totalSupplyNative * usdPrice)}
+                    stat={smallUsdFormatter(vault.totalSupplyNative * usdPrice, true)}
                   />
                   <CaptionedStat
                     caption={'APY'}
