@@ -238,6 +238,7 @@ export enum assetSymbols {
   "sAMM-HAY/BUSD" = "sAMM-HAY-BUSD",
   "vAMM-ANKR/ankrBNB" = "vAMM-ANKR-ankrBNB",
   "vAMM-ANKR/HAY" = "vAMM-ANKR-HAY",
+  "vAMM-HAY/ankrBNB" = "vAMM-HAY-ankrBNB",
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
