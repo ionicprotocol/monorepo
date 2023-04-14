@@ -24,7 +24,7 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
   const { cCard, cSolidBtn } = useColors();
-  const { address, setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
+  const { address, setGlobalLoading } = useMultiMidas();
 
   return (
     <Box h="full" pos="fixed" w="full">
@@ -69,11 +69,9 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
         role="group"
       >
         <Icon as={BsFillHouseFill} fontSize="20" mr="4" />
-        {!isSidebarCollapsed ? (
-          <Text fontSize={16} fontWeight={'bold'}>
-            Pools
-          </Text>
-        ) : null}
+        <Text fontSize={16} fontWeight={'bold'}>
+          Pools
+        </Text>
       </Flex>
       <Flex
         _hover={{
@@ -93,11 +91,9 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
         role="group"
       >
         <Icon as={SiVault} fontSize="20" mr="4" />
-        {!isSidebarCollapsed ? (
-          <Text fontSize={16} fontWeight={'bold'}>
-            Vaults
-          </Text>
-        ) : null}
+        <Text fontSize={16} fontWeight={'bold'}>
+          Vaults
+        </Text>
       </Flex>
       {address ? (
         <Flex
@@ -118,11 +114,9 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
           role="group"
         >
           <Icon as={ImUser} fontSize="20" mr="4" />
-          {!isSidebarCollapsed ? (
-            <Text fontSize={16} fontWeight={'bold'}>
-              Account
-            </Text>
-          ) : null}
+          <Text fontSize={16} fontWeight={'bold'}>
+            Account
+          </Text>
         </Flex>
       ) : null}
       <Flex
@@ -143,11 +137,9 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
         role="group"
       >
         <Icon as={BsHouseAddFill} fontSize="20" mr="4" />
-        {!isSidebarCollapsed ? (
-          <Text fontSize={16} fontWeight={'bold'}>
-            Create Pool
-          </Text>
-        ) : null}
+        <Text fontSize={16} fontWeight={'bold'}>
+          Create Pool
+        </Text>
       </Flex>
       <Link
         _focus={{ boxShadow: 'none' }}
@@ -168,11 +160,9 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
           role="group"
         >
           <Icon as={BsChatLeftTextFill} fontSize="20" mr="4" />
-          {!isSidebarCollapsed ? (
-            <Text fontSize={16} fontWeight={'bold'}>
-              Request Feature
-            </Text>
-          ) : null}
+          <Text fontSize={16} fontWeight={'bold'}>
+            Request Feature
+          </Text>
         </Flex>
       </Link>
       <Stack bottom={4} position={'absolute'} width={'100%'}>
