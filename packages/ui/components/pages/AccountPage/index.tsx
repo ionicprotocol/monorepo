@@ -21,6 +21,7 @@ import {
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
+import { shortAddress } from '@ui/utils/shortAddress';
 
 const AccountPage = memo(() => {
   const { setGlobalLoading, address } = useMultiMidas();
@@ -90,7 +91,7 @@ const AccountPage = memo(() => {
                   }}
                 />
                 <Text fontWeight="bold" size="xl" textAlign="left">
-                  {address}
+                  {shortAddress(address, 8, 8)}
                 </Text>
               </HStack>
 

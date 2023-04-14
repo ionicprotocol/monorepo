@@ -20,9 +20,9 @@ output "bsc-mainnet-liquidation-2" {
 output "polygon-mainnet-feed-verifier" {
   value = module.polygon_mainnet_oracle_feed_verifier.lambda_cron_service_name
 }
-output "polygon-mainnet-price-change-verifier" {
-  value = module.polygon_mainnet_oracle_price_change_verifier.lambda_cron_service_name
-}
+# output "polygon-mainnet-price-change-verifier" {
+#   value = module.polygon_mainnet_oracle_price_change_verifier.lambda_cron_service_name
+# }
 # output "polygon-mainnet-price-verifier" {
 #   value = module.polygon_mainnet_oracle_price_verifier.lambda_cron_service_name
 # }
@@ -34,12 +34,12 @@ output "polygon-mainnet-liquidation-2" {
 }
 
 # MOONBEAM
-output "moonbeam-mainnet-feed-verifier" {
-  value = module.moonbeam_mainnet_oracle_feed_verifier.lambda_cron_service_name
-}
-output "moonbeam-mainnet-price-change-verifier" {
-  value = module.moonbeam_mainnet_oracle_price_change_verifier.lambda_cron_service_name
-}
+# output "moonbeam-mainnet-feed-verifier" {
+#   value = module.moonbeam_mainnet_oracle_feed_verifier.lambda_cron_service_name
+# }
+# output "moonbeam-mainnet-price-change-verifier" {
+#   value = module.moonbeam_mainnet_oracle_price_change_verifier.lambda_cron_service_name
+# }
 # output "moonbeam-mainnet-price-verifier" {
 #   value = module.moonbeam_mainnet_oracle_price_verifier.lambda_cron_service_name
 # }
