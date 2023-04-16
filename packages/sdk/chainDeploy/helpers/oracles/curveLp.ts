@@ -25,10 +25,6 @@ export const deployCurveLpOracle = async ({
           methodName: "initialize",
           args: [[], [], []],
         },
-        onUpgrade: {
-          methodName: "reinitialize",
-          args: [curvePools.map((c) => c.lpToken)],
-        },
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",
@@ -80,10 +76,6 @@ export const deployCurveV2LpOracle = async ({
         init: {
           methodName: "initialize",
           args: [[], []],
-        },
-        onUpgrade: {
-          methodName: "reinitialize",
-          args: [curveV2Pools.map((c) => c.lpToken)],
         },
       },
       owner: deployer,

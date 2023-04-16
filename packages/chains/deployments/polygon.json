@@ -45,7 +45,7 @@
       "address": "0x73472dD551E2991574a1132D29438033123A64D4"
     },
     "BalancerLpStablePoolPriceOracle_Implementation": {
-      "address": "0x771E646370F67EC1bB2c1125cEb1126013531ea3"
+      "address": "0x33bef3950a0411E148a9Bca9A111fBDAb4A5838C"
     },
     "BalancerLpStablePoolPriceOracle_Proxy": {
       "address": "0x73472dD551E2991574a1132D29438033123A64D4"
@@ -75,7 +75,7 @@
       "address": "0x7EeC2d629e281A4dcE670269b7290cA430787C7E"
     },
     "CErc20Delegate": {
-      "address": "0x587906620D627fe75C4d1288C6A584089780959c"
+      "address": "0x9F137f1A06C40F1CC4b2738B01780Ac447440416"
     },
     "CErc20PluginDelegate": {
       "address": "0xc2Ea306eeacD4d82E4815Eb5094e4DBBF7582522"
@@ -129,7 +129,7 @@
       "address": "0xf656D243a23A0987329ac6522292f4104A7388e1"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xce6C6a3b74A6ba533b074aB2567b19f958CC5D6b"
+      "address": "0x0A57356c07f7e60D217660f161eF9AaAc27996aC"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xf656D243a23A0987329ac6522292f4104A7388e1"
