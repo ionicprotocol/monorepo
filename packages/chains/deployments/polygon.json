@@ -78,10 +78,10 @@
       "address": "0x9F137f1A06C40F1CC4b2738B01780Ac447440416"
     },
     "CErc20PluginDelegate": {
-      "address": "0xc2Ea306eeacD4d82E4815Eb5094e4DBBF7582522"
+      "address": "0x552676931416F17393F2e2Ae993F123253caD9bb"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xc6579da86D08Dbc8af0440E298077a09E6a17624"
+      "address": "0x16ef27F620cd4B9c3C6BF57E9821F8d52E055E8E"
     },
     "CEtherDelegate": {
       "address": "0xA6BDC4e098b6b14f4fCA2906B0a51e2798BA5777"
@@ -153,7 +153,7 @@
       "address": "0x9A161e68EC0d5364f4d09A6080920DAFF6FFf250"
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x4981A56915A8a807f7e6B83DdE665337Aa4D6b41"
+      "address": "0x19878F7B6830081e8e46Ce3f5707A97F7e7E7A4d"
     },
     "FusePoolDirectory_Proxy": {
       "address": "0x9A161e68EC0d5364f4d09A6080920DAFF6FFf250"
