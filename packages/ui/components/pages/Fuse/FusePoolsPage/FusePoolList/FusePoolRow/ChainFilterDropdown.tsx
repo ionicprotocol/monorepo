@@ -17,19 +17,18 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { ALL, SEARCH } from '@ui/constants/index';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
-import type { PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 
 export const ChainFilterDropdown = ({
   globalFilter,
   isLoading,
+  loadingStatusPerChain,
   onFilter,
-  poolsPerChain,
   props,
 }: {
   globalFilter: (SupportedChains | string)[];
   isLoading: boolean;
+  loadingStatusPerChain: { [chainId: string]: boolean };
   onFilter: (filter: SupportedChains | string) => void;
-  poolsPerChain: PoolsPerChainStatus;
   props: ButtonProps;
 }) => {
   const enabledChains = useEnabledChains();
@@ -53,7 +52,7 @@ export const ChainFilterDropdown = ({
               <ChainFilterCheckbox
                 chainId={chainId}
                 globalFilter={globalFilter}
-                isLoading={poolsPerChain[chainId.toString()].isLoading}
+                isLoading={loadingStatusPerChain[chainId.toString()]}
                 key={chainId}
                 onFilter={onFilter}
               />
@@ -69,13 +68,17 @@ export const ChainFilterDropdown = ({
         ) : chainFilter.length === 1 ? (
           <IconChainName
             chainId={chainFilter[0]}
-            isLoading={poolsPerChain[chainFilter[0].toString()].isLoading}
+            isLoading={loadingStatusPerChain[chainFilter[0].toString()]}
           />
         ) : (
           <>
             <AvatarGroup>
               {chainFilter.map((chainId) => (
-                <ButtonContent chainId={chainId} key={chainId} poolsPerChain={poolsPerChain} />
+                <ButtonContent
+                  chainId={chainId}
+                  key={chainId}
+                  loadingStatusPerChain={loadingStatusPerChain}
+                />
               ))}
             </AvatarGroup>
             <Text flexShrink={0} ml={2}>
@@ -138,10 +141,10 @@ const ChainFilterCheckbox = ({
 
 interface ButtonContentProps extends AvatarProps {
   chainId: SupportedChains;
-  poolsPerChain: PoolsPerChainStatus;
+  loadingStatusPerChain: { [chainId: string]: boolean };
 }
 
-const ButtonContent = ({ chainId, poolsPerChain, ...avatarProps }: ButtonContentProps) => {
+const ButtonContent = ({ chainId, loadingStatusPerChain, ...avatarProps }: ButtonContentProps) => {
   const chainConfig = useChainConfig(chainId);
 
   return chainConfig ? (
@@ -149,7 +152,7 @@ const ButtonContent = ({ chainId, poolsPerChain, ...avatarProps }: ButtonContent
       <Avatar
         height="26px"
         icon={
-          poolsPerChain[chainId.toString()].isLoading ? (
+          loadingStatusPerChain[chainId.toString()] ? (
             <SpinnerIcon boxSize={'85%'} opacity={0.3} />
           ) : undefined
         }

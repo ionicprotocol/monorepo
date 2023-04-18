@@ -1,7 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
   Box,
-  ButtonGroup,
   Center,
   Checkbox,
   Flex,
@@ -42,13 +41,14 @@ import {
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { ChainFilterButton } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
+import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
+import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
 import { Chain } from '@ui/components/pages/VaultsPage/VaultsList/Chain';
 import { SupplyApy } from '@ui/components/pages/VaultsPage/VaultsList/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
-import { CButton, CIconButton } from '@ui/components/shared/Button';
+import { CIconButton } from '@ui/components/shared/Button';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -65,10 +65,9 @@ import {
   VAULTS_COUNT_PER_PAGE,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
-import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import type { Err, VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { sortVaults } from '@ui/utils/sorts';
 import { AdditionalInfo } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/index';
@@ -92,7 +91,6 @@ export const VaultsList = ({
   vaultsPerChain: VaultsPerChainStatus;
 }) => {
   const { address } = useMultiMidas();
-  const enabledChains = useEnabledChains();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [selectedFilteredVaults, setSelectedFilteredVaults] = useState<VaultData[]>([]);
@@ -102,7 +100,6 @@ export const VaultsList = ({
     pageIndex: 0,
     pageSize: VAULTS_COUNT_PER_PAGE[0],
   });
-  const isSemiSmallScreen = useIsSemiSmallScreen();
 
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
@@ -116,6 +113,16 @@ export const VaultsList = ({
 
       return res;
     }, [] as VaultData[]);
+  }, [vaultsPerChain]);
+
+  const loadingStatusPerChain = useMemo(() => {
+    const _loadingStatusPerChain: { [chainId: string]: boolean } = {};
+
+    Object.entries(vaultsPerChain).map(([chainId, vaults]) => {
+      _loadingStatusPerChain[chainId] = vaults.isLoading;
+    });
+
+    return _loadingStatusPerChain;
   }, [vaultsPerChain]);
 
   useEffect(() => {
@@ -341,33 +348,20 @@ export const VaultsList = ({
           mb={3}
           width="100%"
         >
-          <ButtonGroup
-            flexFlow={'row wrap'}
-            gap={0}
-            isAttached
-            justifyContent="flex-start"
-            spacing={0}
-          >
-            <CButton
-              isSelected={globalFilter.includes(ALL)}
-              onClick={() => onFilter(ALL)}
-              px={4}
-              variant="filter"
-            >
-              <Text>{isSemiSmallScreen ? 'All' : 'All Chains'}</Text>
-            </CButton>
-            {enabledChains.map((chainId) => {
-              return (
-                <ChainFilterButton
-                  chainId={chainId}
-                  globalFilter={globalFilter}
-                  isLoading={vaultsPerChain[chainId.toString()].isLoading}
-                  key={chainId}
-                  onFilter={onFilter}
-                />
-              );
-            })}
-          </ButtonGroup>
+          <ChainFilterButtons
+            globalFilter={globalFilter}
+            isLoading={isLoading}
+            loadingStatusPerChain={loadingStatusPerChain}
+            onFilter={onFilter}
+            props={{ display: { base: 'none', lg: 'inline-flex' } }}
+          />
+          <ChainFilterDropdown
+            globalFilter={globalFilter}
+            isLoading={isLoading}
+            loadingStatusPerChain={loadingStatusPerChain}
+            onFilter={onFilter}
+            props={{ display: { base: 'inline-flex', lg: 'none' } }}
+          />
 
           <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="center">
             <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
