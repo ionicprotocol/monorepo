@@ -174,7 +174,9 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
           <VStack borderRadius="20" spacing={0} width="100%">
             <Box
               background={cCard.headingBgColor}
-              borderColor={cCard.headingBgColor}
+              borderBottom="none"
+              borderColor={cCard.borderColor}
+              borderTopRadius={12}
               borderWidth={2}
               height={14}
               px={4}
@@ -196,7 +198,13 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                 </HStack>
               </Flex>
             </Box>
-            <Box borderColor={cCard.headingBgColor} borderWidth={2} height="250px" width="100%">
+            <Box
+              borderBottomRadius={12}
+              borderColor={cCard.borderColor}
+              borderWidth={2}
+              height="250px"
+              width="100%"
+            >
               <VStack height="100%" spacing={0}>
                 <Grid
                   gap={0}
@@ -286,7 +294,9 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
           <VStack borderRadius="20" spacing={0} width="100%">
             <Box
               background={cCard.headingBgColor}
-              borderColor={cCard.headingBgColor}
+              borderBottom="none"
+              borderColor={cCard.borderColor}
+              borderTopRadius={12}
               borderWidth={2}
               height={14}
               px={4}
@@ -297,7 +307,8 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
               </Flex>
             </Box>
             <Box
-              borderColor={cCard.headingBgColor}
+              borderBottomRadius={12}
+              borderColor={cCard.borderColor}
               borderWidth={2}
               height="250px"
               pb={4}
