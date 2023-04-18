@@ -65,6 +65,7 @@ import {
   VAULTS_COUNT_PER_PAGE,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
@@ -104,6 +105,8 @@ export const VaultsList = ({
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
   const [searchText, setSearchText] = useState('');
+
+  const enabledChains = useEnabledChains();
 
   const allVaults = useMemo(() => {
     return Object.values(vaultsPerChain).reduce((res, vaults) => {
@@ -255,14 +258,39 @@ export const VaultsList = ({
   const { cCard } = useColors();
 
   const onFilter = (filter: SupportedChains | string) => {
-    if (globalFilter.includes(SEARCH) && globalFilter.includes(HIDDEN)) {
-      setGlobalFilter([filter, SEARCH, HIDDEN]);
-    } else if (globalFilter.includes(SEARCH)) {
-      setGlobalFilter([filter, SEARCH]);
-    } else if (globalFilter.includes(HIDDEN)) {
-      setGlobalFilter([filter, HIDDEN]);
+    let _globalFilter: (SupportedChains | string)[] = [];
+
+    if (globalFilter.includes(filter)) {
+      if (filter === ALL) {
+        _globalFilter = [enabledChains[0]];
+      } else {
+        _globalFilter = globalFilter.filter((f) => f !== filter);
+
+        if (_globalFilter.length === 0) {
+          _globalFilter = [ALL];
+        }
+      }
     } else {
-      setGlobalFilter([filter]);
+      if (globalFilter.includes(ALL)) {
+        _globalFilter = [filter];
+      } else if (
+        filter === ALL ||
+        enabledChains.length === globalFilter.filter((f) => f !== ALL && f != SEARCH).length + 1
+      ) {
+        _globalFilter = [ALL];
+      } else {
+        _globalFilter = [...globalFilter, filter];
+      }
+    }
+
+    if (globalFilter.includes(SEARCH) && globalFilter.includes(HIDDEN)) {
+      setGlobalFilter([..._globalFilter, SEARCH, HIDDEN]);
+    } else if (globalFilter.includes(SEARCH)) {
+      setGlobalFilter([..._globalFilter, SEARCH]);
+    } else if (globalFilter.includes(HIDDEN)) {
+      setGlobalFilter([..._globalFilter, HIDDEN]);
+    } else {
+      setGlobalFilter([..._globalFilter]);
     }
   };
 
