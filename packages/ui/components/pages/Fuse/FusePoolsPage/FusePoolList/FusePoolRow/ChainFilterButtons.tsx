@@ -1,3 +1,4 @@
+import type { ButtonGroupProps } from '@chakra-ui/react';
 import { ButtonGroup, HStack, Img, Spinner, Text } from '@chakra-ui/react';
 import type { SupportedChains } from '@midas-capital/types';
 
@@ -12,16 +13,25 @@ export const ChainFilterButtons = ({
   globalFilter,
   onFilter,
   poolsPerChain,
+  props,
 }: {
   globalFilter: (SupportedChains | string)[];
   isLoading: boolean;
   onFilter: (filter: SupportedChains | string) => void;
   poolsPerChain: PoolsPerChainStatus;
+  props?: ButtonGroupProps;
 }) => {
   const enabledChains = useEnabledChains();
 
   return (
-    <ButtonGroup flexFlow={'row wrap'} gap={0} isAttached justifyContent="flex-start" spacing={0}>
+    <ButtonGroup
+      flexFlow={'row wrap'}
+      gap={0}
+      isAttached
+      justifyContent="flex-start"
+      spacing={0}
+      {...props}
+    >
       <CButton
         disabled={isLoading}
         isSelected={globalFilter.includes(ALL)}

@@ -46,6 +46,7 @@ import { Assets } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/Fus
 import { BorrowBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/BorrowBalance';
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
+import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
 import { ExpanderArrow } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ExpanderArrow';
 import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/PoolName';
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/SupplyBalance';
@@ -72,6 +73,7 @@ import {
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
@@ -120,6 +122,7 @@ const PoolsRowList = ({
       return res;
     }, [] as PoolData[]);
   }, [poolsPerChain]);
+  const enabledChains = useEnabledChains();
 
   useEffect(() => {
     const pools: PoolData[] = [];
@@ -319,10 +322,35 @@ const PoolsRowList = ({
   const { cCard } = useColors();
 
   const onFilter = (filter: SupportedChains | string) => {
-    if (globalFilter.includes(SEARCH)) {
-      setGlobalFilter([filter, SEARCH]);
+    let _globalFilter: (SupportedChains | string)[] = [];
+
+    if (globalFilter.includes(filter)) {
+      if (filter === ALL) {
+        _globalFilter = [enabledChains[0]];
+      } else {
+        _globalFilter = globalFilter.filter((f) => f !== filter);
+
+        if (_globalFilter.length === 0) {
+          _globalFilter = [ALL];
+        }
+      }
     } else {
-      setGlobalFilter([filter]);
+      if (globalFilter.includes(ALL)) {
+        _globalFilter = [...enabledChains.filter((f) => f !== filter)];
+      } else if (
+        filter === ALL ||
+        enabledChains.length === globalFilter.filter((f) => f !== ALL && f != SEARCH).length + 1
+      ) {
+        _globalFilter = [ALL];
+      } else {
+        _globalFilter = [...globalFilter, filter];
+      }
+    }
+
+    if (globalFilter.includes(SEARCH)) {
+      setGlobalFilter([..._globalFilter, SEARCH]);
+    } else {
+      setGlobalFilter([..._globalFilter]);
     }
   };
 
@@ -420,6 +448,14 @@ const PoolsRowList = ({
           isLoading={isLoading}
           onFilter={onFilter}
           poolsPerChain={poolsPerChain}
+          props={{ display: { base: 'none', lg: 'inline-flex' } }}
+        />
+        <ChainFilterDropdown
+          globalFilter={globalFilter}
+          isLoading={isLoading}
+          onFilter={onFilter}
+          poolsPerChain={poolsPerChain}
+          props={{ display: { base: 'inline-flex', lg: 'none' } }}
         />
         <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="center">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
