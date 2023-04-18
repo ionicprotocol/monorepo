@@ -1,17 +1,14 @@
 import { ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
-  ButtonGroup,
   Center,
   Checkbox,
   Flex,
   Hide,
   HStack,
   IconButton,
-  Img,
   Input,
   Select,
   Skeleton,
-  Spinner,
   Stack,
   Table,
   Tbody,
@@ -48,6 +45,8 @@ import { AdditionalInfo } from '@ui/components/pages/Fuse/FusePoolsPage/FusePool
 import { Assets } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Assets';
 import { BorrowBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/BorrowBalance';
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
+import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
+import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
 import { ExpanderArrow } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ExpanderArrow';
 import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/PoolName';
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/SupplyBalance';
@@ -55,7 +54,7 @@ import { TotalBorrow } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolLis
 import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
-import { CButton, CIconButton } from '@ui/components/shared/Button';
+import { CIconButton } from '@ui/components/shared/Button';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -74,10 +73,10 @@ import {
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
+import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
-import { useIsMobile, useIsSmallScreen } from '@ui/hooks/useScreenSize';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import type { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import type { PoolData } from '@ui/types/TokensDataMap';
 import { poolSortByAddress } from '@ui/utils/sorts';
@@ -99,7 +98,6 @@ const PoolsRowList = ({
   isLoading: boolean;
   poolsPerChain: PoolsPerChainStatus;
 }) => {
-  const enabledChains = useEnabledChains();
   const { address, setGlobalLoading } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
@@ -114,7 +112,6 @@ const PoolsRowList = ({
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [searchText, setSearchText] = useState('');
-  const isSmallScreen = useIsSmallScreen();
   const mounted = useRef(false);
   const router = useRouter();
   const allPools = useMemo(() => {
@@ -125,6 +122,7 @@ const PoolsRowList = ({
       return res;
     }, [] as PoolData[]);
   }, [poolsPerChain]);
+  const enabledChains = useEnabledChains();
 
   useEffect(() => {
     const pools: PoolData[] = [];
@@ -324,10 +322,35 @@ const PoolsRowList = ({
   const { cCard } = useColors();
 
   const onFilter = (filter: SupportedChains | string) => {
-    if (globalFilter.includes(SEARCH)) {
-      setGlobalFilter([filter, SEARCH]);
+    let _globalFilter: (SupportedChains | string)[] = [];
+
+    if (globalFilter.includes(filter)) {
+      if (filter === ALL) {
+        _globalFilter = [enabledChains[0]];
+      } else {
+        _globalFilter = globalFilter.filter((f) => f !== filter);
+
+        if (_globalFilter.length === 0) {
+          _globalFilter = [ALL];
+        }
+      }
     } else {
-      setGlobalFilter([filter]);
+      if (globalFilter.includes(ALL)) {
+        _globalFilter = [filter];
+      } else if (
+        filter === ALL ||
+        enabledChains.length === globalFilter.filter((f) => f !== ALL && f != SEARCH).length + 1
+      ) {
+        _globalFilter = [ALL];
+      } else {
+        _globalFilter = [...globalFilter, filter];
+      }
+    }
+
+    if (globalFilter.includes(SEARCH)) {
+      setGlobalFilter([..._globalFilter, SEARCH]);
+    } else {
+      setGlobalFilter([..._globalFilter]);
     }
   };
 
@@ -420,35 +443,20 @@ const PoolsRowList = ({
         mb={3}
         width="100%"
       >
-        <ButtonGroup
-          flexFlow={'row wrap'}
-          gap={0}
-          isAttached
-          justifyContent="flex-start"
-          spacing={0}
-        >
-          <CButton
-            disabled={isLoading}
-            isSelected={globalFilter.includes(ALL)}
-            onClick={() => onFilter(ALL)}
-            px={4}
-            variant="filter"
-          >
-            <Text>{isSmallScreen ? 'All' : 'All Chains'}</Text>
-          </CButton>
-          {enabledChains.map((chainId) => {
-            return (
-              <ChainFilterButton
-                chainId={chainId}
-                globalFilter={globalFilter}
-                isLoading={poolsPerChain[chainId.toString()].isLoading}
-                key={chainId}
-                onFilter={onFilter}
-              />
-            );
-          })}
-        </ButtonGroup>
-
+        <ChainFilterButtons
+          globalFilter={globalFilter}
+          isLoading={isLoading}
+          onFilter={onFilter}
+          poolsPerChain={poolsPerChain}
+          props={{ display: { base: 'none', lg: 'inline-flex' } }}
+        />
+        <ChainFilterDropdown
+          globalFilter={globalFilter}
+          isLoading={isLoading}
+          onFilter={onFilter}
+          poolsPerChain={poolsPerChain}
+          props={{ display: { base: 'inline-flex', lg: 'none' } }}
+        />
         <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="center">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
           <PopoverTooltip
@@ -726,47 +734,6 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
       />
     </HStack>
   );
-};
-
-const ChainFilterButton = ({
-  chainId,
-  onFilter,
-  globalFilter,
-  isLoading,
-}: {
-  chainId: SupportedChains;
-  globalFilter: (SupportedChains | string)[];
-  isLoading: boolean;
-  onFilter: (chainId: SupportedChains) => void;
-}) => {
-  const chainConfig = useChainConfig(chainId);
-  const isSmallScreen = useIsSmallScreen();
-
-  return chainConfig ? (
-    <CButton
-      disabled={isLoading}
-      isSelected={globalFilter.includes(chainId)}
-      mx={'-1px'}
-      onClick={() => onFilter(chainId)}
-      px={4}
-      variant="filter"
-    >
-      <HStack>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <Img
-            alt=""
-            borderRadius="50%"
-            height={6}
-            src={chainConfig.specificParams.metadata.img}
-            width={6}
-          />
-        )}
-        {!isSmallScreen && <Text pt="2px">{chainConfig.specificParams.metadata.shortName}</Text>}
-      </HStack>
-    </CButton>
-  ) : null;
 };
 
 export default PoolsRowList;
