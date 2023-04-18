@@ -95,7 +95,7 @@ const ChainFilterButton = ({
               width={6}
             />
           )}
-          <Text display={{ '2xl': 'block', base: 'none' }} pt="2px">
+          <Text display={{ '3xl': 'block', base: 'none' }} pt="2px">
             {chainConfig.specificParams.metadata.shortName}
           </Text>
         </HStack>

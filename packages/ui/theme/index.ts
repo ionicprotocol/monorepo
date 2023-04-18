@@ -53,6 +53,7 @@ export const COLOR_PALETTE = {
 
 export const breakpoints = {
   '2xl': '96em', // 1536px
+  '3xl': '114em', //1824px
   lg: '62em', // 992px
   md: '48em', // 768px
   sm: '30em', // 480px
