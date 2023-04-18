@@ -99,7 +99,7 @@ export const Sidebar = () => {
         <Icon as={SiVault} fontSize="20" mr="4" />
         {!isSidebarCollapsed ? (
           <Text fontSize={16} fontWeight={'bold'}>
-            Vaults
+            Supply Vaults
           </Text>
         ) : null}
       </Flex>

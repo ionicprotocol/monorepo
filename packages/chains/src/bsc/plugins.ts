@@ -3,32 +3,6 @@ import { assetSymbols, DeployedPlugins, Strategy, underlying } from "@midas-capi
 import assets from "./assets";
 
 const deployedPlugins: DeployedPlugins = {
-  // No plugin deployment file stored
-  // Can we delete this?
-  "0x10C90bfCFb3D2A7ae814dA1548ae3a7fC31C35A0": {
-    market: "0x34ea4cbb464E6D120B081661464d4635Ca237FA7",
-    name: "Bomb",
-    strategy: Strategy.Bomb,
-    apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb",
-    strategyDocsUrl:
-      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
-    underlying: underlying(assets, assetSymbols.BOMB),
-    otherParams: ["0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b"], // xBOMB
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/bomb.png",
-  },
-  // No plugin deployment file stored
-  // Can we delete this?
-  "0x6B8B935dfC9Dcd0754eced708b1b633BF73FE854": {
-    market: "0x4cF3D3ca995beEeEd83f67A5C0456A13e038f7b8",
-    name: "Beefy BTCB-BOMB Vault",
-    strategy: Strategy.Bomb,
-    apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb-btcb",
-    strategyDocsUrl:
-      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
-    underlying: underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB
-    otherParams: ["0x94E85B8E050F3F281CB9597cc0144F1F7AF1fe9B", "10"], // beefy vault, withdrawal fee
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/bomb.png",
-  },
   // DotDotLpERC4626_2brl_0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba.json
   "0x23bBcF59BF843cD55c4DA9bDB81429695C87f847": {
     market: "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba",
