@@ -336,7 +336,7 @@ const PoolsRowList = ({
       }
     } else {
       if (globalFilter.includes(ALL)) {
-        _globalFilter = [...enabledChains.filter((f) => f !== filter)];
+        _globalFilter = [filter];
       } else if (
         filter === ALL ||
         enabledChains.length === globalFilter.filter((f) => f !== ALL && f != SEARCH).length + 1
