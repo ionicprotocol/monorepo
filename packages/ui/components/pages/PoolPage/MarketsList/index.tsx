@@ -637,7 +637,6 @@ export const MarketsList = ({
               label="Hide markets you don't supply or borrow from"
               my={3}
               placement="top-end"
-              width={200}
             >
               <span>
                 <CIconButton
