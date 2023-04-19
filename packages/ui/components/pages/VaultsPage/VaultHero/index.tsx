@@ -4,20 +4,20 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
+import { useVaultTVL } from '@ui/hooks/vault/useVaultTVL';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 const MotionFlex = motion<FlexProps>(Flex);
 
 const VaultHero = () => {
-  const { data: tvlData, isLoading } = useTVL();
+  const { data: vaultTvlData, isLoading } = useVaultTVL();
 
-  const totalTVL = useMemo(() => {
-    if (tvlData) {
-      return [...tvlData.values()].reduce((a, c) => a + c.value, 0);
+  const totalVaultTVL = useMemo(() => {
+    if (vaultTvlData) {
+      return [...vaultTvlData.values()].reduce((a, c) => a + c.value, 0);
     }
-  }, [tvlData]);
+  }, [vaultTvlData]);
   const { cPage } = useColors();
 
   return (
@@ -50,9 +50,9 @@ const VaultHero = () => {
 
       <PopoverTooltip
         body={
-          tvlData ? (
+          vaultTvlData ? (
             <VStack alignItems="flex-start" spacing={0} width={'100%'}>
-              {[...tvlData.values()].map((chainTVL, index) => (
+              {[...vaultTvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
@@ -82,12 +82,12 @@ const VaultHero = () => {
           position="relative"
           px={{ lg: '10vw' }}
         >
-          {isLoading || totalTVL === undefined ? (
+          {isLoading || totalVaultTVL === undefined ? (
             <Spinner />
           ) : (
             <>
               <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
-                {smallUsdFormatter(totalTVL)}
+                {smallUsdFormatter(totalVaultTVL)}
               </Text>
             </>
           )}
