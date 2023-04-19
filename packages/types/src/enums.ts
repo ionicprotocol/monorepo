@@ -79,6 +79,7 @@ export enum IrmTypes {
   WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
   AnkrFTMInterestRateModel = "AnkrFTMInterestRateModel",
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
+  AdjustableAnkrBNBIrm = "AdjustableAnkrBNBIrm",
   AdjustableJumpRateModel_PSTAKE_WBNB = "AdjustableJumpRateModel_PSTAKE_WBNB",
   AdjustableJumpRateModel_MIXBYTES_XCDOT = "AdjustableJumpRateModel_MIXBYTES_XCDOT",
   AdjustableJumpRateModel_TRANSFERO_BRZ = "AdjustableJumpRateModel_TRANSFERO_BRZ",
