@@ -11,6 +11,9 @@
     "AddressesProvider_Proxy": {
       "address": "0x01c97299b37E66c03419bC4Db24074a89FB36e6d"
     },
+    "AdjustableAnkrBNBIrm": {
+      "address": "0xAEDDeEBB506A28E91647e00b53FE6E7233abAF92"
+    },
     "AdjustableJumpRateModel_JARVIS_jBRL": {
       "address": "0x5aD28814ae64efb07eED63305659Af68d46D32f2"
     },
@@ -57,7 +60,7 @@
       "address": "0x1D5Db1b87bb5Ca37d0091c0c884C1F961524E5EA"
     },
     "AnkrCertificateTokenPriceOracle_Implementation": {
-      "address": "0xeF9035D4553124398BE71508D944729a4dB1d65C"
+      "address": "0x8f0751eEcF23b2bC01f06284AfBDb70D7Ccc540e"
     },
     "AnkrCertificateTokenPriceOracle_Proxy": {
       "address": "0x1D5Db1b87bb5Ca37d0091c0c884C1F961524E5EA"
@@ -102,7 +105,7 @@
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x161FbE0943Af4A39a50262026A81a243B635982d"
+      "address": "0xcF6b3c34D3758c05e46ebe0BD98A5fa4B1950EAB"
     },
     "CurveLpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
@@ -117,7 +120,7 @@
       "address": "0x461fc4600c4e1B2e99886E9564a223E76C87e336"
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x5ffD348899aD28761d0C30574FdD9c066ecA0bcb"
+      "address": "0x9E327Dd23002c9EE5289cBBB7928fFaB2A6Bfe5f"
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0x461fc4600c4e1B2e99886E9564a223E76C87e336"
@@ -255,7 +258,7 @@
       "address": "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17"
     },
     "JarvisLiquidatorFunder": {
-      "address": "0xC168EAe9F3e900c6b3E0d521ed638b10585A4aFC"
+      "address": "0x89a8deF787d6d6dfd4D032851E44FcC5247D2151"
     },
     "JumpRateModel": {
       "address": "0x8A163f41414c005c3f551f2179bC9Ad8dcadE1C6"
@@ -291,7 +294,7 @@
       "address": "0xEfF15E27eea8bA87C93D972145730165366A935E"
     },
     "MidasFlywheel_AUTOv2_Implementation": {
-      "address": "0x613b8fA09ccF7a045f66dA5Ac27b8451496d35c6"
+      "address": "0x052f960e99FD9d139b8b81948EB60faC59aFfbA5"
     },
     "MidasFlywheel_AUTOv2_Proxy": {
       "address": "0xEfF15E27eea8bA87C93D972145730165366A935E"
@@ -300,7 +303,7 @@
       "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5"
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0x4BaAD5cf3D4a5EF5898f32996AeaA497Cd5deb78"
+      "address": "0xb0562b226468FaF602B928EaDfD6E1695470a546"
     },
     "MidasFlywheel_DDD_Proxy": {
       "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5"
@@ -309,7 +312,7 @@
       "address": "0xF2E46295c684C541d618243558a0af17fb4a6862"
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0x572417380ecE5de92e1157a3721E2B532e26b8BD"
+      "address": "0x0614E7AD514afB81451a3f01597aB19e72C3b1cF"
     },
     "MidasFlywheel_EPX_Proxy": {
       "address": "0xF2E46295c684C541d618243558a0af17fb4a6862"
@@ -348,7 +351,7 @@
       "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE"
     },
     "StkBNBPriceOracle_Implementation": {
-      "address": "0x65b122FCB7cCa699342146e5e16aA685cAD4BE85"
+      "address": "0x196ecDfC9E824Df7dcB148d1254E3E8071183CCA"
     },
     "StkBNBPriceOracle_Proxy": {
       "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE"
