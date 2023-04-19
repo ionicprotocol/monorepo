@@ -545,14 +545,35 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(wombatLpTokenLiquidator.transactionHash);
   console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
 
+  //// deploy ankr bnb adjustable interest rate model
+  const abairm = await deployments.deploy("AdjustableAnkrBNBIrm", {
+    from: deployer,
+    args: [
+      {
+        blocksPerYear: deployConfig.blocksPerYear,
+        multiplierPerYear: ethers.utils.parseEther("0.4").toString(),
+        jumpMultiplierPerYear: ethers.utils.parseEther("4").toString(),
+        kink: ethers.utils.parseEther("0.75").toString(),
+      },
+      {
+        day: 3,
+        rate_provider: "0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eBa",
+        abond: "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827",
+      },
+    ],
+    log: true,
+  });
+  if (abairm.transactionHash) await ethers.provider.waitForTransaction(abairm.transactionHash);
+  console.log("AnkrBNBInterestRateModel: ", abairm.address);
+
   //// deploy ankr bnb interest rate model
   const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      "5000000000000000",
-      "3000000000000000000",
-      "800000000000000000",
+      ethers.utils.parseEther("0.005").toString(),
+      ethers.utils.parseEther("3").toString(),
+      ethers.utils.parseEther("0.8").toString(),
       3,
       "0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eBa",
       "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827",

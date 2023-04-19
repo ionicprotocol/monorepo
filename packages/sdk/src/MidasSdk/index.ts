@@ -46,6 +46,7 @@ import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { withVaults } from "../modules/Vaults";
 
 import { CTOKEN_ERROR_CODES } from "./config";
+import AdjustableAnkrBNBIrm from "./irm/AdjustableAnkrBNBIrm";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
 import AnkrBNBInterestRateModel from "./irm/AnkrBNBInterestRateModel";
 import AnkrFTMInterestRateModel from "./irm/AnkrFTMInterestRateModel";
@@ -289,6 +290,7 @@ export class MidasBase {
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
       AnkrFTMInterestRateModel: AnkrFTMInterestRateModel,
       AdjustableJumpRateModel: AdjustableJumpRateModel,
+      AdjustableAnkrBNBIrm: AdjustableAnkrBNBIrm,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 
