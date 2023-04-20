@@ -205,10 +205,9 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
               height="250px"
               width="100%"
             >
-              <VStack height="100%" spacing={0}>
+              <VStack height="100%" justifyContent="space-evenly" spacing={0}>
                 <Grid
-                  gap={0}
-                  my={8}
+                  gap={{ base: 4, md: 2 }}
                   templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
                   width="100%"
                 >
