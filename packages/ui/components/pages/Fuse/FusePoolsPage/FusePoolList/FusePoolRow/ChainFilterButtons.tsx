@@ -6,19 +6,18 @@ import { CButton } from '@ui/components/shared/Button';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { ALL } from '@ui/constants/index';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
-import type { PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 
 export const ChainFilterButtons = ({
-  isLoading,
   globalFilter,
+  isLoading,
+  loadingStatusPerChain,
   onFilter,
-  poolsPerChain,
   props,
 }: {
   globalFilter: (SupportedChains | string)[];
   isLoading: boolean;
+  loadingStatusPerChain: { [chainId: string]: boolean };
   onFilter: (filter: SupportedChains | string) => void;
-  poolsPerChain: PoolsPerChainStatus;
   props?: ButtonGroupProps;
 }) => {
   const enabledChains = useEnabledChains();
@@ -50,7 +49,7 @@ export const ChainFilterButtons = ({
           <ChainFilterButton
             chainId={chainId}
             globalFilter={globalFilter}
-            isLoading={poolsPerChain[chainId.toString()].isLoading}
+            isLoading={loadingStatusPerChain[chainId.toString()]}
             key={chainId}
             onFilter={onFilter}
           />

@@ -71,6 +71,13 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
   },
+  {
+    symbol: assetSymbols.BOMB,
+    underlying: "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768",
+    name: "Testing Bomb",
+    decimals: 18,
+    oracle: OracleTypes.SimplePriceOracle,
+  },
 ];
 
 export default assets;

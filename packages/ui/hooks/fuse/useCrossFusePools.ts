@@ -88,8 +88,9 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
     }),
   });
 
-  const [poolsPerChain, isLoading, error] = useMemo(() => {
+  const [allPools, poolsPerChain, isLoading, error] = useMemo(() => {
     const _poolsPerChain: PoolsPerChainStatus = {};
+    const allPools: PoolData[] = [];
 
     let isLoading = true;
     let isError = true;
@@ -105,10 +106,14 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
         error: pools.error as Err | undefined,
         isLoading: pools.isLoading,
       };
+
+      if (pools.data) {
+        allPools.push(...pools.data);
+      }
     });
 
-    return [_poolsPerChain, isLoading, error];
+    return [allPools, _poolsPerChain, isLoading, error];
   }, [poolsQueries, chainIds]);
 
-  return { error, isLoading, poolsPerChain };
+  return { allPools, error, isLoading, poolsPerChain };
 };

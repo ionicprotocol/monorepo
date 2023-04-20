@@ -41,6 +41,7 @@ export const PoolName = ({
             as={Link}
             height="auto"
             m={0}
+            maxWidth="100%"
             minWidth={6}
             onClick={(e) => {
               e.stopPropagation();
@@ -55,6 +56,7 @@ export const PoolName = ({
             }}
             p={0}
             variant="_link"
+            width="fit-content"
           >
             <Box maxWidth="100%" width="fit-content">
               <GradientText
@@ -64,6 +66,7 @@ export const PoolName = ({
                   claimableRewards && claimableRewards.length > 0 && !isHovering ? true : false
                 }
                 maxWidth="100%"
+                overflow="hidden"
                 size="lg"
                 textOverflow="ellipsis"
                 whiteSpace="nowrap"

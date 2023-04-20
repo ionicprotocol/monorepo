@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { BsChatLeftTextFill, BsFillHouseFill, BsHouseAddFill } from 'react-icons/bs';
 import { ImUser } from 'react-icons/im';
+import { SiVault } from 'react-icons/si';
 
 import Footer from '@ui/components/pages/Layout/Footer';
 import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
@@ -72,7 +73,7 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
           Pools
         </Text>
       </Flex>
-      {/* <Flex
+      <Flex
         _hover={{
           bg: cCard.hoverBgColor,
           color: cCard.txtColor,
@@ -93,7 +94,7 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
         <Text fontSize={16} fontWeight={'bold'}>
           Vaults
         </Text>
-      </Flex> */}
+      </Flex>
       {address ? (
         <Flex
           _hover={{
