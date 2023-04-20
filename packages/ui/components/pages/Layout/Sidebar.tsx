@@ -28,7 +28,7 @@ export const Sidebar = () => {
         alignItems="center"
         h="16"
         justifyContent="space-between"
-        mx={isSidebarCollapsed ? 5 : 8}
+        mx={isSidebarCollapsed ? '18px' : 8}
       >
         <Box
           _hover={{ cursor: 'pointer' }}

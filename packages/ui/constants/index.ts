@@ -99,6 +99,7 @@ export const ankrBNBContractABI = [
 ];
 
 export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
+export const VAULTS_COUNT_PER_PAGE = [25, 50, 75];
 export const POOLS_COUNT_PER_PAGE = [25, 50, 75];
 
 export const REWARDS = 'Rewards';
@@ -176,6 +177,9 @@ export const MARKET_COLUMNS = [
   LIQUIDITY,
 ];
 
+export const VAULT = 'Vault';
+export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
+
 export const POOL_NAME = 'Pool Name';
 export const ASSETS = 'Assets';
 export const CHAIN = 'Chain';
@@ -195,3 +199,22 @@ export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-reque
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
 export const HIGH_RISK_RATIO = 0.8;
+
+export const VAULT_SUPPLY_STEPS = (symbol: string) =>
+  [
+    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    {
+      desc: `Mints tokens which represent your share in the ${symbol} vault`,
+      done: false,
+      title: 'Mint Vault Share',
+    },
+  ] as TxStep[];
+
+export const VAULT_WITHDRAW_STEPS = (symbol: string) =>
+  [
+    {
+      desc: `Withdraws supplied liquidity of ${symbol} from the vault`,
+      done: false,
+      title: 'Withdraw',
+    },
+  ] as TxStep[];

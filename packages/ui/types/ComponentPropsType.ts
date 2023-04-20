@@ -1,6 +1,6 @@
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset, VaultData } from '@midas-capital/types';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import type { ReactNode } from 'react';
@@ -245,6 +245,14 @@ export type APYResponse = {
 export type PoolsPerChainStatus = {
   [chainId: string]: {
     data?: PoolData[] | null | undefined;
+    error: Error | undefined;
+    isLoading: boolean;
+  };
+};
+
+export type VaultsPerChainStatus = {
+  [chainId: string]: {
+    data?: VaultData[] | null | undefined;
     error: Error | undefined;
     isLoading: boolean;
   };
