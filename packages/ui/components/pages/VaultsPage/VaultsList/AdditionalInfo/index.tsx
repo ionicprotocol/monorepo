@@ -233,49 +233,59 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
                     tooltip={ADMIN_FEE_TOOLTIP}
                   />
                 </Grid>
-                <VStack alignItems="flex-end">
+                <VStack alignItems="center" justifyContent="center">
                   <Text>Vault Composition</Text>
                   {Object.values(comptrollerToPool).length > 0 ? (
                     Object.values(comptrollerToPool).map((info, i) => {
                       return (
-                        <HStack key={i}>
-                          <Stack alignItems="flex-end" maxWidth={'300px'} minWidth={'150px'}>
-                            <SimpleTooltip label={info.poolName}>
-                              <Button
-                                as={Link}
-                                height="auto"
-                                m={0}
-                                maxWidth="100%"
-                                minWidth={6}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setGlobalLoading(true);
-                                  router.push(`/${chainId}/pool/${info.poolId}`);
-                                }}
-                                p={0}
-                                variant="_link"
-                                width="fit-content"
-                              >
-                                <Box maxWidth="100%" width="fit-content">
-                                  <GradientText
-                                    _hover={{ color: cCard.borderColor }}
-                                    fontWeight="bold"
-                                    isEnabled={false}
+                        <HStack key={i} spacing={{ base: 2, md: 4 }}>
+                          <Text>{i + 1}</Text>
+                          <Text>-</Text>
+                          <Flex direction={{ base: 'column', md: 'row' }} gap={{ base: 0, md: 4 }}>
+                            <HStack>
+                              <Text>Allocation :</Text>
+                              <Text fontWeight="bold">{info.allocation * 100}%</Text>
+                            </HStack>
+                            <HStack>
+                              <Text>Pool Name :</Text>
+                              <Stack alignItems="flex-start" maxWidth={'250px'} minWidth={'150px'}>
+                                <SimpleTooltip label={info.poolName}>
+                                  <Button
+                                    as={Link}
+                                    height="auto"
+                                    m={0}
                                     maxWidth="100%"
-                                    overflow="hidden"
-                                    size="lg"
-                                    textOverflow="ellipsis"
-                                    whiteSpace="nowrap"
+                                    minWidth={6}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setGlobalLoading(true);
+                                      router.push(`/${chainId}/pool/${info.poolId}`);
+                                    }}
+                                    p={0}
+                                    textDecoration="underline"
+                                    variant="_link"
                                     width="fit-content"
                                   >
-                                    {info.poolName}
-                                  </GradientText>
-                                </Box>
-                              </Button>
-                            </SimpleTooltip>
-                          </Stack>
-                          <Text>:</Text>
-                          <Text fontWeight="bold">{info.allocation * 100}%</Text>
+                                    <Box maxWidth="100%" width="fit-content">
+                                      <GradientText
+                                        _hover={{ color: cCard.borderColor }}
+                                        fontWeight="bold"
+                                        isEnabled={false}
+                                        maxWidth="100%"
+                                        overflow="hidden"
+                                        size="lg"
+                                        textOverflow="ellipsis"
+                                        whiteSpace="nowrap"
+                                        width="fit-content"
+                                      >
+                                        {info.poolName}
+                                      </GradientText>
+                                    </Box>
+                                  </Button>
+                                </SimpleTooltip>
+                              </Stack>
+                            </HStack>
+                          </Flex>
                         </HStack>
                       );
                     })
