@@ -8,7 +8,7 @@ export function useColors() {
       bgColor: useColorModeValue(COLOR_PALETTE.whiteBg, COLOR_PALETTE.raisinBlack),
       borderColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),
       dividerColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru30),
-      hoverColor: useColorModeValue(COLOR_PALETTE.silverMetallic30, COLOR_PALETTE.ecru20),
+      hoverColor: useColorModeValue(COLOR_PALETTE.ecru30alpha, COLOR_PALETTE.ecru30),
       txtColor: useColorModeValue(COLOR_PALETTE.raisinBlack, COLOR_PALETTE.whiteBg),
     },
     secondary: {
@@ -50,8 +50,8 @@ export function useColors() {
     bgColor: useColorModeValue(COLOR_PALETTE.whiteBg, COLOR_PALETTE.raisinBlack),
     borderColor: cPage.primary.borderColor,
     dividerColor: cPage.primary.dividerColor,
-    headingBgColor: useColorModeValue(COLOR_PALETTE.silverMetallic50, COLOR_PALETTE.ecru30),
-    hoverBgColor: useColorModeValue(COLOR_PALETTE.silverMetallic20, COLOR_PALETTE.ecru10),
+    headingBgColor: useColorModeValue(COLOR_PALETTE.ecru30alpha, COLOR_PALETTE.ecru30),
+    hoverBgColor: useColorModeValue(COLOR_PALETTE.ecru10alpha, COLOR_PALETTE.ecru10),
     txtColor: useColorModeValue(COLOR_PALETTE.raisinBlack, COLOR_PALETTE.white),
   };
 
@@ -62,7 +62,7 @@ export function useColors() {
   const cSelect = {
     bgColor: useColorModeValue(COLOR_PALETTE.whiteBg, COLOR_PALETTE.raisinBlack),
     borderColor: cPage.primary.borderColor,
-    hoverBgColor: useColorModeValue(COLOR_PALETTE.silverMetallic30, COLOR_PALETTE.ecru30),
+    hoverBgColor: useColorModeValue(COLOR_PALETTE.ecru10alpha, COLOR_PALETTE.ecru10),
     txtColor: useColorModeValue(COLOR_PALETTE.gunmetal, COLOR_PALETTE.ecru),
   };
 

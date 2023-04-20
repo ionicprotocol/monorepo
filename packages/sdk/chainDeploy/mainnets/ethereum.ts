@@ -2,9 +2,14 @@ import { ethereum } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle } from "../helpers";
-import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, ERC4626Asset } from "../helpers/types";
-import {} from "../helpers/oracles/erc4626";
+import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle, deployUniswapV3Oracle } from "../helpers";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  ChainlinkFeedBaseCurrency,
+  ConcentratedLiquidityOracleConfig,
+  ERC4626Asset,
+} from "../helpers/types";
 
 const assets = ethereum.assets;
 const USDC = underlying(assets, assetSymbols.USDC);
@@ -74,6 +79,21 @@ const erc4626Assets: ERC4626Asset[] = [
   },
 ];
 
+const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
+  {
+    assetAddress: underlying(assets, assetSymbols.PAR),
+    poolAddress: "0xD7Dcb0eb6AaB643b85ba74cf9997c840fE32e695",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: USDC,
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.GOHM),
+    poolAddress: "0xcF7e21b96a7DAe8e1663b5A266FD812CBE973E70",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: USDC,
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -88,6 +108,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     assets: assets,
     chainlinkAssets,
+  });
+
+  //// deploy uniswap v3 price oracle
+  await deployUniswapV3Oracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    concentratedLiquidityOracleTokens: uniswapV3OracleTokens,
   });
 
   // ERC4626 Oracle

@@ -51,7 +51,17 @@ export const COLOR_PALETTE = {
   whiteBg: '#F6F4F1',
 };
 
+export const breakpoints = {
+  '2xl': '96em', // 1536px
+  '3xl': '114em', //1824px
+  lg: '62em', // 992px
+  md: '48em', // 768px
+  sm: '30em', // 480px
+  xl: '80em', // 1280px
+};
+
 export const theme = extendTheme({
+  breakpoints,
   colors: {
     cyan: {
       ...DefaultTheme.colors.cyan,

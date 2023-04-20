@@ -5,12 +5,9 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import ClaimAllRewardsButton from '@ui/components/shared/ClaimAllRewardsButton';
 import { Row } from '@ui/components/shared/Flex';
-import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 export const WalletButtons = memo(() => {
-  const isMobile = useIsSmallScreen();
-
   return (
     <Row crossAxisAlignment="center" gap={2} mainAxisAlignment="center">
       <ClaimAllRewardsButton />
@@ -51,11 +48,9 @@ export const WalletButtons = memo(() => {
                           width={6}
                         />
                       )}
-                      {!isMobile && (
-                        <Text color="raisinBlack" ml={2}>
-                          {chain.name}
-                        </Text>
-                      )}
+                      <Text color="raisinBlack" display={{ base: 'none', md: 'flex' }} ml={2}>
+                        {chain.name}
+                      </Text>
                     </Button>
                     <Button onClick={openAccountModal} px={2}>
                       {account.hasPendingTransactions ? (
@@ -63,14 +58,16 @@ export const WalletButtons = memo(() => {
                           <Center height="100%">
                             <Spinner size="md" speed="1s" thickness="4px" />
                           </Center>
-                          {!isMobile && <Text color="raisinBlack">Pending</Text>}
+                          <Text color="raisinBlack" display={{ base: 'none', md: 'flex' }}>
+                            Pending
+                          </Text>
                         </HStack>
                       ) : (
                         <HStack>
                           {<Jazzicon diameter={23} seed={jsNumberForAddress(account.address)} />}
-                          {!isMobile && (
-                            <Text color="raisinBlack">{shortAddress(account.address)}</Text>
-                          )}
+                          <Text color="raisinBlack" display={{ base: 'none', md: 'flex' }}>
+                            {shortAddress(account.address)}
+                          </Text>
                         </HStack>
                       )}
                     </Button>

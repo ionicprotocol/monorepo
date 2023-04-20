@@ -1,12 +1,17 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Drawer, DrawerContent, Flex, useDisclosure } from '@chakra-ui/react';
 
-import Footer from '@ui/components/pages/Layout/Footer';
-import { MidasNavbar } from '@ui/components/pages/Layout/MidasNavbar';
+import { Header } from './Header';
+import { Sidebar } from './Sidebar';
+import { SidebarMobile } from './SidebarMobile';
+
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import type { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
 
 const FusePageLayout = ({ children }: FusePageLayoutProps) => {
   const { cPage } = useColors();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isSidebarCollapsed } = useMultiMidas();
 
   return (
     <Flex
@@ -16,9 +21,31 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
       justifyContent="flex-start"
       minH="100vh"
     >
-      <MidasNavbar />
-      {children}
-      <Footer />
+      <Sidebar />
+      <Drawer
+        autoFocus={false}
+        isOpen={isOpen}
+        onClose={onClose}
+        onOverlayClick={onClose}
+        placement="left"
+        returnFocusOnClose={false}
+        size="full"
+      >
+        <DrawerContent bg={cPage.primary.bgColor}>
+          <SidebarMobile onClose={onClose} />
+        </DrawerContent>
+      </Drawer>
+      <Header onOpen={onOpen} />
+      <Box
+        ml={{ base: 0, md: isSidebarCollapsed ? '86px' : '240px' }}
+        p={{ base: 4, md: 8 }}
+        width={{
+          base: '100%',
+          md: isSidebarCollapsed ? 'calc(100% - 86px)' : 'calc(100% - 240px)',
+        }}
+      >
+        {children}
+      </Box>
     </Flex>
   );
 };
