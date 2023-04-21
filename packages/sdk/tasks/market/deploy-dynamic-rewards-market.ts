@@ -14,9 +14,9 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
   .addParam("comptroller", "Comptroller address", undefined, types.string)
   .addParam("symbol", "Symbols of assets for which to deploy the plugin", undefined, types.string)
   .addParam("contractName", "Name of the contract of the plugin", undefined, types.string)
-  .addParam("pluginExtraParams", "Extra plugin parameters", undefined, types.string)
   .addParam("fwAddresses", "Flywheel address, one for each reward token", undefined, types.string)
   .addParam("rewardTokens", "Reward tokens", undefined, types.string)
+  .addOptionalParam("pluginExtraParams", "Extra plugin parameters", undefined, types.string)
   .setAction(async (taskArgs, { run, ethers, deployments }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
     // @ts-ignore
@@ -36,7 +36,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     const marketAddress = await sdk
       .createComptroller(comptroller, signer)
       .callStatic.cTokensByUnderlying(underlyingAddress);
-    const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
+    const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress, signer);
 
     const cTokenImplementation = await cToken.callStatic.implementation();
     console.log({ marketAddress });
