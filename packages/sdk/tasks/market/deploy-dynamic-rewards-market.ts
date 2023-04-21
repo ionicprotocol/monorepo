@@ -27,7 +27,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     // task argument parsing
     const comptroller = taskArgs.comptroller;
     const contractName = taskArgs.contractName;
-    const pluginExtraParams = taskArgs.pluginExtraParams.split(",");
+    const pluginExtraParams = taskArgs.pluginExtraParams ? taskArgs.pluginExtraParams.split(",") : [];
     const rewardTokens = taskArgs.rewardTokens.split(",");
     const fwAddresses = taskArgs.fwAddresses.split(",");
     const symbol = taskArgs.symbol;
@@ -40,7 +40,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
 
     const cTokenImplementation = await cToken.callStatic.implementation();
     console.log({ marketAddress });
-    const deployArgs = [underlyingAddress, ...pluginExtraParams, marketAddress, rewardTokens];
+    const deployArgs = [underlyingAddress, ...pluginExtraParams, marketAddress, fwAddresses[0]];
 
     // STEP 1: deploy plugins
     console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);

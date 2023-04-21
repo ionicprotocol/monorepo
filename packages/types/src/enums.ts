@@ -233,6 +233,7 @@ export enum assetSymbols {
   pSTAKE = "pSTAKE",
   ANKR = "ANKR",
   SD = "SD", // stader labs
+  THE = "THE",
 
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
@@ -375,6 +376,7 @@ export enum assetSymbols {
   IXT = "IXT",
   GNS = "GNS",
   "DAI-GNS" = "DAI-GNS",
+  "IXT-USDT" = "IXT-USDT",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
