@@ -47,7 +47,7 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
       throw 'ThenaAPYProvider: Not initialized';
     }
 
-    const apy = this.thenaAPYs[pluginData.underlying];
+    const apy = this.thenaAPYs[pluginData.underlying.toLowerCase()];
 
     if (apy === undefined) {
       await functionsAlert(
