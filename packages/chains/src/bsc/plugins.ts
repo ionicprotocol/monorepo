@@ -232,6 +232,17 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xb36fffD0174B2eC18D82d21BB2e24b132ecBA5b0", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
+  // ThenaLpERC4626_vAMM-HAY-ankrBNB_0x04b6895d7AD8b10a1a13C749159226249a3b8515
+  "0xE141ce7507656f9b2c45d06d649961Eb84e19f82": {
+    market: "0x04b6895d7AD8b10a1a13C749159226249a3b8515",
+    name: "Thena vAMM-HAY-ankrBNB LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"])}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"]),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
 };
 
 export default deployedPlugins;
