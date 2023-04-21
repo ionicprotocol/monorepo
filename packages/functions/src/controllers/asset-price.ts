@@ -40,19 +40,15 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
     const results = await Promise.all(
       config.assets.map(async (asset) => {
         try {
-          const res = await mpo.callStatic.oracles(asset.underlying);
-
-          if (!BigNumber.from(res).eq(constants.AddressZero)) {
-            const underlyingPrice = await mpo.callStatic.price(asset.underlying);
-            const underlyingPriceNum = Number(utils.formatUnits(underlyingPrice));
-            const usdPrice = underlyingPriceNum * price;
-            return {
-              chainId,
-              underlyingAddress: asset.underlying,
-              underlyingPriceNum: underlyingPriceNum,
-              usdPrice,
-            };
-          }
+          const underlyingPrice = await mpo.callStatic.price(asset.underlying);
+          const underlyingPriceNum = Number(utils.formatUnits(underlyingPrice));
+          const usdPrice = underlyingPriceNum * price;
+          return {
+            chainId,
+            underlyingAddress: asset.underlying,
+            underlyingPriceNum: underlyingPriceNum,
+            usdPrice,
+          };
         } catch (exception) {
           console.error(exception);
           await functionsAlert(
