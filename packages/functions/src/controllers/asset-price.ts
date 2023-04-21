@@ -1,5 +1,5 @@
 import { ChainSupportedAssets, SupportedChains } from '@midas-capital/types';
-import { utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { MidasSdk } from '@midas-capital/sdk';
@@ -68,15 +68,19 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
     const results = await Promise.all(
       assets.map(async (asset) => {
         try {
-          const underlyingPrice = await mpo.callStatic.price(asset.underlying);
-          const underlyingPriceNum = Number(utils.formatUnits(underlyingPrice));
-          const usdPrice = underlyingPriceNum * price;
-          return {
-            chainId,
-            underlyingAddress: asset.underlying,
-            underlyingPriceNum: underlyingPriceNum,
-            usdPrice,
-          };
+          const res = await mpo.callStatic.oracles(asset.underlying);
+
+          if (!BigNumber.from(res).eq(constants.AddressZero)) {
+            const underlyingPrice = await mpo.callStatic.price(asset.underlying);
+            const underlyingPriceNum = Number(utils.formatUnits(underlyingPrice));
+            const usdPrice = underlyingPriceNum * price;
+            return {
+              chainId,
+              underlyingAddress: asset.underlying,
+              underlyingPriceNum: underlyingPriceNum,
+              usdPrice,
+            };
+          }
         } catch (exception) {
           console.error(exception);
           await functionsAlert(
