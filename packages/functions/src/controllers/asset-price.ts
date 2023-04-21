@@ -5,35 +5,8 @@ import { environment, supabase } from '../config';
 import { MidasSdk } from '@midas-capital/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
-import {
-  arbitrum,
-  basegoerli,
-  bsc,
-  chainIdToConfig,
-  chapel,
-  ethereum,
-  evmos,
-  fantom,
-  ganache,
-  moonbeam,
-  neondevnet,
-  polygon,
-} from '@midas-capital/chains';
+import { chainIdToConfig } from '@midas-capital/chains';
 import axios from 'axios';
-
-export const chainSupportedAssets: ChainSupportedAssets = {
-  [SupportedChains.bsc]: bsc.assets,
-  [SupportedChains.polygon]: polygon.assets,
-  [SupportedChains.ganache]: ganache.assets,
-  [SupportedChains.evmos]: evmos.assets,
-  [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.moonbeam]: moonbeam.assets,
-  [SupportedChains.neon_devnet]: neondevnet.assets,
-  [SupportedChains.arbitrum]: arbitrum.assets,
-  [SupportedChains.fantom]: fantom.assets,
-  [SupportedChains.basegoerli]: basegoerli.assets,
-  [SupportedChains.ethereum]: ethereum.assets,
-};
 
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
@@ -46,7 +19,6 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
       config
     );
     const mpo = sdk.createMasterPriceOracle();
-    const assets = chainSupportedAssets[chainId];
 
     //get USD price
     const cgId = config.specificParams.cgId;
@@ -66,7 +38,7 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
     }
 
     const results = await Promise.all(
-      assets.map(async (asset) => {
+      config.assets.map(async (asset) => {
         try {
           const res = await mpo.callStatic.oracles(asset.underlying);
 
