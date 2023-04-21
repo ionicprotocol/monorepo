@@ -1,4 +1,4 @@
-import { ChainSupportedAssets, SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@midas-capital/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
