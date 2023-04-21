@@ -25,7 +25,7 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
     const thenaResponse = await axios
       .get(ThenaAPYProvider.apyEndpoint)
       .then((response) => response.data)
-      .then((data) => ThenaAPYResponse.parse(data));
+      .then((data) => ThenaAPYResponse.parse(data.data));
 
     this.thenaAPYs = thenaResponse.reduce((acc, cur) => {
       return {
