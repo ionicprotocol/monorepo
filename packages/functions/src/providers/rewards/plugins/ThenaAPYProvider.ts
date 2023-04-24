@@ -57,12 +57,14 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
       config
     );
     const mpo = sdk.createMasterPriceOracle();
+    const flywheelContract = sdk.createMidasFlywheel(pluginData.flywheel, sdk.provider);
 
-    const [theUsdPriceBig, lpTokenUsdPriceBig, rewardRateBig, totalSupplyBig] = await Promise.all([
+    const [theUsdPriceBig, lpTokenUsdPriceBig, rewardRateBig, totalSupplyBig, rewardToken] = await Promise.all([
       mpo.callStatic.price(theAsset.underlying),
       mpo.callStatic.price(pluginData.underlying),
       gaugeV2Contract.callStatic.rewardRate(),
       gaugeV2Contract.callStatic.totalSupply(),
+      flywheelContract.callStatic.rewardToken()
     ]);
     const rewardRate = Number(utils.formatUnits(rewardRateBig));
     const totalSupply = Number(utils.formatUnits(totalSupplyBig));
@@ -83,6 +85,8 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
       {
         apy: apy,
         plugin: pluginAddress,
+        flywheel: pluginData.flywheel,
+        token: rewardToken,
         updated_at: new Date().toISOString(),
       },
     ];
