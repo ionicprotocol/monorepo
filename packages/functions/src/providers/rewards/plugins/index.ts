@@ -6,6 +6,7 @@ import DotDotAPYProvider from './DotDotAPYProvider';
 import HelioAPYProvider from './HelioAPYProvider';
 import MimoAPYProvider from './MimoAPYProvider';
 import StellaSwapAPYProvider from './StellaSwapAPYProvider';
+import ThenaAPYProvider from './ThenaAPYProvider';
 
 type ProviderMap = Partial<{
   [key in Strategy]: AbstractPluginAPYProvider;
@@ -18,6 +19,7 @@ const providerMap: ProviderMap = {
   [Strategy.CurveGauge]: CurveGaugeAPYProvider,
   [Strategy.HelioHAY]: HelioAPYProvider,
   [Strategy.Stella]: StellaSwapAPYProvider,
+  [Strategy.ThenaERC4626]: ThenaAPYProvider,
 };
 
 export async function getAPYProviders(initObj: APYProviderInitObject): Promise<ProviderMap> {

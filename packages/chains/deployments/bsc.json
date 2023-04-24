@@ -29,6 +29,15 @@
     "AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB": {
       "address": "0x109fa5BC7665c56CD145A0590A3b82A9E4bd3e1E"
     },
+    "AlgebraPriceOracle": {
+      "address": "0xA4C55B159824470a710e5131Faec37969b2F32Ab"
+    },
+    "AlgebraPriceOracle_Implementation": {
+      "address": "0xBC76A6c346A87e1033F6d62bfAfD14aE575194fD"
+    },
+    "AlgebraPriceOracle_Proxy": {
+      "address": "0xA4C55B159824470a710e5131Faec37969b2F32Ab"
+    },
     "AlpacaERC4626_BETH": {
       "address": "0xCBE401B8874A1C30163740f5f45156088Eb21481"
     },
@@ -75,13 +84,13 @@
       "address": "0x23B1ff27D97eF804fC0F100af7Bc5911D07f79d3"
     },
     "CErc20Delegate": {
-      "address": "0x74517010927Ad1a0219595070f6d70cc7CdbBfc3"
+      "address": "0x8E156d3cC38616C7FaB451069ecDEFc14469EA55"
     },
     "CErc20PluginDelegate": {
-      "address": "0xBdfB1cdCeC6c86eDFEb1E06F7Ad8F72aF21978Ca"
+      "address": "0xc1261803b3C4a0757fAec489F2F9c11440aa5Ce8"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xfaCEF17d6eF89d85Fa11f89C7c9C161658798283"
+      "address": "0xb8729Ec632f4afdf66b49658e3FaDDd48302fD54"
     },
     "CEtherDelegate": {
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
@@ -93,7 +102,7 @@
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
     },
     "Comptroller": {
-      "address": "0x789eA0BDC85D385CD728e9ff261aF5738667d6e0"
+      "address": "0x7dde570f479587D9993c340fc38C8e9e3Db90095"
     },
     "ComptrollerFirstExtension": {
       "address": "0xBB9A827f23c1352f33Be91160c36b2eE05a13C9a"
@@ -317,6 +326,24 @@
     "MidasFlywheel_EPX_Proxy": {
       "address": "0xF2E46295c684C541d618243558a0af17fb4a6862"
     },
+    "MidasFlywheel_THE": {
+      "address": "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74"
+    },
+    "MidasFlywheel_THE_Implementation": {
+      "address": "0xF01057bEb023b3ACC8D6D7D43a15dE5D8570f19b"
+    },
+    "MidasFlywheel_THE_Proxy": {
+      "address": "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74"
+    },
+    "OptimizedVaultsRegistry": {
+      "address": "0xFbD283c802233d56Ba45F4E86d2C500d5B88006a"
+    },
+    "OptimizedVaultsRegistry_Implementation": {
+      "address": "0x6FEE86968fE32106B9355d3Cb267c3d687633396"
+    },
+    "OptimizedVaultsRegistry_Proxy": {
+      "address": "0xFbD283c802233d56Ba45F4E86d2C500d5B88006a"
+    },
     "ReplacingFlywheelDynamicRewards_AUTOv2": {
       "address": "0xD5b4395736457104624587038961e967CdEAe937"
     },
@@ -325,6 +352,9 @@
     },
     "ReplacingFlywheelDynamicRewards_EPX": {
       "address": "0xc534e0E748d7143736E5E19b77F5dec6623389A0"
+    },
+    "ReplacingFlywheelDynamicRewards_THE": {
+      "address": "0x74475506d18fa05d38ad628330d3eb34283a7ec8"
     },
     "SimplePriceOracle": {
       "address": "0x5425F12dD3Fbc16deB3c6693d85B52b77fb59eaE"
@@ -355,6 +385,42 @@
     },
     "StkBNBPriceOracle_Proxy": {
       "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE"
+    },
+    "ThenaLpERC4626_sAMM-HAY-BUSD_0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB": {
+      "address": "0x02706A482fc9f6B20238157B56763391a45bE60E"
+    },
+    "ThenaLpERC4626_sAMM-HAY-BUSD_0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB_Implementation": {
+      "address": "0xC3F159eB41b75BF79bbC099AFB63ED0c74d6aEC5"
+    },
+    "ThenaLpERC4626_sAMM-HAY-BUSD_0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB_Proxy": {
+      "address": "0x02706A482fc9f6B20238157B56763391a45bE60E"
+    },
+    "ThenaLpERC4626_vAMM-ANKR-HAY_0xbc65FE441545E9e8f97E50F70526B7E8963826bc": {
+      "address": "0x52156377Dbe031706cfAb4e759cA102e58A19953"
+    },
+    "ThenaLpERC4626_vAMM-ANKR-HAY_0xbc65FE441545E9e8f97E50F70526B7E8963826bc_Implementation": {
+      "address": "0xc7c100192fE5330d1767eBA5a8ACCd149E1AE230"
+    },
+    "ThenaLpERC4626_vAMM-ANKR-HAY_0xbc65FE441545E9e8f97E50F70526B7E8963826bc_Proxy": {
+      "address": "0x52156377Dbe031706cfAb4e759cA102e58A19953"
+    },
+    "ThenaLpERC4626_vAMM-ANKR-ankrBNB_0x71693C84486B37096192c9942852f542543639Bf": {
+      "address": "0x0c0e8ED68a72c31E657Ce5F03A615FB96753C9b5"
+    },
+    "ThenaLpERC4626_vAMM-ANKR-ankrBNB_0x71693C84486B37096192c9942852f542543639Bf_Implementation": {
+      "address": "0x8Ed68aec909477c6Fae8e479A19C69C0fece09ab"
+    },
+    "ThenaLpERC4626_vAMM-ANKR-ankrBNB_0x71693C84486B37096192c9942852f542543639Bf_Proxy": {
+      "address": "0x0c0e8ED68a72c31E657Ce5F03A615FB96753C9b5"
+    },
+    "ThenaLpERC4626_vAMM-HAY-ankrBNB_0x04b6895d7AD8b10a1a13C749159226249a3b8515": {
+      "address": "0xE141ce7507656f9b2c45d06d649961Eb84e19f82"
+    },
+    "ThenaLpERC4626_vAMM-HAY-ankrBNB_0x04b6895d7AD8b10a1a13C749159226249a3b8515_Implementation": {
+      "address": "0x0Bfc9B10Aa220481Fb0Cb93fF004880684b4ed12"
+    },
+    "ThenaLpERC4626_vAMM-HAY-ankrBNB_0x04b6895d7AD8b10a1a13C749159226249a3b8515_Proxy": {
+      "address": "0xE141ce7507656f9b2c45d06d649961Eb84e19f82"
     },
     "UniswapLpTokenLiquidator": {
       "address": "0xE1B50506e2fE039ED593FBbde14608559aE97d27"

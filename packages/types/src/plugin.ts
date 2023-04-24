@@ -8,6 +8,7 @@ export enum Strategy {
   CurveGauge = "CurveGaugeERC4626",
   MiniChefV2 = "MiniChefV2",
   HelioHAY = "HelioHAY",
+  ThenaERC4626 = "ThenaERC4626",
 }
 
 export interface AbstractPlugin {
@@ -77,6 +78,14 @@ export interface CurveGaugePlugin extends AbstractPlugin {
   icon: "https://d1912tcoux65lj.cloudfront.net/plugin/curve.png";
 }
 
+export interface ThenaERC4626Plugin extends AbstractPlugin {
+  strategy: Strategy.ThenaERC4626;
+  otherParams: [];
+  flywheel: string;
+  apyDocsUrl: `https://www.thena.fi/liquidity/manage/${string}`;
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png";
+}
+
 export interface DiffusionMiniChefV2Plugin extends AbstractPlugin {
   strategy: Strategy.MiniChefV2;
   otherParams: [string, string]; // poolId, minichef address
@@ -93,7 +102,8 @@ export type SupportedPlugin =
   | CurveGaugePlugin
   | ArrakisPlugin
   | DiffusionMiniChefV2Plugin
-  | HelioHAYPlugin;
+  | HelioHAYPlugin
+  | ThenaERC4626Plugin;
 
 export declare type DeployedPlugins = {
   [pluginAddress: string]: SupportedPlugin;
