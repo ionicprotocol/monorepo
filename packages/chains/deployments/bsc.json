@@ -96,13 +96,13 @@
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
     },
     "CTokenFirstExtension": {
-      "address": "0x3f9d37FC82D53F24d20Ee2F588573A837294Eb98"
+      "address": "0x0Eb2A964C79C7D2669b07Ce10A8A981FD14362b1"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
     },
     "Comptroller": {
-      "address": "0x7dde570f479587D9993c340fc38C8e9e3Db90095"
+      "address": "0xaC1A2fF17a88F308083e360b54ECbF9873A9aE29"
     },
     "ComptrollerFirstExtension": {
       "address": "0xBB9A827f23c1352f33Be91160c36b2eE05a13C9a"
