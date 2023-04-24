@@ -40,6 +40,7 @@ const valdai3EPS = "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC";
 const epsBUSD_jCHF = "0x5887cEa5e2bb7dD36F0C06Da47A8Df918c289A29";
 const BOMB = "0x522348779DCb2911539e76A1042aA922F9C47Ee3";
 const xBOMB = "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b";
+const THE = "0xF4C8E32EaDEC4BFe97E0F595AdD0f4450a863a11";
 
 const stkBNB_WBNB = "0xaA2527ff1893e0D40d4a454623d362B79E8bb7F1";
 const stkBNB = "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16";
@@ -176,6 +177,14 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", ALPACA),
     disabled: true,
+  },
+  {
+    symbol: assetSymbols.THE,
+    underlying: THE,
+    name: "THENA",
+    decimals: 18,
+    oracle: OracleTypes.AlgebraPriceOracle,
+    extraDocs: defaultDocs("https://bscscan.com", THE),
   },
   // stables
   {

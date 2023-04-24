@@ -13,7 +13,7 @@ export const deployFlywheelWithDynamicRewards = async ({
 
   const dynamicFlywheels = [];
 
-  for (const config of deployConfig.dynamicFlywheels) {
+  for (const config of deployConfig.dynamicFlywheels!) {
     if (config) {
       console.log(
         `Deploying MidasReplacingFlywheel & ReplacingFlywheelDynamicRewards for ${config.rewardToken} reward token`

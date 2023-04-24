@@ -22,7 +22,7 @@ export const deployUniswapLpOracle = async ({
 
   const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
   const underlyings = [];
-  for (const lpToken of deployConfig.uniswap.uniswapOracleLpTokens) {
+  for (const lpToken of deployConfig.uniswap.uniswapOracleLpTokens!) {
     if ((await mpo.callStatic.oracles(lpToken)) === constants.AddressZero) {
       underlyings.push(lpToken);
     }

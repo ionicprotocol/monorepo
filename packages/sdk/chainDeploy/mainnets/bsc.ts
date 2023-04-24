@@ -6,6 +6,7 @@ import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  deployAlgebraPriceOracle,
   deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
@@ -22,6 +23,7 @@ import {
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
+  ConcentratedLiquidityOracleConfig,
   CurvePoolConfig,
   CurveV2PoolConfig,
   DiaAsset,
@@ -107,6 +109,11 @@ export const deployConfig: ChainDeployConfig = {
       rewardToken: "0xa184088a740c695E156F91f5cC086a06bb78b827",
       cycleLength: 1,
       name: "AUTOv2",
+    },
+    {
+      rewardToken: underlying(assets, assetSymbols.THE),
+      cycleLength: 1,
+      name: "THE",
     },
   ],
   cgId: bsc.specificParams.cgId,
@@ -302,6 +309,15 @@ const wombatAssets: WombatAsset[] = [
   },
 ];
 
+const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
+  {
+    assetAddress: underlying(assets, assetSymbols.THE),
+    poolAddress: "0x51Bd5e6d3da9064D59BcaA5A76776560aB42cEb8",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.WBNB),
+  },
+];
+
 const solidlyLps: SolidlyLpAsset[] = [
   { lpTokenAddress: underlying(assets, assetSymbols["sAMM-jBRL/BRZ"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["sAMM-HAY/BUSD"]) },
@@ -341,6 +357,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     assets: assets,
     chainlinkAssets,
+  });
+
+  //// deploy algebra price oracle
+  await deployAlgebraPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    concentratedLiquidityOracleTokens: algebraOracleTokens,
   });
 
   //// Uniswap Oracle

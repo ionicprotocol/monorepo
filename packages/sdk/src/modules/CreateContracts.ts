@@ -3,6 +3,7 @@ import { Contract, ContractInterface } from "ethers";
 import { MidasBaseConstructor } from "..";
 import CErc20DelegateABI from "../../abis/CErc20Delegate";
 import CErc20PluginRewardsDelegateABI from "../../abis/CErc20PluginRewardsDelegate";
+import CompoundMarketERC4626ABI from "../../abis/CompoundMarketERC4626";
 import ComptrollerABI from "../../abis/Comptroller";
 import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
 import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
@@ -10,9 +11,14 @@ import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
+import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
+import OptimizedAPRVaultFirstExtensionABI from "../../abis/OptimizedAPRVaultFirstExtension";
+import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSecondExtension";
+import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
+import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
@@ -20,11 +26,16 @@ import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
+import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
+import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
+import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../MidasSdk";
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
 type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
+type OptimizedAPRVaultWithExtensions = OptimizedAPRVaultFirstExtension & OptimizedAPRVaultSecondExtension;
 
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
@@ -76,6 +87,34 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         MasterPriceOracleABI,
         signerOrProvider
       ) as MasterPriceOracle;
+    }
+
+    createCompoundMarketERC4626(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(address, CompoundMarketERC4626ABI, signerOrProvider) as CompoundMarketERC4626;
+    }
+
+    createOptimizedAPRVault(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        address,
+        [...OptimizedAPRVaultFirstExtensionABI, ...OptimizedAPRVaultSecondExtensionABI],
+        signerOrProvider
+      ) as OptimizedAPRVaultWithExtensions;
+    }
+
+    createOptimizedVaultsRegistry(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.OptimizedVaultsRegistry.address,
+        OptimizedVaultsRegistryABI,
+        signerOrProvider
+      ) as OptimizedVaultsRegistry;
+    }
+
+    createMidasFlywheelLensRouter(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.MidasFlywheelLensRouter.address,
+        MidasFlywheelLensRouterABI,
+        signerOrProvider
+      ) as MidasFlywheelLensRouter;
     }
   };
 }

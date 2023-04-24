@@ -122,6 +122,17 @@ const PoolsRowList = ({
       return res;
     }, [] as PoolData[]);
   }, [poolsPerChain]);
+
+  const loadingStatusPerChain = useMemo(() => {
+    const _loadingStatusPerChain: { [chainId: string]: boolean } = {};
+
+    Object.entries(poolsPerChain).map(([chainId, pools]) => {
+      _loadingStatusPerChain[chainId] = pools.isLoading;
+    });
+
+    return _loadingStatusPerChain;
+  }, [poolsPerChain]);
+
   const enabledChains = useEnabledChains();
 
   useEffect(() => {
@@ -446,15 +457,15 @@ const PoolsRowList = ({
         <ChainFilterButtons
           globalFilter={globalFilter}
           isLoading={isLoading}
+          loadingStatusPerChain={loadingStatusPerChain}
           onFilter={onFilter}
-          poolsPerChain={poolsPerChain}
           props={{ display: { base: 'none', lg: 'inline-flex' } }}
         />
         <ChainFilterDropdown
           globalFilter={globalFilter}
           isLoading={isLoading}
+          loadingStatusPerChain={loadingStatusPerChain}
           onFilter={onFilter}
-          poolsPerChain={poolsPerChain}
           props={{ display: { base: 'inline-flex', lg: 'none' } }}
         />
         <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="center">

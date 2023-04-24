@@ -1,3 +1,4 @@
+import type { TextProps } from '@chakra-ui/react';
 import { Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
@@ -8,8 +9,7 @@ export const GradientText = ({
   children,
   isEnabled,
   ...props
-}: {
-  [key: string]: ReactNode;
+}: TextProps & {
   children: ReactNode;
   isEnabled: boolean;
 }) => {

@@ -232,6 +232,50 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xb36fffD0174B2eC18D82d21BB2e24b132ecBA5b0", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
+  // ThenaLpERC4626_vAMM-HAY-ankrBNB_0x04b6895d7AD8b10a1a13C749159226249a3b8515
+  "0xE141ce7507656f9b2c45d06d649961Eb84e19f82": {
+    market: "0x04b6895d7AD8b10a1a13C749159226249a3b8515",
+    name: "Thena vAMM-HAY-ankrBNB LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"])}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"]),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
+  // ThenaLpERC4626_vAMM-ANKR-HAY_0xbc65FE441545E9e8f97E50F70526B7E8963826bc.json
+  "0x52156377Dbe031706cfAb4e759cA102e58A19953": {
+    market: "0xbc65FE441545E9e8f97E50F70526B7E8963826bc",
+    name: "Thena vAMM-ANKR-HAY LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols["vAMM-ANKR/HAY"])}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols["vAMM-ANKR/HAY"]),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
+  // ThenaLpERC4626_vAMM-ANKR-ankrBNB_0x71693C84486B37096192c9942852f542543639Bf.json
+  "0x0c0e8ED68a72c31E657Ce5F03A615FB96753C9b5": {
+    market: "0x71693C84486B37096192c9942852f542543639Bf",
+    name: "Thena vAMM-ANKR-ankrBNB LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"])}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"]),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
+  // ThenaLpERC4626_sAMM-HAY-BUSD_0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB.json
+  "0x02706A482fc9f6B20238157B56763391a45bE60E": {
+    market: "0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB",
+    name: "Thena sAMM-HAY-BUSD LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols["sAMM-HAY/BUSD"])}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols["sAMM-HAY/BUSD"]),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
 };
 
 export default deployedPlugins;
