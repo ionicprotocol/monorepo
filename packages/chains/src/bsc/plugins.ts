@@ -243,9 +243,9 @@ const deployedPlugins: DeployedPlugins = {
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
   },
-  // ThenaLpERC4626_vAMM-ANKR-HAY_0xbc65FE441545E9e8f97E50F70526B7E8963826b.json
+  // ThenaLpERC4626_vAMM-ANKR-HAY_0xbc65FE441545E9e8f97E50F70526B7E8963826bc.json
   "0x52156377Dbe031706cfAb4e759cA102e58A19953": {
-    market: "0xbc65FE441545E9e8f97E50F70526B7E8963826b",
+    market: "0xbc65FE441545E9e8f97E50F70526B7E8963826bc",
     name: "Thena vAMM-ANKR-HAY LP Vault",
     strategy: Strategy.ThenaERC4626,
     apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols["vAMM-ANKR/HAY"])}`,
