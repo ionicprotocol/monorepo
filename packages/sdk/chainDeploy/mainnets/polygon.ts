@@ -78,6 +78,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["MAI-USDC"]),
       underlying(assets, assetSymbols["WMATIC-MATICx"]),
       underlying(assets, assetSymbols["DAI-GNS"]),
+      underlying(assets, assetSymbols["IXT-USDT"]),
     ],
     flashSwapFee: 30,
   },

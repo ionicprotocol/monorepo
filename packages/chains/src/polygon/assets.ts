@@ -82,6 +82,7 @@ const JEUR_EURT = "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1";
 const EURE_JEUR = "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4";
 const MAI_USDC = "0x160532D2536175d65C03B97b0630A9802c274daD";
 const DAI_GNS = "0x6E53cB6942e518376E9e763554dB1A45DDCd25c4";
+const IXT_USDT = "0x304e57c752E854E9A233Ae82fcC42F7568b81180";
 
 // stable forex
 const AGEUR = "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4";
@@ -470,6 +471,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(DAI, GNS, "DAI-GNS", DAI_GNS),
+  },
+  {
+    symbol: assetSymbols["IXT-USDT"],
+    underlying: IXT_USDT,
+    name: "IXT-USDT LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: quickSwapDocs(IXT, USDT, "IXT-USDT", IXT_USDT),
   },
   // curve.fi LP tokens
   {
