@@ -159,7 +159,7 @@ const config: HardhatUserConfig = {
       chainId: 245022926,
     },
     polygon: {
-      url: OVERRIDE_RPC_URL || `https://rpc-mainnet.maticvigil.com/`,
+      url: OVERRIDE_RPC_URL || `https://polygon-mainnet.g.alchemy.com/v2/tldbE3dxJ4U5mH6aBYL3HhJAwwPWKVWw`,
       accounts: { mnemonic },
       chainId: 137,
     },
