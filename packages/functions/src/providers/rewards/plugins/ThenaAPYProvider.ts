@@ -29,6 +29,13 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
       throw 'ThenaAPYProvider: ChainId Not initialized';
     }
 
+    const config = chainIdToConfig[this.chainId];
+    const theAsset = config.assets.find((asset) => asset.symbol === assetSymbols.THE);
+
+    if (!theAsset) {
+      throw 'ThenaAPYProvider: THE asset is not defined in supported assets list';
+    }
+
     const voterV3Contract = new Contract(
       VOTER_V3_ADDRESS,
       ['function gauges(address pool) view returns (address)'],
@@ -44,29 +51,21 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
       ],
       this.provider
     );
-    const [rewardRateBig, totalSupplyBig] = await Promise.all([
-      gaugeV2Contract.callStatic.rewardRate(),
-      gaugeV2Contract.callStatic.totalSupply(),
-    ]);
-    const rewardRate = Number(utils.formatUnits(rewardRateBig));
-    const totalSupply = Number(utils.formatUnits(totalSupplyBig));
-
-    const config = chainIdToConfig[this.chainId];
-    const theAsset = config.assets.find((asset) => asset.symbol === assetSymbols.THE);
-
-    if (!theAsset) {
-      throw 'ThenaAPYProvider: THE asset is not defined in supported assets list';
-    }
 
     const sdk = new MidasSdk(
       new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
       config
     );
     const mpo = sdk.createMasterPriceOracle();
-    const [theUsdPriceBig, lpTokenUsdPriceBig] = await Promise.all([
+
+    const [theUsdPriceBig, lpTokenUsdPriceBig, rewardRateBig, totalSupplyBig] = await Promise.all([
       mpo.callStatic.price(theAsset.underlying),
       mpo.callStatic.price(pluginData.underlying),
+      gaugeV2Contract.callStatic.rewardRate(),
+      gaugeV2Contract.callStatic.totalSupply(),
     ]);
+    const rewardRate = Number(utils.formatUnits(rewardRateBig));
+    const totalSupply = Number(utils.formatUnits(totalSupplyBig));
 
     const theUsdPrice = Number(utils.formatUnits(theUsdPriceBig));
     const lpTokenUsdPrice = Number(utils.formatUnits(lpTokenUsdPriceBig));
