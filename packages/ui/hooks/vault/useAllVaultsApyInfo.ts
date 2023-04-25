@@ -11,6 +11,7 @@ import { useVaultsPerChain } from '@ui/hooks/vault/useVaultsPerChain';
 export type VaultInfo = {
   supplyApy: number;
   totalSupplyRated: number;
+  totalSupplyUsd: number;
   xAxis: number;
 }[];
 
@@ -59,9 +60,15 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
               (Number(utils.formatUnits(info.totalSupply)) / Number(utils.formatUnits(maxSupply))) *
               100;
 
+            const totalSupplyUsd =
+              Number(utils.formatUnits(info.totalSupply, vault.decimals)) *
+              Number(utils.formatUnits(vault.underlyingPrice, 18)) *
+              usdPrice;
+
             return {
               supplyApy,
               totalSupplyRated,
+              totalSupplyUsd,
               xAxis: info.createdAt,
             };
           });
