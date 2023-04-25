@@ -25,10 +25,10 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<VaultA
 
   const databaseResponse = await client
     .from(config.supabaseVaultApyTableName)
-    .select<'info', { info: VaultApy }>('info')
+    .select<'info, created_at', { created_at: string; info: VaultApy }>('info, created_at')
     .eq('chain_id', parseInt(chainId as string, 10))
     .eq('vault_address', (vaultAddress as string).toLowerCase())
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
     .limit(100);
 
   if (databaseResponse.error) {
@@ -36,7 +36,12 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<VaultA
   }
 
   if (databaseResponse.data && databaseResponse.data.length > 0) {
-    return response.json(databaseResponse.data.map((data) => data.info));
+    return response.json(
+      databaseResponse.data.map((data) => ({
+        ...data.info,
+        createdAt: new Date(data.created_at).getTime(),
+      }))
+    );
   } else {
     return response.json([]);
   }
