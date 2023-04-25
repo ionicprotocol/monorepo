@@ -453,12 +453,7 @@ export const VaultsList = ({
           <Table>
             <Thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <Tr
-                  borderBottomWidth={1}
-                  borderColor={cCard.dividerColor}
-                  borderTopWidth={2}
-                  key={headerGroup.id}
-                >
+                <Tr borderBottomWidth={1} borderColor={cCard.dividerColor} key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
                       <Th
