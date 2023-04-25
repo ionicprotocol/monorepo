@@ -28,7 +28,7 @@ export const updateVaultData = async (chainId: SupportedChains) => {
       return {
         vault: data.vault,
         info: {
-          totalSupply:  data.estimatedTotalAssets.toString(),
+          totalSupply: data.estimatedTotalAssets.toString(),
           supplyApy: utils.formatUnits(data.apr),
         },
       };
