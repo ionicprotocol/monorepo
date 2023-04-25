@@ -1,5 +1,5 @@
 import { SupportedChains } from '@midas-capital/types';
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { chainIdToConfig } from '@midas-capital/chains';
@@ -28,8 +28,8 @@ export const updateVaultData = async (chainId: SupportedChains) => {
       return {
         vault: data.vault,
         info: {
-          totalSupply: data.estimatedTotalAssets.toString(),
-          supplyApy: data.apr.toString(),
+          totalSupply:  data.estimatedTotalAssets.toString(),
+          supplyApy: utils.formatUnits(data.apr),
         },
       };
     });
