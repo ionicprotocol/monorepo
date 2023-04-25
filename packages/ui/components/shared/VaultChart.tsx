@@ -67,7 +67,7 @@ const VaultChart = ({ vaultApyInfo }: { vaultApyInfo: VaultInfo }) => {
           tickFormatter={(index) => moment(vaultApyInfo[index].xAxis).format('MM/DD')}
           ticks={[0, 25, 50, 75, 99]}
         >
-          <Label fill={cCard.txtColor} offset={-10} position="insideBottom" value="Utilization" />
+          <Label fill={cCard.txtColor} offset={-10} position="insideBottom" value="Date" />
         </XAxis>
         <YAxis
           domain={[0, 110]}
