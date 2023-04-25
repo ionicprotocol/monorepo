@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import moment from 'moment';
 import { useState } from 'react';
 import { AiOutlineLineChart } from 'react-icons/ai';
 import {
@@ -22,6 +23,7 @@ type LineProps = {
 };
 
 const VaultChart = ({ vaultApyInfo }: { vaultApyInfo: VaultInfo }) => {
+  console.log(vaultApyInfo);
   const keys = vaultApyInfo.length > 0 ? Object.keys(vaultApyInfo[0]) : [];
 
   const supplyApyColor = useColorModeValue('#00B5D8', 'cyan'); // #00B5D8 = cyan.500
@@ -60,13 +62,15 @@ const VaultChart = ({ vaultApyInfo }: { vaultApyInfo: VaultInfo }) => {
       <AreaChart data={vaultApyInfo} margin={{ bottom: 10, left: 20, right: 20, top: 10 }}>
         <CartesianGrid strokeWidth={0} />
         <XAxis
+          dataKey="time"
           minTickGap={10}
           padding={{ left: 0, right: 10 }}
           tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
-          tickFormatter={(label) => `${label}%`}
-          ticks={[0, 25, 50, 75, 100]}
+          tickFormatter={(timeStr) => moment(timeStr).format('YY/MM/DD')}
+          ticks={[Date.now() - 1000000, Date.now()]}
+          type="number"
         >
-          <Label fill={cCard.txtColor} offset={-10} position="insideBottom" value="Utilization" />
+          <Label fill={cCard.txtColor} offset={-10} position="insideBottom" value="Date" />
         </XAxis>
         <YAxis
           domain={[0, 110]}
@@ -74,7 +78,7 @@ const VaultChart = ({ vaultApyInfo }: { vaultApyInfo: VaultInfo }) => {
           tickFormatter={(label) => `${label}%`}
           ticks={[0, 50, 100]}
         >
-          <Label angle={-90} fill={cCard.txtColor} offset={0} position="insideLeft" value="Rate" />
+          <Label angle={-90} fill={cCard.txtColor} offset={0} position="insideLeft" value="APY" />
         </YAxis>
         <Tooltip content={<CustomTooltip />} wrapperStyle={{ outline: 'none' }} />
         <Legend
@@ -100,19 +104,6 @@ const VaultChart = ({ vaultApyInfo }: { vaultApyInfo: VaultInfo }) => {
               name="Supply Rate"
               opacity={Number(lineProps.hover === keys[1] || !lineProps.hover ? 1 : 0.2)}
               stroke={supplyApyColor}
-              strokeWidth={3}
-              type="monotone"
-            />
-            <Area
-              activeDot={{ r: 5, strokeWidth: 0 }}
-              dataKey={keys[3]}
-              dot={{ r: 0 }}
-              fill={totalSupplyColor}
-              fillOpacity={0.2}
-              hide={lineProps[keys[3]] === true}
-              name="Borrow Rate"
-              opacity={Number(lineProps.hover === keys[3] || !lineProps.hover ? 1 : 0.2)}
-              stroke={totalSupplyColor}
               strokeWidth={3}
               type="monotone"
             />
