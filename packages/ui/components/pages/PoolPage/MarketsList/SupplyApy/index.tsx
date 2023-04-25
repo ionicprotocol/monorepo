@@ -137,7 +137,7 @@ export const SupplyApy = ({
                 >
                   {Number(ankrBNBApr).toFixed(2)}%
                 </Text>
-                <Text>Compounding APY</Text>
+                <Text>ankrBNB APY</Text>
               </HStack>
             )}
 
