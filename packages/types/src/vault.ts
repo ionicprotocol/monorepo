@@ -32,6 +32,7 @@ export interface Adapter {
 export interface VaultApy {
   supplyApy: string;
   totalSupply: string;
+  createdAt: number;
 }
 
 export type FlywheelRewardsInfoForVault = {

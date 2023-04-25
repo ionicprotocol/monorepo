@@ -94,7 +94,7 @@ export const TokenName = ({
           >
             <Text
               fontWeight="bold"
-              maxWidth="120px"
+              maxWidth="200px"
               overflow="hidden"
               size="md"
               textOverflow={'ellipsis'}
@@ -109,7 +109,7 @@ export const TokenName = ({
             }
             popoverProps={{ placement: 'top-start' }}
           >
-            <Text opacity={0.6} size="xs" variant="tnumber">
+            <Text opacity={0.6} size="xs" variant="tnumber" whiteSpace="nowrap">
               {parseFloat(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0)}% LTV
             </Text>
           </PopoverTooltip>

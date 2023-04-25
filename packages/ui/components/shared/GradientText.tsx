@@ -20,18 +20,20 @@ export const GradientText = ({
       animate={
         isEnabled
           ? {
+              background: gradientBackground,
+              // eslint-disable-next-line sort-keys/sort-keys-fix
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              background: gradientBackground,
             }
           : {}
       }
       initial={
         isEnabled
           ? {
+              background: gradientBackground[0],
+              // eslint-disable-next-line sort-keys/sort-keys-fix
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              background: gradientBackground[0],
             }
           : {}
       }

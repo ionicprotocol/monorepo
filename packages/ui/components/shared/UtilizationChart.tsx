@@ -172,15 +172,19 @@ const CustomTooltip = (props: any) => {
           label.toString() === currentUtilization ? ' (Current)' : ''
         }`}</Text>
         {payload[0] && (
-          <HStack alignSelf="flex-start" color={payload[0].color} p={2}>
-            <Text>{payload[0].name}: </Text>
-            <Text fontWeight="bold">{Number(payload[0].value).toFixed(2)}%</Text>
+          <HStack alignSelf="flex-start" p={2}>
+            <Text color={payload[0].color}>{payload[0].name}: </Text>
+            <Text color={payload[0].color} fontWeight="bold">
+              {Number(payload[0].value).toFixed(2)}%
+            </Text>
           </HStack>
         )}
         {payload[1] && (
-          <HStack alignSelf="flex-start" color={payload[1].color} pb={2} px={2}>
-            <Text>{payload[1].name}: </Text>
-            <Text fontWeight="bold">{Number(payload[1].value).toFixed(2)}%</Text>
+          <HStack alignSelf="flex-start" pb={2} px={2}>
+            <Text color={payload[1].color}>{payload[1].name}: </Text>
+            <Text color={payload[1].color} fontWeight="bold">
+              {Number(payload[1].value).toFixed(2)}%
+            </Text>
           </HStack>
         )}
       </VStack>
