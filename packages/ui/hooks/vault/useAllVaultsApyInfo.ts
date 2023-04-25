@@ -9,12 +9,10 @@ import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useVaultsPerChain } from '@ui/hooks/vault/useVaultsPerChain';
 
 export type VaultInfo = {
-  decimals: number;
   supplyApy: number;
-  totalSupply: BigNumber;
   totalSupplyRated: number;
-  underlyingPrice: BigNumber;
-  usdPrice: number;
+  totalSupplyUsd: number;
+  xAxis: number;
 }[];
 
 export function useVaultApyInfo(vaultAddress: string, chainId: number) {
@@ -56,20 +54,22 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
             return _max;
           }, constants.Zero);
 
-          return _vaultInfo.map((info, i) => {
+          return _vaultInfo.map((info) => {
             const supplyApy = Number((Number(info.supplyApy) * 100).toFixed(2));
             const totalSupplyRated =
               (Number(utils.formatUnits(info.totalSupply)) / Number(utils.formatUnits(maxSupply))) *
               100;
 
+            const totalSupplyUsd =
+              Number(utils.formatUnits(info.totalSupply, vault.decimals)) *
+              Number(utils.formatUnits(vault.underlyingPrice, 18)) *
+              usdPrice;
+
             return {
-              decimals: vault.decimals,
               supplyApy,
-              totalSupply: BigNumber.from(info.totalSupply),
               totalSupplyRated,
-              underlyingPrice: vault.underlyingPrice,
-              usdPrice,
-              xAxis: i,
+              totalSupplyUsd,
+              xAxis: info.createdAt,
             };
           });
         } else {

@@ -22,34 +22,17 @@ export const updateVaultData = async (chainId: SupportedChains) => {
       sdk.provider
     ) as OptimizedVaultsRegistry;
 
-    const vaults = await optimizedVaultsRegistry.callStatic.getAllVaults();
+    const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
 
-    const results = await Promise.all(
-      vaults.map(async (vault) => {
-        try {
-          const optimizedAPRVault = sdk.createOptimizedAPRVault(vault);
-
-          const [totalSupply, supplyApy] = await Promise.all([
-            optimizedAPRVault.callStatic.estimatedTotalAssets(),
-            optimizedAPRVault.callStatic.supplyAPY(0),
-          ]);
-
-          return {
-            vault,
-            info: {
-              supplyApy: ethers.utils.formatUnits(supplyApy),
-              totalSupply: totalSupply.toString(),
-            },
-          };
-        } catch (exception) {
-          console.error(exception);
-          await functionsAlert(
-            `Functions.vault-data: Vault '${vault}' / Chain '${chainId}'`,
-            JSON.stringify(exception)
-          );
-        }
-      })
-    );
+    const results = vaultsData.map((data) => {
+      return {
+        vault: data.vault,
+        info: {
+          totalSupply: data.estimatedTotalAssets,
+          supplyApy: data.apr,
+        },
+      };
+    });
 
     const rows = results
       .filter((r) => !!r)
