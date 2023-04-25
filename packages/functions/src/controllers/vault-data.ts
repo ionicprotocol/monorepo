@@ -28,8 +28,8 @@ export const updateVaultData = async (chainId: SupportedChains) => {
       return {
         vault: data.vault,
         info: {
-          totalSupply: data.estimatedTotalAssets,
-          supplyApy: data.apr,
+          totalSupply: data.estimatedTotalAssets.toString(),
+          supplyApy: data.apr.toString(),
         },
       };
     });
@@ -38,8 +38,8 @@ export const updateVaultData = async (chainId: SupportedChains) => {
       .filter((r) => !!r)
       .map((r) => ({
         chain_id: chainId,
-        vault_address: r?.vault.toLowerCase(),
-        info: r?.info,
+        vault_address: r.vault.toLowerCase(),
+        info: { ...r.info, createdAt: new Date().getTime() },
       }));
 
     const { error } = await supabase.from(environment.supabaseVaultApyTableName).insert(rows);

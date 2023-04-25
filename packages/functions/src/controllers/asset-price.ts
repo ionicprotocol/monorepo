@@ -64,8 +64,11 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
       .map((r) => ({
         chain_id: chainId,
         underlying_address: r?.underlyingAddress.toLowerCase(),
-        underlying_price: r?.underlyingPriceNum,
-        usd_price: r?.usdPrice,
+        info: {
+          underlyingPrice: r?.underlyingPriceNum,
+          usdPrice: r?.usdPrice,
+          createdAt: new Date().getTime()
+        }
       }));
 
     const { error } = await supabase.from(environment.supabaseAssetPriceTableName).insert(rows);
