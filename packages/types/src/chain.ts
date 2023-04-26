@@ -13,6 +13,7 @@ export type SupportedAsset = {
   disabled?: boolean;
   oracle?: OracleTypes;
   simplePriceOracleAssetPrice?: BigNumber;
+  originalSymbol?: string;
 };
 export type BlockExplorer = {
   name: string;
