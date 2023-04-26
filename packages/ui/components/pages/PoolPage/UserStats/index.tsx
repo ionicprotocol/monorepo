@@ -186,7 +186,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         contentProps={{ p: 2, width: 'fit-content' }}
         visible={topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0}
       >
-        <Flex>
+        <Flex height="100%">
           <UserStat
             label="Your Supply"
             value={poolData ? smallUsdFormatter(poolData.totalSupplyBalanceFiat, true) : undefined}
@@ -232,7 +232,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         contentProps={{ p: 2, width: 'fit-content' }}
         visible={topBorrowedAssets.length > 0 && topBorrowedAssets[0].borrowBalanceFiat > 0}
       >
-        <Flex>
+        <Flex height="100%">
           <UserStat
             label="Your Borrow"
             value={poolData ? smallUsdFormatter(poolData?.totalBorrowBalanceFiat, true) : undefined}
@@ -281,7 +281,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         }
         contentProps={{ minWidth: { base: '300px', sm: '350px' }, p: 2 }}
       >
-        <Flex>
+        <Flex height="100%">
           <UserStat
             label="Effective Supply APY"
             secondValue={
@@ -333,7 +333,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         }
         contentProps={{ minW: { base: '300px', sm: '350px' }, p: 2 }}
       >
-        <Flex>
+        <Flex height="100%">
           <UserStat
             label="Effective Borrow APY"
             secondValue={
