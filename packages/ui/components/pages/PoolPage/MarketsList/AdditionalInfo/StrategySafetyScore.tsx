@@ -22,7 +22,7 @@ import { useColors } from '@ui/hooks/useColors';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { deployedPlugins, getScanUrlByChainId } from '@ui/utils/networkData';
 
-export const StrategySaftyScore = ({
+export const StrategySafetyScore = ({
   asset,
   poolChainId,
   strategyScore,

@@ -10,7 +10,7 @@ import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/Additional
 import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/index';
 import { HistoricalGraph } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/HistoricalGraph';
 import { MarketDetails } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/MarketDetails';
-import { StrategySaftyScore } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/StrategySaftyScore';
+import { StrategySafetyScore } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/StrategySafetyScore';
 import { UtilizationRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/UtilizationRate';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -134,7 +134,7 @@ export const AdditionalInfo = ({
       >
         {strategyScore !== undefined && (
           <GridItem rowSpan={2}>
-            <StrategySaftyScore
+            <StrategySafetyScore
               asset={asset}
               poolChainId={poolChainId}
               strategyScore={strategyScore}
