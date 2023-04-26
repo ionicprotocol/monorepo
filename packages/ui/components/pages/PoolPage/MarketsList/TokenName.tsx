@@ -10,6 +10,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
+import { useTokenData } from '@ui/hooks/useTokenData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const TokenName = ({
@@ -23,6 +24,7 @@ export const TokenName = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const { data: claimableRewards } = useAssetClaimableRewards({
     assetAddress: asset.cToken,
     poolAddress,
@@ -43,7 +45,7 @@ export const TokenName = ({
         body={
           <VStack spacing={0}>
             <Heading alignSelf="flex-start" size="md" textAlign={'left'}>
-              {asset.originalSymbol ?? asset.underlyingSymbol}
+              {asset.originalSymbol ?? tokenData?.symbol ?? asset.underlyingSymbol}
             </Heading>
             {asset.extraDocs || asset.underlyingSymbol ? (
               <Text
@@ -74,7 +76,7 @@ export const TokenName = ({
             body={
               <VStack spacing={0}>
                 <Heading alignSelf="flex-start" size="md" textAlign={'left'}>
-                  {asset.originalSymbol ?? asset.underlyingSymbol}
+                  {asset.originalSymbol ?? tokenData?.symbol ?? asset.underlyingSymbol}
                 </Heading>
                 {asset.extraDocs || asset.underlyingSymbol ? (
                   <Text
@@ -98,7 +100,7 @@ export const TokenName = ({
               textOverflow={'ellipsis'}
               whiteSpace="nowrap"
             >
-              {asset.originalSymbol ?? asset.underlyingSymbol}
+              {asset.originalSymbol ?? tokenData?.symbol ?? asset.underlyingSymbol}
             </Text>
           </PopoverTooltip>
           <PopoverTooltip
