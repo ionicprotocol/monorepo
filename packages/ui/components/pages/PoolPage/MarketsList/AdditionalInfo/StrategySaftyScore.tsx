@@ -46,7 +46,7 @@ export const StrategySaftyScore = ({
   };
 
   return (
-    <VStack borderRadius="20" spacing={0} width="100%">
+    <VStack borderRadius="20" height="100%" spacing={0} width="100%">
       <Box
         background={cCard.headingBgColor}
         borderColor={cCard.borderColor}

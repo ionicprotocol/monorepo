@@ -8,6 +8,7 @@ import { useSwitchNetwork } from 'wagmi';
 import type { Market } from '@ui/components/pages/PoolPage/MarketsList';
 import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/index';
 import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/index';
+import { HistoricalGraph } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/HistoricalGraph';
 import { MarketDetails } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/MarketDetails';
 import { StrategySaftyScore } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/StrategySaftyScore';
 import { UtilizationRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/UtilizationRate';
@@ -149,6 +150,9 @@ export const AdditionalInfo = ({
         </GridItem>
         <GridItem>
           <UtilizationRate asset={asset} poolChainId={poolChainId} />
+        </GridItem>
+        <GridItem>
+          <HistoricalGraph asset={asset} poolChainId={poolChainId} />
         </GridItem>
       </Grid>
     </Box>
