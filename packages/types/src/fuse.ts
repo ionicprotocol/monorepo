@@ -94,3 +94,9 @@ export interface FusePool {
   blockPosted: number;
   timestampPosted: number;
 }
+
+export interface AssetPrice {
+  usdPrice: number;
+  underlyingPrice: number;
+  createdAt: number;
+}

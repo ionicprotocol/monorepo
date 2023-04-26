@@ -6,8 +6,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const { withSentryConfig } = require('@sentry/nextjs');
 
 nextConfig = {
-  reactStrictMode: true,
-  productionBrowserSourceMaps: true,
   env: {
     ARBITRUM: process.env.ARBITRUM,
     BSC: process.env.BSC,
@@ -24,15 +22,18 @@ nextConfig = {
     PRODUCT_URL: process.env.PRODUCT_URL,
     SENTRY_DSN: process.env.SENTRY_DSN,
     SUPABASE_ASSET_APY_TABLE_NAME: process.env.SUPABASE_ASSET_APY_TABLE_NAME,
+    SUPABASE_ASSET_PRICE_TABLE_NAME: process.env.SUPABASE_ASSET_PRICE_TABLE_NAME,
     SUPABASE_KEY: process.env.SUPABASE_KEY,
     SUPABASE_PLUGIN_REWARDS_TABLE_NAME: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME,
     SUPABASE_PLUGIN_TABLE_NAME: process.env.SUPABASE_PLUGIN_TABLE_NAME,
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_VAULT_APY_TABLE_NAME: process.env.SUPABASE_VAULT_APY_TABLE_NAME,
   },
+  productionBrowserSourceMaps: true,
+  reactStrictMode: true,
   sentry: {
-    disableServerWebpackPlugin: true,
     disableClientWebpackPlugin: true,
+    disableServerWebpackPlugin: true,
   },
 };
 
