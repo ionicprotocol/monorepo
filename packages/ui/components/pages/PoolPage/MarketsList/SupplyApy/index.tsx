@@ -137,7 +137,7 @@ export const SupplyApy = ({
                 >
                   {Number(ankrBNBApr).toFixed(2)}%
                 </Text>
-                <Text>Compounding APY</Text>
+                <Text>ankrBNB APY</Text>
               </HStack>
             )}
 
@@ -146,10 +146,11 @@ export const SupplyApy = ({
                 <HStack justifyContent="flex-start">
                   <Text
                     fontWeight="medium"
+                    maxWidth="max-content"
+                    minWidth="60px"
                     size="sm"
                     textAlign="right"
                     variant="tnumber"
-                    width="60px"
                   >
                     {totalRewardApy.toFixed(2)}%
                   </Text>

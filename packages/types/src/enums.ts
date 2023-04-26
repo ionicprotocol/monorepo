@@ -147,6 +147,15 @@ export enum FundOperationMode {
   REPAY,
 }
 
+export enum assetOriginalSymbols {
+  // thena
+  "sAMM-jBRL/BRZ" = "jBRL/BRZ Thena LP",
+  "sAMM-HAY/BUSD" = "HAY/BUSD Thena LP",
+  "vAMM-ANKR/ankrBNB" = "ankrBNB/ANKR Thena LP",
+  "vAMM-ANKR/HAY" = "HAY/ANKR Thena LP",
+  "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
+}
+
 export enum assetSymbols {
   // agnostic
   WETH = "WETH",

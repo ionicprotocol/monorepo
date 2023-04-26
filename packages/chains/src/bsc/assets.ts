@@ -1,4 +1,4 @@
-import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetOriginalSymbols, assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import {
   ankrCertificateDocs,
@@ -581,6 +581,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_jBRL_BRZ),
+    originalSymbol: assetOriginalSymbols["sAMM-jBRL/BRZ"],
   },
   {
     symbol: assetSymbols["vAMM-ANKR/ankrBNB"],
@@ -589,6 +590,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_ankrBNB),
+    originalSymbol: assetOriginalSymbols["vAMM-ANKR/ankrBNB"],
   },
   {
     symbol: assetSymbols["vAMM-ANKR/HAY"],
@@ -597,6 +599,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_HAY),
+    originalSymbol: assetOriginalSymbols["vAMM-ANKR/HAY"],
   },
   {
     symbol: assetSymbols["vAMM-HAY/ankrBNB"],
@@ -605,6 +608,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_HAY_ankrBNB),
+    originalSymbol: assetOriginalSymbols["vAMM-HAY/ankrBNB"],
   },
   {
     symbol: assetSymbols["sAMM-HAY/BUSD"],
@@ -613,6 +617,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_HAY_BUSD),
+    originalSymbol: assetOriginalSymbols["sAMM-HAY/BUSD"],
   },
 ];
 
