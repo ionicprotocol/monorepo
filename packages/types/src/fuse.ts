@@ -60,6 +60,7 @@ export interface NativePricedFuseAsset extends FuseAsset {
   mintGuardianPaused: boolean;
 
   logoUrl?: string;
+  originalSymbol?: string;
 }
 
 export interface FusePoolData {

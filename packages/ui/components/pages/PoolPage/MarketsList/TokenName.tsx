@@ -45,7 +45,7 @@ export const TokenName = ({
         body={
           <VStack spacing={0}>
             <Heading alignSelf="flex-start" size="md" textAlign={'left'}>
-              {tokenData?.symbol ?? asset.underlyingSymbol}
+              {asset.originalSymbol ?? tokenData?.symbol ?? asset.underlyingSymbol}
             </Heading>
             {asset.extraDocs || asset.underlyingSymbol ? (
               <Text
@@ -76,7 +76,7 @@ export const TokenName = ({
             body={
               <VStack spacing={0}>
                 <Heading alignSelf="flex-start" size="md" textAlign={'left'}>
-                  {tokenData?.symbol ?? asset.underlyingSymbol}
+                  {asset.originalSymbol ?? tokenData?.symbol ?? asset.underlyingSymbol}
                 </Heading>
                 {asset.extraDocs || asset.underlyingSymbol ? (
                   <Text
@@ -100,7 +100,7 @@ export const TokenName = ({
               textOverflow={'ellipsis'}
               whiteSpace="nowrap"
             >
-              {tokenData?.symbol ?? asset.underlyingSymbol}
+              {asset.originalSymbol ?? tokenData?.symbol ?? asset.underlyingSymbol}
             </Text>
           </PopoverTooltip>
           <PopoverTooltip
