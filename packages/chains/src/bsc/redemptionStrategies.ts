@@ -100,6 +100,14 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
     underlying(assets, assetSymbols.HAY),
   ],
+  [underlying(assets, assetSymbols["sAMM-HAY/BUSD"])]: [
+    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    underlying(assets, assetSymbols.HAY),
+  ],
+  [underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"])]: [
+    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    underlying(assets, assetSymbols.HAY),
+  ],
   [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
 };
 

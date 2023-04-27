@@ -116,6 +116,8 @@ export type SolidlyLpAsset = {
   lpTokenAddress: string;
 };
 
+export type GammaLpAsset = SolidlyLpAsset;
+
 export type ERC4626Asset = {
   assetAddress: string;
 };
@@ -193,6 +195,11 @@ export type UniswapDeployFnParams = ChainDeployFnParams & {
 export type SolidlyDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   solidlyLps: SolidlyLpAsset[];
+};
+
+export type GammaDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  gammaLps: GammaLpAsset[];
 };
 
 export type SolidlyOracleAssetConfig = {
