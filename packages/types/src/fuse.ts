@@ -100,3 +100,9 @@ export interface AssetPrice {
   underlyingPrice: number;
   createdAt: number;
 }
+
+export interface ChartData {
+  xAxis: number;
+  yAxis: number;
+  yAxisType: string;
+}

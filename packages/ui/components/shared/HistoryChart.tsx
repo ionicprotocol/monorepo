@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import type { AssetPrice } from '@midas-capital/types';
+import type { ChartData } from '@midas-capital/types';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
 import { AiOutlineLineChart } from 'react-icons/ai';
@@ -16,22 +16,31 @@ import {
   YAxis,
 } from 'recharts';
 
+import { MILLI_SECONDS_PER_DAY } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { smallFormatter } from '@ui/utils/bigUtils';
 
 type LineProps = {
   [key: string]: boolean | string | null;
 };
 
-const AssetPriceChart = ({ assetPriceInfo }: { assetPriceInfo: AssetPrice[] }) => {
+const HistoryChart = ({
+  historyData,
+  milliSeconds,
+  mode,
+}: {
+  historyData: ChartData[];
+  milliSeconds: number;
+  mode: string;
+}) => {
   const [min, max, length] = useMemo(() => {
-    const usdPrices = assetPriceInfo.map((info) => info.usdPrice);
+    const yVaules = historyData.map((data) => data.yAxis);
 
-    return [Math.min(...usdPrices), Math.max(...usdPrices), assetPriceInfo.length];
-  }, [assetPriceInfo]);
-  const keys = assetPriceInfo.length > 0 ? Object.keys(assetPriceInfo[0]) : [];
+    return [Math.min(...yVaules), Math.max(...yVaules), historyData.length];
+  }, [historyData]);
+  const keys = historyData.length > 0 ? Object.keys(historyData[0]) : [];
 
-  const usdPriceColor = useColorModeValue('#38A169', '#9AE6B4'); // #38A169 = green.500, #9AE6B4 = green.200
+  const chartColor = useColorModeValue('#38A169', '#9AE6B4'); // #38A169 = green.500, #9AE6B4 = green.200
   const { cCard } = useColors();
 
   const [lineProps, setLineProps] = useState<LineProps>(
@@ -63,27 +72,31 @@ const AssetPriceChart = ({ assetPriceInfo }: { assetPriceInfo: AssetPrice[] }) =
 
   return (
     <ResponsiveContainer height="100%" width="100%">
-      <AreaChart data={assetPriceInfo} margin={{ bottom: 10, left: 20, right: 20, top: 10 }}>
+      <AreaChart data={historyData} margin={{ bottom: 10, left: 20, right: 40, top: -40 }}>
         <CartesianGrid strokeWidth={0} />
         <XAxis
           minTickGap={10}
           padding={{ left: 0, right: 10 }}
-          tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
-          tickFormatter={(index) => moment(assetPriceInfo[index].createdAt).format('MM/DD HH:mm')}
-          ticks={[0, Math.floor(length / 2), Math.floor(length - 1)]}
+          tick={<CustomXAxisTick historyData={historyData} milliSeconds={milliSeconds} />}
+          ticks={[
+            0,
+            Math.floor(length / 4),
+            Math.floor(length / 2),
+            Math.floor((length * 3) / 4),
+            Math.floor(length - 1),
+          ]}
         >
-          <Label fill={cCard.txtColor} offset={-10} position="insideBottom" value="Date" />
+          <Label fill={cCard.txtColor} offset={0} position="insideBottom" value="" />
         </XAxis>
         <YAxis
           domain={[0, Math.ceil(max * 1.5)]}
-          tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
-          tickFormatter={(label) => `${smallUsdFormatter(label, true)}`}
-          ticks={[0, Math.floor(min), Math.ceil(max)]}
+          tick={<CustomYAxisTick historyData={historyData} />}
+          ticks={[Math.floor(min), Math.ceil((min + max) / 2), Math.ceil(max)]}
         >
           <Label angle={-90} fill={cCard.txtColor} offset={0} position="insideLeft" value="" />
         </YAxis>
         <Tooltip
-          content={<CustomTooltip assetPriceInfo={assetPriceInfo} />}
+          content={<CustomTooltip historyData={historyData} />}
           wrapperStyle={{ outline: 'none' }}
         />
         <Legend
@@ -101,14 +114,14 @@ const AssetPriceChart = ({ assetPriceInfo }: { assetPriceInfo: AssetPrice[] }) =
           <>
             <Area
               activeDot={{ r: 5, strokeWidth: 0 }}
-              dataKey={keys[0]}
+              dataKey={keys[1]}
               dot={{ r: 0 }}
-              fill={usdPriceColor}
+              fill={chartColor}
               fillOpacity={0.2}
-              hide={lineProps[keys[0]] === true}
-              name="USD Price"
-              opacity={Number(lineProps.hover === keys[0] || !lineProps.hover ? 1 : 0.2)}
-              stroke={usdPriceColor}
+              hide={lineProps[keys[1]] === true}
+              name={mode}
+              opacity={Number(lineProps.hover === keys[1] || !lineProps.hover ? 1 : 0.2)}
+              stroke={chartColor}
               strokeWidth={3}
               type="monotone"
             />
@@ -119,9 +132,38 @@ const AssetPriceChart = ({ assetPriceInfo }: { assetPriceInfo: AssetPrice[] }) =
   );
 };
 
+const CustomXAxisTick = (props: any) => {
+  const { x, y, payload, historyData, milliSeconds } = props;
+  const { cCard } = useColors();
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text fill={cCard.txtColor} fillOpacity={0.5} textAnchor="start" x={-20} y={20}>
+        {moment(historyData[payload.value].xAxis).format(
+          milliSeconds === MILLI_SECONDS_PER_DAY ? 'HH:mm' : 'MM/DD'
+        )}
+      </text>
+    </g>
+  );
+};
+
+const CustomYAxisTick = (props: any) => {
+  const { x, y, payload, historyData } = props;
+  const { cCard } = useColors();
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text fill={cCard.txtColor} fillOpacity={0.5} textAnchor="end" x={0} y={0}>
+        {historyData[0].yAxisType}
+        {smallFormatter(payload.value, true)}
+      </text>
+    </g>
+  );
+};
+
 const CustomTooltip = (props: any) => {
   const { cCard } = useColors();
-  const { active, payload, label, assetPriceInfo } = props;
+  const { active, payload, label, historyData } = props;
 
   if (active && payload && payload.length) {
     return (
@@ -140,7 +182,7 @@ const CustomTooltip = (props: any) => {
           p={2}
           textAlign="left"
           width="100%"
-        >{`${moment(assetPriceInfo[label].createdAt).format('YYYY-MM-DD HH:mm')}`}</Text>
+        >{`${moment(historyData[label].xAxis).format('YYYY-MM-DD HH:mm')}`}</Text>
         {payload[0] && (
           <HStack alignSelf="flex-start" p={2}>
             <Text color={payload[0].color}>{payload[0].name}: </Text>
@@ -168,7 +210,7 @@ const CustomLegend = (
   const { cCard } = useColors();
 
   return (
-    <HStack justifyContent="center" spacing={12}>
+    <HStack justifyContent="flex-start" ml="60px" spacing={12}>
       {payload &&
         payload.map((item: any, index: number) => {
           return (
@@ -194,4 +236,4 @@ const CustomLegend = (
   );
 };
 
-export default AssetPriceChart;
+export default HistoryChart;

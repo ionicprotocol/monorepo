@@ -218,3 +218,11 @@ export const VAULT_WITHDRAW_STEPS = (symbol: string) =>
       title: 'Withdraw',
     },
   ] as TxStep[];
+
+export const PRICE = 'Price';
+export const TVL = 'TVL';
+export const APY = 'APY';
+export const MILLI_SECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+export const MILLI_SECONDS_PER_WEEK = MILLI_SECONDS_PER_DAY * 7;
+export const MILLI_SECONDS_PER_MONTH = MILLI_SECONDS_PER_DAY * 30;
+export const MILLI_SECONDS_PER_YEAR = MILLI_SECONDS_PER_DAY * 365;

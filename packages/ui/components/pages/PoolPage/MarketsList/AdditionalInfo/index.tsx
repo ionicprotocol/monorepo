@@ -8,14 +8,13 @@ import { useSwitchNetwork } from 'wagmi';
 import type { Market } from '@ui/components/pages/PoolPage/MarketsList';
 import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/index';
 import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/index';
-import { HistoricalGraph } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/HistoricalGraph';
+import { HistoricalRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/HistoricalRate/index';
 import { MarketDetails } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/MarketDetails';
 import { StrategySafetyScore } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/StrategySafetyScore';
 import { UtilizationRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/UtilizationRate';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
-import { useWindowSize } from '@ui/hooks/useScreenSize';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getChainConfig } from '@ui/utils/networkData';
 
@@ -38,7 +37,6 @@ export const AdditionalInfo = ({
   const assets: MarketData[] = rows.map((row) => row.original.market);
 
   const { currentChain } = useMultiMidas();
-  const windowWidth = useWindowSize();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
@@ -54,7 +52,7 @@ export const AdditionalInfo = ({
   };
 
   return (
-    <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
+    <Box width="100%">
       <Flex
         alignItems="center"
         flexDirection={{ base: 'column', lg: 'row' }}
@@ -152,7 +150,7 @@ export const AdditionalInfo = ({
           <UtilizationRate asset={asset} poolChainId={poolChainId} />
         </GridItem>
         <GridItem>
-          <HistoricalGraph asset={asset} poolChainId={poolChainId} />
+          <HistoricalRate asset={asset} poolChainId={poolChainId} />
         </GridItem>
       </Grid>
     </Box>
