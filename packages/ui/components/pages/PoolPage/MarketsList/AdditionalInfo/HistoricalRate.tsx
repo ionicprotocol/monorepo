@@ -27,7 +27,7 @@ export const HistoricalRate = ({
   poolChainId: number;
 }) => {
   const [mode, setMode] = useState<string>(PRICE);
-  const [milliSeconds, setMilliSeconds] = useState(MILLI_SECONDS_PER_DAY);
+  const [milliSeconds, setMilliSeconds] = useState<number>(MILLI_SECONDS_PER_DAY);
   const { cCard } = useColors();
   const { data: historyData } = useHistoryData(
     mode,
