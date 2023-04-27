@@ -72,7 +72,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         }
         contentProps={{ p: 2, width: { base: '250px', sm: 'fit-content' } }}
       >
-        <Flex>
+        <Flex height="100%">
           <PoolStat
             label="Total Supply"
             value={poolData ? smallUsdFormatter(poolData.totalSuppliedFiat, true) : undefined}
@@ -117,7 +117,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         }
         contentProps={{ p: 2, width: { base: '250px', sm: 'fit-content' } }}
       >
-        <Flex>
+        <Flex height="100%">
           <PoolStat
             label="Total Borrow"
             value={poolData ? smallUsdFormatter(poolData?.totalBorrowedFiat, true) : undefined}
@@ -162,7 +162,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         }
         contentProps={{ p: 2, width: { base: '250px', sm: 'fit-content' } }}
       >
-        <Flex>
+        <Flex height="100%">
           <PoolStat
             label="Total Liquidity"
             value={
@@ -203,7 +203,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         }
         contentProps={{ p: 2, width: { base: '250px', sm: 'fit-content' } }}
       >
-        <Flex>
+        <Flex height="100%">
           <PoolStat
             label="Pool Utilization"
             value={poolData ? poolData.utilization.toFixed(2) + '%' : undefined}
