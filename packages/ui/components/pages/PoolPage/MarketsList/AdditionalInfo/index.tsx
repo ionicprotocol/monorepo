@@ -8,7 +8,7 @@ import { useSwitchNetwork } from 'wagmi';
 import type { Market } from '@ui/components/pages/PoolPage/MarketsList';
 import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/index';
 import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/index';
-import { HistoricalRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/HistoricalRate/index';
+import { HistoricalRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/HistoricalRate';
 import { MarketDetails } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/MarketDetails';
 import { StrategySafetyScore } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/StrategySafetyScore';
 import { UtilizationRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/UtilizationRate';
