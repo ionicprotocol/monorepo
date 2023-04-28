@@ -101,6 +101,12 @@ export interface AssetPrice {
   createdAt: number;
 }
 
+export interface AssetTvl {
+  createdAt: number;
+  tvlNative: number;
+  tvlUnderlying: number;
+}
+
 export interface ChartData {
   xAxis: number;
   yAxis: number;

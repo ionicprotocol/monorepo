@@ -41,6 +41,7 @@ export const HistoricalRate = ({
   const { data: historyData, isLoading } = useHistoryData(
     mode,
     asset.underlyingToken,
+    asset.cToken,
     poolChainId,
     milliSeconds
   );
