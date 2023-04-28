@@ -89,23 +89,23 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols["stkBNB-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["sAMM-jBRL/BRZ"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.jBRL),
   ],
   [underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.ankrBNB),
   ],
   [underlying(assets, assetSymbols["vAMM-ANKR/HAY"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.HAY),
   ],
   [underlying(assets, assetSymbols["sAMM-HAY/BUSD"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.BUSD),
   ],
   [underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.ankrBNB),
   ],
   [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],

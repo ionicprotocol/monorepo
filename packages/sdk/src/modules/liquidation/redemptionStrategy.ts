@@ -5,6 +5,7 @@ import { BytesLike, constants, Contract, ethers } from "ethers";
 import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";
 import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 import SaddleLpPriceOracleABI from "../../../abis/SaddleLpPriceOracle";
+import { IPair__factory } from "../../../typechain/factories/IPair__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
 
@@ -143,6 +144,25 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         ),
         outputToken: actualOutputToken,
       };
+    case RedemptionStrategyContract.SolidlyLpTokenLiquidator: {
+      const lpToken = IPair__factory.connect(inputToken, midasSdk.provider);
+
+      const token0 = await lpToken.callStatic.token0();
+      const token1 = await lpToken.callStatic.token1();
+
+      if (token0 != outputToken && token1 != outputToken) {
+        throw new Error(`Output token ${outputToken} does not match either of the pair tokens! ${token0} ${token1}`);
+      }
+
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(
+          ["address", "address[]"],
+          [midasSdk.chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, outputToken]
+        ),
+        outputToken,
+      };
+    }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
     case RedemptionStrategyContract.GelatoGUniLiquidator: {
       const lpToken = IUniswapV2Pair__factory.connect(inputToken, midasSdk.provider);
