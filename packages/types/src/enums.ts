@@ -28,6 +28,7 @@ export enum RedemptionStrategyContract {
   BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
   BalancerSwapLiquidator = "BalancerSwapLiquidator",
   ERC4626Liquidator = "ERC4626Liquidator",
+  AlgebraSwapLiquidator = "AlgebraSwapLiquidator"
 }
 
 export enum FundingStrategyContract {

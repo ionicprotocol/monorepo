@@ -109,6 +109,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.WBNB),
   ],
   [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
+  [underlying(assets, assetSymbols.ankrBNB)]: [RedemptionStrategyContract.AlgebraSwapLiquidator, WBNB]
 };
 
 export default redemptionStrategies;
