@@ -187,7 +187,7 @@ const CustomTooltip = (props: any) => {
           <HStack alignSelf="flex-start" p={2}>
             <Text color={payload[0].color}>{payload[0].name}: </Text>
             <Text color={payload[0].color} fontWeight="bold">
-              ${Number(payload[0].value).toFixed(2)}
+              ${smallFormatter(Number(payload[0].value))}
             </Text>
           </HStack>
         )}
