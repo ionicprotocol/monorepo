@@ -110,7 +110,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
   [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
   [underlying(assets, assetSymbols.ankrBNB)]: [RedemptionStrategyContract.AlgebraSwapLiquidator, WBNB],
-  [underlying(assets, assetSymbols.HAY)]: [RedemptionStrategyContract.AlgebraSwapLiquidator, BUSD],
+  [underlying(assets, assetSymbols.HAY)]: [RedemptionStrategyContract.SolidlyLiquidator, BUSD],
 };
 
 export default redemptionStrategies;

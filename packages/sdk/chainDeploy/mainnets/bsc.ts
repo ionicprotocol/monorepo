@@ -492,6 +492,28 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
+  const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (algebraSwapLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(algebraSwapLiquidator.transactionHash);
+  }
+  console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
+
+  const solidlyLiquidator = await deployments.deploy("SolidlyLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlyLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(solidlyLiquidator.transactionHash);
+  }
+  console.log("SolidlyLiquidator: ", solidlyLiquidator.address);
+
   //// Liquidator Redemption and Funding Strategies
 
   //// custom uniswap v2 redemptions and funding
