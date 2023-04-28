@@ -19,6 +19,15 @@ const HistoryChart = dynamic(() => import('@ui/components/shared/HistoryChart'),
   ssr: false,
 });
 
+export const TimeFrames = [
+  { label: '1D', milliSeconds: MILLI_SECONDS_PER_DAY },
+  { label: '1W', milliSeconds: MILLI_SECONDS_PER_WEEK },
+  { label: '1M', milliSeconds: MILLI_SECONDS_PER_MONTH },
+  { label: '1Y', milliSeconds: MILLI_SECONDS_PER_YEAR },
+];
+
+export const Modes = [PRICE, TVL];
+
 export const HistoricalRate = ({
   asset,
   poolChainId,
@@ -58,30 +67,23 @@ export const HistoricalRate = ({
             justifyContent="flex-start"
             spacing={0}
           >
-            <CButton
-              borderRadius={8}
-              height="100%"
-              isSelected={mode === PRICE}
-              onClick={() => setMode(PRICE)}
-              p={2}
-              variant="filter"
-            >
-              <Center fontWeight="bold" height="100%" width="100%">
-                Price
-              </Center>
-            </CButton>
-            <CButton
-              borderRadius={8}
-              height="100%"
-              isSelected={mode === TVL}
-              onClick={() => setMode(TVL)}
-              p={2}
-              variant="filter"
-            >
-              <Center fontWeight="bold" height="100%" width="100%">
-                TVL
-              </Center>
-            </CButton>
+            {Modes.map((_mode) => {
+              return (
+                <CButton
+                  borderRadius={8}
+                  height="100%"
+                  isSelected={mode === _mode}
+                  key={_mode}
+                  onClick={() => setMode(_mode)}
+                  p={2}
+                  variant="filter"
+                >
+                  <Center fontWeight="bold" height="100%" width="100%">
+                    {_mode}
+                  </Center>
+                </CButton>
+              );
+            })}
           </ButtonGroup>
         </Flex>
       </Box>
@@ -105,54 +107,23 @@ export const HistoricalRate = ({
             spacing={0}
             zIndex={1}
           >
-            <CButton
-              borderRadius={8}
-              height="100%"
-              isSelected={milliSeconds === MILLI_SECONDS_PER_DAY}
-              onClick={() => setMilliSeconds(MILLI_SECONDS_PER_DAY)}
-              p={2}
-              variant="filter"
-            >
-              <Center fontWeight="bold" height="100%" width="100%">
-                1D
-              </Center>
-            </CButton>
-            <CButton
-              borderRadius={8}
-              height="100%"
-              isSelected={milliSeconds === MILLI_SECONDS_PER_WEEK}
-              onClick={() => setMilliSeconds(MILLI_SECONDS_PER_WEEK)}
-              p={2}
-              variant="filter"
-            >
-              <Center fontWeight="bold" height="100%" width="100%">
-                1W
-              </Center>
-            </CButton>
-            <CButton
-              borderRadius={8}
-              height="100%"
-              isSelected={milliSeconds === MILLI_SECONDS_PER_MONTH}
-              onClick={() => setMilliSeconds(MILLI_SECONDS_PER_MONTH)}
-              p={2}
-              variant="filter"
-            >
-              <Center fontWeight="bold" height="100%" width="100%">
-                1M
-              </Center>
-            </CButton>
-            <CButton
-              borderRadius={8}
-              height="100%"
-              isSelected={milliSeconds === MILLI_SECONDS_PER_YEAR}
-              onClick={() => setMilliSeconds(MILLI_SECONDS_PER_YEAR)}
-              p={2}
-              variant="filter"
-            >
-              <Center fontWeight="bold" height="100%" width="100%">
-                1Y
-              </Center>
-            </CButton>
+            {TimeFrames.map((tf) => {
+              return (
+                <CButton
+                  borderRadius={8}
+                  height="100%"
+                  isSelected={milliSeconds === tf.milliSeconds}
+                  key={tf.label}
+                  onClick={() => setMilliSeconds(tf.milliSeconds)}
+                  p={2}
+                  variant="filter"
+                >
+                  <Center fontWeight="bold" height="100%" width="100%">
+                    {tf.label}
+                  </Center>
+                </CButton>
+              );
+            })}
           </ButtonGroup>
           <Stack height={'200px'} width={'100%'}>
             {!isLoading ? (
