@@ -1,6 +1,6 @@
 import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
 
-import assets, { WBNB } from "./assets";
+import assets, { BUSD, WBNB } from "./assets";
 
 // [input token address]: [conversion strategy, output token address]
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
@@ -90,15 +90,15 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["sAMM-jBRL/BRZ"])]: [
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
-    underlying(assets, assetSymbols.BUSD),
+    underlying(assets, assetSymbols.jBRL),
   ],
   [underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"])]: [
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
-    underlying(assets, assetSymbols.WBNB),
+    underlying(assets, assetSymbols.ankrBNB),
   ],
   [underlying(assets, assetSymbols["vAMM-ANKR/HAY"])]: [
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
-    underlying(assets, assetSymbols.BUSD),
+    underlying(assets, assetSymbols.HAY),
   ],
   [underlying(assets, assetSymbols["sAMM-HAY/BUSD"])]: [
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
@@ -106,10 +106,11 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
   [underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"])]: [
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
-    underlying(assets, assetSymbols.WBNB),
+    underlying(assets, assetSymbols.ankrBNB),
   ],
   [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
-  [underlying(assets, assetSymbols.ankrBNB)]: [RedemptionStrategyContract.AlgebraSwapLiquidator, WBNB]
+  [underlying(assets, assetSymbols.ankrBNB)]: [RedemptionStrategyContract.AlgebraSwapLiquidator, WBNB],
+  [underlying(assets, assetSymbols.HAY)]: [RedemptionStrategyContract.AlgebraSwapLiquidator, BUSD],
 };
 
 export default redemptionStrategies;
