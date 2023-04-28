@@ -61,3 +61,6 @@ schedule = "@hourly"
 
 [functions."asset-price-*"]
 schedule = "@hourly"
+
+[functions."asset-tvl-*"]
+schedule = "@hourly"
