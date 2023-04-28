@@ -167,7 +167,7 @@ export const HistoricalRate = ({
               )
             ) : (
               <Center height="100%">
-                <Spinner />
+                <Spinner mt={-8} />
               </Center>
             )}
           </Stack>
