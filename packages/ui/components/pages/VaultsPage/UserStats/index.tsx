@@ -115,7 +115,7 @@ export const UserStats = ({
         contentProps={{ p: 2, width: 'fit-content' }}
         visible={topSuppliedAssets.length > 0 && topSuppliedAssets[0].supplyBalanceFiat > 0}
       >
-        <Flex>
+        <Flex height="100%">
           <UserStat label="Your Supply" value={smallUsdFormatter(totalSupplyBalanceFiat, true)} />
         </Flex>
       </PopoverTooltip>
@@ -161,7 +161,7 @@ export const UserStats = ({
         }
         contentProps={{ minW: { base: '300px', sm: '350px' }, p: 2 }}
       >
-        <Flex>
+        <Flex height="100%">
           <UserStat
             label="Effective Supply APY"
             secondValue={
