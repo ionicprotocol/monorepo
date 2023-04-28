@@ -160,7 +160,9 @@ export const HistoricalRate = ({
                 <HistoryChart historyData={historyData} milliSeconds={milliSeconds} mode={mode} />
               ) : (
                 <Center height="100%">
-                  <Text size="md">Not available</Text>
+                  <Text mt="-8" size="md">
+                    Not available
+                  </Text>
                 </Center>
               )
             ) : (
