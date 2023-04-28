@@ -29,7 +29,7 @@ export const HistoricalRate = ({
   const [mode, setMode] = useState<string>(PRICE);
   const [milliSeconds, setMilliSeconds] = useState<number>(MILLI_SECONDS_PER_DAY);
   const { cCard } = useColors();
-  const { data: historyData } = useHistoryData(
+  const { data: historyData, isLoading } = useHistoryData(
     mode,
     asset.underlyingToken,
     poolChainId,
@@ -155,8 +155,14 @@ export const HistoricalRate = ({
             </CButton>
           </ButtonGroup>
           <Stack height={'200px'} width={'100%'}>
-            {historyData ? (
-              <HistoryChart historyData={historyData} milliSeconds={milliSeconds} mode={mode} />
+            {!isLoading ? (
+              historyData && historyData.length > 0 ? (
+                <HistoryChart historyData={historyData} milliSeconds={milliSeconds} mode={mode} />
+              ) : (
+                <Center height="100%">
+                  <Text size="md">Not available</Text>
+                </Center>
+              )
             ) : (
               <Center height="100%">
                 <Spinner />
