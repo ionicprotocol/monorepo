@@ -170,6 +170,16 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken,
       };
     }
+    case RedemptionStrategyContract.AlgebraSwapLiquidator: {
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(
+          ["address", "address"],
+          [outputToken, midasSdk.chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER]
+        ),
+        outputToken,
+      };
+    }
     case RedemptionStrategyContract.UniswapV2LiquidatorFunder: {
       const swapPath = [inputToken, outputToken];
       return {

@@ -11,6 +11,7 @@ const chainAddresses: ChainAddresses = {
   PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
   STABLE_TOKEN: BUSD,
   W_BTC_TOKEN: BTCB,
+  ALGEBRA_SWAP_ROUTER: "0x327Dd3208f0bCF590A66110aCB6e5e6941A4EfA0",
 };
 
 export default chainAddresses;
