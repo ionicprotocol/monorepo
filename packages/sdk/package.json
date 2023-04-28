@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/sdk",
   "repository": "git://github.com:midas-protocol/monorepo.git",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -35,6 +35,7 @@
     "export:all": "npm run export:bsc && npm run export:polygon && npm run export:moonbeam && npm run export:neondevnet && npm run export:chapel",
     "export:bsc": "hardhat export --network bsc --export ../chains/deployments/bsc.json",
     "export:polygon": "hardhat export --network polygon --export ../chains/deployments/polygon.json",
+    "export:ethereum": "hardhat export --network ethereum --export ../chains/deployments/ethereum.json",
     "export:moonbeam": "hardhat export --network moonbeam --export ../chains/deployments/moonbeam.json",
     "export:arbitrum": "hardhat export --network arbitrum --export ../chains/deployments/arbitrum.json",
     "export:neondevnet": "hardhat export --network neondevnet --export ../chains/deployments/neondevnet.json",
@@ -49,6 +50,7 @@
     "deploy:chapel": "hardhat --network chapel deploy --tags prod --no-compile",
     "deploy:bsc": "hardhat --network bsc deploy --tags prod --no-compile",
     "deploy:polygon": "hardhat --network polygon deploy --tags prod --no-compile",
+    "deploy:ethereum": "hardhat --network ethereum deploy --tags prod --no-compile",
     "deploy:moonbeam": "hardhat --network moonbeam deploy --tags prod --no-compile",
     "deploy:arbitrum": "hardhat --network arbitrum deploy --tags prod --no-compile",
     "deploy:evmos": "hardhat --network evmos deploy --tags prod --no-compile",

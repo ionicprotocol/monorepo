@@ -1,5 +1,30 @@
 {
   "name": "ethereum",
   "chainId": "1",
-  "contracts": {}
+  "contracts": {
+    "CErc20Delegate": {
+      "address": "0xB537BCFd6E6Ab1a91da42c1a5BbF539e75D627C0"
+    },
+    "CTokenFirstExtension": {
+      "address": "0x6e9F78938D405C8742D8B85378bb29137d42a039"
+    },
+    "Comptroller": {
+      "address": "0x10364f67301feFf9F0ADB1919921c75fe3BA17A2"
+    },
+    "ComptrollerFirstExtension": {
+      "address": "0x07f196040A64A17F3438e273C72484A7428cb922"
+    },
+    "DefaultProxyAdmin": {
+      "address": "0xF68095f787CA0fA9362954afd04cE0E7063a1dC1"
+    },
+    "FuseFeeDistributor": {
+      "address": "0xC033a75057C1102Bf54Df6DE75D2E9aBa8E745A2"
+    },
+    "FuseFeeDistributor_Implementation": {
+      "address": "0x3829533733A3d54FDC4387acFd93b303D115e83D"
+    },
+    "FuseFeeDistributor_Proxy": {
+      "address": "0xC033a75057C1102Bf54Df6DE75D2E9aBa8E745A2"
+    }
+  }
 }
