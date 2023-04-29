@@ -1,6 +1,6 @@
 import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
 
-import assets, { WBNB } from "./assets";
+import assets, { BUSD, WBNB } from "./assets";
 
 // [input token address]: [conversion strategy, output token address]
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
@@ -89,18 +89,28 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols["stkBNB-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["sAMM-jBRL/BRZ"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.jBRL),
   ],
   [underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.ankrBNB),
   ],
   [underlying(assets, assetSymbols["vAMM-ANKR/HAY"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     underlying(assets, assetSymbols.HAY),
   ],
+  [underlying(assets, assetSymbols["sAMM-HAY/BUSD"])]: [
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    underlying(assets, assetSymbols.BUSD),
+  ],
+  [underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"])]: [
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
   [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
+  [underlying(assets, assetSymbols.ankrBNB)]: [RedemptionStrategyContract.AlgebraSwapLiquidator, WBNB],
+  [underlying(assets, assetSymbols.HAY)]: [RedemptionStrategyContract.SolidlyLiquidator, BUSD],
 };
 
 export default redemptionStrategies;
