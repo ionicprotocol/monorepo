@@ -1,6 +1,6 @@
 import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
 
-import assets, { BUSD, WBNB } from "./assets";
+import assets, { ankrBNB, BUSD, WBNB } from "./assets";
 
 // [input token address]: [conversion strategy, output token address]
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
@@ -86,6 +86,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.BTCB),
   ],
   [underlying(assets, assetSymbols["CAKE-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
+  [underlying(assets, assetSymbols["ANKR-ankrBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, ankrBNB],
   [underlying(assets, assetSymbols["stkBNB-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["sAMM-jBRL/BRZ"])]: [
