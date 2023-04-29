@@ -76,6 +76,8 @@ export type ChainAddresses = {
     PAIR_INIT_HASH: string;
     QUOTER_V2: string;
   };
+  ALGEBRA_SWAP_ROUTER?: string;
+  SOLIDLY_SWAP_ROUTER?: string;
 };
 
 export type ChainSupportedAssets = {

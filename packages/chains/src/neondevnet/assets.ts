@@ -2,7 +2,7 @@ import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types"
 
 const WNEON = "0xf1041596da0499c3438e3B1Eb7b95354C6Aed1f5";
 const MORA = "0x6dcDD1620Ce77B595E6490701416f6Dbf20D2f67";
-const USDC = "0x6Ab1F83c0429A1322D7ECDFdDf54CE6D179d911f";
+const USDC = "0x4F6B3c357c439E15FB61c1187cc5E28eC72bBc55";
 
 export const assets: SupportedAsset[] = [
   {

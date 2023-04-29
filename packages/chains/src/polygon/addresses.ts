@@ -12,6 +12,7 @@ const chainAddresses: ChainAddresses = {
   PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
   STABLE_TOKEN: underlying(assets, assetSymbols.USDC),
   W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
+  ALGEBRA_SWAP_ROUTER: "0xf5b509bB0909a69B1c207E495f687a596C168E12",
 };
 
 export default chainAddresses;
