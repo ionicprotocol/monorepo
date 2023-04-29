@@ -24,7 +24,7 @@ export const getCgPrice = async (coingeckoId: string) => {
     return usdPrice;
   } else {
     if (coingeckoId === neondevnet.specificParams.cgId) {
-      return 0.05;
+      return 5;
     } else {
       return 1;
     }
