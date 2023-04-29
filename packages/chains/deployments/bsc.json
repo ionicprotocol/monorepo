@@ -38,6 +38,9 @@
     "AlgebraPriceOracle_Proxy": {
       "address": "0xA4C55B159824470a710e5131Faec37969b2F32Ab"
     },
+    "AlgebraSwapLiquidator": {
+      "address": "0xf7d7EDa783382c28058C842768Fbf20185c27f8D"
+    },
     "AlpacaERC4626_BETH": {
       "address": "0xCBE401B8874A1C30163740f5f45156088Eb21481"
     },
@@ -364,6 +367,12 @@
     },
     "SimplePriceOracle_Proxy": {
       "address": "0x5425F12dD3Fbc16deB3c6693d85B52b77fb59eaE"
+    },
+    "SolidlyLiquidator": {
+      "address": "0x368De44F36E7f07620dC36EB0eD30319F190Ddc5"
+    },
+    "SolidlyLpTokenLiquidator": {
+      "address": "0x0416C8D8aFCB44EBA7Aa1062339A15C0448D4Bbb"
     },
     "SolidlyLpTokenPriceOracle": {
       "address": "0xf12BF362779D3F728644DC33a5D594F0E57a85F2"

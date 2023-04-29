@@ -514,6 +514,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("SolidlyLiquidator: ", solidlyLiquidator.address);
 
+  const solidlyLpTokenLiquidator = await deployments.deploy("SolidlyLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlyLpTokenLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(solidlyLpTokenLiquidator.transactionHash);
+  }
+  console.log("SolidlyLpTokenLiquidator: ", solidlyLpTokenLiquidator.address);
+
   //// Liquidator Redemption and Funding Strategies
 
   //// custom uniswap v2 redemptions and funding
