@@ -45,7 +45,7 @@ export function useAllUsdPrices() {
               if (config.chainId === chainIdToConfig[SupportedChains.neon_devnet].chainId) {
                 prices[id.toString()] = {
                   symbol: config.specificParams.metadata.nativeCurrency.symbol,
-                  value: 0.05,
+                  value: 1.2,
                 };
               } else {
                 prices[id.toString()] = {
