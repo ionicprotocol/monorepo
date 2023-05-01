@@ -94,3 +94,21 @@ export interface FusePool {
   blockPosted: number;
   timestampPosted: number;
 }
+
+export interface AssetPrice {
+  usdPrice: number;
+  underlyingPrice: number;
+  createdAt: number;
+}
+
+export interface AssetTvl {
+  createdAt: number;
+  tvlNative: number;
+  tvlUnderlying: number;
+}
+
+export interface ChartData {
+  xAxis: number;
+  yAxis: number;
+  yAxisType: string;
+}
