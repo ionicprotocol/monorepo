@@ -23,7 +23,7 @@ import "./tasks/sendTestTokens";
 
 import "./tasks/one-time/liquidate-take-bad-debt";
 import "./tasks/oracle/add-apeswap-oracle";
-import "./tasks/configureApStrategies";
+import "./tasks/admin/configureApStrategies";
 import "./tasks/vaults/vaults";
 
 dotEnvConfig();

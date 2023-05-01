@@ -16,9 +16,9 @@ task("pool:create", "Create pool if does not exist")
     const signer = await hre.ethers.getNamedSigner(taskArgs.creator);
 
     // @ts-ignore
-    const poolModule = await import("../../tests/utils/pool");
+    const poolModule = await import("../../../tests/utils/pool");
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const whitelist = taskArgs.whitelist ? taskArgs.whitelist.split(",") : [];
     if (taskArgs.enforceWhitelist === "true" && whitelist.length === 0) {

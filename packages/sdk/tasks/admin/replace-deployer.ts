@@ -3,7 +3,6 @@ import { task, types } from "hardhat/config";
 
 import { AddressesProvider } from "../../typechain/AddressesProvider";
 import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
-import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { DiaPriceOracle } from "../../typechain/DiaPriceOracle";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";

@@ -1,10 +1,10 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../typechain/Comptroller";
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
-import { Unitroller } from "../../typechain/Unitroller";
+import { Comptroller } from "../../../typechain/Comptroller";
+import { FuseFeeDistributor } from "../../../typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../../typechain/FusePoolDirectory";
+import { Unitroller } from "../../../typechain/Unitroller";
 
 task("non-owner-pool:upgrade")
   .addParam("comptrollerAddress", "The comptroller implementation address", undefined, types.string)

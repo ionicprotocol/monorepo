@@ -1,5 +1,3 @@
-import "./create";
-import "./non-owner";
-import "./upgrade";
+import "./admin";
+import "../market/risk";
 import "./get-pool-data";
-import "./deprecate";
