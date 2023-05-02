@@ -2,6 +2,7 @@ import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useDebtCeilingForAssetForCollateral = ({
@@ -16,6 +17,7 @@ export const useDebtCeilingForAssetForCollateral = ({
   poolChainId: number;
 }) => {
   const sdk = useSdk(poolChainId);
+  const { address } = useMultiMidas();
 
   return useQuery(
     [
@@ -23,9 +25,10 @@ export const useDebtCeilingForAssetForCollateral = ({
       poolChainId,
       assets.map((asset) => asset.cToken).sort(),
       collaterals.map((asset) => asset.cToken).sort(),
+      address,
     ],
     async () => {
-      if (!sdk || collaterals.length === 0) return null;
+      if (!sdk || collaterals.length === 0 || !address) return null;
 
       const debtCeilingPerCollateral: {
         asset: NativePricedFuseAsset;
@@ -39,25 +42,38 @@ export const useDebtCeilingForAssetForCollateral = ({
           await Promise.all(
             collaterals.map(async (collateralAsset) => {
               if (asset.cToken !== collateralAsset.cToken) {
-                const isInBlackList =
-                  await comptroller.callStatic.borrowingAgainstCollateralBlacklist(
+                const [isInBlackList, isAccountInWhitelist] = await Promise.all([
+                  comptroller.callStatic.borrowingAgainstCollateralBlacklist(
                     asset.cToken,
                     collateralAsset.cToken
-                  );
+                  ),
+                  comptroller.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
+                    asset.cToken,
+                    collateralAsset.cToken,
+                    address
+                  ),
+                ]);
 
-                if (isInBlackList) {
+                if (isInBlackList && !isAccountInWhitelist) {
                   debtCeilingPerCollateral.push({
                     asset,
                     collateralAsset,
                     debtCeiling: -1,
                   });
                 } else {
-                  const debtCeiling = await comptroller.callStatic.borrowCapForCollateral(
-                    asset.cToken,
-                    collateralAsset.cToken
-                  );
+                  const [debtCeiling, isAccountInWhitelist] = await Promise.all([
+                    comptroller.callStatic.borrowCapForCollateral(
+                      asset.cToken,
+                      collateralAsset.cToken
+                    ),
+                    comptroller.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
+                      asset.cToken,
+                      collateralAsset.cToken,
+                      address
+                    ),
+                  ]);
 
-                  if (debtCeiling.gt(constants.Zero)) {
+                  if (debtCeiling.gt(constants.Zero) && !isAccountInWhitelist) {
                     debtCeilingPerCollateral.push({
                       asset,
                       collateralAsset,
@@ -73,6 +89,10 @@ export const useDebtCeilingForAssetForCollateral = ({
 
       return debtCeilingPerCollateral;
     },
-    { cacheTime: Infinity, enabled: !!sdk && collaterals.length > 0, staleTime: Infinity }
+    {
+      cacheTime: Infinity,
+      enabled: !!sdk && collaterals.length > 0 && !!address,
+      staleTime: Infinity,
+    }
   );
 };

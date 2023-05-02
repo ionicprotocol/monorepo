@@ -3,6 +3,7 @@ import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { Cap } from '@ui/hooks/useBorrowCap';
@@ -19,6 +20,7 @@ export const useSupplyCap = ({
   market,
 }: UseSupplyCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
+  const { address } = useMultiMidas();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
@@ -36,14 +38,18 @@ export const useSupplyCap = ({
       market.cToken,
       market.underlyingPrice,
       usdPrice,
+      address,
     ],
     async () => {
-      if (sdk && usdPrice && market) {
+      if (sdk && usdPrice && market && address) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
-          const supplyCap = await comptroller.callStatic.supplyCaps(market.cToken);
+          const [supplyCap, supplyCapWhitelist] = await Promise.all([
+            comptroller.callStatic.supplyCaps(market.cToken),
+            comptroller.callStatic.supplyCapWhitelist(market.cToken, address),
+          ]);
 
-          if (supplyCap.eq(constants.Zero)) {
+          if (supplyCapWhitelist || supplyCap.eq(constants.Zero)) {
             return null;
           } else {
             const usdCap =
@@ -68,7 +74,7 @@ export const useSupplyCap = ({
     },
     {
       cacheTime: Infinity,
-      enabled: !!sdk && !!usdPrice && !!market,
+      enabled: !!sdk && !!usdPrice && !!market && !!address,
       staleTime: Infinity,
     }
   );
