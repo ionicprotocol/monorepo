@@ -23,6 +23,9 @@
     "AlgebraPriceOracle_Proxy": {
       "address": "0x7f3597b369610cCFf34C181c0A19d4480aCe1eEa"
     },
+    "AlgebraSwapLiquidator": {
+      "address": "0x37681ed6a380C97b36547Febd45C2Cc1A5c9edD7"
+    },
     "AnkrCertificateTokenPriceOracle": {
       "address": "0x4Be947BaA3C038aac1097EDF845080c4b2C1130e"
     },
@@ -93,10 +96,10 @@
       "address": "0x7ef2A6a6aF8ee090da3a24ea947b3717c4D16D94"
     },
     "Comptroller": {
-      "address": "0x60e44fb3E3247c65EB6a04d39ed1FD25C0265045"
+      "address": "0x529Eb3c53bE3B7976Ef30774d71FC257b6D19609"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xD880d5D33221F3992E695f5C6bFBC558e9Ad31cF"
+      "address": "0x7bEd7966108617600cbEeEa2109e4942486781A7"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
       "address": "0x9F5DaC5Aa35a55bCb84A7AdFcdA71e7b4bc0DaF7"
@@ -159,7 +162,7 @@
       "address": "0x9A161e68EC0d5364f4d09A6080920DAFF6FFf250"
     },
     "FusePoolLens": {
-      "address": "0x8F3586b2B350dbe1a0397811f424BdA9559A90E0"
+      "address": "0x8dA927B869221656EEC98b01606509018c9560b1"
     },
     "FusePoolLensSecondary": {
       "address": "0x12C72b635ca66e3A01B4796e018f9e703b54df45"
@@ -297,7 +300,7 @@
       "address": "0x329eC9aBdA182F1b259e8257afc2DB4f144088ad"
     },
     "UniswapV3LiquidatorFunder": {
-      "address": "0x2F436d94E3479E78b00fE88c5ac05d2a9c57C3af"
+      "address": "0x46A1319a73Be2408a75774be66c3aeD3E6203595"
     },
     "UniswapV3PriceOracle": {
       "address": "0xF36e137F9aA5fB74e9aEb0EDc767238872d6fd3d"
