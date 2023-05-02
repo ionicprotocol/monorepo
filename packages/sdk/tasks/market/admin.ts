@@ -12,10 +12,8 @@ export default task("market:unsupport", "Unsupport a market")
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 
-    // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    // @ts-ignoreutils/pool
-
+    // @ts-ignore
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const comptroller = await sdk.createComptroller(taskArgs.comptroller, signer);

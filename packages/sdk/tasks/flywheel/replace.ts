@@ -1,11 +1,11 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../typechain/ComptrollerFirstExtension";
-import { FuseFlywheelDynamicRewardsPlugin } from "../typechain/FuseFlywheelDynamicRewardsPlugin";
-import { MidasFlywheel } from "../typechain/MidasFlywheel";
-import { MidasReplacingFlywheel } from "../typechain/MidasReplacingFlywheel";
+import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { FuseFlywheelDynamicRewardsPlugin } from "../../typechain/FuseFlywheelDynamicRewardsPlugin";
+import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasReplacingFlywheel } from "../../typechain/MidasReplacingFlywheel";
 
 task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
   .addParam("flywheelToReplaceAddress", "address of flywheel to replace", undefined, types.string)
@@ -21,7 +21,7 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       if (flywheelName != "DDD") throw new Error(`name DDD`);
     }
     const chainid = await getChainId();
-    if (chainid == 56) {
+    if (chainid == "56") {
       const flywheelContractName = `MidasFlywheel_${flywheelName}`;
 
       const flywheelToReplace = (await ethers.getContractAt(

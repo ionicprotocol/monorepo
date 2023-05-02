@@ -12,11 +12,9 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
     types.string
   )
   .setAction(async (taskArgs, { ethers, deployments }) => {
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
-
     const signer = await ethers.getNamedSigner(taskArgs.creator);
+    const midasSdkModule = await import("../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(signer);
 
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
 

@@ -1,6 +1,6 @@
 import { task, types } from "hardhat/config";
 
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { FusePoolDirectory } from "../../../typechain/FusePoolDirectory";
 
 export default task("pool:deprecate", "Whitelists a new comptroller implementation upgrade")
   .addOptionalParam("index", "Pool index for which to deprecate", undefined, types.string)

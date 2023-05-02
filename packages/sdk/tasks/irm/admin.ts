@@ -9,7 +9,7 @@ export default task("irm:set", "Set new IRM to ctoken")
     const { deployer } = await ethers.getNamedSigners();
 
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const ctokens = _ctokens.split(",");
@@ -28,7 +28,6 @@ task("irm:set-non-owner", "Set new IRM to ctoken")
   .setAction(async ({ ctokens: _ctokens, irmAddress: _irmAddress }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
-    // @ts-ignore
     const sliced = _irmAddress.slice(2);
     const cTokens = _ctokens.split(",");
 
