@@ -1,10 +1,6 @@
 import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../../typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
-import { CToken } from "../../../typechain/CToken";
-
 export default task("market:set-borrow-cap", "Set borrow cap on market")
   .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
   .addParam("market", "The address of the CToken", undefined, types.string)
@@ -12,14 +8,13 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
   .setAction(async ({ admin, market, maxBorrow }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const cToken: CToken = (await ethers.getContractAt("CToken.sol:CToken", market, signer)) as CToken;
+    // @ts-ignore
+    const midasSdkModule = await import("../../../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+
+    const cToken = sdk.createCTokenWithExtensions(market, signer);
     const comptroller = await cToken.callStatic.comptroller();
-    const pool = (await ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, signer)) as Comptroller;
-    const poolExtension = (await ethers.getContractAt(
-      "ComptrollerFirstExtension",
-      comptroller,
-      signer
-    )) as ComptrollerFirstExtension;
+    const pool = sdk.createComptroller(comptroller, signer);
 
     const currentBorrowCap = await pool.callStatic.supplyCaps(cToken.address);
     console.log(`Current borrow cap is ${currentBorrowCap}`);
@@ -30,10 +25,7 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
       return;
     }
 
-    const tx: providers.TransactionResponse = await poolExtension._setMarketBorrowCaps(
-      [cToken.address],
-      [newBorrowCap]
-    );
+    const tx: providers.TransactionResponse = await pool._setMarketBorrowCaps([cToken.address], [newBorrowCap]);
     await tx.wait();
 
     const newSupplyCapSet = await pool.callStatic.supplyCaps(cToken.address);
@@ -54,9 +46,6 @@ task("market:set-borrow-cap-whitelist", "Pauses borrowing on a market")
 
     const cToken = sdk.createCTokenWithExtensions(market, signer);
     const comptroller = await cToken.callStatic.comptroller();
-    if (comptroller !== (await cToken.callStatic.comptroller())) {
-      throw new Error("Comptrollers do not match");
-    }
     const pool = sdk.createComptroller(comptroller, signer);
 
     const currentBorrowCap = await pool.callStatic.supplyCaps(cToken.address);
