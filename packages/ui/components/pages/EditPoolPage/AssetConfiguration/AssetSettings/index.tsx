@@ -6,6 +6,7 @@ import type { BigNumber, ContractFunction } from 'ethers';
 import { AdminFee } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/AdminFee';
 import { BorrowCapWhitelist } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/BorrowCapWhitelist';
 import { DebtCeilings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/DebtCeilings';
+import { DebtCeilingsWhitelist } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/DebtCeilingsWhitelist';
 import { InterestRateModel } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/InterestRateModel';
 import { LoanToValue } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/LoanToValue';
 import { Plugin } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/Plugin';
@@ -105,6 +106,15 @@ export const AssetSettings = ({
           <Divider />
 
           <DebtCeilings
+            assets={assets}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+            selectedAsset={selectedAsset}
+          />
+
+          <Divider />
+
+          <DebtCeilingsWhitelist
             assets={assets}
             comptrollerAddress={comptrollerAddress}
             poolChainId={poolChainId}

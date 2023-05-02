@@ -140,9 +140,9 @@ export const ASSET_SUPPLIED_TOOLTIP =
   'Total Supply of this asset is limited for the overall safety of this pool';
 export const ASSET_BORROWED_TOOLTIP =
   'Total Borrow of this asset is limited for the overall safety of this pool';
-export const SUPPLY_CAP_WHITELIST_TOOLTIP = 'Add Address with no supply cap';
-export const BORROW_CAP_WHITELIST_TOOLTIP = 'Add Address with no borrow cap';
-export const DEBT_CEILING_WHITELIST_TOOLTIP = 'Addresses with no debt ceilings';
+export const SUPPLY_CAP_WHITELIST_TOOLTIP = 'Add or remove address with no supply cap';
+export const BORROW_CAP_WHITELIST_TOOLTIP = 'Add or remove address with no borrow cap';
+export const DEBT_CEILING_WHITELIST_TOOLTIP = 'Add or remove address with no debt ceilings';
 export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';

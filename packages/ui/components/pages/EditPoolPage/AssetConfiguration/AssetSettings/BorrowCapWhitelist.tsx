@@ -29,7 +29,7 @@ import {
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface BorrowCapWhitelistProps {
@@ -48,6 +48,7 @@ export const BorrowCapWhitelist = ({
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
+  const infoToast = useInfoToast();
   const queryClient = useQueryClient();
   const addRecentTransaction = useAddRecentTransaction();
 
@@ -107,7 +108,7 @@ export const BorrowCapWhitelist = ({
           description: `Successfully ${mode === ADD ? 'added' : 'removed'} in whitelist.`,
         });
       } else {
-        successToast({
+        infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in whitelist.`,
