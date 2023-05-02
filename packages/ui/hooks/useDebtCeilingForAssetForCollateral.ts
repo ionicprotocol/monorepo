@@ -42,14 +42,20 @@ export const useDebtCeilingForAssetForCollateral = ({
           await Promise.all(
             collaterals.map(async (collateralAsset) => {
               if (asset.cToken !== collateralAsset.cToken) {
-                const isAccountInWhitelist =
-                  await comptroller.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
+                const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] = await Promise.all([
+                  comptroller.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
                     asset.cToken,
                     collateralAsset.cToken,
                     address
-                  );
+                  ),
+                  comptroller.callStatic.borrowCapForCollateralWhitelist(
+                    asset.cToken,
+                    collateralAsset.cToken,
+                    address
+                  ),
+                ]);
 
-                if (!isAccountInWhitelist) {
+                if (!isAssetBlacklistWhitelist && !isDebtCeilingWhitelist) {
                   const isInBlackList =
                     await comptroller.callStatic.borrowingAgainstCollateralBlacklist(
                       asset.cToken,
