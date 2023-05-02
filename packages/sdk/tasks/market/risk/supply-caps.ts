@@ -57,7 +57,7 @@ task("market:set-supply-cap-whitelist", "Pauses borrowing on a market")
       return;
     } else {
       console.log(`Whitelist status is ${whitelistStatus}, setting to ${whitelist}`);
-      const tx = await pool._supplyCapWhitelist(market, account);
+      const tx = await pool._supplyCapWhitelist(market, account, whitelist);
       await tx.wait();
       console.log(`Whitelist status for ${account} set: ${await pool.callStatic.supplyCapWhitelist(market, account)}`);
     }
