@@ -28,7 +28,8 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
       if (!chainDeployConfig[chainId]) {
         throw new Error(`Config invalid for ${chainId}`);
       }
-      const { config: chainDeployParams }: { config: ChainDeployConfig; deployFunc: any } = chainDeployConfig[chainId];
+      const { config: chainDeployParams }: { config: ChainDeployConfig; deployFunc: CallableFunction } =
+        chainDeployConfig[chainId];
       console.log("chainDeployParams: ", chainDeployParams);
 
       const msl = await deployments.deploy("MidasSafeLiquidator", {

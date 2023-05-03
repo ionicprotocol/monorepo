@@ -211,7 +211,6 @@ task("supply-chapel-market-with-rewards").setAction(async ({ vault }, { ethers, 
 task("claim-chapel-rewards").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
   const bombToken = (await ethers.getContract("ChapelBombERC20")) as IERC20;
-  const rewardsToken = (await ethers.getContract("ChapelRewardsERC20")) as IERC20;
   const symbol = await bombToken.callStatic.symbol();
   const market = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
 

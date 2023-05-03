@@ -17,8 +17,7 @@ task("fund:mint", "deploy dynamic rewards plugin with flywheels")
   .addParam("enter", "Enter tx", false, types.boolean)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
     const underlyings = underlyingsMapping[sdk.chainId];
 

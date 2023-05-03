@@ -1,21 +1,9 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
-import { CErc20 } from "../../typechain/CErc20";
-import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
-import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
-import { Comptroller } from "../../typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { IERC20MetadataUpgradeable as IERC20 } from "../../typechain/IERC20MetadataUpgradeable";
-import { IERC20Mintable } from "../../typechain/IERC20Mintable";
-import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
-import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { OptimizedAPRVaultBase } from "../../typechain/OptimizedAPRVaultBase";
-import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
-import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
-import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
 export default task("optimized-vault:add")
   .addParam("vaultAddress", "Address of the vault to add", undefined, types.string)
