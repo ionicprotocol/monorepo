@@ -1,6 +1,7 @@
 import "./set-plugin";
 import "./admin";
 import "./fund";
+import "./risk";
 import "./upgrade";
 import "./risk";
 import "./upgrade-all";

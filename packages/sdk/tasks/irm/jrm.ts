@@ -8,7 +8,6 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
   .setAction(async ({ irm: _irm, args: _args, postfix: _postfix }, { deployments, ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    // @ts-ignore
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
@@ -70,7 +69,6 @@ task("irm:edit:adjustable-jrm-params", "Edit adjustable JRM parameters")
   .setAction(async ({ irmAddress: _irm, args: _args }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    // @ts-ignore
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const irm = await ethers.getContractAt("AdjustableJumpRateModel", _irm, deployer);
