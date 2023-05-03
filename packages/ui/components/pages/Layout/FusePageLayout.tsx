@@ -36,16 +36,18 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
         </DrawerContent>
       </Drawer>
       <Header onOpen={onOpen} />
-      <Box
-        ml={{ base: 0, md: isSidebarCollapsed ? '86px' : '240px' }}
-        p={{ base: 4, md: 8 }}
-        width={{
-          base: '100%',
-          md: isSidebarCollapsed ? 'calc(100% - 86px)' : 'calc(100% - 240px)',
-        }}
-      >
-        {children}
-      </Box>
+      {isSidebarCollapsed !== undefined ? (
+        <Box
+          ml={{ base: 0, md: isSidebarCollapsed ? '86px' : '240px' }}
+          p={{ base: 4, md: 8 }}
+          width={{
+            base: '100%',
+            md: isSidebarCollapsed ? 'calc(100% - 86px)' : 'calc(100% - 240px)',
+          }}
+        >
+          {children}
+        </Box>
+      ) : null}
     </Flex>
   );
 };
