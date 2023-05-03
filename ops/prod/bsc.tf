@@ -78,8 +78,8 @@ module "bsc_mainnet_liquidation_rpc_2" {
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_2 }
   )
   schedule_expression = "rate(2 minutes)"
-  timeout             = 450
-  memory_size         = 128
+  timeout             = 700
+  memory_size         = 256
 }
 
 
