@@ -132,13 +132,21 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
-    setIsSidebarCollapsed(JSON.parse(oldData || '').isSidebarCollapsed || false);
+    if (oldData && JSON.parse(oldData).isSidebarCollapsed) {
+      setIsSidebarCollapsed(true);
+    } else {
+      setIsSidebarCollapsed(false);
+    }
   }, []);
 
   useEffect(() => {
     if (isSidebarCollapsed !== undefined) {
       const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
-      const data = { ...JSON.parse(oldData || ''), isSidebarCollapsed };
+      let oldObj;
+      if (oldData) {
+        oldObj = JSON.parse(oldData);
+      }
+      const data = { ...oldObj, isSidebarCollapsed };
       localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
   }, [isSidebarCollapsed]);
