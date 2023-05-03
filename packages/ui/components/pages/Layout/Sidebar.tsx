@@ -16,7 +16,7 @@ export const Sidebar = () => {
   const { cPage, cCard, cSolidBtn } = useColors();
   const { address, setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
 
-  return (
+  return isSidebarCollapsed !== undefined ? (
     <Box
       borderColor={cPage.primary.hoverColor}
       borderRightWidth={2}
@@ -183,5 +183,5 @@ export const Sidebar = () => {
         <Footer />
       </Stack>
     </Box>
-  );
+  ) : null;
 };
