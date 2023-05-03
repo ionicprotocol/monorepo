@@ -8,7 +8,7 @@ export default task("irm:get-curve", "Get an IRM curve")
   .addParam("adminFee", "Admin fee of asset", 0, types.int)
   .setAction(async ({ irmAddress: _irmAddress, reserveFactor: _reserveFactor, adminFee: _adminFee }, { ethers }) => {
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const IRM = await sdk.identifyInterestRateModel(_irmAddress);
 

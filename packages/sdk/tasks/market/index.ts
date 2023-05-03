@@ -1,4 +1,3 @@
-import "./create";
 import "./set-plugin";
 import "./admin";
 import "./fund";

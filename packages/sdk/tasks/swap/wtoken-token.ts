@@ -2,16 +2,16 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { task, types } from "hardhat/config";
 
+import ERC20Abi from "../../abis/ERC20";
+
 export default task("swap:wtoken-token", "Swap WNATIVE for token")
   .addParam("token", "token address", undefined, types.string)
   .addOptionalParam("amount", "Amount to trade", "100", types.string)
   .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
   .setAction(async ({ token: _token, amount: _amount, account: _account }, { ethers }) => {
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    // @ts-ignore
-    const sdkModule = await import("../../src");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
+
     let account: SignerWithAddress;
     if (_account === "whale") {
       const signers = await ethers.getSigners();
@@ -23,11 +23,14 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
           max = bal;
         }
       }
+      if (!account!) {
+        throw new Error("No whale found");
+      }
     } else {
       account = await ethers.getNamedSigner(_account);
     }
 
-    const tokenContract = new ethers.Contract(_token, sdkModule.ERC20Abi, account);
+    const tokenContract = new ethers.Contract(_token, ERC20Abi, account);
     const tokenSymbol = await tokenContract.callStatic.symbol();
     await tokenContract.approve(
       sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,

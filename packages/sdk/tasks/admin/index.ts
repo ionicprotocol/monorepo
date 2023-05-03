@@ -4,4 +4,4 @@ import "./edit-deployers";
 import "./revenue";
 import "./fix-flywheel-owners";
 import "./transaction";
-import "./configureApStrategies";
+import "./configure-ap-strategies";

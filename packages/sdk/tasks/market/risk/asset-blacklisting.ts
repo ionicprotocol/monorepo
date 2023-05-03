@@ -9,8 +9,7 @@ export default task("market:set-asset-blacklist", "Set borrow blacklist of colla
   .setAction(async ({ admin, collat, borrow, blacklist }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
 
     const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
@@ -53,8 +52,7 @@ task("market:set-asset-blacklist-whitelist", "Pauses borrowing on a market")
   .setAction(async ({ admin, collat, borrow, account, whitelist }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
 
     const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
