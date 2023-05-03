@@ -517,7 +517,7 @@ export const MarketsList = ({
             variant="filter"
             width="80px"
           >
-            <Center fontWeight="bold" height="100%" width="100%">{`${data.length} All`}</Center>
+            <Center fontWeight="bold" height="100%" width="100%">{`All (${data.length})`}</Center>
           </CButton>
           {allClaimableRewards && Object.keys(allClaimableRewards).length !== 0 && (
             <GradientButton
@@ -530,9 +530,9 @@ export const MarketsList = ({
             >
               <Center fontWeight="bold" height="100%" pt="2px" width="100%">
                 <GradientText color={cCard.bgColor} isEnabled={!globalFilter.includes(REWARDS)}>
-                  {`${
+                  {`Rewards (${
                     (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
-                  } Rewards`}
+                  })`}
                 </GradientText>
               </Center>
             </GradientButton>
@@ -547,7 +547,7 @@ export const MarketsList = ({
               width="125px"
             >
               <Center fontWeight="bold" height="100%" width="100%">
-                {`${collateralCounts} Collateral`}
+                {`Collateral (${collateralCounts})`}
               </Center>
             </CButton>
           )}
@@ -561,7 +561,7 @@ export const MarketsList = ({
               width="135px"
             >
               <Center fontWeight="bold" height="100%" width="100%">
-                {`${borrowableCounts} Borrowable`}
+                {`Borrowable (${borrowableCounts})`}
               </Center>
             </CButton>
           )}
@@ -575,7 +575,7 @@ export const MarketsList = ({
               width="125px"
             >
               <Center fontWeight="bold" height="100%" width="100%">
-                {`${protectedCounts} Protected`}
+                {`Protected (${protectedCounts})`}
               </Center>
             </CButton>
           )}
@@ -589,7 +589,7 @@ export const MarketsList = ({
               width="140px"
             >
               <Center fontWeight="bold" height="100%" whiteSpace="nowrap" width="100%">
-                {`${pausedCounts} Paused`}
+                {`Paused (${pausedCounts})`}
               </Center>
             </CButton>
           )}
