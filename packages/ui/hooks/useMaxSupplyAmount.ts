@@ -30,12 +30,15 @@ export function useMaxSupplyAmount(
         const tokenBalance = await fetchTokenBalance(asset.underlyingToken, sdk, address);
 
         const comptroller = sdk.createComptroller(comptrollerAddress);
-        const supplyCap = await comptroller.callStatic.supplyCaps(asset.cToken);
+        const [supplyCap, isWhitelisted] = await Promise.all([
+          comptroller.callStatic.supplyCaps(asset.cToken),
+          comptroller.callStatic.supplyCapWhitelist(asset.cToken, address),
+        ]);
 
         let bigNumber: BigNumber;
 
         // if asset has supply cap
-        if (supplyCap.gt(constants.Zero)) {
+        if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
           const availableCap = supplyCap.sub(asset.totalSupply);
 
           if (availableCap.lte(tokenBalance)) {
