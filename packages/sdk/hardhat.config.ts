@@ -6,6 +6,8 @@ import "hardhat-abi-exporter";
 import "hardhat-deploy";
 import { HardhatUserConfig } from "hardhat/types/config";
 
+import "./tasks/admin";
+import "./tasks/flywheel";
 import "./tasks/fork";
 import "./tasks/irm";
 import "./tasks/market";
@@ -13,18 +15,9 @@ import "./tasks/oracle";
 import "./tasks/plugin";
 import "./tasks/pool";
 import "./tasks/swap";
-import "./tasks/admin";
 import "./tasks/validate";
-
-import "./tasks/flywheel";
+import "./tasks/vaults";
 import "./tasks/liquidation";
-import "./tasks/replaceFlywheels";
-import "./tasks/sendTestTokens";
-
-import "./tasks/one-time/liquidate-take-bad-debt";
-import "./tasks/oracle/add-apeswap-oracle";
-import "./tasks/configureApStrategies";
-import "./tasks/vaults/vaults";
 
 dotEnvConfig();
 

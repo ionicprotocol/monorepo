@@ -5,10 +5,8 @@ task("swap:get-token-pair", "Get token pair address")
   .addParam("token1", "token1 address", undefined, types.string)
   .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
   .setAction(async ({ token0: _token0, token1: _token1, account: _account }, { ethers }) => {
-    // @ts-ignore
-    const sdkModule = await import("../../tests/utils/midasSdk");
-    // @ts-ignore
-    const sdk = await sdkModule.getOrCreateMidas();
+    const midasSdkModule = await import("../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const account = await ethers.getNamedSigner(_account);
 
     if (!_token0) {

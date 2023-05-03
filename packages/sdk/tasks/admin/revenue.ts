@@ -1,4 +1,5 @@
 import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import axios from "axios";
 import { BigNumber, Contract, providers } from "ethers";
 import { task, types } from "hardhat/config";
@@ -12,7 +13,6 @@ const LOG = process.env.LOG ? true : false;
 
 async function setUpFeeCalculation(hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.ethers.getNamedSigners();
-  // @ts-ignore
   const fpd = (await hre.ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
   const mpo = await hre.ethers.getContract("MasterPriceOracle", deployer);
   const [, pools] = await fpd.callStatic.getActivePools();
@@ -25,11 +25,12 @@ async function cgPrice(cgId: string) {
 }
 
 async function createComptroller(
-  pool: FusePoolDirectory.FusePoolStructOutput
+  pool: FusePoolDirectory.FusePoolStructOutput,
+  deployer: SignerWithAddress
 ): Promise<ComptrollerWithExtension | null> {
   // @ts-ignore
-  const midasSdkModule = await import("../../tests/utils/midasSdk");
-  const sdk = await midasSdkModule.getOrCreateMidas();
+  const midasSdkModule = await import("../midasSdk");
+  const sdk = await midasSdkModule.getOrCreateMidas(deployer);
   const comptroller = sdk.createComptroller(pool.comptroller);
   const poolAdmin = await comptroller.callStatic.fuseAdmin();
 
@@ -45,14 +46,14 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
   async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const { pools, mpo } = await setUpFeeCalculation(hre);
     let fuseFeeTotal = BigNumber.from(0);
 
     for (const pool of pools) {
-      const comptroller = await createComptroller(pool);
+      const comptroller = await createComptroller(pool, deployer);
       if (comptroller === null) {
         continue;
       }
@@ -97,14 +98,14 @@ task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance
   async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const { pools, mpo } = await setUpFeeCalculation(hre);
     let pluginFeesTotal = BigNumber.from(0);
 
     for (const pool of pools) {
-      const comptroller = await createComptroller(pool);
+      const comptroller = await createComptroller(pool, deployer);
       if (comptroller === null) {
         continue;
       }
@@ -165,14 +166,14 @@ task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Perfor
   async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const { pools, mpo } = await setUpFeeCalculation(hre);
     let flywheelFeesTotal = BigNumber.from(0);
 
     for (const pool of pools) {
-      const comptroller = await createComptroller(pool);
+      const comptroller = await createComptroller(pool, deployer);
       if (comptroller === null) {
         continue;
       }
@@ -233,7 +234,7 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from 4626 Performance
   .setAction(async (taskArgs, hre) => {
     const deployer = await hre.ethers.getNamedSigner("deployer");
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
     const cgId = sdk.chainSpecificParams.cgId;
 
@@ -279,7 +280,7 @@ task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance 
     let tx: providers.TransactionResponse;
     const deployer = await hre.ethers.getNamedSigner("deployer");
     // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const plugins = sdk.deployedPlugins;

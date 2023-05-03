@@ -5,9 +5,8 @@ task("oracle:update-twap", "Call update on twap oracle to update the last price 
   .setAction(async ({ pair: _pair }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const midasSdkModule = await import("../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const uniswapTwapRoot = await ethers.getContractAt(
       "UniswapTwapPriceOracleV2Root",
@@ -24,9 +23,8 @@ task("oracle:remove-twap-pair", "Call update on twap oracle to update the last p
   .setAction(async ({ pairIndex: _pairIndex }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const midasSdkModule = await import("../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const uniswapTwapRoot = await ethers.getContractAt(
       "UniswapTwapPriceOracleV2Resolver",

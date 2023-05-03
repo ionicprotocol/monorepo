@@ -11,8 +11,6 @@ function difference(a: Set<any>, b: Set<any>): Set<any> {
 }
 
 export default task("validate:assets", "Get pools data").setAction(async (taskArgs, hre) => {
-  // @ts-ignore
-  const midasSdkModule = await import("../../tests/utils/midasSdk");
   const chainId = (await hre.ethers.provider.getNetwork()).chainId;
   const chainAssets: Set<SupportedAsset> = new Set<SupportedAsset>(
     chainIdToConfig[chainId].assets.filter((x) => x.disabled == false || x.disabled == undefined)
@@ -20,6 +18,7 @@ export default task("validate:assets", "Get pools data").setAction(async (taskAr
 
   const chainRedemptionStrategies = chainIdToConfig[chainId].redemptionStrategies;
 
+  const midasSdkModule = await import("../midasSdk");
   const sdk = await midasSdkModule.getOrCreateMidas();
 
   const liveAssets = await sdk.getLiveAssets();

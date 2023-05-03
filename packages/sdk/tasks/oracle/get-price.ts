@@ -5,9 +5,8 @@ task("oracle:get-price", "Get price of token")
   .addOptionalParam("ctoken", "CToken address for which to get the price", undefined, types.string)
   .setAction(async ({ ctoken: _ctoken, address: _address }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const midasSdkModule = await import("../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const mpo = sdk.createMasterPriceOracle(deployer);
 

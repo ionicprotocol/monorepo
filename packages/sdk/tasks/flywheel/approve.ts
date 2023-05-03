@@ -1,7 +1,6 @@
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
-import { JarvisSafeLiquidator } from "../../typechain/JarvisSafeLiquidator";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 
 task("approve-market-flywheel")
