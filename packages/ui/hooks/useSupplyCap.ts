@@ -52,11 +52,12 @@ export const useSupplyCap = ({
           if (supplyCapWhitelist || supplyCap.eq(constants.Zero)) {
             return null;
           } else {
+            const _supplyCap = market.totalSupply.gt(supplyCap) ? market.totalSupply : supplyCap;
+            const tokenCap = Number(utils.formatUnits(_supplyCap, market.underlyingDecimals));
             const usdCap =
-              Number(utils.formatUnits(supplyCap, market.underlyingDecimals)) *
+              tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
-            const tokenCap = Number(utils.formatUnits(supplyCap, market.underlyingDecimals));
 
             return { tokenCap, type: 'supply', usdCap };
           }
