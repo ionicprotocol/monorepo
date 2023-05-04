@@ -37,7 +37,7 @@ export function useMaxSupplyAmount(
 
         let bigNumber: BigNumber;
 
-        // if asset has supply cap
+        // if address isn't in supply cap whitelist and asset has supply cap
         if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
           const availableCap = supplyCap.sub(asset.totalSupply);
 

@@ -31,12 +31,15 @@ export function useMaxBorrowAmount(
         )) as BigNumber;
 
         const comptroller = sdk.createComptroller(comptrollerAddress);
-        const borrowCap = await comptroller.callStatic.borrowCaps(asset.cToken);
+        const [borrowCap, isWhitelisted] = await Promise.all([
+          comptroller.callStatic.borrowCaps(asset.cToken),
+          comptroller.callStatic.borrowCapWhitelist(asset.cToken, address),
+        ]);
 
         let bigNumber: BigNumber;
 
-        // if asset has borrow cap
-        if (borrowCap.gt(constants.Zero)) {
+        // if address isn't in borrw cap whitelist and asset has borrow cap
+        if (!isWhitelisted && borrowCap.gt(constants.Zero)) {
           const availableCap = borrowCap.sub(asset.totalBorrow);
 
           if (availableCap.lte(maxBorrow)) {
