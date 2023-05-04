@@ -24,7 +24,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { CButton } from '@ui/components/shared/Button';
 import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { BORROW_CAP, DEBT_CEILING, DEFAULT_DECIMALS } from '@ui/constants/index';
+import { DEBT_CEILING, DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
@@ -121,7 +121,7 @@ export const DebtCeilings = ({
     debtCeiling,
   }: {
     collateralAsset: string;
-    debtCeiling: number;
+    debtCeiling: number | string;
   }) => {
     if (!currentSdk) return;
     const collateralAsset = assets.find((asset) => asset.cToken === collateralAssetAddress);
@@ -131,7 +131,7 @@ export const DebtCeilings = ({
 
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
-      if (debtCeiling === -1) {
+      if (debtCeiling === '-1') {
         const tx = await comptroller._blacklistBorrowingAgainstCollateral(
           selectedAsset.cToken,
           collateralAssetAddress,
@@ -266,7 +266,7 @@ export const DebtCeilings = ({
                   clampValueOnBlur={false}
                   isDisabled={!isEditableAdmin}
                   isReadOnly={!isEditDebtCeiling || isSubmitting}
-                  min={BORROW_CAP.MIN}
+                  min={DEBT_CEILING.MIN}
                   onChange={onChange}
                   value={
                     selectedAsset.cToken === watchCollateralAsset ||

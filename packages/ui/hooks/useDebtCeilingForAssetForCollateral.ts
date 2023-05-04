@@ -25,6 +25,7 @@ export const useDebtCeilingForAssetForCollateral = ({
       poolChainId,
       assets.map((asset) => asset.cToken).sort(),
       collaterals.map((asset) => asset.cToken).sort(),
+      comptrollerAddress,
       address,
     ],
     async () => {
