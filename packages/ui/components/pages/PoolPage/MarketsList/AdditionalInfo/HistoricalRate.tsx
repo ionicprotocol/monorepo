@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { CButton } from '@ui/components/shared/Button';
 import {
+  APY,
   MILLI_SECONDS_PER_DAY,
   MILLI_SECONDS_PER_MONTH,
   MILLI_SECONDS_PER_WEEK,
@@ -26,7 +27,7 @@ export const TimeFrames = [
   { label: '1Y', milliSeconds: MILLI_SECONDS_PER_YEAR },
 ];
 
-export const Modes = [PRICE, TVL];
+export const Modes = [APY, PRICE, TVL];
 
 export const HistoricalRate = ({
   asset,
@@ -35,7 +36,7 @@ export const HistoricalRate = ({
   asset: MarketData;
   poolChainId: number;
 }) => {
-  const [mode, setMode] = useState<string>(PRICE);
+  const [mode, setMode] = useState<string>(APY);
   const [milliSeconds, setMilliSeconds] = useState<number>(MILLI_SECONDS_PER_DAY);
   const { cCard } = useColors();
   const { data: historyData, isLoading } = useHistoryData(
