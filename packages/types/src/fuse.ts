@@ -118,7 +118,6 @@ export interface AssetTotalApy {
 }
 
 export interface ChartData {
-  xAxis: number;
-  yAxis: number;
-  yAxisType: string;
+  createdAt: number;
+  [key: string]: number;
 }

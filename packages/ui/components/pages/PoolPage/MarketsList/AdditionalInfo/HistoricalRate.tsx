@@ -127,7 +127,7 @@ export const HistoricalRate = ({
               );
             })}
           </ButtonGroup>
-          <Stack height={'200px'} width={'100%'}>
+          <Stack height={'300px'} width={'100%'}>
             {!isLoading ? (
               historyData && historyData.length > 0 ? (
                 <HistoryChart historyData={historyData} milliSeconds={milliSeconds} mode={mode} />

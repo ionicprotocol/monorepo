@@ -30,8 +30,6 @@ export function useHistoryData(
         try {
           const info: ChartData[] = [];
 
-          console.log(mode);
-
           if (mode === PRICE) {
             const { data: prices } = await axios.get(
               `/api/assetPrice?chainId=${chainId}&underlyingAddress=${underlyingAddress}&milliSeconds=${
@@ -40,7 +38,7 @@ export function useHistoryData(
             );
 
             prices.map((data: AssetPrice) => {
-              info.push({ xAxis: data.createdAt, yAxis: data.usdPrice, yAxisType: '$' });
+              info.push({ createdAt: data.createdAt, price: data.usdPrice });
             });
           } else if (mode === TVL && usdPrice !== undefined) {
             const { data: tvls } = await axios.get(
@@ -51,9 +49,8 @@ export function useHistoryData(
 
             tvls.map((data: AssetTvl) => {
               info.push({
-                xAxis: data.createdAt,
-                yAxis: data.tvlNative * usdPrice,
-                yAxisType: '$',
+                createdAt: data.createdAt,
+                tvl: data.tvlNative * usdPrice,
               });
             });
           } else if (mode === APY) {
@@ -64,10 +61,10 @@ export function useHistoryData(
             );
 
             apys.map((data: AssetTotalApy) => {
+              const { createdAt, ...rest } = data;
               info.push({
-                xAxis: data.createdAt,
-                yAxis: data.totalSupplyApy,
-                yAxisType: '%',
+                createdAt,
+                ...rest,
               });
             });
           }
