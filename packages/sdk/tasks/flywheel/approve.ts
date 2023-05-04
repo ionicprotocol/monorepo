@@ -33,13 +33,13 @@ task("flywheel:set-fee-recipient")
   .addParam("fwAddress", "Flywheel address, one for each reward token", undefined, types.string)
   .addParam("feeRecipient", "Fee recipient address", undefined, types.string)
   .setAction(async ({ fwAddress, feeRecipient }, { ethers }) => {
-  const deployer = await ethers.getNamedSigner("deployer");
+    const deployer = await ethers.getNamedSigner("deployer");
 
-  const flywheel = (await ethers.getContractAt("MidasFlywheel", fwAddress, deployer)) as MidasFlywheel;
-  const currentFee = await flywheel.callStatic.performanceFee();
+    const flywheel = (await ethers.getContractAt("MidasFlywheel", fwAddress, deployer)) as MidasFlywheel;
+    const currentFee = await flywheel.callStatic.performanceFee();
 
-  console.log(`updating the fee recipient to ${feeRecipient} for flywheel ${fwAddress}`);
-  const tx = await flywheel.updateFeeSettings(currentFee, feeRecipient);
-  await tx.wait();
-  console.log(`mined tx ${tx.hash}`);
-});
+    console.log(`updating the fee recipient to ${feeRecipient} for flywheel ${fwAddress}`);
+    const tx = await flywheel.updateFeeSettings(currentFee, feeRecipient);
+    await tx.wait();
+    console.log(`mined tx ${tx.hash}`);
+  });
