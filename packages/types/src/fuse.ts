@@ -107,6 +107,16 @@ export interface AssetTvl {
   tvlUnderlying: number;
 }
 
+export interface AssetTotalApy {
+  createdAt: number;
+  totalSupplyApy: number;
+  supplyApy: number;
+  ankrBNBApr?: number;
+  compoundingApy?: number;
+  rewardApy?: number;
+  borrowApy?: number;
+}
+
 export interface ChartData {
   xAxis: number;
   yAxis: number;
