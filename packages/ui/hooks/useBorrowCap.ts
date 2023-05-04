@@ -58,11 +58,12 @@ export const useBorrowCap = ({
           if (borrowCapWhitelist || borrowCap.eq(constants.Zero)) {
             return null;
           } else {
+            const _borrowCap = market.totalBorrow.gt(borrowCap) ? market.totalBorrow : borrowCap;
+            const tokenCap = Number(utils.formatUnits(_borrowCap, market.underlyingDecimals));
             const usdCap =
-              Number(utils.formatUnits(borrowCap, market.underlyingDecimals)) *
+              tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
-            const tokenCap = Number(utils.formatUnits(borrowCap, market.underlyingDecimals));
 
             return { tokenCap, type: 'borrow', usdCap };
           }
