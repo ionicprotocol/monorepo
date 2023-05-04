@@ -7,10 +7,7 @@ import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
 
 const querySchema = yup.object().shape({
-  cTokenAddress: yup
-    .string()
-    .matches(VALID_ADDRESS_REGEX, 'Not a valid underlying address')
-    .required(),
+  cTokenAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid cToken address').required(),
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
   milliSeconds: yup.string().required(),
 });
