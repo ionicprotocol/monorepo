@@ -217,6 +217,7 @@ task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Perfor
     return flywheelFeesTotal;
   }
 );
+
 task("revenue:all:calculate", "Calculate the fees accrued from 4626 Performance Fees").setAction(
   async (taskArgs, hre) => {
     const pluginFees = await hre.run("revenue:4626:calculate");

@@ -5,6 +5,7 @@ import { task, types } from "hardhat/config";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
+import { MidasERC4626 } from "../../typechain/MidasERC4626";
 
 task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config list").setAction(
   async ({}, { ethers, getChainId, deployments }) => {
@@ -133,5 +134,26 @@ task("plugins:replace", "Replaces an old plugin contract with a new one")
       }
     } catch (e) {
       console.log(`market ${marketAddress} is probably not a plugin market`, e);
+    }
+  });
+
+task("plugin:set-fee-recipient")
+  .addParam("pluginAddress", "Plugin address", undefined, types.string)
+  .addParam("feeRecipient", "Fee recipient address", undefined, types.string)
+  .setAction(async ({ pluginAddress, feeRecipient }, { ethers }) => {
+    const deployer = await ethers.getNamedSigner("deployer");
+
+    const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
+
+    const currentFee = await plugin.callStatic.performanceFee();
+    const currentFr = await plugin.callStatic.feeRecipient();
+
+    if (currentFr.toLowerCase() !== feeRecipient.toLowerCase()) {
+      console.log(`updating the fee recipient to ${feeRecipient} for plugin ${pluginAddress}`);
+      const tx = await plugin.updateFeeSettings(currentFee, feeRecipient);
+      await tx.wait();
+      console.log(`mined tx ${tx.hash}`);
+    } else {
+      console.log(`already set to ${currentFr}`);
     }
   });
