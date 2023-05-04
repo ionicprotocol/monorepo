@@ -218,7 +218,7 @@ export const RepayModal = ({
           setConfirmedSteps([..._steps]);
 
           await tx.wait();
-          await queryClient.refetchQueries();
+          await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
 
           _steps[optionToWrap ? 2 : 1] = {
             ..._steps[optionToWrap ? 2 : 1],

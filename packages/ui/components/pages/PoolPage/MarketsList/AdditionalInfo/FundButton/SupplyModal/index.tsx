@@ -272,7 +272,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
 
           await tx.wait();
-          await queryClient.refetchQueries();
+          await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
 
           _steps[
             optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
@@ -284,6 +284,10 @@ export const SupplyModal = ({
             txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
+          successToast({
+            description: 'Successfully supplied!',
+            id: 'Supply',
+          });
         }
       } catch (error) {
         setFailedStep(

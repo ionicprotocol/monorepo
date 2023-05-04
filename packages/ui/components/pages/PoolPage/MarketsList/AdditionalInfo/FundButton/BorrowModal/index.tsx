@@ -189,7 +189,7 @@ export const BorrowModal = ({
         setSteps([..._steps]);
 
         await tx.wait();
-        await queryClient.refetchQueries();
+        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
 
         _steps[0] = {
           ..._steps[0],
@@ -199,7 +199,7 @@ export const BorrowModal = ({
         setSteps([..._steps]);
         successToast({
           description: 'Successfully borrowed!',
-          id: 'Borrow',
+          id: Math.random().toString(),
         });
       }
     } catch (error) {
