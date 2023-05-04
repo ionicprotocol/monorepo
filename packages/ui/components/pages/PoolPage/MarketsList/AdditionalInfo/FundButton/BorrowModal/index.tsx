@@ -189,7 +189,6 @@ export const BorrowModal = ({
         setSteps([..._steps]);
 
         await tx.wait();
-        await queryClient.refetchQueries();
 
         _steps[0] = {
           ..._steps[0],
@@ -352,8 +351,11 @@ export const BorrowModal = ({
       }
       isOpen={isOpen}
       modalCloseButtonProps={{ hidden: isBorrowing }}
-      onClose={() => {
+      onClose={async () => {
         onClose();
+        if (isConfirmed) {
+          await queryClient.refetchQueries();
+        }
         if (!isBorrowing) {
           setUserEnteredAmount('');
           setAmount(constants.Zero);
