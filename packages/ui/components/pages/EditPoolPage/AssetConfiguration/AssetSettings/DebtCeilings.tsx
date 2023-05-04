@@ -69,6 +69,7 @@ export const DebtCeilings = ({
     collateralAsset: NativePricedFuseAsset;
     debtCeiling: number;
   }>();
+  const [defaultCollateralAssetCToken, setDefaultCollateralAssetCToken] = useState<string>();
 
   const {
     control,
@@ -87,10 +88,17 @@ export const DebtCeilings = ({
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   const watchDebtCeiling = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
-  const watchCollateralAsset = watch(
-    'collateralAsset',
-    assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken || assets[0].cToken
-  );
+
+  useEffect(() => {
+    const assetsExceptSelectedAsset = assets.filter((a) => a.cToken !== selectedAsset.cToken);
+    if (assetsExceptSelectedAsset.length > 0) {
+      setDefaultCollateralAssetCToken(assetsExceptSelectedAsset[0].cToken);
+    } else {
+      setDefaultCollateralAssetCToken(selectedAsset.cToken);
+    }
+  }, [assets, selectedAsset]);
+
+  const watchCollateralAsset = watch('collateralAsset', defaultCollateralAssetCToken);
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const { data: debtCeilingPerCollateral } = useDebtCeilingForAssetForCollateral({
@@ -115,6 +123,13 @@ export const DebtCeilings = ({
   useEffect(() => {
     setValue('debtCeiling', debtCeilingState ? debtCeilingState.debtCeiling : 0);
   }, [debtCeilingState, setValue]);
+
+  useEffect(() => {
+    if (defaultCollateralAssetCToken) {
+      setValue('collateralAsset', defaultCollateralAssetCToken);
+      setDefaultCollateralAssetCToken(undefined);
+    }
+  }, [defaultCollateralAssetCToken, setValue]);
 
   const updateDebtCeiling = async ({
     collateralAsset: collateralAssetAddress,
