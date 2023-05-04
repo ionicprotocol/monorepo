@@ -218,6 +218,7 @@ export const RepayModal = ({
           setConfirmedSteps([..._steps]);
 
           await tx.wait();
+          await queryClient.refetchQueries();
 
           _steps[optionToWrap ? 2 : 1] = {
             ..._steps[optionToWrap ? 2 : 1],
@@ -344,9 +345,6 @@ export const RepayModal = ({
       modalCloseButtonProps={{ hidden: isRepaying }}
       onClose={async () => {
         onClose();
-        if (isConfirmed) {
-          await queryClient.refetchQueries();
-        }
         if (!isRepaying) {
           setAmount(constants.Zero);
           setIsConfirmed(false);

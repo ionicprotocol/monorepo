@@ -272,6 +272,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
 
           await tx.wait();
+          await queryClient.refetchQueries();
 
           _steps[
             optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
@@ -303,10 +304,6 @@ export const SupplyModal = ({
 
   const onModalClose = async () => {
     onClose();
-
-    if (isConfirmed) {
-      await queryClient.refetchQueries();
-    }
 
     if (!isSupplying) {
       setAmount(constants.Zero);

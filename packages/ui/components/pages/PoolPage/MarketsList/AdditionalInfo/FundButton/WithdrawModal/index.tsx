@@ -118,6 +118,7 @@ export const WithdrawModal = ({
         setSteps([..._steps]);
 
         await tx.wait();
+        await queryClient.refetchQueries();
 
         _steps[0] = {
           ..._steps[0],
@@ -227,9 +228,6 @@ export const WithdrawModal = ({
       modalCloseButtonProps={{ hidden: isWithdrawing }}
       onClose={async () => {
         onClose();
-        if (isConfirmed) {
-          await queryClient.refetchQueries();
-        }
         if (!isWithdrawing) {
           setAmount(constants.Zero);
           setIsConfirmed(false);
