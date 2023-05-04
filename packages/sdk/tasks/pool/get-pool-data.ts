@@ -7,16 +7,13 @@ export default task("get-pool-data", "Get pools data")
   .addOptionalParam("poolId", "Id of the pool", undefined, types.int)
   .addOptionalParam("address", "Address of the pool", undefined, types.string)
   .setAction(async (taskArgs, hre) => {
-    // @ts-ignore
-    const poolModule = await import("../../tests/utils/pool");
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-
     const chainId = parseInt(await hre.getChainId());
     if (!(chainId in SupportedChains)) {
       throw "Invalid chain provided";
     }
 
+    const midasSdkModule = await import("../midasSdk");
+    const poolModule = await import("./utils");
     const sdk = await midasSdkModule.getOrCreateMidas();
     if (taskArgs.address) {
       const pool = await poolModule.logPoolData(taskArgs.address, sdk);
@@ -60,16 +57,13 @@ task("get-position-ratio", "Get unhealthy po data")
   )
   .addOptionalParam("logData", "Verbose logging", true, types.boolean)
   .setAction(async (taskArgs, hre) => {
-    // @ts-ignore
-    const poolModule = await import("../../tests/utils/pool");
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-
     const chainId = parseInt(await hre.getChainId());
     if (!(chainId in SupportedChains)) {
       throw "Invalid chain provided";
     }
 
+    const midasSdkModule = await import("../midasSdk");
+    const poolModule = await import("./utils");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     if (!taskArgs.namedUser && !taskArgs.userAddress) {

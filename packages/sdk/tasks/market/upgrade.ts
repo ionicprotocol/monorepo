@@ -16,8 +16,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
 
     const comptroller = sdk.createComptroller(comptrollerAddress, signer);

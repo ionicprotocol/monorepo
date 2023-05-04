@@ -23,8 +23,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
   .addParam("pluginExtraParams", "Extra plugin parameters", undefined, types.string)
   .setAction(async (taskArgs, { run, ethers, deployments }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
     const underlyings = underlyingsMapping[sdk.chainId];
 

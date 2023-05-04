@@ -10,6 +10,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { Chain } from 'wagmi';
 import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
+import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 export interface MultiMidasContextData {
@@ -24,7 +25,7 @@ export interface MultiMidasContextData {
   getSecurity: (chainId: number) => Security | undefined;
   isConnected: boolean;
   isGlobalLoading: boolean;
-  isSidebarCollapsed: boolean;
+  isSidebarCollapsed: boolean | undefined;
   sdks: MidasSdk[];
   securities: Security[];
   setAddress: Dispatch<string>;
@@ -56,7 +57,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     | undefined
   >();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>();
 
   const [sdks, securities, chainIds] = useMemo(() => {
     const _sdks: MidasSdk[] = [];
@@ -128,6 +129,27 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   useEffect(() => {
     setCurrentChain(chain);
   }, [chain]);
+
+  useEffect(() => {
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    if (oldData && JSON.parse(oldData).isSidebarCollapsed) {
+      setIsSidebarCollapsed(true);
+    } else {
+      setIsSidebarCollapsed(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isSidebarCollapsed !== undefined) {
+      const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+      let oldObj;
+      if (oldData) {
+        oldObj = JSON.parse(oldData);
+      }
+      const data = { ...oldObj, isSidebarCollapsed };
+      localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    }
+  }, [isSidebarCollapsed]);
 
   const value = useMemo(() => {
     return {

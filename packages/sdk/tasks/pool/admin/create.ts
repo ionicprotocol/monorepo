@@ -1,6 +1,8 @@
 import { parseEther, parseUnits } from "ethers/lib/utils";
 import { task, types } from "hardhat/config";
 
+import { getPoolByName, logPoolData } from "../utils";
+
 // update the MPO=0x429041250873643235cb3788871447c6fF3205aA
 // npx hardhat pool:create --name Test --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
 
@@ -15,18 +17,15 @@ task("pool:create", "Create pool if does not exist")
   .setAction(async (taskArgs, hre) => {
     const signer = await hre.ethers.getNamedSigner(taskArgs.creator);
 
-    // @ts-ignore
-    const poolModule = await import("../../tests/utils/pool");
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const midasSdkModule = await import("../../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(signer);
     const whitelist = taskArgs.whitelist ? taskArgs.whitelist.split(",") : [];
     if (taskArgs.enforceWhitelist === "true" && whitelist.length === 0) {
       throw "If enforcing whitelist, a whitelist array of addresses must be provided";
     }
 
     let poolAddress: string;
-    if (await poolModule.getPoolByName(taskArgs.name, sdk)) {
+    if (await getPoolByName(taskArgs.name, sdk)) {
       throw "Pool already exists";
     } else {
       [poolAddress] = await sdk.deployPool(
@@ -39,6 +38,6 @@ task("pool:create", "Create pool if does not exist")
       );
     }
 
-    await poolModule.logPoolData(poolAddress, sdk);
+    await logPoolData(poolAddress, sdk);
     return poolAddress;
   });

@@ -7,7 +7,7 @@ export default task("plugin:whitelist", "Whitelists a plugin implementation")
   .addParam("oldImplementation", "The old plugin implementation address", undefined, types.string)
   .addParam("newImplementation", "The new plugin implementation address", undefined, types.string)
   .addOptionalParam("admin", "Named account that is an admin of the FuseFeeDistributor", "deployer", types.string)
-  .setAction(async (taskArgs, { ethers, run }) => {
+  .setAction(async (taskArgs, { ethers }) => {
     const oldPluginImplementation = taskArgs.oldImplementation;
     const newPluginImplementation = taskArgs.newImplementation;
     const signer = await ethers.getNamedSigner(taskArgs.admin);

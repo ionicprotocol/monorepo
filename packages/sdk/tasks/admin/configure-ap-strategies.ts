@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-import { configureAddressesProviderStrategies } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
+import { configureAddressesProviderStrategies } from "../../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
 
 export default task(
   "config:strategies",
