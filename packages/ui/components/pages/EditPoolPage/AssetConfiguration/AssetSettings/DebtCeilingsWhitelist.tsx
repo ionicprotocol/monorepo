@@ -16,6 +16,7 @@ import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { CButton } from '@ui/components/shared/Button';
@@ -53,6 +54,7 @@ export const DebtCeilingsWhitelist = ({
   const infoToast = useInfoToast();
   const queryClient = useQueryClient();
   const { cSelect } = useColors();
+  const [defaultCollateralAssetCToken, setDefaultCollateralAssetCToken] = useState<string>();
 
   const {
     control,
@@ -73,11 +75,25 @@ export const DebtCeilingsWhitelist = ({
   const addRecentTransaction = useAddRecentTransaction();
 
   const watchAddressWhitelisted = watch('addressWhitelisted', DEBT_CEILING_WHITELIST.DEFAULT);
-  const watchCollateralAsset = watch(
-    'collateralAsset',
-    assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken || assets[0].cToken
-  );
+
+  const watchCollateralAsset = watch('collateralAsset', defaultCollateralAssetCToken);
   const watchMode = watch('mode', ADD);
+
+  useEffect(() => {
+    const assetsExceptSelectedAsset = assets.filter((a) => a.cToken !== selectedAsset.cToken);
+    if (assetsExceptSelectedAsset.length > 0) {
+      setDefaultCollateralAssetCToken(assetsExceptSelectedAsset[0].cToken);
+    } else {
+      setDefaultCollateralAssetCToken(selectedAsset.cToken);
+    }
+  }, [assets, selectedAsset]);
+
+  useEffect(() => {
+    if (defaultCollateralAssetCToken) {
+      setValue('collateralAsset', defaultCollateralAssetCToken);
+      setDefaultCollateralAssetCToken(undefined);
+    }
+  }, [defaultCollateralAssetCToken, setValue]);
 
   const updateDebtCeilingWhitelist = async ({
     collateralAsset: collateralAssetAddress,
