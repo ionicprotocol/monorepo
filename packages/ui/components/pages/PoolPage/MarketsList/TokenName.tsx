@@ -1,6 +1,5 @@
 import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useEffect, useState } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { GradientButton } from '@ui/components/shared/GradientButton';
@@ -8,11 +7,9 @@ import { GradientText } from '@ui/components/shared/GradientText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
-import type { DebtCeilingPerCollateralType } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
+import { useRestricted } from '@ui/hooks/useRestricted';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -27,57 +24,19 @@ export const TokenName = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
-  const [restricted, setRestricted] = useState<DebtCeilingPerCollateralType[]>([]);
-  const { address } = useMultiMidas();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const { data: claimableRewards } = useAssetClaimableRewards({
     assetAddress: asset.cToken,
     poolAddress,
     poolChainId,
   });
-
   const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({
     assets: [asset],
     collaterals: assets,
     comptroller: poolAddress,
     poolChainId,
   });
-  const sdk = useSdk(poolChainId);
-
-  useEffect(() => {
-    const func = async () => {
-      if (sdk && debtCeilingsOfAsset && debtCeilingsOfAsset.length > 0 && address) {
-        const comptroller = sdk.createComptroller(poolAddress, sdk.provider);
-
-        await Promise.all(
-          debtCeilingsOfAsset.map(async (debtCeiling) => {
-            const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] = await Promise.all([
-              comptroller.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
-                debtCeiling.asset.cToken,
-                debtCeiling.collateralAsset.cToken,
-                address
-              ),
-              comptroller.callStatic.borrowCapForCollateralWhitelist(
-                debtCeiling.asset.cToken,
-                debtCeiling.collateralAsset.cToken,
-                address
-              ),
-            ]);
-
-            if (!isAssetBlacklistWhitelist && !isDebtCeilingWhitelist) {
-              setRestricted([...debtCeilingsOfAsset]);
-            } else {
-              setRestricted([]);
-            }
-          })
-        );
-      } else {
-        setRestricted([]);
-      }
-    };
-
-    func();
-  }, [sdk, poolAddress, debtCeilingsOfAsset, address]);
+  const { data: restricted } = useRestricted(poolChainId, poolAddress, debtCeilingsOfAsset);
 
   return (
     <Row className="marketName" crossAxisAlignment="center" mainAxisAlignment="flex-start">
@@ -183,7 +142,7 @@ export const TokenName = ({
                   Borrowable
                 </Badge>
               </SimpleTooltip>
-              {restricted.length > 0 && (
+              {restricted && restricted.length > 0 && (
                 <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon. Follow us on Twitter and Discord to stay up to date.">
                   <Badge colorScheme="red" px={1} textTransform="capitalize" variant="outline">
                     Restricted
