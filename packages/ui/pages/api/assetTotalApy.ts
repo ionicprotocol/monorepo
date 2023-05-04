@@ -25,7 +25,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<AssetT
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
 
   const databaseResponse = await client
-    .from(config.supabaseAssetTvlTableName)
+    .from(config.supabaseAssetTotalApyTableName)
     .select<'info', { info: AssetTotalApy }>('info')
     .filter('info', 'not.eq', null)
     .filter('created_at', 'not.lt', new Date(Number(milliSeconds)).toISOString())
