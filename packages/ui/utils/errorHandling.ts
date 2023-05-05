@@ -34,17 +34,17 @@ export const handleGenericError = ({
     if (error.code === 'ACTION_REJECTED') {
       toast({
         description: 'Your transaction has been rejected!',
-        id: `error-${new Date().getTime()}`,
+        id: 'Error action rejected - ' + Math.random().toString(),
         status: 'warning',
         title: 'Action Rejected!',
       });
     } else if (error.method === 'estimateGas') {
       toast({
         description: 'Gas cannot be estimated!',
-        id: `error-${new Date().getTime()}`,
+        id: 'Error estimate gas - ' + Math.random().toString(),
       });
     } else {
-      toast({ description: message, id: `error-${new Date().getTime()}` });
+      toast({ description: message, id: 'Error - ' + Math.random().toString() });
     }
   }
 };

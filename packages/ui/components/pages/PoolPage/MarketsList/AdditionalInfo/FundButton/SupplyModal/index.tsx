@@ -123,6 +123,15 @@ export const SupplyModal = ({
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
 
+    successToast({
+      description: 'Successfully Wrapped!',
+      id: 'Wrapped - ' + Math.random().toString(),
+    });
+    successToast({
+      description: 'Successfully Wrapped!',
+      id: 'Wrapped - ' + Math.random().toString(),
+    });
+
     const sentryProperties = {
       chainId: currentSdk.chainId,
       comptroller: comptrollerAddress,
@@ -165,7 +174,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Wrapped!',
-            id: 'wrapped',
+            id: 'Wrapped - ' + Math.random().toString(),
           });
         } catch (error) {
           setFailedStep(1);
@@ -203,7 +212,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Approved!',
-            id: 'approved',
+            id: 'Approved - ' + Math.random().toString(),
           });
         } else {
           _steps[optionToWrap ? 1 : 0] = {
@@ -241,7 +250,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Collateral enabled!',
-            id: 'collateralEnabled',
+            id: 'Collateral enabled - ' + Math.random().toString(),
           });
         } catch (error) {
           setFailedStep(optionToWrap ? 3 : 2);
@@ -286,7 +295,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully supplied!',
-            id: 'Supply',
+            id: 'Supply - ' + Math.random().toString(),
           });
         }
       } catch (error) {

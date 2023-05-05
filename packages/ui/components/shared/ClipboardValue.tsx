@@ -32,6 +32,7 @@ const ClipboardValue = ({
   useEffect(() => {
     if (hasCopied) {
       infoToast({
+        id: 'Copied - ' + Math.random().toString(),
         title: 'Copied to clipboard',
       });
     }
@@ -64,6 +65,7 @@ export const ClipboardValueIconButton = ({
   useEffect(() => {
     if (hasCopied) {
       infoToast({
+        id: 'Copied - ' + Math.random().toString(),
         title: 'Copied to clipboard',
       });
     }

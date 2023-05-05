@@ -128,7 +128,7 @@ export const WithdrawModal = ({
         setSteps([..._steps]);
         successToast({
           description: 'Successfully withdrew!',
-          id: 'Withdraw',
+          id: 'Withdraw - ' + Math.random().toString(),
         });
       }
     } catch (error) {

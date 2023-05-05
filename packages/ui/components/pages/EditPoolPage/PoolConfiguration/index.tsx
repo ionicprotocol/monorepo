@@ -120,7 +120,10 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully changed whitelist status!' });
+      successToast({
+        description: 'Successfully changed whitelist status!',
+        id: 'Whitelist status - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -161,7 +164,10 @@ const PoolConfiguration = ({
 
       onChange(newList);
 
-      successToast({ description: 'Successfully added!' });
+      successToast({
+        description: 'Successfully added!',
+        id: 'Added to whitelist - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -209,7 +215,10 @@ const PoolConfiguration = ({
 
       onChange(whitelist.filter((v) => v !== removeUser));
 
-      successToast({ description: 'Successfully removed from the whitelist!' });
+      successToast({
+        description: 'Successfully removed from the whitelist!',
+        id: 'Removed from whitelist - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -241,7 +250,10 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully changed admin rights!' });
+      successToast({
+        description: 'Successfully changed admin rights!',
+        id: 'Changed admin rights - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -289,7 +301,10 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated close factor!' });
+      successToast({
+        description: 'Successfully updated close factor!',
+        id: 'Updated close factor - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -336,7 +351,10 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated liquidation incentive!' });
+      successToast({
+        description: 'Successfully updated liquidation incentive!',
+        id: 'Updated liquidation incentive - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,

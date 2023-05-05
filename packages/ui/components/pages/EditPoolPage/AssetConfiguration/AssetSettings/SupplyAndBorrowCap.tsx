@@ -99,7 +99,10 @@ export const SupplyAndBorrowCaps = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated max supply amount!' });
+      successToast({
+        description: 'Successfully updated max supply amount!',
+        id: 'Updated max supply - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -130,7 +133,10 @@ export const SupplyAndBorrowCaps = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated max total borrow amount!' });
+      successToast({
+        description: 'Successfully updated max total borrow amount!',
+        id: 'Updated max total borrow - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         borrowCap,

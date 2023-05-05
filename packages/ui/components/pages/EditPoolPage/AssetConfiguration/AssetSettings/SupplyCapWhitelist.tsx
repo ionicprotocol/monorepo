@@ -106,12 +106,14 @@ export const SupplyCapWhitelist = ({
 
         successToast({
           description: `Successfully ${mode === ADD ? 'added' : 'removed'} in whitelist.`,
+          id: 'Updated supply cap whitelist - ' + Math.random().toString(),
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in whitelist.`,
+          id: 'Already added or removed - ' + Math.random().toString(),
         });
       }
     } catch (error) {

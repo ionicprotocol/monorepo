@@ -106,12 +106,14 @@ export const BorrowCapWhitelist = ({
 
         successToast({
           description: `Successfully ${mode === ADD ? 'added' : 'removed'} in whitelist.`,
+          id: 'Whitelist - ' + Math.random().toString(),
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in whitelist.`,
+          id: 'Already added - ' + Math.random().toString(),
         });
       }
     } catch (error) {

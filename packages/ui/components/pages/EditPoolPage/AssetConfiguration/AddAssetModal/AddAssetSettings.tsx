@@ -114,6 +114,7 @@ export const AddAssetSettings = ({
           errorToast({
             description:
               'This asset is not supported. The price oracle is not available for this asset',
+            id: 'Asset not supported - ' + Math.random().toString(),
           });
 
           return;
@@ -158,6 +159,7 @@ export const AddAssetSettings = ({
 
       successToast({
         description: 'You may now lend and borrow with this asset.',
+        id: 'Added asset - ' + Math.random().toString(),
         title: 'You have successfully added an asset to this pool!',
       });
 

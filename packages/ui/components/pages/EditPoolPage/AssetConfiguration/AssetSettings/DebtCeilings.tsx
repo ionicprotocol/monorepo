@@ -179,6 +179,7 @@ export const DebtCeilings = ({
 
       successToast({
         description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
+        id: 'Updated debt ceiling - ' + Math.random().toString(),
       });
     } catch (error) {
       const sentryProperties = {

@@ -145,7 +145,7 @@ export const RepayModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Wrapped!',
-            id: 'wrapped',
+            id: 'Wrapped - ' + Math.random().toString(),
           });
         } catch (error) {
           setFailedStep(1);
@@ -183,7 +183,7 @@ export const RepayModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Approved!',
-            id: 'approved',
+            id: 'Approved - ' + Math.random().toString(),
           });
         } else {
           _steps[optionToWrap ? 1 : 0] = {
@@ -229,7 +229,7 @@ export const RepayModal = ({
         }
         successToast({
           description: 'Repaid!',
-          id: 'repaid',
+          id: 'Repaid - ' + Math.random().toString(),
         });
       } catch (error) {
         setFailedStep(optionToWrap ? 3 : 2);

@@ -148,14 +148,14 @@ export const DebtCeilingsWhitelist = ({
           description: `Successfully ${
             mode === ADD ? 'added' : 'removed'
           } in asset-blacklist whitelist.`,
-          id: 'asset-blacklist',
+          id: 'Asset-blacklist - ' + Math.random().toString(),
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in asset-blacklist whitelist.`,
-          id: 'asset-blacklist',
+          id: 'Asset-blacklist' + Math.random().toString(),
         });
       }
 
@@ -181,14 +181,14 @@ export const DebtCeilingsWhitelist = ({
           description: `Successfully ${
             mode === ADD ? 'added' : 'removed'
           } in debt-ceiling whitelist.`,
-          id: 'debt-ceiling',
+          id: 'Debt-ceiling - ' + Math.random().toString(),
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in debt-ceiling whitelist.`,
-          id: 'debt-ceiling',
+          id: 'Debt-ceiling - ' + Math.random().toString(),
         });
       }
 

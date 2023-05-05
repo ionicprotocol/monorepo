@@ -199,7 +199,7 @@ export const BorrowModal = ({
         setSteps([..._steps]);
         successToast({
           description: 'Successfully borrowed!',
-          id: Math.random().toString(),
+          id: 'Borrowed - ' + Math.random().toString(),
         });
       }
     } catch (error) {
