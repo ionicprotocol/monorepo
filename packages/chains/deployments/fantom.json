@@ -51,10 +51,10 @@
       "address": "0x8E9f21C59A6E63e5F08a6688a02b55042158f0B5"
     },
     "Comptroller": {
-      "address": "0x59Df8f4cBe0cDd9261E0A53326BF2C07F4CF7542"
+      "address": "0xc828C9B08eB5fd65FC12Ee05c4EF97Cc37569bD4"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x52e6C832c0ca520492526429BCa394E4051Bd79a"
+      "address": "0xC075244c4A0bE7BC76F68dA32E41f7E9Ad8786cf"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
       "address": "0x239218130dCBe0298d7ec4d2F96f4696Fe118624"
@@ -108,7 +108,7 @@
       "address": "0xE622c2967E2885ED04436075889C88696328aBE8"
     },
     "FusePoolLens": {
-      "address": "0x51Fc4413D3d32129a7C56c72fC8d273Cfe8306e6"
+      "address": "0xFE9B92522853F1d0c85f6fe6bD76d56c57DD6405"
     },
     "FusePoolLensSecondary": {
       "address": "0x6537110273d79184205395cfd852dcF3DA6861Ed"

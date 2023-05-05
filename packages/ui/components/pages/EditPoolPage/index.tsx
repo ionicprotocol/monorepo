@@ -39,7 +39,7 @@ const EditPoolPage = memo(() => {
   const { data } = useFusePoolData(poolId, Number(poolChainId));
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[poolChainId.toString()]) {
+    if (usdPrices && poolChainId && usdPrices[poolChainId.toString()]) {
       return usdPrices[poolChainId.toString()].value;
     } else {
       return undefined;

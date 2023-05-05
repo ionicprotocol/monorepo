@@ -85,7 +85,10 @@ export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: Adm
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated admin fee!' });
+      successToast({
+        description: 'Successfully updated admin fee!',
+        id: 'Updated admin fee - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,

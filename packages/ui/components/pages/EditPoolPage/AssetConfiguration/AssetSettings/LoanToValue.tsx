@@ -95,7 +95,10 @@ export const LoanToValue = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated loan-to-Value!' });
+      successToast({
+        description: 'Successfully updated loan-to-Value!',
+        id: 'Updated loan-to-value - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,

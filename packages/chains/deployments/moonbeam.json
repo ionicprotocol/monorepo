@@ -36,10 +36,10 @@
       "address": "0xcE49eeAa20E08eFfFf403C6d8E7A595a5ce301c6"
     },
     "Comptroller": {
-      "address": "0x22b4d4403733B4391C8329cEa50218d199eF30AE"
+      "address": "0xCdCd2Fc5883147d509b33fc6B6b37ACbE1441521"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x2CB68644A995AC0708CC334a72318Dd2E10742BB"
+      "address": "0x47c39c46Aa9b60d64E2f7EdAE37f8D600CCB561A"
     },
     "CurveGaugeERC4626_xcDOT-stDOT_0xe4C6Bd326a1715cEbFeD3647A963a308Ae7F8A98": {
       "address": "0xE9c4274341ab4Be0857476e84963b3c36787568D"
@@ -114,7 +114,7 @@
       "address": "0x64d9a81F1412c7691e7731C66A290aeE8FA21f10"
     },
     "FusePoolLens": {
-      "address": "0xfBd1D47962f711eE157Dc51d9a9124C9A1144a9c"
+      "address": "0x9dc2dF183b13b5B341BC715ef7012773dAe93fF7"
     },
     "FusePoolLensSecondary": {
       "address": "0x73Cb1cc1e67F2aD5aFa398e816c04181A80dC4f4"

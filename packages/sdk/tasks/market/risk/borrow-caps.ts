@@ -2,7 +2,7 @@ import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
 export default task("market:set-borrow-cap", "Set borrow cap on market")
-  .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .addParam("admin", "Named account from which to set the borrow caps", "deployer", types.string)
   .addParam("market", "The address of the CToken", undefined, types.string)
   .addParam("maxBorrow", "Maximum amount of tokens that can be borrowed", undefined, types.string)
   .setAction(async ({ admin, market, maxBorrow }, { ethers }) => {
@@ -32,7 +32,7 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
   });
 
 task("market:set-borrow-cap-whitelist", "Pauses borrowing on a market")
-  .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .addParam("admin", "Named account from which to set the borrow cap whitelist", "deployer", types.string)
   .addParam("market", "The address of the CToken", undefined, types.string)
   .addParam("account", "Account to be whitelisted / removed from whitelist", undefined, types.string)
   .addOptionalParam("whitelist", "Set whitelist to true ot false", true, types.boolean)

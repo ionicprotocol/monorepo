@@ -101,7 +101,10 @@ export const InterestRateModel = ({
       await tx.wait();
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated interest rate model!' });
+      successToast({
+        description: 'Successfully updated interest rate model!',
+        id: 'Updated interest rate model - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,

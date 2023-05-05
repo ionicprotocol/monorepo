@@ -165,7 +165,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Wrapped!',
-            id: 'wrapped',
+            id: 'Wrapped - ' + Math.random().toString(),
           });
         } catch (error) {
           setFailedStep(1);
@@ -203,7 +203,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Approved!',
-            id: 'approved',
+            id: 'Approved - ' + Math.random().toString(),
           });
         } else {
           _steps[optionToWrap ? 1 : 0] = {
@@ -241,7 +241,7 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Collateral enabled!',
-            id: 'collateralEnabled',
+            id: 'Collateral enabled - ' + Math.random().toString(),
           });
         } catch (error) {
           setFailedStep(optionToWrap ? 3 : 2);
@@ -272,7 +272,11 @@ export const SupplyModal = ({
           setConfirmedSteps([..._steps]);
 
           await tx.wait();
-          await queryClient.refetchQueries();
+          await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
 
           _steps[
             optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
@@ -284,6 +288,10 @@ export const SupplyModal = ({
             txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
+          successToast({
+            description: 'Successfully supplied!',
+            id: 'Supply - ' + Math.random().toString(),
+          });
         }
       } catch (error) {
         setFailedStep(
@@ -302,7 +310,7 @@ export const SupplyModal = ({
     setIsSupplying(false);
   };
 
-  const onModalClose = () => {
+  const onModalClose = async () => {
     onClose();
 
     if (!isSupplying) {

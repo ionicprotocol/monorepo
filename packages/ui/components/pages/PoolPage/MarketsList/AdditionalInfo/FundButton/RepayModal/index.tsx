@@ -145,7 +145,7 @@ export const RepayModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Wrapped!',
-            id: 'wrapped',
+            id: 'Wrapped - ' + Math.random().toString(),
           });
         } catch (error) {
           setFailedStep(1);
@@ -183,7 +183,7 @@ export const RepayModal = ({
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Approved!',
-            id: 'approved',
+            id: 'Approved - ' + Math.random().toString(),
           });
         } else {
           _steps[optionToWrap ? 1 : 0] = {
@@ -218,7 +218,11 @@ export const RepayModal = ({
           setConfirmedSteps([..._steps]);
 
           await tx.wait();
-          await queryClient.refetchQueries();
+          await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
 
           _steps[optionToWrap ? 2 : 1] = {
             ..._steps[optionToWrap ? 2 : 1],
@@ -229,7 +233,7 @@ export const RepayModal = ({
         }
         successToast({
           description: 'Repaid!',
-          id: 'repaid',
+          id: 'Repaid - ' + Math.random().toString(),
         });
       } catch (error) {
         setFailedStep(optionToWrap ? 3 : 2);
@@ -343,7 +347,7 @@ export const RepayModal = ({
       }
       isOpen={isOpen}
       modalCloseButtonProps={{ hidden: isRepaying }}
-      onClose={() => {
+      onClose={async () => {
         onClose();
         if (!isRepaying) {
           setAmount(constants.Zero);

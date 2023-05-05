@@ -46,12 +46,16 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
         from: address,
       });
       await tx.wait();
-      successToast({ description: 'Flywheel added to pool!' });
+      successToast({
+        description: 'Flywheel added to pool!',
+        id: 'Added flywheel - ' + Math.random().toString(),
+      });
       if (onSuccess) onSuccess();
     } catch (e) {
       console.error(e);
       errorToast({
         description: e as string,
+        id: 'Adding flywheel - ' + Math.random().toString(),
       });
     } finally {
       setIsAdding(false);
