@@ -23,12 +23,12 @@ export const useRestricted = (
         await Promise.all(
           debtCeilings.map(async (debtCeiling) => {
             const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] = await Promise.all([
-              comptroller.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
+              comptroller.callStatic.isBlacklistBorrowingAgainstCollateralWhitelisted(
                 debtCeiling.asset.cToken,
                 debtCeiling.collateralAsset.cToken,
                 address
               ),
-              comptroller.callStatic.borrowCapForCollateralWhitelist(
+              comptroller.callStatic.isBorrowCapForCollateralWhitelisted(
                 debtCeiling.asset.cToken,
                 debtCeiling.collateralAsset.cToken,
                 address

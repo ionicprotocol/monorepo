@@ -50,12 +50,12 @@ export const useBorrowCap = ({
       if (sdk && usdPrice && market && address) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
-          const [borrowCap, borrowCapWhitelist] = await Promise.all([
+          const [borrowCap, isBorrowCapWhitelist] = await Promise.all([
             comptroller.callStatic.borrowCaps(market.cToken),
-            comptroller.callStatic.borrowCapWhitelist(market.cToken, address),
+            comptroller.callStatic.isBorrowCapWhitelisted(market.cToken, address),
           ]);
 
-          if (borrowCapWhitelist || borrowCap.eq(constants.Zero)) {
+          if (isBorrowCapWhitelist || borrowCap.eq(constants.Zero)) {
             return null;
           } else {
             const _borrowCap = market.totalBorrow.gt(borrowCap) ? market.totalBorrow : borrowCap;

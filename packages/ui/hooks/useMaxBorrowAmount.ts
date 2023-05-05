@@ -33,7 +33,7 @@ export function useMaxBorrowAmount(
         const comptroller = sdk.createComptroller(comptrollerAddress);
         const [borrowCap, isWhitelisted] = await Promise.all([
           comptroller.callStatic.borrowCaps(asset.cToken),
-          comptroller.callStatic.borrowCapWhitelist(asset.cToken, address),
+          comptroller.callStatic.isBorrowCapWhitelisted(asset.cToken, address),
         ]);
 
         let bigNumber: BigNumber;
