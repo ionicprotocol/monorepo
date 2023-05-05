@@ -12,7 +12,7 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "CErc20Delegate": {
-      "address": "0xEB63CE86Caf06CbB6387F9822c13c629B31b6064"
+      "address": "0x3eDBE40Ef393070404cB056B10bF597a1C7B0e3b"
     },
     "CErc20PluginDelegate": {
       "address": "0xE2740f47C26f43e56bE3EeCe7c01a5187C766FB9"
@@ -129,7 +129,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolLens": {
-      "address": "0x70DFe506D2C3AfC7EEa40620BAC8ab3f558A84d2"
+      "address": "0x604805B587C939042120D2e22398f299547A130c"
     },
     "FusePoolLensSecondary": {
       "address": "0x8c70FDE00F64E5F3835D247E6742447074017128"
