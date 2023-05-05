@@ -99,7 +99,15 @@ export const SupplyAndBorrowCaps = ({
       );
       await tx.wait();
 
-      await queryClient.refetchQueries({ queryKey: ['useSupplyCap', 'useMaxSupplyAmount'] });
+      await queryClient.refetchQueries({
+        queryKey: ['useSupplyCap'],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ['useMaxSupplyAmount'],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ['useCTokenData'],
+      });
 
       successToast({
         description: 'Successfully updated max supply amount!',
@@ -135,7 +143,16 @@ export const SupplyAndBorrowCaps = ({
       );
 
       await tx.wait();
-      await queryClient.refetchQueries({ queryKey: ['useBorrowCap', 'useMaxBorrowAmount'] });
+
+      await queryClient.refetchQueries({
+        queryKey: ['useBorrowCap'],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ['useMaxBorrowAmount'],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ['useCTokenData'],
+      });
 
       successToast({
         description: 'Successfully updated max total borrow amount!',
