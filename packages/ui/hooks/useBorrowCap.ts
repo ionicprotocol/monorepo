@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -35,6 +36,7 @@ export const useBorrowCap = ({
   }, [usdPrices, chainId]);
 
   const sdk = useSdk(chainId);
+  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(market.cToken, chainId);
 
   return useQuery<Cap | null | undefined>(
     [
@@ -43,11 +45,19 @@ export const useBorrowCap = ({
       sdk?.chainId,
       market.underlyingPrice,
       market.cToken,
+      market.totalBorrow,
       usdPrice,
+      borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
       address,
     ],
     async () => {
-      if (sdk && usdPrice && market && address) {
+      if (
+        sdk &&
+        usdPrice &&
+        market &&
+        address &&
+        borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
+      ) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [borrowCap, isBorrowCapWhitelist] = await Promise.all([
@@ -58,8 +68,13 @@ export const useBorrowCap = ({
           if (isBorrowCapWhitelist || borrowCap.eq(constants.Zero)) {
             return null;
           } else {
-            const _borrowCap = market.totalBorrow.gt(borrowCap) ? market.totalBorrow : borrowCap;
-            const tokenCap = Number(utils.formatUnits(_borrowCap, market.underlyingDecimals));
+            const whitelistedTotalBorrows = market.totalBorrow.sub(
+              borrowCapsDataForAsset.nonWhitelistedTotalBorrows
+            );
+
+            const tokenCap = Number(
+              utils.formatUnits(borrowCap.add(whitelistedTotalBorrows), market.underlyingDecimals)
+            );
             const usdCap =
               tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
@@ -82,7 +97,12 @@ export const useBorrowCap = ({
     },
     {
       cacheTime: Infinity,
-      enabled: !!sdk && !!usdPrice && !!market && !!address,
+      enabled:
+        !!sdk &&
+        !!usdPrice &&
+        !!market &&
+        !!address &&
+        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
       staleTime: Infinity,
     }
   );

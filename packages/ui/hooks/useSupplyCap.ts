@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { Cap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -29,6 +30,11 @@ export const useSupplyCap = ({
     }
   }, [usdPrices, chainId]);
   const sdk = useSdk(chainId);
+  const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
+    comptrollerAddress,
+    market.cToken,
+    chainId
+  );
 
   return useQuery<Cap | null | undefined>(
     [
@@ -36,12 +42,14 @@ export const useSupplyCap = ({
       comptrollerAddress,
       sdk?.chainId,
       market.cToken,
+      market.totalSupply,
       market.underlyingPrice,
       usdPrice,
       address,
+      supplyCapsDataForAsset,
     ],
     async () => {
-      if (sdk && usdPrice && market && address) {
+      if (sdk && usdPrice && market && address && supplyCapsDataForAsset) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
@@ -52,8 +60,12 @@ export const useSupplyCap = ({
           if (isSupplyCapWhitelist || supplyCap.eq(constants.Zero)) {
             return null;
           } else {
-            const _supplyCap = market.totalSupply.gt(supplyCap) ? market.totalSupply : supplyCap;
-            const tokenCap = Number(utils.formatUnits(_supplyCap, market.underlyingDecimals));
+            const whitelistedTotalSupply = market.totalSupply.sub(
+              supplyCapsDataForAsset.nonWhitelistedTotalSupply
+            );
+            const tokenCap = Number(
+              utils.formatUnits(supplyCap.add(whitelistedTotalSupply), market.underlyingDecimals)
+            );
             const usdCap =
               tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
@@ -75,7 +87,7 @@ export const useSupplyCap = ({
     },
     {
       cacheTime: Infinity,
-      enabled: !!sdk && !!usdPrice && !!market && !!address,
+      enabled: !!sdk && !!usdPrice && !!market && !!address && !!supplyCapsDataForAsset,
       staleTime: Infinity,
     }
   );

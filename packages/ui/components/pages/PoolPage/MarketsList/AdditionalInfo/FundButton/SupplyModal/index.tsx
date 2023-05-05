@@ -273,6 +273,10 @@ export const SupplyModal = ({
 
           await tx.wait();
           await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
 
           _steps[
             optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1

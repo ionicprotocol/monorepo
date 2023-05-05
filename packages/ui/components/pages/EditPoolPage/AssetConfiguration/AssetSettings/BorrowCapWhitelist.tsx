@@ -126,6 +126,7 @@ export const BorrowCapWhitelist = ({
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
+      setAddressWhitelistDefault();
     }
   };
 

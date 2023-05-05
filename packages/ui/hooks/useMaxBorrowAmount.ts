@@ -4,6 +4,7 @@ import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useMaxBorrowAmount(
@@ -13,18 +14,19 @@ export function useMaxBorrowAmount(
 ) {
   const { address } = useMultiMidas();
   const sdk = useSdk(chainId);
+  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(asset.cToken, chainId);
 
   return useQuery(
     [
       'useMaxBorrowAmount',
       asset.cToken,
       comptrollerAddress,
-      asset.totalBorrow,
       sdk?.chainId,
       address,
+      borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
     ],
     async () => {
-      if (sdk && address) {
+      if (sdk && address && borrowCapsDataForAsset?.nonWhitelistedTotalBorrows) {
         const maxBorrow = (await sdk.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
           address,
           asset.cToken
@@ -40,7 +42,7 @@ export function useMaxBorrowAmount(
 
         // if address isn't in borrw cap whitelist and asset has borrow cap
         if (!isWhitelisted && borrowCap.gt(constants.Zero)) {
-          const availableCap = borrowCap.sub(asset.totalBorrow);
+          const availableCap = borrowCap.sub(borrowCapsDataForAsset.nonWhitelistedTotalBorrows);
 
           if (availableCap.lte(maxBorrow)) {
             bigNumber = availableCap;
@@ -61,7 +63,12 @@ export function useMaxBorrowAmount(
     },
     {
       cacheTime: Infinity,
-      enabled: !!address && !!asset && !!sdk && !!comptrollerAddress,
+      enabled:
+        !!address &&
+        !!asset &&
+        !!sdk &&
+        !!comptrollerAddress &&
+        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
       staleTime: Infinity,
     }
   );

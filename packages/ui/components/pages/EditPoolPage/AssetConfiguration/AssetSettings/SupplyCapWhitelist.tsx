@@ -126,6 +126,7 @@ export const SupplyCapWhitelist = ({
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsUpdating(false);
+      setAddressWhitelistDefault();
     }
   };
 
