@@ -11,7 +11,9 @@ export const handleGenericError = ({
   sentryInfo: { contextName: string; properties: { [key: string]: any } };
   toast?: CreateToastFnReturn;
 }) => {
-  console.error('Raw Error', error);
+  if (error.code !== 'ACTION_REJECTED') {
+    console.error('Raw Error', error);
+  }
 
   let message: string;
 
