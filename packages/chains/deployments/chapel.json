@@ -12,7 +12,7 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "CErc20Delegate": {
-      "address": "0x3eDBE40Ef393070404cB056B10bF597a1C7B0e3b"
+      "address": "0xb414B2204bCF11cE2b3e1Afdb2bdDf18E1500812"
     },
     "CErc20PluginDelegate": {
       "address": "0xE2740f47C26f43e56bE3EeCe7c01a5187C766FB9"
@@ -90,7 +90,7 @@
       "address": "0x3379523a4ef49B19f411123053D455D5eC21C0aA"
     },
     "Comptroller": {
-      "address": "0x8cd88E0066bd75eC74ade3743bD281Dbe9AaAa30"
+      "address": "0xe39F5730A845c14558d9e52504d36f634d5AC20C"
     },
     "ComptrollerFirstExtension": {
       "address": "0xB7CC30898a3487D42F0F9d48C94ef71e16dDb252"
