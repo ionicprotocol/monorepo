@@ -14,7 +14,6 @@ import {
 } from '@chakra-ui/react';
 import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -52,8 +51,8 @@ export const DebtCeilingsWhitelist = ({
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const infoToast = useInfoToast();
-  const queryClient = useQueryClient();
   const { cSelect } = useColors();
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [defaultCollateralAssetCToken, setDefaultCollateralAssetCToken] = useState<string>();
 
   const {
@@ -62,7 +61,7 @@ export const DebtCeilingsWhitelist = ({
     setValue,
     register,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       addressWhitelisted: DEBT_CEILING_WHITELIST.DEFAULT,
@@ -111,6 +110,7 @@ export const DebtCeilingsWhitelist = ({
     if (!collateralAsset) return;
 
     try {
+      setIsSaving(true);
       const validAddress = utils.getAddress(addressWhitelisted);
       const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
       const [isAssetBlacklistWhitelisted, isDebtCeilingWhitelist] = await Promise.all([
@@ -191,8 +191,6 @@ export const DebtCeilingsWhitelist = ({
           id: 'Debt-ceiling - ' + Math.random().toString(),
         });
       }
-
-      await queryClient.refetchQueries();
     } catch (error) {
       const sentryProperties = {
         addressWhitelisted,
@@ -207,6 +205,8 @@ export const DebtCeilingsWhitelist = ({
         properties: sentryProperties,
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
+    } finally {
+      setIsSaving(false);
       setAddressWhitelistDefault();
     }
   };
@@ -301,7 +301,7 @@ export const DebtCeilingsWhitelist = ({
                       {[ADD, REMOVE].map((_mode) => (
                         <CButton
                           height={10}
-                          isDisabled={isSubmitting}
+                          isDisabled={isSaving}
                           isSelected={watchMode === _mode}
                           key={_mode}
                           onClick={() => onChange(_mode)}
@@ -325,15 +325,11 @@ export const DebtCeilingsWhitelist = ({
           isDisabled={selectedAsset.cToken === watchCollateralAsset}
           mt={2}
         >
-          <Button
-            isDisabled={isSubmitting || !isEditableAdmin}
-            isLoading={isSubmitting}
-            type="submit"
-          >
+          <Button isDisabled={isSaving || !isEditableAdmin} isLoading={isSaving} type="submit">
             Save
           </Button>
           <Button
-            isDisabled={isSubmitting || !isEditableAdmin}
+            isDisabled={isSaving || !isEditableAdmin}
             onClick={setAddressWhitelistDefault}
             variant="silver"
           >
