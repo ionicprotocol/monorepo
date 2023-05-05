@@ -1,4 +1,4 @@
-import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetOriginalSymbols, assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import {
   arrakisDocs,
@@ -579,6 +579,7 @@ export const assets: SupportedAsset[] = [
       "WMATIC-MATICx BLP",
       WMATIC_MATICX_STABLE_BLP
     ),
+    originalSymbol: assetOriginalSymbols.WMATIC_MATICX_STABLE_BLP,
   },
   {
     symbol: assetSymbols.WMATIC_CSMATIC_STABLE_BLP,
