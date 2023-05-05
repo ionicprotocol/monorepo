@@ -123,6 +123,8 @@ export const WithdrawModal = ({
         await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
+        await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
+        await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
 
         _steps[0] = {
           ..._steps[0],

@@ -277,6 +277,8 @@ export const SupplyModal = ({
           await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
           await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
           await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
+          await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
+          await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
 
           _steps[
             optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
