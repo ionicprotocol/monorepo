@@ -11,7 +11,6 @@ export default task("fusefee:update", "Update FuseFee")
     const adminFee = taskArgs.adminFee;
     const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
 
-    // @ts-ignoreutils/fuseSdk
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
     const cToken = sdk.createCTokenWithExtensions(taskArgs.cToken);

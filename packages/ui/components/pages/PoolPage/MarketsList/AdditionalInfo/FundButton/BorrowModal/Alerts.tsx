@@ -3,6 +3,7 @@ import { utils } from 'ethers';
 import { Banner } from '@ui/components/shared/Banner';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
+import { useRestricted } from '@ui/hooks/useRestricted';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { toCeil } from '@ui/utils/formatNumber';
 export const Alerts = ({
@@ -19,13 +20,13 @@ export const Alerts = ({
   const {
     data: { minBorrowAsset, minBorrowUSD },
   } = useBorrowMinimum(asset, poolChainId);
-
   const { data: debtCeilings } = useDebtCeilingForAssetForCollateral({
     assets: [asset],
     collaterals: assets,
     comptroller: comptrollerAddress,
     poolChainId,
   });
+  const { data: restricted } = useRestricted(poolChainId, comptrollerAddress, debtCeilings);
 
   return (
     <>
@@ -61,7 +62,7 @@ export const Alerts = ({
               },
             ]}
           />
-          {debtCeilings && debtCeilings.length > 0 && (
+          {restricted && restricted.length > 0 && (
             <Banner
               alertDescriptionProps={{ fontSize: 'lg' }}
               alertProps={{ status: 'info' }}

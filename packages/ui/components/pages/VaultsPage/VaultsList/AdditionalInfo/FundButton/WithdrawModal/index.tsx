@@ -117,7 +117,7 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
       setSteps([..._steps]);
       successToast({
         description: 'Successfully withdrew!',
-        id: 'Withdraw',
+        id: 'Withdraw - ' + Math.random().toString(),
       });
     } catch (error) {
       setFailedStep(1);

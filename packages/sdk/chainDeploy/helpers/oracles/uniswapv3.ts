@@ -100,11 +100,13 @@ async function configureOracle(
   for (const assetConfig of tokens) {
     const existingOracleAssetConfig: ConcentratedLiquidityBasePriceOracle.AssetConfigStruct =
       await oracle.callStatic.poolFeeds(assetConfig.assetAddress);
+
     if (
-      existingOracleAssetConfig.poolAddress != assetConfig.poolAddress ||
-      existingOracleAssetConfig.twapWindow != assetConfig.twapWindow ||
-      existingOracleAssetConfig.baseToken != assetConfig.baseToken
+      existingOracleAssetConfig.poolAddress.toString().toLowerCase() != assetConfig.poolAddress.toLowerCase() ||
+      existingOracleAssetConfig.twapWindow.toString() != assetConfig.twapWindow.toString() ||
+      existingOracleAssetConfig.baseToken.toString().toLowerCase() != assetConfig.baseToken.toString().toLowerCase()
     ) {
+      console.log(`Updating Concentrated Liquidity Oracle for token: ${assetConfig.assetAddress}`);
       assetsToAdd.push(assetConfig);
     }
   }

@@ -146,7 +146,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
         setConfirmedSteps([..._steps]);
         successToast({
           description: 'Successfully Wrapped!',
-          id: 'wrapped',
+          id: 'Wrapped - ' + Math.random().toString(),
         });
       } catch (error) {
         const sentryInfo = {
@@ -188,7 +188,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
         setConfirmedSteps([..._steps]);
         successToast({
           description: 'Successfully Approved!',
-          id: 'approved',
+          id: 'Approved - ' + Math.random().toString(),
         });
       } else {
         _steps[optionToWrap ? 1 : 0] = {

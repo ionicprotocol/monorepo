@@ -28,7 +28,6 @@ async function createComptroller(
   pool: FusePoolDirectory.FusePoolStructOutput,
   deployer: SignerWithAddress
 ): Promise<ComptrollerWithExtension | null> {
-  // @ts-ignore
   const midasSdkModule = await import("../midasSdk");
   const sdk = await midasSdkModule.getOrCreateMidas(deployer);
   const comptroller = sdk.createComptroller(pool.comptroller);
@@ -45,7 +44,7 @@ async function createComptroller(
 export default task("revenue:admin:calculate", "Calculate the fees accrued from 4626 Performance Fees").setAction(
   async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
-    // @ts-ignore
+
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
@@ -97,7 +96,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
 task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance Fees").setAction(
   async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
-    // @ts-ignore
+
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
@@ -165,7 +164,7 @@ task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance
 task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Performance Fees").setAction(
   async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
-    // @ts-ignore
+
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
@@ -233,7 +232,7 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from 4626 Performance
   .addParam("threshold", "Threshold for fuse fee seizing denominated in native", "0.01", types.string)
   .setAction(async (taskArgs, hre) => {
     const deployer = await hre.ethers.getNamedSigner("deployer");
-    // @ts-ignore
+
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
     const cgId = sdk.chainSpecificParams.cgId;
@@ -279,7 +278,7 @@ task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance 
   .setAction(async (taskArgs, hre) => {
     let tx: providers.TransactionResponse;
     const deployer = await hre.ethers.getNamedSigner("deployer");
-    // @ts-ignore
+
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 

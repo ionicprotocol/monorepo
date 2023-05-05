@@ -24,7 +24,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { CButton } from '@ui/components/shared/Button';
 import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { BORROW_CAP, DEBT_CEILING, DEFAULT_DECIMALS } from '@ui/constants/index';
+import { DEBT_CEILING, DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
@@ -69,6 +69,7 @@ export const DebtCeilings = ({
     collateralAsset: NativePricedFuseAsset;
     debtCeiling: number;
   }>();
+  const [defaultCollateralAssetCToken, setDefaultCollateralAssetCToken] = useState<string>();
 
   const {
     control,
@@ -87,10 +88,17 @@ export const DebtCeilings = ({
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   const watchDebtCeiling = Number(watch('debtCeiling', DEBT_CEILING.DEFAULT));
-  const watchCollateralAsset = watch(
-    'collateralAsset',
-    assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken || assets[0].cToken
-  );
+
+  useEffect(() => {
+    const assetsExceptSelectedAsset = assets.filter((a) => a.cToken !== selectedAsset.cToken);
+    if (assetsExceptSelectedAsset.length > 0) {
+      setDefaultCollateralAssetCToken(assetsExceptSelectedAsset[0].cToken);
+    } else {
+      setDefaultCollateralAssetCToken(selectedAsset.cToken);
+    }
+  }, [assets, selectedAsset]);
+
+  const watchCollateralAsset = watch('collateralAsset', defaultCollateralAssetCToken);
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const { data: debtCeilingPerCollateral } = useDebtCeilingForAssetForCollateral({
@@ -116,12 +124,19 @@ export const DebtCeilings = ({
     setValue('debtCeiling', debtCeilingState ? debtCeilingState.debtCeiling : 0);
   }, [debtCeilingState, setValue]);
 
+  useEffect(() => {
+    if (defaultCollateralAssetCToken) {
+      setValue('collateralAsset', defaultCollateralAssetCToken);
+      setDefaultCollateralAssetCToken(undefined);
+    }
+  }, [defaultCollateralAssetCToken, setValue]);
+
   const updateDebtCeiling = async ({
     collateralAsset: collateralAssetAddress,
     debtCeiling,
   }: {
     collateralAsset: string;
-    debtCeiling: number;
+    debtCeiling: number | string;
   }) => {
     if (!currentSdk) return;
     const collateralAsset = assets.find((asset) => asset.cToken === collateralAssetAddress);
@@ -131,7 +146,7 @@ export const DebtCeilings = ({
 
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
-      if (debtCeiling === -1) {
+      if (debtCeiling === '-1') {
         const tx = await comptroller._blacklistBorrowingAgainstCollateral(
           selectedAsset.cToken,
           collateralAssetAddress,
@@ -160,10 +175,16 @@ export const DebtCeilings = ({
         await txDebtCeilings.wait();
       }
 
-      await queryClient.refetchQueries();
+      await queryClient.refetchQueries({
+        queryKey: ['useDebtCeilingForAssetForCollateral'],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ['useCTokenData'],
+      });
 
       successToast({
         description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
+        id: 'Updated debt ceiling - ' + Math.random().toString(),
       });
     } catch (error) {
       const sentryProperties = {
@@ -266,7 +287,7 @@ export const DebtCeilings = ({
                   clampValueOnBlur={false}
                   isDisabled={!isEditableAdmin}
                   isReadOnly={!isEditDebtCeiling || isSubmitting}
-                  min={BORROW_CAP.MIN}
+                  min={DEBT_CEILING.MIN}
                   onChange={onChange}
                   value={
                     selectedAsset.cToken === watchCollateralAsset ||
