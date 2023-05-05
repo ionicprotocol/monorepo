@@ -114,12 +114,12 @@ export const DebtCeilingsWhitelist = ({
       const validAddress = utils.getAddress(addressWhitelisted);
       const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
       const [isAssetBlacklistWhitelisted, isDebtCeilingWhitelist] = await Promise.all([
-        comptroller.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
+        comptroller.callStatic.isBlacklistBorrowingAgainstCollateralWhitelisted(
           selectedAsset.cToken,
           collateralAssetAddress,
           validAddress
         ),
-        comptroller.callStatic.borrowCapForCollateralWhitelist(
+        comptroller.callStatic.isBorrowCapForCollateralWhitelisted(
           selectedAsset.cToken,
           collateralAssetAddress,
           validAddress

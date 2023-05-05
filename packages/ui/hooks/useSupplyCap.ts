@@ -44,12 +44,12 @@ export const useSupplyCap = ({
       if (sdk && usdPrice && market && address) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
-          const [supplyCap, supplyCapWhitelist] = await Promise.all([
+          const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
             comptroller.callStatic.supplyCaps(market.cToken),
-            comptroller.callStatic.supplyCapWhitelist(market.cToken, address),
+            comptroller.callStatic.isSupplyCapWhitelisted(market.cToken, address),
           ]);
 
-          if (supplyCapWhitelist || supplyCap.eq(constants.Zero)) {
+          if (isSupplyCapWhitelist || supplyCap.eq(constants.Zero)) {
             return null;
           } else {
             const _supplyCap = market.totalSupply.gt(supplyCap) ? market.totalSupply : supplyCap;

@@ -32,7 +32,7 @@ export function useMaxSupplyAmount(
         const comptroller = sdk.createComptroller(comptrollerAddress);
         const [supplyCap, isWhitelisted] = await Promise.all([
           comptroller.callStatic.supplyCaps(asset.cToken),
-          comptroller.callStatic.supplyCapWhitelist(asset.cToken, address),
+          comptroller.callStatic.isSupplyCapWhitelisted(asset.cToken, address),
         ]);
 
         let bigNumber: BigNumber;

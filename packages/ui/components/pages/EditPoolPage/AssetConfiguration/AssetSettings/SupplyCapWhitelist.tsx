@@ -82,7 +82,7 @@ export const SupplyCapWhitelist = ({
 
       const validAddress = utils.getAddress(addressWhitelisted);
       const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
-      const isSupplyCapwhitelisted = await comptroller.callStatic.supplyCapWhitelist(
+      const isSupplyCapwhitelisted = await comptroller.callStatic.isSupplyCapWhitelisted(
         cTokenAddress,
         validAddress
       );

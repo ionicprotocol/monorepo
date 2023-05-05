@@ -82,7 +82,7 @@ export const BorrowCapWhitelist = ({
 
       const validAddress = utils.getAddress(addressWhitelisted);
       const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
-      const isBorrowCapwhitelisted = await comptroller.callStatic.borrowCapWhitelist(
+      const isBorrowCapwhitelisted = await comptroller.callStatic.isBorrowCapWhitelisted(
         cTokenAddress,
         validAddress
       );
