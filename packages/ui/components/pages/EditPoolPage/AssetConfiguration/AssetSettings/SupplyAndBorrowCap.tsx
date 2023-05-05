@@ -57,7 +57,8 @@ export const SupplyAndBorrowCaps = ({
   const [isEditSupplyCap, setIsEditSupplyCap] = useState<boolean>(false);
   const [isEditBorrowCap, setIsEditBorrowCap] = useState<boolean>(false);
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
-
+  const [isSupplyCapSaving, setIsSupplyCapSaving] = useState<boolean>(false);
+  const [isBorrowCapSaving, setIsBorrowCapSaving] = useState<boolean>(false);
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
 
@@ -66,7 +67,7 @@ export const SupplyAndBorrowCaps = ({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       borrowCap: BORROW_CAP.DEFAULT,
@@ -89,6 +90,7 @@ export const SupplyAndBorrowCaps = ({
   const updateSupplyCaps = async ({ supplyCap }: { supplyCap: number }) => {
     if (!cTokenAddress || !currentSdk) return;
 
+    setIsSupplyCapSaving(true);
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
       const tx = await comptroller._setMarketSupplyCaps(
@@ -97,7 +99,7 @@ export const SupplyAndBorrowCaps = ({
       );
       await tx.wait();
 
-      await queryClient.refetchQueries();
+      await queryClient.refetchQueries({ queryKey: ['useSupplyCap', 'useMaxSupplyAmount'] });
 
       successToast({
         description: 'Successfully updated max supply amount!',
@@ -117,21 +119,23 @@ export const SupplyAndBorrowCaps = ({
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsEditSupplyCap(false);
+      setIsSupplyCapSaving(false);
     }
   };
 
   const updateBorrowCap = async ({ borrowCap }: { borrowCap: number }) => {
     if (!cTokenAddress || !currentSdk) return;
 
+    setIsBorrowCapSaving(true);
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
       const tx = await comptroller._setMarketBorrowCaps(
         [cTokenAddress],
         [utils.parseUnits(borrowCap.toString(), selectedAsset.underlyingDecimals)]
       );
-      await tx.wait();
 
-      await queryClient.refetchQueries();
+      await tx.wait();
+      await queryClient.refetchQueries({ queryKey: ['useBorrowCap', 'useMaxBorrowAmount'] });
 
       successToast({
         description: 'Successfully updated max total borrow amount!',
@@ -151,6 +155,7 @@ export const SupplyAndBorrowCaps = ({
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
       setIsEditBorrowCap(false);
+      setIsBorrowCapSaving(false);
     }
   };
 
@@ -224,7 +229,7 @@ export const SupplyAndBorrowCaps = ({
                       <NumberInput
                         allowMouseWheel
                         clampValueOnBlur={false}
-                        isDisabled={isSubmitting || !isEditableAdmin}
+                        isDisabled={isSupplyCapSaving || !isEditableAdmin}
                         isReadOnly={!isEditSupplyCap}
                         min={SUPPLY_CAP.MIN}
                         onChange={onChange}
@@ -272,18 +277,19 @@ export const SupplyAndBorrowCaps = ({
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
               <Button
                 isDisabled={
-                  isSubmitting ||
+                  isSupplyCapSaving ||
                   !isEditableAdmin ||
                   !cTokenData ||
                   watchSupplyCap ===
                     parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS))
                 }
+                isLoading={isSupplyCapSaving}
                 type="submit"
               >
                 Save
               </Button>
               <Button
-                isDisabled={isSubmitting || !isEditableAdmin}
+                isDisabled={isSupplyCapSaving || !isEditableAdmin}
                 onClick={setSupplyCapsDefault}
                 variant="silver"
               >
@@ -293,7 +299,7 @@ export const SupplyAndBorrowCaps = ({
           ) : (
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
               <CButton
-                isDisabled={isSubmitting || !isEditableAdmin}
+                isDisabled={isSupplyCapSaving || !isEditableAdmin}
                 onClick={() => setIsEditSupplyCap(true)}
               >
                 Edit
@@ -339,7 +345,7 @@ export const SupplyAndBorrowCaps = ({
                       <NumberInput
                         allowMouseWheel
                         clampValueOnBlur={false}
-                        isDisabled={isSubmitting || !isEditableAdmin}
+                        isDisabled={isBorrowCapSaving || !isEditableAdmin}
                         isReadOnly={!isEditBorrowCap}
                         min={BORROW_CAP.MIN}
                         onChange={onChange}
@@ -387,18 +393,19 @@ export const SupplyAndBorrowCaps = ({
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
               <Button
                 isDisabled={
-                  isSubmitting ||
+                  isBorrowCapSaving ||
                   !isEditableAdmin ||
                   !cTokenData ||
                   watchBorrowCap ===
                     parseFloat(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS))
                 }
+                isLoading={isBorrowCapSaving}
                 type="submit"
               >
                 Save
               </Button>
               <Button
-                isDisabled={isSubmitting || !isEditableAdmin}
+                isDisabled={isBorrowCapSaving || !isEditableAdmin}
                 onClick={setTotalBorrowCapsDefault}
                 variant="silver"
               >
@@ -408,7 +415,7 @@ export const SupplyAndBorrowCaps = ({
           ) : (
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
               <CButton
-                isDisabled={isSubmitting || !isEditableAdmin}
+                isDisabled={isBorrowCapSaving || !isEditableAdmin}
                 onClick={() => setIsEditBorrowCap(true)}
               >
                 Edit
