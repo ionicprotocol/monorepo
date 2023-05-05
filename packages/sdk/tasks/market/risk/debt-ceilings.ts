@@ -105,3 +105,83 @@ task("market:set-debt-ceiling-whitelist", "Pauses borrowing on a market")
       );
     }
   });
+
+task("debt-ceilings:print")
+  .addOptionalParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .setAction(async ({ admin }, { run, ethers }) => {
+  const hayMarket = "0x10b6f851225c203eE74c369cE876BEB56379FCa3";
+  const ankrBNBMarket = "0xb2b01D6f953A28ba6C8f9E22986f5bDDb7653aEa";
+
+  const collaterals1 = [
+    "0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB",
+    "0xbc65FE441545E9e8f97E50F70526B7E8963826bc",
+    "0x04b6895d7AD8b10a1a13C749159226249a3b8515"
+  ];
+
+  const collaterals2 = [
+    "0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB",
+    "0xbc65FE441545E9e8f97E50F70526B7E8963826bc",
+    "0x04b6895d7AD8b10a1a13C749159226249a3b8515",
+    "0x71693C84486B37096192c9942852f542543639Bf",
+    "0x5156bC51ed3C2cE6cc59c0b68F9d68916782618f"
+  ];
+
+  const maxDebt = "0";
+  for (const collateralMarket of collaterals1) {
+    await run("market:print-debt-ceiling", {
+      admin,
+      collat: collateralMarket,
+      borrow: hayMarket,
+      maxDebt
+    });
+  }
+
+  for (const collateralMarket of collaterals2) {
+    await run("market:print-debt-ceiling", {
+      admin,
+      collat: collateralMarket,
+      borrow: hayMarket,
+      maxDebt
+    });
+    await run("market:print-debt-ceiling", {
+      admin,
+      collat: collateralMarket,
+      borrow: ankrBNBMarket,
+      maxDebt
+    });
+  }
+});
+
+task("market:print-debt-ceiling", "Prints debt ceiling for market against another")
+  .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .addParam("collat", "The address of the collateral CToken", undefined, types.string)
+  .addParam("borrow", "The address of the borrow CToken", undefined, types.string)
+  .addParam(
+    "maxDebt",
+    "Maximum amount of debt that can be accrued, denominated in the borrowed asset",
+    undefined,
+    types.string
+  )
+  .setAction(async ({ admin, collat, borrow, maxDebt }, { ethers }) => {
+    const signer = await ethers.getNamedSigner(admin);
+
+    const midasSdkModule = await import("../../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+
+    const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
+    const borrowCToken = sdk.createCTokenWithExtensions(borrow, signer);
+
+    const comptroller = await collatCToken.callStatic.comptroller();
+    if (comptroller !== (await borrowCToken.callStatic.comptroller())) {
+      throw new Error("Comptrollers do not match");
+    }
+
+    const pool = sdk.createComptroller(comptroller, signer);
+
+    const currentDebtCeilings = await pool.callStatic.borrowCapForCollateral(
+      borrowCToken.address,
+      collatCToken.address
+    );
+
+    console.log(`${borrow} , ${collat} : ${currentDebtCeilings}`);
+  });
