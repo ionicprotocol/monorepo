@@ -27,7 +27,7 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0x18bbac6f368d907635823Ae3F7d2B0b848F5899d"
+      "address": "0x9b6e92653d771032cC068326a94a7798745212d8"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x9c55d77E1f46622f5171Dc0eB03461FdCCD92836"
@@ -93,7 +93,7 @@
       "address": "0x8cd88E0066bd75eC74ade3743bD281Dbe9AaAa30"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x4a325738F49253B83Cd950c8843DBa64A8537d24"
+      "address": "0xB7CC30898a3487D42F0F9d48C94ef71e16dDb252"
     },
     "DefaultProxyAdmin": {
       "address": "0x0C64dEFA0125678C77dDa2287FDD6000699737Cc"
