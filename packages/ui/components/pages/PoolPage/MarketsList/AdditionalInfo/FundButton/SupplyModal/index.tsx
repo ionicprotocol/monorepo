@@ -123,15 +123,6 @@ export const SupplyModal = ({
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
 
-    successToast({
-      description: 'Successfully Wrapped!',
-      id: 'Wrapped - ' + Math.random().toString(),
-    });
-    successToast({
-      description: 'Successfully Wrapped!',
-      id: 'Wrapped - ' + Math.random().toString(),
-    });
-
     const sentryProperties = {
       chainId: currentSdk.chainId,
       comptroller: comptrollerAddress,
