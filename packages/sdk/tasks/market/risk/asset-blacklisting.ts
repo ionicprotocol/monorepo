@@ -47,7 +47,7 @@ export default task("market:set-asset-blacklist", "Set borrow blacklist of colla
 task("market:set-asset-blacklist-whitelist", "Pauses borrowing on a market")
   .addParam("collat", "The address of the collateral CToken", undefined, types.string)
   .addParam("borrow", "The address of the borrow CToken", undefined, types.string)
-  .addParam("account", "The account to whitelist", true, types.string)
+  .addParam("account", "The account to whitelist", undefined, types.string)
   .addParam("whitelist", "To whitelist or not", true, types.boolean)
   .setAction(async ({ admin, collat, borrow, account, whitelist }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
@@ -64,7 +64,7 @@ task("market:set-asset-blacklist-whitelist", "Pauses borrowing on a market")
     }
     const pool = sdk.createComptroller(comptroller, signer);
 
-    const whitelistStatus = await pool.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
+    const whitelistStatus = await pool.callStatic.isBorrowingAgainstCollateralBlacklistWhitelisted(
       borrowCToken.address,
       collatCToken.address,
       account
@@ -82,7 +82,7 @@ task("market:set-asset-blacklist-whitelist", "Pauses borrowing on a market")
       );
       await tx.wait();
       console.log(
-        `Whitelist status for ${account} set: ${await pool.callStatic.borrowingAgainstCollateralBlacklistWhitelist(
+        `Whitelist status for ${account} set: ${await pool.callStatic.isBorrowingAgainstCollateralBlacklistWhitelisted(
           borrowCToken.address,
           collatCToken.address,
           account

@@ -90,10 +90,10 @@
       "address": "0x3379523a4ef49B19f411123053D455D5eC21C0aA"
     },
     "Comptroller": {
-      "address": "0xCdCd2Fc5883147d509b33fc6B6b37ACbE1441521"
+      "address": "0x8cd88E0066bd75eC74ade3743bD281Dbe9AaAa30"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x59a638381AD65B6DC285Dd47a227B219222d1694"
+      "address": "0x4a325738F49253B83Cd950c8843DBa64A8537d24"
     },
     "DefaultProxyAdmin": {
       "address": "0x0C64dEFA0125678C77dDa2287FDD6000699737Cc"
@@ -129,7 +129,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolLens": {
-      "address": "0x789eA0BDC85D385CD728e9ff261aF5738667d6e0"
+      "address": "0xe94fAEFC602eADdFa7Fed9353f2173E0b1147ed4"
     },
     "FusePoolLensSecondary": {
       "address": "0x8c70FDE00F64E5F3835D247E6742447074017128"
