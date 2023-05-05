@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -49,7 +48,6 @@ export const BorrowCapWhitelist = ({
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const infoToast = useInfoToast();
-  const queryClient = useQueryClient();
   const addRecentTransaction = useAddRecentTransaction();
 
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -101,8 +99,6 @@ export const BorrowCapWhitelist = ({
           hash: tx.hash,
         });
         await tx.wait();
-
-        await queryClient.refetchQueries();
 
         successToast({
           description: `Successfully ${mode === ADD ? 'added' : 'removed'} in whitelist.`,
