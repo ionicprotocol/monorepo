@@ -175,7 +175,12 @@ export const DebtCeilings = ({
         await txDebtCeilings.wait();
       }
 
-      await queryClient.refetchQueries();
+      await queryClient.refetchQueries({
+        queryKey: ['useDebtCeilingForAssetForCollateral'],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ['useCTokenData'],
+      });
 
       successToast({
         description: `Successfully updated '${collateralAsset.underlyingSymbol}' debt ceiling for '${selectedAsset.underlyingSymbol}'!`,
