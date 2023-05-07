@@ -65,18 +65,18 @@ task("market:set-debt-ceiling-whitelist", "Whitelists an account for the borrowi
     const midasSdkModule = await import("../../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
 
-    const collterals = collats.split(",");
+    const collaterals = collats.split(",");
 
     const borrowCToken = sdk.createCTokenWithExtensions(borrow, signer);
 
     const comptroller = await borrowCToken.callStatic.comptroller();
 
-    for (const collat of collterals) {
+    for (const collat of collaterals) {
+      const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
       if (comptroller !== (await borrowCToken.callStatic.comptroller())) {
         throw new Error("Comptrollers do not match");
       }
       const pool = sdk.createComptroller(comptroller, signer);
-      const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
 
       const whitelistStatus = await pool.callStatic.isBorrowCapForCollateralWhitelisted(
         borrowCToken.address,
