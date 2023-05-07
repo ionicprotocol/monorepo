@@ -99,16 +99,16 @@
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
     },
     "CTokenFirstExtension": {
-      "address": "0x0Eb2A964C79C7D2669b07Ce10A8A981FD14362b1"
+      "address": "0xbd536E6837009aBD5FB1E8a11fCA92d22f8620C6"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
     },
     "Comptroller": {
-      "address": "0x5AE976Ec8bB7cF6D4F030358E2C3FC5a5d9EC1b3"
+      "address": "0x0a1209F543246c102CCBdb9C19678B6E7632FeEB"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x7EeC2d629e281A4dcE670269b7290cA430787C7E"
+      "address": "0xa27694DD3F69D9584D4218C74EA25d49c3b54ab5"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
       "address": "0xB83AC269cbCeb97105D216305954f170C1fca5fD"
@@ -234,7 +234,7 @@
       "address": "0x295d7347606F4bd810C8296bb8d75D657001fcf7"
     },
     "FusePoolLens": {
-      "address": "0xBE2B313529aaF7b5b6bedF49d4dd418190100dE9"
+      "address": "0xcBC246BC32c6fb4c61d3B234d41BccEA2c7b2C19"
     },
     "FusePoolLensSecondary": {
       "address": "0x96f0A348D31C6e6d86c5Fca5cf657D6c592AAff6"
