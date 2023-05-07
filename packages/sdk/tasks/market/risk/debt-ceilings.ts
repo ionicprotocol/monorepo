@@ -165,7 +165,7 @@ task("market:print-debt-ceiling", "Prints debt ceiling for market against anothe
     undefined,
     types.string
   )
-  .setAction(async ({ admin, collat, borrow }, { ethers }) => {
+  .setAction(async ({ admin, collat, borrow, maxDebt }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
     const midasSdkModule = await import("../../midasSdk");
