@@ -55,7 +55,7 @@ export const useSupplyCapsDataForAsset = (
   return useQuery(
     [
       'useSupplyCapsDataForAsset',
-      supplyCapsDataForPool?.map((data) => data.cTokenAddress),
+      supplyCapsDataForPool?.sort((a, b) => a.cTokenAddress.localeCompare(b.cTokenAddress)),
       cTokenAddress,
     ],
     () => {

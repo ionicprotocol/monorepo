@@ -27,7 +27,6 @@ export function useMaxSupplyAmount(
       asset.underlyingToken,
       asset.cToken,
       comptrollerAddress,
-      asset.totalSupply,
       sdk?.chainId,
       address,
       supplyCapsDataForAsset,
@@ -46,9 +45,7 @@ export function useMaxSupplyAmount(
 
         // if address isn't in supply cap whitelist and asset has supply cap
         if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
-          const availableCap = supplyCap
-            .add(supplyCapsDataForAsset.nonWhitelistedTotalSupply)
-            .sub(asset.totalSupply);
+          const availableCap = supplyCap.sub(supplyCapsDataForAsset.nonWhitelistedTotalSupply);
 
           if (availableCap.lte(tokenBalance)) {
             bigNumber = availableCap;
