@@ -6,7 +6,6 @@ export default task("send-tokens", "Edit deployers")
   .addOptionalParam("sendTo", "Address to which the minted tokens should be sent to")
   .addOptionalParam("sendAmount", "Amount to be sent", "10", types.string)
   .setAction(async ({ tokens: _tokens, sendTo: _sendTo, sendAmount: _sendAmount }, { getNamedAccounts, ethers }) => {
-    // @ts-ignore
     const { deployer } = await getNamedAccounts();
     const tokens = _tokens.split(",");
     let tx: providers.TransactionResponse;

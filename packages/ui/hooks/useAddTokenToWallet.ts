@@ -21,7 +21,11 @@ export const useAddTokenToWallet = ({
     const ethereum = window.ethereum;
 
     if (!ethereum) {
-      errorToast({ description: 'Wallet could not be found!', title: 'Error' });
+      errorToast({
+        description: 'Wallet could not be found!',
+        id: 'Wallet not found - ' + Math.random().toString(),
+        title: 'Error',
+      });
 
       return false;
     }
@@ -49,7 +53,11 @@ export const useAddTokenToWallet = ({
       });
 
       if (added) {
-        successToast({ description: 'Token is successfully added to wallet', title: 'Added' });
+        successToast({
+          description: 'Token is successfully added to wallet',
+          id: 'Added token - ' + Math.random().toString(),
+          title: 'Added',
+        });
       }
 
       return added;

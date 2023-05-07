@@ -5,8 +5,7 @@ task("swap:native-wtoken", "Wrap native token")
   .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
   .addOptionalParam("weth", "weth address override", undefined, types.string)
   .setAction(async ({ account: _account, amount: _amount, weth: _weth }, { ethers }) => {
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const account = await ethers.getNamedSigner(_account);
 

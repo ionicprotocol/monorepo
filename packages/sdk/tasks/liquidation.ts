@@ -14,8 +14,7 @@ export default task("get-liquidations", "Get potential liquidations")
   )
   .addOptionalParam("maxHealth", "Filter pools by max health", "1", types.string)
   .setAction(async (taskArgs, hre) => {
-    // @ts-ignore
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("./midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     let excludedComptrollers: Array<string> = [];

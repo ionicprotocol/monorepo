@@ -101,11 +101,13 @@ export const CollateralModal = ({
           errorToast({
             description:
               'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
+            id: 'Disabling collateral - ' + Math.random().toString(),
             title: 'Error! Code: ' + call,
           });
         } else {
           errorToast({
             description: 'You cannot enable this asset as collateral at this time.',
+            id: 'Enabling collateral - ' + Math.random().toString(),
             title: 'Error! Code: ' + call,
           });
         }

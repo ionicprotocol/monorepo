@@ -8,8 +8,8 @@ task("flywheel:deploy-static-rewards-fw", "Deploy static rewards flywheel for LM
   .addParam("pool", "comptroller to which to add the flywheel", undefined, types.string)
   .setAction(async ({ signer, name, rewardToken, strategies, pool }, { ethers, deployments, run }) => {
     const deployer = await ethers.getNamedSigner(signer);
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const flywheelBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
@@ -66,8 +66,8 @@ task("flywheel:deploy-static-rewards", "Deploy static rewards flywheel for LM re
       ],
       waitConfirmations: 1,
     });
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const tx = await sdk.setFlywheelRewards(flywheel, rewards.address);
@@ -96,8 +96,7 @@ task("flywheel:add-strategy-for-rewards", "Create pool if does not exist")
       throw `Invalid 'strategy': ${taskArgs.strategy}`;
     }
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("..//midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const addTx = await sdk.addStrategyForRewardsToFlywheelCore(flywheelAddress, strategyAddress);
@@ -125,8 +124,7 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
       throw `Invalid 'pool': ${taskArgs.pool}`;
     }
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const addTx = await sdk.addFlywheelCoreToComptroller(flywheelAddress, poolAddress);

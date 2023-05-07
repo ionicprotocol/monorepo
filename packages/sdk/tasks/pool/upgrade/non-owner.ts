@@ -1,15 +1,15 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../typechain/Comptroller";
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
-import { Unitroller } from "../../typechain/Unitroller";
+import { Comptroller } from "../../../typechain/Comptroller";
+import { FuseFeeDistributor } from "../../../typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../../typechain/FusePoolDirectory";
+import { Unitroller } from "../../../typechain/Unitroller";
 
 task("non-owner-pool:upgrade")
   .addParam("comptrollerAddress", "The comptroller implementation address", undefined, types.string)
   .addParam("poolAddress", "The pool address", undefined, types.string)
-  .setAction(async ({ comptrollerAddress, poolAddress }, { ethers, run }) => {
+  .setAction(async ({ comptrollerAddress, poolAddress }, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
     // pools to upgrade

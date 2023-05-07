@@ -5,6 +5,7 @@ import { constants, utils } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export function useMaxSupplyAmount(
@@ -14,6 +15,11 @@ export function useMaxSupplyAmount(
 ) {
   const { address } = useMultiMidas();
   const sdk = useSdk(chainId);
+  const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
+    comptrollerAddress,
+    asset.cToken,
+    chainId
+  );
 
   return useQuery(
     [
@@ -21,22 +27,25 @@ export function useMaxSupplyAmount(
       asset.underlyingToken,
       asset.cToken,
       comptrollerAddress,
-      asset.totalSupply,
       sdk?.chainId,
       address,
+      supplyCapsDataForAsset,
     ],
     async () => {
-      if (sdk && address) {
+      if (sdk && address && supplyCapsDataForAsset) {
         const tokenBalance = await fetchTokenBalance(asset.underlyingToken, sdk, address);
 
         const comptroller = sdk.createComptroller(comptrollerAddress);
-        const supplyCap = await comptroller.callStatic.supplyCaps(asset.cToken);
+        const [supplyCap, isWhitelisted] = await Promise.all([
+          comptroller.callStatic.supplyCaps(asset.cToken),
+          comptroller.callStatic.isSupplyCapWhitelisted(asset.cToken, address),
+        ]);
 
         let bigNumber: BigNumber;
 
-        // if asset has supply cap
-        if (supplyCap.gt(constants.Zero)) {
-          const availableCap = supplyCap.sub(asset.totalSupply);
+        // if address isn't in supply cap whitelist and asset has supply cap
+        if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
+          const availableCap = supplyCap.sub(supplyCapsDataForAsset.nonWhitelistedTotalSupply);
 
           if (availableCap.lte(tokenBalance)) {
             bigNumber = availableCap;

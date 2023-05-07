@@ -1,7 +1,7 @@
-import "./create";
 import "./set-plugin";
 import "./admin";
 import "./fund";
+import "./risk";
 import "./upgrade";
 import "./upgrade-all";
 import "./deploy-dynamic-rewards-market";

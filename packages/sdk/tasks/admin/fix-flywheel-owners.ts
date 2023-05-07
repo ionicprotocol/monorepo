@@ -25,8 +25,8 @@ task("deploy-fwr", "Changes the system admin to a new address")
       ],
       waitConfirmations: 1,
     });
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const tx = await sdk.setFlywheelRewards(flywheel, rewards.address);

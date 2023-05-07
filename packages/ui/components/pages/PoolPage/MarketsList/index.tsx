@@ -37,7 +37,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import * as React from 'react';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar/index';
 import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
@@ -125,7 +125,7 @@ export const MarketsList = ({
   const [isHidden, setIsHidden] = useState<boolean>(initHidden);
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
-    assetsAddress: assets.map((asset) => asset.cToken),
+    assetsAddress: assets.map((asset) => asset.cToken).sort(),
     poolAddress: comptrollerAddress,
     poolChainId,
   });
@@ -148,43 +148,49 @@ export const MarketsList = ({
     assetInfos
   );
   const { data: borrowApyPerAsset } = useBorrowAPYs(assets, poolChainId);
+  const [searchText, setSearchText] = useState('');
 
-  const assetFilter: FilterFn<Market> = (row, columnId, value) => {
-    if (
-      (!searchText ||
-        (value.includes(SEARCH) &&
-          (row.original.market.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.original.market.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.original.market.cToken.toLowerCase().includes(searchText.toLowerCase())))) &&
-      (!value.includes(HIDDEN) ||
-        (value.includes(HIDDEN) &&
-          (!row.original.market.supplyBalance.isZero() ||
-            !row.original.market.borrowBalance.isZero())))
-    ) {
+  const assetFilter: FilterFn<Market> = useCallback(
+    (row, columnId, value) => {
       if (
-        value.includes(ALL) ||
-        (value.includes(REWARDS) &&
-          allClaimableRewards &&
-          allClaimableRewards[row.original.market.cToken]) ||
-        (value.includes(COLLATERAL) && row.original.market.membership) ||
-        (value.includes(PROTECTED) &&
-          row.original.market.isBorrowPaused &&
-          !row.original.market.isSupplyPaused) ||
-        (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused) ||
-        (value.includes(PAUSED) &&
-          row.original.market.isBorrowPaused &&
-          row.original.market.isSupplyPaused)
+        (!searchText ||
+          (value.includes(SEARCH) &&
+            (row.original.market.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
+              row.original.market.underlyingSymbol
+                .toLowerCase()
+                .includes(searchText.toLowerCase()) ||
+              row.original.market.cToken.toLowerCase().includes(searchText.toLowerCase())))) &&
+        (!value.includes(HIDDEN) ||
+          (value.includes(HIDDEN) &&
+            (!row.original.market.supplyBalance.isZero() ||
+              !row.original.market.borrowBalance.isZero())))
       ) {
-        return true;
+        if (
+          value.includes(ALL) ||
+          (value.includes(REWARDS) &&
+            allClaimableRewards &&
+            allClaimableRewards[row.original.market.cToken]) ||
+          (value.includes(COLLATERAL) && row.original.market.membership) ||
+          (value.includes(PROTECTED) &&
+            row.original.market.isBorrowPaused &&
+            !row.original.market.isSupplyPaused) ||
+          (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused) ||
+          (value.includes(PAUSED) &&
+            row.original.market.isBorrowPaused &&
+            row.original.market.isSupplyPaused)
+        ) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
-    } else {
-      return false;
-    }
-  };
+    },
+    [allClaimableRewards, searchText]
+  );
 
-  const assetSort: SortingFn<Market> = React.useCallback(
+  const assetSort: SortingFn<Market> = useCallback(
     (rowA, rowB, columnId) => {
       if (!sdk) return 0;
 
@@ -368,8 +374,16 @@ export const MarketsList = ({
         sortingFn: assetSort,
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, comptrollerAddress, totalSupplyApyPerAsset, assets, borrowApyPerAsset, poolChainId]);
+  }, [
+    rewards,
+    comptrollerAddress,
+    totalSupplyApyPerAsset,
+    assetFilter,
+    assetSort,
+    assets,
+    borrowApyPerAsset,
+    poolChainId,
+  ]);
 
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
@@ -380,7 +394,6 @@ export const MarketsList = ({
 
   const [globalFilter, setGlobalFilter] = useState<string[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
-  const [searchText, setSearchText] = useState('');
 
   const table = useReactTable({
     columns,
@@ -517,7 +530,7 @@ export const MarketsList = ({
             variant="filter"
             width="80px"
           >
-            <Center fontWeight="bold" height="100%" width="100%">{`${data.length} All`}</Center>
+            <Center fontWeight="bold" height="100%" width="100%">{`All (${data.length})`}</Center>
           </CButton>
           {allClaimableRewards && Object.keys(allClaimableRewards).length !== 0 && (
             <GradientButton
@@ -530,9 +543,9 @@ export const MarketsList = ({
             >
               <Center fontWeight="bold" height="100%" pt="2px" width="100%">
                 <GradientText color={cCard.bgColor} isEnabled={!globalFilter.includes(REWARDS)}>
-                  {`${
+                  {`Rewards (${
                     (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
-                  } Rewards`}
+                  })`}
                 </GradientText>
               </Center>
             </GradientButton>
@@ -547,7 +560,7 @@ export const MarketsList = ({
               width="125px"
             >
               <Center fontWeight="bold" height="100%" width="100%">
-                {`${collateralCounts} Collateral`}
+                {`Collateral (${collateralCounts})`}
               </Center>
             </CButton>
           )}
@@ -561,7 +574,7 @@ export const MarketsList = ({
               width="135px"
             >
               <Center fontWeight="bold" height="100%" width="100%">
-                {`${borrowableCounts} Borrowable`}
+                {`Borrowable (${borrowableCounts})`}
               </Center>
             </CButton>
           )}
@@ -575,7 +588,7 @@ export const MarketsList = ({
               width="125px"
             >
               <Center fontWeight="bold" height="100%" width="100%">
-                {`${protectedCounts} Protected`}
+                {`Protected (${protectedCounts})`}
               </Center>
             </CButton>
           )}
@@ -589,7 +602,7 @@ export const MarketsList = ({
               width="140px"
             >
               <Center fontWeight="bold" height="100%" whiteSpace="nowrap" width="100%">
-                {`${pausedCounts} Paused`}
+                {`Paused (${pausedCounts})`}
               </Center>
             </CButton>
           )}

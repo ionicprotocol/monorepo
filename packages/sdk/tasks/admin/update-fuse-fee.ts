@@ -1,4 +1,3 @@
-import { Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
@@ -10,15 +9,11 @@ export default task("fusefee:update", "Update FuseFee")
   .addParam("adminFee", "AdminFee", undefined, types.string)
   .setAction(async (taskArgs, hre) => {
     const adminFee = taskArgs.adminFee;
-
     const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
 
-    // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
-
-    const cToken = new Contract(taskArgs.cToken, sdk.chainDeployment.CTokenFirstExtension.abi, signer);
-
+    const midasSdkModule = await import("../midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const cToken = sdk.createCTokenWithExtensions(taskArgs.cToken);
     await cToken._setAdminFee(adminFee);
   });
 

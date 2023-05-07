@@ -12,7 +12,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const { cPage } = useColors();
   const { isSidebarCollapsed, setIsSidebarCollapsed } = useMultiMidas();
 
-  return (
+  return isSidebarCollapsed !== undefined ? (
     <HStack
       alignItems={'flex-start'}
       alignSelf={'flex-end'}
@@ -58,5 +58,5 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
         </Button>
       </HStack>
     </HStack>
-  );
+  ) : null;
 };

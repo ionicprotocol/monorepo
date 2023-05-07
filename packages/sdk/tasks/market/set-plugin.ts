@@ -12,8 +12,7 @@ export default task("market:set-plugin", "Set's the plugin of a market")
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const comptroller = sdk.createComptroller(comptrollerAddress, signer);
@@ -22,16 +21,16 @@ export default task("market:set-plugin", "Set's the plugin of a market")
 
     const cTokenInstances = allMarkets.map((marketAddress) => sdk.createCErc20PluginRewardsDelegate(marketAddress));
 
-    const cTokenInstance = await cTokenInstances.find(async (cToken) => {
+    const cTokenInstance = cTokenInstances.find(async (cToken) => {
       return (await cToken.callStatic.underlying()) == underlying;
     });
 
     console.log(`Setting plugin to ${pluginAddress}`);
-    const setPluginTx = await cTokenInstance._updatePlugin(pluginAddress);
+    const setPluginTx = await cTokenInstance!._updatePlugin(pluginAddress);
 
     const receipt: TransactionReceipt = await setPluginTx.wait();
     if (receipt.status != ethers.constants.One.toNumber()) {
       throw `Failed set plugin to ${pluginAddress}`;
     }
-    console.log(`Plugin successfully set to ${pluginAddress} for market ${cTokenInstance.address}`);
+    console.log(`Plugin successfully set to ${pluginAddress} for market ${cTokenInstance!.address}`);
   });

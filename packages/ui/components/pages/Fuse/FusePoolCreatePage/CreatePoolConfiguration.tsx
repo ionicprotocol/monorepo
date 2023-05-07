@@ -115,6 +115,7 @@ export const CreatePoolConfiguration = () => {
 
       successToast({
         description: 'You may now add assets to it.',
+        id: 'Pool deployed - ' + Math.random().toString(),
         title: 'Your pool has been deployed!',
       });
 

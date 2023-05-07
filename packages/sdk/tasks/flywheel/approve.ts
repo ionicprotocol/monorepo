@@ -1,7 +1,6 @@
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
-import { JarvisSafeLiquidator } from "../../typechain/JarvisSafeLiquidator";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 
 task("approve-market-flywheel")
@@ -30,22 +29,17 @@ task("approve-market-flywheel")
     }
   });
 
-task("deploy-jsl").setAction(async ({}, { ethers, deployments }) => {
-  const deployer = await ethers.getNamedSigner("deployer");
+task("flywheel:set-fee-recipient")
+  .addParam("fwAddress", "Flywheel address, one for each reward token", undefined, types.string)
+  .addParam("feeRecipient", "Fee recipient address", undefined, types.string)
+  .setAction(async ({ fwAddress, feeRecipient }, { ethers }) => {
+    const deployer = await ethers.getNamedSigner("deployer");
 
-  const jsl = await deployments.deploy("JarvisSafeLiquidator", {
-    from: deployer.address,
-    log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [],
-        },
-      },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer.address,
-    },
+    const flywheel = (await ethers.getContractAt("MidasFlywheel", fwAddress, deployer)) as MidasFlywheel;
+    const currentFee = await flywheel.callStatic.performanceFee();
+
+    console.log(`updating the fee recipient to ${feeRecipient} for flywheel ${fwAddress}`);
+    const tx = await flywheel.updateFeeSettings(currentFee, feeRecipient);
+    await tx.wait();
+    console.log(`mined tx ${tx.hash}`);
   });
-  if (jsl.transactionHash) await ethers.provider.waitForTransaction(jsl.transactionHash);
-});

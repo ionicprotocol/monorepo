@@ -12,10 +12,7 @@ export default task("market:unsupport", "Unsupport a market")
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 
-    // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    // @ts-ignoreutils/pool
-
+    const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const comptroller = await sdk.createComptroller(taskArgs.comptroller, signer);
@@ -134,34 +131,4 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
 
       console.log(`The market at ${market.address} borrowing pause has been to ${isPausedAfter}`);
     }
-  });
-
-task("market:set-supply-cap", "Pauses borrowing on a market")
-  .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
-  .addParam("market", "The address of the CToken", undefined, types.string)
-  .addParam("maxSupply", "Maximum amount of tokens that can be supplied", undefined, types.string)
-  .setAction(async (taskArgs, hre) => {
-    const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
-
-    const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
-    const comptroller = await market.callStatic.comptroller();
-    const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
-    const poolExtension = (await hre.ethers.getContractAt(
-      "ComptrollerFirstExtension",
-      comptroller,
-      admin
-    )) as ComptrollerFirstExtension;
-
-    const currentSupplyCap = await pool.callStatic.supplyCaps(taskArgs.market);
-    console.log(`Current supply cap is ${currentSupplyCap}`);
-
-    const newSupplyCap = hre.ethers.BigNumber.from(taskArgs.maxSupply);
-    const tx: providers.TransactionResponse = await poolExtension._setMarketSupplyCaps(
-      [market.address],
-      [newSupplyCap]
-    );
-    await tx.wait();
-
-    const newSupplyCapSet = await pool.callStatic.supplyCaps(taskArgs.market);
-    console.log(`New supply cap set: ${newSupplyCapSet.toNumber()}`);
   });

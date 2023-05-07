@@ -1,9 +1,9 @@
 import { task } from "hardhat/config";
 
 task("fork:create-pool", "Create pool on forking node").setAction(async (taskArgs, hre) => {
-  // @ts-ignore
-  const midasSdkModule = await import("../../tests/utils/midasSdk");
-  const sdk = await midasSdkModule.getOrCreateMidas();
+  const deployer = await hre.ethers.getNamedSigner("deployer");
+  const midasSdkModule = await import("../midasSdk");
+  const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
   console.log("Creating pool...");
 
