@@ -44,8 +44,8 @@ export default task("market:set-debt-ceiling", "Sets debt ceiling for market aga
     }
 
     const tx: providers.TransactionResponse = await pool._setBorrowCapForCollateral(
-      borrow.address,
-      collat.address,
+      borrowCToken.address,
+      collatCToken.address,
       newDebtCeiling
     );
     await tx.wait();
@@ -59,7 +59,7 @@ export default task("market:set-debt-ceiling", "Sets debt ceiling for market aga
     );
   });
 
-task("market:set-debt-ceiling-whitelist", "Pauses borrowing on a market")
+task("market:set-debt-ceiling-whitelist", "Whitelists an account for the borrowing against collateral cap")
   .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
   .addParam("collat", "The address of the collateral CToken", undefined, types.string)
   .addParam("borrow", "The address of the borrow CToken", undefined, types.string)
@@ -108,7 +108,7 @@ task("market:set-debt-ceiling-whitelist", "Pauses borrowing on a market")
 
 task("debt-ceilings:print")
   .addOptionalParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
-  .setAction(async ({ admin }, { run, ethers }) => {
+  .setAction(async ({ admin }, { run }) => {
   const hayMarket = "0x10b6f851225c203eE74c369cE876BEB56379FCa3";
   const ankrBNBMarket = "0xb2b01D6f953A28ba6C8f9E22986f5bDDb7653aEa";
 
@@ -185,3 +185,51 @@ task("market:print-debt-ceiling", "Prints debt ceiling for market against anothe
 
     console.log(`${borrow} , ${collat} : ${currentDebtCeilings}`);
   });
+
+task("debt-ceiling:whitelist:ankr")
+  .setAction(async ({ admin, collat, borrow, accountToWhitelist }, { run }) => {
+    const hayMarket = "0x10b6f851225c203eE74c369cE876BEB56379FCa3";
+    const ankrBNBMarket = "0xb2b01D6f953A28ba6C8f9E22986f5bDDb7653aEa";
+
+    const account1 = "0x906A2E1E6Bb24A1D9d50AD1315dA46c861d11B14";
+    const account2 = "0x28C0208b7144B511C73586Bb07dE2100495e92f3";
+
+    const collaterals1 = [
+      "0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB",
+      "0xbc65FE441545E9e8f97E50F70526B7E8963826bc",
+      "0x04b6895d7AD8b10a1a13C749159226249a3b8515"
+    ];
+
+    const collaterals2 = [
+      "0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB",
+      "0xbc65FE441545E9e8f97E50F70526B7E8963826bc",
+      "0x04b6895d7AD8b10a1a13C749159226249a3b8515",
+      "0x71693C84486B37096192c9942852f542543639Bf",
+      "0x5156bC51ed3C2cE6cc59c0b68F9d68916782618f"
+    ];
+
+    for (const collateralMarket of collaterals1) {
+      await run("market:set-debt-ceiling-whitelist", {
+        admin,
+        collat: collateralMarket,
+        borrow: hayMarket,
+        account: account1
+      });
+    }
+
+    for (const collateralMarket of collaterals2) {
+      await run("market:set-debt-ceiling-whitelist", {
+        admin,
+        collat: collateralMarket,
+        borrow: hayMarket,
+        account: account2
+      });
+      await run("market:set-debt-ceiling-whitelist", {
+        admin,
+        collat: collateralMarket,
+        borrow: ankrBNBMarket,
+        account: account2
+      });
+    }
+
+});
