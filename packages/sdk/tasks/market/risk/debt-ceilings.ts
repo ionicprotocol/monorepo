@@ -79,7 +79,7 @@ task("market:set-debt-ceiling-whitelist", "Whitelists an account for the borrowi
       throw new Error("Comptrollers do not match");
     }
     const pool = sdk.createComptroller(comptroller, signer);
-    const whitelistStatus = await pool.callStatic.borrowCapForCollateralWhitelist(
+    const whitelistStatus = await pool.callStatic.isBorrowCapForCollateralWhitelisted(
       borrowCToken.address,
       collatCToken.address,
       account
@@ -97,7 +97,7 @@ task("market:set-debt-ceiling-whitelist", "Whitelists an account for the borrowi
       );
       await tx.wait();
       console.log(
-        `Whitelist status for ${account} set: ${await pool.borrowCapForCollateralWhitelist(
+        `Whitelist status for ${account} set: ${await pool.isBorrowCapForCollateralWhitelisted(
           borrowCToken.address,
           collatCToken.address,
           account
