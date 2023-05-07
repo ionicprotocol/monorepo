@@ -189,7 +189,13 @@ export const BorrowModal = ({
         setSteps([..._steps]);
 
         await tx.wait();
-        await queryClient.refetchQueries();
+        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
+        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
+        await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
+        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
+        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
+        await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
+        await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
 
         _steps[0] = {
           ..._steps[0],
@@ -199,7 +205,7 @@ export const BorrowModal = ({
         setSteps([..._steps]);
         successToast({
           description: 'Successfully borrowed!',
-          id: 'Borrow',
+          id: 'Borrowed - ' + Math.random().toString(),
         });
       }
     } catch (error) {
@@ -352,7 +358,7 @@ export const BorrowModal = ({
       }
       isOpen={isOpen}
       modalCloseButtonProps={{ hidden: isBorrowing }}
-      onClose={() => {
+      onClose={async () => {
         onClose();
         if (!isBorrowing) {
           setUserEnteredAmount('');

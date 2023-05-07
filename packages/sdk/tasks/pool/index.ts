@@ -1,2 +1,3 @@
-import "./get-pool-data";
 import "./admin";
+import "./get-pool-data";
+import "./upgrade";

@@ -59,6 +59,7 @@ const RemoveAssetButton = ({
 
       successToast({
         description: 'You have successfully removed an asset from this pool!',
+        id: 'Removed asset - ' + Math.random().toString(),
       });
     } catch (error) {
       const sentryProperties = {

@@ -114,6 +114,7 @@ export const AddAssetSettings = ({
           errorToast({
             description:
               'This asset is not supported. The price oracle is not available for this asset',
+            id: 'Asset not supported - ' + Math.random().toString(),
           });
 
           return;
@@ -151,13 +152,11 @@ export const AddAssetSettings = ({
     try {
       await currentSdk.deployAsset(marketConfig);
 
-      await queryClient.refetchQueries();
-      // Wait 2 seconds for refetch and then close modal.
-      // We do this instead of waiting the refetch because some fetches take a while or error out and we want to close now.
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
 
       successToast({
         description: 'You may now lend and borrow with this asset.',
+        id: 'Added asset - ' + Math.random().toString(),
         title: 'You have successfully added an asset to this pool!',
       });
 

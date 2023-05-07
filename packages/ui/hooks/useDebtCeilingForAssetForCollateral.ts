@@ -2,7 +2,14 @@ import type { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+export interface DebtCeilingPerCollateralType {
+  asset: NativePricedFuseAsset;
+  collateralAsset: NativePricedFuseAsset;
+  debtCeiling: number;
+}
 
 export const useDebtCeilingForAssetForCollateral = ({
   assets,
@@ -16,6 +23,7 @@ export const useDebtCeilingForAssetForCollateral = ({
   poolChainId: number;
 }) => {
   const sdk = useSdk(poolChainId);
+  const { address } = useMultiMidas();
 
   return useQuery(
     [
@@ -23,15 +31,13 @@ export const useDebtCeilingForAssetForCollateral = ({
       poolChainId,
       assets.map((asset) => asset.cToken).sort(),
       collaterals.map((asset) => asset.cToken).sort(),
+      comptrollerAddress,
+      address,
     ],
     async () => {
-      if (!sdk || collaterals.length === 0) return null;
+      if (!sdk || collaterals.length === 0 || !address) return null;
 
-      const debtCeilingPerCollateral: {
-        asset: NativePricedFuseAsset;
-        collateralAsset: NativePricedFuseAsset;
-        debtCeiling: number;
-      }[] = [];
+      const debtCeilingPerCollateral: DebtCeilingPerCollateralType[] = [];
       const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
 
       await Promise.all(
@@ -73,6 +79,10 @@ export const useDebtCeilingForAssetForCollateral = ({
 
       return debtCeilingPerCollateral;
     },
-    { cacheTime: Infinity, enabled: !!sdk && collaterals.length > 0, staleTime: Infinity }
+    {
+      cacheTime: Infinity,
+      enabled: !!sdk && collaterals.length > 0 && !!address,
+      staleTime: Infinity,
+    }
   );
 };

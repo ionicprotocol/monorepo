@@ -8,7 +8,6 @@ export default task("irm:set", "Set new IRM to ctoken")
   .setAction(async ({ ctokens: _ctokens, irmAddress: _irmAddress }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    // @ts-ignore
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 

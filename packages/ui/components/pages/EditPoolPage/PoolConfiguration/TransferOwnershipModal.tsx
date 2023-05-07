@@ -39,6 +39,7 @@ const TransferOwnershipModal = ({
 
       successToast({
         description: `${verifiedAddress} can now become the admin of this pool!`,
+        id: 'Transfer ownership - ' + Math.random().toString(),
       });
     } catch (error) {
       const sentryProperties = {

@@ -3,7 +3,9 @@ import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { Cap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -19,6 +21,7 @@ export const useSupplyCap = ({
   market,
 }: UseSupplyCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
+  const { address } = useMultiMidas();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
@@ -27,6 +30,11 @@ export const useSupplyCap = ({
     }
   }, [usdPrices, chainId]);
   const sdk = useSdk(chainId);
+  const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
+    comptrollerAddress,
+    market.cToken,
+    chainId
+  );
 
   return useQuery<Cap | null | undefined>(
     [
@@ -34,23 +42,34 @@ export const useSupplyCap = ({
       comptrollerAddress,
       sdk?.chainId,
       market.cToken,
+      market.totalSupply,
       market.underlyingPrice,
       usdPrice,
+      address,
+      supplyCapsDataForAsset,
     ],
     async () => {
-      if (sdk && usdPrice && market) {
+      if (sdk && usdPrice && market && address && supplyCapsDataForAsset) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
-          const supplyCap = await comptroller.callStatic.supplyCaps(market.cToken);
+          const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
+            comptroller.callStatic.supplyCaps(market.cToken),
+            comptroller.callStatic.isSupplyCapWhitelisted(market.cToken, address),
+          ]);
 
-          if (supplyCap.eq(constants.Zero)) {
+          if (isSupplyCapWhitelist || supplyCap.eq(constants.Zero)) {
             return null;
           } else {
+            const whitelistedTotalSupply = market.totalSupply.sub(
+              supplyCapsDataForAsset.nonWhitelistedTotalSupply
+            );
+            const tokenCap = Number(
+              utils.formatUnits(supplyCap.add(whitelistedTotalSupply), market.underlyingDecimals)
+            );
             const usdCap =
-              Number(utils.formatUnits(supplyCap, market.underlyingDecimals)) *
+              tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
-            const tokenCap = Number(utils.formatUnits(supplyCap, market.underlyingDecimals));
 
             return { tokenCap, type: 'supply', usdCap };
           }
@@ -68,7 +87,7 @@ export const useSupplyCap = ({
     },
     {
       cacheTime: Infinity,
-      enabled: !!sdk && !!usdPrice && !!market,
+      enabled: !!sdk && !!usdPrice && !!market && !!address && !!supplyCapsDataForAsset,
       staleTime: Infinity,
     }
   );
