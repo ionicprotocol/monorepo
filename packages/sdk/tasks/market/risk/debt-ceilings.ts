@@ -61,48 +61,60 @@ export default task("market:set-debt-ceiling", "Sets debt ceiling for market aga
 
 task("market:set-debt-ceiling-whitelist", "Pauses borrowing on a market")
   .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
-  .addParam("collat", "The address of the collateral CToken", undefined, types.string)
+  .addParam("collats", "The address of the collateral CToken(s)", undefined, types.string)
   .addParam("borrow", "The address of the borrow CToken", undefined, types.string)
   .addParam("account", "Address to whitelist", undefined, types.string)
   .addOptionalParam("whitelist", "Set whitelist to true ot false", true, types.boolean)
-  .setAction(async ({ admin, collat, borrow, account, whitelist }, { ethers }) => {
+  .setAction(async ({ admin, collats, borrow, account, whitelist }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
     const midasSdkModule = await import("../../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(signer);
 
-    const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
+    const collterals = collats.split(",");
+
     const borrowCToken = sdk.createCTokenWithExtensions(borrow, signer);
 
-    const comptroller = await collatCToken.callStatic.comptroller();
-    if (comptroller !== (await borrowCToken.callStatic.comptroller())) {
-      throw new Error("Comptrollers do not match");
-    }
-    const pool = sdk.createComptroller(comptroller, signer);
-    const whitelistStatus = await pool.callStatic.borrowCapForCollateralWhitelist(
-      borrowCToken.address,
-      collatCToken.address,
-      account
-    );
-    if (whitelistStatus == whitelist) {
-      console.log(`Whitelist status is already ${whitelist}`);
-      return;
-    } else {
-      console.log(`Whitelist status is ${whitelistStatus}, setting to ${whitelist}`);
-      const tx = await pool._setBorrowCapForCollateralWhitelist(
+    const comptroller = await borrowCToken.callStatic.comptroller();
+
+    for (const collat of collterals) {
+      if (comptroller !== (await borrowCToken.callStatic.comptroller())) {
+        throw new Error("Comptrollers do not match");
+      }
+      const pool = sdk.createComptroller(comptroller, signer);
+      const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
+
+      const whitelistStatus = await pool.callStatic.borrowCapForCollateralWhitelist(
         borrowCToken.address,
         collatCToken.address,
-        account,
-        whitelist
+        account
       );
-      await tx.wait();
       console.log(
-        `Whitelist status for ${account} set: ${await pool.borrowCapForCollateralWhitelist(
+        `Whitelist status is already ${whitelistStatus} for ${account}: borrow of ${borrow} with collat ${collat}`
+      );
+      continue;
+      if (whitelistStatus == whitelist) {
+        console.log(
+          `Whitelist status is already ${whitelist} for ${account}: borrow of ${borrow} with collat ${collat}`
+        );
+        return;
+      } else {
+        console.log(`Whitelist status is ${whitelistStatus}, setting to ${whitelist}`);
+        const tx = await pool._setBorrowCapForCollateralWhitelist(
           borrowCToken.address,
           collatCToken.address,
-          account
-        )}`
-      );
+          account,
+          whitelist
+        );
+        await tx.wait();
+        console.log(
+          `Whitelist status for ${account} set: ${await pool.borrowCapForCollateralWhitelist(
+            borrowCToken.address,
+            collatCToken.address,
+            account
+          )}`
+        );
+      }
     }
   });
 
