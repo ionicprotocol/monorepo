@@ -189,7 +189,7 @@ task("market:print-debt-ceiling", "Prints debt ceiling for market against anothe
     console.log(`${borrow} , ${collat} : ${currentDebtCeilings}`);
   });
 
-task("debt-ceiling:whitelist:ankr").setAction(async ({ admin, collat, borrow, accountToWhitelist }, { run }) => {
+task("debt-ceiling:whitelist:ankr").setAction(async ({ admin }, { run }) => {
   const hayMarket = "0x10b6f851225c203eE74c369cE876BEB56379FCa3";
   const ankrBNBMarket = "0xb2b01D6f953A28ba6C8f9E22986f5bDDb7653aEa";
 
