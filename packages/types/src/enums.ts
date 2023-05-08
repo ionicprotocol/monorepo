@@ -421,6 +421,7 @@ export enum assetSymbols {
   // Arbitrum
   "2pool" = "2pool",
   GOHM = "GOHM",
+  OHM = "OHM",
   "WETH-GOHM" = "WETH-GOHM",
   DPX = "DPX",
   MAGIC = "MAGIC",
