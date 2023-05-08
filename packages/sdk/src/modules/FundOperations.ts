@@ -81,7 +81,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
 
       const address = await this.signer.getAddress();
       // add 10% to default estimated gas
-      const gasLimit = (await cToken.estimateGas.borrow(amount, { from: address })).mul(11).div(10);
+      const gasLimit = (await cToken.estimateGas.borrow(amount, { from: address })).mul(12).div(10);
       const response = (await cToken.callStatic.borrow(amount, { gasLimit, from: address })) as BigNumber;
 
       if (response.toString() !== "0") {
