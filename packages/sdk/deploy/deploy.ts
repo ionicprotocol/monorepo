@@ -617,6 +617,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   /// SYSTEM ADDRESSES
+  const currentDeployer = await addressesProvider.callStatic.getAddress("deployer");
+  if (currentDeployer !== deployer) {
+    tx = await addressesProvider.setAddress("deployer", deployer);
+    await tx.wait();
+    console.log("setAddress deployer", tx.hash);
+  }
+
   const masterPOAddress = await addressesProvider.callStatic.getAddress("MasterPriceOracle");
   if (masterPOAddress !== masterPO.address) {
     tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
