@@ -205,6 +205,11 @@ describe("FundOperation", () => {
     });
 
     it("success", async () => {
+      Object.defineProperty(mockcTokenContract, "estimateGas", {
+        value: {
+          borrow: stub().resolves(BigNumber.from(0)),
+        },
+      });
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
           borrow: stub().resolves(BigNumber.from(0)),
@@ -220,6 +225,11 @@ describe("FundOperation", () => {
     });
 
     it("fail", async () => {
+      Object.defineProperty(mockcTokenContract, "estimateGas", {
+        value: {
+          borrow: stub().resolves(BigNumber.from(2)),
+        },
+      });
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
           borrow: stub().resolves(BigNumber.from(2)),
