@@ -231,6 +231,17 @@ const CustomLegend = (
   const { payload, lineProps, selectLine, handleLegendMouseEnter, handleLegendMouseLeave } = props;
   const { cCard } = useColors();
 
+  const Legends: { [x: string]: string } = {
+    ankrBNBApr: 'AnkrBNB APR',
+    borrowApy: 'Borrow APY',
+    compoundingApy: 'Compounding APY',
+    price: 'USD Price',
+    rewardApy: 'Reward APY',
+    supplyApy: 'Supply APY',
+    totalSupplyApy: 'Total Supply APY',
+    tvl: 'TVL',
+  };
+
   return (
     <VStack alignItems="flex-start" justifyContent="flex-start" ml="60px" pb={2} spacing={1}>
       <Grid columnGap={2} rowGap={2} templateColumns={{ base: 'repeat(2, 1fr)' }}>
@@ -249,7 +260,7 @@ const CustomLegend = (
                   fontSize={20}
                 />
                 <Text color={lineProps[item.dataKey] ? cCard.txtColor : item.color}>
-                  {item.value}
+                  {Legends[item.value]}
                 </Text>
               </HStack>
             );
