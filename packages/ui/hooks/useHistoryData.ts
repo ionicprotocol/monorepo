@@ -1,9 +1,9 @@
-import type { AssetPrice, AssetTvl, ChartData } from '@midas-capital/types';
+import type { AssetPrice, AssetTotalApy, AssetTvl, ChartData } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
 
-import { PRICE, TVL } from '@ui/constants/index';
+import { APY, PRICE, TVL } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export function useHistoryData(
@@ -38,7 +38,7 @@ export function useHistoryData(
             );
 
             prices.map((data: AssetPrice) => {
-              info.push({ xAxis: data.createdAt, yAxis: data.usdPrice, yAxisType: '$' });
+              info.push({ createdAt: data.createdAt, price: data.usdPrice });
             });
           } else if (mode === TVL && usdPrice !== undefined) {
             const { data: tvls } = await axios.get(
@@ -49,9 +49,22 @@ export function useHistoryData(
 
             tvls.map((data: AssetTvl) => {
               info.push({
-                xAxis: data.createdAt,
-                yAxis: data.tvlNative * usdPrice,
-                yAxisType: '$',
+                createdAt: data.createdAt,
+                tvl: data.tvlNative * usdPrice,
+              });
+            });
+          } else if (mode === APY) {
+            const { data: apys } = await axios.get(
+              `/api/assetTotalApy?chainId=${chainId}&cTokenAddress=${cTokenAddress}&milliSeconds=${
+                Date.now() - milliSeconds
+              }`
+            );
+
+            apys.map((data: AssetTotalApy) => {
+              const { createdAt, ...rest } = data;
+              info.push({
+                createdAt,
+                ...rest,
               });
             });
           }
