@@ -80,7 +80,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       const cToken = getContract(cTokenAddress, CErc20DelegateABI, this.signer) as CErc20Delegate;
 
       const address = await this.signer.getAddress();
-      // add 10% to default estimated gas
+      // add 20% to default estimated gas
       const gasLimit = (await cToken.estimateGas.borrow(amount, { from: address })).mul(12).div(10);
       const response = (await cToken.callStatic.borrow(amount, { gasLimit, from: address })) as BigNumber;
 
