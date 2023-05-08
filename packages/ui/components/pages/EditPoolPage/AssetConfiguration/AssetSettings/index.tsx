@@ -4,12 +4,15 @@ import { ComptrollerErrorCodes, CTokenErrorCodes } from '@midas-capital/types';
 import type { BigNumber, ContractFunction } from 'ethers';
 
 import { AdminFee } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/AdminFee';
+import { BorrowCapWhitelist } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/BorrowCapWhitelist';
 import { DebtCeilings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/DebtCeilings';
+import { DebtCeilingsWhitelist } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/DebtCeilingsWhitelist';
 import { InterestRateModel } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/InterestRateModel';
 import { LoanToValue } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/LoanToValue';
 import { Plugin } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/Plugin';
 import { ReserveFactor } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/ReserveFactor';
 import { SupplyAndBorrowCaps } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/SupplyAndBorrowCap';
+import { SupplyCapWhitelist } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/SupplyCapWhitelist';
 import { ToggleBorrow } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/ToggleBorrow';
 import RemoveAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/RemoveAssetButton';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
@@ -86,7 +89,32 @@ export const AssetSettings = ({
 
           <Divider />
 
+          <SupplyCapWhitelist
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+            selectedAsset={selectedAsset}
+          />
+
+          <Divider />
+
+          <BorrowCapWhitelist
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+            selectedAsset={selectedAsset}
+          />
+
+          <Divider />
+
           <DebtCeilings
+            assets={assets}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+            selectedAsset={selectedAsset}
+          />
+
+          <Divider />
+
+          <DebtCeilingsWhitelist
             assets={assets}
             comptrollerAddress={comptrollerAddress}
             poolChainId={poolChainId}

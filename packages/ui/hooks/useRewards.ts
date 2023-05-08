@@ -98,7 +98,12 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
   const sdk = useSdk(chainId);
 
   return useQuery<UseRewardsData>(
-    ['useRewards', chainId, poolData],
+    [
+      'useRewards',
+      chainId,
+      poolData?.comptroller,
+      poolData?.assets.map((asset) => [asset.cToken, asset.plugin]),
+    ],
     async () => {
       if (chainId && sdk && poolData) {
         return await fetchRewards(poolData.comptroller, poolData.assets, chainId, sdk);

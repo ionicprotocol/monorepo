@@ -3,6 +3,8 @@ import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -24,6 +26,7 @@ export const useBorrowCap = ({
   market,
 }: UseBorrowCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
+  const { address } = useMultiMidas();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
@@ -33,6 +36,7 @@ export const useBorrowCap = ({
   }, [usdPrices, chainId]);
 
   const sdk = useSdk(chainId);
+  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(market.cToken, chainId);
 
   return useQuery<Cap | null | undefined>(
     [
@@ -41,22 +45,40 @@ export const useBorrowCap = ({
       sdk?.chainId,
       market.underlyingPrice,
       market.cToken,
+      market.totalBorrow,
       usdPrice,
+      borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+      address,
     ],
     async () => {
-      if (sdk && usdPrice && market) {
+      if (
+        sdk &&
+        usdPrice &&
+        market &&
+        address &&
+        borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
+      ) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
-          const borrowCap = await comptroller.callStatic.borrowCaps(market.cToken);
+          const [borrowCap, isBorrowCapWhitelist] = await Promise.all([
+            comptroller.callStatic.borrowCaps(market.cToken),
+            comptroller.callStatic.isBorrowCapWhitelisted(market.cToken, address),
+          ]);
 
-          if (borrowCap.eq(constants.Zero)) {
+          if (isBorrowCapWhitelist || borrowCap.eq(constants.Zero)) {
             return null;
           } else {
+            const whitelistedTotalBorrows = market.totalBorrow.sub(
+              borrowCapsDataForAsset.nonWhitelistedTotalBorrows
+            );
+
+            const tokenCap = Number(
+              utils.formatUnits(borrowCap.add(whitelistedTotalBorrows), market.underlyingDecimals)
+            );
             const usdCap =
-              Number(utils.formatUnits(borrowCap, market.underlyingDecimals)) *
+              tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
-            const tokenCap = Number(utils.formatUnits(borrowCap, market.underlyingDecimals));
 
             return { tokenCap, type: 'borrow', usdCap };
           }
@@ -75,7 +97,12 @@ export const useBorrowCap = ({
     },
     {
       cacheTime: Infinity,
-      enabled: !!sdk && !!usdPrice && !!market,
+      enabled:
+        !!sdk &&
+        !!usdPrice &&
+        !!market &&
+        !!address &&
+        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
       staleTime: Infinity,
     }
   );

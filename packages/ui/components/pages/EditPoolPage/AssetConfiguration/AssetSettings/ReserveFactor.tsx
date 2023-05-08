@@ -89,7 +89,10 @@ export const ReserveFactor = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated reserve factor!' });
+      successToast({
+        description: 'Successfully updated reserve factor!',
+        id: 'Updated reserve factor - ' + Math.random().toString(),
+      });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,

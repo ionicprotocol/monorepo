@@ -125,6 +125,16 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0xc373B9DB0707fD451Bc56bA5E9b029ba26629DF0",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.wstETH,
+    aggregator: "0xb523AE262D20A936BC152e6023996e46FDC2A95D",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH,
+  },
+  {
+    symbol: assetSymbols.OHM,
+    aggregator: "0x761aaeBf021F19F198D325D7979965D0c7C9e53b",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 // https://arbitrum.curve.fi/

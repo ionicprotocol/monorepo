@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -6,20 +6,24 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const useBorrowAPYs = (assets: MarketData[], chainId?: number) => {
   const sdk = useSdk(chainId);
-  const data = useMemo(() => {
-    if (!sdk || !assets || !chainId) return null;
 
-    const result: { [market: string]: number } = {};
+  return useQuery(
+    ['useBorrowAPYs', { chain: sdk?.chainId }, { assets: assets.map((a) => a.cToken).sort() }],
+    () => {
+      if (!sdk || !assets || !chainId) return null;
 
-    for (const asset of assets) {
-      const marketBorrowApy =
-        sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, getBlockTimePerMinuteByChainId(chainId)) /
-        100;
+      const result: { [market: string]: number } = {};
 
-      result[asset.cToken] = marketBorrowApy;
-    }
+      for (const asset of assets) {
+        const marketBorrowApy =
+          sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, getBlockTimePerMinuteByChainId(chainId)) /
+          100;
 
-    return result;
-  }, [assets, chainId, sdk]);
-  return { data };
+        result[asset.cToken] = marketBorrowApy;
+      }
+
+      return result;
+    },
+    { cacheTime: Infinity, enabled: !!sdk && !!assets && !!chainId, staleTime: Infinity }
+  );
 };

@@ -89,6 +89,7 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
         // fwCore = await currentSdk.deployFlywheelCore(rewardTokenData.address);
         successToast({
           description: 'Flywheel Core Deployed',
+          id: 'Flywheel core deployed - ' + Math.random().toString(),
         });
       } catch (error) {
         setFailedStep(1);
@@ -103,6 +104,7 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
         // await fwStaticRewards.deployTransaction.wait();
         successToast({
           description: 'Flywheel Rewards Deployed',
+          id: 'Flywheel rewards deployed - ' + Math.random().toString(),
         });
       } catch (error) {
         setFailedStep(2);
@@ -116,6 +118,7 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
         // await tx.wait();
         successToast({
           description: 'Rewards Added to Flywheel',
+          id: 'Rewards added - ' + Math.random().toString(),
         });
       } catch (error) {
         setFailedStep(3);
@@ -132,6 +135,7 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
         // await tx.wait();
         successToast({
           description: 'Flywheel added to Pool',
+          id: 'Flywheel added - ' + Math.random().toString(),
         });
       } catch (error) {
         setFailedStep(4);
@@ -148,6 +152,7 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
       setIsDeploying(false);
       errorToast({
         description: JSON.stringify(error),
+        id: 'Adding flywheel - ' + Math.random().toString(),
       });
       return;
     }

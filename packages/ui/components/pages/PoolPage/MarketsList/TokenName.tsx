@@ -1,6 +1,5 @@
 import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useMemo } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { GradientButton } from '@ui/components/shared/GradientButton';
@@ -10,6 +9,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
+import { useRestricted } from '@ui/hooks/useRestricted';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -30,14 +30,13 @@ export const TokenName = ({
     poolAddress,
     poolChainId,
   });
-
   const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({
     assets: [asset],
     collaterals: assets,
     comptroller: poolAddress,
     poolChainId,
   });
-  const restricted = useMemo(() => debtCeilingsOfAsset ?? [], [debtCeilingsOfAsset]);
+  const { data: restricted } = useRestricted(poolChainId, poolAddress, debtCeilingsOfAsset);
 
   return (
     <Row className="marketName" crossAxisAlignment="center" mainAxisAlignment="flex-start">
@@ -143,7 +142,7 @@ export const TokenName = ({
                   Borrowable
                 </Badge>
               </SimpleTooltip>
-              {restricted.length > 0 && (
+              {restricted && restricted.length > 0 && (
                 <SimpleTooltip label="Use of collateral to borrow this asset is further restricted for the security of the pool. More information on this soon. Follow us on Twitter and Discord to stay up to date.">
                   <Badge colorScheme="red" px={1} textTransform="capitalize" variant="outline">
                     Restricted

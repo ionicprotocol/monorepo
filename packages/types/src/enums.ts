@@ -157,6 +157,7 @@ export enum assetOriginalSymbols {
   "vAMM-ANKR/ankrBNB" = "ankrBNB/ANKR Thena LP",
   "vAMM-ANKR/HAY" = "HAY/ANKR Thena LP",
   "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
+  "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
 }
 
 export enum assetSymbols {
@@ -420,6 +421,7 @@ export enum assetSymbols {
   // Arbitrum
   "2pool" = "2pool",
   GOHM = "GOHM",
+  OHM = "OHM",
   "WETH-GOHM" = "WETH-GOHM",
   DPX = "DPX",
   MAGIC = "MAGIC",
