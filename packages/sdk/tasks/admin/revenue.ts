@@ -1,5 +1,5 @@
 import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import axios from "axios";
 import { BigNumber, Contract, providers } from "ethers";
 import { task, types } from "hardhat/config";
