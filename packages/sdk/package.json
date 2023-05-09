@@ -66,7 +66,7 @@
   "license": "ISC",
   "devDependencies": {
     "@abimate/core": "^0.2.1",
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-waffle": "^2.0.5",
     "@tenderly/hardhat-tenderly": "^1.7.2",
     "@typechain/ethers-v5": "^10.2.0",
