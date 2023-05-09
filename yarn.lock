@@ -3694,6 +3694,7 @@ __metadata:
     hardhat: ^2.14.0
     hardhat-abi-exporter: ^2.10.1
     hardhat-deploy: ^0.11.26
+    hardhat-deploy-ethers: next
     lint-staged: 13.2.1
     mocha: ^10.2.0
     nyc: ^15.1.0
@@ -15239,6 +15240,17 @@ __metadata:
   peerDependencies:
     hardhat: ^2.0.0
   checksum: 5dba9ebb7bd1002311b504a87cc0f9197ffe5066a61d27073f49bde2adcd080e94ef9e2e696e4fb26c9731df1bed76967e1e0428742af36b37d9c70f9944c98b
+  languageName: node
+  linkType: hard
+
+"hardhat-deploy-ethers@npm:next":
+  version: 0.4.0-next.1
+  resolution: "hardhat-deploy-ethers@npm:0.4.0-next.1"
+  peerDependencies:
+    "@nomiclabs/hardhat-ethers": ^2.2.1
+    hardhat: ^2.12.0
+    hardhat-deploy: ^0.11.23
+  checksum: d0a5f36bf64983849e32c4931239b07ec5190d82ae1ee97dc01c89cbe2516ca2c8e26b69142b2057d71086c91166d50dfaff8c7ca4ef1aed1f3412878e73e1b3
   languageName: node
   linkType: hard
 
