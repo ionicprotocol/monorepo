@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import { Grid, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import type { ChartData } from '@midas-capital/types';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
@@ -16,12 +16,23 @@ import {
   YAxis,
 } from 'recharts';
 
-import { MILLI_SECONDS_PER_DAY } from '@ui/constants/index';
+import { APY, MILLI_SECONDS_PER_DAY } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { smallFormatter } from '@ui/utils/bigUtils';
 
 type LineProps = {
   [key: string]: boolean | string | null;
+};
+
+const YAxisTitles: { [x: string]: string } = {
+  ankrBNBApr: 'AnkrBNB APR',
+  borrowApy: 'Borrow APY',
+  compoundingApy: 'Compounding APY',
+  price: 'USD Price',
+  rewardApy: 'Reward APY',
+  supplyApy: 'Supply APY',
+  totalSupplyApy: 'Total Supply APY',
+  tvl: 'TVL',
 };
 
 const HistoryChart = ({
@@ -34,13 +45,30 @@ const HistoryChart = ({
   mode: string;
 }) => {
   const [min, max, length] = useMemo(() => {
-    const yVaules = historyData.map((data) => data.yAxis);
+    const yVaules: number[] = [];
+
+    historyData.map((data) => {
+      Object.keys(data)
+        .filter((key) => key !== 'createdAt')
+        .map((key) => {
+          yVaules.push(data[key]);
+        });
+    });
 
     return [Math.min(...yVaules), Math.max(...yVaules), historyData.length];
   }, [historyData]);
   const keys = historyData.length > 0 ? Object.keys(historyData[0]) : [];
+  const colors: any = {
+    ankrBNBApr: useColorModeValue('#B83280', '#F687B3'),
+    borrowApy: useColorModeValue('#DD6B20', 'orange'),
+    compoundingApy: useColorModeValue('#2C7A7B', '#4FD1C5'),
+    price: useColorModeValue('#38A169', '#9AE6B4'),
+    rewardApy: useColorModeValue('#6B46C1', '#B794F4'),
+    supplyApy: useColorModeValue('#38A169', '#9AE6B4'),
+    totalSupplyApy: useColorModeValue('#00B5D8', 'cyan'),
+    tvl: useColorModeValue('#38A169', '#9AE6B4'),
+  };
 
-  const chartColor = useColorModeValue('#38A169', '#9AE6B4'); // #38A169 = green.500, #9AE6B4 = green.200
   const { cCard } = useColors();
 
   const [lineProps, setLineProps] = useState<LineProps>(
@@ -90,13 +118,13 @@ const HistoryChart = ({
         </XAxis>
         <YAxis
           domain={[0, Math.ceil(max * 1.5)]}
-          tick={<CustomYAxisTick historyData={historyData} />}
+          tick={<CustomYAxisTick mode={mode} />}
           ticks={[Math.floor(min), Math.ceil((min + max) / 2), Math.ceil(max)]}
         >
           <Label angle={-90} fill={cCard.txtColor} offset={0} position="insideLeft" value="" />
         </YAxis>
         <Tooltip
-          content={<CustomTooltip historyData={historyData} />}
+          content={<CustomTooltip historyData={historyData} mode={mode} />}
           wrapperStyle={{ outline: 'none' }}
         />
         <Legend
@@ -110,23 +138,25 @@ const HistoryChart = ({
           }
           verticalAlign="top"
         />
-        {keys.length > 0 && (
-          <>
-            <Area
-              activeDot={{ r: 5, strokeWidth: 0 }}
-              dataKey={keys[1]}
-              dot={{ r: 0 }}
-              fill={chartColor}
-              fillOpacity={0.2}
-              hide={lineProps[keys[1]] === true}
-              name={mode}
-              opacity={Number(lineProps.hover === keys[1] || !lineProps.hover ? 1 : 0.2)}
-              stroke={chartColor}
-              strokeWidth={3}
-              type="monotone"
-            />
-          </>
-        )}
+        {keys.length > 0 &&
+          keys.map((key, i) =>
+            key !== 'createdAt' ? (
+              <Area
+                activeDot={{ r: 5, strokeWidth: 0 }}
+                dataKey={key}
+                dot={{ r: 0 }}
+                fill={colors[key]}
+                fillOpacity={0.2}
+                hide={lineProps[key] === true}
+                key={i}
+                name={key}
+                opacity={Number(lineProps.hover === key || !lineProps.hover ? 1 : 0.2)}
+                stroke={colors[key]}
+                strokeWidth={3}
+                type="monotone"
+              />
+            ) : null
+          )}
       </AreaChart>
     </ResponsiveContainer>
   );
@@ -139,7 +169,7 @@ const CustomXAxisTick = (props: any) => {
   return (
     <g transform={`translate(${x},${y})`}>
       <text fill={cCard.txtColor} fillOpacity={0.5} textAnchor="start" x={-20} y={20}>
-        {moment(historyData[payload.value].xAxis).format(
+        {moment(historyData[payload.value].createdAt).format(
           milliSeconds === MILLI_SECONDS_PER_DAY ? 'HH:mm' : 'MM/DD'
         )}
       </text>
@@ -148,14 +178,15 @@ const CustomXAxisTick = (props: any) => {
 };
 
 const CustomYAxisTick = (props: any) => {
-  const { x, y, payload, historyData } = props;
+  const { x, y, payload, mode } = props;
   const { cCard } = useColors();
 
   return (
     <g transform={`translate(${x},${y})`}>
       <text fill={cCard.txtColor} fillOpacity={0.5} textAnchor="end" x={0} y={0}>
-        {historyData[0].yAxisType}
+        {mode !== APY ? '$' : ''}
         {smallFormatter(payload.value, true)}
+        {mode === APY ? '%' : ''}
       </text>
     </g>
   );
@@ -163,7 +194,7 @@ const CustomYAxisTick = (props: any) => {
 
 const CustomTooltip = (props: any) => {
   const { cCard } = useColors();
-  const { active, payload, label, historyData } = props;
+  const { active, payload, label, historyData, mode } = props;
 
   if (active && payload && payload.length) {
     return (
@@ -172,7 +203,7 @@ const CustomTooltip = (props: any) => {
         borderColor={cCard.borderColor}
         borderRadius={4}
         borderWidth={2}
-        spacing={0}
+        spacing={2}
       >
         <Text
           bgColor="ecru20alpha"
@@ -182,15 +213,17 @@ const CustomTooltip = (props: any) => {
           p={2}
           textAlign="left"
           width="100%"
-        >{`${moment(historyData[label].xAxis).format('YYYY-MM-DD HH:mm')}`}</Text>
-        {payload[0] && (
-          <HStack alignSelf="flex-start" p={2}>
-            <Text color={payload[0].color}>{payload[0].name}: </Text>
-            <Text color={payload[0].color} fontWeight="bold">
-              ${smallFormatter(Number(payload[0].value))}
+        >{`${moment(historyData[label].createdAt).format('YYYY-MM-DD HH:mm')}`}</Text>
+        {payload.map((pl: any, i: number) => (
+          <HStack alignSelf="flex-start" key={i} px={2}>
+            <Text color={pl.color}>{YAxisTitles[pl.name]}: </Text>
+            <Text color={pl.color} fontWeight="bold">
+              {mode !== APY ? '$' : ''}
+              {smallFormatter(Number(pl.value))}
+              {mode === APY ? '%' : ''}
             </Text>
           </HStack>
-        )}
+        ))}
       </VStack>
     );
   }
@@ -210,29 +243,30 @@ const CustomLegend = (
   const { cCard } = useColors();
 
   return (
-    <HStack justifyContent="flex-start" ml="60px" spacing={12}>
-      {payload &&
-        payload.map((item: any, index: number) => {
-          return (
-            <HStack
-              cursor="pointer"
-              key={index}
-              onClick={() => selectLine(item.dataKey)}
-              onMouseEnter={() => handleLegendMouseEnter(item.dataKey)}
-              onMouseLeave={() => handleLegendMouseLeave()}
-              pb={4}
-            >
-              <AiOutlineLineChart
-                color={lineProps[item.dataKey] ? cCard.txtColor : item.color}
-                fontSize={20}
-              />
-              <Text color={lineProps[item.dataKey] ? cCard.txtColor : item.color} pb={1} pt={2}>
-                {item.value}
-              </Text>
-            </HStack>
-          );
-        })}
-    </HStack>
+    <VStack alignItems="flex-start" justifyContent="flex-start" ml="60px" pb={2} spacing={1}>
+      <Grid columnGap={2} rowGap={2} templateColumns={{ base: 'repeat(2, 1fr)' }}>
+        {payload &&
+          payload.map((item: any, index: number) => {
+            return (
+              <HStack
+                cursor="pointer"
+                key={index}
+                onClick={() => selectLine(item.dataKey)}
+                onMouseEnter={() => handleLegendMouseEnter(item.dataKey)}
+                onMouseLeave={() => handleLegendMouseLeave()}
+              >
+                <AiOutlineLineChart
+                  color={lineProps[item.dataKey] ? cCard.txtColor : item.color}
+                  fontSize={20}
+                />
+                <Text color={lineProps[item.dataKey] ? cCard.txtColor : item.color}>
+                  {YAxisTitles[item.value]}
+                </Text>
+              </HStack>
+            );
+          })}
+      </Grid>
+    </VStack>
   );
 };
 

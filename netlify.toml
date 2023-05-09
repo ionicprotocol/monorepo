@@ -64,3 +64,6 @@ schedule = "@hourly"
 
 [functions."asset-tvl-*"]
 schedule = "@hourly"
+
+[functions."asset-total-apy-*"]
+schedule = "@hourly"

@@ -79,13 +79,16 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     async borrow(cTokenAddress: string, amount: BigNumber) {
       const cToken = getContract(cTokenAddress, CErc20DelegateABI, this.signer) as CErc20Delegate;
 
-      const response = (await cToken.callStatic.borrow(amount)) as BigNumber;
+      const address = await this.signer.getAddress();
+      // add 20% to default estimated gas
+      const gasLimit = (await cToken.estimateGas.borrow(amount, { from: address })).mul(12).div(10);
+      const response = (await cToken.callStatic.borrow(amount, { gasLimit, from: address })) as BigNumber;
 
       if (response.toString() !== "0") {
         const errorCode = parseInt(response.toString());
         return { errorCode };
       }
-      const tx: ContractTransaction = await cToken.borrow(amount);
+      const tx: ContractTransaction = await cToken.borrow(amount, { gasLimit, from: address });
 
       return { tx, errorCode: null };
     }
