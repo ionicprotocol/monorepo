@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/types",
   "repository": "git://github.com:midas-protocol/monorepo.git",
-  "version": "0.3.0",
+  "version": "0.3.4",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

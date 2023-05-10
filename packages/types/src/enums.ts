@@ -446,5 +446,3 @@ export enum assetSymbols {
   ethBtcMomentum = "ethBtcMomentum",
   wstETH = "wstETH",
 }
-
-export default assetSymbols;
