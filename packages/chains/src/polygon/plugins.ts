@@ -158,7 +158,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xebe0c8d842AA5A57D7BEf8e524dEabA676F91cD1", "50"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
-  // BeefyERC4626_MAI-USDC_0x9df035a2DC13ab63FcF05bb27B3722E68c7AE6b9.json
+  // BeefyERC4626_JEUR_PAR STABLE BLP_0x1944FA4a490f85Ed99e2c6fF9234F94DE16fdbde.json
   "0x36A297A86Eaed6aE0BaEb541F766A1675960B390": {
     market: "0x1944FA4a490f85Ed99e2c6fF9234F94DE16fdbde",
     name: "Beefy JEUR-PAR Vault",
