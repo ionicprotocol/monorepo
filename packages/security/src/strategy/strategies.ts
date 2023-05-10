@@ -588,6 +588,21 @@ export const strategies: ERC4626Strategy[] = [
     contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
     adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   },
+  {
+    address: "0x36A297A86Eaed6aE0BaEb541F766A1675960B390",
+    strategy: Strategy.Beefy,
+    name: "Beefy Curve.fi JEUR-PAR Vault",
+    complexity: StrategyComplexity.LOW,
+    timeInMarket: StrategyTimeInMarket.BATTLE_TESTED,
+    riskIL: AssetRiskIL.NONE,
+    liquidity: AssetRiskLiquidity.LOW,
+    mktCap: AssetRiskMktCap.LARGE,
+    supplyCentralised: AssetRiskSupply.DECENTRALIZED,
+    reputation: PlatformRiskReputation.NEW,
+    audit: PlatformRiskAudit.AUDIT,
+    contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
+    adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
+  },
   // MOONBEAM
   {
     address: "0x0DaFF7aaaE63F1Fc30c1C40816257513D052b649",
