@@ -1,7 +1,6 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
-import "hardhat-deploy-ethers";
 import { config as dotEnvConfig } from "dotenv";
 import "hardhat-abi-exporter";
 import "hardhat-deploy";

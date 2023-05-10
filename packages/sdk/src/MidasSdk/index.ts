@@ -12,7 +12,7 @@ import {
   SupportedAsset,
   SupportedChains,
 } from "@midas-capital/types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
 
 import CTokenInterfaceABI from "../../abis/CTokenInterface";
