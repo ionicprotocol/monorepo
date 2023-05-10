@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/sdk",
   "repository": "git://github.com:midas-protocol/monorepo.git",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -66,7 +66,6 @@
   "license": "ISC",
   "devDependencies": {
     "@abimate/core": "^0.2.1",
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@nomiclabs/hardhat-waffle": "^2.0.5",
     "@tenderly/hardhat-tenderly": "^1.7.2",
     "@typechain/ethers-v5": "^10.2.0",
@@ -104,6 +103,7 @@
   "dependencies": {
     "@midas-capital/chains": "workspace:*",
     "@midas-capital/types": "workspace:*",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "bad-words": "^3.0.4",
     "bufferutil": "^4.0.7",
     "ethereum-waffle": "^4.0.10",
