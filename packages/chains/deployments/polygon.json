@@ -78,13 +78,13 @@
       "address": "0x7EeC2d629e281A4dcE670269b7290cA430787C7E"
     },
     "CErc20Delegate": {
-      "address": "0x1e3d85eA9692a4227c4A5c742861D42070279AA2"
+      "address": "0x96a9327AAf9F6dd5F83a644F1D0BE367A05069e4"
     },
     "CErc20PluginDelegate": {
-      "address": "0x5E5d2E2BfA6B3eB47aa6Ecd126A12Bcb55eB088B"
+      "address": "0x96FC23ABC75124a6285a859AE8c8511fD6449e95"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x4Aa07569f763D318D30E8B6a1D9D8888109D471a"
+      "address": "0x9ba377A5A984E9d0652e40E85F12cB4A75c0BbF4"
     },
     "CEtherDelegate": {
       "address": "0xA6BDC4e098b6b14f4fCA2906B0a51e2798BA5777"
