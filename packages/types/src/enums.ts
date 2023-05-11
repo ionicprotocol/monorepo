@@ -158,6 +158,7 @@ export enum assetOriginalSymbols {
   "vAMM-ANKR/ankrBNB" = "ankrBNB/ANKR Thena LP",
   "vAMM-ANKR/HAY" = "HAY/ANKR Thena LP",
   "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
+  "sAMM-stkBNB/WBNB" = "stkBNB/WBNB Thena LP",
   "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
 }
 

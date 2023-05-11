@@ -638,7 +638,6 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
     extraDocs: thenaDocs(solidlyGammaStable_stkBNB_WBNB),
-    originalSymbol: assetOriginalSymbols.aWBNB_STKBNB,
   },
 ];
 
