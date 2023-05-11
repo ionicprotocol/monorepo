@@ -87,13 +87,13 @@
       "address": "0x23B1ff27D97eF804fC0F100af7Bc5911D07f79d3"
     },
     "CErc20Delegate": {
-      "address": "0x8E156d3cC38616C7FaB451069ecDEFc14469EA55"
+      "address": "0xa53754f3f7F09cCa16e75E37E5BEBed579ce3F3F"
     },
     "CErc20PluginDelegate": {
-      "address": "0xc1261803b3C4a0757fAec489F2F9c11440aa5Ce8"
+      "address": "0x72a8414972DA268CCCA8c60418e81c2b1D47c23D"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xb8729Ec632f4afdf66b49658e3FaDDd48302fD54"
+      "address": "0x13A2eB858aa1ACE895a2a89ac6Afd48Bd6B1F8d7"
     },
     "CEtherDelegate": {
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
@@ -259,6 +259,15 @@
     },
     "FuseSafeLiquidator_Proxy": {
       "address": "0xc9C3D317E89f4390A564D56180bBB1842CF3c99C"
+    },
+    "GammaPoolPriceOracle": {
+      "address": "0x97c4Ff71D0bcF1EaAFF7709aD24Dc387d2BC5df7"
+    },
+    "GammaPoolPriceOracle_Implementation": {
+      "address": "0xa0876927a590a7322A9c67E451cfc069c1734B77"
+    },
+    "GammaPoolPriceOracle_Proxy": {
+      "address": "0x97c4Ff71D0bcF1EaAFF7709aD24Dc387d2BC5df7"
     },
     "HelioERC4626_HAY_0xAB7d4760E2c54c0Da1efEC7C358F171d72e14153": {
       "address": "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17"
