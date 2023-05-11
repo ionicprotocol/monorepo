@@ -82,6 +82,9 @@ const solidlyVolatileAMM_ANKR_HAY = "0xa2C2C08AFEFD3CC69B9aab797dEe5a1886388783"
 const solidlyStableAMM_HAY_BUSD = "0x93B32a8dfE10e9196403dd111974E325219aec24";
 const solidlyVolatileAMM_HAY_ankrBNB = "0xC6dB38F34DA75393E9aac841c08104348997D509";
 
+const solidlyStableAMM_stkBNB_WBNB = "0x2B3510f57365aA17bFF8E6360EA67C136175dC6D";
+const solidlyGammaStable_stkBNB_WBNB = "0x86b481fCe116DCd01fBeBb963f1358bcc466668C";
+
 const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.BNB,
@@ -618,6 +621,24 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_HAY_BUSD),
     originalSymbol: assetOriginalSymbols["sAMM-HAY/BUSD"],
+  },
+  {
+    symbol: assetSymbols["sAMM-stkBNB/WBNB"],
+    underlying: solidlyStableAMM_stkBNB_WBNB,
+    name: "Stable V1 AMM - stkBNB/WBNB",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: thenaDocs(solidlyStableAMM_stkBNB_WBNB),
+    originalSymbol: assetOriginalSymbols["sAMM-stkBNB/WBNB"],
+  },
+  {
+    symbol: assetSymbols.aWBNB_STKBNB,
+    underlying: solidlyGammaStable_stkBNB_WBNB,
+    name: "Fusion V2 AMM - Stable stkBNB/WBNB",
+    decimals: 18,
+    oracle: OracleTypes.GammaPoolPriceOracle,
+    extraDocs: thenaDocs(solidlyGammaStable_stkBNB_WBNB),
+    originalSymbol: assetOriginalSymbols.aWBNB_STKBNB,
   },
 ];
 

@@ -9,6 +9,7 @@ export { deployAnkrCertificateTokenPriceOracle } from "./oracles/aXXXc";
 export { deployChainlinkOracle } from "./oracles/chainlink";
 export { deployDiaOracle } from "./oracles/dia";
 export { deployGelatoGUniPriceOracle } from "./oracles/gelato";
+export { deployGammaPoolOracle } from "./oracles/gamma";
 export { deployNativeUsdPriceFeed } from "./oracles/nativeUsd";
 export { deployFluxOracle } from "./oracles/flux";
 export { deployAdrastiaOracle } from "./oracles/adrastia";

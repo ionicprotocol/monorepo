@@ -3,7 +3,7 @@ import { GammaDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
-export const deployGammmaPoolOracle = async ({
+export const deployGammaPoolOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,

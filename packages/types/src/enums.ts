@@ -60,6 +60,7 @@ export enum OracleTypes {
   UniswapV3PriceOracle = "UniswapV3PriceOracle",
   AlgebraPriceOracle = "AlgebraPriceOracle",
   AnkrCertificateTokenPriceOracle = "AnkrCertificateTokenPriceOracle",
+  GammaPoolPriceOracle = "GammaPoolPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
@@ -251,9 +252,12 @@ export enum assetSymbols {
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
   "sAMM-HAY/BUSD" = "sAMM-HAY-BUSD",
+  "sAMM-stkBNB/WBNB" = "sAMM-stkBNB-WBNB",
   "vAMM-ANKR/ankrBNB" = "vAMM-ANKR-ankrBNB",
   "vAMM-ANKR/HAY" = "vAMM-ANKR-HAY",
   "vAMM-HAY/ankrBNB" = "vAMM-HAY-ankrBNB",
+  aWBNB_STKBNB = "aWBNB-STKBNB",
+
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
