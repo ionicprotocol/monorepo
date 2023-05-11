@@ -60,6 +60,7 @@ export enum OracleTypes {
   UniswapV3PriceOracle = "UniswapV3PriceOracle",
   AlgebraPriceOracle = "AlgebraPriceOracle",
   AnkrCertificateTokenPriceOracle = "AnkrCertificateTokenPriceOracle",
+  GammaPoolPriceOracle = "GammaPoolPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
@@ -251,9 +252,12 @@ export enum assetSymbols {
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
   "sAMM-HAY/BUSD" = "sAMM-HAY-BUSD",
+  "sAMM-stkBNB/WBNB" = "sAMM-stkBNB-WBNB",
   "vAMM-ANKR/ankrBNB" = "vAMM-ANKR-ankrBNB",
   "vAMM-ANKR/HAY" = "vAMM-ANKR-HAY",
   "vAMM-HAY/ankrBNB" = "vAMM-HAY-ankrBNB",
+  aWBNB_STKBNB = "aWBNB-STKBNB",
+
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
@@ -403,6 +407,9 @@ export enum assetSymbols {
   TETU_LINEAR_USDT = "TETU_LINEAR USDT",
   TETU_LINEAR_USDC = "TETU_LINEAR USDC",
   TETU_LINEAR_DAI = "TETU_LINEAR DAI",
+  AAVE_LINEAR_WMATIC = "AAVE_LINEAR WMATIC",
+  MaticX_bbaWMATIC = "MaticX-​bbaWMATIC",
+  StMatic_bbaWMATIC = "StMatic-​bbaWMATIC",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",

@@ -197,6 +197,14 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.BalancerSwapLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
+  [underlying(assets, assetSymbols.MaticX_bbaWMATIC)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.WMATIC),
+  ],
+  [underlying(assets, assetSymbols.StMatic_bbaWMATIC)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.WMATIC),
+  ],
 };
 
 export default redemptionStrategies;
