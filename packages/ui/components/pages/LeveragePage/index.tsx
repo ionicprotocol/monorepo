@@ -8,13 +8,10 @@ import LeverageHero from '@ui/components/pages/LeveragePage/LeverageHero/index';
 import { LeverageList } from '@ui/components/pages/LeveragePage/LeverageList/index';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { MIDAS_LOCALSTORAGE_KEYS, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useLeveragePerChain } from '@ui/hooks/leverage/useLeveragePerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 const LeveragePage = memo(() => {
-  const { address } = useMultiMidas();
-
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
   const enabledChains = useEnabledChains();

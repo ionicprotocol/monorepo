@@ -1,25 +1,6 @@
-import type { FlexProps } from '@chakra-ui/react';
-import { Avatar, Box, Flex, Spinner, Text, VStack } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { useMemo } from 'react';
-
-import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { useColors } from '@ui/hooks/useColors';
-import { useVaultTVL } from '@ui/hooks/vault/useVaultTVL';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
-
-const MotionFlex = motion<FlexProps>(Flex);
+import { Flex, Text } from '@chakra-ui/react';
 
 const VaultHero = () => {
-  const { data: vaultTvlData, isLoading } = useVaultTVL();
-
-  const totalVaultTVL = useMemo(() => {
-    if (vaultTvlData) {
-      return [...vaultTvlData.values()].reduce((a, c) => a + c.value, 0);
-    }
-  }, [vaultTvlData]);
-  const { cPage } = useColors();
-
   return (
     <Flex
       alignItems="flex-start"
@@ -41,61 +22,12 @@ const VaultHero = () => {
         w={{ base: '100%' }}
       >
         <Text fontWeight="bold" size="2xl">
-          Midas Supply Vaults
+          Midas Leverage
         </Text>
         <Text lineHeight={8} my={4} size="md">
-          {`Midas Supply Vaults distribute assets across multiple Midas pools to optimize yield. Users can propose updated liquidity distributions, which get implemented if the new distribution improves the vault's APY. Eligible pools for distribution of vault assets is based on whitelisting and eventually governance.`}
+          {`TODO: Explanation of leverage platform`}
         </Text>
       </Flex>
-
-      <PopoverTooltip
-        body={
-          vaultTvlData ? (
-            <VStack alignItems="flex-start" spacing={0} width={'100%'}>
-              {[...vaultTvlData.values()].map((chainTVL, index) => (
-                <Flex key={'tvl_' + index}>
-                  <Avatar src={chainTVL.logo} />
-                  <Box ml="3">
-                    <Text fontWeight="bold" mt={1}>
-                      {smallUsdFormatter(chainTVL.value)}
-                    </Text>
-                    <Text>{chainTVL.name}</Text>
-                  </Box>
-                </Flex>
-              ))}
-            </VStack>
-          ) : null
-        }
-        popoverProps={{ placement: 'bottom' }}
-        width={{ base: '100%', lg: '40%' }}
-      >
-        <MotionFlex
-          alignItems="center"
-          bg={cPage.secondary.bgColor}
-          borderRadius="20px"
-          boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
-          color={cPage.secondary.txtColor}
-          flexDir="column"
-          h={{ base: '10rem', lg: '15rem' }}
-          justifyContent="center"
-          overflow="hidden"
-          position="relative"
-          px={{ lg: '10vw' }}
-        >
-          {isLoading || totalVaultTVL === undefined ? (
-            <Spinner />
-          ) : (
-            <>
-              <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
-                {smallUsdFormatter(totalVaultTVL)}
-              </Text>
-            </>
-          )}
-          <Text color="raisinBlack" size="md" whiteSpace="nowrap">
-            Total value supplied across Midas Supply Vaults
-          </Text>
-        </MotionFlex>
-      </PopoverTooltip>
     </Flex>
   );
 };
