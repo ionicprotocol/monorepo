@@ -1,14 +1,14 @@
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import VaultsPage from '@ui/components/pages/VaultsPage/index';
+import LeveragePageComp from '@ui/components/pages/LeveragePage/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export async function getInitialProps() {
   return {};
 }
 
-const VaultPage = () => {
+const LeveragePage = () => {
   const { setGlobalLoading } = useMultiMidas();
 
   useEffect(() => {
@@ -18,11 +18,11 @@ const VaultPage = () => {
   return (
     <>
       <Head>
-        <title key="title">Vaults</title>
+        <title key="title">Leverage</title>
       </Head>
-      <VaultsPage />
+      <LeveragePageComp />
     </>
   );
 };
 
-export default VaultPage;
+export default LeveragePage;
