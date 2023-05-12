@@ -409,8 +409,8 @@ export enum assetSymbols {
   TETU_LINEAR_USDC = "TETU_LINEAR USDC",
   TETU_LINEAR_DAI = "TETU_LINEAR DAI",
   AAVE_LINEAR_WMATIC = "AAVE_LINEAR WMATIC",
-  MaticX_bbaWMATIC = "MaticX-​bbaWMATIC",
-  StMatic_bbaWMATIC = "StMatic-​bbaWMATIC",
+  MaticX_bbaWMATIC = "MaticX-bba-WMATIC",
+  StMatic_bbaWMATIC = "StMatic-bba-WMATIC",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",
