@@ -11,6 +11,7 @@ import {
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
+import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
@@ -574,6 +575,59 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
+  //// LIQUIDATORS REGISTRY
+  const liquidatorsRegistryDep = await deployments.deploy("LiquidatorsRegistry", {
+    from: deployer,
+    log: true,
+    args: [addressesProvider.address]
+  });
+  if (liquidatorsRegistryDep.transactionHash) await ethers.provider.waitForTransaction(liquidatorsRegistryDep.transactionHash);
+  console.log("LiquidatorsRegistry: ", liquidatorsRegistryDep.address);
+  const liquidatorsRegistryExtensionDep = await deployments.deploy("LiquidatorsRegistryExtension", {
+    from: deployer,
+    log: true,
+    args: []
+  });
+  if (liquidatorsRegistryExtensionDep.transactionHash) await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
+  console.log("LiquidatorsRegistryExtension: ", liquidatorsRegistryExtensionDep.address);
+
+  const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
+  const currentLRExtensions = await liquidatorsRegistry._listExtensions();
+  if (!currentLRExtensions.length || currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address) {
+    let extToReplace;
+    if (!currentLRExtensions.length) {
+      extToReplace = constants.AddressZero;
+    } else {
+      extToReplace = currentLRExtensions[0];
+    }
+    tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, extToReplace);
+    await tx.wait();
+    console.log(`replaced the liquidators registry old extension ${extToReplace} with the new ${liquidatorsRegistryExtensionDep.address}`);
+  } else {
+    console.log(`no liquidators registry extensions to update`);
+  }
+  ////
+
+  //// LEVERED POSITIONS FACTORY
+  const lpfDep = await deployments.deploy("LeveredPositionFactory", {
+    from: deployer,
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
+        },
+      },
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: deployer,
+    },
+    waitConfirmations: 1,
+  });
+  if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
+  console.log("LeveredPositionFactory: ", lpfDep.address);
+  ////
+
   /// EXTERNAL ADDRESSES
   const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
   if (
@@ -677,6 +731,22 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     tx = await addressesProvider.setAddress("OptimizedVaultsRegistry", ovr.address);
     await tx.wait();
     console.log("setAddress OptimizedVaultsRegistry: ", tx.hash);
+  }
+
+  const lr = await ethers.getContract("LiquidatorsRegistry");
+  const lrAddress = await addressesProvider.callStatic.getAddress("LiquidatorsRegistry");
+  if (lrAddress !== lr.address) {
+    tx = await addressesProvider.setAddress("LiquidatorsRegistry", lr.address);
+    await tx.wait();
+    console.log("setAddress LiquidatorsRegistry: ", tx.hash);
+  }
+
+  const lpf = await ethers.getContract("LeveredPositionFactory");
+  const lpfAddress = await addressesProvider.callStatic.getAddress("LeveredPositionFactory");
+  if (lpfAddress !== lpf.address) {
+    tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
+    await tx.wait();
+    console.log("setAddress LiquidatorsRegistry: ", tx.hash);
   }
 
   await configureAddressesProviderStrategies({
