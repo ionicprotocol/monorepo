@@ -579,16 +579,18 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const liquidatorsRegistryDep = await deployments.deploy("LiquidatorsRegistry", {
     from: deployer,
     log: true,
-    args: [addressesProvider.address]
+    args: [addressesProvider.address],
   });
-  if (liquidatorsRegistryDep.transactionHash) await ethers.provider.waitForTransaction(liquidatorsRegistryDep.transactionHash);
+  if (liquidatorsRegistryDep.transactionHash)
+    await ethers.provider.waitForTransaction(liquidatorsRegistryDep.transactionHash);
   console.log("LiquidatorsRegistry: ", liquidatorsRegistryDep.address);
   const liquidatorsRegistryExtensionDep = await deployments.deploy("LiquidatorsRegistryExtension", {
     from: deployer,
     log: true,
-    args: []
+    args: [],
   });
-  if (liquidatorsRegistryExtensionDep.transactionHash) await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
+  if (liquidatorsRegistryExtensionDep.transactionHash)
+    await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
   console.log("LiquidatorsRegistryExtension: ", liquidatorsRegistryExtensionDep.address);
 
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
@@ -602,7 +604,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
     tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, extToReplace);
     await tx.wait();
-    console.log(`replaced the liquidators registry old extension ${extToReplace} with the new ${liquidatorsRegistryExtensionDep.address}`);
+    console.log(
+      `replaced the liquidators registry old extension ${extToReplace} with the new ${liquidatorsRegistryExtensionDep.address}`
+    );
   } else {
     console.log(`no liquidators registry extensions to update`);
   }

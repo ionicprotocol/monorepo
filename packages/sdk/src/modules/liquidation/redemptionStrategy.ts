@@ -96,7 +96,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
   let preferredOutputToken;
 
   switch (redemptionStrategy) {
-    case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry: // NOT DONE
+    case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
       const curveLpOracleAddress = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
       const curveLpOracle = new Contract(curveLpOracleAddress, CurveLpTokenPriceOracleNoRegistryABI, midasSdk.provider);
 
@@ -120,7 +120,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         ),
         outputToken: actualOutputToken,
       };
-    case RedemptionStrategyContract.SaddleLpTokenLiquidator: // NOT DONE
+    case RedemptionStrategyContract.SaddleLpTokenLiquidator:
       const saddleLpOracleAddress = midasSdk.chainDeployment.SaddleLpPriceOracle.address;
       const saddleLpOracle = new Contract(saddleLpOracleAddress, SaddleLpPriceOracleABI, midasSdk.provider);
 
@@ -143,7 +143,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         ),
         outputToken: actualOutputToken,
       };
-    case RedemptionStrategyContract.SolidlyLpTokenLiquidator: { // DONE
+    case RedemptionStrategyContract.SolidlyLpTokenLiquidator: {
       const lpToken = IPair__factory.connect(inputToken, midasSdk.provider);
 
       const token0 = await lpToken.callStatic.token0();
@@ -162,8 +162,8 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken,
       };
     }
-    case RedemptionStrategyContract.UniswapLpTokenLiquidator: // DONE
-    case RedemptionStrategyContract.GelatoGUniLiquidator: { // DONE
+    case RedemptionStrategyContract.UniswapLpTokenLiquidator:
+    case RedemptionStrategyContract.GelatoGUniLiquidator: {
       const lpToken = IUniswapV2Pair__factory.connect(inputToken, midasSdk.provider);
 
       const token0 = await lpToken.callStatic.token0();
@@ -189,7 +189,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken,
       };
     }
-    case RedemptionStrategyContract.AlgebraSwapLiquidator: { // DONE
+    case RedemptionStrategyContract.AlgebraSwapLiquidator: {
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
@@ -199,7 +199,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken,
       };
     }
-    case RedemptionStrategyContract.SolidlySwapLiquidator: { // DONE
+    case RedemptionStrategyContract.SolidlySwapLiquidator: {
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
@@ -209,7 +209,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken,
       };
     }
-    case RedemptionStrategyContract.UniswapV2LiquidatorFunder: { // DONE
+    case RedemptionStrategyContract.UniswapV2LiquidatorFunder: {
       const swapPath = [inputToken, outputToken];
       return {
         strategyAddress: redemptionStrategyContract.address,
@@ -220,7 +220,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken,
       };
     }
-    case RedemptionStrategyContract.JarvisLiquidatorFunder: { // DONE
+    case RedemptionStrategyContract.JarvisLiquidatorFunder: {
       const jarvisPool = midasSdk.chainConfig.liquidationDefaults.jarvisPools.find(
         (p) => p.collateralToken == outputToken && p.syntheticToken == inputToken
       );
@@ -238,7 +238,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
-    case RedemptionStrategyContract.CurveSwapLiquidator: { // DONE
+    case RedemptionStrategyContract.CurveSwapLiquidator: {
       const curveV1Oracle = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry
         ? midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address
         : constants.AddressZero;
@@ -253,8 +253,8 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
-    case RedemptionStrategyContract.BalancerSwapLiquidator: // DONE
-    case RedemptionStrategyContract.BalancerLpTokenLiquidator: { // DONE
+    case RedemptionStrategyContract.BalancerSwapLiquidator:
+    case RedemptionStrategyContract.BalancerLpTokenLiquidator: {
       const strategyData = new ethers.utils.AbiCoder().encode(["address"], [outputToken]);
 
       // TODO: add support for multiple pools
