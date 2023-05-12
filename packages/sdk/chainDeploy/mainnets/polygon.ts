@@ -508,6 +508,12 @@ const balancerStableLpAssets: BalancerStableLpAsset[] = [
   {
     lpTokenAddress: underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP),
   },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.MaticX_bbaWMATIC),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.StMatic_bbaWMATIC),
+  },
 ];
 
 const balancerLinerPoolAssets: BalancerLinearPoolAsset[] = [
@@ -519,6 +525,9 @@ const balancerLinerPoolAssets: BalancerLinearPoolAsset[] = [
   },
   {
     lpTokenAddress: underlying(assets, assetSymbols.TETU_LINEAR_DAI),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
   },
 ];
 
@@ -634,6 +643,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     balancerRateProviderAssets,
   });
+  /// Balancer Stable LP Price Oracle
+  await deployBalancerLinearPoolPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLinerPoolAssets,
+  });
 
   /// Balancer Stable LP Price Oracle
   await deployBalancerStableLpPriceOracle({
@@ -643,16 +661,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     balancerLpAssets: balancerStableLpAssets,
-  });
-
-  /// Balancer Stable LP Price Oracle
-  await deployBalancerLinearPoolPriceOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    balancerLinerPoolAssets,
   });
 
   /// Ankr Certificate Price Oracle

@@ -12,13 +12,13 @@
       "address": "0xe693a13526Eb4cff15EbeC54779Ea640E2F36a9f"
     },
     "CErc20Delegate": {
-      "address": "0xee2E63a5CF8071223307439d3A297ce99f23Ab4b"
+      "address": "0x4d589B23885D2Cc17732fFF9e8DEc87E7D54A1DB"
     },
     "CErc20PluginDelegate": {
-      "address": "0x86460032dC8De74a7821E0568e5bcbe8db78c1eB"
+      "address": "0x738f38751f967bBb61c576A946F9110035013108"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x99D0d93b5a057270Da61D4971C2CDdC5bF0E07B8"
+      "address": "0xC7E9eBBE065FA096264dB1dbDc8A16c66000Ff17"
     },
     "CEtherDelegate": {
       "address": "0xB813269354382f8897dd133AB7aDdcc3D4dE9C3E"

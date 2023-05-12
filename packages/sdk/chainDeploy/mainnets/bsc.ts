@@ -13,6 +13,7 @@ import {
   deployCurveV2LpOracle,
   deployDiaOracle,
   deployFlywheelWithDynamicRewards,
+  deployGammaPoolOracle,
   deploySolidlyLpOracle,
   deploySolidlyPriceOracle,
   deployStkBNBOracle,
@@ -27,6 +28,7 @@ import {
   CurvePoolConfig,
   CurveV2PoolConfig,
   DiaAsset,
+  GammaLpAsset,
   SolidlyLpAsset,
   SolidlyOracleAssetConfig,
   WombatAsset,
@@ -325,6 +327,12 @@ const solidlyLps: SolidlyLpAsset[] = [
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/HAY"]) },
 ];
 
+const gammaLps: GammaLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aWBNB_STKBNB),
+  },
+];
+
 const solidlyOracleSupportedStables: string[] = [
   deployConfig.stableToken!,
   underlying(assets, assetSymbols.USDC),
@@ -439,6 +447,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     solidlyLps,
+  });
+  //// Solidly LP Oracle
+  await deployGammaPoolOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    gammaLps,
   });
 
   //// Curve LP Oracle
