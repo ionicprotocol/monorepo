@@ -1,0 +1,513 @@
+{
+  "address": "0x47Bf57bB81c82Af4116cA2FF76D063C698cFCd76",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "_testingBomb",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "_testingStable",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "enter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getExchangeRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_share",
+          "type": "uint256"
+        }
+      ],
+      "name": "leave",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "testingBomb",
+      "outputs": [
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "testingStable",
+      "outputs": [
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakedAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "toREWARD",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "rewardAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "toSTAKED",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x284579b6df55b534d57e0a280b7d9e130f56488f6cbe1e8b694671bed97f8c5e",
+  "receipt": {
+    "to": null,
+    "from": "0x27521eae4eE4153214CaDc3eCD703b9B0326C908",
+    "contractAddress": "0x47Bf57bB81c82Af4116cA2FF76D063C698cFCd76",
+    "transactionIndex": 3,
+    "gasUsed": "268002",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x98efed827078374797683dbada0e02daa6808c3804e987163f477ef0550288ea",
+    "transactionHash": "0x284579b6df55b534d57e0a280b7d9e130f56488f6cbe1e8b694671bed97f8c5e",
+    "logs": [],
+    "blockNumber": 29737814,
+    "cumulativeGasUsed": "394438",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768",
+    "0x4f1885D25eF219D3D4Fa064809D6D4985FAb9A0b"
+  ],
+  "numDeployments": 1,
+  "metadata": {
+    "compiler": {
+      "version": "0.8.10+commit.fc410830"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "_testingBomb",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "_testingStable",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_amount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "enter"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getExchangeRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_share",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "leave"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "testingBomb",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "testingStable",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "stakedAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "toREWARD",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "rewardAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "toSTAKED",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@openzeppelin/=lib/openzeppelin-contracts/",
+        ":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        ":adrastia-core/=lib/adrastia-core/contracts/",
+        ":adrastia/=lib/adrastia-core/contracts/",
+        ":ds-test/=lib/ds-test/src/",
+        ":flywheel-v2/=lib/flywheel-v2/src/",
+        ":flywheel/=lib/flywheel-v2/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":fuse-flywheel/=lib/fuse-flywheel/src/",
+        ":libcompound/=lib/fuse-flywheel/lib/libcompound/src/",
+        ":openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+        ":openzeppelin-contracts/=lib/openzeppelin-contracts/",
+        ":ops/=lib/ops/contracts/",
+        ":pyth-neon/=lib/pyth-neon/contracts/",
+        ":pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        ":solidity-bytes-utils/=lib/solidity-bytes-utils/",
+        ":solmate/=lib/solmate/src/",
+        ":weird-erc20/=lib/fuse-flywheel/lib/libcompound/lib/solmate/lib/weird-erc20/src/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "none"
+      },
+      "compilationTarget": {
+        "contracts/liquidators/XBombLiquidatorFunder.sol": "XBombSwap"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "contracts/external/bomb/IXBomb.sol": {
+        "keccak256": "0x7bab8191e350a68203996c0d99a5c075307ad421c98142072f9b5312534bff9b",
+        "urls": [
+          "bzz-raw://70ada9803810fff6a8d907a50da72dc95eb75267060b5a71c899cd244d970638",
+          "dweb:/ipfs/QmcMaYsCbFhoKJLGza4F9hy86cvEhjq492Y65pVzZB8jUj"
+        ],
+        "license": null
+      },
+      "contracts/liquidators/IFundsConversionStrategy.sol": {
+        "keccak256": "0xa8bb583271cf321f13f24304b0d03aa951d63aca61bcbbff22d2b44138240271",
+        "urls": [
+          "bzz-raw://75dcf6023f0638ea92256efb1c052b54229479ab8da3f51a0a72d78523b6ad6b",
+          "dweb:/ipfs/QmTzBcHW2j7RK2GVAc1Bn5XnL9Nxm6bRdxodcnkrf3zY4G"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/liquidators/IRedemptionStrategy.sol": {
+        "keccak256": "0x4cf72f79d325ed14f3c8d52e013a8d1f8bfe15b59553bbd9dff251761baf60dd",
+        "urls": [
+          "bzz-raw://057886f22f3ce6c62b3052f70cbe2684371c8b2541ad5cd6e8df917a9973a8e6",
+          "dweb:/ipfs/QmeHaakFX1WHDx3NhuwhmxKLWySGiG3JCZrGHTrjC8jyAL"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/liquidators/XBombLiquidatorFunder.sol": {
+        "keccak256": "0xc13d00b611b45718e9b9fcf2499523a88a5ac7725e12d2a00ed3507d0b8e9fc8",
+        "urls": [
+          "bzz-raw://1a1eb90f41b0c3668be4157d0a818426b9d496ab02d1133e3f9f896a3c231a57",
+          "dweb:/ipfs/QmRB3ykU7Ejayq9Tf4F4cpXwqS5PX7h3ffHYcBPEvD14JF"
+        ],
+        "license": "UNLICENSED"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol": {
+        "keccak256": "0x4e733d3164f73f461eaf9d8087a7ad1ea180bdc8ba0d3d61b0e1ae16d8e63dff",
+        "urls": [
+          "bzz-raw://75b47c3aeca7b66ea6752f8be020ec5c1c502de6ec9065272dae23d3a52196e2",
+          "dweb:/ipfs/QmUebPMHv16tYKFh5BmBQkMfRFb5b8UZ2RgVwdjxCeufVF"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/access/AccessControl.sol": {
+        "keccak256": "0x07cf8d783adf28649b2ec21c55dd14941b5c779e87d19b6233fa1cb0debe2f71",
+        "urls": [
+          "bzz-raw://3752ae12fdcfa26302c48e93103a6951e545842f836c368860f5191d7eee2b46",
+          "dweb:/ipfs/QmeJMaAv99yh5WJHcHnt24diZREjMab4wBptkETwxNfyaq"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/access/AccessControlEnumerable.sol": {
+        "keccak256": "0x13f5e15f2a0650c0b6aaee2ef19e89eaf4870d6e79662d572a393334c1397247",
+        "urls": [
+          "bzz-raw://7ee05f28f549a5d6515e152580716b87636ed4bfab9812499a6e3803df88288b",
+          "dweb:/ipfs/QmeEnhdwY1t5Y3YU5a4ffzgXuToydH2PNdNxV9W7dEPRQJ"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol": {
+        "keccak256": "0x59ce320a585d7e1f163cd70390a0ef2ff9cec832e2aa544293a00692465a7a57",
+        "urls": [
+          "bzz-raw://bb2c137c343ef0c4c7ce7b18c1d108afdc9d315a04e48307288d2d05adcbde3a",
+          "dweb:/ipfs/QmUxhrAQM3MM3FF5j7AtcXLXguWCJBHJ14BRdVtuoQc8Fh"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/access/IAccessControlEnumerable.sol": {
+        "keccak256": "0xba4459ab871dfa300f5212c6c30178b63898c03533a1ede28436f11546626676",
+        "urls": [
+          "bzz-raw://3dcc7b09bfa6e18aab262ca372f4a9b1fc82e294b430706a4e1378cf58e6a276",
+          "dweb:/ipfs/QmT8oSAcesdctR15HMLhr2a1HRpXymxdjTfdtfTYJcj2N2"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/security/Pausable.sol": {
+        "keccak256": "0x0849d93b16c9940beb286a7864ed02724b248b93e0d80ef6355af5ef15c64773",
+        "urls": [
+          "bzz-raw://4ddabb16009cd17eaca3143feadf450ac13e72919ebe2ca50e00f61cb78bc004",
+          "dweb:/ipfs/QmSPwPxX7d6TTWakN5jy5wsaGkS1y9TW8fuhGSraMkLk2B"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol": {
+        "keccak256": "0x3270d2a7a042dda9cf85dddd16e6106c2c9ad784c0972315630b2a148215fa7d",
+        "urls": [
+          "bzz-raw://b394e20d57877a825c24c1841e219d6ab1e41decec060ea935422ac9b7a25f8a",
+          "dweb:/ipfs/QmVTaGCMR4Gi9w1LUVVcjEJHrHF2qcr1avFkLtsLD6sEAr"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+        "keccak256": "0x9750c6b834f7b43000631af5cc30001c5f547b3ceb3635488f140f60e897ea6b",
+        "urls": [
+          "bzz-raw://5a7d5b1ef5d8d5889ad2ed89d8619c09383b80b72ab226e0fe7bde1636481e34",
+          "dweb:/ipfs/QmebXWgtEfumQGBdVeM6c71McLixYXQP5Bk6kKXuoY4Bmr"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Burnable.sol": {
+        "keccak256": "0x0d19410453cda55960a818e02bd7c18952a5c8fe7a3036e81f0d599f34487a7b",
+        "urls": [
+          "bzz-raw://4c0f62d3d5bef22b5ca00cc3903e7de6152cb68d2d22401a463f373cda54c00f",
+          "dweb:/ipfs/QmSfzjZux7LC7NW2f7rjCXTHeFMUCWERqDkhpCTBy7kxTe"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Pausable.sol": {
+        "keccak256": "0x978847fbff92d66d27d8767402a90ba996970b1936b372406aa17f5492bd8dc5",
+        "urls": [
+          "bzz-raw://1414cb92779420b50d3e796b47bad6ea800ef1805bc6f9bf35a3ccb4e17db3dc",
+          "dweb:/ipfs/QmaMzwYqLiivfaWSgqeaAPboBtJjVD1hSrH48p7ExJZ7DG"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+        "keccak256": "0x8de418a5503946cabe331f35fe242d3201a73f67f77aaeb7110acb1f30423aca",
+        "urls": [
+          "bzz-raw://5a376d3dda2cb70536c0a45c208b29b34ac560c4cb4f513a42079f96ba47d2dd",
+          "dweb:/ipfs/QmZQg6gn1sUpM8wHzwNvSnihumUCAhxD119MpXeKp8B9s8"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol": {
+        "keccak256": "0x2cd54808b851c4db22f459065af0b7a952262741a85a73923e7a660767cd7baa",
+        "urls": [
+          "bzz-raw://750c4a78e953fe92317bba7166afd0a4b7725723e5822ea1b92ffd4e72d2d36b",
+          "dweb:/ipfs/QmZNyCSrdYXGQfmB6LkbX8R6y4gGZRNh1d2pJobYBpkaRF"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+        "keccak256": "0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7",
+        "urls": [
+          "bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
+          "dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/Strings.sol": {
+        "keccak256": "0xbaa90c891304799f6aa4039eae4b59afc0b59ce3bcc647f3fc2bbf5a04b17f1e",
+        "urls": [
+          "bzz-raw://1cc3f5b077759f92f28ba4182d9410aa8fd586d7efc5f76bdd22228bf2d227f0",
+          "dweb:/ipfs/QmbLPLb31LxAyB7GWir5AssC1TYVHqhBsN6R7APj2UV9fv"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol": {
+        "keccak256": "0xd10975de010d89fd1c78dc5e8a9a7e7f496198085c151648f20cba166b32582b",
+        "urls": [
+          "bzz-raw://fb0048dee081f6fffa5f74afc3fb328483c2a30504e94a0ddd2a5114d731ec4d",
+          "dweb:/ipfs/QmZptt1nmYoA5SgjwnSgWqgUSDgm4q52Yos3xhnMv3MV43"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+        "keccak256": "0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1",
+        "urls": [
+          "bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f",
+          "dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": {
+        "keccak256": "0xbb9b373ec337797b9f8822171cb191095cb11e729a4fde4c207d25b8b642fb93",
+        "urls": [
+          "bzz-raw://6fba7f4448f95e3a42fba5305cc02403eee23aa62e742a0ae7bca609bdaf89da",
+          "dweb:/ipfs/QmSXV5FapsVemawU9Zzkx3u3DNLhCaS9MnwcZLsPpMSKnz"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/structs/EnumerableSet.sol": {
+        "keccak256": "0x636eab608b4563c01e88042aba9330e6fe69af2c567fe1adf4d85731974ac81d",
+        "urls": [
+          "bzz-raw://e35967fa779d58a99de2f6d7ac23ef489d09bc18a5668fd231753905e0a9f633",
+          "dweb:/ipfs/QmWUSbnhG7z4fDUYMbCuyJ4nyhqKwzL2jbeFEnVLDxo6R6"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "bytecode": {
+    "object": "0x608060405234801561001057600080fd5b506040516103d03803806103d083398101604081905261002f9161007c565b600080546001600160a01b039384166001600160a01b031991821617909155600180549290931691161790556100af565b80516001600160a01b038116811461007757600080fd5b919050565b6000806040838503121561008f57600080fd5b61009883610060565b91506100a660208401610060565b90509250929050565b610312806100be6000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c80636be2be951161005b5780636be2be9514610082578063a59f3e0c146100e6578063e6aa216c146100f9578063e80fbdd71461010757600080fd5b8063067e4b9e146100825780630a003d5c146100a657806367dfd4c9146100d1575b600080fd5b6100936100903660046102c3565b90565b6040519081526020015b60405180910390f35b6001546100b9906001600160a01b031681565b6040516001600160a01b03909116815260200161009d565b6100e46100df3660046102c3565b61011a565b005b6100e46100f43660046102c3565b610210565b670de0b6b3a7640000610093565b6000546100b9906001600160a01b031681565b6000546040516323b872dd60e01b8152336004820152306024820152604481018390526001600160a01b03909116906323b872dd906064016020604051808303816000875af1158015610171573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061019591906102dc565b5060015460405163a9059cbb60e01b8152336004820152602481018390526001600160a01b039091169063a9059cbb906044015b6020604051808303816000875af11580156101e8573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061020c91906102dc565b5050565b6001546040516323b872dd60e01b8152336004820152306024820152604481018390526001600160a01b03909116906323b872dd906064016020604051808303816000875af1158015610267573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061028b91906102dc565b5060005460405163a9059cbb60e01b8152336004820152602481018390526001600160a01b039091169063a9059cbb906044016101c9565b6000602082840312156102d557600080fd5b5035919050565b6000602082840312156102ee57600080fd5b815180151581146102fe57600080fd5b939250505056fea164736f6c634300080a000a",
+    "sourceMap": "3516:883:3:-:0;;;3622:151;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;3706:11;:26;;-1:-1:-1;;;;;3706:26:3;;;-1:-1:-1;;;;;;3706:26:3;;;;;;;;3738:30;;;;;;;;;;;3516:883;;14:196:56;112:13;;-1:-1:-1;;;;;154:31:56;;144:42;;134:70;;200:1;197;190:12;134:70;14:196;;;:::o;215:385::-;348:6;356;409:2;397:9;388:7;384:23;380:32;377:52;;;425:1;422;415:12;377:52;448:59;497:9;448:59;:::i;:::-;438:69;;526:68;590:2;579:9;575:18;526:68;:::i;:::-;516:78;;215:385;;;;;:::o;:::-;3516:883:3;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c80636be2be951161005b5780636be2be9514610082578063a59f3e0c146100e6578063e6aa216c146100f9578063e80fbdd71461010757600080fd5b8063067e4b9e146100825780630a003d5c146100a657806367dfd4c9146100d1575b600080fd5b6100936100903660046102c3565b90565b6040519081526020015b60405180910390f35b6001546100b9906001600160a01b031681565b6040516001600160a01b03909116815260200161009d565b6100e46100df3660046102c3565b61011a565b005b6100e46100f43660046102c3565b610210565b670de0b6b3a7640000610093565b6000546100b9906001600160a01b031681565b6000546040516323b872dd60e01b8152336004820152306024820152604481018390526001600160a01b03909116906323b872dd906064016020604051808303816000875af1158015610171573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061019591906102dc565b5060015460405163a9059cbb60e01b8152336004820152602481018390526001600160a01b039091169063a9059cbb906044015b6020604051808303816000875af11580156101e8573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061020c91906102dc565b5050565b6001546040516323b872dd60e01b8152336004820152306024820152604481018390526001600160a01b03909116906323b872dd906064016020604051808303816000875af1158015610267573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061028b91906102dc565b5060005460405163a9059cbb60e01b8152336004820152602481018390526001600160a01b039091169063a9059cbb906044016101c9565b6000602082840312156102d557600080fd5b5035919050565b6000602082840312156102ee57600080fd5b815180151581146102fe57600080fd5b939250505056fea164736f6c634300080a000a",
+    "sourceMap": "3516:883:3:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;4189:102;;;;;;:::i;:::-;4274:12;4189:102;;;;345:25:56;;;333:2;318:18;4189:102:3;;;;;;;;3579:38;;;;;-1:-1:-1;;;;;3579:38:3;;;;;;-1:-1:-1;;;;;572:32:56;;;554:51;;542:2;527:18;3579:38:3;381:230:56;3777:158:3;;;;;;:::i;:::-;;:::i;:::-;;3939:161;;;;;;:::i;:::-;;:::i;4104:81::-;4176:4;4104:81;;3539:36;;;;;-1:-1:-1;;;;;3539:36:3;;;3777:158;3823:11;;:59;;-1:-1:-1;;;3823:59:3;;3848:10;3823:59;;;856:34:56;3868:4:3;906:18:56;;;899:43;958:18;;;951:34;;;-1:-1:-1;;;;;3823:11:3;;;;:24;;791:18:56;;3823:59:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;3888:13:3;;:42;;-1:-1:-1;;;3888:42:3;;3911:10;3888:42;;;1452:51:56;1519:18;;;1512:34;;;-1:-1:-1;;;;;3888:13:3;;;;:22;;1425:18:56;;3888:42:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;3777:158;:::o;3939:161::-;3986:13;;:62;;-1:-1:-1;;;3986:62:3;;4013:10;3986:62;;;856:34:56;4033:4:3;906:18:56;;;899:43;958:18;;;951:34;;;-1:-1:-1;;;;;3986:13:3;;;;:26;;791:18:56;;3986:62:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;4054:11:3;;:41;;-1:-1:-1;;;4054:41:3;;4075:10;4054:41;;;1452:51:56;1519:18;;;1512:34;;;-1:-1:-1;;;;;4054:11:3;;;;:20;;1425:18:56;;4054:41:3;1278:274:56;14:180;73:6;126:2;114:9;105:7;101:23;97:32;94:52;;;142:1;139;132:12;94:52;-1:-1:-1;165:23:56;;14:180;-1:-1:-1;14:180:56:o;996:277::-;1063:6;1116:2;1104:9;1095:7;1091:23;1087:32;1084:52;;;1132:1;1129;1122:12;1084:52;1164:9;1158:16;1217:5;1210:13;1203:21;1196:5;1193:32;1183:60;;1239:1;1236;1229:12;1183:60;1262:5;996:277;-1:-1:-1;;;996:277:56:o",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "enter(uint256)": "a59f3e0c",
+    "getExchangeRate()": "e6aa216c",
+    "leave(uint256)": "67dfd4c9",
+    "testingBomb()": "e80fbdd7",
+    "testingStable()": "0a003d5c",
+    "toREWARD(uint256)": "067e4b9e",
+    "toSTAKED(uint256)": "6be2be95"
+  }
+}

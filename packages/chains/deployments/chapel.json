@@ -224,6 +224,9 @@
     "SimplePriceOracle_Proxy": {
       "address": "0xDdD3cf9407a12A6360281d244cb100ABe7fB561f"
     },
+    "TestingStable": {
+      "address": "0x4f1885D25eF219D3D4Fa064809D6D4985FAb9A0b"
+    },
     "UniswapLpTokenLiquidator": {
       "address": "0x3e9543F2B0b0DD72F8A85E8aBC4A8cDA3Eb5E14C"
     },
@@ -244,6 +247,9 @@
     },
     "WhitePaperInterestRateModel": {
       "address": "0xFe44E528caF2F391dEBA6fd5beaa5d530b6bf8A3"
+    },
+    "XBombSwap": {
+      "address": "0x47Bf57bB81c82Af4116cA2FF76D063C698cFCd76"
     }
   }
 }
