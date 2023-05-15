@@ -543,7 +543,49 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("SolidlyLpTokenLiquidator: ", solidlyLpTokenLiquidator.address);
 
-  //// Liquidator Redemption and Funding Strategies
+  /// curve LP tokens
+  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenLiquidatorNoRegistry.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
+  console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
+
+  // curve swap underlying tokens
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
+
+  // wombat Lp token liquidator
+  const wombatLpTokenLiquidator = await deployments.deploy("WombatLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  if (wombatLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(wombatLpTokenLiquidator.transactionHash);
+  console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
+
+  // Gamma LP token liquidator
+  const gammaLpTokenLiquidator = await deployments.deploy("GammaLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  if (gammaLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(gammaLpTokenLiquidator.transactionHash);
+  console.log("GammaLpTokenLiquidator: ", gammaLpTokenLiquidator.address);
+
+  //// Liquidator Funding Strategies
 
   //// custom uniswap v2 redemptions and funding
   const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {
@@ -579,28 +621,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
-  /// curve LP tokens
-  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (curveLpTokenLiquidatorNoRegistry.transactionHash)
-    await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
-  console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
-
-  // curve swap underlying tokens
-  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (curveSwapLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
-  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
-
   // curve swap liquidator funder - TODO replace the CurveSwapLiquidator above
   const curveSwapLiquidatorFunder = await deployments.deploy("CurveSwapLiquidatorFunder", {
     from: deployer,
@@ -611,16 +631,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (curveSwapLiquidatorFunder.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
   console.log("CurveSwapLiquidatorFunder: ", curveSwapLiquidatorFunder.address);
-
-  // wombat Lp token liquidator
-  const wombatLpTokenLiquidator = await deployments.deploy("WombatLpTokenLiquidator", {
-    from: deployer,
-    args: [],
-    log: true,
-  });
-  if (wombatLpTokenLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(wombatLpTokenLiquidator.transactionHash);
-  console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
 
   //// deploy ankr bnb adjustable interest rate model
   const abairm = await deployments.deploy("AdjustableAnkrBNBIrm", {
