@@ -171,7 +171,7 @@
       "address": "0x78C18C27E215A70b17471D3985e9A201DAA978Be"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x329eC9aBdA182F1b259e8257afc2DB4f144088ad"
+      "address": "0x8BE6118918898894b72F889320b1f702068838C4"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"
@@ -247,6 +247,9 @@
     },
     "WhitePaperInterestRateModel": {
       "address": "0xFe44E528caF2F391dEBA6fd5beaa5d530b6bf8A3"
+    },
+    "XBombLiquidatorFunder": {
+      "address": "0x70190bAbF03fBC09BA7151ffB8FA73D2fFD80ea4"
     },
     "XBombSwap": {
       "address": "0x47Bf57bB81c82Af4116cA2FF76D063C698cFCd76"
