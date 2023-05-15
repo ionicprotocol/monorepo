@@ -27,6 +27,7 @@ task("market:deploy", "deploy market")
       maxFeePerGas: ethers.utils.parseUnits("240", "gwei"),
       maxPriorityFeePerGas: ethers.utils.parseUnits("50", "gwei"),
     });
+    console.log("tx", tx.hash, tx.nonce);
 
     // Recreate Address of Deployed Market
     const receipt = await tx.wait();
