@@ -1,6 +1,7 @@
 import { constants, providers } from "ethers";
 
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
+import { SolidlyPriceOracle } from "../../../typechain/SolidlyPriceOracle";
 import { SolidlyDeployFnParams, SolidlyOracleAssetConfig, SolidlyOracleDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
@@ -54,7 +55,22 @@ export const deploySolidlyPriceOracle = async ({
   if (solidlyPriceOracle.transactionHash) await ethers.provider.waitForTransaction(solidlyPriceOracle.transactionHash);
   console.log("SolidlyPriceOracle: ", solidlyPriceOracle.address);
 
-  const solidlyOracle = await ethers.getContract("SolidlyPriceOracle", deployer);
+  const solidlyOracle = (await ethers.getContract("SolidlyPriceOracle", deployer)) as SolidlyPriceOracle;
+
+  const currentSupportedBaseTokens = await solidlyOracle.callStatic.getSupportedBaseTokens();
+  let missingBaseTokens = false;
+  for (const baseToken of supportedBaseTokens) {
+    if (!currentSupportedBaseTokens.includes(baseToken)) {
+      console.log(`Base token ${baseToken} not currently supported`);
+      missingBaseTokens = true;
+    }
+  }
+  if (missingBaseTokens) {
+    console.log(`${supportedBaseTokens.length} base tokens to be set: ${supportedBaseTokens.join(", ")}`);
+    const tx: providers.TransactionResponse = await solidlyOracle._setSupportedBaseTokens(supportedBaseTokens);
+    const receipt = await tx.wait();
+    console.log("supported base tokens mined: ", receipt.transactionHash);
+  }
 
   const assetsToAdd: SolidlyOracleAssetConfig[] = [];
 
