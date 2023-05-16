@@ -28,6 +28,7 @@ export const fetchTokenData = async (
           decimals: asset.decimals,
           logoURL: config.iconServerURL + '/token/96x96/' + asset.symbol.toLowerCase() + '.png',
           name: asset.name,
+          originalSymbol: asset.originalSymbol,
           symbol: asset.symbol,
         });
       } else {

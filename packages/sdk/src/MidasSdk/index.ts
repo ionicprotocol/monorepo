@@ -41,6 +41,7 @@ import { withFlywheel } from "../modules/Flywheel";
 import { withFundOperations } from "../modules/FundOperations";
 import { withFusePoolLens } from "../modules/FusePoolLens";
 import { withFusePools } from "../modules/FusePools";
+import { withLeverage } from "../modules/Leverage";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { withVaults } from "../modules/Vaults";
@@ -351,7 +352,9 @@ export class MidasBase {
 const MidasBaseWithModules = withFusePoolLens(
   withFundOperations(
     withSafeLiquidator(
-      withFusePools(withAsset(withFlywheel(withVaults(withCreateContracts(withConvertMantissa(MidasBase))))))
+      withFusePools(
+        withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(MidasBase))))))
+      )
     )
   )
 );
