@@ -54,7 +54,35 @@ export default task("levered-positions:configure-pair")
     }
   );
 
-task("chapel-stable-levered", "creates and funds a levered position on chapel").setAction(
+task("chapel-create-levered-position", "creates and funds a levered position on chapel").setAction(
+  async ({}, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // TUSD
+    const testingBomb = (await ethers.getContractAt(
+      "ERC20PresetMinterPauser",
+      testingBombAddress,
+      deployer
+    )) as ERC20PresetMinterPauser;
+    const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e"; // TUSD market
+    const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
+
+    const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
+
+    const oneEth = ethers.utils.parseEther("1");
+    let tx = await testingBomb.approve(factory.address, oneEth);
+    await tx.wait();
+    console.log(`approved position for 1e18 bomb`);
+
+    tx = await factory.createAndFundPosition(collateralMarketAddress, borrowMarketAddress, testingBombAddress, oneEth);
+    await tx.wait();
+    console.log(`created a levered position with tx ${tx.hash}`);
+
+    const deployerPositions = await factory.callStatic.getPositionsByAccount(deployer);
+    console.log(`position address ${deployerPositions[deployerPositions.length - 1]}`);
+  }
+);
+
+task("chapel-fund-first-levered-position", "funds a levered position on chapel").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
