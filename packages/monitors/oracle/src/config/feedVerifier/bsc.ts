@@ -1,25 +1,15 @@
 import { chainIdToConfig } from "@midas-capital/chains";
-import { assetFilter, assetSymbols, OracleTypes, SupportedChains } from "@midas-capital/types";
+import { OracleTypes, SupportedChains } from "@midas-capital/types";
 
 import { FeedVerifierAsset } from "../../types";
 
-import { defaultDeviationThreshold, defaultMaxObservationDelay } from "./defaults";
+import { defaultMaxObservationDelay } from "./defaults";
 
 const chainAssets = chainIdToConfig[SupportedChains.bsc].assets.filter(
   (asset) => asset.disabled === undefined || asset.disabled == false
 );
 
-const MAI = assetFilter(chainAssets, assetSymbols.MAI);
 const chainLinkSupportedAssets = chainAssets.filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2);
-
-// Dia Assets
-const diaAssets: FeedVerifierAsset[] = [
-  {
-    ...MAI,
-    deviationThreshold: defaultDeviationThreshold,
-    maxObservationDelay: defaultMaxObservationDelay,
-  },
-];
 
 const uniswapV2Assets: FeedVerifierAsset[] = [];
 
@@ -31,11 +21,6 @@ const chainLinkAssets: FeedVerifierAsset[] = chainLinkSupportedAssets.map((asset
   };
 });
 
-const assets: FeedVerifierAsset[] = [
-  // Dia Assets
-  ...diaAssets,
-  ...uniswapV2Assets,
-  ...chainLinkAssets,
-];
+const assets: FeedVerifierAsset[] = [...uniswapV2Assets, ...chainLinkAssets];
 
 export default assets;

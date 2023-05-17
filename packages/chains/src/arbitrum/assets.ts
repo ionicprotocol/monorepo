@@ -192,6 +192,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
     extraDocs: defaultDocs("https://arbiscan.io", GMX),
+    disabled: true,
   },
   {
     symbol: assetSymbols.OHM,
