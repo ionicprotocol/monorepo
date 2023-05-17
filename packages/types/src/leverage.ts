@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 import { SupportedChains } from "./enums";
 
 export interface LeveredPositionBorrowable {
@@ -13,6 +15,7 @@ export interface LeveredPosition {
     cToken: string;
     underlyingToken: string;
     symbol: string;
+    supplyRatePerYear: BigNumber;
   };
   borrowable: LeveredPositionBorrowable[];
 }

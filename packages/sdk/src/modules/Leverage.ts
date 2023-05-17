@@ -14,6 +14,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             markets: collateralCTokens,
             underlyings: collateralUnderlyings,
             symbols: collateralsymbols,
+            rates: supplyRatesPerYear,
           } = await leveredPositionFactory.callStatic.getCollateralMarkets();
 
           await Promise.all(
@@ -54,6 +55,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                       ? collateralAsset.originalSymbol
                       : collateralAsset.symbol
                     : collateralsymbols[index],
+                  supplyRatePerYear: supplyRatesPerYear[index],
                 },
                 borrowable,
               });
