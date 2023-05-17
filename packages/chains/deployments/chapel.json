@@ -12,13 +12,13 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "CErc20Delegate": {
-      "address": "0x4C6Fc55c7e2b43AFcC00c0781d0a6341765804f5"
+      "address": "0x2213ED9cF0Afa7AdFb2e461A8D3951681C297c63"
     },
     "CErc20PluginDelegate": {
-      "address": "0x5A351BD250E37c3FB0C0945c9c250Fc290A44dFE"
+      "address": "0x1c78b87D9e9DC9F2504A4Ee96504C8897089BadF"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xF3c98FB8fDFDaC33894D72fa049eB849B0970330"
+      "address": "0x6578B2eFED53bb2780F14ED2C6F6E10Ed409C100"
     },
     "CErc20RewardsDelegate": {
       "address": "0x99d485eF4425862D90C8301725DF670c4b8B71EC"
@@ -162,7 +162,7 @@
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
     },
     "LeveredPositionFactory_Implementation": {
-      "address": "0x0740d3F4B37fbFE606f1d776b2b1290b53710d5B"
+      "address": "0xB4518f0CB3fc04D764b70281CA6BAAB0C13040C3"
     },
     "LeveredPositionFactory_Proxy": {
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
@@ -171,7 +171,7 @@
       "address": "0x78C18C27E215A70b17471D3985e9A201DAA978Be"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x8BE6118918898894b72F889320b1f702068838C4"
+      "address": "0x99925FE02AFed8Df6d8a470647b0d637b9f42ea4"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"
