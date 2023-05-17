@@ -162,16 +162,16 @@
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
     },
     "LeveredPositionFactory_Implementation": {
-      "address": "0x2302511A6fe03848B9F7cF03ed1782288BAFF1E6"
+      "address": "0xaC985e3Fc3e7373FB4252E55E3470370c9dC79c5"
     },
     "LeveredPositionFactory_Proxy": {
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
     },
     "LiquidatorsRegistry": {
-      "address": "0x78C18C27E215A70b17471D3985e9A201DAA978Be"
+      "address": "0xF688761AD33223994be4Aea4263c286B9751685b"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x99925FE02AFed8Df6d8a470647b0d637b9f42ea4"
+      "address": "0x2016a912e2F5A290E3C6D353a34C16fFf3235989"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"
