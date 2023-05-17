@@ -12,6 +12,7 @@ import {
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
+import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
@@ -597,7 +598,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const currentLRExtensions = await liquidatorsRegistry._listExtensions();
   if (!currentLRExtensions.length || currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address) {
     let extToReplace;
-    if (!currentLRExtensions.length) {
+    if (currentLRExtensions.length == 0) {
       extToReplace = constants.AddressZero;
     } else {
       extToReplace = currentLRExtensions[0];
@@ -630,6 +631,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
   console.log("LeveredPositionFactory: ", lpfDep.address);
+
+  const leveredPositionFactory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
+  const currentLiquidatorsRegistry = await leveredPositionFactory.callStatic.liquidatorsRegistry();
+  if (currentLiquidatorsRegistry.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
+    tx = await leveredPositionFactory.setLiquidatorsRegistry(liquidatorsRegistry.address);
+    await tx.wait();
+    console.log("updated the liquidators registry: ", tx.hash);
+  }
   ////
 
   /// EXTERNAL ADDRESSES
@@ -750,7 +759,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (lpfAddress !== lpf.address) {
     tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
     await tx.wait();
-    console.log("setAddress LiquidatorsRegistry: ", tx.hash);
+    console.log("setAddress LeveredPositionFactory: ", tx.hash);
   }
 
   await configureAddressesProviderStrategies({

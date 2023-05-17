@@ -6,3 +6,4 @@ import "./upgrade";
 import "./upgrade-all";
 import "./deploy-dynamic-rewards-market";
 import "./deploy-static-rewards-market";
+import "./deploy";

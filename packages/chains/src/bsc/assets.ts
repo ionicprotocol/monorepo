@@ -31,6 +31,7 @@ const USDC = "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d";
 const USDT = "0x55d398326f99059fF775485246999027B3197955";
 const TUSD = "0x14016E85a25aeb13065688cAFB43044C2ef86784";
 const MAI = "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d";
+const FRAX = "0x29cED01C447166958605519F10DcF8b0255fB379";
 const threeEPS = "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452";
 const maiThreeEPS = "0x80D00D2c8d920a9253c3D65BA901250a55011b37";
 const twoBRL = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
@@ -171,6 +172,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     extraDocs: defaultDocs("https://bscscan.com", BIFI),
     disabled: true,
+  },
+  {
+    symbol: assetSymbols.FRAX,
+    underlying: FRAX,
+    name: "Frax",
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    decimals: 18,
+    extraDocs: defaultDocs("https://bscscan.com", FRAX),
   },
   {
     symbol: assetSymbols.ALPACA,

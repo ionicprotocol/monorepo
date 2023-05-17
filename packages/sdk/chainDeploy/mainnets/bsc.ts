@@ -227,6 +227,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0xc4429B539397a3166eF3ef132c29e34715a3ABb4",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.FRAX,
+    aggregator: "0x13A9c98b07F098c5319f4FF786eB16E22DC738e1",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 // TODO use these as funding and redemption strategies
@@ -325,6 +330,7 @@ const solidlyLps: SolidlyLpAsset[] = [
   { lpTokenAddress: underlying(assets, assetSymbols["sAMM-HAY/BUSD"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/HAY"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["sAMM-stkBNB/WBNB"]) },
 ];
 
 const gammaLps: GammaLpAsset[] = [
@@ -337,6 +343,8 @@ const solidlyOracleSupportedStables: string[] = [
   deployConfig.stableToken!,
   underlying(assets, assetSymbols.USDC),
   underlying(assets, assetSymbols.ankrBNB),
+  underlying(assets, assetSymbols.FRAX),
+  underlying(assets, assetSymbols.BUSD),
 ];
 
 const solidlyOracles: SolidlyOracleAssetConfig[] = [
@@ -349,6 +357,16 @@ const solidlyOracles: SolidlyOracleAssetConfig[] = [
     underlying: underlying(assets, assetSymbols.ANKR),
     poolAddress: "0x7ef540f672Cd643B79D2488344944499F7518b1f", // vAMM-ankrBNB-ANKR
     baseToken: underlying(assets, assetSymbols.ankrBNB),
+  },
+  {
+    underlying: underlying(assets, assetSymbols.MAI),
+    poolAddress: "0x49ad051F4263517BD7204f75123b7C11aF9Fd31C", // sAMM-MAI-FRAX
+    baseToken: underlying(assets, assetSymbols.FRAX),
+  },
+  {
+    underlying: underlying(assets, assetSymbols.pSTAKE),
+    poolAddress: "0x67e51F1DE32318f3a27265287ed766839A62Cf13", // sAMM-BUSD-pSTAKE
+    baseToken: underlying(assets, assetSymbols.BUSD),
   },
 ];
 
@@ -541,6 +559,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(solidlyLpTokenLiquidator.transactionHash);
   }
   console.log("SolidlyLpTokenLiquidator: ", solidlyLpTokenLiquidator.address);
+
+  const gammaLpTokenLiquidator = await deployments.deploy("GammaLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (gammaLpTokenLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(gammaLpTokenLiquidator.transactionHash);
+  }
+  console.log("GammaLpTokenLiquidator: ", gammaLpTokenLiquidator.address);
 
   //// Liquidator Redemption and Funding Strategies
 
