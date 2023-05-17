@@ -344,6 +344,7 @@ const solidlyOracleSupportedStables: string[] = [
   underlying(assets, assetSymbols.USDC),
   underlying(assets, assetSymbols.ankrBNB),
   underlying(assets, assetSymbols.FRAX),
+  underlying(assets, assetSymbols.BUSD),
 ];
 
 const solidlyOracles: SolidlyOracleAssetConfig[] = [
@@ -361,6 +362,11 @@ const solidlyOracles: SolidlyOracleAssetConfig[] = [
     underlying: underlying(assets, assetSymbols.MAI),
     poolAddress: "0x49ad051F4263517BD7204f75123b7C11aF9Fd31C", // sAMM-MAI-FRAX
     baseToken: underlying(assets, assetSymbols.FRAX),
+  },
+  {
+    underlying: underlying(assets, assetSymbols.pSTAKE),
+    poolAddress: "0x67e51F1DE32318f3a27265287ed766839A62Cf13", // sAMM-BUSD-pSTAKE
+    baseToken: underlying(assets, assetSymbols.BUSD),
   },
 ];
 
@@ -553,6 +559,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(solidlyLpTokenLiquidator.transactionHash);
   }
   console.log("SolidlyLpTokenLiquidator: ", solidlyLpTokenLiquidator.address);
+
+  const gammaLpTokenLiquidator = await deployments.deploy("GammaLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (gammaLpTokenLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(gammaLpTokenLiquidator.transactionHash);
+  }
+  console.log("GammaLpTokenLiquidator: ", gammaLpTokenLiquidator.address);
 
   //// Liquidator Redemption and Funding Strategies
 

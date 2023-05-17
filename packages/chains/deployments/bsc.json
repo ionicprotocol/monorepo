@@ -260,6 +260,9 @@
     "FuseSafeLiquidator_Proxy": {
       "address": "0xc9C3D317E89f4390A564D56180bBB1842CF3c99C"
     },
+    "GammaLpTokenLiquidator": {
+      "address": "0xf811898366003995de7202E55E3416419C71d847"
+    },
     "GammaPoolPriceOracle": {
       "address": "0x97c4Ff71D0bcF1EaAFF7709aD24Dc387d2BC5df7"
     },
