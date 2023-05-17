@@ -86,6 +86,7 @@ export interface TokenData {
   extraData: ExtraData;
   logoURL: string;
   name: string;
+  originalSymbol?: string;
   overlayTextColor: string;
   symbol: string;
 }

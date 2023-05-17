@@ -7,17 +7,19 @@ import type { Err, LeveragePerChainStatus } from '@ui/types/ComponentPropsType';
 
 export const useLeveragePerChain = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();
+  console.log(address);
 
   const leverageQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
         cacheTime: Infinity,
-        enabled: !!chainId,
+        enabled: !!chainId && !!address,
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
 
-          if (chainId && sdk) {
-            return await sdk.getAllVaults();
+          if (chainId && sdk && address) {
+            console.log(address);
+            return await sdk.getAllLeveredPositions(address);
           } else {
             return null;
           }
