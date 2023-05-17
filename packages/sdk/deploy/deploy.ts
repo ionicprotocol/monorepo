@@ -598,7 +598,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const currentLRExtensions = await liquidatorsRegistry._listExtensions();
   if (!currentLRExtensions.length || currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address) {
     let extToReplace;
-    if (!currentLRExtensions.length) {
+    if (currentLRExtensions.length == 0) {
       extToReplace = constants.AddressZero;
     } else {
       extToReplace = currentLRExtensions[0];
@@ -759,7 +759,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (lpfAddress !== lpf.address) {
     tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
     await tx.wait();
-    console.log("setAddress LiquidatorsRegistry: ", tx.hash);
+    console.log("setAddress LeveredPositionFactory: ", tx.hash);
   }
 
   await configureAddressesProviderStrategies({
