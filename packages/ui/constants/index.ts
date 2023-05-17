@@ -116,6 +116,7 @@ export const ankrBNBContractABI = [
 
 export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
 export const VAULTS_COUNT_PER_PAGE = [25, 50, 75];
+export const LEVERAGES_COUNT_PER_PAGE = [25, 50, 75];
 export const POOLS_COUNT_PER_PAGE = [25, 50, 75];
 
 export const REWARDS = 'Rewards';
@@ -198,6 +199,9 @@ export const MARKET_COLUMNS = [
 
 export const VAULT = 'Vault';
 export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
+
+export const COLLATERAL_ASSET = 'Collateral';
+export const BORROWABLE_ASSET = 'Borrowable';
 
 export const POOL_NAME = 'Pool Name';
 export const ASSETS = 'Assets';

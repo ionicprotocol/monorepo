@@ -8,14 +8,14 @@ import LeverageHero from '@ui/components/pages/LeveragePage/LeverageHero/index';
 import { LeverageList } from '@ui/components/pages/LeveragePage/LeverageList/index';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { MIDAS_LOCALSTORAGE_KEYS, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
-import { useLeveragePerChain } from '@ui/hooks/leverage/useLeveragePerChain';
+import { useLeveragesPerChain } from '@ui/hooks/leverage/useLeveragesPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 const LeveragePage = memo(() => {
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
   const enabledChains = useEnabledChains();
-  const { isLoading, leveragePerChain } = useLeveragePerChain([...enabledChains]);
+  const { isLoading, leveragesPerChain } = useLeveragesPerChain([...enabledChains]);
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
@@ -57,12 +57,12 @@ const LeveragePage = memo(() => {
       <PageTransitionLayout>
         <FusePageLayout>
           <LeverageHero />
-          {leveragePerChain && initSorting && initColumnVisibility ? (
+          {leveragesPerChain && initSorting && initColumnVisibility ? (
             <LeverageList
               initColumnVisibility={initColumnVisibility}
               initSorting={initSorting}
               isLoading={isLoading}
-              vaultsPerChain={leveragePerChain}
+              leveragesPerChain={leveragesPerChain}
             />
           ) : (
             <>

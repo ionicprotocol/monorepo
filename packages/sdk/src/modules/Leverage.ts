@@ -1,28 +1,66 @@
-import { SupportedChains } from "@midas-capital/types";
+import { LeveredPosition, LeveredPositionBorrowable, SupportedChains } from "@midas-capital/types";
 
 import { CreateContractsModule } from "./CreateContracts";
+import { ChainSupportedAssets } from "./FusePools";
 
 export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Leverage extends Base {
-    async getAllLeveredPositions(account: string): Promise<void> {
+    async getAllLeveredPositions(): Promise<LeveredPosition[]> {
       if (this.chainId === SupportedChains.chapel) {
         try {
+          const leveredPositions: LeveredPosition[] = [];
           const leveredPositionFactory = this.createLeveredPositionFactory();
-          const positions = await leveredPositionFactory.callStatic.getPositionsByAccount(account);
-          const res = await Promise.all(
-            positions.map(async (position) => {
-              const positionContract = this.createLeveredPosition(position);
-              const [market, asset, currentLeverageRatio] = await Promise.all([
-                positionContract.callStatic.collateralMarket(),
-                positionContract.callStatic.collateralAsset(),
-                positionContract.callStatic.getCurrentLeverageRatio(),
-              ]);
+          const {
+            markets: collateralCTokens,
+            underlyings: collateralUnderlyings,
+            symbols: collateralsymbols,
+          } = await leveredPositionFactory.callStatic.getCollateralMarkets();
 
-              return { market, asset, currentLeverageRatio };
+          await Promise.all(
+            collateralCTokens.map(async (collateralCToken, index) => {
+              const collateralAsset = ChainSupportedAssets[this.chainId].find(
+                (asset) => asset.underlying === collateralUnderlyings[index]
+              );
+              const {
+                markets: borrowableMarkets,
+                underlyings: borrowableUnderlyings,
+                symbols: borrowableSymbols,
+                rates: borrowableRates,
+              } = await leveredPositionFactory.callStatic.getBorrowableMarketsAndRates(collateralCToken);
+
+              const borrowable: LeveredPositionBorrowable[] = [];
+              borrowableMarkets.map((borrowableMarket, i) => {
+                const borrowableAsset = ChainSupportedAssets[this.chainId].find(
+                  (asset) => asset.underlying === borrowableUnderlyings[index]
+                );
+                borrowable.push({
+                  cToken: borrowableMarket,
+                  underlyingToken: borrowableUnderlyings[i],
+                  symbol: borrowableAsset
+                    ? borrowableAsset.originalSymbol
+                      ? borrowableAsset.originalSymbol
+                      : borrowableAsset.symbol
+                    : borrowableSymbols[index],
+                  rate: Number(borrowableRates[i]),
+                });
+              });
+              leveredPositions.push({
+                chainId: this.chainId,
+                collateral: {
+                  cToken: collateralCToken,
+                  underlyingToken: collateralUnderlyings[index],
+                  symbol: collateralAsset
+                    ? collateralAsset.originalSymbol
+                      ? collateralAsset.originalSymbol
+                      : collateralAsset.symbol
+                    : collateralsymbols[index],
+                },
+                borrowable,
+              });
             })
           );
 
-          console.log({ res });
+          return leveredPositions;
         } catch (error) {
           this.logger.error(`get levered positions error in chain ${this.chainId}:  ${error}`);
 
@@ -32,7 +70,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           );
         }
       } else {
-        // return [];
+        return [];
       }
     }
   };
