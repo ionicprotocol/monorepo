@@ -104,7 +104,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
                     rel="noreferrer"
                   >
                     <Button rightIcon={<ExternalLinkIcon />} size="xs" variant={'external'}>
-                      Leverage Contract
+                      Market Contract
                     </Button>
                   </Link>
                 </HStack>

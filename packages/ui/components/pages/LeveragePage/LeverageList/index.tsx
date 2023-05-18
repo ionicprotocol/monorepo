@@ -45,7 +45,7 @@ import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/Fuse
 import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
 import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
 import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/index';
-import { BorrowableAsset } from '@ui/components/pages/LeveragePage/LeverageList/BorrowableAsset';
+import { BorrowableAssets } from '@ui/components/pages/LeveragePage/LeverageList/BorrowableAssets';
 import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
@@ -238,7 +238,7 @@ export const LeverageList = ({
       },
       {
         accessorFn: (row) => row.borrowableAsset,
-        cell: ({ getValue }) => <BorrowableAsset leverage={getValue<LeveredPosition>()} />,
+        cell: ({ getValue }) => <BorrowableAssets leverage={getValue<LeveredPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => (
           <TableHeaderCell context={context}>{BORROWABLE_ASSET}</TableHeaderCell>
