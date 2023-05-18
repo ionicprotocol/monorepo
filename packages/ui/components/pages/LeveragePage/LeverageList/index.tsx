@@ -20,7 +20,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import type { SupportedChains, VaultData } from '@midas-capital/types';
+import type { LeveredPosition, SupportedChains } from '@midas-capital/types';
 import type {
   ColumnDef,
   FilterFn,
@@ -38,15 +38,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
+import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
 import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
-import { Chain } from '@ui/components/pages/VaultsPage/VaultsList/Chain';
-import { SupplyApy } from '@ui/components/pages/VaultsPage/VaultsList/SupplyApy';
+import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/index';
+import { BorrowableAsset } from '@ui/components/pages/LeveragePage/LeverageList/BorrowableAsset';
+import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
-import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CIconButton } from '@ui/components/shared/Button';
@@ -54,35 +55,32 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
+  BORROWABLE_ASSET,
   CHAIN,
+  COLLATERAL_ASSET,
   HIDDEN,
+  LEVERAGES_COUNT_PER_PAGE,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
-  POOL_NAME,
   SEARCH,
   SUPPLY_APY,
-  TOTAL_SUPPLY,
-  VAULT,
-  VAULTS_COUNT_PER_PAGE,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
-import type { Err, VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
-import { sortVaults } from '@ui/utils/sorts';
-import { AdditionalInfo } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/index';
+import type { Err, LeveragesPerChainStatus } from '@ui/types/ComponentPropsType';
+import { sortLeverages } from '@ui/utils/sorts';
 
-export type VaultRowData = {
-  chain: VaultData;
-  supplyApy: VaultData;
-  totalSupply: VaultData;
-  vault: VaultData;
+export type LeverageRowData = {
+  borrowableAsset: LeveredPosition;
+  chain: LeveredPosition;
+  collateralAsset: LeveredPosition;
+  supplyApy: LeveredPosition;
 };
 
 export const LeverageList = ({
-  vaultsPerChain,
+  leveragesPerChain,
   initSorting,
   initColumnVisibility,
   isLoading,
@@ -90,17 +88,15 @@ export const LeverageList = ({
   initColumnVisibility: VisibilityState;
   initSorting: SortingState;
   isLoading: boolean;
-  vaultsPerChain: VaultsPerChainStatus;
+  leveragesPerChain: LeveragesPerChainStatus;
 }) => {
-  const { address } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
-  const [selectedFilteredVaults, setSelectedFilteredVaults] = useState<VaultData[]>([]);
-
+  const [selectedFilteredLeverages, setSelectedFilteredLeverages] = useState<LeveredPosition[]>([]);
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: VAULTS_COUNT_PER_PAGE[0],
+    pageSize: LEVERAGES_COUNT_PER_PAGE[0],
   });
 
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
@@ -109,128 +105,149 @@ export const LeverageList = ({
 
   const enabledChains = useEnabledChains();
 
-  const allVaults = useMemo(() => {
-    return Object.values(vaultsPerChain).reduce((res, vaults) => {
-      if (vaults.data && vaults.data.length > 0) {
-        res.push(...vaults.data);
+  const allLeverages = useMemo(() => {
+    return Object.values(leveragesPerChain).reduce((res, leverages) => {
+      if (leverages.data && leverages.data.length > 0) {
+        res.push(...leverages.data);
       }
 
       return res;
-    }, [] as VaultData[]);
-  }, [vaultsPerChain]);
+    }, [] as LeveredPosition[]);
+  }, [leveragesPerChain]);
 
   const loadingStatusPerChain = useMemo(() => {
     const _loadingStatusPerChain: { [chainId: string]: boolean } = {};
 
-    Object.entries(vaultsPerChain).map(([chainId, vaults]) => {
-      _loadingStatusPerChain[chainId] = vaults.isLoading;
+    Object.entries(leveragesPerChain).map(([chainId, leverage]) => {
+      _loadingStatusPerChain[chainId] = leverage.isLoading;
     });
 
     return _loadingStatusPerChain;
-  }, [vaultsPerChain]);
+  }, [leveragesPerChain]);
 
   useEffect(() => {
-    const vaults: VaultData[] = [];
+    const leverages: LeveredPosition[] = [];
 
     if (globalFilter.includes(ALL)) {
-      setSelectedFilteredVaults([...allVaults]);
+      setSelectedFilteredLeverages([...allLeverages]);
     } else {
       globalFilter.map((filter) => {
-        const data = vaultsPerChain[filter.toString()]?.data;
+        const data = leveragesPerChain[filter.toString()]?.data;
 
         if (data) {
-          vaults.push(...data);
+          leverages.push(...data);
         }
       });
 
-      setSelectedFilteredVaults(vaults);
+      setSelectedFilteredLeverages(leverages);
     }
-  }, [globalFilter, vaultsPerChain, allVaults]);
+  }, [globalFilter, leveragesPerChain, allLeverages]);
 
-  const vaultFilter: FilterFn<VaultRowData> = (row, columnId, value) => {
-    if (
-      (!searchText ||
-        (value.includes(SEARCH) &&
-          (row.original.vault.symbol.toLowerCase().includes(searchText.toLowerCase()) ||
-            row.original.vault.asset.toLowerCase().includes(searchText.toLowerCase())))) &&
-      (!value.includes(HIDDEN) ||
-        (value.includes(HIDDEN) && !row.original.vault.totalSupply.isZero()))
-    ) {
-      if (value.includes(ALL) || value.includes(row.original.vault.chainId)) {
-        return true;
+  const leverageFilter: FilterFn<LeverageRowData> = useCallback(
+    (row, columnId, value) => {
+      if (
+        (!searchText ||
+          (value.includes(SEARCH) &&
+            (row.original.collateralAsset.collateral.symbol
+              .toLowerCase()
+              .includes(searchText.toLowerCase()) ||
+              row.original.collateralAsset.collateral.underlyingToken
+                .toLowerCase()
+                .includes(searchText.toLowerCase())))) &&
+        !value.includes(HIDDEN)
+      ) {
+        if (value.includes(ALL) || value.includes(row.original.collateralAsset.chainId)) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
-    } else {
-      return false;
-    }
-  };
+    },
+    [searchText]
+  );
 
-  const vaultSort: SortingFn<VaultRowData> = React.useCallback((rowA, rowB, columnId) => {
-    if (columnId === VAULT) {
-      return rowB.original.vault.symbol.localeCompare(rowA.original.vault.symbol);
+  const leverageSort: SortingFn<LeverageRowData> = useCallback((rowA, rowB, columnId) => {
+    if (columnId === COLLATERAL_ASSET) {
+      return rowB.original.collateralAsset.collateral.symbol.localeCompare(
+        rowA.original.collateralAsset.collateral.symbol
+      );
     } else if (columnId === CHAIN) {
-      return Number(rowB.original.vault.chainId) > Number(rowA.original.vault.chainId) ? 1 : -1;
+      return Number(rowB.original.collateralAsset.chainId) >
+        Number(rowA.original.collateralAsset.chainId)
+        ? 1
+        : -1;
     } else if (columnId === SUPPLY_APY) {
-      return Number(rowB.original.vault.supplyApy) > Number(rowA.original.vault.supplyApy) ? 1 : -1;
-    } else if (columnId === TOTAL_SUPPLY) {
-      return rowB.original.vault.totalSupply.gt(rowA.original.vault.totalSupply) ? 1 : -1;
+      return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
+        Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
+        ? 1
+        : -1;
     } else {
       return 0;
     }
   }, []);
 
-  const data: VaultRowData[] = useMemo(() => {
-    return sortVaults(allVaults).map((vault) => {
+  const data: LeverageRowData[] = useMemo(() => {
+    return sortLeverages(allLeverages).map((leverage) => {
       return {
-        chain: vault,
-        supplyApy: vault,
-        totalSupply: vault,
-        vault: vault,
+        borrowableAsset: leverage,
+        chain: leverage,
+        collateralAsset: leverage,
+        supplyApy: leverage,
       };
     });
-  }, [allVaults]);
+  }, [allLeverages]);
 
-  const columns: ColumnDef<VaultRowData>[] = useMemo(() => {
+  const columns: ColumnDef<LeverageRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.chain,
-        cell: ({ getValue }) => <Chain chainId={Number(getValue<VaultData>().chainId)} />,
+        cell: ({ getValue }) => <Chain chainId={Number(getValue<LeveredPosition>().chainId)} />,
         enableHiding: false,
         footer: (props) => props.column.id,
         header: () => null,
         id: CHAIN,
-        sortingFn: vaultSort,
+        sortingFn: leverageSort,
       },
       {
-        accessorFn: (row) => row.vault,
-        cell: ({ getValue }) => <TokenName vault={getValue<VaultData>()} />,
+        accessorFn: (row) => row.collateralAsset,
+        cell: ({ getValue }) => (
+          <TokenName
+            chainId={Number(getValue<LeveredPosition>().chainId)}
+            symbol={getValue<LeveredPosition>().collateral.symbol}
+            underlying={getValue<LeveredPosition>().collateral.underlyingToken}
+          />
+        ),
         enableHiding: false,
-        filterFn: vaultFilter,
+        filterFn: leverageFilter,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{VAULT}</TableHeaderCell>,
-        id: VAULT,
-        sortingFn: vaultSort,
+        header: (context) => (
+          <TableHeaderCell context={context}>{COLLATERAL_ASSET}</TableHeaderCell>
+        ),
+        id: COLLATERAL_ASSET,
+        sortingFn: leverageSort,
       },
       {
         accessorFn: (row) => row.supplyApy,
-        cell: ({ getValue }) => <SupplyApy vault={getValue<VaultData>()} />,
+        cell: ({ getValue }) => <SupplyApy leverage={getValue<LeveredPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
         id: SUPPLY_APY,
-        sortingFn: vaultSort,
+        sortingFn: leverageSort,
       },
       {
-        accessorFn: (row) => row.totalSupply,
-        cell: ({ getValue }) => <TotalSupply vault={getValue<VaultData>()} />,
+        accessorFn: (row) => row.borrowableAsset,
+        cell: ({ getValue }) => <BorrowableAsset leverage={getValue<LeveredPosition>()} />,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
-        id: TOTAL_SUPPLY,
-        sortingFn: vaultSort,
+        header: (context) => (
+          <TableHeaderCell context={context}>{BORROWABLE_ASSET}</TableHeaderCell>
+        ),
+        id: BORROWABLE_ASSET,
+        sortingFn: leverageSort,
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [leverageFilter, leverageSort]);
 
   const table = useReactTable({
     columns,
@@ -243,7 +260,7 @@ export const LeverageList = ({
     getPaginationRowModel: getPaginationRowModel(),
     getRowCanExpand: () => true,
     getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: vaultFilter,
+    globalFilterFn: leverageFilter,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: onPagination,
@@ -320,22 +337,22 @@ export const LeverageList = ({
         arr.push(key);
       }
     });
-    const data = { ...oldObj, vaultColumnVisibility: arr, vaultSorting: sorting };
+    const data = { ...oldObj, leverageColumnVisibility: arr, leverageSorting: sorting };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 
   useEffect(() => {
-    const selectedChainId = Object.keys(vaultsPerChain).find((chainId) =>
+    const selectedChainId = Object.keys(leveragesPerChain).find((chainId) =>
       globalFilter.includes(Number(chainId))
     );
     if (selectedChainId) {
-      setErr(vaultsPerChain[selectedChainId].error);
-      setIsLoadingPerChain(vaultsPerChain[selectedChainId].isLoading);
+      setErr(leveragesPerChain[selectedChainId].error);
+      setIsLoadingPerChain(leveragesPerChain[selectedChainId].isLoading);
     } else {
       setErr(undefined);
       setIsLoadingPerChain(false);
     }
-  }, [globalFilter, vaultsPerChain]);
+  }, [globalFilter, leveragesPerChain]);
 
   return (
     <Box>
@@ -423,7 +440,7 @@ export const LeverageList = ({
             }}
             descriptions={[
               {
-                text: `Unable to retrieve Vaults. Please try again later.`,
+                text: `Unable to retrieve Leverages. Please try again later.`,
               },
             ]}
             title={err.reason ? err.reason : 'Unexpected Error'}
@@ -441,8 +458,8 @@ export const LeverageList = ({
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
                         px={{
-                          base: header.column.id === VAULT ? 2 : 1,
-                          lg: header.column.id === VAULT ? 4 : 2,
+                          base: header.column.id === COLLATERAL_ASSET ? 2 : 1,
+                          lg: header.column.id === COLLATERAL_ASSET ? 4 : 2,
                         }}
                         py={6}
                         textTransform="capitalize"
@@ -451,7 +468,7 @@ export const LeverageList = ({
                           justifyContent={
                             header.column.id === CHAIN
                               ? 'center'
-                              : header.column.id === VAULT || header.column.id === POOL_NAME
+                              : header.column.id === COLLATERAL_ASSET
                               ? 'flex-start'
                               : 'flex-end'
                           }
@@ -473,7 +490,7 @@ export const LeverageList = ({
                       background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                       borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                       borderColor={cCard.dividerColor}
-                      className={row.original.vault.symbol}
+                      className={row.original.collateralAsset.collateral.symbol}
                       cursor="pointer"
                       key={row.id}
                       onClick={() => row.toggleExpanded()}
@@ -503,10 +520,10 @@ export const LeverageList = ({
                     )}
                   </Fragment>
                 ))
-              ) : selectedFilteredVaults.length === 0 ? (
+              ) : selectedFilteredLeverages.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>No vaults in this chain.</Center>
+                    <Center py={8}>No leverages in this chain.</Center>
                   </Td>
                 </Tr>
               ) : (
@@ -528,7 +545,7 @@ export const LeverageList = ({
         <Flex alignItems="center" className="pagination" gap={4} justifyContent="flex-end" p={4}>
           <HStack>
             <Hide below="lg">
-              <Text>Vaults Per Page</Text>
+              <Text>Leverages Per Page</Text>
             </Hide>
             <Select
               maxW="max-content"

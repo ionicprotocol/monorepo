@@ -3,11 +3,10 @@ import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import type { Err, LeveragePerChainStatus } from '@ui/types/ComponentPropsType';
+import type { Err, LeveragesPerChainStatus } from '@ui/types/ComponentPropsType';
 
-export const useLeveragePerChain = (chainIds: SupportedChains[]) => {
+export const useLeveragesPerChain = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();
-  console.log(address);
 
   const leverageQueries = useQueries({
     queries: chainIds.map((chainId) => {
@@ -18,35 +17,34 @@ export const useLeveragePerChain = (chainIds: SupportedChains[]) => {
           const sdk = getSdk(Number(chainId));
 
           if (chainId && sdk && address) {
-            console.log(address);
-            return await sdk.getAllLeveredPositions(address);
+            return await sdk.getAllLeveredPositions();
           } else {
             return null;
           }
         },
-        queryKey: ['useLeveragePerChain', chainId, address],
+        queryKey: ['useLeveragesPerChain', chainId, address],
         staleTime: Infinity,
       };
     }),
   });
 
-  const [leveragePerChain, isLoading] = useMemo(() => {
-    const _leveragePerChain: LeveragePerChainStatus = {};
+  const [leveragesPerChain, isLoading] = useMemo(() => {
+    const _leveragesPerChain: LeveragesPerChainStatus = {};
 
     let isLoading = true;
 
     leverageQueries.map((leverage, index) => {
       isLoading = isLoading && leverage.isLoading;
       const _chainId = chainIds[index];
-      _leveragePerChain[_chainId.toString()] = {
+      _leveragesPerChain[_chainId.toString()] = {
         data: leverage.data,
         error: leverage.error as Err | undefined,
         isLoading: leverage.isLoading,
       };
     });
 
-    return [_leveragePerChain, isLoading];
+    return [_leveragesPerChain, isLoading];
   }, [leverageQueries, chainIds]);
 
-  return { isLoading, leveragePerChain };
+  return { isLoading, leveragesPerChain };
 };

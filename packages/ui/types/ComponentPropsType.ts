@@ -1,6 +1,6 @@
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import type { LeverageData, NativePricedFuseAsset, VaultData } from '@midas-capital/types';
+import type { LeveredPosition, NativePricedFuseAsset, VaultData } from '@midas-capital/types';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import type { ReactNode } from 'react';
@@ -259,9 +259,9 @@ export type VaultsPerChainStatus = {
   };
 };
 
-export type LeveragePerChainStatus = {
+export type LeveragesPerChainStatus = {
   [chainId: string]: {
-    data?: LeverageData[] | null | undefined;
+    data?: LeveredPosition[] | null | undefined;
     error: Error | undefined;
     isLoading: boolean;
   };

@@ -2,21 +2,20 @@ import { BigNumber } from "ethers";
 
 import { SupportedChains } from "./enums";
 
-export interface LeverageData {
-  chainId: SupportedChains;
-  totalSupply: BigNumber;
-  totalSupplyNative: number;
-  asset: string;
+export interface LeveredPositionBorrowable {
+  cToken: string;
+  underlyingToken: string;
   symbol: string;
-  supplyApy: BigNumber;
-  adaptersCount: number;
-  isEmergencyStopped: boolean;
-  decimals: number;
-  underlyingPrice: BigNumber;
-  vault: string;
-  extraDocs: string | undefined;
-  performanceFee: BigNumber;
-  depositFee: BigNumber;
-  withdrawalFee: BigNumber;
-  managementFee: BigNumber;
+  rate: number;
+}
+
+export interface LeveredPosition {
+  chainId: SupportedChains;
+  collateral: {
+    cToken: string;
+    underlyingToken: string;
+    symbol: string;
+    supplyRatePerBlock: BigNumber;
+  };
+  borrowable: LeveredPositionBorrowable[];
 }
