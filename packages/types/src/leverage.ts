@@ -15,7 +15,7 @@ export interface LeveredPosition {
     cToken: string;
     underlyingToken: string;
     symbol: string;
-    supplyRatePerYear: BigNumber;
+    supplyRatePerBlock: BigNumber;
   };
   borrowable: LeveredPositionBorrowable[];
 }
