@@ -35,11 +35,13 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
                       background: cCard.hoverBgColor,
                     }}
                     cursor="pointer"
+                    justifyContent="space-between"
                     key={i}
                     onClick={() => onClick(asset.cToken)}
                     px={2}
                     py={1}
                     spacing={4}
+                    width="100%"
                   >
                     <TokenIcon
                       address={asset.underlyingToken}
@@ -60,7 +62,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
             </VStack>
           }
           bodyProps={{ p: 0 }}
-          contentProps={{ borderRadius: 4, mt: -2 }}
+          contentProps={{ borderRadius: 4, mt: -1, width: '230px' }}
         >
           <Button
             _hover={{ background: cCard.hoverBgColor }}
@@ -72,18 +74,17 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
             px={2}
             rightIcon={<FaAngleDown />}
             variant="_outline"
+            width="230px"
           >
-            <HStack spacing={4}>
+            <HStack justifyContent="space-between" width="100%">
               <TokenIcon
                 address={borrowableAsset.underlyingToken}
                 chainId={leverage.chainId}
                 size="sm"
               />
-              <HStack justifyContent="flex-end" maxW="100px">
-                <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">
-                  {borrowableAsset.symbol}
-                </EllipsisText>
-              </HStack>
+              <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">
+                {borrowableAsset.symbol}
+              </EllipsisText>
               <Text>{borrowableAsset.rate.toFixed(2)}%</Text>
             </HStack>
           </Button>
