@@ -38,16 +38,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
 import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
+import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/index';
+import { BorrowableAsset } from '@ui/components/pages/LeveragePage/LeverageList/BorrowableAsset';
 import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/SupplyApy';
-import { AdditionalInfo } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/index';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
-import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CIconButton } from '@ui/components/shared/Button';
@@ -55,6 +55,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
+  BORROWABLE_ASSET,
   CHAIN,
   COLLATERAL_ASSET,
   HIDDEN,
@@ -64,10 +65,8 @@ import {
   POOL_NAME,
   SEARCH,
   SUPPLY_APY,
-  TOTAL_SUPPLY,
   VAULT,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -93,7 +92,6 @@ export const LeverageList = ({
   isLoading: boolean;
   leveragesPerChain: LeveragesPerChainStatus;
 }) => {
-  const { address } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [selectedFilteredLeverages, setSelectedFilteredLeverages] = useState<LeveredPosition[]>([]);
@@ -147,29 +145,32 @@ export const LeverageList = ({
     }
   }, [globalFilter, leveragesPerChain, allLeverages]);
 
-  const leverageFilter: FilterFn<LeverageRowData> = (row, columnId, value) => {
-    if (
-      (!searchText ||
-        (value.includes(SEARCH) &&
-          (row.original.collateralAsset.collateral.symbol
-            .toLowerCase()
-            .includes(searchText.toLowerCase()) ||
-            row.original.collateralAsset.collateral.underlyingToken
+  const leverageFilter: FilterFn<LeverageRowData> = useCallback(
+    (row, columnId, value) => {
+      if (
+        (!searchText ||
+          (value.includes(SEARCH) &&
+            (row.original.collateralAsset.collateral.symbol
               .toLowerCase()
-              .includes(searchText.toLowerCase())))) &&
-      !value.includes(HIDDEN)
-    ) {
-      if (value.includes(ALL) || value.includes(row.original.collateralAsset.chainId)) {
-        return true;
+              .includes(searchText.toLowerCase()) ||
+              row.original.collateralAsset.collateral.underlyingToken
+                .toLowerCase()
+                .includes(searchText.toLowerCase())))) &&
+        !value.includes(HIDDEN)
+      ) {
+        if (value.includes(ALL) || value.includes(row.original.collateralAsset.chainId)) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
-    } else {
-      return false;
-    }
-  };
+    },
+    [searchText]
+  );
 
-  const leverageSort: SortingFn<LeverageRowData> = React.useCallback((rowA, rowB, columnId) => {
+  const leverageSort: SortingFn<LeverageRowData> = useCallback((rowA, rowB, columnId) => {
     if (columnId === COLLATERAL_ASSET) {
       return rowB.original.collateralAsset.collateral.symbol.localeCompare(
         rowA.original.collateralAsset.collateral.symbol
@@ -180,7 +181,10 @@ export const LeverageList = ({
         ? 1
         : -1;
     } else if (columnId === SUPPLY_APY) {
-      return Number(rowB.original.vault.supplyApy) > Number(rowA.original.vault.supplyApy) ? 1 : -1;
+      return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
+        Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
+        ? 1
+        : -1;
     } else {
       return 0;
     }
@@ -235,16 +239,17 @@ export const LeverageList = ({
         sortingFn: leverageSort,
       },
       {
-        accessorFn: (row) => row.totalSupply,
-        cell: ({ getValue }) => <TotalSupply vault={getValue<LeveredPosition>()} />,
+        accessorFn: (row) => row.borrowableAsset,
+        cell: ({ getValue }) => <BorrowableAsset leverage={getValue<LeveredPosition>()} />,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
-        id: TOTAL_SUPPLY,
+        header: (context) => (
+          <TableHeaderCell context={context}>{BORROWABLE_ASSET}</TableHeaderCell>
+        ),
+        id: BORROWABLE_ASSET,
         sortingFn: leverageSort,
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [leverageFilter, leverageSort]);
 
   const table = useReactTable({
     columns,
@@ -339,17 +344,17 @@ export const LeverageList = ({
   }, [sorting, columnVisibility]);
 
   useEffect(() => {
-    const selectedChainId = Object.keys(vaultsPerChain).find((chainId) =>
+    const selectedChainId = Object.keys(leveragesPerChain).find((chainId) =>
       globalFilter.includes(Number(chainId))
     );
     if (selectedChainId) {
-      setErr(vaultsPerChain[selectedChainId].error);
-      setIsLoadingPerChain(vaultsPerChain[selectedChainId].isLoading);
+      setErr(leveragesPerChain[selectedChainId].error);
+      setIsLoadingPerChain(leveragesPerChain[selectedChainId].isLoading);
     } else {
       setErr(undefined);
       setIsLoadingPerChain(false);
     }
-  }, [globalFilter, vaultsPerChain]);
+  }, [globalFilter, leveragesPerChain]);
 
   return (
     <Box>
@@ -487,7 +492,7 @@ export const LeverageList = ({
                       background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                       borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                       borderColor={cCard.dividerColor}
-                      className={row.original.vault.symbol}
+                      className={row.original.collateralAsset.collateral.symbol}
                       cursor="pointer"
                       key={row.id}
                       onClick={() => row.toggleExpanded()}
