@@ -12,6 +12,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
   const [borrowableAsset, setBorrowableAsset] = useState<LeveredPositionBorrowable>(
     leverage.borrowable[0]
   );
+
   const onClick = (ctoken: string) => {
     const asset = leverage.borrowable.find((asset) => asset.cToken === ctoken);
     if (asset) {
@@ -19,7 +20,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
     }
   };
 
-  const { cPage } = useColors();
+  const { cCard } = useColors();
 
   return (
     <HStack justifyContent="flex-end">
@@ -31,7 +32,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
                 return (
                   <HStack
                     _hover={{
-                      background: cPage.primary.dividerColor,
+                      background: cCard.hoverBgColor,
                     }}
                     cursor="pointer"
                     key={i}
@@ -60,12 +61,14 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
           }
           bodyProps={{ p: 0 }}
           contentProps={{ borderRadius: 4, mt: -2 }}
-          popoverProps={{ trigger: 'click' }}
         >
           <Button
+            _hover={{ background: cCard.hoverBgColor }}
             aria-label="Column Settings"
             height={12}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
             px={2}
             rightIcon={<FaAngleDown />}
             variant="_outline"
