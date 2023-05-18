@@ -202,7 +202,7 @@ export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
 
 export const COLLATERAL_ASSET = 'Collateral';
 export const BORROWABLE_ASSET = 'Borrowable';
-
+export const LEVERAGE_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, BORROWABLE_ASSET];
 export const POOL_NAME = 'Pool Name';
 export const ASSETS = 'Assets';
 export const CHAIN = 'Chain';
