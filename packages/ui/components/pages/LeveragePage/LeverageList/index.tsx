@@ -239,12 +239,12 @@ export const LeverageList = ({
       {
         accessorFn: (row) => row.borrowableAsset,
         cell: ({ getValue }) => <BorrowableAssets leverage={getValue<LeveredPosition>()} />,
+        enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => (
           <TableHeaderCell context={context}>{BORROWABLE_ASSET}</TableHeaderCell>
         ),
         id: BORROWABLE_ASSET,
-        sortingFn: leverageSort,
       },
     ];
   }, [leverageFilter, leverageSort]);
