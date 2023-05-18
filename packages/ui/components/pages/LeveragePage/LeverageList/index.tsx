@@ -62,10 +62,8 @@ import {
   LEVERAGES_COUNT_PER_PAGE,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
-  POOL_NAME,
   SEARCH,
   SUPPLY_APY,
-  VAULT,
 } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
@@ -339,7 +337,7 @@ export const LeverageList = ({
         arr.push(key);
       }
     });
-    const data = { ...oldObj, leverageSorting: sorting, vaultColumnVisibility: arr };
+    const data = { ...oldObj, leverageColumnVisibility: arr, leverageSorting: sorting };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 
@@ -442,7 +440,7 @@ export const LeverageList = ({
             }}
             descriptions={[
               {
-                text: `Unable to retrieve Vaults. Please try again later.`,
+                text: `Unable to retrieve Leverages. Please try again later.`,
               },
             ]}
             title={err.reason ? err.reason : 'Unexpected Error'}
@@ -460,8 +458,8 @@ export const LeverageList = ({
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
                         px={{
-                          base: header.column.id === VAULT ? 2 : 1,
-                          lg: header.column.id === VAULT ? 4 : 2,
+                          base: header.column.id === COLLATERAL_ASSET ? 2 : 1,
+                          lg: header.column.id === COLLATERAL_ASSET ? 4 : 2,
                         }}
                         py={6}
                         textTransform="capitalize"
@@ -470,7 +468,7 @@ export const LeverageList = ({
                           justifyContent={
                             header.column.id === CHAIN
                               ? 'center'
-                              : header.column.id === VAULT || header.column.id === POOL_NAME
+                              : header.column.id === COLLATERAL_ASSET
                               ? 'flex-start'
                               : 'flex-end'
                           }
@@ -525,7 +523,7 @@ export const LeverageList = ({
               ) : selectedFilteredLeverages.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>No vaults in this chain.</Center>
+                    <Center py={8}>No leverages in this chain.</Center>
                   </Td>
                 </Tr>
               ) : (
@@ -547,7 +545,7 @@ export const LeverageList = ({
         <Flex alignItems="center" className="pagination" gap={4} justifyContent="flex-end" p={4}>
           <HStack>
             <Hide below="lg">
-              <Text>Vaults Per Page</Text>
+              <Text>Leverages Per Page</Text>
             </Hide>
             <Select
               maxW="max-content"
