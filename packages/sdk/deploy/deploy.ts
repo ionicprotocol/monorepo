@@ -11,8 +11,8 @@ import {
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
-import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
+import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
@@ -632,7 +632,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
   console.log("LeveredPositionFactory: ", lpfDep.address);
 
-  const leveredPositionFactory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
+  const leveredPositionFactory = (await ethers.getContract(
+    "LeveredPositionFactory",
+    deployer
+  )) as LeveredPositionFactory;
   const currentLiquidatorsRegistry = await leveredPositionFactory.callStatic.liquidatorsRegistry();
   if (currentLiquidatorsRegistry.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
     tx = await leveredPositionFactory.setLiquidatorsRegistry(liquidatorsRegistry.address);

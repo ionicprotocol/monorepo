@@ -1,15 +1,15 @@
 import { task, types } from "hardhat/config";
 
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { ERC20PresetMinterPauser } from "../../typechain/ERC20PresetMinterPauser";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../../typechain/LiquidatorsRegistry";
-import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
-import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
-import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
 export default task("levered-positions:configure-pair")
   .addParam("collateralMarketAddress", "Address of the market that will be used as collateral", undefined, types.string)
@@ -100,7 +100,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
       log: true,
       skipIfAlreadyDeployed: true,
       args: ["Testing DAI", "DAI"],
-      waitConfirmations: 1
+      waitConfirmations: 1,
     });
 
     const tdai = (await ethers.getContractAt(
@@ -112,16 +112,13 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     const ts = await tdai.callStatic.totalSupply();
     if (ts == 0) {
       const mintAmount = ethers.utils.parseEther("87654321");
-      let tx = await tdai.mint(deployer, mintAmount);
+      const tx = await tdai.mint(deployer, mintAmount);
       await tx.wait();
       console.log(`minted some tokens to the deployer`);
     }
 
     const chapelMidasPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
-    const spo = (await ethers.getContract(
-      "SimplePriceOracle",
-      deployer
-    )) as SimplePriceOracle;
+    const spo = (await ethers.getContract("SimplePriceOracle", deployer)) as SimplePriceOracle;
     let tx;
 
     tx = await spo.setDirectPrice(tdai.address, ethers.utils.parseEther("0.67"));
@@ -133,11 +130,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     await tx.wait();
     console.log(`added the SPO to the MPO for the testing DAI token`);
 
-    const pool = (await ethers.getContractAt(
-      "Comptroller",
-      chapelMidasPool,
-      deployer
-    )) as Comptroller;
+    const pool = (await ethers.getContractAt("Comptroller", chapelMidasPool, deployer)) as Comptroller;
     const midasPoolAsExt = (await ethers.getContractAt(
       "ComptrollerFirstExtension",
       chapelMidasPool,
@@ -189,7 +182,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     await run("levered-positions:configure-pair", {
       collateralMarketAddress: testingBombMarket,
       borrowMarketAddress: newMarketAddress,
-      liquidatorName: "XBombLiquidatorFunder"
+      liquidatorName: "XBombLiquidatorFunder",
     });
   }
 );
