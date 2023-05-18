@@ -78,6 +78,13 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SimplePriceOracle,
   },
+  {
+    symbol: assetSymbols.DAI,
+    underlying: "",
+    name: "Testing DAI",
+    decimals: 18,
+    oracle: OracleTypes.SimplePriceOracle,
+  },
 ];
 
 export default assets;

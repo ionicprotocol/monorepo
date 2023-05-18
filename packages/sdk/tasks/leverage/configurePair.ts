@@ -1,10 +1,15 @@
 import { task, types } from "hardhat/config";
 
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { Comptroller } from "../../typechain/Comptroller";
 import { ERC20PresetMinterPauser } from "../../typechain/ERC20PresetMinterPauser";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../../typechain/LiquidatorsRegistry";
+import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
+import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 
 export default task("levered-positions:configure-pair")
   .addParam("collateralMarketAddress", "Address of the market that will be used as collateral", undefined, types.string)
@@ -79,6 +84,113 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
 
     const deployerPositions = await factory.callStatic.getPositionsByAccount(deployer);
     console.log(`position address ${deployerPositions[deployerPositions.length - 1]}`);
+  }
+);
+
+task("chapel-create-asset-deploy-market", "creates a new asset and deploy a market for it on chapel").setAction(
+  async ({}, { ethers, deployments, run, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const ffd = await ethers.getContract("FuseFeeDistributor");
+    const jrm = await ethers.getContract("JumpRateModel");
+    const rewardsDelegate = await ethers.getContract("CErc20RewardsDelegate");
+
+    const tdaiDep = await deployments.deploy("TestingDAI", {
+      contract: "ERC20PresetMinterPauser",
+      from: deployer,
+      log: true,
+      skipIfAlreadyDeployed: true,
+      args: ["Testing DAI", "DAI"],
+      waitConfirmations: 1
+    });
+
+    const tdai = (await ethers.getContractAt(
+      "ERC20PresetMinterPauser",
+      tdaiDep.address,
+      deployer
+    )) as ERC20PresetMinterPauser;
+
+    const ts = await tdai.callStatic.totalSupply();
+    if (ts == 0) {
+      const mintAmount = ethers.utils.parseEther("87654321");
+      let tx = await tdai.mint(deployer, mintAmount);
+      await tx.wait();
+      console.log(`minted some tokens to the deployer`);
+    }
+
+    const chapelMidasPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
+    const spo = (await ethers.getContract(
+      "SimplePriceOracle",
+      deployer
+    )) as SimplePriceOracle;
+    let tx;
+
+    tx = await spo.setDirectPrice(tdai.address, ethers.utils.parseEther("0.67"));
+    await tx.wait();
+    console.log(`set the price of the testing DAI`);
+
+    const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
+    tx = await mpo.add([tdai.address], [spo.address]);
+    await tx.wait();
+    console.log(`added the SPO to the MPO for the testing DAI token`);
+
+    const pool = (await ethers.getContractAt(
+      "Comptroller",
+      chapelMidasPool,
+      deployer
+    )) as Comptroller;
+    const midasPoolAsExt = (await ethers.getContractAt(
+      "ComptrollerFirstExtension",
+      chapelMidasPool,
+      deployer
+    )) as ComptrollerFirstExtension;
+
+    const constructorData = new ethers.utils.AbiCoder().encode(
+      ["address", "address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
+      [
+        tdai.address,
+        chapelMidasPool,
+        ffd.address,
+        jrm.address,
+        "M Testing BOMB",
+        "MTB",
+        rewardsDelegate.address,
+        new ethers.utils.AbiCoder().encode([], []),
+        0,
+        0,
+      ]
+    );
+
+    tx = await pool._deployMarket(false, constructorData, ethers.utils.parseEther("0.9"));
+    console.log(`mining tx ${tx.hash}`);
+    await tx.wait();
+    console.log(`deployed a testing DAI market`);
+
+    const allMarkets = await midasPoolAsExt.callStatic.getAllMarkets();
+    const newMarketAddress = allMarkets[allMarkets.length - 1];
+
+    tx = await tdai.approve(newMarketAddress, ethers.constants.MaxUint256);
+    await tx.wait();
+    console.log(`approved the new market to pull the underlying testing DAI tokens`);
+
+    const newMarket = (await ethers.getContractAt(
+      "CErc20RewardsDelegate",
+      newMarketAddress,
+      deployer
+    )) as CErc20RewardsDelegate;
+    const errCode = await newMarket.callStatic.mint(ethers.utils.parseEther("2"));
+    if (!errCode.isZero()) throw new Error(`unable to mint cTokens from the new testing BOMB market`);
+    else {
+      tx = await newMarket.mint(ethers.utils.parseEther("7654321"));
+      await tx.wait();
+      console.log(`minted some cTokens from the testing DAI market`);
+    }
+
+    const testingBombMarket = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
+    await run("levered-positions:configure-pair", {
+      collateralMarketAddress: testingBombMarket,
+      borrowMarketAddress: newMarketAddress,
+      liquidatorName: "XBombLiquidatorFunder"
+    });
   }
 );
 
