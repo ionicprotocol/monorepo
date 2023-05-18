@@ -7,6 +7,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const SupplyApy = ({ leverage }: { leverage: LeveredPosition }) => {
   const supplyApyColor = useColorModeValue('#51B2D4', 'cyan');
+
   const sdk = useSdk(leverage.chainId);
   const supplyAPY = useMemo(() => {
     if (sdk) {
@@ -20,7 +21,7 @@ export const SupplyApy = ({ leverage }: { leverage: LeveredPosition }) => {
   return (
     <HStack justifyContent="flex-end">
       <VStack alignItems={'flex-end'} spacing={0.5}>
-        {supplyAPY ? (
+        {supplyAPY !== undefined ? (
           <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
             {supplyAPY.toFixed(2)}%
           </Text>
