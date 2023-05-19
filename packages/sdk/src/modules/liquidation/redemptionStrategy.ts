@@ -310,6 +310,16 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         strategyData,
         outputToken,
       };
+    case RedemptionStrategyContract.GammaLpTokenLiquidator: {
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(
+          ["address", "address"],
+          [outputToken, midasSdk.chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER]
+        ),
+        outputToken,
+      };
+    }
     default: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
