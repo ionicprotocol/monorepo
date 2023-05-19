@@ -305,7 +305,7 @@ export const thenaDocsV2 = (token0: string, token1: string, poolAddress: string,
   <p> 3. Click on "Add Liquidty".</p>
   <p>This will credit your wallet with the Thena LP Tokens (${poolAddress}).</p><br />
   <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p><br />
-  <p> <b>NOTE</b>: do not stake the LPs on Thena, Midas will do that for you! </p>
+  <p> <b>NOTE</b>: <p> - Do not stake the LPs on Thena, Midas will do that for you! </p>  <p> - Make sure to use "AUTOMATIC" range for stable LPs </p> </p>
   `;
 };
 
