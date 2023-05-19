@@ -5,7 +5,6 @@ import {
   Grid,
   GridItem,
   HStack,
-  Input,
   Slider,
   SliderFilledTrack,
   SliderMark,
@@ -14,13 +13,14 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { LeveredPosition } from '@midas-capital/types';
+import type { LeveredPosition, LeveredPositionBorrowable } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { BorrowableAssets } from '../BorrowableAssets';
+import { BorrowList } from './BorrowList';
+import { SupplyAmount } from './SupplyAmount';
 
 import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -43,6 +43,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
+  const [borrowAsset, setBorrowAsset] = useState<LeveredPositionBorrowable>();
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -51,6 +52,12 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
       openChainModal();
     }
   };
+
+  const selectBorrowAsset = (asset: LeveredPositionBorrowable) => {
+    setBorrowAsset(asset);
+  };
+
+  console.log({ borrowAsset });
 
   const { cSlider } = useColors();
 
@@ -102,21 +109,10 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
               w="100%"
             >
               <GridItem colSpan={{ base: 1, lg: 2, md: 1 }}>
-                <VStack alignItems="flex-start" spacing={4}>
-                  <Text size="md">Supply</Text>
-                  <VStack alignItems="flex-start" spacing={0}>
-                    <Text>Available: xx</Text>
-                    <Input height={12} width="230px" />
-                  </VStack>
-                </VStack>
+                <SupplyAmount />
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 2, md: 1 }}>
-                <VStack alignItems="flex-start" height="100%" justifyContent="space-between">
-                  <Text size="md">Borrow</Text>
-                  <VStack>
-                    <BorrowableAssets leverage={leverage} />
-                  </VStack>
-                </VStack>
+                <BorrowList leverage={leverage} selectBorrowAsset={selectBorrowAsset} />
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 1, md: 2 }}>
                 <VStack alignItems="flex-start" height="100%" justifyContent="flex-end">
