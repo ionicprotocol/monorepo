@@ -5115,8 +5115,8 @@ __metadata:
   linkType: hard
 
 "@octokit/core@npm:^4.1.0":
-  version: 4.2.0
-  resolution: "@octokit/core@npm:4.2.0"
+  version: 4.2.1
+  resolution: "@octokit/core@npm:4.2.1"
   dependencies:
     "@octokit/auth-token": ^3.0.0
     "@octokit/graphql": ^5.0.0
@@ -5125,7 +5125,7 @@ __metadata:
     "@octokit/types": ^9.0.0
     before-after-hook: ^2.2.0
     universal-user-agent: ^6.0.0
-  checksum: 5ac56e7f14b42a5da8d3075a2ae41483521a78bee061a01f4a81d8c0ecd6a684b2e945d66baba0cd1fdf264639deedc3a96d0f32c4d2fc39b49ca10f52f4de39
+  checksum: f82d52e937e12da1c7c163341c845b8e27e7fa75678f5e5954e6fa017a94f1833d6e5c4e43f0be796fbfea9dc5e1137087f655dbd5acb3d57879e1b28568e0a9
   languageName: node
   linkType: hard
 
@@ -5202,8 +5202,8 @@ __metadata:
   linkType: hard
 
 "@octokit/request@npm:^6.0.0":
-  version: 6.2.4
-  resolution: "@octokit/request@npm:6.2.4"
+  version: 6.2.5
+  resolution: "@octokit/request@npm:6.2.5"
   dependencies:
     "@octokit/endpoint": ^7.0.0
     "@octokit/request-error": ^3.0.0
@@ -5211,7 +5211,7 @@ __metadata:
     is-plain-object: ^5.0.0
     node-fetch: ^2.6.7
     universal-user-agent: ^6.0.0
-  checksum: c498594cc7aef2321d43d52e503b73136983215ebaad80105e7774befd26d362650a07f4f25f0185b143613c4c1269a724a10d7e3cae09b2b1b177b976ee66fd
+  checksum: 856451ea8cc6b1dd0f6e350a141e65c318b5e3a25b8dea373d3afd115f9a3077535a0330f5d90e9db81dc3234dba1dd64edd31e68f639553baa10b4d02b99498
   languageName: node
   linkType: hard
 
@@ -5828,12 +5828,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinonjs/fake-timers@npm:^10.0.2":
-  version: 10.1.0
-  resolution: "@sinonjs/fake-timers@npm:10.1.0"
+"@sinonjs/fake-timers@npm:^10.0.2, @sinonjs/fake-timers@npm:^10.2.0":
+  version: 10.2.0
+  resolution: "@sinonjs/fake-timers@npm:10.2.0"
   dependencies:
     "@sinonjs/commons": ^3.0.0
-  checksum: f8f7e23a136e32ba0128493207e4223f453e033471257a971acb43840927e738a0838004b1e4fa046279609762a2dd8d700606616e9264dc3891c4f8d45889a2
+  checksum: 586c76e1dd90d03b0c4e754f2011325b38ac6055878c81c52434c900f36d9d245438c96ef69e08e28d9fbecf2335fb347b67850962d8b6e539dd7359d8c62802
   languageName: node
   linkType: hard
 
@@ -6974,9 +6974,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 20.2.0
-  resolution: "@types/node@npm:20.2.0"
-  checksum: 9b937367448a07482af14e3518125ae531bff99e16d51e0945f4f93dbd7051d8a270811bdeb57f0b52c629fb0c9c401a238a7352dfbc87e26495b6f0f59cbdb6
+  version: 20.2.1
+  resolution: "@types/node@npm:20.2.1"
+  checksum: ed774afa6e9b4ad7868ed0182a8ca40ad0dd54815a70d3051b23fa850f3bca6bea4d0cb55e1fc769666786ac2cc4c1b37aeade313cb4c4634133f18ebcded496
   languageName: node
   linkType: hard
 
@@ -7002,9 +7002,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.0.0, @types/node@npm:^18.15.11":
-  version: 18.16.12
-  resolution: "@types/node@npm:18.16.12"
-  checksum: 90b316c097a059534870bc8e358c7996d99e3bb4395c88a91b893b925ad34e32ff1177009ec6c16a6467266414dca64ec9613e9e6bb3f91b6de0ab629d3bb3b9
+  version: 18.16.13
+  resolution: "@types/node@npm:18.16.13"
+  checksum: ec1ffb814750fc7f7c6c7cb138ed56f24cb23a2ffe50d264a265be52b5cafca37b94b8fb3b5b420f5674baa677b0e011160aeaa1a0edd862aa4cfa11f4467918
   languageName: node
   linkType: hard
 
@@ -11958,9 +11958,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.284":
-  version: 1.4.399
-  resolution: "electron-to-chromium@npm:1.4.399"
-  checksum: 51995e6e4dd6d2f630d56b21bd0ae47d8078dc7414b9648e644ba11fad99631da742ffd7a0f8af0abcb0bdb1749a678f95c87ead9b604fbc4625395b4236c94a
+  version: 1.4.401
+  resolution: "electron-to-chromium@npm:1.4.401"
+  checksum: 1bedceac7374b128b4ce06b63fef7d1c5cf8bb0647d90d11f331066f6e7070ff2b509a46fd4ba22d0f4032e389307da1961be1a6737c8410a72ad1abfc3151a7
   languageName: node
   linkType: hard
 
@@ -15523,18 +15523,18 @@ __metadata:
   linkType: hard
 
 "i18next-fs-backend@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "i18next-fs-backend@npm:2.1.1"
-  checksum: fe606df2639b3ea49501b5bc947553e4bfbce67290c91ab22a8b9ecee4d11b8ae78179980720998881f117f0321d3ba0f739fb93a0ab95613cd79b85ffb014f5
+  version: 2.1.2
+  resolution: "i18next-fs-backend@npm:2.1.2"
+  checksum: 69b1fa72e6f1723f924c55573eb16342c35893c78e1dadf9a1466b6e57ece391211ae0d0f8278f4ef61e0e5d0abb367672351e8f6a56fecfb2179e921853f570
   languageName: node
   linkType: hard
 
 "i18next@npm:^22.4.14":
-  version: 22.4.15
-  resolution: "i18next@npm:22.4.15"
+  version: 22.5.0
+  resolution: "i18next@npm:22.5.0"
   dependencies:
     "@babel/runtime": ^7.20.6
-  checksum: fced898227983e439c59e7aa6e7b87e53ad1b8a1c85f0613a968881418266e5336e9443831125590559796075d516fe3dbf8118679c894094a0a404be78b02a2
+  checksum: 291c0e02fda20bd1827b6529dad74c01867892c7ac000befe0f69e10ad97ab074a2ae5b4ce1e0638c28ae1a6f59d1ed8503ea05bd1c324d731a44dd94c43a49a
   languageName: node
   linkType: hard
 
@@ -21940,10 +21940,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-fast-compare@npm:3.2.1, react-fast-compare@npm:^3.0.1":
+"react-fast-compare@npm:3.2.1":
   version: 3.2.1
   resolution: "react-fast-compare@npm:3.2.1"
   checksum: 209b4dc3a9cc79c074a26ec020459efd8be279accaca612db2edb8ada2a28849ea51cf3d246fc0fafb344949b93a63a43798b6c1787559b0a128571883fe6859
+  languageName: node
+  linkType: hard
+
+"react-fast-compare@npm:^3.0.1":
+  version: 3.2.2
+  resolution: "react-fast-compare@npm:3.2.2"
+  checksum: 2071415b4f76a3e6b55c84611c4d24dcb12ffc85811a2840b5a3f1ff2d1a99be1020d9437ee7c6e024c9f4cbb84ceb35e48cf84f28fcb00265ad2dfdd3947704
   languageName: node
   linkType: hard
 
@@ -21977,8 +21984,8 @@ __metadata:
   linkType: hard
 
 "react-i18next@npm:^12.2.0":
-  version: 12.2.2
-  resolution: "react-i18next@npm:12.2.2"
+  version: 12.3.1
+  resolution: "react-i18next@npm:12.3.1"
   dependencies:
     "@babel/runtime": ^7.20.6
     html-parse-stringify: ^3.0.1
@@ -21990,7 +21997,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 460e32779f6abba287d63be6054f855202c2e365cbceca36673c8f37a497c2ac5a21a8577d20fcc0b3fcd4825f89427dc4fdf00136365963d27dac7d997c3c74
+  checksum: fe3f360e5184bc63861734e94bf625a09b9ec0d28fab41779a68758af258fd1737dde25ff7a88ddb66c1571a3e3de5b3403825a91b4949bf9832a00615acb87a
   languageName: node
   linkType: hard
 
@@ -23329,16 +23336,16 @@ __metadata:
   linkType: hard
 
 "sinon@npm:^15.0.3":
-  version: 15.0.4
-  resolution: "sinon@npm:15.0.4"
+  version: 15.1.0
+  resolution: "sinon@npm:15.1.0"
   dependencies:
     "@sinonjs/commons": ^3.0.0
-    "@sinonjs/fake-timers": ^10.0.2
+    "@sinonjs/fake-timers": ^10.2.0
     "@sinonjs/samsam": ^8.0.0
     diff: ^5.1.0
     nise: ^5.1.4
     supports-color: ^7.2.0
-  checksum: a5e262c59a891daea405e4c432c5d703f888a7f738c42cb353c08867c920da85c528742025dd3b5cf17897101c7d7f77c287dcc1590103c351be98704e8a51eb
+  checksum: 3f0eab3e293c6206cca4a31f3c2836be86889f16bf6f54e2429550c1d07d0e7e9327cdbe6b7b69662c152a63e9f2661334c266932ba8f3206190009d58cb4f06
   languageName: node
   linkType: hard
 
@@ -24961,9 +24968,9 @@ __metadata:
   linkType: hard
 
 "tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.5.0":
-  version: 2.5.1
-  resolution: "tslib@npm:2.5.1"
-  checksum: 535e41e956b32d21aeff007a2c74989d1a6bf3fecb2b0141d80e5b9920bf90e23b4f0cd3772704bc03637c762dbdc1a314d75a407dd7189afbe3e83d80df9392
+  version: 2.5.2
+  resolution: "tslib@npm:2.5.2"
+  checksum: 4d3c1e238b94127ed0e88aa0380db3c2ddae581dc0f4bae5a982345e9f50ee5eda90835b8bfba99b02df10a5734470be197158c36f9129ac49fdc14a6a9da222
   languageName: node
   linkType: hard
 
