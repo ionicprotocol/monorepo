@@ -1,4 +1,5 @@
 import { LeveredPosition, LeveredPositionBorrowable, SupportedChains } from "@midas-capital/types";
+import { BigNumber } from "ethers";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./FusePools";
@@ -74,6 +75,22 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       } else {
         return [];
       }
+    }
+
+    async getBorrowRateAtRatio(
+      collateralAsset: string,
+      borrowableAsset: string,
+      supplyAmount: BigNumber,
+      leverageRatio: BigNumber
+    ) {
+      const leveredPositionFactory = this.createLeveredPositionFactory();
+
+      return await leveredPositionFactory.callStatic.getBorrowRateAtRatio(
+        collateralAsset,
+        borrowableAsset,
+        supplyAmount,
+        leverageRatio
+      );
     }
   };
 }
