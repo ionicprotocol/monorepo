@@ -119,8 +119,8 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
 
     const chapelMidasPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
     const spo = (await ethers.getContract("SimplePriceOracle", deployer)) as SimplePriceOracle;
-    let tx;
 
+    let tx;
     tx = await spo.setDirectPrice(tdai.address, ethers.utils.parseEther("0.67"));
     await tx.wait();
     console.log(`set the price of the testing DAI`);
