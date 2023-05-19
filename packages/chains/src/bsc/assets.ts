@@ -10,6 +10,7 @@ import {
   StaderXDocs,
   stkBNBDocs,
   thenaDocs,
+  thenaDocsV2,
   wombatDocs,
   wrappedAssetDocs,
 } from "../common";
@@ -646,7 +647,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Stable stkBNB/WBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocs(solidlyGammaStable_stkBNB_WBNB),
+    extraDocs: thenaDocsV2(WBNB, stkBNB, solidlyGammaStable_stkBNB_WBNB, true),
   },
 ];
 
