@@ -276,6 +276,30 @@ const deployedPlugins: DeployedPlugins = {
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
   },
+  // BeefyERC4626_sAMM-stkBNB-WBNB_0x17A610C49C8BaaACFb92681be1fcC62fdB17B2f8.json
+  "0x3FCA4C8D345340Ef47a698f96e4813e8c4f6076C": {
+    market: "0x17A610C49C8BaaACFb92681be1fcC62fdB17B2f8",
+    name: "Beefy sAMM stkBNB-WBNB LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-wbnb-stkbnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["sAMM-stkBNB/WBNB"]),
+    otherParams: ["0xAd36A6a7fC6D6B2aeBB77B48A85a0B58D0f3AB28", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_aWBNB-STKBNB_0x1A8fF97a26B1ab7Eb17bD8E607B09F4f4382584B.json
+  "0x7D6679bDbD5E23833F11B777Fd55275a104aD8e5": {
+    market: "0x1A8fF97a26B1ab7Eb17bD8E607B09F4f4382584B",
+    name: "Beefy aWBNB-stkBNB Gamma LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-gamma-bnb-stkbnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["aWBNB_STKBNB"]),
+    otherParams: ["0x33D0F945F77660F4A9e56949500265313f6D08fb", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
 };
 
 export default deployedPlugins;
