@@ -14,6 +14,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           const {
             markets: collateralCTokens,
             underlyings: collateralUnderlyings,
+            decimals: collateralDecimals,
             symbols: collateralsymbols,
             rates: supplyRatePerBlock,
           } = await leveredPositionFactory.callStatic.getCollateralMarkets();
@@ -51,6 +52,9 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 collateral: {
                   cToken: collateralCToken,
                   underlyingToken: collateralUnderlyings[index],
+                  underlyingDecimals: collateralAsset
+                    ? BigNumber.from(collateralAsset.decimals)
+                    : BigNumber.from(collateralDecimals[index]),
                   symbol: collateralAsset
                     ? collateralAsset.originalSymbol
                       ? collateralAsset.originalSymbol

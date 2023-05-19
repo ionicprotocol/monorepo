@@ -301,7 +301,7 @@ export const BorrowModal = ({
                         userEnteredAmount={userEnteredAmount}
                       />
 
-                      <Balance asset={asset} />
+                      <Balance asset={asset} chainId={poolChainId} />
                     </Column>
                     <StatsColumn
                       amount={amount}

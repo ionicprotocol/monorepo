@@ -4,19 +4,19 @@ import { utils } from 'ethers';
 
 import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export const Balance = ({ vault }: { vault: VaultData }) => {
-  const { currentSdk, currentChain } = useMultiMidas();
-
-  if (!currentChain || !currentSdk) throw new Error('Connect your wallet');
-
-  const { data: myBalance } = useTokenBalance(vault.asset);
-  const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
-  const nativeSymbol = currentChain.nativeCurrency?.symbol;
+  const sdk = useSdk(vault.chainId);
+  const { data: myBalance } = useTokenBalance(vault.asset, vault.chainId);
+  const { data: myNativeBalance } = useTokenBalance(
+    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
+    vault.chainId
+  );
+  const nativeSymbol = sdk?.chainSpecificParams.metadata.nativeCurrency.symbol;
   const optionToWrap =
-    vault.asset === currentSdk.chainSpecificAddresses.W_TOKEN &&
+    vault.asset === sdk?.chainSpecificAddresses.W_TOKEN &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
 

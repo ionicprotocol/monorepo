@@ -27,7 +27,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
       <VStack alignItems={'flex-end'} spacing={0.5}>
         <PopoverTooltip
           body={
-            <VStack alignItems="flex-start">
+            <VStack alignItems="flex-start" spacing={0}>
               {leverage.borrowable.map((asset, i) => {
                 return (
                   <HStack

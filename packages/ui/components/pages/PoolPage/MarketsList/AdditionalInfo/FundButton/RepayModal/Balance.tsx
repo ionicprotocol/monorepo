@@ -1,22 +1,23 @@
 import { Text } from '@chakra-ui/react';
+import type { SupportedChains } from '@midas-capital/types';
 import { utils } from 'ethers';
 
 import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-export const Balance = ({ asset }: { asset: MarketData }) => {
-  const { currentSdk, currentChain } = useMultiMidas();
-
-  if (!currentChain || !currentSdk) throw new Error('Connect your wallet');
-
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken);
-  const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
-  const nativeSymbol = currentChain.nativeCurrency?.symbol;
+export const Balance = ({ asset, chainId }: { asset: MarketData; chainId: SupportedChains }) => {
+  const sdk = useSdk(chainId);
+  const { data: myBalance } = useTokenBalance(asset.underlyingToken, chainId);
+  const { data: myNativeBalance } = useTokenBalance(
+    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
+    chainId
+  );
+  const nativeSymbol = sdk?.chainSpecificParams.metadata.nativeCurrency.symbol;
   const optionToWrap =
-    asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+    asset.underlyingToken === sdk?.chainSpecificAddresses.W_TOKEN &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
 

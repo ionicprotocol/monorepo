@@ -9,13 +9,16 @@ export interface LeveredPositionBorrowable {
   rate: number;
 }
 
+export interface LeveredPositionCollateral {
+  cToken: string;
+  underlyingToken: string;
+  underlyingDecimals: BigNumber;
+  symbol: string;
+  supplyRatePerBlock: BigNumber;
+}
+
 export interface LeveredPosition {
   chainId: SupportedChains;
-  collateral: {
-    cToken: string;
-    underlyingToken: string;
-    symbol: string;
-    supplyRatePerBlock: BigNumber;
-  };
+  collateral: LeveredPositionCollateral;
   borrowable: LeveredPositionBorrowable[];
 }

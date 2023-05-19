@@ -63,9 +63,10 @@ const EditFlywheelModal = ({
 
   const { data: flywheelRewardsBalance, refetch: refetchRewardsBalance } = useTokenBalance(
     flywheel.rewardToken,
+    pool.chainId,
     flywheel.rewards
   );
-  const { data: myBalance } = useTokenBalance(flywheel.rewardToken);
+  const { data: myBalance } = useTokenBalance(flywheel.rewardToken, pool.chainId);
   const rewardTokenDecimal = useMemo(() => {
     const asset = ChainSupportedAssets[pool.chainId as SupportedChains].find((asset) => {
       return asset.underlying === flywheel.rewardToken;

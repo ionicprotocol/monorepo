@@ -34,7 +34,7 @@ export const BorrowList = ({
       <VStack>
         <PopoverTooltip
           body={
-            <VStack alignItems="flex-start">
+            <VStack alignItems="flex-start" spacing={0}>
               {leverage.borrowable.map((asset, i) => {
                 return (
                   <HStack
@@ -60,16 +60,13 @@ export const BorrowList = ({
                         {asset.symbol}
                       </EllipsisText>
                     </HStack>
-                    <HStack justifyContent="flex-end">
-                      <Text>{asset.rate.toFixed(2)}%</Text>
-                    </HStack>
                   </HStack>
                 );
               })}
             </VStack>
           }
           bodyProps={{ p: 0 }}
-          contentProps={{ borderRadius: 4, mt: -1, width: '230px' }}
+          contentProps={{ borderRadius: 4, mt: -1, width: '180px' }}
         >
           <Button
             _hover={{ background: cCard.hoverBgColor }}
@@ -81,7 +78,7 @@ export const BorrowList = ({
             px={2}
             rightIcon={<FaAngleDown />}
             variant="_outline"
-            width="230px"
+            width="180px"
           >
             <HStack justifyContent="space-between" width="100%">
               <TokenIcon
@@ -92,7 +89,6 @@ export const BorrowList = ({
               <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">
                 {borrowableAsset.symbol}
               </EllipsisText>
-              <Text>{borrowableAsset.rate.toFixed(2)}%</Text>
             </HStack>
           </Button>
         </PopoverTooltip>

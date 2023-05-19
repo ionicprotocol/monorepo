@@ -51,8 +51,11 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
   const { data: tokenData } = useTokenData(vault.asset, Number(vault.chainId));
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const { cCard } = useColors();
-  const { data: myBalance } = useTokenBalance(vault.asset);
-  const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
+  const { data: myBalance } = useTokenBalance(vault.asset, vault.chainId);
+  const { data: myNativeBalance } = useTokenBalance(
+    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
+    vault.chainId
+  );
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSupplying, setIsSupplying] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);

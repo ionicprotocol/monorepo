@@ -1,30 +1,16 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  HStack,
-  Slider,
-  SliderFilledTrack,
-  SliderMark,
-  SliderThumb,
-  SliderTrack,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, HStack, Text, VStack } from '@chakra-ui/react';
 import type { LeveredPosition, LeveredPositionBorrowable } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
+import type { BigNumber } from 'ethers';
 import { useMemo, useState } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { BorrowList } from './BorrowList';
-import { SupplyAmount } from './SupplyAmount';
-
+import { BorrowList } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/BorrowList';
+import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/LeverageSlider';
+import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/SupplyAmount';
 import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useColors } from '@ui/hooks/useColors';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { getChainConfig } from '@ui/utils/networkData';
 
@@ -37,13 +23,15 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
 
   const chainId = Number(leverage.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
-  const [sliderValue, setSliderValue] = useState(0);
+
   const { currentChain } = useMultiMidas();
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
-  const [borrowAsset, setBorrowAsset] = useState<LeveredPositionBorrowable>();
+  const [amount, setAmount] = useState<BigNumber>();
+  const [borrowAsset, setBorrowAsset] = useState<LeveredPositionBorrowable>(leverage.borrowable[0]);
+  const [leverageNum, setLeverageNum] = useState<number>(1);
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -57,9 +45,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
     setBorrowAsset(asset);
   };
 
-  console.log({ borrowAsset });
-
-  const { cSlider } = useColors();
+  console.warn({ amount, borrowAsset, leverageNum });
 
   return (
     <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
@@ -85,7 +71,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
           <HStack>{/*  */}</HStack>
         )}
       </Flex>
-      <Flex justifyContent="center" width="100%">
+      <Flex justifyContent="center" pb={6} width="100%">
         <Grid
           alignItems="stretch"
           gap={4}
@@ -109,7 +95,11 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
               w="100%"
             >
               <GridItem colSpan={{ base: 1, lg: 2, md: 1 }}>
-                <SupplyAmount />
+                <SupplyAmount
+                  chainId={leverage.chainId}
+                  collateralAsset={leverage.collateral}
+                  setAmount={setAmount}
+                />
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 2, md: 1 }}>
                 <BorrowList leverage={leverage} selectBorrowAsset={selectBorrowAsset} />
@@ -120,42 +110,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
                 </VStack>
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 4, md: 2 }}>
-                <VStack alignItems="flex-start" height={20} spacing={4}>
-                  <Text size="md">Leverage</Text>
-                  <Slider
-                    aria-label="slider"
-                    max={3}
-                    min={1}
-                    onChange={(val) => setSliderValue(val)}
-                    step={0.5}
-                    value={sliderValue}
-                  >
-                    <SliderMark fontSize="md" mt={4} value={1}>
-                      1.0
-                    </SliderMark>
-                    <SliderMark fontSize="md" mt={4} value={1.5}>
-                      1.5
-                    </SliderMark>
-                    <SliderMark fontSize="md" ml={-1} mt={4} value={2}>
-                      2.0
-                    </SliderMark>
-                    <SliderMark fontSize="md" ml={-1} mt={4} value={2.5}>
-                      2.5
-                    </SliderMark>
-                    <SliderMark fontSize="md" ml={-1} mt={4} value={3}>
-                      3.0
-                    </SliderMark>
-                    <SliderTrack backgroundColor={cSlider.trackBgColor} height={1.5}>
-                      <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />
-                    </SliderTrack>
-                    <SliderThumb
-                      bgColor={cSlider.thumbBgColor}
-                      borderColor={cSlider.thumbBorderColor}
-                      borderWidth={2}
-                      boxSize={4}
-                    />
-                  </Slider>
-                </VStack>
+                <LeverageSlider leverageNum={leverageNum} setLeverageNum={setLeverageNum} />
               </GridItem>
             </Grid>
           </GridItem>
