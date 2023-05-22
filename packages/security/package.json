@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/security",
   "repository": "git://github.com:midas-protocol/monorepo.git",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

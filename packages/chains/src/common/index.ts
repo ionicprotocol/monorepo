@@ -24,6 +24,7 @@ export {
   stellaSwapDocs,
   stellaSwapStableDocs,
   thenaDocs,
+  thenaDocsV2,
   wombatDocs,
   sommFinanceMainnetDocs,
 } from "./docs";
