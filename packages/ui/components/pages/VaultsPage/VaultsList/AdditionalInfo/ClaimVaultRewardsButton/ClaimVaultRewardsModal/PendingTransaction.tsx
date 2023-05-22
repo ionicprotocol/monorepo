@@ -35,7 +35,7 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text fontWeight="bold" variant="mdText">
-            You claimed {reward.rewardsInfo.map((info) => info.rewardTokenSymbol).join(',')}
+            You claimed {reward.rewardsInfo.map((info) => info.rewardTokenSymbol).join(', ')}
           </Text>
           <VStack width="100%">
             {Object.values(reward.rewardsInfo).map((info) => {

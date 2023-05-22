@@ -38,7 +38,7 @@ export const PendingTransaction = ({
             You claimed{' '}
             {Object.values(assetPerRewardToken)
               .map((asset) => asset?.symbol)
-              .join(',')}
+              .join(', ')}
           </Text>
           <VStack width="100%">
             {Object.values(assetPerRewardToken).map((asset) => {
