@@ -15,6 +15,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             markets: collateralCTokens,
             underlyings: collateralUnderlyings,
             decimals: collateralDecimals,
+            totalUnderlyingSupplied: collateralTotalSupplied,
             symbols: collateralsymbols,
             rates: supplyRatePerBlock,
           } = await leveredPositionFactory.callStatic.getCollateralMarkets();
