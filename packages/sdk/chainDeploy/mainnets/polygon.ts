@@ -108,6 +108,12 @@ const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: underlying(assets, assetSymbols.USDT),
   },
+  {
+    assetAddress: underlying(assets, assetSymbols.SD),
+    poolAddress: "0x5D0aCfa39A0FCA603147f1c14e53f46BE76984BC",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.USDC),
+  },
 ];
 
 const chainlinkAssets: ChainlinkAsset[] = [
