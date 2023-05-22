@@ -6,7 +6,7 @@ export interface LeveredPositionBorrowable {
   cToken: string;
   underlyingToken: string;
   symbol: string;
-  rate: number;
+  rate: BigNumber;
 }
 
 export interface LeveredPositionCollateral {

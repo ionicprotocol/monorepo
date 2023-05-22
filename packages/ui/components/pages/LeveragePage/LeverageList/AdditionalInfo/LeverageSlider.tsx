@@ -17,19 +17,26 @@ import {
 import { useColors } from '@ui/hooks/useColors';
 
 export const LeverageSlider = ({
-  leverageNum,
-  setLeverageNum,
+  leverageValue,
+  setLeverageValue,
 }: {
-  leverageNum: number;
-  setLeverageNum: (num: number) => void;
+  leverageValue: string;
+  setLeverageValue: (value: string) => void;
 }) => {
   const { cSlider } = useColors();
   const [MIN, MAX] = [1.0, 3.0];
 
   return (
     <VStack alignItems="flex-start" height={20} spacing={4}>
-      <HStack spacing={8}>
+      <HStack spacing={4}>
         <Text size="md">Leverage</Text>
+        {Number.isNaN(Number(leverageValue)) ? (
+          <Text>( should be a number )</Text>
+        ) : parseFloat(leverageValue) < MIN || parseFloat(leverageValue) > MAX ? (
+          <Text>
+            ( should be between {MIN.toFixed(1)} and {MAX.toFixed(1)} )
+          </Text>
+        ) : null}
         <NumberInput
           allowMouseWheel
           clampValueOnBlur={false}
@@ -37,11 +44,15 @@ export const LeverageSlider = ({
           max={MAX}
           maxW="100px"
           min={MIN}
-          onChange={(vaule) => setLeverageNum(Number(vaule))}
+          onChange={(value) => {
+            if(parseFloat(value) >= MIN && parseFloat(value) <= MAX ){
+              setLeverageValue(value)
+            }
+          }}
           step={0.01}
-          value={leverageNum}
+          value={leverageValue}
         >
-          <NumberInputField paddingLeft={2} paddingRight={7} textAlign="center" type="number" />
+          <NumberInputField paddingLeft={2} paddingRight={7} textAlign="center" />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
@@ -54,9 +65,9 @@ export const LeverageSlider = ({
         focusThumbOnChange={false}
         max={MAX}
         min={MIN}
-        onChange={(val) => setLeverageNum(Number(val))}
+        onChange={(val) => setLeverageValue(val.toString())}
         step={0.01}
-        value={leverageNum}
+        value={parseFloat(leverageValue)}
       >
         <SliderMark fontSize="md" mt={4} value={1}>
           1.0

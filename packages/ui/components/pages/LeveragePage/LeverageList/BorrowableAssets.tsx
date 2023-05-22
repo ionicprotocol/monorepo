@@ -54,7 +54,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
                       </EllipsisText>
                     </HStack>
                     <HStack justifyContent="flex-end">
-                      <Text>{asset.rate.toFixed(2)}%</Text>
+                      <Text>{Number(asset.rate).toFixed(2)}%</Text>
                     </HStack>
                   </HStack>
                 );
@@ -85,7 +85,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) =>
               <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">
                 {borrowableAsset.symbol}
               </EllipsisText>
-              <Text>{borrowableAsset.rate.toFixed(2)}%</Text>
+              <Text>{Number(borrowableAsset.rate).toFixed(2)}%</Text>
             </HStack>
           </Button>
         </PopoverTooltip>

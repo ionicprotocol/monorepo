@@ -44,7 +44,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                       ? borrowableAsset.originalSymbol
                       : borrowableAsset.symbol
                     : borrowableSymbols[index],
-                  rate: Number(borrowableRates[i]),
+                  rate: borrowableRates[i],
                 });
               });
               leveredPositions.push({
@@ -81,19 +81,25 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       }
     }
 
-    async getBorrowRateAtRatio(
-      collateralAsset: string,
-      borrowableAsset: string,
-      supplyAmount: BigNumber,
-      leverageRatio: BigNumber
+    async getUpdatedApy(cTokenAddress: string, amount: BigNumber) {
+      const cToken = this.createCTokenWithExtensions(cTokenAddress);
+
+      return await cToken.callStatic.supplyRatePerBlockAfterDeposit(amount);
+    }
+
+    async getUpdatedBorrowApr(
+      collateralMarket: string,
+      borrowMarket: string,
+      baseCollateral: BigNumber,
+      targetLeverageRatio: BigNumber
     ) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
       return await leveredPositionFactory.callStatic.getBorrowRateAtRatio(
-        collateralAsset,
-        borrowableAsset,
-        supplyAmount,
-        leverageRatio
+        collateralMarket,
+        borrowMarket,
+        baseCollateral,
+        targetLeverageRatio
       );
     }
   };

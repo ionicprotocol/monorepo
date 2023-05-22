@@ -1,16 +1,19 @@
-import { Box, Button, Flex, Grid, GridItem, HStack, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, HStack, VStack } from '@chakra-ui/react';
 import type { LeveredPosition, LeveredPositionBorrowable } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import type { BigNumber } from 'ethers';
+import { constants } from 'ethers';
 import { useMemo, useState } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
+import { Apy } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/Apy';
 import { BorrowList } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/BorrowList';
 import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/LeverageSlider';
 import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/SupplyAmount';
 import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { getChainConfig } from '@ui/utils/networkData';
 
@@ -29,9 +32,12 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
-  const [amount, setAmount] = useState<BigNumber>();
+  const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const [borrowAsset, setBorrowAsset] = useState<LeveredPositionBorrowable>(leverage.borrowable[0]);
-  const [leverageNum, setLeverageNum] = useState<number>(1);
+  const [leverageValue, setLeverageValue] = useState<string>('1.0');
+  const debouncedAmount = useDebounce(amount, 1000);
+  const debouncedBorrowAsset = useDebounce(borrowAsset, 1000);
+  const debouncedLeverageNum = useDebounce(parseFloat(leverageValue), 1000);
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -44,8 +50,6 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const selectBorrowAsset = (asset: LeveredPositionBorrowable) => {
     setBorrowAsset(asset);
   };
-
-  console.warn({ amount, borrowAsset, leverageNum });
 
   return (
     <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
@@ -110,43 +114,20 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
                 </VStack>
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 4, md: 2 }}>
-                <LeverageSlider leverageNum={leverageNum} setLeverageNum={setLeverageNum} />
+                <LeverageSlider leverageValue={leverageValue} setLeverageValue={setLeverageValue} />
               </GridItem>
             </Grid>
           </GridItem>
           <GridItem colSpan={{ base: 1, lg: 2, md: 1 }}>
-            <Flex height="100%" justifyContent="center">
-              <VStack alignItems="flex-start" height="100%" justifyContent="center" spacing={4}>
-                <HStack spacing={4}>
-                  <HStack justifyContent="flex-end" width="90px">
-                    <Text size="md">Yield</Text>
-                  </HStack>
-                  <HStack>
-                    <Text>20%</Text>
-                    <Text>➡</Text>
-                    <Text>50%</Text>
-                  </HStack>
-                </HStack>
-                <HStack spacing={4}>
-                  <HStack justifyContent="flex-end" width="90px">
-                    <Text size="md">Borrow</Text>
-                  </HStack>
-                  <HStack>
-                    <Text>20%</Text>
-                    <Text>➡</Text>
-                    <Text>50%</Text>
-                  </HStack>
-                </HStack>
-                <HStack spacing={4}>
-                  <HStack justifyContent="flex-end" width="90px">
-                    <Text size="md">Total APR</Text>
-                  </HStack>
-                  <HStack>
-                    <Text>20%</Text>
-                  </HStack>
-                </HStack>
-              </VStack>
-            </Flex>
+            <Apy
+              amount={debouncedAmount}
+              borrowRatePerBlock={debouncedBorrowAsset.rate}
+              borrowToken={debouncedBorrowAsset.cToken}
+              chainId={leverage.chainId}
+              collateralCToken={leverage.collateral.cToken}
+              leverageValue={debouncedLeverageNum}
+              supplyRatePerBlock={leverage.collateral.supplyRatePerBlock}
+            />
           </GridItem>
         </Grid>
       </Flex>
