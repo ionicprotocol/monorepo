@@ -300,6 +300,30 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0x33D0F945F77660F4A9e56949500265313f6D08fb", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
+  // BeefyERC4626_aWBNB-BTCB_0x3E03A4e68553311f1273529C9b2b9Fd756736cA6.json
+  "0x3cDB6f8b8bDAEB684d917A3973D737220aE2292a": {
+    market: "0x3E03A4e68553311f1273529C9b2b9Fd756736cA6",
+    name: "Beefy aWBNB-BTCB Gamma Narrow LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-gamma-btcb-bnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["aWBNB_BTCB"]),
+    otherParams: ["0x960eE6caC56912D94cE5c83D7Fb0CD873b5c5099", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_aWBNB-ETH_0x274bA3f7bc996275D7cdEB6239B1B240FFE14198.json
+  "0xFd25A63B7e387a79f9aa28272530DcEe5Efa2FBC": {
+    market: "0x274bA3f7bc996275D7cdEB6239B1B240FFE14198",
+    name: "Beefy aWBNB-ETH Gamma Narrow LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-gamma-eth-bnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["aWBNB_ETH"]),
+    otherParams: ["0xbCFcE18C5c33463316f93A067b1f50d75b00dc09", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
 };
 
 export default deployedPlugins;
