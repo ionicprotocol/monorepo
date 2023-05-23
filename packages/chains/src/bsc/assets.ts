@@ -649,7 +649,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Stable stkBNB/WBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(WBNB, stkBNB, solidlyGammaStable_stkBNB_WBNB, true),
+    extraDocs: thenaDocsV2(WBNB, stkBNB, solidlyGammaStable_stkBNB_WBNB, "GAMMA_STABLE"),
   },
   {
     symbol: assetSymbols.aWBNB_BTCB,
@@ -657,7 +657,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Stable BTCB/WBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(BTCB, WBNB, solidlyGammaNarrow_BTCB_WBNB, true),
+    extraDocs: thenaDocsV2(BTCB, WBNB, solidlyGammaNarrow_BTCB_WBNB, "GAMMA_NARROW"),
   },
   {
     symbol: assetSymbols.aWBNB_ETH,
@@ -665,7 +665,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Stable ETH/WBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(ETH, WBNB, solidlyGammaNarrow_ETH_WBNB, true),
+    extraDocs: thenaDocsV2(ETH, WBNB, solidlyGammaNarrow_ETH_WBNB, "GAMMA_NARROW"),
   },
 ];
 

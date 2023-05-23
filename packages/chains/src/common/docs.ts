@@ -295,12 +295,12 @@ export const thenaDocs = (poolAddress: string) => {
   `;
 };
 
-export const thenaDocsV2 = (token0: string, token1: string, poolAddress: string, stable: boolean) => {
+type ThenaStrategy = "GAMMA_NARROW" | "GAMMA_STABLE" | "GAMMA_WIDE";
+
+export const thenaDocsV2 = (token0: string, token1: string, poolAddress: string, strategy: ThenaStrategy) => {
   return `
   <p><b>How to acquire this token</b><p/><br /><p> 1. Make sure you are connected to BNB Network on your browser wallet.</p><br />
-  <p> 2. Head to the <a href="https://thena.fi/liquidity/fusion?currency0=${token0}&currency1=${token1}${
-    stable ? "&strategy=GAMMA_STABLE" : ""
-  }" target="_blank" style="color: #BCAC83;"> Thena.fi Exchange </a> and deposit the desired amount of token pairs.</p>
+  <p> 2. Head to the <a href="https://thena.fi/liquidity/fusion?currency0=${token0}&currency1=${token1}&strategy=${strategy}" target="_blank" style="color: #BCAC83;"> Thena.fi Exchange </a> and deposit the desired amount of token pairs.</p>
   <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Thena to spend them. </p><br />
   <p> 3. Click on "Add Liquidty".</p>
   <p>This will credit your wallet with the Thena LP Tokens (${poolAddress}).</p><br />
