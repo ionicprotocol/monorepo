@@ -259,6 +259,8 @@ export enum assetSymbols {
   "vAMM-ANKR/HAY" = "vAMM-ANKR-HAY",
   "vAMM-HAY/ankrBNB" = "vAMM-HAY-ankrBNB",
   aWBNB_STKBNB = "aWBNB-STKBNB",
+  aWBNB_BTCB = "aWBNB-BTCB",
+  aWBNB_ETH = "aWBNB-ETH",
 
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
