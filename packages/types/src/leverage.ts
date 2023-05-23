@@ -15,6 +15,7 @@ export interface LeveredPositionCollateral {
   underlyingDecimals: BigNumber;
   symbol: string;
   supplyRatePerBlock: BigNumber;
+  totalSupplied: BigNumber;
 }
 
 export interface LeveredPosition {
