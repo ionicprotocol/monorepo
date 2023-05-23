@@ -472,6 +472,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     solidlyLps,
   });
+  //// Solidly LP Oracle
+  await deployGammaPoolOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    gammaLps,
+  });
 
   //// Curve LP Oracle
   await deployCurveLpOracle({
