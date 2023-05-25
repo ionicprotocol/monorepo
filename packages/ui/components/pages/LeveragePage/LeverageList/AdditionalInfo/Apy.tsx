@@ -15,6 +15,7 @@ export const Apy = ({
   collateralCToken,
   leverageValue,
   supplyRatePerBlock,
+  totalSupplied,
 }: {
   amount: BigNumber;
   borrowRatePerBlock: BigNumber;
@@ -23,6 +24,7 @@ export const Apy = ({
   collateralCToken: string;
   leverageValue: number;
   supplyRatePerBlock: BigNumber;
+  totalSupplied: BigNumber;
 }) => {
   const sdk = useSdk(chainId);
   const supplyAPY = useMemo(() => {
@@ -58,7 +60,9 @@ export const Apy = ({
         const bigApr = await sdk.getUpdatedBorrowApr(
           collateralCToken,
           borrowToken,
-          amount,
+          totalSupplied.add(
+            amount.mul(utils.parseUnits(leverageValue.toString())).div(constants.WeiPerEther)
+          ),
           utils.parseUnits(leverageValue.toString())
         );
         setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
@@ -66,7 +70,7 @@ export const Apy = ({
     };
 
     func();
-  }, [sdk, collateralCToken, amount, leverageValue, borrowToken]);
+  }, [sdk, collateralCToken, amount, leverageValue, borrowToken, totalSupplied]);
 
   return (
     <Flex height="100%" justifyContent="center">

@@ -15,10 +15,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             markets: collateralCTokens,
             underlyings: collateralUnderlyings,
             decimals: collateralDecimals,
-            totalUnderlyingSupplied: collateralTotalSupplied,
+            totalUnderlyingSupplied: collateralTotalSupplys,
             symbols: collateralsymbols,
             rates: supplyRatePerBlock,
           } = await leveredPositionFactory.callStatic.getCollateralMarkets();
+          const midasFlywheelLensRouter = this.createMidasFlywheelLensRouter();
+          const rewards = await midasFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
 
           await Promise.all(
             collateralCTokens.map(async (collateralCToken, index) => {
@@ -48,6 +50,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   rate: borrowableRates[i],
                 });
               });
+              const reward = rewards.find((rw) => rw.market === collateralCToken);
               leveredPositions.push({
                 chainId: this.chainId,
                 collateral: {
@@ -56,12 +59,14 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   underlyingDecimals: collateralAsset
                     ? BigNumber.from(collateralAsset.decimals)
                     : BigNumber.from(collateralDecimals[index]),
+                  totalSupplied: collateralTotalSupplys[index],
                   symbol: collateralAsset
                     ? collateralAsset.originalSymbol
                       ? collateralAsset.originalSymbol
                       : collateralAsset.symbol
                     : collateralsymbols[index],
                   supplyRatePerBlock: supplyRatePerBlock[index],
+                  reward,
                 },
                 borrowable,
               });
@@ -103,5 +108,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         targetLeverageRatio
       );
     }
+
+    async getMarketRewardsInfo(cTokens: string[]) {}
   };
 }
