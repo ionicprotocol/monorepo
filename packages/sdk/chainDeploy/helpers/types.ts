@@ -150,6 +150,12 @@ export type LiquidatorConfigFnParams = {
   chainId: number;
 };
 
+export type LiquidatorsRegistryConfigFnParams = {
+  ethers: HardhatRuntimeEnvironment["ethers"];
+  getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
+  chainId: number;
+};
+
 export type IrmDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
