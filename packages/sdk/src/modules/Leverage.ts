@@ -18,6 +18,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             totalUnderlyingSupplied: collateralTotalSupplys,
             symbols: collateralsymbols,
             rates: supplyRatePerBlock,
+            poolOfMarket,
           } = await leveredPositionFactory.callStatic.getCollateralMarkets();
           const midasFlywheelLensRouter = this.createMidasFlywheelLensRouter();
           const rewards = await midasFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
@@ -67,6 +68,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                     : collateralsymbols[index],
                   supplyRatePerBlock: supplyRatePerBlock[index],
                   reward,
+                  pool: poolOfMarket[index],
+                  plugin: this.marketToPlugin[collateralCToken],
                 },
                 borrowable,
               });
@@ -108,7 +111,5 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         targetLeverageRatio
       );
     }
-
-    async getMarketRewardsInfo(cTokens: string[]) {}
   };
 }

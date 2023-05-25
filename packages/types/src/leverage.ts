@@ -23,6 +23,8 @@ export interface LeveredPositionCollateral {
   symbol: string;
   supplyRatePerBlock: BigNumber;
   totalSupplied: BigNumber;
+  pool: string;
+  plugin?: string;
   reward?: {
     underlyingPrice: BigNumber;
     market: string;

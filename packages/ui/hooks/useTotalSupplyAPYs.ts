@@ -10,7 +10,10 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const useTotalSupplyAPYs = (
-  assets: MarketData[],
+  assets: Pick<
+    MarketData,
+    'cToken' | 'supplyRatePerBlock' | 'underlyingSymbol' | 'underlyingToken'
+  >[],
   chainId?: number,
   allRewards?: UseRewardsData,
   assetInfos?: UseAssetsData
