@@ -61,8 +61,10 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     }
   });
 
-task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on").setAction(
-  async ({}, { ethers }) => {
+task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on")
+  .addFlag("forceUpgrade", "If the pool upgrade should be forced")
+  .setAction(
+  async ({ forceUpgrade }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
@@ -87,7 +89,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
         console.log(`current impl ${implBefore} latest ${latestImpl}`);
 
-        let shouldUpgrade = implBefore != latestImpl;
+        let shouldUpgrade = forceUpgrade || implBefore != latestImpl;
         if (!shouldUpgrade) {
           const comptrollerAsExtension = (await ethers.getContractAt(
             "ComptrollerFirstExtension",

@@ -27,7 +27,7 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0xE168340D10591A21443A20f34fAACC108d13b99d"
+      "address": "0xBa328AD0E90c5a34D7e6F2b5164c09538b60eA0E"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x9c55d77E1f46622f5171Dc0eB03461FdCCD92836"
@@ -162,7 +162,7 @@
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
     },
     "LeveredPositionFactory_Implementation": {
-      "address": "0x578950c6b41Dac8635b3572992B290Ba2cCC9C80"
+      "address": "0xF57cf3EF95743D396Ab0fd1D6a2DdE1922f3E47b"
     },
     "LeveredPositionFactory_Proxy": {
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
@@ -171,7 +171,7 @@
       "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xd7357B6a7817F1e7CcED40322826792fa9C45aB7"
+      "address": "0x6d925B7967eFE530b7a1976595905dc9FA0ba707"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"
