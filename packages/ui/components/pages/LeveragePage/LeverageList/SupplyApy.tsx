@@ -1,10 +1,9 @@
-import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import type { LeveredPosition } from '@midas-capital/types';
-import { useMemo } from 'react';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { SupplyApy as MarketSupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
+import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 
 export const SupplyApy = ({ leverage }: { leverage: LeveredPosition }) => {
   const { data: allRewards } = useRewardsForMarket({
@@ -15,28 +14,33 @@ export const SupplyApy = ({ leverage }: { leverage: LeveredPosition }) => {
     chainId: Number(leverage.chainId),
     poolAddress: leverage.collateral.pool,
   });
-  console.log({ allRewards });
-  const supplyApyColor = useColorModeValue('#51B2D4', 'cyan');
-
-  const sdk = useSdk(leverage.chainId);
-  const supplyAPY = useMemo(() => {
-    if (sdk) {
-      return sdk.ratePerBlockToAPY(
-        leverage.collateral.supplyRatePerBlock,
-        getBlockTimePerMinuteByChainId(sdk.chainId)
-      );
-    }
-  }, [sdk, leverage.collateral.supplyRatePerBlock]);
-
-  return (
-    <HStack justifyContent="flex-end">
-      <VStack alignItems={'flex-end'} spacing={0.5}>
-        {supplyAPY !== undefined ? (
-          <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
-            {supplyAPY.toFixed(2)}%
-          </Text>
-        ) : null}
-      </VStack>
-    </HStack>
+  const { data: assetInfos } = useAssets(leverage.chainId);
+  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
+    [
+      {
+        cToken: leverage.collateral.cToken,
+        supplyRatePerBlock: leverage.collateral.supplyRatePerBlock,
+        underlyingSymbol: leverage.collateral.symbol,
+        underlyingToken: leverage.collateral.underlyingToken,
+      },
+    ],
+    leverage.chainId,
+    allRewards,
+    assetInfos
   );
+
+  return allRewards ? (
+    <MarketSupplyApy
+      asset={{
+        cToken: leverage.collateral.cToken,
+        plugin: leverage.collateral.plugin,
+        supplyRatePerBlock: leverage.collateral.supplyRatePerBlock,
+        underlyingSymbol: leverage.collateral.symbol,
+        underlyingToken: leverage.collateral.underlyingToken,
+      }}
+      poolChainId={leverage.chainId}
+      rewards={allRewards}
+      totalSupplyApyPerAsset={totalSupplyApyPerAsset}
+    />
+  ) : null;
 };
