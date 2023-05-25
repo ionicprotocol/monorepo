@@ -105,7 +105,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
         throw `Failed set implementation to ${implementationAddress}`;
       }
       console.log(`Implementation successfully set to ${implementationAddress}`);
-      if (pluginAddress != ethers.constants.AddressZero) console.log(`with plugin ${await cTokenInstance.callStatic.plugin()}`);
+      if (pluginAddress != ethers.constants.AddressZero)
+        console.log(`with plugin ${await cTokenInstance.callStatic.plugin()}`);
     } else {
       console.log(`market ${marketAddress} already at ${implementationAddress}`);
     }

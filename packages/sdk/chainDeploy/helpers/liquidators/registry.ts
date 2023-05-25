@@ -1,29 +1,30 @@
-import {LiquidatorsRegistryConfigFnParams} from "../types";
-import {LiquidatorsRegistryExtension} from "../../../typechain/LiquidatorsRegistryExtension";
-import {LiquidatorsRegistry} from "../../../typechain/LiquidatorsRegistry";
+import { chainIdToConfig } from "@midas-capital/chains";
 
-import {chainIdToConfig} from "@midas-capital/chains";
+import { LiquidatorsRegistry } from "../../../typechain/LiquidatorsRegistry";
+import { LiquidatorsRegistryExtension } from "../../../typechain/LiquidatorsRegistryExtension";
+import { LiquidatorsRegistryConfigFnParams } from "../types";
 
 export const configureLiquidatorsRegistry = async ({
-                                                    ethers,
-                                                    getNamedAccounts,
-                                                    chainId,
-                                                  }: LiquidatorsRegistryConfigFnParams): Promise<void> => {
+  ethers,
+  getNamedAccounts,
+  chainId,
+}: LiquidatorsRegistryConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
   const strategies: string[] = [];
   const inputTokens: string[] = [];
   const outputTokens: string[] = [];
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
-  const liquidatorsRegistryExt = (await ethers.getContract("LiquidatorsRegistryExtension", deployer)) as LiquidatorsRegistryExtension;
+  const liquidatorsRegistryExt = (await ethers.getContract(
+    "LiquidatorsRegistryExtension",
+    deployer
+  )) as LiquidatorsRegistryExtension;
 
   for (const inputToken in chainIdToConfig[chainId].redemptionStrategies) {
     const [redemptionStrategyType, outputToken] = chainIdToConfig[chainId].redemptionStrategies[inputToken];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
 
-    const strategy = await liquidatorsRegistry.callStatic.redemptionStrategiesByTokens(
-      inputToken, outputToken
-    );
+    const strategy = await liquidatorsRegistry.callStatic.redemptionStrategiesByTokens(inputToken, outputToken);
     if (strategy != ethers.constants.AddressZero) {
       strategies.push(redemptionStrategy.address);
       inputTokens.push(inputToken);
@@ -38,5 +39,4 @@ export const configureLiquidatorsRegistry = async ({
   } else {
     console.log("no redemption strategies to add");
   }
-
-}
+};
