@@ -89,6 +89,9 @@ const solidlyGammaStable_stkBNB_WBNB = "0x86b481fCe116DCd01fBeBb963f1358bcc46666
 const solidlyGammaNarrow_BTCB_WBNB = "0xD3C480EC7a47596fF8D63396227d1F7dC728A7f0";
 const solidlyGammaNarrow_ETH_WBNB = "0x10bf6e7B28b1cfFb1c047D7F815953931e5Ee947";
 
+const solidlyGammaNarrow_ANKR_ankrBNB = "0x3f8f3caefF393B1994a9968E835Fd38eCba6C1be";
+const solidlyGammaWide_ANKR_ankrBNB = "0x31257f40e65585cC45fDABEb12002C25bC95eE80";
+
 const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.BNB,
@@ -666,6 +669,22 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
     extraDocs: thenaDocsV2(ETH, WBNB, solidlyGammaNarrow_ETH_WBNB, "GAMMA_NARROW"),
+  },
+  {
+    symbol: assetSymbols.aANKRBNB_ANKR_N,
+    underlying: solidlyGammaNarrow_ANKR_ankrBNB,
+    name: "Fusion V2 AMM - Narrow ANKR/ankrBNB",
+    decimals: 18,
+    oracle: OracleTypes.GammaPoolPriceOracle,
+    extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaNarrow_ANKR_ankrBNB, "GAMMA_NARROW"),
+  },
+  {
+    symbol: assetSymbols.aANKRBNB_ANKR_W,
+    underlying: solidlyGammaWide_ANKR_ankrBNB,
+    name: "Fusion V2 AMM - Wide ANKR/ankrBNB",
+    decimals: 18,
+    oracle: OracleTypes.GammaPoolPriceOracle,
+    extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaWide_ANKR_ankrBNB, "GAMMA_WIDE"),
   },
 ];
 
