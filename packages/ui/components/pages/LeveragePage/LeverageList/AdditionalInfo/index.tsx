@@ -80,14 +80,14 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
         );
 
         const hasApprovedEnough = (
-          await token.callStatic.allowance(address, leverage.collateral.cToken)
+          await token.callStatic.allowance(
+            address,
+            currentSdk.chainDeployment.LeveredPositionFactory.address
+          )
         ).gte(realAmount);
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.leverageApprove(
-            leverage.collateral.cToken,
-            leverage.collateral.underlyingToken
-          );
+          const tx = await currentSdk.leverageApprove(leverage.collateral.underlyingToken);
 
           addRecentTransaction({
             description: `Approve ${leverage.collateral.symbol}`,
