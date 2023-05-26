@@ -29,7 +29,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const chainId = Number(leverage.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
 
-  const { currentChain, currentSdk } = useMultiMidas();
+  const { currentChain, currentSdk, address } = useMultiMidas();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
@@ -58,17 +58,63 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   };
 
   const onLeverage = async () => {
-    if (currentSdk) {
-      try {
-        setIsLoading(true);
+    if (currentSdk && address) {
+      setIsLoading(true);
 
+      const realAmount = debouncedAmount
+        .mul(utils.parseUnits(debouncedLeverageNum.toString()))
+        .div(constants.WeiPerEther);
+
+      const sentryProperties = {
+        amount: realAmount,
+        borrowCToken: debouncedBorrowAsset.cToken,
+        chainId: currentSdk.chainId,
+        collateralCToken: leverage.collateral.cToken,
+        fundingAsset: leverage.collateral.underlyingToken,
+      };
+
+      try {
+        const token = currentSdk.getEIP20TokenInstance(
+          leverage.collateral.underlyingToken,
+          currentSdk.signer
+        );
+
+        const hasApprovedEnough = (
+          await token.callStatic.allowance(address, leverage.collateral.cToken)
+        ).gte(realAmount);
+
+        if (!hasApprovedEnough) {
+          const tx = await currentSdk.leverageApprove(
+            leverage.collateral.cToken,
+            leverage.collateral.underlyingToken
+          );
+
+          addRecentTransaction({
+            description: `Approve ${leverage.collateral.symbol}`,
+            hash: tx.hash,
+          });
+
+          await tx.wait();
+
+          successToast({
+            description: 'Successfully Approved!',
+            id: 'Approved - ' + Math.random().toString(),
+          });
+        }
+      } catch (error) {
+        const sentryInfo = {
+          contextName: 'Leverage - Approving',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, sentryInfo, toast: errorToast });
+      }
+
+      try {
         const tx = await currentSdk.createAndFundPosition(
           leverage.collateral.cToken,
           debouncedBorrowAsset.cToken,
           leverage.collateral.underlyingToken,
-          debouncedAmount
-            .mul(utils.parseUnits(debouncedLeverageNum.toString()))
-            .div(constants.WeiPerEther)
+          realAmount
         );
 
         addRecentTransaction({
@@ -84,15 +130,6 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
           title: 'Created',
         });
       } catch (error) {
-        const sentryProperties = {
-          amount: debouncedAmount
-            .mul(utils.parseUnits(debouncedLeverageNum.toString()))
-            .div(constants.WeiPerEther),
-          borrowCToken: debouncedBorrowAsset.cToken,
-          chainId: currentSdk.chainId,
-          collateralCToken: leverage.collateral.cToken,
-          fundingAsset: leverage.collateral.underlyingToken,
-        };
         const sentryInfo = {
           contextName: 'Levered Position - Creating',
           properties: sentryProperties,

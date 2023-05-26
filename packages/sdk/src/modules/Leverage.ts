@@ -1,5 +1,8 @@
 import { LeveredPosition, LeveredPositionBorrowable, SupportedChains } from "@midas-capital/types";
-import { BigNumber } from "ethers";
+import { BigNumber, constants } from "ethers";
+
+import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import { getContract } from "../MidasSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./FusePools";
@@ -110,6 +113,13 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         baseCollateral,
         targetLeverageRatio
       );
+    }
+
+    async leverageApprove(collateralCToken: string, collateralUnderlying: string) {
+      const token = getContract(collateralUnderlying, EIP20InterfaceABI, this.signer);
+      const tx = await token.approve(collateralCToken, constants.MaxUint256);
+
+      return tx;
     }
 
     async createAndFundPosition(
