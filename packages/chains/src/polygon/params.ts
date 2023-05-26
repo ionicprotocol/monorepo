@@ -19,7 +19,7 @@ const specificParams: ChainParams = {
     img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://polygonscan.com" } },
     rpcUrls: {
-      default: { http: ["https://rpc.ankr.com/polygon"] },
+      default: { http: ["https://rpc-mainnet.matic.quiknode.pro"] },
       public: { http: ["https://rpc.ankr.com/polygon"] },
     },
     nativeCurrency: {

@@ -42,6 +42,7 @@ const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
 const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
+const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -310,6 +311,15 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", SNX),
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.SD,
+    underlying: SD,
+    name: "Stader Labs (PoS)",
+    decimals: 18,
+    oracle: OracleTypes.AlgebraPriceOracle,
+    extraDocs: defaultDocs("https://polygonscan.com", SD),
     disabled: true,
   },
   {

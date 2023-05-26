@@ -231,6 +231,12 @@ const EditFlywheelModal = ({
     [flywheel.address, currentSdk, errorToast, refetchRewardsInfo, refetchEnabledMarkets]
   );
 
+  const onMax = () => {
+    if (myBalance) {
+      setTransactionPendingAmount(Number(utils.formatUnits(myBalance, rewardTokenDecimal)));
+    }
+  };
+
   return (
     <MidasModal
       body={
@@ -313,6 +319,9 @@ const EditFlywheelModal = ({
                     </NumberInput>
                     <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
                   </InputGroup>
+                  <Button alignSelf="center" isDisabled={!!myBalance} onClick={onMax} px={2}>
+                    Max
+                  </Button>
                   <Button
                     disabled={
                       isTransactionPending ||
@@ -420,6 +429,7 @@ const EditFlywheelModal = ({
                           hidden={!isSpeedEditable}
                           ml={2}
                           onClick={updateRewardInfo}
+                          width={20}
                         >
                           {isTransactionPending ? <Spinner /> : 'Save'}
                         </Button>

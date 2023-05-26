@@ -5,14 +5,15 @@ task("flywheel:deploy-static-rewards-fw", "Deploy static rewards flywheel for LM
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
   .addParam("rewardToken", "Reward token of flywheel", undefined, types.string)
   .addParam("strategies", "address of strategy for which to enable the flywheel", undefined, types.string)
+  .addParam("booster", "Kind of booster flywheel to use", "LooplessFlywheelBooster", types.string)
   .addParam("pool", "comptroller to which to add the flywheel", undefined, types.string)
-  .setAction(async ({ signer, name, rewardToken, strategies, pool }, { ethers, deployments, run }) => {
+  .setAction(async ({ signer, name, rewardToken, strategies, pool, booster }, { ethers, deployments, run }) => {
     const deployer = await ethers.getNamedSigner(signer);
 
     const midasSdkModule = await import("../midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
-    const flywheelBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
+    const flywheelBooster = await ethers.getContract(booster, deployer);
 
     console.log({ signer, name, rewardToken, strategies, pool });
     const flywheel = await deployments.deploy(`MidasFlywheel_${name}`, {

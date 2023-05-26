@@ -276,6 +276,76 @@ const deployedPlugins: DeployedPlugins = {
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
   },
+  // BeefyERC4626_sAMM-stkBNB-WBNB_0x17A610C49C8BaaACFb92681be1fcC62fdB17B2f8.json
+  "0x3FCA4C8D345340Ef47a698f96e4813e8c4f6076C": {
+    market: "0x17A610C49C8BaaACFb92681be1fcC62fdB17B2f8",
+    name: "Beefy sAMM stkBNB-WBNB LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-wbnb-stkbnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["sAMM-stkBNB/WBNB"]),
+    otherParams: ["0xAd36A6a7fC6D6B2aeBB77B48A85a0B58D0f3AB28", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_aWBNB-STKBNB_0x1A8fF97a26B1ab7Eb17bD8E607B09F4f4382584B.json
+  "0x7D6679bDbD5E23833F11B777Fd55275a104aD8e5": {
+    market: "0x1A8fF97a26B1ab7Eb17bD8E607B09F4f4382584B",
+    name: "Beefy aWBNB-stkBNB Gamma LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-gamma-bnb-stkbnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["aWBNB_STKBNB"]),
+    otherParams: ["0x33D0F945F77660F4A9e56949500265313f6D08fb", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_aWBNB-BTCB_0x3E03A4e68553311f1273529C9b2b9Fd756736cA6.json
+  "0x3cDB6f8b8bDAEB684d917A3973D737220aE2292a": {
+    market: "0x3E03A4e68553311f1273529C9b2b9Fd756736cA6",
+    name: "Beefy aWBNB-BTCB Gamma Narrow LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-gamma-btcb-bnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["aWBNB_BTCB"]),
+    otherParams: ["0x960eE6caC56912D94cE5c83D7Fb0CD873b5c5099", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_aWBNB-ETH_0x274bA3f7bc996275D7cdEB6239B1B240FFE14198.json
+  "0xFd25A63B7e387a79f9aa28272530DcEe5Efa2FBC": {
+    market: "0x274bA3f7bc996275D7cdEB6239B1B240FFE14198",
+    name: "Beefy aWBNB-ETH Gamma Narrow LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/thena-gamma-eth-bnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["aWBNB_ETH"]),
+    otherParams: ["0xbCFcE18C5c33463316f93A067b1f50d75b00dc09", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // ThenaLpERC4626_aANKRBNB-ANKR-W_0x6F55B262cA509e112cb27b15402EF0c8cd330F0b.json
+  "0xDbC22fE3F4aAE46bA4509b4e13b200E87375b5ab": {
+    market: "0x6F55B262cA509e112cb27b15402EF0c8cd330F0b",
+    name: "Thena Gamma ankrBNB-ANKR Wide LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols.aANKRBNB_ANKR_W)}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols.aANKRBNB_ANKR_W),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
+  // ThenaLpERC4626_aANKRBNB-ANKR-N_0x0f3590D7010f3D5AD5d618BD2c223eb394bB5432
+  "0x7A5D376F717732C65d5ac63Fd05F73a287324B05": {
+    market: "0x0f3590D7010f3D5AD5d618BD2c223eb394bB5432",
+    name: "Thena Gamma ankrBNB-ANKR Narrow LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols.aANKRBNB_ANKR_N)}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols.aANKRBNB_ANKR_N),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
 };
 
 export default deployedPlugins;

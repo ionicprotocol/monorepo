@@ -38,7 +38,7 @@ export const PendingTransaction = ({
             You claimed{' '}
             {Object.values(assetPerRewardToken)
               .map((asset) => asset?.symbol)
-              .join(',')}
+              .join(', ')}
           </Text>
           <VStack width="100%">
             {Object.values(assetPerRewardToken).map((asset) => {
@@ -72,7 +72,7 @@ export const PendingTransaction = ({
             Check your wallet to submit the transactions
           </Text>
           <Text textAlign="center" variant="smText">
-            Do not close this modal until you submit all transactions!
+            Do not close this pop-up until you submit all transactions!
           </Text>
         </VStack>
       ) : null}
