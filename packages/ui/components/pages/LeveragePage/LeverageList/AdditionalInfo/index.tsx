@@ -1,9 +1,9 @@
-import { Box, Button, Flex, Grid, GridItem, HStack, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, VStack } from '@chakra-ui/react';
 import type { LeveredPosition, LeveredPositionBorrowable } from '@midas-capital/types';
-import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
+import { useAddRecentTransaction, useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import type { BigNumber } from 'ethers';
-import { constants } from 'ethers';
+import { constants, utils } from 'ethers';
 import { useMemo, useState } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -15,6 +15,8 @@ import type { LeverageRowData } from '@ui/components/pages/LeveragePage/Leverage
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { handleGenericError } from '@ui/utils/errorHandling';
 import { getChainConfig } from '@ui/utils/networkData';
 
 export interface ComptrollerToPool {
@@ -27,7 +29,8 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const chainId = Number(leverage.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
 
-  const { currentChain } = useMultiMidas();
+  const { currentChain, currentSdk } = useMultiMidas();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
@@ -38,6 +41,9 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const debouncedAmount = useDebounce(amount, 1000);
   const debouncedBorrowAsset = useDebounce(borrowAsset, 1000);
   const debouncedLeverageNum = useDebounce(parseFloat(leverageValue), 1000);
+  const addRecentTransaction = useAddRecentTransaction();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -49,6 +55,54 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
 
   const selectBorrowAsset = (asset: LeveredPositionBorrowable) => {
     setBorrowAsset(asset);
+  };
+
+  const onLeverage = async () => {
+    if (currentSdk) {
+      try {
+        setIsLoading(true);
+
+        const tx = await currentSdk.createAndFundPosition(
+          leverage.collateral.cToken,
+          debouncedBorrowAsset.cToken,
+          leverage.collateral.underlyingToken,
+          debouncedAmount
+            .mul(utils.parseUnits(debouncedLeverageNum.toString()))
+            .div(constants.WeiPerEther)
+        );
+
+        addRecentTransaction({
+          description: 'Creating levered position.',
+          hash: tx.hash,
+        });
+
+        tx.wait();
+
+        successToast({
+          description: 'Successfully created levered position',
+          id: 'Levered position - ' + Math.random().toString(),
+          title: 'Created',
+        });
+      } catch (error) {
+        const sentryProperties = {
+          amount: debouncedAmount
+            .mul(utils.parseUnits(debouncedLeverageNum.toString()))
+            .div(constants.WeiPerEther),
+          borrowCToken: debouncedBorrowAsset.cToken,
+          chainId: currentSdk.chainId,
+          collateralCToken: leverage.collateral.cToken,
+          fundingAsset: leverage.collateral.underlyingToken,
+        };
+        const sentryInfo = {
+          contextName: 'Levered Position - Creating',
+          properties: sentryProperties,
+        };
+
+        handleGenericError({ error, sentryInfo, toast: errorToast });
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -71,9 +125,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
               Switch {chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
             </Button>
           </Box>
-        ) : (
-          <HStack>{/*  */}</HStack>
-        )}
+        ) : null}
       </Flex>
       <Flex justifyContent="center" pb={6} width="100%">
         <Grid
@@ -110,7 +162,18 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 1, md: 2 }}>
                 <VStack alignItems="flex-start" height="100%" justifyContent="flex-end">
-                  <Button height={12}>Leverage</Button>
+                  <Button
+                    height={12}
+                    isDisabled={
+                      !currentChain ||
+                      currentChain.unsupported ||
+                      currentChain.id !== Number(leverage.chainId)
+                    }
+                    isLoading={isLoading}
+                    onClick={onLeverage}
+                  >
+                    Leverage
+                  </Button>
                 </VStack>
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 4, md: 2 }}>

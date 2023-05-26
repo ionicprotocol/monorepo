@@ -111,5 +111,21 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         targetLeverageRatio
       );
     }
+
+    async createAndFundPosition(
+      collateralMarket: string,
+      borrowMarket: string,
+      fundingAsset: string,
+      fundingAmount: BigNumber
+    ) {
+      const leveredPositionFactory = this.createLeveredPositionFactory(this.signer);
+
+      return await leveredPositionFactory.createAndFundPosition(
+        collateralMarket,
+        borrowMarket,
+        fundingAsset,
+        fundingAmount
+      );
+    }
   };
 }
