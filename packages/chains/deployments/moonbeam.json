@@ -18,13 +18,13 @@
       "address": "0x27Db2518FB95C30B75094317349e1C5BCC241cf9"
     },
     "CErc20Delegate": {
-      "address": "0x798d0d89Fd7B2D4DbCFb96254de2d7D881B7F2F6"
+      "address": "0x70DFe506D2C3AfC7EEa40620BAC8ab3f558A84d2"
     },
     "CErc20PluginDelegate": {
-      "address": "0x7b8098F7809C1eC2C05F96AE17ca3c80fF2521C8"
+      "address": "0x21768aE8B63C442A3a067acb1BFe7E4130ea0021"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x22dCab4a82DE0426ADa10Dd834d635397b999e16"
+      "address": "0x7d5bCe803bBd8511875122267cD0Cf89d058196F"
     },
     "CEtherDelegate": {
       "address": "0x7698198376DAAB5097c9A327250BD07062118626"
