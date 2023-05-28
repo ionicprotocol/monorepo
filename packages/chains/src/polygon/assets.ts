@@ -569,7 +569,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.USDR3CRV,
-    underlying: am3CRV,
+    underlying: USDR3CRV,
     name: "Curve.fi USDR/DAI/USDC/USDT",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,

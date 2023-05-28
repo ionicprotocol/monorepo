@@ -39,7 +39,7 @@
       "address": "0x966C8998962A0c5472b9DB8e865dcba3c100Ac40"
     },
     "BalancerLpLinearPoolPriceOracle_Implementation": {
-      "address": "0x1c86c8A911D861c27D0458370B227a2D8CeB92C1"
+      "address": "0x2C4957cFeAa2137DB078f5A4c8549F0afb0369F2"
     },
     "BalancerLpLinearPoolPriceOracle_Proxy": {
       "address": "0x966C8998962A0c5472b9DB8e865dcba3c100Ac40"
@@ -175,6 +175,9 @@
     },
     "FuseSafeLiquidator_Proxy": {
       "address": "0x37b3890B9b3a5e158EAFDA243d4640c5349aFC15"
+    },
+    "GammaLpTokenLiquidator": {
+      "address": "0x22AA923Eb8b5E8515A8389F489d8d76EdaD5248B"
     },
     "GelatoGUniLiquidator": {
       "address": "0x596B2f83A2c5FA29c2348A9F7FC7C7590C29537F"
