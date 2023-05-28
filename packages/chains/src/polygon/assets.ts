@@ -7,6 +7,7 @@ import {
   defaultDocs,
   jarvisDocs,
   quickSwapDocs,
+  tangibleDocsUsdr,
   wrappedAssetDocs,
 } from "../common";
 import { ankrCertificateDocs, clayStackDocs, lidoFinanceDocs, oneInchDocs, StaderXDocs } from "../common/docs";
@@ -43,6 +44,7 @@ const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
 const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
+const USDR = "0xb5DFABd7fF7F83BAB83995E72A52B97ABb7bcf63";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -69,7 +71,7 @@ const AAVE_LINEAR_WMATIC = "0xE4885Ed2818Cc9E840A25f94F9b2A28169D1AEA7";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
-
+const USDR3CRV = "0xa138341185a9D0429B0021A11FB717B225e13e1F";
 // QuickSwap
 const WMATIC_USDC = "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827";
 const WMATIC_USDT = "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3";
@@ -389,7 +391,6 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/MIMO"),
   },
-
   {
     symbol: assetSymbols.MATICx,
     underlying: MATICx,
@@ -565,6 +566,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs("aave", "am3CRV", am3CRV, false),
+  },
+  {
+    symbol: assetSymbols.USDR3CRV,
+    underlying: am3CRV,
+    name: "Curve.fi USDR/DAI/USDC/USDT",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: curveFinancePolygonDocs(339, "USDR3CRV", USDR3CRV, true),
   },
   // Balancer
   {
@@ -918,6 +927,14 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: jarvisDocs("v2"),
   },
+  {
+    symbol: assetSymbols.USDR,
+    underlying: USDR,
+    name: "Real USD ",
+    decimals: 9,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: tangibleDocsUsdr(),
+  },
   // Arrakis Vaults
   {
     symbol: assetSymbols["arrakis_USDC_WETH_005"],
@@ -999,7 +1016,6 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.GelatoGUniPriceOracle,
     extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_USDT_005),
   },
-
   {
     symbol: assetSymbols["arrakis_USDC_DAI_005"],
     underlying: arrakis_USDC_DAI_005,
