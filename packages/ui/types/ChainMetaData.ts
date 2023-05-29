@@ -23,7 +23,7 @@ export const supportedChainIdToConfig: {
   [moonbeam.chainId]: { enabled: config.isMoonbeamEnabled, supported: config.isMoonbeamEnabled },
   [arbitrum.chainId]: {
     enabled: true,
-    supported: config.isDevelopment || config.isTestnetEnabled,
+    supported: config.isArbitrumEnabled,
   },
   [neondevnet.chainId]: {
     enabled: true,
