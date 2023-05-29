@@ -191,6 +191,17 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xf0695B22d8F416FEC35E02668aE01B9EEAF96a0D", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
+  // BeefyERC4626_USDR3CRV_0x24691492A0B99404F21B1509B1f41Ea3927c8Da9.json
+  "0xb341c397dEe4098c53428bF4f8BC90F79BFDf4bA": {
+    market: "0x24691492A0B99404F21B1509B1f41Ea3927c8Da9",
+    name: "Beefy Curve.fi USDR/DAI/USDC/USDT Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/curve-poly-usdr`",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/mimo-pool",
+    underlying: underlying(assets, assetSymbols.USDR3CRV),
+    otherParams: ["0x2520D50bfD793D3C757900D81229422F70171969", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
 };
 
 export default deployedPlugins;
