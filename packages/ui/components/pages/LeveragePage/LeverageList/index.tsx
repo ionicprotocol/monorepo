@@ -523,7 +523,7 @@ export const LeverageList = ({
               ) : selectedFilteredLeverages.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>No leverages in this chain.</Center>
+                    <Center py={8}>There are no assets to use leverage with on this chain.</Center>
                   </Td>
                 </Tr>
               ) : (
