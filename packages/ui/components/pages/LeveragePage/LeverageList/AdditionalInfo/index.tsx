@@ -12,6 +12,7 @@ import { BorrowList } from '@ui/components/pages/LeveragePage/LeverageList/Addit
 import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/LeverageSlider';
 import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/SupplyAmount';
 import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/index';
+import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
@@ -40,7 +41,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const [leverageValue, setLeverageValue] = useState<string>('1.0');
   const debouncedAmount = useDebounce(amount, 1000);
   const debouncedBorrowAsset = useDebounce(borrowAsset, 1000);
-  const debouncedLeverageNum = useDebounce(parseFloat(leverageValue), 1000);
+  const debouncedLeverageNum = useDebounce(parseFloat(leverageValue) || 0, 1000);
   const addRecentTransaction = useAddRecentTransaction();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -58,7 +59,13 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   };
 
   const onLeverage = async () => {
-    if (currentSdk && address) {
+    if (
+      currentSdk &&
+      address &&
+      debouncedLeverageNum >= LEVERAGE_VALUE.MIN &&
+      debouncedLeverageNum <= LEVERAGE_VALUE.MAX &&
+      !debouncedAmount.isZero()
+    ) {
       setIsLoading(true);
 
       const realAmount = debouncedAmount

@@ -14,6 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
+import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 
 export const LeverageSlider = ({
@@ -24,7 +25,6 @@ export const LeverageSlider = ({
   setLeverageValue: (value: string) => void;
 }) => {
   const { cSlider } = useColors();
-  const [MIN, MAX] = [1.0, 3.0];
 
   return (
     <VStack alignItems="flex-start" height={20} spacing={4}>
@@ -32,25 +32,33 @@ export const LeverageSlider = ({
         <Text size="md">Leverage</Text>
         {Number.isNaN(Number(leverageValue)) ? (
           <Text>( should be a number )</Text>
-        ) : parseFloat(leverageValue) < MIN || parseFloat(leverageValue) > MAX ? (
+        ) : parseFloat(leverageValue) < LEVERAGE_VALUE.MIN ||
+          parseFloat(leverageValue) > LEVERAGE_VALUE.MAX ? (
           <Text>
-            ( should be between {MIN.toFixed(1)} and {MAX.toFixed(1)} )
+            ( should be between {LEVERAGE_VALUE.MIN.toFixed(1)} and {LEVERAGE_VALUE.MAX.toFixed(1)}{' '}
+            )
           </Text>
         ) : null}
         <NumberInput
           allowMouseWheel
           clampValueOnBlur={false}
-          defaultValue={MIN}
-          max={MAX}
+          defaultValue={LEVERAGE_VALUE.MIN}
+          max={LEVERAGE_VALUE.MAX}
           maxW="100px"
-          min={MIN}
-          onChange={(value) => {
-            if (parseFloat(value) >= MIN && parseFloat(value) <= MAX) {
-              setLeverageValue(value.slice(0, 5));
+          min={LEVERAGE_VALUE.MIN}
+          onBlur={(e) => {
+            if (
+              !Number.isNaN(parseFloat(e.target.value)) &&
+              parseFloat(e.target.value).toString().length === 1
+            ) {
+              setLeverageValue(Number(e.target.value).toFixed(1).slice(0, 5));
             }
           }}
+          onChange={(str) => {
+            setLeverageValue(str.slice(0, 5));
+          }}
           step={0.001}
-          value={leverageValue}
+          value={leverageValue || ''}
         >
           <NumberInputField paddingLeft={2} paddingRight={7} textAlign="center" />
           <NumberInputStepper>
@@ -63,11 +71,17 @@ export const LeverageSlider = ({
       <Slider
         aria-label="slider"
         focusThumbOnChange={false}
-        max={MAX}
-        min={MIN}
-        onChange={(val) => setLeverageValue(val.toString().slice(0, 5))}
+        max={LEVERAGE_VALUE.MAX}
+        min={LEVERAGE_VALUE.MIN}
+        onChange={(val) => {
+          if (val.toString().length === 1) {
+            setLeverageValue(val.toFixed(1).slice(0, 5));
+          } else {
+            setLeverageValue(val.toString().slice(0, 5));
+          }
+        }}
         step={0.001}
-        value={parseFloat(leverageValue)}
+        value={parseFloat(leverageValue) || LEVERAGE_VALUE.DEFAULT}
       >
         <SliderMark fontSize="md" mt={4} value={1}>
           1.0

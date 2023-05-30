@@ -252,3 +252,9 @@ export const MILLI_SECONDS_PER_YEAR = MILLI_SECONDS_PER_DAY * 365;
 
 export const ADD = 'Add';
 export const REMOVE = 'Remove';
+
+export const LEVERAGE_VALUE = {
+  DEFAULT: 1.0,
+  MAX: 3.0,
+  MIN: 1.0,
+};

@@ -4,6 +4,7 @@ import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
+import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
@@ -75,7 +76,12 @@ export const Apy = ({
 
   useEffect(() => {
     const func = async () => {
-      if (sdk) {
+      if (
+        sdk &&
+        !Number.isNaN(leverageValue) &&
+        leverageValue >= LEVERAGE_VALUE.MIN &&
+        leverageValue <= LEVERAGE_VALUE.MAX
+      ) {
         const bigApy = await sdk.getUpdatedApy(
           collateralCToken,
           amount.mul(utils.parseUnits(leverageValue.toString())).div(constants.WeiPerEther)
@@ -89,7 +95,12 @@ export const Apy = ({
 
   useEffect(() => {
     const func = async () => {
-      if (sdk) {
+      if (
+        sdk &&
+        !Number.isNaN(leverageValue) &&
+        leverageValue >= LEVERAGE_VALUE.MIN &&
+        leverageValue <= LEVERAGE_VALUE.MAX
+      ) {
         const bigApr = await sdk.getUpdatedBorrowApr(
           collateralCToken,
           borrowToken,
