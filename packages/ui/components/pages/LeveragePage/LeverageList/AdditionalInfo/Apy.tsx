@@ -5,6 +5,9 @@ import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useAssets } from '@ui/hooks/useAssets';
+import { useRewardsForMarket } from '@ui/hooks/useRewards';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const Apy = ({
@@ -13,7 +16,11 @@ export const Apy = ({
   borrowToken,
   chainId,
   collateralCToken,
+  collateralSymbol,
+  collateralUnderlying,
   leverageValue,
+  plugin,
+  poolAddress,
   supplyRatePerBlock,
   totalSupplied,
 }: {
@@ -22,11 +29,37 @@ export const Apy = ({
   borrowToken: string;
   chainId: SupportedChains;
   collateralCToken: string;
+  collateralSymbol: string;
+  collateralUnderlying: string;
   leverageValue: number;
+  plugin?: string;
+  poolAddress: string;
   supplyRatePerBlock: BigNumber;
   totalSupplied: BigNumber;
 }) => {
   const sdk = useSdk(chainId);
+  const { data: allRewards } = useRewardsForMarket({
+    asset: {
+      cToken: collateralCToken,
+      plugin,
+    },
+    chainId: Number(chainId),
+    poolAddress,
+  });
+  const { data: assetInfos } = useAssets(chainId);
+  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
+    [
+      {
+        cToken: collateralCToken,
+        supplyRatePerBlock,
+        underlyingSymbol: collateralSymbol,
+        underlyingToken: collateralUnderlying,
+      },
+    ],
+    chainId,
+    allRewards,
+    assetInfos
+  );
   const supplyAPY = useMemo(() => {
     if (sdk) {
       return sdk.ratePerBlockToAPY(supplyRatePerBlock, getBlockTimePerMinuteByChainId(sdk.chainId));
@@ -79,11 +112,15 @@ export const Apy = ({
           <HStack justifyContent="flex-end" width="90px">
             <Text size="md">Yield</Text>
           </HStack>
-          <HStack>
-            <Text>{supplyAPY}%</Text>
-            <Text>➡</Text>
-            <Text>{updatedSupplyApy}%</Text>
-          </HStack>
+          {totalSupplyApyPerAsset && updatedSupplyApy !== undefined && supplyAPY !== undefined ? (
+            <HStack>
+              <Text>{totalSupplyApyPerAsset[collateralCToken]}%</Text>
+              <Text>➡</Text>
+              <Text>
+                {totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY}%
+              </Text>
+            </HStack>
+          ) : null}
         </HStack>
         <HStack spacing={4}>
           <HStack justifyContent="flex-end" width="90px">
@@ -100,7 +137,9 @@ export const Apy = ({
             <Text size="md">Total APR</Text>
           </HStack>
           <HStack>
-            <Text>20%</Text>
+            <Text>
+              {supplyAPY !== undefined && borrowAPY !== undefined ? supplyAPY - borrowAPY : '?'}%
+            </Text>
           </HStack>
         </HStack>
       </VStack>
