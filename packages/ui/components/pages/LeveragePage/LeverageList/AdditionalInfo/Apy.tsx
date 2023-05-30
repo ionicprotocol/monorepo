@@ -138,7 +138,10 @@ export const Apy = ({
           </HStack>
           <HStack>
             <Text>
-              {supplyAPY !== undefined && borrowAPY !== undefined ? supplyAPY - borrowAPY : '?'}%
+              {totalSupplyApyPerAsset && supplyAPY !== undefined && borrowAPY !== undefined
+                ? totalSupplyApyPerAsset[collateralCToken] - borrowAPY
+                : '?'}
+              %
             </Text>
           </HStack>
         </HStack>
