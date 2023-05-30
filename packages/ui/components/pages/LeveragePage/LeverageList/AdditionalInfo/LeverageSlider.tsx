@@ -45,8 +45,8 @@ export const LeverageSlider = ({
           maxW="100px"
           min={MIN}
           onChange={(value) => {
-            if(parseFloat(value) >= MIN && parseFloat(value) <= MAX ){
-              setLeverageValue(value)
+            if (parseFloat(value) >= MIN && parseFloat(value) <= MAX) {
+              setLeverageValue(value);
             }
           }}
           step={0.01}
