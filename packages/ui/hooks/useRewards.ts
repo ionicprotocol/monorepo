@@ -1,3 +1,4 @@
+import type { MidasSdk } from '@midas-capital/sdk';
 import type { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/src/modules/Flywheel';
 import type { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
@@ -19,6 +20,21 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
+export const fetchFlywheelRewards = async (comptroller: string, chainId: number, sdk: MidasSdk) => {
+  try {
+    const [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
+      sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller),
+      sdk.getFlywheelMarketRewardsByPool(comptroller),
+    ]);
+
+    return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
+  } catch (e) {
+    console.error('Unable to get onchain Flywheel Rewards', e);
+
+    return { flywheelRewardsWithAPY: [], flywheelRewardsWithoutAPY: [] };
+  }
+};
+
 export function useFlywheelRewards(comptroller?: string, chainId?: number) {
   const sdk = useSdk(chainId);
 
@@ -26,18 +42,7 @@ export function useFlywheelRewards(comptroller?: string, chainId?: number) {
     ['useFlywheelRewards', chainId, comptroller],
     async () => {
       if (chainId && sdk && comptroller) {
-        try {
-          const [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-            sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller),
-            sdk.getFlywheelMarketRewardsByPool(comptroller),
-          ]);
-
-          return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
-        } catch (e) {
-          console.error('Unable to get onchain Flywheel Rewards', e);
-
-          return { flywheelRewardsWithAPY: [], flywheelRewardsWithoutAPY: [] };
-        }
+        return await fetchFlywheelRewards(comptroller, chainId, sdk);
       }
 
       return null;
