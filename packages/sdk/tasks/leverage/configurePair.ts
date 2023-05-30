@@ -4,8 +4,8 @@ import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
-import { IERC20Mintable } from "../../typechain/IERC20Mintable";
 import { ERC20 } from "../../typechain/ERC20";
+import { IERC20Mintable } from "../../typechain/IERC20Mintable";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistryExtension } from "../../typechain/LiquidatorsRegistryExtension";
@@ -21,54 +21,45 @@ export default task("levered-positions:configure-pair")
     undefined,
     types.string
   )
-  .setAction(
-    async (
-      { collateralMarketAddress, borrowMarketAddress, liquidatorName },
-      { ethers, getNamedAccounts }
-    ) => {
-      const { deployer } = await getNamedAccounts();
+  .setAction(async ({ collateralMarketAddress, borrowMarketAddress, liquidatorName }, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
 
-      const liquidator = await ethers.getContract(liquidatorName);
-      const registry = (await ethers.getContract("LiquidatorsRegistryExtension", deployer)) as LiquidatorsRegistryExtension;
+    const liquidator = await ethers.getContract(liquidatorName);
+    const registry = (await ethers.getContract(
+      "LiquidatorsRegistryExtension",
+      deployer
+    )) as LiquidatorsRegistryExtension;
 
-      const collateralMarket = (await ethers.getContractAt(
-        "CErc20Delegate",
-        collateralMarketAddress
-      )) as CErc20Delegate;
-      const borrowMarket = (await ethers.getContractAt("CErc20Delegate", borrowMarketAddress)) as CErc20Delegate;
+    const collateralMarket = (await ethers.getContractAt("CErc20Delegate", collateralMarketAddress)) as CErc20Delegate;
+    const borrowMarket = (await ethers.getContractAt("CErc20Delegate", borrowMarketAddress)) as CErc20Delegate;
 
-      const collateralToken = await collateralMarket.callStatic.underlying();
-      const borrowToken = await borrowMarket.callStatic.underlying();
+    const collateralToken = await collateralMarket.callStatic.underlying();
+    const borrowToken = await borrowMarket.callStatic.underlying();
 
-      const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
+    const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
 
-      let tx = await registry._setRedemptionStrategies(
-        [liquidator.address, liquidator.address],
-        [collateralToken, borrowToken],
-        [borrowToken, collateralToken]
-      );
-      await tx.wait();
-      console.log(
-        `configured the redemption strategy for the collateral/borrow pair ${collateralToken} / ${borrowToken}`
-      );
+    let tx = await registry._setRedemptionStrategies(
+      [liquidator.address, liquidator.address],
+      [collateralToken, borrowToken],
+      [borrowToken, collateralToken]
+    );
+    await tx.wait();
+    console.log(
+      `configured the redemption strategy for the collateral/borrow pair ${collateralToken} / ${borrowToken}`
+    );
 
-      tx = await factory._setPairWhitelisted(collateralMarketAddress, borrowMarketAddress, true);
-      await tx.wait();
-      console.log(
-        `configured the markets pair ${collateralMarketAddress} / ${borrowMarketAddress} as whitelisted for levered positions`
-      );
-    }
-  );
+    tx = await factory._setPairWhitelisted(collateralMarketAddress, borrowMarketAddress, true);
+    await tx.wait();
+    console.log(
+      `configured the markets pair ${collateralMarketAddress} / ${borrowMarketAddress} as whitelisted for levered positions`
+    );
+  });
 
 task("chapel-create-levered-position", "creates and funds a levered position on chapel").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // TUSD
-    const testingBomb = (await ethers.getContractAt(
-      "ERC20",
-      testingBombAddress,
-      deployer
-    )) as ERC20;
+    const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
     const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e"; // TUSD market
     const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
 
@@ -192,11 +183,7 @@ task("chapel-fund-first-levered-position", "funds a levered position on chapel")
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
-    const testingBomb = (await ethers.getContractAt(
-      "ERC20",
-      testingBombAddress,
-      deployer
-    )) as ERC20;
+    const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
     const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
     const deployerPositions = await factory.callStatic.getPositionsByAccount(deployer);
@@ -242,11 +229,7 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
     await tx.wait();
     console.log(`minted stables`);
 
-    const testingStable = (await ethers.getContractAt(
-      "ERC20",
-      stableAddress,
-      deployer
-    )) as ERC20;
+    const testingStable = (await ethers.getContractAt("ERC20", stableAddress, deployer)) as ERC20;
 
     tx = await testingStable.approve(borrowMarket.address, ethers.constants.MaxUint256);
     await tx.wait();
