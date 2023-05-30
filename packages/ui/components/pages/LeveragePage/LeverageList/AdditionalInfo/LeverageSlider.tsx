@@ -46,10 +46,10 @@ export const LeverageSlider = ({
           min={MIN}
           onChange={(value) => {
             if (parseFloat(value) >= MIN && parseFloat(value) <= MAX) {
-              setLeverageValue(value);
+              setLeverageValue(value.slice(0, 5));
             }
           }}
-          step={0.01}
+          step={0.001}
           value={leverageValue}
         >
           <NumberInputField paddingLeft={2} paddingRight={7} textAlign="center" />
@@ -65,8 +65,8 @@ export const LeverageSlider = ({
         focusThumbOnChange={false}
         max={MAX}
         min={MIN}
-        onChange={(val) => setLeverageValue(val.toString())}
-        step={0.01}
+        onChange={(val) => setLeverageValue(val.toString().slice(0, 5))}
+        step={0.001}
         value={parseFloat(leverageValue)}
       >
         <SliderMark fontSize="md" mt={4} value={1}>

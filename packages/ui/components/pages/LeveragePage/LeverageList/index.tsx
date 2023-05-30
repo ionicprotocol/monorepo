@@ -545,7 +545,7 @@ export const LeverageList = ({
         <Flex alignItems="center" className="pagination" gap={4} justifyContent="flex-end" p={4}>
           <HStack>
             <Hide below="lg">
-              <Text>Leverages Per Page</Text>
+              <Text>Assets Per Page</Text>
             </Hide>
             <Select
               maxW="max-content"
