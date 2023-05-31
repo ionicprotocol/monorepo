@@ -22,6 +22,7 @@ export const Apy = ({
   leverageValue,
   plugin,
   poolAddress,
+  range,
   supplyRatePerBlock,
   totalSupplied,
 }: {
@@ -35,9 +36,12 @@ export const Apy = ({
   leverageValue: number;
   plugin?: string;
   poolAddress: string;
+  range: { max: number; min: number } | null | undefined;
   supplyRatePerBlock: BigNumber;
   totalSupplied: BigNumber;
 }) => {
+  const minValue = range ? range.min : LEVERAGE_VALUE.MIN;
+  const maxValue = range ? range.max : LEVERAGE_VALUE.MAX;
   const sdk = useSdk(chainId);
   const { data: allRewards } = useRewardsForMarket({
     asset: {
@@ -79,8 +83,8 @@ export const Apy = ({
       if (
         sdk &&
         !Number.isNaN(leverageValue) &&
-        leverageValue >= LEVERAGE_VALUE.MIN &&
-        leverageValue <= LEVERAGE_VALUE.MAX
+        leverageValue >= minValue &&
+        leverageValue <= maxValue
       ) {
         const bigApy = await sdk.getUpdatedApy(
           collateralCToken,
@@ -91,15 +95,15 @@ export const Apy = ({
     };
 
     func();
-  }, [sdk, collateralCToken, amount, leverageValue]);
+  }, [sdk, collateralCToken, amount, leverageValue, minValue, maxValue]);
 
   useEffect(() => {
     const func = async () => {
       if (
         sdk &&
         !Number.isNaN(leverageValue) &&
-        leverageValue >= LEVERAGE_VALUE.MIN &&
-        leverageValue <= LEVERAGE_VALUE.MAX
+        leverageValue >= minValue &&
+        leverageValue <= maxValue
       ) {
         const bigApr = await sdk.getUpdatedBorrowApr(
           collateralCToken,
@@ -114,7 +118,16 @@ export const Apy = ({
     };
 
     func();
-  }, [sdk, collateralCToken, amount, leverageValue, borrowToken, totalSupplied]);
+  }, [
+    sdk,
+    collateralCToken,
+    amount,
+    leverageValue,
+    borrowToken,
+    totalSupplied,
+    minValue,
+    maxValue,
+  ]);
 
   return (
     <Flex height="100%" justifyContent="center">

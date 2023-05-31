@@ -246,6 +246,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
               leverageValue={debouncedLeverageNum}
               plugin={leverage.collateral.plugin}
               poolAddress={leverage.collateral.pool}
+              range={range}
               supplyRatePerBlock={leverage.collateral.supplyRatePerBlock}
               totalSupplied={leverage.collateral.totalSupplied}
             />
