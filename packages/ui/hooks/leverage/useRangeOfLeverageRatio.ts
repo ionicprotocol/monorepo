@@ -1,22 +1,21 @@
-import type { AssetReward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export interface UseAssetsData {
-  [asset: string]: AssetReward[];
-}
-export function useMinLeverageRatio(address?: string, chainId?: number) {
+export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
   const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useMinLeverageRatio', address, sdk],
+    ['useRangeOfLeverageRatio', address, sdk],
     async () => {
       if (sdk && address) {
-        const bignum = await sdk.getMinLeverageRatio(address);
+        const [minBignum, maxBignum] = await sdk.getRangeOfLeverageRatio(address);
 
-        return Number(utils.formatUnits(bignum));
+        return {
+          max: Number(Number(utils.formatUnits(maxBignum)).toFixed(3)),
+          min: Number(Number(utils.formatUnits(minBignum)).toFixed(3)),
+        };
       } else {
         return null;
       }

@@ -14,7 +14,7 @@ import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/Add
 import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/index';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useMinLeverageRatio } from '@ui/hooks/leverage/useMinLeverageRatio';
+import { useRangeOfLeverageRatio } from '@ui/hooks/leverage/useRangeOfLeverageRatio';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -46,7 +46,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const addRecentTransaction = useAddRecentTransaction();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
-  const { data: minRatio } = useMinLeverageRatio(
+  const { data: range } = useRangeOfLeverageRatio(
     debouncedBorrowAsset.leveredPosition,
     leverage.chainId
   );
@@ -67,8 +67,8 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
     if (
       currentSdk &&
       address &&
-      debouncedLeverageNum >= (minRatio ? minRatio : LEVERAGE_VALUE.MIN) &&
-      debouncedLeverageNum <= LEVERAGE_VALUE.MAX &&
+      debouncedLeverageNum >= (range ? range.min : LEVERAGE_VALUE.MIN) &&
+      debouncedLeverageNum <= (range ? range.max : LEVERAGE_VALUE.MAX) &&
       !debouncedAmount.isZero()
     ) {
       setIsLoading(true);
@@ -228,7 +228,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
               <GridItem colSpan={{ base: 1, lg: 4, md: 2 }}>
                 <LeverageSlider
                   leverageValue={leverageValue}
-                  minRatio={minRatio}
+                  range={range}
                   setLeverageValue={setLeverageValue}
                 />
               </GridItem>

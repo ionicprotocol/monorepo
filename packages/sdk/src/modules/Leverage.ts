@@ -160,10 +160,13 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       );
     }
 
-    async getMinLeverageRatio(address: string) {
+    async getRangeOfLeverageRatio(address: string) {
       const leveredPosition = this.createLeveredPosition(address);
 
-      return await leveredPosition.callStatic.getMinLeverageRatio();
+      return await Promise.all([
+        leveredPosition.callStatic.getMinLeverageRatio(),
+        leveredPosition.callStatic.getMaxLeverageRatio(),
+      ]);
     }
   };
 }
