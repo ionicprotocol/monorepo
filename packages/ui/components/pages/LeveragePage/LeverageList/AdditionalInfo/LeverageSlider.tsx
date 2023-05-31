@@ -19,12 +19,16 @@ import { useColors } from '@ui/hooks/useColors';
 
 export const LeverageSlider = ({
   leverageValue,
+  range,
   setLeverageValue,
 }: {
   leverageValue: string;
+  range: { max: number; min: number } | null | undefined;
   setLeverageValue: (value: string) => void;
 }) => {
   const { cSlider } = useColors();
+  const minValue = range ? range.min : LEVERAGE_VALUE.MIN;
+  const maxValue = range ? range.max : LEVERAGE_VALUE.MAX;
 
   return (
     <VStack alignItems="flex-start" height={20} spacing={4}>
@@ -32,20 +36,18 @@ export const LeverageSlider = ({
         <Text size="md">Leverage</Text>
         {Number.isNaN(Number(leverageValue)) ? (
           <Text>( should be a number )</Text>
-        ) : parseFloat(leverageValue) < LEVERAGE_VALUE.MIN ||
-          parseFloat(leverageValue) > LEVERAGE_VALUE.MAX ? (
+        ) : parseFloat(leverageValue) < minValue || parseFloat(leverageValue) > maxValue ? (
           <Text>
-            ( should be between {LEVERAGE_VALUE.MIN.toFixed(1)} and {LEVERAGE_VALUE.MAX.toFixed(1)}{' '}
-            )
+            ( should be between {minValue.toFixed(1)} and {maxValue.toFixed(1)} )
           </Text>
         ) : null}
         <NumberInput
           allowMouseWheel
           clampValueOnBlur={false}
-          defaultValue={LEVERAGE_VALUE.MIN}
-          max={LEVERAGE_VALUE.MAX}
+          defaultValue={minValue}
+          max={maxValue}
           maxW="100px"
-          min={LEVERAGE_VALUE.MIN}
+          min={minValue}
           onBlur={(e) => {
             if (
               !Number.isNaN(parseFloat(e.target.value)) &&
@@ -71,8 +73,8 @@ export const LeverageSlider = ({
       <Slider
         aria-label="slider"
         focusThumbOnChange={false}
-        max={LEVERAGE_VALUE.MAX}
-        min={LEVERAGE_VALUE.MIN}
+        max={maxValue}
+        min={minValue}
         onChange={(val) => {
           if (val.toString().length === 1) {
             setLeverageValue(val.toFixed(1).slice(0, 5));
@@ -83,20 +85,14 @@ export const LeverageSlider = ({
         step={0.001}
         value={parseFloat(leverageValue) || LEVERAGE_VALUE.DEFAULT}
       >
-        <SliderMark fontSize="md" mt={4} value={1}>
-          1.0
+        <SliderMark fontSize="md" ml={-2} mt={4} value={minValue}>
+          {minValue.toFixed(1)}
         </SliderMark>
-        <SliderMark fontSize="md" mt={4} value={1.5}>
-          1.5
+        <SliderMark fontSize="md" ml={-2} mt={4} value={2}>
+          {((maxValue + minValue) / 2).toFixed(1)}
         </SliderMark>
-        <SliderMark fontSize="md" ml={-1} mt={4} value={2}>
-          2.0
-        </SliderMark>
-        <SliderMark fontSize="md" ml={-1} mt={4} value={2.5}>
-          2.5
-        </SliderMark>
-        <SliderMark fontSize="md" ml={-1} mt={4} value={3}>
-          3.0
+        <SliderMark fontSize="md" ml={-2} mt={4} value={maxValue}>
+          {maxValue.toFixed(1)}
         </SliderMark>
         <SliderTrack backgroundColor={cSlider.trackBgColor}>
           <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />

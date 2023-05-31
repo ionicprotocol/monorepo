@@ -14,6 +14,7 @@ import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/Add
 import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/index';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useRangeOfLeverageRatio } from '@ui/hooks/leverage/useRangeOfLeverageRatio';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -45,6 +46,10 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const addRecentTransaction = useAddRecentTransaction();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
+  const { data: range } = useRangeOfLeverageRatio(
+    debouncedBorrowAsset.leveredPosition,
+    leverage.chainId
+  );
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -62,8 +67,8 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
     if (
       currentSdk &&
       address &&
-      debouncedLeverageNum >= LEVERAGE_VALUE.MIN &&
-      debouncedLeverageNum <= LEVERAGE_VALUE.MAX &&
+      debouncedLeverageNum >= (range ? range.min : LEVERAGE_VALUE.MIN) &&
+      debouncedLeverageNum <= (range ? range.max : LEVERAGE_VALUE.MAX) &&
       !debouncedAmount.isZero()
     ) {
       setIsLoading(true);
@@ -221,7 +226,11 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
                 </VStack>
               </GridItem>
               <GridItem colSpan={{ base: 1, lg: 4, md: 2 }}>
-                <LeverageSlider leverageValue={leverageValue} setLeverageValue={setLeverageValue} />
+                <LeverageSlider
+                  leverageValue={leverageValue}
+                  range={range}
+                  setLeverageValue={setLeverageValue}
+                />
               </GridItem>
             </Grid>
           </GridItem>
@@ -237,6 +246,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
               leverageValue={debouncedLeverageNum}
               plugin={leverage.collateral.plugin}
               poolAddress={leverage.collateral.pool}
+              range={range}
               supplyRatePerBlock={leverage.collateral.supplyRatePerBlock}
               totalSupplied={leverage.collateral.totalSupplied}
             />
