@@ -9,7 +9,7 @@ import { ChainSupportedAssets } from "./FusePools";
 
 export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Leverage extends Base {
-    async getAllLeveredPositions(): Promise<LeveredPosition[]> {
+    async getAllLeveredPositions(account: string): Promise<LeveredPosition[]> {
       if (this.chainId === SupportedChains.chapel) {
         try {
           const leveredPositions: LeveredPosition[] = [];
@@ -23,6 +23,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             rates: supplyRatePerBlock,
             poolOfMarket,
           } = await leveredPositionFactory.callStatic.getCollateralMarkets();
+          const positions = await this.getPositionsByAccount(account);
+
           const midasFlywheelLensRouter = this.createMidasFlywheelLensRouter();
           const rewards = await midasFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
 
@@ -43,6 +45,9 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 const borrowableAsset = ChainSupportedAssets[this.chainId].find(
                   (asset) => asset.underlying === borrowableUnderlyings[index]
                 );
+                const position = positions.find(
+                  (pos) => pos.collateralMarket === collateralCToken && pos.borrowMarket === borrowableMarket
+                );
                 borrowable.push({
                   cToken: borrowableMarket,
                   underlyingToken: borrowableUnderlyings[i],
@@ -52,6 +57,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                       : borrowableAsset.symbol
                     : borrowableSymbols[index],
                   rate: borrowableRates[i],
+                  leveredPosition: position ? position.position : undefined,
                 });
               });
               const reward = rewards.find((rw) => rw.market === collateralCToken);
@@ -91,6 +97,22 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       } else {
         return [];
       }
+    }
+
+    async getPositionsByAccount(account: string) {
+      const leveredPositionFactory = this.createLeveredPositionFactory();
+      const leveredPositions = await leveredPositionFactory.callStatic.getPositionsByAccount(account);
+      return await Promise.all(
+        leveredPositions.map(async (position) => {
+          const positionContract = this.createLeveredPosition(position);
+          const [collateralMarket, borrowMarket] = await Promise.all([
+            positionContract.callStatic.collateralMarket(),
+            positionContract.callStatic.stableMarket(),
+          ]);
+
+          return { collateralMarket, borrowMarket, position };
+        })
+      );
     }
 
     async getUpdatedApy(cTokenAddress: string, amount: BigNumber) {
@@ -136,6 +158,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         fundingAsset,
         fundingAmount
       );
+    }
+
+    async getMinLeverageRatio(address: string) {
+      const leveredPosition = this.createLeveredPosition(address);
+
+      return await leveredPosition.callStatic.getMinLeverageRatio();
     }
   };
 }

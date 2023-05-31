@@ -17,7 +17,7 @@ export const useLeveragesPerChain = (chainIds: SupportedChains[]) => {
           const sdk = getSdk(Number(chainId));
 
           if (chainId && sdk && address) {
-            return await sdk.getAllLeveredPositions();
+            return await sdk.getAllLeveredPositions(address);
           } else {
             return null;
           }

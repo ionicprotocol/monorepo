@@ -14,6 +14,7 @@ export interface LeveredPositionBorrowable {
   underlyingToken: string;
   symbol: string;
   rate: BigNumber;
+  leveredPosition: string | undefined;
 }
 
 export interface LeveredPositionCollateral {

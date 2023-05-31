@@ -19,12 +19,15 @@ import { useColors } from '@ui/hooks/useColors';
 
 export const LeverageSlider = ({
   leverageValue,
+  minRatio,
   setLeverageValue,
 }: {
   leverageValue: string;
+  minRatio: number | null | undefined;
   setLeverageValue: (value: string) => void;
 }) => {
   const { cSlider } = useColors();
+  const minValue = minRatio ? minRatio : LEVERAGE_VALUE.MIN;
 
   return (
     <VStack alignItems="flex-start" height={20} spacing={4}>
@@ -32,20 +35,19 @@ export const LeverageSlider = ({
         <Text size="md">Leverage</Text>
         {Number.isNaN(Number(leverageValue)) ? (
           <Text>( should be a number )</Text>
-        ) : parseFloat(leverageValue) < LEVERAGE_VALUE.MIN ||
+        ) : parseFloat(leverageValue) < minValue ||
           parseFloat(leverageValue) > LEVERAGE_VALUE.MAX ? (
           <Text>
-            ( should be between {LEVERAGE_VALUE.MIN.toFixed(1)} and {LEVERAGE_VALUE.MAX.toFixed(1)}{' '}
-            )
+            ( should be between {minValue.toFixed(1)} and {LEVERAGE_VALUE.MAX.toFixed(1)} )
           </Text>
         ) : null}
         <NumberInput
           allowMouseWheel
           clampValueOnBlur={false}
-          defaultValue={LEVERAGE_VALUE.MIN}
+          defaultValue={minValue}
           max={LEVERAGE_VALUE.MAX}
           maxW="100px"
-          min={LEVERAGE_VALUE.MIN}
+          min={minValue}
           onBlur={(e) => {
             if (
               !Number.isNaN(parseFloat(e.target.value)) &&
@@ -72,7 +74,7 @@ export const LeverageSlider = ({
         aria-label="slider"
         focusThumbOnChange={false}
         max={LEVERAGE_VALUE.MAX}
-        min={LEVERAGE_VALUE.MIN}
+        min={minValue}
         onChange={(val) => {
           if (val.toString().length === 1) {
             setLeverageValue(val.toFixed(1).slice(0, 5));
