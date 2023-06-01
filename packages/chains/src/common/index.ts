@@ -19,6 +19,7 @@ export {
   curveFinanceMoonbeamDocs,
   curveFinanceFantomDocs,
   jarvisDocs,
+  tangibleDocsUsdr,
   wrappedAssetDocs,
   lidoFinanceDocs,
   stellaSwapDocs,

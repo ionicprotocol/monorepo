@@ -88,7 +88,7 @@ export const LeverageSlider = ({
         <SliderMark fontSize="md" ml={-2} mt={4} value={minValue}>
           {minValue.toFixed(1)}
         </SliderMark>
-        <SliderMark fontSize="md" ml={-2} mt={4} value={2}>
+        <SliderMark fontSize="md" ml={-2} mt={4} value={(maxValue + minValue) / 2}>
           {((maxValue + minValue) / 2).toFixed(1)}
         </SliderMark>
         <SliderMark fontSize="md" ml={-2} mt={4} value={maxValue}>

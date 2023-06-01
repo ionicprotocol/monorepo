@@ -72,7 +72,6 @@ export function getEnabledChains() {
   if (config.isMoonbeamEnabled) {
     enabledChains.push(SupportedChains.moonbeam);
   }
-
   if (config.isArbitrumEnabled) {
     enabledChains.push(SupportedChains.arbitrum);
   }

@@ -261,6 +261,12 @@ export const jarvisDocs = (v: string) => {
   <p>You can acquire this asset on the <a href="https://${v}-app.jarvis.exchange/" target="_blank" style="color: #BCAC83;">Jarvis Network</a> website.</p>`;
 };
 
+export const tangibleDocsUsdr = () => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p>You can acquire this asset on the <a href="https://www.tangible.store/realusd?action=Mint" target="_blank" style="color: #BCAC83;">Tangible</a> website.</p>`;
+};
+
 export const oneInchDocs = (url: `https://${string}`) => `
 <p><b>How to acquire this token</b><p/><br />
 <p>You can acquire this asset for example via the <a href="${url}" target="_blank" style="color: #BCAC83;">1inch decentralized exchange</a>.</p>

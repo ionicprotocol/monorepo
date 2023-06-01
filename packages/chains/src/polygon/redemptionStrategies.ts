@@ -155,6 +155,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     underlying(assets, assetSymbols.USDC),
   ],
+  [underlying(assets, assetSymbols.USDR3CRV)]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.USDC),
+  ],
   [underlying(assets, assetSymbols["MAI-USDC"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, USDC],
   [underlying(assets, assetSymbols["WMATIC-MATICx"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WMATIC],
   [underlying(assets, assetSymbols.MIMO_PAR_80_20)]: [

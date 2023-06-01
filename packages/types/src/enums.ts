@@ -401,6 +401,8 @@ export enum assetSymbols {
   GNS = "GNS",
   "DAI-GNS" = "DAI-GNS",
   "IXT-USDT" = "IXT-USDT",
+  USDR = "USDR",
+  USDR3CRV = "USDR3CRV",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",

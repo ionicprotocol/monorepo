@@ -46,11 +46,18 @@ output "polygon-mainnet-liquidation-2" {
 # output "moonbeam-mainnet-liquidation-0" {
 #   value = module.moonbeam_mainnet_liquidation_rpc_0.lambda_cron_service_name
 # }
-output "moonbeam-mainnet-liquidation-1" {
-  value = module.moonbeam_mainnet_liquidation_rpc_1.lambda_cron_service_name
-}
+# output "moonbeam-mainnet-liquidation-1" {
+#   value = module.moonbeam_mainnet_liquidation_rpc_1.lambda_cron_service_name
+# }
 
 # FANTOM
 output "fantom-mainnet-liquidation" {
   value = module.fantom_mainnet_liquidation_rpc_1.lambda_cron_service_name
 }
+
+
+# ARBITRUM
+output "arbitrum-mainnet-liquidation" {
+  value = module.arbitrum_mainnet_liquidation_rpc_1.lambda_cron_service_name
+}
+
