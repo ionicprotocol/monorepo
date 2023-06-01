@@ -181,10 +181,10 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         .filter((value, index, self) => self.indexOf(value) === index); // Unique Array;
     }
 
-    async getFlywheelMarketRewardsByPoolWithAPR(markets: string[]): Promise<FlywheelMarketRewardsInfo[]> {
+    async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
         this.contracts.MidasFlywheelLensRouter as MidasFlywheelLensRouter
-      ).callStatic.getMarketRewardsInfo(markets);
+      ).callStatic.getPoolMarketRewardsInfo(pool);
 
       const adaptedMarketRewards = marketRewards
         .map((marketReward) => ({

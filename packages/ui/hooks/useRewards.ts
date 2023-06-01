@@ -27,12 +27,10 @@ export const fetchRewards = async (
 ) => {
   try {
     const [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-      sdk
-        .getFlywheelMarketRewardsByPoolWithAPR(assets.map((asset) => asset.cToken))
-        .catch((exception) => {
-          console.error('Unable to get onchain Flywheel Rewards with APY', exception);
-          return [];
-        }),
+      sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
+        console.error('Unable to get onchain Flywheel Rewards with APY', exception);
+        return [];
+      }),
       sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
         console.error('Unable to get onchain Flywheel Rewards without APY', error);
         return [];
