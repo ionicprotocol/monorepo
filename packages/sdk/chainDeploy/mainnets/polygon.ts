@@ -421,6 +421,16 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.USDT),
     ],
   },
+  {
+    lpToken: underlying(assets, assetSymbols.USDR3CRV),
+    pool: "0xa138341185a9D0429B0021A11FB717B225e13e1F",
+    underlyings: [
+      underlying(assets, assetSymbols.USDR),
+      underlying(assets, assetSymbols.DAI),
+      underlying(assets, assetSymbols.USDC),
+      underlying(assets, assetSymbols.USDT),
+    ],
+  },
 ];
 
 const gelatoAssets: GelatoGUniAsset[] = [
@@ -486,6 +496,12 @@ const diaAssets: DiaAsset[] = [
     underlying: underlying(assets, assetSymbols.PAR),
     feed: "0xd3709072C338689F94a4072a26Bb993559D9a026",
     key: "PAR/USD",
+  },
+  {
+    symbol: assetSymbols.USDR,
+    underlying: underlying(assets, assetSymbols.USDR),
+    feed: "0x763F20F3Fcdd30e11EF633A70B4396B91C149189",
+    key: "USDR/USD",
   },
 ];
 

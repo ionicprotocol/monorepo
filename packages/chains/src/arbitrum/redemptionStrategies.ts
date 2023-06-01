@@ -12,6 +12,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.SaddleLpTokenLiquidator,
     underlying(assets, assetSymbols.saddleFraxBP),
   ],
+  [underlying(assets, assetSymbols.OHM)]: [
+    RedemptionStrategyContract.BalancerSwapLiquidator,
+    underlying(assets, assetSymbols.WETH),
+  ],
 };
 
 export default redemptionStrategies;
