@@ -111,19 +111,23 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
 
     await Promise.all(
       pools.map(async ({ comptroller }) => {
-        const [_assets, flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-          sdk.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller).catch(() => []),
-          sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
-            console.error('Unable to get onchain Flywheel Rewards with APY', exception);
-            return [];
-          }),
+        const _assets = await sdk.contracts.FusePoolLens.callStatic
+          .getPoolAssetsWithData(comptroller)
+          .catch(() => []);
+        const assets = _assets.map(filterOnlyObjectProperties);
+        const [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
+          sdk
+            .getFlywheelMarketRewardsByPoolWithAPR(assets.map((asset) => asset.cToken))
+            .catch((exception) => {
+              console.error('Unable to get onchain Flywheel Rewards with APY', exception);
+              return [];
+            }),
           sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
             console.error('Unable to get onchain Flywheel Rewards without APY', error);
             return [];
           }),
         ]);
 
-        const assets = _assets.map(filterOnlyObjectProperties);
         const rewards = flywheelRewardsWithoutAPY.map((fwReward) => {
           const rewardWithAPY = flywheelRewardsWithAPY.find((r) => r.market === fwReward.market);
           if (rewardWithAPY) return rewardWithAPY;
