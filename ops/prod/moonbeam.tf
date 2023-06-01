@@ -49,21 +49,21 @@ locals {
 #   schedule_expression = "rate(20 minutes)"
 # }
 
-module "moonbeam_mainnet_liquidation_rpc_1" {
-  source              = "../modules/lambda"
-  ecr_repository_name = "liquidator"
-  docker_image_tag    = var.bots_image_tag
-  container_family    = "liquidator-rpc-1"
-  environment         = "mainnet"
-  chain_id            = local.moonbeam_mainnet_chain_id
-  container_env_vars = merge(
-    local.liquidation_variables,
-    { WEB3_HTTP_PROVIDER_URL = local.moonbeam_mainnet_rpc_1 }
-  )
-  schedule_expression = "rate(2 minutes)"
-  timeout             = 700
-  memory_size         = 256
-}
+# module "moonbeam_mainnet_liquidation_rpc_1" {
+#   source              = "../modules/lambda"
+#   ecr_repository_name = "liquidator"
+#   docker_image_tag    = var.bots_image_tag
+#   container_family    = "liquidator-rpc-1"
+#   environment         = "mainnet"
+#   chain_id            = local.moonbeam_mainnet_chain_id
+#   container_env_vars = merge(
+#     local.liquidation_variables,
+#     { WEB3_HTTP_PROVIDER_URL = local.moonbeam_mainnet_rpc_1 }
+#   )
+#   schedule_expression = "rate(2 minutes)"
+#   timeout             = 700
+#   memory_size         = 256
+# }
 
 
 # module "moonbeam_mainnet_liquidation_rpc_0" {
