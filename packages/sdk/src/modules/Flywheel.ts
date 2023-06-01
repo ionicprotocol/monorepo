@@ -184,7 +184,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
         this.contracts.MidasFlywheelLensRouter as MidasFlywheelLensRouter
-      ).callStatic.getPoolMarketRewardsInfo(pool);
+      ).callStatic.getMarketRewardsInfo(pool);
 
       const adaptedMarketRewards = marketRewards
         .map((marketReward) => ({
