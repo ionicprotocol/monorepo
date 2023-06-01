@@ -7,7 +7,7 @@ export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
   const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useRangeOfLeverageRatio', address, sdk],
+    ['useRangeOfLeverageRatio', address, sdk?.chainId],
     async () => {
       if (sdk && address) {
         const [minBignum, maxBignum] = await sdk.getRangeOfLeverageRatio(address);

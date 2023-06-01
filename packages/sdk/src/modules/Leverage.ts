@@ -1,5 +1,5 @@
 import { LeveredPosition, LeveredPositionBorrowable, SupportedChains } from "@midas-capital/types";
-import { BigNumber, constants } from "ethers";
+import { BigNumber, constants, ContractTransaction } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
 import { getContract } from "../MidasSdk/utils";
@@ -167,6 +167,20 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         leveredPosition.callStatic.getMinLeverageRatio(),
         leveredPosition.callStatic.getMaxLeverageRatio(),
       ]);
+    }
+
+    async closeLeveredPosition(address: string, withdrawTo?: string) {
+      const leveredPosition = this.createLeveredPosition(address, this.signer);
+
+      let tx: ContractTransaction;
+
+      if (withdrawTo) {
+        tx = await leveredPosition["closePosition(address)"](withdrawTo);
+      } else {
+        tx = await leveredPosition["closePosition()"]();
+      }
+
+      return tx;
     }
   };
 }

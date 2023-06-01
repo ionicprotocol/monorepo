@@ -32,7 +32,8 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
 
   const { currentChain, currentSdk, address } = useMultiMidas();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLeverageLoading, setIsLeverageLoading] = useState<boolean>(false);
+  const [isCloseLoading, setIsCloseLoading] = useState<boolean>(false);
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
@@ -71,7 +72,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
       debouncedLeverageNum <= (range ? range.max : LEVERAGE_VALUE.MAX) &&
       !debouncedAmount.isZero()
     ) {
-      setIsLoading(true);
+      setIsLeverageLoading(true);
 
       const realAmount = debouncedAmount
         .mul(utils.parseUnits(debouncedLeverageNum.toString()))
@@ -149,7 +150,44 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
 
         handleGenericError({ error, sentryInfo, toast: errorToast });
       } finally {
-        setIsLoading(false);
+        setIsLeverageLoading(false);
+      }
+    }
+  };
+
+  const onClose = async () => {
+    if (currentSdk && address && debouncedBorrowAsset.leveredPosition) {
+      setIsCloseLoading(true);
+
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        position: debouncedBorrowAsset.leveredPosition,
+      };
+
+      try {
+        const tx = await currentSdk.closeLeveredPosition(debouncedBorrowAsset.leveredPosition);
+
+        addRecentTransaction({
+          description: 'Closing levered position.',
+          hash: tx.hash,
+        });
+
+        tx.wait();
+
+        successToast({
+          description: 'Successfully closed levered position',
+          id: 'Close levered position - ' + Math.random().toString(),
+          title: 'Closed',
+        });
+      } catch (error) {
+        const sentryInfo = {
+          contextName: 'Levered Position - Closing',
+          properties: sentryProperties,
+        };
+
+        handleGenericError({ error, sentryInfo, toast: errorToast });
+      } finally {
+        setIsCloseLoading(false);
       }
     }
   };
@@ -214,14 +252,30 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
                   <Button
                     height={12}
                     isDisabled={
+                      isLeverageLoading ||
+                      isCloseLoading ||
                       !currentChain ||
                       currentChain.unsupported ||
                       currentChain.id !== Number(leverage.chainId)
                     }
-                    isLoading={isLoading}
+                    isLoading={isLeverageLoading}
                     onClick={onLeverage}
                   >
                     Leverage
+                  </Button>
+                  <Button
+                    height={12}
+                    isDisabled={
+                      isLeverageLoading ||
+                      isCloseLoading ||
+                      !currentChain ||
+                      currentChain.unsupported ||
+                      currentChain.id !== Number(leverage.chainId)
+                    }
+                    isLoading={isCloseLoading}
+                    onClick={onClose}
+                  >
+                    Close Position
                   </Button>
                 </VStack>
               </GridItem>
