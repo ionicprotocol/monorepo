@@ -82,8 +82,14 @@ export const SupplyAndBorrowCaps = ({
 
   useEffect(() => {
     if (cTokenData) {
-      setValue('supplyCap', parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS)));
-      setValue('borrowCap', parseFloat(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS)));
+      setValue(
+        'supplyCap',
+        parseFloat(utils.formatUnits(cTokenData.supplyCap, cTokenData.decimals))
+      );
+      setValue(
+        'borrowCap',
+        parseFloat(utils.formatUnits(cTokenData.borrowCap, cTokenData.decimals))
+      );
     }
   }, [cTokenData, setValue]);
 
