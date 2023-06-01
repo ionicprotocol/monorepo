@@ -21,18 +21,21 @@ export interface UseRewardsData {
 }
 
 export const fetchFlywheelRewards = async (comptroller: string, chainId: number, sdk: MidasSdk) => {
-  try {
-    const [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-      sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller),
-      sdk.getFlywheelMarketRewardsByPool(comptroller),
-    ]);
+  let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
+  let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
 
-    return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
-  } catch (e) {
-    console.error('Unable to get onchain Flywheel Rewards', e);
+  [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
+    sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
+      console.error('Unable to get onchain Flywheel Rewards with APY', exception);
+      return [];
+    }),
+    sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
+      console.error('Unable to get onchain Flywheel Rewards without APY', error);
+      return [];
+    }),
+  ]);
 
-    return { flywheelRewardsWithAPY: [], flywheelRewardsWithoutAPY: [] };
-  }
+  return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
 };
 
 export function useFlywheelRewards(comptroller?: string, chainId?: number) {
