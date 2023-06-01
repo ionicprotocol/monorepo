@@ -20,6 +20,9 @@ const providerMap: ProviderMapForChain = {
     '0xFA36Fe1dA08C89eC72Ea1F0143a35bFd5DAea108': LidoStakedDotAPYProvider,
     '0x191cf2602Ca2e534c5Ccae7BCBF4C46a704bb949': LidoStakedDotAPYProvider,
   },
+  [SupportedChains.polygon]: {
+    '0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6': new MockAPYProvider(0.047),
+  },
 };
 
 export async function getAPYProviders(
