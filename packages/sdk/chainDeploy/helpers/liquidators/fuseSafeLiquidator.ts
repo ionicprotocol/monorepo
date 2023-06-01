@@ -200,51 +200,39 @@ export const configureAddressesProviderStrategies = async ({
 
   // configure the curve oracles addresses in the AddressesProvider
   const clpov1 = await ethers.getContractOrNull("CurveLpTokenPriceOracleNoRegistry");
-  const clpov1Address = await ap.callStatic.getAddress("CurveLpTokenPriceOracleNoRegistry");
-  if (clpov1 && clpov1Address !== clpov1.address) {
-    const tx = await ap.setAddress("CurveLpTokenPriceOracleNoRegistry", clpov1.address);
-    await tx.wait();
-    console.log("setAddress CurveLpTokenPriceOracleNoRegistry: ", tx.hash);
-  }
+  await configureAddress("CurveLpTokenPriceOracleNoRegistry", clpov1?.address, ap);
 
   const clpov2 = await ethers.getContractOrNull("CurveV2LpTokenPriceOracleNoRegistry");
-  const clpov2Address = await ap.callStatic.getAddress("CurveV2LpTokenPriceOracleNoRegistry");
-  if (clpov2 && clpov2Address !== clpov2.address) {
-    const tx = await ap.setAddress("CurveV2LpTokenPriceOracleNoRegistry", clpov2.address);
-    await tx.wait();
-    console.log("setAddress CurveV2LpTokenPriceOracleNoRegistry: ", tx.hash);
-  }
+  await configureAddress("CurveV2LpTokenPriceOracleNoRegistry", clpov2?.address, ap);
 
   // configure the redemption and funding strategies addresses
   const csl = await ethers.getContractOrNull("CurveSwapLiquidator");
-  const cslAddress = await ap.callStatic.getAddress("CurveSwapLiquidator");
-  if (csl && cslAddress !== csl.address) {
-    const tx = await ap.setAddress("CurveSwapLiquidator", csl.address);
-    await tx.wait();
-    console.log("setAddress CurveSwapLiquidator: ", tx.hash);
-  }
+  await configureAddress("CurveSwapLiquidator", csl?.address, ap);
 
   const jlf = await ethers.getContractOrNull("JarvisLiquidatorFunder");
-  const jlfAddress = await ap.callStatic.getAddress("JarvisLiquidatorFunder");
-  if (jlf && jlfAddress !== jlf.address) {
-    const tx = await ap.setAddress("JarvisLiquidatorFunder", jlf.address);
-    await tx.wait();
-    console.log("setAddress JarvisLiquidatorFunder: ", tx.hash);
-  }
+  await configureAddress("JarvisLiquidatorFunder", jlf?.address, ap);
 
   const uv2l = await ethers.getContractOrNull("UniswapV2Liquidator");
-  const uv2lAddress = await ap.callStatic.getAddress("UniswapV2Liquidator");
-  if (uv2l && uv2lAddress !== uv2l.address) {
-    const tx = await ap.setAddress("UniswapV2Liquidator", uv2l.address);
-    await tx.wait();
-    console.log("setAddress UniswapV2Liquidator: ", tx.hash);
-  }
+  await configureAddress("UniswapV2Liquidator", uv2l?.address, ap);
 
   const clptlnr = await ethers.getContractOrNull("CurveLpTokenLiquidatorNoRegistry");
-  const clptlnrAddress = await ap.callStatic.getAddress("CurveLpTokenLiquidatorNoRegistry");
-  if (clptlnr && clptlnrAddress !== clptlnr.address) {
-    const tx = await ap.setAddress("CurveLpTokenLiquidatorNoRegistry", clptlnr.address);
-    await tx.wait();
-    console.log("setAddress CurveLpTokenLiquidatorNoRegistry: ", tx.hash);
-  }
+  await configureAddress("CurveLpTokenLiquidatorNoRegistry", clptlnr?.address, ap);
+
+  await configureAddress("UNISWAP_V3_ROUTER", chainConfig.chainAddresses.UNISWAP_V3_ROUTER, ap);
+  await configureAddress("ALGEBRA_SWAP_ROUTER", chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER, ap);
+  await configureAddress("SOLIDLY_SWAP_ROUTER", chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, ap);
 };
+
+async function configureAddress(key, value, ap) {
+  if (!value) {
+    console.log(`empty value for key ${key}`);
+    return;
+  }
+
+  const currentValue = await ap.callStatic.getAddress(key);
+  if (currentValue && currentValue !== value) {
+    const tx = await ap.setAddress(key, value);
+    await tx.wait();
+    console.log(`setAddress ${key}: ${tx.hash}`);
+  }
+}
