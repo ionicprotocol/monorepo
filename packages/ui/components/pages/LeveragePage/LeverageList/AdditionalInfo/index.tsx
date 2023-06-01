@@ -17,7 +17,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useRangeOfLeverageRatio } from '@ui/hooks/leverage/useRangeOfLeverageRatio';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
-import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { getChainConfig } from '@ui/utils/networkData';
 
@@ -46,6 +46,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const debouncedLeverageNum = useDebounce(parseFloat(leverageValue) || 0, 1000);
   const addRecentTransaction = useAddRecentTransaction();
   const successToast = useSuccessToast();
+  const infoToast = useInfoToast();
   const errorToast = useErrorToast();
   const { data: range } = useRangeOfLeverageRatio(
     debouncedBorrowAsset.leveredPosition,
@@ -166,6 +167,16 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
 
       try {
         const tx = await currentSdk.closeLeveredPosition(debouncedBorrowAsset.leveredPosition);
+
+        if (!tx) {
+          infoToast({
+            description: 'Already closed levered position',
+            id: 'Already Closed levered position - ' + Math.random().toString(),
+            title: 'Info',
+          });
+
+          return;
+        }
 
         addRecentTransaction({
           description: 'Closing levered position.',

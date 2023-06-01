@@ -172,15 +172,21 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     async closeLeveredPosition(address: string, withdrawTo?: string) {
       const leveredPosition = this.createLeveredPosition(address, this.signer);
 
-      let tx: ContractTransaction;
+      const isPositionClosed = await leveredPosition.callStatic.isPositionClosed();
 
-      if (withdrawTo) {
-        tx = await leveredPosition["closePosition(address)"](withdrawTo);
+      if (!isPositionClosed) {
+        let tx: ContractTransaction;
+
+        if (withdrawTo) {
+          tx = await leveredPosition["closePosition(address)"](withdrawTo);
+        } else {
+          tx = await leveredPosition["closePosition()"]();
+        }
+
+        return tx;
       } else {
-        tx = await leveredPosition["closePosition()"]();
+        return null;
       }
-
-      return tx;
     }
   };
 }
