@@ -4,11 +4,13 @@ import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { smallFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const Apy = ({
@@ -105,15 +107,17 @@ export const Apy = ({
         leverageValue >= minValue &&
         leverageValue <= maxValue
       ) {
-        const bigApr = await sdk.getUpdatedBorrowApr(
-          collateralCToken,
-          borrowToken,
-          totalSupplied.add(
-            amount.mul(utils.parseUnits(leverageValue.toString())).div(constants.WeiPerEther)
-          ),
-          utils.parseUnits(leverageValue.toString())
-        );
-        setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
+        try {
+          const bigApr = await sdk.getUpdatedBorrowApr(
+            collateralCToken,
+            borrowToken,
+            totalSupplied.add(
+              amount.mul(utils.parseUnits(leverageValue.toString())).div(constants.WeiPerEther)
+            ),
+            utils.parseUnits(leverageValue.toString())
+          );
+          setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
+        } catch (e) {}
       }
     };
 
@@ -136,13 +140,51 @@ export const Apy = ({
           <HStack justifyContent="flex-end" width="90px">
             <Text size="md">Yield</Text>
           </HStack>
-          {totalSupplyApyPerAsset && updatedSupplyApy !== undefined && supplyAPY !== undefined ? (
+          {totalSupplyApyPerAsset ? (
             <HStack>
-              <Text>{totalSupplyApyPerAsset[collateralCToken]}%</Text>
+              <EllipsisText
+                maxWidth="300px"
+                tooltip={
+                  totalSupplyApyPerAsset[collateralCToken] !== undefined &&
+                  totalSupplyApyPerAsset[collateralCToken] !== 0
+                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken], true, 18)
+                    : ''
+                }
+              >
+                <Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined
+                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken])
+                    : '?'}
+                  %
+                </Text>
+              </EllipsisText>
               <Text>➡</Text>
-              <Text>
-                {totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY}%
-              </Text>
+              <EllipsisText
+                maxWidth="300px"
+                tooltip={
+                  totalSupplyApyPerAsset[collateralCToken] !== undefined &&
+                  updatedSupplyApy !== undefined &&
+                  supplyAPY !== undefined &&
+                  totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY !== 0
+                    ? smallFormatter(
+                        totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY,
+                        true,
+                        18
+                      )
+                    : ''
+                }
+              >
+                <Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
+                  updatedSupplyApy !== undefined &&
+                  supplyAPY !== undefined
+                    ? smallFormatter(
+                        totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY
+                      )
+                    : '?'}
+                  %
+                </Text>
+              </EllipsisText>
             </HStack>
           ) : null}
         </HStack>
@@ -151,9 +193,19 @@ export const Apy = ({
             <Text size="md">Borrow</Text>
           </HStack>
           <HStack>
-            <Text>{borrowAPY}%</Text>
+            <EllipsisText
+              maxWidth="300px"
+              tooltip={borrowAPY ? smallFormatter(borrowAPY, true, 18) : ''}
+            >
+              <Text>{borrowAPY ? smallFormatter(borrowAPY) : '?'}%</Text>
+            </EllipsisText>
             <Text>➡</Text>
-            <Text>{updatedBorrowApr}%</Text>
+            <EllipsisText
+              maxWidth="300px"
+              tooltip={updatedBorrowApr ? smallFormatter(updatedBorrowApr, true, 18) : ''}
+            >
+              <Text>{updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%</Text>
+            </EllipsisText>
           </HStack>
         </HStack>
         <HStack spacing={4}>
@@ -161,12 +213,21 @@ export const Apy = ({
             <Text size="md">Total APR</Text>
           </HStack>
           <HStack>
-            <Text>
-              {totalSupplyApyPerAsset && supplyAPY !== undefined && borrowAPY !== undefined
-                ? totalSupplyApyPerAsset[collateralCToken] - borrowAPY
-                : '?'}
-              %
-            </Text>
+            <EllipsisText
+              maxWidth="300px"
+              tooltip={
+                totalSupplyApyPerAsset && supplyAPY !== undefined && borrowAPY !== undefined
+                  ? smallFormatter(totalSupplyApyPerAsset[collateralCToken] - borrowAPY, true, 18)
+                  : ''
+              }
+            >
+              <Text>
+                {totalSupplyApyPerAsset && supplyAPY !== undefined && borrowAPY !== undefined
+                  ? smallFormatter(totalSupplyApyPerAsset[collateralCToken] - borrowAPY)
+                  : '?'}
+                %
+              </Text>
+            </EllipsisText>
           </HStack>
         </HStack>
       </VStack>

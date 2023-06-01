@@ -4,10 +4,10 @@ import { formatUnits } from 'ethers/lib/utils';
 export const dynamicFormatter = (value: number, options: Intl.NumberFormatOptions) =>
   new Intl.NumberFormat('en-US', options).format(value);
 
-export const smallFormatter = (num: number, isCompacted?: boolean) => {
+export const smallFormatter = (num: number, isCompacted?: boolean, digits = 2) => {
   return dynamicFormatter(num, {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
+    maximumFractionDigits: digits,
+    minimumFractionDigits: digits,
     notation: isCompacted ? 'compact' : undefined,
   });
 };
