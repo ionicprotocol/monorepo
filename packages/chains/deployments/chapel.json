@@ -6,7 +6,7 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "AddressesProvider_Implementation": {
-      "address": "0x655840D0C8681CcD661fC6E3f413E5e6caCa03D0"
+      "address": "0x0173236042B3D1b2B19a185eDdf54B0BCc837345"
     },
     "AddressesProvider_Proxy": {
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
@@ -27,7 +27,7 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0xf12BF362779D3F728644DC33a5D594F0E57a85F2"
+      "address": "0xAF6Ae81e29DA3CdF4D64B9e2B04bD93Fc090c7Bd"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x9c55d77E1f46622f5171Dc0eB03461FdCCD92836"
@@ -162,7 +162,7 @@
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
     },
     "LeveredPositionFactory_Implementation": {
-      "address": "0xE000dDBC2e0aD178E40bd2FF2e966065375256d3"
+      "address": "0x52309DC31c20Ec014A3a179d45cB16Ec317d233e"
     },
     "LeveredPositionFactory_Proxy": {
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
@@ -171,7 +171,7 @@
       "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x0bA2e4c2501407F9eA5355BB9e54d8FBF2378B32"
+      "address": "0x81a8C0dCB748a1155A656aE02C57e985Aa083B88"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"

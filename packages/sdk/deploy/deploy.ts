@@ -12,7 +12,6 @@ import {
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
-import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
