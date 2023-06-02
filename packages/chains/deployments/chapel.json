@@ -162,7 +162,7 @@
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
     },
     "LeveredPositionFactory_Implementation": {
-      "address": "0x52309DC31c20Ec014A3a179d45cB16Ec317d233e"
+      "address": "0x927F22bfC0976A83463A48D9E9A0eFC169A5Efe6"
     },
     "LeveredPositionFactory_Proxy": {
       "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
@@ -171,7 +171,7 @@
       "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x81a8C0dCB748a1155A656aE02C57e985Aa083B88"
+      "address": "0xd41b3308Bc5FbB2101ED8B4c3508adAC410B0Ba0"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"
@@ -186,7 +186,7 @@
       "address": "0x429041250873643235cb3788871447c6fF3205aA"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x3391ed1C5203168337Fa827cB5Ac8BB8B60D93B7"
+      "address": "0x73B6f1B5B344A9981E312e7DBF64A5C4C587ac38"
     },
     "MidasFlywheel_Implementation": {
       "address": "0x7b08D19832eD5Ec09b4898eA928991ea7b145457"
