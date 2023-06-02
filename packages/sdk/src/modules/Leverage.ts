@@ -20,7 +20,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             decimals: collateralDecimals,
             totalUnderlyingSupplied: collateralTotalSupplys,
             symbols: collateralsymbols,
-            rates: supplyRatePerBlock,
+            ratesPerBlock: supplyRatePerBlock,
             poolOfMarket,
           } = await leveredPositionFactory.callStatic.getCollateralMarkets();
           const positions = await this.getPositionsByAccount(account);
