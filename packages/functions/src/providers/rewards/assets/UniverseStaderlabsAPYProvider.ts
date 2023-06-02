@@ -1,4 +1,4 @@
-import { Reward } from '@midas-capital/types';
+import { Reward, SupportedChains } from '@midas-capital/types';
 import axios from 'axios';
 import { AbstractAssetAPYProvider } from './AbstractAssetAPYProvider';
 
@@ -9,8 +9,28 @@ class UniverseStaderlabsAPYProvider extends AbstractAssetAPYProvider {
       }
     | undefined = undefined;
 
-  async init() {
-    this.data = await (await axios.get('https://universe.staderlabs.com/polygon/apy')).data;
+  async init({ chainId }: { chainId: SupportedChains }) {
+    let chainKey = '';
+
+    switch (chainId) {
+      case SupportedChains.polygon:
+        chainKey = 'polygon';
+        break;
+      case SupportedChains.bsc:
+        chainKey = 'bnb';
+        break;
+      case SupportedChains.fantom:
+        chainKey = 'fantom';
+        break;
+      default:
+        break;
+    }
+
+    if (!chainKey) {
+      throw `UniverseStaderlabsAPYProvider: No chainId provided`;
+    }
+
+    this.data = await (await axios.get(`https://universe.staderlabs.com/${chainKey}/apy`)).data;
 
     if (!this.data) {
       throw `UniverseStaderlabsAPYProvider: unexpected response`;
