@@ -12,6 +12,8 @@ import {
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
+import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
+import { LeveredPositionFactoryExtension } from "../typechain/LeveredPositionFactoryExtension";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
@@ -625,20 +627,40 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const lpfDep = await deployments.deploy("LeveredPositionFactory", {
     from: deployer,
     log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
-        },
-      },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
-    },
+    args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
     waitConfirmations: 1,
   });
   if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
   console.log("LeveredPositionFactory: ", lpfDep.address);
+
+  const lpfExtDep = await deployments.deploy("LeveredPositionFactoryExtension", {
+    from: deployer,
+    log: true,
+    args: [],
+    waitConfirmations: 1,
+  });
+  if (lpfExtDep.transactionHash) await ethers.provider.waitForTransaction(lpfExtDep.transactionHash);
+  console.log("LeveredPositionFactoryExtension: ", lpfExtDep.address);
+
+  const leveredPositionFactory = (await ethers.getContract(
+    "LeveredPositionFactory",
+    deployer
+  )) as LeveredPositionFactory;
+  const currentLPFExtensions = await leveredPositionFactory._listExtensions();
+  if (!currentLPFExtensions.length || currentLPFExtensions[0] != lpfExtDep.address) {
+    let extToReplace;
+    if (currentLPFExtensions.length == 0) {
+      extToReplace = constants.AddressZero;
+    } else {
+      extToReplace = currentLPFExtensions[0];
+    }
+
+    tx = await leveredPositionFactory._registerExtension(lpfExtDep.address, extToReplace);
+    await tx.wait();
+    console.log("replaced the LeveredPositionFactory extension: ", tx.hash);
+  } else {
+    console.log(`no LeveredPositionFactory extensions to update`);
+  }
   ////
 
   /// EXTERNAL ADDRESSES

@@ -159,13 +159,10 @@
       "address": "0x212f88Ba5927b6cDcA498E0BA20541EF35864961"
     },
     "LeveredPositionFactory": {
-      "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
+      "address": "0x67419AE30cBb8723c49E1F03bca0Ddcc245da3AA"
     },
-    "LeveredPositionFactory_Implementation": {
-      "address": "0x927F22bfC0976A83463A48D9E9A0eFC169A5Efe6"
-    },
-    "LeveredPositionFactory_Proxy": {
-      "address": "0x7b6F27bF7cE60DA6e398ec348a915D8A81bC2b3A"
+    "LeveredPositionFactoryExtension": {
+      "address": "0x0d3E0a318Be8792921C8e9c6Cea9e05EAE52F44a"
     },
     "LiquidatorsRegistry": {
       "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
