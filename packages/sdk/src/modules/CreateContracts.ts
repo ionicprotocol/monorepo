@@ -10,7 +10,7 @@ import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import LeveredPositionABI from "../../abis/LeveredPosition";
-import LeveredPositionFactoryABI from "../../abis/LeveredPositionFactory";
+import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
 import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
 import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
@@ -27,7 +27,7 @@ import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
-import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
+import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
@@ -124,9 +124,9 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createLeveredPositionFactory(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.LeveredPositionFactory.address,
-        LeveredPositionFactoryABI,
+        ILeveredPositionFactoryABI,
         signerOrProvider
-      ) as LeveredPositionFactory;
+      ) as ILeveredPositionFactory;
     }
 
     createLeveredPosition(address: string, signerOrProvider: SignerOrProvider = this.provider) {
