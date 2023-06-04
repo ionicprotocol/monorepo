@@ -168,7 +168,7 @@
       "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xd41b3308Bc5FbB2101ED8B4c3508adAC410B0Ba0"
+      "address": "0x49646a9f47550d6caff1DF14F71e89163a310888"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"
@@ -249,10 +249,13 @@
       "address": "0xFe44E528caF2F391dEBA6fd5beaa5d530b6bf8A3"
     },
     "XBombLiquidatorFunder": {
-      "address": "0x70190bAbF03fBC09BA7151ffB8FA73D2fFD80ea4"
+      "address": "0x153C0DB51dEb8c29ab1E9225F0f03bcEEE26E54f"
     },
-    "XBombSwap": {
-      "address": "0x47Bf57bB81c82Af4116cA2FF76D063C698cFCd76"
+    "XBombSwapTDai": {
+      "address": "0xd816eb4660615BBF080ddf425F28ea4AF30d04D5"
+    },
+    "XBombSwapTUSD": {
+      "address": "0x161FbE0943Af4A39a50262026A81a243B635982d"
     }
   }
 }

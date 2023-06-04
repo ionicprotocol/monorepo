@@ -79,9 +79,16 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.SimplePriceOracle,
   },
   {
-    symbol: assetSymbols.DAI,
-    underlying: "",
+    symbol: assetSymbols.TDAI,
+    underlying: "0x8870f7102F1DcB1c35b01af10f1baF1B00aD6805",
     name: "Testing DAI",
+    decimals: 18,
+    oracle: OracleTypes.SimplePriceOracle,
+  },
+  {
+    symbol: assetSymbols.TUSD,
+    underlying: "0x4f1885D25eF219D3D4Fa064809D6D4985FAb9A0b",
+    name: "Testing USD",
     decimals: 18,
     oracle: OracleTypes.SimplePriceOracle,
   },
