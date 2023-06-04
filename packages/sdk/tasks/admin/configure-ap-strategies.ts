@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 
 import { configureAddressesProviderStrategies } from "../../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
-import {configureLiquidatorsRegistry} from "../../chainDeploy/helpers/liquidators/registry";
+import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
 
 export default task(
   "config:strategies",
@@ -20,5 +20,4 @@ export default task(
     getNamedAccounts,
     chainId,
   });
-
 });
