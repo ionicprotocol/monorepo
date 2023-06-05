@@ -17,7 +17,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import type { CreatedPosition, SupportedChains } from '@midas-capital/types';
+import type { NewPosition, NewPositionBorrowable, SupportedChains } from '@midas-capital/types';
 import type {
   ColumnDef,
   FilterFn,
@@ -39,9 +39,9 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
-import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/index';
-import { BorrowableAssets } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/BorrowableAssets';
-import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/SupplyApy';
+import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/index';
+import { BorrowableAssets } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/BorrowableAssets';
+import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
@@ -52,10 +52,10 @@ import {
   BORROWABLE_ASSET,
   CHAIN,
   COLLATERAL_ASSET,
-  CREATED_POSITION_PER_PAGE,
   HIDDEN,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
+  POSITION_CREATION_PER_PAGE,
   SEARCH,
   SUPPLY_APY,
 } from '@ui/constants/index';
@@ -64,13 +64,13 @@ import type { Err, LeveragesPerChainStatus } from '@ui/types/ComponentPropsType'
 import { sortLeverages } from '@ui/utils/sorts';
 
 export type LeverageRowData = {
-  borrowableAsset: CreatedPosition;
-  chain: CreatedPosition;
-  collateralAsset: CreatedPosition;
-  supplyApy: CreatedPosition;
+  borrowableAsset: NewPosition;
+  chain: NewPosition;
+  collateralAsset: NewPosition;
+  supplyApy: NewPosition;
 };
 
-export const CreatedPositionComp = ({
+export const NewPositionComp = ({
   initGlobalFilter,
   initColumnVisibility,
   initSorting,
@@ -87,34 +87,52 @@ export const CreatedPositionComp = ({
 }) => {
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
-  const [selectedFilteredLeverages, setSelectedFilteredLeverages] = useState<CreatedPosition[]>([]);
+  const [selectedFilteredLeverages, setSelectedFilteredLeverages] = useState<NewPosition[]>([]);
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: CREATED_POSITION_PER_PAGE[0],
+    pageSize: POSITION_CREATION_PER_PAGE[0],
   });
+
+  const [selectedBorrowableAssets, setSelectedBorrowableAssets] = useState<{
+    [collateral: string]: NewPositionBorrowable;
+  }>();
 
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>(initGlobalFilter);
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
 
-  const allCreatedPositions = useMemo(() => {
+  const allNewPositions = useMemo(() => {
     return Object.values(leveragesPerChain).reduce((res, leverages) => {
-      if (leverages.data && leverages.data.createdPositions.length > 0) {
-        res.push(...leverages.data.createdPositions);
+      if (leverages.data && leverages.data.newPositions.length > 0) {
+        res.push(...leverages.data.newPositions);
       }
 
       return res;
-    }, [] as CreatedPosition[]);
+    }, [] as NewPosition[]);
   }, [leveragesPerChain]);
 
   useEffect(() => {
-    const leverages: CreatedPosition[] = [];
+    const _selectedBorrowableAssets: {
+      [collateral: string]: NewPositionBorrowable;
+    } = {};
+
+    allNewPositions.map((newPosition) => {
+      if (newPosition.borrowable.length > 0) {
+        _selectedBorrowableAssets[newPosition.collateral.cToken] = newPosition.borrowable[0];
+      }
+    });
+
+    setSelectedBorrowableAssets(_selectedBorrowableAssets);
+  }, [allNewPositions]);
+
+  useEffect(() => {
+    const leverages: NewPosition[] = [];
 
     if (globalFilter.includes(ALL)) {
-      setSelectedFilteredLeverages([...allCreatedPositions]);
+      setSelectedFilteredLeverages([...allNewPositions]);
     } else {
       globalFilter.map((filter) => {
-        const data = leveragesPerChain[filter.toString()]?.data?.createdPositions;
+        const data = leveragesPerChain[filter.toString()]?.data?.newPositions;
 
         if (data) {
           leverages.push(...data);
@@ -123,7 +141,7 @@ export const CreatedPositionComp = ({
 
       setSelectedFilteredLeverages(leverages);
     }
-  }, [globalFilter, leveragesPerChain, allCreatedPositions]);
+  }, [globalFilter, leveragesPerChain, allNewPositions]);
 
   const leverageFilter: FilterFn<LeverageRowData> = useCallback(
     (row, columnId, value) => {
@@ -171,7 +189,7 @@ export const CreatedPositionComp = ({
   }, []);
 
   const data: LeverageRowData[] = useMemo(() => {
-    return sortLeverages(allCreatedPositions).map((leverage) => {
+    return sortLeverages(allNewPositions).map((leverage) => {
       return {
         borrowableAsset: leverage,
         chain: leverage,
@@ -179,13 +197,13 @@ export const CreatedPositionComp = ({
         supplyApy: leverage,
       };
     });
-  }, [allCreatedPositions]);
+  }, [allNewPositions]);
 
   const columns: ColumnDef<LeverageRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.chain,
-        cell: ({ getValue }) => <Chain chainId={Number(getValue<CreatedPosition>().chainId)} />,
+        cell: ({ getValue }) => <Chain chainId={Number(getValue<NewPosition>().chainId)} />,
         enableHiding: false,
         footer: (props) => props.column.id,
         header: () => null,
@@ -196,9 +214,9 @@ export const CreatedPositionComp = ({
         accessorFn: (row) => row.collateralAsset,
         cell: ({ getValue }) => (
           <TokenName
-            chainId={Number(getValue<CreatedPosition>().chainId)}
-            symbol={getValue<CreatedPosition>().collateral.symbol}
-            underlying={getValue<CreatedPosition>().collateral.underlyingToken}
+            chainId={Number(getValue<NewPosition>().chainId)}
+            symbol={getValue<NewPosition>().collateral.symbol}
+            underlying={getValue<NewPosition>().collateral.underlyingToken}
           />
         ),
         enableHiding: false,
@@ -212,7 +230,7 @@ export const CreatedPositionComp = ({
       },
       {
         accessorFn: (row) => row.supplyApy,
-        cell: ({ getValue }) => <SupplyApy leverage={getValue<CreatedPosition>()} />,
+        cell: ({ getValue }) => <SupplyApy leverage={getValue<NewPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
         id: SUPPLY_APY,
@@ -220,7 +238,13 @@ export const CreatedPositionComp = ({
       },
       {
         accessorFn: (row) => row.borrowableAsset,
-        cell: ({ getValue }) => <BorrowableAssets leverage={getValue<CreatedPosition>()} />,
+        cell: ({ getValue }) => (
+          <BorrowableAssets
+            leverage={getValue<NewPosition>()}
+            selectedBorrowableAssets={selectedBorrowableAssets}
+            setSelectedBorrowableAssets={setSelectedBorrowableAssets}
+          />
+        ),
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => (
@@ -229,7 +253,7 @@ export const CreatedPositionComp = ({
         id: BORROWABLE_ASSET,
       },
     ];
-  }, [leverageFilter, leverageSort]);
+  }, [leverageFilter, leverageSort, selectedBorrowableAssets]);
 
   const table = useReactTable({
     columns,
@@ -298,7 +322,7 @@ export const CreatedPositionComp = ({
         width="100%"
       >
         <Text py={4} size="md" textAlign="center" width="100%">
-          Open Levered Positions
+          Create New Levered Position
         </Text>
       </Box>
       <MidasBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
@@ -391,7 +415,10 @@ export const CreatedPositionComp = ({
                       >
                         {/* 2nd row is a custom 1 cell row */}
                         <Td border="none" colSpan={row.getVisibleCells().length}>
-                          <AdditionalInfo row={row} />
+                          <AdditionalInfo
+                            row={row}
+                            selectedBorrowableAssets={selectedBorrowableAssets}
+                          />
                         </Td>
                       </Tr>
                     )}
@@ -400,7 +427,7 @@ export const CreatedPositionComp = ({
               ) : selectedFilteredLeverages.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>You have no open levered positions on this chain.</Center>
+                    <Center py={8}>There are no assets to use leverage with on this chain.</Center>
                   </Td>
                 </Tr>
               ) : (

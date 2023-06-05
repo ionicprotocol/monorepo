@@ -1,8 +1,8 @@
 import {
-  CreatedPosition,
-  CreatedPositionBorrowable,
-  PositionCreation,
-  PositionCreationBorrowable,
+  NewPosition,
+  NewPositionBorrowable,
+  OpenPosition,
+  OpenPositionBorrowable,
   SupportedChains,
 } from "@midas-capital/types";
 import { BigNumber, constants, ContractTransaction } from "ethers";
@@ -17,11 +17,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
   return class Leverage extends Base {
     async getAllLeveredPositions(
       account: string
-    ): Promise<{ createdPositions: CreatedPosition[]; positionCreations: PositionCreation[] }> {
+    ): Promise<{ openPositions: OpenPosition[]; newPositions: NewPosition[] }> {
       if (this.chainId === SupportedChains.chapel) {
         try {
-          const createdPositions: CreatedPosition[] = [];
-          const positionCreations: PositionCreation[] = [];
+          const openPositions: OpenPosition[] = [];
+          const newPositions: NewPosition[] = [];
 
           const leveredPositionFactory = this.createLeveredPositionFactory();
           const midasFlywheelLensRouter = this.createMidasFlywheelLensRouter();
@@ -60,8 +60,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
               const reward = rewards.find((rw) => rw.market === collateralCToken);
 
               //get borrowable asset
-              const createdPositionBorrowable: CreatedPositionBorrowable[] = [];
-              const positionCreationBorrowable: PositionCreationBorrowable[] = [];
+              const openPositionBorrowable: OpenPositionBorrowable[] = [];
+              const newPositionBorrowable: NewPositionBorrowable[] = [];
               borrowableMarkets.map((borrowableMarket, i) => {
                 const borrowableAsset = ChainSupportedAssets[this.chainId].find(
                   (asset) => asset.underlying === borrowableUnderlyings[index]
@@ -82,19 +82,19 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 };
 
                 if (position) {
-                  createdPositionBorrowable.push({
+                  openPositionBorrowable.push({
                     ...borrowable,
                     position: position.position,
                   });
                 } else {
-                  positionCreationBorrowable.push({
+                  newPositionBorrowable.push({
                     ...borrowable,
                   });
                 }
               });
 
-              createdPositionBorrowable.map((_borrowable) => {
-                createdPositions.push({
+              openPositionBorrowable.map((_borrowable) => {
+                openPositions.push({
                   chainId: this.chainId,
                   collateral: {
                     cToken: collateralCToken,
@@ -117,7 +117,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 });
               });
 
-              positionCreations.push({
+              newPositions.push({
                 chainId: this.chainId,
                 collateral: {
                   cToken: collateralCToken,
@@ -136,12 +136,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   pool: poolOfMarket[index],
                   plugin: this.marketToPlugin[collateralCToken],
                 },
-                borrowable: positionCreationBorrowable,
+                borrowable: newPositionBorrowable,
               });
             })
           );
 
-          return { createdPositions, positionCreations };
+          return { newPositions, openPositions };
         } catch (error) {
           this.logger.error(`get levered positions error in chain ${this.chainId}:  ${error}`);
 
@@ -151,7 +151,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           );
         }
       } else {
-        return { positionCreations: [], createdPositions: [] };
+        return { newPositions: [], openPositions: [] };
       }
     }
 

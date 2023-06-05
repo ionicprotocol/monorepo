@@ -4,7 +4,7 @@ import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';
 
-import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/AdditionalInfo/Balance';
+import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/Balance';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -102,7 +102,7 @@ export const SupplyAmount = ({
           underlyingSymbol={collateralAsset.symbol}
           underlyingToken={collateralAsset.underlyingToken}
         />
-        <MidasBox height={12} width="100%">
+        <MidasBox height={12} maxW="300px" width="100%">
           <Row
             crossAxisAlignment="center"
             expand

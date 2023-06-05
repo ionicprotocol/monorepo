@@ -1,5 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
-import type { CreatedPosition } from '@midas-capital/types';
+import type { OpenPosition } from '@midas-capital/types';
 import { FaAngleDown } from 'react-icons/fa';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -7,7 +7,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useColors } from '@ui/hooks/useColors';
 
-export const BorrowableAssets = ({ leverage }: { leverage: CreatedPosition }) => {
+export const BorrowableAssets = ({ leverage }: { leverage: OpenPosition }) => {
   const { cCard } = useColors();
 
   return (

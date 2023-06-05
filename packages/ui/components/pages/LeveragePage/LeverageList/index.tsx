@@ -6,8 +6,8 @@ import * as React from 'react';
 
 import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
 import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
-import { CreatedPositionComp } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/index';
-import { PositionCreationComp } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/index';
+import { NewPositionComp } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
+import { OpenPositionComp } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
 import {
   ALL,
   COLLATERAL_ASSET,
@@ -22,17 +22,15 @@ import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 export const LeverageList = () => {
-  const [initSortingPositionCreation, setInitSortingPositionCreation] = useState<
-    SortingState | undefined
-  >();
-  const [initColumnVisibilityPositionCreation, setInitColumnVisibilityPositionCreation] = useState<
+  const [initSortingNewPosition, setInitSortingNewPosition] = useState<SortingState | undefined>();
+  const [initColumnVisibilityNewPosition, setInitColumnVisibilityNewPosition] = useState<
     VisibilityState | undefined
   >();
 
-  const [initSortingCreatedPosition, setInitSortingCreatedPosition] = useState<
+  const [initSortingOpenPosition, setInitSortingOpenPosition] = useState<
     SortingState | undefined
   >();
-  const [initColumnVisibilityCreatedPosition, setInitColumnVisibilityCreatedPosition] = useState<
+  const [initColumnVisibilityOpenPosition, setInitColumnVisibilityOpenPosition] = useState<
     VisibilityState | undefined
   >();
 
@@ -99,61 +97,61 @@ export const LeverageList = () => {
     // for Position Creation Panel
     if (
       oldData &&
-      JSON.parse(oldData).positionCreationSorting &&
-      POSITION_CREATION_COLUMNS.includes(JSON.parse(oldData).positionCreationSorting[0].id)
+      JSON.parse(oldData).newPositionSorting &&
+      POSITION_CREATION_COLUMNS.includes(JSON.parse(oldData).newPositionSorting[0].id)
     ) {
-      setInitSortingPositionCreation(JSON.parse(oldData).positionCreationSorting);
+      setInitSortingNewPosition(JSON.parse(oldData).newPositionSorting);
     } else {
-      setInitSortingPositionCreation([{ desc: true, id: COLLATERAL_ASSET }]);
+      setInitSortingNewPosition([{ desc: true, id: COLLATERAL_ASSET }]);
     }
 
-    const columnVisibilityPositionCreation: VisibilityState = {};
+    const columnVisibilityNewPosition: VisibilityState = {};
 
     if (
       oldData &&
-      JSON.parse(oldData).positionCreationColumnVisibility &&
-      JSON.parse(oldData).positionCreationColumnVisibility.length > 0
+      JSON.parse(oldData).newPositionColumnVisibility &&
+      JSON.parse(oldData).newPositionColumnVisibility.length > 0
     ) {
       POSITION_CREATION_COLUMNS.map((columnId) => {
-        if (JSON.parse(oldData).positionCreationColumnVisibility.includes(columnId)) {
-          columnVisibilityPositionCreation[columnId] = true;
+        if (JSON.parse(oldData).newPositionColumnVisibility.includes(columnId)) {
+          columnVisibilityNewPosition[columnId] = true;
         } else {
-          columnVisibilityPositionCreation[columnId] = false;
+          columnVisibilityNewPosition[columnId] = false;
         }
       });
     }
 
-    setInitColumnVisibilityPositionCreation(columnVisibilityPositionCreation);
+    setInitColumnVisibilityNewPosition(columnVisibilityNewPosition);
 
     // for Created Position Panel
 
     if (
       oldData &&
-      JSON.parse(oldData).createdPositionSorting &&
-      CREATED_POSITIONS_COLUMNS.includes(JSON.parse(oldData).createdPositionSorting[0].id)
+      JSON.parse(oldData).openPositionSorting &&
+      CREATED_POSITIONS_COLUMNS.includes(JSON.parse(oldData).openPositionSorting[0].id)
     ) {
-      setInitSortingCreatedPosition(JSON.parse(oldData).createdPositionSorting);
+      setInitSortingOpenPosition(JSON.parse(oldData).openPositionSorting);
     } else {
-      setInitSortingCreatedPosition([{ desc: true, id: COLLATERAL_ASSET }]);
+      setInitSortingOpenPosition([{ desc: true, id: COLLATERAL_ASSET }]);
     }
 
-    const columnVisibilityCreatedPosition: VisibilityState = {};
+    const columnVisibilityOpenPosition: VisibilityState = {};
 
     if (
       oldData &&
-      JSON.parse(oldData).createdPositionColumnVisibility &&
-      JSON.parse(oldData).createdPositionColumnVisibility.length > 0
+      JSON.parse(oldData).openPositionColumnVisibility &&
+      JSON.parse(oldData).openPositionColumnVisibility.length > 0
     ) {
       CREATED_POSITIONS_COLUMNS.map((columnId) => {
-        if (JSON.parse(oldData).createdPositionColumnVisibility.includes(columnId)) {
-          columnVisibilityCreatedPosition[columnId] = true;
+        if (JSON.parse(oldData).openPositionColumnVisibility.includes(columnId)) {
+          columnVisibilityOpenPosition[columnId] = true;
         } else {
-          columnVisibilityCreatedPosition[columnId] = false;
+          columnVisibilityOpenPosition[columnId] = false;
         }
       });
     }
 
-    setInitColumnVisibilityCreatedPosition(columnVisibilityCreatedPosition);
+    setInitColumnVisibilityOpenPosition(columnVisibilityOpenPosition);
   }, []);
 
   useEffect(() => {
@@ -208,14 +206,12 @@ export const LeverageList = () => {
           width="100%"
         >
           <GridItem colSpan={1}>
-            {leveragesPerChain &&
-            initSortingPositionCreation &&
-            initColumnVisibilityPositionCreation ? (
-              <PositionCreationComp
-                initColumnVisibility={initColumnVisibilityPositionCreation}
+            {leveragesPerChain && initSortingNewPosition && initColumnVisibilityNewPosition ? (
+              <NewPositionComp
+                initColumnVisibility={initColumnVisibilityNewPosition}
                 initGlobalFilter={globalFilter}
                 initSearchText={searchText}
-                initSorting={initSortingPositionCreation}
+                initSorting={initSortingNewPosition}
                 isLoading={isLoading}
                 leveragesPerChain={leveragesPerChain}
               />
@@ -246,14 +242,12 @@ export const LeverageList = () => {
             )}
           </GridItem>
           <GridItem colSpan={1}>
-            {leveragesPerChain &&
-            initSortingCreatedPosition &&
-            initColumnVisibilityCreatedPosition ? (
-              <CreatedPositionComp
-                initColumnVisibility={initColumnVisibilityCreatedPosition}
+            {leveragesPerChain && initSortingOpenPosition && initColumnVisibilityOpenPosition ? (
+              <OpenPositionComp
+                initColumnVisibility={initColumnVisibilityOpenPosition}
                 initGlobalFilter={globalFilter}
                 initSearchText={searchText}
-                initSorting={initSortingCreatedPosition}
+                initSorting={initSortingOpenPosition}
                 isLoading={isLoading}
                 leveragesPerChain={leveragesPerChain}
               />

@@ -1,5 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
-import type { CreatedPosition, CreatedPositionBorrowable } from '@midas-capital/types';
+import type { OpenPosition, OpenPositionBorrowable } from '@midas-capital/types';
 import { FaAngleDown } from 'react-icons/fa';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -11,8 +11,8 @@ export const BorrowList = ({
   leverage,
   selectBorrowAsset,
 }: {
-  leverage: CreatedPosition;
-  selectBorrowAsset: (asset: CreatedPositionBorrowable) => void;
+  leverage: OpenPosition;
+  selectBorrowAsset: (asset: OpenPositionBorrowable) => void;
 }) => {
   const { cCard } = useColors();
 

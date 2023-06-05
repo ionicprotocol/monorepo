@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem, VStack } from '@chakra-ui/react';
-import type { CreatedPosition, CreatedPositionBorrowable } from '@midas-capital/types';
+import type { OpenPosition, OpenPositionBorrowable } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import type { BigNumber } from 'ethers';
@@ -7,11 +7,11 @@ import { constants, utils } from 'ethers';
 import { useMemo, useState } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { Apy } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/Apy';
-import { BorrowList } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/BorrowList';
-import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/LeverageSlider';
-import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/SupplyAmount';
-import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/index';
+import { Apy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/Apy';
+import { BorrowList } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/BorrowList';
+import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/LeverageSlider';
+import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/SupplyAmount';
+import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useRangeOfLeverageRatio } from '@ui/hooks/leverage/useRangeOfLeverageRatio';
@@ -26,7 +26,7 @@ export interface ComptrollerToPool {
 }
 
 export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
-  const leverage: CreatedPosition = row.original.collateralAsset;
+  const leverage: OpenPosition = row.original.collateralAsset;
 
   const chainId = Number(leverage.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
@@ -39,7 +39,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
-  const [borrowAsset, setBorrowAsset] = useState<CreatedPositionBorrowable>(leverage.borrowable);
+  const [borrowAsset, setBorrowAsset] = useState<OpenPositionBorrowable>(leverage.borrowable);
   const [leverageValue, setLeverageValue] = useState<string>('1.0');
   const debouncedAmount = useDebounce(amount, 1000);
   const debouncedBorrowAsset = useDebounce(borrowAsset, 1000);
@@ -58,7 +58,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
     }
   };
 
-  const selectBorrowAsset = (asset: CreatedPositionBorrowable) => {
+  const selectBorrowAsset = (asset: OpenPositionBorrowable) => {
     setBorrowAsset(asset);
   };
 

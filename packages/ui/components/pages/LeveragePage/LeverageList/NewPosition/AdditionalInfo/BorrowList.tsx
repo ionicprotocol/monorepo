@@ -1,5 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
-import type { PositionCreation, PositionCreationBorrowable } from '@midas-capital/types';
+import type { NewPosition, NewPositionBorrowable } from '@midas-capital/types';
 import { useState } from 'react';
 import { FaAngleDown } from 'react-icons/fa';
 
@@ -12,10 +12,10 @@ export const BorrowList = ({
   leverage,
   selectBorrowAsset,
 }: {
-  leverage: PositionCreation;
-  selectBorrowAsset: (asset: PositionCreationBorrowable) => void;
+  leverage: NewPosition;
+  selectBorrowAsset: (asset: NewPositionBorrowable) => void;
 }) => {
-  const [borrowableAsset, setBorrowableAsset] = useState<PositionCreationBorrowable>(
+  const [borrowableAsset, setBorrowableAsset] = useState<NewPositionBorrowable>(
     leverage.borrowable[0]
   );
   const { cCard } = useColors();

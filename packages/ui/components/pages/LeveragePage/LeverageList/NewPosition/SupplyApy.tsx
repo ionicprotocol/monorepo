@@ -1,11 +1,11 @@
-import type { PositionCreation } from '@midas-capital/types';
+import type { NewPosition } from '@midas-capital/types';
 
 import { SupplyApy as MarketSupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 
-export const SupplyApy = ({ leverage }: { leverage: PositionCreation }) => {
+export const SupplyApy = ({ leverage }: { leverage: NewPosition }) => {
   const { data: allRewards } = useRewardsForMarket({
     asset: {
       cToken: leverage.collateral.cToken,

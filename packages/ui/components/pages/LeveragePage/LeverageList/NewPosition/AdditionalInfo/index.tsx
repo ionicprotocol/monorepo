@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react';
-import type { PositionCreation, PositionCreationBorrowable } from '@midas-capital/types';
+import type { NewPosition, NewPositionBorrowable } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
@@ -8,10 +8,10 @@ import { constants, utils } from 'ethers';
 import { useMemo, useState } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { Apy } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/AdditionalInfo/Apy';
-import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/AdditionalInfo/LeverageSlider';
-import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/AdditionalInfo/SupplyAmount';
-import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/index';
+import { Apy } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/Apy';
+import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/LeverageSlider';
+import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/SupplyAmount';
+import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -29,9 +29,9 @@ export const AdditionalInfo = ({
   selectedBorrowableAssets,
 }: {
   row: Row<LeverageRowData>;
-  selectedBorrowableAssets?: { [collateral: string]: PositionCreationBorrowable };
+  selectedBorrowableAssets?: { [collateral: string]: NewPositionBorrowable };
 }) => {
-  const leverage: PositionCreation = row.original.collateralAsset;
+  const leverage: NewPosition = row.original.collateralAsset;
 
   const chainId = Number(leverage.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
