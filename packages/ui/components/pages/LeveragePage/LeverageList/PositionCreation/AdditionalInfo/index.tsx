@@ -225,7 +225,7 @@ export const AdditionalInfo = ({
       <Flex justifyContent="center" pb={6} px={8} width="100%">
         <Grid
           alignItems="stretch"
-          gap={8}
+          gap={{ base: 16, lg: 8 }}
           maxW="1200px"
           minW="400px"
           templateColumns={{
