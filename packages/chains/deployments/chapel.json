@@ -159,16 +159,25 @@
       "address": "0x212f88Ba5927b6cDcA498E0BA20541EF35864961"
     },
     "LeveredPositionFactory": {
-      "address": "0x67419AE30cBb8723c49E1F03bca0Ddcc245da3AA"
+      "address": "0x1d83D315c0310287D02cE484c689A3AC6115371e"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x0d3E0a318Be8792921C8e9c6Cea9e05EAE52F44a"
+      "address": "0xc3510c7c806bF1b34AA2E62FAE69C37B9C106FC9"
+    },
+    "LeveredPositionsLens": {
+      "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"
+    },
+    "LeveredPositionsLens_Implementation": {
+      "address": "0xa7Be14ec17A2B44B9465CA181a73A30b23C662aE"
+    },
+    "LeveredPositionsLens_Proxy": {
+      "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"
     },
     "LiquidatorsRegistry": {
       "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x49646a9f47550d6caff1DF14F71e89163a310888"
+      "address": "0x244E87B134CFa924DB9e6867a0E7AF50ca3A9e12"
     },
     "LooplessFlywheelBooster": {
       "address": "0x48bbA9a6f8f10761B0aa5e54e5C0D81A83b43eA9"
