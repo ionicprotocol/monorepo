@@ -15,6 +15,7 @@ import {
   Th,
   Thead,
   Tr,
+  VStack,
 } from '@chakra-ui/react';
 import type { CreatedPosition, SupportedChains } from '@midas-capital/types';
 import type {
@@ -286,8 +287,21 @@ export const CreatedPositionComp = ({
   }, [globalFilter, leveragesPerChain, isLoading]);
 
   return (
-    <Box>
-      <MidasBox overflowX="auto" width="100%">
+    <VStack borderRadius="xl" spacing={0}>
+      <Box
+        background={cCard.headingBgColor}
+        borderColor={cCard.borderColor}
+        borderTopRadius={12}
+        borderWidth={2}
+        height={14}
+        px={4}
+        width="100%"
+      >
+        <Text py={4} size="md" textAlign="center" width="100%">
+          Open Levered Positions
+        </Text>
+      </Box>
+      <MidasBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
         {err && err.code !== 'NETWORK_ERROR' ? (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
@@ -386,7 +400,7 @@ export const CreatedPositionComp = ({
               ) : selectedFilteredLeverages.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>There are no assets to use leverage with on this chain.</Center>
+                    <Center py={8}>You have no open levered positions on this chain.</Center>
                   </Td>
                 </Tr>
               ) : (
@@ -457,6 +471,6 @@ export const CreatedPositionComp = ({
           </HStack>
         </Flex>
       </MidasBox>
-    </Box>
+    </VStack>
   );
 };

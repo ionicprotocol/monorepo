@@ -15,6 +15,7 @@ import {
   Th,
   Thead,
   Tr,
+  VStack,
 } from '@chakra-ui/react';
 import type {
   PositionCreation,
@@ -317,8 +318,21 @@ export const PositionCreationComp = ({
   }, [globalFilter, leveragesPerChain, isLoading]);
 
   return (
-    <Box>
-      <MidasBox overflowX="auto" width="100%">
+    <VStack borderRadius="xl" spacing={0}>
+      <Box
+        background={cCard.headingBgColor}
+        borderColor={cCard.borderColor}
+        borderTopRadius={12}
+        borderWidth={2}
+        height={14}
+        px={4}
+        width="100%"
+      >
+        <Text py={4} size="md" textAlign="center" width="100%">
+          Create New Levered Position
+        </Text>
+      </Box>
+      <MidasBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
         {err && err.code !== 'NETWORK_ERROR' ? (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
@@ -491,6 +505,6 @@ export const PositionCreationComp = ({
           </HStack>
         </Flex>
       </MidasBox>
-    </Box>
+    </VStack>
   );
 };
