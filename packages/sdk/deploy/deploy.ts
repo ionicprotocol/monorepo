@@ -663,6 +663,26 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
   ////
 
+  //// LEVERED POSITIONS LENS
+  const lpLens = await deployments.deploy("LeveredPositionsLens", {
+    from: deployer,
+    log: true,
+    waitConfirmations: 1,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [leveredPositionFactory.address],
+        },
+      },
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: deployer,
+    },
+  });
+  if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
+  console.log("LeveredPositionsLens: ", lpLens.address);
+  ////
+
   /// EXTERNAL ADDRESSES
   const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
   if (
@@ -782,6 +802,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
     await tx.wait();
     console.log("setAddress LeveredPositionFactory: ", tx.hash);
+  }
+
+  const lpl = await ethers.getContract("LeveredPositionsLens");
+  const lplAddress = await addressesProvider.callStatic.getAddress("LeveredPositionsLens");
+  if (lplAddress !== lpl.address) {
+    tx = await addressesProvider.setAddress("LeveredPositionsLens", lpl.address);
+    await tx.wait();
+    console.log("setAddress LeveredPositionsLens: ", tx.hash);
   }
 
   await configureAddressesProviderStrategies({
