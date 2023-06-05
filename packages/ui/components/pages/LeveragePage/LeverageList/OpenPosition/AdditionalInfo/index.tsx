@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
 import { ClosePositionButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/ClosePositionButton/index';
-import type { PositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
+import type { OpenPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { getChainConfig } from '@ui/utils/networkData';
@@ -15,7 +15,7 @@ export interface ComptrollerToPool {
   [comptroller: string]: { allocation: number; chainId: number; poolId: number; poolName: string };
 }
 
-export const AdditionalInfo = ({ row }: { row: Row<PositionRowData> }) => {
+export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
   const position: OpenPosition = row.original.collateralAsset;
 
   const chainId = Number(position.chainId);

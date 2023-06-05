@@ -7,7 +7,7 @@ import { useSwitchNetwork } from 'wagmi';
 
 import { CreatePositionButton } from './CreatePositionButton';
 
-import type { PositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
+import type { NewPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
@@ -21,7 +21,7 @@ export const AdditionalInfo = ({
   row,
   selectedBorrowableAssets,
 }: {
-  row: Row<PositionRowData>;
+  row: Row<NewPositionRowData>;
   selectedBorrowableAssets?: { [collateral: string]: NewPositionBorrowable };
 }) => {
   const position: NewPosition = row.original.collateralAsset;

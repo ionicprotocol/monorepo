@@ -62,7 +62,7 @@ import { useColors } from '@ui/hooks/useColors';
 import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { sortPositions } from '@ui/utils/sorts';
 
-export type PositionRowData = {
+export type NewPositionRowData = {
   borrowableAsset: NewPosition;
   chain: NewPosition;
   collateralAsset: NewPosition;
@@ -143,7 +143,7 @@ export const NewPositionComp = ({
     }
   }, [initGlobalFilter, positionsPerChain, allNewPositions]);
 
-  const positionFilter: FilterFn<PositionRowData> = useCallback(
+  const positionFilter: FilterFn<NewPositionRowData> = useCallback(
     (row, columnId, value) => {
       if (
         (!initSearchText ||
@@ -168,7 +168,7 @@ export const NewPositionComp = ({
     [initSearchText]
   );
 
-  const positionSort: SortingFn<PositionRowData> = useCallback((rowA, rowB, columnId) => {
+  const positionSort: SortingFn<NewPositionRowData> = useCallback((rowA, rowB, columnId) => {
     if (columnId === COLLATERAL_ASSET) {
       return rowB.original.collateralAsset.collateral.symbol.localeCompare(
         rowA.original.collateralAsset.collateral.symbol
@@ -188,7 +188,7 @@ export const NewPositionComp = ({
     }
   }, []);
 
-  const data: PositionRowData[] = useMemo(() => {
+  const data: NewPositionRowData[] = useMemo(() => {
     return sortPositions(allNewPositions).map((position) => {
       return {
         borrowableAsset: position,
@@ -199,7 +199,7 @@ export const NewPositionComp = ({
     });
   }, [allNewPositions]);
 
-  const columns: ColumnDef<PositionRowData>[] = useMemo(() => {
+  const columns: ColumnDef<NewPositionRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.chain,

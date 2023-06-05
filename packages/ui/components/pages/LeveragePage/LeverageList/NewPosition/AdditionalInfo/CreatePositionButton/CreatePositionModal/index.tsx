@@ -59,7 +59,6 @@ export const CreatePositionModal = ({
   } = collateralAsset;
   const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
-  if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
   const { data: tokenData } = useTokenData(underlyingToken, chainId);
@@ -79,18 +78,17 @@ export const CreatePositionModal = ({
   const [steps, setSteps] = useState<TxStep[]>([...CREATE_NEW_POSITION_STEPS(symbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
-  const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const [leverageValue, setLeverageValue] = useState<string>('1.0');
   const debouncedAmount = useDebounce(amount, 1000);
   const debouncedBorrowAsset = useDebounce(borrowAsset, 1000);
   const debouncedLeverageNum = useDebounce(parseFloat(leverageValue) || 0, 1000);
   const optionToWrap = useMemo(() => {
     return (
-      underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+      underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
       myBalance?.isZero() &&
       !myNativeBalance?.isZero()
     );
-  }, [underlyingToken, currentSdk.chainSpecificAddresses.W_TOKEN, myBalance, myNativeBalance]);
+  }, [underlyingToken, currentSdk?.chainSpecificAddresses.W_TOKEN, myBalance, myNativeBalance]);
 
   const { data: supplyCap } = useSupplyCap({
     chainId,
@@ -135,7 +133,7 @@ export const CreatePositionModal = ({
   }, [amount, isLoading, isAmountValid, symbol]);
 
   const onConfirm = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !currentChain) return;
 
     const sentryProperties = {
       amount: debouncedAmount,
@@ -164,7 +162,7 @@ export const CreatePositionModal = ({
           const tx = await WToken.deposit({ from: address, value: amount });
 
           addRecentTransaction({
-            description: `Wrap ${nativeSymbol}`,
+            description: `Wrap ${currentChain.nativeCurrency?.symbol}`,
             hash: tx.hash,
           });
           _steps[0] = {
@@ -252,8 +250,8 @@ export const CreatePositionModal = ({
           hash: tx.hash,
         });
 
-        _steps[optionToWrap ? 3 : 2] = {
-          ..._steps[optionToWrap ? 3 : 2],
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
           txHash: tx.hash,
         };
         setConfirmedSteps([..._steps]);
@@ -269,8 +267,8 @@ export const CreatePositionModal = ({
         await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
 
-        _steps[optionToWrap ? 3 : 2] = {
-          ..._steps[optionToWrap ? 3 : 2],
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
           done: true,
           txHash: tx.hash,
         };
@@ -406,7 +404,9 @@ export const CreatePositionModal = ({
                       onClick={onConfirm}
                       width="100%"
                     >
-                      {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
+                      {optionToWrap
+                        ? `Wrap ${currentChain?.nativeCurrency?.symbol} & ${btnStr}`
+                        : btnStr}
                     </Button>
                   </>
                 ) : (
