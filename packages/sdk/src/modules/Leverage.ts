@@ -1,4 +1,10 @@
-import { LeveredPosition, LeveredPositionBorrowable, SupportedChains } from "@midas-capital/types";
+import {
+  CreatedPosition,
+  CreatedPositionBorrowable,
+  PositionCreation,
+  PositionCreationBorrowable,
+  SupportedChains,
+} from "@midas-capital/types";
 import { BigNumber, constants, ContractTransaction } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
@@ -9,23 +15,33 @@ import { ChainSupportedAssets } from "./FusePools";
 
 export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Leverage extends Base {
-    async getAllLeveredPositions(account: string): Promise<LeveredPosition[]> {
+    async getAllLeveredPositions(
+      account: string
+    ): Promise<{ createdPositions: CreatedPosition[]; positionCreations: PositionCreation[] }> {
       if (this.chainId === SupportedChains.chapel) {
         try {
-          const leveredPositions: LeveredPosition[] = [];
-          const leveredPositionFactory = this.createLeveredPositionFactory();
-          const {
-            markets: collateralCTokens,
-            underlyings: collateralUnderlyings,
-            decimals: collateralDecimals,
-            totalUnderlyingSupplied: collateralTotalSupplys,
-            symbols: collateralsymbols,
-            ratesPerBlock: supplyRatePerBlock,
-            poolOfMarket,
-          } = await leveredPositionFactory.callStatic.getCollateralMarkets();
-          const positions = await this.getPositionsByAccount(account);
+          const createdPositions: CreatedPosition[] = [];
+          const positionCreations: PositionCreation[] = [];
 
+          const leveredPositionFactory = this.createLeveredPositionFactory();
           const midasFlywheelLensRouter = this.createMidasFlywheelLensRouter();
+
+          const [
+            {
+              markets: collateralCTokens,
+              underlyings: collateralUnderlyings,
+              decimals: collateralDecimals,
+              totalUnderlyingSupplied: collateralTotalSupplys,
+              symbols: collateralsymbols,
+              ratesPerBlock: supplyRatePerBlock,
+              poolOfMarket,
+            },
+            positions,
+          ] = await Promise.all([
+            leveredPositionFactory.callStatic.getCollateralMarkets(),
+            this.getPositionsByAccount(account),
+          ]);
+
           const rewards = await midasFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
 
           await Promise.all(
@@ -40,7 +56,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 rates: borrowableRates,
               } = await leveredPositionFactory.callStatic.getBorrowableMarketsAndRates(collateralCToken);
 
-              const borrowable: LeveredPositionBorrowable[] = [];
+              // get rewards
+              const reward = rewards.find((rw) => rw.market === collateralCToken);
+
+              //get borrowable asset
+              const createdPositionBorrowable: CreatedPositionBorrowable[] = [];
+              const positionCreationBorrowable: PositionCreationBorrowable[] = [];
               borrowableMarkets.map((borrowableMarket, i) => {
                 const borrowableAsset = ChainSupportedAssets[this.chainId].find(
                   (asset) => asset.underlying === borrowableUnderlyings[index]
@@ -48,7 +69,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 const position = positions.find(
                   (pos) => pos.collateralMarket === collateralCToken && pos.borrowMarket === borrowableMarket
                 );
-                borrowable.push({
+
+                const borrowable = {
                   cToken: borrowableMarket,
                   underlyingToken: borrowableUnderlyings[i],
                   symbol: borrowableAsset
@@ -57,11 +79,45 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                       : borrowableAsset.symbol
                     : borrowableSymbols[index],
                   rate: borrowableRates[i],
-                  leveredPosition: position ? position.position : undefined,
+                };
+
+                if (position) {
+                  createdPositionBorrowable.push({
+                    ...borrowable,
+                    position: position.position,
+                  });
+                } else {
+                  positionCreationBorrowable.push({
+                    ...borrowable,
+                  });
+                }
+              });
+
+              createdPositionBorrowable.map((_borrowable) => {
+                createdPositions.push({
+                  chainId: this.chainId,
+                  collateral: {
+                    cToken: collateralCToken,
+                    underlyingToken: collateralUnderlyings[index],
+                    underlyingDecimals: collateralAsset
+                      ? BigNumber.from(collateralAsset.decimals)
+                      : BigNumber.from(collateralDecimals[index]),
+                    totalSupplied: collateralTotalSupplys[index],
+                    symbol: collateralAsset
+                      ? collateralAsset.originalSymbol
+                        ? collateralAsset.originalSymbol
+                        : collateralAsset.symbol
+                      : collateralsymbols[index],
+                    supplyRatePerBlock: supplyRatePerBlock[index],
+                    reward,
+                    pool: poolOfMarket[index],
+                    plugin: this.marketToPlugin[collateralCToken],
+                  },
+                  borrowable: _borrowable,
                 });
               });
-              const reward = rewards.find((rw) => rw.market === collateralCToken);
-              leveredPositions.push({
+
+              positionCreations.push({
                 chainId: this.chainId,
                 collateral: {
                   cToken: collateralCToken,
@@ -80,12 +136,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   pool: poolOfMarket[index],
                   plugin: this.marketToPlugin[collateralCToken],
                 },
-                borrowable,
+                borrowable: positionCreationBorrowable,
               });
             })
           );
 
-          return leveredPositions;
+          return { createdPositions, positionCreations };
         } catch (error) {
           this.logger.error(`get levered positions error in chain ${this.chainId}:  ${error}`);
 
@@ -95,7 +151,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           );
         }
       } else {
-        return [];
+        return { positionCreations: [], createdPositions: [] };
       }
     }
 

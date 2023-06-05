@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem, VStack } from '@chakra-ui/react';
-import type { LeveredPosition, LeveredPositionBorrowable } from '@midas-capital/types';
+import type { CreatedPosition, CreatedPositionBorrowable } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import type { BigNumber } from 'ethers';
@@ -7,11 +7,11 @@ import { constants, utils } from 'ethers';
 import { useMemo, useState } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { Apy } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/Apy';
-import { BorrowList } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/BorrowList';
-import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/LeverageSlider';
-import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/SupplyAmount';
-import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/index';
+import { Apy } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/Apy';
+import { BorrowList } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/BorrowList';
+import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/LeverageSlider';
+import { SupplyAmount } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/AdditionalInfo/SupplyAmount';
+import type { LeverageRowData } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/index';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useRangeOfLeverageRatio } from '@ui/hooks/leverage/useRangeOfLeverageRatio';
@@ -26,7 +26,7 @@ export interface ComptrollerToPool {
 }
 
 export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
-  const leverage: LeveredPosition = row.original.collateralAsset;
+  const leverage: CreatedPosition = row.original.collateralAsset;
 
   const chainId = Number(leverage.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
@@ -39,7 +39,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
-  const [borrowAsset, setBorrowAsset] = useState<LeveredPositionBorrowable>(leverage.borrowable[0]);
+  const [borrowAsset, setBorrowAsset] = useState<CreatedPositionBorrowable>(leverage.borrowable);
   const [leverageValue, setLeverageValue] = useState<string>('1.0');
   const debouncedAmount = useDebounce(amount, 1000);
   const debouncedBorrowAsset = useDebounce(borrowAsset, 1000);
@@ -48,10 +48,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   const successToast = useSuccessToast();
   const infoToast = useInfoToast();
   const errorToast = useErrorToast();
-  const { data: range } = useRangeOfLeverageRatio(
-    debouncedBorrowAsset.leveredPosition,
-    leverage.chainId
-  );
+  const { data: range } = useRangeOfLeverageRatio(debouncedBorrowAsset.position, leverage.chainId);
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -61,7 +58,7 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
     }
   };
 
-  const selectBorrowAsset = (asset: LeveredPositionBorrowable) => {
+  const selectBorrowAsset = (asset: CreatedPositionBorrowable) => {
     setBorrowAsset(asset);
   };
 
@@ -157,16 +154,16 @@ export const AdditionalInfo = ({ row }: { row: Row<LeverageRowData> }) => {
   };
 
   const onClose = async () => {
-    if (currentSdk && address && debouncedBorrowAsset.leveredPosition) {
+    if (currentSdk && address && debouncedBorrowAsset.position) {
       setIsCloseLoading(true);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        position: debouncedBorrowAsset.leveredPosition,
+        position: debouncedBorrowAsset.position,
       };
 
       try {
-        const tx = await currentSdk.closeLeveredPosition(debouncedBorrowAsset.leveredPosition);
+        const tx = await currentSdk.closeLeveredPosition(debouncedBorrowAsset.position);
 
         if (!tx) {
           infoToast({

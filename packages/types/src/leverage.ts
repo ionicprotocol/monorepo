@@ -9,15 +9,18 @@ export interface MarketRewardsInfoStructOutput {
   flywheel: string;
   rewardToken: string;
 }
-export interface LeveredPositionBorrowable {
+
+export interface PositionCreationBorrowable {
   cToken: string;
   underlyingToken: string;
   symbol: string;
   rate: BigNumber;
-  leveredPosition: string | undefined;
+}
+export interface CreatedPositionBorrowable extends PositionCreationBorrowable {
+  position: string;
 }
 
-export interface LeveredPositionCollateral {
+export interface LeveredCollateral {
   cToken: string;
   underlyingToken: string;
   underlyingDecimals: BigNumber;
@@ -33,8 +36,14 @@ export interface LeveredPositionCollateral {
   };
 }
 
-export interface LeveredPosition {
+export interface CreatedPosition {
   chainId: SupportedChains;
-  collateral: LeveredPositionCollateral;
-  borrowable: LeveredPositionBorrowable[];
+  collateral: LeveredCollateral;
+  borrowable: CreatedPositionBorrowable;
+}
+
+export interface PositionCreation {
+  chainId: SupportedChains;
+  collateral: LeveredCollateral;
+  borrowable: PositionCreationBorrowable[];
 }

@@ -1,119 +1,43 @@
-import { ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Center,
-  Checkbox,
-  Flex,
-  Hide,
-  HStack,
-  IconButton,
-  Input,
-  Select,
-  Skeleton,
-  Stack,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  VStack,
-} from '@chakra-ui/react';
-import type { LeveredPosition, SupportedChains } from '@midas-capital/types';
-import type {
-  ColumnDef,
-  FilterFn,
-  PaginationState,
-  SortingFn,
-  SortingState,
-  VisibilityState,
-} from '@tanstack/react-table';
-import {
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Flex, Grid, GridItem, HStack, Input, Skeleton, Text } from '@chakra-ui/react';
+import type { SupportedChains } from '@midas-capital/types';
+import type { SortingState, VisibilityState } from '@tanstack/react-table';
+import { useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
 import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
-import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/index';
-import { BorrowableAssets } from '@ui/components/pages/LeveragePage/LeverageList/BorrowableAssets';
-import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/SupplyApy';
-import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
-import { Banner } from '@ui/components/shared/Banner';
-import { MidasBox } from '@ui/components/shared/Box';
-import { CIconButton } from '@ui/components/shared/Button';
-import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
+import { CreatedPositionComp } from '@ui/components/pages/LeveragePage/LeverageList/CreatedPosition/index';
+import { PositionCreationComp } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/index';
 import {
   ALL,
-  BORROWABLE_ASSET,
-  CHAIN,
   COLLATERAL_ASSET,
-  HIDDEN,
-  LEVERAGES_COUNT_PER_PAGE,
-  MARKETS_COUNT_PER_PAGE,
+  CREATED_POSITIONS_COLUMNS,
   MIDAS_LOCALSTORAGE_KEYS,
+  POSITION_CREATION_COLUMNS,
   SEARCH,
-  SUPPLY_APY,
 } from '@ui/constants/index';
+import { useLeveragesPerChain } from '@ui/hooks/leverage/useLeveragesPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
-import type { Err, LeveragesPerChainStatus } from '@ui/types/ComponentPropsType';
-import { sortLeverages } from '@ui/utils/sorts';
 
-export type LeverageRowData = {
-  borrowableAsset: LeveredPosition;
-  chain: LeveredPosition;
-  collateralAsset: LeveredPosition;
-  supplyApy: LeveredPosition;
-};
+export const LeverageList = () => {
+  const [initSortingPositionCreation, setInitSortingPositionCreation] = useState<
+    SortingState | undefined
+  >();
+  const [initColumnVisibilityPositionCreation, setInitColumnVisibilityPositionCreation] = useState<
+    VisibilityState | undefined
+  >();
 
-export const LeverageList = ({
-  leveragesPerChain,
-  initSorting,
-  initColumnVisibility,
-  isLoading,
-}: {
-  initColumnVisibility: VisibilityState;
-  initSorting: SortingState;
-  isLoading: boolean;
-  leveragesPerChain: LeveragesPerChainStatus;
-}) => {
-  const [err, setErr] = useState<Err | undefined>();
-  const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
-  const [selectedFilteredLeverages, setSelectedFilteredLeverages] = useState<LeveredPosition[]>([]);
-  const [sorting, setSorting] = useState<SortingState>(initSorting);
-  const [pagination, onPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: LEVERAGES_COUNT_PER_PAGE[0],
-  });
-
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
-  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
-  const [searchText, setSearchText] = useState('');
+  const [initSortingCreatedPosition, setInitSortingCreatedPosition] = useState<
+    SortingState | undefined
+  >();
+  const [initColumnVisibilityCreatedPosition, setInitColumnVisibilityCreatedPosition] = useState<
+    VisibilityState | undefined
+  >();
 
   const enabledChains = useEnabledChains();
-
-  const allLeverages = useMemo(() => {
-    return Object.values(leveragesPerChain).reduce((res, leverages) => {
-      if (leverages.data && leverages.data.length > 0) {
-        res.push(...leverages.data);
-      }
-
-      return res;
-    }, [] as LeveredPosition[]);
-  }, [leveragesPerChain]);
+  const { isLoading, leveragesPerChain } = useLeveragesPerChain([...enabledChains]);
 
   const loadingStatusPerChain = useMemo(() => {
     const _loadingStatusPerChain: { [chainId: string]: boolean } = {};
@@ -125,155 +49,8 @@ export const LeverageList = ({
     return _loadingStatusPerChain;
   }, [leveragesPerChain]);
 
-  useEffect(() => {
-    const leverages: LeveredPosition[] = [];
-
-    if (globalFilter.includes(ALL)) {
-      setSelectedFilteredLeverages([...allLeverages]);
-    } else {
-      globalFilter.map((filter) => {
-        const data = leveragesPerChain[filter.toString()]?.data;
-
-        if (data) {
-          leverages.push(...data);
-        }
-      });
-
-      setSelectedFilteredLeverages(leverages);
-    }
-  }, [globalFilter, leveragesPerChain, allLeverages]);
-
-  const leverageFilter: FilterFn<LeverageRowData> = useCallback(
-    (row, columnId, value) => {
-      if (
-        (!searchText ||
-          (value.includes(SEARCH) &&
-            (row.original.collateralAsset.collateral.symbol
-              .toLowerCase()
-              .includes(searchText.toLowerCase()) ||
-              row.original.collateralAsset.collateral.underlyingToken
-                .toLowerCase()
-                .includes(searchText.toLowerCase())))) &&
-        !value.includes(HIDDEN)
-      ) {
-        if (value.includes(ALL) || value.includes(row.original.collateralAsset.chainId)) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        return false;
-      }
-    },
-    [searchText]
-  );
-
-  const leverageSort: SortingFn<LeverageRowData> = useCallback((rowA, rowB, columnId) => {
-    if (columnId === COLLATERAL_ASSET) {
-      return rowB.original.collateralAsset.collateral.symbol.localeCompare(
-        rowA.original.collateralAsset.collateral.symbol
-      );
-    } else if (columnId === CHAIN) {
-      return Number(rowB.original.collateralAsset.chainId) >
-        Number(rowA.original.collateralAsset.chainId)
-        ? 1
-        : -1;
-    } else if (columnId === SUPPLY_APY) {
-      return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
-        Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
-        ? 1
-        : -1;
-    } else {
-      return 0;
-    }
-  }, []);
-
-  const data: LeverageRowData[] = useMemo(() => {
-    return sortLeverages(allLeverages).map((leverage) => {
-      return {
-        borrowableAsset: leverage,
-        chain: leverage,
-        collateralAsset: leverage,
-        supplyApy: leverage,
-      };
-    });
-  }, [allLeverages]);
-
-  const columns: ColumnDef<LeverageRowData>[] = useMemo(() => {
-    return [
-      {
-        accessorFn: (row) => row.chain,
-        cell: ({ getValue }) => <Chain chainId={Number(getValue<LeveredPosition>().chainId)} />,
-        enableHiding: false,
-        footer: (props) => props.column.id,
-        header: () => null,
-        id: CHAIN,
-        sortingFn: leverageSort,
-      },
-      {
-        accessorFn: (row) => row.collateralAsset,
-        cell: ({ getValue }) => (
-          <TokenName
-            chainId={Number(getValue<LeveredPosition>().chainId)}
-            symbol={getValue<LeveredPosition>().collateral.symbol}
-            underlying={getValue<LeveredPosition>().collateral.underlyingToken}
-          />
-        ),
-        enableHiding: false,
-        filterFn: leverageFilter,
-        footer: (props) => props.column.id,
-        header: (context) => (
-          <TableHeaderCell context={context}>{COLLATERAL_ASSET}</TableHeaderCell>
-        ),
-        id: COLLATERAL_ASSET,
-        sortingFn: leverageSort,
-      },
-      {
-        accessorFn: (row) => row.supplyApy,
-        cell: ({ getValue }) => <SupplyApy leverage={getValue<LeveredPosition>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
-        id: SUPPLY_APY,
-        sortingFn: leverageSort,
-      },
-      {
-        accessorFn: (row) => row.borrowableAsset,
-        cell: ({ getValue }) => <BorrowableAssets leverage={getValue<LeveredPosition>()} />,
-        enableSorting: false,
-        footer: (props) => props.column.id,
-        header: (context) => (
-          <TableHeaderCell context={context}>{BORROWABLE_ASSET}</TableHeaderCell>
-        ),
-        id: BORROWABLE_ASSET,
-      },
-    ];
-  }, [leverageFilter, leverageSort]);
-
-  const table = useReactTable({
-    columns,
-    data,
-    enableSortingRemoval: false,
-    getColumnCanGlobalFilter: () => true,
-    getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getRowCanExpand: () => true,
-    getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: leverageFilter,
-    onColumnVisibilityChange: setColumnVisibility,
-    onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: onPagination,
-    onSortingChange: setSorting,
-    state: {
-      columnVisibility,
-      globalFilter,
-      pagination,
-      sorting,
-    },
-  });
-
-  const { cCard } = useColors();
+  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
+  const [searchText, setSearchText] = useState('');
 
   const onFilter = (filter: SupportedChains | string) => {
     let _globalFilter: (SupportedChains | string)[] = [];
@@ -301,12 +78,8 @@ export const LeverageList = ({
       }
     }
 
-    if (globalFilter.includes(SEARCH) && globalFilter.includes(HIDDEN)) {
-      setGlobalFilter([..._globalFilter, SEARCH, HIDDEN]);
-    } else if (globalFilter.includes(SEARCH)) {
+    if (globalFilter.includes(SEARCH)) {
       setGlobalFilter([..._globalFilter, SEARCH]);
-    } else if (globalFilter.includes(HIDDEN)) {
-      setGlobalFilter([..._globalFilter, HIDDEN]);
     } else {
       setGlobalFilter([..._globalFilter]);
     }
@@ -321,38 +94,72 @@ export const LeverageList = ({
   };
 
   useEffect(() => {
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+
+    // for Position Creation Panel
+    if (
+      oldData &&
+      JSON.parse(oldData).positionCreationSorting &&
+      POSITION_CREATION_COLUMNS.includes(JSON.parse(oldData).positionCreationSorting[0].id)
+    ) {
+      setInitSortingPositionCreation(JSON.parse(oldData).positionCreationSorting);
+    } else {
+      setInitSortingPositionCreation([{ desc: true, id: COLLATERAL_ASSET }]);
+    }
+
+    const columnVisibilityPositionCreation: VisibilityState = {};
+
+    if (
+      oldData &&
+      JSON.parse(oldData).positionCreationColumnVisibility &&
+      JSON.parse(oldData).positionCreationColumnVisibility.length > 0
+    ) {
+      POSITION_CREATION_COLUMNS.map((columnId) => {
+        if (JSON.parse(oldData).positionCreationColumnVisibility.includes(columnId)) {
+          columnVisibilityPositionCreation[columnId] = true;
+        } else {
+          columnVisibilityPositionCreation[columnId] = false;
+        }
+      });
+    }
+
+    setInitColumnVisibilityPositionCreation(columnVisibilityPositionCreation);
+
+    // for Created Position Panel
+
+    if (
+      oldData &&
+      JSON.parse(oldData).createdPositionSorting &&
+      CREATED_POSITIONS_COLUMNS.includes(JSON.parse(oldData).createdPositionSorting[0].id)
+    ) {
+      setInitSortingCreatedPosition(JSON.parse(oldData).createdPositionSorting);
+    } else {
+      setInitSortingCreatedPosition([{ desc: true, id: COLLATERAL_ASSET }]);
+    }
+
+    const columnVisibilityCreatedPosition: VisibilityState = {};
+
+    if (
+      oldData &&
+      JSON.parse(oldData).createdPositionColumnVisibility &&
+      JSON.parse(oldData).createdPositionColumnVisibility.length > 0
+    ) {
+      CREATED_POSITIONS_COLUMNS.map((columnId) => {
+        if (JSON.parse(oldData).createdPositionColumnVisibility.includes(columnId)) {
+          columnVisibilityCreatedPosition[columnId] = true;
+        } else {
+          columnVisibilityCreatedPosition[columnId] = false;
+        }
+      });
+    }
+
+    setInitColumnVisibilityCreatedPosition(columnVisibilityCreatedPosition);
+  }, []);
+
+  useEffect(() => {
     onSearchFiltered();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
-
-  useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
-    let oldObj;
-    if (oldData) {
-      oldObj = JSON.parse(oldData);
-    }
-    const arr: string[] = [];
-    Object.entries(columnVisibility).map(([key, value]) => {
-      if (value) {
-        arr.push(key);
-      }
-    });
-    const data = { ...oldObj, leverageColumnVisibility: arr, leverageSorting: sorting };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
-  }, [sorting, columnVisibility]);
-
-  useEffect(() => {
-    const selectedChainId = Object.keys(leveragesPerChain).find((chainId) =>
-      globalFilter.includes(Number(chainId))
-    );
-    if (selectedChainId) {
-      setErr(leveragesPerChain[selectedChainId].error);
-      setIsLoadingPerChain(leveragesPerChain[selectedChainId].isLoading);
-    } else {
-      setErr(undefined);
-      setIsLoadingPerChain(false);
-    }
-  }, [globalFilter, leveragesPerChain]);
 
   return (
     <Box>
@@ -388,212 +195,96 @@ export const LeverageList = ({
 
           <Flex alignItems="flex-end" className="searchAsset" gap={2} justifyContent="center">
             <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
-            <PopoverTooltip
-              body={
-                <VStack alignItems="flex-start">
-                  <Text>Show/Hide Columns</Text>
-                  <Checkbox
-                    isChecked={table.getIsAllColumnsVisible()}
-                    onChange={table.getToggleAllColumnsVisibilityHandler()}
-                  >
-                    All
-                  </Checkbox>
-                  {table.getAllColumns().map((column) => {
-                    if (column.getCanHide()) {
-                      return (
-                        <Checkbox
-                          isChecked={column.getIsVisible()}
-                          key={column.id}
-                          onChange={column.getToggleVisibilityHandler()}
-                        >
-                          {column.id}
-                        </Checkbox>
-                      );
-                    }
-                  })}
-                </VStack>
-              }
-            >
-              <IconButton
-                aria-label="Column Settings"
-                icon={<SettingsIcon fontSize={20} />}
-                maxWidth={10}
-                variant="_outline"
-              />
-            </PopoverTooltip>
           </Flex>
         </Flex>
       </Flex>
-      <MidasBox overflowX="auto" width="100%">
-        {err && err.code !== 'NETWORK_ERROR' ? (
-          <Banner
-            alertDescriptionProps={{ fontSize: 'lg' }}
-            alertIconProps={{ boxSize: 12 }}
-            alertProps={{
-              alignItems: 'center',
-              flexDirection: 'column',
-              gap: 4,
-              height: '2xs',
-              justifyContent: 'center',
-              status: 'warning',
-              textAlign: 'center',
-            }}
-            descriptions={[
-              {
-                text: `Unable to retrieve Leverages. Please try again later.`,
-              },
-            ]}
-            title={err.reason ? err.reason : 'Unexpected Error'}
-          />
-        ) : !isLoading && !isLoadingPerChain ? (
-          <Table>
-            <Thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <Tr borderBottomWidth={1} borderColor={cCard.dividerColor} key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <Th
-                        border="none"
-                        color={cCard.txtColor}
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        px={{
-                          base: header.column.id === COLLATERAL_ASSET ? 2 : 1,
-                          lg: header.column.id === COLLATERAL_ASSET ? 4 : 2,
-                        }}
-                        py={6}
-                        textTransform="capitalize"
-                      >
-                        <HStack
-                          justifyContent={
-                            header.column.id === CHAIN
-                              ? 'center'
-                              : header.column.id === COLLATERAL_ASSET
-                              ? 'flex-start'
-                              : 'flex-end'
-                          }
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                        </HStack>
-                      </Th>
-                    );
-                  })}
-                </Tr>
-              ))}
-            </Thead>
-            <Tbody>
-              {table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <Fragment key={row.id}>
-                    <Tr
-                      _hover={{ bg: cCard.hoverBgColor }}
-                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                      borderBottomWidth={row.getIsExpanded() ? 0 : 1}
-                      borderColor={cCard.dividerColor}
-                      className={row.original.collateralAsset.collateral.symbol}
-                      cursor="pointer"
-                      key={row.id}
-                      onClick={() => row.toggleExpanded()}
-                    >
-                      {row.getVisibleCells().map((cell) => {
-                        return (
-                          <Td border="none" key={cell.id} px={{ base: 2, lg: 4 }} py={2}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </Td>
-                        );
-                      })}
-                    </Tr>
-                    {row.getIsExpanded() && (
-                      <Tr
-                        background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                        borderBottomStyle="solid"
-                        borderBottomWidth={1}
-                        borderColor={cCard.dividerColor}
-                        borderTopStyle="dashed"
-                        borderTopWidth={1}
-                      >
-                        {/* 2nd row is a custom 1 cell row */}
-                        <Td border="none" colSpan={row.getVisibleCells().length}>
-                          <AdditionalInfo row={row} />
-                        </Td>
-                      </Tr>
-                    )}
-                  </Fragment>
-                ))
-              ) : selectedFilteredLeverages.length === 0 ? (
-                <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>There are no assets to use leverage with on this chain.</Center>
-                  </Td>
-                </Tr>
-              ) : (
-                <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>No results</Center>
-                  </Td>
-                </Tr>
-              )}
-            </Tbody>
-          </Table>
-        ) : (
-          <Stack>
-            <Skeleton height={16} />
-            <Skeleton height={60} />
-          </Stack>
-        )}
-        {/* Pagination Elements */}
-        <Flex alignItems="center" className="pagination" gap={4} justifyContent="flex-end" p={4}>
-          <HStack>
-            <Hide below="lg">
-              <Text>Assets Per Page</Text>
-            </Hide>
-            <Select
-              maxW="max-content"
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              value={pagination.pageSize}
-            >
-              {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </Select>
-          </HStack>
-          <HStack gap={2}>
-            <Text>
-              {table.getFilteredRowModel().rows.length === 0
-                ? 0
-                : pagination.pageIndex * pagination.pageSize + 1}{' '}
-              -{' '}
-              {(pagination.pageIndex + 1) * pagination.pageSize >
-              table.getFilteredRowModel().rows.length
-                ? table.getFilteredRowModel().rows.length
-                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-              of {table.getFilteredRowModel().rows.length}
-            </Text>
-            <HStack>
-              <CIconButton
-                aria-label="toPrevious"
-                icon={<ChevronLeftIcon fontSize={30} />}
-                isDisabled={!table.getCanPreviousPage()}
-                isRound
-                onClick={() => table.previousPage()}
-                variant="_outline"
+      <Flex justifyContent="center" pb={6} width="100%">
+        <Grid
+          gap={4}
+          templateColumns={{
+            base: 'repeat(1, 1fr)',
+            lg: 'repeat(2, 1fr)',
+          }}
+          width="100%"
+        >
+          <GridItem colSpan={1}>
+            {leveragesPerChain &&
+            initSortingPositionCreation &&
+            initColumnVisibilityPositionCreation ? (
+              <PositionCreationComp
+                initColumnVisibility={initColumnVisibilityPositionCreation}
+                initGlobalFilter={globalFilter}
+                initSearchText={searchText}
+                initSorting={initSortingPositionCreation}
+                isLoading={isLoading}
+                leveragesPerChain={leveragesPerChain}
               />
-              <CIconButton
-                aria-label="toNext"
-                icon={<ChevronRightIcon fontSize={30} />}
-                isDisabled={!table.getCanNextPage()}
-                isRound
-                onClick={() => table.nextPage()}
-                variant="_outline"
+            ) : (
+              <>
+                <Box gap={4} p={4}>
+                  <Flex alignItems="center" justifyContent={'space-between'}>
+                    <Flex flexDirection={['row']} gap={0}>
+                      <Skeleton
+                        borderEndRadius={0}
+                        borderStartRadius={'xl'}
+                        height={'52px'}
+                        width={'72px'}
+                      />
+                      <Skeleton borderRadius={0} height={'52px'} width={'120px'} />
+                      <Skeleton
+                        borderEndRadius={'xl'}
+                        borderStartRadius={0}
+                        height={'52px'}
+                        width={'120px'}
+                      />
+                    </Flex>
+                    <Skeleton height={'40px'} width={'320px'} />
+                  </Flex>
+                </Box>
+                <Skeleton height={360} width="100%" />
+              </>
+            )}
+          </GridItem>
+          <GridItem colSpan={1}>
+            {leveragesPerChain &&
+            initSortingCreatedPosition &&
+            initColumnVisibilityCreatedPosition ? (
+              <CreatedPositionComp
+                initColumnVisibility={initColumnVisibilityCreatedPosition}
+                initGlobalFilter={globalFilter}
+                initSearchText={searchText}
+                initSorting={initSortingCreatedPosition}
+                isLoading={isLoading}
+                leveragesPerChain={leveragesPerChain}
               />
-            </HStack>
-          </HStack>
-        </Flex>
-      </MidasBox>
+            ) : (
+              <>
+                <Box gap={4} p={4}>
+                  <Flex alignItems="center" justifyContent={'space-between'}>
+                    <Flex flexDirection={['row']} gap={0}>
+                      <Skeleton
+                        borderEndRadius={0}
+                        borderStartRadius={'xl'}
+                        height={'52px'}
+                        width={'72px'}
+                      />
+                      <Skeleton borderRadius={0} height={'52px'} width={'120px'} />
+                      <Skeleton
+                        borderEndRadius={'xl'}
+                        borderStartRadius={0}
+                        height={'52px'}
+                        width={'120px'}
+                      />
+                    </Flex>
+                    <Skeleton height={'40px'} width={'320px'} />
+                  </Flex>
+                </Box>
+                <Skeleton height={360} width="100%" />
+              </>
+            )}
+          </GridItem>
+        </Grid>
+      </Flex>
     </Box>
   );
 };

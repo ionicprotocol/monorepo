@@ -1,5 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
-import type { LeveredPosition, LeveredPositionBorrowable } from '@midas-capital/types';
+import type { PositionCreation, PositionCreationBorrowable } from '@midas-capital/types';
 import { useState } from 'react';
 import { FaAngleDown } from 'react-icons/fa';
 
@@ -8,8 +8,8 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useColors } from '@ui/hooks/useColors';
 
-export const BorrowableAssets = ({ leverage }: { leverage: LeveredPosition }) => {
-  const [borrowableAsset, setBorrowableAsset] = useState<LeveredPositionBorrowable>(
+export const BorrowableAssets = ({ leverage }: { leverage: PositionCreation }) => {
+  const [borrowableAsset, setBorrowableAsset] = useState<PositionCreationBorrowable>(
     leverage.borrowable[0]
   );
 

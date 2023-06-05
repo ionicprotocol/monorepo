@@ -1,10 +1,10 @@
 import { Box, Button, Input, Text, VStack } from '@chakra-ui/react';
-import type { LeveredPositionCollateral, SupportedChains } from '@midas-capital/types';
+import type { LeveredCollateral, SupportedChains } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';
 
-import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/AdditionalInfo/Balance';
+import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/PositionCreation/AdditionalInfo/Balance';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -21,7 +21,7 @@ export const SupplyAmount = ({
   setAmount,
 }: {
   chainId: SupportedChains;
-  collateralAsset: LeveredPositionCollateral;
+  collateralAsset: LeveredCollateral;
   setAmount: (amount: BigNumber) => void;
 }) => {
   const { address } = useMultiMidas();
