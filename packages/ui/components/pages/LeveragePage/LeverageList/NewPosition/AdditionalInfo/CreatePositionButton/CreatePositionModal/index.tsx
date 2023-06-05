@@ -54,6 +54,7 @@ export const CreatePositionModal = ({
     pool: comptrollerAddress,
     cToken,
     totalSupplied,
+    underlyingPrice,
     underlyingDecimals,
   } = collateralAsset;
   const { currentSdk, address, currentChain } = useMultiMidas();
@@ -98,7 +99,7 @@ export const CreatePositionModal = ({
       cToken,
       totalSupply: totalSupplied,
       underlyingDecimals,
-      underlyingPrice: constants.Zero,
+      underlyingPrice,
     },
   });
 
