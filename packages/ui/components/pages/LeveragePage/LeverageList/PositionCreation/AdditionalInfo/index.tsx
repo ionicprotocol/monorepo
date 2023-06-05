@@ -222,10 +222,10 @@ export const AdditionalInfo = ({
           </Box>
         )}
       </Flex>
-      <Flex justifyContent="center" pb={6} width="100%">
+      <Flex justifyContent="center" pb={6} px={8} width="100%">
         <Grid
           alignItems="stretch"
-          gap={16}
+          gap={8}
           maxW="1200px"
           minW="400px"
           templateColumns={{

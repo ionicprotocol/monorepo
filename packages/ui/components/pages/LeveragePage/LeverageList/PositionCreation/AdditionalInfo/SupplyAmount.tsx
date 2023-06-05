@@ -102,7 +102,7 @@ export const SupplyAmount = ({
           underlyingSymbol={collateralAsset.symbol}
           underlyingToken={collateralAsset.underlyingToken}
         />
-        <MidasBox height={12} maxW="300px" width="100%">
+        <MidasBox height={12} width="100%">
           <Row
             crossAxisAlignment="center"
             expand
