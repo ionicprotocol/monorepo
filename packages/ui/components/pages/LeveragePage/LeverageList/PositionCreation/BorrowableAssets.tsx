@@ -6,11 +6,19 @@ import { FaAngleDown } from 'react-icons/fa';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
 
 export const BorrowableAssets = ({ leverage }: { leverage: PositionCreation }) => {
   const [borrowableAsset, setBorrowableAsset] = useState<PositionCreationBorrowable>(
     leverage.borrowable[0]
+  );
+
+  const { data: borrowApys } = useBorrowAPYs(
+    leverage.borrowable.map((asset) => {
+      return { borrowRatePerBlock: asset.rate, cToken: asset.cToken };
+    }),
+    leverage.chainId
   );
 
   const onClick = (ctoken: string) => {
@@ -54,7 +62,7 @@ export const BorrowableAssets = ({ leverage }: { leverage: PositionCreation }) =
                       </EllipsisText>
                     </HStack>
                     <HStack justifyContent="flex-end">
-                      <Text>{Number(asset.rate).toFixed(2)}%</Text>
+                      <Text>{borrowApys ? (borrowApys[asset.cToken] * 100).toFixed(2) : '?'}%</Text>
                     </HStack>
                   </HStack>
                 );
@@ -85,7 +93,9 @@ export const BorrowableAssets = ({ leverage }: { leverage: PositionCreation }) =
               <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">
                 {borrowableAsset.symbol}
               </EllipsisText>
-              <Text>{Number(borrowableAsset.rate).toFixed(2)}%</Text>
+              <Text>
+                {borrowApys ? (borrowApys[borrowableAsset.cToken] * 100).toFixed(2) : '?'}%
+              </Text>
             </HStack>
           </Button>
         </PopoverTooltip>

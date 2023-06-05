@@ -1,7 +1,7 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
+import type { PositionCreation, PositionCreationBorrowable } from '@midas-capital/types';
 import { useState } from 'react';
 import { FaAngleDown } from 'react-icons/fa';
-import type { LeveredPosition, LeveredPositionBorrowable } from 'types/dist';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -12,10 +12,10 @@ export const BorrowList = ({
   leverage,
   selectBorrowAsset,
 }: {
-  leverage: LeveredPosition;
-  selectBorrowAsset: (asset: LeveredPositionBorrowable) => void;
+  leverage: PositionCreation;
+  selectBorrowAsset: (asset: PositionCreationBorrowable) => void;
 }) => {
-  const [borrowableAsset, setBorrowableAsset] = useState<LeveredPositionBorrowable>(
+  const [borrowableAsset, setBorrowableAsset] = useState<PositionCreationBorrowable>(
     leverage.borrowable[0]
   );
   const { cCard } = useColors();
