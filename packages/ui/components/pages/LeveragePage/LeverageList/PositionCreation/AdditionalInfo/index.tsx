@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import type { PositionCreation, PositionCreationBorrowable } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
@@ -36,11 +37,12 @@ export const AdditionalInfo = ({
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
 
   const { currentChain, currentSdk, address } = useMultiMidas();
-  const [isLeverageLoading, setIsLeverageLoading] = useState<boolean>(false);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
+  const queryClient = useQueryClient();
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const borrowAsset = selectedBorrowableAssets
     ? selectedBorrowableAssets[leverage.collateral.cToken]
@@ -61,7 +63,7 @@ export const AdditionalInfo = ({
     }
   };
 
-  const onLeverage = async () => {
+  const onCreatePosition = async () => {
     if (!currentSdk) {
       errorToast({
         description: 'SDK not found',
@@ -107,7 +109,7 @@ export const AdditionalInfo = ({
       return;
     }
 
-    setIsLeverageLoading(true);
+    setIsCreating(true);
 
     const realAmount = debouncedAmount
       .mul(utils.parseUnits(debouncedLeverageNum.toString()))
@@ -172,6 +174,10 @@ export const AdditionalInfo = ({
 
       tx.wait();
 
+      await queryClient.refetchQueries({
+        queryKey: ['useLeveragesPerChain'],
+      });
+
       successToast({
         description: 'Successfully created levered position',
         id: 'Levered position - ' + Math.random().toString(),
@@ -185,7 +191,7 @@ export const AdditionalInfo = ({
 
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
-      setIsLeverageLoading(false);
+      setIsCreating(false);
     }
   };
 
@@ -213,9 +219,9 @@ export const AdditionalInfo = ({
           <Box>
             <Button
               height={12}
-              isDisabled={isLeverageLoading}
-              isLoading={isLeverageLoading}
-              onClick={onLeverage}
+              isDisabled={isCreating}
+              isLoading={isCreating}
+              onClick={onCreatePosition}
             >
               Create Position
             </Button>
