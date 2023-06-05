@@ -210,7 +210,7 @@ export const Apy = ({
         </HStack>
         <HStack spacing={4}>
           <HStack justifyContent="flex-end" width="90px">
-            <Text size="md">Total APR</Text>
+            <Text size="md">Net APY</Text>
           </HStack>
           <HStack>
             <EllipsisText

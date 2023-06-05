@@ -1,6 +1,7 @@
 import type {
+  CreatedPosition,
   FusePoolData,
-  LeveredPosition,
+  PositionCreation,
   SupportedAsset,
   VaultData,
 } from '@midas-capital/types';
@@ -84,7 +85,7 @@ export const sortVaults = <T extends VaultData>(vaults: T[]) => {
   });
 };
 
-export const sortLeverages = <T extends LeveredPosition>(leverages: T[]) => {
+export const sortLeverages = <T extends CreatedPosition | PositionCreation>(leverages: T[]) => {
   return leverages.sort((a, b) => {
     return a.collateral.underlyingToken.localeCompare(b.collateral.underlyingToken);
   });

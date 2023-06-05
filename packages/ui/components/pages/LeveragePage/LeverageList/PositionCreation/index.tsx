@@ -16,7 +16,11 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import type { PositionCreation, SupportedChains } from '@midas-capital/types';
+import type {
+  PositionCreation,
+  PositionCreationBorrowable,
+  SupportedChains,
+} from '@midas-capital/types';
 import type {
   ColumnDef,
   FilterFn,
@@ -95,6 +99,10 @@ export const PositionCreationComp = ({
     pageSize: POSITION_CREATION_PER_PAGE[0],
   });
 
+  const [selectedBorrowableAssets, setSelectedBorrowableAssets] = useState<{
+    [collateral: string]: PositionCreationBorrowable;
+  }>();
+
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>(initGlobalFilter);
   const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
 
@@ -107,6 +115,21 @@ export const PositionCreationComp = ({
       return res;
     }, [] as PositionCreation[]);
   }, [leveragesPerChain]);
+
+  useEffect(() => {
+    const _selectedBorrowableAssets: {
+      [collateral: string]: PositionCreationBorrowable;
+    } = {};
+
+    allPositionCreations.map((positionCreation) => {
+      if (positionCreation.borrowable.length > 0) {
+        _selectedBorrowableAssets[positionCreation.collateral.cToken] =
+          positionCreation.borrowable[0];
+      }
+    });
+
+    setSelectedBorrowableAssets(_selectedBorrowableAssets);
+  }, [allPositionCreations]);
 
   useEffect(() => {
     const leverages: PositionCreation[] = [];
@@ -221,7 +244,13 @@ export const PositionCreationComp = ({
       },
       {
         accessorFn: (row) => row.borrowableAsset,
-        cell: ({ getValue }) => <BorrowableAssets leverage={getValue<PositionCreation>()} />,
+        cell: ({ getValue }) => (
+          <BorrowableAssets
+            leverage={getValue<PositionCreation>()}
+            selectedBorrowableAssets={selectedBorrowableAssets}
+            setSelectedBorrowableAssets={setSelectedBorrowableAssets}
+          />
+        ),
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => (
@@ -230,7 +259,7 @@ export const PositionCreationComp = ({
         id: BORROWABLE_ASSET,
       },
     ];
-  }, [leverageFilter, leverageSort]);
+  }, [leverageFilter, leverageSort, selectedBorrowableAssets]);
 
   const table = useReactTable({
     columns,
@@ -379,7 +408,10 @@ export const PositionCreationComp = ({
                       >
                         {/* 2nd row is a custom 1 cell row */}
                         <Td border="none" colSpan={row.getVisibleCells().length}>
-                          <AdditionalInfo row={row} />
+                          <AdditionalInfo
+                            row={row}
+                            selectedBorrowableAssets={selectedBorrowableAssets}
+                          />
                         </Td>
                       </Tr>
                     )}

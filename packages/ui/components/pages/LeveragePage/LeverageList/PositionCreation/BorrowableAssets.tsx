@@ -1,6 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
 import type { PositionCreation, PositionCreationBorrowable } from '@midas-capital/types';
-import { useState } from 'react';
 import { FaAngleDown } from 'react-icons/fa';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -9,11 +8,19 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
 
-export const BorrowableAssets = ({ leverage }: { leverage: PositionCreation }) => {
-  const [borrowableAsset, setBorrowableAsset] = useState<PositionCreationBorrowable>(
-    leverage.borrowable[0]
-  );
-
+export const BorrowableAssets = ({
+  leverage,
+  selectedBorrowableAssets,
+  setSelectedBorrowableAssets,
+}: {
+  leverage: PositionCreation;
+  selectedBorrowableAssets?: {
+    [collateral: string]: PositionCreationBorrowable;
+  };
+  setSelectedBorrowableAssets: (assets: {
+    [collateral: string]: PositionCreationBorrowable;
+  }) => void;
+}) => {
   const { data: borrowApys } = useBorrowAPYs(
     leverage.borrowable.map((asset) => {
       return { borrowRatePerBlock: asset.rate, cToken: asset.cToken };
@@ -21,10 +28,18 @@ export const BorrowableAssets = ({ leverage }: { leverage: PositionCreation }) =
     leverage.chainId
   );
 
+  const borrowableAsset = selectedBorrowableAssets
+    ? selectedBorrowableAssets[leverage.collateral.cToken]
+    : undefined;
+
   const onClick = (ctoken: string) => {
     const asset = leverage.borrowable.find((asset) => asset.cToken === ctoken);
+
     if (asset) {
-      setBorrowableAsset(asset);
+      setSelectedBorrowableAssets({
+        ...selectedBorrowableAssets,
+        [leverage.collateral.cToken]: asset,
+      });
     }
   };
 
@@ -84,19 +99,21 @@ export const BorrowableAssets = ({ leverage }: { leverage: PositionCreation }) =
             variant="_outline"
             width="230px"
           >
-            <HStack justifyContent="space-between" width="100%">
-              <TokenIcon
-                address={borrowableAsset.underlyingToken}
-                chainId={leverage.chainId}
-                size="sm"
-              />
-              <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">
-                {borrowableAsset.symbol}
-              </EllipsisText>
-              <Text>
-                {borrowApys ? (borrowApys[borrowableAsset.cToken] * 100).toFixed(2) : '?'}%
-              </Text>
-            </HStack>
+            {borrowableAsset ? (
+              <HStack justifyContent="space-between" width="100%">
+                <TokenIcon
+                  address={borrowableAsset.underlyingToken}
+                  chainId={leverage.chainId}
+                  size="sm"
+                />
+                <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">
+                  {borrowableAsset.symbol}
+                </EllipsisText>
+                <Text>
+                  {borrowApys ? (borrowApys[borrowableAsset.cToken] * 100).toFixed(2) : '?'}%
+                </Text>
+              </HStack>
+            ) : null}
           </Button>
         </PopoverTooltip>
       </VStack>
