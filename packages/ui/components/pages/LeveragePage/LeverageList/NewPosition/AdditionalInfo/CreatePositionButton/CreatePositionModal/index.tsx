@@ -8,7 +8,7 @@ import type {
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
+import { constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
@@ -137,12 +137,8 @@ export const CreatePositionModal = ({
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
 
-    const realAmount = debouncedAmount
-      .mul(utils.parseUnits(debouncedLeverageNum.toString()))
-      .div(constants.WeiPerEther);
-
     const sentryProperties = {
-      amount: realAmount,
+      amount: debouncedAmount,
       borrowCToken: debouncedBorrowAsset.cToken,
       chainId: currentSdk.chainId,
       collateralCToken: cToken,
@@ -201,7 +197,7 @@ export const CreatePositionModal = ({
             address,
             currentSdk.chainDeployment.LeveredPositionFactory.address
           )
-        ).gte(realAmount);
+        ).gte(debouncedAmount);
 
         if (!hasApprovedEnough) {
           const tx = await currentSdk.leverageApprove(underlyingToken);
@@ -248,7 +244,7 @@ export const CreatePositionModal = ({
           cToken,
           debouncedBorrowAsset.cToken,
           underlyingToken,
-          realAmount
+          debouncedAmount
         );
 
         addRecentTransaction({

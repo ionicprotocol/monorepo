@@ -40,6 +40,7 @@ import * as React from 'react';
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/index';
 import { BorrowableAsset } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/BorrowableAsset';
+import { NetApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/NetApy';
 import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
@@ -54,6 +55,7 @@ import {
   HIDDEN,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
+  NET_APY,
   POSITION_CREATION_PER_PAGE,
   SEARCH,
   SUPPLY_APY,
@@ -62,10 +64,11 @@ import { useColors } from '@ui/hooks/useColors';
 import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { sortPositions } from '@ui/utils/sorts';
 
-export type PositionRowData = {
+export type OpenPositionRowData = {
   borrowableAsset: OpenPosition;
   chain: OpenPosition;
   collateralAsset: OpenPosition;
+  netApy: OpenPosition;
   supplyApy: OpenPosition;
 };
 
@@ -121,7 +124,7 @@ export const OpenPositionComp = ({
     }
   }, [initGlobalFilter, positionsPerChain, allOpenPositions]);
 
-  const positionFilter: FilterFn<PositionRowData> = useCallback(
+  const positionFilter: FilterFn<OpenPositionRowData> = useCallback(
     (row, columnId, value) => {
       if (
         (!initSearchText ||
@@ -146,7 +149,7 @@ export const OpenPositionComp = ({
     [initSearchText]
   );
 
-  const positionSort: SortingFn<PositionRowData> = useCallback((rowA, rowB, columnId) => {
+  const positionSort: SortingFn<OpenPositionRowData> = useCallback((rowA, rowB, columnId) => {
     if (columnId === COLLATERAL_ASSET) {
       return rowB.original.collateralAsset.collateral.symbol.localeCompare(
         rowA.original.collateralAsset.collateral.symbol
@@ -161,23 +164,29 @@ export const OpenPositionComp = ({
         Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
         ? 1
         : -1;
+    } else if (columnId === NET_APY) {
+      return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
+        Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
+        ? 1
+        : -1;
     } else {
       return 0;
     }
   }, []);
 
-  const data: PositionRowData[] = useMemo(() => {
+  const data: OpenPositionRowData[] = useMemo(() => {
     return sortPositions(allOpenPositions).map((position) => {
       return {
         borrowableAsset: position,
         chain: position,
         collateralAsset: position,
+        netApy: position,
         supplyApy: position,
       };
     });
   }, [allOpenPositions]);
 
-  const columns: ColumnDef<PositionRowData>[] = useMemo(() => {
+  const columns: ColumnDef<OpenPositionRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.chain,
@@ -212,6 +221,14 @@ export const OpenPositionComp = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
         id: SUPPLY_APY,
+        sortingFn: positionSort,
+      },
+      {
+        accessorFn: (row) => row.netApy,
+        cell: ({ getValue }) => <NetApy position={getValue<OpenPosition>()} />,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{NET_APY}</TableHeaderCell>,
+        id: NET_APY,
         sortingFn: positionSort,
       },
       {
