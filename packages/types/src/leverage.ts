@@ -34,6 +34,7 @@ export interface LeveredCollateral {
     market: string;
     rewardsInfo: MarketRewardsInfoStructOutput[];
   };
+  underlyingPrice: BigNumber;
 }
 
 export interface OpenPosition {

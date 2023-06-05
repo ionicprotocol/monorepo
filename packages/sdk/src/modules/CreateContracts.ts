@@ -11,6 +11,7 @@ import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import LeveredPositionABI from "../../abis/LeveredPosition";
+import LeveredPositionsLensABI from "../../abis/LeveredPositionsLens";
 import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
 import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
@@ -28,6 +29,7 @@ import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
+import { LeveredPositionsLens } from "../../typechain/LeveredPositionsLens";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
@@ -131,6 +133,14 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
 
     createLeveredPosition(address: string, signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(address, LeveredPositionABI, signerOrProvider) as LeveredPosition;
+    }
+
+    createLeveredPositionLens(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.LeveredPositionsLens.address,
+        LeveredPositionsLensABI,
+        signerOrProvider
+      ) as LeveredPositionsLens;
     }
   };
 }
