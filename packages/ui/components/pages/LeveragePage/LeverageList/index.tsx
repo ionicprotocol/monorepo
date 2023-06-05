@@ -1,6 +1,6 @@
 import { Box, Flex, Grid, GridItem, HStack, Input, Skeleton, Text } from '@chakra-ui/react';
 import type { SupportedChains } from '@midas-capital/types';
-import type { SortingState, VisibilityState } from '@tanstack/react-table';
+import type { SortingState } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
@@ -16,37 +16,27 @@ import {
   POSITION_CREATION_COLUMNS,
   SEARCH,
 } from '@ui/constants/index';
-import { useLeveragesPerChain } from '@ui/hooks/leverage/useLeveragesPerChain';
+import { usePositionsPerChain } from '@ui/hooks/leverage/usePositionsPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 export const LeverageList = () => {
   const [initSortingNewPosition, setInitSortingNewPosition] = useState<SortingState | undefined>();
-  const [initColumnVisibilityNewPosition, setInitColumnVisibilityNewPosition] = useState<
-    VisibilityState | undefined
-  >();
-
   const [initSortingOpenPosition, setInitSortingOpenPosition] = useState<
     SortingState | undefined
   >();
-  const [initColumnVisibilityOpenPosition, setInitColumnVisibilityOpenPosition] = useState<
-    VisibilityState | undefined
-  >();
-
   const enabledChains = useEnabledChains();
-  const { isLoading, leveragesPerChain } = useLeveragesPerChain([...enabledChains]);
-
+  const { isLoading, positionsPerChain } = usePositionsPerChain([...enabledChains]);
   const loadingStatusPerChain = useMemo(() => {
     const _loadingStatusPerChain: { [chainId: string]: boolean } = {};
 
-    Object.entries(leveragesPerChain).map(([chainId, leverage]) => {
+    Object.entries(positionsPerChain).map(([chainId, leverage]) => {
       _loadingStatusPerChain[chainId] = leverage.isLoading;
     });
 
     return _loadingStatusPerChain;
-  }, [leveragesPerChain]);
-
+  }, [positionsPerChain]);
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [searchText, setSearchText] = useState('');
 
@@ -94,7 +84,7 @@ export const LeverageList = () => {
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
 
-    // for Position Creation Panel
+    // for New Position Panel
     if (
       oldData &&
       JSON.parse(oldData).newPositionSorting &&
@@ -105,25 +95,7 @@ export const LeverageList = () => {
       setInitSortingNewPosition([{ desc: true, id: COLLATERAL_ASSET }]);
     }
 
-    const columnVisibilityNewPosition: VisibilityState = {};
-
-    if (
-      oldData &&
-      JSON.parse(oldData).newPositionColumnVisibility &&
-      JSON.parse(oldData).newPositionColumnVisibility.length > 0
-    ) {
-      POSITION_CREATION_COLUMNS.map((columnId) => {
-        if (JSON.parse(oldData).newPositionColumnVisibility.includes(columnId)) {
-          columnVisibilityNewPosition[columnId] = true;
-        } else {
-          columnVisibilityNewPosition[columnId] = false;
-        }
-      });
-    }
-
-    setInitColumnVisibilityNewPosition(columnVisibilityNewPosition);
-
-    // for Created Position Panel
+    // for Open Position Panel
 
     if (
       oldData &&
@@ -134,24 +106,6 @@ export const LeverageList = () => {
     } else {
       setInitSortingOpenPosition([{ desc: true, id: COLLATERAL_ASSET }]);
     }
-
-    const columnVisibilityOpenPosition: VisibilityState = {};
-
-    if (
-      oldData &&
-      JSON.parse(oldData).openPositionColumnVisibility &&
-      JSON.parse(oldData).openPositionColumnVisibility.length > 0
-    ) {
-      CREATED_POSITIONS_COLUMNS.map((columnId) => {
-        if (JSON.parse(oldData).openPositionColumnVisibility.includes(columnId)) {
-          columnVisibilityOpenPosition[columnId] = true;
-        } else {
-          columnVisibilityOpenPosition[columnId] = false;
-        }
-      });
-    }
-
-    setInitColumnVisibilityOpenPosition(columnVisibilityOpenPosition);
   }, []);
 
   useEffect(() => {
@@ -206,14 +160,14 @@ export const LeverageList = () => {
           width="100%"
         >
           <GridItem colSpan={1}>
-            {leveragesPerChain && initSortingNewPosition && initColumnVisibilityNewPosition ? (
+            {positionsPerChain && initSortingNewPosition ? (
               <NewPositionComp
-                initColumnVisibility={initColumnVisibilityNewPosition}
                 initGlobalFilter={globalFilter}
                 initSearchText={searchText}
                 initSorting={initSortingNewPosition}
                 isLoading={isLoading}
-                leveragesPerChain={leveragesPerChain}
+                positionsPerChain={positionsPerChain}
+                setGlobalFilter={setGlobalFilter}
               />
             ) : (
               <>
@@ -242,14 +196,14 @@ export const LeverageList = () => {
             )}
           </GridItem>
           <GridItem colSpan={1}>
-            {leveragesPerChain && initSortingOpenPosition && initColumnVisibilityOpenPosition ? (
+            {positionsPerChain && initSortingOpenPosition ? (
               <OpenPositionComp
-                initColumnVisibility={initColumnVisibilityOpenPosition}
                 initGlobalFilter={globalFilter}
                 initSearchText={searchText}
                 initSorting={initSortingOpenPosition}
                 isLoading={isLoading}
-                leveragesPerChain={leveragesPerChain}
+                positionsPerChain={positionsPerChain}
+                setGlobalFilter={setGlobalFilter}
               />
             ) : (
               <>

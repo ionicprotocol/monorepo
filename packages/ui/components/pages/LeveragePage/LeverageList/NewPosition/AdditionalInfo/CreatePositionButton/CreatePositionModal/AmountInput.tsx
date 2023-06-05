@@ -1,11 +1,11 @@
-import { Box, Button, Input, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Input } from '@chakra-ui/react';
 import type { LeveredCollateral, SupportedChains } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';
 
-import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/Balance';
 import { MidasBox } from '@ui/components/shared/Box';
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -15,13 +15,15 @@ import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
-export const SupplyAmount = ({
+export const AmountInput = ({
   collateralAsset,
   chainId,
+  optionToWrap,
   setAmount,
 }: {
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
+  optionToWrap?: boolean;
   setAmount: (amount: BigNumber) => void;
 }) => {
   const { address } = useMultiMidas();
@@ -30,14 +32,6 @@ export const SupplyAmount = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();
   const { data: myBalance } = useTokenBalance(collateralAsset.underlyingToken, chainId);
-  const { data: myNativeBalance } = useTokenBalance(
-    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
-    chainId
-  );
-  const optionToWrap =
-    collateralAsset.underlyingToken === sdk?.chainSpecificAddresses.W_TOKEN &&
-    myBalance?.isZero() &&
-    !myNativeBalance?.isZero();
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -93,61 +87,47 @@ export const SupplyAmount = ({
   };
 
   return (
-    <VStack alignItems="flex-start" spacing={4}>
-      <Text size="md">Supply</Text>
-      <VStack alignItems="flex-start" spacing={0}>
-        <Balance
-          chainId={chainId}
-          underlyingDecimals={collateralAsset.underlyingDecimals}
-          underlyingSymbol={collateralAsset.symbol}
-          underlyingToken={collateralAsset.underlyingToken}
+    <MidasBox width="100%">
+      <Row crossAxisAlignment="center" expand mainAxisAlignment="space-between" p={4} width="100%">
+        <Input
+          autoFocus
+          fontSize={22}
+          id="fundInput"
+          inputMode="decimal"
+          mr={4}
+          onChange={(event) => updateAmount(event.target.value)}
+          placeholder="0.0"
+          type="number"
+          value={userEnteredAmount}
+          variant="unstyled"
         />
-        <MidasBox height={12} maxW="300px" width="100%">
-          <Row
-            crossAxisAlignment="center"
-            expand
-            mainAxisAlignment="space-between"
-            pl={4}
-            pr={2}
-            py={2}
-            width="100%"
-          >
-            <Input
-              autoFocus
-              fontSize={20}
-              id="fundInput"
-              inputMode="decimal"
-              mr={4}
-              onChange={(event) => updateAmount(event.target.value)}
-              placeholder="0.0"
-              type="number"
-              value={userEnteredAmount}
-              variant="unstyled"
-            />
-            <Row crossAxisAlignment="center" flexShrink={0} mainAxisAlignment="flex-start">
-              <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
-                <Box height={8} mr={1} width={8}>
-                  <TokenIcon
-                    address={collateralAsset.underlyingToken}
-                    chainId={chainId}
-                    size="sm"
-                  />
-                </Box>
-              </Row>
-              <Button
-                borderRadius={6}
-                fontSize={14}
-                height={{ base: 6, lg: 6, md: 6, sm: 6 }}
-                isLoading={isLoading}
-                onClick={setToMax}
-                px={{ base: 2, lg: 2, md: 2, sm: 2 }}
-              >
-                MAX
-              </Button>
-            </Row>
+        <Row crossAxisAlignment="center" flexShrink={0} mainAxisAlignment="flex-start">
+          <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
+            <Box height={8} mr={2} width={8}>
+              <TokenIcon address={collateralAsset.underlyingToken} chainId={chainId} size="sm" />
+            </Box>
+            <EllipsisText
+              fontWeight="bold"
+              maxWidth="80px"
+              mr={2}
+              size="md"
+              tooltip={optionToWrap ? collateralAsset.symbol.slice(1) : collateralAsset.symbol}
+            >
+              {optionToWrap ? collateralAsset.symbol.slice(1) : collateralAsset.symbol}
+            </EllipsisText>
           </Row>
-        </MidasBox>
-      </VStack>
-    </VStack>
+          <Button
+            borderRadius={6}
+            fontSize={14}
+            height={8}
+            isLoading={isLoading}
+            onClick={setToMax}
+            px={2}
+          >
+            MAX
+          </Button>
+        </Row>
+      </Row>
+    </MidasBox>
   );
 };

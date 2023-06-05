@@ -3,12 +3,12 @@ import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import type { Err, LeveragesPerChainStatus } from '@ui/types/ComponentPropsType';
+import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
 
-export const useLeveragesPerChain = (chainIds: SupportedChains[]) => {
+export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();
 
-  const leverageQueries = useQueries({
+  const positionQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
         cacheTime: Infinity,
@@ -22,29 +22,29 @@ export const useLeveragesPerChain = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        queryKey: ['useLeveragesPerChain', chainId, address],
+        queryKey: ['usePositionsPerChain', chainId, address],
         staleTime: Infinity,
       };
     }),
   });
 
-  const [leveragesPerChain, isLoading] = useMemo(() => {
-    const _leveragesPerChain: LeveragesPerChainStatus = {};
+  const [positionsPerChain, isLoading] = useMemo(() => {
+    const _positionsPerChain: PositionsPerChainStatus = {};
 
     let isLoading = true;
 
-    leverageQueries.map((leverage, index) => {
+    positionQueries.map((leverage, index) => {
       isLoading = isLoading && leverage.isLoading;
       const _chainId = chainIds[index];
-      _leveragesPerChain[_chainId.toString()] = {
+      _positionsPerChain[_chainId.toString()] = {
         data: leverage.data,
         error: leverage.error as Err | undefined,
         isLoading: leverage.isLoading,
       };
     });
 
-    return [_leveragesPerChain, isLoading];
-  }, [leverageQueries, chainIds]);
+    return [_positionsPerChain, isLoading];
+  }, [positionQueries, chainIds]);
 
-  return { isLoading, leveragesPerChain };
+  return { isLoading, positionsPerChain };
 };

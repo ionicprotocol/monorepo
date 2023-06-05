@@ -85,8 +85,8 @@ export const sortVaults = <T extends VaultData>(vaults: T[]) => {
   });
 };
 
-export const sortLeverages = <T extends NewPosition | OpenPosition>(leverages: T[]) => {
-  return leverages.sort((a, b) => {
+export const sortPositions = <T extends NewPosition | OpenPosition>(positions: T[]) => {
+  return positions.sort((a, b) => {
     return a.collateral.underlyingToken.localeCompare(b.collateral.underlyingToken);
   });
 };

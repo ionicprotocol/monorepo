@@ -11,7 +11,6 @@ import {
   SliderThumb,
   SliderTrack,
   Text,
-  VStack,
 } from '@chakra-ui/react';
 
 import { LEVERAGE_VALUE } from '@ui/constants/index';
@@ -19,19 +18,17 @@ import { useColors } from '@ui/hooks/useColors';
 
 export const LeverageSlider = ({
   leverageValue,
-  range,
   setLeverageValue,
 }: {
   leverageValue: string;
-  range: { max: number; min: number } | null | undefined;
   setLeverageValue: (value: string) => void;
 }) => {
   const { cSlider } = useColors();
-  const minValue = range ? range.min : LEVERAGE_VALUE.MIN;
-  const maxValue = range ? range.max : LEVERAGE_VALUE.MAX;
+  const minValue = LEVERAGE_VALUE.MIN;
+  const maxValue = LEVERAGE_VALUE.MAX;
 
   return (
-    <VStack alignItems="flex-start" height={20} spacing={4}>
+    <HStack alignItems="flex-start" py={4} spacing={4} width="100%">
       <HStack spacing={4}>
         <Text size="md">Leverage</Text>
         {Number.isNaN(Number(leverageValue)) ? (
@@ -46,7 +43,6 @@ export const LeverageSlider = ({
           clampValueOnBlur={false}
           defaultValue={minValue}
           max={maxValue}
-          maxW="100px"
           min={minValue}
           onBlur={(e) => {
             if (
@@ -61,6 +57,7 @@ export const LeverageSlider = ({
           }}
           step={0.001}
           value={leverageValue || ''}
+          width="100px"
         >
           <NumberInputField paddingLeft={2} paddingRight={7} textAlign="center" />
           <NumberInputStepper>
@@ -85,13 +82,13 @@ export const LeverageSlider = ({
         step={0.001}
         value={parseFloat(leverageValue) || LEVERAGE_VALUE.DEFAULT}
       >
-        <SliderMark fontSize="md" ml={-2} mt={4} value={minValue}>
+        <SliderMark fontSize="md" ml={0} mt={4} value={minValue}>
           {minValue.toFixed(1)}
         </SliderMark>
-        <SliderMark fontSize="md" ml={-2} mt={4} value={(maxValue + minValue) / 2}>
+        <SliderMark fontSize="md" ml={-3} mt={4} value={(maxValue + minValue) / 2}>
           {((maxValue + minValue) / 2).toFixed(1)}
         </SliderMark>
-        <SliderMark fontSize="md" ml={-2} mt={4} value={maxValue}>
+        <SliderMark fontSize="md" ml={-6} mt={4} value={maxValue}>
           {maxValue.toFixed(1)}
         </SliderMark>
         <SliderTrack backgroundColor={cSlider.trackBgColor}>
@@ -104,6 +101,6 @@ export const LeverageSlider = ({
           boxSize={4}
         />
       </Slider>
-    </VStack>
+    </HStack>
   );
 };

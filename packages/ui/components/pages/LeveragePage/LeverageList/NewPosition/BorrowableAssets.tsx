@@ -9,34 +9,34 @@ import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
 
 export const BorrowableAssets = ({
-  leverage,
+  position,
   selectedBorrowableAssets,
   setSelectedBorrowableAssets,
 }: {
-  leverage: NewPosition;
+  position: NewPosition;
   selectedBorrowableAssets?: {
     [collateral: string]: NewPositionBorrowable;
   };
   setSelectedBorrowableAssets: (assets: { [collateral: string]: NewPositionBorrowable }) => void;
 }) => {
   const { data: borrowApys } = useBorrowAPYs(
-    leverage.borrowable.map((asset) => {
+    position.borrowable.map((asset) => {
       return { borrowRatePerBlock: asset.rate, cToken: asset.cToken };
     }),
-    leverage.chainId
+    position.chainId
   );
 
   const borrowableAsset = selectedBorrowableAssets
-    ? selectedBorrowableAssets[leverage.collateral.cToken]
+    ? selectedBorrowableAssets[position.collateral.cToken]
     : undefined;
 
   const onClick = (ctoken: string) => {
-    const asset = leverage.borrowable.find((asset) => asset.cToken === ctoken);
+    const asset = position.borrowable.find((asset) => asset.cToken === ctoken);
 
     if (asset) {
       setSelectedBorrowableAssets({
         ...selectedBorrowableAssets,
-        [leverage.collateral.cToken]: asset,
+        [position.collateral.cToken]: asset,
       });
     }
   };
@@ -49,7 +49,7 @@ export const BorrowableAssets = ({
         <PopoverTooltip
           body={
             <VStack alignItems="flex-start" spacing={0}>
-              {leverage.borrowable.map((asset, i) => {
+              {position.borrowable.map((asset, i) => {
                 return (
                   <HStack
                     _hover={{
@@ -66,7 +66,7 @@ export const BorrowableAssets = ({
                   >
                     <TokenIcon
                       address={asset.underlyingToken}
-                      chainId={leverage.chainId}
+                      chainId={position.chainId}
                       size="sm"
                     />
                     <HStack justifyContent="flex-end" maxW="100px">
@@ -101,7 +101,7 @@ export const BorrowableAssets = ({
               <HStack justifyContent="space-between" width="100%">
                 <TokenIcon
                   address={borrowableAsset.underlyingToken}
-                  chainId={leverage.chainId}
+                  chainId={position.chainId}
                   size="sm"
                 />
                 <EllipsisText maxWidth="100px" tooltip={borrowableAsset.symbol} variant="title">

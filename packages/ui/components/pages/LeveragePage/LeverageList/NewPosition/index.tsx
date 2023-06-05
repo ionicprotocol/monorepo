@@ -24,7 +24,6 @@ import type {
   PaginationState,
   SortingFn,
   SortingState,
-  VisibilityState,
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -60,10 +59,10 @@ import {
   SUPPLY_APY,
 } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
-import type { Err, LeveragesPerChainStatus } from '@ui/types/ComponentPropsType';
-import { sortLeverages } from '@ui/utils/sorts';
+import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
+import { sortPositions } from '@ui/utils/sorts';
 
-export type LeverageRowData = {
+export type PositionRowData = {
   borrowableAsset: NewPosition;
   chain: NewPosition;
   collateralAsset: NewPosition;
@@ -72,22 +71,22 @@ export type LeverageRowData = {
 
 export const NewPositionComp = ({
   initGlobalFilter,
-  initColumnVisibility,
   initSorting,
   isLoading,
-  leveragesPerChain,
+  positionsPerChain,
   initSearchText,
+  setGlobalFilter,
 }: {
-  initColumnVisibility: VisibilityState;
   initGlobalFilter: (SupportedChains | string)[];
   initSearchText: string;
   initSorting: SortingState;
   isLoading: boolean;
-  leveragesPerChain: LeveragesPerChainStatus;
+  positionsPerChain: PositionsPerChainStatus;
+  setGlobalFilter: (globalFilter: (SupportedChains | string)[]) => void;
 }) => {
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
-  const [selectedFilteredLeverages, setSelectedFilteredLeverages] = useState<NewPosition[]>([]);
+  const [selectedFilteredPositions, setSelectedFilteredPositions] = useState<NewPosition[]>([]);
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -98,18 +97,19 @@ export const NewPositionComp = ({
     [collateral: string]: NewPositionBorrowable;
   }>();
 
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>(initGlobalFilter);
-  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
-
   const allNewPositions = useMemo(() => {
-    return Object.values(leveragesPerChain).reduce((res, leverages) => {
-      if (leverages.data && leverages.data.newPositions.length > 0) {
-        res.push(...leverages.data.newPositions);
+    return Object.values(positionsPerChain).reduce((res, positions) => {
+      if (positions.data && positions.data.newPositions.length > 0) {
+        positions.data.newPositions.map((position) => {
+          if (position.borrowable.length > 0) {
+            res.push(position);
+          }
+        });
       }
 
       return res;
     }, [] as NewPosition[]);
-  }, [leveragesPerChain]);
+  }, [positionsPerChain]);
 
   useEffect(() => {
     const _selectedBorrowableAssets: {
@@ -126,24 +126,24 @@ export const NewPositionComp = ({
   }, [allNewPositions]);
 
   useEffect(() => {
-    const leverages: NewPosition[] = [];
+    const positions: NewPosition[] = [];
 
-    if (globalFilter.includes(ALL)) {
-      setSelectedFilteredLeverages([...allNewPositions]);
+    if (initGlobalFilter.includes(ALL)) {
+      setSelectedFilteredPositions([...allNewPositions]);
     } else {
-      globalFilter.map((filter) => {
-        const data = leveragesPerChain[filter.toString()]?.data?.newPositions;
+      initGlobalFilter.map((filter) => {
+        const data = positionsPerChain[filter.toString()]?.data?.newPositions;
 
         if (data) {
-          leverages.push(...data);
+          positions.push(...data);
         }
       });
 
-      setSelectedFilteredLeverages(leverages);
+      setSelectedFilteredPositions(positions);
     }
-  }, [globalFilter, leveragesPerChain, allNewPositions]);
+  }, [initGlobalFilter, positionsPerChain, allNewPositions]);
 
-  const leverageFilter: FilterFn<LeverageRowData> = useCallback(
+  const positionFilter: FilterFn<PositionRowData> = useCallback(
     (row, columnId, value) => {
       if (
         (!initSearchText ||
@@ -168,7 +168,7 @@ export const NewPositionComp = ({
     [initSearchText]
   );
 
-  const leverageSort: SortingFn<LeverageRowData> = useCallback((rowA, rowB, columnId) => {
+  const positionSort: SortingFn<PositionRowData> = useCallback((rowA, rowB, columnId) => {
     if (columnId === COLLATERAL_ASSET) {
       return rowB.original.collateralAsset.collateral.symbol.localeCompare(
         rowA.original.collateralAsset.collateral.symbol
@@ -188,18 +188,18 @@ export const NewPositionComp = ({
     }
   }, []);
 
-  const data: LeverageRowData[] = useMemo(() => {
-    return sortLeverages(allNewPositions).map((leverage) => {
+  const data: PositionRowData[] = useMemo(() => {
+    return sortPositions(allNewPositions).map((position) => {
       return {
-        borrowableAsset: leverage,
-        chain: leverage,
-        collateralAsset: leverage,
-        supplyApy: leverage,
+        borrowableAsset: position,
+        chain: position,
+        collateralAsset: position,
+        supplyApy: position,
       };
     });
   }, [allNewPositions]);
 
-  const columns: ColumnDef<LeverageRowData>[] = useMemo(() => {
+  const columns: ColumnDef<PositionRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.chain,
@@ -208,7 +208,7 @@ export const NewPositionComp = ({
         footer: (props) => props.column.id,
         header: () => null,
         id: CHAIN,
-        sortingFn: leverageSort,
+        sortingFn: positionSort,
       },
       {
         accessorFn: (row) => row.collateralAsset,
@@ -220,27 +220,27 @@ export const NewPositionComp = ({
           />
         ),
         enableHiding: false,
-        filterFn: leverageFilter,
+        filterFn: positionFilter,
         footer: (props) => props.column.id,
         header: (context) => (
           <TableHeaderCell context={context}>{COLLATERAL_ASSET}</TableHeaderCell>
         ),
         id: COLLATERAL_ASSET,
-        sortingFn: leverageSort,
+        sortingFn: positionSort,
       },
       {
         accessorFn: (row) => row.supplyApy,
-        cell: ({ getValue }) => <SupplyApy leverage={getValue<NewPosition>()} />,
+        cell: ({ getValue }) => <SupplyApy position={getValue<NewPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
         id: SUPPLY_APY,
-        sortingFn: leverageSort,
+        sortingFn: positionSort,
       },
       {
         accessorFn: (row) => row.borrowableAsset,
         cell: ({ getValue }) => (
           <BorrowableAssets
-            leverage={getValue<NewPosition>()}
+            position={getValue<NewPosition>()}
             selectedBorrowableAssets={selectedBorrowableAssets}
             setSelectedBorrowableAssets={setSelectedBorrowableAssets}
           />
@@ -253,7 +253,7 @@ export const NewPositionComp = ({
         id: BORROWABLE_ASSET,
       },
     ];
-  }, [leverageFilter, leverageSort, selectedBorrowableAssets]);
+  }, [positionFilter, positionSort, selectedBorrowableAssets]);
 
   const table = useReactTable({
     columns,
@@ -266,14 +266,12 @@ export const NewPositionComp = ({
     getPaginationRowModel: getPaginationRowModel(),
     getRowCanExpand: () => true,
     getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: leverageFilter,
-    onColumnVisibilityChange: setColumnVisibility,
+    globalFilterFn: positionFilter,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: onPagination,
     onSortingChange: setSorting,
     state: {
-      columnVisibility,
-      globalFilter,
+      globalFilter: initGlobalFilter,
       pagination,
       sorting,
     },
@@ -287,28 +285,23 @@ export const NewPositionComp = ({
     if (oldData) {
       oldObj = JSON.parse(oldData);
     }
-    const arr: string[] = [];
-    Object.entries(columnVisibility).map(([key, value]) => {
-      if (value) {
-        arr.push(key);
-      }
-    });
-    const data = { ...oldObj, leverageColumnVisibility: arr, leverageSorting: sorting };
+
+    const data = { ...oldObj, newPositionSorting: sorting };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
-  }, [sorting, columnVisibility]);
+  }, [sorting]);
 
   useEffect(() => {
-    const selectedChainId = Object.keys(leveragesPerChain).find((chainId) =>
-      globalFilter.includes(Number(chainId))
+    const selectedChainId = Object.keys(positionsPerChain).find((chainId) =>
+      initGlobalFilter.includes(Number(chainId))
     );
     if (selectedChainId) {
-      setErr(leveragesPerChain[selectedChainId].error);
-      setIsLoadingPerChain(leveragesPerChain[selectedChainId].isLoading);
+      setErr(positionsPerChain[selectedChainId].error);
+      setIsLoadingPerChain(positionsPerChain[selectedChainId].isLoading);
     } else {
       setErr(undefined);
       setIsLoadingPerChain(isLoading);
     }
-  }, [globalFilter, leveragesPerChain, isLoading]);
+  }, [initGlobalFilter, positionsPerChain, isLoading]);
 
   return (
     <VStack borderRadius="xl" spacing={0}>
@@ -424,7 +417,7 @@ export const NewPositionComp = ({
                     )}
                   </Fragment>
                 ))
-              ) : selectedFilteredLeverages.length === 0 ? (
+              ) : selectedFilteredPositions.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
                     <Center py={8}>There are no assets to use leverage with on this chain.</Center>

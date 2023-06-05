@@ -24,7 +24,6 @@ import type {
   PaginationState,
   SortingFn,
   SortingState,
-  VisibilityState,
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -40,7 +39,7 @@ import * as React from 'react';
 
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/index';
-import { BorrowableAssets } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/BorrowableAssets';
+import { BorrowableAsset } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/BorrowableAsset';
 import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
@@ -52,18 +51,18 @@ import {
   BORROWABLE_ASSET,
   CHAIN,
   COLLATERAL_ASSET,
-  CREATED_POSITION_PER_PAGE,
   HIDDEN,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
+  POSITION_CREATION_PER_PAGE,
   SEARCH,
   SUPPLY_APY,
 } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
-import type { Err, LeveragesPerChainStatus } from '@ui/types/ComponentPropsType';
-import { sortLeverages } from '@ui/utils/sorts';
+import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
+import { sortPositions } from '@ui/utils/sorts';
 
-export type LeverageRowData = {
+export type PositionRowData = {
   borrowableAsset: OpenPosition;
   chain: OpenPosition;
   collateralAsset: OpenPosition;
@@ -72,60 +71,57 @@ export type LeverageRowData = {
 
 export const OpenPositionComp = ({
   initGlobalFilter,
-  initColumnVisibility,
   initSorting,
   isLoading,
-  leveragesPerChain,
+  positionsPerChain,
   initSearchText,
+  setGlobalFilter,
 }: {
-  initColumnVisibility: VisibilityState;
   initGlobalFilter: (SupportedChains | string)[];
   initSearchText: string;
   initSorting: SortingState;
   isLoading: boolean;
-  leveragesPerChain: LeveragesPerChainStatus;
+  positionsPerChain: PositionsPerChainStatus;
+  setGlobalFilter: (globalFilter: (SupportedChains | string)[]) => void;
 }) => {
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
-  const [selectedFilteredLeverages, setSelectedFilteredLeverages] = useState<OpenPosition[]>([]);
+  const [selectedFilteredPositions, setSelectedFilteredPositions] = useState<OpenPosition[]>([]);
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: CREATED_POSITION_PER_PAGE[0],
+    pageSize: POSITION_CREATION_PER_PAGE[0],
   });
 
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>(initGlobalFilter);
-  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
-
   const allOpenPositions = useMemo(() => {
-    return Object.values(leveragesPerChain).reduce((res, leverages) => {
-      if (leverages.data && leverages.data.openPositions.length > 0) {
-        res.push(...leverages.data.openPositions);
+    return Object.values(positionsPerChain).reduce((res, positions) => {
+      if (positions.data && positions.data.openPositions.length > 0) {
+        res.push(...positions.data.openPositions);
       }
 
       return res;
     }, [] as OpenPosition[]);
-  }, [leveragesPerChain]);
+  }, [positionsPerChain]);
 
   useEffect(() => {
-    const leverages: OpenPosition[] = [];
+    const positions: OpenPosition[] = [];
 
-    if (globalFilter.includes(ALL)) {
-      setSelectedFilteredLeverages([...allOpenPositions]);
+    if (initGlobalFilter.includes(ALL)) {
+      setSelectedFilteredPositions([...allOpenPositions]);
     } else {
-      globalFilter.map((filter) => {
-        const data = leveragesPerChain[filter.toString()]?.data?.openPositions;
+      initGlobalFilter.map((filter) => {
+        const data = positionsPerChain[filter.toString()]?.data?.openPositions;
 
         if (data) {
-          leverages.push(...data);
+          positions.push(...data);
         }
       });
 
-      setSelectedFilteredLeverages(leverages);
+      setSelectedFilteredPositions(positions);
     }
-  }, [globalFilter, leveragesPerChain, allOpenPositions]);
+  }, [initGlobalFilter, positionsPerChain, allOpenPositions]);
 
-  const leverageFilter: FilterFn<LeverageRowData> = useCallback(
+  const positionFilter: FilterFn<PositionRowData> = useCallback(
     (row, columnId, value) => {
       if (
         (!initSearchText ||
@@ -150,7 +146,7 @@ export const OpenPositionComp = ({
     [initSearchText]
   );
 
-  const leverageSort: SortingFn<LeverageRowData> = useCallback((rowA, rowB, columnId) => {
+  const positionSort: SortingFn<PositionRowData> = useCallback((rowA, rowB, columnId) => {
     if (columnId === COLLATERAL_ASSET) {
       return rowB.original.collateralAsset.collateral.symbol.localeCompare(
         rowA.original.collateralAsset.collateral.symbol
@@ -170,18 +166,18 @@ export const OpenPositionComp = ({
     }
   }, []);
 
-  const data: LeverageRowData[] = useMemo(() => {
-    return sortLeverages(allOpenPositions).map((leverage) => {
+  const data: PositionRowData[] = useMemo(() => {
+    return sortPositions(allOpenPositions).map((position) => {
       return {
-        borrowableAsset: leverage,
-        chain: leverage,
-        collateralAsset: leverage,
-        supplyApy: leverage,
+        borrowableAsset: position,
+        chain: position,
+        collateralAsset: position,
+        supplyApy: position,
       };
     });
   }, [allOpenPositions]);
 
-  const columns: ColumnDef<LeverageRowData>[] = useMemo(() => {
+  const columns: ColumnDef<PositionRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.chain,
@@ -190,7 +186,7 @@ export const OpenPositionComp = ({
         footer: (props) => props.column.id,
         header: () => null,
         id: CHAIN,
-        sortingFn: leverageSort,
+        sortingFn: positionSort,
       },
       {
         accessorFn: (row) => row.collateralAsset,
@@ -202,25 +198,25 @@ export const OpenPositionComp = ({
           />
         ),
         enableHiding: false,
-        filterFn: leverageFilter,
+        filterFn: positionFilter,
         footer: (props) => props.column.id,
         header: (context) => (
           <TableHeaderCell context={context}>{COLLATERAL_ASSET}</TableHeaderCell>
         ),
         id: COLLATERAL_ASSET,
-        sortingFn: leverageSort,
+        sortingFn: positionSort,
       },
       {
         accessorFn: (row) => row.supplyApy,
-        cell: ({ getValue }) => <SupplyApy leverage={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => <SupplyApy position={getValue<OpenPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
         id: SUPPLY_APY,
-        sortingFn: leverageSort,
+        sortingFn: positionSort,
       },
       {
         accessorFn: (row) => row.borrowableAsset,
-        cell: ({ getValue }) => <BorrowableAssets leverage={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => <BorrowableAsset position={getValue<OpenPosition>()} />,
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => (
@@ -229,7 +225,7 @@ export const OpenPositionComp = ({
         id: BORROWABLE_ASSET,
       },
     ];
-  }, [leverageFilter, leverageSort]);
+  }, [positionFilter, positionSort]);
 
   const table = useReactTable({
     columns,
@@ -242,14 +238,12 @@ export const OpenPositionComp = ({
     getPaginationRowModel: getPaginationRowModel(),
     getRowCanExpand: () => true,
     getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: leverageFilter,
-    onColumnVisibilityChange: setColumnVisibility,
+    globalFilterFn: positionFilter,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: onPagination,
     onSortingChange: setSorting,
     state: {
-      columnVisibility,
-      globalFilter,
+      globalFilter: initGlobalFilter,
       pagination,
       sorting,
     },
@@ -263,28 +257,23 @@ export const OpenPositionComp = ({
     if (oldData) {
       oldObj = JSON.parse(oldData);
     }
-    const arr: string[] = [];
-    Object.entries(columnVisibility).map(([key, value]) => {
-      if (value) {
-        arr.push(key);
-      }
-    });
-    const data = { ...oldObj, leverageColumnVisibility: arr, leverageSorting: sorting };
+
+    const data = { ...oldObj, openPositionSorting: sorting };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
-  }, [sorting, columnVisibility]);
+  }, [sorting]);
 
   useEffect(() => {
-    const selectedChainId = Object.keys(leveragesPerChain).find((chainId) =>
-      globalFilter.includes(Number(chainId))
+    const selectedChainId = Object.keys(positionsPerChain).find((chainId) =>
+      initGlobalFilter.includes(Number(chainId))
     );
     if (selectedChainId) {
-      setErr(leveragesPerChain[selectedChainId].error);
-      setIsLoadingPerChain(leveragesPerChain[selectedChainId].isLoading);
+      setErr(positionsPerChain[selectedChainId].error);
+      setIsLoadingPerChain(positionsPerChain[selectedChainId].isLoading);
     } else {
       setErr(undefined);
       setIsLoadingPerChain(isLoading);
     }
-  }, [globalFilter, leveragesPerChain, isLoading]);
+  }, [initGlobalFilter, positionsPerChain, isLoading]);
 
   return (
     <VStack borderRadius="xl" spacing={0}>
@@ -298,7 +287,7 @@ export const OpenPositionComp = ({
         width="100%"
       >
         <Text py={4} size="md" textAlign="center" width="100%">
-          Open Levered Positions
+          Open Levered Position
         </Text>
       </Box>
       <MidasBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
@@ -317,7 +306,7 @@ export const OpenPositionComp = ({
             }}
             descriptions={[
               {
-                text: `Unable to retrieve Leverages. Please try again later.`,
+                text: `Unable to retrieve positions. Please try again later.`,
               },
             ]}
             title={err.reason ? err.reason : 'Unexpected Error'}
@@ -397,7 +386,7 @@ export const OpenPositionComp = ({
                     )}
                   </Fragment>
                 ))
-              ) : selectedFilteredLeverages.length === 0 ? (
+              ) : selectedFilteredPositions.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
                     <Center py={8}>You have no open levered positions on this chain.</Center>

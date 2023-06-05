@@ -264,7 +264,7 @@ export type VaultsPerChainStatus = {
   };
 };
 
-export type LeveragesPerChainStatus = {
+export type PositionsPerChainStatus = {
   [chainId: string]: {
     data?: { newPositions: NewPosition[]; openPositions: OpenPosition[] } | null | undefined;
     error: Error | undefined;

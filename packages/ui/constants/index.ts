@@ -177,6 +177,25 @@ export const REPAY_STEPS = (symbol: string) =>
     { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
     { desc: `Repays a borrow position of ${symbol} token`, done: false, title: 'Repay' },
   ] as TxStep[];
+export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
+  [
+    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    {
+      desc: `Creates new levered position with ${symbol} market`,
+      done: false,
+      title: 'Create position',
+    },
+  ] as TxStep[];
+
+export const CLOSE_OPEN_POSITION_STEPS = (symbol: string) =>
+  [
+    {
+      desc: `Closes open levered position with ${symbol} market`,
+      done: false,
+      title: 'Close position',
+    },
+  ] as TxStep[];
+
 export const SCORE_LIMIT = 0.6;
 export const SCORE_RANGE_MAX = 10;
 export const MARKET_LTV = 'Market / LTV';

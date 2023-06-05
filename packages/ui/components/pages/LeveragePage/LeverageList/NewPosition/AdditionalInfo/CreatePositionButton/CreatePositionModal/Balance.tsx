@@ -39,14 +39,16 @@ export const Balance = ({
           Available:
         </Text>
         <EllipsisText
-          maxWidth="160px"
+          maxWidth="300px"
           tooltip={`${myBalance ? utils.formatUnits(myBalance, underlyingDecimals) : 0}`}
           variant="title"
           width="100%"
         >
           {myBalance ? utils.formatUnits(myBalance, underlyingDecimals) : 0}
         </EllipsisText>
-        <Text ml={1}>{underlyingSymbol}</Text>
+        <EllipsisText maxWidth="80px" tooltip={underlyingSymbol} variant="title" width="100%">
+          {underlyingSymbol}
+        </EllipsisText>
       </Row>
       {optionToWrap && (
         <Row crossAxisAlignment="center" mainAxisAlignment="flex-end" mt={1} width="100%">

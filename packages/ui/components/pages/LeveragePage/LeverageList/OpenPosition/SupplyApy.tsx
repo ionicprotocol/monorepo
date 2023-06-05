@@ -5,26 +5,26 @@ import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 
-export const SupplyApy = ({ leverage }: { leverage: OpenPosition }) => {
+export const SupplyApy = ({ position }: { position: OpenPosition }) => {
   const { data: allRewards } = useRewardsForMarket({
     asset: {
-      cToken: leverage.collateral.cToken,
-      plugin: leverage.collateral.plugin,
+      cToken: position.collateral.cToken,
+      plugin: position.collateral.plugin,
     },
-    chainId: Number(leverage.chainId),
-    poolAddress: leverage.collateral.pool,
+    chainId: Number(position.chainId),
+    poolAddress: position.collateral.pool,
   });
-  const { data: assetInfos } = useAssets(leverage.chainId);
+  const { data: assetInfos } = useAssets(position.chainId);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {
-        cToken: leverage.collateral.cToken,
-        supplyRatePerBlock: leverage.collateral.supplyRatePerBlock,
-        underlyingSymbol: leverage.collateral.symbol,
-        underlyingToken: leverage.collateral.underlyingToken,
+        cToken: position.collateral.cToken,
+        supplyRatePerBlock: position.collateral.supplyRatePerBlock,
+        underlyingSymbol: position.collateral.symbol,
+        underlyingToken: position.collateral.underlyingToken,
       },
     ],
-    leverage.chainId,
+    position.chainId,
     allRewards,
     assetInfos
   );
@@ -32,13 +32,13 @@ export const SupplyApy = ({ leverage }: { leverage: OpenPosition }) => {
   return allRewards ? (
     <MarketSupplyApy
       asset={{
-        cToken: leverage.collateral.cToken,
-        plugin: leverage.collateral.plugin,
-        supplyRatePerBlock: leverage.collateral.supplyRatePerBlock,
-        underlyingSymbol: leverage.collateral.symbol,
-        underlyingToken: leverage.collateral.underlyingToken,
+        cToken: position.collateral.cToken,
+        plugin: position.collateral.plugin,
+        supplyRatePerBlock: position.collateral.supplyRatePerBlock,
+        underlyingSymbol: position.collateral.symbol,
+        underlyingToken: position.collateral.underlyingToken,
       }}
-      poolChainId={leverage.chainId}
+      poolChainId={position.chainId}
       rewards={allRewards}
       totalSupplyApyPerAsset={totalSupplyApyPerAsset}
     />

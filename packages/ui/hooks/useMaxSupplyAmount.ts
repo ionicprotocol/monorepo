@@ -9,7 +9,7 @@ import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPo
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export function useMaxSupplyAmount(
-  asset: NativePricedFuseAsset,
+  asset: Pick<NativePricedFuseAsset, 'cToken' | 'underlyingDecimals' | 'underlyingToken'>,
   comptrollerAddress: string,
   chainId: number
 ) {
@@ -26,6 +26,7 @@ export function useMaxSupplyAmount(
       'useMaxSupplyAmount',
       asset.underlyingToken,
       asset.cToken,
+      asset.underlyingDecimals,
       comptrollerAddress,
       sdk?.chainId,
       address,
