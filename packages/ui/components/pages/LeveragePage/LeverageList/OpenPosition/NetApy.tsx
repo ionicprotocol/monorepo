@@ -1,4 +1,4 @@
-import { HStack, Text } from '@chakra-ui/react';
+import { HStack, Text, useColorModeValue } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import { utils } from 'ethers';
 
@@ -48,7 +48,7 @@ export const NetApy = ({ position }: { position: OpenPosition }) => {
 
   const { data: baseCollateral } = useBaseCollateral(positionAddress, position.chainId);
   const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, position.chainId);
-
+  const borrowApyColor = useColorModeValue('orange.500', 'orange');
   const { data: currentNetApy } = useGetNetApy(
     collateralCToken,
     borrowCToken,
@@ -66,7 +66,7 @@ export const NetApy = ({ position }: { position: OpenPosition }) => {
         maxWidth="300px"
         tooltip={currentNetApy ? smallFormatter(currentNetApy, true, 18) : ''}
       >
-        <Text>
+        <Text color={borrowApyColor}>
           {currentNetApy !== undefined && currentNetApy !== null
             ? smallFormatter(currentNetApy)
             : '?'}
