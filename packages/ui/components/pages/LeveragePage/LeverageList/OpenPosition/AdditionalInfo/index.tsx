@@ -1,10 +1,11 @@
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
+import { AdjustRatioButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/index';
 import { ClosePositionButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/ClosePositionButton/index';
 import type { OpenPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -56,11 +57,18 @@ export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
             </Button>
           </Box>
         ) : (
-          <ClosePositionButton
-            borrowAsset={position.borrowable}
-            chainId={position.chainId}
-            collateralAsset={position.collateral}
-          />
+          <HStack>
+            <AdjustRatioButton
+              borrowAsset={position.borrowable}
+              chainId={position.chainId}
+              collateralAsset={position.collateral}
+            />
+            <ClosePositionButton
+              borrowAsset={position.borrowable}
+              chainId={position.chainId}
+              collateralAsset={position.collateral}
+            />
+          </HStack>
         )}
       </Flex>
     </Box>
