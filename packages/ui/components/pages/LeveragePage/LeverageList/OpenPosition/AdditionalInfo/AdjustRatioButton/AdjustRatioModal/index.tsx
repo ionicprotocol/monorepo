@@ -94,6 +94,7 @@ export const AdjustRatioModal = ({
         await tx.wait();
 
         await queryClient.refetchQueries({ queryKey: ['usePositionsPerChain'] });
+        await queryClient.refetchQueries({ queryKey: ['useCurrentLeverageRatio'] });
 
         _steps[0] = {
           ..._steps[0],
