@@ -342,7 +342,7 @@ export const FundPositionModal = ({
           ) : (
             <>
               <HStack justifyContent="center" my={4} width="100%">
-                <Text variant="title">Adjust Leverage Ratio</Text>
+                <Text variant="title">Fund position</Text>
                 <Box height="36px" mx={2} width="36px">
                   <TokenIcon address={underlyingToken} chainId={chainId} size="36" />
                 </Box>
