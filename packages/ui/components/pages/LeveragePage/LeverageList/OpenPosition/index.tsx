@@ -304,7 +304,7 @@ export const OpenPositionComp = ({
         width="100%"
       >
         <Text py={4} size="md" textAlign="center" width="100%">
-          Open Levered Position
+          Open Levered Positions
         </Text>
       </Box>
       <MidasBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">

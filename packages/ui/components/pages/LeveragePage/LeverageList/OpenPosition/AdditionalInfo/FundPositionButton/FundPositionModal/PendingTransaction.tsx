@@ -1,5 +1,7 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
 import type { LeveredCollateral } from '@midas-capital/types';
+import type { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';
@@ -13,19 +15,21 @@ export const PendingTransaction = ({
   activeStep,
   failedStep,
   steps,
-  isAdjusting,
+  isFunding,
   chainId,
+  amount,
   collateralAsset,
-  leverageValue,
 }: {
   activeStep: number;
+  amount: BigNumber;
   chainId: number;
   collateralAsset: LeveredCollateral;
   failedStep: number;
-  isAdjusting: boolean;
-  leverageValue: number;
+  isFunding: boolean;
   steps: TxStep[];
 }) => {
+  const amountNum = utils.formatUnits(amount, collateralAsset.underlyingDecimals);
+
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
@@ -39,7 +43,7 @@ export const PendingTransaction = ({
 
   return (
     <Column crossAxisAlignment="center" expand mainAxisAlignment="center" p={4} pt={12}>
-      {isAdjusting ? (
+      {isFunding ? (
         <Loader />
       ) : failedStep === 0 ? (
         <VStack width="100%">
@@ -48,7 +52,7 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text fontWeight="bold" variant="mdText">
-            You adjusted leverage ratio as {leverageValue}
+            You funded {amountNum} {collateralAsset.symbol}
           </Text>
           <Flex justifyContent="flex-end" width="100%">
             <Button onClick={addToken} size="sm" variant={'ghost'}>
@@ -68,12 +72,12 @@ export const PendingTransaction = ({
         <TransactionStepper
           activeStep={activeStep}
           failedStep={failedStep}
-          isLoading={isAdjusting}
+          isLoading={isFunding}
           poolChainId={chainId}
           steps={steps}
         />
       </Box>
-      {isAdjusting ? (
+      {isFunding ? (
         <VStack mt={4}>
           <Text textAlign="center" variant="smText">
             Check your wallet to submit the transactions

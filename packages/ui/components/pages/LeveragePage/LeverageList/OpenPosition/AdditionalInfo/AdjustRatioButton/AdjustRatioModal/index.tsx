@@ -1,5 +1,4 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import { WETHAbi } from '@midas-capital/sdk';
 import type {
   LeveredCollateral,
   OpenPositionBorrowable,
@@ -7,17 +6,11 @@ import type {
 } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { constants } from 'ethers';
-import type { BigNumber } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
-import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
+import { useState } from 'react';
 
-import { AmountInput } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/AmountInput';
 import { ApyStatus } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/ApyStatus';
-import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/Balance';
 import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/LeverageSlider';
 import { PendingTransaction } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/PendingTransaction';
-import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
@@ -26,13 +19,9 @@ import { ADJUST_LEVERAGE_RATIO_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import type { TxStep } from '@ui/types/ComponentPropsType';
-import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 export const AdjustRatioModal = ({
@@ -48,194 +37,46 @@ export const AdjustRatioModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const {
-    underlyingToken,
-    symbol,
-    pool: comptrollerAddress,
-    cToken,
-    totalSupplied,
-    underlyingPrice,
-    underlyingDecimals,
-  } = collateralAsset;
+  const { underlyingToken, symbol, cToken } = collateralAsset;
   const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
 
   const errorToast = useErrorToast();
   const { data: tokenData } = useTokenData(underlyingToken, chainId);
-  const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const { cCard } = useColors();
-  const { data: myBalance } = useTokenBalance(underlyingToken, chainId);
-  const { data: myNativeBalance } = useTokenBalance(
-    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
-    chainId
-  );
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isAdjusting, setIsAdjusting] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
-  const [btnStr, setBtnStr] = useState<string>('Adjust leverage ratio');
-  const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([...ADJUST_LEVERAGE_RATIO_STEPS(symbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
   const [leverageValue, setLeverageValue] = useState<string>('1.0');
-  const debouncedAmount = useDebounce(amount, 1000);
   const debouncedLeverageNum = useDebounce(parseFloat(leverageValue) || 0, 1000);
-  const optionToWrap = useMemo(() => {
-    return (
-      underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
-      myBalance?.isZero() &&
-      !myNativeBalance?.isZero()
-    );
-  }, [underlyingToken, currentSdk?.chainSpecificAddresses.W_TOKEN, myBalance, myNativeBalance]);
-
-  const { data: supplyCap } = useSupplyCap({
-    chainId,
-    comptroller: comptrollerAddress,
-    market: {
-      cToken,
-      totalSupply: totalSupplied,
-      underlyingDecimals,
-      underlyingPrice,
-    },
-  });
-
-  const { data: maxSupplyAmount, isLoading } = useMaxSupplyAmount(
-    { cToken, underlyingDecimals, underlyingToken },
-    comptrollerAddress,
-    chainId
-  );
 
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
-      setIsAmountValid(false);
-    } else {
-      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-      setIsAmountValid(amount.lte(max));
-    }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
-
-  useEffect(() => {
-    if (amount.isZero()) {
-      setBtnStr('Enter a valid amount to adjust ratio');
-    } else if (isLoading) {
-      setBtnStr(`Loading your balance of ${symbol}...`);
-    } else {
-      if (isAmountValid) {
-        setBtnStr('Adjust leverage ratio');
-      } else {
-        setBtnStr(`You don't have enough ${symbol}`);
-      }
-    }
-  }, [amount, isLoading, isAmountValid, symbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address || !currentChain) return;
 
     const sentryProperties = {
-      amount: debouncedAmount,
       borrowCToken: borrowAsset.cToken,
       chainId: currentSdk.chainId,
       collateralCToken: cToken,
       fundingAsset: underlyingToken,
+      leverageValue: debouncedLeverageNum,
     };
 
     setIsConfirmed(true);
     setConfirmedSteps([...steps]);
     const _steps = [...steps];
 
-    setIsCreating(true);
+    setIsAdjusting(true);
     setActiveStep(0);
     setFailedStep(0);
     try {
-      if (optionToWrap) {
-        try {
-          setActiveStep(1);
-          const WToken = getContract(
-            currentSdk.chainSpecificAddresses.W_TOKEN,
-            WETHAbi,
-            currentSdk.signer
-          );
-          const tx = await WToken.deposit({ from: address, value: amount });
-
-          addRecentTransaction({
-            description: `Wrap ${currentChain.nativeCurrency?.symbol}`,
-            hash: tx.hash,
-          });
-          _steps[0] = {
-            ..._steps[0],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          await tx.wait();
-          _steps[0] = {
-            ..._steps[0],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          successToast({
-            description: 'Successfully Wrapped!',
-            id: 'Wrapped - ' + Math.random().toString(),
-          });
-        } catch (error) {
-          setFailedStep(1);
-          throw error;
-        }
-      }
-
       try {
-        setActiveStep(optionToWrap ? 2 : 1);
-        const token = currentSdk.getEIP20TokenInstance(underlyingToken, currentSdk.signer);
-        const hasApprovedEnough = (
-          await token.callStatic.allowance(
-            address,
-            currentSdk.chainDeployment.LeveredPositionFactory.address
-          )
-        ).gte(debouncedAmount);
-
-        if (!hasApprovedEnough) {
-          const tx = await currentSdk.leverageApprove(underlyingToken);
-
-          addRecentTransaction({
-            description: `Approve ${symbol}`,
-            hash: tx.hash,
-          });
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-
-          await tx.wait();
-
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          successToast({
-            description: 'Successfully Approved!',
-            id: 'Approved - ' + Math.random().toString(),
-          });
-        } else {
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            desc: 'Already approved!',
-            done: true,
-          };
-          setConfirmedSteps([..._steps]);
-        }
-      } catch (error) {
-        setFailedStep(optionToWrap ? 2 : 1);
-        throw error;
-      }
-
-      try {
-        setActiveStep(optionToWrap ? 3 : 2);
+        setActiveStep(1);
 
         const tx = await currentSdk.adjustLeverageRatio(borrowAsset.position, debouncedLeverageNum);
 
@@ -244,8 +85,8 @@ export const AdjustRatioModal = ({
           hash: tx.hash,
         });
 
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
+        _steps[0] = {
+          ..._steps[0],
           txHash: tx.hash,
         };
         setConfirmedSteps([..._steps]);
@@ -253,16 +94,9 @@ export const AdjustRatioModal = ({
         await tx.wait();
 
         await queryClient.refetchQueries({ queryKey: ['usePositionsPerChain'] });
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
-        await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
 
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
+        _steps[0] = {
+          ..._steps[0],
           done: true,
           txHash: tx.hash,
         };
@@ -274,7 +108,7 @@ export const AdjustRatioModal = ({
           title: 'Adjusted',
         });
       } catch (error) {
-        setFailedStep(optionToWrap ? 3 : 2);
+        setFailedStep(1);
         throw error;
       }
     } catch (error) {
@@ -285,37 +119,18 @@ export const AdjustRatioModal = ({
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
 
-    setIsCreating(false);
+    setIsAdjusting(false);
   };
 
   const onModalClose = async () => {
     onClose();
 
-    if (!isCreating) {
-      setAmount(constants.Zero);
+    if (!isAdjusting) {
       setIsConfirmed(false);
-      let _steps = [...ADJUST_LEVERAGE_RATIO_STEPS(symbol)];
 
-      if (optionToWrap) {
-        _steps = [
-          { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
-          ..._steps,
-        ];
-      }
-
-      setSteps(_steps);
+      setSteps([...ADJUST_LEVERAGE_RATIO_STEPS(symbol)]);
     }
   };
-
-  useEffect(() => {
-    let _steps = [...ADJUST_LEVERAGE_RATIO_STEPS(symbol)];
-
-    if (optionToWrap) {
-      _steps = [{ desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' }, ..._steps];
-    }
-
-    setSteps(_steps);
-  }, [optionToWrap, symbol]);
 
   return (
     <MidasModal
@@ -331,11 +146,11 @@ export const AdjustRatioModal = ({
           {isConfirmed ? (
             <PendingTransaction
               activeStep={activeStep}
-              amount={debouncedAmount}
               chainId={chainId}
               collateralAsset={collateralAsset}
               failedStep={failedStep}
-              isCreating={isCreating}
+              isAdjusting={isAdjusting}
+              leverageValue={debouncedLeverageNum}
               steps={confirmedSteps}
             />
           ) : (
@@ -364,69 +179,28 @@ export const AdjustRatioModal = ({
                 p={4}
                 width="100%"
               >
-                {!supplyCap || totalSupplied.lt(supplyCap.underlyingCap) ? (
-                  <>
-                    <Column gap={1} w="100%">
-                      <AmountInput
-                        chainId={chainId}
-                        collateralAsset={collateralAsset}
-                        optionToWrap={optionToWrap}
-                        setAmount={setAmount}
-                      />
-                      <Balance
-                        chainId={chainId}
-                        underlyingDecimals={underlyingDecimals}
-                        underlyingSymbol={symbol}
-                        underlyingToken={underlyingToken}
-                      />
-                      <LeverageSlider
-                        leverageValue={leverageValue}
-                        setLeverageValue={setLeverageValue}
-                      />
-                    </Column>
-                    <ApyStatus
-                      amount={debouncedAmount}
-                      borrowAsset={borrowAsset}
-                      chainId={chainId}
-                      collateralAsset={collateralAsset}
-                      leverageValue={debouncedLeverageNum}
-                    />
-                    <Button
-                      height={16}
-                      id="confirmCreate"
-                      isDisabled={!isAmountValid}
-                      onClick={onConfirm}
-                      width="100%"
-                    >
-                      {optionToWrap
-                        ? `Wrap ${currentChain?.nativeCurrency?.symbol} & ${btnStr}`
-                        : btnStr}
-                    </Button>
-                  </>
-                ) : (
-                  <Banner
-                    alertDescriptionProps={{ fontSize: 'lg' }}
-                    alertProps={{ status: 'info' }}
-                    descriptions={[
-                      {
-                        text: `${smallFormatter(supplyCap.tokenCap)} ${symbol} / ${smallFormatter(
-                          supplyCap.tokenCap
-                        )} ${symbol}`,
-                        textProps: { display: 'block', fontWeight: 'bold' },
-                      },
-                      {
-                        text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.',
-                      },
-                    ]}
+                <Column gap={1} w="100%">
+                  <LeverageSlider
+                    leverageValue={leverageValue}
+                    setLeverageValue={setLeverageValue}
                   />
-                )}
+                </Column>
+                <ApyStatus
+                  borrowAsset={borrowAsset}
+                  chainId={chainId}
+                  collateralAsset={collateralAsset}
+                  leverageValue={debouncedLeverageNum}
+                />
+                <Button height={16} id="confirmAdjust" onClick={onConfirm} width="100%">
+                  Adjust leverage ratio
+                </Button>
               </Column>
             </>
           )}
         </Column>
       }
       isOpen={isOpen}
-      modalCloseButtonProps={{ hidden: isCreating }}
+      modalCloseButtonProps={{ hidden: isAdjusting }}
       onClose={onModalClose}
     />
   );

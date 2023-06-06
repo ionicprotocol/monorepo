@@ -189,7 +189,6 @@ export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
 
 export const ADJUST_LEVERAGE_RATIO_STEPS = (symbol: string) =>
   [
-    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
     {
       desc: `Adjusts leverage ratio on ${symbol} market`,
       done: false,
@@ -203,6 +202,16 @@ export const CLOSE_OPEN_POSITION_STEPS = (symbol: string) =>
       desc: `Closes open levered position with ${symbol} market`,
       done: false,
       title: 'Close position',
+    },
+  ] as TxStep[];
+
+export const FUND_POSITION_STEPS = (symbol: string) =>
+  [
+    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    {
+      desc: `Funds position with ${symbol} market`,
+      done: false,
+      title: 'Fund position',
     },
   ] as TxStep[];
 
