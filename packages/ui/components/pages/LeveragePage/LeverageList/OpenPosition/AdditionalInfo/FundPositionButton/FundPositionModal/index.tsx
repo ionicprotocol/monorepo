@@ -2,27 +2,26 @@ import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
 import type {
   LeveredCollateral,
-  NewPositionBorrowable,
+  OpenPositionBorrowable,
   SupportedChains,
 } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
+import { constants } from 'ethers';
 import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
-import { AmountInput } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/CreatePositionModal/AmountInput';
-import { ApyStatus } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/CreatePositionModal/ApyStatus';
-import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/CreatePositionModal/Balance';
-import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/CreatePositionModal/LeverageSlider';
-import { PendingTransaction } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/CreatePositionModal/PendingTransaction';
+import { AmountInput } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/AmountInput';
+import { ApyStatus } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/ApyStatus';
+import { Balance } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/Balance';
+import { PendingTransaction } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/PendingTransaction';
 import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { CREATE_NEW_POSITION_STEPS, LEVERAGE_VALUE } from '@ui/constants/index';
+import { FUND_POSITION_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -35,14 +34,14 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
-export const CreatePositionModal = ({
+export const FundPositionModal = ({
   borrowAsset,
   chainId,
   collateralAsset,
   isOpen,
   onClose,
 }: {
-  borrowAsset: NewPositionBorrowable;
+  borrowAsset: OpenPositionBorrowable;
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
   isOpen: boolean;
@@ -70,19 +69,15 @@ export const CreatePositionModal = ({
     chainId
   );
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isFunding, setIsFunding] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
-  const [btnStr, setBtnStr] = useState<string>('Create new position');
+  const [btnStr, setBtnStr] = useState<string>('Fund position');
   const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
-  const [isLeverageValueValid, setIsLeverageValueValid] = useState<boolean>(false);
-  const [steps, setSteps] = useState<TxStep[]>([...CREATE_NEW_POSITION_STEPS(symbol)]);
+  const [steps, setSteps] = useState<TxStep[]>([...FUND_POSITION_STEPS(symbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
-  const [leverageValue, setLeverageValue] = useState<string>('1.0');
   const debouncedAmount = useDebounce(amount, 1000);
-  const debouncedBorrowAsset = useDebounce(borrowAsset, 1000);
-  const debouncedLeverageNum = useDebounce(parseFloat(leverageValue) || 0, 1000);
   const optionToWrap = useMemo(() => {
     return (
       underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
@@ -120,38 +115,25 @@ export const CreatePositionModal = ({
   }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
 
   useEffect(() => {
-    if (debouncedLeverageNum < LEVERAGE_VALUE.MIN || debouncedLeverageNum > LEVERAGE_VALUE.MAX) {
-      setIsLeverageValueValid(false);
-    } else {
-      setIsLeverageValueValid(true);
-    }
-  }, [debouncedLeverageNum]);
-
-  useEffect(() => {
-    if (debouncedAmount.isZero()) {
+    if (amount.isZero()) {
       setBtnStr('Enter a valid amount to supply');
-    } else if (
-      debouncedLeverageNum < LEVERAGE_VALUE.MIN ||
-      debouncedLeverageNum > LEVERAGE_VALUE.MAX
-    ) {
-      setBtnStr('Enter a valid leverage value');
     } else if (isLoading) {
       setBtnStr(`Loading your balance of ${symbol}...`);
     } else {
       if (isAmountValid) {
-        setBtnStr('Create new position');
+        setBtnStr('Fund position');
       } else {
         setBtnStr(`You don't have enough ${symbol}`);
       }
     }
-  }, [debouncedAmount, debouncedLeverageNum, isLoading, isAmountValid, symbol]);
+  }, [amount, isLoading, isAmountValid, symbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address || !currentChain) return;
 
     const sentryProperties = {
       amount: debouncedAmount,
-      borrowCToken: debouncedBorrowAsset.cToken,
+      borrowCToken: borrowAsset.cToken,
       chainId: currentSdk.chainId,
       collateralCToken: cToken,
       fundingAsset: underlyingToken,
@@ -161,7 +143,7 @@ export const CreatePositionModal = ({
     setConfirmedSteps([...steps]);
     const _steps = [...steps];
 
-    setIsCreating(true);
+    setIsFunding(true);
     setActiveStep(0);
     setFailedStep(0);
     try {
@@ -252,16 +234,14 @@ export const CreatePositionModal = ({
       try {
         setActiveStep(optionToWrap ? 3 : 2);
 
-        const tx = await currentSdk.createAndFundPositionAtRatio(
-          cToken,
-          debouncedBorrowAsset.cToken,
-          underlyingToken,
-          debouncedAmount,
-          utils.parseUnits(debouncedLeverageNum.toString())
+        const tx = await currentSdk.fundPosition(
+          borrowAsset.position,
+          collateralAsset.cToken,
+          debouncedAmount
         );
 
         addRecentTransaction({
-          description: 'Creating levered position.',
+          description: 'Fund position.',
           hash: tx.hash,
         });
 
@@ -290,9 +270,9 @@ export const CreatePositionModal = ({
         setConfirmedSteps([..._steps]);
 
         successToast({
-          description: 'Successfully created levered position',
-          id: 'Levered position - ' + Math.random().toString(),
-          title: 'Created',
+          description: 'Successfully funded position',
+          id: 'Fund position - ' + Math.random().toString(),
+          title: 'Funded',
         });
       } catch (error) {
         setFailedStep(optionToWrap ? 3 : 2);
@@ -300,22 +280,22 @@ export const CreatePositionModal = ({
       }
     } catch (error) {
       const sentryInfo = {
-        contextName: 'Position - Creating',
+        contextName: 'Position - Funding',
         properties: sentryProperties,
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
 
-    setIsCreating(false);
+    setIsFunding(false);
   };
 
   const onModalClose = async () => {
     onClose();
 
-    if (!isCreating) {
+    if (!isFunding) {
       setAmount(constants.Zero);
       setIsConfirmed(false);
-      let _steps = [...CREATE_NEW_POSITION_STEPS(symbol)];
+      let _steps = [...FUND_POSITION_STEPS(symbol)];
 
       if (optionToWrap) {
         _steps = [
@@ -329,7 +309,7 @@ export const CreatePositionModal = ({
   };
 
   useEffect(() => {
-    let _steps = [...CREATE_NEW_POSITION_STEPS(symbol)];
+    let _steps = [...FUND_POSITION_STEPS(symbol)];
 
     if (optionToWrap) {
       _steps = [{ desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' }, ..._steps];
@@ -356,13 +336,13 @@ export const CreatePositionModal = ({
               chainId={chainId}
               collateralAsset={collateralAsset}
               failedStep={failedStep}
-              isCreating={isCreating}
+              isFunding={isFunding}
               steps={confirmedSteps}
             />
           ) : (
             <>
               <HStack justifyContent="center" my={4} width="100%">
-                <Text variant="title">Supply</Text>
+                <Text variant="title">Fund position</Text>
                 <Box height="36px" mx={2} width="36px">
                   <TokenIcon address={underlyingToken} chainId={chainId} size="36" />
                 </Box>
@@ -400,22 +380,17 @@ export const CreatePositionModal = ({
                         underlyingSymbol={symbol}
                         underlyingToken={underlyingToken}
                       />
-                      <LeverageSlider
-                        leverageValue={leverageValue}
-                        setLeverageValue={setLeverageValue}
-                      />
                     </Column>
                     <ApyStatus
                       amount={debouncedAmount}
-                      borrowAsset={debouncedBorrowAsset}
+                      borrowAsset={borrowAsset}
                       chainId={chainId}
                       collateralAsset={collateralAsset}
-                      leverageValue={debouncedLeverageNum}
                     />
                     <Button
                       height={16}
                       id="confirmCreate"
-                      isDisabled={!isAmountValid || !isLeverageValueValid}
+                      isDisabled={!isAmountValid}
                       onClick={onConfirm}
                       width="100%"
                     >
@@ -447,7 +422,7 @@ export const CreatePositionModal = ({
         </Column>
       }
       isOpen={isOpen}
-      modalCloseButtonProps={{ hidden: isCreating }}
+      modalCloseButtonProps={{ hidden: isFunding }}
       onClose={onModalClose}
     />
   );

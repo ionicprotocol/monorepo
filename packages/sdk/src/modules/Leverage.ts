@@ -82,14 +82,14 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   rate: borrowableRates[i],
                 };
 
+                newPositionBorrowable.push({
+                  ...borrowable,
+                });
+
                 if (position) {
                   openPositionBorrowable.push({
                     ...borrowable,
                     position: position.position,
-                  });
-                } else {
-                  newPositionBorrowable.push({
-                    ...borrowable,
                   });
                 }
               });
@@ -174,25 +174,25 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       );
     }
 
-    async getUpdatedApy(cTokenAddress: string, amount: BigNumber) {
+    async getPositionSupplyApy(cTokenAddress: string, amount: BigNumber) {
       const cToken = this.createCTokenWithExtensions(cTokenAddress);
 
       return await cToken.callStatic.supplyRatePerBlockAfterDeposit(amount);
     }
 
-    async getUpdatedBorrowApr(
+    async getPositionBorrowApr(
       collateralMarket: string,
       borrowMarket: string,
-      baseCollateral: BigNumber,
-      targetLeverageRatio: BigNumber
+      leverageRatio: BigNumber,
+      amount: BigNumber
     ) {
       const leveredPositionsLens = this.createLeveredPositionLens();
 
       return await leveredPositionsLens.callStatic.getBorrowRateAtRatio(
         collateralMarket,
         borrowMarket,
-        baseCollateral,
-        targetLeverageRatio
+        amount,
+        leverageRatio
       );
     }
 
@@ -219,6 +219,24 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       );
     }
 
+    async createAndFundPositionAtRatio(
+      collateralMarket: string,
+      borrowMarket: string,
+      fundingAsset: string,
+      fundingAmount: BigNumber,
+      leverageRatio: BigNumber
+    ) {
+      const leveredPositionFactory = this.createLeveredPositionFactory(this.signer);
+
+      return await leveredPositionFactory.createAndFundPositionAtRatio(
+        collateralMarket,
+        borrowMarket,
+        fundingAsset,
+        fundingAmount,
+        leverageRatio
+      );
+    }
+
     async getRangeOfLeverageRatio(address: string) {
       const leveredPosition = this.createLeveredPosition(address);
 
@@ -228,10 +246,15 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       ]);
     }
 
-    async closeLeveredPosition(address: string, withdrawTo?: string) {
-      const leveredPosition = this.createLeveredPosition(address, this.signer);
+    async isPositionClosed(address: string) {
+      const leveredPosition = this.createLeveredPosition(address);
 
-      const isPositionClosed = await leveredPosition.callStatic.isPositionClosed();
+      return await leveredPosition.callStatic.isPositionClosed();
+    }
+
+    async closeLeveredPosition(address: string, withdrawTo?: string) {
+      const isPositionClosed = await this.isPositionClosed(address);
+      const leveredPosition = this.createLeveredPosition(address, this.signer);
 
       if (!isPositionClosed) {
         let tx: ContractTransaction;
@@ -254,6 +277,44 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       const tx = await leveredPosition.adjustLeverageRatio(utils.parseUnits(ratio.toString()));
 
       return tx;
+    }
+
+    async fundPosition(positionAddress: string, cToken: string, amount: BigNumber) {
+      const leveredPosition = this.createLeveredPosition(positionAddress, this.signer);
+
+      const tx = await leveredPosition.fundPosition(cToken, amount);
+
+      return tx;
+    }
+
+    async getNetAPY(
+      supplyApy: BigNumber,
+      supplyAmount: BigNumber,
+      collateralMarket: string,
+      borrowableMarket: string,
+      leverageRatio: BigNumber
+    ) {
+      const leveredPositionsLens = this.createLeveredPositionLens();
+
+      return await leveredPositionsLens.callStatic.getNetAPY(
+        supplyApy,
+        supplyAmount,
+        collateralMarket,
+        borrowableMarket,
+        leverageRatio
+      );
+    }
+
+    async getCurrentLeverageRatio(positionAddress: string) {
+      const leveredPosition = this.createLeveredPosition(positionAddress);
+
+      return await leveredPosition.callStatic.getCurrentLeverageRatio();
+    }
+
+    async getBaseCollateral(positionAddress: string) {
+      const leveredPosition = this.createLeveredPosition(positionAddress);
+
+      return await leveredPosition.callStatic.baseCollateral();
     }
   };
 }

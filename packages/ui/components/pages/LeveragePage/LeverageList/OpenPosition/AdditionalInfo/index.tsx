@@ -7,6 +7,7 @@ import { useSwitchNetwork } from 'wagmi';
 
 import { AdjustRatioButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/index';
 import { ClosePositionButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/ClosePositionButton/index';
+import { FundPositionButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/index';
 import type { OpenPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
@@ -59,6 +60,11 @@ export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
         ) : (
           <HStack>
             <AdjustRatioButton
+              borrowAsset={position.borrowable}
+              chainId={position.chainId}
+              collateralAsset={position.collateral}
+            />
+            <FundPositionButton
               borrowAsset={position.borrowable}
               chainId={position.chainId}
               collateralAsset={position.collateral}

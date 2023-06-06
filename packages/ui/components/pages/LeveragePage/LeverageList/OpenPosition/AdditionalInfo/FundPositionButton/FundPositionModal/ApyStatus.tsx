@@ -1,7 +1,7 @@
 import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import type {
   LeveredCollateral,
-  NewPositionBorrowable,
+  OpenPositionBorrowable,
   SupportedChains,
 } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
@@ -10,8 +10,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
+import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
@@ -24,13 +25,11 @@ export const ApyStatus = ({
   borrowAsset,
   chainId,
   collateralAsset,
-  leverageValue,
 }: {
   amount: BigNumber;
-  borrowAsset: NewPositionBorrowable;
+  borrowAsset: OpenPositionBorrowable;
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
-  leverageValue: number;
 }) => {
   const {
     cToken: collateralCToken,
@@ -38,10 +37,9 @@ export const ApyStatus = ({
     pool: poolAddress,
     supplyRatePerBlock,
     plugin,
-    totalSupplied,
     underlyingToken: collateralUnderlying,
   } = collateralAsset;
-  const { rate: borrowRatePerBlock, cToken: borrowCToken } = borrowAsset;
+  const { rate: borrowRatePerBlock, cToken: borrowCToken, position } = borrowAsset;
   const sdk = useSdk(chainId);
   const { data: allRewards } = useRewardsForMarket({
     asset: {
@@ -78,11 +76,25 @@ export const ApyStatus = ({
   const [updatedSupplyApy, setUpdatedSupplyApy] = useState<number | undefined>(supplyAPY);
   const [updatedBorrowApr, setUpdatedBorrowApr] = useState<number | undefined>(borrowAPY);
 
-  const { data: netApy } = useGetNetApy(
+  const { data: baseCollateral } = useBaseCollateral(position, chainId);
+  const { data: currentLeverageRatio } = useCurrentLeverageRatio(position, chainId);
+
+  const { data: currentNetApy } = useGetNetApy(
     collateralCToken,
     borrowCToken,
-    amount,
-    utils.parseUnits(leverageValue.toString()),
+    baseCollateral,
+    currentLeverageRatio,
+    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      : undefined,
+    chainId
+  );
+
+  const { data: updatedNetApy } = useGetNetApy(
+    collateralCToken,
+    borrowCToken,
+    baseCollateral ? baseCollateral.add(amount) : amount,
+    currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
       : undefined,
@@ -102,26 +114,22 @@ export const ApyStatus = ({
 
   useEffect(() => {
     const func = async () => {
-      if (
-        sdk &&
-        !Number.isNaN(leverageValue) &&
-        leverageValue >= LEVERAGE_VALUE.MIN &&
-        leverageValue <= LEVERAGE_VALUE.MAX
-      ) {
+      if (sdk && currentLeverageRatio && baseCollateral) {
         try {
           const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
             borrowCToken,
-            amount,
-            utils.parseUnits(leverageValue.toString())
+            baseCollateral.add(amount),
+            currentLeverageRatio
           );
+
           setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
         } catch (e) {}
       }
     };
 
     func();
-  }, [sdk, collateralCToken, amount, leverageValue, borrowCToken, totalSupplied]);
+  }, [sdk, collateralCToken, amount, borrowCToken, currentLeverageRatio, baseCollateral]);
 
   return (
     <MidasBox py={4} width="100%">
@@ -207,11 +215,28 @@ export const ApyStatus = ({
               <EllipsisText
                 maxWidth="300px"
                 tooltip={
-                  netApy !== undefined && netApy !== null ? smallFormatter(netApy, true, 18) : ''
+                  currentNetApy !== undefined && currentNetApy !== null
+                    ? smallFormatter(currentNetApy, true, 18)
+                    : ''
                 }
               >
                 <Text>
-                  {netApy !== undefined && netApy !== null ? smallFormatter(netApy) : '?'}%
+                  {currentNetApy !== undefined && currentNetApy !== null
+                    ? smallFormatter(currentNetApy)
+                    : '?'}
+                  %
+                </Text>
+              </EllipsisText>
+              <Text>➡</Text>
+              <EllipsisText
+                maxWidth="300px"
+                tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
+              >
+                <Text>
+                  {updatedNetApy !== undefined && updatedNetApy !== null
+                    ? smallFormatter(updatedNetApy)
+                    : '?'}
+                  %
                 </Text>
               </EllipsisText>
             </HStack>
