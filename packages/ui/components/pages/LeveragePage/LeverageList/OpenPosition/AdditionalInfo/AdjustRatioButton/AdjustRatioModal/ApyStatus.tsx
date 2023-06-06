@@ -113,11 +113,7 @@ export const ApyStatus = ({
               <Text>➡</Text>
               <EllipsisText
                 maxWidth="300px"
-                tooltip={
-                  updatedNetApy !== undefined && updatedNetApy !== null
-                    ? smallFormatter(updatedNetApy, true, 18)
-                    : ''
-                }
+                tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
               >
                 <Text>
                   {updatedNetApy !== undefined && updatedNetApy !== null

@@ -1,13 +1,15 @@
-import { Text } from '@chakra-ui/react';
+import { HStack, Text } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import { utils } from 'ethers';
 
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { smallFormatter } from '@ui/utils/bigUtils';
 
 export const NetApy = ({ position }: { position: OpenPosition }) => {
   const {
@@ -58,5 +60,19 @@ export const NetApy = ({ position }: { position: OpenPosition }) => {
     position.chainId
   );
 
-  return currentNetApy ? <Text>{currentNetApy}</Text> : null;
+  return currentNetApy !== undefined && currentNetApy !== null ? (
+    <HStack justifyContent="flex-end">
+      <EllipsisText
+        maxWidth="300px"
+        tooltip={currentNetApy ? smallFormatter(currentNetApy, true, 18) : ''}
+      >
+        <Text>
+          {currentNetApy !== undefined && currentNetApy !== null
+            ? smallFormatter(currentNetApy)
+            : '?'}
+          %
+        </Text>
+      </EllipsisText>
+    </HStack>
+  ) : null;
 };
