@@ -193,7 +193,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
               if (info.asset.toLowerCase() === asset.underlyingToken.toLowerCase()) {
                 info.rewards.map((reward) => {
                   if (reward.apy) {
-                    compoundingApy += reward.apy;
+                    compoundingApy += reward.apy * 100;
                   }
                 });
               }
