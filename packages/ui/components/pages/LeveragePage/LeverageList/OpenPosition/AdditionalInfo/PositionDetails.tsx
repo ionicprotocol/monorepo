@@ -5,10 +5,12 @@ import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
+import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
-import { smallFormatter } from '@ui/utils/bigUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 export const PositionDetails = ({ position }: { position: OpenPosition }) => {
@@ -22,6 +24,15 @@ export const PositionDetails = ({ position }: { position: OpenPosition }) => {
     position.borrowable.position,
     position.chainId
   );
+  const { data: usdPrices } = useAllUsdPrices();
+
+  const usdPrice = useMemo(() => {
+    if (usdPrices && usdPrices[position.chainId.toString()]) {
+      return usdPrices[position.chainId.toString()].value;
+    } else {
+      return undefined;
+    }
+  }, [usdPrices, position.chainId]);
 
   return (
     <VStack borderRadius="20" spacing={0} width="100%">
@@ -73,18 +84,20 @@ export const PositionDetails = ({ position }: { position: OpenPosition }) => {
             }
           />
           <CaptionedStat
-            caption={'Total Funded'}
+            caption={'TVL'}
             crossAxisAlignment="center"
             stat={
-              baseCollateral
-                ? smallFormatter(
+              baseCollateral && usdPrice
+                ? smallUsdFormatter(
                     Number(
                       utils.formatUnits(baseCollateral, position.collateral.underlyingDecimals)
-                    ),
+                    ) *
+                      Number(
+                        utils.formatUnits(position.collateral.underlyingPrice, DEFAULT_DECIMALS)
+                      ) *
+                      usdPrice,
                     true
-                  ) +
-                  ' ' +
-                  position.collateral.symbol
+                  )
                 : '-'
             }
           />
