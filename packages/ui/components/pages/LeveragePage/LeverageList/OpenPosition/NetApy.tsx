@@ -2,6 +2,8 @@ import { Text } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import { utils } from 'ethers';
 
+import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
+import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
@@ -42,10 +44,14 @@ export const NetApy = ({ position }: { position: OpenPosition }) => {
     assetInfos
   );
 
+  const { data: baseCollateral } = useBaseCollateral(positionAddress, position.chainId);
+  const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, position.chainId);
+
   const { data: currentNetApy } = useGetNetApy(
-    positionAddress,
     collateralCToken,
     borrowCToken,
+    baseCollateral,
+    currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
       : undefined,

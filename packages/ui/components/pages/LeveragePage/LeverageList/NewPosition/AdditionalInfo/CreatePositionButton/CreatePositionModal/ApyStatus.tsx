@@ -12,6 +12,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
@@ -40,7 +41,7 @@ export const ApyStatus = ({
     totalSupplied,
     underlyingToken: collateralUnderlying,
   } = collateralAsset;
-  const { rate: borrowRatePerBlock, cToken: borrowToken } = borrowAsset;
+  const { rate: borrowRatePerBlock, cToken: borrowCToken } = borrowAsset;
   const sdk = useSdk(chainId);
   const { data: allRewards } = useRewardsForMarket({
     asset: {
@@ -77,6 +78,17 @@ export const ApyStatus = ({
   const [updatedSupplyApy, setUpdatedSupplyApy] = useState<number | undefined>(supplyAPY);
   const [updatedBorrowApr, setUpdatedBorrowApr] = useState<number | undefined>(borrowAPY);
 
+  const { data: netApy } = useGetNetApy(
+    collateralCToken,
+    borrowCToken,
+    amount,
+    utils.parseUnits(leverageValue.toString()),
+    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      : undefined,
+    chainId
+  );
+
   useEffect(() => {
     const func = async () => {
       if (sdk) {
@@ -99,7 +111,7 @@ export const ApyStatus = ({
         try {
           const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
-            borrowToken,
+            borrowCToken,
             amount,
             utils.parseUnits(leverageValue.toString())
           );
@@ -109,7 +121,7 @@ export const ApyStatus = ({
     };
 
     func();
-  }, [sdk, collateralCToken, amount, leverageValue, borrowToken, totalSupplied]);
+  }, [sdk, collateralCToken, amount, leverageValue, borrowCToken, totalSupplied]);
 
   return (
     <MidasBox py={4} width="100%">
@@ -195,16 +207,11 @@ export const ApyStatus = ({
               <EllipsisText
                 maxWidth="300px"
                 tooltip={
-                  totalSupplyApyPerAsset && supplyAPY !== undefined && borrowAPY !== undefined
-                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken] - borrowAPY, true, 18)
-                    : ''
+                  netApy !== undefined && netApy !== null ? smallFormatter(netApy, true, 18) : ''
                 }
               >
                 <Text>
-                  {totalSupplyApyPerAsset && supplyAPY !== undefined && borrowAPY !== undefined
-                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken] - borrowAPY)
-                    : '?'}
-                  %
+                  {netApy !== undefined && netApy !== null ? smallFormatter(netApy) : '?'}%
                 </Text>
               </EllipsisText>
             </HStack>

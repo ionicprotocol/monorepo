@@ -3,38 +3,35 @@ import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
-import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 
 export function useGetNetApy(
-  position: string,
   collateralMarket: string,
   borrowableMarket: string,
+  amount: BigNumber | null | undefined,
+  leverageRatio: BigNumber | null | undefined,
   supplyApy?: BigNumber,
   chainId?: number
 ) {
   const sdk = useSdk(chainId);
-  const { data: baseCollateral } = useBaseCollateral(position, chainId);
-  const { data: currentLeverageRatio } = useCurrentLeverageRatio(position, chainId);
 
   return useQuery(
     [
       'useGetNetApy',
       supplyApy,
-      baseCollateral,
+      amount,
       collateralMarket,
       borrowableMarket,
-      currentLeverageRatio,
+      leverageRatio,
       sdk?.chainId,
     ],
     async () => {
-      if (sdk && supplyApy !== undefined && baseCollateral && currentLeverageRatio) {
+      if (sdk && supplyApy !== undefined && amount && leverageRatio) {
         const netApy = await sdk.getNetAPY(
           supplyApy,
-          baseCollateral,
+          amount,
           collateralMarket,
           borrowableMarket,
-          currentLeverageRatio
+          leverageRatio
         );
 
         return Number(utils.formatUnits(netApy));
@@ -44,7 +41,7 @@ export function useGetNetApy(
     },
     {
       cacheTime: Infinity,
-      enabled: !!sdk && !!baseCollateral && supplyApy !== undefined && !!currentLeverageRatio,
+      enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
       staleTime: Infinity,
     }
   );

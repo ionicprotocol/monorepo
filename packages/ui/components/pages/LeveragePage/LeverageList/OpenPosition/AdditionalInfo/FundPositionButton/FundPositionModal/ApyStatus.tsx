@@ -14,7 +14,6 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
-import { useGetNetApyAtSupplyAmount } from '@ui/hooks/leverage/useGetNetApyAtSupplyAmount';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
@@ -51,7 +50,6 @@ export const ApyStatus = ({
     poolAddress,
   });
   const { data: assetInfos } = useAssets(chainId);
-  const { data: baseCollateral } = useBaseCollateral(position);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {
@@ -78,28 +76,30 @@ export const ApyStatus = ({
   const [updatedSupplyApy, setUpdatedSupplyApy] = useState<number | undefined>(supplyAPY);
   const [updatedBorrowApr, setUpdatedBorrowApr] = useState<number | undefined>(borrowAPY);
 
-  const { data: currentNetApy } = useGetNetApy(
-    position,
-    collateralCToken,
-    borrowCToken,
-    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
-      : undefined,
-    chainId
-  );
-
-  const { data: updatedNetApy } = useGetNetApyAtSupplyAmount(
-    position,
-    amount,
-    collateralCToken,
-    borrowCToken,
-    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
-      : undefined,
-    chainId
-  );
-
+  const { data: baseCollateral } = useBaseCollateral(position, chainId);
   const { data: currentLeverageRatio } = useCurrentLeverageRatio(position, chainId);
+
+  const { data: currentNetApy } = useGetNetApy(
+    collateralCToken,
+    borrowCToken,
+    baseCollateral,
+    currentLeverageRatio,
+    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      : undefined,
+    chainId
+  );
+
+  const { data: updatedNetApy } = useGetNetApy(
+    collateralCToken,
+    borrowCToken,
+    baseCollateral ? baseCollateral.add(amount) : amount,
+    currentLeverageRatio,
+    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      : undefined,
+    chainId
+  );
 
   useEffect(() => {
     const func = async () => {

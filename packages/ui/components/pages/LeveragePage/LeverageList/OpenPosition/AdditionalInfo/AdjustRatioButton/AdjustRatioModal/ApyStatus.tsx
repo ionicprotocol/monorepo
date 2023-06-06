@@ -8,8 +8,9 @@ import { utils } from 'ethers';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
+import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
+import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
-import { useGetNetApyAtRatio } from '@ui/hooks/leverage/useGetNetApyAtRatio';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
@@ -60,20 +61,24 @@ export const ApyStatus = ({
     assetInfos
   );
 
+  const { data: baseCollateral } = useBaseCollateral(position, chainId);
+  const { data: currentLeverageRatio } = useCurrentLeverageRatio(position, chainId);
+
   const { data: currentNetApy } = useGetNetApy(
-    position,
     collateralCToken,
     borrowCToken,
+    baseCollateral,
+    currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
       : undefined,
     chainId
   );
 
-  const { data: updatedNetApy } = useGetNetApyAtRatio(
-    position,
+  const { data: updatedNetApy } = useGetNetApy(
     collateralCToken,
     borrowCToken,
+    baseCollateral,
     utils.parseUnits(leverageValue.toString()),
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
