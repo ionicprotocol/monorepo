@@ -174,31 +174,25 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       );
     }
 
-    async getUpdatedApy(cTokenAddress: string, amount: BigNumber) {
+    async getPositionSupplyApy(cTokenAddress: string, amount: BigNumber) {
       const cToken = this.createCTokenWithExtensions(cTokenAddress);
 
       return await cToken.callStatic.supplyRatePerBlockAfterDeposit(amount);
     }
 
-    async getBorrowAprAtSupplyAmount(
-      positionAddress: string,
+    async getPositionBorrowApr(
       collateralMarket: string,
       borrowMarket: string,
+      leverageRatio: BigNumber,
       amount: BigNumber
     ) {
-      const leveredPosition = this.createLeveredPosition(positionAddress);
-      const [baseCollateral, currentLeverageRatio] = await Promise.all([
-        leveredPosition.callStatic.baseCollateral(),
-        leveredPosition.callStatic.getCurrentLeverageRatio(),
-      ]);
-
       const leveredPositionsLens = this.createLeveredPositionLens();
 
       return await leveredPositionsLens.callStatic.getBorrowRateAtRatio(
         collateralMarket,
         borrowMarket,
-        baseCollateral.add(amount),
-        currentLeverageRatio
+        amount,
+        leverageRatio
       );
     }
 

@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useGetNetApyAtSupplyAmount } from '@ui/hooks/leverage/useGetNetApyAtSupplyAmount';
 import { useAssets } from '@ui/hooks/useAssets';
@@ -96,10 +97,12 @@ export const ApyStatus = ({
     chainId
   );
 
+  const { data: currentLeverageRatio } = useCurrentLeverageRatio(position, chainId);
+
   useEffect(() => {
     const func = async () => {
       if (sdk) {
-        const bigApy = await sdk.getUpdatedApy(collateralCToken, amount);
+        const bigApy = await sdk.getPositionSupplyApy(collateralCToken, amount);
         setUpdatedSupplyApy(Number(utils.formatUnits(bigApy)));
       }
     };
@@ -109,13 +112,13 @@ export const ApyStatus = ({
 
   useEffect(() => {
     const func = async () => {
-      if (sdk) {
+      if (sdk && currentLeverageRatio) {
         try {
-          const bigApr = await sdk.getBorrowAprAtSupplyAmount(
-            position,
+          const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
             borrowCToken,
-            amount
+            amount,
+            currentLeverageRatio
           );
 
           setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
@@ -124,7 +127,7 @@ export const ApyStatus = ({
     };
 
     func();
-  }, [sdk, collateralCToken, amount, borrowCToken, position]);
+  }, [sdk, collateralCToken, amount, borrowCToken, currentLeverageRatio]);
 
   return (
     <MidasBox py={4} width="100%">

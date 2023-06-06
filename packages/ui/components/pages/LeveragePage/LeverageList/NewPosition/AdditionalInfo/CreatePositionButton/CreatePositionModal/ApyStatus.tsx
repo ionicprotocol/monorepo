@@ -5,7 +5,7 @@ import type {
   SupportedChains,
 } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
+import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
@@ -79,22 +79,14 @@ export const ApyStatus = ({
 
   useEffect(() => {
     const func = async () => {
-      if (
-        sdk &&
-        !Number.isNaN(leverageValue) &&
-        leverageValue >= LEVERAGE_VALUE.MIN &&
-        leverageValue <= LEVERAGE_VALUE.MAX
-      ) {
-        const bigApy = await sdk.getUpdatedApy(
-          collateralCToken,
-          amount.mul(utils.parseUnits(leverageValue.toString())).div(constants.WeiPerEther)
-        );
+      if (sdk) {
+        const bigApy = await sdk.getPositionSupplyApy(collateralCToken, amount);
         setUpdatedSupplyApy(Number(utils.formatUnits(bigApy)));
       }
     };
 
     func();
-  }, [sdk, collateralCToken, amount, leverageValue]);
+  }, [sdk, collateralCToken, amount]);
 
   useEffect(() => {
     const func = async () => {
@@ -105,12 +97,10 @@ export const ApyStatus = ({
         leverageValue <= LEVERAGE_VALUE.MAX
       ) {
         try {
-          const bigApr = await sdk.getUpdatedBorrowApr(
+          const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
             borrowToken,
-            totalSupplied.add(
-              amount.mul(utils.parseUnits(leverageValue.toString())).div(constants.WeiPerEther)
-            ),
+            amount,
             utils.parseUnits(leverageValue.toString())
           );
           setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
