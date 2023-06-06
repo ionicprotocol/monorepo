@@ -90,6 +90,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   openPositionBorrowable.push({
                     ...borrowable,
                     position: position.position,
+                    isPositionClosed: position.isClosed,
                   });
                 }
               });
@@ -160,16 +161,17 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
 
     async getPositionsByAccount(account: string) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
-      const leveredPositions = await leveredPositionFactory.callStatic.getPositionsByAccount(account);
+      const [positions, states] = await leveredPositionFactory.callStatic.getPositionsByAccount(account);
       return await Promise.all(
-        leveredPositions.map(async (position) => {
+        positions.map(async (position, index) => {
           const positionContract = this.createLeveredPosition(position);
+          const state = states[index];
           const [collateralMarket, borrowMarket] = await Promise.all([
             positionContract.callStatic.collateralMarket(),
             positionContract.callStatic.stableMarket(),
           ]);
 
-          return { collateralMarket, borrowMarket, position };
+          return { collateralMarket, borrowMarket, position, isClosed: state };
         })
       );
     }
@@ -315,6 +317,14 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       const leveredPosition = this.createLeveredPosition(positionAddress);
 
       return await leveredPosition.callStatic.baseCollateral();
+    }
+
+    async removeClosedPosition(positionAddress: string) {
+      const leveredPositionFactory = this.createLeveredPositionFactory(this.signer);
+
+      const tx = await leveredPositionFactory.removeClosedPosition(positionAddress);
+
+      return tx;
     }
   };
 }

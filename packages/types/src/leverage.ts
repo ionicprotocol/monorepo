@@ -18,6 +18,7 @@ export interface NewPositionBorrowable {
 }
 export interface OpenPositionBorrowable extends NewPositionBorrowable {
   position: string;
+  isPositionClosed: boolean;
 }
 
 export interface LeveredCollateral {

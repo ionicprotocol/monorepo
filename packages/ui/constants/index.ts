@@ -205,6 +205,15 @@ export const CLOSE_OPEN_POSITION_STEPS = (symbol: string) =>
     },
   ] as TxStep[];
 
+export const REMOVE_CLOSED_POSITION_STEPS = (symbol: string) =>
+  [
+    {
+      desc: `Removes closed levered position with ${symbol} market`,
+      done: false,
+      title: 'Remove position',
+    },
+  ] as TxStep[];
+
 export const FUND_POSITION_STEPS = (symbol: string) =>
   [
     { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
