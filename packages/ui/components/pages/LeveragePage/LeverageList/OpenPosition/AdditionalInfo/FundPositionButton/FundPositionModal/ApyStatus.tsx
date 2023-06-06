@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useGetNetApyAtSupplyAmount } from '@ui/hooks/leverage/useGetNetApyAtSupplyAmount';
@@ -50,6 +51,7 @@ export const ApyStatus = ({
     poolAddress,
   });
   const { data: assetInfos } = useAssets(chainId);
+  const { data: baseCollateral } = useBaseCollateral(position);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {
@@ -112,12 +114,12 @@ export const ApyStatus = ({
 
   useEffect(() => {
     const func = async () => {
-      if (sdk && currentLeverageRatio) {
+      if (sdk && currentLeverageRatio && baseCollateral) {
         try {
           const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
             borrowCToken,
-            amount,
+            baseCollateral.add(amount),
             currentLeverageRatio
           );
 
@@ -127,7 +129,7 @@ export const ApyStatus = ({
     };
 
     func();
-  }, [sdk, collateralCToken, amount, borrowCToken, currentLeverageRatio]);
+  }, [sdk, collateralCToken, amount, borrowCToken, currentLeverageRatio, baseCollateral]);
 
   return (
     <MidasBox py={4} width="100%">
