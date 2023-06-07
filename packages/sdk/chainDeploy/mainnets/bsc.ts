@@ -232,6 +232,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0x13A9c98b07F098c5319f4FF786eB16E22DC738e1",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.RDNT,
+    aggregator: "0x20123C6ebd45c6496102BeEA86e1a6616Ca547c6",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 // TODO use these as funding and redemption strategies
@@ -348,6 +353,12 @@ const gammaLps: GammaLpAsset[] = [
   },
   {
     lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_ANKR_W),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_RDNT_N),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_RDNT_W),
   },
 ];
 
