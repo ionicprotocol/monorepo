@@ -22,7 +22,7 @@ const VaultHero = () => {
         w={{ base: '100%' }}
       >
         <Text fontWeight="bold" size="2xl">
-          Midas Leverage
+          Levered Positions
         </Text>
         <Text lineHeight={8} my={4} size="md">
           {`TODO: Explanation of leverage platform`}
