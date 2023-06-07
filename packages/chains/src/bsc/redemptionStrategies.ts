@@ -116,6 +116,26 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.GammaLpTokenLiquidator,
     underlying(assets, assetSymbols.WBNB),
   ],
+  [underlying(assets, assetSymbols.aANKRBNB_ANKR_N)]: [
+    RedemptionStrategyContract.GammaLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
+  [underlying(assets, assetSymbols.aANKRBNB_ANKR_W)]: [
+    RedemptionStrategyContract.GammaLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
+  [underlying(assets, assetSymbols.aANKRBNB_RDNT_N)]: [
+    RedemptionStrategyContract.GammaLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
+  [underlying(assets, assetSymbols.aANKRBNB_RDNT_W)]: [
+    RedemptionStrategyContract.GammaLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
+  [underlying(assets, assetSymbols.RDNT)]: [
+    RedemptionStrategyContract.AlgebraSwapLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
 };
 
 export default redemptionStrategies;
