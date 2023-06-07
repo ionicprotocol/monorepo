@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, HStack, Img, Spinner, Text, VStack } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import type { SupportedAsset } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
@@ -144,11 +144,13 @@ const ClaimableToken = ({
 
 const ClaimRewardsModal = ({
   isOpen,
+  isLoading,
   onClose,
   claimableRewards,
   refetch,
 }: {
   claimableRewards: { [chainId: string]: FlywheelClaimableRewards[] };
+  isLoading: boolean;
   isOpen: boolean;
   onClose: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -332,7 +334,12 @@ const ClaimRewardsModal = ({
           ) : null}
         </VStack>
       }
-      header="Claim Rewards"
+      header={
+        <HStack gap={2}>
+          <Text>Claim Rewards</Text>
+          {isLoading ? <Spinner /> : null}
+        </HStack>
+      }
       isOpen={isOpen}
       modalCloseButtonProps={{ hidden: isAllClaiming, right: 4, top: 4 }}
       onClose={() => {

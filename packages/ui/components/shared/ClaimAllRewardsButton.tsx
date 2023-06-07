@@ -29,6 +29,7 @@ const ClaimAllRewardsButton: React.FC = () => {
     data: crossAllClaimableRewards,
     isLoading,
     refetch,
+    isRefetching,
   } = useCrossAllClaimableRewards([...enabledChains]);
 
   useEffect(() => {
@@ -54,6 +55,7 @@ const ClaimAllRewardsButton: React.FC = () => {
       {currentChain && (
         <ClaimRewardsModal
           claimableRewards={allClaimableRewards}
+          isLoading={isLoading || isRefetching}
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           refetch={refetch}
