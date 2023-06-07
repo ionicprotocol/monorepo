@@ -154,7 +154,7 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: () => Promise<any>;
 }) => {
-  const { currentSdk, currentChain, signer } = useMultiMidas();
+  const { currentSdk, currentChain, signer, address } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
   const [isAllClaiming, setIsAllClaiming] = useState<boolean>(false);
@@ -173,11 +173,15 @@ const ClaimRewardsModal = ({
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
-      if (!currentSdk || !currentChain || !signer || !rewards || rewards.length === 0) return;
+      if (!currentSdk || !currentChain || !signer || !address || !rewards || rewards.length === 0)
+        return;
 
       setIsAllClaiming(true);
 
       const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
+      const markets: string[] = [];
+      const flywhees: string[] = [];
+      const accrue: boolean[] = [];
 
       rewards.map((reward) => {
         const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
@@ -185,6 +189,17 @@ const ClaimRewardsModal = ({
         });
 
         _assetPerRewardToken[reward.rewardToken] = asset;
+
+        reward.rewards.map((rw) => {
+          if (!markets.includes(rw.market)) {
+            markets.push(rw.market);
+          }
+        });
+
+        if (!flywhees.includes(reward.flywheel)) {
+          flywhees.push(reward.flywheel);
+          accrue.push(true);
+        }
       });
 
       const _steps: TxStep[] = [
@@ -207,8 +222,11 @@ const ClaimRewardsModal = ({
       try {
         const fwLensRouter = currentSdk.createMidasFlywheelLensRouter(currentSdk.signer);
 
-        const tx = await fwLensRouter.claimRewardsFromFlywheels(
-          rewards.map((reward) => reward.flywheel)
+        const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
+          address,
+          markets,
+          flywhees,
+          accrue
         );
 
         addRecentTransaction({
@@ -248,7 +266,7 @@ const ClaimRewardsModal = ({
 
       setIsAllClaiming(false);
     },
-    [currentSdk, signer, errorToast, currentChain, refetch, addRecentTransaction]
+    [currentSdk, signer, errorToast, address, currentChain, refetch, addRecentTransaction]
   );
 
   return (
