@@ -251,6 +251,7 @@ export enum assetSymbols {
   ANKR = "ANKR",
   SD = "SD", // stader labs
   THE = "THE",
+  RDNT = "RDNT",
 
   // thena
   "sAMM-jBRL/BRZ" = "sAMM-jBRL-BRZ",
@@ -264,6 +265,8 @@ export enum assetSymbols {
   aWBNB_ETH = "aWBNB-ETH",
   aANKRBNB_ANKR_W = "aANKRBNB-ANKR-W",
   aANKRBNB_ANKR_N = "aANKRBNB-ANKR-N",
+  aANKRBNB_RDNT_W = "aANKRBNB-RDNT-W",
+  aANKRBNB_RDNT_N = "aANKRBNB-RDNT-N",
 
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
@@ -403,6 +406,7 @@ export enum assetSymbols {
   "IXT-USDT" = "IXT-USDT",
   USDR = "USDR",
   USDR3CRV = "USDR3CRV",
+  TNGBL = "TNGBL",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",

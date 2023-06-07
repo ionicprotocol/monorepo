@@ -6,7 +6,7 @@
       "address": "0x01c97299b37E66c03419bC4Db24074a89FB36e6d"
     },
     "AddressesProvider_Implementation": {
-      "address": "0xC9c8C9a3b2287A71f9f76AeD92e4c1fF9F49715C"
+      "address": "0xad3920247d59443FDb39c7622b3770C02F8D9E2a"
     },
     "AddressesProvider_Proxy": {
       "address": "0x01c97299b37E66c03419bC4Db24074a89FB36e6d"
@@ -39,7 +39,7 @@
       "address": "0xA4C55B159824470a710e5131Faec37969b2F32Ab"
     },
     "AlgebraSwapLiquidator": {
-      "address": "0xf7d7EDa783382c28058C842768Fbf20185c27f8D"
+      "address": "0x836a8E408FDBd6D0EF73790372084788662Ab82B"
     },
     "AlpacaERC4626_BETH": {
       "address": "0xCBE401B8874A1C30163740f5f45156088Eb21481"
@@ -87,31 +87,31 @@
       "address": "0x23B1ff27D97eF804fC0F100af7Bc5911D07f79d3"
     },
     "CErc20Delegate": {
-      "address": "0xa53754f3f7F09cCa16e75E37E5BEBed579ce3F3F"
+      "address": "0xE45D130df116C7AEe349446FE91601Fb70e3bC2F"
     },
     "CErc20PluginDelegate": {
-      "address": "0x72a8414972DA268CCCA8c60418e81c2b1D47c23D"
+      "address": "0x8FBC4bC0d77b7A7Fe2Deca13ECF2543f9168448a"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x13A2eB858aa1ACE895a2a89ac6Afd48Bd6B1F8d7"
+      "address": "0x1D48eFBa40d11c22315Dd278E69268bca9dd5D7d"
     },
     "CEtherDelegate": {
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
     },
     "CTokenFirstExtension": {
-      "address": "0xbd536E6837009aBD5FB1E8a11fCA92d22f8620C6"
+      "address": "0x2a8C6f2Ddf8cB3d82407a07DC795f095A3aD8A0f"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x939321650F2a112d51B29d0445cd828749ac46f4"
     },
     "Comptroller": {
-      "address": "0x0a1209F543246c102CCBdb9C19678B6E7632FeEB"
+      "address": "0x27569756A02Ee590306F1409821b5496A8e4B2B3"
     },
     "ComptrollerFirstExtension": {
       "address": "0xa27694DD3F69D9584D4218C74EA25d49c3b54ab5"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0xB83AC269cbCeb97105D216305954f170C1fca5fD"
+      "address": "0xE69e354Be51BeD09E90e9b6Be506EBCfbD51d46d"
     },
     "CurveLpTokenPriceOracleNoRegistry": {
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
@@ -123,10 +123,10 @@
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
     },
     "CurveSwapLiquidator": {
-      "address": "0x73DA07e8F012d7A6066f099f8A3df761b806c3D7"
+      "address": "0x3e5114109cdcD592dE30D33F36545a005c78c335"
     },
     "CurveSwapLiquidatorFunder": {
-      "address": "0xc107D4D1662bf610607B00E1FCD1bb1CEd945936"
+      "address": "0x4bc3b8C4681E27eEe2Daf1ec7d408619a3684B11"
     },
     "CurveV2LpTokenPriceOracleNoRegistry": {
       "address": "0x461fc4600c4e1B2e99886E9564a223E76C87e336"
@@ -237,7 +237,7 @@
       "address": "0xcBC246BC32c6fb4c61d3B234d41BccEA2c7b2C19"
     },
     "FusePoolLensSecondary": {
-      "address": "0x96f0A348D31C6e6d86c5Fca5cf657D6c592AAff6"
+      "address": "0x18A0928082aCCF49AE055357f9FF9418E70Cf15f"
     },
     "FusePoolLensSecondary_Implementation": {
       "address": "0xbC4eeEE763a0B348080bABF3E6a0cE6d648DdC81"
@@ -261,7 +261,7 @@
       "address": "0xc9C3D317E89f4390A564D56180bBB1842CF3c99C"
     },
     "GammaLpTokenLiquidator": {
-      "address": "0xf811898366003995de7202E55E3416419C71d847"
+      "address": "0x4807c55D5cde8864AF17B3f88a3FcE4Fd653Ed13"
     },
     "GammaPoolPriceOracle": {
       "address": "0x97c4Ff71D0bcF1EaAFF7709aD24Dc387d2BC5df7"
@@ -282,7 +282,7 @@
       "address": "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17"
     },
     "JarvisLiquidatorFunder": {
-      "address": "0x89a8deF787d6d6dfd4D032851E44FcC5247D2151"
+      "address": "0x8867366c631127b0CE25e2619D6ed4A849f4563C"
     },
     "JumpRateModel": {
       "address": "0x8A163f41414c005c3f551f2179bC9Ad8dcadE1C6"
@@ -303,7 +303,7 @@
       "address": "0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xb4c8353412633B779893Bb728435930b7d3610C8"
+      "address": "0xf16f0E6C3F4ee9B380369Db229C7D826039af3d6"
     },
     "MidasFlywheel_ANKR_Ankr_BNB_Pool": {
       "address": "0x4ab7cAEfb78D6EA8Bc62cAa6F9788ca873869dA1"
@@ -384,7 +384,7 @@
       "address": "0x368De44F36E7f07620dC36EB0eD30319F190Ddc5"
     },
     "SolidlyLpTokenLiquidator": {
-      "address": "0x0416C8D8aFCB44EBA7Aa1062339A15C0448D4Bbb"
+      "address": "0xAC790560a78c16c8e6E4c195D1BA3B493d9DF2A7"
     },
     "SolidlyLpTokenPriceOracle": {
       "address": "0xf12BF362779D3F728644DC33a5D594F0E57a85F2"
@@ -462,7 +462,7 @@
       "address": "0xE141ce7507656f9b2c45d06d649961Eb84e19f82"
     },
     "UniswapLpTokenLiquidator": {
-      "address": "0xE1B50506e2fE039ED593FBbde14608559aE97d27"
+      "address": "0x99f7AC1B8De47627dE263DEa2E2F92d7fB50E45d"
     },
     "UniswapLpTokenPriceOracle": {
       "address": "0x1023bc3990C45E39Ba8B74D158bE391CA04a18b1"
@@ -480,19 +480,19 @@
       "address": "0x83937d6388E4E208f77728F153d90602DE189eab"
     },
     "UniswapV2LiquidatorFunder": {
-      "address": "0xa20C394ced60DdBd7f39ef3BCe76ae473EE8Daa4"
+      "address": "0x0CE4eddf5799171B3969e0BEAd13a160d1480e31"
     },
     "WhitePaperInterestRateModel": {
       "address": "0x25a655F5f2bCeB4bFdD5C012Be865Cc2a9c7B4ED"
     },
     "WombatLpTokenLiquidator": {
-      "address": "0x8FEbf08E760043167CB4E2e21E671b70412AcBb1"
+      "address": "0x2A52Fa0B6D69269Ffca8A0a51266EfF9F84322Bf"
     },
     "WombatLpTokenPriceOracle": {
       "address": "0xD7C43601182B066d2a26a85ab1A3E4c850FA8C93"
     },
     "XBombLiquidatorFunder": {
-      "address": "0xf871a90f1023A89DB1Ff5082367Fc9C4bC969120"
+      "address": "0xa234C9897771886E892146C9cA80D5bE9E67a0C8"
     }
   }
 }

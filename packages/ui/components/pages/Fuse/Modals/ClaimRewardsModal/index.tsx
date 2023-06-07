@@ -24,11 +24,11 @@ import { ChainSupportedAssets } from '@ui/utils/networkData';
 const ClaimableToken = ({
   data,
   onClaim,
-  claimingRewardTokens,
+  isAllClaiming,
   rewardChainId,
 }: {
-  claimingRewardTokens: string[];
   data: FlywheelClaimableRewards;
+  isAllClaiming: boolean;
   onClaim: () => void;
   rewardChainId: string;
 }) => {
@@ -88,7 +88,7 @@ const ClaimableToken = ({
       <Box width="150px">
         {currentChain?.id !== Number(rewardChainId) ? (
           <Button
-            disabled={claimingRewardTokens.length > 0}
+            disabled={isAllClaiming}
             onClick={handleSwitch}
             variant="silver"
             whiteSpace="normal"
@@ -117,8 +117,8 @@ const ClaimableToken = ({
           </Button>
         ) : (
           <Button
-            disabled={claimingRewardTokens.length > 0}
-            isLoading={claimingRewardTokens.includes(rewardToken)}
+            disabled={isAllClaiming}
+            isLoading={isAllClaiming && Number(rewardChainId) === currentChain.id}
             onClick={onClaim}
           >
             {chainConfig ? (
@@ -154,10 +154,10 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: () => Promise<any>;
 }) => {
-  const { currentSdk, address, signer } = useMultiMidas();
+  const { currentSdk, currentChain, signer } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
-  const [claimingRewardTokens, setClaimingRewardTokens] = useState<string[]>([]);
+  const [isAllClaiming, setIsAllClaiming] = useState<boolean>(false);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([]);
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -173,9 +173,10 @@ const ClaimRewardsModal = ({
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
-      if (!currentSdk || !address || !signer || !rewards || rewards.length === 0) return;
+      if (!currentSdk || !currentChain || !signer || !rewards || rewards.length === 0) return;
 
-      const _steps: TxStep[] = [];
+      setIsAllClaiming(true);
+
       const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
 
       rewards.map((reward) => {
@@ -184,70 +185,70 @@ const ClaimRewardsModal = ({
         });
 
         _assetPerRewardToken[reward.rewardToken] = asset;
-
-        _steps.push({
-          desc: `Claims ${asset?.symbol} rewards from Midas`,
-          done: false,
-          title: `Claim ${asset?.symbol}`,
-        });
       });
+
+      const _steps: TxStep[] = [
+        {
+          desc: `Claim ${Object.values(_assetPerRewardToken)
+            .map((asset) => asset?.symbol)
+            .filter((symbol) => !!symbol)
+            .join(', ')} rewards from Midas`,
+          done: false,
+          title: `Claim rewards on ${currentChain.network}`,
+        },
+      ];
 
       setSteps(_steps);
       setAssetPerRewardToken(_assetPerRewardToken);
-
       setIsConfirmed(true);
-      setClaimingRewardTokens(rewards.map((reward) => reward.rewardToken));
-      const fwLensRouter = currentSdk.contracts.MidasFlywheelLensRouter;
-
       setFailedStep(0);
+      setActiveStep(1);
 
-      for (const [index, reward] of rewards.entries()) {
-        setActiveStep(index + 1);
-        const markets = reward.rewards.map((reward) => reward.market);
+      try {
+        const fwLensRouter = currentSdk.createMidasFlywheelLensRouter(currentSdk.signer);
 
-        try {
-          const tx = await fwLensRouter
-            .connect(signer)
-            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true]);
+        const tx = await fwLensRouter.claimRewardsFromFlywheels(
+          rewards.map((reward) => reward.flywheel)
+        );
 
-          addRecentTransaction({
-            description: `${_assetPerRewardToken[reward.rewardToken]?.symbol} Reward Claim`,
-            hash: tx.hash,
-          });
+        addRecentTransaction({
+          description: `Claim all rewards`,
+          hash: tx.hash,
+        });
 
-          _steps[index] = {
-            ..._steps[index],
-            txHash: tx.hash,
-          };
-          setSteps([..._steps]);
+        _steps[0] = {
+          ..._steps[0],
+          txHash: tx.hash,
+        };
 
-          await tx.wait();
+        setSteps([..._steps]);
 
-          _steps[index] = {
-            ..._steps[index],
-            done: true,
-            txHash: tx.hash,
-          };
-          setSteps([..._steps]);
-        } catch (error) {
-          const sentryProperties = {
-            chainId: currentSdk.chainId,
-            flywheel: reward.flywheel,
-            markets: markets.toString(),
-          };
-          const sentryInfo = {
-            contextName: 'Claiming rewards',
-            properties: sentryProperties,
-          };
-          handleGenericError({ error, sentryInfo, toast: errorToast });
-          setFailedStep(index + 1);
-        }
+        await tx.wait();
+
+        _steps[0] = {
+          ..._steps[0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setSteps([..._steps]);
+
+        await refetch();
+      } catch (error) {
+        const sentryProperties = {
+          chainId: currentSdk.chainId,
+          rewards: rewards,
+        };
+        const sentryInfo = {
+          contextName: 'Claiming all rewards',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, sentryInfo, toast: errorToast });
+        setFailedStep(1);
       }
-      await refetch();
 
-      setClaimingRewardTokens([]);
+      setIsAllClaiming(false);
     },
-    [address, currentSdk, signer, errorToast, refetch, addRecentTransaction]
+    [currentSdk, signer, errorToast, currentChain, refetch, addRecentTransaction]
   );
 
   return (
@@ -265,8 +266,8 @@ const ClaimRewardsModal = ({
               {Object.entries(claimableRewards).map(([key, value]) => {
                 return value.map((cr: FlywheelClaimableRewards, index: number) => (
                   <ClaimableToken
-                    claimingRewardTokens={claimingRewardTokens}
                     data={cr}
+                    isAllClaiming={isAllClaiming}
                     key={index}
                     onClaim={claimRewards(
                       currentSdk && key === currentSdk.chainId.toString() ? [cr] : null
@@ -278,10 +279,8 @@ const ClaimRewardsModal = ({
               <Center pt={4}>
                 {claimableRewardsOfCurrentChain && claimableRewardsOfCurrentChain.length > 0 && (
                   <Button
-                    disabled={claimingRewardTokens.length > 0}
-                    isLoading={
-                      claimingRewardTokens.length === claimableRewardsOfCurrentChain.length
-                    }
+                    disabled={isAllClaiming}
+                    isLoading={isAllClaiming}
                     onClick={claimRewards(claimableRewardsOfCurrentChain)}
                     width="100%"
                   >
@@ -308,7 +307,7 @@ const ClaimRewardsModal = ({
               activeStep={activeStep}
               assetPerRewardToken={assetPerRewardToken}
               failedStep={failedStep}
-              isClaiming={claimingRewardTokens.length > 0}
+              isAllClaiming={isAllClaiming}
               poolChainId={Number(currentSdk.chainId)}
               steps={steps}
             />
@@ -317,11 +316,11 @@ const ClaimRewardsModal = ({
       }
       header="Claim Rewards"
       isOpen={isOpen}
-      modalCloseButtonProps={{ hidden: claimingRewardTokens.length !== 0, right: 4, top: 4 }}
+      modalCloseButtonProps={{ hidden: isAllClaiming, right: 4, top: 4 }}
       onClose={() => {
         onClose();
 
-        if (claimingRewardTokens.length === 0) {
+        if (!isAllClaiming) {
           setIsConfirmed(false);
           setSteps([]);
         }
