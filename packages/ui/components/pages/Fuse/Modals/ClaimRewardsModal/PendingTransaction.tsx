@@ -13,20 +13,20 @@ export const PendingTransaction = ({
   activeStep,
   failedStep,
   steps,
-  isClaiming,
+  isAllClaiming,
   poolChainId,
   assetPerRewardToken,
 }: {
   activeStep: number;
   assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined };
   failedStep: number;
-  isClaiming: boolean;
+  isAllClaiming: boolean;
   poolChainId: number;
   steps: TxStep[];
 }) => {
   return (
     <Column crossAxisAlignment="center" expand mainAxisAlignment="center" pt={2}>
-      {isClaiming ? (
+      {isAllClaiming ? (
         <Loader />
       ) : failedStep === 0 ? (
         <VStack width="100%">
@@ -60,13 +60,13 @@ export const PendingTransaction = ({
         <TransactionStepper
           activeStep={activeStep}
           failedStep={failedStep}
-          isLoading={isClaiming}
+          isLoading={isAllClaiming}
           poolChainId={poolChainId}
           steps={steps}
         />
       </Box>
 
-      {isClaiming ? (
+      {isAllClaiming ? (
         <VStack mt={4}>
           <Text textAlign="center" variant="smText">
             Check your wallet to submit the transactions
