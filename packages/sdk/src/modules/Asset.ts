@@ -16,11 +16,11 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
 
     async deployAsset(config: MarketConfig): Promise<[string, string, TransactionReceipt]> {
       //1. Validate configuration
-      await this.#validateConfiguration(config);
+      await this.validateConfiguration(config);
 
       //2. Deploy new asset to existing pool via SDK
       try {
-        const [assetAddress, implementationAddress, receipt] = await this.#deployMarket(config);
+        const [assetAddress, implementationAddress, receipt] = await this.deployMarket(config);
 
         return [assetAddress, implementationAddress, receipt];
       } catch (error) {
@@ -29,7 +29,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       }
     }
 
-    async #validateConfiguration(config: MarketConfig) {
+    async validateConfiguration(config: MarketConfig) {
       // BigNumbers
       // 10% -> 0.1 * 1e18
       const reserveFactorBN = utils.parseEther((config.reserveFactor / 100).toString());
@@ -57,7 +57,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       }
     }
 
-    async #deployMarket(config: MarketConfig): Promise<[string, string, TransactionReceipt]> {
+    async deployMarket(config: MarketConfig): Promise<[string, string, TransactionReceipt]> {
       const abiCoder = new utils.AbiCoder();
 
       const reserveFactorBN = utils.parseUnits((config.reserveFactor / 100).toString());

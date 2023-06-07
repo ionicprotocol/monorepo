@@ -4,14 +4,9 @@ import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxWithdrawVault } from '@ui/hooks/useMaxWithdrawVault';
 
 export const Balance = ({ vault }: { vault: VaultData }) => {
-  const { currentSdk, currentChain, address } = useMultiMidas();
-
-  if (!currentChain || !currentSdk || !address) throw new Error('Connect your wallet');
-
   const { data: maxWithdrawVault } = useMaxWithdrawVault(vault.vault);
 
   const availableToWithdraw = useMemo(() => {

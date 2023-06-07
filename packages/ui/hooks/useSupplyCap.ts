@@ -13,7 +13,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 interface UseSupplyCapParams {
   chainId: number;
   comptroller: string;
-  market: MarketData;
+  market: Pick<MarketData, 'cToken' | 'totalSupply' | 'underlyingDecimals' | 'underlyingPrice'>;
 }
 export const useSupplyCap = ({
   comptroller: comptrollerAddress,
@@ -44,6 +44,7 @@ export const useSupplyCap = ({
       market.cToken,
       market.totalSupply,
       market.underlyingPrice,
+      market.underlyingDecimals,
       usdPrice,
       address,
       supplyCapsDataForAsset,
@@ -63,15 +64,14 @@ export const useSupplyCap = ({
             const whitelistedTotalSupply = market.totalSupply.sub(
               supplyCapsDataForAsset.nonWhitelistedTotalSupply
             );
-            const tokenCap = Number(
-              utils.formatUnits(supplyCap.add(whitelistedTotalSupply), market.underlyingDecimals)
-            );
+            const underlyingCap = supplyCap.add(whitelistedTotalSupply);
+            const tokenCap = Number(utils.formatUnits(underlyingCap, market.underlyingDecimals));
             const usdCap =
               tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
 
-            return { tokenCap, type: 'supply', usdCap };
+            return { tokenCap, type: 'supply', underlyingCap, usdCap };
           }
         } catch (e) {
           console.warn(

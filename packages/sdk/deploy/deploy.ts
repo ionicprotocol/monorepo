@@ -9,8 +9,12 @@ import {
   configureFuseSafeLiquidator,
   deployFuseSafeLiquidator,
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
+import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
+import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
+import { LeveredPositionFactoryExtension } from "../typechain/LeveredPositionFactoryExtension";
+import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
@@ -574,6 +578,111 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
+  //// LIQUIDATORS REGISTRY
+  const liquidatorsRegistryDep = await deployments.deploy("LiquidatorsRegistry", {
+    from: deployer,
+    log: true,
+    args: [addressesProvider.address],
+  });
+  if (liquidatorsRegistryDep.transactionHash)
+    await ethers.provider.waitForTransaction(liquidatorsRegistryDep.transactionHash);
+  console.log("LiquidatorsRegistry: ", liquidatorsRegistryDep.address);
+  const liquidatorsRegistryExtensionDep = await deployments.deploy("LiquidatorsRegistryExtension", {
+    from: deployer,
+    log: true,
+    args: [],
+  });
+  if (liquidatorsRegistryExtensionDep.transactionHash)
+    await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
+  console.log("LiquidatorsRegistryExtension: ", liquidatorsRegistryExtensionDep.address);
+
+  const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
+  const currentLRExtensions = await liquidatorsRegistry._listExtensions();
+  if (!currentLRExtensions.length || currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address) {
+    let extToReplace;
+    if (currentLRExtensions.length == 0) {
+      extToReplace = constants.AddressZero;
+    } else {
+      extToReplace = currentLRExtensions[0];
+    }
+    tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, extToReplace);
+    await tx.wait();
+    console.log(
+      `replaced the liquidators registry old extension ${extToReplace} with the new ${liquidatorsRegistryExtensionDep.address}`
+    );
+  } else {
+    console.log(`no liquidators registry extensions to update`);
+  }
+
+  //// Configure Liquidators Registry
+  await configureLiquidatorsRegistry({
+    ethers,
+    getNamedAccounts,
+    chainId,
+  });
+  ///
+  ////
+
+  //// LEVERED POSITIONS FACTORY
+  const lpfDep = await deployments.deploy("LeveredPositionFactory", {
+    from: deployer,
+    log: true,
+    args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
+    waitConfirmations: 1,
+  });
+  if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
+  console.log("LeveredPositionFactory: ", lpfDep.address);
+
+  const lpfExtDep = await deployments.deploy("LeveredPositionFactoryExtension", {
+    from: deployer,
+    log: true,
+    args: [],
+    waitConfirmations: 1,
+  });
+  if (lpfExtDep.transactionHash) await ethers.provider.waitForTransaction(lpfExtDep.transactionHash);
+  console.log("LeveredPositionFactoryExtension: ", lpfExtDep.address);
+
+  const leveredPositionFactory = (await ethers.getContract(
+    "LeveredPositionFactory",
+    deployer
+  )) as LeveredPositionFactory;
+  const currentLPFExtensions = await leveredPositionFactory._listExtensions();
+  if (!currentLPFExtensions.length || currentLPFExtensions[0] != lpfExtDep.address) {
+    let extToReplace;
+    if (currentLPFExtensions.length == 0) {
+      extToReplace = constants.AddressZero;
+    } else {
+      extToReplace = currentLPFExtensions[0];
+    }
+
+    tx = await leveredPositionFactory._registerExtension(lpfExtDep.address, extToReplace);
+    await tx.wait();
+    console.log("replaced the LeveredPositionFactory extension: ", tx.hash);
+  } else {
+    console.log(`no LeveredPositionFactory extensions to update`);
+  }
+  ////
+
+  //// LEVERED POSITIONS LENS
+  const lpLens = await deployments.deploy("LeveredPositionsLens", {
+    from: deployer,
+    log: true,
+    waitConfirmations: 1,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [leveredPositionFactory.address],
+        },
+      },
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: deployer,
+    },
+  });
+  if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
+  console.log("LeveredPositionsLens: ", lpLens.address);
+  ////
+
   /// EXTERNAL ADDRESSES
   const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
   if (
@@ -677,6 +786,38 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     tx = await addressesProvider.setAddress("OptimizedVaultsRegistry", ovr.address);
     await tx.wait();
     console.log("setAddress OptimizedVaultsRegistry: ", tx.hash);
+  }
+
+  const lr = await ethers.getContract("LiquidatorsRegistry");
+  const lrAddress = await addressesProvider.callStatic.getAddress("LiquidatorsRegistry");
+  if (lrAddress !== lr.address) {
+    tx = await addressesProvider.setAddress("LiquidatorsRegistry", lr.address);
+    await tx.wait();
+    console.log("setAddress LiquidatorsRegistry: ", tx.hash);
+  }
+
+  const lpf = await ethers.getContract("LeveredPositionFactory");
+  const lpfAddress = await addressesProvider.callStatic.getAddress("LeveredPositionFactory");
+  if (lpfAddress !== lpf.address) {
+    tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
+    await tx.wait();
+    console.log("setAddress LeveredPositionFactory: ", tx.hash);
+  }
+
+  const lpl = await ethers.getContract("LeveredPositionsLens");
+  const lplAddress = await addressesProvider.callStatic.getAddress("LeveredPositionsLens");
+  if (lplAddress !== lpl.address) {
+    tx = await addressesProvider.setAddress("LeveredPositionsLens", lpl.address);
+    await tx.wait();
+    console.log("setAddress LeveredPositionsLens: ", tx.hash);
+  }
+
+  const mflr = await ethers.getContract("MidasFlywheelLensRouter");
+  const mflrAddress = await addressesProvider.callStatic.getAddress("MidasFlywheelLensRouter");
+  if (mflrAddress !== mflr.address) {
+    tx = await addressesProvider.setAddress("MidasFlywheelLensRouter", mflr.address);
+    await tx.wait();
+    console.log("setAddress MidasFlywheelLensRouter: ", tx.hash);
   }
 
   await configureAddressesProviderStrategies({

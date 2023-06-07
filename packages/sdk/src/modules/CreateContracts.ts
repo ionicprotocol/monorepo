@@ -8,7 +8,10 @@ import ComptrollerABI from "../../abis/Comptroller";
 import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
 import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
+import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
 import JumpRateModelABI from "../../abis/JumpRateModel";
+import LeveredPositionABI from "../../abis/LeveredPosition";
+import LeveredPositionsLensABI from "../../abis/LeveredPositionsLens";
 import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
 import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
@@ -23,7 +26,10 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
+import { LeveredPosition } from "../../typechain/LeveredPosition";
+import { LeveredPositionsLens } from "../../typechain/LeveredPositionsLens";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
@@ -115,6 +121,26 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         MidasFlywheelLensRouterABI,
         signerOrProvider
       ) as MidasFlywheelLensRouter;
+    }
+
+    createLeveredPositionFactory(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.LeveredPositionFactory.address,
+        ILeveredPositionFactoryABI,
+        signerOrProvider
+      ) as ILeveredPositionFactory;
+    }
+
+    createLeveredPosition(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(address, LeveredPositionABI, signerOrProvider) as LeveredPosition;
+    }
+
+    createLeveredPositionLens(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.LeveredPositionsLens.address,
+        LeveredPositionsLensABI,
+        signerOrProvider
+      ) as LeveredPositionsLens;
     }
   };
 }

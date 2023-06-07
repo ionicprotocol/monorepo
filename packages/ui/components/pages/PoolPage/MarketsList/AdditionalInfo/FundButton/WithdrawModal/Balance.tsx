@@ -3,15 +3,10 @@ import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Balance = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
-  const { currentSdk, currentChain, address } = useMultiMidas();
-
-  if (!currentChain || !currentSdk || !address) throw new Error('Connect your wallet');
-
   const { data: maxWithdrawAmount } = useMaxWithdrawAmount(asset, poolChainId);
 
   const availableToWithdraw = useMemo(() => {

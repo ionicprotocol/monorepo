@@ -12,7 +12,7 @@ import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRe
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
-import { fetchRewards } from '@ui/hooks/useRewards';
+import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getAnkrBNBContract } from '@ui/utils/contracts';
 import { ChainSupportedAssets, getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -116,13 +116,14 @@ export function useAllFundedInfo() {
                           totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
                         });
                       });
-
+                      const { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY } =
+                        await fetchFlywheelRewards(pool.comptroller, Number(chainId), sdk);
                       //get rewards
                       const rewards = await fetchRewards(
-                        pool.comptroller,
                         assets,
                         Number(chainId),
-                        sdk
+                        flywheelRewardsWithAPY,
+                        flywheelRewardsWithoutAPY
                       );
 
                       // get claimable rewards

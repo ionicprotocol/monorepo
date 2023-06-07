@@ -1,4 +1,5 @@
 import type { MidasSdk } from '@midas-capital/sdk';
+import type { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/src/modules/Flywheel';
 import type { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -19,24 +20,51 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
+export const fetchFlywheelRewards = async (comptroller: string, chainId: number, sdk: MidasSdk) => {
+  let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
+  let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
+
+  [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
+    sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
+      console.error('Unable to get onchain Flywheel Rewards with APY', exception);
+      return [];
+    }),
+    sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
+      console.error('Unable to get onchain Flywheel Rewards without APY', error);
+      return [];
+    }),
+  ]);
+
+  return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
+};
+
+export function useFlywheelRewards(comptroller?: string, chainId?: number) {
+  const sdk = useSdk(chainId);
+
+  return useQuery(
+    ['useFlywheelRewards', chainId, comptroller],
+    async () => {
+      if (chainId && sdk && comptroller) {
+        return await fetchFlywheelRewards(comptroller, chainId, sdk);
+      }
+
+      return null;
+    },
+    {
+      cacheTime: Infinity,
+      enabled: !!comptroller && !!chainId,
+      staleTime: Infinity,
+    }
+  );
+}
+
 export const fetchRewards = async (
-  comptroller: string,
-  assets: MarketData[],
+  assets: Pick<MarketData, 'cToken' | 'plugin'>[],
   chainId: number,
-  sdk: MidasSdk
+  flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[],
+  flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[]
 ) => {
   try {
-    const [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-      sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
-        console.error('Unable to get onchain Flywheel Rewards with APY', exception);
-        return [];
-      }),
-      sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
-        console.error('Unable to get onchain Flywheel Rewards without APY', error);
-        return [];
-      }),
-    ]);
-
     const allFlywheelRewards = flywheelRewardsWithoutAPY.map((fwReward) => {
       const rewardWithAPY = flywheelRewardsWithAPY.find((r) => r.market === fwReward.market);
       if (rewardWithAPY) return rewardWithAPY;
@@ -95,25 +123,63 @@ export const fetchRewards = async (
 
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
   const { data: poolData } = useFusePoolData(poolId, Number(chainId));
-  const sdk = useSdk(chainId);
+  const { data: flywheelRewards } = useFlywheelRewards(poolData?.comptroller, chainId);
 
   return useQuery<UseRewardsData>(
     [
       'useRewards',
       chainId,
-      poolData?.comptroller,
       poolData?.assets.map((asset) => [asset.cToken, asset.plugin]),
+      flywheelRewards,
     ],
     async () => {
-      if (chainId && sdk && poolData) {
-        return await fetchRewards(poolData.comptroller, poolData.assets, chainId, sdk);
+      if (chainId && poolData && flywheelRewards) {
+        return await fetchRewards(
+          poolData.assets,
+          chainId,
+          flywheelRewards.flywheelRewardsWithAPY,
+          flywheelRewards.flywheelRewardsWithoutAPY
+        );
       }
 
       return {};
     },
     {
       cacheTime: Infinity,
-      enabled: !!poolData,
+      enabled: !!poolData && !!flywheelRewards,
+      staleTime: Infinity,
+    }
+  );
+}
+
+export function useRewardsForMarket({
+  asset,
+  chainId,
+  poolAddress,
+}: {
+  asset: Pick<MarketData, 'cToken' | 'plugin'>;
+  chainId: number;
+  poolAddress: string;
+}) {
+  const { data: flywheelRewards } = useFlywheelRewards(poolAddress, chainId);
+
+  return useQuery<UseRewardsData>(
+    ['useRewardsForMarket', chainId, asset, flywheelRewards],
+    async () => {
+      if (chainId && asset && flywheelRewards) {
+        return await fetchRewards(
+          [asset],
+          chainId,
+          flywheelRewards.flywheelRewardsWithAPY,
+          flywheelRewards.flywheelRewardsWithoutAPY
+        );
+      }
+
+      return {};
+    },
+    {
+      cacheTime: Infinity,
+      enabled: !!asset && !!poolAddress,
       staleTime: Infinity,
     }
   );

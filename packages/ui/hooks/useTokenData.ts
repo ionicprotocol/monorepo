@@ -26,8 +26,11 @@ export const fetchTokenData = async (
         data.push({
           address: asset.underlying,
           decimals: asset.decimals,
-          logoURL: config.iconServerURL + '/token/96x96/' + asset.symbol.toLowerCase() + '.png',
+          logoURL: asset.symbol
+            ? config.iconServerURL + '/token/96x96/' + asset.symbol.toLowerCase() + '.png'
+            : undefined,
           name: asset.name,
+          originalSymbol: asset.originalSymbol,
           symbol: asset.symbol,
         });
       } else {

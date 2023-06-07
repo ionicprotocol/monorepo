@@ -22,8 +22,12 @@ import { useColors } from '@ui/hooks/useColors';
 export const PopoverTooltip = ({
   children,
   header,
+  headerProps,
   body,
+  bodyProps,
+  boxProps,
   footer,
+  footerProps,
   width,
   height,
   hideArrow = true,
@@ -33,6 +37,7 @@ export const PopoverTooltip = ({
 }: {
   body?: PopoverBodyProps['children'];
   bodyProps?: PopoverBodyProps;
+  boxProps?: BoxProps;
   children: PopoverProps['children'];
   contentProps?: PopoverContentProps;
   footer?: PopoverFooterProps['children'];
@@ -49,7 +54,7 @@ export const PopoverTooltip = ({
   if (!visible) return <>{children}</>;
 
   return (
-    <Box height={height} width={width}>
+    <Box height={height} width={width} {...boxProps}>
       <Popover placement="bottom-end" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
         {header || body || footer ? (
@@ -69,9 +74,9 @@ export const PopoverTooltip = ({
                 }}
               />
             )}
-            {header && <PopoverHeader>{header}</PopoverHeader>}
-            {body && <PopoverBody>{body}</PopoverBody>}
-            {footer && <PopoverFooter>{footer}</PopoverFooter>}
+            {header && <PopoverHeader {...headerProps}>{header}</PopoverHeader>}
+            {body && <PopoverBody {...bodyProps}>{body}</PopoverBody>}
+            {footer && <PopoverFooter {...footerProps}>{footer}</PopoverFooter>}
           </PopoverContent>
         ) : null}
       </Popover>

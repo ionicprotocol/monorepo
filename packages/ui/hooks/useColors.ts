@@ -86,7 +86,7 @@ export function useColors() {
 
   const cSlider = {
     filledTrackBgColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),
-    thumbBgColor: useColorModeValue(COLOR_PALETTE.raisinBlack, COLOR_PALETTE.raisinBlack),
+    thumbBgColor: useColorModeValue(COLOR_PALETTE.raisinBlack, COLOR_PALETTE.ecru),
     thumbBorderColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),
     trackBgColor: useColorModeValue(COLOR_PALETTE.bone, COLOR_PALETTE.bone),
   };

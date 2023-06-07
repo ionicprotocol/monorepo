@@ -1,4 +1,10 @@
-import type { FusePoolData, SupportedAsset, VaultData } from '@midas-capital/types';
+import type {
+  FusePoolData,
+  NewPosition,
+  OpenPosition,
+  SupportedAsset,
+  VaultData,
+} from '@midas-capital/types';
 
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
@@ -76,5 +82,11 @@ export const sortTopUserBorrowedAssets = <T extends MarketData>(assets: T[]) => 
 export const sortVaults = <T extends VaultData>(vaults: T[]) => {
   return vaults.sort((a, b) => {
     return a.asset.localeCompare(b.asset);
+  });
+};
+
+export const sortPositions = <T extends NewPosition | OpenPosition>(positions: T[]) => {
+  return positions.sort((a, b) => {
+    return a.collateral.underlyingToken.localeCompare(b.collateral.underlyingToken);
   });
 };

@@ -167,7 +167,7 @@ const FlywheelRow = ({
   // TODO filter out rewards of markets of other pools!
 
   // Balances
-  const { data: fwBalance } = useTokenBalance(flywheel.rewardToken, flywheel.rewards);
+  const { data: fwBalance } = useTokenBalance(flywheel.rewardToken, pool.chainId, flywheel.rewards);
   const fwTokenDecimal = useMemo(() => {
     const asset = ChainSupportedAssets[pool.chainId as SupportedChains].find((asset) => {
       return asset.underlying === flywheel.rewardToken;

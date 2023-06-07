@@ -58,8 +58,11 @@ export const SupplyModal = ({
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const [enableAsCollateral, setEnableAsCollateral] = useState(!asset.membership);
   const { cCard } = useColors();
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken);
-  const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
+  const { data: myBalance } = useTokenBalance(asset.underlyingToken, poolChainId);
+  const { data: myNativeBalance } = useTokenBalance(
+    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
+    poolChainId
+  );
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSupplying, setIsSupplying] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -407,7 +410,7 @@ export const SupplyModal = ({
                         setAmount={setAmount}
                       />
 
-                      <Balance asset={asset} />
+                      <Balance asset={asset} chainId={poolChainId} />
                     </Column>
                     <StatsColumn
                       amount={amount}

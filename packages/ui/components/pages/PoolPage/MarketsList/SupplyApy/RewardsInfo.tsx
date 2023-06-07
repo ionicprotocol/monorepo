@@ -7,23 +7,22 @@ import { useEffect, useMemo, useState } from 'react';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
-import type { MarketData } from '@ui/types/TokensDataMap';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 interface RewardsInfoProps {
-  asset: MarketData;
+  assetCToken: string;
   chainId: number;
   reward: Reward;
 }
 
-export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
+export const RewardsInfo = ({ reward, chainId, assetCToken }: RewardsInfoProps) => {
   const { data: pluginInfo } = usePluginInfo(
     chainId,
     'plugin' in reward ? reward.plugin : undefined
   );
   const { data: rewardsInfo } = useRewardsInfoForMarket(
     isFlywheelReward(reward) ? reward.flywheel : undefined,
-    asset.cToken,
+    assetCToken,
     chainId
   );
   const [endDate, setEndDate] = useState<Date | null>(null);
