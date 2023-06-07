@@ -278,6 +278,28 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 
+  //// Balancer Lp token liquidator
+  const balancerLpTokenLiquidator = await deployments.deploy("BalancerLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (balancerLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerLpTokenLiquidator.transactionHash);
+  console.log("BalancerLpTokenLiquidator: ", balancerLpTokenLiquidator.address);
+
+  //// Balancer Swap token liquidator
+  const balancerSwapTokenLiquidator = await deployments.deploy("BalancerSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (balancerSwapTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerSwapTokenLiquidator.transactionHash);
+  console.log("BalancerSwapLiquidator: ", balancerSwapTokenLiquidator.address);
+
   ////
 
   // Plugins & Rewards

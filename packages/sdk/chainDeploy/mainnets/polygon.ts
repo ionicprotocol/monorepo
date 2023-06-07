@@ -99,6 +99,12 @@ const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: underlying(assets, assetSymbols.WMATIC),
   },
+  {
+    assetAddress: underlying(assets, assetSymbols.TNGBL),
+    poolAddress: "0xDC8a5c5975726235402cFac9B28268EEccd42813",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.DAI),
+  },
 ];
 
 const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [

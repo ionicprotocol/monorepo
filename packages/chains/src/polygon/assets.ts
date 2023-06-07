@@ -45,6 +45,7 @@ const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
 const USDR = "0xb5DFABd7fF7F83BAB83995E72A52B97ABb7bcf63";
+const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -934,6 +935,14 @@ export const assets: SupportedAsset[] = [
     decimals: 9,
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: tangibleDocsUsdr(),
+  },
+  {
+    symbol: assetSymbols.TNGBL,
+    underlying: TNGBL,
+    name: "Tangible ",
+    decimals: 18,
+    oracle: OracleTypes.UniswapV3PriceOracle,
+    extraDocs: defaultDocs("https://polygonscan.com", TNGBL),
   },
   // Arrakis Vaults
   {
