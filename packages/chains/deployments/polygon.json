@@ -6,7 +6,7 @@
       "address": "0x2fCa24E19C67070467927DDB85810fF766423e8e"
     },
     "AddressesProvider_Implementation": {
-      "address": "0xAf8DD0B66BE38dc5C151B3B7D2DdCcDDCB0abb9f"
+      "address": "0xC91a6979620e4946E87e8DFF87f6776819d5380e"
     },
     "AddressesProvider_Proxy": {
       "address": "0x2fCa24E19C67070467927DDB85810fF766423e8e"
@@ -24,7 +24,7 @@
       "address": "0x7f3597b369610cCFf34C181c0A19d4480aCe1eEa"
     },
     "AlgebraSwapLiquidator": {
-      "address": "0x37681ed6a380C97b36547Febd45C2Cc1A5c9edD7"
+      "address": "0xE706134f898320dc1b1772362566bA6646C569c1"
     },
     "AnkrCertificateTokenPriceOracle": {
       "address": "0x4Be947BaA3C038aac1097EDF845080c4b2C1130e"
@@ -54,7 +54,7 @@
       "address": "0x73472dD551E2991574a1132D29438033123A64D4"
     },
     "BalancerLpTokenLiquidator": {
-      "address": "0x57dafD7C3CB6D13f4190af69c6B755E7972fc282"
+      "address": "0xB954290c884d96C39EC10d87F8B2a5a9A407F93A"
     },
     "BalancerLpTokenPriceOracle": {
       "address": "0x7b7fa6D93f8ca69724d98E0d563e868Ce342eB51"
@@ -75,34 +75,34 @@
       "address": "0x0C3397c084F373C11B9f39341f03316d9109DCE7"
     },
     "BalancerSwapLiquidator": {
-      "address": "0x7EeC2d629e281A4dcE670269b7290cA430787C7E"
+      "address": "0x268448fd5ab592780Fafd14992bc78A0eC1f71b6"
     },
     "CErc20Delegate": {
-      "address": "0x96a9327AAf9F6dd5F83a644F1D0BE367A05069e4"
+      "address": "0x2e75714EA0852Caeeb2182341C703217D73b854E"
     },
     "CErc20PluginDelegate": {
-      "address": "0x96FC23ABC75124a6285a859AE8c8511fD6449e95"
+      "address": "0x23a4067e31FC86427F9A291BBC37D130d544D000"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x9ba377A5A984E9d0652e40E85F12cB4A75c0BbF4"
+      "address": "0xEe49898259A317C4F74b311503f53e61dB3a6482"
     },
     "CEtherDelegate": {
       "address": "0xA6BDC4e098b6b14f4fCA2906B0a51e2798BA5777"
     },
     "CTokenFirstExtension": {
-      "address": "0x88dC65910dF3610Ab263B5499abA3Fe494d41Eec"
+      "address": "0x6024654e065Cbff429f5Ce4223628666FD1862E4"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x7ef2A6a6aF8ee090da3a24ea947b3717c4D16D94"
     },
     "Comptroller": {
-      "address": "0xC1ED4b6EC4bE863634BefF32891CA8c30ED7fdd7"
+      "address": "0x043Cd491Bb446286be932E431E9e488DfB9b622e"
     },
     "ComptrollerFirstExtension": {
       "address": "0x59b7116CA4EC3fCFFD99f9E01e159dD872377d2C"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x9F5DaC5Aa35a55bCb84A7AdFcdA71e7b4bc0DaF7"
+      "address": "0x80d68C9af156Fb5185f8C04B666F589B1D903bFe"
     },
     "CurveLpTokenPriceOracleNoRegistry": {
       "address": "0xaCF3E1C6f2D6Ff12B8aEE44413D6834774B3f7A3"
@@ -114,10 +114,10 @@
       "address": "0xaCF3E1C6f2D6Ff12B8aEE44413D6834774B3f7A3"
     },
     "CurveSwapLiquidator": {
-      "address": "0x2cDCB34818EB41744e142DD6a2375B314331c6f0"
+      "address": "0x368c5E0655566DFE96c469EAB68969B0c6F4d3bc"
     },
     "CurveSwapLiquidatorFunder": {
-      "address": "0xD1027EbBfAe89EA33A0aE7C0015a99f423A1e52a"
+      "address": "0x182DF2202ce23626268E3345640184eEF5d89DB8"
     },
     "DefaultProxyAdmin": {
       "address": "0x9b30a238A94c5a456a02ceC01e41f1c91d54e915"
@@ -165,7 +165,7 @@
       "address": "0x8720B2b5903964C4c7d8a08b6DA2b5A513A53593"
     },
     "FusePoolLensSecondary": {
-      "address": "0x12C72b635ca66e3A01B4796e018f9e703b54df45"
+      "address": "0xccCc8F785480e056A8bF165F2eCf73cbc9958d11"
     },
     "FuseSafeLiquidator": {
       "address": "0x37b3890B9b3a5e158EAFDA243d4640c5349aFC15"
@@ -177,16 +177,16 @@
       "address": "0x37b3890B9b3a5e158EAFDA243d4640c5349aFC15"
     },
     "GammaLpTokenLiquidator": {
-      "address": "0x22AA923Eb8b5E8515A8389F489d8d76EdaD5248B"
+      "address": "0x35EAeEb9a300aaB2cC47101250024e30c1233567"
     },
     "GelatoGUniLiquidator": {
-      "address": "0x596B2f83A2c5FA29c2348A9F7FC7C7590C29537F"
+      "address": "0x1ef47980f73A8b82a96C093F07C0ddB166fD485F"
     },
     "GelatoGUniPriceOracle": {
       "address": "0xb36badd5a3040fC2E950E087bf2B9BCfdb45aC1e"
     },
     "JarvisLiquidatorFunder": {
-      "address": "0x65149Ff9058f69Fa49F118093d2F165f40b61591"
+      "address": "0x6886f3F3b4457f33FF5bbfa2Ff3c58bc017E0920"
     },
     "JarvisSafeLiquidator": {
       "address": "0x6dA2d84d390F12a6C49Afe7B677a6a2B8E0D961a"
@@ -237,7 +237,7 @@
       "address": "0x1557ccC2cc2B0CC6029330B86FC39CCEA007339b"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xda359cB8c4732C7260CD72dD052CD053765f1Dcf"
+      "address": "0x12034385E1A0eEaad1368332425A17580b8E2812"
     },
     "MidasFlywheel_JRT_Jarvis": {
       "address": "0x5943487ca06D49Bb62b378ad7D1e9ff0848cCF86"
@@ -256,6 +256,15 @@
     },
     "MidasFlywheel_MIMO_Proxy": {
       "address": "0x5fF63E442AC4724EC342f4a3d26924233832EcBB"
+    },
+    "MidasFlywheel_Tangible_USDC_DAI_USDT": {
+      "address": "0x78dAA052e2D90877d0ADEDEA5D5ac37d4bcA52bd"
+    },
+    "MidasFlywheel_Tangible_USDC_DAI_USDT_Implementation": {
+      "address": "0x1F4453c598C927098D64D740e54B15ed56398cA9"
+    },
+    "MidasFlywheel_Tangible_USDC_DAI_USDT_Proxy": {
+      "address": "0x78dAA052e2D90877d0ADEDEA5D5ac37d4bcA52bd"
     },
     "MidasSafeLiquidator": {
       "address": "0x401B9E407896d5CAad75b057EF32Fa005c07252d"
@@ -291,7 +300,7 @@
       "address": "0x7770BdDdA35F7e13dB7e112Cc77b0445922DA660"
     },
     "UniswapLpTokenLiquidator": {
-      "address": "0xB22Fb94b0da976c2c16E2F9a581dB9282E204c01"
+      "address": "0x67b3AF7C93903A21818C5f8Ef7129832165CB792"
     },
     "UniswapLpTokenPriceOracle": {
       "address": "0x7D846942d87374Cf7b4761c0a5C5d70c6FEed669"
@@ -300,10 +309,10 @@
       "address": "0xd0CE13FD52b4bE9e375EAEf5B2d4F6dB207c0E90"
     },
     "UniswapV2LiquidatorFunder": {
-      "address": "0x329eC9aBdA182F1b259e8257afc2DB4f144088ad"
+      "address": "0x5bEb4BD2164D286CdE9c672910c548dF643a2Caa"
     },
     "UniswapV3LiquidatorFunder": {
-      "address": "0x46A1319a73Be2408a75774be66c3aeD3E6203595"
+      "address": "0x77ACC9d42f6D93e3420B9023f2495A847D5c66E8"
     },
     "UniswapV3PriceOracle": {
       "address": "0xF36e137F9aA5fB74e9aEb0EDc767238872d6fd3d"
@@ -316,6 +325,9 @@
     },
     "WhitePaperInterestRateModel": {
       "address": "0x1c5DCC70eD61301Ebfd847Ad3573290da223E085"
+    },
+    "WithdrawableFlywheelStaticRewards_Tangible_USDC_DAI_USDT": {
+      "address": "0xa0a6741C6E2F7A1DFe3ca87ea4Fa207Db5bdea6a"
     }
   }
 }
