@@ -812,6 +812,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("setAddress LeveredPositionsLens: ", tx.hash);
   }
 
+  const mflr = await ethers.getContract("MidasFlywheelLensRouter");
+  const mflrAddress = await addressesProvider.callStatic.getAddress("MidasFlywheelLensRouter");
+  if (mflrAddress !== mflr.address) {
+    tx = await addressesProvider.setAddress("MidasFlywheelLensRouter", mflr.address);
+    await tx.wait();
+    console.log("setAddress MidasFlywheelLensRouter: ", tx.hash);
+  }
+
   await configureAddressesProviderStrategies({
     ethers,
     getNamedAccounts,
