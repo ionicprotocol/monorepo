@@ -14,6 +14,7 @@ const eUSD = "0x97de57eC338AB5d51557DA3434828C5DbFaDA371";
 const GOHM = "0x0ab87046fBb341D058F17CBC4c1133F25a20a52f";
 const FRAX = "0x853d955aCEf822Db058eb8505911ED77F175b99e";
 const MIM = "0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3";
+const frxETH = "0x5E8422345238F34275888049021821E8E08CAa1f";
 const wstETH = "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0";
 const stETH = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 const swETH = "0xf951E335afb289353dc249e82926178EaC7DEd78";
@@ -140,7 +141,7 @@ export const assets: SupportedAsset[] = [
     underlying: WETH,
     name: "Wrapped Ether",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.FixedNativePriceOracle,
     extraDocs: wrappedAssetDocs(SupportedChains.ethereum),
   },
   {
@@ -193,6 +194,16 @@ export const assets: SupportedAsset[] = [
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
     <p>You can get swETH by staking your ETH </code> on <a href="https://app.swellnetwork.io/" target="_blank" style="color: #BCAC83; cursor="pointer">Swell</a></p>`,
+  },
+  {
+    symbol: assetSymbols.frxETH,
+    underlying: frxETH,
+    name: "Frax ETH",
+    decimals: 18,
+    oracle: OracleTypes.UniswapV3PriceOracle,
+    extraDocs: `
+    <p><b>How to acquire this token</b><p/><br />
+    <p>You can get frxETH by minting it with your ETH </code> on <a href="https://app.frax.finance/frxeth/mint" target="_blank" style="color: #BCAC83; cursor="pointer">Frax Finance</a></p>`,
   },
   // Sommelier Finance
   {

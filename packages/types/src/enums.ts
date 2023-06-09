@@ -475,6 +475,7 @@ export enum assetSymbols {
   rETH = "rETH",
   cbETH = "cbETH",
   ankrETH = "ankrETH",
+  frxETH = "frxETH",
   SWETH_BBA_WETH_BPT = "swETH-bba-WETH-BPT",
   WSTETH_WETH_STABLE_BPT = "wstETH-WETH-Stable-BPT",
   WSTETH_RETH_FRXETH_STABLE_BPT = "wstETH-rETH-frxETH-Stable-BPT",

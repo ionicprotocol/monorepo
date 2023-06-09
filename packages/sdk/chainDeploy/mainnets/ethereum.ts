@@ -79,15 +79,53 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.MIM,
+    aggregator: "0x7A364e8770418566e3eb2001A96116E6138Eb32F",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.OHM,
+    aggregator: "0x9a72298ae3886221820B1c878d12D872087D3a23",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH,
+  },
+  {
     symbol: assetSymbols.WBTC,
     aggregator: "0x6ce185860a4963106506C203335A2910413708e9",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.ANKR,
+    aggregator: "0x7eed379bf00005CfeD29feD4009669dE9Bcc21ce",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.ANKR,
+    aggregator: "0x7eed379bf00005CfeD29feD4009669dE9Bcc21ce",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.stETH,
+    aggregator: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.rETH,
+    aggregator: "0x536218f9E9Eb48863970252233c8F271f554C2d0",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH,
+  },
+  {
+    symbol: assetSymbols.cbETH,
+    aggregator: "0xF017fcB346A1885194689bA23Eff2fE6fA5C483b",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH,
   },
 ];
 
 const erc4626Assets: ERC4626Asset[] = [
   {
     assetAddress: underlying(assets, assetSymbols.realYieldUSD),
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.realYieldETH),
   },
   {
     assetAddress: underlying(assets, assetSymbols.ethBtcTrend),
@@ -106,6 +144,12 @@ const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     poolAddress: "0xcF7e21b96a7DAe8e1663b5A266FD812CBE973E70",
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: USDC,
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.frxETH),
+    poolAddress: "0x8a15b2Dc9c4f295DCEbB0E7887DD25980088fDCB",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: WETH,
   },
 ];
 
