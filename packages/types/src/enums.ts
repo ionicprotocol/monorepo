@@ -474,4 +474,6 @@ export enum assetSymbols {
   cbETH = "cbETH",
   ankrETH = "ankrETH",
   SWETH_BBA_WETH_BPT = "swETH-bba-WETH-BPT",
+
+  TDAI = "TDAI",
 }
