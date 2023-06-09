@@ -132,6 +132,14 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.GammaLpTokenLiquidator,
     underlying(assets, assetSymbols.ankrBNB),
   ],
+  [underlying(assets, assetSymbols.aANKRBNB_THE_N)]: [
+    RedemptionStrategyContract.GammaLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
+  [underlying(assets, assetSymbols.aANKRBNB_THE_W)]: [
+    RedemptionStrategyContract.GammaLpTokenLiquidator,
+    underlying(assets, assetSymbols.ankrBNB),
+  ],
   [underlying(assets, assetSymbols.RDNT)]: [
     RedemptionStrategyContract.AlgebraSwapLiquidator,
     underlying(assets, assetSymbols.ankrBNB),

@@ -360,6 +360,12 @@ const gammaLps: GammaLpAsset[] = [
   {
     lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_RDNT_W),
   },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_THE_N),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_THE_W),
+  },
 ];
 
 const solidlyOracleSupportedStables: string[] = [
@@ -489,7 +495,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     solidlyLps,
   });
-  //// Solidly LP Oracle
+
+  //// Gamma LP Oracle
   await deployGammaPoolOracle({
     run,
     ethers,

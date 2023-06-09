@@ -266,6 +266,8 @@ export enum assetSymbols {
   aANKRBNB_ANKR_N = "aANKRBNB-ANKR-N",
   aANKRBNB_RDNT_W = "aANKRBNB-RDNT-W",
   aANKRBNB_RDNT_N = "aANKRBNB-RDNT-N",
+  aANKRBNB_THE_W = "aANKRBNB-THE-W",
+  aANKRBNB_THE_N = "aANKRBNB-THE-N",
 
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
@@ -461,7 +463,14 @@ export enum assetSymbols {
 
   // Mainnet
   realYieldUSD = "realYieldUSD",
+  realYieldETH = "realYieldETH",
   ethBtcTrend = "ethBtcTrend",
   ethBtcMomentum = "ethBtcMomentum",
   wstETH = "wstETH",
+  stETH = "stETH",
+  swETH = "swETH",
+  rETH = "rETH",
+  cbETH = "cbETH",
+  ankrETH = "ankrETH",
+  SWETH_BBA_WETH_BPT = "swETH-bba-WETH-BPT",
 }

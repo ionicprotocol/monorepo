@@ -2,12 +2,19 @@ import { ethereum } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle, deployUniswapV3Oracle } from "../helpers";
+import {
+  ChainDeployConfig,
+  deployChainlinkOracle,
+  deployDiaOracle,
+  deployErc4626PriceOracle,
+  deployUniswapV3Oracle,
+} from "../helpers";
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
   ChainlinkFeedBaseCurrency,
   ConcentratedLiquidityOracleConfig,
+  DiaAsset,
   ERC4626Asset,
 } from "../helpers/types";
 
@@ -94,6 +101,15 @@ const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
   },
 ];
 
+const diaAssets: DiaAsset[] = [
+  {
+    symbol: assetSymbols.swETH,
+    underlying: underlying(assets, assetSymbols.swETH),
+    feed: "0xf5cECAc781d91b99db6935E975097F552786b7C3",
+    key: "swETH/USD",
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -118,6 +134,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     concentratedLiquidityOracleTokens: uniswapV3OracleTokens,
+  });
+
+  /// Dia Price Oracle
+  await deployDiaOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    diaAssets,
+    deployConfig,
+    diaNativeFeed: { feed: "0xf5cECAc781d91b99db6935E975097F552786b7C3", key: "ETH/USD" },
   });
 
   // ERC4626 Oracle

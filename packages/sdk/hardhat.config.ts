@@ -104,8 +104,15 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 97,
       gas: 25e6,
-      gasPrice: 20e10,
+      gasPrice: 21e10,
       url: "http://localhost:8547",
+    },
+    localeth: {
+      accounts: { mnemonic },
+      chainId: 1,
+      gasPrice: 21e9,
+      initialBaseFeePerGas: 21e9,
+      url: "http://localhost:8545",
     },
     localpolygon: {
       accounts: { mnemonic },

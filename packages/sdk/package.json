@@ -58,6 +58,7 @@
     "deploy:neondevnet": "hardhat --network neondevnet deploy --tags prod --no-compile",
     "deploy:basegoerli": "hardhat --network basegoerli deploy --tags prod --no-compile",
     "deploy:localhost": "hardhat --network localhost deploy --tags prod --no-compile",
+    "deploy:localeth": "hardhat --network localeth deploy --tags prod --no-compile",
     "forge": "forge",
     "hardhat": "hardhat"
   },
