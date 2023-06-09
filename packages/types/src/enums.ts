@@ -481,4 +481,6 @@ export enum assetSymbols {
   OHM50_DAI50_BPT = "OHM50-DAI50 BPT",
   OHM50_WETH50_BPT = "OHM50-WETH50 BPT",
   AAVE_BOOSTED_STABLE_BPT = "AAVE-bba-stable-BPT",
+
+  TDAI = "TDAI",
 }
