@@ -25,3 +25,4 @@ export { deployBalancerRateProviderPriceOracle } from "./oracles/balancerLp";
 export { deployBalancerLinearPoolPriceOracle } from "./oracles/balancerLp";
 export { deployFlywheelWithDynamicRewards } from "./dynamicFlywheels";
 export { deployErc4626PriceOracle } from "./oracles/erc4626";
+export { deployCurveV2Oracle } from "./oracles/curveV2";

@@ -10,6 +10,7 @@ const BAL = "0xba100000625a3754423978a60c9317c58a424e3D";
 const DAI = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
 const PAR = "0x68037790A0229e9Ce6EaA8A99ea92964106C4703";
 const USDT = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+const eUSD = "0x97de57eC338AB5d51557DA3434828C5DbFaDA371";
 const GOHM = "0x0ab87046fBb341D058F17CBC4c1133F25a20a52f";
 const FRAX = "0x853d955aCEf822Db058eb8505911ED77F175b99e";
 const MIM = "0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3";
@@ -30,6 +31,11 @@ const WSTETH_CBETH_STABLE_BPT = "0x9c6d47Ff73e0F5E51BE5FD53236e3F595C5793F2";
 const OHM50_DAI50_BPT = "0x76FCf0e8C7Ff37A47a799FA2cd4c13cDe0D981C9";
 const OHM50_WETH50_BPT = "0xD1eC5e215E8148D76F4460e4097FD3d5ae0A3558";
 const AAVE_BOOSTED_STABLE_BPT = "0xfeBb0bbf162E64fb9D0dfe186E517d84C395f016";
+
+const AAVE_LINEAR_DAI = "0x6667c6fa9f2b3Fc1Cc8D85320b62703d938E4385";
+const AAVE_LINEAR_USDT = "0xA1697F9Af0875B63DdC472d6EeBADa8C1fAB8568";
+const AAVE_LINEAR_USDC = "0xcbFA4532D8B2ade2C261D3DD5ef2A2284f792692";
+const AAVE_LINEAR_WETH = "0x60D604890feaa0b5460B28A424407c24fe89374a";
 // Require oracles for R
 // const R_DAI_STABLE_BPT = "0x20a61B948E33879ce7F23e535CC7BAA3BC66c5a9";
 // Requires oracle for STG (PCS V3 works)
@@ -112,6 +118,14 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://etherscan.io", USDT),
+  },
+  {
+    symbol: assetSymbols.eUSD,
+    underlying: eUSD,
+    name: "eUSD",
+    decimals: 18,
+    oracle: OracleTypes.CurveV2PriceOracle,
+    extraDocs: defaultDocs("https://etherscan.io", eUSD),
   },
   {
     symbol: assetSymbols.WBTC,
@@ -317,6 +331,42 @@ export const assets: SupportedAsset[] = [
       "OHM50/WETH50 Weighed LP",
       OHM50_WETH50_BPT
     ),
+  },
+  {
+    symbol: assetSymbols.AAVE_LINEAR_WETH,
+    underlying: AAVE_LINEAR_WETH,
+    name: "bb-a-WETH Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
+    extraDocs: "",
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.AAVE_LINEAR_USDT,
+    underlying: AAVE_LINEAR_USDT,
+    name: "bb-a-USDT Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
+    extraDocs: "",
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.AAVE_LINEAR_USDC,
+    underlying: AAVE_LINEAR_USDC,
+    name: "bb-a-USDC Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
+    extraDocs: "",
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.AAVE_LINEAR_DAI,
+    underlying: AAVE_LINEAR_DAI,
+    name: "bb-a-DAI Linear BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
+    extraDocs: "",
+    disabled: true,
   },
   {
     symbol: assetSymbols.AAVE_BOOSTED_STABLE_BPT,

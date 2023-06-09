@@ -4,16 +4,24 @@ import { ethers } from "ethers";
 
 import {
   ChainDeployConfig,
+  deployBalancerLinearPoolPriceOracle,
+  deployBalancerLpPriceOracle,
+  deployBalancerStableLpPriceOracle,
   deployChainlinkOracle,
+  deployCurveV2Oracle,
   deployDiaOracle,
   deployErc4626PriceOracle,
   deployUniswapV3Oracle,
 } from "../helpers";
 import {
+  BalancerLinearPoolAsset,
+  BalancerLpAsset,
+  BalancerStableLpAsset,
   ChainDeployFnParams,
   ChainlinkAsset,
   ChainlinkFeedBaseCurrency,
   ConcentratedLiquidityOracleConfig,
+  CurveV2OracleConfig,
   DiaAsset,
   ERC4626Asset,
 } from "../helpers/types";
@@ -110,6 +118,58 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
+const balancerStableLpAssets: BalancerStableLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WSTETH_WETH_STABLE_BPT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WBETH_WSTETH_STABLE_BPT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WSTETH_CBETH_STABLE_BPT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.AAVE_BOOSTED_STABLE_BPT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.SWETH_BBA_WETH_BPT),
+  },
+];
+
+const balancerLinerPoolAssets: BalancerLinearPoolAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.AAVE_LINEAR_DAI),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.AAVE_LINEAR_USDC),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.AAVE_LINEAR_USDT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.AAVE_LINEAR_WETH),
+  },
+];
+
+const balancerLpAssets: BalancerLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.OHM50_DAI50_BPT),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.OHM50_WETH50_BPT),
+  },
+];
+
+const curveV2OraclePools: CurveV2OracleConfig[] = [
+  {
+    token: underlying(assets, assetSymbols.eUSD),
+    pool: "0x880F2fB3704f1875361DE6ee59629c6c6497a5E3",
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -124,6 +184,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     assets: assets,
     chainlinkAssets,
+  });
+
+  //// deploy Curve V2 price oracle
+  await deployCurveV2Oracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curveV2OraclePools,
   });
 
   //// deploy uniswap v3 price oracle
@@ -149,6 +219,36 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   // ERC4626 Oracle
   await deployErc4626PriceOracle({ run, ethers, getNamedAccounts, deployments, erc4626Assets });
+
+  /// Balancer Stable LP Price Oracle
+  await deployBalancerLinearPoolPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLinerPoolAssets,
+  });
+
+  /// Balancer LP Price Oracle
+  await deployBalancerLpPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLpAssets,
+  });
+
+  /// Balancer Stable LP Price Oracle
+  await deployBalancerStableLpPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLpAssets: balancerStableLpAssets,
+  });
 
   // Quoter
   const quoter = await deployments.deploy("Quoter", {

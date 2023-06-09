@@ -133,6 +133,11 @@ export type CurveV2PoolConfig = {
   pool: string;
 };
 
+export type CurveV2OracleConfig = {
+  token: string;
+  pool: string;
+};
+
 export type ChainDeployFnParams = {
   ethers: HardhatRuntimeEnvironment["ethers"];
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
@@ -238,6 +243,11 @@ export type SaddleLpFnParams = ChainDeployFnParams & {
 export type CurveV2LpFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   curveV2Pools: CurveV2PoolConfig[];
+};
+
+export type CurveV2OracleLpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  curveV2OraclePools: CurveV2OracleConfig[];
 };
 
 export type DiaStDotFnParams = ChainDeployFnParams & {

@@ -51,6 +51,7 @@ export enum DelegateContractName {
 export enum OracleTypes {
   ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
   CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
+  CurveV2PriceOracle = "CurveV2PriceOracle",
   CurveV2LpTokenPriceOracleNoRegistry = "CurveV2LpTokenPriceOracleNoRegistry",
   DiaPriceOracle = "DiaPriceOracle",
   FixedNativePriceOracle = "FixedNativePriceOracle",
@@ -463,6 +464,7 @@ export enum assetSymbols {
   triCrypto = "triCrypto",
 
   // Mainnet
+  eUSD = "eUSD",
   realYieldUSD = "realYieldUSD",
   realYieldETH = "realYieldETH",
   ethBtcTrend = "ethBtcTrend",
@@ -481,6 +483,10 @@ export enum assetSymbols {
   OHM50_DAI50_BPT = "OHM50-DAI50 BPT",
   OHM50_WETH50_BPT = "OHM50-WETH50 BPT",
   AAVE_BOOSTED_STABLE_BPT = "AAVE-bba-stable-BPT",
+  AAVE_LINEAR_DAI = "AAVE-LINEAR-DAI",
+  AAVE_LINEAR_USDC = "AAVE-LINEAR-USDC",
+  AAVE_LINEAR_USDT = "AAVE-LINEAR-USDT",
+  AAVE_LINEAR_WETH = "AAVE-LINEAR-WETH",
 
   TDAI = "TDAI",
 }
