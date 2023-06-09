@@ -346,6 +346,50 @@ const deployedPlugins: DeployedPlugins = {
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
   },
+  // ThenaLpERC4626_aANKRBNB-RDNT-N_0xA443a78906B534069a703BC5E186994CA4F90aCC.json
+  "0xE706134f898320dc1b1772362566bA6646C569c1": {
+    market: "0xA443a78906B534069a703BC5E186994CA4F90aCC",
+    name: "Thena Gamma ankrBNB-RDNT Narrow LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols.aANKRBNB_RDNT_N)}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols.aANKRBNB_RDNT_N),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
+  // ThenaLpERC4626_aANKRBNB-RDNT-W_0x525fE855718680DE71F3FE761F893a0b763500E4.json
+  "0x2841f61C4D0Dd34010a3E75241c1C80AFc99D202": {
+    market: "0x525fE855718680DE71F3FE761F893a0b763500E4",
+    name: "Thena Gamma ankrBNB-RDNT Wide LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols.aANKRBNB_RDNT_W)}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols.aANKRBNB_RDNT_W),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
+  // ThenaLpERC4626_aANKRBNB-THE-N_0x336378365892Ae2C706BB97cd9f23b339951ab01.json
+  "0x5bEb4BD2164D286CdE9c672910c548dF643a2Caa": {
+    market: "0x336378365892Ae2C706BB97cd9f23b339951ab01",
+    name: "Thena Gamma ankrBNB-THE Narrow LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols.aANKRBNB_THE_N)}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols.aANKRBNB_THE_N),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
+  // ThenaLpERC4626_aANKRBNB-THE-W_0x0B2ed08ba628bAF7287536A452C3060826422a13.json
+  "0xbe79A4B9Cb6892ae0d383038C6e7b25fF79FBc14": {
+    market: "0x0B2ed08ba628bAF7287536A452C3060826422a13",
+    name: "Thena Gamma ankrBNB-THE Wide LP Vault",
+    strategy: Strategy.ThenaERC4626,
+    apyDocsUrl: `https://www.thena.fi/liquidity/manage/${underlying(assets, assetSymbols.aANKRBNB_THE_W)}`,
+    otherParams: [],
+    underlying: underlying(assets, assetSymbols.aANKRBNB_THE_W),
+    flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+  },
 };
 
 export default deployedPlugins;
