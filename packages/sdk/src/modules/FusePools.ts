@@ -90,7 +90,9 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
         if (_asset) {
           asset.underlyingSymbol = _asset.symbol;
-          asset.logoUrl = "https://d1912tcoux65lj.cloudfront.net/token/96x96/" + _asset.symbol.toLowerCase() + ".png";
+          asset.logoUrl = _asset.symbol
+            ? "https://d1912tcoux65lj.cloudfront.net/token/96x96/" + _asset.symbol.toLowerCase() + ".png"
+            : undefined;
           asset.originalSymbol = _asset.originalSymbol ? _asset.originalSymbol : undefined;
         }
 
