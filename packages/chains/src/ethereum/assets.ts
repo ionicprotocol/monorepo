@@ -23,6 +23,17 @@ const ANKR = "0x8290333ceF9e6D528dD5618Fb97a76f268f3EDD4";
 
 // Balancer
 const SWETH_BBA_WETH_BPT = "0x02D928E68D8F10C0358566152677Db51E1e2Dc8C";
+const WSTETH_WETH_STABLE_BPT = "0x32296969Ef14EB0c6d29669C550D4a0449130230";
+const WSTETH_RETH_FRXETH_STABLE_BPT = "0x5aEe1e99fE86960377DE9f88689616916D5DcaBe";
+const WBETH_WSTETH_STABLE_BPT = "0x2E848426AEc6dbF2260535a5bEa048ed94d9FF3D";
+const WSTETH_CBETH_STABLE_BPT = "0x9c6d47Ff73e0F5E51BE5FD53236e3F595C5793F2";
+const OHM50_DAI50_BPT = "0x76FCf0e8C7Ff37A47a799FA2cd4c13cDe0D981C9";
+const OHM50_WETH50_BPT = "0xD1eC5e215E8148D76F4460e4097FD3d5ae0A3558";
+const AAVE_BOOSTED_STABLE_BPT = "0xfeBb0bbf162E64fb9D0dfe186E517d84C395f016";
+// Require oracles for R
+// const R_DAI_STABLE_BPT = "0x20a61B948E33879ce7F23e535CC7BAA3BC66c5a9";
+// Requires oracle for STG (PCS V3 works)
+// const STG_BOOSTED_WEIGHTED_BPT = "0x639883476960a23b38579acfd7D71561A0f408Cf";
 
 // Sommelier
 const realYieldUSD = "0x97e6E0a40a3D02F12d1cEC30ebfbAE04e37C119E";
@@ -214,6 +225,110 @@ export const assets: SupportedAsset[] = [
       "0x02d928e68d8f10c0358566152677db51e1e2dc8c00000000000000000000051e",
       "SwETH/Boosted Aave V3 WETH",
       SWETH_BBA_WETH_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.WSTETH_WETH_STABLE_BPT,
+    underlying: WSTETH_WETH_STABLE_BPT,
+    name: "wstETH/WETH Stable LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0x32296969ef14eb0c6d29669c550d4a0449130230000200000000000000000080",
+      "wstETH/WETH Stable LP",
+      WSTETH_WETH_STABLE_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT,
+    underlying: WSTETH_RETH_FRXETH_STABLE_BPT,
+    name: "wstETH/rETH/frxETH Stable LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0x5aee1e99fe86960377de9f88689616916d5dcabe000000000000000000000467",
+      "wstETH/rETH/frxETH Stable LP",
+      WSTETH_RETH_FRXETH_STABLE_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT,
+    underlying: WSTETH_RETH_FRXETH_STABLE_BPT,
+    name: "wstETH/rETH/frxETH Stable LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0x5aee1e99fe86960377de9f88689616916d5dcabe000000000000000000000467",
+      "wstETH/rETH/frxETH Stable LP",
+      WSTETH_RETH_FRXETH_STABLE_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.WBETH_WSTETH_STABLE_BPT,
+    underlying: WBETH_WSTETH_STABLE_BPT,
+    name: "wBETH/wstETH Stable LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0x2e848426aec6dbf2260535a5bea048ed94d9ff3d000000000000000000000536",
+      "wBETH/wstETH Stable LP",
+      WBETH_WSTETH_STABLE_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.WSTETH_CBETH_STABLE_BPT,
+    underlying: WSTETH_CBETH_STABLE_BPT,
+    name: "wstETH/cbETH Stable LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0x9c6d47ff73e0f5e51be5fd53236e3f595c5793f200020000000000000000042c",
+      "wstETH/cbETH Stable LP",
+      WSTETH_CBETH_STABLE_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.OHM50_DAI50_BPT,
+    underlying: OHM50_DAI50_BPT,
+    name: "OHM50/DAI50 Weighed LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0x76fcf0e8c7ff37a47a799fa2cd4c13cde0d981c90002000000000000000003d2",
+      "OHM50/DAI50 Weighed LP",
+      OHM50_DAI50_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.OHM50_WETH50_BPT,
+    underlying: OHM50_WETH50_BPT,
+    name: "OHM50/WETH50 Weighed LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0xd1ec5e215e8148d76f4460e4097fd3d5ae0a35580002000000000000000003d3",
+      "OHM50/WETH50 Weighed LP",
+      OHM50_WETH50_BPT
+    ),
+  },
+  {
+    symbol: assetSymbols.AAVE_BOOSTED_STABLE_BPT,
+    underlying: AAVE_BOOSTED_STABLE_BPT,
+    name: "AAVE Boosted Stable LP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
+    extraDocs: balancerDocs(
+      "ethereum",
+      "0xfebb0bbf162e64fb9d0dfe186e517d84c395f016000000000000000000000502",
+      "AAVE Boosted Stable LP",
+      AAVE_BOOSTED_STABLE_BPT
     ),
   },
 ];
