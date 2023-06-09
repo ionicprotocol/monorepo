@@ -1,22 +1,24 @@
 import { Center, HStack, Text, VStack } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
 
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
-export const TokenName = ({ vault }: { vault: VaultData }) => {
-  const { data: tokenData } = useTokenData(vault.asset, Number(vault.chainId));
+export const TokenName = ({
+  chainId,
+  symbol,
+  underlying,
+}: {
+  chainId: number;
+  symbol: string;
+  underlying: string;
+}) => {
+  const { data: tokenData } = useTokenData(underlying, chainId);
 
   return (
     <Row className="marketName" crossAxisAlignment="center" mainAxisAlignment="flex-start">
       <Center>
-        <TokenIcon
-          address={vault.asset}
-          chainId={Number(vault.chainId)}
-          size="md"
-          withTooltip={false}
-        />
+        <TokenIcon address={underlying} chainId={chainId} size="md" withTooltip={false} />
       </Center>
 
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
@@ -29,7 +31,7 @@ export const TokenName = ({ vault }: { vault: VaultData }) => {
             textOverflow={'ellipsis'}
             whiteSpace="nowrap"
           >
-            {tokenData?.symbol ?? vault.symbol}
+            {tokenData?.originalSymbol ?? tokenData?.symbol ?? symbol}
           </Text>
         </HStack>
       </VStack>

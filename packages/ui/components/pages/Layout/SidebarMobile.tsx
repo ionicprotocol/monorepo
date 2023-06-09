@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { BsChatLeftTextFill, BsFillHouseFill, BsHouseAddFill } from 'react-icons/bs';
 import { ImUser } from 'react-icons/im';
+// import { RiBuilding2Fill } from 'react-icons/ri';
 import { SiVault } from 'react-icons/si';
 
 import Footer from '@ui/components/pages/Layout/Footer';
@@ -92,9 +93,31 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
       >
         <Icon as={SiVault} fontSize="20" mr="4" />
         <Text fontSize={16} fontWeight={'bold'}>
-          Vaults
+          Supply Vaults
         </Text>
       </Flex>
+      {/* <Flex
+        _hover={{
+          bg: cCard.hoverBgColor,
+          color: cCard.txtColor,
+        }}
+        align="center"
+        bg={router.pathname === '/leverage' ? cSolidBtn.primary.bgColor : undefined}
+        borderRadius="lg"
+        cursor="pointer"
+        mx="4"
+        onClick={() => {
+          setGlobalLoading(true);
+          router.push('/leverage');
+        }}
+        p="4"
+        role="group"
+      >
+        <Icon as={RiBuilding2Fill} fontSize="20" mr="4" />
+        <Text fontSize={16} fontWeight={'bold'}>
+          Leverage
+        </Text>
+      </Flex> */}
       {address ? (
         <Flex
           _hover={{

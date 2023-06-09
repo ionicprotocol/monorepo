@@ -56,8 +56,11 @@ export const RepayModal = ({
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const { cCard } = useColors();
 
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken);
-  const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
+  const { data: myBalance } = useTokenBalance(asset.underlyingToken, poolChainId);
+  const { data: myNativeBalance } = useTokenBalance(
+    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
+    poolChainId
+  );
 
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isRepaying, setIsRepaying] = useState(false);
@@ -321,7 +324,7 @@ export const RepayModal = ({
                     setAmount={setAmount}
                   />
 
-                  <Balance asset={asset} />
+                  <Balance asset={asset} chainId={poolChainId} />
                 </Column>
 
                 <StatsColumn

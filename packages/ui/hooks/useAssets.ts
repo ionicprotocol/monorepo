@@ -19,6 +19,7 @@ export function useAssets(chainId?: number) {
     },
     {
       cacheTime: Infinity,
+      enabled: !!chainId,
       staleTime: Infinity,
     }
   );

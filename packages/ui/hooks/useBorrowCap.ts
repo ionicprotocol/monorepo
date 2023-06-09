@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
@@ -12,6 +13,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export interface Cap {
   tokenCap: number;
   type: 'borrow' | 'supply';
+  underlyingCap: BigNumber;
   usdCap: number;
 }
 
@@ -71,16 +73,14 @@ export const useBorrowCap = ({
             const whitelistedTotalBorrows = market.totalBorrow.sub(
               borrowCapsDataForAsset.nonWhitelistedTotalBorrows
             );
-
-            const tokenCap = Number(
-              utils.formatUnits(borrowCap.add(whitelistedTotalBorrows), market.underlyingDecimals)
-            );
+            const underlyingCap = borrowCap.add(whitelistedTotalBorrows);
+            const tokenCap = Number(utils.formatUnits(underlyingCap, market.underlyingDecimals));
             const usdCap =
               tokenCap *
               Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
 
-            return { tokenCap, type: 'borrow', usdCap };
+            return { tokenCap, type: 'borrow', underlyingCap, usdCap };
           }
         } catch (e) {
           console.warn(

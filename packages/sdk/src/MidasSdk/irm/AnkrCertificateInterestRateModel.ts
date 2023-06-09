@@ -2,8 +2,9 @@ import { Web3Provider } from "@ethersproject/providers";
 import { InterestRateModel } from "@midas-capital/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
+import CTokenFirstExtensionABI from "../../../abis/CTokenFirstExtension";
 import AnkrCertificateInterestRateModelArtifact from "../../../artifacts/AnkrCertificateInterestRateModel.json";
-import CTokenInterfaceArtifact from "../../../artifacts/CTokenInterface.json";
+import { CTokenFirstExtension } from "../../../typechain/CTokenFirstExtension";
 import { getContract } from "../utils";
 
 export default class AnkrCertificateInterestRateModel implements InterestRateModel {
@@ -24,7 +25,7 @@ export default class AnkrCertificateInterestRateModel implements InterestRateMod
     this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.jumpMultiplierPerBlock());
     this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getBaseRatePerBlock());
     this.kink = BigNumber.from(await jumpRateModelContract.callStatic.kink());
-    const cTokenContract = getContract(assetAddress, CTokenInterfaceArtifact.abi, provider);
+    const cTokenContract = getContract(assetAddress, CTokenFirstExtensionABI, provider) as CTokenFirstExtension;
     this.reserveFactorMantissa = BigNumber.from(await cTokenContract.callStatic.reserveFactorMantissa());
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(
       BigNumber.from(await cTokenContract.callStatic.adminFeeMantissa())

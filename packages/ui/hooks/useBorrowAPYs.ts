@@ -4,7 +4,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const useBorrowAPYs = (assets: MarketData[], chainId?: number) => {
+export const useBorrowAPYs = (
+  assets: Pick<MarketData, 'borrowRatePerBlock' | 'cToken'>[],
+  chainId?: number
+) => {
   const sdk = useSdk(chainId);
 
   return useQuery(

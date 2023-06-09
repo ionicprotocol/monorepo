@@ -25,7 +25,12 @@ const ClaimAssetRewardsButton = ({
   const { cPage } = useColors();
   const { currentChain } = useMultiMidas();
 
-  const { data: claimableRewards, refetch: refetchRewards } = useAssetClaimableRewards({
+  const {
+    data: claimableRewards,
+    refetch: refetchRewards,
+    isLoading,
+    isRefetching,
+  } = useAssetClaimableRewards({
     assetAddress,
     poolAddress,
     poolChainId,
@@ -67,6 +72,7 @@ const ClaimAssetRewardsButton = ({
       <Box position="absolute">
         <ClaimRewardsModal
           claimableRewards={claimableRewardsOfChain}
+          isLoading={isLoading || isRefetching}
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           refetch={refetchRewards}

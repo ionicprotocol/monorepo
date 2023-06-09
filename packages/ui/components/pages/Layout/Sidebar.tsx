@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { BsChatLeftTextFill, BsFillHouseFill, BsHouseAddFill } from 'react-icons/bs';
 import { ImUser } from 'react-icons/im';
+// import { RiBuilding2Fill } from 'react-icons/ri';
 import { SiVault } from 'react-icons/si';
 
 import Footer from '@ui/components/pages/Layout/Footer';
@@ -103,6 +104,30 @@ export const Sidebar = () => {
           </Text>
         ) : null}
       </Flex>
+      {/* <Flex
+        _hover={{
+          bg: cCard.hoverBgColor,
+          color: cCard.txtColor,
+        }}
+        align="center"
+        bg={router.pathname === '/leverage' ? cSolidBtn.primary.bgColor : undefined}
+        borderRadius="lg"
+        cursor="pointer"
+        mx="4"
+        onClick={() => {
+          setGlobalLoading(true);
+          router.push('/leverage');
+        }}
+        p="4"
+        role="group"
+      >
+        <Icon as={RiBuilding2Fill} fontSize="20" mr="4" />
+        {!isSidebarCollapsed ? (
+          <Text fontSize={16} fontWeight={'bold'}>
+            Leverage
+          </Text>
+        ) : null}
+      </Flex> */}
       {address ? (
         <Flex
           _hover={{

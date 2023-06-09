@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, HStack, Img, Spinner, Text, VStack } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import type { SupportedAsset } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
@@ -144,17 +144,19 @@ const ClaimableToken = ({
 
 const ClaimRewardsModal = ({
   isOpen,
+  isLoading,
   onClose,
   claimableRewards,
   refetch,
 }: {
   claimableRewards: { [chainId: string]: FlywheelClaimableRewards[] };
+  isLoading: boolean;
   isOpen: boolean;
   onClose: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: () => Promise<any>;
 }) => {
-  const { currentSdk, currentChain, signer } = useMultiMidas();
+  const { currentSdk, currentChain, signer, address } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
   const [isAllClaiming, setIsAllClaiming] = useState<boolean>(false);
@@ -173,11 +175,15 @@ const ClaimRewardsModal = ({
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
-      if (!currentSdk || !currentChain || !signer || !rewards || rewards.length === 0) return;
+      if (!currentSdk || !currentChain || !signer || !address || !rewards || rewards.length === 0)
+        return;
 
       setIsAllClaiming(true);
 
       const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
+      const markets: string[] = [];
+      const flywhees: string[] = [];
+      const accrue: boolean[] = [];
 
       rewards.map((reward) => {
         const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
@@ -185,6 +191,17 @@ const ClaimRewardsModal = ({
         });
 
         _assetPerRewardToken[reward.rewardToken] = asset;
+
+        reward.rewards.map((rw) => {
+          if (!markets.includes(rw.market)) {
+            markets.push(rw.market);
+          }
+        });
+
+        if (!flywhees.includes(reward.flywheel)) {
+          flywhees.push(reward.flywheel);
+          accrue.push(true);
+        }
       });
 
       const _steps: TxStep[] = [
@@ -207,8 +224,11 @@ const ClaimRewardsModal = ({
       try {
         const fwLensRouter = currentSdk.createMidasFlywheelLensRouter(currentSdk.signer);
 
-        const tx = await fwLensRouter.claimRewardsFromFlywheels(
-          rewards.map((reward) => reward.flywheel)
+        const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
+          address,
+          markets,
+          flywhees,
+          accrue
         );
 
         addRecentTransaction({
@@ -248,7 +268,7 @@ const ClaimRewardsModal = ({
 
       setIsAllClaiming(false);
     },
-    [currentSdk, signer, errorToast, currentChain, refetch, addRecentTransaction]
+    [currentSdk, signer, errorToast, address, currentChain, refetch, addRecentTransaction]
   );
 
   return (
@@ -314,7 +334,12 @@ const ClaimRewardsModal = ({
           ) : null}
         </VStack>
       }
-      header="Claim Rewards"
+      header={
+        <HStack gap={2}>
+          <Text>Claim Rewards</Text>
+          {isLoading ? <Spinner /> : null}
+        </HStack>
+      }
       isOpen={isOpen}
       modalCloseButtonProps={{ hidden: isAllClaiming, right: 4, top: 4 }}
       onClose={() => {

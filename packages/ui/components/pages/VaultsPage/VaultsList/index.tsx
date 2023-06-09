@@ -204,7 +204,13 @@ export const VaultsList = ({
       },
       {
         accessorFn: (row) => row.vault,
-        cell: ({ getValue }) => <TokenName vault={getValue<VaultData>()} />,
+        cell: ({ getValue }) => (
+          <TokenName
+            chainId={Number(getValue<VaultData>().chainId)}
+            symbol={getValue<VaultData>().symbol}
+            underlying={getValue<VaultData>().asset}
+          />
+        ),
         enableHiding: false,
         filterFn: vaultFilter,
         footer: (props) => props.column.id,

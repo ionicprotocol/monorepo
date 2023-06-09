@@ -15,7 +15,10 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface SupplyApyProps {
-  asset: MarketData;
+  asset: Pick<
+    MarketData,
+    'cToken' | 'plugin' | 'supplyRatePerBlock' | 'underlyingSymbol' | 'underlyingToken'
+  >;
   poolChainId: number;
   rewards: UseRewardsData;
   totalSupplyApyPerAsset?: {
@@ -171,7 +174,7 @@ export const SupplyApy = ({
                 </HStack>
                 {rewardsOfThisMarket.map((reward, index) => (
                   <RewardsInfo
-                    asset={asset}
+                    assetCToken={asset.cToken}
                     chainId={poolChainId}
                     key={`reward_${index}`}
                     reward={reward}

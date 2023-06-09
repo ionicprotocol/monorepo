@@ -116,6 +116,8 @@ export const ankrBNBContractABI = [
 
 export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
 export const VAULTS_COUNT_PER_PAGE = [25, 50, 75];
+export const POSITION_CREATION_PER_PAGE = [25, 50, 75];
+export const CREATED_POSITION_PER_PAGE = [25, 50, 75];
 export const POOLS_COUNT_PER_PAGE = [25, 50, 75];
 
 export const REWARDS = 'Rewards';
@@ -175,6 +177,53 @@ export const REPAY_STEPS = (symbol: string) =>
     { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
     { desc: `Repays a borrow position of ${symbol} token`, done: false, title: 'Repay' },
   ] as TxStep[];
+export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
+  [
+    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    {
+      desc: `Creates new levered position with ${symbol} market`,
+      done: false,
+      title: 'Create position',
+    },
+  ] as TxStep[];
+
+export const ADJUST_LEVERAGE_RATIO_STEPS = (symbol: string) =>
+  [
+    {
+      desc: `Adjusts leverage ratio on ${symbol} market`,
+      done: false,
+      title: 'Adjust leverage ratio',
+    },
+  ] as TxStep[];
+
+export const CLOSE_OPEN_POSITION_STEPS = (symbol: string) =>
+  [
+    {
+      desc: `Closes open levered position with ${symbol} market`,
+      done: false,
+      title: 'Close position',
+    },
+  ] as TxStep[];
+
+export const REMOVE_CLOSED_POSITION_STEPS = (symbol: string) =>
+  [
+    {
+      desc: `Removes closed levered position with ${symbol} market`,
+      done: false,
+      title: 'Remove position',
+    },
+  ] as TxStep[];
+
+export const FUND_POSITION_STEPS = (symbol: string) =>
+  [
+    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    {
+      desc: `Funds position with ${symbol} market`,
+      done: false,
+      title: 'Fund position',
+    },
+  ] as TxStep[];
+
 export const SCORE_LIMIT = 0.6;
 export const SCORE_RANGE_MAX = 10;
 export const MARKET_LTV = 'Market / LTV';
@@ -199,6 +248,11 @@ export const MARKET_COLUMNS = [
 export const VAULT = 'Vault';
 export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
 
+export const COLLATERAL_ASSET = 'Collateral';
+export const BORROWABLE_ASSET = 'Borrowable';
+export const NET_APY = 'Net APY';
+export const POSITION_CREATION_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];
+export const CREATED_POSITIONS_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];
 export const POOL_NAME = 'Pool Name';
 export const ASSETS = 'Assets';
 export const CHAIN = 'Chain';
@@ -248,3 +302,9 @@ export const MILLI_SECONDS_PER_YEAR = MILLI_SECONDS_PER_DAY * 365;
 
 export const ADD = 'Add';
 export const REMOVE = 'Remove';
+
+export const LEVERAGE_VALUE = {
+  DEFAULT: 1.0,
+  MAX: 3.0,
+  MIN: 1.0,
+};

@@ -29,7 +29,7 @@ export const AmountInput = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();
   const { data: maxDepositVault } = useMaxDepositVault(vault.vault);
-  const { data: myBalance } = useTokenBalance(vault.asset);
+  const { data: myBalance } = useTokenBalance(vault.asset, vault.chainId);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {

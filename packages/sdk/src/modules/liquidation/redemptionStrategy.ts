@@ -21,7 +21,7 @@ export type StrategyAndData = {
 };
 
 export const getRedemptionStrategiesAndDatas = async (
-  fuse: MidasBase,
+  midasSdk: MidasBase,
   inputToken: string,
   expectedOutputToken: string | null
 ): Promise<[StrategiesAndDatas, string[]]> => {
@@ -32,9 +32,9 @@ export const getRedemptionStrategiesAndDatas = async (
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
     // chain redemptions as long as it is redeemable and is not the needed output token
-    while (tokenToRedeem != expectedOutputToken && tokenToRedeem in fuse.redemptionStrategies) {
+    while (tokenToRedeem != expectedOutputToken && tokenToRedeem in midasSdk.redemptionStrategies) {
       const { strategyAddress, strategyData, outputToken } = (await getStrategyAndData(
-        fuse,
+        midasSdk,
         tokenToRedeem
       )) as StrategyAndData;
 
@@ -66,10 +66,10 @@ export const getUniswapV2Router = (midasSdk: MidasBase, asset: string): string =
     : midasSdk.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
 };
 
-const pickPreferredToken = (fuse: MidasBase, tokens: string[], strategyOutputToken: string): string => {
-  const wtoken = fuse.chainSpecificAddresses.W_TOKEN;
-  const stableToken = fuse.chainSpecificAddresses.STABLE_TOKEN;
-  const wBTCToken = fuse.chainSpecificAddresses.W_BTC_TOKEN;
+const pickPreferredToken = (midasSdk: MidasBase, tokens: string[], strategyOutputToken: string): string => {
+  const wtoken = midasSdk.chainSpecificAddresses.W_TOKEN;
+  const stableToken = midasSdk.chainSpecificAddresses.STABLE_TOKEN;
+  const wBTCToken = midasSdk.chainSpecificAddresses.W_BTC_TOKEN;
 
   if (tokens.find((t) => t == strategyOutputToken)) {
     return strategyOutputToken;
@@ -95,7 +95,6 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
   let actualOutputToken;
   let preferredOutputToken;
 
-  // let outputTokenIndex;
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
       const curveLpOracleAddress = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
@@ -122,7 +121,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken: actualOutputToken,
       };
     case RedemptionStrategyContract.SaddleLpTokenLiquidator:
-      const saddleLpOracleAddress = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
+      const saddleLpOracleAddress = midasSdk.chainDeployment.SaddleLpPriceOracle.address;
       const saddleLpOracle = new Contract(saddleLpOracleAddress, SaddleLpPriceOracleABI, midasSdk.provider);
 
       tokens = await saddleLpOracle.callStatic.getUnderlyingTokens(inputToken);
@@ -157,7 +156,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
-          ["address", "address[]"],
+          ["address", "address"],
           [midasSdk.chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, outputToken]
         ),
         outputToken,
@@ -200,7 +199,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         outputToken,
       };
     }
-    case RedemptionStrategyContract.SolidlyLiquidator: {
+    case RedemptionStrategyContract.SolidlySwapLiquidator: {
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
@@ -260,15 +259,6 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
 
       // TODO: add support for multiple pools
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
-    }
-    case RedemptionStrategyContract.XBombLiquidatorFunder: {
-      const xbomb = inputToken;
-      const bomb = outputToken;
-      return {
-        strategyAddress: redemptionStrategyContract.address,
-        strategyData: new ethers.utils.AbiCoder().encode(["address", "address", "address"], [inputToken, xbomb, bomb]),
-        outputToken,
-      };
     }
     case RedemptionStrategyContract.ERC4626Liquidator:
       let fee: number;

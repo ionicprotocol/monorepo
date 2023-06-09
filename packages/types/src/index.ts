@@ -8,3 +8,4 @@ export * from "./plugin";
 export * from "./rewards";
 export * from "./utils";
 export * from "./vault";
+export * from "./leverage";

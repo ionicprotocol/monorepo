@@ -15,7 +15,7 @@ import {
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
 
-import CTokenInterfaceABI from "../../abis/CTokenInterface";
+import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
 import FuseFeeDistributorABI from "../../abis/FuseFeeDistributor";
 import FusePoolDirectoryABI from "../../abis/FusePoolDirectory";
@@ -25,6 +25,7 @@ import FuseSafeLiquidatorABI from "../../abis/FuseSafeLiquidator";
 import MidasERC4626ABI from "../../abis/MidasERC4626";
 import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
 import UnitrollerABI from "../../abis/Unitroller";
+import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
@@ -41,6 +42,7 @@ import { withFlywheel } from "../modules/Flywheel";
 import { withFundOperations } from "../modules/FundOperations";
 import { withFusePoolLens } from "../modules/FusePoolLens";
 import { withFusePools } from "../modules/FusePools";
+import { withLeverage } from "../modules/Leverage";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { withVaults } from "../modules/Vaults";
@@ -310,7 +312,7 @@ export class MidasBase {
 
   async getInterestRateModel(assetAddress: string): Promise<InterestRateModel> {
     // Get interest rate model address from asset address
-    const assetContract = getContract(assetAddress, CTokenInterfaceABI, this.provider);
+    const assetContract = getContract(assetAddress, CTokenFirstExtensionABI, this.provider) as CTokenFirstExtension;
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
@@ -351,7 +353,9 @@ export class MidasBase {
 const MidasBaseWithModules = withFusePoolLens(
   withFundOperations(
     withSafeLiquidator(
-      withFusePools(withAsset(withFlywheel(withVaults(withCreateContracts(withConvertMantissa(MidasBase))))))
+      withFusePools(
+        withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(MidasBase))))))
+      )
     )
   )
 );
