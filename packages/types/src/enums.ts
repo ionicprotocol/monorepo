@@ -22,6 +22,7 @@ export enum RedemptionStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
   UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
+  UniswapV3Liquidator = "UniswapV3Liquidator",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
   GammaLpTokenLiquidator = "GammaLpTokenLiquidator",
   CurveSwapLiquidator = "CurveSwapLiquidator",
