@@ -182,7 +182,7 @@ const ClaimRewardsModal = ({
 
       const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
       const markets: string[] = [];
-      const flywhees: string[] = [];
+      const flywheels: string[] = [];
       const accrue: boolean[] = [];
 
       rewards.map((reward) => {
@@ -198,8 +198,8 @@ const ClaimRewardsModal = ({
           }
         });
 
-        if (!flywhees.includes(reward.flywheel)) {
-          flywhees.push(reward.flywheel);
+        if (!flywheels.includes(reward.flywheel)) {
+          flywheels.push(reward.flywheel);
           accrue.push(true);
         }
       });
@@ -227,7 +227,7 @@ const ClaimRewardsModal = ({
         const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
           address,
           markets,
-          flywhees,
+          flywheels,
           accrue
         );
 
