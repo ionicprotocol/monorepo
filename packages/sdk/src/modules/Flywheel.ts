@@ -121,7 +121,8 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       for (const flywheel of flywheels) {
         const rewards: FlywheelClaimableRewards["rewards"] = [];
         for (const market of marketsOfPool) {
-          const rewardOfMarket = await flywheel.callStatic["accrue(address,address)"](market, account);
+          const [rewardOfMarket] = await this.getClaimRewardsForMarkets([market], [flywheel.address], account);
+
           if (rewardOfMarket.gt(0)) {
             rewards.push({
               market,
@@ -150,10 +151,14 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         const rewards: FlywheelClaimableRewards["rewards"] = [];
         // TODO don't accrue for all markets. Check which markets/strategies are available for that specific flywheel
         // trying to accrue for a market which is not active in the flywheel will throw an error
-        const rewardOfMarket = await flywheel.callStatic["accrue(address,address)"](market, account).catch((e) => {
-          console.error(`Error while calling accrue for market ${market} and account ${account}: ${e.message}`);
-          return BigNumber.from(0);
-        });
+        const [rewardOfMarket] = await this.getClaimRewardsForMarkets([market], [flywheel.address], account).catch(
+          (e) => {
+            console.error(
+              `Error while calling accrue for market ${market}, flywheel ${flywheel.address} and account ${account}: ${e.message}`
+            );
+            return [BigNumber.from(0)];
+          }
+        );
         if (rewardOfMarket.gt(0)) {
           rewards.push({
             market,
@@ -209,6 +214,24 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         ...rewardsInfo,
       };
     }
+
+    async getClaimRewardsForMarkets(markets: string[], flywheels: string[], account: string) {
+      const fwLensRouter = this.createMidasFlywheelLensRouter();
+
+      const rewardAmounts = await fwLensRouter.callStatic.getUnclaimedRewardsByMarkets(
+        account,
+        markets,
+        flywheels,
+        Array.from(flywheels, () => true)
+      );
+
+      if (markets.includes("0x8816504d9F8F591f5069388a1FF95818b9F2DA7b")) {
+        console.log({ markets, flywheels, account, rewardAmounts });
+      }
+
+      return rewardAmounts;
+    }
+
     /** WRITE */
     getFlywheelEnabledMarkets(flywheelAddress: string) {
       return this.createMidasFlywheel(flywheelAddress).callStatic.getAllStrategies();
@@ -240,6 +263,20 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     addFlywheelCoreToComptroller(flywheelCoreAddress: string, comptrollerAddress: string) {
       const comptrollerInstance = this.createComptroller(comptrollerAddress, this.signer);
       return comptrollerInstance.functions._addRewardsDistributor(flywheelCoreAddress);
+    }
+
+    async claimRewardsForMarkets(markets: string[], flywheels: string[]) {
+      const fwLensRouter = this.createMidasFlywheelLensRouter(this.signer);
+      const account = await this.signer.getAddress();
+
+      const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
+        account,
+        markets,
+        flywheels,
+        Array.from(flywheels, () => true)
+      );
+
+      return tx;
     }
   };
 }
