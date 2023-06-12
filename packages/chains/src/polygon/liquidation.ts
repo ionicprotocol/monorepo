@@ -131,7 +131,60 @@ const liquidationDefaults: LiquidationDefaults = {
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
   ],
-  balancerPools: [],
+  balancerPools: [
+    {
+      poolAddress: underlying(assets, assetSymbols.MIMO_PAR_80_20),
+      underlyingTokens: [underlying(assets, assetSymbols.MIMO), underlying(assets, assetSymbols.PAR)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.BRZ_JBRL_STABLE_BLP),
+      underlyingTokens: [underlying(assets, assetSymbols.jBRL), underlying(assets, assetSymbols.BRZ)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+      underlyingTokens: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.PAR)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+      underlyingTokens: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.PAR)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.WMATIC_CSMATIC_STABLE_BLP),
+      underlyingTokens: [underlying(assets, assetSymbols.WMATIC), underlying(assets, assetSymbols.csMATIC)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP),
+      underlyingTokens: [underlying(assets, assetSymbols.WMATIC), underlying(assets, assetSymbols.MATICx)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP),
+      underlyingTokens: [
+        underlying(assets, assetSymbols.TETU_LINEAR_DAI),
+        underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+        underlying(assets, assetSymbols.TETU_LINEAR_USDT),
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+      underlyingTokens: [underlying(assets, assetSymbols.USDC)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.MaticX_bbaWMATIC),
+      underlyingTokens: [underlying(assets, assetSymbols.MATICx), underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.StMatic_bbaWMATIC),
+      underlyingTokens: [underlying(assets, assetSymbols.stMATIC), underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.StMatic_bbaWMATIC),
+      underlyingTokens: [underlying(assets, assetSymbols.stMATIC), underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC)],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
+      underlyingTokens: [underlying(assets, assetSymbols.WMATIC), underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC)],
+    },
+  ],
 };
 
 export default liquidationDefaults;

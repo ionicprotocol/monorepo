@@ -189,10 +189,6 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.BalancerLpTokenLiquidator,
     underlying(assets, assetSymbols.WMATIC),
   ],
-  [underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP)]: [
-    RedemptionStrategyContract.BalancerLpTokenLiquidator,
-    underlying(assets, assetSymbols.WMATIC),
-  ],
   [underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP)]: [
     RedemptionStrategyContract.BalancerSwapLiquidator,
     underlying(assets, assetSymbols.TETU_LINEAR_USDC),
@@ -206,6 +202,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.WMATIC),
   ],
   [underlying(assets, assetSymbols.StMatic_bbaWMATIC)]: [
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    underlying(assets, assetSymbols.WMATIC),
+  ],
+  [underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC)]: [
     RedemptionStrategyContract.BalancerLpTokenLiquidator,
     underlying(assets, assetSymbols.WMATIC),
   ],
