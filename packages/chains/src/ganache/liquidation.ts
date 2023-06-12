@@ -19,6 +19,7 @@ const liquidationDefaults: LiquidationDefaults = {
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 2,
   jarvisPools: [],
+  balancerPools: [],
 };
 
 export default liquidationDefaults;

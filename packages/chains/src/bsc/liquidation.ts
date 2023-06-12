@@ -27,6 +27,7 @@ const liquidationDefaults: LiquidationDefaults = {
       collateralToken: underlying(assets, assetSymbols.BUSD),
     },
   ],
+  balancerPools: [],
 };
 
 export default liquidationDefaults;

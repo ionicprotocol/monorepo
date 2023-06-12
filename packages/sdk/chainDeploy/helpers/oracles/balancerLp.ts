@@ -36,49 +36,6 @@ export const deployBalancerLpPriceOracle = async ({
   await addUnderlyingsToMpo(mpo, underlyings, blpo.address);
 };
 
-export const deployBalancerLinearLpPriceOracle = async ({
-  ethers,
-  getNamedAccounts,
-  deployments,
-  balancerLpAssets,
-}: BalancerLpFnParams): Promise<void> => {
-  const { deployer } = await getNamedAccounts();
-
-  const underlyings = balancerLpAssets.map((d) => d.lpTokenAddress);
-  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
-
-  const blplo = await deployments.deploy("BalancerLpLinearPoolPriceOracle", {
-    from: deployer,
-    args: [],
-    log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [underlyings],
-        },
-      },
-      owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
-  });
-  if (blplo.transactionHash) await ethers.provider.waitForTransaction(blplo.transactionHash);
-  console.log("BalancerLpLinearPoolPriceOracle: ", blplo.address);
-
-  const blpOracle = await ethers.getContract("BalancerLpLinearPoolPriceOracle", deployer);
-  const registeredUnderlyings = await blpOracle.getAllUnderlyings();
-
-  for (const token of balancerLpAssets) {
-    if (!registeredUnderlyings.includes(token.lpTokenAddress)) {
-      const tx: providers.TransactionResponse = await blpOracle.registerToken(token.lpTokenAddress);
-      await tx.wait();
-      console.log(`BalancerLpLinearPoolPriceOracle registered token ${token.lpTokenAddress}`);
-    }
-  }
-
-  await addUnderlyingsToMpo(mpo, underlyings, blpOracle.address);
-};
-
 export const deployBalancerStableLpPriceOracle = async ({
   ethers,
   getNamedAccounts,
@@ -195,7 +152,7 @@ export const deployBalancerLinearPoolPriceOracle = async ({
   console.log("BalancerLpLinearPoolPriceOracle: ", blpo.address);
 
   const blpOracle = await ethers.getContract("BalancerLpLinearPoolPriceOracle", deployer);
-  const registeredUnderlyings = await blpOracle.getAllUnderlyings();
+  const registeredUnderlyings = await blpOracle.callStatic.getAllUnderlyings();
 
   for (const token of balancerLinerPoolAssets) {
     if (!registeredUnderlyings.includes(token.lpTokenAddress)) {
