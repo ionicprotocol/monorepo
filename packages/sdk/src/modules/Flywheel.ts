@@ -114,9 +114,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         from: account,
       });
 
-      // get all markets of all pools
-      const allMarkets: string[] = [];
-      const allFlywheels: string[] = [];
+      const flywheelWithRewards: FlywheelClaimableRewards[] = [];
 
       await Promise.all(
         comptrollers.map(async (comptroller) => {
@@ -127,36 +125,21 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
             pool.callStatic.getRewardsDistributors(),
           ]);
 
-          // get unique market
-          markets.map((market) => {
-            if (!allMarkets.includes(market)) {
-              allMarkets.push(market);
-            }
-          });
+          const rewardAmounts = await this.getClaimableRewardsForMarkets(markets, rewardDistributors, account);
 
-          // get unique flywheel
-          rewardDistributors.map((rewardDistributor) => {
-            if (!allFlywheels.includes(rewardDistributor)) {
-              allFlywheels.push(rewardDistributor);
-            }
-          });
-        })
-      );
+          await Promise.all(
+            rewardAmounts.map(async (amount, i) => {
+              if (amount.gt(0)) {
+                const flywheel = this.createMidasFlywheel(rewardDistributors[i], this.provider);
 
-      const flywheelWithRewards: FlywheelClaimableRewards[] = [];
-
-      const rewardAmounts = await this.getClaimableRewardsForMarkets(allMarkets, allFlywheels, account);
-      await Promise.all(
-        rewardAmounts.map(async (amount, i) => {
-          if (amount.gt(0)) {
-            const flywheel = this.createMidasFlywheel(allFlywheels[i], this.provider);
-
-            flywheelWithRewards.push({
-              flywheel: flywheel.address,
-              rewardToken: await flywheel.callStatic.rewardToken(),
-              amount,
-            });
-          }
+                flywheelWithRewards.push({
+                  flywheel: flywheel.address,
+                  rewardToken: await flywheel.callStatic.rewardToken(),
+                  amount,
+                });
+              }
+            })
+          );
         })
       );
 
