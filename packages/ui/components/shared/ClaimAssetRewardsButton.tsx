@@ -10,10 +10,10 @@ import { useColors } from '@ui/hooks/useColors';
 
 const ClaimAssetRewardsButton = ({
   poolAddress,
-  assetAddress,
+  marketAddress,
   poolChainId,
 }: {
-  assetAddress: string;
+  marketAddress: string;
   poolAddress: string;
   poolChainId: number;
 }) => {
@@ -31,7 +31,7 @@ const ClaimAssetRewardsButton = ({
     isLoading,
     isRefetching,
   } = useAssetClaimableRewards({
-    assetAddress,
+    marketAddress,
     poolAddress,
     poolChainId,
   });
@@ -71,9 +71,10 @@ const ClaimAssetRewardsButton = ({
       )}
       <Box position="absolute">
         <ClaimRewardsModal
-          claimableRewards={claimableRewardsOfChain}
+          claimableRewardsPerChain={claimableRewardsOfChain}
           isLoading={isLoading || isRefetching}
           isOpen={isClaimModalOpen}
+          markets={[marketAddress]}
           onClose={closeClaimModal}
           refetch={refetchRewards}
         />
