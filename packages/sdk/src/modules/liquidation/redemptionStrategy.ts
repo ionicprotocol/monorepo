@@ -253,7 +253,35 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
-    case RedemptionStrategyContract.BalancerSwapLiquidator:
+    case RedemptionStrategyContract.BalancerSwapLiquidator: {
+      let pool;
+      for (const balancerPoolConfig of midasSdk.chainConfig.liquidationDefaults.balancerPools) {
+        let inputFound = false;
+        let outputFound = false;
+        for (const underlying of balancerPoolConfig.underlyingTokens) {
+          if (underlying == inputToken) {
+            inputFound = true;
+          } else if (underlying == outputToken) {
+            outputFound = true;
+          }
+        }
+
+        if (inputFound && outputFound) {
+          pool = balancerPoolConfig.poolAddress;
+          break;
+        }
+      }
+
+      if (pool == null) {
+        throw new Error(
+          `wrong config for the balancer liquidation pools for ${inputToken} - no such pool with output token ${outputToken}`
+        );
+      }
+
+      const strategyData = new ethers.utils.AbiCoder().encode(["address", "address"], [outputToken, pool]);
+
+      return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
+    }
     case RedemptionStrategyContract.BalancerLpTokenLiquidator: {
       const strategyData = new ethers.utils.AbiCoder().encode(["address"], [outputToken]);
 
