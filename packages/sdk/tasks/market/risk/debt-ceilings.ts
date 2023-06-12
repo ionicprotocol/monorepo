@@ -88,7 +88,6 @@ task("market:set-debt-ceiling-whitelist", "Whitelists an account for the borrowi
         console.log(
           `Whitelist status is already ${whitelist} for ${account}: borrow of ${borrow} with collat ${collat}`
         );
-        return;
       } else {
         console.log(`Whitelist status is ${whitelistStatus}, setting to ${whitelist}`);
         const tx = await pool._setBorrowCapForCollateralWhitelist(
