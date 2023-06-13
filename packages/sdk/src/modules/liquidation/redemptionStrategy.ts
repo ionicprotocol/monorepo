@@ -238,6 +238,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
+    case RedemptionStrategyContract.CurveSwapLiquidatorFunder:
     case RedemptionStrategyContract.CurveSwapLiquidator: {
       const curveV1Oracle = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry
         ? midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address

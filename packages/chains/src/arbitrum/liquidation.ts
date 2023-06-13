@@ -13,7 +13,12 @@ const liquidationDefaults: LiquidationDefaults = {
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 20,
   jarvisPools: [],
-  balancerPools: [],
+  balancerPools: [
+    {
+      poolAddress: "0x89dc7e71e362faF88D92288fE2311D25c6a1B5E0",
+      underlyingTokens: [underlying(assets, assetSymbols.WETH), underlying(assets, assetSymbols.OHM)],
+    },
+  ],
 };
 
 export default liquidationDefaults;
