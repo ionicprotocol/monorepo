@@ -145,7 +145,11 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 </AvatarGroup>
               </VStack>
             )}
-            <ClaimPoolRewardsButton poolAddress={pool.comptroller} poolChainId={pool.chainId} />
+            <ClaimPoolRewardsButton
+              poolAddress={pool.comptroller}
+              poolChainId={pool.chainId}
+              poolMarkets={pool.assets.map((asset) => asset.cToken)}
+            />
           </Grid>
         </VStack>
         <VStack>
