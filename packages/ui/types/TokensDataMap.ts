@@ -15,6 +15,7 @@ export type TokensDataMap = { [address: string]: MidasApiTokenData };
 export interface MarketData extends NativePricedFuseAsset {
   borrowBalanceFiat: number;
   liquidityFiat: number;
+  netSupplyBalanceFiat: number;
   supplyBalanceFiat: number;
   totalBorrowFiat: number;
   totalSupplyFiat: number;
