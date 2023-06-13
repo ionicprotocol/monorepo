@@ -6,6 +6,7 @@ import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModa
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useAllMarkets } from '@ui/hooks/rewards/useAllMarkets';
 import { useCrossAllClaimableRewards } from '@ui/hooks/rewards/useCrossAllClaimableRewards';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
@@ -32,6 +33,8 @@ const ClaimAllRewardsButton: React.FC = () => {
     isRefetching,
   } = useCrossAllClaimableRewards([...enabledChains]);
 
+  const { data: allMarkets } = useAllMarkets(currentChain?.id);
+
   useEffect(() => {
     if (crossAllClaimableRewards) {
       const _allClaimableRewards: { [chainId: string]: FlywheelClaimableRewards[] } = {};
@@ -54,9 +57,10 @@ const ClaimAllRewardsButton: React.FC = () => {
     <>
       {currentChain && (
         <ClaimRewardsModal
-          claimableRewards={allClaimableRewards}
+          claimableRewardsPerChain={allClaimableRewards}
           isLoading={isLoading || isRefetching}
           isOpen={isClaimModalOpen}
+          markets={allMarkets}
           onClose={closeClaimModal}
           refetch={refetch}
         />

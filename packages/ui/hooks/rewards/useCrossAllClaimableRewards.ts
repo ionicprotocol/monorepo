@@ -17,7 +17,7 @@ export const useCrossAllClaimableRewards = (chainIds: SupportedChains[]) => {
               const sdk = getSdk(Number(chainId));
 
               if (sdk) {
-                return { [chainId.toString()]: await sdk.getFlywheelClaimableRewards(address) };
+                return { [chainId.toString()]: await sdk.getAllFlywheelClaimableRewards(address) };
               } else {
                 throw new Error('sdk not available');
               }
