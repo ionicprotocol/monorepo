@@ -50,9 +50,20 @@ export const UserStats = ({
         underlying: string;
       }[] = [];
 
+      let _estimatedUsd = 0;
+
       assets.map((asset) => {
+        _estimatedUsd +=
+          totalSupplyApyPerAsset[asset.cToken].apy * asset.supplyBalanceFiat +
+          (totalSupplyApyPerAsset[asset.cToken].totalApy -
+            totalSupplyApyPerAsset[asset.cToken].apy) *
+            asset.netSupplyBalanceFiat;
+
         _totalApy +=
-          (totalSupplyApyPerAsset[asset.cToken] * asset.supplyBalanceNative) /
+          (totalSupplyApyPerAsset[asset.cToken].apy * asset.supplyBalanceNative +
+            (totalSupplyApyPerAsset[asset.cToken].totalApy -
+              totalSupplyApyPerAsset[asset.cToken].apy) *
+              asset.netSupplyBalanceNative) /
           totalSupplyBalanceNative;
 
         if (asset.supplyBalanceNative !== 0) {
@@ -60,18 +71,24 @@ export const UserStats = ({
             utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals.toNumber())
           );
 
+          const netSuppliedNum = parseFloat(
+            utils.formatUnits(asset.netSupplyBalance, asset.underlyingDecimals.toNumber())
+          );
+
           _estimatedPerAsset.push({
-            apy: totalSupplyApyPerAsset[asset.cToken] * 100,
+            apy: totalSupplyApyPerAsset[asset.cToken].totalApy * 100,
             chainId: Number(asset.chainId),
-            estimated: totalSupplyApyPerAsset[asset.cToken] * suppliedNum,
+            estimated:
+              totalSupplyApyPerAsset[asset.cToken].apy * suppliedNum +
+              (totalSupplyApyPerAsset[asset.cToken].totalApy -
+                totalSupplyApyPerAsset[asset.cToken].apy) *
+                netSuppliedNum,
             supplied: smallFormatter(suppliedNum),
             symbol: asset.underlyingSymbol,
             underlying: asset.underlyingToken,
           });
         }
       });
-
-      const _estimatedUsd = totalSupplyBalanceFiat * _totalApy;
 
       return {
         estimatedPerAsset: _estimatedPerAsset,

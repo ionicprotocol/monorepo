@@ -208,7 +208,7 @@ export const SupplyApy = ({
           <VStack alignItems={'flex-end'} spacing={0.5}>
             {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
               <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
-                {(totalSupplyApyPerAsset[asset.cToken] * 100).toFixed(2)}%
+                {(totalSupplyApyPerAsset[asset.cToken].totalApy * 100).toFixed(2)}%
               </Text>
             )}
           </VStack>
