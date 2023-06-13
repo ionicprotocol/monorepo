@@ -168,7 +168,7 @@
       "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0xC7F7Cf4190aebb6f0daD617ab6a0E334737925f8"
+      "address": "0xe407Fa23774Ad542b6826674d3cb9467dBA09e49"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"
@@ -177,7 +177,7 @@
       "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x244E87B134CFa924DB9e6867a0E7AF50ca3A9e12"
+      "address": "0x1d4854FB034d974774120648F5CA40368c557596"
     },
     "LooplessFlywheelBooster": {
       "address": "0x8ac339fB1857cc2986941C50c4234EfC47F73424"
@@ -258,7 +258,7 @@
       "address": "0xFe44E528caF2F391dEBA6fd5beaa5d530b6bf8A3"
     },
     "XBombLiquidatorFunder": {
-      "address": "0x153C0DB51dEb8c29ab1E9225F0f03bcEEE26E54f"
+      "address": "0xC875a8D8E8a593953115131697a788faEAa37109"
     },
     "XBombSwapTDai": {
       "address": "0xd816eb4660615BBF080ddf425F28ea4AF30d04D5"

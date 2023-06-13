@@ -6,8 +6,10 @@ import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidat
 export default task(
   "config:strategies",
   "Configure the redemption and funding strategies in the AddressesProvider for testing purposes"
-).setAction(async ({}, { ethers, getNamedAccounts, getChainId }) => {
+).setAction(async ({}, { ethers, getNamedAccounts, deployments, getChainId }) => {
   const chainId = parseInt(await getChainId());
+  const { deployer } = await getNamedAccounts();
+
   await configureAddressesProviderStrategies({
     ethers,
     getNamedAccounts,
