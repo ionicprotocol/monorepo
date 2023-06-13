@@ -355,4 +355,25 @@ export const STRATEGY_HELP = {
       },
     },
   },
+  [Strategy.Dyson4626]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "Dyson strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "Dyson strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "Dyson strategy is battle tested",
+      },
+    },
+  },
 };
