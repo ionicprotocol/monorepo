@@ -35,7 +35,7 @@ export interface BeefyPlugin extends AbstractPlugin {
 export interface DysonPlugin extends AbstractPlugin {
   strategy: Strategy.Dyson4626;
   apyDocsUrl: `https://app.dyson.money/#/pools?id=${string}`;
-  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png";
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/dyson.png";
 }
 
 export interface DotDotPlugin extends AbstractPlugin {
