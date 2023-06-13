@@ -61,7 +61,7 @@ export function useAllFundedInfo() {
           [key: string]: FlywheelClaimableRewards[];
         } = {};
         let assetInfos: UseAssetsData = {};
-        const totalSupplyAPYs: { [market: string]: number } = {};
+        const totalSupplyAPYs: { [market: string]: { apy: number; totalApy: number } } = {};
         const borrowAPYs: { [market: string]: number } = {};
         const rewards: UseRewardsData = {};
 
@@ -160,11 +160,13 @@ export function useAllFundedInfo() {
                       }
 
                       for (const asset of assets) {
-                        let marketTotalAPY =
+                        const apy =
                           sdk.ratePerBlockToAPY(
                             asset.supplyRatePerBlock,
                             getBlockTimePerMinuteByChainId(Number(chainId))
                           ) / 100;
+
+                        let marketTotalAPY = apy;
 
                         if (asset.underlyingSymbol === assetSymbols.ankrBNB && ankrBNBApr) {
                           marketTotalAPY += Number(ankrBNBApr) / 100;
@@ -183,7 +185,7 @@ export function useAllFundedInfo() {
                           });
                         }
 
-                        totalSupplyAPYs[asset.cToken] = marketTotalAPY;
+                        totalSupplyAPYs[asset.cToken] = { apy, totalApy: marketTotalAPY };
                       }
 
                       // get borrowAPYs
