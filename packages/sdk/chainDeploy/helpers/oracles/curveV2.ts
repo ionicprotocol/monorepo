@@ -16,7 +16,7 @@ export const deployCurveV2Oracle = async ({
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
-  //// CurveLpTokenPriceOracleNoRegistry
+  //// CurveV2PriceOracle
   const cpo = await deployments.deploy("CurveV2PriceOracle", {
     from: deployer,
     args: [],
@@ -25,7 +25,7 @@ export const deployCurveV2Oracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], []],
+          args: [curveV2OraclePools.map((c) => c.token), curveV2OraclePools.map((c) => c.pool)],
         },
       },
       owner: deployer,

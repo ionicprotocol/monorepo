@@ -250,6 +250,11 @@ export type CurveV2OracleLpFnParams = ChainDeployFnParams & {
   curveV2OraclePools: CurveV2OracleConfig[];
 };
 
+export type WstEthOracleFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  assets: SupportedAsset[];
+};
+
 export type DiaStDotFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };

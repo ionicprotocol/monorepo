@@ -2,6 +2,7 @@ import { ethereum } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
+import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   deployBalancerLinearPoolPriceOracle,
@@ -11,7 +12,9 @@ import {
   deployCurveV2Oracle,
   deployDiaOracle,
   deployErc4626PriceOracle,
+  deployFlywheelWithDynamicRewards,
   deployUniswapV3Oracle,
+  deployWstEthOracle,
 } from "../helpers";
 import {
   BalancerLinearPoolAsset,
@@ -230,6 +233,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     chainlinkAssets,
   });
 
+  /// WstEth Oracle
+  await deployWstEthOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets,
+  });
+
   //// deploy Curve V2 price oracle
   await deployCurveV2Oracle({
     run,
@@ -319,13 +332,111 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   ////
 
   // Plugins & Rewards
-  //   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
-  //     ethers,
-  //     getNamedAccounts,
-  //     deployments,
-  //     run,
-  //     deployConfig,
-  //   });
+  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+  });
 
-  //   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
+  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
+
+  //// Liquidator Redemption Strategies
+
+  //// UniswapLpTokenLiquidator
+  //// Balancer Lp token liquidator
+  const balancerLpTokenLiquidator = await deployments.deploy("BalancerLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (balancerLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerLpTokenLiquidator.transactionHash);
+  console.log("BalancerLpTokenLiquidator: ", balancerLpTokenLiquidator.address);
+
+  //// Balancer Swap token liquidator
+  const balancerSwapTokenLiquidator = await deployments.deploy("BalancerSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (balancerSwapTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerSwapTokenLiquidator.transactionHash);
+  console.log("BalancerSwapLiquidator: ", balancerSwapTokenLiquidator.address);
+
+  //// CurveLPLiquidator
+  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenLiquidatorNoRegistry.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
+  console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
+
+  // CurveSwapLiquidator
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
+
+  // UniswapV3Liquidator
+  const uniswapV3Liquidator = await deployments.deploy("UniswapV3Liquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (uniswapV3Liquidator.transactionHash)
+    await ethers.provider.waitForTransaction(uniswapV3Liquidator.transactionHash);
+  console.log("UniswapV3Liquidator: ", uniswapV3Liquidator.address);
+
+  // curve swap liquidator funder - TODO replace the CurveSwapLiquidator above
+  const curveSwapLiquidatorFunder = await deployments.deploy("CurveSwapLiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
+  console.log("CurveSwapLiquidatorFunder: ", curveSwapLiquidatorFunder.address);
+
+  //// Uniswap V3 Liquidator Funder
+  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+
+  /// Addresses Provider
+  const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+  /// set BalancerLpStablePoolPriceOracle
+  const balancerLpStablePoolPriceOracle = await ethers.getContractOrNull("BalancerLpStablePoolPriceOracle", deployer);
+  const balancerLpStablePoolPriceOracleAp = await addressesProvider.callStatic.getAddress(
+    "BalancerLpStablePoolPriceOracle"
+  );
+  if (
+    balancerLpStablePoolPriceOracle &&
+    balancerLpStablePoolPriceOracleAp !== balancerLpStablePoolPriceOracle.address
+  ) {
+    const tx = await addressesProvider.setAddress(
+      "BalancerLpStablePoolPriceOracle",
+      balancerLpStablePoolPriceOracle.address
+    );
+    console.log("setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
+    await tx.wait();
+    console.log("mined setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
+  }
 };

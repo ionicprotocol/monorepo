@@ -1,7 +1,6 @@
 import { chainIdToConfig } from "@midas-capital/chains";
 
 import { ILiquidatorsRegistry } from "../../../typechain/ILiquidatorsRegistry";
-import { LiquidatorsRegistry } from "../../../typechain/LiquidatorsRegistry";
 import { LiquidatorsRegistryConfigFnParams } from "../types";
 
 export const configureLiquidatorsRegistry = async ({
@@ -14,7 +13,12 @@ export const configureLiquidatorsRegistry = async ({
   const strategies: string[] = [];
   const inputTokens: string[] = [];
   const outputTokens: string[] = [];
-  const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as ILiquidatorsRegistry;
+  const lr = await ethers.getContract("LiquidatorsRegistry");
+  const liquidatorsRegistry = (await ethers.getContractAt(
+    "ILiquidatorsRegistry",
+    lr.address,
+    deployer
+  )) as ILiquidatorsRegistry;
 
   for (const inputToken in chainIdToConfig[chainId].redemptionStrategies) {
     const [redemptionStrategyType, outputToken] = chainIdToConfig[chainId].redemptionStrategies[inputToken];

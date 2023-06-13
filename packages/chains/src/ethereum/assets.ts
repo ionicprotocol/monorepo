@@ -13,6 +13,7 @@ const PAR = "0x68037790A0229e9Ce6EaA8A99ea92964106C4703";
 const USDT = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 const eUSD = "0x97de57eC338AB5d51557DA3434828C5DbFaDA371";
 const GOHM = "0x0ab87046fBb341D058F17CBC4c1133F25a20a52f";
+const OHM = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5";
 const FRAX = "0x853d955aCEf822Db058eb8505911ED77F175b99e";
 const MIM = "0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3";
 const frxETH = "0x5E8422345238F34275888049021821E8E08CAa1f";
@@ -87,6 +88,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
     extraDocs: defaultDocs("https://etherscan.io", GOHM),
+  },
+  {
+    symbol: assetSymbols.OHM,
+    underlying: GOHM,
+    name: "Olympus V2",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://etherscan.io", OHM),
   },
   {
     symbol: assetSymbols.PAR,
