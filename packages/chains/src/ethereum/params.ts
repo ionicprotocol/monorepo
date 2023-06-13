@@ -12,7 +12,7 @@ const specificParams: ChainParams = {
     name: "Ethereum Mainnet",
     shortName: "Ethereum",
     uniswapV3Fees: {},
-    img: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.png",
     blockExplorerUrls: { default: { name: "etherscan", url: "https://etherscan.io" } },
     rpcUrls: {
       default: { http: ["https://rpc.ankr.com/eth"] },
@@ -29,7 +29,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#7A88A1",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.png",
     },
   },
 };
