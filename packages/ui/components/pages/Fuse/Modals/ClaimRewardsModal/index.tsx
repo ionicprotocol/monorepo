@@ -2,8 +2,8 @@ import { Box, Button, HStack, Img, Spinner, Text, VStack } from '@chakra-ui/reac
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import type { SupportedAsset } from '@midas-capital/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
-import { BigNumber, utils } from 'ethers';
-import { useCallback, useMemo, useState } from 'react';
+import { utils } from 'ethers';
+import { useCallback, useEffect, useState } from 'react';
 import { BsFillArrowRightCircleFill, BsFillGiftFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -32,21 +32,12 @@ const ClaimableToken = ({
   onClaim: () => void;
   rewardChainId: string;
 }) => {
+  const { amount, rewardToken } = data;
   const { currentChain } = useMultiMidas();
-  const { rewards, rewardToken } = useMemo(() => data, [data]);
   const { data: tokenData } = useTokenData(rewardToken, Number(rewardChainId));
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
   const chainConfig = useChainConfig(Number(rewardChainId));
-
-  const totalRewardsString = useMemo(
-    () =>
-      utils.formatUnits(
-        rewards.reduce((acc, curr) => (curr ? acc.add(curr.amount) : acc), BigNumber.from(0)),
-        tokenData?.decimals
-      ),
-    [rewards, tokenData?.decimals]
-  );
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -60,7 +51,7 @@ const ClaimableToken = ({
     <HStack justify="space-between" width="90%">
       {currentChain && (
         <TokenIcon
-          address={rewardToken}
+          address={data.rewardToken}
           chainId={Number(rewardChainId)}
           size="xs"
           withMotion={false}
@@ -68,7 +59,7 @@ const ClaimableToken = ({
         />
       )}
       <Box minWidth="140px">
-        <SimpleTooltip label={totalRewardsString}>
+        <SimpleTooltip label={utils.formatUnits(amount, tokenData?.decimals)}>
           <Text
             fontSize={'16'}
             fontWeight="bold"
@@ -76,7 +67,7 @@ const ClaimableToken = ({
             textAlign="end"
             width="fit-content"
           >
-            {dynamicFormatter(Number(totalRewardsString), {
+            {dynamicFormatter(Number(utils.formatUnits(amount, tokenData?.decimals)), {
               maximumFractionDigits: 8,
               minimumFractionDigits: 4,
             })}
@@ -143,15 +134,17 @@ const ClaimableToken = ({
 };
 
 const ClaimRewardsModal = ({
+  claimableRewardsPerChain,
   isOpen,
   isLoading,
+  markets,
   onClose,
-  claimableRewards,
   refetch,
 }: {
-  claimableRewards: { [chainId: string]: FlywheelClaimableRewards[] };
+  claimableRewardsPerChain: { [chainId: string]: FlywheelClaimableRewards[] };
   isLoading: boolean;
   isOpen: boolean;
+  markets?: string[];
   onClose: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: () => Promise<any>;
@@ -159,6 +152,7 @@ const ClaimRewardsModal = ({
   const { currentSdk, currentChain, signer, address } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
+  const chainConfig = useChainConfig(Number(currentSdk?.chainId));
   const [isAllClaiming, setIsAllClaiming] = useState<boolean>(false);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([]);
@@ -167,41 +161,43 @@ const ClaimRewardsModal = ({
   const [assetPerRewardToken, setAssetPerRewardToken] = useState<{
     [rewardToken: string]: SupportedAsset | undefined;
   }>({});
+  const [claimableRewards, setClaimableRewards] = useState<FlywheelClaimableRewards[]>([]);
 
-  const chainConfig = useChainConfig(Number(currentSdk?.chainId));
-  const claimableRewardsOfCurrentChain = useMemo(() => {
-    return currentSdk ? claimableRewards[currentSdk.chainId.toString()] : undefined;
-  }, [claimableRewards, currentSdk]);
+  useEffect(() => {
+    if (
+      currentSdk &&
+      claimableRewardsPerChain[currentSdk.chainId.toString()] &&
+      claimableRewardsPerChain[currentSdk.chainId.toString()].length > 0
+    ) {
+      setClaimableRewards(claimableRewardsPerChain[currentSdk.chainId.toString()]);
+    }
+  }, [currentSdk, claimableRewardsPerChain]);
 
   const claimRewards = useCallback(
-    (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
-      if (!currentSdk || !currentChain || !signer || !address || !rewards || rewards.length === 0)
+    (claimableRewards: FlywheelClaimableRewards[], markets: string[]) => async () => {
+      if (
+        !currentSdk ||
+        !currentChain ||
+        !signer ||
+        !address ||
+        markets.length === 0 ||
+        claimableRewards.length === 0
+      )
         return;
 
       setIsAllClaiming(true);
 
       const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
-      const markets: string[] = [];
-      const flywhees: string[] = [];
-      const accrue: boolean[] = [];
+      const flywheels: string[] = [];
 
-      rewards.map((reward) => {
+      claimableRewards.map((reward) => {
+        flywheels.push(reward.flywheel);
+
         const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
           return asset.underlying === reward.rewardToken;
         });
 
         _assetPerRewardToken[reward.rewardToken] = asset;
-
-        reward.rewards.map((rw) => {
-          if (!markets.includes(rw.market)) {
-            markets.push(rw.market);
-          }
-        });
-
-        if (!flywhees.includes(reward.flywheel)) {
-          flywhees.push(reward.flywheel);
-          accrue.push(true);
-        }
       });
 
       const _steps: TxStep[] = [
@@ -222,14 +218,7 @@ const ClaimRewardsModal = ({
       setActiveStep(1);
 
       try {
-        const fwLensRouter = currentSdk.createMidasFlywheelLensRouter(currentSdk.signer);
-
-        const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
-          address,
-          markets,
-          flywhees,
-          accrue
-        );
+        const tx = await currentSdk.claimRewardsForMarkets(markets, flywheels);
 
         addRecentTransaction({
           description: `Claim all rewards`,
@@ -256,7 +245,8 @@ const ClaimRewardsModal = ({
       } catch (error) {
         const sentryProperties = {
           chainId: currentSdk.chainId,
-          rewards: rewards,
+          flywheels,
+          markets,
         };
         const sentryInfo = {
           contextName: 'Claiming all rewards',
@@ -275,7 +265,7 @@ const ClaimRewardsModal = ({
     <MidasModal
       body={
         <VStack m={4} maxHeight="450px" overflowY="auto">
-          {Object.values(claimableRewards).length === 0 ? (
+          {Object.values(claimableRewardsPerChain).length === 0 ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
                 No rewards available to be claimed
@@ -283,25 +273,28 @@ const ClaimRewardsModal = ({
             </Center>
           ) : !isConfirmed ? (
             <>
-              {Object.entries(claimableRewards).map(([key, value]) => {
-                return value.map((cr: FlywheelClaimableRewards, index: number) => (
-                  <ClaimableToken
-                    data={cr}
-                    isAllClaiming={isAllClaiming}
-                    key={index}
-                    onClaim={claimRewards(
-                      currentSdk && key === currentSdk.chainId.toString() ? [cr] : null
-                    )}
-                    rewardChainId={key}
-                  />
-                ));
+              {Object.entries(claimableRewardsPerChain).map(([key, value]) => {
+                return value.map((cr: FlywheelClaimableRewards, index: number) =>
+                  currentSdk && markets ? (
+                    <ClaimableToken
+                      data={cr}
+                      isAllClaiming={isAllClaiming}
+                      key={index}
+                      onClaim={claimRewards(
+                        key === currentSdk.chainId.toString() ? [cr] : [],
+                        markets
+                      )}
+                      rewardChainId={key}
+                    />
+                  ) : null
+                );
               })}
               <Center pt={4}>
-                {claimableRewardsOfCurrentChain && claimableRewardsOfCurrentChain.length > 0 && (
+                {markets && claimableRewards && claimableRewards.length > 0 ? (
                   <Button
                     disabled={isAllClaiming}
                     isLoading={isAllClaiming}
-                    onClick={claimRewards(claimableRewardsOfCurrentChain)}
+                    onClick={claimRewards(claimableRewards, markets)}
                     width="100%"
                   >
                     {chainConfig ? (
@@ -319,7 +312,7 @@ const ClaimRewardsModal = ({
                       Claim All
                     </Text>
                   </Button>
-                )}
+                ) : null}
               </Center>
             </>
           ) : currentSdk ? (

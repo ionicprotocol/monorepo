@@ -8,6 +8,7 @@ import ComptrollerABI from "../../abis/Comptroller";
 import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
 import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
+import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
 import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import LeveredPositionABI from "../../abis/LeveredPosition";
@@ -26,6 +27,7 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { FusePoolLensSecondary } from "../../typechain/FusePoolLensSecondary";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
@@ -141,6 +143,14 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         LeveredPositionsLensABI,
         signerOrProvider
       ) as LeveredPositionsLens;
+    }
+
+    createFusePoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.FusePoolLensSecondary.address,
+        FusePoolLensSecondaryABI,
+        signerOrProvider
+      ) as FusePoolLensSecondary;
     }
   };
 }

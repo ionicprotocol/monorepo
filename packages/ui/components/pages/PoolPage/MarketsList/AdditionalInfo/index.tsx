@@ -74,7 +74,7 @@ export const AdditionalInfo = ({
         ) : (
           <HStack>
             <ClaimAssetRewardsButton
-              assetAddress={asset.cToken}
+              marketAddress={asset.cToken}
               poolAddress={comptrollerAddress}
               poolChainId={poolChainId}
             />

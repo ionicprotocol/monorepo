@@ -9,6 +9,7 @@ export enum Strategy {
   MiniChefV2 = "MiniChefV2",
   HelioHAY = "HelioHAY",
   ThenaERC4626 = "ThenaERC4626",
+  Dyson4626 = "Dyson4626",
 }
 
 export interface AbstractPlugin {
@@ -29,6 +30,12 @@ export interface BeefyPlugin extends AbstractPlugin {
   strategy: Strategy.Beefy;
   apyDocsUrl: `https://app.beefy.finance/vault/${string}`;
   icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png";
+}
+
+export interface DysonPlugin extends AbstractPlugin {
+  strategy: Strategy.Dyson4626;
+  apyDocsUrl: `https://app.dyson.money/#/pools?id=${string}`;
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/dyson.png";
 }
 
 export interface DotDotPlugin extends AbstractPlugin {
@@ -95,6 +102,7 @@ export interface DiffusionMiniChefV2Plugin extends AbstractPlugin {
 
 export type SupportedPlugin =
   | BeefyPlugin
+  | DysonPlugin
   | DotDotPlugin
   | MimoPlugin
   | BombPlugin

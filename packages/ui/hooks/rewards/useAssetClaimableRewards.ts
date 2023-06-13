@@ -7,10 +7,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useAssetClaimableRewards = ({
   poolAddress,
-  assetAddress,
+  marketAddress,
   poolChainId,
 }: {
-  assetAddress: string;
+  marketAddress: string;
   poolAddress: string;
   poolChainId: number;
 }) => {
@@ -18,17 +18,23 @@ export const useAssetClaimableRewards = ({
   const sdk = useSdk(poolChainId);
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
-    ['useAssetClaimableRewards', poolAddress, assetAddress, address, sdk?.chainId],
-    () => {
+    ['useAssetClaimableRewards', poolAddress, marketAddress, address, sdk?.chainId],
+    async () => {
       if (sdk && address) {
-        return sdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
+        const flywheelClaimableRewardsForAsset = await sdk.getFlywheelClaimableRewardsForAsset(
+          poolAddress,
+          marketAddress,
+          address
+        );
+
+        return flywheelClaimableRewardsForAsset;
       }
 
       return null;
     },
     {
       cacheTime: Infinity,
-      enabled: !!poolAddress && !!address && !!sdk,
+      enabled: !!poolAddress && !!marketAddress && !!address && !!sdk,
       staleTime: Infinity,
     }
   );
@@ -41,20 +47,20 @@ export const getAssetsClaimableRewards = async (
   address: string
 ) => {
   const allRewards = await Promise.all(
-    assetsAddress.map((assetAddress) => {
+    assetsAddress.map(async (assetAddress) => {
       try {
-        return sdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
+        return await sdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
       } catch (error) {
         console.warn(`Unable to fetch claimable rewards for asset: '${assetAddress}'`, error);
-        return undefined;
+        return null;
       }
     })
   );
 
   const res: { [key: string]: FlywheelClaimableRewards[] } = {};
-  allRewards.map((reward) => {
+  allRewards.map((reward, i) => {
     if (reward && reward.length !== 0) {
-      res[reward[0].rewards[0].market] = reward;
+      res[assetsAddress[i]] = reward;
     }
   });
 

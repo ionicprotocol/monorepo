@@ -181,15 +181,15 @@ const deployedPlugins: DeployedPlugins = {
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
   // BeefyERC4626_StMatic-bba-WMATIC_0x6107D9186D710cA8BaC2B9b2b8b26a045D9f994b.json
-  "0x9d71BFb9F408996D9939334FD81e391e3FC72d2A": {
+  "0x6732E47b15919EaA4a876bC1007bdCa19020d4ED": {
     market: "0x6107D9186D710cA8BaC2B9b2b8b26a045D9f994b",
-    name: "Beefy StMatic-bba-WMATIC Vault",
-    strategy: Strategy.Beefy,
-    apyDocsUrl: "https://app.beefy.finance/vault/balancer-stmatic-bbawmatic",
+    name: "Dyson StMatic-bba-WMATIC Vault",
+    strategy: Strategy.Dyson4626,
+    apyDocsUrl: "https://app.dyson.money/#/pools?id=balancer-stmatic-bbawmatic",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/mimo-pool",
     underlying: underlying(assets, assetSymbols.StMatic_bbaWMATIC),
-    otherParams: ["0xf0695B22d8F416FEC35E02668aE01B9EEAF96a0D", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    otherParams: ["0x18661C2527220aBE021F5b52351d5c4210E0E2c6", "10"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/dyson.png",
   },
   // BeefyERC4626_USDR3CRV_0x24691492A0B99404F21B1509B1f41Ea3927c8Da9.json
   "0xb341c397dEe4098c53428bF4f8BC90F79BFDf4bA": {

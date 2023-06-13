@@ -78,6 +78,9 @@ export function getEnabledChains() {
   if (config.isFantomEnabled) {
     enabledChains.push(SupportedChains.fantom);
   }
+  if (config.isEthereumEnabled) {
+    enabledChains.push(SupportedChains.ethereum);
+  }
   if (config.isEvmosEnabled) {
     enabledChains.push(SupportedChains.evmos);
   }

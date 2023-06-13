@@ -10,7 +10,7 @@ export const useAllClaimableRewards = () => {
     ['useAllClaimableRewards', currentSdk?.chainId, address],
     () => {
       if (currentSdk && address) {
-        return currentSdk.getFlywheelClaimableRewards(address);
+        return currentSdk.getAllFlywheelClaimableRewards(address);
       } else {
         return null;
       }
