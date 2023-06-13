@@ -145,10 +145,6 @@ const liquidationDefaults: LiquidationDefaults = {
       underlyingTokens: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.PAR)],
     },
     {
-      poolAddress: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
-      underlyingTokens: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.PAR)],
-    },
-    {
       poolAddress: underlying(assets, assetSymbols.WMATIC_CSMATIC_STABLE_BLP),
       underlyingTokens: [underlying(assets, assetSymbols.WMATIC), underlying(assets, assetSymbols.csMATIC)],
     },

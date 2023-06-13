@@ -209,7 +209,7 @@ export const assets: SupportedAsset[] = [
     underlying: frxETH,
     name: "Frax ETH",
     decimals: 18,
-    oracle: OracleTypes.UniswapV3PriceOracle,
+    oracle: OracleTypes.CurveV2PriceOracle,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
     <p>You can get frxETH by minting it with your ETH </code> on <a href="https://app.frax.finance/frxeth/mint" target="_blank" style="color: #BCAC83; cursor="pointer">Frax Finance</a></p>`,
@@ -272,19 +272,6 @@ export const assets: SupportedAsset[] = [
       "0x32296969ef14eb0c6d29669c550d4a0449130230000200000000000000000080",
       "wstETH/WETH Stable LP",
       WSTETH_WETH_STABLE_BPT
-    ),
-  },
-  {
-    symbol: assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT,
-    underlying: WSTETH_RETH_FRXETH_STABLE_BPT,
-    name: "wstETH/rETH/frxETH Stable LP",
-    decimals: 18,
-    oracle: OracleTypes.BalancerLpStablePoolPriceOracle,
-    extraDocs: balancerDocs(
-      "ethereum",
-      "0x5aee1e99fe86960377de9f88689616916d5dcabe000000000000000000000467",
-      "wstETH/rETH/frxETH Stable LP",
-      WSTETH_RETH_FRXETH_STABLE_BPT
     ),
   },
   {

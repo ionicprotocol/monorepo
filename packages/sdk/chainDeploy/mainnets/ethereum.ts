@@ -102,11 +102,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: assetSymbols.ANKR,
-    aggregator: "0x7eed379bf00005CfeD29feD4009669dE9Bcc21ce",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
     symbol: assetSymbols.stETH,
     aggregator: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -214,6 +209,10 @@ const curveV2OraclePools: CurveV2OracleConfig[] = [
   {
     token: underlying(assets, assetSymbols.eUSD),
     pool: "0x880F2fB3704f1875361DE6ee59629c6c6497a5E3",
+  },
+  {
+    token: underlying(assets, assetSymbols.frxETH),
+    pool: "0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577",
   },
 ];
 
