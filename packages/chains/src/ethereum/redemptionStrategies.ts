@@ -34,7 +34,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
 
   // Balancer and Curve Swaps
-  [underlying(assets, assetSymbols.eUSD)]: [RedemptionStrategyContract.CurveSwapLiquidator, USDC],
+  [underlying(assets, assetSymbols.eUSD)]: [RedemptionStrategyContract.CurveSwapLiquidatorFunder, USDC],
   [underlying(assets, assetSymbols.wstETH)]: [RedemptionStrategyContract.BalancerSwapLiquidator, WETH],
   [underlying(assets, assetSymbols.rETH)]: [RedemptionStrategyContract.BalancerSwapLiquidator, wstETH],
   [underlying(assets, assetSymbols.cbETH)]: [RedemptionStrategyContract.BalancerSwapLiquidator, wstETH],
