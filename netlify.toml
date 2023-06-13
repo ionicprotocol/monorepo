@@ -44,6 +44,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
+ETHEREUM = "true"
 IS_SENTRY_ENABLED = "true"
 
 [functions]

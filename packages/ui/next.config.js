@@ -9,6 +9,7 @@ nextConfig = {
   env: {
     ARBITRUM: process.env.ARBITRUM,
     BSC: process.env.BSC,
+    ETHEREUM: process.env.ETHEREUM,
     EVMOS: process.env.EVMOS,
     FANTOM: process.env.FANTOM,
     FEATURE_CREATE_POOL: process.env.FEATURE_CREATE_POOL,

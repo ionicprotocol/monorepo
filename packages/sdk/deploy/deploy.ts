@@ -13,7 +13,6 @@ import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
-import { LeveredPositionFactoryExtension } from "../typechain/LeveredPositionFactoryExtension";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
@@ -554,26 +553,28 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   ///
 
-  //// OPTIMIZED VAULTS
-  //// Deploy vaults registry
-  console.log("Deploying the optimized APR vaults registry");
-  const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
-    from: deployer,
-    log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [],
+  // OPTIMIZED VAULTS
+  // Deploy vaults registry
+  if (chainId !== 1) {
+    console.log("Deploying the optimized APR vaults registry");
+    const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
+      from: deployer,
+      log: true,
+      proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [],
+          },
         },
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: deployer,
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
-    },
-    waitConfirmations: 1,
-  });
-  if (vaultsRegistry.transactionHash) await ethers.provider.waitForTransaction(vaultsRegistry.transactionHash);
-  console.log("OptimizedVaultsRegistry: ", vaultsRegistry.address);
+      waitConfirmations: 1,
+    });
+    if (vaultsRegistry.transactionHash) await ethers.provider.waitForTransaction(vaultsRegistry.transactionHash);
+    console.log("OptimizedVaultsRegistry: ", vaultsRegistry.address);
+  }
   ////
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
@@ -624,64 +625,64 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// LEVERED POSITIONS FACTORY
-  const lpfDep = await deployments.deploy("LeveredPositionFactory", {
-    from: deployer,
-    log: true,
-    args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
-    waitConfirmations: 1,
-  });
-  if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
-  console.log("LeveredPositionFactory: ", lpfDep.address);
+  if (chainId !== 1) {
+    const lpfDep = await deployments.deploy("LeveredPositionFactory", {
+      from: deployer,
+      log: true,
+      args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
+      waitConfirmations: 1,
+    });
+    if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
+    console.log("LeveredPositionFactory: ", lpfDep.address);
 
-  const lpfExtDep = await deployments.deploy("LeveredPositionFactoryExtension", {
-    from: deployer,
-    log: true,
-    args: [],
-    waitConfirmations: 1,
-  });
-  if (lpfExtDep.transactionHash) await ethers.provider.waitForTransaction(lpfExtDep.transactionHash);
-  console.log("LeveredPositionFactoryExtension: ", lpfExtDep.address);
+    const lpfExtDep = await deployments.deploy("LeveredPositionFactoryExtension", {
+      from: deployer,
+      log: true,
+      args: [],
+      waitConfirmations: 1,
+    });
+    if (lpfExtDep.transactionHash) await ethers.provider.waitForTransaction(lpfExtDep.transactionHash);
+    console.log("LeveredPositionFactoryExtension: ", lpfExtDep.address);
 
-  const leveredPositionFactory = (await ethers.getContract(
-    "LeveredPositionFactory",
-    deployer
-  )) as LeveredPositionFactory;
-  const currentLPFExtensions = await leveredPositionFactory._listExtensions();
-  if (!currentLPFExtensions.length || currentLPFExtensions[0] != lpfExtDep.address) {
-    let extToReplace;
-    if (currentLPFExtensions.length == 0) {
-      extToReplace = constants.AddressZero;
+    const leveredPositionFactory = (await ethers.getContract(
+      "LeveredPositionFactory",
+      deployer
+    )) as LeveredPositionFactory;
+    const currentLPFExtensions = await leveredPositionFactory._listExtensions();
+    if (!currentLPFExtensions.length || currentLPFExtensions[0] != lpfExtDep.address) {
+      let extToReplace;
+      if (currentLPFExtensions.length == 0) {
+        extToReplace = constants.AddressZero;
+      } else {
+        extToReplace = currentLPFExtensions[0];
+      }
+
+      tx = await leveredPositionFactory._registerExtension(lpfExtDep.address, extToReplace);
+      await tx.wait();
+      console.log("replaced the LeveredPositionFactory extension: ", tx.hash);
     } else {
-      extToReplace = currentLPFExtensions[0];
+      console.log(`no LeveredPositionFactory extensions to update`);
     }
 
-    tx = await leveredPositionFactory._registerExtension(lpfExtDep.address, extToReplace);
-    await tx.wait();
-    console.log("replaced the LeveredPositionFactory extension: ", tx.hash);
-  } else {
-    console.log(`no LeveredPositionFactory extensions to update`);
-  }
-  ////
-
-  //// LEVERED POSITIONS LENS
-  const lpLens = await deployments.deploy("LeveredPositionsLens", {
-    from: deployer,
-    log: true,
-    waitConfirmations: 1,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [leveredPositionFactory.address],
+    //// LEVERED POSITIONS LENS
+    const lpLens = await deployments.deploy("LeveredPositionsLens", {
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [leveredPositionFactory.address],
+          },
         },
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: deployer,
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
-    },
-  });
-  if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
-  console.log("LeveredPositionsLens: ", lpLens.address);
-  ////
+    });
+    if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
+    console.log("LeveredPositionsLens: ", lpLens.address);
+  }
 
   /// EXTERNAL ADDRESSES
   const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
@@ -780,14 +781,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
-  const ovr = await ethers.getContract("OptimizedVaultsRegistry");
-  const ovrAddress = await addressesProvider.callStatic.getAddress("OptimizedVaultsRegistry");
-  if (ovrAddress !== ovr.address) {
-    tx = await addressesProvider.setAddress("OptimizedVaultsRegistry", ovr.address);
-    await tx.wait();
-    console.log("setAddress OptimizedVaultsRegistry: ", tx.hash);
-  }
-
   const lr = await ethers.getContract("LiquidatorsRegistry");
   const lrAddress = await addressesProvider.callStatic.getAddress("LiquidatorsRegistry");
   if (lrAddress !== lr.address) {
@@ -796,20 +789,30 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("setAddress LiquidatorsRegistry: ", tx.hash);
   }
 
-  const lpf = await ethers.getContract("LeveredPositionFactory");
-  const lpfAddress = await addressesProvider.callStatic.getAddress("LeveredPositionFactory");
-  if (lpfAddress !== lpf.address) {
-    tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
-    await tx.wait();
-    console.log("setAddress LeveredPositionFactory: ", tx.hash);
-  }
+  if (chainId !== 1) {
+    const ovr = await ethers.getContract("OptimizedVaultsRegistry");
+    const ovrAddress = await addressesProvider.callStatic.getAddress("OptimizedVaultsRegistry");
+    if (ovrAddress !== ovr.address) {
+      tx = await addressesProvider.setAddress("OptimizedVaultsRegistry", ovr.address);
+      await tx.wait();
+      console.log("setAddress OptimizedVaultsRegistry: ", tx.hash);
+    }
 
-  const lpl = await ethers.getContract("LeveredPositionsLens");
-  const lplAddress = await addressesProvider.callStatic.getAddress("LeveredPositionsLens");
-  if (lplAddress !== lpl.address) {
-    tx = await addressesProvider.setAddress("LeveredPositionsLens", lpl.address);
-    await tx.wait();
-    console.log("setAddress LeveredPositionsLens: ", tx.hash);
+    const lpf = await ethers.getContract("LeveredPositionFactory");
+    const lpfAddress = await addressesProvider.callStatic.getAddress("LeveredPositionFactory");
+    if (lpfAddress !== lpf.address) {
+      tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
+      await tx.wait();
+      console.log("setAddress LeveredPositionFactory: ", tx.hash);
+    }
+
+    const lpl = await ethers.getContract("LeveredPositionsLens");
+    const lplAddress = await addressesProvider.callStatic.getAddress("LeveredPositionsLens");
+    if (lplAddress !== lpl.address) {
+      tx = await addressesProvider.setAddress("LeveredPositionsLens", lpl.address);
+      await tx.wait();
+      console.log("setAddress LeveredPositionsLens: ", tx.hash);
+    }
   }
 
   const mflr = await ethers.getContract("MidasFlywheelLensRouter");
@@ -819,13 +822,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress MidasFlywheelLensRouter: ", tx.hash);
   }
-
-  await configureAddressesProviderStrategies({
-    ethers,
-    getNamedAccounts,
-    chainId,
-  });
-
+  if (chainId !== 1) {
+    await configureAddressesProviderStrategies({
+      ethers,
+      getNamedAccounts,
+      chainId,
+    });
+  }
   // upgrade any of the pools if necessary
   // the markets are also autoupgraded with this task
   await run("pools:all:upgrade");

@@ -22,9 +22,11 @@ export enum RedemptionStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
   UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
+  UniswapV3Liquidator = "UniswapV3Liquidator",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
   GammaLpTokenLiquidator = "GammaLpTokenLiquidator",
   CurveSwapLiquidator = "CurveSwapLiquidator",
+  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
   SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
   BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
   BalancerSwapLiquidator = "BalancerSwapLiquidator",
@@ -51,6 +53,7 @@ export enum DelegateContractName {
 export enum OracleTypes {
   ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
   CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
+  CurveV2PriceOracle = "CurveV2PriceOracle",
   CurveV2LpTokenPriceOracleNoRegistry = "CurveV2LpTokenPriceOracleNoRegistry",
   DiaPriceOracle = "DiaPriceOracle",
   FixedNativePriceOracle = "FixedNativePriceOracle",
@@ -463,6 +466,7 @@ export enum assetSymbols {
   triCrypto = "triCrypto",
 
   // Mainnet
+  eUSD = "eUSD",
   realYieldUSD = "realYieldUSD",
   realYieldETH = "realYieldETH",
   ethBtcTrend = "ethBtcTrend",
@@ -473,7 +477,19 @@ export enum assetSymbols {
   rETH = "rETH",
   cbETH = "cbETH",
   ankrETH = "ankrETH",
+  frxETH = "frxETH",
   SWETH_BBA_WETH_BPT = "swETH-bba-WETH-BPT",
+  WSTETH_WETH_STABLE_BPT = "wstETH-WETH-Stable-BPT",
+  WSTETH_RETH_FRXETH_STABLE_BPT = "wstETH-rETH-frxETH-Stable-BPT",
+  WBETH_WSTETH_STABLE_BPT = "WBETH-wstETH-Stable-BPT",
+  WSTETH_CBETH_STABLE_BPT = "wstETH-cbETH-Stable-BPT",
+  OHM50_DAI50_BPT = "OHM50-DAI50 BPT",
+  OHM50_WETH50_BPT = "OHM50-WETH50 BPT",
+  AAVE_BOOSTED_STABLE_BPT = "AAVE-bba-stable-BPT",
+  AAVE_LINEAR_DAI = "AAVE-LINEAR-DAI",
+  AAVE_LINEAR_USDC = "AAVE-LINEAR-USDC",
+  AAVE_LINEAR_USDT = "AAVE-LINEAR-USDT",
+  AAVE_LINEAR_WETH = "AAVE-LINEAR-WETH",
 
   TDAI = "TDAI",
 }

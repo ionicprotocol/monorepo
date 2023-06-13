@@ -257,15 +257,6 @@
     "MidasFlywheel_MIMO_Proxy": {
       "address": "0x5fF63E442AC4724EC342f4a3d26924233832EcBB"
     },
-    "MidasFlywheel_Tangible_USDC_DAI_USDT": {
-      "address": "0x78dAA052e2D90877d0ADEDEA5D5ac37d4bcA52bd"
-    },
-    "MidasFlywheel_Tangible_USDC_DAI_USDT_Implementation": {
-      "address": "0x1F4453c598C927098D64D740e54B15ed56398cA9"
-    },
-    "MidasFlywheel_Tangible_USDC_DAI_USDT_Proxy": {
-      "address": "0x78dAA052e2D90877d0ADEDEA5D5ac37d4bcA52bd"
-    },
     "MidasSafeLiquidator": {
       "address": "0x401B9E407896d5CAad75b057EF32Fa005c07252d"
     },
@@ -325,9 +316,6 @@
     },
     "WhitePaperInterestRateModel": {
       "address": "0x1c5DCC70eD61301Ebfd847Ad3573290da223E085"
-    },
-    "WithdrawableFlywheelStaticRewards_Tangible_USDC_DAI_USDT": {
-      "address": "0xa0a6741C6E2F7A1DFe3ca87ea4Fa207Db5bdea6a"
     }
   }
 }
