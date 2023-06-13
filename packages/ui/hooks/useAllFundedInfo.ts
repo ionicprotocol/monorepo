@@ -37,7 +37,7 @@ export interface resQuery {
   rewards: UseRewardsData;
   totalBorrowBalanceFiat: number;
   totalBorrowBalanceNative: number;
-  totalSupplyAPYs: { [market: string]: number };
+  totalSupplyAPYs: { [market: string]: { apy: number; totalApy: number } };
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
 }

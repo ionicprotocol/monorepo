@@ -23,7 +23,7 @@ export const UserStats = ({
   borrowApyPerAsset: { [market: string]: number };
   totalBorrowBalanceFiat: number;
   totalBorrowBalanceNative: number;
-  totalSupplyApyPerAsset: { [market: string]: number };
+  totalSupplyApyPerAsset: { [market: string]: { apy: number; totalApy: number } };
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
 }) => {
