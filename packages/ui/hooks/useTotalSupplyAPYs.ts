@@ -37,12 +37,14 @@ export const useTotalSupplyAPYs = (
     async () => {
       if (!sdk || !assets || !chainId) return null;
 
-      const result: { [market: string]: number } = {};
+      const result: { [market: string]: { apy: number; totalApy: number } } = {};
 
       for (const asset of assets) {
-        let marketTotalAPY =
+        const apy =
           sdk.ratePerBlockToAPY(asset.supplyRatePerBlock, getBlockTimePerMinuteByChainId(chainId)) /
           100;
+
+        let marketTotalAPY = apy;
 
         if (asset.underlyingSymbol === assetSymbols.ankrBNB && ankrBNBApr) {
           marketTotalAPY += Number(ankrBNBApr) / 100;
@@ -61,7 +63,7 @@ export const useTotalSupplyAPYs = (
           });
         }
 
-        result[asset.cToken] = marketTotalAPY;
+        result[asset.cToken] = { apy, totalApy: marketTotalAPY };
       }
 
       return result;
