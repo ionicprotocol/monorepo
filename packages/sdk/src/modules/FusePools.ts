@@ -96,7 +96,9 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
           asset.originalSymbol = _asset.originalSymbol ? _asset.originalSymbol : undefined;
         }
 
-        asset.netSupplyBalance = asset.supplyBalance.sub(asset.borrowBalance);
+        asset.netSupplyBalance = asset.supplyBalance.gt(asset.borrowBalance)
+          ? asset.supplyBalance.sub(asset.borrowBalance)
+          : constants.Zero;
         asset.netSupplyBalanceNative =
           Number(utils.formatUnits(asset.netSupplyBalance, asset.underlyingDecimals)) *
           Number(utils.formatUnits(asset.underlyingPrice, 18));
