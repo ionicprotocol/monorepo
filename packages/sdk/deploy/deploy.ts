@@ -383,7 +383,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   const mflrReceipt = await deployments.deploy("MidasFlywheelLensRouter", {
     from: deployer,
-    args: [],
+    args: [fpd.address],
     log: true,
     waitConfirmations: 1,
   });
