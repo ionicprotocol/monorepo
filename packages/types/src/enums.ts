@@ -32,7 +32,6 @@ export enum RedemptionStrategyContract {
   BalancerSwapLiquidator = "BalancerSwapLiquidator",
   ERC4626Liquidator = "ERC4626Liquidator",
   AlgebraSwapLiquidator = "AlgebraSwapLiquidator",
-  SolidlyLiquidator = "SolidlyLiquidator",
   SolidlyLpTokenLiquidator = "SolidlyLpTokenLiquidator",
   SolidlySwapLiquidator = "SolidlySwapLiquidator",
 }
