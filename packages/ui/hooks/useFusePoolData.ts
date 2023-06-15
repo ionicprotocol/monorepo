@@ -35,6 +35,7 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
               ...asset,
               borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
               liquidityFiat: asset.liquidityNative * usdPrice,
+              netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
               supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
               totalBorrowFiat: asset.totalBorrowNative * usdPrice,
               totalSupplyFiat: asset.totalSupplyNative * usdPrice,

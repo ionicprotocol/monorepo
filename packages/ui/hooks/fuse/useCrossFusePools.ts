@@ -47,6 +47,8 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
                       borrowBalanceFiat:
                         asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
                       liquidityFiat: asset.liquidityNative * prices[pool.chainId.toString()].value,
+                      netSupplyBalanceFiat:
+                        asset.netSupplyBalanceNative * prices[pool.chainId.toString()].value,
                       supplyBalanceFiat:
                         asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
                       totalBorrowFiat:
