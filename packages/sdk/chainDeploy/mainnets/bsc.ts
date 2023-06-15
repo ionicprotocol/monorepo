@@ -568,7 +568,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
 
-  const solidlyLiquidator = await deployments.deploy("SolidlyLiquidator", {
+  const solidlyLiquidator = await deployments.deploy("SolidlySwapLiquidator", {
     from: deployer,
     args: [],
     log: true,
@@ -577,7 +577,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (solidlyLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(solidlyLiquidator.transactionHash);
   }
-  console.log("SolidlyLiquidator: ", solidlyLiquidator.address);
+  console.log("SolidlySwapLiquidator: ", solidlyLiquidator.address);
 
   const solidlyLpTokenLiquidator = await deployments.deploy("SolidlyLpTokenLiquidator", {
     from: deployer,

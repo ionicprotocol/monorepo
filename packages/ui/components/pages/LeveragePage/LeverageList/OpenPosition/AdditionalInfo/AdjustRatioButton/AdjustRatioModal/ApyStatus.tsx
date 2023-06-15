@@ -70,7 +70,7 @@ export const ApyStatus = ({
     baseCollateral,
     currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
     chainId
   );
@@ -81,7 +81,7 @@ export const ApyStatus = ({
     baseCollateral,
     utils.parseUnits(leverageValue.toString()),
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
     chainId
   );

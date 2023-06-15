@@ -22,7 +22,7 @@ interface SupplyApyProps {
   poolChainId: number;
   rewards: UseRewardsData;
   totalSupplyApyPerAsset?: {
-    [market: string]: number;
+    [market: string]: { apy: number; totalApy: number };
   } | null;
 }
 
@@ -191,7 +191,7 @@ export const SupplyApy = ({
             {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
               <HStack justifyContent="flex-start" width="100%">
                 <Text fontWeight="bold" size="sm" variant="tnumber">
-                  {(totalSupplyApyPerAsset[asset.cToken] * 100).toFixed(2)}%
+                  {(totalSupplyApyPerAsset[asset.cToken].totalApy * 100).toFixed(2)}%
                 </Text>
                 <Text fontWeight="bold" size="sm" variant="tnumber">
                   Total APY
@@ -208,7 +208,7 @@ export const SupplyApy = ({
           <VStack alignItems={'flex-end'} spacing={0.5}>
             {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
               <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
-                {(totalSupplyApyPerAsset[asset.cToken] * 100).toFixed(2)}%
+                {(totalSupplyApyPerAsset[asset.cToken].totalApy * 100).toFixed(2)}%
               </Text>
             )}
           </VStack>

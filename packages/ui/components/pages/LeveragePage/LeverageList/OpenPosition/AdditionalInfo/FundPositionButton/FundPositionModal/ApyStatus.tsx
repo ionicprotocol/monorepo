@@ -85,7 +85,7 @@ export const ApyStatus = ({
     baseCollateral,
     currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
     chainId
   );
@@ -96,7 +96,7 @@ export const ApyStatus = ({
     baseCollateral ? baseCollateral.add(amount) : amount,
     currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
     chainId
   );
@@ -145,14 +145,14 @@ export const ApyStatus = ({
                   maxWidth="300px"
                   tooltip={
                     totalSupplyApyPerAsset[collateralCToken] !== undefined &&
-                    totalSupplyApyPerAsset[collateralCToken] !== 0
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken], true, 18)
+                    totalSupplyApyPerAsset[collateralCToken].totalApy !== 0
+                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy, true, 18)
                       : ''
                   }
                 >
                   <Text>
                     {totalSupplyApyPerAsset[collateralCToken] !== undefined
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken])
+                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy)
                       : '?'}
                     %
                   </Text>
@@ -164,9 +164,14 @@ export const ApyStatus = ({
                     totalSupplyApyPerAsset[collateralCToken] !== undefined &&
                     updatedSupplyApy !== undefined &&
                     supplyAPY !== undefined &&
-                    totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY !== 0
+                    totalSupplyApyPerAsset[collateralCToken].totalApy +
+                      updatedSupplyApy -
+                      supplyAPY !==
+                      0
                       ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY,
+                          totalSupplyApyPerAsset[collateralCToken].totalApy +
+                            updatedSupplyApy -
+                            supplyAPY,
                           true,
                           18
                         )
@@ -178,7 +183,9 @@ export const ApyStatus = ({
                     updatedSupplyApy !== undefined &&
                     supplyAPY !== undefined
                       ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken] + updatedSupplyApy - supplyAPY
+                          totalSupplyApyPerAsset[collateralCToken].totalApy +
+                            updatedSupplyApy -
+                            supplyAPY
                         )
                       : '?'}
                     %

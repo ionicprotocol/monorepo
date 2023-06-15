@@ -55,7 +55,7 @@ export const NetApy = ({ position }: { position: OpenPosition }) => {
     baseCollateral,
     currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].toString())
+      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
     position.chainId
   );
