@@ -11,12 +11,12 @@ import { MidasERC4626 } from "../../typechain/MidasERC4626";
 import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
 import { Ownable } from "../../typechain/Ownable";
 import { OwnableUpgradeable } from "../../typechain/OwnableUpgradeable";
-import { SafeOwnableUpgradeable } from "../../typechain/SafeOwnableUpgradeable";
 import { SafeOwnable } from "../../typechain/SafeOwnable";
+import { SafeOwnableUpgradeable } from "../../typechain/SafeOwnableUpgradeable";
 import { Unitroller } from "../../typechain/Unitroller";
 
 async function safeOwnableUpgrTransferOwnership(ethers, contractName, signer, currentDeployer, newDeployer) {
-  const contract = await ethers.getContractOrNull(contractName, signer) as SafeOwnableUpgradeable;
+  const contract = (await ethers.getContractOrNull(contractName, signer)) as SafeOwnableUpgradeable;
   if (contract) {
     const currentOwner = await contract.callStatic.owner();
     console.log(`current ${contractName} owner ${currentOwner}`);
@@ -35,7 +35,7 @@ async function safeOwnableUpgrTransferOwnership(ethers, contractName, signer, cu
 }
 
 async function ownable2StepTransferOwnership(ethers, contractName, signer, currentDeployer, newDeployer) {
-  const contract = await ethers.getContractOrNull(contractName, signer) as SafeOwnable;
+  const contract = (await ethers.getContractOrNull(contractName, signer)) as SafeOwnable;
   if (contract) {
     const currentOwner = await contract.callStatic.owner();
     console.log(`current ${contractName} owner ${currentOwner}`);
@@ -112,11 +112,7 @@ const safeOwnableUpgrContracts = [
   "NativeUSDPriceOracle",
 ];
 
-const ownable2StepContracts = [
-  "LiquidatorsRegistry",
-  "LeveredPositionFactory",
-  "OptimizedAPRVault",
-];
+const ownable2StepContracts = ["LiquidatorsRegistry", "LeveredPositionFactory", "OptimizedAPRVault"];
 
 // TODO add ERC20Wrapper from CErc20WrappingDelegate
 export default task("system:admin:change", "Changes the system admin to a new address")
@@ -468,4 +464,4 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
         }
       }
     }
-})
+  });

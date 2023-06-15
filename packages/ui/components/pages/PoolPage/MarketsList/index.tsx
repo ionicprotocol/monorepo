@@ -199,12 +199,14 @@ export const MarketsList = ({
           rowA.original.market.underlyingSymbol
         );
       } else if (columnId === SUPPLY_APY) {
-        const rowASupplyAPY = totalSupplyApyPerAsset
-          ? totalSupplyApyPerAsset[rowA.original.market.cToken]
-          : 0;
-        const rowBSupplyAPY = totalSupplyApyPerAsset
-          ? totalSupplyApyPerAsset[rowB.original.market.cToken]
-          : 0;
+        const rowASupplyAPY =
+          totalSupplyApyPerAsset && totalSupplyApyPerAsset[rowA.original.market.cToken]
+            ? totalSupplyApyPerAsset[rowA.original.market.cToken].totalApy
+            : 0;
+        const rowBSupplyAPY =
+          totalSupplyApyPerAsset && totalSupplyApyPerAsset[rowA.original.market.cToken]
+            ? totalSupplyApyPerAsset[rowB.original.market.cToken].totalApy
+            : 0;
         return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
       } else if (columnId === BORROW_APY) {
         const rowABorrowAPY =

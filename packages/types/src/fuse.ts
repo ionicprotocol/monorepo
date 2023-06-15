@@ -61,6 +61,9 @@ export interface NativePricedFuseAsset extends FuseAsset {
 
   logoUrl?: string;
   originalSymbol?: string;
+
+  netSupplyBalance: BigNumber;
+  netSupplyBalanceNative: number;
 }
 
 export interface FusePoolData {
