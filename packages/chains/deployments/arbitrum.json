@@ -33,7 +33,7 @@
       "address": "0xf86a78af09e9012f38C672E3e317F8A96D593f31"
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x70E036fDAA54BdD8e2ce98A288Bea75670Eb4F9B"
+      "address": "0x55C0f57cf6c1CAe4CC57D5F6334408f63C0d5bbC"
     },
     "Comptroller": {
       "address": "0xF3c98FB8fDFDaC33894D72fa049eB849B0970330"
@@ -120,7 +120,7 @@
       "address": "0x70190bAbF03fBC09BA7151ffB8FA73D2fFD80ea4"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x120f22473c2B79FB692BD317eD477BFA8b812702"
+      "address": "0x9B4910cEAfb03056DddF9A1CB284C58f1d85d8A4"
     },
     "LooplessFlywheelBooster": {
       "address": "0xB307C43f80FD6BB30624916eCc64d85550E9A8d9"
@@ -135,7 +135,7 @@
       "address": "0xd4D0cA503E8befAbE4b75aAC36675Bc1cFA533D1"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x52643620755Bda9d6E0f10Fa796375f1fc0F2Ca3"
+      "address": "0x219f7a75925D6d0312d1B62cEE6a4eE6F1A85217"
     },
     "OptimizedVaultsRegistry": {
       "address": "0xCBA6171Ab5557CaadC993489CbC58B77a2b0f3Ed"
