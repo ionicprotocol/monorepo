@@ -102,7 +102,7 @@
       "address": "0xe4fEa88DF81ebA4f579208FA5abEB10aaf84E3f4"
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x83Adf7Fdac47B06BEd23c859986e3c351076df69"
+      "address": "0x66397a7BD91650e260a605F68F2d46F3350f2a1B"
     },
     "Comptroller": {
       "address": "0xd6697545CD3d73A671224bc34C9C838FAB837e69"
@@ -141,7 +141,7 @@
       "address": "0x0C64dEFA0125678C77dDa2287FDD6000699737Cc"
     },
     "DiaPriceOracle": {
-      "address": "0x1225B7ce0e55faC5F04701E92c64FBE5008990bf"
+      "address": "0x4682b914C351830e9e289C02ec312e453f017eE2"
     },
     "DotDotLpERC4626_2brl_0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba": {
       "address": "0x23bBcF59BF843cD55c4DA9bDB81429695C87f847"
@@ -309,7 +309,7 @@
       "address": "0x88683D197d2237AD49Bb3Ad739Ad88E2CB9E850C"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xC18641185306cFC394196fd13c0C6A45c7f844F6"
+      "address": "0x089A362BFFcAeed0674C6C1211843CA346E5FB72"
     },
     "LooplessFlywheelBooster": {
       "address": "0xb77ce603c7b894B9eFe9c0697D5B724dDdb9EaC6"
@@ -324,7 +324,7 @@
       "address": "0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x7A29643B9e2b058Cb8026ca1Fb3F05d342f5997E"
+      "address": "0x01375b03Be806e608b2C7Cb93373d01161Cf18f2"
     },
     "MidasFlywheel_ANKR_Ankr_BNB_Pool": {
       "address": "0x4ab7cAEfb78D6EA8Bc62cAa6F9788ca873869dA1"
@@ -549,7 +549,7 @@
       "address": "0x5e875C4b10e605D5DD7a788750A914643f8Bdd34"
     },
     "XBombLiquidatorFunder": {
-      "address": "0xa234C9897771886E892146C9cA80D5bE9E67a0C8"
+      "address": "0xE422FA2c89339ed8Fc306C25AB6bEcA490E45795"
     }
   }
 }

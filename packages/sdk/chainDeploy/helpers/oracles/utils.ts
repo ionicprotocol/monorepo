@@ -4,7 +4,8 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
   const oracles = [];
   const underlyings = [];
   for (const underlying of underlyingsToCheck) {
-    if ((await mpo.callStatic.oracles(underlying)) === constants.AddressZero) {
+    const currentOracle = await mpo.callStatic.oracles(underlying);
+    if (currentOracle === constants.AddressZero || currentOracle !== oracleAddress) {
       oracles.push(oracleAddress);
       underlyings.push(underlying);
     }
