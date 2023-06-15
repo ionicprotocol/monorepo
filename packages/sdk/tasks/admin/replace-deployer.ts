@@ -353,9 +353,9 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
 
     const deployer = await ethers.getSigner(newDeployer);
 
-    // const oldDeployer = "0x27521eae4eE4153214CaDc3eCD703b9B0326C908";
-    //
-    // const fundingAmount = ethers.utils.parseEther("0.00570920282155354");
+    const oldDeployer = "0x27521eae4eE4153214CaDc3eCD703b9B0326C908";
+
+    // const fundingAmount = ethers.utils.parseEther("0.00082673836433862");
     // if ((await ethers.provider.getBalance(oldDeployer)).lt(fundingAmount)) {
     //   tx = await deployer.sendTransaction({
     //     to: oldDeployer,
@@ -363,6 +363,7 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
     //   })
     //   await tx.wait();
     //   console.log(`funded the old deployer`);
+    //   return;
     // }
 
     const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
