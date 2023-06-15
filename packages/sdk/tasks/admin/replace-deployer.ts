@@ -11,8 +11,108 @@ import { MidasERC4626 } from "../../typechain/MidasERC4626";
 import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
 import { Ownable } from "../../typechain/Ownable";
 import { OwnableUpgradeable } from "../../typechain/OwnableUpgradeable";
+import { SafeOwnable } from "../../typechain/SafeOwnable";
 import { SafeOwnableUpgradeable } from "../../typechain/SafeOwnableUpgradeable";
 import { Unitroller } from "../../typechain/Unitroller";
+
+async function safeOwnableUpgrTransferOwnership(ethers, contractName, signer, currentDeployer, newDeployer) {
+  const contract = (await ethers.getContractOrNull(contractName, signer)) as SafeOwnableUpgradeable;
+  if (contract) {
+    const currentOwner = await contract.callStatic.owner();
+    console.log(`current ${contractName} owner ${currentOwner}`);
+    if (currentOwner == currentDeployer) {
+      const currentPendingOwner = await contract.callStatic.pendingOwner();
+      console.log(`current pending owner ${currentPendingOwner}`);
+      if (currentPendingOwner != newDeployer) {
+        const tx = await contract._setPendingOwner(newDeployer);
+        await tx.wait();
+        console.log(`${contractName}._setPendingOwner tx mined ${tx.hash}`);
+      }
+    } else if (currentOwner != newDeployer) {
+      console.error(`unknown owner ${currentOwner}`, new Error());
+    }
+  }
+}
+
+async function ownable2StepTransferOwnership(ethers, contractName, signer, currentDeployer, newDeployer) {
+  const contract = (await ethers.getContractOrNull(contractName, signer)) as SafeOwnable;
+  if (contract) {
+    const currentOwner = await contract.callStatic.owner();
+    console.log(`current ${contractName} owner ${currentOwner}`);
+    if (currentOwner == currentDeployer) {
+      const currentPendingOwner = await contract.callStatic.pendingOwner();
+      console.log(`current pending owner ${currentPendingOwner}`);
+      if (currentPendingOwner != newDeployer) {
+        const tx = await contract.transferOwnership(newDeployer);
+        await tx.wait();
+        console.log(`${contractName}.transferOwnership (pending owner) tx mined ${tx.hash}`);
+      }
+    } else if (currentOwner != newDeployer) {
+      console.error(`unknown owner ${currentOwner}`, new Error());
+    }
+  }
+}
+
+async function safeOwnableUpgrAcceptOwnership(ethers, contractName, signer, newDeployer) {
+  const contract = (await ethers.getContractOrNull(contractName, signer)) as SafeOwnableUpgradeable;
+  if (contract) {
+    const currentOwner = await contract.callStatic.owner();
+    console.log(`current ${contractName} owner ${currentOwner}`);
+    const pendingOwner = await contract.callStatic.pendingOwner();
+    console.log(`current pending owner ${pendingOwner}`);
+    if (pendingOwner == newDeployer) {
+      const tx = await contract._acceptOwner();
+      await tx.wait();
+      console.log(`${contractName}._acceptOwner tx mined ${tx.hash}`);
+    }
+  }
+}
+
+async function ownable2StepAcceptOwnership(ethers, contractName, signer, newDeployer) {
+  const contract = (await ethers.getContractOrNull(contractName, signer)) as SafeOwnable;
+  if (contract) {
+    const currentOwner = await contract.callStatic.owner();
+    console.log(`current ${contractName} owner ${currentOwner}`);
+    const pendingOwner = await contract.callStatic.pendingOwner();
+    console.log(`current pending owner ${pendingOwner}`);
+    if (pendingOwner == newDeployer) {
+      const tx = await contract.acceptOwnership();
+      await tx.wait();
+      console.log(`${contractName}.acceptOwnership tx mined ${tx.hash}`);
+    }
+  }
+}
+
+const safeOwnableUpgrContracts = [
+  "FuseFeeDistributor",
+  "FusePoolDirectory",
+  "JarvisSafeLiquidator",
+  "MidasSafeLiquidator",
+  "OptimizedVaultsRegistry",
+
+  "AnkrCertificateTokenPriceOracle",
+  "BalancerLpLinearPoolPriceOracle",
+  "BalancerLpStablePoolPriceOracle",
+  "BalancerLpTokenPriceOracle",
+  "BalancerLpTokenPriceOracleNTokens",
+  "BalancerRateProviderOracle",
+  "BNBxPriceOracle",
+  "CurveLpTokenPriceOracleNoRegistry",
+  "CurveV2LpTokenPriceOracleNoRegistry",
+  "CurveV2PriceOracle",
+  "DiaStDotPriceOracle",
+  "ERC4626Oracle",
+  "FluxPriceOracle",
+  "GammaPoolPriceOracle",
+  "PythPriceOracle",
+  "SimplePriceOracle",
+  "SolidlyPriceOracle",
+  "StkBNBPriceOracle",
+  "WSTEthPriceOracle",
+  "NativeUSDPriceOracle",
+];
+
+const ownable2StepContracts = ["LiquidatorsRegistry", "LeveredPositionFactory", "OptimizedAPRVault"];
 
 // TODO add ERC20Wrapper from CErc20WrappingDelegate
 export default task("system:admin:change", "Changes the system admin to a new address")
@@ -55,55 +155,15 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
       {
         // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
-        const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as SafeOwnableUpgradeable;
-        const currentOwnerFFD = await ffd.callStatic.owner();
-        console.log(`current FFD owner ${currentOwnerFFD}`);
-        if (currentOwnerFFD == currentDeployer) {
-          const currentPendingOwner = await ffd.callStatic.pendingOwner();
-          console.log(`current pending owner ${currentPendingOwner}`);
-          if (currentPendingOwner != newDeployer) {
-            tx = await ffd._setPendingOwner(newDeployer);
-            await tx.wait();
-            console.log(`ffd._setPendingOwner tx mined ${tx.hash}`);
-          }
-        } else if (currentOwnerFFD != newDeployer) {
-          console.error(`unknown owner ${currentOwnerFFD}`);
+        for (const safeOwnableContract of safeOwnableUpgrContracts) {
+          await safeOwnableUpgrTransferOwnership(ethers, safeOwnableContract, deployer, currentDeployer, newDeployer);
         }
+      }
 
-        const fpd = (await ethers.getContract("FusePoolDirectory", deployer)) as SafeOwnableUpgradeable;
-        const currentOwnerFPD = await fpd.callStatic.owner();
-        console.log(`current FPD owner ${currentOwnerFPD}`);
-        if (currentOwnerFPD == currentDeployer) {
-          const currentPendingOwner = await fpd.callStatic.pendingOwner();
-          console.log(`current pending owner ${currentPendingOwner}`);
-          if (currentPendingOwner != newDeployer) {
-            tx = await fpd._setPendingOwner(newDeployer);
-            await tx.wait();
-            console.log(`fpd._setPendingOwner tx mined ${tx.hash}`);
-          }
-        } else if (currentOwnerFPD != newDeployer) {
-          console.error(`unknown owner ${currentOwnerFPD}`);
-        }
-
-        const curveOracle = (await ethers.getContractOrNull(
-          "CurveLpTokenPriceOracleNoRegistry",
-          deployer
-        )) as SafeOwnableUpgradeable;
-
-        if (curveOracle) {
-          const currentOwnerCurveOracle = await curveOracle.callStatic.owner();
-          console.log(`current curve oracle owner ${currentOwnerCurveOracle}`);
-          if (currentOwnerCurveOracle == currentDeployer) {
-            const currentPendingOwner = await curveOracle.callStatic.pendingOwner();
-            console.log(`current pending owner ${currentPendingOwner}`);
-            if (currentPendingOwner != newDeployer) {
-              tx = await curveOracle._setPendingOwner(newDeployer);
-              await tx.wait();
-              console.log(`curveOracle._setPendingOwner tx mined ${tx.hash}`);
-            }
-          } else if (currentOwnerCurveOracle != newDeployer) {
-            console.error(`unknown  owner ${currentOwnerCurveOracle}`);
-          }
+      {
+        // SafeOwnable - transferOwnership() / _acceptOwner()
+        for (const ownableContract of ownable2StepContracts) {
+          await ownable2StepTransferOwnership(ethers, ownableContract, deployer, currentDeployer, newDeployer);
         }
       }
 
@@ -240,7 +300,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
             if (currentOwner == currentDeployer) {
               //tx = await midasERC4626.transferOwnership(newDeployer);
               const currentPendingOwner = await midasERC4626.callStatic.pendingOwner();
-              console.log(`current pending owner ${currentPendingOwner}`);
+              console.log(`current pending owner ${currentPendingOwner} of plugin ${pluginAddress}`);
               if (currentPendingOwner != newDeployer) {
                 tx = await midasERC4626._setPendingOwner(newDeployer);
                 await tx.wait();
@@ -292,6 +352,21 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
     let tx: providers.TransactionResponse;
 
     const deployer = await ethers.getSigner(newDeployer);
+
+    const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+    tx = await ap.setAddress("deployer", newDeployer);
+    await tx.wait();
+    console.log(`ap set deployer tx mined ${tx.hash}`);
+
+    // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
+    for (const safeOwnableContract of safeOwnableUpgrContracts) {
+      await safeOwnableUpgrAcceptOwnership(ethers, safeOwnableContract, deployer, newDeployer);
+    }
+
+    // SafeOwnable - transferOwnership() / acceptOwnership()
+    for (const ownableContract of ownable2StepContracts) {
+      await ownable2StepAcceptOwnership(ethers, ownableContract, deployer, newDeployer);
+    }
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
     const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
@@ -386,43 +461,6 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
               console.error(`check if ownable or safeownable - ${midasERC4626.address}`);
             }
           }
-        }
-      }
-    }
-
-    {
-      // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
-      {
-        const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as SafeOwnableUpgradeable;
-        const pendingOwner = await ffd.callStatic.pendingOwner();
-        if (pendingOwner == newDeployer) {
-          tx = await ffd._acceptOwner();
-          await tx.wait();
-          console.log(`ffd._acceptOwner tx mined ${tx.hash}`);
-        }
-      }
-
-      {
-        const fpd = (await ethers.getContract("FusePoolDirectory", deployer)) as SafeOwnableUpgradeable;
-        const pendingOwner = await fpd.callStatic.pendingOwner();
-        if (pendingOwner == newDeployer) {
-          tx = await fpd._acceptOwner();
-          await tx.wait();
-          console.log(`fpd._acceptOwner tx mined ${tx.hash}`);
-        }
-      }
-
-      const curveOracle = (await ethers.getContractOrNull(
-        "CurveLpTokenPriceOracleNoRegistry",
-        deployer
-      )) as SafeOwnableUpgradeable;
-
-      if (curveOracle) {
-        const pendingOwner = await curveOracle.callStatic.pendingOwner();
-        if (pendingOwner == newDeployer) {
-          tx = await curveOracle._acceptOwner();
-          await tx.wait();
-          console.log(`curveOracle._acceptOwner tx mined ${tx.hash}`);
         }
       }
     }
