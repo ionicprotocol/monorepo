@@ -58,27 +58,27 @@ export const deployConfig: ChainDeployConfig = {
 const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.BAL,
-    aggregator: "0xBE5eA816870D11239c543F84b71439511D70B94f",
+    aggregator: "0xdF2917806E30300537aEB49A7663062F4d1F2b5F",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
     symbol: assetSymbols.DAI,
-    aggregator: "0xc5C8E77B397E531B8EC06BFb0048328B30E9eCfB",
+    aggregator: "0xAed0c38402a5d19df6E4c03F4E2DceD6e29c1ee9",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
     symbol: assetSymbols.FRAX,
-    aggregator: "0x0809E3d38d1B4214958faf06D8b1B1a2b73f2ab8",
+    aggregator: "0xB9E1E3A9feFf48998E45Fa90847ed4D467E8BcfD",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
     symbol: assetSymbols.USDC,
-    aggregator: "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
+    aggregator: "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
     symbol: assetSymbols.USDT,
-    aggregator: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
+    aggregator: "0xEe9F2375b4bdF6387aa8265dD4FB8F16512A1d46",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
@@ -93,7 +93,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.WBTC,
-    aggregator: "0x6ce185860a4963106506C203335A2910413708e9",
+    aggregator: "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
