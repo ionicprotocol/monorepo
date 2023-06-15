@@ -12,8 +12,8 @@ task("oracle:get-price", "Get price of token")
 
     console.log("oracle: ", mpo.address);
     if (_address) {
-      const tokenPriceMPO = await mpo.price(_address);
       console.log("underlying oracle address: ", await mpo.callStatic.oracles(_address));
+      const tokenPriceMPO = await mpo.price(_address);
       console.log(`mpo.price(address): ${tokenPriceMPO.toString()}, i.e.: ${ethers.utils.formatEther(tokenPriceMPO)}`);
     }
     if (_ctoken) {
