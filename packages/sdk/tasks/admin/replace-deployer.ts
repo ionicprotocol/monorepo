@@ -357,6 +357,11 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
 
     const deployer = await ethers.getSigner(newDeployer);
 
+    const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+    tx = await ap.setAddress("deployer", newDeployer);
+    await tx.wait();
+    console.log(`ap set deployer tx mined ${tx.hash}`);
+
     // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
     for (const safeOwnableContract of safeOwnableUpgrContracts) {
       await safeOwnableUpgrAcceptOwnership(ethers, safeOwnableContract, deployer, newDeployer);
