@@ -230,7 +230,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     async getClaimableRewardsForMarkets(markets: string[], flywheels: string[], account: string) {
       const fwLensRouter = this.createMidasFlywheelLensRouter();
 
-      const [, , rewardAmountsPerMarket] = await fwLensRouter.callStatic.getUnclaimedRewardsByMarkets(
+      const [, , rewardAmountsPerMarket] = await fwLensRouter.callStatic.claimRewardsForMarkets(
         account,
         markets,
         flywheels,
@@ -243,7 +243,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     async getClaimableRewardsForMarket(market: string, flywheels: string[], account: string) {
       const fwLensRouter = this.createMidasFlywheelLensRouter();
 
-      const [, , rewardAmountsPerFlywheel] = await fwLensRouter.callStatic.getUnclaimedRewardsForMarket(
+      const [, , rewardAmountsPerFlywheel] = await fwLensRouter.callStatic.claimRewardsForMarket(
         account,
         market,
         flywheels,
@@ -322,7 +322,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       const fwLensRouter = this.createMidasFlywheelLensRouter(this.signer);
       const account = await this.signer.getAddress();
 
-      const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
+      const tx = await fwLensRouter.claimRewardsForMarkets(
         account,
         markets,
         flywheels,
