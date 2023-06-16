@@ -1,48 +1,53 @@
 import type { SupportedChains } from '@midas-capital/types';
-import { useQueries } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import type { BigNumber } from 'ethers';
+import { constants } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import type { AllRewardsPerChainStatus } from '@ui/types/ComponentPropsType';
 
-export const useAllClaimableRewardsPerChain = (chainIds: SupportedChains[]) => {
+interface AllRewardsType {
+  amount: BigNumber;
+  chainId: SupportedChains;
+  rewardToken: string;
+}
+
+export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();
 
-  const allRewardQueries = useQueries({
-    queries: chainIds.map((chainId) => {
-      return {
-        cacheTime: Infinity,
-        enabled: !!chainId && !!address,
-        queryFn: async () => {
-          const sdk = getSdk(Number(chainId));
+  return useQuery(
+    ['useAllClaimableRewards', chainIds, address],
+    async () => {
+      if (chainIds.length > 0 && address) {
+        const allRewards: AllRewardsType[] = [];
 
-          if (chainId && sdk && address) {
-            return await sdk.getAllFlywheelClaimableRewards(address);
-          } else {
-            return null;
-          }
-        },
-        queryKey: ['useAllClaimableRewardsPerChain', chainId, address],
-        staleTime: Infinity,
-      };
-    }),
-  });
+        await Promise.all(
+          chainIds.map(async (chainId) => {
+            const sdk = getSdk(chainId);
 
-  const [allRewardsPerChain, isRefetching, isLoading] = useMemo(() => {
-    const _allRewardsPerChain: AllRewardsPerChainStatus = {};
+            if (sdk) {
+              const rewards = await sdk.getAllFlywheelClaimableRewards(address);
+              rewards.map((reward) => {
+                if (reward.amount.gt(constants.Zero)) {
+                  allRewards.push({
+                    amount: reward.amount,
+                    chainId,
+                    rewardToken: reward.rewardToken,
+                  });
+                }
+              });
+            }
+          })
+        );
 
-    let isLoading = true;
-    let isRefetching = true;
+        return allRewards;
+      }
 
-    allRewardQueries.map((reward, index) => {
-      isLoading = isLoading && reward.isLoading;
-      isRefetching = isRefetching && reward.isRefetching;
-      const _chainId = chainIds[index];
-      _allRewardsPerChain[_chainId.toString()] = reward.data;
-    });
-
-    return [_allRewardsPerChain, isRefetching, isLoading];
-  }, [allRewardQueries, chainIds]);
-
-  return { allRewardsPerChain, isLoading, isRefetching };
+      return null;
+    },
+    {
+      cacheTime: Infinity,
+      enabled: !!address || chainIds.length > 0,
+      staleTime: Infinity,
+    }
+  );
 };

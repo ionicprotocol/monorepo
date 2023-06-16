@@ -14,7 +14,7 @@ import { MidasModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useAllClaimableRewardsPerChain } from '@ui/hooks/rewards/useAllClaimableRewards';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -154,18 +154,27 @@ export const ClaimAllRewardsModal = ({
     Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[]
   >([]);
   const enabledChains = useEnabledChains();
-  const { allRewardsPerChain } = useAllClaimableRewardsPerChain(enabledChains);
+  const { data: allRewards } = useAllClaimableRewards(enabledChains);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const allRewardsOfCurrentChain = currentSdk
-      ? allRewardsPerChain[currentSdk.chainId.toString()]
-      : [];
+    if (currentSdk && allRewards) {
+      const rewards: Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[] = [];
 
-    if (currentSdk && allRewardsOfCurrentChain) {
-      setClaimableRewards(allRewardsOfCurrentChain);
+      allRewards.map((reward) => {
+        if (reward.chainId === currentSdk.chainId) {
+          rewards.push({
+            amount: reward.amount,
+            rewardToken: reward.rewardToken,
+          });
+        }
+      });
+
+      if (rewards.length > 0) {
+        setClaimableRewards(rewards);
+      }
     }
-  }, [currentSdk, allRewardsPerChain]);
+  }, [currentSdk, allRewards]);
 
   const claimRewards = useCallback(
     (rewardToken: string) => async () => {
@@ -213,7 +222,7 @@ export const ClaimAllRewardsModal = ({
         };
         setSteps([..._steps]);
 
-        await queryClient.refetchQueries({ queryKey: ['useAllClaimableRewardsPerChain'] });
+        await queryClient.refetchQueries({ queryKey: ['useAllClaimableRewards'] });
       } catch (error) {
         const sentryProperties = {
           chainId: currentSdk.chainId,
@@ -288,7 +297,7 @@ export const ClaimAllRewardsModal = ({
         };
         setSteps([..._steps]);
 
-        await queryClient.refetchQueries({ queryKey: ['useAllClaimableRewardsPerChain'] });
+        await queryClient.refetchQueries({ queryKey: ['useAllClaimableRewards'] });
       } catch (error) {
         const sentryProperties = {
           chainId: currentSdk.chainId,
@@ -310,7 +319,7 @@ export const ClaimAllRewardsModal = ({
     <MidasModal
       body={
         <VStack m={4} maxHeight="450px" overflowY="auto">
-          {Object.values(allRewardsPerChain).length === 0 ? (
+          {!allRewards || allRewards.length === 0 ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
                 No rewards available to be claimed
@@ -318,19 +327,15 @@ export const ClaimAllRewardsModal = ({
             </Center>
           ) : !isClaiming ? (
             <>
-              {Object.entries(allRewardsPerChain).map(([key, value]) => {
-                return value && value.length > 0
-                  ? value.map((reward, index) => (
-                      <ClaimableToken
-                        data={reward}
-                        isClaiming={isClaiming}
-                        key={index}
-                        onClick={() => claimRewards(reward.rewardToken)}
-                        rewardChainId={key}
-                      />
-                    ))
-                  : null;
-              })}
+              {allRewards.map((reward, index) => (
+                <ClaimableToken
+                  data={reward}
+                  isClaiming={isClaiming}
+                  key={index}
+                  onClick={() => claimRewards(reward.rewardToken)}
+                  rewardChainId={reward.chainId.toString()}
+                />
+              ))}
               <Center pt={4}>
                 {claimableRewards.length > 0 ? (
                   <Button
