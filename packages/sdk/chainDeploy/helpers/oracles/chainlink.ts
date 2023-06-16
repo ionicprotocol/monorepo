@@ -29,8 +29,6 @@ export const deployChainlinkOracle = async ({
   const usdBasedFeeds = chainlinkAssets.filter((asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.USD);
   const ethBasedFeeds = chainlinkAssets.filter((asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.ETH);
 
-  console.log({ ethBasedFeeds });
-
   const chainLinkv2 = await ethers.getContract("ChainlinkPriceOracleV2", deployer);
   if (usdBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.USD;

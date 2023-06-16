@@ -159,7 +159,6 @@ export const assets: SupportedAsset[] = [
     name: "Lido Staked Ether",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    disabled: true,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
     <p>You can get stETH by staking your ETH </code> on <a href="https://stake.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Mainnet</a></p>`,
