@@ -5,15 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useAssetClaimableRewards = ({
-  poolAddress,
-  marketAddress,
-  poolChainId,
-}: {
-  marketAddress: string;
-  poolAddress: string;
-  poolChainId: number;
-}) => {
+export const useAssetClaimableRewards = (
+  marketAddress: string,
+  poolAddress: string,
+  poolChainId?: number
+) => {
   const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
 

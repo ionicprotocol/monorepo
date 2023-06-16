@@ -1,13 +1,13 @@
 import { AvatarGroup, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 
-import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal/index';
+import { ClaimAllRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimAllRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useAllMarkets } from '@ui/hooks/rewards/useAllMarkets';
-import { useCrossAllClaimableRewards } from '@ui/hooks/rewards/useCrossAllClaimableRewards';
+import { useAllClaimableRewardsPerChain } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
@@ -26,55 +26,47 @@ const ClaimAllRewardsButton: React.FC = () => {
     [chainId: string]: FlywheelClaimableRewards[];
   }>({});
 
-  const {
-    data: crossAllClaimableRewards,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = useCrossAllClaimableRewards([...enabledChains]);
+  const { allRewardsPerChain, isLoading, isRefetching } = useAllClaimableRewardsPerChain([
+    ...enabledChains,
+  ]);
 
-  const { data: allMarkets } = useAllMarkets(currentChain?.id);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (crossAllClaimableRewards) {
+    if (allRewardsPerChain) {
       const _allClaimableRewards: { [chainId: string]: FlywheelClaimableRewards[] } = {};
 
-      Object.entries(crossAllClaimableRewards).map(([key, value]) => {
+      Object.entries(allRewardsPerChain).map(([key, value]) => {
         if (value && value.length > 0) {
-          _allClaimableRewards[key] = value;
+          allRewardsPerChain[key] = value;
         }
       });
 
       setAllClaimableRewards(_allClaimableRewards);
     }
 
-    if (!isLoading && !crossAllClaimableRewards) {
+    if (!isLoading && !isRefetching && !allRewardsPerChain) {
       setAllClaimableRewards({});
     }
-  }, [crossAllClaimableRewards, isLoading]);
+  }, [allRewardsPerChain, isLoading, isRefetching]);
+
+  const openModal = async () => {
+    openClaimModal();
+
+    await queryClient.refetchQueries({ queryKey: ['useAssetClaimableRewards'] });
+  };
 
   return (
     <>
       {currentChain && (
-        <ClaimRewardsModal
-          claimableRewardsPerChain={allClaimableRewards}
+        <ClaimAllRewardsModal
           isLoading={isLoading || isRefetching}
           isOpen={isClaimModalOpen}
-          markets={allMarkets}
           onClose={closeClaimModal}
-          refetch={refetch}
         />
       )}
       {currentChain && Object.values(allClaimableRewards).length > 0 && (
-        <GradientButton
-          isSelected
-          justifySelf="center"
-          onClick={() => {
-            openClaimModal();
-            refetch();
-          }}
-          width="fit-content"
-        >
+        <GradientButton isSelected justifySelf="center" onClick={openModal} width="fit-content">
           <HStack spacing={1}>
             {!isMobile && (
               <Text
