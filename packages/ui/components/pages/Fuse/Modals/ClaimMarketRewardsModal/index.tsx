@@ -207,7 +207,13 @@ export const ClaimMarketRewardsModal = ({
               })}
               <Center pt={4}>
                 <Button
-                  disabled={isClaiming}
+                  disabled={
+                    isClaiming ||
+                    !currentSdk ||
+                    !currentChain ||
+                    !marketRewards ||
+                    marketRewards.length === 0
+                  }
                   isLoading={isClaiming}
                   onClick={claimMarketRewards}
                   width="100%"

@@ -1,11 +1,12 @@
 import { Box, Button, HStack, Img, Spinner, Text, VStack } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import type { SupportedAsset } from '@midas-capital/types';
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
+import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useCallback, useState } from 'react';
-import { BsFillGiftFill } from 'react-icons/bs';
+import { BsFillArrowRightCircleFill, BsFillGiftFill } from 'react-icons/bs';
+import { useSwitchNetwork } from 'wagmi';
 
 import { PendingTransaction } from '@ui/components/pages/Fuse/Modals/ClaimAllRewardsModal/PendingTransaction';
 import { Center } from '@ui/components/shared/Flex';
@@ -71,16 +72,18 @@ export const ClaimPoolRewardsModal = ({
   isLoading,
   onClose,
   poolAddress,
+  poolChainId,
 }: {
   isLoading: boolean;
   isOpen: boolean;
   onClose: () => void;
   poolAddress: string;
+  poolChainId: number;
 }) => {
   const { currentSdk, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
-  const chainConfig = useChainConfig(Number(currentSdk?.chainId));
+  const chainConfig = useChainConfig(Number(poolChainId));
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([]);
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -88,7 +91,18 @@ export const ClaimPoolRewardsModal = ({
   const [assetPerRewardToken, setAssetPerRewardToken] = useState<{
     [rewardToken: string]: SupportedAsset | undefined;
   }>({});
-  const { data: poolRewards } = usePoolClaimableRewards(poolAddress, currentChain?.id);
+  const { data: poolRewards } = usePoolClaimableRewards(poolAddress, poolChainId);
+  const { switchNetworkAsync } = useSwitchNetwork();
+  const { openChainModal } = useChainModal();
+
+  const handleSwitch = async () => {
+    if (chainConfig && switchNetworkAsync) {
+      await switchNetworkAsync(chainConfig.chainId);
+    } else if (openChainModal) {
+      openChainModal();
+    }
+  };
+
   const queryClient = useQueryClient();
 
   const claimPoolRewards = useCallback(
@@ -196,27 +210,58 @@ export const ClaimPoolRewardsModal = ({
                 ) : null;
               })}
               <Center pt={4}>
-                <Button
-                  disabled={isClaiming}
-                  isLoading={isClaiming}
-                  onClick={claimPoolRewards}
-                  width="100%"
-                >
-                  {chainConfig ? (
-                    <Img
-                      alt=""
-                      borderRadius="50%"
-                      height={6}
-                      src={chainConfig.specificParams.metadata.img}
-                      width={6}
-                    />
-                  ) : (
-                    <BsFillGiftFill size={24} />
-                  )}
-                  <Text color="raisinBlack" ml={2}>
-                    Claim
-                  </Text>
-                </Button>
+                {currentChain?.id !== Number(poolChainId) ? (
+                  <Button
+                    disabled={isClaiming}
+                    onClick={handleSwitch}
+                    variant="silver"
+                    whiteSpace="normal"
+                  >
+                    {chainConfig ? (
+                      <>
+                        <Img
+                          alt=""
+                          borderRadius="50%"
+                          height={6}
+                          src={chainConfig.specificParams.metadata.img}
+                          width={6}
+                        />
+                        <Text color="raisinBlack" ml={2}>
+                          {chainConfig.specificParams.metadata.shortName}
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <BsFillArrowRightCircleFill size={24} />
+                        <Text color="raisinBlack" ml={2}>
+                          Switch Network
+                        </Text>
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    disabled={isClaiming}
+                    isLoading={isClaiming}
+                    onClick={claimPoolRewards}
+                    width="100%"
+                  >
+                    {chainConfig ? (
+                      <Img
+                        alt=""
+                        borderRadius="50%"
+                        height={6}
+                        src={chainConfig.specificParams.metadata.img}
+                        width={6}
+                      />
+                    ) : (
+                      <BsFillGiftFill size={24} />
+                    )}
+                    <Text color="raisinBlack" ml={2}>
+                      Claim
+                    </Text>
+                  </Button>
+                )}
               </Center>
             </>
           ) : currentSdk ? (

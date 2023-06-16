@@ -69,6 +69,7 @@ const ClaimPoolRewardsButton = ({
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           poolAddress={poolAddress}
+          poolChainId={poolChainId}
         />
       </Box>
     </>

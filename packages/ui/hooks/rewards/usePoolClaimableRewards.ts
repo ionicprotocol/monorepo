@@ -11,8 +11,20 @@ export const usePoolClaimableRewards = (poolAddress: string, poolChainId?: numbe
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
     ['usePoolClaimableRewards', poolAddress, address, sdk?.chainId],
     async () => {
-      if (sdk && address && poolChainId) {
-        return await sdk.getFlywheelClaimableRewardsForPool(poolAddress, address);
+      if (sdk && poolAddress && address) {
+        try {
+          const rewards = await sdk.getFlywheelClaimableRewardsForPool(poolAddress, address);
+
+          return rewards.filter((reward) => reward.amount.gt(0));
+        } catch (e) {
+          console.warn('Getting pool claimable rewards error: ', {
+            address,
+            poolAddress,
+            poolChainId,
+          });
+
+          return null;
+        }
       }
 
       return null;
