@@ -105,88 +105,85 @@ export const ClaimPoolRewardsModal = ({
 
   const queryClient = useQueryClient();
 
-  const claimPoolRewards = useCallback(
-    () => async () => {
-      if (!currentSdk || !currentChain || !poolRewards || poolRewards.length === 0) return;
+  const claimPoolRewards = useCallback(async () => {
+    if (!currentSdk || !currentChain || !poolRewards || poolRewards.length === 0) return;
 
-      setIsClaiming(true);
+    setIsClaiming(true);
 
-      const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
+    const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
 
-      poolRewards.map((reward) => {
-        const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
-          return asset.underlying === reward.rewardToken;
-        });
-
-        _assetPerRewardToken[reward.rewardToken] = asset;
+    poolRewards.map((reward) => {
+      const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
+        return asset.underlying === reward.rewardToken;
       });
 
-      const _steps: TxStep[] = [
-        {
-          desc: `Claim ${Object.values(_assetPerRewardToken)
-            .map((asset) => asset?.symbol)
-            .filter((symbol) => !!symbol)
-            .join(', ')} rewards from Midas`,
-          done: false,
-          title: `Claim rewards on ${currentChain.network}`,
-        },
-      ];
+      _assetPerRewardToken[reward.rewardToken] = asset;
+    });
 
-      setSteps(_steps);
-      setAssetPerRewardToken(_assetPerRewardToken);
-      setFailedStep(0);
-      setActiveStep(1);
+    const _steps: TxStep[] = [
+      {
+        desc: `Claim ${Object.values(_assetPerRewardToken)
+          .map((asset) => asset?.symbol)
+          .filter((symbol) => !!symbol)
+          .join(', ')} rewards from Midas`,
+        done: false,
+        title: `Claim rewards on ${currentChain.network}`,
+      },
+    ];
 
-      try {
-        const tx = await currentSdk.claimRewardsForPool(poolAddress);
+    setSteps(_steps);
+    setAssetPerRewardToken(_assetPerRewardToken);
+    setFailedStep(0);
+    setActiveStep(1);
 
-        addRecentTransaction({
-          description: `Claim rewards on pool`,
-          hash: tx.hash,
-        });
+    try {
+      const tx = await currentSdk.claimRewardsForPool(poolAddress);
 
-        _steps[0] = {
-          ..._steps[0],
-          txHash: tx.hash,
-        };
+      addRecentTransaction({
+        description: `Claim rewards on pool`,
+        hash: tx.hash,
+      });
 
-        setSteps([..._steps]);
+      _steps[0] = {
+        ..._steps[0],
+        txHash: tx.hash,
+      };
 
-        await tx.wait();
+      setSteps([..._steps]);
 
-        _steps[0] = {
-          ..._steps[0],
-          done: true,
-          txHash: tx.hash,
-        };
-        setSteps([..._steps]);
+      await tx.wait();
 
-        await queryClient.refetchQueries({ queryKey: ['usePoolClaimableRewards'] });
-      } catch (error) {
-        const sentryProperties = {
-          chainId: currentSdk.chainId,
-          poolAddress,
-        };
-        const sentryInfo = {
-          contextName: `Claiming rewards on pool ${poolAddress}`,
-          properties: sentryProperties,
-        };
-        handleGenericError({ error, sentryInfo, toast: errorToast });
-        setFailedStep(1);
-      }
+      _steps[0] = {
+        ..._steps[0],
+        done: true,
+        txHash: tx.hash,
+      };
+      setSteps([..._steps]);
 
-      setIsClaiming(false);
-    },
-    [
-      currentSdk,
-      currentChain,
-      poolRewards,
-      poolAddress,
-      addRecentTransaction,
-      queryClient,
-      errorToast,
-    ]
-  );
+      await queryClient.refetchQueries({ queryKey: ['usePoolClaimableRewards'] });
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        poolAddress,
+      };
+      const sentryInfo = {
+        contextName: `Claiming rewards on pool ${poolAddress}`,
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, sentryInfo, toast: errorToast });
+      setFailedStep(1);
+    }
+
+    setIsClaiming(false);
+  }, [
+    currentSdk,
+    currentChain,
+    poolRewards,
+    poolAddress,
+    addRecentTransaction,
+    queryClient,
+    errorToast,
+  ]);
 
   return (
     <MidasModal

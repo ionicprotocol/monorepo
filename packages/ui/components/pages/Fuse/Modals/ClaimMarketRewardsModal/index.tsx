@@ -97,92 +97,89 @@ export const ClaimMarketRewardsModal = ({
   );
   const queryClient = useQueryClient();
 
-  const claimMarketRewards = useCallback(
-    () => async () => {
-      if (!currentSdk || !currentChain || !marketRewards || marketRewards.length === 0) return;
+  const claimMarketRewards = useCallback(async () => {
+    if (!currentSdk || !currentChain || !marketRewards || marketRewards.length === 0) return;
 
-      setIsClaiming(true);
+    setIsClaiming(true);
 
-      const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
-      const flywheels: string[] = [];
+    const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
+    const flywheels: string[] = [];
 
-      marketRewards.map((reward) => {
-        flywheels.push(reward.flywheel);
+    marketRewards.map((reward) => {
+      flywheels.push(reward.flywheel);
 
-        const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
-          return asset.underlying === reward.rewardToken;
-        });
-
-        _assetPerRewardToken[reward.rewardToken] = asset;
+      const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
+        return asset.underlying === reward.rewardToken;
       });
 
-      const _steps: TxStep[] = [
-        {
-          desc: `Claim ${Object.values(_assetPerRewardToken)
-            .map((asset) => asset?.symbol)
-            .filter((symbol) => !!symbol)
-            .join(', ')} rewards from Midas`,
-          done: false,
-          title: `Claim rewards on ${currentChain.network}`,
-        },
-      ];
+      _assetPerRewardToken[reward.rewardToken] = asset;
+    });
 
-      setSteps(_steps);
-      setAssetPerRewardToken(_assetPerRewardToken);
-      setFailedStep(0);
-      setActiveStep(1);
+    const _steps: TxStep[] = [
+      {
+        desc: `Claim ${Object.values(_assetPerRewardToken)
+          .map((asset) => asset?.symbol)
+          .filter((symbol) => !!symbol)
+          .join(', ')} rewards from Midas`,
+        done: false,
+        title: `Claim rewards on ${currentChain.network}`,
+      },
+    ];
 
-      try {
-        const tx = await currentSdk.claimRewardsForMarket(marketAddress, flywheels);
+    setSteps(_steps);
+    setAssetPerRewardToken(_assetPerRewardToken);
+    setFailedStep(0);
+    setActiveStep(1);
 
-        addRecentTransaction({
-          description: `Claim rewards on market`,
-          hash: tx.hash,
-        });
+    try {
+      const tx = await currentSdk.claimRewardsForMarket(marketAddress, flywheels);
 
-        _steps[0] = {
-          ..._steps[0],
-          txHash: tx.hash,
-        };
+      addRecentTransaction({
+        description: `Claim rewards on market`,
+        hash: tx.hash,
+      });
 
-        setSteps([..._steps]);
+      _steps[0] = {
+        ..._steps[0],
+        txHash: tx.hash,
+      };
 
-        await tx.wait();
+      setSteps([..._steps]);
 
-        _steps[0] = {
-          ..._steps[0],
-          done: true,
-          txHash: tx.hash,
-        };
-        setSteps([..._steps]);
+      await tx.wait();
 
-        await queryClient.refetchQueries({ queryKey: ['useAssetClaimableRewards'] });
-      } catch (error) {
-        const sentryProperties = {
-          chainId: currentSdk.chainId,
-          flywheels,
-          marketAddress,
-        };
-        const sentryInfo = {
-          contextName: `Claiming rewards on market ${marketAddress}`,
-          properties: sentryProperties,
-        };
-        handleGenericError({ error, sentryInfo, toast: errorToast });
-        setFailedStep(1);
-      }
+      _steps[0] = {
+        ..._steps[0],
+        done: true,
+        txHash: tx.hash,
+      };
+      setSteps([..._steps]);
 
-      setIsClaiming(false);
-    },
-    [
-      currentSdk,
-      currentChain,
-      marketRewards,
-      marketAddress,
-      addRecentTransaction,
-      queryClient,
-      errorToast,
-    ]
-  );
+      await queryClient.refetchQueries({ queryKey: ['useAssetClaimableRewards'] });
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        flywheels,
+        marketAddress,
+      };
+      const sentryInfo = {
+        contextName: `Claiming rewards on market ${marketAddress}`,
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, sentryInfo, toast: errorToast });
+      setFailedStep(1);
+    }
+
+    setIsClaiming(false);
+  }, [
+    currentSdk,
+    currentChain,
+    marketRewards,
+    marketAddress,
+    addRecentTransaction,
+    queryClient,
+    errorToast,
+  ]);
 
   return (
     <MidasModal

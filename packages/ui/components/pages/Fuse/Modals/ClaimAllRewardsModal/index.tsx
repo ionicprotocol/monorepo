@@ -241,79 +241,76 @@ export const ClaimAllRewardsModal = ({
     [currentSdk, currentChain, addRecentTransaction, queryClient, errorToast]
   );
 
-  const claimAllRewards = useCallback(
-    () => async () => {
-      if (!currentSdk || !currentChain) return;
+  const claimAllRewards = useCallback(async () => {
+    if (!currentSdk || !currentChain) return;
 
-      setIsClaiming(true);
+    setIsClaiming(true);
 
-      const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
+    const _assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined } = {};
 
-      claimableRewards.map((reward) => {
-        const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
-          return asset.underlying === reward.rewardToken;
-        });
-
-        _assetPerRewardToken[reward.rewardToken] = asset;
+    claimableRewards.map((reward) => {
+      const asset = ChainSupportedAssets[currentSdk.chainId].find((asset) => {
+        return asset.underlying === reward.rewardToken;
       });
 
-      const _steps: TxStep[] = [
-        {
-          desc: `Claim ${Object.values(_assetPerRewardToken)
-            .map((asset) => asset?.symbol)
-            .filter((symbol) => !!symbol)
-            .join(', ')} rewards from Midas`,
-          done: false,
-          title: `Claim rewards on ${currentChain.network}`,
-        },
-      ];
+      _assetPerRewardToken[reward.rewardToken] = asset;
+    });
 
-      setSteps(_steps);
-      setAssetPerRewardToken(_assetPerRewardToken);
-      setFailedStep(0);
-      setActiveStep(1);
+    const _steps: TxStep[] = [
+      {
+        desc: `Claim ${Object.values(_assetPerRewardToken)
+          .map((asset) => asset?.symbol)
+          .filter((symbol) => !!symbol)
+          .join(', ')} rewards from Midas`,
+        done: false,
+        title: `Claim rewards on ${currentChain.network}`,
+      },
+    ];
 
-      try {
-        const tx = await currentSdk.claimAllRewards();
+    setSteps(_steps);
+    setAssetPerRewardToken(_assetPerRewardToken);
+    setFailedStep(0);
+    setActiveStep(1);
 
-        addRecentTransaction({
-          description: `Claim all rewards`,
-          hash: tx.hash,
-        });
+    try {
+      const tx = await currentSdk.claimAllRewards();
 
-        _steps[0] = {
-          ..._steps[0],
-          txHash: tx.hash,
-        };
+      addRecentTransaction({
+        description: `Claim all rewards`,
+        hash: tx.hash,
+      });
 
-        setSteps([..._steps]);
+      _steps[0] = {
+        ..._steps[0],
+        txHash: tx.hash,
+      };
 
-        await tx.wait();
+      setSteps([..._steps]);
 
-        _steps[0] = {
-          ..._steps[0],
-          done: true,
-          txHash: tx.hash,
-        };
-        setSteps([..._steps]);
+      await tx.wait();
 
-        await queryClient.refetchQueries({ queryKey: ['useAllClaimableRewards'] });
-      } catch (error) {
-        const sentryProperties = {
-          chainId: currentSdk.chainId,
-        };
-        const sentryInfo = {
-          contextName: 'Claiming all rewards',
-          properties: sentryProperties,
-        };
-        handleGenericError({ error, sentryInfo, toast: errorToast });
-        setFailedStep(1);
-      }
+      _steps[0] = {
+        ..._steps[0],
+        done: true,
+        txHash: tx.hash,
+      };
+      setSteps([..._steps]);
 
-      setIsClaiming(false);
-    },
-    [currentSdk, currentChain, claimableRewards, addRecentTransaction, queryClient, errorToast]
-  );
+      await queryClient.refetchQueries({ queryKey: ['useAllClaimableRewards'] });
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+      };
+      const sentryInfo = {
+        contextName: 'Claiming all rewards',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, sentryInfo, toast: errorToast });
+      setFailedStep(1);
+    }
+
+    setIsClaiming(false);
+  }, [currentSdk, currentChain, claimableRewards, addRecentTransaction, queryClient, errorToast]);
 
   return (
     <MidasModal
