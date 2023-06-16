@@ -14,11 +14,11 @@ export const usePoolClaimableRewards = ({
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
     ['usePoolClaimableRewards', poolAddress, address, poolChainId],
-    () => {
+    async () => {
       const sdk = getSdk(poolChainId);
 
       if (sdk && address && poolChainId) {
-        return sdk.getFlywheelClaimableRewardsForPool(poolAddress, address);
+        return await sdk.getFlywheelClaimableRewardsForPool(poolAddress, address);
       }
 
       return null;

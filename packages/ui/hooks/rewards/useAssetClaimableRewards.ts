@@ -21,7 +21,7 @@ export const useAssetClaimableRewards = ({
     ['useAssetClaimableRewards', poolAddress, marketAddress, address, sdk?.chainId],
     async () => {
       if (sdk && address) {
-        const flywheelClaimableRewardsForAsset = await sdk.getFlywheelClaimableRewardsForAsset(
+        const flywheelClaimableRewardsForAsset = await sdk.getFlywheelClaimableRewardsForMarket(
           poolAddress,
           marketAddress,
           address
@@ -49,7 +49,7 @@ export const getAssetsClaimableRewards = async (
   const allRewards = await Promise.all(
     assetsAddress.map(async (assetAddress) => {
       try {
-        return await sdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
+        return await sdk.getFlywheelClaimableRewardsForMarket(poolAddress, assetAddress, address);
       } catch (error) {
         console.warn(`Unable to fetch claimable rewards for asset: '${assetAddress}'`, error);
         return null;
