@@ -25,7 +25,11 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
             const sdk = getSdk(chainId);
 
             if (sdk) {
-              const rewards = await sdk.getAllFlywheelClaimableRewards(address);
+              const rewards = await sdk.getAllFlywheelClaimableRewards(address).catch(() => {
+                console.warn('Getting all claimable reward error', { chainId });
+
+                return [];
+              });
               rewards.map((reward) => {
                 if (reward.amount.gt(constants.Zero)) {
                   allRewards.push({
