@@ -25,10 +25,7 @@ export const PoolName = ({
 }) => {
   const { setGlobalLoading } = useMultiMidas();
   const rewardTokens = useRewardTokensOfPool(comptroller, chainId);
-  const { data: claimableRewards } = usePoolClaimableRewards({
-    poolAddress: comptroller,
-    poolChainId: chainId,
-  });
+  const { data: claimableRewards } = usePoolClaimableRewards(comptroller, chainId);
   const { cCard } = useColors();
   const router = useRouter();
   const [isHovering, setIsHovering] = useState<boolean>(false);

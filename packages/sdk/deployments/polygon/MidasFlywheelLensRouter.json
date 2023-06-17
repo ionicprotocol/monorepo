@@ -367,9 +367,7 @@
     "status": 1,
     "byzantium": true
   },
-  "args": [
-    "0x9A161e68EC0d5364f4d09A6080920DAFF6FFf250"
-  ],
+  "args": ["0x9A161e68EC0d5364f4d09A6080920DAFF6FFf250"],
   "numDeployments": 11,
   "metadata": {
     "compiler": {

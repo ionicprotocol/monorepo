@@ -1,7 +1,7 @@
 import { AvatarGroup, Box, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 
-import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal/index';
+import { ClaimMarketRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimMarketRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -30,18 +30,7 @@ const ClaimAssetRewardsButton = ({
     refetch: refetchRewards,
     isLoading,
     isRefetching,
-  } = useAssetClaimableRewards({
-    marketAddress,
-    poolAddress,
-    poolChainId,
-  });
-
-  const claimableRewardsOfChain: { [chainId: string]: FlywheelClaimableRewards[] } =
-    claimableRewards && claimableRewards.length > 0
-      ? {
-          [poolChainId]: claimableRewards,
-        }
-      : {};
+  } = useAssetClaimableRewards(marketAddress, poolAddress, poolChainId);
 
   return (
     <>
@@ -70,13 +59,12 @@ const ClaimAssetRewardsButton = ({
         </GradientButton>
       )}
       <Box position="absolute">
-        <ClaimRewardsModal
-          claimableRewardsPerChain={claimableRewardsOfChain}
+        <ClaimMarketRewardsModal
           isLoading={isLoading || isRefetching}
           isOpen={isClaimModalOpen}
-          markets={[marketAddress]}
+          marketAddress={marketAddress}
           onClose={closeClaimModal}
-          refetch={refetchRewards}
+          poolAddress={poolAddress}
         />
       </Box>
     </>

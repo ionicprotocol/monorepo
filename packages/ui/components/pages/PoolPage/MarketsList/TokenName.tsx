@@ -25,11 +25,11 @@ export const TokenName = ({
   poolChainId: number;
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
-  const { data: claimableRewards } = useAssetClaimableRewards({
-    marketAddress: asset.cToken,
+  const { data: claimableRewards } = useAssetClaimableRewards(
+    asset.cToken,
     poolAddress,
-    poolChainId,
-  });
+    poolChainId
+  );
   const { data: debtCeilingsOfAsset } = useDebtCeilingForAssetForCollateral({
     assets: [asset],
     collaterals: assets,

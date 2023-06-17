@@ -1,13 +1,12 @@
 import { AvatarGroup, HStack, Text, useDisclosure } from '@chakra-ui/react';
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import React, { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import React from 'react';
 
-import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal/index';
+import { ClaimAllRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimAllRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useAllMarkets } from '@ui/hooks/rewards/useAllMarkets';
-import { useCrossAllClaimableRewards } from '@ui/hooks/rewards/useCrossAllClaimableRewards';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
@@ -22,59 +21,28 @@ const ClaimAllRewardsButton: React.FC = () => {
   const { currentChain } = useMultiMidas();
   const isMobile = useIsSmallScreen();
   const enabledChains = useEnabledChains();
-  const [allClaimableRewards, setAllClaimableRewards] = useState<{
-    [chainId: string]: FlywheelClaimableRewards[];
-  }>({});
 
-  const {
-    data: crossAllClaimableRewards,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = useCrossAllClaimableRewards([...enabledChains]);
+  const { data: allRewards, isRefetching, isLoading } = useAllClaimableRewards([...enabledChains]);
 
-  const { data: allMarkets } = useAllMarkets(currentChain?.id);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (crossAllClaimableRewards) {
-      const _allClaimableRewards: { [chainId: string]: FlywheelClaimableRewards[] } = {};
+  const openModal = async () => {
+    openClaimModal();
 
-      Object.entries(crossAllClaimableRewards).map(([key, value]) => {
-        if (value && value.length > 0) {
-          _allClaimableRewards[key] = value;
-        }
-      });
-
-      setAllClaimableRewards(_allClaimableRewards);
-    }
-
-    if (!isLoading && !crossAllClaimableRewards) {
-      setAllClaimableRewards({});
-    }
-  }, [crossAllClaimableRewards, isLoading]);
+    await queryClient.refetchQueries({ queryKey: ['useAssetClaimableRewards'] });
+  };
 
   return (
     <>
       {currentChain && (
-        <ClaimRewardsModal
-          claimableRewardsPerChain={allClaimableRewards}
+        <ClaimAllRewardsModal
           isLoading={isLoading || isRefetching}
           isOpen={isClaimModalOpen}
-          markets={allMarkets}
           onClose={closeClaimModal}
-          refetch={refetch}
         />
       )}
-      {currentChain && Object.values(allClaimableRewards).length > 0 && (
-        <GradientButton
-          isSelected
-          justifySelf="center"
-          onClick={() => {
-            openClaimModal();
-            refetch();
-          }}
-          width="fit-content"
-        >
+      {currentChain && allRewards && allRewards.length > 0 && (
+        <GradientButton isSelected justifySelf="center" onClick={openModal} width="fit-content">
           <HStack spacing={1}>
             {!isMobile && (
               <Text
@@ -88,10 +56,10 @@ const ClaimAllRewardsButton: React.FC = () => {
               </Text>
             )}
             <AvatarGroup max={30} size="xs">
-              {Object.entries(allClaimableRewards).map(([key, value]) => {
-                return value.map((rD: FlywheelClaimableRewards, index: number) => {
-                  return <TokenIcon address={rD.rewardToken} chainId={Number(key)} key={index} />;
-                });
+              {allRewards.map((reward, index) => {
+                return (
+                  <TokenIcon address={reward.rewardToken} chainId={reward.chainId} key={index} />
+                );
               })}
             </AvatarGroup>
           </HStack>

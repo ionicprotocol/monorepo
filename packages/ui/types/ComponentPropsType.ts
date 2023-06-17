@@ -272,6 +272,10 @@ export type PositionsPerChainStatus = {
   };
 };
 
+export type AllRewardsPerChainStatus = {
+  [chainId: string]: Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[] | null | undefined;
+};
+
 export type RewardsPerChainProps = {
   [chainId: string]: {
     data?: FlywheelClaimableRewards[] | null | undefined;

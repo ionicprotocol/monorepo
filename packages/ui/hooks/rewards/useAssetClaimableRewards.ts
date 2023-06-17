@@ -1,33 +1,41 @@
 import type { MidasSdk } from '@midas-capital/sdk';
 import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
+import { constants } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useAssetClaimableRewards = ({
-  poolAddress,
-  marketAddress,
-  poolChainId,
-}: {
-  marketAddress: string;
-  poolAddress: string;
-  poolChainId: number;
-}) => {
+export const useAssetClaimableRewards = (
+  marketAddress: string,
+  poolAddress: string,
+  poolChainId?: number
+) => {
   const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
     ['useAssetClaimableRewards', poolAddress, marketAddress, address, sdk?.chainId],
     async () => {
-      if (sdk && address) {
-        const flywheelClaimableRewardsForAsset = await sdk.getFlywheelClaimableRewardsForMarket(
-          poolAddress,
-          marketAddress,
-          address
-        );
+      if (sdk && poolAddress && marketAddress && address) {
+        try {
+          const rewards = await sdk.getFlywheelClaimableRewardsForMarket(
+            poolAddress,
+            marketAddress,
+            address
+          );
 
-        return flywheelClaimableRewardsForAsset;
+          return rewards.filter((reward) => reward.amount.gt(constants.Zero));
+        } catch (e) {
+          console.warn('Getting market claimable rewards error: ', {
+            address,
+            marketAddress,
+            poolAddress,
+            poolChainId,
+          });
+
+          return null;
+        }
       }
 
       return null;
