@@ -30,7 +30,7 @@
       "address": "0xe17eD87fb21A3730611e2988909f717ab84D88c7"
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x39eaA0bB0dB6B5356e08CB4b9212585Ba7aA2E0B"
+      "address": "0x219f7a75925D6d0312d1B62cEE6a4eE6F1A85217"
     },
     "ChapelBombERC20": {
       "address": "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"
@@ -192,7 +192,7 @@
       "address": "0x429041250873643235cb3788871447c6fF3205aA"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xF5eb414FAFfc0Ff4eD7f409b31db44F95A484154"
+      "address": "0xed5886Fcf8B390210B387432431159dCfA5D8763"
     },
     "MidasFlywheel_Implementation": {
       "address": "0x7b08D19832eD5Ec09b4898eA928991ea7b145457"

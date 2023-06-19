@@ -210,7 +210,7 @@
       "address": "0x65Cbe775B7f17008e4e06B4582A7202592e72F21"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x218e41adCd03E764f009400628979c10b6190a8b"
+      "address": "0x4682b914C351830e9e289C02ec312e453f017eE2"
     },
     "LeveredPositionsLens": {
       "address": "0xc7C522615d468c8F91d8B8B5837f0E71fcefEe32"
@@ -258,7 +258,7 @@
       "address": "0x1557ccC2cc2B0CC6029330B86FC39CCEA007339b"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x7e84BD63951a1f8155681209C209D236dd3a6c8D"
+      "address": "0x79eA192e51e56D639AafB24993b6CEd772407d13"
     },
     "MidasFlywheel_JRT_Jarvis": {
       "address": "0x5943487ca06D49Bb62b378ad7D1e9ff0848cCF86"
@@ -311,6 +311,15 @@
     "SimplePriceOracle_Proxy": {
       "address": "0x7770BdDdA35F7e13dB7e112Cc77b0445922DA660"
     },
+    "SolidlyPriceOracle": {
+      "address": "0xe3a5BDb287D9f6da0453A0025B8Df550D518A86c"
+    },
+    "SolidlyPriceOracle_Implementation": {
+      "address": "0xFcF2cf061B27783E650c79DcD90682Ee7eaC7900"
+    },
+    "SolidlyPriceOracle_Proxy": {
+      "address": "0xe3a5BDb287D9f6da0453A0025B8Df550D518A86c"
+    },
     "UniswapLpTokenLiquidator": {
       "address": "0x67b3AF7C93903A21818C5f8Ef7129832165CB792"
     },
@@ -324,7 +333,7 @@
       "address": "0x5bEb4BD2164D286CdE9c672910c548dF643a2Caa"
     },
     "UniswapV3LiquidatorFunder": {
-      "address": "0x77ACC9d42f6D93e3420B9023f2495A847D5c66E8"
+      "address": "0xC3627C03FC11EFE4A031d5769E5335B058724BD2"
     },
     "UniswapV3PriceOracle": {
       "address": "0xF36e137F9aA5fB74e9aEb0EDc767238872d6fd3d"

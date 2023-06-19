@@ -135,7 +135,7 @@
       "address": "0x7eeab71F7D449601D63494f1F4FE998C8c88F75a"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x2DE7311e02D57A1C4db5dF9108265FeEdF542a15"
+      "address": "0x287efee065Ea462bBAB2B61FfDF25F0c4E51D75E"
     },
     "LeveredPositionsLens": {
       "address": "0x8a571d80CaB8bf2101dbA71F4FeaC2216b507403"
@@ -165,7 +165,7 @@
       "address": "0x14C15B9ec83ED79f23BF71D51741f58b69ff1494"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x47f6F7c534233EF315c9d579739fb0Ca242342C9"
+      "address": "0x968188FD4Bc26D120368Cec1410677B035848301"
     },
     "MidasFlywheel_LDO": {
       "address": "0xb13aAD1F212FdE08a5ab51249cf6434574434A4e"

@@ -294,7 +294,7 @@
       "address": "0x71ba5c7B3A623C3605ce3Fc5Fe04CAE6809de907"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x657bE636307f0030902d74ad0Ae27e24B7a4bE55"
+      "address": "0x42ca8cb70B857E77deaD7F62e6765DfAa6ed2082"
     },
     "LeveredPositionsLens": {
       "address": "0xbFac919fEF89D2e3EB41c82C304E3d9183C67A75"
@@ -324,7 +324,7 @@
       "address": "0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x01375b03Be806e608b2C7Cb93373d01161Cf18f2"
+      "address": "0xDdA85440F80319e3B3591C13fDF9e2708D996c9c"
     },
     "MidasFlywheel_ANKR_Ankr_BNB_Pool": {
       "address": "0x4ab7cAEfb78D6EA8Bc62cAa6F9788ca873869dA1"

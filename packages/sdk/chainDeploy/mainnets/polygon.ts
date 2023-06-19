@@ -16,6 +16,7 @@ import {
   deployCurveLpOracle,
   deployDiaOracle,
   deployGelatoGUniPriceOracle,
+  deploySolidlyPriceOracle,
   deployUniswapLpOracle,
   deployUniswapV3Oracle,
 } from "../helpers";
@@ -31,6 +32,7 @@ import {
   CurvePoolConfig,
   DiaAsset,
   GelatoGUniAsset,
+  SolidlyOracleAssetConfig,
 } from "../helpers/types";
 
 const assets = polygon.assets;
@@ -503,12 +505,12 @@ const diaAssets: DiaAsset[] = [
     feed: "0xd3709072C338689F94a4072a26Bb993559D9a026",
     key: "PAR/USD",
   },
-  {
-    symbol: assetSymbols.USDR,
-    underlying: underlying(assets, assetSymbols.USDR),
-    feed: "0x763F20F3Fcdd30e11EF633A70B4396B91C149189",
-    key: "USDR/USD",
-  },
+  // {
+  //   symbol: assetSymbols.USDR,
+  //   underlying: underlying(assets, assetSymbols.USDR),
+  //   feed: "0x763F20F3Fcdd30e11EF633A70B4396B91C149189",
+  //   key: "USDR/USD",
+  // },
 ];
 
 const balancerLpAssets: BalancerLpAsset[] = [
@@ -567,10 +569,36 @@ const balancerRateProviderAssets: BalancerRateProviderAsset[] = [
   },
 ];
 
+const solidlyOracleSupportedStables: string[] = [
+  deployConfig.stableToken!,
+  underlying(assets, assetSymbols.USDC),
+  underlying(assets, assetSymbols.USDR),
+];
+
+const solidlyOracles: SolidlyOracleAssetConfig[] = [
+  {
+    underlying: underlying(assets, assetSymbols.USDR),
+    poolAddress: "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797", // sAMM-USDC-USDR
+    baseToken: underlying(assets, assetSymbols.USDC),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  //// Solidly Price Oracle
+  await deploySolidlyPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    supportedBaseTokens: solidlyOracleSupportedStables,
+    assets: solidlyOracles,
+  });
+
   //// deploy uniswap v3 price oracle
   await deployUniswapV3Oracle({
     run,

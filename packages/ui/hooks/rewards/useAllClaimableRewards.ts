@@ -1,28 +1,57 @@
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
+import type { BigNumber } from 'ethers';
+import { constants } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
-export const useAllClaimableRewards = () => {
-  const { currentSdk, address } = useMultiMidas();
+interface AllRewardsType {
+  amount: BigNumber;
+  chainId: SupportedChains;
+  rewardToken: string;
+}
 
-  return useQuery<Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[] | null | undefined>(
-    ['useAllClaimableRewards', currentSdk?.chainId, address],
+export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
+  const { address, getSdk } = useMultiMidas();
+
+  return useQuery(
+    ['useAllClaimableRewards', chainIds, address],
     async () => {
-      if (currentSdk && address) {
-        return await currentSdk.getAllFlywheelClaimableRewards(address).catch((e) => {
-          console.warn(
-            `Getting all claimable rewards error: `,
-            { address, chainId: currentSdk.chainId },
-            e
-          );
+      if (chainIds.length > 0 && address) {
+        const allRewards: AllRewardsType[] = [];
 
-          return null;
-        });
-      } else {
-        return null;
+        await Promise.all(
+          chainIds.map(async (chainId) => {
+            const sdk = getSdk(chainId);
+
+            if (sdk) {
+              const rewards = await sdk.getAllFlywheelClaimableRewards(address).catch(() => {
+                console.warn('Getting all claimable reward error', { chainId });
+
+                return [];
+              });
+              rewards.map((reward) => {
+                if (reward.amount.gt(constants.Zero)) {
+                  allRewards.push({
+                    amount: reward.amount,
+                    chainId,
+                    rewardToken: reward.rewardToken,
+                  });
+                }
+              });
+            }
+          })
+        );
+
+        return allRewards;
       }
+
+      return null;
     },
-    { cacheTime: Infinity, enabled: !!address && !!currentSdk, staleTime: Infinity }
+    {
+      cacheTime: Infinity,
+      enabled: !!address || chainIds.length > 0,
+      staleTime: Infinity,
+    }
   );
 };

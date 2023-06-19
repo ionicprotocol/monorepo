@@ -108,96 +108,6 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       return rewardsInfos;
     }
 
-    async getAllFlywheelClaimableRewards(account: string) {
-      const fplSecondary = this.createFusePoolLensSecondary();
-      const [, comptrollers] = await fplSecondary.callStatic.getFlywheelsToClaim(account, {
-        from: account,
-      });
-
-      const flywheelWithRewards: FlywheelClaimableRewards[] = [];
-
-      await Promise.all(
-        comptrollers.map(async (comptroller) => {
-          const pool = this.createComptroller(comptroller, this.provider);
-
-          const [markets, rewardDistributors] = await Promise.all([
-            pool.callStatic.getAllMarkets(),
-            pool.callStatic.getRewardsDistributors(),
-          ]);
-
-          const rewardAmounts = await this.getClaimableRewardsForMarkets(markets, rewardDistributors, account);
-
-          await Promise.all(
-            rewardAmounts.map(async (amount, i) => {
-              if (amount.gt(0)) {
-                const flywheel = this.createMidasFlywheel(rewardDistributors[i], this.provider);
-
-                flywheelWithRewards.push({
-                  flywheel: flywheel.address,
-                  rewardToken: await flywheel.callStatic.rewardToken(),
-                  amount,
-                });
-              }
-            })
-          );
-        })
-      );
-
-      return flywheelWithRewards;
-    }
-
-    async getFlywheelClaimableRewardsForPool(poolAddress: string, account: string) {
-      const pool = this.createComptroller(poolAddress, this.provider);
-      const [markets, rewardDistributors] = await Promise.all([
-        pool.callStatic.getAllMarkets(),
-        pool.callStatic.getRewardsDistributors(),
-      ]);
-
-      const flywheelWithRewards: FlywheelClaimableRewards[] = [];
-
-      const rewardAmounts = await this.getClaimableRewardsForMarkets(markets, rewardDistributors, account);
-
-      await Promise.all(
-        rewardAmounts.map(async (amount, i) => {
-          if (amount.gt(0)) {
-            const flywheel = this.createMidasFlywheel(rewardDistributors[i], this.provider);
-
-            flywheelWithRewards.push({
-              flywheel: flywheel.address,
-              rewardToken: await flywheel.callStatic.rewardToken(),
-              amount,
-            });
-          }
-        })
-      );
-
-      return flywheelWithRewards;
-    }
-
-    async getFlywheelClaimableRewardsForAsset(poolAddress: string, market: string, account: string) {
-      const pool = this.createComptroller(poolAddress, this.provider);
-      const rewardDistributors = await pool.callStatic.getRewardsDistributors();
-      const rewardAmounts = await this.getClaimableRewardsForMarket(market, rewardDistributors, account);
-
-      const flywheelWithRewards: FlywheelClaimableRewards[] = [];
-
-      await Promise.all(
-        rewardAmounts.map(async (amount, i) => {
-          if (amount.gt(0)) {
-            const flywheel = this.createMidasFlywheel(rewardDistributors[i], this.provider);
-
-            flywheelWithRewards.push({
-              flywheel: flywheel.address,
-              rewardToken: await flywheel.callStatic.rewardToken(),
-              amount,
-            });
-          }
-        })
-      );
-
-      return flywheelWithRewards;
-    }
-
     async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
         this.contracts.MidasFlywheelLensRouter as MidasFlywheelLensRouter
@@ -227,62 +137,86 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       };
     }
 
-    async getClaimableRewardsForMarkets(markets: string[], flywheels: string[], account: string) {
+    async getFlywheelClaimableRewardsForMarket(
+      poolAddress: string,
+      market: string,
+      account: string
+    ): Promise<FlywheelClaimableRewards[]> {
+      const pool = this.createComptroller(poolAddress, this.provider);
+      const rewardDistributors = await pool.callStatic.getRewardsDistributors();
+
       const fwLensRouter = this.createMidasFlywheelLensRouter();
 
-      const [, , rewardAmountsPerMarket] = await fwLensRouter.callStatic.getUnclaimedRewardsByMarkets(
-        account,
-        markets,
-        flywheels,
-        Array.from(flywheels, () => true)
-      );
-
-      return rewardAmountsPerMarket;
-    }
-
-    async getClaimableRewardsForMarket(market: string, flywheels: string[], account: string) {
-      const fwLensRouter = this.createMidasFlywheelLensRouter();
-
-      const [, , rewardAmountsPerFlywheel] = await fwLensRouter.callStatic.getUnclaimedRewardsForMarket(
+      const [_flywheels, rewardTokens, rewards] = await fwLensRouter.callStatic.claimRewardsForMarket(
         account,
         market,
-        flywheels,
-        Array.from(flywheels, () => true)
+        rewardDistributors,
+        Array.from(rewardDistributors, () => true)
       );
 
-      return rewardAmountsPerFlywheel;
-    }
-
-    async getAllComptrollers() {
-      const fplSecondary = this.createFusePoolLensSecondary();
-      const account = await this.signer.getAddress();
-      const [, comptrollers] = await fplSecondary.callStatic.getFlywheelsToClaim(account, {
-        from: account,
+      return _flywheels.map((flywheel, i) => {
+        return {
+          flywheel,
+          rewardToken: rewardTokens[i],
+          amount: rewards[i],
+        };
       });
-
-      return comptrollers;
     }
 
-    async getAllMarkets() {
-      const comptrollers = await this.getAllComptrollers();
+    async getFlywheelClaimableRewardsByMarkets(
+      poolAddress: string,
+      markets: string[],
+      account: string
+    ): Promise<FlywheelClaimableRewards[]> {
+      const pool = this.createComptroller(poolAddress, this.provider);
+      const rewardDistributors = await pool.callStatic.getRewardsDistributors();
 
-      const allMarkets: string[] = [];
+      const fwLensRouter = this.createMidasFlywheelLensRouter();
 
-      await Promise.all(
-        comptrollers.map(async (comptroller) => {
-          const pool = this.createComptroller(comptroller, this.provider);
-          const markets = await pool.callStatic.getAllMarkets();
-
-          // get unique market
-          markets.map((market) => {
-            if (!allMarkets.includes(market)) {
-              allMarkets.push(market);
-            }
-          });
-        })
+      const [_flywheels, rewardTokens, rewards] = await fwLensRouter.callStatic.claimRewardsForMarkets(
+        account,
+        markets,
+        rewardDistributors,
+        Array.from(rewardDistributors, () => true)
       );
 
-      return allMarkets;
+      return _flywheels.map((flywheel, i) => {
+        return {
+          flywheel,
+          rewardToken: rewardTokens[i],
+          amount: rewards[i],
+        };
+      });
+    }
+
+    async getFlywheelClaimableRewardsForPool(poolAddress: string, account: string) {
+      const fwLensRouter = this.createMidasFlywheelLensRouter();
+
+      const [_flywheels, rewardTokens, rewards] = await fwLensRouter.callStatic.claimRewardsForPool(
+        account,
+        poolAddress
+      );
+
+      return _flywheels.map((flywheel, i) => {
+        return {
+          flywheel,
+          rewardToken: rewardTokens[i],
+          amount: rewards[i],
+        };
+      });
+    }
+
+    async getAllFlywheelClaimableRewards(account: string) {
+      const fwLensRouter = this.createMidasFlywheelLensRouter();
+
+      const [rewardTokens, rewards] = await fwLensRouter.callStatic.claimAllRewardTokens(account);
+
+      return rewardTokens.map((rewardToken, i) => {
+        return {
+          rewardToken,
+          amount: rewards[i],
+        };
+      });
     }
 
     /** WRITE */
@@ -318,16 +252,83 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       return comptrollerInstance.functions._addRewardsDistributor(flywheelCoreAddress);
     }
 
+    /**
+      @notice claim rewards of single market.
+      @param market market cToken address
+      @param flywheels available flywheels addresses which market could have
+      @return contract transaction
+    */
+    async claimRewardsForMarket(market: string, flywheels: string[]) {
+      const fwLensRouter = this.createMidasFlywheelLensRouter(this.signer);
+      const account = await this.signer.getAddress();
+
+      const tx = await fwLensRouter.claimRewardsForMarket(
+        account,
+        market,
+        flywheels,
+        Array.from(flywheels, () => true)
+      );
+
+      return tx;
+    }
+
+    /**
+      @notice claim rewards of multiple markets.
+      @param market markets cToken addresses
+      @param flywheels available flywheels addresses which markets could have
+      @return contract transaction
+    */
     async claimRewardsForMarkets(markets: string[], flywheels: string[]) {
       const fwLensRouter = this.createMidasFlywheelLensRouter(this.signer);
       const account = await this.signer.getAddress();
 
-      const tx = await fwLensRouter.getUnclaimedRewardsByMarkets(
+      const tx = await fwLensRouter.claimRewardsForMarkets(
         account,
         markets,
         flywheels,
         Array.from(flywheels, () => true)
       );
+
+      return tx;
+    }
+
+    /**
+      @notice claim rewards of single pool.
+      @param poolAddress pool address
+      @return contract transaction
+    */
+    async claimRewardsForPool(poolAddress: string) {
+      const fwLensRouter = this.createMidasFlywheelLensRouter(this.signer);
+      const account = await this.signer.getAddress();
+
+      const tx = await fwLensRouter.claimRewardsForPool(account, poolAddress);
+
+      return tx;
+    }
+
+    /**
+      @notice claim rewards for specific reward token
+      @param rewardToken reward token address
+      @return contract transaction
+    */
+    async claimRewardsForRewardToken(rewardToken: string) {
+      const fwLensRouter = this.createMidasFlywheelLensRouter(this.signer);
+      const account = await this.signer.getAddress();
+
+      const tx = await fwLensRouter.claimRewardsOfRewardToken(account, rewardToken);
+
+      return tx;
+    }
+
+    /**
+      @notice claim all rewards
+      @return contract transaction
+    */
+    async claimAllRewards() {
+      const fwLensRouter = this.createMidasFlywheelLensRouter(this.signer);
+      const account = await this.signer.getAddress();
+
+      const tx = await fwLensRouter.claimAllRewardTokens(account);
 
       return tx;
     }
