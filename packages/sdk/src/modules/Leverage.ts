@@ -1,10 +1,4 @@
-import {
-  NewPosition,
-  NewPositionBorrowable,
-  OpenPosition,
-  OpenPositionBorrowable,
-  SupportedChains,
-} from "@midas-capital/types";
+import { LeveredBorrowable, NewPosition, OpenPosition, SupportedChains } from "@midas-capital/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
@@ -61,8 +55,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
               const reward = rewards.find((rw) => rw.market === collateralCToken);
 
               //get borrowable asset
-              const openPositionBorrowable: OpenPositionBorrowable[] = [];
-              const newPositionBorrowable: NewPositionBorrowable[] = [];
+              const leveredBorrowable: LeveredBorrowable[] = [];
               borrowableMarkets.map((borrowableMarket, i) => {
                 const borrowableAsset = ChainSupportedAssets[this.chainId].find(
                   (asset) => asset.underlying === borrowableUnderlyings[index]
@@ -82,42 +75,36 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   rate: borrowableRates[i],
                 };
 
-                newPositionBorrowable.push({
+                leveredBorrowable.push({
                   ...borrowable,
                 });
 
                 if (position) {
-                  openPositionBorrowable.push({
-                    ...borrowable,
-                    position: position.position,
-                    isPositionClosed: position.isClosed,
+                  openPositions.push({
+                    chainId: this.chainId,
+                    collateral: {
+                      cToken: collateralCToken,
+                      underlyingToken: collateralUnderlyings[index],
+                      underlyingDecimals: collateralAsset
+                        ? BigNumber.from(collateralAsset.decimals)
+                        : BigNumber.from(collateralDecimals[index]),
+                      totalSupplied: collateralTotalSupplys[index],
+                      symbol: collateralAsset
+                        ? collateralAsset.originalSymbol
+                          ? collateralAsset.originalSymbol
+                          : collateralAsset.symbol
+                        : collateralsymbols[index],
+                      supplyRatePerBlock: supplyRatePerBlock[index],
+                      reward,
+                      pool: poolOfMarket[index],
+                      plugin: this.marketToPlugin[collateralCToken],
+                      underlyingPrice: collateralUnderlyingPrices[index],
+                    },
+                    borrowable,
+                    address: position.position,
+                    isClosed: position.isClosed,
                   });
                 }
-              });
-
-              openPositionBorrowable.map((_borrowable) => {
-                openPositions.push({
-                  chainId: this.chainId,
-                  collateral: {
-                    cToken: collateralCToken,
-                    underlyingToken: collateralUnderlyings[index],
-                    underlyingDecimals: collateralAsset
-                      ? BigNumber.from(collateralAsset.decimals)
-                      : BigNumber.from(collateralDecimals[index]),
-                    totalSupplied: collateralTotalSupplys[index],
-                    symbol: collateralAsset
-                      ? collateralAsset.originalSymbol
-                        ? collateralAsset.originalSymbol
-                        : collateralAsset.symbol
-                      : collateralsymbols[index],
-                    supplyRatePerBlock: supplyRatePerBlock[index],
-                    reward,
-                    pool: poolOfMarket[index],
-                    plugin: this.marketToPlugin[collateralCToken],
-                    underlyingPrice: collateralUnderlyingPrices[index],
-                  },
-                  borrowable: _borrowable,
-                });
               });
 
               newPositions.push({
@@ -140,7 +127,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   plugin: this.marketToPlugin[collateralCToken],
                   underlyingPrice: collateralUnderlyingPrices[index],
                 },
-                borrowable: newPositionBorrowable,
+                borrowable: leveredBorrowable,
               });
             })
           );
@@ -325,6 +312,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       const tx = await leveredPositionFactory.removeClosedPosition(positionAddress);
 
       return tx;
+    }
+
+    async getPositionInfo(positionAddress: string, supplyApy: BigNumber) {
+      const leveredPositionLens = this.createLeveredPositionLens();
+
+      return await leveredPositionLens.getPositionInfo(positionAddress, supplyApy);
     }
   };
 }

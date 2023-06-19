@@ -20,7 +20,8 @@ export const NetApy = ({ position }: { position: OpenPosition }) => {
     plugin,
     underlyingToken: collateralUnderlying,
   } = position.collateral;
-  const { cToken: borrowCToken, position: positionAddress } = position.borrowable;
+  const { address: positionAddress } = position;
+  const { cToken: borrowCToken } = position.borrowable;
 
   const { data: allRewards } = useRewardsForMarket({
     asset: {

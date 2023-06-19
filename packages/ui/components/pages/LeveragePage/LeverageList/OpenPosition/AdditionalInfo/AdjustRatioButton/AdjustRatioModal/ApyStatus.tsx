@@ -1,9 +1,5 @@
 import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
-import type {
-  LeveredCollateral,
-  OpenPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import type { OpenPosition } from '@midas-capital/types';
 import { utils } from 'ethers';
 
 import { MidasBox } from '@ui/components/shared/Box';
@@ -17,16 +13,18 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { smallFormatter } from '@ui/utils/bigUtils';
 
 export const ApyStatus = ({
-  borrowAsset,
-  chainId,
-  collateralAsset,
+  position,
   leverageValue,
 }: {
-  borrowAsset: OpenPositionBorrowable;
-  chainId: SupportedChains;
-  collateralAsset: LeveredCollateral;
   leverageValue: number;
+  position: OpenPosition;
 }) => {
+  const {
+    collateral: collateralAsset,
+    borrowable: borrowAsset,
+    chainId,
+    address: positionAddress,
+  } = position;
   const {
     cToken: collateralCToken,
     symbol: collateralSymbol,
@@ -35,8 +33,7 @@ export const ApyStatus = ({
     plugin,
     underlyingToken: collateralUnderlying,
   } = collateralAsset;
-
-  const { cToken: borrowCToken, position } = borrowAsset;
+  const { cToken: borrowCToken } = borrowAsset;
 
   const { data: allRewards } = useRewardsForMarket({
     asset: {
@@ -61,8 +58,8 @@ export const ApyStatus = ({
     assetInfos
   );
 
-  const { data: baseCollateral } = useBaseCollateral(position, chainId);
-  const { data: currentLeverageRatio } = useCurrentLeverageRatio(position, chainId);
+  const { data: baseCollateral } = useBaseCollateral(positionAddress, chainId);
+  const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, chainId);
 
   const { data: currentNetApy, isLoading } = useGetNetApy(
     collateralCToken,

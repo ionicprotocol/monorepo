@@ -10,15 +10,11 @@ export interface MarketRewardsInfoStructOutput {
   rewardToken: string;
 }
 
-export interface NewPositionBorrowable {
+export interface LeveredBorrowable {
   cToken: string;
   underlyingToken: string;
   symbol: string;
   rate: BigNumber;
-}
-export interface OpenPositionBorrowable extends NewPositionBorrowable {
-  position: string;
-  isPositionClosed: boolean;
 }
 
 export interface LeveredCollateral {
@@ -41,11 +37,13 @@ export interface LeveredCollateral {
 export interface OpenPosition {
   chainId: SupportedChains;
   collateral: LeveredCollateral;
-  borrowable: OpenPositionBorrowable;
+  borrowable: LeveredBorrowable;
+  address: string;
+  isClosed: boolean;
 }
 
 export interface NewPosition {
   chainId: SupportedChains;
   collateral: LeveredCollateral;
-  borrowable: NewPositionBorrowable[];
+  borrowable: LeveredBorrowable[];
 }

@@ -1,10 +1,6 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
-import type {
-  LeveredCollateral,
-  OpenPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import type { OpenPosition } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
@@ -35,18 +31,20 @@ import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 export const FundPositionModal = ({
-  borrowAsset,
-  chainId,
-  collateralAsset,
+  position,
   isOpen,
   onClose,
 }: {
-  borrowAsset: OpenPositionBorrowable;
-  chainId: SupportedChains;
-  collateralAsset: LeveredCollateral;
   isOpen: boolean;
   onClose: () => void;
+  position: OpenPosition;
 }) => {
+  const {
+    collateral: collateralAsset,
+    chainId,
+    borrowable: borrowAsset,
+    address: positionAddress,
+  } = position;
   const {
     underlyingToken,
     symbol,
@@ -235,7 +233,7 @@ export const FundPositionModal = ({
         setActiveStep(optionToWrap ? 3 : 2);
 
         const tx = await currentSdk.fundPosition(
-          borrowAsset.position,
+          positionAddress,
           collateralAsset.cToken,
           debouncedAmount
         );
@@ -381,12 +379,7 @@ export const FundPositionModal = ({
                         underlyingToken={underlyingToken}
                       />
                     </Column>
-                    <ApyStatus
-                      amount={debouncedAmount}
-                      borrowAsset={borrowAsset}
-                      chainId={chainId}
-                      collateralAsset={collateralAsset}
-                    />
+                    <ApyStatus amount={debouncedAmount} position={position} />
                     <Button
                       height={16}
                       id="confirmCreate"

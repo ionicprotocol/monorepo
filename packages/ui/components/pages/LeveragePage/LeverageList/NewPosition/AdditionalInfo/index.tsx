@@ -1,5 +1,5 @@
 import { Box, Button, Flex } from '@chakra-ui/react';
-import type { NewPosition, NewPositionBorrowable } from '@midas-capital/types';
+import type { LeveredBorrowable, NewPosition } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
@@ -22,7 +22,7 @@ export const AdditionalInfo = ({
   selectedBorrowableAssets,
 }: {
   row: Row<NewPositionRowData>;
-  selectedBorrowableAssets?: { [collateral: string]: NewPositionBorrowable };
+  selectedBorrowableAssets?: { [collateral: string]: LeveredBorrowable };
 }) => {
   const position: NewPosition = row.original.collateralAsset;
 

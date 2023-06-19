@@ -1,9 +1,5 @@
 import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
-import type {
-  LeveredCollateral,
-  NewPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -27,7 +23,7 @@ export const ApyStatus = ({
   leverageValue,
 }: {
   amount: BigNumber;
-  borrowAsset: NewPositionBorrowable;
+  borrowAsset: LeveredBorrowable;
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
   leverageValue: number;

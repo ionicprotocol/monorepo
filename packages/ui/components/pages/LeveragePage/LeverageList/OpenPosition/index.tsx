@@ -37,6 +37,8 @@ import {
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
+import { PositionValue } from './PositionValue';
+
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/index';
 import { BorrowableAsset } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/BorrowableAsset';
@@ -57,6 +59,7 @@ import {
   MIDAS_LOCALSTORAGE_KEYS,
   NET_APY,
   POSITION_CREATION_PER_PAGE,
+  POSITION_VALUE,
   SEARCH,
   SUPPLY_APY,
 } from '@ui/constants/index';
@@ -69,6 +72,7 @@ export type OpenPositionRowData = {
   chain: OpenPosition;
   collateralAsset: OpenPosition;
   netApy: OpenPosition;
+  positionValue: OpenPosition;
   supplyApy: OpenPosition;
 };
 
@@ -159,6 +163,12 @@ export const OpenPositionComp = ({
         Number(rowA.original.collateralAsset.chainId)
         ? 1
         : -1;
+    } else if (columnId === POSITION_VALUE) {
+      return rowB.original.collateralAsset.collateral.totalSupplied.gt(
+        rowA.original.collateralAsset.collateral.totalSupplied
+      )
+        ? 1
+        : -1;
     } else if (columnId === SUPPLY_APY) {
       return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
         Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
@@ -181,6 +191,7 @@ export const OpenPositionComp = ({
         chain: position,
         collateralAsset: position,
         netApy: position,
+        positionValue: position,
         supplyApy: position,
       };
     });
@@ -213,6 +224,14 @@ export const OpenPositionComp = ({
           <TableHeaderCell context={context}>{COLLATERAL_ASSET}</TableHeaderCell>
         ),
         id: COLLATERAL_ASSET,
+        sortingFn: positionSort,
+      },
+      {
+        accessorFn: (row) => row.positionValue,
+        cell: ({ getValue }) => <PositionValue position={getValue<OpenPosition>()} />,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{POSITION_VALUE}</TableHeaderCell>,
+        id: POSITION_VALUE,
         sortingFn: positionSort,
       },
       {

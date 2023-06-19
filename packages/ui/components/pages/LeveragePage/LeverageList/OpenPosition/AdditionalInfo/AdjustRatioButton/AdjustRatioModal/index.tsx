@@ -1,9 +1,5 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import type {
-  LeveredCollateral,
-  OpenPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import type { OpenPosition } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -25,18 +21,20 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 export const AdjustRatioModal = ({
-  borrowAsset,
-  chainId,
-  collateralAsset,
+  position,
   isOpen,
   onClose,
 }: {
-  borrowAsset: OpenPositionBorrowable;
-  chainId: SupportedChains;
-  collateralAsset: LeveredCollateral;
   isOpen: boolean;
   onClose: () => void;
+  position: OpenPosition;
 }) => {
+  const {
+    collateral: collateralAsset,
+    borrowable: borrowAsset,
+    chainId,
+    address: positionAddress,
+  } = position;
   const { underlyingToken, symbol, cToken } = collateralAsset;
   const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
@@ -78,7 +76,7 @@ export const AdjustRatioModal = ({
       try {
         setActiveStep(1);
 
-        const tx = await currentSdk.adjustLeverageRatio(borrowAsset.position, debouncedLeverageNum);
+        const tx = await currentSdk.adjustLeverageRatio(positionAddress, debouncedLeverageNum);
 
         addRecentTransaction({
           description: 'Adjust leverage ratio.',
@@ -186,12 +184,7 @@ export const AdjustRatioModal = ({
                     setLeverageValue={setLeverageValue}
                   />
                 </Column>
-                <ApyStatus
-                  borrowAsset={borrowAsset}
-                  chainId={chainId}
-                  collateralAsset={collateralAsset}
-                  leverageValue={debouncedLeverageNum}
-                />
+                <ApyStatus leverageValue={debouncedLeverageNum} position={position} />
                 <Button height={16} id="confirmAdjust" onClick={onConfirm} width="100%">
                   Adjust leverage ratio
                 </Button>

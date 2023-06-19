@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { BsChatLeftTextFill, BsFillHouseFill, BsHouseAddFill } from 'react-icons/bs';
 import { ImUser } from 'react-icons/im';
-// import { RiBuilding2Fill } from 'react-icons/ri';
+import { RiBuilding2Fill } from 'react-icons/ri';
 import { SiVault } from 'react-icons/si';
 
 import Footer from '@ui/components/pages/Layout/Footer';
@@ -96,7 +96,7 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
           Supply Vaults
         </Text>
       </Flex>
-      {/* <Flex
+      <Flex
         _hover={{
           bg: cCard.hoverBgColor,
           color: cCard.txtColor,
@@ -117,7 +117,7 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
         <Text fontSize={16} fontWeight={'bold'}>
           Leverage
         </Text>
-      </Flex> */}
+      </Flex>
       {address ? (
         <Flex
           _hover={{

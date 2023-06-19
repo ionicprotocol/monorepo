@@ -1,10 +1,6 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
-import type {
-  LeveredCollateral,
-  NewPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -42,7 +38,7 @@ export const CreatePositionModal = ({
   isOpen,
   onClose,
 }: {
-  borrowAsset: NewPositionBorrowable;
+  borrowAsset: LeveredBorrowable;
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
   isOpen: boolean;

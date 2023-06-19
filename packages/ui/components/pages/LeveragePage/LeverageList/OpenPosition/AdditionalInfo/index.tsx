@@ -58,36 +58,16 @@ export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
               Switch {chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
             </Button>
           </Box>
-        ) : position.borrowable.isPositionClosed ? (
+        ) : position.isClosed ? (
           <HStack>
-            <ReopenPositionButton
-              borrowAsset={position.borrowable}
-              chainId={position.chainId}
-              collateralAsset={position.collateral}
-            />
-            <RemovePositionButton
-              borrowAsset={position.borrowable}
-              chainId={position.chainId}
-              collateralAsset={position.collateral}
-            />
+            <ReopenPositionButton position={position} />
+            <RemovePositionButton position={position} />
           </HStack>
         ) : (
           <HStack>
-            <AdjustRatioButton
-              borrowAsset={position.borrowable}
-              chainId={position.chainId}
-              collateralAsset={position.collateral}
-            />
-            <FundPositionButton
-              borrowAsset={position.borrowable}
-              chainId={position.chainId}
-              collateralAsset={position.collateral}
-            />
-            <ClosePositionButton
-              borrowAsset={position.borrowable}
-              chainId={position.chainId}
-              collateralAsset={position.collateral}
-            />
+            <AdjustRatioButton position={position} />
+            <FundPositionButton position={position} />
+            <ClosePositionButton position={position} />
           </HStack>
         )}
       </Flex>
