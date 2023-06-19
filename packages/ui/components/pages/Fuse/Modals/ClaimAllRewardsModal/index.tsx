@@ -177,7 +177,7 @@ export const ClaimAllRewardsModal = ({
   }, [currentSdk, allRewards]);
 
   const claimRewards = useCallback(
-    (rewardToken: string) => async () => {
+    async (rewardToken: string) => {
       if (!currentSdk || !currentChain) return;
 
       setIsClaiming(true);
