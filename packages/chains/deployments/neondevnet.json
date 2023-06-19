@@ -75,7 +75,7 @@
       "address": "0x4C28C6c18481AE068b89e842bACEebB3150e84b8"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x22CD1CBe8f10111d6007bdF9aEdd519D7dd3f0F3"
+      "address": "0x726d0395Da1b6297693318c09505C476FC526103"
     },
     "LeveredPositionsLens": {
       "address": "0x5670E9d607666a8341313DA477B0220E70c98370"
@@ -105,7 +105,7 @@
       "address": "0x5403C2E4D471f16dc01F343075A6e905a7594A35"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x7ff5F79258B6aEE77D665D2EBdb60ec21B0Bc88b"
+      "address": "0x63b7F394328126a5769B9eA0552F275E7CC97Fec"
     },
     "OptimizedVaultsRegistry": {
       "address": "0x17De74d3E0763D3F2463d2aEB0c74C899BA57800"

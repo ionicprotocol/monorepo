@@ -105,7 +105,7 @@
       "address": "0x7eeab71F7D449601D63494f1F4FE998C8c88F75a"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x2DE7311e02D57A1C4db5dF9108265FeEdF542a15"
+      "address": "0xFfcD5BeC57EbF1B9AC513D1340c13a3A9d2a053e"
     },
     "LeveredPositionsLens": {
       "address": "0x8a571d80CaB8bf2101dbA71F4FeaC2216b507403"
@@ -135,7 +135,7 @@
       "address": "0xd4D0cA503E8befAbE4b75aAC36675Bc1cFA533D1"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x219f7a75925D6d0312d1B62cEE6a4eE6F1A85217"
+      "address": "0xFe5aF5765A7cCD1538E4ee4B501BC7fe93ec8EBa"
     },
     "OptimizedVaultsRegistry": {
       "address": "0xCBA6171Ab5557CaadC993489CbC58B77a2b0f3Ed"
@@ -177,7 +177,7 @@
       "address": "0xE10C6F1Ec7d1C8664aB6473847c09c5109486a38"
     },
     "UniswapV3LiquidatorFunder": {
-      "address": "0x28C1aDFef083480Ba32b1abD036de515983375d0"
+      "address": "0x46600C411D16C335D46675C09D578558d42fD1E7"
     },
     "UniswapV3PriceOracle": {
       "address": "0x6684b0A4B8363A43fbF4f6D022436B4554F8B4B2"
