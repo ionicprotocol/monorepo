@@ -26,15 +26,19 @@ export function useGetNetApy(
     ],
     async () => {
       if (sdk && supplyApy !== undefined && amount && leverageRatio) {
-        const netApy = await sdk.getNetAPY(
-          supplyApy,
-          amount,
-          collateralMarket,
-          borrowableMarket,
-          leverageRatio
-        );
+        const netApy = await sdk
+          .getNetAPY(supplyApy, amount, collateralMarket, borrowableMarket, leverageRatio)
+          .catch((e) => {
+            console.warn(
+              `Getting net apy error: `,
+              { amount, borrowableMarket, collateralMarket, leverageRatio, supplyApy },
+              e
+            );
 
-        return Number(utils.formatUnits(netApy));
+            return null;
+          });
+
+        return netApy ? Number(utils.formatUnits(netApy)) : null;
       } else {
         return null;
       }

@@ -18,28 +18,32 @@ export const useRestricted = (
       const restricted: DebtCeilingPerCollateralType[] = [];
 
       if (sdk && debtCeilings && debtCeilings.length > 0 && address && comptrollerAddress) {
-        const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
+        try {
+          const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
 
-        await Promise.all(
-          debtCeilings.map(async (debtCeiling) => {
-            const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] = await Promise.all([
-              comptroller.callStatic.isBlacklistBorrowingAgainstCollateralWhitelisted(
-                debtCeiling.asset.cToken,
-                debtCeiling.collateralAsset.cToken,
-                address
-              ),
-              comptroller.callStatic.isBorrowCapForCollateralWhitelisted(
-                debtCeiling.asset.cToken,
-                debtCeiling.collateralAsset.cToken,
-                address
-              ),
-            ]);
+          await Promise.all(
+            debtCeilings.map(async (debtCeiling) => {
+              const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] = await Promise.all([
+                comptroller.callStatic.isBlacklistBorrowingAgainstCollateralWhitelisted(
+                  debtCeiling.asset.cToken,
+                  debtCeiling.collateralAsset.cToken,
+                  address
+                ),
+                comptroller.callStatic.isBorrowCapForCollateralWhitelisted(
+                  debtCeiling.asset.cToken,
+                  debtCeiling.collateralAsset.cToken,
+                  address
+                ),
+              ]);
 
-            if (!isAssetBlacklistWhitelist && !isDebtCeilingWhitelist) {
-              restricted.push(debtCeiling);
-            }
-          })
-        );
+              if (!isAssetBlacklistWhitelist && !isDebtCeilingWhitelist) {
+                restricted.push(debtCeiling);
+              }
+            })
+          );
+        } catch (e) {
+          console.warn(`Getting restricted error: `, { comptrollerAddress }, e);
+        }
       }
 
       return restricted;

@@ -1,48 +1,67 @@
 import type { NativePricedFuseAsset } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const usePoolDetails = (assets?: NativePricedFuseAsset[], poolChainId?: number) => {
-  const { getSdk } = useMultiMidas();
-  const sdk = useMemo(() => {
-    if (poolChainId) return getSdk(poolChainId);
-  }, [poolChainId, getSdk]);
+  const sdk = useSdk(poolChainId);
+
   const blocksPerMinute = useMemo(() => {
-    if (sdk) return getBlockTimePerMinuteByChainId(sdk.chainId);
-  }, [sdk]);
+    if (sdk?.chainId) return getBlockTimePerMinuteByChainId(sdk.chainId);
+  }, [sdk?.chainId]);
 
-  return useMemo(() => {
-    if (assets && assets.length && sdk && blocksPerMinute) {
-      let mostSuppliedAsset = assets[0];
-      let topLendingAPYAsset = assets[0];
-      let topBorrowAPRAsset = assets[0];
-      assets.map((asset) => {
-        if (asset.totalSupplyNative > mostSuppliedAsset.totalSupplyNative) {
-          mostSuppliedAsset = asset;
-        }
-        if (
-          sdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
-          sdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
-        ) {
-          topLendingAPYAsset = asset;
-        }
-        if (
-          sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
-          sdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
-        ) {
-          topBorrowAPRAsset = asset;
-        }
-      });
+  return useQuery(
+    [
+      'usePoolDetails',
+      assets
+        ?.sort((assetA, assetB) => assetA.underlyingToken.localeCompare(assetB.underlyingToken))
+        .map(
+          (asset) => (asset.totalSupplyNative, asset.supplyRatePerBlock, asset.borrowRatePerBlock)
+        ),
+      sdk?.chainId,
+    ],
+    async () => {
+      if (assets && assets.length && sdk && blocksPerMinute) {
+        try {
+          let mostSuppliedAsset = assets[0];
+          let topLendingAPYAsset = assets[0];
+          let topBorrowAPRAsset = assets[0];
+          assets.map((asset) => {
+            if (asset.totalSupplyNative > mostSuppliedAsset.totalSupplyNative) {
+              mostSuppliedAsset = asset;
+            }
+            if (
+              sdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+              sdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
+            ) {
+              topLendingAPYAsset = asset;
+            }
+            if (
+              sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+              sdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
+            ) {
+              topBorrowAPRAsset = asset;
+            }
+          });
 
-      return {
-        mostSuppliedAsset,
-        topBorrowAPRAsset,
-        topLendingAPYAsset,
-      };
-    } else {
-      return null;
+          return {
+            mostSuppliedAsset,
+            topBorrowAPRAsset,
+            topLendingAPYAsset,
+          };
+        } catch (e) {
+          console.warn(`Getting pool details error: `, { poolChainId }, e);
+        }
+      } else {
+        return null;
+      }
+    },
+    {
+      cacheTime: Infinity,
+      enabled: !!assets && assets.length > 0 && !!sdk && !!blocksPerMinute,
+      staleTime: Infinity,
     }
-  }, [assets, sdk, blocksPerMinute]);
+  );
 };

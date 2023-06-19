@@ -16,7 +16,11 @@ export const useClaimableRewardsForVaults = (chainIds: SupportedChains[]) => {
           const sdk = getSdk(Number(chainId));
 
           if (sdk && address) {
-            const rewardsOfChain = await sdk.getClaimableRewardsForVaults(address);
+            const rewardsOfChain = await sdk.getClaimableRewardsForVaults(address).catch((e) => {
+              console.warn(`Getting claimable rewards for vaults error: `, { chainId }, e);
+
+              return [] as FlywheelRewardsInfoForVault[];
+            });
 
             res.push(...rewardsOfChain);
           }

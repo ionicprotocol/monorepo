@@ -46,7 +46,13 @@ const useUpdatedUserAssets = <T extends MarketData>({
     async () => {
       if (!assets || !assets.length || !usdPrice || !currentSdk) return [];
 
-      const resAssets = await currentSdk.getUpdatedAssets(mode, index, assets, amount);
+      const resAssets = await currentSdk
+        .getUpdatedAssets(mode, index, assets, amount)
+        .catch((e) => {
+          console.warn(`Updated assets error: `, { amount, assets, index, mode }, e);
+
+          return [];
+        });
       const assetsWithPrice: MarketData[] = [];
       if (resAssets && resAssets.length !== 0) {
         resAssets.map((asset) => {

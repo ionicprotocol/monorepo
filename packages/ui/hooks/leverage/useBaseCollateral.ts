@@ -9,7 +9,11 @@ export function useBaseCollateral(position: string, chainId?: number) {
     ['useBaseCollateral', sdk?.chainId, position],
     async () => {
       if (sdk) {
-        const baseCollateral = await sdk.getBaseCollateral(position);
+        const baseCollateral = await sdk.getBaseCollateral(position).catch((e) => {
+          console.warn(`Getting base collateral error: `, { chainId, position }, e);
+
+          return null;
+        });
 
         return baseCollateral;
       } else {

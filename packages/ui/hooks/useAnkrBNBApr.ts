@@ -1,7 +1,7 @@
 import type { SupportedChains } from '@midas-capital/types';
 import { assetSymbols } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
+import { constants, utils } from 'ethers';
 
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -20,7 +20,17 @@ export const useAnkrBNBApr = (isEnabled: boolean, poolChainId?: number) => {
 
       if (sdk && poolChainId && ankrAsset && isEnabled) {
         const contract = getAnkrBNBContract(sdk);
-        const apr = await contract.callStatic.averagePercentageRate(ankrAsset.underlying, aprDays);
+        const apr = await contract.callStatic
+          .averagePercentageRate(ankrAsset.underlying, aprDays)
+          .catch((e) => {
+            console.warn(
+              `Getting average percentage rate of ankrBNB error: `,
+              { aprDays, poolChainId },
+              e
+            );
+
+            return constants.Zero;
+          });
 
         return utils.formatUnits(apr);
       } else {

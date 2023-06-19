@@ -10,7 +10,11 @@ export function useChartData(market: string, poolChainId: number) {
     ['useChartData', market, sdk?.chainId],
     async () => {
       if (sdk) {
-        const interestRateModel = await sdk.getInterestRateModel(market);
+        const interestRateModel = await sdk.getInterestRateModel(market).catch((e) => {
+          console.warn(`Getting intereste rate modal error: `, { market, poolChainId }, e);
+
+          return null;
+        });
 
         if (interestRateModel === null) {
           return { rates: null };

@@ -9,10 +9,16 @@ export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
     ['useOracle', underlyingAddress, sdk?.chainId],
     async () => {
       if (underlyingAddress && sdk) {
-        const mpo = sdk.createMasterPriceOracle(sdk.provider);
-        const oracle = await mpo.callStatic.oracles(underlyingAddress);
+        try {
+          const mpo = sdk.createMasterPriceOracle(sdk.provider);
+          const oracle = await mpo.callStatic.oracles(underlyingAddress);
 
-        return oracle;
+          return oracle;
+        } catch (e) {
+          console.warn(`Getting oracle error: `, { poolChainId, underlyingAddress }, e);
+
+          return null;
+        }
       } else {
         return null;
       }

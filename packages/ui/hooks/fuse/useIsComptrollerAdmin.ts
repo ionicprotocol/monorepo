@@ -15,9 +15,15 @@ export const useIsComptrollerAdmin = (
     async () => {
       if (!comptrollerAddress || !sdk) return null;
 
-      const comptroller = sdk.createComptroller(comptrollerAddress);
+      try {
+        const comptroller = sdk.createComptroller(comptrollerAddress);
 
-      return await comptroller.callStatic.admin();
+        return await comptroller.callStatic.admin();
+      } catch (e) {
+        console.warn(`Checking comptroller admin error: `, { comptrollerAddress, poolChainId }, e);
+
+        return null;
+      }
     },
     { cacheTime: Infinity, enabled: !!comptrollerAddress && !!sdk, staleTime: Infinity }
   );

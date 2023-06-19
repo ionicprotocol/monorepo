@@ -28,7 +28,11 @@ export const useUpdatedUserVault = ({ mode, amount, vault }: UseUpdatedUserVault
     async () => {
       if (!vault || !usdPrice || !sdk) return null;
 
-      return await sdk.getUpdatedVault(mode, vault, amount);
+      return await sdk.getUpdatedVault(mode, vault, amount).catch((e) => {
+        console.warn(`Updated vaults error: `, { amount, mode, vault }, e);
+
+        return null;
+      });
     },
     { cacheTime: Infinity, enabled: !!vault && !!usdPrice && !!sdk, staleTime: Infinity }
   );

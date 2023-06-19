@@ -6,11 +6,19 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 export const useAllClaimableRewards = () => {
   const { currentSdk, address } = useMultiMidas();
 
-  return useQuery<FlywheelClaimableRewards[] | null | undefined>(
+  return useQuery<Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[] | null | undefined>(
     ['useAllClaimableRewards', currentSdk?.chainId, address],
-    () => {
+    async () => {
       if (currentSdk && address) {
-        return currentSdk.getAllFlywheelClaimableRewards(address);
+        return await currentSdk.getAllFlywheelClaimableRewards(address).catch((e) => {
+          console.warn(
+            `Getting all claimable rewards error: `,
+            { address, chainId: currentSdk.chainId },
+            e
+          );
+
+          return null;
+        });
       } else {
         return null;
       }

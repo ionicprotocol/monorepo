@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
+import { constants, utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
@@ -10,7 +10,11 @@ export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
     ['useRangeOfLeverageRatio', address, sdk?.chainId],
     async () => {
       if (sdk && address) {
-        const [minBignum, maxBignum] = await sdk.getRangeOfLeverageRatio(address);
+        const [minBignum, maxBignum] = await sdk.getRangeOfLeverageRatio(address).catch((e) => {
+          console.warn(`Getting range of leverage ratio error: `, { address, chainId }, e);
+
+          return [constants.Zero, constants.Zero];
+        });
 
         return {
           max: Number(Number(utils.formatUnits(maxBignum)).toFixed(3)),

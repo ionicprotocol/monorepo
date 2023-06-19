@@ -9,7 +9,15 @@ export function useMaxDepositVault(vault: string) {
     ['useMaxDepositVault', vault, currentSdk?.chainId, address],
     async () => {
       if (currentSdk && address && vault) {
-        const maxDepositVault = await currentSdk.getMaxDepositVault(vault);
+        const maxDepositVault = await currentSdk.getMaxDepositVault(vault).catch((e) => {
+          console.warn(
+            `Getting max deposit vault error: `,
+            { chainId: currentSdk.chainId, vault },
+            e
+          );
+
+          return null;
+        });
 
         return maxDepositVault;
       } else {
