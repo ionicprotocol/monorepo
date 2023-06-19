@@ -38,7 +38,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
     }
   }, [usdPrices, pool.chainId]);
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
-  const poolDetails = usePoolDetails(pool.assets, pool.chainId);
+  const { data: poolDetails } = usePoolDetails(pool.assets, pool.chainId);
   const sdk = useMemo(() => getSdk(pool.chainId), [getSdk, pool.chainId]);
   const scanUrl = useMemo(() => getScanUrlByChainId(pool.chainId), [pool.chainId]);
 

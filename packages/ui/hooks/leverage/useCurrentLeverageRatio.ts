@@ -9,7 +9,11 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
     ['useCurrentLeverageRatio', sdk?.chainId, position],
     async () => {
       if (sdk) {
-        const currentLeverageRatio = await sdk.getCurrentLeverageRatio(position);
+        const currentLeverageRatio = await sdk.getCurrentLeverageRatio(position).catch((e) => {
+          console.warn(`Getting current leverage ratio error: `, { chainId, position }, e);
+
+          return null;
+        });
 
         return currentLeverageRatio;
       } else {

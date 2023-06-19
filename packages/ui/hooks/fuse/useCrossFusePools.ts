@@ -25,61 +25,68 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
             const chainPools: FusePoolsPerChain = {};
             const _allPools: FusePoolData[] = [];
 
-            const pools = await sdk.fetchPoolsManual({ from: address });
-            const visiblePools: FusePoolData[] = !pools
-              ? []
-              : poolSort(
-                  pools.map((p) => ({ ...p, chainId: Number(sdk.chainId) } as FusePoolData))
-                );
+            try {
+              const pools = await sdk.fetchPoolsManual({ from: address });
+              const visiblePools: FusePoolData[] = !pools
+                ? []
+                : poolSort(
+                    pools.map((p) => ({ ...p, chainId: Number(sdk.chainId) } as FusePoolData))
+                  );
 
-            chainPools[sdk.chainId] = visiblePools;
-            _allPools.push(...visiblePools);
+              chainPools[sdk.chainId] = visiblePools;
+              _allPools.push(...visiblePools);
 
-            const allPools: PoolData[] = await Promise.all(
-              _allPools.map((pool) => {
-                const assetsWithPrice: MarketData[] = [];
-                const { assets } = pool;
+              const allPools: PoolData[] = await Promise.all(
+                _allPools.map((pool) => {
+                  const assetsWithPrice: MarketData[] = [];
+                  const { assets } = pool;
 
-                if (assets && assets.length !== 0) {
-                  assets.map((asset) => {
-                    assetsWithPrice.push({
-                      ...asset,
-                      borrowBalanceFiat:
-                        asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
-                      liquidityFiat: asset.liquidityNative * prices[pool.chainId.toString()].value,
-                      netSupplyBalanceFiat:
-                        asset.netSupplyBalanceNative * prices[pool.chainId.toString()].value,
-                      supplyBalanceFiat:
-                        asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
-                      totalBorrowFiat:
-                        asset.totalBorrowNative * prices[pool.chainId.toString()].value,
-                      totalSupplyFiat:
-                        asset.totalSupplyNative * prices[pool.chainId.toString()].value,
+                  if (assets && assets.length !== 0) {
+                    assets.map((asset) => {
+                      assetsWithPrice.push({
+                        ...asset,
+                        borrowBalanceFiat:
+                          asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
+                        liquidityFiat:
+                          asset.liquidityNative * prices[pool.chainId.toString()].value,
+                        netSupplyBalanceFiat:
+                          asset.netSupplyBalanceNative * prices[pool.chainId.toString()].value,
+                        supplyBalanceFiat:
+                          asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
+                        totalBorrowFiat:
+                          asset.totalBorrowNative * prices[pool.chainId.toString()].value,
+                        totalSupplyFiat:
+                          asset.totalSupplyNative * prices[pool.chainId.toString()].value,
+                      });
                     });
-                  });
-                }
-                const adaptedFusePoolData: PoolData = {
-                  ...pool,
-                  assets: assetsWithPrice,
-                  totalAvailableLiquidityFiat:
-                    pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()].value,
-                  totalBorrowBalanceFiat:
-                    pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
-                  totalBorrowedFiat:
-                    pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
-                  totalLiquidityFiat:
-                    pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
-                  totalSuppliedFiat:
-                    pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
-                  totalSupplyBalanceFiat:
-                    pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
-                };
+                  }
+                  const adaptedFusePoolData: PoolData = {
+                    ...pool,
+                    assets: assetsWithPrice,
+                    totalAvailableLiquidityFiat:
+                      pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()].value,
+                    totalBorrowBalanceFiat:
+                      pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
+                    totalBorrowedFiat:
+                      pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
+                    totalLiquidityFiat:
+                      pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
+                    totalSuppliedFiat:
+                      pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
+                    totalSupplyBalanceFiat:
+                      pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
+                  };
 
-                return adaptedFusePoolData;
-              })
-            );
+                  return adaptedFusePoolData;
+                })
+              );
 
-            return allPools;
+              return allPools;
+            } catch (e) {
+              console.warn(`Fetching pools error: `, { chainId }, e);
+
+              return null;
+            }
           } else {
             return null;
           }

@@ -9,10 +9,16 @@ export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number
     ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
     async () => {
       if (sdk) {
-        const comptroller = sdk.createComptroller(comptrollerAddress);
-        const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
+        try {
+          const comptroller = sdk.createComptroller(comptrollerAddress);
+          const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 
-        return isUpgradeable;
+          return isUpgradeable;
+        } catch (e) {
+          console.warn(`Checking upgradeable error: `, { comptrollerAddress, poolChainId }, e);
+
+          return null;
+        }
       } else {
         return null;
       }

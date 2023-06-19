@@ -9,12 +9,18 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
     ['useRewardTokensOfPool', sdk?.chainId, poolAddress],
     async () => {
       if (poolAddress && sdk) {
-        const rewards = await sdk.getFlywheelMarketRewardsByPool(poolAddress);
+        try {
+          const rewards = await sdk.getFlywheelMarketRewardsByPool(poolAddress);
 
-        return rewards
-          .flatMap((r) => r.rewardsInfo)
-          .map((ri) => ri.rewardToken)
-          .filter((value, index, self) => self.indexOf(value) === index);
+          return rewards
+            .flatMap((r) => r.rewardsInfo)
+            .map((ri) => ri.rewardToken)
+            .filter((value, index, self) => self.indexOf(value) === index);
+        } catch (e) {
+          console.warn(`Getting reward tokens of pool error: `, { chainId, poolAddress }, e);
+
+          return null;
+        }
       } else {
         return null;
       }

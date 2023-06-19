@@ -17,7 +17,11 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
           const sdk = getSdk(Number(chainId));
 
           if (chainId && sdk) {
-            return await sdk.getAllVaults();
+            return await sdk.getAllVaults().catch((e) => {
+              console.warn(`Getting all vaults error: `, { chainId }, e);
+
+              return null;
+            });
           } else {
             return null;
           }

@@ -10,10 +10,16 @@ export const usePerformanceFee = (poolChainId: number, pluginAddress?: string) =
     ['usePerformanceFee', pluginAddress, sdk?.chainId],
     async () => {
       if (sdk && pluginAddress) {
-        const pluginContract = sdk.getMidasErc4626PluginInstance(pluginAddress);
-        const performanceFee = await pluginContract.callStatic.performanceFee();
+        try {
+          const pluginContract = sdk.getMidasErc4626PluginInstance(pluginAddress);
+          const performanceFee = await pluginContract.callStatic.performanceFee();
 
-        return Number(utils.formatUnits(performanceFee)) * 100;
+          return Number(utils.formatUnits(performanceFee)) * 100;
+        } catch (e) {
+          console.warn(`Getting performance fee error: `, { pluginAddress, poolChainId }, e);
+
+          return null;
+        }
       } else {
         return null;
       }

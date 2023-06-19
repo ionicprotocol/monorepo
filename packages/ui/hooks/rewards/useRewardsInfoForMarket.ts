@@ -13,7 +13,17 @@ export const useRewardsInfoForMarket = (
     ['useRewardsInfoForMarket', flywheelAddress, marketAddress, sdk?.chainId],
     async () => {
       if (flywheelAddress && marketAddress && sdk) {
-        return sdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
+        return await sdk
+          .getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress)
+          .catch((e) => {
+            console.warn(
+              `Getting flywheel rewards info for market error: `,
+              { flywheelAddress, marketAddress, poolChainId },
+              e
+            );
+
+            return null;
+          });
       } else {
         return null;
       }

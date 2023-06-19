@@ -9,11 +9,17 @@ export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
     ['useIRM', cTokenAddress, sdk?.chainId],
     async () => {
       if (cTokenAddress && sdk) {
-        const cToken = sdk.createCTokenWithExtensions(cTokenAddress);
+        try {
+          const cToken = sdk.createCTokenWithExtensions(cTokenAddress);
 
-        const irm = await cToken.callStatic.interestRateModel();
+          const irm = await cToken.callStatic.interestRateModel();
 
-        return irm;
+          return irm;
+        } catch (e) {
+          console.warn(`Getting IRM error: `, { cTokenAddress, poolChainId }, e);
+
+          return null;
+        }
       } else {
         return null;
       }

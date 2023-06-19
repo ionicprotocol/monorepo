@@ -14,44 +14,52 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
         return null;
       }
 
-      const comptroller = sdk.createComptroller(comptrollerAddress);
+      try {
+        const comptroller = sdk.createComptroller(comptrollerAddress);
 
-      const [
-        { 0: admin, 1: upgradeable },
-        closeFactor,
-        liquidationIncentive,
-        enforceWhitelist,
-        whitelist,
-        pendingAdmin,
-        oracle,
-      ] = await Promise.all([
-        sdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
-        comptroller.callStatic.closeFactorMantissa(),
-        comptroller.callStatic.liquidationIncentiveMantissa(),
-        comptroller.callStatic
-          .enforceWhitelist()
-          .then((x: boolean) => x)
-          .catch(() => false),
-        comptroller.callStatic
-          .getWhitelist()
-          .then((x: string[]) => x)
-          .catch(() => []),
-        comptroller.callStatic.pendingAdmin(),
-        comptroller.callStatic.oracle().then((oracleAddress) => sdk.getPriceOracle(oracleAddress)),
-      ]);
+        const [
+          { 0: admin, 1: upgradeable },
+          closeFactor,
+          liquidationIncentive,
+          enforceWhitelist,
+          whitelist,
+          pendingAdmin,
+          oracle,
+        ] = await Promise.all([
+          sdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
+          comptroller.callStatic.closeFactorMantissa(),
+          comptroller.callStatic.liquidationIncentiveMantissa(),
+          comptroller.callStatic
+            .enforceWhitelist()
+            .then((x: boolean) => x)
+            .catch(() => false),
+          comptroller.callStatic
+            .getWhitelist()
+            .then((x: string[]) => x)
+            .catch(() => []),
+          comptroller.callStatic.pendingAdmin(),
+          comptroller.callStatic
+            .oracle()
+            .then((oracleAddress) => sdk.getPriceOracle(oracleAddress)),
+        ]);
 
-      return {
-        admin,
-        closeFactor,
-        enforceWhitelist,
-        isPendingAdmin: pendingAdmin.toLowerCase() === address?.toLowerCase(),
-        isPowerfulAdmin: admin.toLowerCase() === address?.toLowerCase() && upgradeable,
-        liquidationIncentive,
-        oracle,
-        pendingAdmin,
-        upgradeable,
-        whitelist: whitelist as string[],
-      };
+        return {
+          admin,
+          closeFactor,
+          enforceWhitelist,
+          isPendingAdmin: pendingAdmin.toLowerCase() === address?.toLowerCase(),
+          isPowerfulAdmin: admin.toLowerCase() === address?.toLowerCase() && upgradeable,
+          liquidationIncentive,
+          oracle,
+          pendingAdmin,
+          upgradeable,
+          whitelist: whitelist as string[],
+        };
+      } catch (e) {
+        console.warn(`Getting extra pool info error: `, { comptrollerAddress, poolChainId }, e);
+
+        return null;
+      }
     },
     {
       cacheTime: Infinity,

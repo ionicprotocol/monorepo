@@ -17,11 +17,15 @@ export const usePoolClaimableRewards = (poolAddress: string, poolChainId?: numbe
 
           return rewards.filter((reward) => reward.amount.gt(0));
         } catch (e) {
-          console.warn('Getting pool claimable rewards error: ', {
-            address,
-            poolAddress,
-            poolChainId,
-          });
+          console.warn(
+            'Getting pool claimable rewards error: ',
+            {
+              address,
+              poolAddress,
+              poolChainId,
+            },
+            e
+          );
 
           return null;
         }

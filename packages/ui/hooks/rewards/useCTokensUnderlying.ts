@@ -14,7 +14,11 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
         await Promise.all(
           cTokenAddresses.map(async (cTokenAddress) => {
             const cTokenInstance = currentSdk.createCTokenWithExtensions(cTokenAddress);
-            _map[cTokenAddress] = await cTokenInstance.callStatic.underlying();
+            _map[cTokenAddress] = await cTokenInstance.callStatic.underlying().catch((e) => {
+              console.warn(`Getting underlying of cToken error: `, { cTokenAddress }, e);
+
+              return '';
+            });
           })
         );
       }

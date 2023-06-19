@@ -27,36 +27,46 @@ export function useMaxBorrowAmount(
     ],
     async () => {
       if (sdk && address && borrowCapsDataForAsset?.nonWhitelistedTotalBorrows) {
-        const maxBorrow = (await sdk.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
-          address,
-          asset.cToken
-        )) as BigNumber;
+        try {
+          const maxBorrow = (await sdk.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
+            address,
+            asset.cToken
+          )) as BigNumber;
 
-        const comptroller = sdk.createComptroller(comptrollerAddress);
-        const [borrowCap, isWhitelisted] = await Promise.all([
-          comptroller.callStatic.borrowCaps(asset.cToken),
-          comptroller.callStatic.isBorrowCapWhitelisted(asset.cToken, address),
-        ]);
+          const comptroller = sdk.createComptroller(comptrollerAddress);
+          const [borrowCap, isWhitelisted] = await Promise.all([
+            comptroller.callStatic.borrowCaps(asset.cToken),
+            comptroller.callStatic.isBorrowCapWhitelisted(asset.cToken, address),
+          ]);
 
-        let bigNumber: BigNumber;
+          let bigNumber: BigNumber;
 
-        // if address isn't in borrw cap whitelist and asset has borrow cap
-        if (!isWhitelisted && borrowCap.gt(constants.Zero)) {
-          const availableCap = borrowCap.sub(borrowCapsDataForAsset.nonWhitelistedTotalBorrows);
+          // if address isn't in borrw cap whitelist and asset has borrow cap
+          if (!isWhitelisted && borrowCap.gt(constants.Zero)) {
+            const availableCap = borrowCap.sub(borrowCapsDataForAsset.nonWhitelistedTotalBorrows);
 
-          if (availableCap.lte(maxBorrow)) {
-            bigNumber = availableCap;
+            if (availableCap.lte(maxBorrow)) {
+              bigNumber = availableCap;
+            } else {
+              bigNumber = maxBorrow;
+            }
           } else {
             bigNumber = maxBorrow;
           }
-        } else {
-          bigNumber = maxBorrow;
-        }
 
-        return {
-          bigNumber: bigNumber,
-          number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
-        };
+          return {
+            bigNumber: bigNumber,
+            number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
+          };
+        } catch (e) {
+          console.warn(
+            `Getting max borrow amount error: `,
+            { address, cToken: asset.cToken, chainId, comptrollerAddress },
+            e
+          );
+
+          return null;
+        }
       } else {
         return null;
       }

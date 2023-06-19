@@ -18,11 +18,17 @@ export const useBorrowAPYs = (
       const result: { [market: string]: number } = {};
 
       for (const asset of assets) {
-        const marketBorrowApy =
-          sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, getBlockTimePerMinuteByChainId(chainId)) /
-          100;
+        try {
+          const marketBorrowApy =
+            sdk.ratePerBlockToAPY(
+              asset.borrowRatePerBlock,
+              getBlockTimePerMinuteByChainId(chainId)
+            ) / 100;
 
-        result[asset.cToken] = marketBorrowApy;
+          result[asset.cToken] = marketBorrowApy;
+        } catch (e) {
+          console.warn(`Getting apy from rate per block error: `, { asset, chainId }, e);
+        }
       }
 
       return result;

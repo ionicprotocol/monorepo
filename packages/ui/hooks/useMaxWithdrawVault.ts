@@ -9,7 +9,15 @@ export function useMaxWithdrawVault(vault: string) {
     ['useMaxWithdrawVault', vault, currentSdk?.chainId, address],
     async () => {
       if (currentSdk && address && vault) {
-        const maxWithdrawVault = await currentSdk.getMaxWithdrawVault(vault);
+        const maxWithdrawVault = await currentSdk.getMaxWithdrawVault(vault).catch((e) => {
+          console.warn(
+            `Getting max withdraw vault error: `,
+            { address, chainId: currentSdk.chainId, vault },
+            e
+          );
+
+          return null;
+        });
 
         return maxWithdrawVault;
       } else {

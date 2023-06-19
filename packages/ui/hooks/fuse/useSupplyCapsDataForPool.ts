@@ -16,23 +16,30 @@ export const useSupplyCapsDataForPool = (comptrollerAddress: string, poolChainId
     ['useSupplyCapsDataForPool', comptrollerAddress, sdk?.chainId],
     async () => {
       if (comptrollerAddress && sdk) {
-        const res: SupplyCapsDataForPoolType[] = [];
+        try {
+          const res: SupplyCapsDataForPoolType[] = [];
 
-        const supplyCapsData = await sdk.contracts.FusePoolLens.callStatic.getSupplyCapsDataForPool(
-          comptrollerAddress
-        );
+          const supplyCapsData =
+            await sdk.contracts.FusePoolLens.callStatic.getSupplyCapsDataForPool(
+              comptrollerAddress
+            );
 
-        if (supplyCapsData) {
-          supplyCapsData[0].map((data, i) => {
-            res.push({
-              cTokenAddress: data,
-              nonWhitelistedTotalSupply: supplyCapsData[2][i],
-              supplyCaps: supplyCapsData[1][i],
+          if (supplyCapsData) {
+            supplyCapsData[0].map((data, i) => {
+              res.push({
+                cTokenAddress: data,
+                nonWhitelistedTotalSupply: supplyCapsData[2][i],
+                supplyCaps: supplyCapsData[1][i],
+              });
             });
-          });
-        }
+          }
 
-        return res;
+          return res;
+        } catch (e) {
+          console.warn(`Getting supply caps error: `, { comptrollerAddress, poolChainId }, e);
+
+          return null;
+        }
       } else {
         return null;
       }

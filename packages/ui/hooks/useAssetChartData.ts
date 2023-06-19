@@ -16,7 +16,17 @@ export function useAssetChartData(
     ['useAssetChartData', interestRateModelAddress, adminFee, reserveFactor, sdk?.chainId],
     async () => {
       if (sdk) {
-        const interestRateModel = await sdk.identifyInterestRateModel(interestRateModelAddress);
+        const interestRateModel = await sdk
+          .identifyInterestRateModel(interestRateModelAddress)
+          .catch((e) => {
+            console.warn(
+              `Identifying interest rate model error: `,
+              { adminFee, interestRateModelAddress, poolChainId, reserveFactor },
+              e
+            );
+
+            return null;
+          });
 
         if (interestRateModel === null) {
           return null;

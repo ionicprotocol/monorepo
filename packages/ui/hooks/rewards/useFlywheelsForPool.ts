@@ -19,11 +19,51 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
         flywheelCores.map(async (flywheel) => {
           // TODO add function to FlywheelLensRouter to get all info in one call
           const [booster, rewards, markets, owner, rewardToken] = await Promise.all([
-            flywheel.callStatic.flywheelBooster(),
-            flywheel.callStatic.flywheelRewards(),
-            flywheel.callStatic.getAllStrategies(),
-            flywheel.callStatic.owner(),
-            flywheel.callStatic.rewardToken(),
+            flywheel.callStatic.flywheelBooster().catch((e) => {
+              console.warn(
+                `Getting flywheel booster error: `,
+                { chainId: sdk.chainId, flywheelAddress: flywheel.address },
+                e
+              );
+
+              return '';
+            }),
+            flywheel.callStatic.flywheelRewards().catch((e) => {
+              console.warn(
+                `Getting flywheel rewards error: `,
+                { chainId: sdk.chainId, flywheelAddress: flywheel.address },
+                e
+              );
+
+              return '';
+            }),
+            flywheel.callStatic.getAllStrategies().catch((e) => {
+              console.warn(
+                `Getting flywheel all strategies error: `,
+                { chainId: sdk.chainId, flywheelAddress: flywheel.address },
+                e
+              );
+
+              return [] as string[];
+            }),
+            flywheel.callStatic.owner().catch((e) => {
+              console.warn(
+                `Getting flywheel owner error: `,
+                { chainId: sdk.chainId, flywheelAddress: flywheel.address },
+                e
+              );
+
+              return '';
+            }),
+            flywheel.callStatic.rewardToken().catch((e) => {
+              console.warn(
+                `Getting flywheel rewardToken error: `,
+                { chainId: sdk.chainId, flywheelAddress: flywheel.address },
+                e
+              );
+
+              return '';
+            }),
           ]);
 
           return {

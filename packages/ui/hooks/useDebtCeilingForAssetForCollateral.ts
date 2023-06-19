@@ -45,31 +45,41 @@ export const useDebtCeilingForAssetForCollateral = ({
           await Promise.all(
             collaterals.map(async (collateralAsset) => {
               if (asset.cToken !== collateralAsset.cToken) {
-                const isInBlackList =
-                  await comptroller.callStatic.borrowingAgainstCollateralBlacklist(
-                    asset.cToken,
-                    collateralAsset.cToken
-                  );
+                try {
+                  const isInBlackList =
+                    await comptroller.callStatic.borrowingAgainstCollateralBlacklist(
+                      asset.cToken,
+                      collateralAsset.cToken
+                    );
 
-                if (isInBlackList) {
-                  debtCeilingPerCollateral.push({
-                    asset,
-                    collateralAsset,
-                    debtCeiling: -1,
-                  });
-                } else {
-                  const debtCeiling = await comptroller.callStatic.borrowCapForCollateral(
-                    asset.cToken,
-                    collateralAsset.cToken
-                  );
-
-                  if (debtCeiling.gt(constants.Zero)) {
+                  if (isInBlackList) {
                     debtCeilingPerCollateral.push({
                       asset,
                       collateralAsset,
-                      debtCeiling: Number(utils.formatUnits(debtCeiling, asset.underlyingDecimals)),
+                      debtCeiling: -1,
                     });
+                  } else {
+                    const debtCeiling = await comptroller.callStatic.borrowCapForCollateral(
+                      asset.cToken,
+                      collateralAsset.cToken
+                    );
+
+                    if (debtCeiling.gt(constants.Zero)) {
+                      debtCeilingPerCollateral.push({
+                        asset,
+                        collateralAsset,
+                        debtCeiling: Number(
+                          utils.formatUnits(debtCeiling, asset.underlyingDecimals)
+                        ),
+                      });
+                    }
                   }
+                } catch (e) {
+                  console.warn(
+                    `Getting debt ceilings error: `,
+                    { cToken: asset.cToken, collateralAsset, comptrollerAddress },
+                    e
+                  );
                 }
               }
             })

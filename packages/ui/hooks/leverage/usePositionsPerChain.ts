@@ -17,7 +17,11 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
           const sdk = getSdk(Number(chainId));
 
           if (chainId && sdk && address) {
-            return await sdk.getAllLeveredPositions(address);
+            return await sdk.getAllLeveredPositions(address).catch((e) => {
+              console.warn(`Getting all levered positions error: `, { address, chainId }, e);
+
+              return null;
+            });
           } else {
             return null;
           }

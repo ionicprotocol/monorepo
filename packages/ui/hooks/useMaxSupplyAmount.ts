@@ -34,33 +34,43 @@ export function useMaxSupplyAmount(
     ],
     async () => {
       if (sdk && address && supplyCapsDataForAsset) {
-        const tokenBalance = await fetchTokenBalance(asset.underlyingToken, sdk, address);
+        try {
+          const tokenBalance = await fetchTokenBalance(asset.underlyingToken, sdk, address);
 
-        const comptroller = sdk.createComptroller(comptrollerAddress);
-        const [supplyCap, isWhitelisted] = await Promise.all([
-          comptroller.callStatic.supplyCaps(asset.cToken),
-          comptroller.callStatic.isSupplyCapWhitelisted(asset.cToken, address),
-        ]);
+          const comptroller = sdk.createComptroller(comptrollerAddress);
+          const [supplyCap, isWhitelisted] = await Promise.all([
+            comptroller.callStatic.supplyCaps(asset.cToken),
+            comptroller.callStatic.isSupplyCapWhitelisted(asset.cToken, address),
+          ]);
 
-        let bigNumber: BigNumber;
+          let bigNumber: BigNumber;
 
-        // if address isn't in supply cap whitelist and asset has supply cap
-        if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
-          const availableCap = supplyCap.sub(supplyCapsDataForAsset.nonWhitelistedTotalSupply);
+          // if address isn't in supply cap whitelist and asset has supply cap
+          if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
+            const availableCap = supplyCap.sub(supplyCapsDataForAsset.nonWhitelistedTotalSupply);
 
-          if (availableCap.lte(tokenBalance)) {
-            bigNumber = availableCap;
+            if (availableCap.lte(tokenBalance)) {
+              bigNumber = availableCap;
+            } else {
+              bigNumber = tokenBalance;
+            }
           } else {
             bigNumber = tokenBalance;
           }
-        } else {
-          bigNumber = tokenBalance;
-        }
 
-        return {
-          bigNumber: bigNumber,
-          number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
-        };
+          return {
+            bigNumber: bigNumber,
+            number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
+          };
+        } catch (e) {
+          console.warn(
+            `Getting max supply amount error: `,
+            { address, cToken: asset.cToken, comptrollerAddress },
+            e
+          );
+
+          return null;
+        }
       } else {
         return null;
       }

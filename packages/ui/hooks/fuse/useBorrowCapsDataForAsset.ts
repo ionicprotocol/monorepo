@@ -9,10 +9,16 @@ export const useBorrowCapsDataForAsset = (cTokenAddress: string, poolChainId?: n
     ['useBorrowCapsDataForAsset', cTokenAddress, sdk?.chainId],
     async () => {
       if (cTokenAddress && sdk) {
-        const borrowCapsData =
-          await sdk.contracts.FusePoolLens.callStatic.getBorrowCapsDataForAsset(cTokenAddress);
+        try {
+          const borrowCapsData =
+            await sdk.contracts.FusePoolLens.callStatic.getBorrowCapsDataForAsset(cTokenAddress);
 
-        return borrowCapsData;
+          return borrowCapsData;
+        } catch (e) {
+          console.warn(`Getting borrow caps error: `, { cTokenAddress, poolChainId }, e);
+
+          return null;
+        }
       } else {
         return null;
       }
