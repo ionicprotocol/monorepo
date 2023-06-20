@@ -45,13 +45,13 @@
       "address": "0x58d7840319ab12fFE1f4A43741F6ad30288DD3Ad"
     },
     "CErc20Delegate": {
-      "address": "0x5958478BC0AD765b49b23081c7bD0BF8F10a455C"
+      "address": "0xFfcD5BeC57EbF1B9AC513D1340c13a3A9d2a053e"
     },
     "CErc20PluginDelegate": {
-      "address": "0x92e8E05fe8579D607520684E74cE0B2ce15266c5"
+      "address": "0x0b7c55eD8f7Bc25c20eA4FdFbfED79d4AeB9aCaE"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x323edf95e7560AeAc96f9b78a41b29e006E76677"
+      "address": "0x57F4dA24e95DCb26A58b45CecaCeaE858215e1C2"
     },
     "CTokenFirstExtension": {
       "address": "0x6c66030a8431C7e2973D63340F5fF95889dce5f9"
@@ -60,7 +60,7 @@
       "address": "0x199e1b4354604b8a6f8d1a8453d6db9cb4d705ed"
     },
     "Comptroller": {
-      "address": "0xA1cf4DEEF72c590668e879e94468C8f57A9a5522"
+      "address": "0x20c0D39eFDDf10cccB6CB0b2d4D16cc6B17CB7Fd"
     },
     "ComptrollerFirstExtension": {
       "address": "0x586250C13C174e9538eD07b4261264B0fa32C968"
@@ -87,7 +87,7 @@
       "address": "0xF68095f787CA0fA9362954afd04cE0E7063a1dC1"
     },
     "DiaPriceOracle": {
-      "address": "0x4F6216f5127B649Cea7Fa32C9c09053988aA1Ac5"
+      "address": "0x968188FD4Bc26D120368Cec1410677B035848301"
     },
     "ERC4626Liquidator": {
       "address": "0x489B57744223e80Fbd5a7C4dD45F9fbd04333962"
@@ -144,7 +144,7 @@
       "address": "0xD439f3fCCBBeB0eaa03E43538b72764684ee07Bd"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x23150d91C7753B0b101D08643B8C2cC1aa935579"
+      "address": "0x66397a7BD91650e260a605F68F2d46F3350f2a1B"
     },
     "LooplessFlywheelBooster": {
       "address": "0x7ef2A6a6aF8ee090da3a24ea947b3717c4D16D94"
@@ -159,7 +159,7 @@
       "address": "0xdD8d4e09Acb39C2B4DE9A84384389B79850f3271"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xb813bfe190B4A155d38B77930D1D58629D1D5770"
+      "address": "0x5670E9d607666a8341313DA477B0220E70c98370"
     },
     "Quoter": {
       "address": "0x2a664207F499496498546aDc9B73d5663171e5D4"
@@ -174,10 +174,10 @@
       "address": "0x08690Ef71647C80a96fe98d64Afdf79C347AC1d3"
     },
     "UniswapV3Liquidator": {
-      "address": "0xfd3af277a967237Aa97E4B1E9c493ec843d08435"
+      "address": "0xB077105Fdf4eb4D1f3360f1CfF8B10398075eE8c"
     },
     "UniswapV3LiquidatorFunder": {
-      "address": "0x98acE36DE729A7dAD7707D80f8241C23A84A07BB"
+      "address": "0x01375b03Be806e608b2C7Cb93373d01161Cf18f2"
     },
     "UniswapV3PriceOracle": {
       "address": "0x71b3eDbD5120Be61F72D9DfCc6AE2EDbA01bee4E"
