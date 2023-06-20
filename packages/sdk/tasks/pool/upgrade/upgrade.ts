@@ -101,6 +101,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
             console.log(`market address ${market}`);
             const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
             const implBefore = await cTokenInstance.callStatic.implementation();
+            console.log(`implementation before ${implBefore}`);
             const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
             if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
               console.log(`No auto upgrade with latest implementation ${latestImpl}`);
@@ -165,7 +166,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
   });
 
 task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed pools")
-  .addParam("enable", "If autoimplementations should be on or off", true, types.boolean)
+  .addOptionalParam("enable", "If autoimplementations should be on or off", false, types.boolean)
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async ({ enable, admin }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
