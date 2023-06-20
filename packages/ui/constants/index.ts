@@ -250,6 +250,9 @@ export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
 
 export const COLLATERAL_ASSET = 'Collateral';
 export const POSITION_VALUE = 'Position Value';
+export const DEBT_VALUE = 'Debt Value';
+export const EQUITY_VALUE = 'Equity Value';
+export const CURRENT_APY = 'Current Apy';
 export const BORROWABLE_ASSET = 'Borrowable';
 export const NET_APY = 'Net APY';
 export const POSITION_CREATION_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];

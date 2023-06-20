@@ -130,7 +130,7 @@ export const MarketsList = ({
     poolChainId,
   });
 
-  const { data: assetInfos } = useAssets(poolChainId);
+  const { data: assetInfos } = useAssets([poolChainId]);
 
   const [collateralCounts, protectedCounts, borrowableCounts, pausedCounts] = useMemo(() => {
     return [
@@ -292,7 +292,11 @@ export const MarketsList = ({
             asset={getValue<MarketData>()}
             poolChainId={poolChainId}
             rewards={rewards}
-            totalSupplyApyPerAsset={totalSupplyApyPerAsset}
+            totalApy={
+              totalSupplyApyPerAsset
+                ? totalSupplyApyPerAsset[getValue<MarketData>().cToken]?.totalApy
+                : undefined
+            }
           />
         ),
         enableSorting: !!totalSupplyApyPerAsset,

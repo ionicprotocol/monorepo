@@ -41,7 +41,7 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
     chainId: Number(chainId),
     poolAddress,
   });
-  const { data: assetInfos } = useAssets(chainId);
+  const { data: assetInfos } = useAssets([chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {

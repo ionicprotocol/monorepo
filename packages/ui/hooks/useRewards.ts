@@ -20,7 +20,7 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
-export const fetchFlywheelRewards = async (comptroller: string, chainId: number, sdk: MidasSdk) => {
+export const fetchFlywheelRewards = async (comptroller: string, sdk: MidasSdk) => {
   let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
   let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
 
@@ -38,21 +38,23 @@ export const fetchFlywheelRewards = async (comptroller: string, chainId: number,
   return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
 };
 
-export function useFlywheelRewards(comptroller?: string, chainId?: number) {
+export function useFlywheelRewards(comptrollers?: string[], chainId?: number) {
   const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useFlywheelRewards', chainId, comptroller],
+    ['useFlywheelRewards', chainId, comptrollers?.sort()],
     async () => {
-      if (chainId && sdk && comptroller) {
-        return await fetchFlywheelRewards(comptroller, chainId, sdk);
+      if (chainId && sdk && comptrollers && comptrollers.length > 0) {
+        return await Promise.all(
+          comptrollers.map(async (comptroller) => await fetchFlywheelRewards(comptroller, sdk))
+        );
       }
 
       return null;
     },
     {
       cacheTime: Infinity,
-      enabled: !!comptroller && !!chainId,
+      enabled: !!comptrollers && comptrollers.length > 0 && !!chainId,
       staleTime: Infinity,
     }
   );
@@ -123,7 +125,10 @@ export const fetchRewards = async (
 
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
   const { data: poolData } = useFusePoolData(poolId, Number(chainId));
-  const { data: flywheelRewards } = useFlywheelRewards(poolData?.comptroller, chainId);
+  const { data: flywheelRewards } = useFlywheelRewards(
+    poolData ? [poolData.comptroller] : undefined,
+    chainId
+  );
 
   return useQuery<UseRewardsData>(
     [
@@ -137,8 +142,8 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
         return await fetchRewards(
           poolData.assets,
           chainId,
-          flywheelRewards.flywheelRewardsWithAPY,
-          flywheelRewards.flywheelRewardsWithoutAPY
+          flywheelRewards[0].flywheelRewardsWithAPY,
+          flywheelRewards[0].flywheelRewardsWithoutAPY
         );
       }
 
@@ -152,34 +157,40 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
   );
 }
 
-export function useRewardsForMarket({
-  asset,
-  chainId,
-  poolAddress,
-}: {
-  asset: Pick<MarketData, 'cToken' | 'plugin'>;
-  chainId: number;
-  poolAddress: string;
-}) {
-  const { data: flywheelRewards } = useFlywheelRewards(poolAddress, chainId);
+export function useRewardsForMarkets(
+  markets: Pick<MarketData, 'cToken' | 'plugin'>[],
+  pools: string[],
+  chainId: number
+) {
+  const { data: flywheelRewards } = useFlywheelRewards(pools, chainId);
 
   return useQuery<UseRewardsData>(
-    ['useRewardsForMarket', chainId, asset, flywheelRewards],
+    ['useRewardsForMarkets', chainId, markets, flywheelRewards],
     async () => {
-      if (chainId && asset && flywheelRewards) {
-        return await fetchRewards(
-          [asset],
-          chainId,
-          flywheelRewards.flywheelRewardsWithAPY,
-          flywheelRewards.flywheelRewardsWithoutAPY
+      if (chainId && markets && flywheelRewards) {
+        let allRewards: UseRewardsData = {};
+
+        await Promise.all(
+          flywheelRewards.map(async (reward, i) => {
+            const res = await fetchRewards(
+              [markets[i]],
+              chainId,
+              reward.flywheelRewardsWithAPY,
+              reward.flywheelRewardsWithoutAPY
+            );
+
+            allRewards = { ...allRewards, ...res };
+          })
         );
+
+        return allRewards;
       }
 
       return {};
     },
     {
       cacheTime: Infinity,
-      enabled: !!asset && !!poolAddress,
+      enabled: !!markets && markets.length > 0 && !!pools && pools.length > 0,
       staleTime: Infinity,
     }
   );

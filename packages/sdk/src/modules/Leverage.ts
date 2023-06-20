@@ -17,7 +17,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           const openPositions: OpenPosition[] = [];
           const newPositions: NewPosition[] = [];
 
-          const leveredPositionsLens = this.createLeveredPositionLens();
+          const leveredPositionLens = this.createLeveredPositionLens();
           const midasFlywheelLensRouter = this.createMidasFlywheelLensRouter();
 
           const [
@@ -33,7 +33,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             },
             positions,
           ] = await Promise.all([
-            leveredPositionsLens.callStatic.getCollateralMarkets(),
+            leveredPositionLens.callStatic.getCollateralMarkets(),
             this.getPositionsByAccount(account),
           ]);
 
@@ -49,7 +49,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 underlyings: borrowableUnderlyings,
                 symbols: borrowableSymbols,
                 rates: borrowableRates,
-              } = await leveredPositionsLens.callStatic.getBorrowableMarketsAndRates(collateralCToken);
+              } = await leveredPositionLens.callStatic.getBorrowableMarketsAndRates(collateralCToken);
 
               // get rewards
               const reward = rewards.find((rw) => rw.market === collateralCToken);
@@ -175,9 +175,9 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       leverageRatio: BigNumber,
       amount: BigNumber
     ) {
-      const leveredPositionsLens = this.createLeveredPositionLens();
+      const leveredPositionLens = this.createLeveredPositionLens();
 
-      return await leveredPositionsLens.callStatic.getBorrowRateAtRatio(
+      return await leveredPositionLens.callStatic.getBorrowRateAtRatio(
         collateralMarket,
         borrowMarket,
         amount,
@@ -283,9 +283,9 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       borrowableMarket: string,
       leverageRatio: BigNumber
     ) {
-      const leveredPositionsLens = this.createLeveredPositionLens();
+      const leveredPositionLens = this.createLeveredPositionLens();
 
-      return await leveredPositionsLens.callStatic.getNetAPY(
+      return await leveredPositionLens.callStatic.getNetAPY(
         supplyApy,
         supplyAmount,
         collateralMarket,

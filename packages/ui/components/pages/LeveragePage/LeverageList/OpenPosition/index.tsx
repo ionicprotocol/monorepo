@@ -54,6 +54,7 @@ import {
   BORROWABLE_ASSET,
   CHAIN,
   COLLATERAL_ASSET,
+  DEBT_VALUE,
   HIDDEN,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
@@ -63,6 +64,7 @@ import {
   SEARCH,
   SUPPLY_APY,
 } from '@ui/constants/index';
+import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
 import { useColors } from '@ui/hooks/useColors';
 import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { sortPositions } from '@ui/utils/sorts';
@@ -71,6 +73,9 @@ export type OpenPositionRowData = {
   borrowableAsset: OpenPosition;
   chain: OpenPosition;
   collateralAsset: OpenPosition;
+  currentApy: OpenPosition;
+  debtValue: OpenPosition;
+  equityValue: OpenPosition;
   netApy: OpenPosition;
   positionValue: OpenPosition;
   supplyApy: OpenPosition;
@@ -109,6 +114,18 @@ export const OpenPositionComp = ({
       return res;
     }, [] as OpenPosition[]);
   }, [positionsPerChain]);
+
+  const supplyApyPerMarket = usePositionsSupplyApy(
+    allOpenPositions.map((position) => position.collateral),
+    position.chainId
+  );
+  const { data: info } = usePositionInfo(
+    position.address,
+    supplyApyPerMarket
+      ? utils.parseUnits(supplyApyPerMarket[position.collateral.cToken].totalApy.toString())
+      : undefined,
+    position.chainId
+  );
 
   useEffect(() => {
     const positions: OpenPosition[] = [];
@@ -165,6 +182,12 @@ export const OpenPositionComp = ({
         : -1;
     } else if (columnId === POSITION_VALUE) {
       return rowB.original.collateralAsset.collateral.totalSupplied.gt(
+        rowA.original.collateralAsset.collateral.totalSupplied
+      )
+        ? 1
+        : -1;
+    } else if (columnId === DEBT_VALUE) {
+      return rowB.original.debtValue.collateral.totalSupplied.gt(
         rowA.original.collateralAsset.collateral.totalSupplied
       )
         ? 1

@@ -43,7 +43,7 @@ export const ApyStatus = ({
     chainId: Number(chainId),
     poolAddress,
   });
-  const { data: assetInfos } = useAssets(chainId);
+  const { data: assetInfos } = useAssets([chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {

@@ -14,7 +14,7 @@ export const SupplyApy = ({ position }: { position: NewPosition }) => {
     chainId: Number(position.chainId),
     poolAddress: position.collateral.pool,
   });
-  const { data: assetInfos } = useAssets(position.chainId);
+  const { data: assetInfos } = useAssets([position.chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {

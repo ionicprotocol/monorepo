@@ -31,7 +31,7 @@ export const NetApy = ({ position }: { position: OpenPosition }) => {
     chainId: Number(position.chainId),
     poolAddress,
   });
-  const { data: assetInfos } = useAssets(position.chainId);
+  const { data: assetInfos } = useAssets([position.chainId]);
 
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [

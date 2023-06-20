@@ -8,7 +8,7 @@ import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
-export const PositionValue = ({ position }: { position: OpenPosition }) => {
+export const EquityValue = ({ position }: { position: OpenPosition }) => {
   const { data: usdPrice } = useUsdPrice(position.chainId.toString());
   const supplyApyPerMarket = usePositionSupplyApy(position.collateral, position.chainId);
   const { data: info } = usePositionInfo(
@@ -21,20 +21,18 @@ export const PositionValue = ({ position }: { position: OpenPosition }) => {
   const [supplyBalance, setSupplyBalance] = useState<BigNumber>();
 
   useEffect(() => {
-    if (info?.positionValue) {
+    if (info?.equityValue) {
       setSupplyBalance(
-        info.positionValue
+        info.equityValue
           .mul(utils.parseUnits('1', Number(position.collateral.underlyingDecimals) + 18))
           .div(position.collateral.underlyingPrice)
       );
     }
   }, [
-    info?.positionValue,
+    info?.equityValue,
     position.collateral.underlyingDecimals,
     position.collateral.underlyingPrice,
   ]);
-
-  console.log(info);
 
   return info && supplyBalance ? (
     <MarketSupplyBalance
