@@ -18,13 +18,13 @@
       "address": "0x27Db2518FB95C30B75094317349e1C5BCC241cf9"
     },
     "CErc20Delegate": {
-      "address": "0xCbEf1456cEB963F928BB2D2544aA5177c2cB7B99"
+      "address": "0x3f74Ce8432D8F433953Ff0FC16A57aea7ff946C3"
     },
     "CErc20PluginDelegate": {
-      "address": "0xfe127417694fC1Dd63721f3Bf53301A00d3d13e4"
+      "address": "0xf99c1E1b4A51e480F54257C2ED2960F0Ac283DDa"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x825FF174fb0672469d29A527e1D48F1b28306786"
+      "address": "0xa7BA1a64a43D48f5C5001dBd7A95bCfC62FF0Cee"
     },
     "CEtherDelegate": {
       "address": "0x7698198376DAAB5097c9A327250BD07062118626"
@@ -36,7 +36,7 @@
       "address": "0xA443095Fa1B5C9E6B47dB99042097aee24AAc6d3"
     },
     "Comptroller": {
-      "address": "0x423320533FcF8c7FE1AB03BadB23D3922034a696"
+      "address": "0xa65b3e229BD57AeA24D6Eeb822c5f26Ea4Ce9A8d"
     },
     "ComptrollerFirstExtension": {
       "address": "0xF705F6FFefD7D8B1D06e9A3FD77D66c0e65b46dB"
