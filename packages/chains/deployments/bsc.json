@@ -87,13 +87,13 @@
       "address": "0x23B1ff27D97eF804fC0F100af7Bc5911D07f79d3"
     },
     "CErc20Delegate": {
-      "address": "0x96954e4ab0fa5a10C5f2DB11B681D17E704574B7"
+      "address": "0x81d365Ebd922965eD18C7D215C593C85A5a6CC95"
     },
     "CErc20PluginDelegate": {
-      "address": "0x4B0383F127aFB979afa9e1F5044b18bF1370687F"
+      "address": "0x49Cd5d6FE9fBe533b957De754BaB19484933067F"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xf3c870B7c201515e2552D018ec2A15910fD35909"
+      "address": "0x6e0ef83Cd845eA731496C545218b4B84bc06aea4"
     },
     "CEtherDelegate": {
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
@@ -105,7 +105,7 @@
       "address": "0x66397a7BD91650e260a605F68F2d46F3350f2a1B"
     },
     "Comptroller": {
-      "address": "0xd6697545CD3d73A671224bc34C9C838FAB837e69"
+      "address": "0x5952Bd37B46b4d1278B305A06EA1087fF62A9E1b"
     },
     "ComptrollerFirstExtension": {
       "address": "0x5624d1ed7ee2CeE4Fc2cDC7A7BA188F80115707e"
@@ -324,7 +324,7 @@
       "address": "0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xDdA85440F80319e3B3591C13fDF9e2708D996c9c"
+      "address": "0x5b7f3D1615e5306F5C5c587e96Db31751041C1A7"
     },
     "MidasFlywheel_ANKR_Ankr_BNB_Pool": {
       "address": "0x4ab7cAEfb78D6EA8Bc62cAa6F9788ca873869dA1"
