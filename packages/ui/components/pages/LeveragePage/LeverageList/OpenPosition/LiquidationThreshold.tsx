@@ -19,9 +19,11 @@ export const LiquidationThreshold = ({ position }: { position: OpenPosition }) =
 
   useEffect(() => {
     if (info?.liquidationThreshold) {
-      setLiquidationThreshold(utils.formatUnits(info?.liquidationThreshold));
+      setLiquidationThreshold(Number(utils.formatUnits(info?.liquidationThreshold)).toFixed(2));
     }
   }, [info?.liquidationThreshold]);
 
-  return info && liquidationThreshold ? <Text>{liquidationThreshold}</Text> : null;
+  return info && liquidationThreshold ? (
+    <Text textAlign="right">{liquidationThreshold}%</Text>
+  ) : null;
 };

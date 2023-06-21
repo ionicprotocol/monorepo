@@ -19,9 +19,9 @@ export const DebtRatio = ({ position }: { position: OpenPosition }) => {
 
   useEffect(() => {
     if (info?.debtRatio) {
-      setDebtRatio(utils.formatUnits(info.debtRatio));
+      setDebtRatio(Number(utils.formatUnits(info.debtRatio)).toFixed(2));
     }
   }, [info?.debtRatio]);
 
-  return info && debtRatio ? <Text>{debtRatio}</Text> : null;
+  return info && debtRatio ? <Text textAlign="right">{debtRatio}%</Text> : null;
 };

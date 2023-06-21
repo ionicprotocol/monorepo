@@ -19,9 +19,9 @@ export const SafetyBuffer = ({ position }: { position: OpenPosition }) => {
 
   useEffect(() => {
     if (info?.safetyBuffer) {
-      setSafetyBuffer(utils.formatUnits(info?.safetyBuffer));
+      setSafetyBuffer(Number(utils.formatUnits(info?.safetyBuffer)).toFixed(2));
     }
   }, [info?.safetyBuffer]);
 
-  return info && safetyBuffer ? <Text>{safetyBuffer}</Text> : null;
+  return info && safetyBuffer ? <Text textAlign="right">{safetyBuffer}%</Text> : null;
 };
