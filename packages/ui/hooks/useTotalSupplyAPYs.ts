@@ -2,6 +2,7 @@ import { assetSymbols } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
@@ -13,15 +14,16 @@ export const useTotalSupplyAPYs = (
     MarketData,
     'cToken' | 'supplyRatePerBlock' | 'underlyingSymbol' | 'underlyingToken'
   >[],
-  chainIds?: number[],
+  chainId?: number,
   allRewards?: UseRewardsData,
   assetInfos?: UseAssetsData
 ) => {
+  const sdk = useSdk(chainId);
   const isEnabled = useMemo(() => {
     return !!assets.find((asset) => asset.underlyingSymbol === assetSymbols.ankrBNB);
   }, [assets]);
 
-  const { data: ankrBNBApr } = useAnkrBNBApr(isEnabled, chainIds);
+  const { data: ankrBNBApr } = useAnkrBNBApr(isEnabled, chainId);
 
   return useQuery(
     [

@@ -4,44 +4,37 @@ import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
 import { aprDays } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { getAnkrBNBContract } from '@ui/utils/contracts';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
-export const useAnkrBNBApr = (isEnabled: boolean, poolChainIds?: number[]) => {
-  const { getSdk } = useMultiMidas();
+export const useAnkrBNBApr = (isEnabled: boolean, poolChainId?: number) => {
+  const sdk = useSdk(poolChainId);
 
   return useQuery(
-    ['useAnkrBNBApr', aprDays, poolChainIds, isEnabled],
+    ['useAnkrBNBApr', aprDays, sdk?.chainId, poolChainId, isEnabled],
     async () => {
-      if (poolChainIds && poolChainIds.length > 0) {
-        return await Promise.all(
-          poolChainIds.map(async (poolChainId) => {
-            const sdk = getSdk(poolChainId);
-            const ankrAsset = ChainSupportedAssets[poolChainId as SupportedChains].find(
-              (asset) => asset.symbol === assetSymbols.ankrBNB
+      const ankrAsset = ChainSupportedAssets[poolChainId as SupportedChains].find(
+        (asset) => asset.symbol === assetSymbols.ankrBNB
+      );
+
+      if (sdk && poolChainId && ankrAsset && isEnabled) {
+        const contract = getAnkrBNBContract(sdk);
+        const apr = await contract.callStatic
+          .averagePercentageRate(ankrAsset.underlying, aprDays)
+          .catch((e) => {
+            console.warn(
+              `Getting average percentage rate of ankrBNB error: `,
+              { aprDays, poolChainId },
+              e
             );
 
-            if (sdk && poolChainId && ankrAsset && isEnabled) {
-              const contract = getAnkrBNBContract(sdk);
-              const apr = await contract.callStatic
-                .averagePercentageRate(ankrAsset.underlying, aprDays)
-                .catch((e) => {
-                  console.warn(
-                    `Getting average percentage rate of ankrBNB error: `,
-                    { aprDays, poolChainId },
-                    e
-                  );
+            return constants.Zero;
+          });
 
-                  return constants.Zero;
-                });
-
-              return utils.formatUnits(apr);
-            } else {
-              return null;
-            }
-          })
-        );
+        return utils.formatUnits(apr);
+      } else {
+        return null;
       }
     },
     {
