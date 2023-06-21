@@ -21,19 +21,19 @@
       "address": "0x16A4CCFE86aD6d6BfF8072eb4e7cA7eb9C6B727E"
     },
     "CErc20Delegate": {
-      "address": "0x21e3Fe865721797440cDb8c2cAFAC098Cc1a9004"
+      "address": "0x089A362BFFcAeed0674C6C1211843CA346E5FB72"
     },
     "CErc20PluginDelegate": {
-      "address": "0x772b5bf3A94fb6B6Fcbd3Ef528D6AA145164D86E"
+      "address": "0x8700bd39A9Fd7cC8050bf0447DfdAEb579D7D50B"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x09FC7b0459963b6A7Fe7197b43c062f025a4c3b9"
+      "address": "0x726d0395Da1b6297693318c09505C476FC526103"
     },
     "CTokenFirstExtension": {
       "address": "0x63b484896Bd2A381f1E308088A65bf9E292FBc7a"
     },
     "Comptroller": {
-      "address": "0x23DB6596145883475C0B8425802FA63Add5CF7b8"
+      "address": "0xe3a5BDb287D9f6da0453A0025B8Df550D518A86c"
     },
     "ComptrollerFirstExtension": {
       "address": "0x47f6F7c534233EF315c9d579739fb0Ca242342C9"

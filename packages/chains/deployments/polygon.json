@@ -78,13 +78,13 @@
       "address": "0xAe0CDC5b15E4F916DE52F8c0f3289556fe24a1a6"
     },
     "CErc20Delegate": {
-      "address": "0xa3C69f19A5e4fF2c91b72412149d67B25a4159E5"
+      "address": "0xAa7B37C0A56D37558A27F85aC2795601baf02b3A"
     },
     "CErc20PluginDelegate": {
-      "address": "0xA6F8B72A254d0407E5F80FEF7201819f79AA736D"
+      "address": "0xB1b2F209416B5734c8E7C6BF310A96880acfd80C"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xF6B8262f76c72462e20D8557B52A46a46A7F7E1E"
+      "address": "0xFbf563F640F9712aaE9b1ad2219822Fe47283534"
     },
     "CEtherDelegate": {
       "address": "0xA6BDC4e098b6b14f4fCA2906B0a51e2798BA5777"
@@ -96,7 +96,7 @@
       "address": "0x12f455CA7cf0b90aDAF31f58dA6BeeD7DFe28bBf"
     },
     "Comptroller": {
-      "address": "0x25A9AdBB6678178E3232F54B27276f2104a79198"
+      "address": "0x81EA4BF61139668675988C1525A8A9E9815e964B"
     },
     "ComptrollerFirstExtension": {
       "address": "0x493661d1a76faD10DF605C133A7DEd6e43dc5C01"
