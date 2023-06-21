@@ -1,8 +1,8 @@
 import type { LeveredCollateral } from '@midas-capital/types';
 
+import { useRewardsForPositions } from '@ui/hooks/leverage/usePositionsRewards';
+import { usePositionsTotalSupplyApy } from '@ui/hooks/leverage/usePositionsTotalSupplyApy';
 import { useAssets } from '@ui/hooks/useAssets';
-import { useRewardsForMarkets } from '@ui/hooks/useRewards';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 
 export function usePositionsSupplyApy(collaterals: LeveredCollateral[], chainIds: number[]) {
   const assets = collaterals.map((collateral) => {
@@ -19,11 +19,11 @@ export function usePositionsSupplyApy(collaterals: LeveredCollateral[], chainIds
     return collateral.pool;
   });
 
-  const { data: allRewards } = useRewardsForMarkets(assets, pools, chainId);
+  const { data: allRewards } = useRewardsForPositions(assets, chainIds, pools);
   const { data: assetInfos } = useAssets(chainIds);
-  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
+  const { data: totalSupplyApyPerAsset } = usePositionsTotalSupplyApy(
     assets,
-    chainId,
+    chainIds,
     allRewards,
     assetInfos
   );

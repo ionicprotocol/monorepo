@@ -5,15 +5,16 @@ import { useMemo } from 'react';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
-import { usePositionSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
 import { smallFormatter } from '@ui/utils/bigUtils';
 
 export const CurrentApy = ({ position }: { position: OpenPosition }) => {
-  const supplyApy = usePositionSupplyApy(position.collateral, position.chainId);
-  console.log({ supplyApy });
+  const supplyApy = usePositionsSupplyApy([position.collateral], [position.chainId]);
   const { data: info, isLoading } = usePositionInfo(
     position.address,
-    supplyApy ? utils.parseUnits(supplyApy.totalApy.toString()) : undefined,
+    supplyApy
+      ? utils.parseUnits(supplyApy[position.collateral.cToken].totalApy.toString())
+      : undefined,
     position.chainId
   );
   const borrowApyColor = useColorModeValue('orange.500', 'orange');

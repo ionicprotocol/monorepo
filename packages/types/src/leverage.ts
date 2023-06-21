@@ -47,3 +47,13 @@ export interface NewPosition {
   collateral: LeveredCollateral;
   borrowable: LeveredBorrowable[];
 }
+
+export interface PositionInfo {
+  positionValue: BigNumber;
+  debtValue: BigNumber;
+  equityValue: BigNumber;
+  currentApy: BigNumber;
+  debtRatio: BigNumber;
+  liquidationThreshold: BigNumber;
+  safetyBuffer: BigNumber;
+}

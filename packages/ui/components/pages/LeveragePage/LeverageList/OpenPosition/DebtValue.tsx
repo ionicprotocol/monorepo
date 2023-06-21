@@ -5,12 +5,12 @@ import { useEffect, useState } from 'react';
 
 import { SupplyBalance as MarketSupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
 import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
-import { usePositionSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export const DebtValue = ({ position }: { position: OpenPosition }) => {
   const { data: usdPrice } = useUsdPrice(position.chainId.toString());
-  const supplyApyPerMarket = usePositionSupplyApy(position.collateral, position.chainId);
+  const supplyApyPerMarket = usePositionsSupplyApy([position.collateral], [position.chainId]);
   const { data: info } = usePositionInfo(
     position.address,
     supplyApyPerMarket

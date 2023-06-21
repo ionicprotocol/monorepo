@@ -1,4 +1,4 @@
-import { LeveredBorrowable, NewPosition, OpenPosition, SupportedChains } from "@midas-capital/types";
+import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo, SupportedChains } from "@midas-capital/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
@@ -314,7 +314,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       return tx;
     }
 
-    async getPositionInfo(positionAddress: string, supplyApy: BigNumber) {
+    async getPositionInfo(positionAddress: string, supplyApy: BigNumber): Promise<PositionInfo> {
       const leveredPositionLens = this.createLeveredPositionLens();
 
       return await leveredPositionLens.getPositionInfo(positionAddress, supplyApy);
