@@ -40,11 +40,9 @@ import * as React from 'react';
 
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/index';
-import { BorrowableAsset } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/BorrowableAsset';
 import { CurrentApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/CurrentApy';
 import { DebtValue } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/DebtValue';
 import { EquityValue } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/EquityValue';
-import { NetApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/NetApy';
 import { PositionValue } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/PositionValue';
 import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
@@ -54,7 +52,6 @@ import { CIconButton } from '@ui/components/shared/Button';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
-  BORROWABLE_ASSET,
   CHAIN,
   COLLATERAL_ASSET,
   CURRENT_APY,
@@ -63,7 +60,6 @@ import {
   HIDDEN,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
-  NET_APY,
   POSITION_CREATION_PER_PAGE,
   POSITION_VALUE,
   SEARCH,
@@ -76,13 +72,11 @@ import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType'
 import { sortPositions } from '@ui/utils/sorts';
 
 export type OpenPositionRowData = {
-  borrowableAsset: OpenPosition;
   chain: OpenPosition;
   collateralAsset: OpenPosition;
   currentApy: OpenPosition;
   debtValue: OpenPosition;
   equityValue: OpenPosition;
-  netApy: OpenPosition;
   positionValue: OpenPosition;
   supplyApy: OpenPosition;
 };
@@ -221,6 +215,11 @@ export const OpenPositionComp = ({
             ? positionsInfo[rowB.original.collateralAsset.address].equityValue
             : constants.Zero;
         return rowAEquityValue.gt(rowBEquityValue) ? 1 : -1;
+      } else if (columnId === SUPPLY_APY) {
+        return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
+          Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
+          ? 1
+          : -1;
       } else if (columnId === CURRENT_APY) {
         const rowACurrentApy =
           positionsInfo && positionsInfo[rowA.original.collateralAsset.address]
@@ -231,16 +230,6 @@ export const OpenPositionComp = ({
             ? positionsInfo[rowB.original.collateralAsset.address].currentApy
             : constants.Zero;
         return rowACurrentApy.gt(rowBCurrentApy) ? 1 : -1;
-      } else if (columnId === SUPPLY_APY) {
-        return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
-          Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
-          ? 1
-          : -1;
-      } else if (columnId === NET_APY) {
-        return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
-          Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
-          ? 1
-          : -1;
       } else {
         return 0;
       }
@@ -251,13 +240,11 @@ export const OpenPositionComp = ({
   const data: OpenPositionRowData[] = useMemo(() => {
     return sortPositions(allOpenPositions).map((position) => {
       return {
-        borrowableAsset: position,
         chain: position,
         collateralAsset: position,
         currentApy: position,
         debtValue: position,
         equityValue: position,
-        netApy: position,
         positionValue: position,
         supplyApy: position,
       };
@@ -318,14 +305,6 @@ export const OpenPositionComp = ({
         sortingFn: positionSort,
       },
       {
-        accessorFn: (row) => row.currentApy,
-        cell: ({ getValue }) => <CurrentApy position={getValue<OpenPosition>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{CURRENT_APY}</TableHeaderCell>,
-        id: CURRENT_APY,
-        sortingFn: positionSort,
-      },
-      {
         accessorFn: (row) => row.supplyApy,
         cell: ({ getValue }) => <SupplyApy position={getValue<OpenPosition>()} />,
         footer: (props) => props.column.id,
@@ -334,22 +313,12 @@ export const OpenPositionComp = ({
         sortingFn: positionSort,
       },
       {
-        accessorFn: (row) => row.netApy,
-        cell: ({ getValue }) => <NetApy position={getValue<OpenPosition>()} />,
+        accessorFn: (row) => row.currentApy,
+        cell: ({ getValue }) => <CurrentApy position={getValue<OpenPosition>()} />,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{NET_APY}</TableHeaderCell>,
-        id: NET_APY,
+        header: (context) => <TableHeaderCell context={context}>{CURRENT_APY}</TableHeaderCell>,
+        id: CURRENT_APY,
         sortingFn: positionSort,
-      },
-      {
-        accessorFn: (row) => row.borrowableAsset,
-        cell: ({ getValue }) => <BorrowableAsset position={getValue<OpenPosition>()} />,
-        enableSorting: false,
-        footer: (props) => props.column.id,
-        header: (context) => (
-          <TableHeaderCell context={context}>{BORROWABLE_ASSET}</TableHeaderCell>
-        ),
-        id: BORROWABLE_ASSET,
       },
     ];
   }, [positionFilter, positionSort]);

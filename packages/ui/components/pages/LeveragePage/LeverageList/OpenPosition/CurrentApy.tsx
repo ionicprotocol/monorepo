@@ -24,14 +24,16 @@ export const CurrentApy = ({ position }: { position: OpenPosition }) => {
   }, [info?.currentApy]);
 
   return isLoading ? (
-    <Spinner />
-  ) : currentApyNum ? (
+    <HStack justifyContent="flex-end">
+      <Spinner />
+    </HStack>
+  ) : currentApyNum !== null ? (
     <HStack justifyContent="flex-end">
       <EllipsisText maxWidth="300px" tooltip={smallFormatter(currentApyNum, true, 18)}>
-        <Text color={borrowApyColor}>
-          {currentApyNum !== null ? smallFormatter(currentApyNum) : '?'}%
-        </Text>
+        <Text color={borrowApyColor}>{smallFormatter(currentApyNum)}%</Text>
       </EllipsisText>
     </HStack>
-  ) : null;
+  ) : (
+    <Text textAlign="right">-</Text>
+  );
 };
