@@ -6,6 +6,7 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { ERC20 } from "../../typechain/ERC20";
 import { IERC20Mintable } from "../../typechain/IERC20Mintable";
+import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistryExtension } from "../../typechain/LiquidatorsRegistryExtension";
@@ -63,7 +64,12 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
     const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e"; // TUSD market
     const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
 
-    const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factory = (await ethers.getContractAt(
+      "ILeveredPositionFactory",
+      factoryDep.address,
+      deployer
+    )) as ILeveredPositionFactory;
 
     const oneEth = ethers.utils.parseEther("1");
     let tx = await testingBomb.approve(factory.address, oneEth);
@@ -74,7 +80,7 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
     await tx.wait();
     console.log(`created a levered position with tx ${tx.hash}`);
 
-    const deployerPositions = await factory.callStatic.getPositionsByAccount(deployer);
+    const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
     console.log(`position address ${deployerPositions[deployerPositions.length - 1]}`);
   }
 );
