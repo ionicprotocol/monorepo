@@ -23,17 +23,25 @@ export const CurrentApy = ({ position }: { position: OpenPosition }) => {
     return info?.currentApy ? Number(utils.formatUnits(info.currentApy)) : null;
   }, [info?.currentApy]);
 
-  return isLoading ? (
-    <HStack justifyContent="flex-end">
-      <Spinner />
-    </HStack>
-  ) : currentApyNum !== null ? (
-    <HStack justifyContent="flex-end">
-      <EllipsisText maxWidth="300px" tooltip={smallFormatter(currentApyNum, true, 18)}>
-        <Text color={borrowApyColor}>{smallFormatter(currentApyNum)}%</Text>
-      </EllipsisText>
-    </HStack>
-  ) : (
-    <Text textAlign="right">-</Text>
+  return (
+    <>
+      {isLoading ? (
+        <HStack justifyContent="flex-end">
+          <Spinner />
+        </HStack>
+      ) : currentApyNum !== null ? (
+        <HStack justifyContent="flex-end">
+          <EllipsisText
+            color={borrowApyColor}
+            maxWidth="300px"
+            tooltip={smallFormatter(currentApyNum, true, 18)}
+          >
+            {smallFormatter(currentApyNum)}%
+          </EllipsisText>
+        </HStack>
+      ) : (
+        <Text textAlign="right">-</Text>
+      )}
+    </>
   );
 };
