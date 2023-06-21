@@ -21,8 +21,8 @@ type Query = yup.InferType<typeof querySchema>;
 const handler = async (request: NextApiRequest, response: NextApiResponse<AssetsResponse>) => {
   let validatedQuery: Query | null = null;
   try {
-    querySchema.validateSync(request.query);
-    validatedQuery = request.query as Query;
+    querySchema.validateSync(request.body);
+    validatedQuery = request.body as Query;
   } catch (error) {
     return response.status(400);
   }

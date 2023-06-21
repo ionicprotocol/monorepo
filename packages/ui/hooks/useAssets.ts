@@ -13,9 +13,11 @@ export function useAssets(chainIds?: number[]) {
 
       if (chainIds && chainIds.length > 0) {
         try {
-          const { data } = await axios.get(`/api/assets?chainIds=${chainIds}`);
+          const res = await axios.post('/api/assets', {
+            chainIds,
+          });
 
-          assetsRewards = { ...data };
+          assetsRewards = { ...res.data };
         } catch (e) {
           console.error(`Unable to fetch assets of chain \`${chainIds}\``, e);
         }
