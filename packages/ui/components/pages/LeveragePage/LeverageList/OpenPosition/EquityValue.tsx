@@ -1,44 +1,22 @@
 import type { OpenPosition } from '@midas-capital/types';
-import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
-import { useEffect, useState } from 'react';
 
 import { SupplyBalance as MarketSupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
-import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
-import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export const EquityValue = ({ position }: { position: OpenPosition }) => {
   const { data: usdPrice } = useUsdPrice(position.chainId.toString());
-  const supplyApyPerMarket = usePositionsSupplyApy([position.collateral], [position.chainId]);
-  const { data: info } = usePositionInfo(
-    position.address,
-    supplyApyPerMarket
-      ? utils.parseUnits(supplyApyPerMarket[position.collateral.cToken].totalApy.toString())
-      : undefined,
-    position.chainId
-  );
-  const [supplyBalance, setSupplyBalance] = useState<BigNumber>();
+  const { data: baseCollateral } = useBaseCollateral(position.address, position.chainId);
 
-  useEffect(() => {
-    if (info?.equityValue) {
-      setSupplyBalance(
-        info.equityValue
-          .mul(utils.parseUnits('1', Number(position.collateral.underlyingDecimals) + 18))
-          .div(position.collateral.underlyingPrice)
-      );
-    }
-  }, [
-    info?.equityValue,
-    position.collateral.underlyingDecimals,
-    position.collateral.underlyingPrice,
-  ]);
-
-  return info && supplyBalance ? (
+  return baseCollateral && usdPrice ? (
     <MarketSupplyBalance
       asset={{
-        supplyBalance,
-        supplyBalanceFiat: usdPrice ? Number(utils.formatUnits(info.positionValue)) * usdPrice : 0,
+        supplyBalance: baseCollateral,
+        supplyBalanceFiat:
+          Number(utils.formatUnits(baseCollateral, position.collateral.underlyingDecimals)) *
+          Number(utils.formatUnits(position.collateral.underlyingPrice)) *
+          usdPrice,
         underlyingDecimals: position.collateral.underlyingDecimals,
         underlyingToken: position.collateral.underlyingToken,
       }}

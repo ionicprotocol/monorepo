@@ -324,7 +324,16 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.positionValue,
-        cell: ({ getValue }) => <PositionValue position={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => (
+          <PositionValue
+            info={
+              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
+                ? positionsInfo[getValue<OpenPosition>().address]
+                : undefined
+            }
+            position={getValue<OpenPosition>()}
+          />
+        ),
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{POSITION_VALUE}</TableHeaderCell>,
         id: POSITION_VALUE,
@@ -332,7 +341,16 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.debtValue,
-        cell: ({ getValue }) => <DebtValue position={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => (
+          <DebtValue
+            info={
+              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
+                ? positionsInfo[getValue<OpenPosition>().address]
+                : undefined
+            }
+            position={getValue<OpenPosition>()}
+          />
+        ),
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{DEBT_VALUE}</TableHeaderCell>,
         id: DEBT_VALUE,
@@ -340,7 +358,16 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.equityValue,
-        cell: ({ getValue }) => <EquityValue position={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => (
+          <EquityValue
+            info={
+              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
+                ? positionsInfo[getValue<OpenPosition>().address]
+                : undefined
+            }
+            position={getValue<OpenPosition>()}
+          />
+        ),
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{EQUITY_VALUE}</TableHeaderCell>,
         id: EQUITY_VALUE,
@@ -356,7 +383,15 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.currentApy,
-        cell: ({ getValue }) => <CurrentApy position={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => (
+          <CurrentApy
+            info={
+              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
+                ? positionsInfo[getValue<OpenPosition>().address]
+                : undefined
+            }
+          />
+        ),
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{CURRENT_APY}</TableHeaderCell>,
         id: CURRENT_APY,
@@ -364,7 +399,15 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.debtRatio,
-        cell: ({ getValue }) => <DebtRatio position={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => (
+          <DebtRatio
+            info={
+              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
+                ? positionsInfo[getValue<OpenPosition>().address]
+                : undefined
+            }
+          />
+        ),
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{DEBT_RATIO}</TableHeaderCell>,
         id: DEBT_RATIO,
@@ -372,7 +415,15 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.liquidationThreshold,
-        cell: ({ getValue }) => <LiquidationThreshold position={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => (
+          <LiquidationThreshold
+            info={
+              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
+                ? positionsInfo[getValue<OpenPosition>().address]
+                : undefined
+            }
+          />
+        ),
         footer: (props) => props.column.id,
         header: (context) => (
           <TableHeaderCell context={context}>{LIQUIDATION_THRESHOLD}</TableHeaderCell>
@@ -382,14 +433,22 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.safetyBuffer,
-        cell: ({ getValue }) => <SafetyBuffer position={getValue<OpenPosition>()} />,
+        cell: ({ getValue }) => (
+          <SafetyBuffer
+            info={
+              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
+                ? positionsInfo[getValue<OpenPosition>().address]
+                : undefined
+            }
+          />
+        ),
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SAFETY_BUFFER}</TableHeaderCell>,
         id: SAFETY_BUFFER,
         sortingFn: positionSort,
       },
     ];
-  }, [positionFilter, positionSort]);
+  }, [positionFilter, positionSort, positionsInfo]);
 
   const table = useReactTable({
     columns,
