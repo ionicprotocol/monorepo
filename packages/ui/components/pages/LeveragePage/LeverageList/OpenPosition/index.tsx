@@ -358,16 +358,7 @@ export const OpenPositionComp = ({
       },
       {
         accessorFn: (row) => row.equityValue,
-        cell: ({ getValue }) => (
-          <EquityValue
-            info={
-              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
-                ? positionsInfo[getValue<OpenPosition>().address]
-                : undefined
-            }
-            position={getValue<OpenPosition>()}
-          />
-        ),
+        cell: ({ getValue }) => <EquityValue position={getValue<OpenPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{EQUITY_VALUE}</TableHeaderCell>,
         id: EQUITY_VALUE,

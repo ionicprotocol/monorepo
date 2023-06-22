@@ -49,7 +49,9 @@ export interface NewPosition {
 }
 
 export interface PositionInfo {
+  positionSupplyAmount: BigNumber;
   positionValue: BigNumber;
+  debtAmount: BigNumber;
   debtValue: BigNumber;
   equityValue: BigNumber;
   currentApy: BigNumber;
