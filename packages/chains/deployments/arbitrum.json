@@ -18,28 +18,28 @@
       "address": "0x8BE6118918898894b72F889320b1f702068838C4"
     },
     "CErc20Delegate": {
-      "address": "0xFcF2cf061B27783E650c79DcD90682Ee7eaC7900"
+      "address": "0xa7BA1a64a43D48f5C5001dBd7A95bCfC62FF0Cee"
     },
     "CErc20PluginDelegate": {
-      "address": "0xe3a5BDb287D9f6da0453A0025B8Df550D518A86c"
+      "address": "0x26B63BE8aD948522702E5e3fb8A85116e4023274"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x089A362BFFcAeed0674C6C1211843CA346E5FB72"
+      "address": "0x8123AaA3676eE37461A43006E13549C46fc7784c"
     },
     "CEtherDelegate": {
       "address": "0xB813269354382f8897dd133AB7aDdcc3D4dE9C3E"
     },
     "CTokenFirstExtension": {
-      "address": "0xf86a78af09e9012f38C672E3e317F8A96D593f31"
+      "address": "0xf99c1E1b4A51e480F54257C2ED2960F0Ac283DDa"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x55C0f57cf6c1CAe4CC57D5F6334408f63C0d5bbC"
     },
     "Comptroller": {
-      "address": "0xd32d5AEcCFc4183B6472a15D94D421B2241317d7"
+      "address": "0xa65b3e229BD57AeA24D6Eeb822c5f26Ea4Ce9A8d"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x345331D77c75f317d4DBc067e8C4bA302aC2554b"
+      "address": "0x3f74Ce8432D8F433953Ff0FC16A57aea7ff946C3"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
       "address": "0x0746526B3F6d9F3f5EECCeAE3CA7a1425dDbaF1C"
@@ -111,7 +111,7 @@
       "address": "0x8a571d80CaB8bf2101dbA71F4FeaC2216b507403"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0x07e433480FaC0C07E5477eE6AB81F0a2eDfeA04a"
+      "address": "0x1f0847B260D736Ed16bCDacFa76b04f0EC6427ba"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x8a571d80CaB8bf2101dbA71F4FeaC2216b507403"
