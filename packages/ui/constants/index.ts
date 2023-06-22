@@ -250,12 +250,21 @@ export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
 
 export const COLLATERAL_ASSET = 'Collateral';
 export const POSITION_VALUE = 'Position Value';
+export const POSITION_VALUE_TOOLTIP = 'Total value of your farming position';
 export const DEBT_VALUE = 'Debt Value';
+export const DEBT_VALUE_TOOLTIP = 'Total debt value of your farming position';
 export const EQUITY_VALUE = 'Equity Value';
+export const EQUITY_VALUE_TOOLTIP = 'Estimated value you would get if you closed your position';
 export const CURRENT_APY = 'Current Apy';
+export const CURRENT_APY_TOOLTIP = 'APY calculated based on current leverage';
 export const DEBT_RATIO = 'Debt Ratio';
+export const DEBT_RATIO_TOOLTIP = 'Debt Value / Position Value';
 export const SAFETY_BUFFER = 'Safety Buffer';
+export const SAFETY_BUFFER_TOOLTIP =
+  'Buffer between the current Debt Ratio and the Liquidation Threshold';
 export const LIQUIDATION_THRESHOLD = 'Liquidation Threshold';
+export const LIQUIDATION_THRESHOLD_TOOLTIP =
+  'Debt Ratio threshold. Beyond this limit, your position could be liquidated';
 export const BORROWABLE_ASSET = 'Borrowable';
 export const NET_APY = 'Net APY';
 export const POSITION_CREATION_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];

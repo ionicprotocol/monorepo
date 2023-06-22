@@ -58,16 +58,23 @@ import {
   CHAIN,
   COLLATERAL_ASSET,
   CURRENT_APY,
+  CURRENT_APY_TOOLTIP,
   DEBT_RATIO,
+  DEBT_RATIO_TOOLTIP,
   DEBT_VALUE,
+  DEBT_VALUE_TOOLTIP,
   EQUITY_VALUE,
+  EQUITY_VALUE_TOOLTIP,
   HIDDEN,
   LIQUIDATION_THRESHOLD,
+  LIQUIDATION_THRESHOLD_TOOLTIP,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
   POSITION_CREATION_PER_PAGE,
   POSITION_VALUE,
+  POSITION_VALUE_TOOLTIP,
   SAFETY_BUFFER,
+  SAFETY_BUFFER_TOOLTIP,
   SEARCH,
   SUPPLY_APY,
 } from '@ui/constants/index';
@@ -335,7 +342,11 @@ export const OpenPositionComp = ({
           />
         ),
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{POSITION_VALUE}</TableHeaderCell>,
+        header: (context) => (
+          <TableHeaderCell context={context} description={POSITION_VALUE_TOOLTIP}>
+            {POSITION_VALUE}
+          </TableHeaderCell>
+        ),
         id: POSITION_VALUE,
         sortingFn: positionSort,
       },
@@ -352,7 +363,11 @@ export const OpenPositionComp = ({
           />
         ),
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{DEBT_VALUE}</TableHeaderCell>,
+        header: (context) => (
+          <TableHeaderCell context={context} description={DEBT_VALUE_TOOLTIP}>
+            {DEBT_VALUE}
+          </TableHeaderCell>
+        ),
         id: DEBT_VALUE,
         sortingFn: positionSort,
       },
@@ -360,7 +375,11 @@ export const OpenPositionComp = ({
         accessorFn: (row) => row.equityValue,
         cell: ({ getValue }) => <EquityValue position={getValue<OpenPosition>()} />,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{EQUITY_VALUE}</TableHeaderCell>,
+        header: (context) => (
+          <TableHeaderCell context={context} description={EQUITY_VALUE_TOOLTIP}>
+            {EQUITY_VALUE}
+          </TableHeaderCell>
+        ),
         id: EQUITY_VALUE,
         sortingFn: positionSort,
       },
@@ -384,7 +403,11 @@ export const OpenPositionComp = ({
           />
         ),
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{CURRENT_APY}</TableHeaderCell>,
+        header: (context) => (
+          <TableHeaderCell context={context} description={CURRENT_APY_TOOLTIP}>
+            {CURRENT_APY}
+          </TableHeaderCell>
+        ),
         id: CURRENT_APY,
         sortingFn: positionSort,
       },
@@ -400,7 +423,11 @@ export const OpenPositionComp = ({
           />
         ),
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{DEBT_RATIO}</TableHeaderCell>,
+        header: (context) => (
+          <TableHeaderCell context={context} description={DEBT_RATIO_TOOLTIP}>
+            {DEBT_RATIO}
+          </TableHeaderCell>
+        ),
         id: DEBT_RATIO,
         sortingFn: positionSort,
       },
@@ -417,7 +444,9 @@ export const OpenPositionComp = ({
         ),
         footer: (props) => props.column.id,
         header: (context) => (
-          <TableHeaderCell context={context}>{LIQUIDATION_THRESHOLD}</TableHeaderCell>
+          <TableHeaderCell context={context} description={LIQUIDATION_THRESHOLD_TOOLTIP}>
+            {LIQUIDATION_THRESHOLD}
+          </TableHeaderCell>
         ),
         id: LIQUIDATION_THRESHOLD,
         sortingFn: positionSort,
@@ -434,7 +463,11 @@ export const OpenPositionComp = ({
           />
         ),
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{SAFETY_BUFFER}</TableHeaderCell>,
+        header: (context) => (
+          <TableHeaderCell context={context} description={SAFETY_BUFFER_TOOLTIP}>
+            {SAFETY_BUFFER}
+          </TableHeaderCell>
+        ),
         id: SAFETY_BUFFER,
         sortingFn: positionSort,
       },
