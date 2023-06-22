@@ -18,7 +18,7 @@ export const CurrentApy = ({ info }: { info?: PositionInfo }) => {
       <EllipsisText
         color={borrowApyColor}
         maxWidth="300px"
-        tooltip={smallFormatter(currentApyNum, true, 18)}
+        tooltip={smallFormatter(currentApyNum * 100, true, 18)}
       >
         {smallFormatter(currentApyNum)}%
       </EllipsisText>
