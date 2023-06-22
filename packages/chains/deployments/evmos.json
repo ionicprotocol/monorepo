@@ -21,22 +21,22 @@
       "address": "0x16A4CCFE86aD6d6BfF8072eb4e7cA7eb9C6B727E"
     },
     "CErc20Delegate": {
-      "address": "0x089A362BFFcAeed0674C6C1211843CA346E5FB72"
+      "address": "0x75bBfA5D096B0F5DfC64fB1e10e4A6063089C840"
     },
     "CErc20PluginDelegate": {
-      "address": "0x8700bd39A9Fd7cC8050bf0447DfdAEb579D7D50B"
+      "address": "0x42ca8cb70B857E77deaD7F62e6765DfAa6ed2082"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x726d0395Da1b6297693318c09505C476FC526103"
+      "address": "0xf1dc2f61bAC0253344FBD7D2FC85Dfa2C3D859ea"
     },
     "CTokenFirstExtension": {
-      "address": "0x63b484896Bd2A381f1E308088A65bf9E292FBc7a"
+      "address": "0x93709b82Ba091a300CEFdD503FB5EfC0524A3956"
     },
     "Comptroller": {
-      "address": "0xe3a5BDb287D9f6da0453A0025B8Df550D518A86c"
+      "address": "0x26B63BE8aD948522702E5e3fb8A85116e4023274"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x47f6F7c534233EF315c9d579739fb0Ca242342C9"
+      "address": "0x8123AaA3676eE37461A43006E13549C46fc7784c"
     },
     "DefaultProxyAdmin": {
       "address": "0xb6C070BFDFbbc081F2da688d3e0527A5B5EfCB0C"
@@ -108,7 +108,7 @@
       "address": "0x05ac34CF184A6dC188D66921F0A028022a713eee"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0x9b64b5336aCFc63bFa1E4992C42a8797fFcC1B83"
+      "address": "0x889e1AB929534AB8aa966F6A8Cd9f348343Fa98F"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x05ac34CF184A6dC188D66921F0A028022a713eee"
