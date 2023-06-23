@@ -89,7 +89,7 @@ task("market:mint-pause", "Pauses minting on a market")
 
 task("markets:borrow-pause", "Pauses borrowing on a market")
   .addParam("markets", "The address of the CToken", undefined, types.string)
-  .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .addOptionalParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
   .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
   .setAction(async (taskArgs, hre) => {
     let tx: providers.TransactionResponse;
