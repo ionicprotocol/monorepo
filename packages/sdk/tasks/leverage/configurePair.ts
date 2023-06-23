@@ -79,7 +79,12 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
     await tx.wait();
     console.log(`approved position for bomb`);
 
-    tx = await factory.createAndFundPosition(collateralMarketAddress, borrowMarketAddress, testingBombAddress, fundAmount);
+    tx = await factory.createAndFundPosition(
+      collateralMarketAddress,
+      borrowMarketAddress,
+      testingBombAddress,
+      fundAmount
+    );
     await tx.wait();
     console.log(`created a levered position with tx ${tx.hash}`);
 
@@ -92,44 +97,43 @@ task("chapel-close-levered-position").setAction(async ({}, { ethers, getNamedAcc
   const { deployer } = await getNamedAccounts();
   const positionAddress = "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe";
 
-    const position = (await ethers.getContractAt("LeveredPosition", positionAddress, deployer)) as LeveredPosition;
+  const position = (await ethers.getContractAt("LeveredPosition", positionAddress, deployer)) as LeveredPosition;
 
-    let tx = await position["closePosition()"]();
-    await tx.wait();
-    console.log(`closed`);
+  let tx = await position["closePosition()"]();
+  await tx.wait();
+  console.log(`closed`);
 
-    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
-    const factory = (await ethers.getContractAt(
-      "ILeveredPositionFactory",
-      factoryDep.address,
-      deployer
-    )) as ILeveredPositionFactory;
+  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+  const factory = (await ethers.getContractAt(
+    "ILeveredPositionFactory",
+    factoryDep.address,
+    deployer
+  )) as ILeveredPositionFactory;
 
-    tx = await factory.removeClosedPosition(positionAddress);
-    await tx.wait();
-    console.log(`removed a closed levered position with tx ${tx.hash}`);
+  tx = await factory.removeClosedPosition(positionAddress);
+  await tx.wait();
+  console.log(`removed a closed levered position with tx ${tx.hash}`);
 
-    const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
-    console.log(`pos ${deployerPositions}`);
-    console.log(`closed ${closed}`);
-  });
+  const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
+  console.log(`pos ${deployerPositions}`);
+  console.log(`closed ${closed}`);
+});
 
-task("chapel-close-remove-levered-position").setAction(
-  async ({}, { ethers, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const positionAddress = "0x263718679A41AafDAa8f3d94425BC80bf72439e5";
+task("chapel-close-remove-levered-position").setAction(async ({}, { ethers, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const positionAddress = "0x263718679A41AafDAa8f3d94425BC80bf72439e5";
 
-    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
-    const factory = (await ethers.getContractAt(
-      "ILeveredPositionFactory",
-      factoryDep.address,
-      deployer
-    )) as ILeveredPositionFactory;
+  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+  const factory = (await ethers.getContractAt(
+    "ILeveredPositionFactory",
+    factoryDep.address,
+    deployer
+  )) as ILeveredPositionFactory;
 
-    const tx = await factory.closeAndRemoveUserPosition(positionAddress);
-    await tx.wait();
-    console.log(`removed a closed levered position with tx ${tx.hash}`);
-  });
+  const tx = await factory.closeAndRemoveUserPosition(positionAddress);
+  await tx.wait();
+  console.log(`removed a closed levered position with tx ${tx.hash}`);
+});
 
 task("chapel-create-asset-deploy-market", "creates a new asset and deploy a market for it on chapel").setAction(
   async ({}, { ethers, deployments, run, getNamedAccounts }) => {
