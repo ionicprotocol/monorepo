@@ -74,10 +74,10 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
       deployer
     )) as ILeveredPositionFactory;
 
-    const oneEth = ethers.utils.parseEther("1");
+    const oneEth = ethers.utils.parseEther("10000000");
     let tx = await testingBomb.approve(factory.address, oneEth);
     await tx.wait();
-    console.log(`approved position for 1e18 bomb`);
+    console.log(`approved position for bomb`);
 
     tx = await factory.createAndFundPosition(collateralMarketAddress, borrowMarketAddress, testingBombAddress, oneEth);
     await tx.wait();
@@ -90,30 +90,47 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
 
 task("chapel-close-levered-position").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
-  const { deployer } = await getNamedAccounts();
-  const positionAddress = "0x05eEcC36d91aff71B2E64D0C2dc33fcF75fFBeA5";
+    const { deployer } = await getNamedAccounts();
+    const positionAddress = "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe";
 
-  const position = (await ethers.getContractAt("LeveredPosition", positionAddress, deployer)) as LeveredPosition;
+    const position = (await ethers.getContractAt("LeveredPosition", positionAddress, deployer)) as LeveredPosition;
 
-  let tx = await position["closePosition()"]();
-  await tx.wait();
-  console.log(`closed`);
+    let tx = await position["closePosition()"]();
+    await tx.wait();
+    console.log(`closed`);
 
-  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
-  const factory = (await ethers.getContractAt(
-    "ILeveredPositionFactory",
-    factoryDep.address,
-    deployer
-  )) as ILeveredPositionFactory;
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factory = (await ethers.getContractAt(
+      "ILeveredPositionFactory",
+      factoryDep.address,
+      deployer
+    )) as ILeveredPositionFactory;
 
-  tx = await factory.removeClosedPosition(positionAddress);
-  await tx.wait();
-  console.log(`removed a closed levered position with tx ${tx.hash}`);
+    tx = await factory.removeClosedPosition(positionAddress);
+    await tx.wait();
+    console.log(`removed a closed levered position with tx ${tx.hash}`);
 
-  const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
-  console.log(`pos ${deployerPositions}`);
-  console.log(`closed ${closed}`);
-});
+    const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
+    console.log(`pos ${deployerPositions}`);
+    console.log(`closed ${closed}`);
+  });
+
+task("chapel-close-remove-levered-position").setAction(
+  async ({}, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const positionAddress = "0x263718679A41AafDAa8f3d94425BC80bf72439e5";
+
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factory = (await ethers.getContractAt(
+      "ILeveredPositionFactory",
+      factoryDep.address,
+      deployer
+    )) as ILeveredPositionFactory;
+
+    const tx = await factory.closeAndRemoveUserPosition(positionAddress);
+    await tx.wait();
+    console.log(`removed a closed levered position with tx ${tx.hash}`);
+  });
 
 task("chapel-create-asset-deploy-market", "creates a new asset and deploy a market for it on chapel").setAction(
   async ({}, { ethers, deployments, run, getNamedAccounts }) => {
@@ -222,35 +239,29 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
     const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
-    // const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
-    // const factory = (await ethers.getContractAt(
-    //   "ILeveredPositionFactory",
-    //   factoryDep.address,
-    //   deployer
-    // )) as ILeveredPositionFactory;
-    // const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
-    // console.log(`position ${deployerPositions[0]}`);
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factory = (await ethers.getContractAt(
+      "ILeveredPositionFactory",
+      factoryDep.address,
+      deployer
+    )) as ILeveredPositionFactory;
+    const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
+    console.log(`position ${deployerPositions[0]}`);
 
-    // const leveredPosition = (await ethers.getContractAt(
-    //   "LeveredPosition",
-    //   "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe", //deployerPositions[0],
-    //   deployer
-    // )) as LeveredPosition;
-    //
-    // const oneEth = ethers.utils.parseEther("10000000");
-    // let tx = await testingBomb.approve(leveredPosition.address, oneEth);
-    // await tx.wait();
-    // console.log(`approved position for bomb`);
-    //
-    // tx = await leveredPosition.fundPosition(testingBombAddress, oneEth);
-    // await tx.wait();
-    // console.log(`funded the levered position`);
+    const leveredPosition = (await ethers.getContractAt(
+      "LeveredPosition",
+      "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe", //deployerPositions[0],
+      deployer
+    )) as LeveredPosition;
 
-    const singer = await ethers.getSigner(deployer);
-    const tx = await singer.sendTransaction({
-      value: ethers.utils.parseEther("0.03"),
-      to: "0x27521eae4eE4153214CaDc3eCD703b9B0326C908"
-    });
+    const oneEth = ethers.utils.parseEther("10000000");
+    let tx = await testingBomb.approve(leveredPosition.address, oneEth);
+    await tx.wait();
+    console.log(`approved position for bomb`);
+
+    tx = await leveredPosition.fundPosition(testingBombAddress, oneEth);
+    await tx.wait();
+    console.log(`funded the levered position`);
   }
 );
 
@@ -261,12 +272,12 @@ task("chapel-adjust-ratio-levered-position").setAction(async ({}, { ethers, getN
 
   const leveredPosition = (await ethers.getContractAt(
     "LeveredPosition",
-    "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe",
+    "0x8EfC6FC5A7A29f9E93E1FA9fB1929B52FC812B8A",
     deployer
   )) as LeveredPosition;
 
-  const oneTwo = ethers.utils.parseEther("1.2");
-  const tx = await leveredPosition.adjustLeverageRatio(oneTwo);
+  const ratio = ethers.utils.parseEther("1.44");
+  const tx = await leveredPosition.adjustLeverageRatio(ratio);
   await tx.wait();
   console.log(`adjusted the ratio`);
 });
