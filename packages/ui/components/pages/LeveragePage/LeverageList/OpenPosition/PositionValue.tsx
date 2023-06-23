@@ -18,12 +18,7 @@ export const PositionValue = ({
     <MarketSupplyBalance
       asset={{
         supplyBalance: info.positionSupplyAmount,
-        supplyBalanceFiat:
-          Number(
-            utils.formatUnits(info.positionSupplyAmount, position.collateral.underlyingDecimals)
-          ) *
-          Number(utils.formatUnits(position.collateral.underlyingPrice)) *
-          usdPrice,
+        supplyBalanceFiat: Number(utils.formatUnits(info.positionValue)) * usdPrice,
         underlyingDecimals: position.collateral.underlyingDecimals,
         underlyingToken: position.collateral.underlyingToken,
       }}

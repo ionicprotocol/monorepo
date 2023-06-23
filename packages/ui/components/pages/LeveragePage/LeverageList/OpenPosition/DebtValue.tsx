@@ -12,10 +12,7 @@ export const DebtValue = ({ info, position }: { info?: PositionInfo; position: O
     <MarketSupplyBalance
       asset={{
         supplyBalance: info.debtAmount,
-        supplyBalanceFiat:
-          Number(utils.formatUnits(info.debtAmount, position.borrowable.underlyingDecimals)) *
-          Number(utils.formatUnits(position.borrowable.underlyingPrice)) *
-          usdPrice,
+        supplyBalanceFiat: Number(utils.formatUnits(info.debtValue)) * usdPrice,
         underlyingDecimals: BigNumber.from(position.borrowable.underlyingDecimals.toString()),
         underlyingToken: position.borrowable.underlyingToken,
       }}
