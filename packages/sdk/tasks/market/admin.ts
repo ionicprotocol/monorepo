@@ -5,6 +5,7 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CToken } from "../../typechain/CToken";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("comptroller", "Comptroller Address", undefined, types.string)
@@ -88,7 +89,7 @@ task("market:mint-pause", "Pauses minting on a market")
 
 task("markets:borrow-pause", "Pauses borrowing on a market")
   .addParam("markets", "The address of the CToken", undefined, types.string)
-  .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .addOptionalParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
   .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
   .setAction(async (taskArgs, hre) => {
     let tx: providers.TransactionResponse;
@@ -130,5 +131,36 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
       const isPausedAfter: boolean = await pool.callStatic.borrowGuardianPaused(market.address);
 
       console.log(`The market at ${market.address} borrowing pause has been to ${isPausedAfter}`);
+    }
+  });
+
+task("markets:all:pause", "Pauses borrowing on a market")
+  .addOptionalParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
+  .setAction(async (taskArgs, hre) => {
+    let tx: providers.TransactionResponse;
+    const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
+
+    const fusePoolDirectory = (await hre.ethers.getContract("FusePoolDirectory")) as FusePoolDirectory;
+
+    const [, poolData] = await fusePoolDirectory.callStatic.getActivePools();
+
+    for (let i = 0; i < poolData.length; i++) {
+      const pool = poolData[poolData.length - i - 1];
+      const poolExtension = (await hre.ethers.getContractAt(
+        "ComptrollerFirstExtension",
+        pool.comptroller,
+        admin
+      )) as ComptrollerFirstExtension;
+
+      const markets = await poolExtension.callStatic.getAllMarkets();
+
+      const marketsStr = Array.from(markets).reverse().join(",");
+      await hre.run("markets:borrow-pause", {
+        markets: marketsStr,
+      });
+      await hre.run("market:mint-pause", {
+        markets: marketsStr,
+      });
     }
   });
