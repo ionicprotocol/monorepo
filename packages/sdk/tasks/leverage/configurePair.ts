@@ -88,8 +88,7 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
   }
 );
 
-task("chapel-close-levered-position").setAction(
-  async ({}, { ethers, getNamedAccounts }) => {
+task("chapel-close-levered-position").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
   const positionAddress = "0x05eEcC36d91aff71B2E64D0C2dc33fcF75fFBeA5";
 
@@ -249,7 +248,7 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
     const singer = await ethers.getSigner(deployer);
     const tx = await singer.sendTransaction({
       value: ethers.utils.parseEther("0.03"),
-      to: "0x27521eae4eE4153214CaDc3eCD703b9B0326C908"
+      to: "0x27521eae4eE4153214CaDc3eCD703b9B0326C908",
     });
   }
 );
