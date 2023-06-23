@@ -56,6 +56,7 @@ export interface PositionInfo {
   debtAmount: BigNumber;
   debtValue: BigNumber;
   equityValue: BigNumber;
+  equityAmount: BigNumber;
   currentApy: BigNumber;
   debtRatio: BigNumber;
   liquidationThreshold: BigNumber;

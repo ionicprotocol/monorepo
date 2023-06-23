@@ -7,9 +7,9 @@ import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExten
 import { ERC20 } from "../../typechain/ERC20";
 import { IERC20Mintable } from "../../typechain/IERC20Mintable";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
+import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
-import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
 import { LiquidatorsRegistryExtension } from "../../typechain/LiquidatorsRegistryExtension";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
@@ -27,10 +27,7 @@ export default task("levered-positions:configure-pair")
     const { deployer } = await getNamedAccounts();
 
     const liquidator = await ethers.getContract(liquidatorName);
-    const registry = (await ethers.getContract(
-      "LiquidatorsRegistry",
-      deployer
-    )) as ILiquidatorsRegistry;
+    const registry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as ILiquidatorsRegistry;
     const registryAsExt = (await ethers.getContractAt(
       "LiquidatorsRegistryExtension",
       registry.address,
@@ -93,20 +90,30 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
 
 task("chapel-close-levered-position").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
+  const positionAddress = "0x05eEcC36d91aff71B2E64D0C2dc33fcF75fFBeA5";
 
-    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
-    const factory = (await ethers.getContractAt(
-      "ILeveredPositionFactory",
-      factoryDep.address,
-      deployer
-    )) as ILeveredPositionFactory;
+  const position = (await ethers.getContractAt("LeveredPosition", positionAddress, deployer)) as LeveredPosition;
 
-    const tx = await factory.fixChapelPositions();
-    await tx.wait();
-    console.log(`cleaned the chapel positions`);
-  }
-);
+  let tx = await position["closePosition()"]();
+  await tx.wait();
+  console.log(`closed`);
+
+  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+  const factory = (await ethers.getContractAt(
+    "ILeveredPositionFactory",
+    factoryDep.address,
+    deployer
+  )) as ILeveredPositionFactory;
+
+  tx = await factory.removeClosedPosition(positionAddress);
+  await tx.wait();
+  console.log(`removed a closed levered position with tx ${tx.hash}`);
+
+  const [deployerPositions, closed] = await factory.callStatic.getPositionsByAccount(deployer);
+  console.log(`pos ${deployerPositions}`);
+  console.log(`closed ${closed}`);
+});
 
 task("chapel-create-asset-deploy-market", "creates a new asset and deploy a market for it on chapel").setAction(
   async ({}, { ethers, deployments, run, getNamedAccounts }) => {
@@ -247,24 +254,22 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
   }
 );
 
-task("chapel-adjust-ratio-levered-position").setAction(
-  async ({}, { ethers, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
-    const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
+task("chapel-adjust-ratio-levered-position").setAction(async ({}, { ethers, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
+  const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
-    const leveredPosition = (await ethers.getContractAt(
-      "LeveredPosition",
-      "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe",
-      deployer
-    )) as LeveredPosition;
+  const leveredPosition = (await ethers.getContractAt(
+    "LeveredPosition",
+    "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe",
+    deployer
+  )) as LeveredPosition;
 
-    const oneTwo = ethers.utils.parseEther("1.2");
-    const tx = await leveredPosition.adjustLeverageRatio(oneTwo);
-    await tx.wait();
-    console.log(`adjusted the ratio`);
-  }
-);
+  const oneTwo = ethers.utils.parseEther("1.2");
+  const tx = await leveredPosition.adjustLeverageRatio(oneTwo);
+  await tx.wait();
+  console.log(`adjusted the ratio`);
+});
 
 task("chapel-stables-mint", "mints testing stables in the levered pair borrowing market").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
