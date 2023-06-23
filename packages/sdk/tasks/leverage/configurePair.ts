@@ -74,12 +74,12 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
       deployer
     )) as ILeveredPositionFactory;
 
-    const oneEth = ethers.utils.parseEther("10000000");
-    let tx = await testingBomb.approve(factory.address, oneEth);
+    const fundAmount = ethers.utils.parseEther("10000000");
+    let tx = await testingBomb.approve(factory.address, fundAmount);
     await tx.wait();
     console.log(`approved position for bomb`);
 
-    tx = await factory.createAndFundPosition(collateralMarketAddress, borrowMarketAddress, testingBombAddress, oneEth);
+    tx = await factory.createAndFundPosition(collateralMarketAddress, borrowMarketAddress, testingBombAddress, fundAmount);
     await tx.wait();
     console.log(`created a levered position with tx ${tx.hash}`);
 
@@ -88,10 +88,9 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
   }
 );
 
-task("chapel-close-levered-position").setAction(
-  async ({}, { ethers, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const positionAddress = "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe";
+task("chapel-close-levered-position").setAction(async ({}, { ethers, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const positionAddress = "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe";
 
     const position = (await ethers.getContractAt("LeveredPosition", positionAddress, deployer)) as LeveredPosition;
 
@@ -254,12 +253,12 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
       deployer
     )) as LeveredPosition;
 
-    const oneEth = ethers.utils.parseEther("10000000");
-    let tx = await testingBomb.approve(leveredPosition.address, oneEth);
+    const fundAmount = ethers.utils.parseEther("10000000");
+    let tx = await testingBomb.approve(leveredPosition.address, fundAmount);
     await tx.wait();
     console.log(`approved position for bomb`);
 
-    tx = await leveredPosition.fundPosition(testingBombAddress, oneEth);
+    tx = await leveredPosition.fundPosition(testingBombAddress, fundAmount);
     await tx.wait();
     console.log(`funded the levered position`);
   }
