@@ -85,6 +85,8 @@ export type FluxAsset = {
   feed: string;
 };
 
+export type UmbrellaAsset = FluxAsset;
+
 export type AdrastiaAsset = {
   underlying: string;
   feed: string;
@@ -179,6 +181,13 @@ export type DiaDeployFnParams = ChainDeployFnParams & {
 
 export type FluxDeployFnParams = ChainDeployFnParams & {
   fluxAssets: FluxAsset[];
+  deployConfig: ChainDeployConfig;
+  nativeUsdFeed: string;
+};
+
+export type UmbrellaDeployFnParams = ChainDeployFnParams & {
+  registryAddress: string;
+  umbrellaAssets: UmbrellaAsset[];
   deployConfig: ChainDeployConfig;
   nativeUsdFeed: string;
 };

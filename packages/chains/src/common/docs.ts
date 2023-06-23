@@ -37,9 +37,9 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapName: "SpookySwap",
       swapAddress: "https://spooky.fi/#/swap",
     },
-    [SupportedChains.basegoerli]: {
-      swapName: "BaseSwap",
-      swapAddress: "",
+    [SupportedChains.lineagoerli]: {
+      swapName: "Uniswap",
+      swapAddress: "https://swap.goerli.linea.build/#/swap",
     },
     [SupportedChains.ethereum]: {
       swapName: "Uniswap",

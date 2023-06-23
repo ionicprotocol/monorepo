@@ -1,9 +1,9 @@
 import { ChainConfig, SupportedChains } from "@midas-capital/types";
 
-import deployments from "../../deployments/basegoerli.json";
+import deployments from "../../deployments/lineagoerli.json";
 
 import chainAddresses from "./addresses";
-import assets from "./assets";
+import { assets } from "./assets";
 import fundingStrategies from "./fundingStrategies";
 import irms from "./irms";
 import liquidationDefaults from "./liquidation";
@@ -13,7 +13,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.basegoerli,
+  chainId: SupportedChains.lineagoerli,
   chainAddresses,
   assets,
   irms,

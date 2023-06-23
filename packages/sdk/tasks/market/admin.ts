@@ -5,6 +5,7 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CToken } from "../../typechain/CToken";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("comptroller", "Comptroller Address", undefined, types.string)
@@ -130,5 +131,33 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
       const isPausedAfter: boolean = await pool.callStatic.borrowGuardianPaused(market.address);
 
       console.log(`The market at ${market.address} borrowing pause has been to ${isPausedAfter}`);
+    }
+  });
+
+task("markets:all:pause", "Pauses borrowing on a market")
+  .addOptionalParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
+  .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
+  .setAction(async (taskArgs, hre) => {
+    const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
+
+    const fusePoolDirectory = (await hre.ethers.getContract("FusePoolDirectory")) as FusePoolDirectory;
+
+    const [, poolData] = await fusePoolDirectory.callStatic.getActivePools();
+
+    for (const pool of poolData) {
+      const poolExtension = (await hre.ethers.getContractAt(
+        "ComptrollerFirstExtension",
+        pool.comptroller,
+        admin
+      )) as ComptrollerFirstExtension;
+
+      const markets = await poolExtension.callStatic.getAllMarkets();
+
+      await hre.run("markets:borrow-pause", {
+        markets: markets.join(","),
+      });
+      await hre.run("market:mint-pause", {
+        markets: markets.join(","),
+      });
     }
   });
