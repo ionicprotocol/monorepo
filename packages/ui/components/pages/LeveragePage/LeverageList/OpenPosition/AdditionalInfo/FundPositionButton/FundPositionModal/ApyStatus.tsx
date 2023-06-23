@@ -7,8 +7,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
@@ -68,7 +68,7 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
   const [updatedSupplyApy, setUpdatedSupplyApy] = useState<number | undefined>(supplyAPY);
   const [updatedBorrowApr, setUpdatedBorrowApr] = useState<number | undefined>(borrowAPY);
 
-  const { data: baseCollateral } = useBaseCollateral(positionAddress, chainId);
+  const { data: baseCollateral } = useEquityAmount(positionAddress, chainId);
   const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, chainId);
 
   const { data: currentNetApy } = useGetNetApy(

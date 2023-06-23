@@ -4,8 +4,8 @@ import { utils } from 'ethers';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
@@ -58,7 +58,7 @@ export const ApyStatus = ({
     assetInfos
   );
 
-  const { data: baseCollateral } = useBaseCollateral(positionAddress, chainId);
+  const { data: baseCollateral } = useEquityAmount(positionAddress, chainId);
   const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, chainId);
 
   const { data: currentNetApy, isLoading } = useGetNetApy(

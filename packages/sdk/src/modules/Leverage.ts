@@ -304,7 +304,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       return await leveredPosition.callStatic.getCurrentLeverageRatio();
     }
 
-    async getBaseCollateral(positionAddress: string) {
+    async getEquityAmount(positionAddress: string) {
       const leveredPosition = this.createLeveredPosition(positionAddress);
 
       return await leveredPosition.callStatic.getEquityAmount();
