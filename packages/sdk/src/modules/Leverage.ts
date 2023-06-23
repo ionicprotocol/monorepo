@@ -49,6 +49,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 underlyings: borrowableUnderlyings,
                 symbols: borrowableSymbols,
                 rates: borrowableRates,
+                decimals: borrowableDecimals,
+                underlyingsPrices: borrowableUnderlyingPrices,
               } = await leveredPositionLens.callStatic.getBorrowableMarketsAndRates(collateralCToken);
 
               // get rewards
@@ -65,8 +67,10 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 );
 
                 const borrowable = {
+                  underlyingDecimals: borrowableDecimals[i],
                   cToken: borrowableMarket,
                   underlyingToken: borrowableUnderlyings[i],
+                  underlyingPrice: borrowableUnderlyingPrices[i],
                   symbol: borrowableAsset
                     ? borrowableAsset.originalSymbol
                       ? borrowableAsset.originalSymbol

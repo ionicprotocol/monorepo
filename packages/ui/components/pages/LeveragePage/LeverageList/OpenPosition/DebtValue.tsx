@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react';
 import type { OpenPosition, PositionInfo } from '@midas-capital/types';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 import { SupplyBalance as MarketSupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
@@ -13,11 +13,11 @@ export const DebtValue = ({ info, position }: { info?: PositionInfo; position: O
       asset={{
         supplyBalance: info.debtAmount,
         supplyBalanceFiat:
-          Number(utils.formatUnits(info.debtAmount, position.collateral.underlyingDecimals)) *
-          Number(utils.formatUnits(position.collateral.underlyingPrice)) *
+          Number(utils.formatUnits(info.debtAmount, position.borrowable.underlyingDecimals)) *
+          Number(utils.formatUnits(position.borrowable.underlyingPrice)) *
           usdPrice,
-        underlyingDecimals: position.collateral.underlyingDecimals,
-        underlyingToken: position.collateral.underlyingToken,
+        underlyingDecimals: BigNumber.from(position.borrowable.underlyingDecimals.toString()),
+        underlyingToken: position.borrowable.underlyingToken,
       }}
       poolChainId={position.chainId}
     />

@@ -13,6 +13,8 @@ export interface MarketRewardsInfoStructOutput {
 export interface LeveredBorrowable {
   cToken: string;
   underlyingToken: string;
+  underlyingDecimals: number;
+  underlyingPrice: BigNumber;
   symbol: string;
   rate: BigNumber;
 }
