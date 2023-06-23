@@ -12,13 +12,13 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "CErc20Delegate": {
-      "address": "0xa75E461eF3643C6a2787593c24b6C67df3619a3C"
+      "address": "0x9036c0F4483b6f873c5DC2bd0668ceA3c0D62c36"
     },
     "CErc20PluginDelegate": {
-      "address": "0xE422FA2c89339ed8Fc306C25AB6bEcA490E45795"
+      "address": "0x1f0847B260D736Ed16bCDacFa76b04f0EC6427ba"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x25b3891FFB59cFc5Cfbd0eb9f150f81c4Db7f947"
+      "address": "0xc7107037D5871084Ece6010f648e3BE552c1582b"
     },
     "CErc20RewardsDelegate": {
       "address": "0x99d485eF4425862D90C8301725DF670c4b8B71EC"
@@ -27,7 +27,7 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0xe9d788D663628095899162c53e75A2042fCF3D1B"
+      "address": "0x34A9031fc7d9e292819Abd0c7b8D833Bac58A5FB"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x219f7a75925D6d0312d1B62cEE6a4eE6F1A85217"

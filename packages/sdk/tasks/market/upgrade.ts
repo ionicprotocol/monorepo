@@ -1,7 +1,8 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { task, types } from "hardhat/config";
 
-import { CErc20PluginDelegate } from "../../typechain";
+import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
+import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("comptroller", "address of comptroller", undefined, types.string) // TODO I would rather use id or comptroller address directly.
@@ -84,8 +85,14 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
       signer
     )) as CErc20PluginDelegate;
 
+    const cfe = (await ethers.getContract("CTokenFirstExtension")) as CTokenFirstExtension;
     const impl = await cTokenInstance.callStatic.implementation();
-    if (impl.toLowerCase() != implementationAddress.toLowerCase()) {
+    const extensions = await cTokenInstance.callStatic._listExtensions();
+
+    if (
+      impl.toLowerCase() != implementationAddress.toLowerCase()
+      || (extensions.length > 0 && extensions[0].toLowerCase() != cfe.address.toLowerCase())
+    ) {
       if (!pluginAddress) {
         pluginAddress = ethers.constants.AddressZero;
       }
