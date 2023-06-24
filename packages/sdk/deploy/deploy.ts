@@ -398,6 +398,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   if (booster.transactionHash) await ethers.provider.waitForTransaction(booster.transactionHash);
   console.log("LooplessFlywheelBooster: ", booster.address);
+  if (booster.newlyDeployed) await run("flywheels:booster:update");
 
   const erc20Delegate = await ethers.getContract("CErc20Delegate", deployer);
   const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", deployer);
