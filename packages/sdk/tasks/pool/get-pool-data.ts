@@ -135,3 +135,18 @@ task("get-balance-of", "Get public pools")
       console.log("balance: ", hre.ethers.utils.formatEther(await token.balanceOf(signer.address)));
     }
   });
+
+task("get-chain-tvl", "Get chain's TVL").setAction(async (taskArgs, hre) => {
+  const midasSdkModule = await import("../midasSdk");
+  const sdk = await midasSdkModule.getOrCreateMidas();
+
+  const { 2: fusePoolDataStructs } = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(
+    false
+  );
+
+  const tvl = fusePoolDataStructs
+    .map((data) => data.totalSupply)
+    .reduce((prev, cur) => prev.add(cur), hre.ethers.BigNumber.from(0));
+  console.log("tvl: ", hre.ethers.utils.formatEther(tvl));
+  return tvl;
+});
