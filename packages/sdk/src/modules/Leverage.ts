@@ -60,7 +60,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
               const leveredBorrowable: LeveredBorrowable[] = [];
               borrowableMarkets.map((borrowableMarket, i) => {
                 const borrowableAsset = ChainSupportedAssets[this.chainId].find(
-                  (asset) => asset.underlying === borrowableUnderlyings[index]
+                  (asset) => asset.underlying === borrowableUnderlyings[i]
                 );
                 const position = positions.find(
                   (pos) => pos.collateralMarket === collateralCToken && pos.borrowMarket === borrowableMarket
@@ -75,7 +75,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                     ? borrowableAsset.originalSymbol
                       ? borrowableAsset.originalSymbol
                       : borrowableAsset.symbol
-                    : borrowableSymbols[index],
+                    : borrowableSymbols[i],
                   rate: borrowableRates[i],
                 };
 

@@ -97,7 +97,7 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
     const func = async () => {
       if (sdk) {
         const bigApy = await sdk.getPositionSupplyApy(collateralCToken, amount);
-        setUpdatedSupplyApy(Number(utils.formatUnits(bigApy)));
+        setUpdatedSupplyApy(Number(utils.formatUnits(bigApy)) * 100);
       }
     };
 
@@ -138,13 +138,17 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
                   tooltip={
                     totalSupplyApyPerAsset[collateralCToken] !== undefined &&
                     totalSupplyApyPerAsset[collateralCToken].totalApy !== 0
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy, true, 18)
+                      ? smallFormatter(
+                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100,
+                          true,
+                          18
+                        )
                       : ''
                   }
                 >
                   <Text>
                     {totalSupplyApyPerAsset[collateralCToken] !== undefined
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy)
+                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy * 100)
                       : '?'}
                     %
                   </Text>
@@ -156,12 +160,12 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
                     totalSupplyApyPerAsset[collateralCToken] !== undefined &&
                     updatedSupplyApy !== undefined &&
                     supplyAPY !== undefined &&
-                    totalSupplyApyPerAsset[collateralCToken].totalApy +
+                    totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
                       updatedSupplyApy -
                       supplyAPY !==
                       0
                       ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy +
+                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
                             updatedSupplyApy -
                             supplyAPY,
                           true,
@@ -175,7 +179,7 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
                     updatedSupplyApy !== undefined &&
                     supplyAPY !== undefined
                       ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy +
+                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
                             updatedSupplyApy -
                             supplyAPY
                         )
