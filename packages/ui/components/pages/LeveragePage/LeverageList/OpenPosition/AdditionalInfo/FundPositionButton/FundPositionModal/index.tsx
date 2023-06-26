@@ -184,12 +184,9 @@ export const FundPositionModal = ({
       try {
         setActiveStep(optionToWrap ? 2 : 1);
         const token = currentSdk.getEIP20TokenInstance(underlyingToken, currentSdk.signer);
-        const hasApprovedEnough = (
-          await token.callStatic.allowance(
-            address,
-            currentSdk.chainDeployment.LeveredPositionFactory.address
-          )
-        ).gte(debouncedAmount);
+        const hasApprovedEnough = (await token.callStatic.allowance(address, position.address)).gte(
+          debouncedAmount
+        );
 
         if (!hasApprovedEnough) {
           const tx = await currentSdk.leverageApprove(underlyingToken);
