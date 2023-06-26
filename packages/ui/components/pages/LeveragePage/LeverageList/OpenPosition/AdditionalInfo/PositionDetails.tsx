@@ -6,8 +6,8 @@ import { useMemo } from 'react';
 
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -20,7 +20,7 @@ export const PositionDetails = ({ position }: { position: OpenPosition }) => {
     position.address,
     position.chainId
   );
-  const { data: baseCollateral } = useBaseCollateral(position.address, position.chainId);
+  const { data: baseCollateral } = useEquityAmount(position.address, position.chainId);
   const { data: usdPrices } = useAllUsdPrices();
 
   const usdPrice = useMemo(() => {
