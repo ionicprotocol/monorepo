@@ -10,6 +10,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
+import { useUpdatedNetApyAfterFunding } from '@ui/hooks/leverage/useUpdatedNetApyAfterFunding';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
@@ -82,11 +83,9 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
     chainId
   );
 
-  const { data: updatedNetApy } = useGetNetApy(
-    collateralCToken,
-    borrowCToken,
+  const { data: updatedNetApy } = useUpdatedNetApyAfterFunding(
+    positionAddress,
     baseCollateral ? baseCollateral.add(amount) : amount,
-    currentLeverageRatio,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,

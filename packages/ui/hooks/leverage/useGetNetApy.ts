@@ -44,7 +44,7 @@ export function useGetNetApy(
             return null;
           });
 
-        return netApy ? Number(utils.formatUnits(netApy)) : null;
+        return netApy ? Number(utils.formatUnits(netApy)) * 100 : null;
       } else {
         return null;
       }
