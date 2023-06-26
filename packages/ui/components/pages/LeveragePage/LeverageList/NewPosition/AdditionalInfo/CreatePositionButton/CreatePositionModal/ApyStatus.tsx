@@ -142,12 +142,10 @@ export const ApyStatus = ({
                       : ''
                   }
                 >
-                  <Text>
-                    {totalSupplyApyPerAsset[collateralCToken] !== undefined
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy * 100)
-                      : '?'}
-                    %
-                  </Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined
+                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy * 100)
+                    : '?'}
+                  %
                 </EllipsisText>
                 <Text>➡</Text>
                 <EllipsisText
@@ -170,18 +168,16 @@ export const ApyStatus = ({
                       : ''
                   }
                 >
-                  <Text>
-                    {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
-                    updatedSupplyApy !== undefined &&
-                    supplyAPY !== undefined
-                      ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
-                            updatedSupplyApy -
-                            supplyAPY
-                        )
-                      : '?'}
-                    %
-                  </Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
+                  updatedSupplyApy !== undefined &&
+                  supplyAPY !== undefined
+                    ? smallFormatter(
+                        totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
+                          updatedSupplyApy -
+                          supplyAPY
+                      )
+                    : '?'}
+                  %
                 </EllipsisText>
               </HStack>
             ) : null}
@@ -195,14 +191,14 @@ export const ApyStatus = ({
                 maxWidth="300px"
                 tooltip={borrowAPY ? smallFormatter(borrowAPY, true, 18) : ''}
               >
-                <Text>{borrowAPY ? smallFormatter(borrowAPY) : '?'}%</Text>
+                {borrowAPY ? smallFormatter(borrowAPY) : '?'}%
               </EllipsisText>
               <Text>➡</Text>
               <EllipsisText
                 maxWidth="300px"
                 tooltip={updatedBorrowApr ? smallFormatter(updatedBorrowApr, true, 18) : ''}
               >
-                <Text>{updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%</Text>
+                {updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%
               </EllipsisText>
             </HStack>
           </HStack>
@@ -217,9 +213,7 @@ export const ApyStatus = ({
                   netApy !== undefined && netApy !== null ? smallFormatter(netApy, true, 18) : ''
                 }
               >
-                <Text>
-                  {netApy !== undefined && netApy !== null ? smallFormatter(netApy) : '?'}%
-                </Text>
+                {netApy !== undefined && netApy !== null ? smallFormatter(netApy) : '?'}%
               </EllipsisText>
             </HStack>
           </HStack>

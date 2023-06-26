@@ -103,12 +103,10 @@ export const ApyStatus = ({
                       : ''
                   }
                 >
-                  <Text>
-                    {currentNetApy !== undefined && currentNetApy !== null
-                      ? smallFormatter(currentNetApy)
-                      : '?'}
-                    %
-                  </Text>
+                  {currentNetApy !== undefined && currentNetApy !== null
+                    ? smallFormatter(currentNetApy)
+                    : '?'}
+                  %
                 </EllipsisText>
               )}
               <Text>➡</Text>
@@ -119,12 +117,10 @@ export const ApyStatus = ({
                   maxWidth="300px"
                   tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
                 >
-                  <Text>
-                    {updatedNetApy !== undefined && updatedNetApy !== null
-                      ? smallFormatter(updatedNetApy)
-                      : '?'}
-                    %
-                  </Text>
+                  {updatedNetApy !== undefined && updatedNetApy !== null
+                    ? smallFormatter(updatedNetApy)
+                    : '?'}
+                  %
                 </EllipsisText>
               )}
             </HStack>

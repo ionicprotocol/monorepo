@@ -146,12 +146,10 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
                       : ''
                   }
                 >
-                  <Text>
-                    {totalSupplyApyPerAsset[collateralCToken] !== undefined
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy * 100)
-                      : '?'}
-                    %
-                  </Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined
+                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy * 100)
+                    : '?'}
+                  %
                 </EllipsisText>
                 <Text>➡</Text>
                 <EllipsisText
@@ -174,18 +172,16 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
                       : ''
                   }
                 >
-                  <Text>
-                    {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
-                    updatedSupplyApy !== undefined &&
-                    supplyAPY !== undefined
-                      ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
-                            updatedSupplyApy -
-                            supplyAPY
-                        )
-                      : '?'}
-                    %
-                  </Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
+                  updatedSupplyApy !== undefined &&
+                  supplyAPY !== undefined
+                    ? smallFormatter(
+                        totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
+                          updatedSupplyApy -
+                          supplyAPY
+                      )
+                    : '?'}
+                  %
                 </EllipsisText>
               </HStack>
             ) : null}
@@ -199,14 +195,14 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
                 maxWidth="300px"
                 tooltip={borrowAPY ? smallFormatter(borrowAPY, true, 18) : ''}
               >
-                <Text>{borrowAPY ? smallFormatter(borrowAPY) : '?'}%</Text>
+                {borrowAPY ? smallFormatter(borrowAPY) : '?'}%
               </EllipsisText>
               <Text>➡</Text>
               <EllipsisText
                 maxWidth="300px"
                 tooltip={updatedBorrowApr ? smallFormatter(updatedBorrowApr, true, 18) : ''}
               >
-                <Text>{updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%</Text>
+                {updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%
               </EllipsisText>
             </HStack>
           </HStack>
@@ -223,24 +219,20 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
                     : ''
                 }
               >
-                <Text>
-                  {currentNetApy !== undefined && currentNetApy !== null
-                    ? smallFormatter(currentNetApy)
-                    : '?'}
-                  %
-                </Text>
+                {currentNetApy !== undefined && currentNetApy !== null
+                  ? smallFormatter(currentNetApy)
+                  : '?'}
+                %
               </EllipsisText>
               <Text>➡</Text>
               <EllipsisText
                 maxWidth="300px"
                 tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
               >
-                <Text>
-                  {updatedNetApy !== undefined && updatedNetApy !== null
-                    ? smallFormatter(updatedNetApy)
-                    : '?'}
-                  %
-                </Text>
+                {updatedNetApy !== undefined && updatedNetApy !== null
+                  ? smallFormatter(updatedNetApy)
+                  : '?'}
+                %
               </EllipsisText>
             </HStack>
           </HStack>
