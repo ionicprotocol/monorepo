@@ -111,8 +111,8 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
           const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
             borrowCToken,
-            baseCollateral.add(amount),
-            currentLeverageRatio
+            utils.parseUnits(currentLeverageRatio.toString()),
+            baseCollateral.add(amount)
           );
 
           setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));

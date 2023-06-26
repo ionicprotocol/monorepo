@@ -76,7 +76,7 @@ export const ApyStatus = ({
     collateralCToken,
     borrowCToken,
     baseCollateral,
-    utils.parseUnits(leverageValue.toString()),
+    leverageValue,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,

@@ -70,11 +70,7 @@ export const PositionDetails = ({ position }: { position: OpenPosition }) => {
           <CaptionedStat
             caption={'Leverage Ratio'}
             crossAxisAlignment="center"
-            stat={
-              currentLeverageRatio
-                ? Number(utils.formatUnits(currentLeverageRatio)).toFixed(3) + ' x'
-                : '-'
-            }
+            stat={currentLeverageRatio ? currentLeverageRatio.toFixed(3) + ' x' : '-'}
           />
           <CaptionedStat
             caption={'TVL'}

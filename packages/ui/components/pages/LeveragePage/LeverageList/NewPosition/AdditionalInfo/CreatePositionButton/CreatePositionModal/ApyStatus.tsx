@@ -78,7 +78,7 @@ export const ApyStatus = ({
     collateralCToken,
     borrowCToken,
     amount,
-    utils.parseUnits(leverageValue.toString()),
+    leverageValue,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
@@ -108,8 +108,8 @@ export const ApyStatus = ({
           const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
             borrowCToken,
-            amount,
-            utils.parseUnits(leverageValue.toString())
+            utils.parseUnits(leverageValue.toString()),
+            amount
           );
           setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
         } catch (e) {}

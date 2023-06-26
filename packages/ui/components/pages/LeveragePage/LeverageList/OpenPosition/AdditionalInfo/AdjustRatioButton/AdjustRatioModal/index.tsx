@@ -2,7 +2,7 @@ import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ApyStatus } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/ApyStatus';
 import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/LeverageSlider';
@@ -13,6 +13,7 @@ import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { ADJUST_LEVERAGE_RATIO_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -49,7 +50,18 @@ export const AdjustRatioModal = ({
   const [steps, setSteps] = useState<TxStep[]>([...ADJUST_LEVERAGE_RATIO_STEPS(symbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
+  const { data: currentLeverageRatio } = useCurrentLeverageRatio(
+    position.address,
+    position.chainId
+  );
   const [leverageValue, setLeverageValue] = useState<string>('1.0');
+
+  useEffect(() => {
+    if (currentLeverageRatio) {
+      setLeverageValue(currentLeverageRatio.toFixed(3));
+    }
+  }, [currentLeverageRatio]);
+
   const debouncedLeverageNum = useDebounce(parseFloat(leverageValue) || 0, 1000);
 
   const queryClient = useQueryClient();
@@ -127,8 +139,10 @@ export const AdjustRatioModal = ({
 
     if (!isAdjusting) {
       setIsConfirmed(false);
-
       setSteps([...ADJUST_LEVERAGE_RATIO_STEPS(symbol)]);
+      if (currentLeverageRatio) {
+        setLeverageValue(currentLeverageRatio.toFixed(3));
+      }
     }
   };
 
