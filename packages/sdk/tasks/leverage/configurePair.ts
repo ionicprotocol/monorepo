@@ -59,10 +59,68 @@ export default task("levered-positions:configure-pair")
     );
   });
 
+task("chapel-borrow-tusd", "creates and funds a levered position on chapel").setAction(
+  async ({}, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e"; // TUSD market
+    const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // BOMB
+    const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
+    const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
+    const chapelMidasPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
+
+    // const collateralMarket = (await ethers.getContractAt(
+    //   "CErc20Delegate",
+    //   collateralMarketAddress,
+    //   deployer
+    // )) as CErc20Delegate;
+    // const fundAmount = ethers.utils.parseEther("300000000000");
+    //
+    // let tx = await testingBomb.approve(collateralMarket.address, fundAmount);
+    // await tx.wait();
+    // console.log(`mined approve tx ${tx.hash}`);
+    //
+    // const errCode = await collateralMarket.callStatic.mint(fundAmount);
+    // if (errCode.isZero()) {
+    //   let tx = await collateralMarket.mint(fundAmount);
+    //   await tx.wait();
+    //   console.log(`minted a lot of bomb with tx ${tx.hash}`);
+    // } else {
+    //   throw new Error(`err code ${errCode}`);
+    // }
+
+    let tx;
+    const pool = (await ethers.getContractAt("Comptroller", chapelMidasPool, deployer)) as Comptroller;
+    tx = await pool.enterMarkets([
+      collateralMarketAddress,
+      borrowMarketAddress
+    ]);
+    await tx.wait();
+    console.log(`entered markets ${tx.hash}`);
+
+    const borrowMarket = (await ethers.getContractAt(
+      "CErc20Delegate",
+      borrowMarketAddress,
+      deployer
+    )) as CErc20Delegate;
+
+    const borrowAmount = ethers.utils.parseEther("1000000000000");
+    const errCode = await borrowMarket.callStatic.borrow(
+      borrowAmount
+    );
+    if (!errCode.isZero()) throw new Error(`err code ${errCode}`);
+
+    tx = await borrowMarket.borrow(
+      borrowAmount
+    );
+    await tx.wait();
+    console.log(`borrowed a lot of TUSD with ${tx.hash}`);
+  }
+);
+
 task("chapel-create-levered-position", "creates and funds a levered position on chapel").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // TUSD
+    const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // BOMB
     const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
     const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e"; // TUSD market
     const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
@@ -270,8 +328,6 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
 
 task("chapel-adjust-ratio-levered-position").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
-  const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
-  const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
   const leveredPosition = (await ethers.getContractAt(
     "LeveredPosition",
