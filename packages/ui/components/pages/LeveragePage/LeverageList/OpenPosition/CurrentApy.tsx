@@ -20,7 +20,7 @@ export const CurrentApy = ({ info }: { info?: PositionInfo }) => {
         maxWidth="300px"
         tooltip={smallFormatter(currentApyNum * 100, true, 18)}
       >
-        {smallFormatter(currentApyNum)}%
+        {smallFormatter(currentApyNum * 100)}%
       </EllipsisText>
     </HStack>
   ) : (
