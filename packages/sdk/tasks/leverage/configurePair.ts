@@ -90,10 +90,7 @@ task("chapel-borrow-tusd", "creates and funds a levered position on chapel").set
 
     let tx;
     const pool = (await ethers.getContractAt("Comptroller", chapelMidasPool, deployer)) as Comptroller;
-    tx = await pool.enterMarkets([
-      collateralMarketAddress,
-      borrowMarketAddress
-    ]);
+    tx = await pool.enterMarkets([collateralMarketAddress, borrowMarketAddress]);
     await tx.wait();
     console.log(`entered markets ${tx.hash}`);
 
@@ -104,14 +101,10 @@ task("chapel-borrow-tusd", "creates and funds a levered position on chapel").set
     )) as CErc20Delegate;
 
     const borrowAmount = ethers.utils.parseEther("1000000000000");
-    const errCode = await borrowMarket.callStatic.borrow(
-      borrowAmount
-    );
+    const errCode = await borrowMarket.callStatic.borrow(borrowAmount);
     if (!errCode.isZero()) throw new Error(`err code ${errCode}`);
 
-    tx = await borrowMarket.borrow(
-      borrowAmount
-    );
+    tx = await borrowMarket.borrow(borrowAmount);
     await tx.wait();
     console.log(`borrowed a lot of TUSD with ${tx.hash}`);
   }
