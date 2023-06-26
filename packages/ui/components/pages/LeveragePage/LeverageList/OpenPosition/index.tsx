@@ -667,7 +667,7 @@ export const OpenPositionComp = ({
         <Flex alignItems="center" className="pagination" gap={4} justifyContent="flex-end" p={4}>
           <HStack>
             <Hide below="lg">
-              <Text>Assets Per Page to Positions Per Page</Text>
+              <Text>Positions Per Page</Text>
             </Hide>
             <Select
               maxW="max-content"
