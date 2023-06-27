@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
+import { getContract } from '@midas-capital/sdk/dist/cjs/src/MidasSdk/utils';
 import type { VaultData } from '@midas-capital/types';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -18,7 +19,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';

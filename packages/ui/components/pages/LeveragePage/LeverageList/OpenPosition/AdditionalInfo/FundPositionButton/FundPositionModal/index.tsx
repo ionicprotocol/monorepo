@@ -1,12 +1,12 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
+import { getContract } from '@midas-capital/sdk/dist/cjs/src/MidasSdk/utils';
 import type { OpenPosition } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { AmountInput } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/AmountInput';
 import { ApyStatus } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/ApyStatus';
@@ -256,6 +256,7 @@ export const FundPositionModal = ({
 
         await queryClient.refetchQueries({ queryKey: ['usePositionsPerChain'] });
         await queryClient.refetchQueries({ queryKey: ['usePositionsInfo'] });
+        await queryClient.refetchQueries({ queryKey: ['useCurrentLeverageRatio'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],

@@ -5,8 +5,7 @@ import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { CreatePositionButton } from './CreatePositionButton';
-
+import { CreatePositionButton } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/index';
 import type { NewPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useDebounce } from '@ui/hooks/useDebounce';

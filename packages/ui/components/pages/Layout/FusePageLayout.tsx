@@ -1,9 +1,8 @@
 import { Box, Drawer, DrawerContent, Flex, useDisclosure } from '@chakra-ui/react';
 
-import { Header } from './Header';
-import { Sidebar } from './Sidebar';
-import { SidebarMobile } from './SidebarMobile';
-
+import { Header } from '@ui/components/pages/Layout/Header';
+import { Sidebar } from '@ui/components/pages/Layout/Sidebar';
+import { SidebarMobile } from '@ui/components/pages/Layout/SidebarMobile';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import type { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
