@@ -1,9 +1,5 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import type {
-  LeveredCollateral,
-  OpenPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import type { OpenPosition } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -22,18 +18,15 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 export const RemovePositionModal = ({
-  borrowAsset,
-  chainId,
-  collateralAsset,
   isOpen,
   onClose,
+  position,
 }: {
-  borrowAsset: OpenPositionBorrowable;
-  chainId: SupportedChains;
-  collateralAsset: LeveredCollateral;
   isOpen: boolean;
   onClose: () => void;
+  position: OpenPosition;
 }) => {
+  const { collateral: collateralAsset, chainId, address: positionAddress } = position;
   const { underlyingToken, symbol } = collateralAsset;
   const { currentSdk, address } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
@@ -58,7 +51,7 @@ export const RemovePositionModal = ({
 
     const sentryProperties = {
       chainId: currentSdk.chainId,
-      position: borrowAsset.position,
+      position: positionAddress,
     };
 
     setIsConfirmed(true);
@@ -71,7 +64,7 @@ export const RemovePositionModal = ({
     try {
       try {
         setActiveStep(1);
-        const tx = await currentSdk.removeClosedPosition(borrowAsset.position);
+        const tx = await currentSdk.removeClosedPosition(positionAddress);
 
         addRecentTransaction({
           description: 'Removing closed position.',

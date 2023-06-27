@@ -6,8 +6,8 @@ import { useMemo } from 'react';
 
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -17,13 +17,10 @@ export const PositionDetails = ({ position }: { position: OpenPosition }) => {
   const { cCard } = useColors();
   const scanUrl = useMemo(() => getScanUrlByChainId(position.chainId), [position.chainId]);
   const { data: currentLeverageRatio } = useCurrentLeverageRatio(
-    position.borrowable.position,
+    position.address,
     position.chainId
   );
-  const { data: baseCollateral } = useBaseCollateral(
-    position.borrowable.position,
-    position.chainId
-  );
+  const { data: baseCollateral } = useEquityAmount(position.address, position.chainId);
   const { data: usdPrices } = useAllUsdPrices();
 
   const usdPrice = useMemo(() => {
@@ -48,11 +45,7 @@ export const PositionDetails = ({ position }: { position: OpenPosition }) => {
         <Flex alignItems="center" height="100%" justifyContent="space-between">
           <Text>Position Details</Text>
           <HStack>
-            <Link
-              href={`${scanUrl}/address/${position.borrowable.position}`}
-              isExternal
-              rel="noreferrer"
-            >
+            <Link href={`${scanUrl}/address/${position.address}`} isExternal rel="noreferrer">
               <Button rightIcon={<ExternalLinkIcon />} size="xs" variant={'external'}>
                 Position Contract
               </Button>
@@ -77,11 +70,7 @@ export const PositionDetails = ({ position }: { position: OpenPosition }) => {
           <CaptionedStat
             caption={'Leverage Ratio'}
             crossAxisAlignment="center"
-            stat={
-              currentLeverageRatio
-                ? Number(utils.formatUnits(currentLeverageRatio)).toFixed(3) + ' x'
-                : '-'
-            }
+            stat={currentLeverageRatio ? currentLeverageRatio.toFixed(3) + ' x' : '-'}
           />
           <CaptionedStat
             caption={'TVL'}

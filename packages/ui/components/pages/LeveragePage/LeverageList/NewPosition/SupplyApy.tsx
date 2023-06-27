@@ -14,7 +14,7 @@ export const SupplyApy = ({ position }: { position: NewPosition }) => {
     chainId: Number(position.chainId),
     poolAddress: position.collateral.pool,
   });
-  const { data: assetInfos } = useAssets(position.chainId);
+  const { data: assetInfos } = useAssets([position.chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {
@@ -29,7 +29,7 @@ export const SupplyApy = ({ position }: { position: NewPosition }) => {
     assetInfos
   );
 
-  return allRewards ? (
+  return allRewards && totalSupplyApyPerAsset ? (
     <MarketSupplyApy
       asset={{
         cToken: position.collateral.cToken,
@@ -40,7 +40,7 @@ export const SupplyApy = ({ position }: { position: NewPosition }) => {
       }}
       poolChainId={position.chainId}
       rewards={allRewards}
-      totalSupplyApyPerAsset={totalSupplyApyPerAsset}
+      totalApy={totalSupplyApyPerAsset[position.collateral.cToken].totalApy}
     />
   ) : null;
 };

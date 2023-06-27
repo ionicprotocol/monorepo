@@ -17,7 +17,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import type { NewPosition, NewPositionBorrowable, SupportedChains } from '@midas-capital/types';
+import type { LeveredBorrowable, NewPosition, SupportedChains } from '@midas-capital/types';
 import type {
   ColumnDef,
   FilterFn,
@@ -94,7 +94,7 @@ export const NewPositionComp = ({
   });
 
   const [selectedBorrowableAssets, setSelectedBorrowableAssets] = useState<{
-    [collateral: string]: NewPositionBorrowable;
+    [collateral: string]: LeveredBorrowable;
   }>();
 
   const allNewPositions = useMemo(() => {
@@ -113,7 +113,7 @@ export const NewPositionComp = ({
 
   useEffect(() => {
     const _selectedBorrowableAssets: {
-      [collateral: string]: NewPositionBorrowable;
+      [collateral: string]: LeveredBorrowable;
     } = {};
 
     allNewPositions.map((newPosition) => {

@@ -1,12 +1,11 @@
 import { Box, Button, Flex } from '@chakra-ui/react';
-import type { NewPosition, NewPositionBorrowable } from '@midas-capital/types';
+import type { LeveredBorrowable, NewPosition } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { useSwitchNetwork } from 'wagmi';
 
-import { CreatePositionButton } from './CreatePositionButton';
-
+import { CreatePositionButton } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/index';
 import type { NewPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -22,7 +21,7 @@ export const AdditionalInfo = ({
   selectedBorrowableAssets,
 }: {
   row: Row<NewPositionRowData>;
-  selectedBorrowableAssets?: { [collateral: string]: NewPositionBorrowable };
+  selectedBorrowableAssets?: { [collateral: string]: LeveredBorrowable };
 }) => {
   const position: NewPosition = row.original.collateralAsset;
 
@@ -50,10 +49,10 @@ export const AdditionalInfo = ({
   return (
     <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
       <Flex
-        alignItems="center"
-        flexDirection={{ base: 'column', lg: 'row' }}
+        alignItems="left"
+        flexDirection={{ base: 'column', xl: 'row' }}
         gap={4}
-        justifyContent="flex-end"
+        justifyContent="flex-start"
       >
         {!currentChain ? (
           <Box>

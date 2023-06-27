@@ -288,7 +288,7 @@ export const FundedMarketsList = ({
             asset={getValue<FundedAsset>()}
             poolChainId={Number(getValue<FundedAsset>().chainId)}
             rewards={rewards}
-            totalSupplyApyPerAsset={totalSupplyApyPerAsset}
+            totalApy={totalSupplyApyPerAsset[getValue<FundedAsset>().cToken]?.totalApy}
           />
         ),
         enableSorting: !!totalSupplyApyPerAsset,

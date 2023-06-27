@@ -117,7 +117,7 @@ export function useAllFundedInfo() {
                         });
                       });
                       const { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY } =
-                        await fetchFlywheelRewards(pool.comptroller, Number(chainId), sdk);
+                        await fetchFlywheelRewards(pool.comptroller, sdk);
                       //get rewards
                       const rewards = await fetchRewards(
                         assets,

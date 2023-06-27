@@ -8,7 +8,7 @@ export function useGetNetApy(
   collateralMarket: string,
   borrowableMarket: string,
   amount: BigNumber | null | undefined,
-  leverageRatio: BigNumber | null | undefined,
+  leverageRatio: number | null | undefined,
   supplyApy?: BigNumber,
   chainId?: number
 ) {
@@ -27,7 +27,13 @@ export function useGetNetApy(
     async () => {
       if (sdk && supplyApy !== undefined && amount && leverageRatio) {
         const netApy = await sdk
-          .getNetAPY(supplyApy, amount, collateralMarket, borrowableMarket, leverageRatio)
+          .getNetAPY(
+            supplyApy,
+            amount,
+            collateralMarket,
+            borrowableMarket,
+            utils.parseUnits(leverageRatio.toString())
+          )
           .catch((e) => {
             console.warn(
               `Getting net apy error: `,
@@ -38,7 +44,7 @@ export function useGetNetApy(
             return null;
           });
 
-        return netApy ? Number(utils.formatUnits(netApy)) : null;
+        return netApy ? Number(utils.formatUnits(netApy)) * 100 : null;
       } else {
         return null;
       }

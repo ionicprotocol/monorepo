@@ -1,15 +1,11 @@
 import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
-import type {
-  LeveredCollateral,
-  OpenPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import type { OpenPosition } from '@midas-capital/types';
 import { utils } from 'ethers';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { useBaseCollateral } from '@ui/hooks/leverage/useBaseCollateral';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
@@ -17,16 +13,18 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { smallFormatter } from '@ui/utils/bigUtils';
 
 export const ApyStatus = ({
-  borrowAsset,
-  chainId,
-  collateralAsset,
+  position,
   leverageValue,
 }: {
-  borrowAsset: OpenPositionBorrowable;
-  chainId: SupportedChains;
-  collateralAsset: LeveredCollateral;
   leverageValue: number;
+  position: OpenPosition;
 }) => {
+  const {
+    collateral: collateralAsset,
+    borrowable: borrowAsset,
+    chainId,
+    address: positionAddress,
+  } = position;
   const {
     cToken: collateralCToken,
     symbol: collateralSymbol,
@@ -35,8 +33,7 @@ export const ApyStatus = ({
     plugin,
     underlyingToken: collateralUnderlying,
   } = collateralAsset;
-
-  const { cToken: borrowCToken, position } = borrowAsset;
+  const { cToken: borrowCToken } = borrowAsset;
 
   const { data: allRewards } = useRewardsForMarket({
     asset: {
@@ -46,7 +43,7 @@ export const ApyStatus = ({
     chainId: Number(chainId),
     poolAddress,
   });
-  const { data: assetInfos } = useAssets(chainId);
+  const { data: assetInfos } = useAssets([chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {
@@ -61,8 +58,8 @@ export const ApyStatus = ({
     assetInfos
   );
 
-  const { data: baseCollateral } = useBaseCollateral(position, chainId);
-  const { data: currentLeverageRatio } = useCurrentLeverageRatio(position, chainId);
+  const { data: baseCollateral } = useEquityAmount(positionAddress, chainId);
+  const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, chainId);
 
   const { data: currentNetApy, isLoading } = useGetNetApy(
     collateralCToken,
@@ -79,7 +76,7 @@ export const ApyStatus = ({
     collateralCToken,
     borrowCToken,
     baseCollateral,
-    utils.parseUnits(leverageValue.toString()),
+    leverageValue,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
@@ -106,12 +103,10 @@ export const ApyStatus = ({
                       : ''
                   }
                 >
-                  <Text>
-                    {currentNetApy !== undefined && currentNetApy !== null
-                      ? smallFormatter(currentNetApy)
-                      : '?'}
-                    %
-                  </Text>
+                  {currentNetApy !== undefined && currentNetApy !== null
+                    ? smallFormatter(currentNetApy)
+                    : '?'}
+                  %
                 </EllipsisText>
               )}
               <Text>➡</Text>
@@ -122,12 +117,10 @@ export const ApyStatus = ({
                   maxWidth="300px"
                   tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
                 >
-                  <Text>
-                    {updatedNetApy !== undefined && updatedNetApy !== null
-                      ? smallFormatter(updatedNetApy)
-                      : '?'}
-                    %
-                  </Text>
+                  {updatedNetApy !== undefined && updatedNetApy !== null
+                    ? smallFormatter(updatedNetApy)
+                    : '?'}
+                  %
                 </EllipsisText>
               )}
             </HStack>

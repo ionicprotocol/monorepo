@@ -1,12 +1,13 @@
 import { Box, Flex, Icon, Image, Link, Stack, Text, useColorMode } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsChatLeftTextFill, BsFillHouseFill, BsHouseAddFill } from 'react-icons/bs';
 import { ImUser } from 'react-icons/im';
-// import { RiBuilding2Fill } from 'react-icons/ri';
+import { RiBuilding2Fill } from 'react-icons/ri';
 import { SiVault } from 'react-icons/si';
 
 import Footer from '@ui/components/pages/Layout/Footer';
+import { config } from '@ui/config/index';
 import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -16,6 +17,13 @@ export const Sidebar = () => {
   const { colorMode } = useColorMode();
   const { cPage, cCard, cSolidBtn } = useColors();
   const { address, setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
+  const [isEnabledLeverageMenu, setIsEnabledLeverageMenu] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsEnabledLeverageMenu(
+      !config.productDomain || !window.location.hostname.includes(config.productDomain)
+    );
+  }, []);
 
   return isSidebarCollapsed !== undefined ? (
     <Box
@@ -104,30 +112,32 @@ export const Sidebar = () => {
           </Text>
         ) : null}
       </Flex>
-      {/* <Flex
-        _hover={{
-          bg: cCard.hoverBgColor,
-          color: cCard.txtColor,
-        }}
-        align="center"
-        bg={router.pathname === '/leverage' ? cSolidBtn.primary.bgColor : undefined}
-        borderRadius="lg"
-        cursor="pointer"
-        mx="4"
-        onClick={() => {
-          setGlobalLoading(true);
-          router.push('/leverage');
-        }}
-        p="4"
-        role="group"
-      >
-        <Icon as={RiBuilding2Fill} fontSize="20" mr="4" />
-        {!isSidebarCollapsed ? (
-          <Text fontSize={16} fontWeight={'bold'}>
-            Leverage
-          </Text>
-        ) : null}
-      </Flex> */}
+      {isEnabledLeverageMenu ? (
+        <Flex
+          _hover={{
+            bg: cCard.hoverBgColor,
+            color: cCard.txtColor,
+          }}
+          align="center"
+          bg={router.pathname === '/leverage' ? cSolidBtn.primary.bgColor : undefined}
+          borderRadius="lg"
+          cursor="pointer"
+          mx="4"
+          onClick={() => {
+            setGlobalLoading(true);
+            router.push('/leverage');
+          }}
+          p="4"
+          role="group"
+        >
+          <Icon as={RiBuilding2Fill} fontSize="20" mr="4" />
+          {!isSidebarCollapsed ? (
+            <Text fontSize={16} fontWeight={'bold'}>
+              Leverage
+            </Text>
+          ) : null}
+        </Flex>
+      ) : null}
       {address ? (
         <Flex
           _hover={{

@@ -10,12 +10,16 @@ export const SupplyBalance = ({
   asset,
   poolChainId,
 }: {
-  asset: MarketData;
+  asset: Pick<
+    MarketData,
+    'supplyBalance' | 'supplyBalanceFiat' | 'underlyingDecimals' | 'underlyingToken'
+  >;
   poolChainId: number;
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
   const { address } = useMultiMidas();
+
   return (
     <>
       {!address ? (

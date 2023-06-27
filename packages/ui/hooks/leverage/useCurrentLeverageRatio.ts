@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
@@ -15,7 +16,11 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
           return null;
         });
 
-        return currentLeverageRatio;
+        if (currentLeverageRatio) {
+          return Number(utils.formatUnits(currentLeverageRatio));
+        }
+
+        return null;
       } else {
         return null;
       }
