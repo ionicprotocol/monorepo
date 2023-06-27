@@ -272,10 +272,10 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       return tx;
     }
 
-    async fundPosition(positionAddress: string, cToken: string, amount: BigNumber) {
+    async fundPosition(positionAddress: string, underlyingToken: string, amount: BigNumber) {
       const leveredPosition = this.createLeveredPosition(positionAddress, this.signer);
 
-      const tx = await leveredPosition.fundPosition(cToken, amount);
+      const tx = await leveredPosition.fundPosition(underlyingToken, amount);
 
       return tx;
     }

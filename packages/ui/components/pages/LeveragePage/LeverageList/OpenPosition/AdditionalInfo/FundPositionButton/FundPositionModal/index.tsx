@@ -231,7 +231,7 @@ export const FundPositionModal = ({
 
         const tx = await currentSdk.fundPosition(
           positionAddress,
-          collateralAsset.cToken,
+          collateralAsset.underlyingToken,
           debouncedAmount
         );
 
