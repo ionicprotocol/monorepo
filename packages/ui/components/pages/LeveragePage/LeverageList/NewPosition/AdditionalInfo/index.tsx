@@ -50,10 +50,10 @@ export const AdditionalInfo = ({
   return (
     <Box minWidth="400px" width={{ base: windowWidth.width * 0.9, md: 'auto' }}>
       <Flex
-        alignItems="center"
-        flexDirection={{ base: 'column', lg: 'row' }}
+        alignItems="left"
+        flexDirection={{ base: 'column', xl: 'row' }}
         gap={4}
-        justifyContent="flex-end"
+        justifyContent="flex-start"
       >
         {!currentChain ? (
           <Box>

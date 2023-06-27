@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Grid, GridItem, HStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
@@ -41,10 +41,10 @@ export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
   return (
     <Box minWidth="400px" width="100%">
       <Flex
-        alignItems="center"
-        flexDirection={{ base: 'column', lg: 'row' }}
+        alignItems="left"
+        flexDirection={{ base: 'column', xl: 'row' }}
         gap={4}
-        justifyContent="flex-end"
+        justifyContent="flex-start"
       >
         {!currentChain ? (
           <Box>
@@ -59,16 +59,16 @@ export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
             </Button>
           </Box>
         ) : position.isClosed ? (
-          <HStack>
+          <>
             <ReopenPositionButton position={position} />
             <RemovePositionButton position={position} />
-          </HStack>
+          </>
         ) : (
-          <HStack>
+          <>
             <AdjustRatioButton position={position} />
             <FundPositionButton position={position} />
             <ClosePositionButton position={position} />
-          </HStack>
+          </>
         )}
       </Flex>
       <Grid
