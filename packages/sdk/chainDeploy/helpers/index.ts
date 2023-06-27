@@ -12,6 +12,7 @@ export { deployGelatoGUniPriceOracle } from "./oracles/gelato";
 export { deployGammaPoolOracle } from "./oracles/gamma";
 export { deployNativeUsdPriceFeed } from "./oracles/nativeUsd";
 export { deployFluxOracle } from "./oracles/flux";
+export { deployUmbrellaOracle } from "./oracles/umbrella";
 export { deployAdrastiaOracle } from "./oracles/adrastia";
 export { deployCurveV2LpOracle } from "./oracles/curveLp";
 export { deployStkBNBOracle } from "./oracles/stkBNBOracle";

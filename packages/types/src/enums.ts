@@ -9,7 +9,7 @@ export enum SupportedChains {
   polygon = 137,
   arbitrum = 42161,
   fantom = 250,
-  basegoerli = 84531,
+  lineagoerli = 59140,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -57,6 +57,7 @@ export enum OracleTypes {
   DiaPriceOracle = "DiaPriceOracle",
   FixedNativePriceOracle = "FixedNativePriceOracle",
   FluxPriceOracle = "FluxPriceOracle",
+  UmbrellaPriceOracle = "UmbrellaPriceOracle",
   MasterPriceOracle = "MasterPriceOracle",
   SimplePriceOracle = "SimplePriceOracle",
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",

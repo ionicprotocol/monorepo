@@ -7,8 +7,8 @@ import { deploy as deploy9001, deployConfig as deployConfig9001 } from "./mainne
 import { deploy as deploy250, deployConfig as deployConfig250 } from "./mainnets/fantom";
 import { deploy as deploy1284, deployConfig as deployConfig1284 } from "./mainnets/moonbeam";
 import { deploy as deploy137, deployConfig as deployConfig137 } from "./mainnets/polygon";
-import { deploy as deploy84531, deployConfig as deployConfig84531 } from "./testnets/basegoerli";
 import { deploy as deploy97, deployConfig as deployConfig97 } from "./testnets/chapel";
+import { deploy as deploy59140, deployConfig as deployConfig59140 } from "./testnets/lineagoerli";
 import { deploy as deploy245022926, deployConfig as deployConfig245022926 } from "./testnets/neondevnet";
 
 export const chainDeployConfig: Record<number, { config: ChainDeployConfig; deployFunc: any }> = {
@@ -25,7 +25,7 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   245022926: { config: deployConfig245022926, deployFunc: deploy245022926 },
   // local
   1337: { config: deployConfig1337, deployFunc: deploy1337 },
-  84531: { config: deployConfig84531, deployFunc: deploy84531 },
+  59140: { config: deployConfig59140, deployFunc: deploy59140 },
 };
 
 export * from "./helpers/types";

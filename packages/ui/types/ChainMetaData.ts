@@ -1,12 +1,12 @@
 import {
   arbitrum,
-  basegoerli,
   bsc,
   chapel,
   ethereum,
   evmos,
   fantom,
   ganache,
+  lineagoerli,
   moonbeam,
   neondevnet,
   polygon,
@@ -29,7 +29,7 @@ export const supportedChainIdToConfig: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled,
   },
-  [basegoerli.chainId]: {
+  [lineagoerli.chainId]: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled,
   },

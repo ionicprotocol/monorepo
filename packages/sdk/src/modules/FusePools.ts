@@ -1,12 +1,12 @@
 import {
   arbitrum,
-  basegoerli,
   bsc,
   chapel,
   ethereum,
   evmos,
   fantom,
   ganache,
+  lineagoerli,
   moonbeam,
   neondevnet,
   polygon,
@@ -42,7 +42,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.fantom]: fantom.assets,
-  [SupportedChains.basegoerli]: basegoerli.assets,
+  [SupportedChains.lineagoerli]: lineagoerli.assets,
   [SupportedChains.ethereum]: ethereum.assets,
 };
 

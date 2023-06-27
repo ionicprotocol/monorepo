@@ -138,15 +138,13 @@ task("markets:all:pause", "Pauses borrowing on a market")
   .addOptionalParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
   .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
   .setAction(async (taskArgs, hre) => {
-    let tx: providers.TransactionResponse;
     const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
 
     const fusePoolDirectory = (await hre.ethers.getContract("FusePoolDirectory")) as FusePoolDirectory;
 
     const [, poolData] = await fusePoolDirectory.callStatic.getActivePools();
 
-    for (let i = 0; i < poolData.length; i++) {
-      const pool = poolData[poolData.length - i - 1];
+    for (const pool of poolData) {
       const poolExtension = (await hre.ethers.getContractAt(
         "ComptrollerFirstExtension",
         pool.comptroller,
@@ -155,12 +153,11 @@ task("markets:all:pause", "Pauses borrowing on a market")
 
       const markets = await poolExtension.callStatic.getAllMarkets();
 
-      const marketsStr = Array.from(markets).reverse().join(",");
       await hre.run("markets:borrow-pause", {
-        markets: marketsStr,
+        markets: markets.join(","),
       });
       await hre.run("market:mint-pause", {
-        markets: marketsStr,
+        markets: markets.join(","),
       });
     }
   });
