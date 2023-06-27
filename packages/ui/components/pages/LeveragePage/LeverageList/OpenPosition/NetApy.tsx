@@ -6,21 +6,21 @@ import { useMemo } from 'react';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { smallFormatter } from '@ui/utils/bigUtils';
 
-export const CurrentApy = ({ info }: { info?: PositionInfo }) => {
+export const NetApy = ({ info }: { info?: PositionInfo }) => {
   const borrowApyColor = useColorModeValue('orange.500', 'orange');
 
-  const currentApyNum = useMemo(() => {
+  const netApyNum = useMemo(() => {
     return info?.currentApy ? Number(utils.formatUnits(info.currentApy)) : null;
   }, [info?.currentApy]);
 
-  return currentApyNum !== null ? (
+  return netApyNum !== null ? (
     <HStack justifyContent="flex-end">
       <EllipsisText
         color={borrowApyColor}
         maxWidth="300px"
-        tooltip={smallFormatter(currentApyNum * 100, true, 18)}
+        tooltip={smallFormatter(netApyNum * 100, true, 18)}
       >
-        {smallFormatter(currentApyNum * 100)}%
+        {smallFormatter(netApyNum * 100)}%
       </EllipsisText>
     </HStack>
   ) : (

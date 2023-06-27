@@ -155,7 +155,7 @@ export const LeverageList = () => {
           gap={4}
           templateColumns={{
             base: 'repeat(1, 1fr)',
-            lg: 'repeat(3, 1fr)',
+            lg: 'repeat(2, 1fr)',
           }}
           width="100%"
         >
@@ -195,7 +195,7 @@ export const LeverageList = () => {
               </>
             )}
           </GridItem>
-          <GridItem colSpan={2}>
+          <GridItem colSpan={1}>
             {positionsPerChain && initSortingOpenPosition ? (
               <OpenPositionComp
                 initGlobalFilter={globalFilter}

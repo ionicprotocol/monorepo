@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react';
-import type { OpenPosition } from '@midas-capital/types';
+import type { OpenPosition, PositionInfo } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
@@ -19,7 +19,13 @@ export interface ComptrollerToPool {
   [comptroller: string]: { allocation: number; chainId: number; poolId: number; poolName: string };
 }
 
-export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
+export const AdditionalInfo = ({
+  positionInfo,
+  row,
+}: {
+  positionInfo: PositionInfo | null;
+  row: Row<OpenPositionRowData>;
+}) => {
   const position: OpenPosition = row.original.collateralAsset;
 
   const chainId = Number(position.chainId);
@@ -41,10 +47,10 @@ export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
   return (
     <Box minWidth="400px" width="100%">
       <Flex
-        alignItems="left"
+        alignItems="center"
         flexDirection={{ base: 'column', xl: 'row' }}
         gap={4}
-        justifyContent="flex-start"
+        justifyContent="flex-end"
       >
         {!currentChain ? (
           <Box>
@@ -82,7 +88,7 @@ export const AdditionalInfo = ({ row }: { row: Row<OpenPositionRowData> }) => {
         w="100%"
       >
         <GridItem>
-          <PositionDetails position={position} />
+          <PositionDetails position={position} positionInfo={positionInfo} />
         </GridItem>
       </Grid>
     </Box>
