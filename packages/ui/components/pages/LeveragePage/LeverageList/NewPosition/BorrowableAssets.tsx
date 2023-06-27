@@ -1,5 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
-import type { NewPosition, NewPositionBorrowable } from '@midas-capital/types';
+import type { LeveredBorrowable, NewPosition } from '@midas-capital/types';
 import { FaAngleDown } from 'react-icons/fa';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -15,9 +15,9 @@ export const BorrowableAssets = ({
 }: {
   position: NewPosition;
   selectedBorrowableAssets?: {
-    [collateral: string]: NewPositionBorrowable;
+    [collateral: string]: LeveredBorrowable;
   };
-  setSelectedBorrowableAssets: (assets: { [collateral: string]: NewPositionBorrowable }) => void;
+  setSelectedBorrowableAssets: (assets: { [collateral: string]: LeveredBorrowable }) => void;
 }) => {
   const { data: borrowApys } = useBorrowAPYs(
     position.borrowable.map((asset) => {

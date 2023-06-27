@@ -1,9 +1,5 @@
-import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
-import type {
-  LeveredCollateral,
-  NewPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
+import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -27,7 +23,7 @@ export const ApyStatus = ({
   leverageValue,
 }: {
   amount: BigNumber;
-  borrowAsset: NewPositionBorrowable;
+  borrowAsset: LeveredBorrowable;
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
   leverageValue: number;
@@ -51,7 +47,7 @@ export const ApyStatus = ({
     chainId: Number(chainId),
     poolAddress,
   });
-  const { data: assetInfos } = useAssets(chainId);
+  const { data: assetInfos } = useAssets([chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     [
       {
@@ -78,11 +74,11 @@ export const ApyStatus = ({
   const [updatedSupplyApy, setUpdatedSupplyApy] = useState<number | undefined>(supplyAPY);
   const [updatedBorrowApr, setUpdatedBorrowApr] = useState<number | undefined>(borrowAPY);
 
-  const { data: netApy } = useGetNetApy(
+  const { data: netApy, isLoading } = useGetNetApy(
     collateralCToken,
     borrowCToken,
     amount,
-    utils.parseUnits(leverageValue.toString()),
+    leverageValue,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
       ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
       : undefined,
@@ -93,7 +89,7 @@ export const ApyStatus = ({
     const func = async () => {
       if (sdk) {
         const bigApy = await sdk.getPositionSupplyApy(collateralCToken, amount);
-        setUpdatedSupplyApy(Number(utils.formatUnits(bigApy)));
+        setUpdatedSupplyApy(Number(utils.formatUnits(bigApy)) * 100);
       }
     };
 
@@ -112,8 +108,8 @@ export const ApyStatus = ({
           const bigApr = await sdk.getPositionBorrowApr(
             collateralCToken,
             borrowCToken,
-            amount,
-            utils.parseUnits(leverageValue.toString())
+            utils.parseUnits(leverageValue.toString()),
+            amount
           );
           setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
         } catch (e) {}
@@ -138,16 +134,18 @@ export const ApyStatus = ({
                   tooltip={
                     totalSupplyApyPerAsset[collateralCToken] !== undefined &&
                     totalSupplyApyPerAsset[collateralCToken].totalApy !== 0
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy, true, 18)
+                      ? smallFormatter(
+                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100,
+                          true,
+                          18
+                        )
                       : ''
                   }
                 >
-                  <Text>
-                    {totalSupplyApyPerAsset[collateralCToken] !== undefined
-                      ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy)
-                      : '?'}
-                    %
-                  </Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined
+                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy * 100)
+                    : '?'}
+                  %
                 </EllipsisText>
                 <Text>➡</Text>
                 <EllipsisText
@@ -156,12 +154,12 @@ export const ApyStatus = ({
                     totalSupplyApyPerAsset[collateralCToken] !== undefined &&
                     updatedSupplyApy !== undefined &&
                     supplyAPY !== undefined &&
-                    totalSupplyApyPerAsset[collateralCToken].totalApy +
+                    totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
                       updatedSupplyApy -
                       supplyAPY !==
                       0
                       ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy +
+                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
                             updatedSupplyApy -
                             supplyAPY,
                           true,
@@ -170,18 +168,16 @@ export const ApyStatus = ({
                       : ''
                   }
                 >
-                  <Text>
-                    {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
-                    updatedSupplyApy !== undefined &&
-                    supplyAPY !== undefined
-                      ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy +
-                            updatedSupplyApy -
-                            supplyAPY
-                        )
-                      : '?'}
-                    %
-                  </Text>
+                  {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
+                  updatedSupplyApy !== undefined &&
+                  supplyAPY !== undefined
+                    ? smallFormatter(
+                        totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
+                          updatedSupplyApy -
+                          supplyAPY
+                      )
+                    : '?'}
+                  %
                 </EllipsisText>
               </HStack>
             ) : null}
@@ -195,14 +191,14 @@ export const ApyStatus = ({
                 maxWidth="300px"
                 tooltip={borrowAPY ? smallFormatter(borrowAPY, true, 18) : ''}
               >
-                <Text>{borrowAPY ? smallFormatter(borrowAPY) : '?'}%</Text>
+                {borrowAPY ? smallFormatter(borrowAPY) : '?'}%
               </EllipsisText>
               <Text>➡</Text>
               <EllipsisText
                 maxWidth="300px"
                 tooltip={updatedBorrowApr ? smallFormatter(updatedBorrowApr, true, 18) : ''}
               >
-                <Text>{updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%</Text>
+                {updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%
               </EllipsisText>
             </HStack>
           </HStack>
@@ -211,16 +207,18 @@ export const ApyStatus = ({
               <Text size="md">Net APY</Text>
             </HStack>
             <HStack>
-              <EllipsisText
-                maxWidth="300px"
-                tooltip={
-                  netApy !== undefined && netApy !== null ? smallFormatter(netApy, true, 18) : ''
-                }
-              >
-                <Text>
+              {isLoading ? (
+                <Skeleton height="20px" width="45px" />
+              ) : (
+                <EllipsisText
+                  maxWidth="300px"
+                  tooltip={
+                    netApy !== undefined && netApy !== null ? smallFormatter(netApy, true, 18) : ''
+                  }
+                >
                   {netApy !== undefined && netApy !== null ? smallFormatter(netApy) : '?'}%
-                </Text>
-              </EllipsisText>
+                </EllipsisText>
+              )}
             </HStack>
           </HStack>
         </VStack>

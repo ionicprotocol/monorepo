@@ -35,10 +35,10 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
   const [positionsPerChain, isLoading] = useMemo(() => {
     const _positionsPerChain: PositionsPerChainStatus = {};
 
-    let isLoading = true;
+    let isLoading = false;
 
     positionQueries.map((leverage, index) => {
-      isLoading = isLoading && leverage.isLoading;
+      isLoading = isLoading || leverage.isLoading;
       const _chainId = chainIds[index];
       _positionsPerChain[_chainId.toString()] = {
         data: leverage.data,

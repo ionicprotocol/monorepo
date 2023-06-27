@@ -4,9 +4,9 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FuseFlywheelDynamicRewardsPlugin } from "../../typechain/FuseFlywheelDynamicRewardsPlugin";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { MidasReplacingFlywheel } from "../../typechain/MidasReplacingFlywheel";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 
 task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
   .addParam("flywheelToReplaceAddress", "address of flywheel to replace", undefined, types.string)
@@ -115,28 +115,33 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
     }
   });
 
-task("flywheels:booster:update")
-  .setAction(async ({ }, { ethers, getChainId, deployments }) => {
-    const deployer = await ethers.getNamedSigner("deployer");
+task("flywheels:booster:update").setAction(async ({}, { ethers, getChainId, deployments }) => {
+  const deployer = await ethers.getNamedSigner("deployer");
 
-    const fusePoolDirectory = await ethers.getContract("FusePoolDirectory", deployer) as FusePoolDirectory;
-    const newBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
+  const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
+  const newBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
 
-    const [ids, poolDatas] = await fusePoolDirectory.callStatic.getActivePools();
-    for (const poolData of poolDatas) {
-      const pool = (await ethers.getContractAt("ComptrollerFirstExtension", poolData.comptroller, deployer)) as ComptrollerFirstExtension;
-      const fws = await pool.callStatic.getAccruingFlywheels();
+  const [ids, poolDatas] = await fusePoolDirectory.callStatic.getActivePools();
+  for (const poolData of poolDatas) {
+    const pool = (await ethers.getContractAt(
+      "ComptrollerFirstExtension",
+      poolData.comptroller,
+      deployer
+    )) as ComptrollerFirstExtension;
+    const fws = await pool.callStatic.getAccruingFlywheels();
 
-      for (const fw of fws) {
-        const flywheel = (await ethers.getContractAt("MidasFlywheel", fw, deployer)) as MidasFlywheel;
-        const currentBooster = await flywheel.callStatic.flywheelBooster();
-        if (currentBooster != ethers.constants.AddressZero && currentBooster != newBooster.address) {
-          const tx = await flywheel.setBooster(newBooster.address);
-          await tx.wait();
-          console.log(`replaced ${currentBooster} with ${newBooster.address} for ${flywheel.address}`);
-        } else {
-          console.log(`current booster ${currentBooster} NOT REPLACED with ${newBooster.address} for ${flywheel.address}`);
-        }
+    for (const fw of fws) {
+      const flywheel = (await ethers.getContractAt("MidasFlywheel", fw, deployer)) as MidasFlywheel;
+      const currentBooster = await flywheel.callStatic.flywheelBooster();
+      if (currentBooster != ethers.constants.AddressZero && currentBooster != newBooster.address) {
+        const tx = await flywheel.setBooster(newBooster.address);
+        await tx.wait();
+        console.log(`replaced ${currentBooster} with ${newBooster.address} for ${flywheel.address}`);
+      } else {
+        console.log(
+          `current booster ${currentBooster} NOT REPLACED with ${newBooster.address} for ${flywheel.address}`
+        );
       }
     }
-  });
+  }
+});

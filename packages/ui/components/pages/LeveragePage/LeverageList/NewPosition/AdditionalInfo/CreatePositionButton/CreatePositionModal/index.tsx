@@ -1,16 +1,12 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
-import type {
-  LeveredCollateral,
-  NewPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import { getContract } from '@midas-capital/sdk/dist/cjs/src/MidasSdk/utils';
+import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { AmountInput } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/CreatePositionModal/AmountInput';
 import { ApyStatus } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/CreatePositionModal/ApyStatus';
@@ -42,7 +38,7 @@ export const CreatePositionModal = ({
   isOpen,
   onClose,
 }: {
-  borrowAsset: NewPositionBorrowable;
+  borrowAsset: LeveredBorrowable;
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
   isOpen: boolean;
@@ -111,13 +107,19 @@ export const CreatePositionModal = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
+    if (debouncedAmount.isZero() || !maxSupplyAmount) {
       setIsAmountValid(false);
     } else {
       const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-      setIsAmountValid(amount.lte(max));
+      setIsAmountValid(debouncedAmount.lte(max));
     }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+
+    if (!debouncedAmount.isZero() && debouncedAmount.eq(amount)) {
+      setIsAmountValid(true);
+    } else {
+      setIsAmountValid(false);
+    }
+  }, [debouncedAmount, maxSupplyAmount, optionToWrap, myNativeBalance, amount]);
 
   useEffect(() => {
     if (debouncedLeverageNum < LEVERAGE_VALUE.MIN || debouncedLeverageNum > LEVERAGE_VALUE.MAX) {
@@ -125,7 +127,13 @@ export const CreatePositionModal = ({
     } else {
       setIsLeverageValueValid(true);
     }
-  }, [debouncedLeverageNum]);
+
+    if (debouncedLeverageNum !== parseFloat(leverageValue)) {
+      setIsLeverageValueValid(false);
+    } else {
+      setIsLeverageValueValid(true);
+    }
+  }, [debouncedLeverageNum, leverageValue]);
 
   useEffect(() => {
     if (debouncedAmount.isZero()) {
@@ -212,7 +220,7 @@ export const CreatePositionModal = ({
         ).gte(debouncedAmount);
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.leverageApprove(underlyingToken);
+          const tx = await currentSdk.leveredFactoryApprove(underlyingToken);
 
           addRecentTransaction({
             description: `Approve ${symbol}`,
@@ -274,13 +282,7 @@ export const CreatePositionModal = ({
         await tx.wait();
 
         await queryClient.refetchQueries({ queryKey: ['usePositionsPerChain'] });
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
-        await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
+        await queryClient.refetchQueries({ queryKey: ['usePositionsInfo'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
@@ -415,7 +417,11 @@ export const CreatePositionModal = ({
                     <Button
                       height={16}
                       id="confirmCreate"
-                      isDisabled={!isAmountValid || !isLeverageValueValid}
+                      isDisabled={
+                        !isAmountValid ||
+                        !isLeverageValueValid ||
+                        debouncedBorrowAsset.cToken !== borrowAsset.cToken
+                      }
                       onClick={onConfirm}
                       width="100%"
                     >

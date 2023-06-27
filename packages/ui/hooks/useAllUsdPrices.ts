@@ -63,3 +63,19 @@ export function useAllUsdPrices() {
     { cacheTime: Infinity, enabled: !!chainIds && chainIds.length > 0, staleTime: Infinity }
   );
 }
+
+export function useUsdPrice(chainId: string) {
+  const { data: usdPrices } = useAllUsdPrices();
+
+  return useQuery(
+    ['useUsdPrice', chainId, usdPrices],
+    async () => {
+      if (usdPrices && usdPrices[chainId]) {
+        return usdPrices[chainId].value;
+      } else {
+        return null;
+      }
+    },
+    { cacheTime: Infinity, enabled: !!chainId && !!usdPrices, staleTime: Infinity }
+  );
+}

@@ -11,25 +11,31 @@ export type AssetsResponse = {
 };
 
 const querySchema = yup.object().shape({
-  chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
+  chainIds: yup
+    .array()
+    .of(yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required())
+    .required(),
 });
 type Query = yup.InferType<typeof querySchema>;
 
 const handler = async (request: NextApiRequest, response: NextApiResponse<AssetsResponse>) => {
   let validatedQuery: Query | null = null;
   try {
-    querySchema.validateSync(request.query);
-    validatedQuery = request.query as Query;
+    querySchema.validateSync(request.body);
+    validatedQuery = request.body as Query;
   } catch (error) {
     return response.status(400);
   }
-  const { chainId } = validatedQuery;
+  const { chainIds } = validatedQuery;
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
 
   const databaseResponse = await client
     .from(config.supabaseAssetApyTableName)
     .select<'rewards,address', { address: string; rewards: AssetReward[] }>('rewards,address')
-    .eq('chain_id', parseInt(chainId as string, 10));
+    .in(
+      'chain_id',
+      chainIds.map((chainId) => parseInt(chainId as string, 10))
+    );
 
   if (databaseResponse.error) {
     return response.status(500);

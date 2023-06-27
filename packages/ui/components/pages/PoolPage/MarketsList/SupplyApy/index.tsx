@@ -21,19 +21,12 @@ interface SupplyApyProps {
   >;
   poolChainId: number;
   rewards: UseRewardsData;
-  totalSupplyApyPerAsset?: {
-    [market: string]: { apy: number; totalApy: number };
-  } | null;
+  totalApy?: number;
 }
 
-export const SupplyApy = ({
-  asset,
-  rewards,
-  poolChainId,
-  totalSupplyApyPerAsset,
-}: SupplyApyProps) => {
+export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyProps) => {
   const sdk = useSdk(poolChainId);
-  const { data: assetInfos } = useAssets(poolChainId);
+  const { data: assetInfos } = useAssets([poolChainId]);
   const assetRewards = useMemo(() => {
     if (assetInfos) return assetInfos[asset.underlyingToken.toLowerCase()];
   }, [asset, assetInfos]);
@@ -188,10 +181,10 @@ export const SupplyApy = ({
         }
         header={
           <>
-            {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
+            {totalApy !== undefined && (
               <HStack justifyContent="flex-start" width="100%">
                 <Text fontWeight="bold" size="sm" variant="tnumber">
-                  {(totalSupplyApyPerAsset[asset.cToken].totalApy * 100).toFixed(2)}%
+                  {(totalApy * 100).toFixed(2)}%
                 </Text>
                 <Text fontWeight="bold" size="sm" variant="tnumber">
                   Total APY
@@ -206,9 +199,9 @@ export const SupplyApy = ({
         <HStack>
           {hasRewardTooltip && <BsStars color={supplyApyColor} fill={supplyApyColor} size={16} />}
           <VStack alignItems={'flex-end'} spacing={0.5}>
-            {totalSupplyApyPerAsset !== undefined && totalSupplyApyPerAsset !== null && (
+            {totalApy !== undefined && (
               <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
-                {(totalSupplyApyPerAsset[asset.cToken].totalApy * 100).toFixed(2)}%
+                {(totalApy * 100).toFixed(2)}%
               </Text>
             )}
           </VStack>

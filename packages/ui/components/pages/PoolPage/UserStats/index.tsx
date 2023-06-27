@@ -26,7 +26,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
     }
   }, [poolData]);
 
-  const { data: assetInfos } = useAssets(poolData.chainId);
+  const { data: assetInfos } = useAssets([poolData.chainId]);
   const { data: allRewards } = useRewards({
     chainId: poolData.chainId,
     poolId: poolData.id.toString(),

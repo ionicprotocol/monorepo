@@ -90,8 +90,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
     const extensions = await cTokenInstance.callStatic._listExtensions();
 
     if (
-      impl.toLowerCase() != implementationAddress.toLowerCase()
-      || (extensions.length > 0 && extensions[0].toLowerCase() != cfe.address.toLowerCase())
+      impl.toLowerCase() != implementationAddress.toLowerCase() ||
+      (extensions.length > 0 && extensions[0].toLowerCase() != cfe.address.toLowerCase())
     ) {
       if (!pluginAddress) {
         pluginAddress = ethers.constants.AddressZero;

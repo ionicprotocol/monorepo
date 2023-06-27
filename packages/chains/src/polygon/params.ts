@@ -19,8 +19,8 @@ const specificParams: ChainParams = {
     img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://polygonscan.com" } },
     rpcUrls: {
-      default: { http: ["https://poly-rpc.gateway.pokt.network"] },
-      public: { http: ["https://rpc.ankr.com/polygon"] },
+      default: { http: ["https://polygon.llamarpc.com"] },
+      public: { http: ["https://polygon.llamarpc.com"] },
     },
     nativeCurrency: {
       symbol: "MATIC",

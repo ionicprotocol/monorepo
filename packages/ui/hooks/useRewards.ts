@@ -20,7 +20,7 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
-export const fetchFlywheelRewards = async (comptroller: string, chainId: number, sdk: MidasSdk) => {
+export const fetchFlywheelRewards = async (comptroller: string, sdk: MidasSdk) => {
   let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
   let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
 
@@ -45,7 +45,7 @@ export function useFlywheelRewards(comptroller?: string, chainId?: number) {
     ['useFlywheelRewards', chainId, comptroller],
     async () => {
       if (chainId && sdk && comptroller) {
-        return await fetchFlywheelRewards(comptroller, chainId, sdk);
+        return await fetchFlywheelRewards(comptroller, sdk);
       }
 
       return null;

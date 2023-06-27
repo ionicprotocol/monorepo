@@ -2,14 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export function useBaseCollateral(position: string, chainId?: number) {
+export function useEquityAmount(position: string, chainId?: number) {
   const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useBaseCollateral', sdk?.chainId, position],
+    ['useEquityAmount', sdk?.chainId, position],
     async () => {
       if (sdk) {
-        const baseCollateral = await sdk.getBaseCollateral(position).catch((e) => {
+        const baseCollateral = await sdk.getEquityAmount(position).catch((e) => {
           console.warn(`Getting base collateral error: `, { chainId, position }, e);
 
           return null;

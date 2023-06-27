@@ -1,16 +1,12 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
-import type {
-  LeveredCollateral,
-  OpenPositionBorrowable,
-  SupportedChains,
-} from '@midas-capital/types';
+import { getContract } from '@midas-capital/sdk/dist/cjs/src/MidasSdk/utils';
+import type { OpenPosition } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { AmountInput } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/AmountInput';
 import { ApyStatus } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/ApyStatus';
@@ -35,18 +31,20 @@ import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 export const FundPositionModal = ({
-  borrowAsset,
-  chainId,
-  collateralAsset,
+  position,
   isOpen,
   onClose,
 }: {
-  borrowAsset: OpenPositionBorrowable;
-  chainId: SupportedChains;
-  collateralAsset: LeveredCollateral;
   isOpen: boolean;
   onClose: () => void;
+  position: OpenPosition;
 }) => {
+  const {
+    collateral: collateralAsset,
+    chainId,
+    borrowable: borrowAsset,
+    address: positionAddress,
+  } = position;
   const {
     underlyingToken,
     symbol,
@@ -106,16 +104,22 @@ export const FundPositionModal = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
+    if (debouncedAmount.isZero() || !maxSupplyAmount) {
       setIsAmountValid(false);
     } else {
       const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-      setIsAmountValid(amount.lte(max));
+      setIsAmountValid(debouncedAmount.lte(max));
     }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+
+    if (!debouncedAmount.isZero() && debouncedAmount.eq(amount)) {
+      setIsAmountValid(true);
+    } else {
+      setIsAmountValid(false);
+    }
+  }, [debouncedAmount, maxSupplyAmount, optionToWrap, myNativeBalance, amount]);
 
   useEffect(() => {
-    if (amount.isZero()) {
+    if (debouncedAmount.isZero()) {
       setBtnStr('Enter a valid amount to supply');
     } else if (isLoading) {
       setBtnStr(`Loading your balance of ${symbol}...`);
@@ -126,7 +130,7 @@ export const FundPositionModal = ({
         setBtnStr(`You don't have enough ${symbol}`);
       }
     }
-  }, [amount, isLoading, isAmountValid, symbol]);
+  }, [debouncedAmount, isLoading, isAmountValid, symbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address || !currentChain) return;
@@ -186,15 +190,12 @@ export const FundPositionModal = ({
       try {
         setActiveStep(optionToWrap ? 2 : 1);
         const token = currentSdk.getEIP20TokenInstance(underlyingToken, currentSdk.signer);
-        const hasApprovedEnough = (
-          await token.callStatic.allowance(
-            address,
-            currentSdk.chainDeployment.LeveredPositionFactory.address
-          )
-        ).gte(debouncedAmount);
+        const hasApprovedEnough = (await token.callStatic.allowance(address, position.address)).gte(
+          debouncedAmount
+        );
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.leverageApprove(underlyingToken);
+          const tx = await currentSdk.leveredPositionApprove(position.address, underlyingToken);
 
           addRecentTransaction({
             description: `Approve ${symbol}`,
@@ -235,8 +236,8 @@ export const FundPositionModal = ({
         setActiveStep(optionToWrap ? 3 : 2);
 
         const tx = await currentSdk.fundPosition(
-          borrowAsset.position,
-          collateralAsset.cToken,
+          positionAddress,
+          collateralAsset.underlyingToken,
           debouncedAmount
         );
 
@@ -254,13 +255,8 @@ export const FundPositionModal = ({
         await tx.wait();
 
         await queryClient.refetchQueries({ queryKey: ['usePositionsPerChain'] });
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
-        await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
+        await queryClient.refetchQueries({ queryKey: ['usePositionsInfo'] });
+        await queryClient.refetchQueries({ queryKey: ['useCurrentLeverageRatio'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
@@ -381,12 +377,7 @@ export const FundPositionModal = ({
                         underlyingToken={underlyingToken}
                       />
                     </Column>
-                    <ApyStatus
-                      amount={debouncedAmount}
-                      borrowAsset={borrowAsset}
-                      chainId={chainId}
-                      collateralAsset={collateralAsset}
-                    />
+                    <ApyStatus amount={debouncedAmount} position={position} />
                     <Button
                       height={16}
                       id="confirmCreate"
