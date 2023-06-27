@@ -1,4 +1,4 @@
-import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
@@ -74,7 +74,7 @@ export const ApyStatus = ({
   const [updatedSupplyApy, setUpdatedSupplyApy] = useState<number | undefined>(supplyAPY);
   const [updatedBorrowApr, setUpdatedBorrowApr] = useState<number | undefined>(borrowAPY);
 
-  const { data: netApy } = useGetNetApy(
+  const { data: netApy, isLoading } = useGetNetApy(
     collateralCToken,
     borrowCToken,
     amount,
@@ -207,14 +207,18 @@ export const ApyStatus = ({
               <Text size="md">Net APY</Text>
             </HStack>
             <HStack>
-              <EllipsisText
-                maxWidth="300px"
-                tooltip={
-                  netApy !== undefined && netApy !== null ? smallFormatter(netApy, true, 18) : ''
-                }
-              >
-                {netApy !== undefined && netApy !== null ? smallFormatter(netApy) : '?'}%
-              </EllipsisText>
+              {isLoading ? (
+                <Skeleton height="20px" width="45px" />
+              ) : (
+                <EllipsisText
+                  maxWidth="300px"
+                  tooltip={
+                    netApy !== undefined && netApy !== null ? smallFormatter(netApy, true, 18) : ''
+                  }
+                >
+                  {netApy !== undefined && netApy !== null ? smallFormatter(netApy) : '?'}%
+                </EllipsisText>
+              )}
             </HStack>
           </HStack>
         </VStack>

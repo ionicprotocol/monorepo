@@ -189,7 +189,7 @@ export const FundPositionModal = ({
         );
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.leverageApprove(underlyingToken);
+          const tx = await currentSdk.leveredPositionApprove(position.address, underlyingToken);
 
           addRecentTransaction({
             description: `Approve ${symbol}`,

@@ -189,9 +189,16 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       );
     }
 
-    async leverageApprove(collateralUnderlying: string) {
+    async leveredFactoryApprove(collateralUnderlying: string) {
       const token = getContract(collateralUnderlying, EIP20InterfaceABI, this.signer);
       const tx = await token.approve(this.chainDeployment.LeveredPositionFactory.address, constants.MaxUint256);
+
+      return tx;
+    }
+
+    async leveredPositionApprove(positionAddress: string, collateralUnderlying: string) {
+      const token = getContract(collateralUnderlying, EIP20InterfaceABI, this.signer);
+      const tx = await token.approve(positionAddress, constants.MaxUint256);
 
       return tx;
     }

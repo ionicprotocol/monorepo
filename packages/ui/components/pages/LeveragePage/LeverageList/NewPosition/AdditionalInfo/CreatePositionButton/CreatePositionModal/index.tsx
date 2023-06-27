@@ -208,7 +208,7 @@ export const CreatePositionModal = ({
         ).gte(debouncedAmount);
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.leverageApprove(underlyingToken);
+          const tx = await currentSdk.leveredFactoryApprove(underlyingToken);
 
           addRecentTransaction({
             description: `Approve ${symbol}`,

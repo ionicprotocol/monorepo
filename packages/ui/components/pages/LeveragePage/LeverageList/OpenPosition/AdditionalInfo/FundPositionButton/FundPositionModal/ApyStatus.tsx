@@ -1,4 +1,4 @@
-import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
@@ -72,7 +72,7 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
   const { data: baseCollateral } = useEquityAmount(positionAddress, chainId);
   const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, chainId);
 
-  const { data: currentNetApy } = useGetNetApy(
+  const { data: currentNetApy, isLoading: isGetting } = useGetNetApy(
     collateralCToken,
     borrowCToken,
     baseCollateral,
@@ -83,7 +83,7 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
     chainId
   );
 
-  const { data: updatedNetApy } = useUpdatedNetApyAfterFunding(
+  const { data: updatedNetApy, isLoading: isUpdating } = useUpdatedNetApyAfterFunding(
     positionAddress,
     baseCollateral ? baseCollateral.add(amount) : amount,
     totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
@@ -210,29 +210,37 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
               <Text size="md">Net APY</Text>
             </HStack>
             <HStack>
-              <EllipsisText
-                maxWidth="300px"
-                tooltip={
-                  currentNetApy !== undefined && currentNetApy !== null
-                    ? smallFormatter(currentNetApy, true, 18)
-                    : ''
-                }
-              >
-                {currentNetApy !== undefined && currentNetApy !== null
-                  ? smallFormatter(currentNetApy)
-                  : '?'}
-                %
-              </EllipsisText>
+              {isGetting ? (
+                <Skeleton height="20px" width="45px" />
+              ) : (
+                <EllipsisText
+                  maxWidth="300px"
+                  tooltip={
+                    currentNetApy !== undefined && currentNetApy !== null
+                      ? smallFormatter(currentNetApy, true, 18)
+                      : ''
+                  }
+                >
+                  {currentNetApy !== undefined && currentNetApy !== null
+                    ? smallFormatter(currentNetApy)
+                    : '?'}
+                  %
+                </EllipsisText>
+              )}
               <Text>➡</Text>
-              <EllipsisText
-                maxWidth="300px"
-                tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
-              >
-                {updatedNetApy !== undefined && updatedNetApy !== null
-                  ? smallFormatter(updatedNetApy)
-                  : '?'}
-                %
-              </EllipsisText>
+              {isUpdating ? (
+                <Skeleton height="20px" width="45px" />
+              ) : (
+                <EllipsisText
+                  maxWidth="300px"
+                  tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
+                >
+                  {updatedNetApy !== undefined && updatedNetApy !== null
+                    ? smallFormatter(updatedNetApy)
+                    : '?'}
+                  %
+                </EllipsisText>
+              )}
             </HStack>
           </HStack>
         </VStack>
