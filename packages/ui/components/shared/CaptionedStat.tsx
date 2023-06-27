@@ -56,7 +56,7 @@ const SecondStat = ({ text }: { text: string }) => {
   );
 };
 
-const Caption = ({ textAlign, children, ...restOfProps }: TextProps) => {
+export const Caption = ({ textAlign, children, ...restOfProps }: TextProps) => {
   return (
     <Text
       letterSpacing="wide"

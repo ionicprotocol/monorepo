@@ -40,14 +40,10 @@ import * as React from 'react';
 
 import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
 import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/index';
-import { CurrentApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/CurrentApy';
-import { DebtRatio } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/DebtRatio';
 import { DebtValue } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/DebtValue';
-import { EquityValue } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/EquityValue';
-import { LiquidationThreshold } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/LiquidationThreshold';
+import { NetApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/NetApy';
 import { PositionValue } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/PositionValue';
 import { SafetyBuffer } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/SafetyBuffer';
-import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
@@ -57,26 +53,19 @@ import {
   ALL,
   CHAIN,
   COLLATERAL_ASSET,
-  CURRENT_APY,
-  CURRENT_APY_TOOLTIP,
-  DEBT_RATIO,
-  DEBT_RATIO_TOOLTIP,
   DEBT_VALUE,
   DEBT_VALUE_TOOLTIP,
-  EQUITY_VALUE,
-  EQUITY_VALUE_TOOLTIP,
   HIDDEN,
-  LIQUIDATION_THRESHOLD,
-  LIQUIDATION_THRESHOLD_TOOLTIP,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
+  NET_APY,
+  NET_APY_TOOLTIP,
   POSITION_CREATION_PER_PAGE,
   POSITION_VALUE,
   POSITION_VALUE_TOOLTIP,
   SAFETY_BUFFER,
   SAFETY_BUFFER_TOOLTIP,
   SEARCH,
-  SUPPLY_APY,
 } from '@ui/constants/index';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
@@ -87,14 +76,10 @@ import { sortPositions } from '@ui/utils/sorts';
 export type OpenPositionRowData = {
   chain: OpenPosition;
   collateralAsset: OpenPosition;
-  currentApy: OpenPosition;
-  debtRatio: OpenPosition;
   debtValue: OpenPosition;
-  equityValue: OpenPosition;
-  liquidationThreshold: OpenPosition;
+  netApy: OpenPosition;
   positionValue: OpenPosition;
   safetyBuffer: OpenPosition;
-  supplyApy: OpenPosition;
 };
 
 export const OpenPositionComp = ({
@@ -221,22 +206,7 @@ export const OpenPositionComp = ({
             ? positionsInfo[rowB.original.collateralAsset.address].debtValue
             : constants.Zero;
         return rowADebtValue.gt(rowBDebtValue) ? 1 : -1;
-      } else if (columnId === EQUITY_VALUE) {
-        const rowAEquityValue =
-          positionsInfo && positionsInfo[rowA.original.collateralAsset.address]
-            ? positionsInfo[rowA.original.collateralAsset.address].equityValue
-            : constants.Zero;
-        const rowBEquityValue =
-          positionsInfo && positionsInfo[rowB.original.collateralAsset.address]
-            ? positionsInfo[rowB.original.collateralAsset.address].equityValue
-            : constants.Zero;
-        return rowAEquityValue.gt(rowBEquityValue) ? 1 : -1;
-      } else if (columnId === SUPPLY_APY) {
-        return Number(rowB.original.collateralAsset.collateral.supplyRatePerBlock) >
-          Number(rowA.original.collateralAsset.collateral.supplyRatePerBlock)
-          ? 1
-          : -1;
-      } else if (columnId === CURRENT_APY) {
+      } else if (columnId === NET_APY) {
         const rowACurrentApy =
           positionsInfo && positionsInfo[rowA.original.collateralAsset.address]
             ? positionsInfo[rowA.original.collateralAsset.address].currentApy
@@ -246,26 +216,6 @@ export const OpenPositionComp = ({
             ? positionsInfo[rowB.original.collateralAsset.address].currentApy
             : constants.Zero;
         return rowACurrentApy.gt(rowBCurrentApy) ? 1 : -1;
-      } else if (columnId === DEBT_RATIO) {
-        const rowADebtRatio =
-          positionsInfo && positionsInfo[rowA.original.collateralAsset.address]
-            ? positionsInfo[rowA.original.collateralAsset.address].debtRatio
-            : constants.Zero;
-        const rowBDebtRatio =
-          positionsInfo && positionsInfo[rowB.original.collateralAsset.address]
-            ? positionsInfo[rowB.original.collateralAsset.address].debtRatio
-            : constants.Zero;
-        return rowADebtRatio.gt(rowBDebtRatio) ? 1 : -1;
-      } else if (columnId === LIQUIDATION_THRESHOLD) {
-        const rowALiquidationThreshold =
-          positionsInfo && positionsInfo[rowA.original.collateralAsset.address]
-            ? positionsInfo[rowA.original.collateralAsset.address].liquidationThreshold
-            : constants.Zero;
-        const rowBLiquidationThreshold =
-          positionsInfo && positionsInfo[rowB.original.collateralAsset.address]
-            ? positionsInfo[rowB.original.collateralAsset.address].liquidationThreshold
-            : constants.Zero;
-        return rowALiquidationThreshold.gt(rowBLiquidationThreshold) ? 1 : -1;
       } else if (columnId === SAFETY_BUFFER) {
         const rowASafetyBuffer =
           positionsInfo && positionsInfo[rowA.original.collateralAsset.address]
@@ -288,14 +238,10 @@ export const OpenPositionComp = ({
       return {
         chain: position,
         collateralAsset: position,
-        currentApy: position,
-        debtRatio: position,
         debtValue: position,
-        equityValue: position,
-        liquidationThreshold: position,
+        netApy: position,
         positionValue: position,
         safetyBuffer: position,
-        supplyApy: position,
       };
     });
   }, [allOpenPositions]);
@@ -372,38 +318,9 @@ export const OpenPositionComp = ({
         sortingFn: positionSort,
       },
       {
-        accessorFn: (row) => row.equityValue,
+        accessorFn: (row) => row.netApy,
         cell: ({ getValue }) => (
-          <EquityValue
-            info={
-              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
-                ? positionsInfo[getValue<OpenPosition>().address]
-                : undefined
-            }
-            position={getValue<OpenPosition>()}
-          />
-        ),
-        footer: (props) => props.column.id,
-        header: (context) => (
-          <TableHeaderCell context={context} description={EQUITY_VALUE_TOOLTIP}>
-            {EQUITY_VALUE}
-          </TableHeaderCell>
-        ),
-        id: EQUITY_VALUE,
-        sortingFn: positionSort,
-      },
-      {
-        accessorFn: (row) => row.supplyApy,
-        cell: ({ getValue }) => <SupplyApy position={getValue<OpenPosition>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
-        id: SUPPLY_APY,
-        sortingFn: positionSort,
-      },
-      {
-        accessorFn: (row) => row.currentApy,
-        cell: ({ getValue }) => (
-          <CurrentApy
+          <NetApy
             info={
               positionsInfo && positionsInfo[getValue<OpenPosition>().address]
                 ? positionsInfo[getValue<OpenPosition>().address]
@@ -413,51 +330,11 @@ export const OpenPositionComp = ({
         ),
         footer: (props) => props.column.id,
         header: (context) => (
-          <TableHeaderCell context={context} description={CURRENT_APY_TOOLTIP}>
-            {CURRENT_APY}
+          <TableHeaderCell context={context} description={NET_APY_TOOLTIP}>
+            {NET_APY}
           </TableHeaderCell>
         ),
-        id: CURRENT_APY,
-        sortingFn: positionSort,
-      },
-      {
-        accessorFn: (row) => row.debtRatio,
-        cell: ({ getValue }) => (
-          <DebtRatio
-            info={
-              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
-                ? positionsInfo[getValue<OpenPosition>().address]
-                : undefined
-            }
-          />
-        ),
-        footer: (props) => props.column.id,
-        header: (context) => (
-          <TableHeaderCell context={context} description={DEBT_RATIO_TOOLTIP}>
-            {DEBT_RATIO}
-          </TableHeaderCell>
-        ),
-        id: DEBT_RATIO,
-        sortingFn: positionSort,
-      },
-      {
-        accessorFn: (row) => row.liquidationThreshold,
-        cell: ({ getValue }) => (
-          <LiquidationThreshold
-            info={
-              positionsInfo && positionsInfo[getValue<OpenPosition>().address]
-                ? positionsInfo[getValue<OpenPosition>().address]
-                : undefined
-            }
-          />
-        ),
-        footer: (props) => props.column.id,
-        header: (context) => (
-          <TableHeaderCell context={context} description={LIQUIDATION_THRESHOLD_TOOLTIP}>
-            {LIQUIDATION_THRESHOLD}
-          </TableHeaderCell>
-        ),
-        id: LIQUIDATION_THRESHOLD,
+        id: NET_APY,
         sortingFn: positionSort,
       },
       {
@@ -636,7 +513,16 @@ export const OpenPositionComp = ({
                       >
                         {/* 2nd row is a custom 1 cell row */}
                         <Td border="none" colSpan={row.getVisibleCells().length}>
-                          <AdditionalInfo row={row} />
+                          <AdditionalInfo
+                            positionInfo={
+                              positionsInfo
+                                ? positionsInfo[
+                                    row.getValue<OpenPosition>(COLLATERAL_ASSET).address
+                                  ]
+                                : null
+                            }
+                            row={row}
+                          />
                         </Td>
                       </Tr>
                     )}
