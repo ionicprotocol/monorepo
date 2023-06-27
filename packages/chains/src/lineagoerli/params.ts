@@ -8,15 +8,15 @@ const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((5 * 24 * 365 * 60).toString()),
   cgId: "ethereum",
   metadata: {
-    chainIdHex: "0x1",
-    name: "Ethereum Mainnet",
-    shortName: "Ethereum",
+    chainIdHex: "0xE704",
+    name: "Linea Goerli Testnet",
+    shortName: "Linea Goerli",
     uniswapV3Fees: {},
-    img: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.png",
-    blockExplorerUrls: { default: { name: "etherscan", url: "https://etherscan.io" } },
+    img: "https://d1912tcoux65lj.cloudfront.net/network/lineagoerli.png",
+    blockExplorerUrls: { default: { name: "lineascan", url: "https://goerli.lineascan.build/" } },
     rpcUrls: {
-      default: { http: ["https://rpc.ankr.com/eth"] },
-      public: { http: ["https://rpc.ankr.com/eth"] },
+      default: { http: ["https://rpc.goerli.linea.build"] },
+      public: { http: ["https://rpc.goerli.linea.build"] },
     },
     nativeCurrency: {
       symbol: "ETH",
