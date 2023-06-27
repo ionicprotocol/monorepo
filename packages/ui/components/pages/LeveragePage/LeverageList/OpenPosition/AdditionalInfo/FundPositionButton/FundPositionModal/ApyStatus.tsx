@@ -1,213 +1,31 @@
 import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import type { OpenPosition } from '@midas-capital/types';
 import type { BigNumber } from 'ethers';
-import { utils } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
-import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
-import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
-import { useUpdatedNetApyAfterFunding } from '@ui/hooks/leverage/useUpdatedNetApyAfterFunding';
-import { useAssets } from '@ui/hooks/useAssets';
-import { useRewardsForMarket } from '@ui/hooks/useRewards';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { smallFormatter } from '@ui/utils/bigUtils';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useUpdatedLeverageRatioAfterFunding } from '@ui/hooks/leverage/useUpdatedLeverageRatioAfterFunding';
 
 export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: OpenPosition }) => {
-  const {
-    collateral: collateralAsset,
-    chainId,
-    borrowable: borrowAsset,
-    address: positionAddress,
-  } = position;
-  const {
-    cToken: collateralCToken,
-    symbol: collateralSymbol,
-    pool: poolAddress,
-    supplyRatePerBlock,
-    plugin,
-    underlyingToken: collateralUnderlying,
-  } = collateralAsset;
-  const { rate: borrowRatePerBlock, cToken: borrowCToken } = borrowAsset;
-  const sdk = useSdk(chainId);
-  const { data: allRewards } = useRewardsForMarket({
-    asset: {
-      cToken: collateralCToken,
-      plugin,
-    },
-    chainId: Number(chainId),
-    poolAddress,
-  });
-  const { data: assetInfos } = useAssets([chainId]);
-  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
-    [
-      {
-        cToken: collateralCToken,
-        supplyRatePerBlock,
-        underlyingSymbol: collateralSymbol,
-        underlyingToken: collateralUnderlying,
-      },
-    ],
-    chainId,
-    allRewards,
-    assetInfos
-  );
-  const supplyAPY = useMemo(() => {
-    if (sdk) {
-      return sdk.ratePerBlockToAPY(supplyRatePerBlock, getBlockTimePerMinuteByChainId(sdk.chainId));
-    }
-  }, [sdk, supplyRatePerBlock]);
-  const borrowAPY = useMemo(() => {
-    if (sdk) {
-      return sdk.ratePerBlockToAPY(borrowRatePerBlock, getBlockTimePerMinuteByChainId(sdk.chainId));
-    }
-  }, [sdk, borrowRatePerBlock]);
-  const [updatedSupplyApy, setUpdatedSupplyApy] = useState<number | undefined>(supplyAPY);
-  const [updatedBorrowApr, setUpdatedBorrowApr] = useState<number | undefined>(borrowAPY);
-
-  const { data: baseCollateral } = useEquityAmount(positionAddress, chainId);
-  const { data: currentLeverageRatio } = useCurrentLeverageRatio(positionAddress, chainId);
-
-  const { data: currentNetApy, isLoading: isGetting } = useGetNetApy(
-    collateralCToken,
-    borrowCToken,
-    baseCollateral,
-    currentLeverageRatio,
-    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
-      : undefined,
-    chainId
-  );
-
-  const { data: updatedNetApy, isLoading: isUpdating } = useUpdatedNetApyAfterFunding(
+  const { chainId, address: positionAddress } = position;
+  const { data: currentLeverageRatio, isLoading: isGetting } = useCurrentLeverageRatio(
     positionAddress,
-    baseCollateral ? baseCollateral.add(amount) : amount,
-    totalSupplyApyPerAsset && totalSupplyApyPerAsset[collateralCToken] !== undefined
-      ? utils.parseUnits(totalSupplyApyPerAsset[collateralCToken].totalApy.toString())
-      : undefined,
     chainId
   );
-
-  useEffect(() => {
-    const func = async () => {
-      if (sdk) {
-        const bigApy = await sdk.getPositionSupplyApy(collateralCToken, amount);
-        setUpdatedSupplyApy(Number(utils.formatUnits(bigApy)) * 100);
-      }
-    };
-
-    func();
-  }, [sdk, collateralCToken, amount]);
-
-  useEffect(() => {
-    const func = async () => {
-      if (sdk && currentLeverageRatio && baseCollateral) {
-        try {
-          const bigApr = await sdk.getPositionBorrowApr(
-            collateralCToken,
-            borrowCToken,
-            utils.parseUnits(currentLeverageRatio.toString()),
-            baseCollateral.add(amount)
-          );
-
-          setUpdatedBorrowApr(Number(utils.formatUnits(bigApr)));
-        } catch (e) {}
-      }
-    };
-
-    func();
-  }, [sdk, collateralCToken, amount, borrowCToken, currentLeverageRatio, baseCollateral]);
+  const { data: updatedLeverageRatio, isLoading: isUpdating } = useUpdatedLeverageRatioAfterFunding(
+    positionAddress,
+    amount,
+    chainId
+  );
 
   return (
     <MidasBox py={4} width="100%">
       <Flex height="100%" justifyContent="center">
         <VStack alignItems="flex-start" height="100%" justifyContent="center" spacing={4}>
           <HStack spacing={4}>
-            <HStack justifyContent="flex-end" width="90px">
-              <Text size="md">Yield</Text>
-            </HStack>
-            {totalSupplyApyPerAsset ? (
-              <HStack>
-                <EllipsisText
-                  maxWidth="300px"
-                  tooltip={
-                    totalSupplyApyPerAsset[collateralCToken] !== undefined &&
-                    totalSupplyApyPerAsset[collateralCToken].totalApy !== 0
-                      ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100,
-                          true,
-                          18
-                        )
-                      : ''
-                  }
-                >
-                  {totalSupplyApyPerAsset[collateralCToken] !== undefined
-                    ? smallFormatter(totalSupplyApyPerAsset[collateralCToken].totalApy * 100)
-                    : '?'}
-                  %
-                </EllipsisText>
-                <Text>➡</Text>
-                <EllipsisText
-                  maxWidth="300px"
-                  tooltip={
-                    totalSupplyApyPerAsset[collateralCToken] !== undefined &&
-                    updatedSupplyApy !== undefined &&
-                    supplyAPY !== undefined &&
-                    totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
-                      updatedSupplyApy -
-                      supplyAPY !==
-                      0
-                      ? smallFormatter(
-                          totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
-                            updatedSupplyApy -
-                            supplyAPY,
-                          true,
-                          18
-                        )
-                      : ''
-                  }
-                >
-                  {totalSupplyApyPerAsset[collateralCToken] !== undefined &&
-                  updatedSupplyApy !== undefined &&
-                  supplyAPY !== undefined
-                    ? smallFormatter(
-                        totalSupplyApyPerAsset[collateralCToken].totalApy * 100 +
-                          updatedSupplyApy -
-                          supplyAPY
-                      )
-                    : '?'}
-                  %
-                </EllipsisText>
-              </HStack>
-            ) : null}
-          </HStack>
-          <HStack spacing={4}>
-            <HStack justifyContent="flex-end" width="90px">
-              <Text size="md">Borrow</Text>
-            </HStack>
-            <HStack>
-              <EllipsisText
-                maxWidth="300px"
-                tooltip={borrowAPY ? smallFormatter(borrowAPY, true, 18) : ''}
-              >
-                {borrowAPY ? smallFormatter(borrowAPY) : '?'}%
-              </EllipsisText>
-              <Text>➡</Text>
-              <EllipsisText
-                maxWidth="300px"
-                tooltip={updatedBorrowApr ? smallFormatter(updatedBorrowApr, true, 18) : ''}
-              >
-                {updatedBorrowApr ? smallFormatter(updatedBorrowApr) : '?'}%
-              </EllipsisText>
-            </HStack>
-          </HStack>
-          <HStack spacing={4}>
-            <HStack justifyContent="flex-end" width="90px">
-              <Text size="md">Net APY</Text>
+            <HStack justifyContent="flex-end" width="150px">
+              <Text size="md">Leverage Ratio</Text>
             </HStack>
             <HStack>
               {isGetting ? (
@@ -215,16 +33,9 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
               ) : (
                 <EllipsisText
                   maxWidth="300px"
-                  tooltip={
-                    currentNetApy !== undefined && currentNetApy !== null
-                      ? smallFormatter(currentNetApy, true, 18)
-                      : ''
-                  }
+                  tooltip={currentLeverageRatio ? currentLeverageRatio.toString() : ''}
                 >
-                  {currentNetApy !== undefined && currentNetApy !== null
-                    ? smallFormatter(currentNetApy)
-                    : '?'}
-                  %
+                  {currentLeverageRatio ? currentLeverageRatio.toFixed(3) : '?'} x
                 </EllipsisText>
               )}
               <Text>➡</Text>
@@ -233,12 +44,9 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
               ) : (
                 <EllipsisText
                   maxWidth="300px"
-                  tooltip={updatedNetApy ? smallFormatter(updatedNetApy, true, 18) : ''}
+                  tooltip={updatedLeverageRatio ? updatedLeverageRatio.toString() : ''}
                 >
-                  {updatedNetApy !== undefined && updatedNetApy !== null
-                    ? smallFormatter(updatedNetApy)
-                    : '?'}
-                  %
+                  {updatedLeverageRatio ? updatedLeverageRatio.toFixed(3) : '?'} x
                 </EllipsisText>
               )}
             </HStack>

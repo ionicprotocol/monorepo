@@ -336,5 +336,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
 
       return await leveredPositionLens.getNetApyForPositionAfterFunding(positionAddress, supplyApy, newFunding);
     }
+
+    async getLeverageRatioAfterFunding(positionAddress: string, newFunding: BigNumber) {
+      const leveredPositionLens = this.createLeveredPositionLens();
+
+      return await leveredPositionLens.getLeverageRatioAfterFunding(positionAddress, newFunding);
+    }
   };
 }
