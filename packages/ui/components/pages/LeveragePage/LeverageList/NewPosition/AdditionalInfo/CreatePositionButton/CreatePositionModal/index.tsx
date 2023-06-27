@@ -114,7 +114,7 @@ export const CreatePositionModal = ({
       setIsAmountValid(debouncedAmount.lte(max));
     }
 
-    if (debouncedAmount.eq(amount)) {
+    if (!debouncedAmount.isZero() && debouncedAmount.eq(amount)) {
       setIsAmountValid(true);
     } else {
       setIsAmountValid(false);

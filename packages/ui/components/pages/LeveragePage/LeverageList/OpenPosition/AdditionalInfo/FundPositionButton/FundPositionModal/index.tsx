@@ -110,7 +110,13 @@ export const FundPositionModal = ({
       const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
       setIsAmountValid(debouncedAmount.lte(max));
     }
-  }, [debouncedAmount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+
+    if (!debouncedAmount.isZero() && debouncedAmount.eq(amount)) {
+      setIsAmountValid(true);
+    } else {
+      setIsAmountValid(false);
+    }
+  }, [debouncedAmount, maxSupplyAmount, optionToWrap, myNativeBalance, amount]);
 
   useEffect(() => {
     if (debouncedAmount.isZero()) {
