@@ -104,16 +104,16 @@ export const FundPositionModal = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
+    if (debouncedAmount.isZero() || !maxSupplyAmount) {
       setIsAmountValid(false);
     } else {
       const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-      setIsAmountValid(amount.lte(max));
+      setIsAmountValid(debouncedAmount.lte(max));
     }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+  }, [debouncedAmount, maxSupplyAmount, optionToWrap, myNativeBalance]);
 
   useEffect(() => {
-    if (amount.isZero()) {
+    if (debouncedAmount.isZero()) {
       setBtnStr('Enter a valid amount to supply');
     } else if (isLoading) {
       setBtnStr(`Loading your balance of ${symbol}...`);
@@ -124,7 +124,7 @@ export const FundPositionModal = ({
         setBtnStr(`You don't have enough ${symbol}`);
       }
     }
-  }, [amount, isLoading, isAmountValid, symbol]);
+  }, [debouncedAmount, isLoading, isAmountValid, symbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address || !currentChain) return;

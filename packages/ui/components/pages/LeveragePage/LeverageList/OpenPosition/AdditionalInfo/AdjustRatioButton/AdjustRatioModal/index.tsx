@@ -200,7 +200,16 @@ export const AdjustRatioModal = ({
                   />
                 </Column>
                 <ApyStatus leverageValue={debouncedLeverageNum} position={position} />
-                <Button height={16} id="confirmAdjust" onClick={onConfirm} width="100%">
+                <Button
+                  height={16}
+                  id="confirmAdjust"
+                  isDisabled={
+                    debouncedLeverageNum.toString() === currentLeverageRatio?.toFixed(3) ||
+                    debouncedLeverageNum !== parseFloat(leverageValue)
+                  }
+                  onClick={onConfirm}
+                  width="100%"
+                >
                   Adjust leverage ratio
                 </Button>
               </Column>

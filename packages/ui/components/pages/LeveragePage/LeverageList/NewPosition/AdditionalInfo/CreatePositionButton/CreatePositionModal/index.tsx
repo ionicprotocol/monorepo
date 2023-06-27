@@ -107,13 +107,19 @@ export const CreatePositionModal = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
+    if (debouncedAmount.isZero() || !maxSupplyAmount) {
       setIsAmountValid(false);
     } else {
       const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-      setIsAmountValid(amount.lte(max));
+      setIsAmountValid(debouncedAmount.lte(max));
     }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+
+    if (debouncedAmount.eq(amount)) {
+      setIsAmountValid(true);
+    } else {
+      setIsAmountValid(false);
+    }
+  }, [debouncedAmount, maxSupplyAmount, optionToWrap, myNativeBalance, amount]);
 
   useEffect(() => {
     if (debouncedLeverageNum < LEVERAGE_VALUE.MIN || debouncedLeverageNum > LEVERAGE_VALUE.MAX) {
@@ -121,7 +127,13 @@ export const CreatePositionModal = ({
     } else {
       setIsLeverageValueValid(true);
     }
-  }, [debouncedLeverageNum]);
+
+    if (debouncedLeverageNum !== parseFloat(leverageValue)) {
+      setIsLeverageValueValid(false);
+    } else {
+      setIsLeverageValueValid(true);
+    }
+  }, [debouncedLeverageNum, leverageValue]);
 
   useEffect(() => {
     if (debouncedAmount.isZero()) {
@@ -270,13 +282,7 @@ export const CreatePositionModal = ({
         await tx.wait();
 
         await queryClient.refetchQueries({ queryKey: ['usePositionsPerChain'] });
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
-        await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
+        await queryClient.refetchQueries({ queryKey: ['usePositionsInfo'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
@@ -411,7 +417,11 @@ export const CreatePositionModal = ({
                     <Button
                       height={16}
                       id="confirmCreate"
-                      isDisabled={!isAmountValid || !isLeverageValueValid}
+                      isDisabled={
+                        !isAmountValid ||
+                        !isLeverageValueValid ||
+                        debouncedBorrowAsset.cToken !== borrowAsset.cToken
+                      }
                       onClick={onConfirm}
                       width="100%"
                     >
