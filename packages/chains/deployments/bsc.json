@@ -33,7 +33,7 @@
       "address": "0xA4C55B159824470a710e5131Faec37969b2F32Ab"
     },
     "AlgebraPriceOracle_Implementation": {
-      "address": "0xf0f8CE54896750aCe4A10226756787A0bfee1B8B"
+      "address": "0x409de7edCCcDd25B5d4b00f045aEcb9D248E91D8"
     },
     "AlgebraPriceOracle_Proxy": {
       "address": "0xA4C55B159824470a710e5131Faec37969b2F32Ab"
@@ -99,7 +99,7 @@
       "address": "0x4F4326189Adf2e2d46aE15A55499B7A5995f8A23"
     },
     "CTokenFirstExtension": {
-      "address": "0xFC5E587C8e6aA01Bc1b7591cbc855B0efD196E65"
+      "address": "0x6232F950dBB5804FC72dC02064Dc1A8220887dF0"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x66397a7BD91650e260a605F68F2d46F3350f2a1B"
@@ -111,7 +111,7 @@
       "address": "0xb57cf3507486abF0443ba782e2A1730CbE25bb9e"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0xE69e354Be51BeD09E90e9b6Be506EBCfbD51d46d"
+      "address": "0x3F3157A190C64201aa188b4950Ff21a80DD2226a"
     },
     "CurveLpTokenPriceOracleNoRegistry": {
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
@@ -291,25 +291,25 @@
       "address": "0xD924786281760368dd5857bB048CF7CB20a115C9"
     },
     "LeveredPositionFactory": {
-      "address": "0x71ba5c7B3A623C3605ce3Fc5Fe04CAE6809de907"
+      "address": "0x6d1Dd50b2E87cA997d35Ae8F6405BCa9c6F238B0"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x42ca8cb70B857E77deaD7F62e6765DfAa6ed2082"
+      "address": "0x560614DFc1dd09ddd0108FbAd4675A668Be899BF"
     },
     "LeveredPositionsLens": {
       "address": "0xbFac919fEF89D2e3EB41c82C304E3d9183C67A75"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0xad86B8Fed020562579033Ab55604a4D5B89BF45A"
+      "address": "0x08Feff80b171168Dc21fE109c462503fA3294B09"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0xbFac919fEF89D2e3EB41c82C304E3d9183C67A75"
     },
     "LiquidatorsRegistry": {
-      "address": "0x88683D197d2237AD49Bb3Ad739Ad88E2CB9E850C"
+      "address": "0x3E86eB86b5D4E68a26a53D23E1953e595b900084"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x089A362BFFcAeed0674C6C1211843CA346E5FB72"
+      "address": "0x3286dC93f11f548e1E712937e56f47F48477135F"
     },
     "LooplessFlywheelBooster": {
       "address": "0xb77ce603c7b894B9eFe9c0697D5B724dDdb9EaC6"
