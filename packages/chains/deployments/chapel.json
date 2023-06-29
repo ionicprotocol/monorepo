@@ -159,7 +159,7 @@
       "address": "0x212f88Ba5927b6cDcA498E0BA20541EF35864961"
     },
     "LeveredPositionFactory": {
-      "address": "0x67419AE30cBb8723c49E1F03bca0Ddcc245da3AA"
+      "address": "0xE55a7dd52D4e0577B1a8bbfeA7246d83b85A5B56"
     },
     "LeveredPositionFactoryExtension": {
       "address": "0x73e9e182b4Fd353D4CD640c3F16623D901E26B0d"
@@ -174,10 +174,10 @@
       "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"
     },
     "LiquidatorsRegistry": {
-      "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
+      "address": "0x074f1427cD25469F1051F51908751dA5409F3677"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xb803b97049D9368AeAb90C5e90d7F566Ef6BCB15"
+      "address": "0x273060359eeDe3AB058bcc52d26C603531c2f778"
     },
     "LooplessFlywheelBooster": {
       "address": "0x8ac339fB1857cc2986941C50c4234EfC47F73424"
