@@ -14,6 +14,7 @@ import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInf
 import { EnableCollateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/EnableCollateral';
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
 import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
+import { SwapToken } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SwapToken';
 import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
@@ -24,6 +25,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
+import { useSwapTokens } from '@ui/hooks/useSwapTokens';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -86,6 +88,20 @@ export const SupplyModal = ({
     myNativeBalance,
   ]);
 
+  const optionToSwap = useMemo(() => {
+    return (
+      (asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+        myBalance?.isZero() &&
+        myNativeBalance?.isZero()) ||
+      (asset.underlyingToken !== currentSdk.chainSpecificAddresses.W_TOKEN && myBalance?.isZero())
+    );
+  }, [
+    asset.underlyingToken,
+    currentSdk.chainSpecificAddresses.W_TOKEN,
+    myBalance,
+    myNativeBalance,
+  ]);
+
   const { data: supplyCap } = useSupplyCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,
@@ -97,6 +113,8 @@ export const SupplyModal = ({
     comptrollerAddress,
     poolChainId
   );
+
+  const { data: swapTokens } = useSwapTokens(asset.underlyingToken, poolChainId);
 
   const queryClient = useQueryClient();
 
@@ -373,6 +391,8 @@ export const SupplyModal = ({
               poolChainId={poolChainId}
               steps={confirmedSteps}
             />
+          ) : optionToSwap ? (
+            <SwapToken asset={asset} poolChainId={poolChainId} />
           ) : (
             <>
               <HStack justifyContent="center" my={4} width="100%">
