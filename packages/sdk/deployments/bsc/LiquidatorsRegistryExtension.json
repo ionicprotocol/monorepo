@@ -50,6 +50,30 @@
       "type": "event"
     },
     {
+      "inputs": [
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "inputToken",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "outputToken",
+          "type": "address"
+        }
+      ],
+      "name": "_addInputTokenForOutputToken",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "_getExtensionFunctions",
       "outputs": [
@@ -81,6 +105,24 @@
         }
       ],
       "name": "_removeRedemptionStrategy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "inputToken",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IERC20Upgradeable",
+          "name": "outputToken",
+          "type": "address"
+        }
+      ],
+      "name": "_setDefaultOutputToken",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -492,6 +534,30 @@
           "anonymous": false
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "_addInputTokenForOutputToken",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
           "inputs": [],
           "stateMutability": "pure",
           "type": "function",
@@ -525,6 +591,23 @@
           "stateMutability": "nonpayable",
           "type": "function",
           "name": "_removeRedemptionStrategy"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "_setDefaultOutputToken"
         },
         {
           "inputs": [
@@ -1223,8 +1306,10 @@
     "linkReferences": {}
   },
   "methodIdentifiers": {
+    "_addInputTokenForOutputToken(address,address)": "93d84a4a",
     "_getExtensionFunctions()": "89f8132e",
     "_removeRedemptionStrategy(address,string,address)": "6e4f9b99",
+    "_setDefaultOutputToken(address,address)": "2434cb7f",
     "_setRedemptionStrategies(address[],address[],address[])": "366eda2e",
     "_setRedemptionStrategy(address,address,address)": "d7341acf",
     "acceptOwnership()": "79ba5097",

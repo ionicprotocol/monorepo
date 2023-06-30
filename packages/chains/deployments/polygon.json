@@ -18,7 +18,7 @@
       "address": "0x7f3597b369610cCFf34C181c0A19d4480aCe1eEa"
     },
     "AlgebraPriceOracle_Implementation": {
-      "address": "0xB22A3E1c1Db4dd6F0c5E8bDD8Ea794cfDB4a7075"
+      "address": "0x0DF63896A016098e72F1a3d947C25d686860C861"
     },
     "AlgebraPriceOracle_Proxy": {
       "address": "0x7f3597b369610cCFf34C181c0A19d4480aCe1eEa"
@@ -90,7 +90,7 @@
       "address": "0xA6BDC4e098b6b14f4fCA2906B0a51e2798BA5777"
     },
     "CTokenFirstExtension": {
-      "address": "0x78d5eE413dCDfE3686D2a59E07fb9B23b349D239"
+      "address": "0x76724Bcd9E270d4d27aed9f7BD77Dd0CB7B7264b"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x12f455CA7cf0b90aDAF31f58dA6BeeD7DFe28bBf"
@@ -102,7 +102,7 @@
       "address": "0x4A5bCc111102E9b0d86E473EacFB7C530048a960"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x80d68C9af156Fb5185f8C04B666F589B1D903bFe"
+      "address": "0xb7d3cf34fA83994B2eC92d918a693d2a4aCEA9Fa"
     },
     "CurveLpTokenPriceOracleNoRegistry": {
       "address": "0xaCF3E1C6f2D6Ff12B8aEE44413D6834774B3f7A3"
@@ -207,25 +207,25 @@
       "address": "0xAe93A10190393c90593db3E931295d6D27e51383"
     },
     "LeveredPositionFactory": {
-      "address": "0x65Cbe775B7f17008e4e06B4582A7202592e72F21"
+      "address": "0x2f54C95b9A76699C7Cd77d3bCe096B36ccbda402"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x4682b914C351830e9e289C02ec312e453f017eE2"
+      "address": "0x2722D6009EBD985B0519A257cD6ACE5543F833e0"
     },
     "LeveredPositionsLens": {
       "address": "0xc7C522615d468c8F91d8B8B5837f0E71fcefEe32"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0x1864fFa2954E6E28CeEa1C9174b3D4870BC7d9e3"
+      "address": "0x48e9E2b08461aD468A8feFB48d67b33249656524"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0xc7C522615d468c8F91d8B8B5837f0E71fcefEe32"
     },
     "LiquidatorsRegistry": {
-      "address": "0x2bB5dA591333DEB05d37C6728A08c89d325b2dE9"
+      "address": "0x61B6d5962d3855f6EcA4Ef646ABF79c8C8beD8bA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xdf682586DE40AbcA92cfB675a79649B642558454"
+      "address": "0x6cB76277e592D8A47dD7bfC86deD45f623C624b1"
     },
     "LooplessFlywheelBooster": {
       "address": "0x04ce4F5F699A2F52152Ea6F567EA852870fFcE73"
@@ -339,7 +339,7 @@
       "address": "0xF36e137F9aA5fB74e9aEb0EDc767238872d6fd3d"
     },
     "UniswapV3PriceOracle_Implementation": {
-      "address": "0x45B69dd6cb81584B63d13134EB0E788ab576b624"
+      "address": "0x8BCfb6afE288A26aB69644e18Ed9913B4C2EdDac"
     },
     "UniswapV3PriceOracle_Proxy": {
       "address": "0xF36e137F9aA5fB74e9aEb0EDc767238872d6fd3d"
