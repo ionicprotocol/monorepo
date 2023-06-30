@@ -5,7 +5,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
-import { constants } from 'ethers';
+import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
@@ -25,7 +25,6 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
-import { useSwapTokens } from '@ui/hooks/useSwapTokens';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -113,8 +112,6 @@ export const SupplyModal = ({
     comptrollerAddress,
     poolChainId
   );
-
-  const { data: swapTokens } = useSwapTokens(asset.underlyingToken, poolChainId);
 
   const queryClient = useQueryClient();
 
@@ -384,10 +381,12 @@ export const SupplyModal = ({
           {isConfirmed ? (
             <PendingTransaction
               activeStep={activeStep}
-              amount={amount}
               asset={asset}
               failedStep={failedStep}
-              isSupplying={isSupplying}
+              info={`You supplied ${utils.formatUnits(amount, asset.underlyingDecimals)} ${
+                asset.underlyingSymbol
+              }`}
+              isLoading={isSupplying}
               poolChainId={poolChainId}
               steps={confirmedSteps}
             />

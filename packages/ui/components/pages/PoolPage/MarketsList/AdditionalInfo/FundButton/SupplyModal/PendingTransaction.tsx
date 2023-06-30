@@ -1,6 +1,4 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import type { BigNumber } from 'ethers';
-import { utils } from 'ethers';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';
@@ -15,21 +13,22 @@ export const PendingTransaction = ({
   activeStep,
   failedStep,
   steps,
-  isSupplying,
+  info,
+  isLoading,
   poolChainId,
-  amount,
   asset,
 }: {
   activeStep: number;
-  amount: BigNumber;
-  asset: MarketData;
+  asset: Pick<
+    MarketData,
+    'logoUrl' | 'underlyingDecimals' | 'underlyingSymbol' | 'underlyingToken'
+  >;
   failedStep: number;
-  isSupplying: boolean;
+  info: string;
+  isLoading: boolean;
   poolChainId: number;
   steps: TxStep[];
 }) => {
-  const amountNum = utils.formatUnits(amount, asset.underlyingDecimals);
-
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
@@ -44,7 +43,7 @@ export const PendingTransaction = ({
 
   return (
     <Column crossAxisAlignment="center" expand mainAxisAlignment="center" p={4} pt={12}>
-      {isSupplying ? (
+      {isLoading ? (
         <Loader />
       ) : failedStep === 0 ? (
         <VStack width="100%">
@@ -53,7 +52,7 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text fontWeight="bold" variant="mdText">
-            You supplied {amountNum} {asset.underlyingSymbol}
+            {info}
           </Text>
           <Flex justifyContent="flex-end" width="100%">
             <Button onClick={addToken} size="sm" variant={'ghost'}>
@@ -73,12 +72,12 @@ export const PendingTransaction = ({
         <TransactionStepper
           activeStep={activeStep}
           failedStep={failedStep}
-          isLoading={isSupplying}
+          isLoading={isLoading}
           poolChainId={poolChainId}
           steps={steps}
         />
       </Box>
-      {isSupplying ? (
+      {isLoading ? (
         <VStack mt={4}>
           <Text textAlign="center" variant="smText">
             Check your wallet to submit the transactions

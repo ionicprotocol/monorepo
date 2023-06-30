@@ -1,23 +1,33 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Divider, HStack, Input, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Input, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
+import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { BsArrowDownCircle } from 'react-icons/bs';
 
 import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/Balance';
+import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { SWAP_STEPS } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useDebounce } from '@ui/hooks/useDebounce';
+import { useSwapAmount } from '@ui/hooks/useSwapAmount';
 import type { SwapTokenType } from '@ui/hooks/useSwapTokens';
 import { useSwapTokens } from '@ui/hooks/useSwapTokens';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import type { TxStep } from '@ui/types/ComponentPropsType';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
@@ -26,8 +36,28 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const { data: swapTokens } = useSwapTokens(asset.underlyingToken, poolChainId);
+
   const { data: balance, isLoading } = useTokenBalance(selectedToken?.underlyingToken, poolChainId);
   const { cCard } = useColors();
+  const debouncedAmount = useDebounce(amount, 1000);
+  const { data: swapAmount, isLoading: isSwapAmountLoading } = useSwapAmount(
+    selectedToken?.underlyingToken,
+    debouncedAmount,
+    asset.underlyingToken,
+    poolChainId
+  );
+
+  const { currentSdk, address } = useMultiMidas();
+  const addRecentTransaction = useAddRecentTransaction();
+
+  const errorToast = useErrorToast();
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isSwapping, setIsSwapping] = useState(false);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [failedStep, setFailedStep] = useState<number>(0);
+  const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
+  const successToast = useSuccessToast();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (swapTokens && swapTokens.length > 0) {
@@ -60,7 +90,82 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
     setSelectedToken(token);
   };
 
-  return (
+  const onConfirm = async () => {
+    if (!currentSdk || !address || !selectedToken || debouncedAmount.eq(constants.Zero)) return;
+
+    const steps = SWAP_STEPS(selectedToken.underlyingSymbol, asset.underlyingSymbol);
+
+    const sentryProperties = {
+      amount: debouncedAmount,
+      chainId: currentSdk.chainId,
+      inputToken: selectedToken,
+      outputToken: asset,
+      token: asset.cToken,
+    };
+
+    setIsConfirmed(true);
+    setConfirmedSteps([...steps]);
+    const _steps = [...steps];
+
+    setIsSwapping(true);
+    setActiveStep(1);
+    setFailedStep(0);
+    try {
+      const tx = await currentSdk.swap(
+        selectedToken.underlyingToken,
+        debouncedAmount,
+        asset.underlyingToken
+      );
+
+      addRecentTransaction({
+        description: `${selectedToken.underlyingSymbol} Token Swap`,
+        hash: tx.hash,
+      });
+
+      _steps[0] = {
+        ..._steps[0],
+        txHash: tx.hash,
+      };
+      setConfirmedSteps([..._steps]);
+
+      await tx.wait();
+
+      await queryClient.refetchQueries({ queryKey: ['TokenBalance'] });
+
+      _steps[0] = {
+        ..._steps[0],
+        done: true,
+        txHash: tx.hash,
+      };
+      setConfirmedSteps([..._steps]);
+      successToast({
+        description: 'Successfully swapped!',
+        id: 'Swap - ' + Math.random().toString(),
+      });
+    } catch (error) {
+      const sentryInfo = {
+        contextName: 'Swapping',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, sentryInfo, toast: errorToast });
+    }
+
+    setIsSwapping(false);
+  };
+
+  return isConfirmed ? (
+    <PendingTransaction
+      activeStep={activeStep}
+      asset={asset}
+      failedStep={failedStep}
+      info={`You swapped ${utils.formatUnits(debouncedAmount, selectedToken?.underlyingDecimals)} ${
+        selectedToken?.underlyingSymbol
+      }`}
+      isLoading={isSwapping}
+      poolChainId={poolChainId}
+      steps={confirmedSteps}
+    />
+  ) : (
     <>
       <HStack justifyContent="center" my={4} width="100%">
         <Text variant="title">Swap to</Text>
@@ -217,19 +322,20 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
                   p={4}
                   width="100%"
                 >
-                  <Input
-                    autoFocus
-                    fontSize={22}
-                    id="fundInput"
-                    inputMode="decimal"
-                    mr={4}
-                    onChange={(event) => updateAmount(event.target.value)}
-                    placeholder="0.0"
-                    readOnly
-                    type="number"
-                    value={userEnteredAmount}
-                    variant="unstyled"
-                  />
+                  <Skeleton isLoaded={!isSwapAmountLoading}>
+                    <Input
+                      autoFocus
+                      fontSize={22}
+                      mr={4}
+                      placeholder="0.0"
+                      readOnly
+                      value={
+                        swapAmount ? utils.formatUnits(swapAmount, asset.underlyingDecimals) : '0.0'
+                      }
+                      variant="unstyled"
+                    />
+                  </Skeleton>
+
                   <Row crossAxisAlignment="center" flexShrink={0} mainAxisAlignment="flex-start">
                     <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
                       <Box height={8} mr={1} width={8}>
@@ -255,12 +361,18 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
             </VStack>
             <Button
               height={16}
-              id="confirmFund"
-              // isDisabled={!isAmountValid}
-              // onClick={onConfirm}
+              isDisabled={
+                !amount.eq(debouncedAmount) ||
+                isSwapAmountLoading ||
+                !balance ||
+                balance.eq(constants.Zero)
+              }
+              onClick={onConfirm}
               width="100%"
             >
-              Swap
+              {balance?.gt(constants.Zero)
+                ? `Swap`
+                : `You don't have enough ${selectedToken.underlyingSymbol}`}
             </Button>
           </>
         ) : null}
