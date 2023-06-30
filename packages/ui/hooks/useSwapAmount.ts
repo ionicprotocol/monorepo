@@ -45,8 +45,7 @@ export function useSwapAmount(inputToken?: string, amount?: BigNumber, outputTok
     },
     {
       cacheTime: Infinity,
-      enabled:
-        !!inputToken && amount?.gt(constants.Zero) && !!outputToken && !!currentSdk && !!address,
+      enabled: !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address,
       staleTime: Infinity,
     }
   );
