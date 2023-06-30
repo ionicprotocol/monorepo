@@ -43,8 +43,7 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
   const { data: swapAmount, isLoading: isSwapAmountLoading } = useSwapAmount(
     selectedToken?.underlyingToken,
     debouncedAmount,
-    asset.underlyingToken,
-    poolChainId
+    asset.underlyingToken
   );
 
   const { currentSdk, address } = useMultiMidas();
@@ -108,40 +107,97 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
     const _steps = [...steps];
 
     setIsSwapping(true);
-    setActiveStep(1);
     setFailedStep(0);
+
     try {
-      const tx = await currentSdk.swap(
-        selectedToken.underlyingToken,
-        debouncedAmount,
-        asset.underlyingToken
-      );
+      try {
+        setActiveStep(1);
+        const token = currentSdk.getEIP20TokenInstance(
+          selectedToken.underlyingToken,
+          currentSdk.signer
+        );
+        const hasApprovedEnough = (
+          await token.callStatic.allowance(
+            address,
+            currentSdk.chainDeployment.LiquidatorsRegistry.address
+          )
+        ).gte(debouncedAmount);
 
-      addRecentTransaction({
-        description: `${selectedToken.underlyingSymbol} Token Swap`,
-        hash: tx.hash,
-      });
+        if (!hasApprovedEnough) {
+          const tx = await currentSdk.approveLiquidatorsRegistry(selectedToken.underlyingToken);
 
-      _steps[0] = {
-        ..._steps[0],
-        txHash: tx.hash,
-      };
-      setConfirmedSteps([..._steps]);
+          addRecentTransaction({
+            description: `Approve ${selectedToken.underlyingSymbol}`,
+            hash: tx.hash,
+          });
+          _steps[0] = {
+            ..._steps[0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
 
-      await tx.wait();
+          await tx.wait();
 
-      await queryClient.refetchQueries({ queryKey: ['TokenBalance'] });
+          _steps[0] = {
+            ..._steps[0],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+          successToast({
+            description: 'Successfully Approved!',
+            id: 'Approved - ' + Math.random().toString(),
+          });
+        } else {
+          _steps[0] = {
+            ..._steps[0],
+            desc: 'Already approved!',
+            done: true,
+          };
+          setConfirmedSteps([..._steps]);
+        }
+      } catch (error) {
+        setFailedStep(1);
+        throw error;
+      }
 
-      _steps[0] = {
-        ..._steps[0],
-        done: true,
-        txHash: tx.hash,
-      };
-      setConfirmedSteps([..._steps]);
-      successToast({
-        description: 'Successfully swapped!',
-        id: 'Swap - ' + Math.random().toString(),
-      });
+      try {
+        setActiveStep(2);
+        const tx = await currentSdk.swap(
+          selectedToken.underlyingToken,
+          debouncedAmount,
+          asset.underlyingToken
+        );
+
+        addRecentTransaction({
+          description: `${selectedToken.underlyingSymbol} Token Swap`,
+          hash: tx.hash,
+        });
+
+        _steps[1] = {
+          ..._steps[1],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+
+        await tx.wait();
+
+        await queryClient.refetchQueries({ queryKey: ['TokenBalance'] });
+
+        _steps[1] = {
+          ..._steps[1],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+        successToast({
+          description: 'Successfully swapped!',
+          id: 'Swap - ' + Math.random().toString(),
+        });
+      } catch (error) {
+        setFailedStep(2);
+        throw error;
+      }
     } catch (error) {
       const sentryInfo = {
         contextName: 'Swapping',

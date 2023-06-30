@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
+import { type BigNumber, constants } from 'ethers';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export interface SwapTokenType {
   underlyingDecimals: BigNumber;
@@ -9,24 +9,31 @@ export interface SwapTokenType {
   underlyingToken: string;
 }
 
-export function useSwapAmount(
-  inputToken?: string,
-  amount?: BigNumber,
-  outputToken?: string,
-  chainId?: number
-) {
-  const sdk = useSdk(chainId);
+export function useSwapAmount(inputToken?: string, amount?: BigNumber, outputToken?: string) {
+  const { address, currentSdk } = useMultiMidas();
 
   return useQuery<BigNumber | null>(
-    ['useSwapAmount', inputToken, amount, outputToken, sdk?.chainId],
+    ['useSwapAmount', inputToken, amount, outputToken, currentSdk?.chainId, address],
     async () => {
-      if (sdk && inputToken && amount && outputToken) {
+      if (currentSdk && inputToken && amount?.gt(constants.Zero) && outputToken && address) {
         try {
-          return await sdk.getSwapAmount(inputToken, amount, outputToken);
+          const token = currentSdk.getEIP20TokenInstance(inputToken);
+          const hasApprovedEnough = (
+            await token.callStatic.allowance(
+              address,
+              currentSdk.chainDeployment.LiquidatorsRegistry.address
+            )
+          ).gte(amount);
+
+          if (!hasApprovedEnough) {
+            await currentSdk.approveLiquidatorsRegistry(inputToken);
+          }
+
+          return await currentSdk.getSwapAmount(inputToken, amount, outputToken);
         } catch (e) {
           console.error(
             'Could not get swap amount',
-            { amount, chainId, inputToken, outputToken },
+            { amount, chainId: currentSdk.chainId, inputToken, outputToken },
             e
           );
 
@@ -38,7 +45,8 @@ export function useSwapAmount(
     },
     {
       cacheTime: Infinity,
-      enabled: !!inputToken && !!amount && !!outputToken && !!sdk,
+      enabled:
+        !!inputToken && amount?.gt(constants.Zero) && !!outputToken && !!currentSdk && !!address,
       staleTime: Infinity,
     }
   );

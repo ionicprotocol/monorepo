@@ -122,6 +122,13 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       return await iLiquidatorsRegistry.swap(inputToken, amount, outputToken);
     }
 
+    async approveLiquidatorsRegistry(underlying: string) {
+      const token = getContract(underlying, EIP20InterfaceABI, this.signer);
+      const tx = await token.approve(this.chainDeployment.LiquidatorsRegistry.address, constants.MaxUint256);
+
+      return tx;
+    }
+
     async getSwapTokens(outputToken: string) {
       const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
 
