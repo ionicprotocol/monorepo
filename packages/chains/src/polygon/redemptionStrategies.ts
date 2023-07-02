@@ -153,6 +153,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
   [underlying(assets, assetSymbols.am3CRV)]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.amUSDC),
+  ],
+  [underlying(assets, assetSymbols.amUSDC)]: [
+    RedemptionStrategyContract.AaveTokenLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.USDR3CRV)]: [

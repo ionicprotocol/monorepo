@@ -70,6 +70,9 @@ const TETU_LINEAR_USDC = "0xae646817e458C0bE890b81e8d880206710E3c44e";
 const TETU_LINEAR_DAI = "0xDa1CD1711743e57Dd57102E9e61b75f3587703da";
 const AAVE_LINEAR_WMATIC = "0xE4885Ed2818Cc9E840A25f94F9b2A28169D1AEA7";
 
+// Aave
+const amUSDC = "0x1a13F4Ca1d028320A707D99520AbFefca3998b7F";
+
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
 const USDR3CRV = "0xa138341185a9D0429B0021A11FB717B225e13e1F";
@@ -559,6 +562,15 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", EURE_JEUR, true),
+  },
+  {
+    symbol: assetSymbols.amUSDC,
+    underlying: amUSDC,
+    name: "AAVE Usdc Token",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: `https://app.aave.com/reserve-overview/?underlyingAsset=${USDC}&marketName=proto_polygon_v3`,
+    disabled: true,
   },
   {
     symbol: assetSymbols.am3CRV,

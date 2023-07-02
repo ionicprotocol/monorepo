@@ -839,6 +839,18 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("GelatoGUniLiquidator: ", gelatoGUniLiquidator.address);
 
+  //// Gelato GUNI Liquidator
+  const aaveTokenLiquidator = await deployments.deploy("AaveTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (aaveTokenLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(aaveTokenLiquidator.transactionHash);
+  }
+  console.log("AaveTokenLiquidator: ", aaveTokenLiquidator.address);
+
   // curve swap liquidator funder - TODO replace the CurveSwapLiquidator above
   const curveSwapLiquidatorFunder = await deployments.deploy("CurveSwapLiquidatorFunder", {
     from: deployer,
