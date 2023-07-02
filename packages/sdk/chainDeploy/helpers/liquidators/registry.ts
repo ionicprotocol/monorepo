@@ -30,6 +30,7 @@ export const configureLiquidatorsRegistry = async ({
 
   if (strategies.length > 0) {
     const tx = await liquidatorsRegistry._resetRedemptionStrategies(strategies, inputTokens, outputTokens);
+    console.log("waiting for tx ", tx.hash);
     await tx.wait();
     console.log("_resetRedemptionStrategies: ", tx.hash);
   } else {

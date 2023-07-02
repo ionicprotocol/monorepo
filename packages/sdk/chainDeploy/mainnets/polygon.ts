@@ -839,7 +839,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("GelatoGUniLiquidator: ", gelatoGUniLiquidator.address);
 
-  //// Gelato GUNI Liquidator
+  //// Aave AToken Liquidator
   const aaveTokenLiquidator = await deployments.deploy("AaveTokenLiquidator", {
     from: deployer,
     args: [],
