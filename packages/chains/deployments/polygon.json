@@ -2,6 +2,9 @@
   "name": "polygon",
   "chainId": "137",
   "contracts": {
+    "AaveTokenLiquidator": {
+      "address": "0x1AB1884Db84759BabD63970D3617BFB12329c8C7"
+    },
     "AddressesProvider": {
       "address": "0x2fCa24E19C67070467927DDB85810fF766423e8e"
     },
@@ -210,7 +213,7 @@
       "address": "0x2f54C95b9A76699C7Cd77d3bCe096B36ccbda402"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x2722D6009EBD985B0519A257cD6ACE5543F833e0"
+      "address": "0xDE399BFA80Cf1c07FCeF8DBC07CB7E2165447A3a"
     },
     "LeveredPositionsLens": {
       "address": "0xc7C522615d468c8F91d8B8B5837f0E71fcefEe32"
@@ -225,7 +228,7 @@
       "address": "0x61B6d5962d3855f6EcA4Ef646ABF79c8C8beD8bA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x6cB76277e592D8A47dD7bfC86deD45f623C624b1"
+      "address": "0x44e36BFBAB92DF9a8102E8221FD4Ee11eD2588D4"
     },
     "LooplessFlywheelBooster": {
       "address": "0x04ce4F5F699A2F52152Ea6F567EA852870fFcE73"
