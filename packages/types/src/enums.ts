@@ -377,6 +377,7 @@ export enum assetSymbols {
   "JCHF-BUSD" = "jCHF-BUSD",
   "MAI-USDC" = "MAI-USDC",
   am3CRV = "am3CRV",
+  amUSDC = "amUSDC",
   AGEUR = "agEUR",
   EURT = "EURT",
   EURE = "EURE",
