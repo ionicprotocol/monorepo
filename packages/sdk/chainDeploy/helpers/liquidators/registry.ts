@@ -23,20 +23,17 @@ export const configureLiquidatorsRegistry = async ({
   for (const inputToken in chainIdToConfig[chainId].redemptionStrategies) {
     const [redemptionStrategyType, outputToken] = chainIdToConfig[chainId].redemptionStrategies[inputToken];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
-
-    const strategy = await liquidatorsRegistry.callStatic.redemptionStrategiesByTokens(inputToken, outputToken);
-    if (strategy != redemptionStrategy.address) {
-      strategies.push(redemptionStrategy.address);
-      inputTokens.push(inputToken);
-      outputTokens.push(outputToken);
-    }
+    strategies.push(redemptionStrategy.address);
+    inputTokens.push(inputToken);
+    outputTokens.push(outputToken);
   }
 
   if (strategies.length > 0) {
-    const tx = await liquidatorsRegistry._setRedemptionStrategies(strategies, inputTokens, outputTokens);
+    const tx = await liquidatorsRegistry._resetRedemptionStrategies(strategies, inputTokens, outputTokens);
+    console.log("waiting for tx ", tx.hash);
     await tx.wait();
-    console.log("_setRedemptionStrategies: ", tx.hash);
+    console.log("_resetRedemptionStrategies: ", tx.hash);
   } else {
-    console.log("no redemption strategies to add");
+    console.log("no redemption strategies to configure in the liquidators registry");
   }
 };
