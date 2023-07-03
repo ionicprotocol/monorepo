@@ -51,9 +51,9 @@ output "polygon-mainnet-liquidation-2" {
 # }
 
 # FANTOM
-output "fantom-mainnet-liquidation" {
-  value = module.fantom_mainnet_liquidation_rpc_1.lambda_cron_service_name
-}
+# output "fantom-mainnet-liquidation" {
+#   value = module.fantom_mainnet_liquidation_rpc_1.lambda_cron_service_name
+# }
 
 
 # ARBITRUM
