@@ -26,7 +26,7 @@ export const SupplyModal = ({
   poolChainId,
 }: SupplyModalProps) => {
   const { cCard } = useColors();
-  const [tabIndex, setTabIndex] = useState<number>(0);
+  const [tabIndex, setTabIndex] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleTabsChange = (index: number) => {
