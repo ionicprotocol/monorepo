@@ -52,9 +52,16 @@ export function useSwapAmount(
         } catch (e) {
           console.error(
             'Could not get swap amount and slippage',
-            { amount, chainId: currentSdk.chainId, inputToken, outputToken },
-            JSON.stringify(e)
+            {
+              amount,
+              chainId: currentSdk.chainId,
+              inputToken,
+              outputToken,
+            },
+            e
           );
+
+          console.error(JSON.stringify(e));
 
           return null;
         }
