@@ -141,8 +141,11 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
 
     async getAmountOutAndSlippageOfSwap(inputToken: string, amount: BigNumber, outputToken: string) {
       const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
+      const account = await this.signer.getAddress();
 
-      return await iLiquidatorsRegistry.callStatic.amountOutAndSlippageOfSwap(inputToken, amount, outputToken);
+      return await iLiquidatorsRegistry.callStatic.amountOutAndSlippageOfSwap(inputToken, amount, outputToken, {
+        from: account,
+      });
     }
   };
 }

@@ -53,7 +53,7 @@ export function useSwapAmount(
           console.error(
             'Could not get swap amount and slippage',
             { amount, chainId: currentSdk.chainId, inputToken, outputToken },
-            e
+            JSON.stringify(e)
           );
 
           return null;
