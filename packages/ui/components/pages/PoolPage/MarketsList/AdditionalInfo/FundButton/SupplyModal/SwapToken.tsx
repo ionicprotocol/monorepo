@@ -1,5 +1,15 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Divider, HStack, Input, Skeleton, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  HStack,
+  Input,
+  Skeleton,
+  Spinner,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -14,6 +24,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SWAP_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -43,7 +54,8 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
   const { data: swapAmount, isLoading: isSwapAmountLoading } = useSwapAmount(
     selectedToken?.underlyingToken,
     debouncedAmount,
-    asset.underlyingToken
+    asset.underlyingToken,
+    balance
   );
 
   const { currentSdk, address } = useMultiMidas();
@@ -183,6 +195,7 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
         await tx.wait();
 
         await queryClient.refetchQueries({ queryKey: ['TokenBalance'] });
+        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
 
         _steps[1] = {
           ..._steps[1],
@@ -386,7 +399,9 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
                       placeholder="0.0"
                       readOnly
                       value={
-                        swapAmount ? utils.formatUnits(swapAmount, asset.underlyingDecimals) : '0.0'
+                        swapAmount
+                          ? utils.formatUnits(swapAmount.outputAmount, asset.underlyingDecimals)
+                          : '0.0'
                       }
                       variant="unstyled"
                     />
@@ -414,14 +429,42 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
                   </Row>
                 </Row>
               </MidasBox>
+
+              {debouncedAmount.gt(constants.Zero) ? (
+                <Row crossAxisAlignment="center" mainAxisAlignment="flex-end" width="100%">
+                  <Text mr={2} size="sm">
+                    Slippage:
+                  </Text>
+                  {!isSwapAmountLoading ? (
+                    <SimpleTooltip
+                      label={`${swapAmount ? utils.formatUnits(swapAmount.slippage) : ''}`}
+                    >
+                      <Text
+                        maxWidth="300px"
+                        overflow="hidden"
+                        textOverflow={'ellipsis'}
+                        whiteSpace="nowrap"
+                      >
+                        {swapAmount
+                          ? `${(Number(utils.formatUnits(swapAmount.slippage)) * 100).toFixed(4)}%`
+                          : 'Cannot be estimated'}
+                      </Text>
+                    </SimpleTooltip>
+                  ) : (
+                    <Spinner />
+                  )}
+                </Row>
+              ) : null}
             </VStack>
             <Button
               height={16}
               isDisabled={
+                debouncedAmount.eq(constants.Zero) ||
                 !amount.eq(debouncedAmount) ||
                 isSwapAmountLoading ||
                 !balance ||
-                balance.eq(constants.Zero)
+                balance.eq(constants.Zero) ||
+                !swapAmount
               }
               onClick={onConfirm}
               width="100%"

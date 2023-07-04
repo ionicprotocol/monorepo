@@ -110,16 +110,10 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       return { tx, errorCode: null };
     }
 
-    async getSwapAmount(inputToken: string, amount: BigNumber, outputToken: string) {
-      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
-
-      return await iLiquidatorsRegistry.callStatic.swap(inputToken, amount, outputToken);
-    }
-
     async swap(inputToken: string, amount: BigNumber, outputToken: string) {
-      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry(this.signer);
 
-      return await iLiquidatorsRegistry.swap(inputToken, amount, outputToken);
+      return await iLiquidatorsRegistry.amountOutAndSlippageOfSwap(inputToken, amount, outputToken);
     }
 
     async approveLiquidatorsRegistry(underlying: string) {
@@ -142,6 +136,15 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
           underlyingSymbol: _asset?.originalSymbol ?? _asset?.symbol ?? token,
           underlyingDecimals: _asset?.decimals ?? 18,
         };
+      });
+    }
+
+    async getAmountOutAndSlippageOfSwap(inputToken: string, amount: BigNumber, outputToken: string) {
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
+      const account = await this.signer.getAddress();
+
+      return await iLiquidatorsRegistry.callStatic.amountOutAndSlippageOfSwap(inputToken, amount, outputToken, {
+        from: account,
       });
     }
   };
