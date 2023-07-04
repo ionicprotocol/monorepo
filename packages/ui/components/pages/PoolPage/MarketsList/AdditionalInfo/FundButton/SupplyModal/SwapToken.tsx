@@ -428,27 +428,32 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
                   </Row>
                 </Row>
               </MidasBox>
-              {!isSwapAmountLoading ? (
+
+              {debouncedAmount.gt(constants.Zero) ? (
                 <Row crossAxisAlignment="center" mainAxisAlignment="flex-end" width="100%">
                   <Text mr={2} size="sm">
                     Slippage:
                   </Text>
-                  <SimpleTooltip
-                    label={`${swapAmount ? utils.formatUnits(swapAmount.slippage) : ''}`}
-                  >
-                    <Text
-                      maxWidth="300px"
-                      overflow="hidden"
-                      textOverflow={'ellipsis'}
-                      whiteSpace="nowrap"
+                  {!isSwapAmountLoading ? (
+                    <SimpleTooltip
+                      label={`${swapAmount ? utils.formatUnits(swapAmount.slippage) : ''}`}
                     >
-                      {swapAmount ? utils.formatUnits(swapAmount.slippage) : 'Cannot be estimated.'}
-                    </Text>
-                  </SimpleTooltip>
+                      <Text
+                        maxWidth="300px"
+                        overflow="hidden"
+                        textOverflow={'ellipsis'}
+                        whiteSpace="nowrap"
+                      >
+                        {swapAmount
+                          ? utils.formatUnits(swapAmount.slippage)
+                          : 'Cannot be estimated.'}
+                      </Text>
+                    </SimpleTooltip>
+                  ) : (
+                    <Spinner />
+                  )}
                 </Row>
-              ) : (
-                <Spinner />
-              )}
+              ) : null}
             </VStack>
             <Button
               height={16}
