@@ -445,8 +445,8 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
                         whiteSpace="nowrap"
                       >
                         {swapAmount
-                          ? Number(utils.formatUnits(swapAmount.slippage)).toFixed(4)
-                          : 'Cannot be estimated.'}
+                          ? `${(Number(utils.formatUnits(swapAmount.slippage)) * 100).toFixed(4)}%`
+                          : 'Cannot be estimated'}
                       </Text>
                     </SimpleTooltip>
                   ) : (
