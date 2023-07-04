@@ -1,15 +1,5 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Input,
-  Skeleton,
-  Spinner,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, HStack, Input, Skeleton, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -19,7 +9,6 @@ import { BsArrowDownCircle } from 'react-icons/bs';
 
 import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/Balance';
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
-import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
@@ -35,16 +24,22 @@ import type { SwapTokenType } from '@ui/hooks/useSwapTokens';
 import { useSwapTokens } from '@ui/hooks/useSwapTokens';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
-import { useTokenData } from '@ui/hooks/useTokenData';
 import type { TxStep } from '@ui/types/ComponentPropsType';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
-export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
+export const SwapTab = ({
+  asset,
+  poolChainId,
+  setIsLoading,
+}: {
+  asset: MarketData;
+  poolChainId: number;
+  setIsLoading: (value: boolean) => void;
+}) => {
   const [selectedToken, setSelectedToken] = useState<SwapTokenType>();
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
-  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const { data: swapTokens } = useSwapTokens(asset.underlyingToken, poolChainId);
 
@@ -114,6 +109,7 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
       token: asset.cToken,
     };
 
+    setIsLoading(true);
     setIsConfirmed(true);
     setConfirmedSteps([...steps]);
     const _steps = [...steps];
@@ -220,6 +216,7 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
     }
 
     setIsSwapping(false);
+    setIsLoading(false);
   };
 
   return isConfirmed ? (
@@ -236,41 +233,14 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
     />
   ) : (
     <>
-      <HStack justifyContent="center" my={4} width="100%">
-        <Text variant="title">Swap to</Text>
-        <Box height="36px" mx={2} width="36px">
-          <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="36" />
-        </Box>
-        <EllipsisText
-          maxWidth="100px"
-          tooltip={tokenData?.symbol || asset.underlyingSymbol}
-          variant="title"
-        >
-          {tokenData?.symbol || asset.underlyingSymbol}
-        </EllipsisText>
-      </HStack>
-
-      <Divider />
-
       <Column
         crossAxisAlignment="center"
         gap={4}
         height="100%"
         mainAxisAlignment="flex-start"
-        p={4}
+        py={4}
         width="100%"
       >
-        <Banner
-          alertDescriptionProps={{ fontSize: 'lg' }}
-          alertProps={{ status: 'warning' }}
-          descriptions={[
-            {
-              text: `You don't have enough ${
-                asset.originalSymbol ?? asset.underlyingSymbol
-              } token in wallet, You might need to swap to get this token`,
-            },
-          ]}
-        />
         {selectedToken && swapTokens && swapTokens.length > 0 ? (
           <>
             <VStack gap={1} w="100%">

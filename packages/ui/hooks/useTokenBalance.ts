@@ -48,9 +48,9 @@ export function useTokenBalance(tokenAddress?: string, chainId?: number, customA
       }
     },
     {
-      cacheTime: Infinity,
+      // cacheTime: Infinity,
       enabled: !!tokenAddress && !!addressToCheck && !!sdk,
-      staleTime: Infinity,
+      // staleTime: Infinity,
     }
   );
 }

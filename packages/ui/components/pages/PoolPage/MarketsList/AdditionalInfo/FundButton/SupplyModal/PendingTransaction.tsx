@@ -42,7 +42,7 @@ export const PendingTransaction = ({
   });
 
   return (
-    <Column crossAxisAlignment="center" expand mainAxisAlignment="center" p={4} pt={12}>
+    <Column crossAxisAlignment="center" expand mainAxisAlignment="center" pt={12} py={4}>
       {isLoading ? (
         <Loader />
       ) : failedStep === 0 ? (
