@@ -111,7 +111,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
     }
 
     async swap(inputToken: string, amount: BigNumber, outputToken: string) {
-      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry(this.signer);
 
       return await iLiquidatorsRegistry.amountOutAndSlippageOfSwap(inputToken, amount, outputToken);
     }
