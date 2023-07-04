@@ -6,6 +6,7 @@ import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  configureBalancerSwap,
   deployAlgebraPriceOracle,
   deployAnkrCertificateTokenPriceOracle,
   deployBalancerLinearPoolPriceOracle,
@@ -26,6 +27,7 @@ import {
   BalancerLpAsset,
   BalancerRateProviderAsset,
   BalancerStableLpAsset,
+  BalancerSwapTokenLiquidatorData,
   ChainDeployFnParams,
   ChainlinkAsset,
   ConcentratedLiquidityOracleConfig,
@@ -583,6 +585,19 @@ const solidlyOracles: SolidlyOracleAssetConfig[] = [
   },
 ];
 
+const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
+  {
+    inputToken: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+    outputToken: underlying(assets, assetSymbols.USDC),
+    poolAddress: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
+    outputToken: underlying(assets, assetSymbols.WMATIC),
+    poolAddress: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -921,5 +936,5 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await tx.wait();
     console.log("mined setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
   }
-  ////
+  await configureBalancerSwap(addressesProvider, balancerSwapLiquidatorData);
 };
