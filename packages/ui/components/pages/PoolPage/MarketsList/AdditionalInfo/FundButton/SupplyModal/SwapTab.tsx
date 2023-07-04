@@ -226,7 +226,9 @@ export const SwapTab = ({
       failedStep={failedStep}
       info={`You swapped ${utils.formatUnits(debouncedAmount, selectedToken?.underlyingDecimals)} ${
         selectedToken?.underlyingSymbol
-      }`}
+      }, got ${
+        swapAmount ? utils.formatUnits(swapAmount.outputAmount, asset.underlyingDecimals) : ''
+      } ${asset.underlyingSymbol}`}
       isLoading={isSwapping}
       poolChainId={poolChainId}
       steps={confirmedSteps}
