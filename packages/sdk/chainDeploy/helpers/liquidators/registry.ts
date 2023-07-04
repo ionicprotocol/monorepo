@@ -10,9 +10,6 @@ export const configureLiquidatorsRegistry = async ({
 }: LiquidatorsRegistryConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
-  const strategies: string[] = [];
-  const inputTokens: string[] = [];
-  const outputTokens: string[] = [];
   const lr = await ethers.getContract("LiquidatorsRegistry");
   const liquidatorsRegistry = (await ethers.getContractAt(
     "ILiquidatorsRegistry",
@@ -20,12 +17,26 @@ export const configureLiquidatorsRegistry = async ({
     deployer
   )) as ILiquidatorsRegistry;
 
+  let strategies: string[] = [];
+  let inputTokens: string[] = [];
+  let outputTokens: string[] = [];
+  const strategyMapping: { [inputToken: string]: { [outputToken: string]: string } } = {};
+
+  [strategies, inputTokens, outputTokens] = await liquidatorsRegistry.callStatic.getAllPairsStrategies();
+  inputTokens.map((inputToken, index) => {
+    strategyMapping[inputToken] = { [outputTokens[index]]: strategies[index] };
+  });
+
   for (const inputToken in chainIdToConfig[chainId].redemptionStrategies) {
     const [redemptionStrategyType, outputToken] = chainIdToConfig[chainId].redemptionStrategies[inputToken];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
-    strategies.push(redemptionStrategy.address);
-    inputTokens.push(inputToken);
-    outputTokens.push(outputToken);
+
+    const existingStrategy = strategyMapping[inputToken][outputToken] ?? null;
+    if (existingStrategy != redemptionStrategy.address || existingStrategy == null) {
+      strategies.push(redemptionStrategy.address);
+      inputTokens.push(inputToken);
+      outputTokens.push(outputToken);
+    }
   }
 
   if (strategies.length > 0) {
