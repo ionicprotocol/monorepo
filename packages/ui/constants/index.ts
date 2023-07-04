@@ -165,6 +165,7 @@ export const SUPPLY_STEPS = (symbol: string) =>
 
 export const SWAP_STEPS = (inputSymbol: string, outputSymbol: string) =>
   [
+    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
     { desc: `Swaps from ${inputSymbol} to get ${outputSymbol}`, done: false, title: 'Swap' },
   ] as TxStep[];
 export const BORROW_STEPS = (symbol: string) =>

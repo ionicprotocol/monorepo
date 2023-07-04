@@ -195,6 +195,7 @@ export const SwapToken = ({ asset, poolChainId }: { asset: MarketData; poolChain
         await tx.wait();
 
         await queryClient.refetchQueries({ queryKey: ['TokenBalance'] });
+        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
 
         _steps[1] = {
           ..._steps[1],
