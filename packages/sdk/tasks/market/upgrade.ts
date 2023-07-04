@@ -116,6 +116,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
       if (pluginAddress != ethers.constants.AddressZero)
         console.log(`with plugin ${await cTokenInstance.callStatic.plugin()}`);
     } else {
-      console.log(`market ${marketAddress} impl ${impl} already eq ${implementationAddress} and extension ${cfe.address} eq ${extensions[0]}`);
+      console.log(
+        `market ${marketAddress} impl ${impl} already eq ${implementationAddress} and extension ${cfe.address} eq ${extensions[0]}`
+      );
     }
   });
