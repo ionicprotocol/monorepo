@@ -340,7 +340,7 @@ export const SwapTab = ({
                       isDisabled={isLoading || !balance}
                       isLoading={isLoading}
                       onClick={() =>
-                        setUserEnteredAmount(
+                        updateAmount(
                           balance
                             ? utils.formatUnits(balance, selectedToken.underlyingDecimals)
                             : ''
@@ -446,7 +446,9 @@ export const SwapTab = ({
                 : `You don't have enough ${selectedToken.underlyingSymbol}`}
             </Button>
           </>
-        ) : null}
+        ) : (
+          <Text py={24}>Not available</Text>
+        )}
       </Column>
     </>
   );
