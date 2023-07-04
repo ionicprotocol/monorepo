@@ -9,13 +9,26 @@ export interface SwapTokenType {
   underlyingToken: string;
 }
 
-export function useSwapAmount(inputToken?: string, amount?: BigNumber, outputToken?: string) {
+export function useSwapAmount(
+  inputToken?: string,
+  amount?: BigNumber,
+  outputToken?: string,
+  balance?: BigNumber | null
+) {
   const { address, currentSdk } = useMultiMidas();
 
-  return useQuery<BigNumber | null>(
+  return useQuery(
     ['useSwapAmount', inputToken, amount, outputToken, currentSdk?.chainId, address],
     async () => {
-      if (currentSdk && inputToken && amount?.gt(constants.Zero) && outputToken && address) {
+      if (
+        currentSdk &&
+        inputToken &&
+        amount?.gt(constants.Zero) &&
+        outputToken &&
+        address &&
+        balance &&
+        balance.gte(amount)
+      ) {
         try {
           const token = currentSdk.getEIP20TokenInstance(inputToken);
           const hasApprovedEnough = (
@@ -29,10 +42,16 @@ export function useSwapAmount(inputToken?: string, amount?: BigNumber, outputTok
             await currentSdk.approveLiquidatorsRegistry(inputToken);
           }
 
-          return await currentSdk.getSwapAmount(inputToken, amount, outputToken);
+          const { outputAmount, slippage } = await currentSdk.getAmountOutAndSlippageOfSwap(
+            inputToken,
+            amount,
+            outputToken
+          );
+
+          return { outputAmount, slippage };
         } catch (e) {
           console.error(
-            'Could not get swap amount',
+            'Could not get swap amount and slippage',
             { amount, chainId: currentSdk.chainId, inputToken, outputToken },
             e
           );
