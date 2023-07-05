@@ -68,10 +68,6 @@ task("chapel-borrow-tusd", "creates and funds a levered position on chapel").set
     const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
     const chapelMidasPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
 
-    let tx;
-    tx = await testingBomb.transfer("0x8982aa50bb919E42e9204f12e5b59D053Eb2A602", ethers.utils.parseEther("10001000.01"));
-    await tx.wait();
-    console.log(`sent bomb`)
     // const collateralMarket = (await ethers.getContractAt(
     //   "CErc20Delegate",
     //   collateralMarketAddress,
@@ -92,25 +88,25 @@ task("chapel-borrow-tusd", "creates and funds a levered position on chapel").set
     //   throw new Error(`err code ${errCode}`);
     // }
 
-    // let tx;
-    // const pool = (await ethers.getContractAt("Comptroller", chapelMidasPool, deployer)) as Comptroller;
-    // tx = await pool.enterMarkets([collateralMarketAddress, borrowMarketAddress]);
-    // await tx.wait();
-    // console.log(`entered markets ${tx.hash}`);
-    //
-    // const borrowMarket = (await ethers.getContractAt(
-    //   "CErc20Delegate",
-    //   borrowMarketAddress,
-    //   deployer
-    // )) as CErc20Delegate;
-    //
-    // const borrowAmount = ethers.utils.parseEther("1000000000000");
-    // const errCode = await borrowMarket.callStatic.borrow(borrowAmount);
-    // if (!errCode.isZero()) throw new Error(`err code ${errCode}`);
-    //
-    // tx = await borrowMarket.borrow(borrowAmount);
-    // await tx.wait();
-    // console.log(`borrowed a lot of TUSD with ${tx.hash}`);
+    let tx;
+    const pool = (await ethers.getContractAt("Comptroller", chapelMidasPool, deployer)) as Comptroller;
+    tx = await pool.enterMarkets([collateralMarketAddress, borrowMarketAddress]);
+    await tx.wait();
+    console.log(`entered markets ${tx.hash}`);
+
+    const borrowMarket = (await ethers.getContractAt(
+      "CErc20Delegate",
+      borrowMarketAddress,
+      deployer
+    )) as CErc20Delegate;
+
+    const borrowAmount = ethers.utils.parseEther("1000000000000");
+    const errCode = await borrowMarket.callStatic.borrow(borrowAmount);
+    if (!errCode.isZero()) throw new Error(`err code ${errCode}`);
+
+    tx = await borrowMarket.borrow(borrowAmount);
+    await tx.wait();
+    console.log(`borrowed a lot of TUSD with ${tx.hash}`);
   }
 );
 
