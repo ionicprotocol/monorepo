@@ -10,6 +10,7 @@ import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
 import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
+import ILiquidatorsRegistryABI from "../../abis/ILiquidatorsRegistry";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import LeveredPositionABI from "../../abis/LeveredPosition";
 import LeveredPositionsLensABI from "../../abis/LeveredPositionsLens";
@@ -29,6 +30,7 @@ import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { FusePoolLensSecondary } from "../../typechain/FusePoolLensSecondary";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
+import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionsLens } from "../../typechain/LeveredPositionsLens";
@@ -151,6 +153,14 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         FusePoolLensSecondaryABI,
         signerOrProvider
       ) as FusePoolLensSecondary;
+    }
+
+    createILiquidatorsRegistry(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.LiquidatorsRegistry.address,
+        ILiquidatorsRegistryABI,
+        signerOrProvider
+      ) as ILiquidatorsRegistry;
     }
   };
 }

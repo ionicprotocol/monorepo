@@ -283,6 +283,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
+    case RedemptionStrategyContract.AaveTokenLiquidator:
     case RedemptionStrategyContract.BalancerLpTokenLiquidator: {
       const strategyData = new ethers.utils.AbiCoder().encode(["address"], [outputToken]);
 

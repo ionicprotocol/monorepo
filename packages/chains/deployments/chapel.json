@@ -12,13 +12,13 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "CErc20Delegate": {
-      "address": "0x1014Cb7eCFade62956648E7fC44f25243ab1823e"
+      "address": "0x96c9Bb0db7ad4222CB396bF676CDcd50Af887179"
     },
     "CErc20PluginDelegate": {
-      "address": "0xfb8ED2Ac0C9B59eE2642415E1749fe26b10a3ecb"
+      "address": "0x9064f2f3b3860eCbb71CafE3E29A5d6162Ab03F6"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x5bcc3535ef38f7CE88f53D4C3Ef01a636245B4C4"
+      "address": "0x2A0AF1E5e92dB2f10D705D450dcc34645423ddd1"
     },
     "CErc20RewardsDelegate": {
       "address": "0x99d485eF4425862D90C8301725DF670c4b8B71EC"
@@ -27,7 +27,7 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0xD7105c5dc0aDC6f00C376f30cC389A286Eb6676F"
+      "address": "0xAecc411ADD4732003DcB14dAAA7dFb611B82d76C"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x219f7a75925D6d0312d1B62cEE6a4eE6F1A85217"
@@ -159,10 +159,10 @@
       "address": "0x212f88Ba5927b6cDcA498E0BA20541EF35864961"
     },
     "LeveredPositionFactory": {
-      "address": "0x67419AE30cBb8723c49E1F03bca0Ddcc245da3AA"
+      "address": "0xE55a7dd52D4e0577B1a8bbfeA7246d83b85A5B56"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x73e9e182b4Fd353D4CD640c3F16623D901E26B0d"
+      "address": "0xa63714AD142885858b3820BC1d33605A76FD9A95"
     },
     "LeveredPositionsLens": {
       "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"
@@ -174,10 +174,10 @@
       "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"
     },
     "LiquidatorsRegistry": {
-      "address": "0x60a7cBfFF6d68A8951dBe9B0494e92709575a3fA"
+      "address": "0x074f1427cD25469F1051F51908751dA5409F3677"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xb803b97049D9368AeAb90C5e90d7F566Ef6BCB15"
+      "address": "0x0B0892778472105E7447DaB8ED0887e72c72D44E"
     },
     "LooplessFlywheelBooster": {
       "address": "0x8ac339fB1857cc2986941C50c4234EfC47F73424"
