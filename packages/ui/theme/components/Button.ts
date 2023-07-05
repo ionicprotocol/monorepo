@@ -22,10 +22,11 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     _ghost: (props) => ({
       ...theme.components.Button.variants?.ghost,
       _hover: {
-        bg: mode('ecru', 'ecru')(props),
-        color: mode('raisinBlack', 'raisinBlack')(props),
+        bg: mode('iPageBg', 'iPageBg')(props),
+        color: mode('iWhite', 'white')(props),
         textDecoration: 'unset',
       },
+      height: 6,
     }),
     _link: (props) => ({
       ...theme.components.Button.variants?.link,

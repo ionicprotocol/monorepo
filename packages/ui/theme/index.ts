@@ -19,6 +19,7 @@ import { TextStyleConfig } from '@ui/theme/components/Text';
 import { TooltipStyleConfig } from '@ui/theme/components/Tooltip';
 
 export const COLOR_PALETTE = {
+  // midas colors
   bone: '#EBE6E0',
   ecru: '#BCAC83',
   ecru10: '#373532',
@@ -34,6 +35,14 @@ export const COLOR_PALETTE = {
   grullo30: '#B29E844d',
   gunmetal: '#253439',
   gunmetal80: '#253439CC',
+  iCardBg: '#212227',
+  iGray: '#666',
+  iGreen: '#39FF88',
+  iLightGray: '#A6A6A6',
+  iPageBg: '#0B0B0B',
+  iRowBg: '#2C2E34',
+  iSeparator: '#3D3D3D',
+  iWhite: '#F0F0F0',
   raisinBlack: '#282828',
   raisinBlack80: '#282828CC',
   silverMetallic: '#A5ADB4',

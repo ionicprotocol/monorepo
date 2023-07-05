@@ -3,6 +3,17 @@ import { useColorModeValue } from '@chakra-ui/react';
 import { COLOR_PALETTE } from '@ui/theme/index';
 
 export function useColors() {
+  const cIPage = {
+    bgColor: useColorModeValue(COLOR_PALETTE.iPageBg, COLOR_PALETTE.iPageBg),
+    dividerColor: useColorModeValue(COLOR_PALETTE.iSeparator, COLOR_PALETTE.iSeparator),
+    txtColor: useColorModeValue(COLOR_PALETTE.iLightGray, COLOR_PALETTE.iLightGray),
+    txtSelectedColor: useColorModeValue(COLOR_PALETTE.iWhite, COLOR_PALETTE.iWhite),
+  };
+
+  const cICard = {
+    bgColor: useColorModeValue(COLOR_PALETTE.iCardBg, COLOR_PALETTE.iCardBg),
+  };
+
   const cPage = {
     primary: {
       bgColor: useColorModeValue(COLOR_PALETTE.whiteBg, COLOR_PALETTE.raisinBlack),
@@ -99,6 +110,8 @@ export function useColors() {
     cAlert,
     cCard,
     cChart,
+    cICard,
+    cIPage,
     cInput,
     cOutlineBtn,
     cPage,

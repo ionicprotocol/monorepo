@@ -1,26 +1,24 @@
 import { Box, Drawer, DrawerContent, Flex, useDisclosure } from '@chakra-ui/react';
 
 import { Header } from '@ui/components/pages/Layout/Header';
-import { Sidebar } from '@ui/components/pages/Layout/Sidebar';
 import { SidebarMobile } from '@ui/components/pages/Layout/SidebarMobile';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import type { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
 
 const FusePageLayout = ({ children }: FusePageLayoutProps) => {
-  const { cPage } = useColors();
+  const { cIPage } = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isSidebarCollapsed } = useMultiMidas();
 
   return (
     <Flex
       alignItems="flex-start"
-      bgColor={cPage.primary.bgColor}
+      bgColor={cIPage.bgColor}
       flexDir="column"
       justifyContent="flex-start"
       minH="100vh"
+      p={6}
     >
-      <Sidebar />
+      {/* <Sidebar /> */}
       <Drawer
         autoFocus={false}
         isOpen={isOpen}
@@ -30,23 +28,14 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
         returnFocusOnClose={false}
         size="full"
       >
-        <DrawerContent bg={cPage.primary.bgColor}>
+        <DrawerContent bg={cIPage.bgColor}>
           <SidebarMobile onClose={onClose} />
         </DrawerContent>
       </Drawer>
       <Header onOpen={onOpen} />
-      {isSidebarCollapsed !== undefined ? (
-        <Box
-          ml={{ base: 0, md: isSidebarCollapsed ? '86px' : '240px' }}
-          p={{ base: 4, md: 8 }}
-          width={{
-            base: '100%',
-            md: isSidebarCollapsed ? 'calc(100% - 86px)' : 'calc(100% - 240px)',
-          }}
-        >
-          {children}
-        </Box>
-      ) : null}
+      <Box py={{ base: 5 }} width={{ base: '100%' }}>
+        {children}
+      </Box>
     </Flex>
   );
 };
