@@ -837,6 +837,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
+  // CurveSwapLiquidator
+  const curveLpTokenWrapper = await deployments.deploy("CurveLpTokenWrapper", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenWrapper.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenWrapper.transactionHash);
+  console.log("CurveLpTokenWrapper: ", curveLpTokenWrapper.address);
+
   // Gamma LP token liquidator
   const gammaLpTokenLiquidator = await deployments.deploy("GammaLpTokenLiquidator", {
     from: deployer,
@@ -913,6 +924,37 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(uniswapV2LiquidatorFunder.transactionHash);
   }
   console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
+
+  // Solidly Liquidators
+  const solidlyLpTokenLiquidator = await deployments.deploy("SolidlyLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlyLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(solidlyLpTokenLiquidator.transactionHash);
+  console.log("SolidlyLpTokenLiquidator: ", solidlyLpTokenLiquidator.address);
+
+  const solidlyLpTokenWrapper = await deployments.deploy("SolidlyLpTokenWrapper", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlyLpTokenWrapper.transactionHash)
+    await ethers.provider.waitForTransaction(solidlyLpTokenWrapper.transactionHash);
+  console.log("SolidlyLpTokenWrapper: ", solidlyLpTokenWrapper.address);
+
+  const solidlySwapLiquidator = await deployments.deploy("SolidlySwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlySwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(solidlySwapLiquidator.transactionHash);
+  console.log("SolidlySwapLiquidator: ", solidlySwapLiquidator.address);
 
   /// Addresses Provider
   /// set bUSD
