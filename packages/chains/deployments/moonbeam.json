@@ -30,7 +30,7 @@
       "address": "0x7698198376DAAB5097c9A327250BD07062118626"
     },
     "CTokenFirstExtension": {
-      "address": "0xE2e734642F432d47b9f09bfA3bc5d65F9e949db4"
+      "address": "0xA7B683c9445277534577973A51E0B052934562b9"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0xA443095Fa1B5C9E6B47dB99042097aee24AAc6d3"
@@ -51,7 +51,7 @@
       "address": "0xE9c4274341ab4Be0857476e84963b3c36787568D"
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x99013556Ac42BCDb7E31F5c3B6D0b9166ac52052"
+      "address": "0x3aaaEbf49749F6643De91C45Cd47cAD4099063E7"
     },
     "CurveLpTokenPriceOracleNoRegistry": {
       "address": "0x315b23e85E1ad004A466f3C89544794Ef3392179"
@@ -132,25 +132,25 @@
       "address": "0xFbf5124ed4700564a17E0b9E43880B39177c54eF"
     },
     "LeveredPositionFactory": {
-      "address": "0x7eeab71F7D449601D63494f1F4FE998C8c88F75a"
+      "address": "0xa1E8f53Af27263a15E20C58476D261e2c27C6985"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x287efee065Ea462bBAB2B61FfDF25F0c4E51D75E"
+      "address": "0x7d310205dC214a305904a2a13bb6A87ba0C0Ce94"
     },
     "LeveredPositionsLens": {
       "address": "0x8a571d80CaB8bf2101dbA71F4FeaC2216b507403"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0xEf80E60D131cd8A547F142595bAf4758131A0c50"
+      "address": "0x21fAe78928806E5CB02700Ce9c7d6C1a9E9C0093"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x8a571d80CaB8bf2101dbA71F4FeaC2216b507403"
     },
     "LiquidatorsRegistry": {
-      "address": "0x70190bAbF03fBC09BA7151ffB8FA73D2fFD80ea4"
+      "address": "0xBC442ca628753f6e70620B32f9B88E6980B78219"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xe8589287762914eef5e08De9f17d4e46E1628d05"
+      "address": "0xf06e7DDD892905323299B808792777a52ab377d6"
     },
     "LooplessFlywheelBooster": {
       "address": "0x0D71831F4f819057A606656D5eF2BEe0bF491f29"
