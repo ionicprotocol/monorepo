@@ -583,6 +583,11 @@ const solidlyOracles: SolidlyOracleAssetConfig[] = [
     poolAddress: "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797", // sAMM-USDC-USDR
     baseToken: underlying(assets, assetSymbols.USDC),
   },
+  {
+    underlying: underlying(assets, assetSymbols.WUSDR),
+    poolAddress: "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2", // vAMM-wUSDR-USDR
+    baseToken: underlying(assets, assetSymbols.USDR),
+  },
 ];
 
 const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
