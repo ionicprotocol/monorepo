@@ -29,8 +29,8 @@ export const configureLiquidatorsRegistry = async ({
     inputTokens.push(inputToken);
     outputTokens.push(outputToken);
   }
-  const match = await liquidatorsRegistry.callStatic.pairsStrategiesMatch(strategies, inputTokens, outputTokens);
-  if (match) {
+  const matching = await liquidatorsRegistry.callStatic.pairsStrategiesMatch(strategies, inputTokens, outputTokens);
+  if (!matching) {
     const tx = await liquidatorsRegistry._resetRedemptionStrategies(strategies, inputTokens, outputTokens);
     console.log("waiting for tx ", tx.hash);
     await tx.wait();
