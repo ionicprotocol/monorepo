@@ -63,7 +63,7 @@
     "hardhat": "hardhat"
   },
   "keywords": [],
-  "author": "Midas Capital",
+  "author": "Ionic Protocol",
   "license": "ISC",
   "devDependencies": {
     "@abimate/core": "^0.2.1",

@@ -22,7 +22,7 @@
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json"
   },
   "keywords": [],
-  "author": "Midas Capital",
+  "author": "Ionic Protocol",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.18.0",
