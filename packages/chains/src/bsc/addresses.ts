@@ -1,4 +1,4 @@
-import { ChainAddresses } from "@midas-capital/types";
+import { ChainAddresses } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { BTCB, BUSD, WBNB } from "./assets";

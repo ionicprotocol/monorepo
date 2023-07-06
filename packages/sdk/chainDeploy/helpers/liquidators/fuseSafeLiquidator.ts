@@ -1,5 +1,5 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { JarvisLiquidityPool } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { JarvisLiquidityPool } from "@ionicprotocol/types";
 import { BigNumber, constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";

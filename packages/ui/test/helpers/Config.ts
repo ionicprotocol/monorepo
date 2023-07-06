@@ -1,6 +1,6 @@
-import { bsc, chapel, polygon } from '@midas-capital/chains';
-import type { SupportedAsset } from '@midas-capital/types';
-import { assetSymbols, SupportedChains } from '@midas-capital/types';
+import { bsc, chapel, polygon } from '@ionicprotocol/chains';
+import type { SupportedAsset } from '@ionicprotocol/types';
+import { assetSymbols, SupportedChains } from '@ionicprotocol/types';
 import dotenv from 'dotenv';
 
 import { BASE_URL, FORKED_RPC } from '@ui/test/constants/index';

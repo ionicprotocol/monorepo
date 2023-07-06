@@ -1,5 +1,5 @@
 import { TransactionRequest } from "@ethersproject/providers";
-import { MidasSdk } from "@midas-capital/sdk";
+import { MidasSdk } from "@ionicprotocol/sdk";
 
 export async function fetchGasLimitForTransaction(midasSdk: MidasSdk, method: string, tx: TransactionRequest) {
   try {

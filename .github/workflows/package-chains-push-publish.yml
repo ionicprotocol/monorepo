@@ -42,7 +42,7 @@ jobs:
         run: yarn build:chains
 
       - name: Lint `chains`
-        run: yarn workspace @midas-capital/chains lint
+        run: yarn workspace @ionicprotocol/chains lint
 
       - uses: JS-DevTools/npm-publish@v1
         if: github.ref == 'refs/heads/main'

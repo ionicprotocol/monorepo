@@ -10,8 +10,8 @@ import {
   moonbeam,
   neondevnet,
   polygon,
-} from "@midas-capital/chains";
-import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
+} from "@ionicprotocol/chains";
+import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 

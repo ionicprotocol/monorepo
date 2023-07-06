@@ -1,6 +1,6 @@
 import { TransactionRequest, TransactionResponse } from "@ethersproject/providers";
-import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
-import { LiquidationStrategy } from "@midas-capital/types";
+import { ERC20Abi, MidasSdk } from "@ionicprotocol/sdk";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, constants, Contract, Wallet } from "ethers";
 
 import config from "../config";

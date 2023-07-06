@@ -1,4 +1,4 @@
-import type { AssetPrice, AssetTotalApy, AssetTvl, ChartData } from '@midas-capital/types';
+import type { AssetPrice, AssetTotalApy, AssetTvl, ChartData } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';

@@ -11,7 +11,7 @@ import {
   Strategy,
   StrategyComplexity,
   StrategyTimeInMarket,
-} from "@midas-capital/types";
+} from "@ionicprotocol/types";
 
 export const strategies: ERC4626Strategy[] = [
   // BNB CHAIN

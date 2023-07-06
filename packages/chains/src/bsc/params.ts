@@ -1,4 +1,4 @@
-import { ChainParams } from "@midas-capital/types";
+import { ChainParams } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
 import { WBNB } from "./assets";

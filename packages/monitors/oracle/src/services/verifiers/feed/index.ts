@@ -1,4 +1,4 @@
-import { OracleTypes } from "@midas-capital/types";
+import { OracleTypes } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
 import ChainlinkPriceOracleV2ABI from "../../../../../../sdk/abis/ChainlinkPriceOracleV2";

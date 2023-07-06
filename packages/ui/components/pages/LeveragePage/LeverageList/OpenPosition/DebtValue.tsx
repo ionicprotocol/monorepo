@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react';
-import type { OpenPosition, PositionInfo } from '@midas-capital/types';
+import type { OpenPosition, PositionInfo } from '@ionicprotocol/types';
 import { BigNumber, utils } from 'ethers';
 
 import { SupplyBalance as MarketSupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';

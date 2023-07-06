@@ -1,4 +1,4 @@
-import { DysonPlugin, Reward, Strategy } from '@midas-capital/types';
+import { DysonPlugin, Reward, Strategy } from '@ionicprotocol/types';
 import axios from 'axios';
 import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
 

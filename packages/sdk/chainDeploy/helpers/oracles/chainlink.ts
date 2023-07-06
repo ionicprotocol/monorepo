@@ -1,4 +1,4 @@
-import { underlying } from "@midas-capital/types";
+import { underlying } from "@ionicprotocol/types";
 import { providers } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";

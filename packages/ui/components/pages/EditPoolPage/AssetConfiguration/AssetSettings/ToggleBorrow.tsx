@@ -1,6 +1,6 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Spacer, Switch, Text } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';

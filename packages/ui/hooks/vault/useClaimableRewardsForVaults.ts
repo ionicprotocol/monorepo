@@ -1,4 +1,4 @@
-import type { FlywheelRewardsInfoForVault, SupportedChains } from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';

@@ -1,5 +1,5 @@
-import { polygon } from "@midas-capital/chains";
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { polygon } from "@ionicprotocol/chains";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../typechain/AddressesProvider";

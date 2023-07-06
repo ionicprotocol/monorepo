@@ -74,8 +74,8 @@ From the `monorepo` top-level folder:
 
 ```
 >>> yarn
->>> yarn workspace @midas-capital/oracles-monitor build
->>> yarn workspace @midas-capital/oracles-monitor start
+>>> yarn workspace @ionicprotocol/oracles-monitor build
+>>> yarn workspace @ionicprotocol/oracles-monitor start
 
 ```
 

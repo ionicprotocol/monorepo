@@ -38,4 +38,4 @@ jobs:
         run: yarn build:deploy:ui
 
       - name: Lint `ui`
-        run: yarn workspace @midas-capital/ui lint
+        run: yarn workspace @ionicprotocol/ui lint

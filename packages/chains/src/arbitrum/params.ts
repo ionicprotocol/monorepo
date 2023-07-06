@@ -1,4 +1,4 @@
-import { assetSymbols, ChainParams, underlying } from "@midas-capital/types";
+import { assetSymbols, ChainParams, underlying } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
 import chainAddresses from "./addresses";

@@ -1,6 +1,6 @@
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-import { chainIdToConfig } from "@midas-capital/chains";
-import { ChainConfig } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { ChainConfig } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 
 import { withChainLinkOracleScorer, withUniswapV3OracleScorer } from "./oracle";

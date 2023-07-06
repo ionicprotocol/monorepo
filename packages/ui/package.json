@@ -1,5 +1,5 @@
 {
-  "name": "@midas-capital/ui",
+  "name": "@ionicprotocol/ui",
   "version": "1.0.27",
   "private": true,
   "scripts": {
@@ -21,10 +21,10 @@
     "@emotion/styled": "^11.10.6",
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
-    "@midas-capital/chains": "workspace:*",
-    "@midas-capital/sdk": "workspace:*",
-    "@midas-capital/security": "workspace:*",
-    "@midas-capital/types": "workspace:*",
+    "@ionicprotocol/chains": "workspace:*",
+    "@ionicprotocol/sdk": "workspace:*",
+    "@ionicprotocol/security": "workspace:*",
+    "@ionicprotocol/types": "workspace:*",
     "@next/bundle-analyzer": "^13.3.0",
     "@rainbow-me/rainbowkit": "^0.12.8",
     "@sentry/nextjs": "^7.48.0",

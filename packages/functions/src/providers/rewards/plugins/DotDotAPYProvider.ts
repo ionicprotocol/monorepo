@@ -1,4 +1,4 @@
-import { DotDotPlugin, Reward, Strategy } from '@midas-capital/types';
+import { DotDotPlugin, Reward, Strategy } from '@ionicprotocol/types';
 import axios from 'axios';
 import { functionsAlert } from '../../../alert';
 import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';

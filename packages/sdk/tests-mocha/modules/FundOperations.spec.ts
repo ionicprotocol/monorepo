@@ -1,4 +1,4 @@
-import { ganache } from "@midas-capital/chains";
+import { ganache } from "@ionicprotocol/chains";
 import axios from "axios";
 import { BigNumber, Contract, providers, Signer } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";

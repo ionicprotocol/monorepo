@@ -1,4 +1,4 @@
-import { underlying } from "@midas-capital/types";
+import { underlying } from "@ionicprotocol/types";
 
 import { aXXXcDeployParams } from "../types";
 

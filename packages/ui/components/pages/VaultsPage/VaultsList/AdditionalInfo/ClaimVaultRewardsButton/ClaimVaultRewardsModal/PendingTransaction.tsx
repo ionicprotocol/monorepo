@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import type { FlywheelRewardsInfoForVault, SupportedAsset } from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, SupportedAsset } from '@ionicprotocol/types';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';

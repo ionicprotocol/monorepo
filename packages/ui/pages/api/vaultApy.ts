@@ -1,4 +1,4 @@
-import type { VaultApy } from '@midas-capital/types';
+import type { VaultApy } from '@ionicprotocol/types';
 import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';

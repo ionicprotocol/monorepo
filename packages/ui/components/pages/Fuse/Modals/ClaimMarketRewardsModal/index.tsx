@@ -1,6 +1,6 @@
 import { Box, Button, HStack, Img, Spinner, Text, VStack } from '@chakra-ui/react';
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import type { SupportedAsset } from '@midas-capital/types';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
+import type { SupportedAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';

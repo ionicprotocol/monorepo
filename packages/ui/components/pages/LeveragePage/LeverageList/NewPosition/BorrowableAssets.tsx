@@ -1,5 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
-import type { LeveredBorrowable, NewPosition } from '@midas-capital/types';
+import type { LeveredBorrowable, NewPosition } from '@ionicprotocol/types';
 import { FaAngleDown } from 'react-icons/fa';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';

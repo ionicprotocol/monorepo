@@ -1,6 +1,6 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Link, Spacer, Text } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
 
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';

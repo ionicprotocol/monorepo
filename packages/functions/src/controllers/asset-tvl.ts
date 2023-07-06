@@ -1,10 +1,10 @@
-import { NativePricedFuseAsset, SupportedChains } from '@midas-capital/types';
+import { NativePricedFuseAsset, SupportedChains } from '@ionicprotocol/types';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { MidasSdk, filterOnlyObjectProperties } from '@midas-capital/sdk';
+import { MidasSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
-import { chainIdToConfig } from '@midas-capital/chains';
+import { chainIdToConfig } from '@ionicprotocol/chains';
 import { utils } from 'ethers';
 
 export const updateAssetTvl = async (chainId: SupportedChains) => {

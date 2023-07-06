@@ -1,6 +1,6 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
-import { ComptrollerErrorCodes } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import { ComptrollerErrorCodes } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { MidasSdk } from "@midas-capital/sdk";
+import { MidasSdk } from "@ionicprotocol/sdk";
 
 import { CurvePoolConfig, InvalidReason, LiquidityDepthConfig, LiquidityValidity } from "../../../types";
 

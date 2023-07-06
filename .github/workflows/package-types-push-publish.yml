@@ -40,7 +40,7 @@ jobs:
         run: yarn build:types
 
       - name: Lint `types`
-        run: yarn workspace @midas-capital/types lint
+        run: yarn workspace @ionicprotocol/types lint
 
       - uses: JS-DevTools/npm-publish@v1
         with:

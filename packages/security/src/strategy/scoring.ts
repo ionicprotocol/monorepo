@@ -9,7 +9,7 @@ import {
   PlatformRiskReputation,
   StrategyComplexity,
   StrategyTimeInMarket,
-} from "@midas-capital/types";
+} from "@ionicprotocol/types";
 
 export const SCORING_WEIGHTS = {
   COMPLEXITY: 0.3,

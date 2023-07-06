@@ -1,5 +1,5 @@
-import { bsc } from "@midas-capital/chains";
-import { SupportedChains } from "@midas-capital/types";
+import { bsc } from "@ionicprotocol/chains";
+import { SupportedChains } from "@ionicprotocol/types";
 import { restore } from "sinon";
 
 import { SecurityBase } from "../../src/index";

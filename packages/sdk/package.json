@@ -1,6 +1,6 @@
 {
-  "name": "@midas-capital/sdk",
-  "repository": "git://github.com:midas-protocol/monorepo.git",
+  "name": "@ionicprotocol/sdk",
+  "repository": "git://github.com:ionicprotocol/monorepo.git",
   "version": "0.6.9",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -102,8 +102,8 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@midas-capital/chains": "workspace:*",
-    "@midas-capital/types": "workspace:*",
+    "@ionicprotocol/chains": "workspace:*",
+    "@ionicprotocol/types": "workspace:*",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "bad-words": "^3.0.4",
     "bufferutil": "^4.0.7",

@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-statefile-midas-capital"
+    bucket = "terraform-statefile-ionicprotocol"
     key    = "midas-deployment"
     region = "us-east-1"
   }

@@ -1,5 +1,5 @@
-import { neondevnet } from "@midas-capital/chains";
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { neondevnet } from "@ionicprotocol/chains";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { ChainDeployConfig } from "../helpers";

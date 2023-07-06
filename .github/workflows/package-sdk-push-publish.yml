@@ -42,7 +42,7 @@ jobs:
         run: yarn build:sdk
 
       - name: Lint `sdk`
-        run: yarn workspace @midas-capital/sdk lint
+        run: yarn workspace @ionicprotocol/sdk lint
 
       - uses: JS-DevTools/npm-publish@v1
         with:

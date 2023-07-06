@@ -1,11 +1,11 @@
-# `@midas-capital/sdk`
+# `@ionicprotocol/sdk`
 
 ## Installation
 
-`npm install @midas-capital/sdk`
+`npm install @ionicprotocol/sdk`
 
 ```typescript
-import { MidasSdk } from "@midas-capital/sdk";
+import { MidasSdk } from "@ionicprotocol/sdk";
 import { ethers } from "ethers";
 
 const chainId = 56;

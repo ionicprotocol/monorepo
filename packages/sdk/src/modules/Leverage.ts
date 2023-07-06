@@ -1,4 +1,4 @@
-import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo, SupportedChains } from "@midas-capital/types";
+import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo, SupportedChains } from "@ionicprotocol/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";

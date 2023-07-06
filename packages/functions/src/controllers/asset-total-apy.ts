@@ -5,16 +5,16 @@ import {
   Reward,
   Strategy,
   FlywheelReward,
-} from '@midas-capital/types';
+} from '@ionicprotocol/types';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { MidasSdk, filterOnlyObjectProperties } from '@midas-capital/sdk';
+import { MidasSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
-import { chainIdToConfig } from '@midas-capital/chains';
+import { chainIdToConfig } from '@ionicprotocol/chains';
 import { BigNumber, Contract, ethers, utils } from 'ethers';
 import { getAPYProviders as getAssetAPYProviders } from '../providers/rewards/assets';
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/src/modules/Flywheel';
+import { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
 import { pluginsOfChain } from '../data/plugins';
 import { getAPYProviders as getPluginAPYProviders } from '../providers/rewards/plugins';
 

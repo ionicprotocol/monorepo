@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { LiquidatablePool } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { LiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
 
 import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";

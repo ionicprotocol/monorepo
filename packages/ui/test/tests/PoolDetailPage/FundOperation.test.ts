@@ -1,5 +1,5 @@
 import type { Dappeteer, DappeteerBrowser, DappeteerPage } from '@chainsafe/dappeteer';
-import { FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 
 import { Config } from '@ui/test//helpers/Config';
 import { JEST_EXE_TIME } from '@ui/test/constants';

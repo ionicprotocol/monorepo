@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { chainIdToConfig } from "@midas-capital/chains";
-import { SupportedChains } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { SupportedChains } from "@ionicprotocol/types";
 import { Signer, Wallet } from "ethers";
 
 import { baseConfig } from "../src/config/variables";

@@ -1,6 +1,6 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { Comptroller } from "@midas-capital/sdk/dist/cjs/typechain/Comptroller";
-import { SupportedAsset } from "@midas-capital/types";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { Comptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/Comptroller";
+import { SupportedAsset } from "@ionicprotocol/types";
 import { constants } from "ethers";
 
 export class PoolService {

@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedAsset } from "@midas-capital/types";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { SupportedAsset } from "@ionicprotocol/types";
 
 import { AMMLiquidityVerifier } from "../services";
 

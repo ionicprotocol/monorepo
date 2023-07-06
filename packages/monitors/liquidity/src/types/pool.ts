@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 
 export enum LiquidityPoolKind {
   UniswapV2 = "UniswapV2",

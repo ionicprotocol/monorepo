@@ -10,8 +10,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-// import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
-// import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/typechain/MidasFlywheel';
+// import { FlywheelStaticRewards } from '@ionicprotocol/sdk/dist/cjs/typechain/FlywheelStaticRewards';
+// import { MidasFlywheel } from '@ionicprotocol/sdk/dist/cjs/typechain/MidasFlywheel';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 

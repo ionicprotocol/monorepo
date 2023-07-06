@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedChains } from "@midas-capital/types";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { SupportedChains } from "@ionicprotocol/types";
 import { BigNumber, utils } from "ethers";
 
 import { logger } from "../../..";

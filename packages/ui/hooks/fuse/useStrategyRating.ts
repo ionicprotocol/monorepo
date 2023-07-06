@@ -1,4 +1,4 @@
-import type { StrategyScore } from '@midas-capital/types';
+import type { StrategyScore } from '@ionicprotocol/types';
 import { useMemo } from 'react';
 
 import { useSecurity } from '@ui/hooks/fuse/useSecurity';

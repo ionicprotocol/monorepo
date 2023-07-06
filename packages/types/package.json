@@ -1,6 +1,6 @@
 {
-  "name": "@midas-capital/types",
-  "repository": "git://github.com:midas-protocol/monorepo.git",
+  "name": "@ionicprotocol/types",
+  "repository": "git://github.com:ionicprotocol/monorepo.git",
   "version": "0.3.7",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -14,7 +14,7 @@
     "/dist/"
   ],
   "scripts": {
-    "build": "echo '> Bundling `@midas-capital/types`...' && tsup ./src/index.ts --format esm,cjs --dts",
+    "build": "echo '> Bundling `@ionicprotocol/types`...' && tsup ./src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf dist",
     "prettier:ts": "prettier --write 'src/**/*.ts'",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",

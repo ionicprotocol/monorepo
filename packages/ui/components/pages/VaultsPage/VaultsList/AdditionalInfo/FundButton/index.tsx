@@ -1,6 +1,6 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
-import { FundOperationMode } from '@midas-capital/types';
+import type { VaultData } from '@ionicprotocol/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useMemo } from 'react';
 
 import { SupplyModal } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/SupplyModal/index';

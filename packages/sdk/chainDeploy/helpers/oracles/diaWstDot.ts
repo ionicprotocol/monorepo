@@ -1,5 +1,5 @@
-import { moonbeam } from "@midas-capital/chains";
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { moonbeam } from "@ionicprotocol/chains";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 
 import { DiaStDotFnParams } from "../types";
 

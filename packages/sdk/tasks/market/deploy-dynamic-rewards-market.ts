@@ -1,5 +1,5 @@
-import { bsc, evmos, moonbeam, polygon } from "@midas-capital/chains";
-import { underlying } from "@midas-capital/types";
+import { bsc, evmos, moonbeam, polygon } from "@ionicprotocol/chains";
+import { underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {

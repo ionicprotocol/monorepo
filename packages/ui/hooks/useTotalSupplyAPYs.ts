@@ -1,4 +1,4 @@
-import { assetSymbols } from '@midas-capital/types';
+import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 

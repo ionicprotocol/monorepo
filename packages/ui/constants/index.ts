@@ -1,4 +1,4 @@
-import { SupportedChainsArray } from '@midas-capital/types';
+import { SupportedChainsArray } from '@ionicprotocol/types';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -77,7 +77,7 @@ export const DEBT_CEILING_WHITELIST = {
 
 export const POOLS_PER_PAGE = 6;
 
-// TODO: We should replace this with NATIVE_DECIMALS from the @midas-capital/chains package
+// TODO: We should replace this with NATIVE_DECIMALS from the @ionicprotocol/chains package
 export const DEFAULT_DECIMALS = 18;
 
 // enums

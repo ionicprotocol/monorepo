@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 
 export const defaultDocs = (blockExplorerUrl: string, tokenAddress: string): string => {
   return `

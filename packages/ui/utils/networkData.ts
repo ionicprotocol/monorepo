@@ -11,13 +11,13 @@ import {
   moonbeam,
   neondevnet,
   polygon,
-} from '@midas-capital/chains';
+} from '@ionicprotocol/chains';
 import type {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
   DeployedPlugins as DeployedPluginsType,
-} from '@midas-capital/types';
-import { SupportedChains } from '@midas-capital/types';
+} from '@ionicprotocol/types';
+import { SupportedChains } from '@ionicprotocol/types';
 import { BigNumber } from 'ethers';
 
 import { config } from '@ui/config/index';

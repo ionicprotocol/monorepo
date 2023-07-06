@@ -1,5 +1,5 @@
-import { arbitrum } from "@midas-capital/chains";
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { arbitrum } from "@ionicprotocol/chains";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import {
