@@ -169,6 +169,9 @@ export enum assetOriginalSymbols {
   "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
   "sAMM-stkBNB/WBNB" = "stkBNB/WBNB Thena LP",
   "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
+  "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
+  "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
+  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP",
 }
 
 export enum assetSymbols {
