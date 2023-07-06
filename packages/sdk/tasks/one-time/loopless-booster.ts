@@ -54,11 +54,10 @@ task("configure-static-rewards-chapel", "").setAction(async ({}, { ethers, deplo
     deployer
   )) as FlywheelStaticRewards;
 
-  let tx = await staticRewards.setRewardsInfo(bombMarket, {
+  const tx = await staticRewards.setRewardsInfo(bombMarket, {
     rewardsPerSecond: 1000000000,
     rewardsEndTimestamp: 1751784923,
   });
   await tx.wait();
   console.log("setRewardsInfo: ", tx.hash);
-
 });
