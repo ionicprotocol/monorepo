@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REGISTRY: 347632749353.dkr.ecr.us-east-1.amazonaws.com
-      REPOSITORY: liquidator
+      REPOSITORY: ionic-liquidator
 
     steps:
       - uses: actions/checkout@v3
@@ -125,16 +125,16 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
-          docker build -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/midas-protocol/liquidator:$IMAGE_TAG .
+          docker build -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push ghcr.io/midas-protocol/liquidator:$IMAGE_TAG
+          docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
 
   build-and-push-oracles-monitor-image:
     needs: [terraform-infra]
     runs-on: ubuntu-latest
     env:
       REGISTRY: 347632749353.dkr.ecr.us-east-1.amazonaws.com
-      REPOSITORY: oracles-monitor
+      REPOSITORY: ionic-oracles-monitor
 
     steps:
       - uses: actions/checkout@v3
@@ -169,9 +169,9 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
-          docker build -f docker/oracles-monitor/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/midas-protocol/oracles-monitor:$IMAGE_TAG .
+          docker build -f docker/oracles-monitor/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push ghcr.io/midas-protocol/oracles-monitor:$IMAGE_TAG
+          docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
 
   smoke-tests:
     runs-on: ubuntu-latest
