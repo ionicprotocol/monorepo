@@ -24,7 +24,7 @@
     "test": "nyc ts-mocha --require 'tests/globalTestHook.ts' --check-leaks --exit --timeout 60000 'tests/**/*.spec.ts'"
   },
   "keywords": [],
-  "author": "Midas Capital",
+  "author": "Ionic Protocol",
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^4.3.1",

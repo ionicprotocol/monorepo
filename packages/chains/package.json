@@ -1,7 +1,7 @@
 {
   "name": "@ionicprotocol/chains",
   "repository": "git://github.com:ionicprotocol/monorepo.git",
-  "version": "0.3.8",
+  "version": "0.4.0",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -22,7 +22,7 @@
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json"
   },
   "keywords": [],
-  "author": "Midas Capital",
+  "author": "Ionic Protocol",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.18.0",
