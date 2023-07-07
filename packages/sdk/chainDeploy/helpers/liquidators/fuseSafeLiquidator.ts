@@ -4,7 +4,7 @@ import { BigNumber, constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { FuseSafeLiquidator } from "../../../typechain/FuseSafeLiquidator";
-import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
+import { BalancerSwapTokenLiquidatorData, LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
 
 export const deployFuseSafeLiquidator = async ({
   ethers,
@@ -200,30 +200,30 @@ export const configureAddressesProviderStrategies = async ({
 
   // configure the curve oracles addresses in the AddressesProvider
   const clpov1 = await ethers.getContractOrNull("CurveLpTokenPriceOracleNoRegistry");
-  await configureAddress("CurveLpTokenPriceOracleNoRegistry", clpov1?.address, ap);
+  await configureAddress(ap, "CurveLpTokenPriceOracleNoRegistry", clpov1?.address);
 
   const clpov2 = await ethers.getContractOrNull("CurveV2LpTokenPriceOracleNoRegistry");
-  await configureAddress("CurveV2LpTokenPriceOracleNoRegistry", clpov2?.address, ap);
+  await configureAddress(ap, "CurveV2LpTokenPriceOracleNoRegistry", clpov2?.address);
 
   // configure the redemption and funding strategies addresses
   const csl = await ethers.getContractOrNull("CurveSwapLiquidator");
-  await configureAddress("CurveSwapLiquidator", csl?.address, ap);
+  await configureAddress(ap, "CurveSwapLiquidator", csl?.address);
 
   const jlf = await ethers.getContractOrNull("JarvisLiquidatorFunder");
-  await configureAddress("JarvisLiquidatorFunder", jlf?.address, ap);
+  await configureAddress(ap, "JarvisLiquidatorFunder", jlf?.address);
 
   const uv2l = await ethers.getContractOrNull("UniswapV2Liquidator");
-  await configureAddress("UniswapV2Liquidator", uv2l?.address, ap);
+  await configureAddress(ap, "UniswapV2Liquidator", uv2l?.address);
 
   const clptlnr = await ethers.getContractOrNull("CurveLpTokenLiquidatorNoRegistry");
-  await configureAddress("CurveLpTokenLiquidatorNoRegistry", clptlnr?.address, ap);
+  await configureAddress(ap, "CurveLpTokenLiquidatorNoRegistry", clptlnr?.address);
 
-  await configureAddress("UNISWAP_V3_ROUTER", chainConfig.chainAddresses.UNISWAP_V3_ROUTER, ap);
-  await configureAddress("ALGEBRA_SWAP_ROUTER", chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER, ap);
-  await configureAddress("SOLIDLY_SWAP_ROUTER", chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, ap);
+  await configureAddress(ap, "UNISWAP_V3_ROUTER", chainConfig.chainAddresses.UNISWAP_V3_ROUTER);
+  await configureAddress(ap, "ALGEBRA_SWAP_ROUTER", chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER);
+  await configureAddress(ap, "SOLIDLY_SWAP_ROUTER", chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER);
 };
 
-async function configureAddress(key, value, ap) {
+async function configureAddress(ap: AddressesProvider, key: string, value?: string) {
   if (!value) {
     console.log(`empty value for key ${key}`);
     return;
@@ -234,5 +234,21 @@ async function configureAddress(key, value, ap) {
     const tx = await ap.setAddress(key, value);
     await tx.wait();
     console.log(`setAddress ${key}: ${tx.hash}`);
+  }
+}
+
+export async function configureBalancerSwap(
+  ap: AddressesProvider,
+  balancerSwapTokenLiquidatorData: BalancerSwapTokenLiquidatorData[]
+) {
+  for (const swap of balancerSwapTokenLiquidatorData) {
+    const pool = await ap.getBalancerPoolForTokens(swap.inputToken, swap.outputToken);
+    if (pool != swap.poolAddress || pool === constants.AddressZero) {
+      const tx = await ap.setBalancerPoolForTokens(swap.inputToken, swap.outputToken, swap.poolAddress);
+      await tx.wait();
+      console.log(
+        `setBalancerPoolForTokens input: ${swap.inputToken}, output: ${swap.outputToken}:, pool: ${swap.poolAddress} with tx: ${tx.hash}`
+      );
+    }
   }
 }

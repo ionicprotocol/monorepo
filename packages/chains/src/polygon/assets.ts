@@ -10,7 +10,14 @@ import {
   tangibleDocsUsdr,
   wrappedAssetDocs,
 } from "../common";
-import { ankrCertificateDocs, clayStackDocs, lidoFinanceDocs, oneInchDocs, StaderXDocs } from "../common/docs";
+import {
+  ankrCertificateDocs,
+  clayStackDocs,
+  lidoFinanceDocs,
+  oneInchDocs,
+  pearlDocs,
+  StaderXDocs,
+} from "../common/docs";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
 export const WMATIC = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
@@ -45,6 +52,7 @@ const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
 const USDR = "0xb5DFABd7fF7F83BAB83995E72A52B97ABb7bcf63";
+const WUSDR = "0xAF0D9D65fC54de245cdA37af3d18cbEc860A4D4b";
 const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 
 // liquid staked assets
@@ -69,6 +77,9 @@ const TETU_LINEAR_USDT = "0x7c82A23B4C48D796dee36A9cA215b641C6a8709d";
 const TETU_LINEAR_USDC = "0xae646817e458C0bE890b81e8d880206710E3c44e";
 const TETU_LINEAR_DAI = "0xDa1CD1711743e57Dd57102E9e61b75f3587703da";
 const AAVE_LINEAR_WMATIC = "0xE4885Ed2818Cc9E840A25f94F9b2A28169D1AEA7";
+
+// Aave
+const amUSDC = "0x1a13F4Ca1d028320A707D99520AbFefca3998b7F";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
@@ -130,6 +141,11 @@ const arrakis_USDC_USDT_001 = "0x2817E729178471DBAC8b1FC190b4fd8e6F3984e3";
 const arrakis_USDC_USDT_005 = "0x869A75D6F7ae09810c9083684cf22e9A618c8B05";
 const arrakis_USDC_DAI_005 = "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA";
 const arrakis_WETH_DAI_03 = "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c";
+
+// pearl (solidly)
+const solidlyStableAMM_USDR_USDC = "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797";
+const solidlyVolatileAMM_stMATIC_USDR = "0x733eEEf37De013283da29cE9EB4758dC59CaFc87";
+const solidlyVolatileAMM_wUSDR_USDR = "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2";
 
 export const assets: SupportedAsset[] = [
   {
@@ -561,6 +577,15 @@ export const assets: SupportedAsset[] = [
     extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", EURE_JEUR, true),
   },
   {
+    symbol: assetSymbols.amUSDC,
+    underlying: amUSDC,
+    name: "AAVE Usdc Token",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: `https://app.aave.com/reserve-overview/?underlyingAsset=${USDC}&marketName=proto_polygon_v3`,
+    disabled: true,
+  },
+  {
     symbol: assetSymbols.am3CRV,
     underlying: am3CRV,
     name: "Curve.fi amDAI/amUSDC/amUSDT",
@@ -934,7 +959,15 @@ export const assets: SupportedAsset[] = [
     name: "Real USD ",
     decimals: 9,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: tangibleDocsUsdr(),
+    extraDocs: tangibleDocsUsdr("Mint"),
+  },
+  {
+    symbol: assetSymbols.WUSDR,
+    underlying: WUSDR,
+    name: "Wrappd Real USD ",
+    decimals: 9,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: tangibleDocsUsdr("Wrap"),
   },
   {
     symbol: assetSymbols.TNGBL,
@@ -1049,6 +1082,33 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", JRT),
     disabled: true,
+  },
+  {
+    symbol: assetSymbols["sAMM-USDC/USDR"],
+    underlying: solidlyStableAMM_USDR_USDC,
+    name: "Stable AMM - USDC/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyStableAMM_USDR_USDC),
+    originalSymbol: assetOriginalSymbols["sAMM-USDC/USDR"],
+  },
+  {
+    symbol: assetSymbols["vAMM-wUSDR/USDR"],
+    underlying: solidlyVolatileAMM_wUSDR_USDR,
+    name: "Volatile AMM - wUSDR/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_wUSDR_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-wUSDR/USDR"],
+  },
+  {
+    symbol: assetSymbols["vAMM-stMATIC/USDR"],
+    underlying: solidlyVolatileAMM_stMATIC_USDR,
+    name: "Stable V1 AMM - stMATIC/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_stMATIC_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-stMATIC/USDR"],
   },
 ];
 

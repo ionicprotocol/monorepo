@@ -25,15 +25,19 @@ export enum RedemptionStrategyContract {
   UniswapV3Liquidator = "UniswapV3Liquidator",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
   GammaLpTokenLiquidator = "GammaLpTokenLiquidator",
+  GammaLpTokenWrapper = "GammaLpTokenWrapper",
   CurveSwapLiquidator = "CurveSwapLiquidator",
   CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
+  CurveLpTokenWrapper = "CurveLpTokenWrapper",
   SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
   BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
   BalancerSwapLiquidator = "BalancerSwapLiquidator",
   ERC4626Liquidator = "ERC4626Liquidator",
   AlgebraSwapLiquidator = "AlgebraSwapLiquidator",
   SolidlyLpTokenLiquidator = "SolidlyLpTokenLiquidator",
+  SolidlyLpTokenWrapper = "SolidlyLpTokenWrapper",
   SolidlySwapLiquidator = "SolidlySwapLiquidator",
+  AaveTokenLiquidator = "AaveTokenLiquidator",
 }
 
 export enum FundingStrategyContract {
@@ -165,6 +169,9 @@ export enum assetOriginalSymbols {
   "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
   "sAMM-stkBNB/WBNB" = "stkBNB/WBNB Thena LP",
   "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
+  "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
+  "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
+  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP",
 }
 
 export enum assetSymbols {
@@ -376,6 +383,7 @@ export enum assetSymbols {
   "JCHF-BUSD" = "jCHF-BUSD",
   "MAI-USDC" = "MAI-USDC",
   am3CRV = "am3CRV",
+  amUSDC = "amUSDC",
   AGEUR = "agEUR",
   EURT = "EURT",
   EURE = "EURE",
@@ -410,6 +418,7 @@ export enum assetSymbols {
   "DAI-GNS" = "DAI-GNS",
   "IXT-USDT" = "IXT-USDT",
   USDR = "USDR",
+  WUSDR = "WUSDR",
   USDR3CRV = "USDR3CRV",
   TNGBL = "TNGBL",
 
@@ -442,6 +451,11 @@ export enum assetSymbols {
   arrakis_USDC_USDT_005 = "Arrakis Vault V1 USDC-USDT (0.05)",
   arrakis_USDC_DAI_005 = "G-UNI USDC-DAI Vault (0.05)",
   arrakis_WETH_DAI_03 = "G-UNI WETH-DAI Vault (0.3)",
+
+  // Pearl
+  "sAMM-USDC/USDR" = "sAMM-USDC-USDR",
+  "vAMM-wUSDR/USDR" = "sAMM-wUSDR-USDR",
+  "vAMM-stMATIC/USDR" = "vAMM-stMATIC-USDR",
 
   // Arbitrum
   "2pool" = "2pool",

@@ -32,7 +32,7 @@ export const fetchTokenBalance = async (
   return balance;
 };
 
-export function useTokenBalance(tokenAddress: string, chainId: number, customAddress?: string) {
+export function useTokenBalance(tokenAddress?: string, chainId?: number, customAddress?: string) {
   const { address } = useMultiMidas();
   const sdk = useSdk(chainId);
 
@@ -41,16 +41,16 @@ export function useTokenBalance(tokenAddress: string, chainId: number, customAdd
   return useQuery(
     ['TokenBalance', tokenAddress, addressToCheck, sdk?.chainId],
     async () => {
-      if (sdk) {
+      if (sdk && tokenAddress && chainId) {
         return await fetchTokenBalance(tokenAddress, sdk, addressToCheck);
       } else {
         return null;
       }
     },
     {
-      cacheTime: Infinity,
+      // cacheTime: Infinity,
       enabled: !!tokenAddress && !!addressToCheck && !!sdk,
-      staleTime: Infinity,
+      // staleTime: Infinity,
     }
   );
 }

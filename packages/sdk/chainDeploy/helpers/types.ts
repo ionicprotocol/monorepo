@@ -27,6 +27,12 @@ export type ConcentratedLiquidityOracleConfig = {
   baseToken: string;
 };
 
+export type BalancerSwapTokenLiquidatorData = {
+  poolAddress: string;
+  inputToken: string;
+  outputToken: string;
+};
+
 export type ChainDeployConfig = {
   uniswap: {
     uniswapV2RouterAddress: string;

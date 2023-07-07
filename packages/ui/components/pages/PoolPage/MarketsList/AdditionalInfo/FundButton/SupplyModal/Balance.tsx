@@ -8,7 +8,13 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-export const Balance = ({ asset, chainId }: { asset: MarketData; chainId: SupportedChains }) => {
+export const Balance = ({
+  asset,
+  chainId,
+}: {
+  asset: Pick<MarketData, 'underlyingDecimals' | 'underlyingSymbol' | 'underlyingToken'>;
+  chainId: SupportedChains;
+}) => {
   const sdk = useSdk(chainId);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken, chainId);
   const { data: myNativeBalance } = useTokenBalance(

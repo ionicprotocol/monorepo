@@ -153,11 +153,15 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
   [underlying(assets, assetSymbols.am3CRV)]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.amUSDC),
+  ],
+  [underlying(assets, assetSymbols.amUSDC)]: [
+    RedemptionStrategyContract.AaveTokenLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.USDR3CRV)]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    underlying(assets, assetSymbols.USDC),
+    underlying(assets, assetSymbols.USDR),
   ],
   [underlying(assets, assetSymbols["MAI-USDC"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, USDC],
   [underlying(assets, assetSymbols["WMATIC-MATICx"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WMATIC],
@@ -190,7 +194,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.WMATIC),
   ],
   [underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP)]: [
-    RedemptionStrategyContract.BalancerSwapLiquidator,
+    RedemptionStrategyContract.BalancerLpTokenLiquidator,
     underlying(assets, assetSymbols.TETU_LINEAR_USDC),
   ],
   [underlying(assets, assetSymbols.TETU_LINEAR_USDC)]: [
@@ -199,15 +203,60 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
   [underlying(assets, assetSymbols.MaticX_bbaWMATIC)]: [
     RedemptionStrategyContract.BalancerLpTokenLiquidator,
-    underlying(assets, assetSymbols.WMATIC),
+    underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
   ],
   [underlying(assets, assetSymbols.StMatic_bbaWMATIC)]: [
     RedemptionStrategyContract.BalancerLpTokenLiquidator,
-    underlying(assets, assetSymbols.WMATIC),
+    underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
   ],
   [underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC)]: [
-    RedemptionStrategyContract.BalancerLpTokenLiquidator,
+    RedemptionStrategyContract.BalancerSwapLiquidator,
     underlying(assets, assetSymbols.WMATIC),
+  ],
+  [underlying(assets, assetSymbols.USDR)]: [
+    RedemptionStrategyContract.SolidlySwapLiquidator,
+    underlying(assets, assetSymbols.USDC),
+  ],
+  [underlying(assets, assetSymbols["sAMM-USDC/USDR"])]: [
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    underlying(assets, assetSymbols.USDC),
+  ],
+  [underlying(assets, assetSymbols["vAMM-wUSDR/USDR"])]: [
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    underlying(assets, assetSymbols.USDR),
+  ],
+  [underlying(assets, assetSymbols["vAMM-stMATIC/USDR"])]: [
+    RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    underlying(assets, assetSymbols.USDR),
+  ],
+  // Zappers
+  [underlying(assets, assetSymbols.USDC)]: [
+    RedemptionStrategyContract.SolidlyLpTokenWrapper,
+    underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
+  ],
+  [underlying(assets, assetSymbols.USDR)]: [
+    RedemptionStrategyContract.SolidlyLpTokenWrapper,
+    underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
+  ],
+  [underlying(assets, assetSymbols.USDR)]: [
+    RedemptionStrategyContract.CurveLpTokenWrapper,
+    underlying(assets, assetSymbols.USDR3CRV),
+  ],
+  [underlying(assets, assetSymbols.am3CRV)]: [
+    RedemptionStrategyContract.CurveLpTokenWrapper,
+    underlying(assets, assetSymbols.USDR3CRV),
+  ],
+  [underlying(assets, assetSymbols.USDR)]: [
+    RedemptionStrategyContract.SolidlyLpTokenWrapper,
+    underlying(assets, assetSymbols["vAMM-stMATIC/USDR"]),
+  ],
+  [underlying(assets, assetSymbols.USDR)]: [
+    RedemptionStrategyContract.SolidlyLpTokenWrapper,
+    underlying(assets, assetSymbols["vAMM-stMATIC/USDR"]),
+  ],
+  [underlying(assets, assetSymbols.stMATIC)]: [
+    RedemptionStrategyContract.SolidlyLpTokenWrapper,
+    underlying(assets, assetSymbols["vAMM-stMATIC/USDR"]),
   ],
 };
 

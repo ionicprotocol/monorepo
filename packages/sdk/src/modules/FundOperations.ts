@@ -1,7 +1,7 @@
+import { SupportedChains } from "@midas-capital/types";
 import axios from "axios";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
-import { MidasBaseConstructor } from "..";
 import CErc20DelegateABI from "../../abis/CErc20Delegate";
 import ComptrollerABI from "../../abis/Comptroller";
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
@@ -9,7 +9,10 @@ import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { getContract } from "../MidasSdk/utils";
 
-export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBase) {
+import { CreateContractsModule } from "./CreateContracts";
+import { ChainSupportedAssets } from "./FusePools";
+
+export function withFundOperations<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class FundOperations extends Base {
     async fetchGasForCall(amount: BigNumber, address: string) {
       const estimatedGas = BigNumber.from(
@@ -105,6 +108,44 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       const tx: ContractTransaction = await cToken.redeemUnderlying(amount);
 
       return { tx, errorCode: null };
+    }
+
+    async swap(inputToken: string, amount: BigNumber, outputToken: string) {
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry(this.signer);
+
+      return await iLiquidatorsRegistry.amountOutAndSlippageOfSwap(inputToken, amount, outputToken);
+    }
+
+    async approveLiquidatorsRegistry(underlying: string) {
+      const token = getContract(underlying, EIP20InterfaceABI, this.signer);
+      const tx = await token.approve(this.chainDeployment.LiquidatorsRegistry.address, constants.MaxUint256);
+
+      return tx;
+    }
+
+    async getSwapTokens(outputToken: string) {
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
+
+      const tokens = await iLiquidatorsRegistry.callStatic.getInputTokensByOutputToken(outputToken);
+
+      return tokens.map((token) => {
+        const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find((ass) => ass.underlying === token);
+
+        return {
+          underlyingToken: token,
+          underlyingSymbol: _asset?.originalSymbol ?? _asset?.symbol ?? token,
+          underlyingDecimals: _asset?.decimals ?? 18,
+        };
+      });
+    }
+
+    async getAmountOutAndSlippageOfSwap(inputToken: string, amount: BigNumber, outputToken: string) {
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
+      const account = await this.signer.getAddress();
+
+      return await iLiquidatorsRegistry.callStatic.amountOutAndSlippageOfSwap(inputToken, amount, outputToken, {
+        from: account,
+      });
     }
   };
 }

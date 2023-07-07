@@ -2,6 +2,9 @@
   "name": "polygon",
   "chainId": "137",
   "contracts": {
+    "AaveTokenLiquidator": {
+      "address": "0x1AB1884Db84759BabD63970D3617BFB12329c8C7"
+    },
     "AddressesProvider": {
       "address": "0x2fCa24E19C67070467927DDB85810fF766423e8e"
     },
@@ -113,6 +116,9 @@
     "CurveLpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0xaCF3E1C6f2D6Ff12B8aEE44413D6834774B3f7A3"
     },
+    "CurveLpTokenWrapper": {
+      "address": "0xd0C4A279ac136D4ccBDD985f8eC86c39D52f7b34"
+    },
     "CurveSwapLiquidator": {
       "address": "0x368c5E0655566DFE96c469EAB68969B0c6F4d3bc"
     },
@@ -210,7 +216,7 @@
       "address": "0x2f54C95b9A76699C7Cd77d3bCe096B36ccbda402"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x2722D6009EBD985B0519A257cD6ACE5543F833e0"
+      "address": "0xDE399BFA80Cf1c07FCeF8DBC07CB7E2165447A3a"
     },
     "LeveredPositionsLens": {
       "address": "0xc7C522615d468c8F91d8B8B5837f0E71fcefEe32"
@@ -225,7 +231,7 @@
       "address": "0x61B6d5962d3855f6EcA4Ef646ABF79c8C8beD8bA"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x6cB76277e592D8A47dD7bfC86deD45f623C624b1"
+      "address": "0xd48001f7e5ac0989576CCAD53D6c2c6e9647C002"
     },
     "LooplessFlywheelBooster": {
       "address": "0x04ce4F5F699A2F52152Ea6F567EA852870fFcE73"
@@ -311,6 +317,12 @@
     "SimplePriceOracle_Proxy": {
       "address": "0x7770BdDdA35F7e13dB7e112Cc77b0445922DA660"
     },
+    "SolidlyLpTokenLiquidator": {
+      "address": "0xa5aD81634B005e18Ab663b789dC127faA79a1150"
+    },
+    "SolidlyLpTokenWrapper": {
+      "address": "0x6765D8b85e88DB96261Dee542A2FE56c90b3CDCF"
+    },
     "SolidlyPriceOracle": {
       "address": "0xe3a5BDb287D9f6da0453A0025B8Df550D518A86c"
     },
@@ -319,6 +331,9 @@
     },
     "SolidlyPriceOracle_Proxy": {
       "address": "0xe3a5BDb287D9f6da0453A0025B8Df550D518A86c"
+    },
+    "SolidlySwapLiquidator": {
+      "address": "0x03Cbdfaf6e3D6108a462691759392Aef814d0dB2"
     },
     "UniswapLpTokenLiquidator": {
       "address": "0x67b3AF7C93903A21818C5f8Ef7129832165CB792"

@@ -6,6 +6,7 @@ import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  configureBalancerSwap,
   deployAlgebraPriceOracle,
   deployAnkrCertificateTokenPriceOracle,
   deployBalancerLinearPoolPriceOracle,
@@ -26,6 +27,7 @@ import {
   BalancerLpAsset,
   BalancerRateProviderAsset,
   BalancerStableLpAsset,
+  BalancerSwapTokenLiquidatorData,
   ChainDeployFnParams,
   ChainlinkAsset,
   ConcentratedLiquidityOracleConfig,
@@ -581,6 +583,24 @@ const solidlyOracles: SolidlyOracleAssetConfig[] = [
     poolAddress: "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797", // sAMM-USDC-USDR
     baseToken: underlying(assets, assetSymbols.USDC),
   },
+  {
+    underlying: underlying(assets, assetSymbols.WUSDR),
+    poolAddress: "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2", // vAMM-wUSDR-USDR
+    baseToken: underlying(assets, assetSymbols.USDR),
+  },
+];
+
+const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
+  {
+    inputToken: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+    outputToken: underlying(assets, assetSymbols.USDC),
+    poolAddress: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
+    outputToken: underlying(assets, assetSymbols.WMATIC),
+    poolAddress: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
+  },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -817,6 +837,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
+  // CurveSwapLiquidator
+  const curveLpTokenWrapper = await deployments.deploy("CurveLpTokenWrapper", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenWrapper.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenWrapper.transactionHash);
+  console.log("CurveLpTokenWrapper: ", curveLpTokenWrapper.address);
+
   // Gamma LP token liquidator
   const gammaLpTokenLiquidator = await deployments.deploy("GammaLpTokenLiquidator", {
     from: deployer,
@@ -838,6 +869,18 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(gelatoGUniLiquidator.transactionHash);
   }
   console.log("GelatoGUniLiquidator: ", gelatoGUniLiquidator.address);
+
+  //// Aave AToken Liquidator
+  const aaveTokenLiquidator = await deployments.deploy("AaveTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (aaveTokenLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(aaveTokenLiquidator.transactionHash);
+  }
+  console.log("AaveTokenLiquidator: ", aaveTokenLiquidator.address);
 
   // curve swap liquidator funder - TODO replace the CurveSwapLiquidator above
   const curveSwapLiquidatorFunder = await deployments.deploy("CurveSwapLiquidatorFunder", {
@@ -882,6 +925,37 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
 
+  // Solidly Liquidators
+  const solidlyLpTokenLiquidator = await deployments.deploy("SolidlyLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlyLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(solidlyLpTokenLiquidator.transactionHash);
+  console.log("SolidlyLpTokenLiquidator: ", solidlyLpTokenLiquidator.address);
+
+  const solidlyLpTokenWrapper = await deployments.deploy("SolidlyLpTokenWrapper", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlyLpTokenWrapper.transactionHash)
+    await ethers.provider.waitForTransaction(solidlyLpTokenWrapper.transactionHash);
+  console.log("SolidlyLpTokenWrapper: ", solidlyLpTokenWrapper.address);
+
+  const solidlySwapLiquidator = await deployments.deploy("SolidlySwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (solidlySwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(solidlySwapLiquidator.transactionHash);
+  console.log("SolidlySwapLiquidator: ", solidlySwapLiquidator.address);
+
   /// Addresses Provider
   /// set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
@@ -909,5 +983,5 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await tx.wait();
     console.log("mined setAddress BalancerLpStablePoolPriceOracle: ", tx.hash);
   }
-  ////
+  await configureBalancerSwap(addressesProvider, balancerSwapLiquidatorData);
 };
