@@ -42,8 +42,8 @@ jobs:
         run: yarn workspace @ionicprotocol/types lint
 
       - uses: JS-DevTools/npm-publish@v1
+        if: github.ref == 'refs/heads/main'
         with:
-          if: github.ref == 'refs/heads/main'
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
           access: 'public'
