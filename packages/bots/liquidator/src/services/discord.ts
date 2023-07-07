@@ -1,6 +1,6 @@
 import { TransactionResponse } from "@ethersproject/providers";
-import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@midas-capital/sdk/src/modules/liquidation/utils";
-import { SupportedChains } from "@midas-capital/types";
+import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicprotocol/sdk/src/modules/liquidation/utils";
+import { SupportedChains } from "@ionicprotocol/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
 import config from "../config";

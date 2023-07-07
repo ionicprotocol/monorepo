@@ -1,4 +1,4 @@
-import { ganache } from "@midas-capital/chains";
+import { ganache } from "@ionicprotocol/chains";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 

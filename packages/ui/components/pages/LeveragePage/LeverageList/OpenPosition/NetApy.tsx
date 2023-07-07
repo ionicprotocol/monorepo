@@ -1,5 +1,5 @@
 import { HStack, Text, useColorModeValue } from '@chakra-ui/react';
-import type { PositionInfo } from '@midas-capital/types';
+import type { PositionInfo } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 

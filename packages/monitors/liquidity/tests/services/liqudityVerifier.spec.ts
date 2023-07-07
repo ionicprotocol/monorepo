@@ -1,6 +1,6 @@
-import { bsc, chainIdToConfig } from "@midas-capital/chains";
-import { MidasSdk } from "@midas-capital/sdk";
-import { assetFilter, assetSymbols, SupportedChains, underlying } from "@midas-capital/types";
+import { bsc, chainIdToConfig } from "@ionicprotocol/chains";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { assetFilter, assetSymbols, SupportedChains, underlying } from "@ionicprotocol/types";
 import { restore } from "sinon";
 
 import { configs } from "../../src/config";

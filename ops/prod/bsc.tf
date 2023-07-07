@@ -68,7 +68,7 @@ locals {
 
 module "bsc_mainnet_liquidation_rpc_2" {
   source              = "../modules/lambda"
-  ecr_repository_name = "liquidator"
+  ecr_repository_name = local.liquidator_ecr_repository_name
   docker_image_tag    = var.bots_image_tag
   container_family    = "liquidator-rpc-2"
   environment         = "mainnet"

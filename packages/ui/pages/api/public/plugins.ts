@@ -9,9 +9,9 @@ import {
   moonbeam,
   neondevnet,
   polygon,
-} from '@midas-capital/chains';
-import type { DeployedPlugins as DeployedPluginsType } from '@midas-capital/types';
-import { SupportedChains } from '@midas-capital/types';
+} from '@ionicprotocol/chains';
+import type { DeployedPlugins as DeployedPluginsType } from '@ionicprotocol/types';
+import { SupportedChains } from '@ionicprotocol/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 

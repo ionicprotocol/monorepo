@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import type { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@ionicprotocol/types';
 import { Contract, utils } from 'ethers';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { erc20ABI } from 'wagmi';

@@ -13,8 +13,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { Adapter, VaultData } from '@midas-capital/types';
-import { FundOperationMode } from '@midas-capital/types';
+import type { Adapter, VaultData } from '@ionicprotocol/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';

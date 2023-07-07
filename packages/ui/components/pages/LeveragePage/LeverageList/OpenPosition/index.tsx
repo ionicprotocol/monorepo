@@ -17,7 +17,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import type { OpenPosition, SupportedChains } from '@midas-capital/types';
+import type { OpenPosition, SupportedChains } from '@ionicprotocol/types';
 import type {
   ColumnDef,
   FilterFn,

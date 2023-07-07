@@ -1,4 +1,4 @@
-import { assetOriginalSymbols, assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetOriginalSymbols, assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
 
 import {
   arrakisDocs,

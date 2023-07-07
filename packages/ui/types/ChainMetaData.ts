@@ -10,8 +10,8 @@ import {
   moonbeam,
   neondevnet,
   polygon,
-} from '@midas-capital/chains';
-import type { FusePoolData } from '@midas-capital/types';
+} from '@ionicprotocol/chains';
+import type { FusePoolData } from '@ionicprotocol/types';
 
 import { config } from '@ui/config/index';
 

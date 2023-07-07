@@ -1,5 +1,5 @@
-import { bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { assetFilter } from "@midas-capital/types";
+import { bsc, moonbeam, polygon } from "@ionicprotocol/chains";
+import { assetFilter } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {

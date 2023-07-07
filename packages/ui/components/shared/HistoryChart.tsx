@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Grid, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import type { ChartData } from '@midas-capital/types';
+import type { ChartData } from '@ionicprotocol/types';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
 import { AiOutlineLineChart } from 'react-icons/ai';

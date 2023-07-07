@@ -12,7 +12,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { MarketConfig } from '@midas-capital/types';
+import type { MarketConfig } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
 import dynamic from 'next/dynamic';

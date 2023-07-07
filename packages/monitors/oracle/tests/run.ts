@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedChains } from "@midas-capital/types";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { SupportedChains } from "@ionicprotocol/types";
 import { Wallet } from "ethers";
 
 import { assets, configs, verifiers } from "../src/config";

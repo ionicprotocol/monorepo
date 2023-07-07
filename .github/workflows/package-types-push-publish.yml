@@ -24,7 +24,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-          token: '${{ secrets.ACCESS_TOKEN }}'
 
       - uses: actions/setup-node@v2
         with:
@@ -40,11 +39,11 @@ jobs:
         run: yarn build:types
 
       - name: Lint `types`
-        run: yarn workspace @midas-capital/types lint
+        run: yarn workspace @ionicprotocol/types lint
 
       - uses: JS-DevTools/npm-publish@v1
+        if: github.ref == 'refs/heads/main'
         with:
-          if: github.ref == 'refs/heads/main'
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
           access: 'public'

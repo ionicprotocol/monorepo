@@ -1,4 +1,4 @@
-import { Reward, SupportedChains } from '@midas-capital/types';
+import { Reward, SupportedChains } from '@ionicprotocol/types';
 import axios from 'axios';
 import { AbstractAssetAPYProvider } from './AbstractAssetAPYProvider';
 

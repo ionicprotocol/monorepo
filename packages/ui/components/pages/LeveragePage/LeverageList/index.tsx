@@ -1,5 +1,5 @@
 import { Box, Flex, Grid, GridItem, HStack, Input, Skeleton, Text } from '@chakra-ui/react';
-import type { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@ionicprotocol/types';
 import type { SortingState } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import * as React from 'react';

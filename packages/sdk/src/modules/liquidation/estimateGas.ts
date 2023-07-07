@@ -1,4 +1,4 @@
-import { LiquidationStrategy } from "@midas-capital/types";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
 import { MidasBase } from "../../MidasSdk";

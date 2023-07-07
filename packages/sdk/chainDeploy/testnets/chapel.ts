@@ -1,5 +1,5 @@
-import { chapel } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset } from "@midas-capital/types";
+import { chapel } from "@ionicprotocol/chains";
+import { assetSymbols, SupportedAsset } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import {

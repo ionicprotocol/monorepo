@@ -1,4 +1,4 @@
-import { SupportedChainsArray } from '@midas-capital/types';
+import { SupportedChainsArray } from '@ionicprotocol/types';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -77,7 +77,7 @@ export const DEBT_CEILING_WHITELIST = {
 
 export const POOLS_PER_PAGE = 6;
 
-// TODO: We should replace this with NATIVE_DECIMALS from the @midas-capital/chains package
+// TODO: We should replace this with NATIVE_DECIMALS from the @ionicprotocol/chains package
 export const DEFAULT_DECIMALS = 18;
 
 // enums
@@ -137,7 +137,7 @@ export const ADMIN_FEE_TOOLTIP =
 export const LOAN_TO_VALUE_TOOLTIP =
   'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.';
 export const PERFORMANCE_FEE_TOOLTIP =
-  'The fee taken by Midas Capital, as a percentage of the rewards earned by this strategy';
+  'The fee taken by Ionic Protocol, as a percentage of the rewards earned by this strategy';
 export const ASSET_SUPPLIED_TOOLTIP =
   'Total Supply of this asset is limited for the overall safety of this pool';
 export const ASSET_BORROWED_TOOLTIP =

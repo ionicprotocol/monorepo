@@ -1,4 +1,4 @@
-import { AbstractPlugin, Reward, SupportedChains } from '@midas-capital/types';
+import { AbstractPlugin, Reward, SupportedChains } from '@ionicprotocol/types';
 import { ethers } from 'ethers';
 export interface APYProviderInitObject {
   chainId: SupportedChains;

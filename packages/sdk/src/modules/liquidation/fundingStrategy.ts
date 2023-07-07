@@ -1,4 +1,4 @@
-import { FundingStrategyContract } from "@midas-capital/types";
+import { FundingStrategyContract } from "@ionicprotocol/types";
 import { BytesLike, constants, ethers } from "ethers";
 
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";

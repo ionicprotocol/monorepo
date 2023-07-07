@@ -1,4 +1,4 @@
-import { ChainConfig } from "@midas-capital/types";
+import { ChainConfig } from "@ionicprotocol/types";
 import Decimal from "decimal.js";
 import { BigNumber, Contract, utils } from "ethers";
 

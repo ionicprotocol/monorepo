@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { chainIdToConfig } from "@midas-capital/chains";
-import { MidasSdk } from "@midas-capital/sdk";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { MidasSdk } from "@ionicprotocol/sdk";
 import { Signer } from "ethers";
 
 const setUpSdk = (chainId: number, provider: Signer | JsonRpcProvider) => {

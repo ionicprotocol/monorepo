@@ -1,5 +1,5 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { DeployedPlugins } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { DeployedPlugins } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";

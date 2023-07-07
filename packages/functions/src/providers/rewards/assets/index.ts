@@ -1,4 +1,4 @@
-import { SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@ionicprotocol/types';
 import { functionsAlert } from '../../../alert';
 import { AbstractAssetAPYProvider, APYProviderInitObject } from './AbstractAssetAPYProvider';
 import LidoStakedDotAPYProvider from './LidoStakedDotAPYProvider';

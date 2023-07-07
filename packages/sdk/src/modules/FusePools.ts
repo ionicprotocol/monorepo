@@ -10,14 +10,14 @@ import {
   moonbeam,
   neondevnet,
   polygon,
-} from "@midas-capital/chains";
+} from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   FusePoolData,
   NativePricedFuseAsset,
   SupportedAsset,
   SupportedChains,
-} from "@midas-capital/types";
+} from "@ionicprotocol/types";
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";

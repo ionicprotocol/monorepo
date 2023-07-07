@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/4e389938-790e-4adb-bfc9-0e3d47dafd64/deploy-status)](https://app.netlify.com/sites/midas-capital-dapp/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4e389938-790e-4adb-bfc9-0e3d47dafd64/deploy-status)](https://app.netlify.com/sites/ionicprotocol-dapp/deploys)
 
 # monorepo
 
@@ -23,8 +23,8 @@ If you already pulled using just `git clone`, you can use below command to updat
 From fresh clone:
 
 - `yarn`
-- `yarn workspace @midas-capital/sdk forge install`
-- `yarn workspace @midas-capital/sdk build`
+- `yarn workspace @ionicprotocol/sdk forge install`
+- `yarn workspace @ionicprotocol/sdk build`
 
 ## Tips
 
@@ -34,12 +34,12 @@ Ask for **.env** file from the team and add it under packages/sdk
 
 If you want to add packages to modules, you can do so like:
 
-- `yarn workspace @midas-capital/sdk add ethers`
+- `yarn workspace @ionicprotocol/sdk add ethers`
 
 To run `forge` commands inside the `sdk` package, run:
 
-- `yarn workspace @midas-capital/sdk forge install <SOME_DEP>`
-- `yarn workspace @midas-capital/sdk forge build`
+- `yarn workspace @ionicprotocol/sdk forge install <SOME_DEP>`
+- `yarn workspace @ionicprotocol/sdk forge build`
 - etc
 
 ## Adding a Package
@@ -66,7 +66,7 @@ To run `forge` commands inside the `sdk` package, run:
   ...
   "dependencies": {
     ...
-    "@midas-capital/some-other-package": "workspace:*"
+    "@ionicprotocol/some-other-package": "workspace:*"
   }
 }
 - `yarn` from top-level to update dependencies/symlinks.
@@ -109,13 +109,13 @@ The idea is to increase the port number with each fork we want to support.
 For convenience we have a Hardhat task to make some token swaps to on the forked node for you.
 
 ```
-> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
+> yarn workspace @ionicprotocol/sdk hardhat fork:fund-accounts --network fork
 // Works with https://localhost:8545
 
-> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network localbsc
+> yarn workspace @ionicprotocol/sdk hardhat fork:fund-accounts --network localbsc
 // Works with https://localhost:8545
 
-> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network localpolygon
+> yarn workspace @ionicprotocol/sdk hardhat fork:fund-accounts --network localpolygon
 // Works with https://localhost:8546
 ```
 
@@ -140,7 +140,7 @@ Follow this step to run the UI test locally
 3. Fund test accounts
 
 ```
-> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
+> yarn workspace @ionicprotocol/sdk hardhat fork:fund-accounts --network fork
 ```
 
 4. Run dAppateer

@@ -1,4 +1,4 @@
-import { assetSymbols, ChainAddresses, underlying } from "@midas-capital/types";
+import { assetSymbols, ChainAddresses, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { assets } from "./assets";

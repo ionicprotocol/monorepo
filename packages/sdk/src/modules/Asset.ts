@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
+import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@ionicprotocol/types";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import CErc20DelegatorArtifact from "../../artifacts/CErc20Delegator.json";

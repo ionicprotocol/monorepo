@@ -1,4 +1,4 @@
-import type { FusePoolData, SupportedChains } from '@midas-capital/types';
+import type { FusePoolData, SupportedChains } from '@ionicprotocol/types';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 

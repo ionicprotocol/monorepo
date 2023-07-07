@@ -1,5 +1,5 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import type { LeveredCollateral, SupportedChains } from '@midas-capital/types';
+import type { LeveredCollateral, SupportedChains } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';

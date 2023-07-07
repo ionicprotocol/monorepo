@@ -1,11 +1,11 @@
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import type {
   NativePricedFuseAsset,
   NewPosition,
   OpenPosition,
   VaultData,
-} from '@midas-capital/types';
+} from '@ionicprotocol/types';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import type { ReactNode } from 'react';

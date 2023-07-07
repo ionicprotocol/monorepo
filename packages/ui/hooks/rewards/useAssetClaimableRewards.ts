@@ -1,5 +1,5 @@
-import type { MidasSdk } from '@midas-capital/sdk';
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 import { constants } from 'ethers';
 

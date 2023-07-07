@@ -1,4 +1,4 @@
-import { assetSymbols, DeployedPlugins, Strategy, underlying } from "@midas-capital/types";
+import { assetSymbols, DeployedPlugins, Strategy, underlying } from "@ionicprotocol/types";
 
 import assets from "./assets";
 

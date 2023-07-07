@@ -1,6 +1,6 @@
-import type { MidasSdk } from '@midas-capital/sdk';
-import type { SupportedChains } from '@midas-capital/types';
-import { assetSymbols } from '@midas-capital/types';
+import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { SupportedChains } from '@ionicprotocol/types';
+import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 

@@ -1,4 +1,4 @@
-import type { VaultApy } from '@midas-capital/types';
+import type { VaultApy } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, utils } from 'ethers';

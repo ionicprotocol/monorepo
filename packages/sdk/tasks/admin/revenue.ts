@@ -1,4 +1,4 @@
-import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
+import { ComptrollerWithExtension } from "@ionicprotocol/liquidity-monitor/src/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import axios from "axios";
 import { BigNumber, Contract, providers } from "ethers";

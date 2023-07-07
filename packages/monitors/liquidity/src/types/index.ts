@@ -1,5 +1,5 @@
-import { Comptroller } from "@midas-capital/sdk/dist/cjs/typechain/Comptroller";
-import { ComptrollerFirstExtension } from "@midas-capital/sdk/dist/cjs/typechain/ComptrollerFirstExtension";
+import { Comptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/Comptroller";
+import { ComptrollerFirstExtension } from "@ionicprotocol/sdk/dist/cjs/typechain/ComptrollerFirstExtension";
 
 export type ComptrollerWithExtension = Comptroller & ComptrollerFirstExtension;
 export * from "./pool";

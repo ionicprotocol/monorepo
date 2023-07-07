@@ -1,5 +1,5 @@
-import { bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { assetFilter, assetSymbols, underlying } from "@midas-capital/types";
+import { bsc, moonbeam, polygon } from "@ionicprotocol/chains";
+import { assetFilter, assetSymbols, underlying } from "@ionicprotocol/types";
 
 import { LiquidityMonitorChains, LiquidityPoolKind, MonitoredChainAssets } from "../types";
 

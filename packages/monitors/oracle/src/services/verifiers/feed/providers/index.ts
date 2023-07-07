@@ -1,4 +1,4 @@
-import { OracleTypes } from "@midas-capital/types";
+import { OracleTypes } from "@ionicprotocol/types";
 
 import { FeedVerifierConfig, PriceFeedInvalidity, VerifyFeedParams } from "../../../../types";
 

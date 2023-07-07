@@ -1,4 +1,4 @@
-import { PluginWithFlywheelReward, Reward, StellaPlugin, Strategy } from '@midas-capital/types';
+import { PluginWithFlywheelReward, Reward, StellaPlugin, Strategy } from '@ionicprotocol/types';
 import axios from 'axios';
 import { functionsAlert } from '../../../alert';
 import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';

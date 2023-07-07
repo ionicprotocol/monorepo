@@ -1,4 +1,4 @@
-import { DeployedPlugins } from "@midas-capital/types";
+import { DeployedPlugins } from "@ionicprotocol/types";
 
 const deployedPlugins: DeployedPlugins = {};
 

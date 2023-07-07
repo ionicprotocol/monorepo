@@ -1,4 +1,4 @@
-import { SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@ionicprotocol/types';
 import { Handler } from '@netlify/functions';
 import { ethers } from 'ethers';
 import { functionsAlert } from '../alert';

@@ -1,4 +1,4 @@
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 
 import { stkBNBOracleDeployParams } from "../types";
 

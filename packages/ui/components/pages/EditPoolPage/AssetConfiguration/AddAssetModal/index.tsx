@@ -15,7 +15,7 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import type { SupportedAsset } from '@midas-capital/types';
+import type { SupportedAsset } from '@ionicprotocol/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetModal/AddAssetSettings';

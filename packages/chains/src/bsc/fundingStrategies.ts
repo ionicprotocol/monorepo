@@ -1,4 +1,4 @@
-import { assetSymbols, FundingStrategyContract, underlying } from "@midas-capital/types";
+import { assetSymbols, FundingStrategyContract, underlying } from "@ionicprotocol/types";
 
 import assets from "./assets";
 

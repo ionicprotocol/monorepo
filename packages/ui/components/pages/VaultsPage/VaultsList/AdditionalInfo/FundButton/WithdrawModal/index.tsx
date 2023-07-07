@@ -10,8 +10,8 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
-import { FundOperationMode } from '@midas-capital/types';
+import type { VaultData } from '@ionicprotocol/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';

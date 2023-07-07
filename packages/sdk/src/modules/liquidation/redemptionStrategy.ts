@@ -1,5 +1,5 @@
-import { ethereum } from "@midas-capital/chains";
-import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
+import { ethereum } from "@ionicprotocol/chains";
+import { assetSymbols, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
 import { BytesLike, constants, Contract, ethers } from "ethers";
 
 import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";

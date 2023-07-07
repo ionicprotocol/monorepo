@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
-import { ChainConfig } from "@midas-capital/types";
+import { ERC20Abi, MidasSdk } from "@ionicprotocol/sdk";
+import { ChainConfig } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
 import { Reserve, UniswapV2AssetConfig } from "../../../types";

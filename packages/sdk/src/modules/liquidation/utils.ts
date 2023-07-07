@@ -1,5 +1,5 @@
 import { TransactionRequest } from "@ethersproject/providers";
-import { FuseAsset, LiquidationStrategy } from "@midas-capital/types";
+import { FuseAsset, LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { FusePoolLens } from "../../../typechain/FusePoolLens";

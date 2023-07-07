@@ -1,6 +1,6 @@
 {
-  "name": "@midas-capital/security",
-  "repository": "git://github.com:midas-protocol/monorepo.git",
+  "name": "@ionicprotocol/security",
+  "repository": "git://github.com:ionicprotocol/monorepo.git",
   "version": "0.3.1",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -24,7 +24,7 @@
     "test": "nyc ts-mocha --require 'tests/globalTestHook.ts' --check-leaks --exit --timeout 60000 'tests/**/*.spec.ts'"
   },
   "keywords": [],
-  "author": "Midas Capital",
+  "author": "Ionic Protocol",
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^4.3.1",
@@ -47,8 +47,8 @@
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.1",
-    "@midas-capital/chains": "workspace:*",
-    "@midas-capital/types": "workspace:*",
+    "@ionicprotocol/chains": "workspace:*",
+    "@ionicprotocol/types": "workspace:*",
     "@types/node-cache": "^4.2.5",
     "axios": "^0.27.2",
     "decimal.js": "^10.4.0",

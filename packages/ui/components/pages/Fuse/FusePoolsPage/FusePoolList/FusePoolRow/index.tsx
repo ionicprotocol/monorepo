@@ -19,7 +19,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import type { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@ionicprotocol/types';
 import type {
   ColumnDef,
   FilterFn,

@@ -1,4 +1,4 @@
-import { MimoPlugin, Reward, Strategy } from '@midas-capital/types';
+import { MimoPlugin, Reward, Strategy } from '@ionicprotocol/types';
 import axios from 'axios';
 import { BigNumber, utils } from 'ethers';
 import { functionsAlert } from '../../../alert';
