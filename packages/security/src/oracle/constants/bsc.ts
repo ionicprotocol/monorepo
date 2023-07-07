@@ -1,4 +1,4 @@
-import { assetSymbols } from "@midas-capital/types";
+import { assetSymbols } from "@ionicprotocol/types";
 
 import { ChainLinkAssetConfig } from "../scorers/chainlink/types";
 

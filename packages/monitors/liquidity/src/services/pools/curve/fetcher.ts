@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedChains } from "@midas-capital/types";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
 
 const BASE_CURVE_API = "https://api.curve.fi/api/getPools";

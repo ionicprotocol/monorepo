@@ -1,4 +1,4 @@
-import { SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@ionicprotocol/types';
 
 export const bscFlywheels = [
   '0xD09b27B5EA296A901D2113c374A28f02Cd46010D',

@@ -1,5 +1,5 @@
-import { arbitrum } from "@midas-capital/chains";
-import { assetFilter, assetSymbols } from "@midas-capital/types";
+import { arbitrum } from "@ionicprotocol/chains";
+import { assetFilter, assetSymbols } from "@ionicprotocol/types";
 import Decimal from "decimal.js";
 
 import { ChainLinkAssetConfig } from "../scorers/chainlink/types";

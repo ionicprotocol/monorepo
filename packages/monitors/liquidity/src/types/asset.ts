@@ -1,4 +1,4 @@
-import { SupportedAsset } from "@midas-capital/types";
+import { SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber, Contract } from "ethers";
 
 export type BaseAssetConfig = {

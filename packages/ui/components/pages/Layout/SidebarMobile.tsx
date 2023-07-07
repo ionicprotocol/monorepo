@@ -49,7 +49,7 @@ export const SidebarMobile = ({ onClose }: { onClose: () => void }) => {
           top={2}
         >
           <Image
-            alt="Midas Capital"
+            alt="Ionic Protocol"
             src={colorMode === 'light' ? '/images/midas-light.svg' : '/images/midas-dark.svg'}
             width={44}
           />

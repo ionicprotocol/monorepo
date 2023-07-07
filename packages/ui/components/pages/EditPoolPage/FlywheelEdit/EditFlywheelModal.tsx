@@ -19,7 +19,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';

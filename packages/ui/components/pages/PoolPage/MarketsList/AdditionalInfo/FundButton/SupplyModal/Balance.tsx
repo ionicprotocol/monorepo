@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react';
-import type { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
 import { Column, Row } from '@ui/components/shared/Flex';

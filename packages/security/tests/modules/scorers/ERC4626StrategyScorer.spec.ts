@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 
 import { SecurityBase } from "../../../src/index";
 import * as StrategyModule from "../../../src/strategy";

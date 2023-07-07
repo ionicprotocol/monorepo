@@ -1,4 +1,4 @@
-import { MidasSdk } from "@midas-capital/sdk";
+import { MidasSdk } from "@ionicprotocol/sdk";
 
 import { InvalidReason, LiquidityDepthConfig, LiquidityValidity, UniswapV2AssetConfig } from "../../../types";
 import { getPoolTVL } from "../utils";

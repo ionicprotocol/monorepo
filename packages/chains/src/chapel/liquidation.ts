@@ -1,4 +1,4 @@
-import { assetSymbols, LiquidationDefaults, LiquidationStrategy, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, LiquidationDefaults, LiquidationStrategy, SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber, constants } from "ethers";
 
 import chainAddresses from "./addresses";

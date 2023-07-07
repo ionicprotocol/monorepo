@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 export default task("get-pool-data", "Get pools data")

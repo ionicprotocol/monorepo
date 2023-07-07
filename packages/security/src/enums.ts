@@ -1,4 +1,4 @@
-import { Strategy } from "@midas-capital/types";
+import { Strategy } from "@ionicprotocol/types";
 
 import { ChainLinkFeedHeartbeat } from "./oracle/scorers/chainlink/types";
 

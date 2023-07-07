@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { CErc20Delegate } from "@midas-capital/sdk/dist/cjs/typechain/CErc20Delegate";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { CErc20Delegate } from "@ionicprotocol/sdk/dist/cjs/typechain/CErc20Delegate";
 import { constants, Contract, logger, Signer } from "ethers";
 
 import { baseConfig } from "../config";

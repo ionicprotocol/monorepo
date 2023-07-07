@@ -17,7 +17,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import type { LeveredBorrowable, NewPosition, SupportedChains } from '@midas-capital/types';
+import type { LeveredBorrowable, NewPosition, SupportedChains } from '@ionicprotocol/types';
 import type {
   ColumnDef,
   FilterFn,

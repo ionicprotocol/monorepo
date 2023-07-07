@@ -26,7 +26,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-          token: '${{ secrets.ACCESS_TOKEN }}'
 
       - uses: actions/setup-node@v2
         with:
@@ -42,7 +41,7 @@ jobs:
         run: yarn build:chains
 
       - name: Lint `chains`
-        run: yarn workspace @midas-capital/chains lint
+        run: yarn workspace @ionicprotocol/chains lint
 
       - uses: JS-DevTools/npm-publish@v1
         if: github.ref == 'refs/heads/main'

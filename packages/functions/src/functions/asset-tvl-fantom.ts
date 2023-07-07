@@ -1,4 +1,4 @@
-import { SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@ionicprotocol/types';
 import { createAssetTvlHandler } from '../controllers/asset-tvl';
 
 export const handler = createAssetTvlHandler(SupportedChains.fantom);

@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@ionicprotocol/chains";
 
 import { uniswapV3OracleAssetMappings as uniswapV3OracleAssetMappingsArbitrum } from "./arbitrum";
 import { chainLinkOracleAssetMappings as chainLinkOracleAssetMappingsBsc } from "./bsc";

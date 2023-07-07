@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Grid, HStack, Link, Text, VStack } from '@chakra-ui/react';
-import type { OpenPosition, PositionInfo } from '@midas-capital/types';
+import type { OpenPosition, PositionInfo } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 

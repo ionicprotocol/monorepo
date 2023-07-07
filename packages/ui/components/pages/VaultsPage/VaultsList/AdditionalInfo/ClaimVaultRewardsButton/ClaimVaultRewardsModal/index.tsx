@@ -1,5 +1,5 @@
 import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
-import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@ionicprotocol/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';

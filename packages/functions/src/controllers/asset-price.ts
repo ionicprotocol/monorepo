@@ -1,11 +1,11 @@
-import { SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@ionicprotocol/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { MidasSdk } from '@midas-capital/sdk';
+import { MidasSdk } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
-import { chainIdToConfig } from '@midas-capital/chains';
+import { chainIdToConfig } from '@ionicprotocol/chains';
 import axios from 'axios';
 
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
@@ -67,8 +67,8 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
         info: {
           underlyingPrice: r?.underlyingPriceNum,
           usdPrice: r?.usdPrice,
-          createdAt: new Date().getTime()
-        }
+          createdAt: new Date().getTime(),
+        },
       }));
 
     const { error } = await supabase.from(environment.supabaseAssetPriceTableName).insert(rows);

@@ -10,8 +10,8 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
-import { ComptrollerErrorCodes } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import { ComptrollerErrorCodes } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';

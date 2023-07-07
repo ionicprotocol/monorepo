@@ -1,5 +1,5 @@
-import type { MidasSdk } from '@midas-capital/sdk';
-import type { InterestRateModel } from '@midas-capital/types';
+import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { InterestRateModel } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
 import type { UtilizationChartData } from '@ui/types/ComponentPropsType';

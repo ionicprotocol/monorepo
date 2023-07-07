@@ -1,5 +1,5 @@
 import { Web3Provider } from "@ethersproject/providers";
-import { InterestRateModel } from "@midas-capital/types";
+import { InterestRateModel } from "@ionicprotocol/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import CTokenFirstExtensionABI from "../../../abis/CTokenFirstExtension";

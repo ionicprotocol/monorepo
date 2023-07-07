@@ -1,4 +1,4 @@
-import { ChainConfig, SupportedChains } from "@midas-capital/types";
+import { ChainConfig, SupportedChains } from "@ionicprotocol/types";
 
 import deployments from "../../deployments/neondevnet.json";
 

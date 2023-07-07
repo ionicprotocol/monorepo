@@ -1,4 +1,4 @@
-import { chainIdToConfig } from '@midas-capital/chains';
+import { chainIdToConfig } from '@ionicprotocol/chains';
 
 export function providerURLForChain(chainId: number) {
   const network = chainIdToConfig[chainId].specificParams.metadata;

@@ -1,5 +1,5 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';

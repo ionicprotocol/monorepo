@@ -1,4 +1,4 @@
-import { ComptrollerErrorCodes } from '@midas-capital/types';
+import { ComptrollerErrorCodes } from '@ionicprotocol/types';
 
 export const errorCodeToMessage = (errorCode: number) => {
   switch (errorCode) {

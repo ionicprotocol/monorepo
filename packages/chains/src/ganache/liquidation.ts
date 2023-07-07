@@ -4,7 +4,7 @@ import {
   LiquidationStrategy,
   SupportedAsset,
   underlying,
-} from "@midas-capital/types";
+} from "@ionicprotocol/types";
 import { BigNumber, constants } from "ethers";
 
 import chainAddresses from "./addresses";

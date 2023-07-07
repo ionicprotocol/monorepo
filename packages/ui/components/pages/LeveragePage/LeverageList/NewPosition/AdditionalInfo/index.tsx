@@ -1,5 +1,5 @@
 import { Box, Button, Flex } from '@chakra-ui/react';
-import type { LeveredBorrowable, NewPosition } from '@midas-capital/types';
+import type { LeveredBorrowable, NewPosition } from '@ionicprotocol/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';

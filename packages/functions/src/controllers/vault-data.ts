@@ -1,11 +1,11 @@
-import { SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@ionicprotocol/types';
 import { ethers, utils } from 'ethers';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { chainIdToConfig } from '@midas-capital/chains';
-import { MidasSdk } from '@midas-capital/sdk';
-import { OptimizedVaultsRegistry } from '@midas-capital/sdk/typechain/OptimizedVaultsRegistry';
-import OptimizedVaultsRegistryABI from '@midas-capital/sdk/abis/OptimizedVaultsRegistry';
+import { chainIdToConfig } from '@ionicprotocol/chains';
+import { MidasSdk } from '@ionicprotocol/sdk';
+import { OptimizedVaultsRegistry } from '@ionicprotocol/sdk/typechain/OptimizedVaultsRegistry';
+import OptimizedVaultsRegistryABI from '@ionicprotocol/sdk/abis/OptimizedVaultsRegistry';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
 

@@ -1,4 +1,4 @@
-import { ChainConfig } from "@midas-capital/types";
+import { ChainConfig } from "@ionicprotocol/types";
 
 import { default as arbitrum } from "./arbitrum";
 import { default as bsc } from "./bsc";

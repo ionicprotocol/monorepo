@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 
 export const defaultDocs = (blockExplorerUrl: string, tokenAddress: string): string => {
   return `
@@ -261,10 +261,10 @@ export const jarvisDocs = (v: string) => {
   <p>You can acquire this asset on the <a href="https://${v}-app.jarvis.exchange/" target="_blank" style="color: #BCAC83;">Jarvis Network</a> website.</p>`;
 };
 
-export const tangibleDocsUsdr = () => {
+export const tangibleDocsUsdr = (action: string) => {
   return `
   <p><b>How to acquire this token</b><p/><br />
-  <p>You can acquire this asset on the <a href="https://www.tangible.store/realusd?action=Mint" target="_blank" style="color: #BCAC83;">Tangible</a> website.</p>`;
+  <p>You can acquire this asset on the <a href="https://www.tangible.store/realusd?action=${action}" target="_blank" style="color: #BCAC83;">Tangible</a> website.</p>`;
 };
 
 export const oneInchDocs = (url: `https://${string}`) => `
@@ -298,6 +298,18 @@ export const thenaDocs = (poolAddress: string) => {
   <p>This will credit your wallet with the Thena LP Tokens.</p><br />
   <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p><br />
   <p> <b>NOTE</b>: do not stake the LPs on Thena, Midas will do that for you! </p>
+  `;
+};
+
+export const pearlDocs = (poolAddress: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br /><p> 1. Make sure you are connected to Polygon Network on your browser wallet.</p><br />
+  <p> 2. Head to the <a href="https://www.pearl.exchange/liquidity/manage/${poolAddress.toLowerCase()}" target="_blank" style="color: #BCAC83;"> Pearl Exchange </a> and deposit the desired amount of token pairs.</p>
+  <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Thena to spend them. </p><br />
+  <p> 3. Click on "Add Liquidty".</p>
+  <p>This will credit your wallet with the Pearl LP Tokens.</p><br />
+  <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p><br />
+  <p> <b>NOTE</b>: do not stake the LPs on Peal, Midas will do that for you! </p>
   `;
 };
 

@@ -1,6 +1,6 @@
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import type { SupportedChains } from '@midas-capital/types';
-import { assetSymbols } from '@midas-capital/types';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
+import type { SupportedChains } from '@ionicprotocol/types';
+import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { utils } from 'ethers';

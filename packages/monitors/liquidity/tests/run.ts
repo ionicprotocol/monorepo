@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { moonbeam } from "@midas-capital/chains";
-import { assetFilter, assetSymbols, SupportedChains, underlying } from "@midas-capital/types";
+import { moonbeam } from "@ionicprotocol/chains";
+import { assetFilter, assetSymbols, SupportedChains, underlying } from "@ionicprotocol/types";
 import { Wallet } from "ethers";
 
 import { setUpSdk } from "../src";

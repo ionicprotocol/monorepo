@@ -1,5 +1,5 @@
-import { bsc } from "@midas-capital/chains";
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { bsc } from "@ionicprotocol/chains";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { constants, ethers } from "ethers";
 
 import { AddressesProvider } from "../../typechain/AddressesProvider";

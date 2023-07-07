@@ -1,4 +1,4 @@
-import { HelioHAYPlugin, Reward, Strategy } from '@midas-capital/types';
+import { HelioHAYPlugin, Reward, Strategy } from '@ionicprotocol/types';
 import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPluginAPYProvider';
 
 import { Contract, utils } from 'ethers';

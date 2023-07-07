@@ -1,4 +1,4 @@
-# Midas Capital: Oracle Monitoring Solution
+# Ionic Protocol: Oracle Monitoring Solution
 
 This repository contains the codebase for our oracle monitors. The monitors have been designed to ensure
 that each price feed is providing at all times an _accurate_ valuation of the asset in question.
@@ -19,7 +19,7 @@ such valuation is checked against a an external data source as an added security
 
 ## How it works
 
-Specifically, for every asset that is supported in Midas Capital we implement a continued monitoring solution that ensures that:
+Specifically, for every asset that is supported in Ionic Protocol we implement a continued monitoring solution that ensures that:
 
 - The latest timestamp of the latest observation is no older than 15 minutes or does not deviate more than the threshold by which an oracle update should be triggered (usually 0.5%)
 - The latest observation does not deviate from an alternate data source (possibly not trustless, e.g. Coingecko) by more than X%, where X is determined per asset (stablecoins, for instance, will have a lower threshold than less liquid / smaller cap assets)
@@ -27,7 +27,7 @@ Specifically, for every asset that is supported in Midas Capital we implement a 
 
 ## Triggered Actions
 
-The bot checks that every asset supported by Midas Capital's Fuse pools is up-to-date. Further,
+The bot checks that every asset supported by Ionic Protocol's Fuse pools is up-to-date. Further,
 
 Alerts are emitted in case:
 
@@ -45,7 +45,7 @@ The codebase is composed of a set of `verifiers`:
 - `PriceVerifier` : ensures that the price returned does not deviate from an alternative price source
 - `PriceChangeVerifier` : ensures that prices do not deviate more than X% in a span of Y minutes
 
-Each of these verifiers runs on a set interval, verifying each asset supported by Midas Capital:
+Each of these verifiers runs on a set interval, verifying each asset supported by Ionic Protocol:
 
 ```
 export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverride?: SupportedAsset[]) {
@@ -74,8 +74,8 @@ From the `monorepo` top-level folder:
 
 ```
 >>> yarn
->>> yarn workspace @midas-capital/oracles-monitor build
->>> yarn workspace @midas-capital/oracles-monitor start
+>>> yarn workspace @ionicprotocol/oracles-monitor build
+>>> yarn workspace @ionicprotocol/oracles-monitor start
 
 ```
 

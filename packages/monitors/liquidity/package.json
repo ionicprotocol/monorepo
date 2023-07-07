@@ -1,5 +1,5 @@
 {
-  "name": "@midas-capital/liquidity-monitor",
+  "name": "@ionicprotocol/liquidity-monitor",
   "version": "1.0.0",
   "description": "Monitors relevant liquidity positions",
   "main": "index.js",
@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Midas-Capital/monorepo.git"
+    "url": "https://github.com/ionicprotocol/monorepo.git"
   },
   "author": {
-    "name": "Midas Capital",
+    "name": "Ionic Protocol",
     "email": "admin@midascapital.xyz",
-    "url": "https://github.com/Midas-Capital"
+    "url": "https://github.com/ionicprotocol"
   },
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
@@ -45,8 +45,8 @@
   "dependencies": {
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.0",
-    "@midas-capital/sdk": "workspace:*",
-    "@midas-capital/types": "workspace:*",
+    "@ionicprotocol/sdk": "workspace:*",
+    "@ionicprotocol/types": "workspace:*",
     "@supabase/supabase-js": "^1.35.4",
     "axios": "^0.21.1",
     "decimal.js": "^10.4.2",

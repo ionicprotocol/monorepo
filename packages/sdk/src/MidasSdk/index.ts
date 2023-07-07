@@ -11,7 +11,7 @@ import {
   RedemptionStrategyContract,
   SupportedAsset,
   SupportedChains,
-} from "@midas-capital/types";
+} from "@ionicprotocol/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
 

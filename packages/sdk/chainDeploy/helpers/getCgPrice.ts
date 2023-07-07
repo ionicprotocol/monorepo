@@ -1,4 +1,4 @@
-import { neondevnet } from "@midas-capital/chains";
+import { neondevnet } from "@ionicprotocol/chains";
 import axios from "axios";
 
 export const getCgPrice = async (coingeckoId: string) => {

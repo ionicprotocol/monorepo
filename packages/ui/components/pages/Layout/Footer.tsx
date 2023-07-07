@@ -57,7 +57,7 @@ const Footer = () => {
           {!isSidebarCollapsed ? (
             <VStack spacing={0}>
               <Text color={cPage.primary.txtColor} size="sm" textAlign="center" width="100%">
-                © {new Date().getFullYear()} Midas Capital
+                © {new Date().getFullYear()} Ionic Protocol
               </Text>
               <Text color={cPage.primary.txtColor} size="sm" textAlign="center" width="100%">
                 All rights reserved

@@ -1,4 +1,4 @@
-import type { MidasSdk } from '@midas-capital/sdk';
+import type { MidasSdk } from '@ionicprotocol/sdk';
 import { Contract } from 'ethers';
 
 import { ankrBNBContractABI, ankrBNBContractAddress } from '@ui/constants/index';

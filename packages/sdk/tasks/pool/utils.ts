@@ -1,5 +1,5 @@
 // pool utilities used across downstream tests
-import { FusePool, FusePoolData } from "@midas-capital/types";
+import { FusePool, FusePoolData } from "@ionicprotocol/types";
 
 import { MidasSdk } from "../../src";
 

@@ -1,4 +1,4 @@
-import { BeefyPlugin, Reward, Strategy } from '@midas-capital/types';
+import { BeefyPlugin, Reward, Strategy } from '@ionicprotocol/types';
 import axios from 'axios';
 import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
 

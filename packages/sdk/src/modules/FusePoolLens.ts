@@ -1,5 +1,5 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { SupportedAsset } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
 import { MidasBaseConstructor } from "..";

@@ -4,7 +4,7 @@ import {
   Reward,
   Strategy,
   SupportedChains,
-} from '@midas-capital/types';
+} from '@ionicprotocol/types';
 import axios from 'axios';
 import { functionsAlert } from '../../../alert';
 import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPluginAPYProvider';

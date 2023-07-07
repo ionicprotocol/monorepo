@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { OracleTypes, SupportedAsset } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
 import { PriceFeedValidity, ServiceConfig, VerifierInitValidity } from "../../types";

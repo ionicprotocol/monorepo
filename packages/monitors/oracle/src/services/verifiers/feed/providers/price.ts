@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 import { utils } from "ethers";
 
 import { logger } from "../../../../logger";

@@ -17,8 +17,8 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
-import { ComptrollerErrorCodes } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import { ComptrollerErrorCodes } from '@ionicprotocol/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber, ContractTransaction } from 'ethers';

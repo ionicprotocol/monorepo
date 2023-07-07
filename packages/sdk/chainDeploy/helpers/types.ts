@@ -1,4 +1,4 @@
-import { assetSymbols, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 

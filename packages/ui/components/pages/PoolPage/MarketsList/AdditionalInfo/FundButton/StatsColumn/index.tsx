@@ -1,5 +1,5 @@
 import { Divider } from '@chakra-ui/react';
-import type { FundOperationMode } from '@midas-capital/types';
+import type { FundOperationMode } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 import { useMemo } from 'react';

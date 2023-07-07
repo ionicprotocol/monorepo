@@ -1,5 +1,5 @@
-import { bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { underlying } from "@midas-capital/types";
+import { bsc, moonbeam, polygon } from "@ionicprotocol/chains";
+import { underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
@@ -8,7 +8,7 @@ const underlyingsMapping = {
   [polygon.chainId]: polygon.assets,
 };
 
-// yarn workspace @midas-capital/sdk deploy-dynamic-rewards-market
+// yarn workspace @ionicprotocol/sdk deploy-dynamic-rewards-market
 // --comptroller 0xD265ff7e5487E9DD556a4BB900ccA6D087Eb3AD2
 // --symbol "EURE-JEUR"
 // --contract-name BeefyERC4626

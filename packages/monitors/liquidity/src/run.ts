@@ -1,4 +1,4 @@
-import { MidasSdk } from "@midas-capital/sdk";
+import { MidasSdk } from "@ionicprotocol/sdk";
 
 import { configs, verifiers } from "./config";
 import { MONITORED_CHAIN_ASSETS } from "./config/pools";

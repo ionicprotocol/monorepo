@@ -1,4 +1,4 @@
-import { LiquidationStrategy } from "@midas-capital/types";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { CErc20Delegate } from "../../../typechain/CErc20Delegate";

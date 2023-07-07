@@ -1,8 +1,8 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { chainIdToConfig } from '@midas-capital/chains';
-import { MidasSdk } from '@midas-capital/sdk';
-import Security from '@midas-capital/security';
-import type { SupportedChains } from '@midas-capital/types';
+import { chainIdToConfig } from '@ionicprotocol/chains';
+import { MidasSdk } from '@ionicprotocol/sdk';
+import Security from '@ionicprotocol/security';
+import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
 import type { FetchSignerResult, Signer } from '@wagmi/core';
 import type { Dispatch, ReactNode } from 'react';

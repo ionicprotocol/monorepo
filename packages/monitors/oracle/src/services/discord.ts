@@ -1,4 +1,4 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { SupportedAsset, SupportedChains } from "@ionicprotocol/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
 import { baseConfig } from "../config/variables";

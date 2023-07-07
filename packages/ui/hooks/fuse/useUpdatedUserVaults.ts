@@ -1,4 +1,4 @@
-import type { FundOperationMode, VaultData } from '@midas-capital/types';
+import type { FundOperationMode, VaultData } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { useMemo } from 'react';

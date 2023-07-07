@@ -1,4 +1,4 @@
-import type { FuseAsset } from '@midas-capital/types';
+import type { FuseAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';

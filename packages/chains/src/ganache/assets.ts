@@ -1,4 +1,4 @@
-import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset } from "@ionicprotocol/types";
 
 export const assets: SupportedAsset[] = [
   {

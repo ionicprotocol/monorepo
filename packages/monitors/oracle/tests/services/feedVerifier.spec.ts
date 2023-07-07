@@ -1,6 +1,6 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { MidasSdk } from "@midas-capital/sdk";
-import { assetSymbols, SupportedChains } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { MidasSdk } from "@ionicprotocol/sdk";
+import { assetSymbols, SupportedChains } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 import { restore } from "sinon";
 

@@ -1,4 +1,4 @@
-import type { NewPosition } from '@midas-capital/types';
+import type { NewPosition } from '@ionicprotocol/types';
 
 import { SupplyApy as MarketSupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
 import { useAssets } from '@ui/hooks/useAssets';

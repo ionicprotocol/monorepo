@@ -1,5 +1,5 @@
-import { fantom } from "@midas-capital/chains";
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { fantom } from "@ionicprotocol/chains";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { constants, ethers } from "ethers";
 
 import {

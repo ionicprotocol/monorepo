@@ -1,5 +1,5 @@
-import type { MidasSdk } from '@midas-capital/sdk';
-import type { PositionInfo } from '@midas-capital/types';
+import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { PositionInfo } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 
