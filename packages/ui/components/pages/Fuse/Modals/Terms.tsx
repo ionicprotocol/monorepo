@@ -23,20 +23,20 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             1. Acceptance of Terms
           </Text>
           <Text>
-            The Midas Capital system and software (the “Midas Capital Protocol”) is an autonomous
-            system of smart contracts on various blockchains that permits, among other things,
-            transactions using smart contracts, and lending and borrowing of cryptocurrencies. The
-            Midas Capital protocol, https://midascapital.xyz (the “Interface” or “App”) — which
-            includes text, images, audio, code and other materials (collectively, the
-            &quot;Content&quot;) and all of the features provided. Note, however, the Midas Capital
-            Protocol is an experimental prototype and its use involves a high degree of risk. There
-            are numerous ways the Midas Capital Protocol could fail in an unexpected way, resulting
-            in the total and absolute loss of funds in the protocol. Please read these Terms of Use
-            (the “Terms” or “Terms of Use”) carefully before using the Service. By using or
-            otherwise accessing the Service, or clicking to accept or agree to these Terms where
-            that option is made available, you (1) accept and agree to these Terms and (2) any
-            additional terms, rules and conditions of participation issued from time to time. If you
-            do not agree to the Terms, then you may not access or use the Content or Site.
+            The Ionic Protocol system and software (the “Ionic Protocol”) is an autonomous system of
+            smart contracts on various blockchains that permits, among other things, transactions
+            using smart contracts, and lending and borrowing of cryptocurrencies. The Ionic
+            Protocol, https://midascapital.xyz (the “Interface” or “App”) — which includes text,
+            images, audio, code and other materials (collectively, the &quot;Content&quot;) and all
+            of the features provided. Note, however, the Ionic Protocol is an experimental prototype
+            and its use involves a high degree of risk. There are numerous ways the Ionic Protocol
+            could fail in an unexpected way, resulting in the total and absolute loss of funds in
+            the protocol. Please read these Terms of Use (the “Terms” or “Terms of Use”) carefully
+            before using the Service. By using or otherwise accessing the Service, or clicking to
+            accept or agree to these Terms where that option is made available, you (1) accept and
+            agree to these Terms and (2) any additional terms, rules and conditions of participation
+            issued from time to time. If you do not agree to the Terms, then you may not access or
+            use the Content or Site.
           </Text>
           <Text fontWeight="bold" size="lg">
             2. Modification of Terms of Use
@@ -58,16 +58,16 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           <Text>
             You hereby represent and warrant that you are fully able and competent to enter into the
             terms, conditions, obligations, affirmations, representations and warranties set forth
-            in these Terms and to abide by and comply with these Terms. The Midas Capital Protocol
-            is global and by accessing the Interface, you are representing and warranting that, you
-            are of the legal age of majority in your jurisdiction as is required to access the
-            Interface and enter into arrangements.. You further represent that you are otherwise
-            legally permitted to use the service in your jurisdiction including owning cryptographic
-            tokens of value, and interacting with the Interface and Midas Capital Protocol. You
-            further represent you are responsible for ensuring compliance with the laws of your
-            jurisdiction and acknowledge that Midas Labs Ltd. & Midas Labs FZE LLC is not. liable
-            for your compliance with such laws. Finally, you represent and warrant that you will not
-            use the Service for any illegal activity.
+            in these Terms and to abide by and comply with these Terms. The Ionic Protocol is global
+            and by accessing the Interface, you are representing and warranting that, you are of the
+            legal age of majority in your jurisdiction as is required to access the Interface and
+            enter into arrangements.. You further represent that you are otherwise legally permitted
+            to use the service in your jurisdiction including owning cryptographic tokens of value,
+            and interacting with the Interface and Ionic Protocol. You further represent you are
+            responsible for ensuring compliance with the laws of your jurisdiction and acknowledge
+            that Midas Labs Ltd. & Midas Labs FZE LLC is not. liable for your compliance with such
+            laws. Finally, you represent and warrant that you will not use the Service for any
+            illegal activity.
           </Text>
           <Text fontWeight="bold" size="lg">
             4. Representations, Warranties, and Risks
@@ -104,21 +104,21 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             4.3 Sophistication and Risk of Cryptographic Systems
           </Text>
           <Text>
-            By utilizing the Midas Capital Protocol or Interface or interacting with the Content in
-            any way, you represent that you understand the inherent risks associated with
-            cryptographic systems; and warrant that you have an understanding of the usage and
-            intricacies of native cryptographic tokens, like Ether (ETH) and smart contract based
-            tokens such as those that follow the Ethereum Token Standard
+            By utilizing the Ionic Protocol or Interface or interacting with the Content in any way,
+            you represent that you understand the inherent risks associated with cryptographic
+            systems; and warrant that you have an understanding of the usage and intricacies of
+            native cryptographic tokens, like Ether (ETH) and smart contract based tokens such as
+            those that follow the Ethereum Token Standard
             (https://github.com/ethereum/EIPs/issues/20), and blockchain-based software systems.
             Midas Labs Ltd. & Midas Labs FZE LLC does not own or control any of the underlying
             software through which blockchain networks are formed. In general, the underlying
             software for blockchain networks tends to be open source such that anyone can use, copy,
-            modify, and distribute it. By using the Midas Capital Protocol and the Interface, you
+            modify, and distribute it. By using the Ionic Protocol and the Interface, you
             acknowledge and agree (i) Midas Labs Ltd. & Midas Labs FZE LLC is not responsible for
             operation of the underlying software and networks that there exists no guarantee of
             functionality, security, or availability of such software and networks; and (ii) that
             the underlying protocols are subject to sudden changes in operating rules (known as
-            &quot;Forks&quot;), and that such Forks may materially affect the Midas Capital
+            &quot;Forks&quot;), and that such Forks may materially affect the Ionic Protocol
             Protocol. It might be discretionarily decided not to support (or cease supporting) the
             Forked network entirely. You acknowledge and agree that the Midas Labs Ltd. & Midas Labs
             FZE LLC assumes absolutely no responsibility whatsoever in respect of any underlying
@@ -129,11 +129,11 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           </Text>
 
           <Text>
-            The Midas Capital Protocol, the Interface, and cryptocurrencies in protocol could be
-            impacted by one or more regulatory inquiries or regulatory action, which could impede or
-            limit the ability of Midas Labs Ltd. & Midas Labs FZE LLC to continue to develop, or
-            which could impede or limit your ability to access or use the Service or Ethereum
-            blockchain, including access to your funds.
+            The Ionic Protocol, the Interface, and cryptocurrencies in protocol could be impacted by
+            one or more regulatory inquiries or regulatory action, which could impede or limit the
+            ability of Midas Labs Ltd. & Midas Labs FZE LLC to continue to develop, or which could
+            impede or limit your ability to access or use the Service or Ethereum blockchain,
+            including access to your funds.
           </Text>
           <Text textDecoration={'underline'}>
             4.5 Risk of Weaknesses or Exploits in the Field of Cryptography
@@ -142,13 +142,12 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           <Text>
             You acknowledge and understand that Cryptography is a progressing field. Advances in
             code cracking or technical advances such as the development of quantum computers may
-            present risks to cryptocurrencies and Midas Capital Protocol, Interface or accessing
-            Content, which could result in the theft or loss of your cryptographic tokens or
-            property. To the extent possible, it is intended to update the protocol underlying the
-            Service to account for any advances in cryptography and to incorporate additional
-            security measures, but does not guarantee or otherwise represent full security of the
-            system. By using the Midas Capital Protocol, Interface or accessing Content, you
-            acknowledge these inherent risks.
+            present risks to cryptocurrencies and Ionic Protocol, Interface or accessing Content,
+            which could result in the theft or loss of your cryptographic tokens or property. To the
+            extent possible, it is intended to update the protocol underlying the Service to account
+            for any advances in cryptography and to incorporate additional security measures, but
+            does not guarantee or otherwise represent full security of the system. By using the
+            Ionic Protocol, Interface or accessing Content, you acknowledge these inherent risks.
           </Text>
           <Text textDecoration={'underline'}>4.6 Volatility of Cryptocurrency</Text>
 
@@ -165,22 +164,22 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           <Text textDecoration={'underline'}>4.7 Application Security</Text>
 
           <Text>
-            You acknowledge that the Midas Capital Protocol and Interface are subject to flaws and
+            You acknowledge that the Ionic Protocol and Interface are subject to flaws and
             acknowledge that you are solely responsible for evaluating any code provided via the
-            Midas Capital Protocol, Interface or Content, including those approved and integrated
-            via the TRIBE DAO. This warning and others later provided by Midas Labs Ltd. & Midas
-            Labs FZE LLC in no way evidence or represent an on-going duty to alert you to all of the
-            potential risks of utilizing the Midas Capital Protocol, Interface or accessing Content.
+            Ionic Protocol, Interface or Content, including those approved and integrated via the
+            TRIBE DAO. This warning and others later provided by Midas Labs Ltd. & Midas Labs FZE
+            LLC in no way evidence or represent an on-going duty to alert you to all of the
+            potential risks of utilizing the Ionic Protocol, Interface or accessing Content.
           </Text>
 
           <Text textDecoration={'underline'}>4.8 Website Accuracy</Text>
 
           <Text>
             Although it is intended to provide accurate and timely information on the Interface and
-            other tools making up the Midas Capital Protocol, the Interface (including, without
-            limitation, the Content) or relevant tools may not always be entirely accurate, complete
-            or current and may also include technical inaccuracies or typographical errors. In an
-            effort to continue to provide you with as complete and accurate information as possible,
+            other tools making up the Ionic Protocol, the Interface (including, without limitation,
+            the Content) or relevant tools may not always be entirely accurate, complete or current
+            and may also include technical inaccuracies or typographical errors. In an effort to
+            continue to provide you with as complete and accurate information as possible,
             information may be changed or updated from time to time without notice, including
             without limitation information regarding our policies. Accordingly, you should verify
             all information before relying on it, and all decisions based on information contained
@@ -196,10 +195,10 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           <Text textDecoration={'underline'}>4.9 Technical Knowledge</Text>
 
           <Text>
-            Any use or interaction with the Midas Capital Protocol and Interface requires a
-            comprehensive understanding of applied cryptography and computer science in order to
-            appreciate inherent risks, including those listed above. You represent and warrant that
-            you possess relevant knowledge and skills.
+            Any use or interaction with the Ionic Protocol and Interface requires a comprehensive
+            understanding of applied cryptography and computer science in order to appreciate
+            inherent risks, including those listed above. You represent and warrant that you possess
+            relevant knowledge and skills.
           </Text>
           <Text fontWeight="bold" size="lg">
             5. Indemnity
@@ -255,12 +254,12 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
           <Text>
             All title, ownership and intellectual property rights in and to the Interface and Midas
             Capital Protocol are owned by Midas Labs Ltd. & Midas Labs FZE LLC, related entities or
-            their licensors. You acknowledge and agree that the Midas Capital Protocol, Interface
-            and Content contain proprietary and confidential information that is protected by
-            applicable intellectual property and other laws. Except as expressly authorized by a
-            relevant entity, you agree not to copy, modify, rent, lease, loan, sell, distribute,
-            perform, display or create derivative works based on the Midas Capital Protocol,
-            Interface and Content, in whole or in part.
+            their licensors. You acknowledge and agree that the Ionic Protocol, Interface and
+            Content contain proprietary and confidential information that is protected by applicable
+            intellectual property and other laws. Except as expressly authorized by a relevant
+            entity, you agree not to copy, modify, rent, lease, loan, sell, distribute, perform,
+            display or create derivative works based on the Ionic Protocol, Interface and Content,
+            in whole or in part.
           </Text>
           <Text fontWeight="bold" size="lg">
             8. Links
@@ -457,7 +456,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
 
               <ListItem>
                 Fraud: Activity which operates to defraud Midas Labs Ltd. & Midas Labs FZE LLC,
-                Midas Capital Protocol and Interface users, or any other person; provide any false,
+                Ionic Protocol and Interface users, or any other person; provide any false,
                 inaccurate, or misleading information.
               </ListItem>
 

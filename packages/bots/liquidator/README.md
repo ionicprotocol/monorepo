@@ -1,4 +1,4 @@
-# Fuse by Midas Capital: Liquidator Bot
+# Fuse by Ionic Protocol: Liquidator Bot
 
 This repository contains the TypeScript source code for the Fuse Liquidator Bot.
 
