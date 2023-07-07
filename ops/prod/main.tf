@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform-statefile-ionicprotocol"
-    key    = "midas-deployment"
+    key    = "ionic-deployment"
     region = "us-east-1"
   }
   required_providers {

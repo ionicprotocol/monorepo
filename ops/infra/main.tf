@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform-statefile-ionicprotocol"
-    key    = "midas-infra"
+    key    = "ionic-infra"
     region = "us-east-1"
   }
   required_providers {
@@ -21,5 +21,5 @@ data "aws_caller_identity" "current" {}
 
 module "ecr" {
   source           = "../modules/ecr"
-  repository_names = ["oracles-monitor", "liquidator"]
+  repository_names = ["ionic-oracles-monitor", "ionic-liquidator"]
 }
