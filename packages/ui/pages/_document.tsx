@@ -32,7 +32,7 @@ class MyDocument extends Document {
             key="twdesc"
             name="twitter:description"
           />
-          <meta content="https://app.midascapital.xyz/" key="twurl" name="twitter:url" />
+          <meta content="https://ionic.money/" key="twurl" name="twitter:url" />
           <meta
             content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
             key="twimage"
