@@ -46,8 +46,8 @@ import { PositionValue } from '@ui/components/pages/LeveragePage/LeverageList/Op
 import { SafetyBuffer } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/SafetyBuffer';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
-import { IonicBox } from '@ui/components/shared/IonicBox';
 import { CIconButton } from '@ui/components/shared/Button';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,

@@ -6,9 +6,9 @@ import { parseUnits } from 'ethers/lib/utils';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 
-import { IonicBox } from '@ui/components/shared/IonicBox';
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';

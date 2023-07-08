@@ -2,8 +2,8 @@ import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import type { OpenPosition } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 
-import { IonicBox } from '@ui/components/shared/IonicBox';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useUpdatedLeverageRatioAfterFunding } from '@ui/hooks/leverage/useUpdatedLeverageRatioAfterFunding';
 

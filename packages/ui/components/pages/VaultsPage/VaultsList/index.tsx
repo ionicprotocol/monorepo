@@ -48,8 +48,8 @@ import { SupplyApy } from '@ui/components/pages/VaultsPage/VaultsList/SupplyApy'
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
-import { IonicBox } from '@ui/components/shared/IonicBox';
 import { CIconButton } from '@ui/components/shared/Button';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {

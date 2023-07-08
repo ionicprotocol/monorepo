@@ -1,18 +1,17 @@
-import type { FlexProps, InputProps } from '@chakra-ui/react';
-import { Flex, Input } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
+import type { InputProps } from '@chakra-ui/react';
+import { Input, InputGroup, InputLeftAddon } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useDebounce } from '@ui/hooks/useDebounce';
 
 export const SearchInput = ({
-  flexProps,
   inputProps,
   localStorageKey,
   onSearch,
   placeholder,
 }: {
-  flexProps?: FlexProps;
   inputProps?: InputProps;
   localStorageKey?: string;
   onSearch: (value: string) => void;
@@ -49,16 +48,19 @@ export const SearchInput = ({
   };
 
   return (
-    <Flex {...flexProps}>
+    <InputGroup variant="ghost">
+      <InputLeftAddon>
+        <SearchIcon height="16px" width="16px" />
+      </InputLeftAddon>
       <Input
         _focusVisible={{}}
-        maxW={80}
+        maxW={60}
         onChange={_onSearch}
         placeholder={placeholder ?? 'Search'}
         type="text"
         value={searchText}
         {...inputProps}
       />
-    </Flex>
+    </InputGroup>
   );
 };

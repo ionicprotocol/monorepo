@@ -1,150 +1,90 @@
-import type { ComponentStyleConfig } from '@chakra-ui/theme';
+import { inputAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
-export const InputConfigStyle: ComponentStyleConfig = {
-  baseStyle: {
+const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(
+  inputAnatomy.keys
+);
+
+const baseStyle = definePartsStyle({
+  field: {
+    _disabled: {
+      cursor: 'not-allowed',
+      opacity: 0.4,
+    },
+    _focusVisible: {
+      boxShadow: 'none',
+      outline: 'none',
+    },
+    appearance: 'none',
+    minWidth: 0,
+    outline: 0,
+  },
+});
+
+const xl = defineStyle({
+  fontSize: 'lg',
+  h: '12',
+  px: '4',
+});
+
+const sizes = {
+  xl: definePartsStyle({ addon: xl, field: xl }),
+};
+
+const ghost = definePartsStyle((props) => {
+  return {
+    addon: {
+      backgroundColor: mode('iCardBg', 'iCardBg')(props),
+      border: 'none',
+      color: mode('iBlack', 'iWhite')(props),
+      height: { base: '20px' },
+      justifyContent: 'center',
+      pointerEvents: 'none',
+      px: { base: 0 },
+      width: { base: '20px' },
+    },
+    element: {
+      color: mode('iBlack', 'iWhite')(props),
+      fontSize: { base: '12px' },
+      height: '20px',
+      pointerEvents: 'none',
+      width: '20px',
+    },
     field: {
-      _disabled: {
-        cursor: 'not-allowed',
-        opacity: 0.4,
+      _focus: {
+        border: 'none',
       },
       _focusVisible: {
         boxShadow: 'none',
         outline: 'none',
       },
-      appearance: 'none',
-      minWidth: 0,
-      outline: 0,
-      position: 'relative',
-      transitionDuration: 'normal',
-      transitionProperty: 'common',
+      _hover: {
+        border: 'none',
+      },
+      _placeholder: { color: mode('iGray', 'iGray')(props) },
+      _readOnly: {
+        _focus: { border: 'none' },
+        border: 'none',
+        cursor: 'auto',
+        outline: 'none',
+      },
+      backgroundColor: mode('iCardBg', 'iCardBg')(props),
+      border: 'none',
+      color: mode('iBlack', 'iWhite')(props),
+      fontSize: '14px',
+      height: { base: '20px' },
+      paddingInlineEnd: 0,
+      paddingInlineStart: '10px',
     },
-  },
+  };
+});
+
+export const InputConfigStyle = defineMultiStyleConfig({
+  baseStyle,
   defaultProps: {
-    variant: 'outline',
+    variant: 'ghost',
   },
-  parts: ['field', 'element', 'addon'],
-  variants: {
-    outline: (props) => ({
-      element: {
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-        pointerEvents: 'none',
-        width: 'auto',
-      },
-      field: {
-        _focus: {
-          borderColor: 'ecru',
-        },
-        _focusVisible: {
-          boxShadow: 'none',
-          outline: 'none',
-        },
-        _hover: {
-          borderColor: 'ecru',
-        },
-        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
-        _readOnly: {
-          _focus: { borderColor: 'ecru30' },
-          borderColor: 'ecru30',
-          cursor: 'auto',
-          outline: 'none',
-        },
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderColor: 'ecru',
-        borderRadius: 'xl',
-        borderWidth: '2px',
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-        paddingInline: '20px',
-      },
-    }),
-    outlineLeftAddon: (props) => ({
-      addon: {
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderColor: 'ecru',
-        borderRadius: 'xl',
-        borderWidth: '2px',
-        color: mode('raisinBlack', 'whiteBg')(props),
-        pointerEvents: 'none',
-      },
-      element: {
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-        pointerEvents: 'none',
-        width: 'auto',
-      },
-      field: {
-        _focus: {
-          borderColor: 'ecru',
-        },
-        _focusVisible: {
-          boxShadow: 'none',
-          outline: 'none',
-        },
-        _hover: {
-          borderColor: 'ecru',
-        },
-        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderColor: 'ecru',
-        borderLeft: 'none',
-        borderRadius: 'xl',
-        borderWidth: '2px',
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-        paddingLeft: 0,
-      },
-    }),
-    outlineRightAddon: (props) => ({
-      addon: {
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderColor: 'ecru30',
-        borderRadius: 'xl',
-        borderWidth: '2px',
-        color: mode('raisinBlack', 'whiteBg')(props),
-        pointerEvents: 'none',
-      },
-      element: {
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-        pointerEvents: 'none',
-        width: 'auto',
-      },
-      field: {
-        _focus: {
-          borderColor: 'ecru',
-        },
-        _focusVisible: {
-          boxShadow: 'none',
-          outline: 'none',
-        },
-        _hover: {
-          borderColor: 'ecru',
-        },
-        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
-        _readOnly: {
-          borderColor: 'ecru30',
-        },
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderColor: 'ecru',
-        borderRadius: 'xl',
-        borderWidth: '2px',
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-      },
-    }),
-    unstyled: (props) => ({
-      field: {
-        _focusVisible: {
-          boxShadow: 'none',
-          outline: 'none',
-        },
-        _placeholder: { color: mode('silverMetallic', 'white50')(props) },
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        color: mode('raisinBlack', 'white')(props),
-        fontSize: '16px',
-      },
-    }),
-  },
-};
+  sizes,
+  variants: { ghost },
+});

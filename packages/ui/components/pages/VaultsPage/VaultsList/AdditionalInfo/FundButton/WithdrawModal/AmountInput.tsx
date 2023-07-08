@@ -4,9 +4,9 @@ import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';
 
-import { IonicBox } from '@ui/components/shared/IonicBox';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxWithdrawVault } from '@ui/hooks/useMaxWithdrawVault';
