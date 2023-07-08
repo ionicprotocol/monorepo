@@ -33,6 +33,6 @@ export const useBorrowAPYs = (
 
       return result;
     },
-    { cacheTime: Infinity, enabled: !!sdk && !!assets && !!chainId, staleTime: Infinity }
+    { enabled: !!sdk && !!assets && !!chainId }
   );
 };

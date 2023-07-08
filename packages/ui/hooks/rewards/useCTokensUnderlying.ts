@@ -26,9 +26,7 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
       return _map;
     },
     {
-      cacheTime: Infinity,
       enabled: cTokenAddresses.length > 0 && !!currentSdk,
-      staleTime: Infinity,
     }
   );
 

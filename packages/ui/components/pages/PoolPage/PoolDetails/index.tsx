@@ -6,7 +6,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 
-import { MidasBox } from '@ui/components/shared/Box';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -55,7 +55,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   }, [comptroller, currentSdk, queryClient, addRecentTransaction]);
 
   return (
-    <MidasBox height="auto" width="100%">
+    <IonicBox height="auto" width="100%">
       <Column
         crossAxisAlignment="flex-start"
         height="100%"
@@ -257,7 +257,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
           </Column>
         )}
       </Column>
-    </MidasBox>
+    </IonicBox>
   );
 };
 

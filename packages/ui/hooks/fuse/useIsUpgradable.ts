@@ -23,7 +23,7 @@ export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number
         return null;
       }
     },
-    { cacheTime: Infinity, enabled: !!comptrollerAddress && !!sdk, staleTime: Infinity }
+    { enabled: !!comptrollerAddress && !!sdk }
   );
 
   return data;

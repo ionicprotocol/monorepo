@@ -12,7 +12,14 @@ import { MultiMidasProvider } from '@ui/context/MultiMidasContext';
 import { theme } from '@ui/theme/index';
 import { connectors, provider } from '@ui/utils/connectors';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+    },
+  },
+});
 
 const client = createClient({
   autoConnect: true,

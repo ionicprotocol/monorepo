@@ -80,9 +80,7 @@ export function useHistoryData(
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!mode && !!chainId && !!underlyingAddress && !!cTokenAddress && !!milliSeconds,
-      staleTime: Infinity,
     }
   );
 }

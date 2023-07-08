@@ -2,7 +2,7 @@ import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import type { OpenPosition } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 
-import { MidasBox } from '@ui/components/shared/Box';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useUpdatedLeverageRatioAfterFunding } from '@ui/hooks/leverage/useUpdatedLeverageRatioAfterFunding';
@@ -20,7 +20,7 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
   );
 
   return (
-    <MidasBox py={4} width="100%">
+    <IonicBox py={4} width="100%">
       <Flex height="100%" justifyContent="center">
         <VStack alignItems="flex-start" height="100%" justifyContent="center" spacing={4}>
           <HStack spacing={4}>
@@ -53,6 +53,6 @@ export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: O
           </HStack>
         </VStack>
       </Flex>
-    </MidasBox>
+    </IonicBox>
   );
 };

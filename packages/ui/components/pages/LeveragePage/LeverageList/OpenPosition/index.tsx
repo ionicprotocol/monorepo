@@ -46,7 +46,7 @@ import { PositionValue } from '@ui/components/pages/LeveragePage/LeverageList/Op
 import { SafetyBuffer } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/SafetyBuffer';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
-import { MidasBox } from '@ui/components/shared/Box';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { CIconButton } from '@ui/components/shared/Button';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -423,7 +423,7 @@ export const OpenPositionComp = ({
           Open Levered Positions
         </Text>
       </Box>
-      <MidasBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
+      <IonicBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
         {err && err.code !== 'NETWORK_ERROR' ? (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
@@ -601,7 +601,7 @@ export const OpenPositionComp = ({
             </HStack>
           </HStack>
         </Flex>
-      </MidasBox>
+      </IonicBox>
     </VStack>
   );
 };

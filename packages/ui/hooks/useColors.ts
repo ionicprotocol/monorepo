@@ -4,7 +4,7 @@ import { COLOR_PALETTE } from '@ui/theme/index';
 
 export function useColors() {
   const cIPage = {
-    bgColor: useColorModeValue(COLOR_PALETTE.iPageBg, COLOR_PALETTE.iPageBg),
+    bgColor: useColorModeValue(COLOR_PALETTE.iBlack, COLOR_PALETTE.iBlack),
     dividerColor: useColorModeValue(COLOR_PALETTE.iSeparator, COLOR_PALETTE.iSeparator),
     txtColor: useColorModeValue(COLOR_PALETTE.iLightGray, COLOR_PALETTE.iLightGray),
     txtSelectedColor: useColorModeValue(COLOR_PALETTE.iWhite, COLOR_PALETTE.iWhite),
@@ -12,6 +12,7 @@ export function useColors() {
 
   const cICard = {
     bgColor: useColorModeValue(COLOR_PALETTE.iCardBg, COLOR_PALETTE.iCardBg),
+    txtColor: useColorModeValue(COLOR_PALETTE.iWhite, COLOR_PALETTE.iWhite),
   };
 
   const cPage = {

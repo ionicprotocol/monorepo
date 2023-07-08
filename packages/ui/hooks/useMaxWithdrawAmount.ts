@@ -26,9 +26,7 @@ export function useMaxWithdrawAmount(asset: NativePricedFuseAsset, chainId: numb
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!address && !!asset && !!sdk,
-      staleTime: Infinity,
     }
   );
 }

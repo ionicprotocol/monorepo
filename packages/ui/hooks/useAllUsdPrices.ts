@@ -60,7 +60,7 @@ export function useAllUsdPrices() {
 
       return prices;
     },
-    { cacheTime: Infinity, enabled: !!chainIds && chainIds.length > 0, staleTime: Infinity }
+    { enabled: !!chainIds && chainIds.length > 0 }
   );
 }
 
@@ -76,6 +76,6 @@ export function useUsdPrice(chainId: string) {
         return null;
       }
     },
-    { cacheTime: Infinity, enabled: !!chainId && !!usdPrices, staleTime: Infinity }
+    { enabled: !!chainId && !!usdPrices }
   );
 }

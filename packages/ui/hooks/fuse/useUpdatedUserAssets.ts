@@ -70,7 +70,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
 
       return assetsWithPrice;
     },
-    { cacheTime: Infinity, enabled: !!assets && !!usdPrice && !!currentSdk, staleTime: Infinity }
+    { enabled: !!assets && !!usdPrice && !!currentSdk }
   );
 };
 

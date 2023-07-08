@@ -49,10 +49,8 @@ export const useRestricted = (
       return restricted;
     },
     {
-      cacheTime: Infinity,
       enabled:
         !!comptrollerAddress && !!debtCeilings && debtCeilings.length > 0 && !!address && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

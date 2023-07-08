@@ -80,9 +80,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
       return flywheels;
     },
     {
-      cacheTime: Infinity,
       enabled: !!comptrollerAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
   return queryResult;

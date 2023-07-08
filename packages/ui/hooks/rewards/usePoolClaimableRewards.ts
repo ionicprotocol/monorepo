@@ -34,9 +34,7 @@ export const usePoolClaimableRewards = (poolAddress: string, poolChainId?: numbe
       return null;
     },
     {
-      cacheTime: Infinity,
       enabled: !!poolAddress && !!address && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

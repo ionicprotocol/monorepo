@@ -65,9 +65,7 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!poolId && !!usdPrice && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

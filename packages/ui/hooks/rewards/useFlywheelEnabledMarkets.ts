@@ -19,9 +19,7 @@ export const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
       return null;
     },
     {
-      cacheTime: Infinity,
       enabled: !!flywheelAddress && !!currentSdk,
-      staleTime: Infinity,
     }
   );
 };

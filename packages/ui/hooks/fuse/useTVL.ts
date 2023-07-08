@@ -57,6 +57,6 @@ export const useTVL = () => {
 
       return null;
     },
-    { cacheTime: Infinity, enabled: !!prices && !isLoading, staleTime: Infinity }
+    { enabled: !!prices && !isLoading }
   );
 };

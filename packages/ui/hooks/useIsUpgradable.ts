@@ -25,9 +25,7 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
-      staleTime: Infinity,
     }
   );
 

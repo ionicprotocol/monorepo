@@ -1,9 +1,9 @@
-import { AvatarGroup, HStack, Text, useDisclosure } from '@chakra-ui/react';
+import { AvatarGroup, Button, HStack, useDisclosure } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
 import { ClaimAllRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimAllRewardsModal/index';
-import { GradientButton } from '@ui/components/shared/GradientButton';
+import { GradientText } from '@ui/components/shared/GradientText';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
@@ -17,7 +17,7 @@ const ClaimAllRewardsButton: React.FC = () => {
     onOpen: openClaimModal,
     onClose: closeClaimModal,
   } = useDisclosure();
-  const { cPage } = useColors();
+  const { cIPage } = useColors();
   const { currentChain } = useMultiMidas();
   const isMobile = useIsSmallScreen();
   const enabledChains = useEnabledChains();
@@ -42,18 +42,18 @@ const ClaimAllRewardsButton: React.FC = () => {
         />
       )}
       {currentChain && allRewards && allRewards.length > 0 && (
-        <GradientButton isSelected justifySelf="center" onClick={openModal} width="fit-content">
+        <Button
+          justifySelf="center"
+          onClick={openModal}
+          px={2}
+          variant="_ghost"
+          width="fit-content"
+        >
           <HStack spacing={1}>
             {!isMobile && (
-              <Text
-                color={cPage.secondary.txtColor}
-                fontWeight="semibold"
-                ml={1}
-                mr={1}
-                width="max-content"
-              >
+              <GradientText color={cIPage.bgColor} isEnabled={true} mx={1}>
                 All Rewards
-              </Text>
+              </GradientText>
             )}
             <AvatarGroup max={30} size="xs">
               {allRewards.map((reward, index) => {
@@ -63,7 +63,7 @@ const ClaimAllRewardsButton: React.FC = () => {
               })}
             </AvatarGroup>
           </HStack>
-        </GradientButton>
+        </Button>
       )}
     </>
   );

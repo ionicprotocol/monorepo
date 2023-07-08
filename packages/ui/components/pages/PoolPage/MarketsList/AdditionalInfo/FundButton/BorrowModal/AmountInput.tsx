@@ -1,9 +1,9 @@
 import { Box, Button, Input } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
-import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -33,7 +33,7 @@ export const AmountInput = ({
   };
 
   return (
-    <MidasBox width="100%">
+    <IonicBox width="100%">
       <Row crossAxisAlignment="center" expand mainAxisAlignment="space-between" p={4} width="100%">
         <Input
           autoFocus
@@ -72,6 +72,6 @@ export const AmountInput = ({
           </Button>
         </Row>
       </Row>
-    </MidasBox>
+    </IonicBox>
   );
 };

@@ -27,14 +27,12 @@ export function useFlywheelRewardsForPositions(pools?: string[], chainIds?: numb
       return null;
     },
     {
-      cacheTime: Infinity,
       enabled:
         !!pools &&
         !!chainIds &&
         pools.length > 0 &&
         chainIds.length > 0 &&
         pools.length === chainIds.length,
-      staleTime: Infinity,
     }
   );
 }
@@ -73,9 +71,7 @@ export function useRewardsForPositions(
       return {};
     },
     {
-      cacheTime: Infinity,
       enabled: !!assets && !!pools && !!chainIds,
-      staleTime: Infinity,
     }
   );
 }

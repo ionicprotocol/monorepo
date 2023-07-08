@@ -39,9 +39,7 @@ export function useUpdatedNetApyAfterFunding(
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && supplyApy !== undefined && !!amount && !!positionAddress,
-      staleTime: Infinity,
     }
   );
 }

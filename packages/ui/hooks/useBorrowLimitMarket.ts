@@ -59,6 +59,6 @@ export const useBorrowLimitMarket = (
 
       return borrowCaps && borrowCaps.usdCap < _maxBorrow ? borrowCaps.usdCap : _maxBorrow;
     },
-    { cacheTime: Infinity, enabled: !!usdPrice, staleTime: Infinity }
+    { enabled: !!usdPrice }
   );
 };

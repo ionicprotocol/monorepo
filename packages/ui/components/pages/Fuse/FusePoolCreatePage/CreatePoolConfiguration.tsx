@@ -22,8 +22,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { OptionRow } from '@ui/components/pages/Fuse/FusePoolCreatePage/OptionRow';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
-import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column } from '@ui/components/shared/Flex';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { config } from '@ui/config/index';
@@ -143,7 +143,7 @@ export const CreatePoolConfiguration = () => {
 
   return (
     <Box alignSelf={'center'} as="form" mx="auto" onSubmit={handleSubmit(onDeploy)}>
-      <MidasBox maxWidth="550px" mx={'auto'}>
+      <IonicBox maxWidth="550px" mx={'auto'}>
         <Text fontWeight="bold" px={4} py={4} variant="title">
           Create Pool
         </Text>
@@ -365,7 +365,7 @@ export const CreatePoolConfiguration = () => {
             </OptionRow>
           </FormControl>
         </Column>
-      </MidasBox>
+      </IonicBox>
       <Center>
         {currentChain?.id && address ? (
           <Button

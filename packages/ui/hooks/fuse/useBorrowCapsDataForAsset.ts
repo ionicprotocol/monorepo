@@ -24,9 +24,7 @@ export const useBorrowCapsDataForAsset = (cTokenAddress: string, poolChainId?: n
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!cTokenAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

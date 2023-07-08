@@ -50,9 +50,7 @@ export function useGetNetApy(
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
-      staleTime: Infinity,
     }
   );
 }

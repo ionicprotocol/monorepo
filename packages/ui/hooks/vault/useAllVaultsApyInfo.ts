@@ -80,9 +80,7 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
       return null;
     },
     {
-      cacheTime: Infinity,
       enabled: Object.keys(vaultsPerChain).length > 0,
-      staleTime: Infinity,
     }
   );
 }

@@ -11,7 +11,6 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
   const vaultsQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
-        cacheTime: Infinity,
         enabled: !!chainId,
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
@@ -27,7 +26,6 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
           }
         },
         queryKey: ['useVaultsPerChain', chainId, address],
-        staleTime: Infinity,
       };
     }),
   });

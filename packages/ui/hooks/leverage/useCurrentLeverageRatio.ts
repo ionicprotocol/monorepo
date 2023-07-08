@@ -26,9 +26,7 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && !!position,
-      staleTime: Infinity,
     }
   );
 }

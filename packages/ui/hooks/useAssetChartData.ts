@@ -53,14 +53,12 @@ export function useAssetChartData(
       }
     },
     {
-      cacheTime: Infinity,
       enabled:
         !!interestRateModelAddress &&
         !!adminFee.toString() &&
         !!reserveFactor.toString() &&
         !!sdk &&
         !!poolChainId,
-      staleTime: Infinity,
     }
   );
 }

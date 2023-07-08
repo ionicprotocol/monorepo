@@ -57,9 +57,7 @@ export const useCTokenData = (
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

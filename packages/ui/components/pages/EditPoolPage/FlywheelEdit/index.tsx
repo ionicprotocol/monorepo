@@ -22,9 +22,9 @@ import React, { useCallback, useMemo, useState } from 'react';
 import AddFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/AddFlywheelModal';
 import CreateFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/CreateFlywheelModal';
 import EditFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/EditFlywheelModal';
-import { MidasBox } from '@ui/components/shared/Box';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column } from '@ui/components/shared/Flex';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import { config } from '@ui/config/index';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
@@ -96,7 +96,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
         />
       )}
 
-      <MidasBox h="100%" my={4} w="100%">
+      <IonicBox h="100%" my={4} w="100%">
         {isLoading && (
           <Column crossAxisAlignment="center" h="100%" mainAxisAlignment="center" p={4} w="100%">
             <Spinner />
@@ -145,7 +145,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             </Tbody>
           </Table>
         )}
-      </MidasBox>
+      </IonicBox>
     </>
   );
 };

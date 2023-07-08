@@ -23,9 +23,7 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!pluginAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

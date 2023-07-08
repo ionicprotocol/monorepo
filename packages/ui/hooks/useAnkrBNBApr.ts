@@ -47,9 +47,7 @@ export const useAnkrBNBApr = (isEnabled: boolean, poolChainId?: number) => {
       return null;
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && !!poolChainId && isEnabled,
-      staleTime: Infinity,
     }
   );
 };

@@ -34,6 +34,6 @@ export const useUpdatedUserVault = ({ mode, amount, vault }: UseUpdatedUserVault
         return null;
       });
     },
-    { cacheTime: Infinity, enabled: !!vault && !!usdPrice && !!sdk, staleTime: Infinity }
+    { enabled: !!vault && !!usdPrice && !!sdk }
   );
 };

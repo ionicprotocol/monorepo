@@ -73,6 +73,6 @@ export const usePositionsTotalSupplyApy = (
 
       return null;
     },
-    { cacheTime: Infinity, enabled: !!assets && !!chainIds, staleTime: Infinity }
+    { enabled: !!assets && !!chainIds }
   );
 };

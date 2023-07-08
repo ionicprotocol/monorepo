@@ -1,9 +1,9 @@
 import { Grid, GridItem } from '@chakra-ui/react';
 import { memo } from 'react';
 
-import FusePoolList from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { Platform } from '@ui/components/pages/PoolsPage/Platform';
+import PoolsList from '@ui/components/pages/PoolsPage/PoolsList/index';
 import { YourPerformance } from '@ui/components/pages/PoolsPage/YourPerformance';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 
@@ -27,7 +27,7 @@ const PoolsPage = memo(() => {
             <Platform />
           </GridItem>
         </Grid>
-        <FusePoolList />
+        <PoolsList />
       </FusePageLayout>
     </PageTransitionLayout>
   );

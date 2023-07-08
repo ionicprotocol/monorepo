@@ -96,14 +96,12 @@ export const useBorrowCap = ({
       }
     },
     {
-      cacheTime: Infinity,
       enabled:
         !!sdk &&
         !!usdPrice &&
         !!market &&
         !!address &&
         !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
-      staleTime: Infinity,
     }
   );
 };

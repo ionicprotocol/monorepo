@@ -21,9 +21,7 @@ export function useEquityAmount(position: string, chainId?: number) {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && !!position,
-      staleTime: Infinity,
     }
   );
 }

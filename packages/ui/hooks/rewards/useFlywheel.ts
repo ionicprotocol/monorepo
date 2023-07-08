@@ -72,10 +72,8 @@ export const useFlywheel = (flywheelAddress?: string) => {
       } as Flywheel;
     },
     {
-      cacheTime: Infinity,
       enabled: !!flywheelAddress && !!currentSdk,
       initialData: undefined,
-      staleTime: Infinity,
     }
   );
 };

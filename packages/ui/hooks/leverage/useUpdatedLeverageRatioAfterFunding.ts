@@ -35,9 +35,7 @@ export function useUpdatedLeverageRatioAfterFunding(
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && !!amount && !!positionAddress,
-      staleTime: Infinity,
     }
   );
 }

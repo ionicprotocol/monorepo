@@ -37,9 +37,7 @@ export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!currentSdk,
-      staleTime: Infinity,
     }
   );
 

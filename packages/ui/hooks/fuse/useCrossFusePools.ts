@@ -7,7 +7,7 @@ import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import type { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { poolSort } from '@ui/utils/sorts';
+import { poolSort, poolSortByAddress } from '@ui/utils/sorts';
 
 export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();
@@ -16,7 +16,6 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const poolsQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
-        cacheTime: Infinity,
         enabled: !!chainId && !!prices && !!prices[chainId.toString()],
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
@@ -92,7 +91,6 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
           }
         },
         queryKey: ['useCrossFusePools', chainId, address, prices && prices[chainId.toString()]],
-        staleTime: Infinity,
       };
     }),
   });
@@ -111,13 +109,13 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
       error = isError ? (pools.error as Err) : undefined;
       const _chainId = chainIds[index];
       _poolsPerChain[_chainId.toString()] = {
-        data: pools.data,
+        data: poolSortByAddress(pools.data ?? []),
         error: pools.error as Err | undefined,
         isLoading: pools.isLoading,
       };
 
       if (pools.data) {
-        allPools.push(...pools.data);
+        allPools.push(...poolSortByAddress(pools.data));
       }
     });
 

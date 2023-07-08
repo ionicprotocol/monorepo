@@ -48,7 +48,7 @@ import { SupplyApy } from '@ui/components/pages/VaultsPage/VaultsList/SupplyApy'
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
-import { MidasBox } from '@ui/components/shared/Box';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { CIconButton } from '@ui/components/shared/Button';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
@@ -434,7 +434,7 @@ export const VaultsList = ({
           </Flex>
         </Flex>
       </Flex>
-      <MidasBox overflowX="auto" width="100%">
+      <IonicBox overflowX="auto" width="100%">
         {err && err.code !== 'NETWORK_ERROR' ? (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
@@ -603,7 +603,7 @@ export const VaultsList = ({
             </HStack>
           </HStack>
         </Flex>
-      </MidasBox>
+      </IonicBox>
     </Box>
   );
 };

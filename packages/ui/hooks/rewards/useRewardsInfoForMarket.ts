@@ -29,9 +29,7 @@ export const useRewardsInfoForMarket = (
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!flywheelAddress && !!marketAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

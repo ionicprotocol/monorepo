@@ -45,9 +45,7 @@ export const useSupplyCapsDataForPool = (comptrollerAddress: string, poolChainId
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!comptrollerAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
 };
@@ -79,9 +77,7 @@ export const useSupplyCapsDataForAsset = (
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!supplyCapsDataForPool && !!cTokenAddress,
-      staleTime: Infinity,
     }
   );
 };

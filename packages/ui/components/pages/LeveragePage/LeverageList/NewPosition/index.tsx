@@ -43,8 +43,8 @@ import { BorrowableAssets } from '@ui/components/pages/LeveragePage/LeverageList
 import { SupplyApy } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
-import { MidasBox } from '@ui/components/shared/Box';
 import { CIconButton } from '@ui/components/shared/Button';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
@@ -318,7 +318,7 @@ export const NewPositionComp = ({
           Create New Levered Position
         </Text>
       </Box>
-      <MidasBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
+      <IonicBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
         {err && err.code !== 'NETWORK_ERROR' ? (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
@@ -490,7 +490,7 @@ export const NewPositionComp = ({
             </HStack>
           </HStack>
         </Flex>
-      </MidasBox>
+      </IonicBox>
     </VStack>
   );
 };

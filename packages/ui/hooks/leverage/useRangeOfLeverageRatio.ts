@@ -25,9 +25,7 @@ export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!address && !!sdk,
-      staleTime: Infinity,
     }
   );
 }

@@ -25,9 +25,7 @@ export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!cTokenAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

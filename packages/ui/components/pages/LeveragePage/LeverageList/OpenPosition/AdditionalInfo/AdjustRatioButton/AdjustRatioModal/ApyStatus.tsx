@@ -2,8 +2,8 @@ import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import type { OpenPosition } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
-import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
@@ -84,7 +84,7 @@ export const ApyStatus = ({
   );
 
   return (
-    <MidasBox py={4} width="100%">
+    <IonicBox py={4} width="100%">
       <Flex height="100%" justifyContent="center">
         <VStack alignItems="flex-start" height="100%" justifyContent="center" spacing={4}>
           <HStack spacing={4}>
@@ -127,6 +127,6 @@ export const ApyStatus = ({
           </HStack>
         </VStack>
       </Flex>
-    </MidasBox>
+    </IonicBox>
   );
 };

@@ -1,9 +1,9 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
-import type { MidasBoxProps } from '@ui/components/shared/Box';
-import { MidasBox } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
+import type { MidasBoxProps } from '@ui/components/shared/IonicBox';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -31,7 +31,7 @@ export const CollateralRatioBar = ({
   }, [borrowFiat, maxBorrow]);
 
   return (
-    <MidasBox height="65px" mx="auto" p={4} width={'100%'} {...midasBoxProps}>
+    <IonicBox height="65px" mx="auto" p={4} width={'100%'} {...midasBoxProps}>
       <Row crossAxisAlignment="center" expand mainAxisAlignment="flex-start">
         <Tooltip label={'Keep this bar from filling up to avoid being liquidated!'}>
           <Text flexShrink={0} mr={4} size="md">
@@ -69,6 +69,6 @@ export const CollateralRatioBar = ({
           </Text>
         </Tooltip>
       </Row>
-    </MidasBox>
+    </IonicBox>
   );
 };

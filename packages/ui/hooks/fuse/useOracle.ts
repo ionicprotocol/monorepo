@@ -24,9 +24,7 @@ export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!underlyingAddress && !!sdk,
-      staleTime: Infinity,
     }
   );
 };

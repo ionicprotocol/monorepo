@@ -72,14 +72,12 @@ export function useMaxBorrowAmount(
       }
     },
     {
-      cacheTime: Infinity,
       enabled:
         !!address &&
         !!asset &&
         !!sdk &&
         !!comptrollerAddress &&
         !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
-      staleTime: Infinity,
     }
   );
 }

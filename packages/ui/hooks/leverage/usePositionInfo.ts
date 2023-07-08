@@ -33,9 +33,7 @@ export function usePositionInfo(position: string, supplyApy?: BigNumber, chainId
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && !!position && !!supplyApy && !!chainId,
-      staleTime: Infinity,
     }
   );
 }
@@ -75,9 +73,7 @@ export function usePositionsInfo(
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!positions && !!totalApys && !!chainIds,
-      staleTime: Infinity,
     }
   );
 }

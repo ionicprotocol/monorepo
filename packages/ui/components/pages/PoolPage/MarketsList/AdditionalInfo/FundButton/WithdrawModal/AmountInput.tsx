@@ -3,9 +3,9 @@ import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';
 
-import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
@@ -56,7 +56,7 @@ export const AmountInput = ({
   };
 
   return (
-    <MidasBox width="100%">
+    <IonicBox width="100%">
       <Row crossAxisAlignment="center" expand mainAxisAlignment="space-between" p={4} width="100%">
         <Input
           autoFocus
@@ -95,6 +95,6 @@ export const AmountInput = ({
           </Button>
         </Row>
       </Row>
-    </MidasBox>
+    </IonicBox>
   );
 };

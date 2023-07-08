@@ -22,9 +22,7 @@ export function useMaxRepayAmount(asset: NativePricedFuseAsset, chainId: number)
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!address && !!asset && !!sdk,
-      staleTime: Infinity,
     }
   );
 }

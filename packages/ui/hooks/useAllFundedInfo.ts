@@ -223,9 +223,7 @@ export function useAllFundedInfo() {
       return null;
     },
     {
-      cacheTime: Infinity,
       enabled: enabledChains.length > 0 && !!poolsPerChain,
-      staleTime: Infinity,
     }
   );
 }

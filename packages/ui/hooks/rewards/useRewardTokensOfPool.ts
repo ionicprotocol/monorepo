@@ -26,10 +26,8 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!poolAddress && !!sdk,
       placeholderData: [],
-      staleTime: Infinity,
     }
   );
 

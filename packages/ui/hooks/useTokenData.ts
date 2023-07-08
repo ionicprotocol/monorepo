@@ -79,6 +79,6 @@ export const useTokenData = (address: string, chainId?: number) => {
         return null;
       }
     },
-    { cacheTime: Infinity, enabled: !!chainId, staleTime: Infinity }
+    { enabled: !!chainId }
   );
 };

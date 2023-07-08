@@ -25,9 +25,7 @@ export function useMaxDepositVault(vault: string) {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!address && !!vault && !!currentSdk,
-      staleTime: Infinity,
     }
   );
 }

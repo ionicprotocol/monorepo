@@ -86,9 +86,7 @@ export const useSupplyCap = ({
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!sdk && !!usdPrice && !!market && !!address && !!supplyCapsDataForAsset,
-      staleTime: Infinity,
     }
   );
 };

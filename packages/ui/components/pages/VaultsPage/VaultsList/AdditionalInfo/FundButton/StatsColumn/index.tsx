@@ -3,7 +3,7 @@ import type { FundOperationMode, VaultData } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
-import { MidasBox } from '@ui/components/shared/Box';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { Column } from '@ui/components/shared/Flex';
 import { useUpdatedUserVault } from '@ui/hooks/fuse/useUpdatedUserVaults';
 import { Supplied } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/Supplied';
@@ -24,7 +24,7 @@ export const StatsColumn = ({ amount, mode, vault }: StatsColumnProps) => {
   const supplyApyTo = updatedVault ? Number(utils.formatUnits(updatedVault.supplyApy)) : undefined;
 
   return (
-    <MidasBox width="100%">
+    <IonicBox width="100%">
       <Column
         crossAxisAlignment="flex-start"
         expand
@@ -37,6 +37,6 @@ export const StatsColumn = ({ amount, mode, vault }: StatsColumnProps) => {
         <Divider />
         <SupplyAPY current={supplyApyFrom} new={supplyApyTo} />
       </Column>
-    </MidasBox>
+    </IonicBox>
   );
 };

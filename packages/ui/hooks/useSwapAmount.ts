@@ -70,9 +70,7 @@ export function useSwapAmount(
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address,
-      staleTime: Infinity,
     }
   );
 }

@@ -59,9 +59,7 @@ export const usePoolDetails = (assets?: NativePricedFuseAsset[], poolChainId?: n
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!assets && assets.length > 0 && !!sdk && !!blocksPerMinute,
-      staleTime: Infinity,
     }
   );
 };

@@ -35,9 +35,7 @@ export function useSwapTokens(outputToken: string, chainId: number) {
       }
     },
     {
-      cacheTime: Infinity,
       enabled: !!outputToken && !!sdk,
-      staleTime: Infinity,
     }
   );
 }

@@ -6,9 +6,9 @@ import { useState } from 'react';
 
 import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/CollateralModal/Alerts';
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/CollateralModal/PendingTransaction';
-import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
+import { IonicBox } from '@ui/components/shared/IonicBox';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -213,7 +213,7 @@ export const CollateralModal = ({
                 width="100%"
               >
                 <Alerts asset={asset} />
-                <MidasBox width="100%">
+                <IonicBox width="100%">
                   <Column
                     crossAxisAlignment="flex-start"
                     expand
@@ -234,7 +234,7 @@ export const CollateralModal = ({
                       </HStack>
                     </Row>
                   </Column>
-                </MidasBox>
+                </IonicBox>
                 <Button height={16} id="confirmCollateral" onClick={onConfirm} width="100%">
                   {!asset.membership ? 'Enable' : 'Disable'} {asset.underlyingSymbol} as collateral
                 </Button>

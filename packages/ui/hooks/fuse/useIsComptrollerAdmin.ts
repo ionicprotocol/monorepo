@@ -25,7 +25,7 @@ export const useIsComptrollerAdmin = (
         return null;
       }
     },
-    { cacheTime: Infinity, enabled: !!comptrollerAddress && !!sdk, staleTime: Infinity }
+    { enabled: !!comptrollerAddress && !!sdk }
   );
 
   return address === data;
