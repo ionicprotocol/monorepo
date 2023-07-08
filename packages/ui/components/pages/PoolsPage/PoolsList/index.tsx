@@ -8,6 +8,7 @@ import {
   Select,
   Skeleton,
   Stack,
+  Switch,
   Table,
   Tbody,
   Td,
@@ -459,7 +460,7 @@ const PoolsList = () => {
   }
 
   return (
-    <IonicBox overflowX="auto" width="100%">
+    <IonicBox mt={{ base: '24px' }} overflowX="auto" width="100%">
       <Flex
         alignItems="center"
         flexWrap="wrap-reverse"
@@ -501,6 +502,13 @@ const PoolsList = () => {
             <Text size="md" width="max-content">
               Best APR
             </Text>
+            <Switch
+              h="20px"
+              // isChecked={true}
+              // isDisabled={isUpdating || !isEditableAdmin}
+              ml="auto"
+              // onChange={toggleBorrowState}
+            />
           </HStack>
         </Flex>
       </Flex>
