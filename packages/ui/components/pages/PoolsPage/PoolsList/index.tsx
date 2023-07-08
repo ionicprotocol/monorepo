@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Center,
   Divider,
@@ -56,7 +56,7 @@ import { TotalBorrow } from '@ui/components/pages/PoolsPage/PoolsList/TotalBorro
 import { TotalSupply } from '@ui/components/pages/PoolsPage/PoolsList/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -460,247 +460,261 @@ const PoolsList = () => {
   }
 
   return (
-    <IonicBox mt={{ base: '24px' }} overflowX="auto" width="100%">
-      <Flex
-        alignItems="center"
-        flexWrap="wrap-reverse"
-        gap={3}
-        justifyContent={['center', 'center', 'space-between']}
-        mb={3}
-        width="100%"
-      >
-        <ChainFilterButtons
-          globalFilter={globalFilter}
-          isLoading={isLoading}
-          loadingStatusPerChain={loadingStatusPerChain}
-          onFilter={onFilter}
-          props={{ display: { base: 'none', lg: 'inline-flex' } }}
-        />
-        <ChainFilterDropdown
-          globalFilter={globalFilter}
-          isLoading={isLoading}
-          loadingStatusPerChain={loadingStatusPerChain}
-          onFilter={onFilter}
-          props={{ display: { base: 'inline-flex', lg: 'none' } }}
-        />
+    <CardBox mt={{ base: '24px' }} overflowX="auto" width="100%">
+      <Flex direction="column" gap="24px">
+        <Text size="xl">Pools</Text>
         <Flex
-          alignItems="flex-end"
-          className="searchAsset"
-          direction="row"
-          gap={2}
-          justifyContent="center"
+          alignItems="center"
+          flexWrap="wrap-reverse"
+          gap={4}
+          justifyContent={['center', 'center', 'space-between']}
+          width="100%"
         >
-          <SearchInput
-            inputProps={{ width: '220px' }}
-            onSearch={(searchText) => setSearchText(searchText)}
-            placeholder="Search by asset or pool name"
+          <ChainFilterButtons
+            globalFilter={globalFilter}
+            isLoading={isLoading}
+            loadingStatusPerChain={loadingStatusPerChain}
+            onFilter={onFilter}
+            props={{ display: { base: 'none', lg: 'inline-flex' } }}
           />
-          <Center height={6}>
-            <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
-          </Center>
-          <HStack>
-            <Text size="md" width="max-content">
-              Best APR
-            </Text>
-            <Switch
-              h="20px"
-              // isChecked={true}
-              // isDisabled={isUpdating || !isEditableAdmin}
-              ml="auto"
-              // onChange={toggleBorrowState}
+          <ChainFilterDropdown
+            globalFilter={globalFilter}
+            isLoading={isLoading}
+            loadingStatusPerChain={loadingStatusPerChain}
+            onFilter={onFilter}
+            props={{ display: { base: 'inline-flex', lg: 'none' } }}
+          />
+          <Flex
+            alignItems="flex-end"
+            className="searchAsset"
+            direction="row"
+            gap={2}
+            justifyContent="center"
+          >
+            <SearchInput
+              inputProps={{ width: '220px' }}
+              onSearch={(searchText) => setSearchText(searchText)}
+              placeholder="Search by asset or pool name"
             />
+            <Center height={5}>
+              <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
+            </Center>
+            <HStack>
+              <Text size="md" width="max-content">
+                Best APR
+              </Text>
+              <Switch
+                h="20px"
+                // isChecked={true}
+                // isDisabled={isUpdating || !isEditableAdmin}
+                ml="auto"
+                // onChange={toggleBorrowState}
+              />
+            </HStack>
+            <Center height={5}>
+              <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
+            </Center>
+            <HStack>
+              <Text size="md" width="max-content">
+                Sort by
+              </Text>
+              <ChevronDownIcon />
+            </HStack>
+          </Flex>
+        </Flex>
+        {!isLoading && !isLoadingPerChain ? (
+          <Table>
+            <Thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <Tr borderBottomWidth={1} borderColor={cCard.dividerColor} key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <Th
+                        border="none"
+                        color={cCard.txtColor}
+                        height={16}
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                        px={
+                          table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? 0 : 3
+                        }
+                        py={4}
+                        textTransform="capitalize"
+                      >
+                        <HStack
+                          justifyContent={
+                            header.column.id === POOL_NAME || header.column.id === ASSETS
+                              ? 'flex-start'
+                              : 'flex-end'
+                          }
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </HStack>
+                      </Th>
+                    );
+                  })}
+                </Tr>
+              ))}
+            </Thead>
+            <Tbody>
+              {err && err.code !== 'NETWORK_ERROR' ? (
+                <Tr>
+                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                    <Banner
+                      alertDescriptionProps={{ fontSize: 'lg' }}
+                      alertIconProps={{ boxSize: 12 }}
+                      alertProps={{
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                        gap: 4,
+                        height: '2xs',
+                        justifyContent: 'center',
+                        status: 'warning',
+                        textAlign: 'center',
+                      }}
+                      descriptions={[
+                        {
+                          text: `Unable to retrieve Pools. Please try again later.`,
+                        },
+                      ]}
+                      title={err.reason ? err.reason : 'Unexpected Error'}
+                    />
+                  </Td>
+                </Tr>
+              ) : table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <Fragment key={row.id}>
+                    <Tr
+                      _hover={{ bg: cCard.hoverBgColor }}
+                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                      borderBottomWidth={row.getIsExpanded() ? 0 : 1}
+                      borderColor={cCard.dividerColor}
+                      cursor="pointer"
+                      key={row.id}
+                      onClick={() => {
+                        setGlobalLoading(true);
+                        router.push(
+                          `/${row.original.poolName.chainId}/pool/${row.original.poolName.id}`
+                        );
+                      }}
+                    >
+                      {row.getVisibleCells().map((cell) => {
+                        return (
+                          <Td
+                            border="none"
+                            height={16}
+                            key={cell.id}
+                            minW={10}
+                            px={{
+                              base:
+                                cell.column.id === POOL_NAME || cell.column.id === ASSETS ? 0 : 2,
+                            }}
+                            py={0}
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </Td>
+                        );
+                      })}
+                    </Tr>
+                    {row.getIsExpanded() && (
+                      <Tr
+                        background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                        borderBottomStyle="solid"
+                        borderBottomWidth={1}
+                        borderColor={cCard.dividerColor}
+                        borderTopStyle="dashed"
+                        borderTopWidth={1}
+                      >
+                        {/* 2nd row is a custom 1 cell row */}
+                        <Td border="none" colSpan={row.getVisibleCells().length}>
+                          <AdditionalInfo row={row} />
+                        </Td>
+                      </Tr>
+                    )}
+                  </Fragment>
+                ))
+              ) : selectedFilteredPools.length === 0 ? (
+                <Tr>
+                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                    <Center py={8}>There are no pools.</Center>
+                  </Td>
+                </Tr>
+              ) : (
+                <Tr>
+                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                    <Center py={8}>There are no results</Center>
+                  </Td>
+                </Tr>
+              )}
+            </Tbody>
+          </Table>
+        ) : (
+          <Stack>
+            <Skeleton height={16} />
+            <Skeleton height={60} />
+          </Stack>
+        )}
+        <Flex
+          alignItems="center"
+          className="pagination"
+          gap={4}
+          justifyContent="flex-end"
+          px={3}
+          py={4}
+          width={'100%'}
+        >
+          <HStack>
+            <Hide below="lg">
+              <Text size="md">Pools Per Page</Text>
+            </Hide>
+            <Select
+              maxW="max-content"
+              onChange={(e) => {
+                table.setPageSize(Number(e.target.value));
+              }}
+              value={pagination.pageSize}
+            >
+              {POOLS_COUNT_PER_PAGE.map((pageSize) => (
+                <option key={pageSize} value={pageSize}>
+                  {pageSize}
+                </option>
+              ))}
+            </Select>
+          </HStack>
+          <HStack gap={2}>
+            <Text size="md">
+              {table.getFilteredRowModel().rows.length === 0
+                ? 0
+                : pagination.pageIndex * pagination.pageSize + 1}{' '}
+              -{' '}
+              {(pagination.pageIndex + 1) * pagination.pageSize >
+              table.getFilteredRowModel().rows.length
+                ? table.getFilteredRowModel().rows.length
+                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+              of {table.getFilteredRowModel().rows.length}
+            </Text>
+            <HStack>
+              <CIconButton
+                aria-label="toPrevious"
+                icon={<ChevronLeftIcon fontSize={30} />}
+                isDisabled={!table.getCanPreviousPage()}
+                isRound
+                onClick={() => table.previousPage()}
+                variant="_outline"
+              />
+              <CIconButton
+                aria-label="toNext"
+                icon={<ChevronRightIcon fontSize={30} />}
+                isDisabled={!table.getCanNextPage()}
+                isRound
+                onClick={() => table.nextPage()}
+                variant="_outline"
+              />
+            </HStack>
           </HStack>
         </Flex>
       </Flex>
-      {!isLoading && !isLoadingPerChain ? (
-        <Table>
-          <Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr borderBottomWidth={1} borderColor={cCard.dividerColor} key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <Th
-                      border="none"
-                      color={cCard.txtColor}
-                      height={16}
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      px={table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? 0 : 3}
-                      py={4}
-                      textTransform="capitalize"
-                    >
-                      <HStack
-                        justifyContent={
-                          header.column.id === POOL_NAME || header.column.id === ASSETS
-                            ? 'flex-start'
-                            : 'flex-end'
-                        }
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </HStack>
-                    </Th>
-                  );
-                })}
-              </Tr>
-            ))}
-          </Thead>
-          <Tbody>
-            {err && err.code !== 'NETWORK_ERROR' ? (
-              <Tr>
-                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                  <Banner
-                    alertDescriptionProps={{ fontSize: 'lg' }}
-                    alertIconProps={{ boxSize: 12 }}
-                    alertProps={{
-                      alignItems: 'center',
-                      flexDirection: 'column',
-                      gap: 4,
-                      height: '2xs',
-                      justifyContent: 'center',
-                      status: 'warning',
-                      textAlign: 'center',
-                    }}
-                    descriptions={[
-                      {
-                        text: `Unable to retrieve Pools. Please try again later.`,
-                      },
-                    ]}
-                    title={err.reason ? err.reason : 'Unexpected Error'}
-                  />
-                </Td>
-              </Tr>
-            ) : table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <Fragment key={row.id}>
-                  <Tr
-                    _hover={{ bg: cCard.hoverBgColor }}
-                    background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                    borderBottomWidth={row.getIsExpanded() ? 0 : 1}
-                    borderColor={cCard.dividerColor}
-                    cursor="pointer"
-                    key={row.id}
-                    onClick={() => {
-                      setGlobalLoading(true);
-                      router.push(
-                        `/${row.original.poolName.chainId}/pool/${row.original.poolName.id}`
-                      );
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <Td
-                          border="none"
-                          height={16}
-                          key={cell.id}
-                          minW={10}
-                          px={{
-                            base: cell.column.id === POOL_NAME || cell.column.id === ASSETS ? 0 : 2,
-                          }}
-                          py={0}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                  {row.getIsExpanded() && (
-                    <Tr
-                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                      borderBottomStyle="solid"
-                      borderBottomWidth={1}
-                      borderColor={cCard.dividerColor}
-                      borderTopStyle="dashed"
-                      borderTopWidth={1}
-                    >
-                      {/* 2nd row is a custom 1 cell row */}
-                      <Td border="none" colSpan={row.getVisibleCells().length}>
-                        <AdditionalInfo row={row} />
-                      </Td>
-                    </Tr>
-                  )}
-                </Fragment>
-              ))
-            ) : selectedFilteredPools.length === 0 ? (
-              <Tr>
-                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                  <Center py={8}>There are no pools.</Center>
-                </Td>
-              </Tr>
-            ) : (
-              <Tr>
-                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                  <Center py={8}>There are no results</Center>
-                </Td>
-              </Tr>
-            )}
-          </Tbody>
-        </Table>
-      ) : (
-        <Stack>
-          <Skeleton height={16} />
-          <Skeleton height={60} />
-        </Stack>
-      )}
-      <Flex
-        alignItems="center"
-        className="pagination"
-        gap={4}
-        justifyContent="flex-end"
-        px={3}
-        py={4}
-        width={'100%'}
-      >
-        <HStack>
-          <Hide below="lg">
-            <Text size="md">Pools Per Page</Text>
-          </Hide>
-          <Select
-            maxW="max-content"
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-            value={pagination.pageSize}
-          >
-            {POOLS_COUNT_PER_PAGE.map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
-            ))}
-          </Select>
-        </HStack>
-        <HStack gap={2}>
-          <Text size="md">
-            {table.getFilteredRowModel().rows.length === 0
-              ? 0
-              : pagination.pageIndex * pagination.pageSize + 1}{' '}
-            -{' '}
-            {(pagination.pageIndex + 1) * pagination.pageSize >
-            table.getFilteredRowModel().rows.length
-              ? table.getFilteredRowModel().rows.length
-              : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-            of {table.getFilteredRowModel().rows.length}
-          </Text>
-          <HStack>
-            <CIconButton
-              aria-label="toPrevious"
-              icon={<ChevronLeftIcon fontSize={30} />}
-              isDisabled={!table.getCanPreviousPage()}
-              isRound
-              onClick={() => table.previousPage()}
-              variant="_outline"
-            />
-            <CIconButton
-              aria-label="toNext"
-              icon={<ChevronRightIcon fontSize={30} />}
-              isDisabled={!table.getCanNextPage()}
-              isRound
-              onClick={() => table.nextPage()}
-              variant="_outline"
-            />
-          </HStack>
-        </HStack>
-      </Flex>
-    </IonicBox>
+    </CardBox>
   );
 };
 

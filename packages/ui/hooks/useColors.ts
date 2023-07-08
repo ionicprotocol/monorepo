@@ -15,6 +15,11 @@ export function useColors() {
     txtColor: useColorModeValue(COLOR_PALETTE.iWhite, COLOR_PALETTE.iWhite),
   };
 
+  const cIRow = {
+    bgColor: useColorModeValue(COLOR_PALETTE.iRowBg, COLOR_PALETTE.iRowBg),
+    txtColor: useColorModeValue(COLOR_PALETTE.iWhite, COLOR_PALETTE.iWhite),
+  };
+
   const cPage = {
     primary: {
       bgColor: useColorModeValue(COLOR_PALETTE.whiteBg, COLOR_PALETTE.raisinBlack),
@@ -113,6 +118,7 @@ export function useColors() {
     cChart,
     cICard,
     cIPage,
+    cIRow,
     cInput,
     cOutlineBtn,
     cPage,

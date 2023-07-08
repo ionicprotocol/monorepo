@@ -5,7 +5,7 @@ import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
@@ -120,7 +120,7 @@ export const ApyStatus = ({
   }, [sdk, collateralCToken, amount, leverageValue, borrowCToken, totalSupplied]);
 
   return (
-    <IonicBox py={4} width="100%">
+    <CardBox py={4} width="100%">
       <Flex height="100%" justifyContent="center">
         <VStack alignItems="flex-start" height="100%" justifyContent="center" spacing={4}>
           <HStack spacing={4}>
@@ -223,6 +223,6 @@ export const ApyStatus = ({
           </HStack>
         </VStack>
       </Flex>
-    </IonicBox>
+    </CardBox>
   );
 };

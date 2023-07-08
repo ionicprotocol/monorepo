@@ -5,7 +5,7 @@ import { useColors } from '@ui/hooks/useColors';
 
 export type IonicBoxProps = BoxProps;
 
-export const IonicBox = ({ children, ...props }: IonicBoxProps) => {
+export const CardBox = ({ children, ...props }: IonicBoxProps) => {
   const { cICard } = useColors();
 
   return (
@@ -16,6 +16,24 @@ export const IonicBox = ({ children, ...props }: IonicBoxProps) => {
       color={cICard.txtColor}
       px={{ base: '32px' }}
       py={{ base: '20px' }}
+      {...props}
+    >
+      {children}
+    </Box>
+  );
+};
+
+export const RowBox = ({ children, ...props }: IonicBoxProps) => {
+  const { cIRow } = useColors();
+
+  return (
+    <Box
+      backgroundColor={cIRow.bgColor}
+      borderRadius={{ base: '20px' }}
+      borderWidth={0}
+      color={cIRow.txtColor}
+      px={{ base: '16px' }}
+      py={{ base: '16px' }}
       {...props}
     >
       {children}

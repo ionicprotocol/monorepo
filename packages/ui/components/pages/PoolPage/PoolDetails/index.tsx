@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
@@ -55,7 +55,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   }, [comptroller, currentSdk, queryClient, addRecentTransaction]);
 
   return (
-    <IonicBox height="auto" width="100%">
+    <CardBox height="auto" width="100%">
       <Column
         crossAxisAlignment="flex-start"
         height="100%"
@@ -257,7 +257,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
           </Column>
         )}
       </Column>
-    </IonicBox>
+    </CardBox>
   );
 };
 

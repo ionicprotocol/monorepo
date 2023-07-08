@@ -24,7 +24,7 @@ import CreateFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/
 import EditFlywheelModal from '@ui/components/pages/EditPoolPage/FlywheelEdit/EditFlywheelModal';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column } from '@ui/components/shared/Flex';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import { config } from '@ui/config/index';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
@@ -96,7 +96,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
         />
       )}
 
-      <IonicBox h="100%" my={4} w="100%">
+      <CardBox h="100%" my={4} w="100%">
         {isLoading && (
           <Column crossAxisAlignment="center" h="100%" mainAxisAlignment="center" p={4} w="100%">
             <Spinner />
@@ -145,7 +145,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             </Tbody>
           </Table>
         )}
-      </IonicBox>
+      </CardBox>
     </>
   );
 };

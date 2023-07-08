@@ -1,12 +1,12 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Flex, Text, VStack } from '@chakra-ui/react';
 
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 
 export const YourPerformance = () => {
   return (
-    <IonicBox>
+    <CardBox>
       <Flex direction="column" gap="20px">
         <Text fontSize="24px" fontWeight={600} lineHeight="34px">
           Your Performance
@@ -67,6 +67,6 @@ export const YourPerformance = () => {
           </VStack>
         </Flex>
       </Flex>
-    </IonicBox>
+    </CardBox>
   );
 };

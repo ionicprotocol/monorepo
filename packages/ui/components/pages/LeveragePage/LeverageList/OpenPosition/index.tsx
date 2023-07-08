@@ -47,7 +47,7 @@ import { SafetyBuffer } from '@ui/components/pages/LeveragePage/LeverageList/Ope
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
@@ -423,7 +423,7 @@ export const OpenPositionComp = ({
           Open Levered Positions
         </Text>
       </Box>
-      <IonicBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
+      <CardBox borderTop="none" borderTopRadius="none" overflowX="auto" width="100%">
         {err && err.code !== 'NETWORK_ERROR' ? (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
@@ -601,7 +601,7 @@ export const OpenPositionComp = ({
             </HStack>
           </HStack>
         </Flex>
-      </IonicBox>
+      </CardBox>
     </VStack>
   );
 };

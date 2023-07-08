@@ -10,7 +10,7 @@ import { BorrowsTotal } from '@ui/components/pages/PoolPage/MarketsList/Addition
 import { Supplied } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn/Supplied';
 import { SupplyAPY } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn/SupplyAPY';
 import { Column } from '@ui/components/shared/Flex';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
@@ -108,7 +108,7 @@ export const StatsColumn = ({
   );
 
   return (
-    <IonicBox width="100%">
+    <CardBox width="100%">
       <Column
         crossAxisAlignment="flex-start"
         expand
@@ -141,6 +141,6 @@ export const StatsColumn = ({
 
         <BorrowAPY current={borrowAPR} new={updatedBorrowAPR} />
       </Column>
-    </IonicBox>
+    </CardBox>
   );
 };

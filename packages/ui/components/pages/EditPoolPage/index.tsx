@@ -12,7 +12,7 @@ import PoolConfiguration from '@ui/components/pages/EditPoolPage/PoolConfigurati
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { Banner } from '@ui/components/shared/Banner';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
@@ -121,7 +121,7 @@ const EditPoolPage = memo(() => {
               mainAxisAlignment="flex-start"
               width="100%"
             >
-              <IonicBox mt={4} width={isMobile ? '100%' : '50%'}>
+              <CardBox mt={4} width={isMobile ? '100%' : '50%'}>
                 {data ? (
                   <PoolConfiguration
                     assets={data.assets}
@@ -134,9 +134,9 @@ const EditPoolPage = memo(() => {
                     <Spinner my={8} />
                   </Center>
                 )}
-              </IonicBox>
+              </CardBox>
 
-              <IonicBox ml={isMobile ? 0 : 4} mt={4} width={isMobile ? '100%' : '50%'}>
+              <CardBox ml={isMobile ? 0 : 4} mt={4} width={isMobile ? '100%' : '50%'}>
                 {data.assets.length > 0 ? (
                   <AssetConfiguration
                     assets={data.assets}
@@ -155,7 +155,7 @@ const EditPoolPage = memo(() => {
                     />
                   </Column>
                 )}
-              </IonicBox>
+              </CardBox>
             </RowOrColumn>
             <FlywheelEdit pool={data} />
           </Flex>

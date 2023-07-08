@@ -4,7 +4,7 @@ import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
 import { Column } from '@ui/components/shared/Flex';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { useUpdatedUserVault } from '@ui/hooks/fuse/useUpdatedUserVaults';
 import { Supplied } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/Supplied';
 import { SupplyAPY } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/SupplyAPY';
@@ -24,7 +24,7 @@ export const StatsColumn = ({ amount, mode, vault }: StatsColumnProps) => {
   const supplyApyTo = updatedVault ? Number(utils.formatUnits(updatedVault.supplyApy)) : undefined;
 
   return (
-    <IonicBox width="100%">
+    <CardBox width="100%">
       <Column
         crossAxisAlignment="flex-start"
         expand
@@ -37,6 +37,6 @@ export const StatsColumn = ({ amount, mode, vault }: StatsColumnProps) => {
         <Divider />
         <SupplyAPY current={supplyApyFrom} new={supplyApyTo} />
       </Column>
-    </IonicBox>
+    </CardBox>
   );
 };

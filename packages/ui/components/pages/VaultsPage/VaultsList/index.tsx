@@ -49,7 +49,7 @@ import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName'
 import { TotalSupply } from '@ui/components/pages/VaultsPage/VaultsList/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -434,7 +434,7 @@ export const VaultsList = ({
           </Flex>
         </Flex>
       </Flex>
-      <IonicBox overflowX="auto" width="100%">
+      <CardBox overflowX="auto" width="100%">
         {err && err.code !== 'NETWORK_ERROR' ? (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
@@ -603,7 +603,7 @@ export const VaultsList = ({
             </HStack>
           </HStack>
         </Flex>
-      </IonicBox>
+      </CardBox>
     </Box>
   );
 };

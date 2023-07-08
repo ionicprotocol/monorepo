@@ -11,7 +11,7 @@ import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import {
@@ -166,7 +166,7 @@ const PoolPage = memo(() => {
 
           <PoolStats poolData={data} />
 
-          <IonicBox mb="4" overflowX="auto" width="100%">
+          <CardBox mb="4" overflowX="auto" width="100%">
             {data &&
             initSorting &&
             initColumnVisibility &&
@@ -221,7 +221,7 @@ const PoolPage = memo(() => {
                 <Skeleton height={360} width="100%" />
               </>
             )}
-          </IonicBox>
+          </CardBox>
           <PoolDetails data={data} />
         </FusePageLayout>
       </PageTransitionLayout>

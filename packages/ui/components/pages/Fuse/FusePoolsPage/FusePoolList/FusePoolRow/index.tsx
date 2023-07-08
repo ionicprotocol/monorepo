@@ -54,7 +54,7 @@ import { TotalBorrow } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolLis
 import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -505,7 +505,7 @@ const PoolsRowList = ({
           </PopoverTooltip>
         </Flex>
       </Flex>
-      <IonicBox overflowX="auto" width="100%">
+      <CardBox overflowX="auto" width="100%">
         {!isLoading && !isLoadingPerChain ? (
           <Table>
             <Thead>
@@ -697,7 +697,7 @@ const PoolsRowList = ({
             </HStack>
           </HStack>
         </Flex>
-      </IonicBox>
+      </CardBox>
     </>
   );
 };

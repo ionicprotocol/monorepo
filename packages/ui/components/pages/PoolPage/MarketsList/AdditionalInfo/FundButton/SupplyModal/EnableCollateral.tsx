@@ -1,6 +1,6 @@
 import { HStack, Switch, Text } from '@chakra-ui/react';
 
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 
 export const EnableCollateral = ({
   enableAsCollateral,
@@ -10,7 +10,7 @@ export const EnableCollateral = ({
   setEnableAsCollateral: (enabling: boolean) => void;
 }) => {
   return (
-    <IonicBox p={4} width="100%">
+    <CardBox p={4} width="100%">
       <HStack alignItems="center" justifyContent="space-between" width="100%">
         <Text size="sm">Enable As Collateral:</Text>
         <Switch
@@ -20,6 +20,6 @@ export const EnableCollateral = ({
           }}
         />
       </HStack>
-    </IonicBox>
+    </CardBox>
   );
 };

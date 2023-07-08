@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
@@ -56,7 +56,7 @@ export const AmountInput = ({
   };
 
   return (
-    <IonicBox width="100%">
+    <CardBox width="100%">
       <Row crossAxisAlignment="center" expand mainAxisAlignment="space-between" p={4} width="100%">
         <Input
           autoFocus
@@ -95,6 +95,6 @@ export const AmountInput = ({
           </Button>
         </Row>
       </Row>
-    </IonicBox>
+    </CardBox>
   );
 };

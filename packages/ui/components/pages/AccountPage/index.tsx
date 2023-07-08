@@ -9,7 +9,7 @@ import { FundedMarketsList } from '@ui/components/pages/AccountPage/FundedMarket
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { Banner } from '@ui/components/shared/Banner';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import {
   LIQUIDITY,
@@ -95,7 +95,7 @@ const AccountPage = memo(() => {
                 </Text>
               </HStack>
 
-              <IonicBox mb="4" overflowX="auto" width="100%">
+              <CardBox mb="4" overflowX="auto" width="100%">
                 {info && initSorting && initColumnVisibility ? (
                   <FundedMarketsList
                     info={info}
@@ -143,7 +143,7 @@ const AccountPage = memo(() => {
                     <Skeleton height={360} width="100%" />
                   </>
                 )}
-              </IonicBox>
+              </CardBox>
             </>
           ) : (
             <Banner

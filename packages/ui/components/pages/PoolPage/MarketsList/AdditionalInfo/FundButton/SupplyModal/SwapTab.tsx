@@ -11,7 +11,7 @@ import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInf
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
-import { IonicBox } from '@ui/components/shared/IonicBox';
+import { CardBox } from '@ui/components/shared/IonicBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -246,7 +246,7 @@ export const SwapTab = ({
         {selectedToken && swapTokens && swapTokens.length > 0 ? (
           <>
             <VStack gap={1} w="100%">
-              <IonicBox width="100%">
+              <CardBox width="100%">
                 <Row
                   crossAxisAlignment="center"
                   expand
@@ -352,10 +352,10 @@ export const SwapTab = ({
                     </Button>
                   </Row>
                 </Row>
-              </IonicBox>
+              </CardBox>
               <Balance asset={selectedToken} chainId={poolChainId} />
               <BsArrowDownCircle color={cCard.borderColor} size={32} />
-              <IonicBox width="100%">
+              <CardBox width="100%">
                 <Row
                   crossAxisAlignment="center"
                   expand
@@ -400,7 +400,7 @@ export const SwapTab = ({
                     </Row>
                   </Row>
                 </Row>
-              </IonicBox>
+              </CardBox>
 
               {debouncedAmount.gt(constants.Zero) ? (
                 <Row crossAxisAlignment="center" mainAxisAlignment="flex-end" width="100%">
