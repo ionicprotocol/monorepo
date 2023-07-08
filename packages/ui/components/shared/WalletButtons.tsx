@@ -52,7 +52,7 @@ export const WalletButtons = memo(() => {
                 }
 
                 return (
-                  <Flex gap={4}>
+                  <Flex alignItems="center" gap={4}>
                     <Button onClick={openChainModal} px={2} variant="_ghost">
                       {chain.iconUrl && (
                         <Img
