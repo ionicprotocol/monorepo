@@ -1,12 +1,10 @@
-import { bsc, evmos, moonbeam, polygon } from "@ionicprotocol/chains";
+import { bsc, polygon } from "@ionicprotocol/chains";
 import { underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
-  [moonbeam.chainId]: moonbeam.assets,
   [polygon.chainId]: polygon.assets,
-  [evmos.chainId]: evmos.assets,
 };
 
 task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywheels")
