@@ -1,10 +1,27 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import { Flex, Text, VStack } from '@chakra-ui/react';
+import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { useMemo } from 'react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useTotalSupplyAndBorrow } from '@ui/hooks/fuse/useTotalSupplyAndBorrow';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const YourPerformance = () => {
+  const { data, isLoading } = useTotalSupplyAndBorrow();
+
+  const totalSupply = useMemo(() => {
+    if (data) {
+      return [...data.values()].reduce((a, c) => a + c.totalSupply, 0);
+    }
+  }, [data]);
+
+  const totalBorrow = useMemo(() => {
+    if (data) {
+      return [...data.values()].reduce((a, c) => a + c.totalBorrow, 0);
+    }
+  }, [data]);
+
   return (
     <CardBox>
       <Flex direction="column" gap="20px">
@@ -22,9 +39,9 @@ export const YourPerformance = () => {
             >
               Total supply
             </Text>
-            <Text color={'iWhite'} fontSize="20px" fontWeight={600} lineHeight="30px">
-              $2.33K
-            </Text>
+            <Skeleton isLoaded={!isLoading} minW="80px">
+              <Text size="lg">{totalSupply ? smallUsdFormatter(totalSupply, true) : '-'}</Text>
+            </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text
@@ -36,9 +53,9 @@ export const YourPerformance = () => {
             >
               Total borrowed
             </Text>
-            <Text color={'iWhite'} fontSize="20px" fontWeight={600} lineHeight="30px">
-              $1.23k
-            </Text>
+            <Skeleton isLoaded={!isLoading} minW="80px">
+              <Text size="lg">{totalBorrow ? smallUsdFormatter(totalBorrow, true) : '-'}</Text>
+            </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Flex direction="row" gap={1} height="18px">

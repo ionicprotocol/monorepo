@@ -5,11 +5,14 @@ import { utils } from 'ethers';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
-  const tvlNative = await midasSdk.getTotalValueLocked(false);
+export const fetchTotalSupplyAndBorrow = async (midasSdk: MidasSdk) => {
+  const { totalSupply, totalBorrow } = await midasSdk.getTotalValueLocked(false);
   const decimals = midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
-  return Number(utils.formatUnits(tvlNative, decimals));
+  return {
+    totalBorrow: Number(utils.formatUnits(totalBorrow, decimals)),
+    totalSupply: Number(utils.formatUnits(totalSupply, decimals)),
+  };
 };
 
 type CrossChainTVL = Map<
@@ -17,17 +20,18 @@ type CrossChainTVL = Map<
   {
     logo: string;
     name: string;
-    value: number;
+    totalBorrow: number;
+    totalSupply: number;
   }
 >;
 
-export const useTVL = () => {
+export const useTotalSupplyAndBorrow = () => {
   const { sdks } = useMultiMidas();
   const { data: prices, isLoading, error } = useAllUsdPrices();
 
   return useQuery<CrossChainTVL | null | undefined>(
     [
-      'useTVL',
+      'useTotalSupplyAndBorrow',
       prices && Object.values(prices).sort(),
       isLoading,
       sdks.map((sdk) => sdk.chainId).sort(),
@@ -39,20 +43,25 @@ export const useTVL = () => {
         await Promise.all(
           sdks.map(async (sdk) => {
             try {
+              const { totalSupply, totalBorrow } = await fetchTotalSupplyAndBorrow(sdk);
+
               chainTVLs.set(sdk.chainId.toString(), {
                 logo: sdk.chainSpecificParams.metadata.img,
                 name: sdk.chainSpecificParams.metadata.name,
-                value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
+                totalBorrow: totalBorrow * prices[sdk.chainId.toString()].value,
+                totalSupply: totalSupply * prices[sdk.chainId.toString()].value,
               });
             } catch (e) {
-              console.warn(`Unable to fetch TVL for chain ${sdk.chainId}`, e);
+              console.warn(`Unable to fetch total supply and borrow for chain ${sdk.chainId}`, e);
             }
           })
         );
 
-        const sortedChainTVLs = new Map([...chainTVLs].sort((a, b) => b[1].value - a[1].value));
+        const resSorted = new Map(
+          [...chainTVLs].sort((a, b) => b[1].totalSupply - a[1].totalSupply)
+        );
 
-        return sortedChainTVLs;
+        return resSorted;
       }
 
       return null;

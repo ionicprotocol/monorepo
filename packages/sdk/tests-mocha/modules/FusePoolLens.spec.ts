@@ -14,10 +14,10 @@ describe("FusePoolLens", () => {
   let mockContract: SinonStubbedInstance<Contract>;
   const totalLockedData = {
     2: [
-      { totalSupply: BigNumber.from(1) },
-      { totalSupply: BigNumber.from(1) },
-      { totalSupply: BigNumber.from(1) },
-      { totalSupply: BigNumber.from(1) },
+      { totalSupply: BigNumber.from(1), totalBorrow: BigNumber.from(1) },
+      { totalSupply: BigNumber.from(1), totalBorrow: BigNumber.from(1) },
+      { totalSupply: BigNumber.from(1), totalBorrow: BigNumber.from(1) },
+      { totalSupply: BigNumber.from(1), totalBorrow: BigNumber.from(1) },
     ],
   };
 
@@ -41,6 +41,7 @@ describe("FusePoolLens", () => {
 
   it("getTotalValueLocked", async () => {
     const total = await fusePoolLens.getTotalValueLocked(true);
-    expect(total.toNumber()).to.be.equal(4);
+    expect(total.totalSupply.toNumber()).to.be.equal(4);
+    expect(total.totalBorrow.toNumber()).to.be.equal(4);
   });
 });

@@ -14,9 +14,15 @@ export function withFusePoolLens<TBase extends MidasBaseConstructor>(Base: TBase
       const { 2: fusePoolDataStructs } =
         await this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(whitelistedAdmin);
 
-      return fusePoolDataStructs
+      const totalSupply = fusePoolDataStructs
         .map((data) => data.totalSupply)
         .reduce((prev, cur) => prev.add(cur), BigNumber.from(0));
+
+      const totalBorrow = fusePoolDataStructs
+        .map((data) => data.totalBorrow)
+        .reduce((prev, cur) => prev.add(cur), BigNumber.from(0));
+
+      return { totalSupply, totalBorrow };
     }
     /**
      * @returns a set of the currently live assets on our platform on the current chain

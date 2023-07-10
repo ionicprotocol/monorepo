@@ -13,20 +13,20 @@ import {
   MIDAS_TELEGRAM_URL,
   MIDAS_TWITTER_URL,
 } from '@ui/constants/index';
-import { useTVL } from '@ui/hooks/fuse/useTVL';
+import { useTotalSupplyAndBorrow } from '@ui/hooks/fuse/useTotalSupplyAndBorrow';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 const MotionFlex = motion<FlexProps>(Flex);
 
 const MidasHero = () => {
-  const { data: tvlData, isLoading } = useTVL();
+  const { data, isLoading } = useTotalSupplyAndBorrow();
 
   const totalTVL = useMemo(() => {
-    if (tvlData) {
-      return [...tvlData.values()].reduce((a, c) => a + c.value, 0);
+    if (data) {
+      return [...data.values()].reduce((a, c) => a + c.totalSupply, 0);
     }
-  }, [tvlData]);
+  }, [data]);
   const { cPage } = useColors();
 
   return (
@@ -100,14 +100,14 @@ const MidasHero = () => {
 
       <PopoverTooltip
         body={
-          tvlData ? (
+          data ? (
             <VStack alignItems="flex-start" spacing={0} width={'100%'}>
-              {[...tvlData.values()].map((chainTVL, index) => (
+              {[...data.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
                     <Text fontWeight="bold" mt={1}>
-                      {smallUsdFormatter(chainTVL.value)}
+                      {smallUsdFormatter(chainTVL.totalSupply)}
                     </Text>
                     <Text>{chainTVL.name}</Text>
                   </Box>

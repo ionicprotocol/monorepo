@@ -1,9 +1,20 @@
-import { Flex, Text, VStack } from '@chakra-ui/react';
+import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { useMemo } from 'react';
 
+import { useTotalSupplyAndBorrow } from '@ui/hooks/fuse/useTotalSupplyAndBorrow';
 import { useColors } from '@ui/hooks/useColors';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const Platform = () => {
   const { cICard } = useColors();
+
+  const { data, isLoading } = useTotalSupplyAndBorrow();
+
+  const totalTVL = useMemo(() => {
+    if (data) {
+      return [...data.values()].reduce((a, c) => a + c.totalSupply, 0);
+    }
+  }, [data]);
 
   return (
     <Flex
@@ -28,9 +39,11 @@ export const Platform = () => {
           >
             TVL
           </Text>
-          <Text color={'iWhite'} fontSize="20px" fontWeight={600} lineHeight="30px">
-            $295.41M
-          </Text>
+          <Skeleton isLoaded={!isLoading} minW="80px">
+            <Text color={'iWhite'} fontSize="20px" fontWeight={600} lineHeight="30px">
+              {totalTVL ? smallUsdFormatter(totalTVL, true) : '-'}
+            </Text>
+          </Skeleton>
         </VStack>
         <VStack alignItems="flex-start">
           <Text

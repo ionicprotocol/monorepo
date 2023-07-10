@@ -4,12 +4,12 @@ import type { ComponentStyleConfig } from '@chakra-ui/theme';
 const $arrowBg = cssVar('popper-arrow-bg');
 export const TooltipStyleConfig: ComponentStyleConfig = {
   baseStyle: ({ colorMode }) => ({
-    bg: colorMode === 'light' ? 'whiteBg' : 'raisinBlack',
-    borderColor: 'ecru',
+    bg: colorMode === 'light' ? 'iBlack' : 'iBlack',
+    borderColor: 'iSeparator',
     borderWidth: '1px',
-    color: colorMode === 'light' ? 'raisinBlack' : 'whiteBg',
+    color: colorMode === 'light' ? 'iWhite' : 'iWhite',
     textAlign: 'center',
-    [$arrowBg.variable]: colorMode === 'light' ? 'whiteBg' : 'raisinBlack',
+    [$arrowBg.variable]: colorMode === 'light' ? 'iBlack' : 'iBlack',
   }),
   defaultProps: {
     p: 2,

@@ -14,18 +14,18 @@ export const SimpleTooltip = ({
   label: string;
   width?: BoxProps['width'];
 }) => {
-  const { cPage } = useColors();
+  const { cIPage } = useColors();
 
   return (
     <Box height={height} width={width}>
       <Tooltip
         aria-label={label}
-        bg={cPage.primary.bgColor}
+        bg={cIPage.bgColor}
         hasArrow
         label={label}
         placement={'top'}
         sx={{
-          '--popper-arrow-shadow-color': `${cPage.primary.borderColor}`,
+          '--popper-arrow-shadow-color': `${cIPage.dividerColor}`,
         }}
         {...tooltipProps}
       >
