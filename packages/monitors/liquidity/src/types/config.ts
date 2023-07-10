@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { SupportedAsset } from "@ionicprotocol/types";
 
 import { AMMLiquidityVerifier } from "../services";
@@ -36,7 +36,7 @@ export type LiquidityDepthConfig = BaseConfig & {
 };
 
 export interface VerifyLiquidityParams {
-  midasSdk: MidasSdk;
+  ionicSdk: IonicSdk;
   asset: TAssetConfig;
   poolKind: LiquidityPoolKind;
 }

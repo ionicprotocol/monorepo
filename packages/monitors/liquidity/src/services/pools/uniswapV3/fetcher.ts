@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { ERC20Abi, MidasSdk } from "@ionicprotocol/sdk";
+import { ERC20Abi, IonicSdk } from "@ionicprotocol/sdk";
 import { ChainConfig } from "@ionicprotocol/types";
 import { BigNumber, Contract, utils } from "ethers";
 
@@ -12,7 +12,7 @@ export class V3Fetcher {
   public uniV3PairInitHash: string;
   public provider: JsonRpcProvider;
 
-  public constructor(sdk: MidasSdk) {
+  public constructor(sdk: IonicSdk) {
     this.chainConfig = sdk.chainConfig;
     this.provider = sdk.provider;
     this.W_TOKEN = this.chainConfig.chainAddresses.W_TOKEN;

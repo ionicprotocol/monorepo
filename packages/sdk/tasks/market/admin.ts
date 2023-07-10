@@ -13,8 +13,8 @@ export default task("market:unsupport", "Unsupport a market")
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
 
     const comptroller = await sdk.createComptroller(taskArgs.comptroller, signer);
     const tx = await comptroller._unsupportMarket(taskArgs.ctoken);

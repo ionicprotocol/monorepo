@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { CErc20Delegate } from "@ionicprotocol/sdk/dist/cjs/typechain/CErc20Delegate";
 import { constants, Contract, logger, Signer } from "ethers";
 
@@ -8,9 +8,9 @@ import { ComptrollerWithExtension } from "../types";
 export class AdminService {
   admin: Signer;
   adminAddress: string;
-  sdk: MidasSdk;
+  sdk: IonicSdk;
 
-  constructor(sdk: MidasSdk) {
+  constructor(sdk: IonicSdk) {
     this.adminAddress = baseConfig.adminAccount;
     this.admin = sdk.signer;
     this.sdk = sdk;

@@ -11,7 +11,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
     async () => {
       if (!flywheelAddress || !currentSdk) return null;
 
-      const flywheel = currentSdk.createMidasFlywheel(flywheelAddress);
+      const flywheel = currentSdk.createIonicFlywheel(flywheelAddress);
 
       // TODO add function to FlywheelLensRouter to get all info in one call
       const [booster, rewards, markets, owner, rewardToken] = await Promise.all([

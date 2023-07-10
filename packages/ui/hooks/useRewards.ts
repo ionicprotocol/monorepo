@@ -1,4 +1,4 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
 import type { FlywheelReward, Reward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
-export const fetchFlywheelRewards = async (comptroller: string, sdk: MidasSdk) => {
+export const fetchFlywheelRewards = async (comptroller: string, sdk: IonicSdk) => {
   let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
   let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
 

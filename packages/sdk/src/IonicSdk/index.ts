@@ -22,8 +22,8 @@ import FusePoolDirectoryABI from "../../abis/FusePoolDirectory";
 import FusePoolLensABI from "../../abis/FusePoolLens";
 import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
 import FuseSafeLiquidatorABI from "../../abis/FuseSafeLiquidator";
-import MidasERC4626ABI from "../../abis/MidasERC4626";
-import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
+import IonicERC4626ABI from "../../abis/MidasERC4626";
+import IonicFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
@@ -32,8 +32,8 @@ import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
-import { MidasERC4626 } from "../../typechain/MidasERC4626";
-import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
+import { MidasERC4626 as IonicERC4626 } from "../../typechain/MidasERC4626";
+import { MidasFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 import { Unitroller } from "../../typechain/Unitroller";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -63,7 +63,7 @@ export type SupportedSigners = Signer | SignerWithAddress;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
 export type StaticContracts = {
   FuseFeeDistributor: FuseFeeDistributor;
-  MidasFlywheelLensRouter: MidasFlywheelLensRouter;
+  IonicFlywheelLensRouter: IonicFlywheelLensRouter;
   FusePoolDirectory: FusePoolDirectory;
   FusePoolLens: FusePoolLens;
   FusePoolLensSecondary: FusePoolLensSecondary;
@@ -80,7 +80,7 @@ export interface Logger {
   [x: string]: any;
 }
 
-export class MidasBase {
+export class IonicBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public _provider: SupportedProvider;
   public _signer: SupportedSigners | null;
@@ -91,7 +91,7 @@ export class MidasBase {
     return SignerWithAddress.isSigner(signer) || Signer.isSigner(signer);
   }
   static isSupportedSignerOrProvider(signerOrProvider: unknown): signerOrProvider is SignerOrProvider {
-    return MidasBase.isSupportedSigner(signerOrProvider) || MidasBase.isSupportedProvider(signerOrProvider);
+    return IonicBase.isSupportedSigner(signerOrProvider) || IonicBase.isSupportedProvider(signerOrProvider);
   }
 
   public _contracts: StaticContracts | undefined;
@@ -152,11 +152,11 @@ export class MidasBase {
         FuseFeeDistributorABI,
         this.provider
       ) as FuseFeeDistributor,
-      MidasFlywheelLensRouter: new Contract(
+      IonicFlywheelLensRouter: new Contract(
         this.chainDeployment.MidasFlywheelLensRouter.address,
-        MidasFlywheelLensRouterABI,
+        IonicFlywheelLensRouterABI,
         this.provider
-      ) as MidasFlywheelLensRouter,
+      ) as IonicFlywheelLensRouter,
       ...this._contracts,
     };
   }
@@ -345,19 +345,19 @@ export class MidasBase {
     return new Contract(this.chainDeployment.FusePoolDirectory.address, FusePoolDirectoryABI, signerOrProvider);
   }
 
-  getMidasErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, MidasERC4626ABI, signerOrProvider) as MidasERC4626;
+  getErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, IonicERC4626ABI, signerOrProvider) as IonicERC4626;
   }
 }
 
-const MidasBaseWithModules = withFusePoolLens(
+const IonicBaseWithModules = withFusePoolLens(
   withFundOperations(
     withSafeLiquidator(
       withFusePools(
-        withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(MidasBase))))))
+        withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(IonicBase))))))
       )
     )
   )
 );
-export class MidasSdk extends MidasBaseWithModules {}
-export default MidasSdk;
+export class IonicSdk extends IonicBaseWithModules {}
+export default IonicSdk;

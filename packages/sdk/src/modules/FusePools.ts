@@ -20,10 +20,10 @@ import {
 } from "@ionicprotocol/types";
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
-import { MidasBaseConstructor } from "..";
+import { IonicBaseConstructor } from "..";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../typechain/FusePoolLens";
-import { filterOnlyObjectProperties, filterPoolName } from "../MidasSdk/utils";
+import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
@@ -46,7 +46,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ethereum]: ethereum.assets,
 };
 
-export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
+export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
     async fetchFusePoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData | null> {
       const {

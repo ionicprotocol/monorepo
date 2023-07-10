@@ -66,7 +66,7 @@ task("chapel-borrow-tusd", "creates and funds a levered position on chapel").set
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // BOMB
     const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
     const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
-    const chapelMidasPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
+    const chapelIonicPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
 
     // const collateralMarket = (await ethers.getContractAt(
     //   "CErc20Delegate",
@@ -89,7 +89,7 @@ task("chapel-borrow-tusd", "creates and funds a levered position on chapel").set
     // }
 
     let tx;
-    const pool = (await ethers.getContractAt("Comptroller", chapelMidasPool, deployer)) as Comptroller;
+    const pool = (await ethers.getContractAt("Comptroller", chapelIonicPool, deployer)) as Comptroller;
     tx = await pool.enterMarkets([collateralMarketAddress, borrowMarketAddress]);
     await tx.wait();
     console.log(`entered markets ${tx.hash}`);
@@ -216,7 +216,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     //   console.log(`minted some tokens to the deployer`);
     // }
 
-    const chapelMidasPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
+    const chapelIonicPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
     const spo = (await ethers.getContract("SimplePriceOracle", deployer)) as SimplePriceOracle;
 
     let tx;
@@ -229,10 +229,10 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     await tx.wait();
     console.log(`added the SPO to the MPO for the testing DAI token`);
 
-    const pool = (await ethers.getContractAt("Comptroller", chapelMidasPool, deployer)) as Comptroller;
-    const midasPoolAsExt = (await ethers.getContractAt(
+    const pool = (await ethers.getContractAt("Comptroller", chapelIonicPool, deployer)) as Comptroller;
+    const ionicPoolAsExt = (await ethers.getContractAt(
       "ComptrollerFirstExtension",
-      chapelMidasPool,
+      chapelIonicPool,
       deployer
     )) as ComptrollerFirstExtension;
 
@@ -240,7 +240,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
       ["address", "address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
       [
         tdai.address,
-        chapelMidasPool,
+        chapelIonicPool,
         ffd.address,
         jrm.address,
         "M Testing BOMB",
@@ -257,7 +257,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     await tx.wait();
     console.log(`deployed a testing DAI market`);
 
-    const allMarkets = await midasPoolAsExt.callStatic.getAllMarkets();
+    const allMarkets = await ionicPoolAsExt.callStatic.getAllMarkets();
     const newMarketAddress = allMarkets[allMarkets.length - 1];
 
     tx = await tdai.approve(newMarketAddress, ethers.constants.MaxUint256);

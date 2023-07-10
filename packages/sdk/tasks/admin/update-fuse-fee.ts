@@ -11,8 +11,8 @@ export default task("fusefee:update", "Update FuseFee")
     const adminFee = taskArgs.adminFee;
     const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
 
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
     const cToken = sdk.createCTokenWithExtensions(taskArgs.cToken);
     await cToken._setAdminFee(adminFee);
   });

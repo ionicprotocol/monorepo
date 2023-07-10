@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { SupportedChains } from "@ionicprotocol/types";
 import { BigNumber, utils } from "ethers";
 
@@ -6,14 +6,14 @@ import { logger } from "../..";
 import { Reserve } from "../../types";
 import { getDefiLlamaPrice } from "../../utils";
 
-export async function getTokenPrices(sdk: MidasSdk, tokens: string[]): Promise<BigNumber[]> {
+export async function getTokenPrices(sdk: IonicSdk, tokens: string[]): Promise<BigNumber[]> {
   const mpo = sdk.createMasterPriceOracle();
   const promises = tokens.map((token) => mpo.callStatic.getUnderlyingPrice(token));
   const prices = await Promise.all(promises);
   return prices;
 }
 
-export async function getPoolTVL(sdk: MidasSdk, reserves: Reserve[]): Promise<number> {
+export async function getPoolTVL(sdk: IonicSdk, reserves: Reserve[]): Promise<number> {
   const tokenPrices = await getTokenPrices(
     sdk,
     reserves.map((r) => r.underlying.address)

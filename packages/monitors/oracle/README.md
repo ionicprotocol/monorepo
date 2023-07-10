@@ -48,14 +48,14 @@ The codebase is composed of a set of `verifiers`:
 Each of these verifiers runs on a set interval, verifying each asset supported by Ionic Protocol:
 
 ```
-export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverride?: SupportedAsset[]) {
+export async function runVerifier(sdk: IonicSdk, service: Services, assetsOverride?: SupportedAsset[]) {
   logger.info(`RUNNING SERVICE: ${service}`);
   const assetsToVerify = assetsOverride ? assetsOverride : assets[service];
   const verifier = new BatchVerifier(sdk, assetsToVerify);
   await verifier.batchVerify(verifiers[service], configs[service]);
 }
 
-setInterval(runVerifier, feedVerifierConfig.runInterval, midasSdk, Services.FeedVerifier);
+setInterval(runVerifier, feedVerifierConfig.runInterval, ionicSdk, Services.FeedVerifier);
 ```
 
 ## Build, Deployment & Local Development

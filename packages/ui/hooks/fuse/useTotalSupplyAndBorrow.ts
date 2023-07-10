@@ -1,13 +1,13 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const fetchTotalSupplyAndBorrow = async (midasSdk: MidasSdk) => {
-  const { totalSupply, totalBorrow } = await midasSdk.getTotalValueLocked(false);
-  const decimals = midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
+export const fetchTotalSupplyAndBorrow = async (ionicSdk: IonicSdk) => {
+  const { totalSupply, totalBorrow } = await ionicSdk.getTotalValueLocked(false);
+  const decimals = ionicSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
   return {
     totalBorrow: Number(utils.formatUnits(totalBorrow, decimals)),

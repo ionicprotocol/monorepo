@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { WETHAbi } from '@ionicprotocol/sdk';
-import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/MidasSdk/utils';
+import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
 import type { VaultData } from '@ionicprotocol/types';
 import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';

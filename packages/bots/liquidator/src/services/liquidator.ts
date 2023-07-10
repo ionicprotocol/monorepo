@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { LiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
 
 import config, { EXCLUDED_ERROR_CODES } from "../config";
@@ -7,12 +7,12 @@ import { logger } from "../logger";
 import { DiscordService } from "./discord";
 
 export class Liquidator {
-  sdk: MidasSdk;
+  sdk: IonicSdk;
   alert: DiscordService;
 
-  constructor(midasSdk: MidasSdk) {
-    this.sdk = midasSdk;
-    this.alert = new DiscordService(midasSdk.chainId);
+  constructor(ionicSdk: IonicSdk) {
+    this.sdk = ionicSdk;
+    this.alert = new DiscordService(ionicSdk.chainId);
   }
   async fetchLiquidations(): Promise<LiquidatablePool[]> {
     try {

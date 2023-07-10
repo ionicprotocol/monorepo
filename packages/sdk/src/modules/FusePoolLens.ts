@@ -2,10 +2,10 @@ import { chainIdToConfig } from "@ionicprotocol/chains";
 import { SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
-import { MidasBaseConstructor } from "..";
+import { IonicBaseConstructor } from "..";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 
-export function withFusePoolLens<TBase extends MidasBaseConstructor>(Base: TBase) {
+export function withFusePoolLens<TBase extends IonicBaseConstructor>(Base: TBase) {
   return class FusePoolLens extends Base {
     /**
      * @returns the TVL on current chain in native asset value

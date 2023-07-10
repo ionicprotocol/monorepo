@@ -7,7 +7,7 @@ import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { ERC20 } from "../../typechain/ERC20";
 import { IUniswapV2Factory } from "../../typechain/IUniswapV2Factory";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
-import { MidasSafeLiquidator } from "../../typechain/MidasSafeLiquidator";
+import { MidasSafeLiquidator as IonicSafeLiquidator } from "../../typechain/MidasSafeLiquidator";
 import { WETH } from "../../typechain/WETH";
 
 task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same asset from the same market")
@@ -59,8 +59,8 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
       if (msl.transactionHash) await ethers.provider.waitForTransaction(msl.transactionHash);
       console.log("MidasSafeLiquidator: ", msl.address);
 
-      const midasSafeLiquidator = (await ethers.getContract("MidasSafeLiquidator", deployer)) as MidasSafeLiquidator;
-      const fslOwner = await midasSafeLiquidator.callStatic.owner();
+      const ionicSafeLiquidator = (await ethers.getContract("MidasSafeLiquidator", deployer)) as IonicSafeLiquidator;
+      const fslOwner = await ionicSafeLiquidator.callStatic.owner();
       console.log(`MidasSafeLiquidator owner is ${fslOwner}`);
 
       const univ2Liquidator = await deployments.deploy("UniswapV2Liquidator", {
@@ -75,11 +75,11 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
 
       const redemptionStrategy = await ethers.getContractAt("UniswapV2Liquidator", univ2Liquidator.address, deployer);
 
-      const whitelisted = await midasSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
+      const whitelisted = await ionicSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
         redemptionStrategy.address
       );
       if (!whitelisted) {
-        const tx = await midasSafeLiquidator._whitelistRedemptionStrategy(redemptionStrategy.address, true);
+        const tx = await ionicSafeLiquidator._whitelistRedemptionStrategy(redemptionStrategy.address, true);
         await tx.wait();
       } else {
         console.log(`UniswapV2Liquidator already whitelisted`);
@@ -122,7 +122,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
       )) as ERC20;
 
       const currentStableCollateral = await stableCollateralCTokenExtension.callStatic.balanceOfUnderlying(
-        midasSafeLiquidator.address
+        ionicSafeLiquidator.address
       );
       if (currentStableCollateral < additionalCollateralRequired) {
         const wNative = (await ethers.getContractAt("WETH", stableCollateralAsset.address, deployer)) as WETH;
@@ -142,7 +142,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
           );
         }
 
-        const tx = await wNative.approve(midasSafeLiquidator.address, diffNeeded);
+        const tx = await wNative.approve(ionicSafeLiquidator.address, diffNeeded);
         await tx.wait();
         console.log(`approved the MSL to pull ${diffNeeded} WMATIC of the stable collateral`);
       } else {
@@ -167,7 +167,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
 
       const flashSwapPair = await factory.callStatic.getPair(stableCollateralAssetAddress, usdc);
 
-      const tx = await midasSafeLiquidator.liquidateAndTakeDebtPosition({
+      const tx = await ionicSafeLiquidator.liquidateAndTakeDebtPosition({
         borrower,
         collateralFundingStrategies: [],
         collateralFundingStrategiesData: [],

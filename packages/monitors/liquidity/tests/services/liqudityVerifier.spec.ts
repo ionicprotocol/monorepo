@@ -1,5 +1,5 @@
 import { bsc, chainIdToConfig } from "@ionicprotocol/chains";
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { assetFilter, assetSymbols, SupportedChains, underlying } from "@ionicprotocol/types";
 import { restore } from "sinon";
 
@@ -12,13 +12,13 @@ import { getSigner } from "../helpers";
 
 describe("Feed verifier", () => {
   let liquidityVerifier: AMMLiquidityVerifier;
-  let sdk: MidasSdk;
+  let sdk: IonicSdk;
 
   const config = configs[Services.LiquidityDepthVerifier];
 
   beforeEach(() => {
     const signer = getSigner(SupportedChains.bsc);
-    sdk = new MidasSdk(signer, chainIdToConfig[SupportedChains.bsc]);
+    sdk = new IonicSdk(signer, chainIdToConfig[SupportedChains.bsc]);
     const testAssetConfig = {
       token0: underlying(bsc.assets, assetSymbols.stkBNB),
       token1: underlying(bsc.assets, assetSymbols.WBNB),

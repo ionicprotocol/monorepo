@@ -4,7 +4,7 @@ import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPlug
 import { Contract, utils } from 'ethers';
 import { chainIdToConfig } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
-import { MidasSdk } from '@ionicprotocol/sdk';
+import { IonicSdk } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { assetSymbols } from '@ionicprotocol/types';
 
@@ -52,12 +52,12 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
       this.provider
     );
 
-    const sdk = new MidasSdk(
+    const sdk = new IonicSdk(
       new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
       config
     );
     const mpo = sdk.createMasterPriceOracle();
-    const flywheelContract = sdk.createMidasFlywheel(pluginData.flywheel, sdk.provider);
+    const flywheelContract = sdk.createIonicFlywheel(pluginData.flywheel, sdk.provider);
 
     const [theUsdPriceBig, lpTokenUsdPriceBig, rewardRateBig, totalSupplyBig, rewardToken] =
       await Promise.all([

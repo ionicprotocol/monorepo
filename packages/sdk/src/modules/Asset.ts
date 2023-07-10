@@ -3,7 +3,7 @@ import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@ionicpr
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import CErc20DelegatorArtifact from "../../artifacts/CErc20Delegator.json";
-import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
+import { COMPTROLLER_ERROR_CODES } from "../IonicSdk/config";
 
 import { withCreateContracts } from "./CreateContracts";
 import { withFlywheel } from "./Flywheel";

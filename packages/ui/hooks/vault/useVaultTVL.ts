@@ -1,18 +1,18 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const fetchVaultNumberTVL = async (midasSdk: MidasSdk) => {
-  const optimizedVaultsRegistry = midasSdk.createOptimizedVaultsRegistry();
+export const fetchVaultNumberTVL = async (ionicSdk: IonicSdk) => {
+  const optimizedVaultsRegistry = ionicSdk.createOptimizedVaultsRegistry();
   const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
   const tvlNative = vaultsData.reduce(
     (tvl, vault) => (tvl = tvl.add(vault.estimatedTotalAssets)),
     constants.Zero
   );
-  const decimals = midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
+  const decimals = ionicSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
   return Number(utils.formatUnits(tvlNative, decimals));
 };
