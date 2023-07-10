@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheel = (flywheelAddress?: string) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
 
   return useQuery(
     ['useFlywheel', currentSdk?.chainId, flywheelAddress],
     async () => {
       if (!flywheelAddress || !currentSdk) return null;
 
-      const flywheel = currentSdk.createMidasFlywheel(flywheelAddress);
+      const flywheel = currentSdk.createIonicFlywheel(flywheelAddress);
 
       // TODO add function to FlywheelLensRouter to get all info in one call
       const [booster, rewards, markets, owner, rewardToken] = await Promise.all([

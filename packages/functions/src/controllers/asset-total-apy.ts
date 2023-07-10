@@ -8,7 +8,7 @@ import {
 } from '@ionicprotocol/types';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { MidasSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
+import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
 import { chainIdToConfig } from '@ionicprotocol/chains';
@@ -35,7 +35,7 @@ export const ankrBNBContractABI = [
   },
 ];
 
-export const getAnkrBNBContract = (sdk: MidasSdk) => {
+export const getAnkrBNBContract = (sdk: IonicSdk) => {
   return new Contract(ankrBNBContractAddress, ankrBNBContractABI, sdk.provider);
 };
 
@@ -64,7 +64,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
     const provider = new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]);
-    const sdk = new MidasSdk(provider, config);
+    const sdk = new IonicSdk(provider, config);
 
     const [poolIndexes, pools] = await sdk.contracts.FusePoolDirectory.callStatic.getActivePools();
 

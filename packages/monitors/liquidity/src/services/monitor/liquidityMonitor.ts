@@ -21,7 +21,7 @@ export class AMMLiquidityVerifier extends AbstractLiquidityVerifier {
     const { sdk, asset } = this;
 
     const priceArgs: VerifyLiquidityParams = {
-      midasSdk: sdk,
+      ionicSdk: sdk,
       asset,
       poolKind,
     };

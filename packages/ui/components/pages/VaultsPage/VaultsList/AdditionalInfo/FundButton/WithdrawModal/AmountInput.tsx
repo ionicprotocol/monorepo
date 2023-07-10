@@ -8,7 +8,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxWithdrawVault } from '@ui/hooks/useMaxWithdrawVault';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
@@ -19,7 +19,7 @@ export const AmountInput = ({
   setAmount: (amount: BigNumber) => void;
   vault: VaultData;
 }) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const { data: maxWithdrawVault, isLoading } = useMaxWithdrawVault(vault.vault);
 

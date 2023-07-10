@@ -63,7 +63,7 @@ import {
   BORROW_BALANCE,
   CHAIN,
   EXPANDER,
-  MIDAS_LOCALSTORAGE_KEYS,
+  IONIC_LOCALSTORAGE_KEYS,
   POOL_NAME,
   POOLS_COLUMNS,
   POOLS_COUNT_PER_PAGE,
@@ -72,7 +72,7 @@ import {
   TOTAL_BORROW,
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -98,7 +98,7 @@ const PoolsRowList = ({
   isLoading: boolean;
   poolsPerChain: PoolsPerChainStatus;
 }) => {
-  const { address, setGlobalLoading } = useMultiMidas();
+  const { address, setGlobalLoading } = useMultiIonic();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
@@ -376,7 +376,7 @@ const PoolsRowList = ({
 
   useEffect(() => {
     if (mounted.current) {
-      const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+      const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
       let oldObj;
       if (oldData) {
         oldObj = JSON.parse(oldData);
@@ -388,7 +388,7 @@ const PoolsRowList = ({
         }
       });
       const data = { ...oldObj, globalFilter, poolsListColumnVisibility: arr, searchText, sorting };
-      localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+      localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
   }, [searchText, globalFilter, sorting, columnVisibility]);
 
@@ -408,7 +408,7 @@ const PoolsRowList = ({
   useEffect(() => {
     mounted.current = true;
 
-    const data = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const data = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     if (data && mounted.current) {
       const obj = JSON.parse(data);
       const _globalFilter = (obj.globalFilter as (SupportedChains | string)[]) || [ALL];
@@ -715,7 +715,7 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
   useEffect(() => {
     mounted.current = true;
 
-    const data = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const data = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     if (data && mounted.current) {
       const obj = JSON.parse(data);
       const _searchText = obj.searchText || '';

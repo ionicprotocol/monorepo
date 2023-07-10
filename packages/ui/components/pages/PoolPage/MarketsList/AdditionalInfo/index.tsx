@@ -13,7 +13,7 @@ import { MarketDetails } from '@ui/components/pages/PoolPage/MarketsList/Additio
 import { StrategySafetyScore } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/StrategySafetyScore';
 import { UtilizationRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/UtilizationRate';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getChainConfig } from '@ui/utils/networkData';
@@ -36,7 +36,7 @@ export const AdditionalInfo = ({
   const asset: MarketData = row.original.market;
   const assets: MarketData[] = rows.map((row) => row.original.market);
 
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();

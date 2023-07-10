@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber, Contract } from "ethers";
 
@@ -74,13 +74,13 @@ export type SupportedAssetPriceFeed = {
 };
 
 export interface VerifyPriceParams {
-  midasSdk: MidasSdk;
+  ionicSdk: IonicSdk;
   asset: PriceVerifierAsset;
   mpoPrice: BigNumber;
 }
 
 export interface VerifyFeedParams {
-  midasSdk: MidasSdk;
+  ionicSdk: IonicSdk;
   underlyingOracle: Contract;
   asset: FeedVerifierAsset;
 }

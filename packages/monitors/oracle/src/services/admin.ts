@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { Comptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/Comptroller";
 import { ComptrollerFirstExtension } from "@ionicprotocol/sdk/dist/cjs/typechain/ComptrollerFirstExtension";
 import { SupportedAsset } from "@ionicprotocol/types";
@@ -7,10 +7,10 @@ import { constants, Contract, logger, Signer } from "ethers";
 export class AdminService {
   admin: Signer;
   adminAddress: string;
-  sdk: MidasSdk;
+  sdk: IonicSdk;
   asset: SupportedAsset;
 
-  constructor(sdk: MidasSdk, asset: SupportedAsset) {
+  constructor(sdk: IonicSdk, asset: SupportedAsset) {
     this.asset = asset;
     this.admin = sdk.signer;
     this.sdk = sdk;

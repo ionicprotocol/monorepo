@@ -11,7 +11,7 @@ export const usePerformanceFee = (poolChainId: number, pluginAddress?: string) =
     async () => {
       if (sdk && pluginAddress) {
         try {
-          const pluginContract = sdk.getMidasErc4626PluginInstance(pluginAddress);
+          const pluginContract = sdk.getErc4626PluginInstance(pluginAddress);
           const performanceFee = await pluginContract.callStatic.performanceFee();
 
           return Number(utils.formatUnits(performanceFee)) * 100;

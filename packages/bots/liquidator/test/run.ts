@@ -8,11 +8,11 @@ import { setUpSdk } from "../src/utils";
 (async function () {
   const chainId: number = config.chainId;
   const provider = new JsonRpcProvider(config.rpcUrl);
-  const midasSdk = setUpSdk(chainId, provider);
+  const ionicSdk = setUpSdk(chainId, provider);
 
-  logger.info(`Config for bot: ${JSON.stringify({ ...midasSdk.chainLiquidationConfig, ...config })}`);
+  logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
 
-  const liquidator = new Liquidator(midasSdk);
+  const liquidator = new Liquidator(ionicSdk);
   const liquidatablePools = await liquidator.fetchLiquidations();
 
   logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);

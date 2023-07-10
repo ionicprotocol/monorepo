@@ -15,14 +15,14 @@ import React, { useCallback, useMemo, useState } from 'react';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFlywheel } from '@ui/hooks/rewards/useFlywheel';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import type { AddFlywheelModalProps, AddFlywheelProps } from '@ui/types/ComponentPropsType';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();

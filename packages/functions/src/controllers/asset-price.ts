@@ -2,7 +2,7 @@ import { SupportedChains } from '@ionicprotocol/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { MidasSdk } from '@ionicprotocol/sdk';
+import { IonicSdk } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
 import { chainIdToConfig } from '@ionicprotocol/chains';
@@ -14,7 +14,7 @@ export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
 export const updateAssetPrice = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
-    const sdk = new MidasSdk(
+    const sdk = new IonicSdk(
       new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
       config
     );

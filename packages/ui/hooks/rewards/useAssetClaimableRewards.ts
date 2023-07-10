@@ -1,9 +1,9 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 import { constants } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useAssetClaimableRewards = (
@@ -11,7 +11,7 @@ export const useAssetClaimableRewards = (
   poolAddress: string,
   poolChainId?: number
 ) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
@@ -51,7 +51,7 @@ export const useAssetClaimableRewards = (
 export const getAssetsClaimableRewards = async (
   poolAddress: string,
   assetsAddress: string[],
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   address: string
 ) => {
   const allRewards = await Promise.all(
@@ -84,7 +84,7 @@ export const useAssetsClaimableRewards = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
   return useQuery<{ [key: string]: FlywheelClaimableRewards[] } | null | undefined>(
