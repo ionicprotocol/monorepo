@@ -3,9 +3,9 @@ import { BigNumber, constants, Contract, ContractReceipt, providers, Signer, uti
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import JumpRateModelArtifact from "../../artifacts/JumpRateModel.json";
-import { MidasBase } from "../../src/MidasSdk/index";
-import JumpRateModel from "../../src/MidasSdk/irm/JumpRateModel";
-import * as utilsFns from "../../src/MidasSdk/utils";
+import { IonicBase } from "../../src/IonicSdk/index";
+import JumpRateModel from "../../src/IonicSdk/irm/JumpRateModel";
+import * as utilsFns from "../../src/IonicSdk/utils";
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../typechain";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
@@ -13,7 +13,7 @@ import { mkAddress } from "../helpers";
 const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [constants.Two] }] as any, blockNumber: 1 };
 
 describe("Fuse Index", () => {
-  let fuseBase: MidasBase;
+  let fuseBase: IonicBase;
   let mockContract: SinonStubbedInstance<Contract>;
 
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe("Fuse Index", () => {
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
     };
-    fuseBase = new MidasBase(mockProvider, ganache);
+    fuseBase = new IonicBase(mockProvider, ganache);
     fuseBase.contracts = { FusePoolDirectory: mockContract as unknown as FusePoolDirectory };
   });
   afterEach(function () {

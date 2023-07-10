@@ -1,12 +1,12 @@
 import { TransactionRequest } from "@ethersproject/providers";
 import { BigNumber, Wallet } from "ethers";
 
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 import { fetchGasLimitForTransaction } from "./utils";
 
 export default async function sendTransactionToSafeLiquidator(
-  sdk: MidasBase,
+  sdk: IonicBase,
   method: string | any,
   params: Array<any> | any,
   value: number | BigNumber

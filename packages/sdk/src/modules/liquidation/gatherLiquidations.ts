@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-import { MidasSdk } from "../../MidasSdk";
+import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import {
@@ -15,7 +15,7 @@ import {
 import { getPotentialLiquidation } from "./index";
 
 async function getLiquidatableUsers(
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   poolUsers: FusePoolUserStruct[],
   pool: PublicPoolUserWithData,
   chainLiquidationConfig: ChainLiquidationConfig
@@ -43,7 +43,7 @@ async function getLiquidatableUsers(
 }
 
 export default async function gatherLiquidations(
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   pools: Array<PublicPoolUserWithData>,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {

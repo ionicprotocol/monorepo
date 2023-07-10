@@ -23,8 +23,8 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
   .addParam("pluginExtraParams", "Extra plugin parameters", undefined, types.string)
   .setAction(async (taskArgs, { run, ethers, deployments }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
     const underlyings = underlyingsMapping[sdk.chainId];
 
     // task argument parsing

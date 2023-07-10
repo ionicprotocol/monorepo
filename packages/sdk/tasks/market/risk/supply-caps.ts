@@ -8,8 +8,8 @@ export default task("market:set-supply-cap", "Pauses borrowing on a market")
   .setAction(async ({ admin, market, maxSupply }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const midasSdkModule = await import("../../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
     const cToken = sdk.createCTokenWithExtensions(market, signer);
     const comptroller = await cToken.callStatic.comptroller();
@@ -39,8 +39,8 @@ task("market:set-supply-cap-whitelist", "Pauses borrowing on a market")
   .setAction(async ({ admin, market, account, whitelist }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const midasSdkModule = await import("../../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
     const cToken = sdk.createCTokenWithExtensions(market, signer);
     const comptroller = await cToken.callStatic.comptroller();

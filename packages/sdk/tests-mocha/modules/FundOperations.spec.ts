@@ -3,14 +3,14 @@ import axios from "axios";
 import { BigNumber, Contract, providers, Signer } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import { MidasBase } from "../../src/MidasSdk/index";
-import * as utilsFns from "../../src/MidasSdk/utils";
+import { IonicSdk } from "../../src/IonicSdk/index";
+import * as utilsFns from "../../src/IonicSdk/utils";
 import * as FundOperationsModule from "../../src/modules/FundOperations";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
 describe("FundOperation", () => {
-  const FundOperations = FundOperationsModule.withFundOperations(MidasBase);
+  const FundOperations = FundOperationsModule.withFundOperations(IonicSdk);
   let fundOperations: InstanceType<typeof FundOperations>;
   let axiosStub: SinonStub;
 
@@ -47,7 +47,7 @@ describe("FundOperation", () => {
   });
 
   describe("approve", async () => {
-    it("allow Midas to use tokens", async () => {
+    it("allow Ionic to use tokens", async () => {
       const mockTokenContract: SinonStubbedInstance<Contract> = createStubInstance(Contract);
       const maxApproveStub = stub().resolves("txId");
 

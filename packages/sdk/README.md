@@ -5,7 +5,7 @@
 `npm install @ionicprotocol/sdk`
 
 ```typescript
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { ethers } from "ethers";
 
 const chainId = 56;

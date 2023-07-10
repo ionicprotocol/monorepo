@@ -1,7 +1,7 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 export type ChainLiquidationConfig = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
@@ -11,7 +11,7 @@ export type ChainLiquidationConfig = {
   LIQUIDATION_INTERVAL_SECONDS: number;
 };
 
-export const getChainLiquidationConfig = (sdk: MidasBase): ChainLiquidationConfig => {
+export const getChainLiquidationConfig = (sdk: IonicBase): ChainLiquidationConfig => {
   return {
     SUPPORTED_OUTPUT_CURRENCIES: process.env.SUPPORTED_OUTPUT_CURRENCIES
       ? process.env.SUPPORTED_OUTPUT_CURRENCIES.split(",")

@@ -1,13 +1,13 @@
 import { TransactionResponse } from "@ethersproject/providers";
 
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 import { EncodedLiquidationTx, LiquidatablePool } from "./utils";
 
 import { sendTransactionToSafeLiquidator } from "./index";
 
 export default async function liquidateUnhealthyBorrows(
-  sdk: MidasBase,
+  sdk: IonicBase,
   liquidatablePool: LiquidatablePool
 ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionResponse>]> {
   const erroredLiquidations: Array<{ tx: EncodedLiquidationTx; error: string }> = [];

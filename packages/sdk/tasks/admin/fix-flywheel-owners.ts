@@ -26,8 +26,8 @@ task("deploy-fwr", "Changes the system admin to a new address")
       waitConfirmations: 1,
     });
 
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(deployer);
 
     const tx = await sdk.setFlywheelRewards(flywheel, rewards.address);
     await tx.wait();
