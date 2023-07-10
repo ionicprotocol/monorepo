@@ -2,8 +2,8 @@ import { task } from "hardhat/config";
 
 task("fork:create-pool", "Create pool on forking node").setAction(async (taskArgs, hre) => {
   const deployer = await hre.ethers.getNamedSigner("deployer");
-  const midasSdkModule = await import("../midasSdk");
-  const sdk = await midasSdkModule.getOrCreateMidas(deployer);
+  const ionicSdkModule = await import("../ionicSdk");
+  const sdk = await ionicSdkModule.getOrCreateIonic(deployer);
 
   console.log("Creating pool...");
 

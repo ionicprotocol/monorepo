@@ -3,7 +3,7 @@ import { ethers, utils } from 'ethers';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { chainIdToConfig } from '@ionicprotocol/chains';
-import { MidasSdk } from '@ionicprotocol/sdk';
+import { IonicSdk } from '@ionicprotocol/sdk';
 import { OptimizedVaultsRegistry } from '@ionicprotocol/sdk/typechain/OptimizedVaultsRegistry';
 import OptimizedVaultsRegistryABI from '@ionicprotocol/sdk/abis/OptimizedVaultsRegistry';
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -12,7 +12,7 @@ import { Handler } from '@netlify/functions';
 export const updateVaultData = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
-    const sdk = new MidasSdk(
+    const sdk = new IonicSdk(
       new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
       config
     );

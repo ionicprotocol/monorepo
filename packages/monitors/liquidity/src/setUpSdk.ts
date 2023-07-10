@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { bsc, chapel, evmos, ethereum, fantom, ganache, moonbeam, neondevnet, polygon } from "@ionicprotocol/chains";
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { bsc, chapel, ethereum, evmos, fantom, ganache, moonbeam, neondevnet, polygon } from "@ionicprotocol/chains";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { ChainConfig } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 
@@ -17,7 +17,7 @@ const chainIdToConfig: { [chainId: number]: ChainConfig } = {
 };
 
 const setUpSdk = (chainId: number, provider: Signer | JsonRpcProvider) => {
-  return new MidasSdk(provider, chainIdToConfig[chainId]);
+  return new IonicSdk(provider, chainIdToConfig[chainId]);
 };
 
 export default setUpSdk;

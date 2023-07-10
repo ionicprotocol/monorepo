@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from "ethers";
 
 import { FusePoolLens as FusePoolLensType } from "../../../typechain/FusePoolLens";
-import { MidasSdk } from "../../MidasSdk";
+import { IonicSdk } from "../../IonicSdk";
 
 import { ErroredPool, FusePoolUserStruct, PublicPoolUserWithData } from "./utils";
 
@@ -34,7 +34,7 @@ function getPositionHealth(totalBorrow: BigNumber, totalCollateral: BigNumber): 
 }
 
 async function getFusePoolUsers(
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   comptroller: string,
   maxHealth: BigNumber
 ): Promise<PublicPoolUserWithData> {
@@ -61,7 +61,7 @@ async function getFusePoolUsers(
   };
 }
 
-async function getPoolsWithShortfall(sdk: MidasSdk, comptroller: string) {
+async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: string) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   const promises = users.map((user) => {
@@ -83,7 +83,7 @@ async function getPoolsWithShortfall(sdk: MidasSdk, comptroller: string) {
 }
 
 export default async function getAllFusePoolUsers(
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   maxHealth: BigNumber,
   excludedComptrollers: Array<string>
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {

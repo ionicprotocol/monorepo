@@ -9,8 +9,8 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
   .addOptionalParam("amount", "Amount to trade", "100", types.string)
   .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
   .setAction(async ({ token: _token, amount: _amount, account: _account }, { ethers }) => {
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
 
     let account: SignerWithAddress;
     if (_account === "whale") {

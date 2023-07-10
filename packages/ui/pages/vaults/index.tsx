@@ -2,14 +2,14 @@ import Head from 'next/head';
 import { useEffect } from 'react';
 
 import VaultsPage from '@ui/components/pages/VaultsPage/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export async function getInitialProps() {
   return {};
 }
 
 const VaultPage = () => {
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading } = useMultiIonic();
 
   useEffect(() => {
     setGlobalLoading(false);

@@ -5,7 +5,7 @@ import React from 'react';
 import { ClaimAllRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimAllRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
@@ -18,7 +18,7 @@ const ClaimAllRewardsButton: React.FC = () => {
     onClose: closeClaimModal,
   } = useDisclosure();
   const { cPage } = useColors();
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
   const isMobile = useIsSmallScreen();
   const enabledChains = useEnabledChains();
 

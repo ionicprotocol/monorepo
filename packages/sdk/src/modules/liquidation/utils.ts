@@ -3,7 +3,7 @@ import { FuseAsset, LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { FusePoolLens } from "../../../typechain/FusePoolLens";
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 export const SCALE_FACTOR_ONE_18_WEI = BigNumber.from(10).pow(18);
 export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: FuseAsset) =>
@@ -55,7 +55,7 @@ export type PublicPoolUserWithData = {
   liquidationIncentive: BigNumber;
 };
 
-export async function fetchGasLimitForTransaction(sdk: MidasBase, method: string, tx: TransactionRequest) {
+export async function fetchGasLimitForTransaction(sdk: IonicBase, method: string, tx: TransactionRequest) {
   try {
     return (await sdk.provider.estimateGas(tx)).mul(11).div(10);
   } catch (error) {
@@ -64,7 +64,7 @@ export async function fetchGasLimitForTransaction(sdk: MidasBase, method: string
 }
 
 export const logLiquidation = (
-  sdk: MidasBase,
+  sdk: IonicBase,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,

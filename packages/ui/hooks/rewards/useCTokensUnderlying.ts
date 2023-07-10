@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { CTokensUnderlyingMap } from '@ui/types/ComponentPropsType';
 
 export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyingMap => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
 
   const { data: cTokensUnderlying } = useQuery(
     ['useCTokensUnderlying', cTokenAddresses?.sort().join(','), currentSdk?.chainId],

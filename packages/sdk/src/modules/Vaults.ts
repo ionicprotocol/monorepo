@@ -2,7 +2,7 @@ import { FlywheelRewardsInfoForVault, FundOperationMode, SupportedChains, VaultD
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import { getContract } from "../MidasSdk/utils";
+import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./FusePools";

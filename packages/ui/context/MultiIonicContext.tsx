@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { chainIdToConfig } from '@ionicprotocol/chains';
-import { MidasSdk } from '@ionicprotocol/sdk';
+import { IonicSdk } from '@ionicprotocol/sdk';
 import Security from '@ionicprotocol/security';
 import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
@@ -10,23 +10,23 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { Chain } from 'wagmi';
 import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
+import { IONIC_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
-export interface MultiMidasContextData {
+export interface MultiIonicContextData {
   address?: string;
   chainIds: SupportedChains[];
   currentChain?: Chain & {
     unsupported?: boolean | undefined;
   };
-  currentSdk?: MidasSdk;
+  currentSdk?: IonicSdk;
   disconnect: () => void;
-  getSdk: (chainId: number) => MidasSdk | undefined;
+  getSdk: (chainId: number) => IonicSdk | undefined;
   getSecurity: (chainId: number) => Security | undefined;
   isConnected: boolean;
   isGlobalLoading: boolean;
   isSidebarCollapsed: boolean | undefined;
-  sdks: MidasSdk[];
+  sdks: IonicSdk[];
   securities: Security[];
   setAddress: Dispatch<string>;
   setGlobalLoading: Dispatch<boolean>;
@@ -34,13 +34,13 @@ export interface MultiMidasContextData {
   signer?: FetchSignerResult<Signer>;
 }
 
-export const MultiMidasContext = createContext<MultiMidasContextData | undefined>(undefined);
+export const MultiIonicContext = createContext<MultiIonicContextData | undefined>(undefined);
 
-interface MultiMidasProviderProps {
+interface MultiIonicProviderProps {
   children: ReactNode;
 }
 
-export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { children: null }) => {
+export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { children: null }) => {
   const enabledChains = useEnabledChains();
   const { chain } = useNetwork();
   // const { chain, chains } = useNetwork();
@@ -60,13 +60,13 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>();
 
   const [sdks, securities, chainIds] = useMemo(() => {
-    const _sdks: MidasSdk[] = [];
+    const _sdks: IonicSdk[] = [];
     const _securities: Security[] = [];
     const _chainIds: SupportedChains[] = [];
     enabledChains.map((chainId) => {
       const config = chainIdToConfig[chainId];
       _sdks.push(
-        new MidasSdk(
+        new IonicSdk(
           new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
           config
         )
@@ -131,7 +131,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [chain]);
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     if (oldData && JSON.parse(oldData).isSidebarCollapsed) {
       setIsSidebarCollapsed(true);
     } else {
@@ -141,13 +141,13 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
 
   useEffect(() => {
     if (isSidebarCollapsed !== undefined) {
-      const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+      const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
       let oldObj;
       if (oldData) {
         oldObj = JSON.parse(oldData);
       }
       const data = { ...oldObj, isSidebarCollapsed };
-      localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+      localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
   }, [isSidebarCollapsed]);
 
@@ -189,15 +189,15 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     setIsSidebarCollapsed,
   ]);
 
-  return <MultiMidasContext.Provider value={value}>{children}</MultiMidasContext.Provider>;
+  return <MultiIonicContext.Provider value={value}>{children}</MultiIonicContext.Provider>;
 };
 
 // Hook
-export function useMultiMidas() {
-  const context = useContext(MultiMidasContext);
+export function useMultiIonic() {
+  const context = useContext(MultiIonicContext);
 
   if (context === undefined) {
-    throw new Error(`useMultiMidas must be used within a MultiMidasProvider`);
+    throw new Error(`useMultiIonic must be used within a MultiIonicProvider`);
   }
 
   return context;

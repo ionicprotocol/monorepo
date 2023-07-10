@@ -7,7 +7,7 @@ import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExten
 import { IERC20MetadataUpgradeable as IERC20 } from "../../typechain/IERC20MetadataUpgradeable";
 import { IERC20Mintable } from "../../typechain/IERC20Mintable";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
-import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasFlywheel as IonicFlywheel } from "../../typechain/MidasFlywheel";
 import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
@@ -81,11 +81,11 @@ export default task("deploy-market-with-rewards").setAction(
       await tx.wait();
       console.log(`minted ${mintingAmount} tokens to the deployer ${deployer}`);
 
-      const midasPoolAddress = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
-      const midasPool = (await ethers.getContractAt("Comptroller", midasPoolAddress, deployer)) as Comptroller;
-      const midasPoolAsExt = (await ethers.getContractAt(
+      const ionicPoolAddress = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
+      const ionicPool = (await ethers.getContractAt("Comptroller", ionicPoolAddress, deployer)) as Comptroller;
+      const ionicPoolAsExt = (await ethers.getContractAt(
         "ComptrollerFirstExtension",
-        midasPoolAddress,
+        ionicPoolAddress,
         deployer
       )) as ComptrollerFirstExtension;
       const ffd = await ethers.getContract("FuseFeeDistributor");
@@ -105,7 +105,7 @@ export default task("deploy-market-with-rewards").setAction(
         ["address", "address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
         [
           bombToken.address,
-          midasPool.address,
+          ionicPool.address,
           ffd.address,
           jrm.address,
           "M Testing BOMB",
@@ -116,12 +116,12 @@ export default task("deploy-market-with-rewards").setAction(
           0,
         ]
       );
-      tx = await midasPool._deployMarket(false, constructorData, ethers.utils.parseEther("0.9"));
+      tx = await ionicPool._deployMarket(false, constructorData, ethers.utils.parseEther("0.9"));
       console.log(`mining tx ${tx.hash}`);
       await tx.wait();
       console.log(`deployed a testing BOMB market`);
 
-      const allMarkets = await midasPoolAsExt.callStatic.getAllMarkets();
+      const allMarkets = await ionicPoolAsExt.callStatic.getAllMarkets();
       const newMarketAddress = allMarkets[allMarkets.length - 1];
 
       const testingBombToken = (await ethers.getContractAt("IERC20", testingBombErc20.address, deployer)) as IERC20;
@@ -170,7 +170,7 @@ export default task("deploy-market-with-rewards").setAction(
           "MidasFlywheel",
           flywheelDeployment.address,
           deployer
-        )) as MidasFlywheel;
+        )) as IonicFlywheel;
         tx = await flywheel.setFlywheelRewards(rewardsDeployment.address);
         await tx.wait();
         console.log(`configured the flywheel rewards`);
@@ -183,7 +183,7 @@ export default task("deploy-market-with-rewards").setAction(
         await tx.wait();
         console.log(`added the testing BOMB market for rewards in the flywheel`);
 
-        tx = await midasPool._addRewardsDistributor(flywheel.address);
+        tx = await ionicPool._addRewardsDistributor(flywheel.address);
         await tx.wait();
         console.log(`added the flywheel to the pool rewards distributors`);
       }
@@ -232,7 +232,7 @@ task("claim-chapel-rewards").setAction(async ({}, { ethers, getNamedAccounts }) 
 
   const flywheels = await vaultAsFirstExt.getAllFlywheels();
   for (const flywheelAddress of flywheels) {
-    const flywheel = (await ethers.getContractAt("MidasFlywheel", flywheelAddress, deployer)) as MidasFlywheel;
+    const flywheel = (await ethers.getContractAt("MidasFlywheel", flywheelAddress, deployer)) as IonicFlywheel;
     tx = await flywheel["accrue(address,address)"](market, deployer);
     await tx.wait();
     console.log(`accrued in the vault fw`);

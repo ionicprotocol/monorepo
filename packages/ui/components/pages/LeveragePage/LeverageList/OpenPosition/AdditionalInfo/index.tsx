@@ -12,7 +12,7 @@ import { PositionDetails } from '@ui/components/pages/LeveragePage/LeverageList/
 import { RemovePositionButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/RemovePositionButton/index';
 import { ReopenPositionButton } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/ReopenPositionButton/index';
 import type { OpenPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { getChainConfig } from '@ui/utils/networkData';
 
 export interface ComptrollerToPool {
@@ -31,7 +31,7 @@ export const AdditionalInfo = ({
   const chainId = Number(position.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
 
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();

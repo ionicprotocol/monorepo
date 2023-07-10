@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 
 import { BalancerPoolConfig, InvalidReason, LiquidityDepthConfig, LiquidityValidity } from "../../../types";
 import { getPoolTVL } from "../utils";
@@ -6,7 +6,7 @@ import { getPoolTVL } from "../utils";
 import { BalancerFetcher } from "./fetcher";
 
 export async function verifyBalancerLiquidityDepth(
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   asset: BalancerPoolConfig,
   config: LiquidityDepthConfig
 ): Promise<LiquidityValidity> {

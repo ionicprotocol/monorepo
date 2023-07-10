@@ -12,7 +12,7 @@ import { LiquidityPoolKind, Services } from "../src/types";
   const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
   const provider = new JsonRpcProvider(process.env.WEB3_HTTP_PROVIDER_URL);
   const signer = new Wallet(baseConfig.adminPrivateKey, provider);
-  const midasSdk = setUpSdk(chainId, signer);
+  const ionicSdk = setUpSdk(chainId, signer);
 
   const assets = {
     [LiquidityPoolKind.UniswapV2]: [
@@ -37,5 +37,5 @@ import { LiquidityPoolKind, Services } from "../src/types";
     ],
     [LiquidityPoolKind.Balancer]: [],
   };
-  runVerifier(midasSdk, Services.LiquidityDepthVerifier, assets);
+  runVerifier(ionicSdk, Services.LiquidityDepthVerifier, assets);
 })();

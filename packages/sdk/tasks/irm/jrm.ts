@@ -8,8 +8,8 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
   .setAction(async ({ irm: _irm, args: _args, postfix: _postfix }, { deployments, ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
 
     const [baseRatePerYear, multiplierPerYear, jumpMultiplierPerYear, kink] = _args
       .split(",")
@@ -69,8 +69,8 @@ task("irm:edit:adjustable-jrm-params", "Edit adjustable JRM parameters")
   .setAction(async ({ irmAddress: _irm, args: _args }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
     const irm = await ethers.getContractAt("AdjustableJumpRateModel", _irm, deployer);
 
     let promises: Array<Promise<any>>;

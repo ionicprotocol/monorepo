@@ -8,7 +8,7 @@ import { createClient, WagmiConfig } from 'wagmi';
 import Layout from '@ui/components/shared/Layout';
 import RainbowKit from '@ui/components/shared/RainbowKitProvider';
 import { config } from '@ui/config/index';
-import { MultiMidasProvider } from '@ui/context/MultiMidasContext';
+import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
 import { theme } from '@ui/theme/index';
 import { connectors, provider } from '@ui/utils/connectors';
 
@@ -26,11 +26,11 @@ function MidasDapp({ Component, pageProps }: AppProps) {
       <WagmiConfig client={client}>
         <RainbowKit>
           <QueryClientProvider client={queryClient}>
-            <MultiMidasProvider>
+            <MultiIonicProvider>
               <Layout>
                 <Component {...pageProps} />
               </Layout>
-            </MultiMidasProvider>
+            </MultiIonicProvider>
             {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
           </QueryClientProvider>
         </RainbowKit>

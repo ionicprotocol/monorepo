@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { SupportedChains } from "@ionicprotocol/types";
 import { Wallet } from "ethers";
 
@@ -9,7 +9,7 @@ import { logger, setUpSdk } from "../src/logger";
 import { BatchVerifier } from "../src/services/verifier";
 import { OracleVerifierAsset, Services } from "../src/types";
 
-export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverride?: OracleVerifierAsset[]) {
+export async function runVerifier(sdk: IonicSdk, service: Services, assetsOverride?: OracleVerifierAsset[]) {
   logger.info(`RUNNING SERVICE: ${service}`);
   const assetsToVerify = assetsOverride ? assetsOverride : assets[service];
   const verifier = new BatchVerifier(sdk, assetsToVerify);
@@ -20,7 +20,7 @@ export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverri
   const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
   const provider = new JsonRpcProvider(process.env.WEB3_HTTP_PROVIDER_URL);
   const signer = new Wallet(baseConfig.adminPrivateKey, provider);
-  const midasSdk = setUpSdk(chainId, signer);
+  const ionicSdk = setUpSdk(chainId, signer);
 
-  runVerifier(midasSdk, baseConfig.service);
+  runVerifier(ionicSdk, baseConfig.service);
 })();

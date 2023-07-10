@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 
 import { InvalidReason, LiquidityDepthConfig, LiquidityValidity, UniswapV3AssetConfig } from "../../../types";
 import { getPoolTVL } from "../utils";
@@ -6,7 +6,7 @@ import { getPoolTVL } from "../utils";
 import { V3Fetcher } from "./fetcher";
 
 export async function verifyUniswapV3LiquidityDepth(
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   asset: UniswapV3AssetConfig,
   config: LiquidityDepthConfig
 ): Promise<LiquidityValidity> {

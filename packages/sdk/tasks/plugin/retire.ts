@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 
 import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { MidasERC4626 } from "../../typechain/MidasERC4626";
+import { MidasERC4626 as IonicERC4626 } from "../../typechain/MidasERC4626";
 
 export default task("plugin:retire", "Retires a plugin from its market")
   .addParam("market", "The address of the market whose plugin to retire", undefined, types.string)
@@ -31,7 +31,7 @@ export default task("plugin:retire", "Retires a plugin from its market")
     const pluginMarket = (await ethers.getContractAt("CErc20PluginDelegate", market)) as CErc20PluginDelegate;
     const pluginAddress = await pluginMarket.callStatic.plugin();
 
-    const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
+    const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as IonicERC4626;
     tx = await plugin.emergencyWithdrawAndPause();
     console.log(`pausing the plugin with tx ${tx.hash}`);
     await tx.wait();

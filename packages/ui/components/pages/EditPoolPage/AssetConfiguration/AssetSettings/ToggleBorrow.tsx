@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -26,7 +26,7 @@ export const ToggleBorrow = ({
 }: ToggleBorrowProps) => {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -17,7 +17,7 @@ const TransferOwnershipModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isTransferring, setIsTransferring] = useState<boolean>(false);

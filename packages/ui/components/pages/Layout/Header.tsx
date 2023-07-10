@@ -4,13 +4,13 @@ import React from 'react';
 import { FiMenu } from 'react-icons/fi';
 
 import { WalletButtons } from '@ui/components/shared/WalletButtons';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
 export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { cPage } = useColors();
-  const { isSidebarCollapsed, setIsSidebarCollapsed } = useMultiMidas();
+  const { isSidebarCollapsed, setIsSidebarCollapsed } = useMultiIonic();
 
   return isSidebarCollapsed !== undefined ? (
     <HStack

@@ -65,7 +65,7 @@ export class FeedVerifier extends AbstractOracleVerifier {
   public async verify(): Promise<PriceFeedValidity> {
     const { sdk, asset, underlyingOracle } = this;
     const feedArgs: VerifyFeedParams = {
-      midasSdk: sdk,
+      ionicSdk: sdk,
       underlyingOracle: underlyingOracle,
       asset,
     };

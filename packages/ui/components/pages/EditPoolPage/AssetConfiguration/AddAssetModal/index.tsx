@@ -21,7 +21,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AddAssetSettings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetModal/AddAssetSettings';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -42,7 +42,7 @@ const AddAsset = ({
   poolName,
   poolChainId,
 }: AddAssetProps) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
 
   const supportedAssets = useMemo(() => {
     if (currentSdk) {

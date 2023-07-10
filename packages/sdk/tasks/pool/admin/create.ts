@@ -17,8 +17,8 @@ task("pool:create", "Create pool if does not exist")
   .setAction(async (taskArgs, hre) => {
     const signer = await hre.ethers.getNamedSigner(taskArgs.creator);
 
-    const midasSdkModule = await import("../../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
     const whitelist = taskArgs.whitelist ? taskArgs.whitelist.split(",") : [];
     if (taskArgs.enforceWhitelist === "true" && whitelist.length === 0) {
       throw "If enforcing whitelist, a whitelist array of addresses must be provided";

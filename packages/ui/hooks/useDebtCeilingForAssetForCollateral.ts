@@ -2,7 +2,7 @@ import type { NativePricedFuseAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export interface DebtCeilingPerCollateralType {
@@ -23,7 +23,7 @@ export const useDebtCeilingForAssetForCollateral = ({
   poolChainId: number;
 }) => {
   const sdk = useSdk(poolChainId);
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return useQuery(
     [

@@ -1,10 +1,7 @@
-import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
-import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
+import { MidasFlywheelCore as IonicFlywheelCore } from "../../typechain/MidasFlywheelCore";
 
 task("loopless-booster", "deploy and a loopless booster for a flywheel")
   .addParam("flywheelAddress", "Address of the flywheel to set the booster to", undefined, types.string)
@@ -16,7 +13,7 @@ task("loopless-booster", "deploy and a loopless booster for a flywheel")
         "MidasFlywheelCore",
         flywheelAddress,
         deployer
-      )) as MidasFlywheelCore;
+      )) as IonicFlywheelCore;
       const currentBoosterAddress = await flywheel.callStatic.flywheelBooster();
       let oldBooster;
       if (chainid == "56") {

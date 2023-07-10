@@ -28,7 +28,7 @@ import { Center, Column } from '@ui/components/shared/Flex';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import { config } from '@ui/config/index';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useCTokensUnderlying } from '@ui/hooks/rewards/useCTokensUnderlying';
@@ -159,7 +159,7 @@ const FlywheelRow = ({
   onClick: (fw: Flywheel) => void;
   pool: PoolData;
 }) => {
-  const { address, currentSdk } = useMultiMidas();
+  const { address, currentSdk } = useMultiIonic();
 
   // TODO check authority here as well.
   const isAdmin = address === flywheel.owner;

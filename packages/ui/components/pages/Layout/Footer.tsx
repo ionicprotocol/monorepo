@@ -11,12 +11,12 @@ import {
   MIDAS_TELEGRAM_URL,
   MIDAS_TWITTER_URL,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
 const Footer = () => {
   const { cPage } = useColors();
-  const { isSidebarCollapsed } = useMultiMidas();
+  const { isSidebarCollapsed } = useMultiIonic();
 
   return (
     <Column crossAxisAlignment="center" flexShrink={0} gap={2} mainAxisAlignment="center">

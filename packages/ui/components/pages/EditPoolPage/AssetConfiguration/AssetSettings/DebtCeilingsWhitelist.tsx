@@ -27,7 +27,7 @@ import {
   DEBT_CEILING_WHITELIST_TOOLTIP,
   REMOVE,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -47,7 +47,7 @@ export const DebtCeilingsWhitelist = ({
   poolChainId,
 }: DebtCeilingsWhitelistProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const infoToast = useInfoToast();

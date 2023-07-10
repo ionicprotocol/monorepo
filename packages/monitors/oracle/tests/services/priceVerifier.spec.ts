@@ -1,5 +1,5 @@
 import { chainIdToConfig } from "@ionicprotocol/chains";
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { assetSymbols, SupportedChains } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 import { restore } from "sinon";
@@ -13,7 +13,7 @@ import { getSigner } from "../helpers";
 
 describe("Price verifier", () => {
   let priceVerifier: PriceVerifier;
-  let sdk: MidasSdk;
+  let sdk: IonicSdk;
   let env: Record<string, string | undefined>;
 
   const chainConfig = chainIdToConfig[SupportedChains.bsc];
@@ -26,7 +26,7 @@ describe("Price verifier", () => {
     process.env = { ...process.env, SERVICE_TO_RUN: "price-verifier" };
 
     const signer = getSigner(SupportedChains.bsc);
-    sdk = new MidasSdk(signer, chainIdToConfig[SupportedChains.bsc]);
+    sdk = new IonicSdk(signer, chainIdToConfig[SupportedChains.bsc]);
     priceVerifier = new PriceVerifier(sdk, assets[0], config);
   });
   afterEach(function () {

@@ -11,8 +11,8 @@ export default task("pool:oracle:change", "Upgrades a market's implementation")
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    const midasSdkModule = await import("../../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
     const pool = sdk.createComptroller(comptrollerAddress, signer);
     console.log(`Setting oracle to ${newOracle}, previous was ${await pool.callStatic.oracle()}`);
