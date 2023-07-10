@@ -1,10 +1,13 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
+  Button,
   Center,
+  Checkbox,
   Divider,
   Flex,
   Hide,
   HStack,
+  Icon,
   Select,
   Skeleton,
   Stack,
@@ -16,6 +19,7 @@ import {
   Th,
   Thead,
   Tr,
+  VStack,
 } from '@chakra-ui/react';
 import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
@@ -38,6 +42,7 @@ import {
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { useAllPoolsData } from './useAllPoolsData';
 import { useLoadingStatusPerChain } from './useLoadingStatusPerChain';
@@ -46,7 +51,6 @@ import { Assets } from '@ui/components/pages/PoolsPage/PoolsList/Assets';
 import { BorrowBalance } from '@ui/components/pages/PoolsPage/PoolsList/BorrowBalance';
 import { ChainFilterButtons } from '@ui/components/pages/PoolsPage/PoolsList/ChainFilterButtons';
 import { ChainFilterDropdown } from '@ui/components/pages/PoolsPage/PoolsList/ChainFilterDropdown';
-import { ExpanderArrow } from '@ui/components/pages/PoolsPage/PoolsList/ExpanderArrow';
 import { PoolName } from '@ui/components/pages/PoolsPage/PoolsList/PoolName';
 import { SupplyBalance } from '@ui/components/pages/PoolsPage/PoolsList/SupplyBalance';
 import { TotalBorrow } from '@ui/components/pages/PoolsPage/PoolsList/TotalBorrow';
@@ -54,13 +58,13 @@ import { TotalSupply } from '@ui/components/pages/PoolsPage/PoolsList/TotalSuppl
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
 import { CardBox } from '@ui/components/shared/IonicBox';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
   ASSETS,
   BORROW_BALANCE,
-  EXPANDER,
   IONIC_LOCALSTORAGE_KEYS,
   POOL_NAME,
   POOLS_COLUMNS,
@@ -250,20 +254,6 @@ const PoolsList = () => {
         id: TOTAL_BORROW,
         sortingFn: poolSort,
       },
-      {
-        cell: ({ row }) => {
-          return (
-            <ExpanderArrow
-              canExpand={row.getCanExpand()}
-              getToggleExpandedHandler={row.getToggleExpandedHandler()}
-              isExpanded={row.getIsExpanded()}
-            />
-          );
-        },
-        enableHiding: false,
-        header: () => null,
-        id: EXPANDER,
-      },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -290,7 +280,7 @@ const PoolsList = () => {
     },
   });
 
-  const { cCard, cIPage } = useColors();
+  const { cCard, cIPage, cIRow } = useColors();
 
   const onFilter = (filter: SupportedChains | string) => {
     let _globalFilter: (SupportedChains | string)[] = [];
@@ -419,30 +409,16 @@ const PoolsList = () => {
   return (
     <CardBox mt={{ base: '24px' }} overflowX="auto" width="100%">
       <Flex direction="column" gap="24px">
-        <Text size="xl">Pools</Text>
         <Flex
           alignItems="center"
-          flexWrap="wrap-reverse"
+          flexWrap="wrap"
           gap={4}
           justifyContent={['center', 'center', 'space-between']}
           width="100%"
         >
-          <ChainFilterButtons
-            globalFilter={globalFilter}
-            isLoading={isLoading}
-            loadingStatusPerChain={loadingStatusPerChain}
-            onFilter={onFilter}
-            props={{ display: { base: 'none', lg: 'inline-flex' } }}
-          />
-          <ChainFilterDropdown
-            globalFilter={globalFilter}
-            isLoading={isLoading}
-            loadingStatusPerChain={loadingStatusPerChain}
-            onFilter={onFilter}
-            props={{ display: { base: 'inline-flex', lg: 'none' } }}
-          />
+          <Text size="xl">Pools</Text>
           <Flex
-            alignItems="flex-end"
+            alignItems="center"
             className="searchAsset"
             direction="row"
             gap={2}
@@ -477,6 +453,102 @@ const PoolsList = () => {
               </Text>
               <ChevronDownIcon />
             </HStack>
+          </Flex>
+        </Flex>
+        <Flex
+          alignItems="center"
+          flexWrap="wrap"
+          gap={4}
+          justifyContent={['center', 'center', 'space-between']}
+          width="100%"
+        >
+          <ChainFilterButtons
+            globalFilter={globalFilter}
+            isLoading={isLoading}
+            loadingStatusPerChain={loadingStatusPerChain}
+            onFilter={onFilter}
+            props={{ display: { base: 'none', lg: 'inline-flex' } }}
+          />
+          <ChainFilterDropdown
+            globalFilter={globalFilter}
+            isLoading={isLoading}
+            loadingStatusPerChain={loadingStatusPerChain}
+            onFilter={onFilter}
+            props={{ display: { base: 'inline-flex', lg: 'none' } }}
+          />
+          <Flex
+            alignItems="center"
+            bg={cIRow.bgColor}
+            borderRadius="12px"
+            direction="row"
+            gap={4}
+            justifyContent="center"
+            px="16px"
+            py="8px"
+          >
+            <Flex
+              alignItems="center"
+              className="searchAsset"
+              direction="row"
+              gap={2}
+              justifyContent="center"
+            >
+              <Text>1 Supply</Text>
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start">
+                    <Text>Supply Assets</Text>
+                    <Checkbox
+                    // isChecked={false}
+                    // onChange={}
+                    >
+                      ETH
+                    </Checkbox>
+                  </VStack>
+                }
+                contentProps={{ width: '200px' }}
+              >
+                <Button p={0} variant="ghost">
+                  <Text display={{ base: 'none', md: 'flex' }} minW="100px" px={2} size="md">
+                    --
+                  </Text>
+                  <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
+                </Button>
+              </PopoverTooltip>
+            </Flex>
+            <Center height={5}>
+              <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
+            </Center>
+            <Flex
+              alignItems="center"
+              className="searchAsset"
+              direction="row"
+              gap={2}
+              justifyContent="center"
+            >
+              <Text>1 Borrow</Text>
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start">
+                    <Text>Borrow Assets</Text>
+                    <Checkbox
+                    // isChecked={false}
+                    // onChange={}
+                    >
+                      ETH
+                    </Checkbox>
+                  </VStack>
+                }
+                contentProps={{ width: '200px' }}
+              >
+                <Button p={0} variant="ghost">
+                  <Text display={{ base: 'none', md: 'flex' }} minW="100px" px={2} size="md">
+                    --
+                  </Text>
+                  <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
+                </Button>
+              </PopoverTooltip>
+            </Flex>
           </Flex>
         </Flex>
         {!isLoading && !isLoadingPerChain ? (

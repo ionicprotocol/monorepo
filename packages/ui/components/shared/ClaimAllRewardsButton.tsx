@@ -42,13 +42,7 @@ const ClaimAllRewardsButton: React.FC = () => {
         />
       )}
       {currentChain && allRewards && allRewards.length > 0 && (
-        <Button
-          justifySelf="center"
-          onClick={openModal}
-          px={2}
-          variant="_ghost"
-          width="fit-content"
-        >
+        <Button justifySelf="center" onClick={openModal} px={2} variant="ghost" width="fit-content">
           <HStack spacing={1}>
             {!isMobile && (
               <GradientText color={cIPage.bgColor} isEnabled={true} mx={1}>

@@ -28,15 +28,17 @@ const outline = defineStyle({
   fontWeight: 'semibold', // change the font weight
 });
 
-const ghost = defineStyle((props) => {
-  return {
-    _hover: {
-      bg: mode('iBlack', 'iBlack')(props),
-      color: mode('iWhite', 'iWhite')(props),
-      textDecoration: 'unset',
-    },
-    height: 6,
-  };
+const ghost = defineStyle({
+  _focus: {
+    bg: 'none',
+    color: 'none',
+  },
+  _hover: {
+    bg: 'none',
+    color: 'none',
+    textDecoration: 'unset',
+  },
+  height: 6,
 });
 
 const _filter = defineStyle((props) => {

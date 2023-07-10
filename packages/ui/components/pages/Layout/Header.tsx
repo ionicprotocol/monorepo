@@ -198,7 +198,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
         <Center height={6}>
           <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
         </Center>
-        <Button ml={2} onClick={toggleColorMode} p={0} variant="_ghost">
+        <Button ml={2} onClick={toggleColorMode} p={0} variant="ghost">
           {colorMode === 'light' ? (
             <Icon as={FiMoon} color={'iWhite'} height={6} width={6} />
           ) : (

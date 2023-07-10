@@ -8,10 +8,10 @@ export const PopoverStyleConfig: ComponentStyleConfig = {
       borderWidth: 0,
     },
     content: {
-      [$arrowBg.variable]: mode('#F6F4F1', '#282828')(props),
-      backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-      borderColor: mode('ecru', 'ecru')(props),
-      borderRadius: 'sm',
+      [$arrowBg.variable]: mode('iBlack', 'iBlack')(props),
+      backgroundColor: mode('iBlack', 'iBlack')(props),
+      borderColor: mode('iSeparator', 'iSeparator')(props),
+      borderRadius: '10px',
       borderWidth: 1,
     },
     popper: {

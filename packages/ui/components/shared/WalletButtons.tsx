@@ -37,7 +37,7 @@ export const WalletButtons = memo(() => {
               {(() => {
                 if (!connected) {
                   return (
-                    <Button fontSize="14px" onClick={openConnectModal} variant="_ghost">
+                    <Button fontSize="14px" onClick={openConnectModal} variant="ghost">
                       Connect Wallet
                     </Button>
                   );
@@ -45,7 +45,7 @@ export const WalletButtons = memo(() => {
 
                 if (chain.unsupported) {
                   return (
-                    <Button onClick={openChainModal} variant="_ghost">
+                    <Button onClick={openChainModal} variant="ghost">
                       Change Network
                     </Button>
                   );
@@ -53,7 +53,7 @@ export const WalletButtons = memo(() => {
 
                 return (
                   <Flex alignItems="center" gap={4}>
-                    <Button onClick={openChainModal} px={2} variant="_ghost">
+                    <Button onClick={openChainModal} px={2} variant="ghost">
                       {chain.iconUrl && (
                         <Img
                           alt={chain.name ?? 'Chain icon'}
@@ -63,14 +63,7 @@ export const WalletButtons = memo(() => {
                           width={6}
                         />
                       )}
-                      <Text
-                        color="iWhite"
-                        display={{ base: 'none', md: 'flex' }}
-                        fontSize="14px"
-                        fontWeight={600}
-                        lineHeight="20px"
-                        ml={2}
-                      >
+                      <Text display={{ base: 'none', md: 'flex' }} ml={2} size="md">
                         {chain.name}
                       </Text>
                       <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
@@ -78,32 +71,20 @@ export const WalletButtons = memo(() => {
                     <Center height={6}>
                       <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
                     </Center>
-                    <Button onClick={openAccountModal} px={2} variant="_ghost">
+                    <Button onClick={openAccountModal} px={2} variant="ghost">
                       {account.hasPendingTransactions ? (
                         <HStack>
                           <Center height="100%">
                             <Spinner size="md" speed="1s" thickness="4px" />
                           </Center>
-                          <Text
-                            color="iWhite"
-                            display={{ base: 'none', md: 'flex' }}
-                            fontSize="14px"
-                            fontWeight={600}
-                            lineHeight="20px"
-                          >
+                          <Text display={{ base: 'none', md: 'flex' }} size="md">
                             Pending
                           </Text>
                         </HStack>
                       ) : (
                         <HStack>
                           {<Jazzicon diameter={23} seed={jsNumberForAddress(account.address)} />}
-                          <Text
-                            color="iWhite"
-                            display={{ base: 'none', md: 'flex' }}
-                            fontSize="14px"
-                            fontWeight={600}
-                            lineHeight="20px"
-                          >
+                          <Text display={{ base: 'none', md: 'flex' }} size="md">
                             {shortAddress(account.address)}
                           </Text>
                         </HStack>

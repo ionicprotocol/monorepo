@@ -108,7 +108,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             <Heading size="md">Flywheels</Heading>
 
             <Flex flexWrap="wrap" gap={2} ml="auto" mt={{ base: 2, md: 0 }}>
-              <Button isDisabled={!isEditableAdmin} ml="auto" onClick={openAdd} variant="_ghost">
+              <Button isDisabled={!isEditableAdmin} ml="auto" onClick={openAdd} variant="ghost">
                 Add existing Flywheel
               </Button>
               {config.isFWDeployEnabled ? (
