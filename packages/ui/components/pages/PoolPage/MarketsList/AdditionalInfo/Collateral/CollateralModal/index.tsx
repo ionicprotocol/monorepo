@@ -11,7 +11,7 @@ import { Column, Row } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -39,7 +39,7 @@ export const CollateralModal = ({
   onClose,
   poolChainId,
 }: CollateralModalProps) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
 
   const errorToast = useErrorToast();

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
@@ -12,7 +12,7 @@ export function useMaxBorrowAmount(
   comptrollerAddress: string,
   chainId: number
 ) {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
   const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(asset.cToken, chainId);
 

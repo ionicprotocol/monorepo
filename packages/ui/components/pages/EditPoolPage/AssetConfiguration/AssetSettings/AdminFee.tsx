@@ -22,7 +22,7 @@ import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { ADMIN_FEE, ADMIN_FEE_TOOLTIP } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -36,7 +36,7 @@ interface AdminFeeProps {
 
 export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: AdminFeeProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiIonic();
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();

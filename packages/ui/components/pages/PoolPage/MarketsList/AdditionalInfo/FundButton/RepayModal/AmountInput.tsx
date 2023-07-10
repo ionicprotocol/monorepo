@@ -7,7 +7,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useErrorToast } from '@ui/hooks/useToast';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -27,7 +27,7 @@ export const AmountInput = ({
   poolChainId: number;
   setAmount: (amount: BigNumber) => void;
 }) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const errorToast = useErrorToast();

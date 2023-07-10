@@ -8,7 +8,7 @@ import { createClient, WagmiConfig } from 'wagmi';
 import Layout from '@ui/components/shared/Layout';
 import RainbowKit from '@ui/components/shared/RainbowKitProvider';
 import { config } from '@ui/config/index';
-import { MultiMidasProvider } from '@ui/context/MultiMidasContext';
+import { MultiMidasProvider } from '@ui/context/MultiIonicContext';
 import { theme } from '@ui/theme/index';
 import { connectors, provider } from '@ui/utils/connectors';
 

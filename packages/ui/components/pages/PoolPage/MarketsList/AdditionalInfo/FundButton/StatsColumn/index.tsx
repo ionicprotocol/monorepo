@@ -11,7 +11,7 @@ import { Supplied } from '@ui/components/pages/PoolPage/MarketsList/AdditionalIn
 import { SupplyAPY } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn/SupplyAPY';
 import { Column } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
@@ -48,7 +48,7 @@ export const StatsColumn = ({
 
   const updatedAsset = updatedAssets ? updatedAssets[index] : undefined;
 
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiIonic();
   if (!currentSdk || !currentChain) throw new Error("SDK doesn't exist!");
 
   const {

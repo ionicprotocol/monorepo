@@ -5,7 +5,7 @@ import React from 'react';
 import { ClaimPoolRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimPoolRewardsModal/index';
 import { GradientButton } from '@ui/components/shared//GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 
@@ -22,7 +22,7 @@ const ClaimPoolRewardsButton = ({
     onClose: closeClaimModal,
   } = useDisclosure();
   const { cPage } = useColors();
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
 
   const {
     data: claimableRewards,

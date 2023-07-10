@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import ConfirmDeleteModal from '@ui/components/shared/ConfirmDeleteModal';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -24,7 +24,7 @@ const RemoveAssetButton = ({
   poolChainId: number;
   setSelectedAsset: (value: NativePricedFuseAsset) => void;
 }) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const isUpgradeable = useIsUpgradeable(comptrollerAddress, poolChainId);

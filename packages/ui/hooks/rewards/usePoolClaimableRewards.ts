@@ -1,11 +1,11 @@
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const usePoolClaimableRewards = (poolAddress: string, poolChainId?: number) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(

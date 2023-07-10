@@ -4,7 +4,7 @@ import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
@@ -28,7 +28,7 @@ export const useBorrowCap = ({
   market,
 }: UseBorrowCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;

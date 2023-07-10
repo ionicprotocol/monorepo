@@ -3,10 +3,10 @@ import Head from 'next/head';
 import { useEffect } from 'react';
 
 import FusePoolEditPage from '@ui/components/pages/EditPoolPage';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 const FusePoolEditPageNext: NextPage = () => {
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading } = useMultiIonic();
   useEffect(() => {
     setGlobalLoading(false);
   }, [setGlobalLoading]);

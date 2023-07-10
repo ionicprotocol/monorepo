@@ -2,7 +2,7 @@ import type { MidasSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export const fetchTotalSupplyAndBorrow = async (midasSdk: MidasSdk) => {
@@ -26,7 +26,7 @@ type CrossChainTVL = Map<
 >;
 
 export const useTotalSupplyAndBorrow = () => {
-  const { sdks } = useMultiMidas();
+  const { sdks } = useMultiIonic();
   const { data: prices, isLoading, error } = useAllUsdPrices();
 
   return useQuery<CrossChainTVL | null | undefined>(

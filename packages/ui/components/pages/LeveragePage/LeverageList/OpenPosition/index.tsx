@@ -56,8 +56,8 @@ import {
   DEBT_VALUE,
   DEBT_VALUE_TOOLTIP,
   HIDDEN,
+  IONIC_LOCALSTORAGE_KEYS,
   MARKETS_COUNT_PER_PAGE,
-  MIDAS_LOCALSTORAGE_KEYS,
   NET_APY,
   NET_APY_TOOLTIP,
   POSITION_CREATION_PER_PAGE,
@@ -385,14 +385,14 @@ export const OpenPositionComp = ({
   const { cCard } = useColors();
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     let oldObj;
     if (oldData) {
       oldObj = JSON.parse(oldData);
     }
 
     const data = { ...oldObj, openPositionSorting: sorting };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting]);
 
   useEffect(() => {

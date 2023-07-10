@@ -63,10 +63,10 @@ import {
   BORROWABLE,
   COLLATERAL,
   HIDDEN,
+  IONIC_LOCALSTORAGE_KEYS,
   LIQUIDITY,
   MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
-  MIDAS_LOCALSTORAGE_KEYS,
   PAUSED,
   PROTECTED,
   REWARDS,
@@ -76,7 +76,7 @@ import {
   TOTAL_BORROW,
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useAssets } from '@ui/hooks/useAssets';
@@ -121,7 +121,7 @@ export const MarketsList = ({
     chainId: poolChainId,
   } = poolData;
   const sdk = useSdk(poolChainId);
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const [isHidden, setIsHidden] = useState<boolean>(initHidden);
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
@@ -459,19 +459,19 @@ export const MarketsList = ({
       setGlobalFilter(globalFilter.filter((f) => f !== HIDDEN));
     }
 
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     let oldObj;
     if (oldData) {
       oldObj = JSON.parse(oldData);
     }
 
     const data = { ...oldObj, isHidden };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHidden]);
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     let oldObj;
     if (oldData) {
       oldObj = JSON.parse(oldData);
@@ -483,7 +483,7 @@ export const MarketsList = ({
       }
     });
     const data = { ...oldObj, marketColumnVisibility: arr, marketSorting: sorting };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 
   return (

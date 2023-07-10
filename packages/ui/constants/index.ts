@@ -145,7 +145,7 @@ export const ASSET_BORROWED_TOOLTIP =
 export const SUPPLY_CAP_WHITELIST_TOOLTIP = 'Add or remove address with no supply cap';
 export const BORROW_CAP_WHITELIST_TOOLTIP = 'Add or remove address with no borrow cap';
 export const DEBT_CEILING_WHITELIST_TOOLTIP = 'Add or remove address with no debt ceilings';
-export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
+export const IONIC_LOCALSTORAGE_KEYS = 'ionic_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
 export const SUPPLY_STEPS = (symbol: string) =>
@@ -235,10 +235,10 @@ export const SCORE_RANGE_MAX = 10;
 export const MARKET_LTV = 'Market / LTV';
 export const SUPPLY_APY = 'Supply APY';
 export const BORROW_APY = 'Borrow APY';
-export const SUPPLY_BALANCE = 'Supply Balance';
-export const BORROW_BALANCE = 'Borrow Balance';
-export const TOTAL_SUPPLY = 'Total Supply';
-export const TOTAL_BORROW = 'Total Borrow';
+export const SUPPLY_BALANCE = 'YOUR SUPPLY';
+export const BORROW_BALANCE = 'YOUR BORROW';
+export const TOTAL_SUPPLY = 'TOTAL SUPPLY';
+export const TOTAL_BORROW = 'TOTAL BORROW';
 export const LIQUIDITY = 'Liquidity';
 export const MARKET_COLUMNS = [
   MARKET_LTV,
@@ -274,20 +274,18 @@ export const BORROWABLE_ASSET = 'Borrowable';
 export const NET_APY = 'Net APY';
 export const POSITION_CREATION_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];
 export const CREATED_POSITIONS_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];
-export const POOL_NAME = 'Pool Name';
-export const ASSETS = 'Assets';
+export const POOL_NAME = 'NETWORK / POOL';
+export const ASSETS = 'ASSETS';
 export const CHAIN = 'Chain';
 export const EXPANDER = 'Expander';
 
 export const POOLS_COLUMNS = [
-  CHAIN,
   POOL_NAME,
   ASSETS,
   SUPPLY_BALANCE,
   BORROW_BALANCE,
   TOTAL_SUPPLY,
   TOTAL_BORROW,
-  EXPANDER,
 ];
 export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-requests';
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';

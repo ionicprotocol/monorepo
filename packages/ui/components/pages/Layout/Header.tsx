@@ -19,14 +19,14 @@ import { FiMenu, FiMoon, FiSun } from 'react-icons/fi';
 import { WalletButtons } from '@ui/components/shared/WalletButtons';
 import { config } from '@ui/config/index';
 import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
 export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { cIPage } = useColors();
-  const { setGlobalLoading, address } = useMultiMidas();
+  const { setGlobalLoading, address } = useMultiIonic();
 
   const [isEnabledLeverageMenu, setIsEnabledLeverageMenu] = useState<boolean>(false);
 

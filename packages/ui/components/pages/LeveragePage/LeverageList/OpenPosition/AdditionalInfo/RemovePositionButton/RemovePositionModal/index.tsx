@@ -10,7 +10,7 @@ import { Column } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { REMOVE_CLOSED_POSITION_STEPS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -28,7 +28,7 @@ export const RemovePositionModal = ({
 }) => {
   const { collateral: collateralAsset, chainId, address: positionAddress } = position;
   const { underlyingToken, symbol } = collateralAsset;
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
 
   const errorToast = useErrorToast();

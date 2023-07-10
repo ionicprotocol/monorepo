@@ -19,7 +19,7 @@ import { Column } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { CREATE_NEW_POSITION_STEPS, LEVERAGE_VALUE } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
@@ -53,7 +53,7 @@ export const CreatePositionModal = ({
     underlyingPrice,
     underlyingDecimals,
   } = collateralAsset;
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
 
   const errorToast = useErrorToast();

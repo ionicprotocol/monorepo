@@ -18,7 +18,7 @@ import { Column } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { REPAY_STEPS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -45,7 +45,7 @@ export const RepayModal = ({
   poolChainId,
   comptrollerAddress,
 }: RepayModalProps) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 

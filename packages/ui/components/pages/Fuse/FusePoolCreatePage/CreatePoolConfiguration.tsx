@@ -28,7 +28,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { config } from '@ui/config/index';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
@@ -50,7 +50,7 @@ export const CreatePoolConfiguration = () => {
   const errorToast = useErrorToast();
   const { openConnectModal } = useConnectModal();
 
-  const { currentSdk, currentChain, address } = useMultiMidas();
+  const { currentSdk, currentChain, address } = useMultiIonic();
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
 

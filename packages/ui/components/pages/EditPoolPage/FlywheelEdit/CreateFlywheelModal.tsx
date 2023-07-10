@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
@@ -49,7 +49,7 @@ const steps = [
 
 // const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
 const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();

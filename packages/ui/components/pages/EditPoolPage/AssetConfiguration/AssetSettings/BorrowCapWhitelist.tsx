@@ -26,7 +26,7 @@ import {
   BORROW_CAP_WHITELIST_TOOLTIP,
   REMOVE,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -43,7 +43,7 @@ export const BorrowCapWhitelist = ({
   poolChainId,
 }: BorrowCapWhitelistProps) => {
   const { cToken: cTokenAddress, underlyingSymbol } = selectedAsset;
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();

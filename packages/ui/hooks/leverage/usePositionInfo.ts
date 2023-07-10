@@ -3,7 +3,7 @@ import type { PositionInfo } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const getPositionInfo = async (position: string, supplyApy: BigNumber, sdk: MidasSdk) => {
@@ -43,7 +43,7 @@ export function usePositionsInfo(
   totalApys?: (BigNumber | null)[],
   chainIds?: number[]
 ) {
-  const { getSdk } = useMultiMidas();
+  const { getSdk } = useMultiIonic();
 
   return useQuery(
     ['usePositionsInfo', positions, totalApys, chainIds],

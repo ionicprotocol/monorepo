@@ -15,19 +15,19 @@ import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import {
+  IONIC_LOCALSTORAGE_KEYS,
   MARKET_COLUMNS,
   MARKET_LTV,
-  MIDAS_LOCALSTORAGE_KEYS,
   SHRINK_ASSETS,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const PoolPage = memo(() => {
-  const { setGlobalLoading, address } = useMultiMidas();
+  const { setGlobalLoading, address } = useMultiIonic();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;
@@ -41,7 +41,7 @@ const PoolPage = memo(() => {
   const [initHidden, setInitHidden] = useState<boolean | undefined>();
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
 
     if (
       oldData &&

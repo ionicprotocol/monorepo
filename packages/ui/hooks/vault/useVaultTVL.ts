@@ -2,7 +2,7 @@ import type { MidasSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export const fetchVaultNumberTVL = async (midasSdk: MidasSdk) => {
@@ -27,7 +27,7 @@ type CrossChainVaultTVL = Map<
 >;
 
 export const useVaultTVL = () => {
-  const { sdks } = useMultiMidas();
+  const { sdks } = useMultiIonic();
   const { data: prices, isLoading, error } = useAllUsdPrices();
 
   return useQuery<CrossChainVaultTVL | null | undefined>(

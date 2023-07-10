@@ -14,7 +14,7 @@ import { Banner } from '@ui/components/shared/Banner';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
@@ -31,7 +31,7 @@ const EditPoolPage = memo(() => {
     onClose: closeAddAssetModal,
   } = useDisclosure();
 
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading } = useMultiIonic();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;

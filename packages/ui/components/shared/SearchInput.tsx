@@ -3,7 +3,7 @@ import type { InputProps } from '@chakra-ui/react';
 import { Input, InputGroup, InputLeftAddon } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 
-import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
+import { IONIC_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useDebounce } from '@ui/hooks/useDebounce';
 
 export const SearchInput = ({
@@ -29,7 +29,7 @@ export const SearchInput = ({
     if (localStorageKey) {
       mounted.current = true;
 
-      const data = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+      const data = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
       if (data && mounted.current) {
         const obj = JSON.parse(data);
         const _searchText = obj[localStorageKey] || '';

@@ -52,8 +52,8 @@ import {
   CHAIN,
   COLLATERAL_ASSET,
   HIDDEN,
+  IONIC_LOCALSTORAGE_KEYS,
   MARKETS_COUNT_PER_PAGE,
-  MIDAS_LOCALSTORAGE_KEYS,
   POSITION_CREATION_PER_PAGE,
   SEARCH,
   SUPPLY_APY,
@@ -280,14 +280,14 @@ export const NewPositionComp = ({
   const { cCard } = useColors();
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     let oldObj;
     if (oldData) {
       oldObj = JSON.parse(oldData);
     }
 
     const data = { ...oldObj, newPositionSorting: sorting };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting]);
 
   useEffect(() => {

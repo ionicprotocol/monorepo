@@ -8,7 +8,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -26,7 +26,7 @@ export const AmountInput = ({
   optionToWrap?: boolean;
   setAmount: (amount: BigNumber) => void;
 }) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
