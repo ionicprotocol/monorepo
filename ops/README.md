@@ -1,6 +1,6 @@
 # Web 2 Infra: AWS Resources
 
-Repository for all AWS resources related to Midas Capital. These are mainly comprised of liquidation bots and TWAP bots,
+Repository for all AWS resources related to Ionic Protocol. These are mainly comprised of liquidation bots and TWAP bots,
 and the configs necessary to deploy them reliably and scalably.
 
 ## Components

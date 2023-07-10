@@ -54,7 +54,7 @@ export const Sidebar = () => {
           top={2}
         >
           <Image
-            alt="Midas Capital"
+            alt="Ionic Protocol"
             minWidth={isSidebarCollapsed ? '220px' : '190px'}
             src={colorMode === 'light' ? '/images/midas-light.svg' : '/images/midas-dark.svg'}
           />

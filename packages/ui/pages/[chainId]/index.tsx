@@ -18,7 +18,7 @@ const FusePage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Midas Capital</title>
+        <title>Ionic Protocol</title>
       </Head>
     </>
   );

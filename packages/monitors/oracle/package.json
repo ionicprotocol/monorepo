@@ -1,7 +1,7 @@
 {
   "name": "@ionicprotocol/oracles-monitor",
   "version": "1.0.0",
-  "description": "Monitors all oracles being used at Midas Capital",
+  "description": "Monitors all oracles being used at Ionic Protocol",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development npx ts-node index.ts",
