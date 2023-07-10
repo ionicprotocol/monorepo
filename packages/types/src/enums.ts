@@ -3,12 +3,9 @@ export enum SupportedChains {
   bsc = 56,
   chapel = 97,
   ganache = 1337,
-  evmos = 9001,
-  moonbeam = 1284,
   neon_devnet = 245022926,
   polygon = 137,
   arbitrum = 42161,
-  fantom = 250,
   lineagoerli = 59140,
 }
 
