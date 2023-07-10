@@ -3,10 +3,7 @@ import {
   bsc,
   chapel,
   ethereum,
-  evmos,
-  fantom,
   ganache,
-  moonbeam,
   neondevnet,
   polygon,
 } from '@ionicprotocol/chains';
@@ -27,12 +24,9 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.bsc]: bsc.deployedPlugins,
   [SupportedChains.polygon]: polygon.deployedPlugins,
   [SupportedChains.ganache]: ganache.deployedPlugins,
-  [SupportedChains.evmos]: evmos.deployedPlugins,
   [SupportedChains.chapel]: chapel.deployedPlugins,
-  [SupportedChains.moonbeam]: moonbeam.deployedPlugins,
   [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
-  [SupportedChains.fantom]: fantom.deployedPlugins,
   [SupportedChains.ethereum]: ethereum.deployedPlugins,
 };
 

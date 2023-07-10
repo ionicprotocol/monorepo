@@ -5,10 +5,7 @@ type CONFIG = {
   isBscEnabled: boolean;
   isDevelopment: boolean;
   isEthereumEnabled: boolean;
-  isEvmosEnabled: boolean;
   isFWDeployEnabled: boolean;
-  isFantomEnabled: boolean;
-  isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
   isTestnetEnabled: boolean;
   productDomain: string | undefined;
@@ -33,10 +30,7 @@ const config: CONFIG = {
   isBscEnabled: process.env.BSC === 'true',
   isDevelopment: process.env.NODE_ENV === 'development',
   isEthereumEnabled: process.env.ETHEREUM === 'true',
-  isEvmosEnabled: process.env.EVMOS === 'true',
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
-  isFantomEnabled: process.env.FANTOM === 'true',
-  isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
