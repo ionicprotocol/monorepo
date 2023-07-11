@@ -27,13 +27,13 @@ export const PoolName = ({
   const { setGlobalLoading } = useMultiIonic();
   const rewardTokens = useRewardTokensOfPool(comptroller, chainId);
   const { data: claimableRewards } = usePoolClaimableRewards(comptroller, chainId);
-  const { cCard } = useColors();
+  const { cCard, cIRow } = useColors();
   const router = useRouter();
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const chainConfig = useChainConfig(chainId);
 
   return (
-    <HStack height="100%" justifyContent="center">
+    <HStack height="100%" justifyContent="flex-start">
       {chainConfig && (
         <SimpleTooltip label={chainConfig.specificParams.metadata.name}>
           <Img
@@ -80,7 +80,7 @@ export const PoolName = ({
                   }
                   maxWidth="100%"
                   overflow="hidden"
-                  size="lg"
+                  size="md"
                   textOverflow="ellipsis"
                   whiteSpace="nowrap"
                   width="fit-content"
@@ -93,7 +93,9 @@ export const PoolName = ({
         </Stack>
         {rewardTokens.length && (
           <HStack spacing={1}>
-            <Text>Earn Rewards</Text>
+            <Text color={cIRow.descColor} size="sm">
+              Earn Rewards
+            </Text>
             <AvatarGroup max={5} size="xs">
               {rewardTokens.map((token) => (
                 <TokenIcon address={token} chainId={chainId} key={token} />

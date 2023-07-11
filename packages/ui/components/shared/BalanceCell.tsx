@@ -66,7 +66,7 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
       }
       popoverProps={{ placement: 'top-end' }}
     >
-      <VStack alignItems="flex-end" spacing={1}>
+      <VStack alignItems="flex-start" spacing={1}>
         <HStack spacing={2}>
           <HStack spacing={0.5}>
             <Text color={cCard.txtColor} fontWeight={'medium'} size="sm" variant="tnumber">

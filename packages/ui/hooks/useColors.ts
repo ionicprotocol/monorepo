@@ -17,6 +17,7 @@ export function useColors() {
 
   const cIRow = {
     bgColor: useColorModeValue(COLOR_PALETTE.iRowBg, COLOR_PALETTE.iRowBg),
+    descColor: useColorModeValue(COLOR_PALETTE.iGray, COLOR_PALETTE.iGray),
     txtColor: useColorModeValue(COLOR_PALETTE.iWhite, COLOR_PALETTE.iWhite),
   };
 

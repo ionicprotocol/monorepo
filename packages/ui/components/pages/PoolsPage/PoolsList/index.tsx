@@ -507,6 +507,7 @@ const PoolsList = () => {
                   </VStack>
                 }
                 contentProps={{ width: '200px' }}
+                popoverProps={{ trigger: 'click' }}
               >
                 <Button p={0} variant="ghost">
                   <Text display={{ base: 'none', md: 'flex' }} minW="100px" px={2} size="md">
@@ -540,6 +541,7 @@ const PoolsList = () => {
                   </VStack>
                 }
                 contentProps={{ width: '200px' }}
+                popoverProps={{ trigger: 'click' }}
               >
                 <Button p={0} variant="ghost">
                   <Text display={{ base: 'none', md: 'flex' }} minW="100px" px={2} size="md">
@@ -552,31 +554,21 @@ const PoolsList = () => {
           </Flex>
         </Flex>
         {!isLoading && !isLoadingPerChain ? (
-          <Table>
+          <Table style={{ borderCollapse: 'separate', borderSpacing: '0 16px' }}>
             <Thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <Tr borderBottomWidth={1} borderColor={cCard.dividerColor} key={headerGroup.id}>
+                <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
                       <Th
                         border="none"
                         color={cCard.txtColor}
-                        height={16}
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        px={
-                          table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? 0 : 3
-                        }
-                        py={4}
+                        px={{ base: '16px' }}
                         textTransform="capitalize"
                       >
-                        <HStack
-                          justifyContent={
-                            header.column.id === POOL_NAME || header.column.id === ASSETS
-                              ? 'flex-start'
-                              : 'flex-end'
-                          }
-                        >
+                        <HStack justifyContent={'flex-start'}>
                           {flexRender(header.column.columnDef.header, header.getContext())}
                         </HStack>
                       </Th>
@@ -614,10 +606,8 @@ const PoolsList = () => {
                 table.getRowModel().rows.map((row) => (
                   <Fragment key={row.id}>
                     <Tr
-                      _hover={{ bg: cCard.hoverBgColor }}
-                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                      borderBottomWidth={row.getIsExpanded() ? 0 : 1}
-                      borderColor={cCard.dividerColor}
+                      _hover={{ bg: cIRow.bgColor }}
+                      borderRadius={{ base: '20px' }}
                       cursor="pointer"
                       key={row.id}
                       onClick={() => {
@@ -627,18 +617,20 @@ const PoolsList = () => {
                         );
                       }}
                     >
-                      {row.getVisibleCells().map((cell) => {
+                      {row.getVisibleCells().map((cell, index) => {
                         return (
                           <Td
+                            background={cIRow.bgColor}
                             border="none"
-                            height={16}
+                            borderLeftRadius={index === 0 ? '20px' : 0}
+                            borderRightRadius={
+                              index === row.getVisibleCells().length - 1 ? '20px' : 0
+                            }
+                            // height={16}
                             key={cell.id}
                             minW={10}
-                            px={{
-                              base:
-                                cell.column.id === POOL_NAME || cell.column.id === ASSETS ? 0 : 2,
-                            }}
-                            py={0}
+                            px={{ base: '16px' }}
+                            py={{ base: '16px' }}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </Td>
