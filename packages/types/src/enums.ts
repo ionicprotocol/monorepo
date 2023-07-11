@@ -279,80 +279,6 @@ export enum assetSymbols {
 
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
-  // evmos
-  kinesisUSDC = "kinesisUSDC",
-  kinesisUSDT = "kinesisUSDT",
-  saddleOptFraxUSD = "saddleOptFraxUSD",
-  saddleOptUSD = "saddleOptUSD",
-  WEVMOS = "WEVMOS",
-  ATOM = "ATOM",
-  OSMO = "OSMO",
-  JUNO = "JUNO",
-  // USD X
-  gUSDC = "gUSDC",
-  axlUSDC = "axlUSDC",
-  ceUSDC = "ceUSDC",
-  gUSDT = "gUSDT",
-  axlUSDT = "axlUSDT",
-  ceUSDT = "ceUSDT",
-  gDAI = "gDAI",
-  // WETH / BTC
-  ceWETH = "ceWETH",
-  axlWETH = "axlWETH",
-  gWBTC = "gWBTC",
-  gWETH = "gWETH",
-  axlWBTC = "axlWBTC",
-
-  DIFF = "DIFF",
-  GRAV = "GRAV",
-  "WEVMOS-JUNO" = "WEVMOS-JUNO",
-  "WEVMOS-gUSDC" = "WEVMOS-gUSDC",
-  "WEVMOS-ceUSDC" = "WEVMOS-ceUSDC",
-  "WEVMOS-gWETH" = "WEVMOS-gWETH",
-  "ceUSDC-ceUSDT" = "ceUSDC-ceUSDT",
-
-  // moonbeam
-  GLMR = "GLMR",
-  WGLMR = "WGLMR",
-  GLINT = "GLINT",
-  // Stella
-  "USDC.wh-GLMR" = "USDC.wh-GLMR",
-  "DOT.xc-GLMR" = "DOT.xc-GLMR",
-  "WETH.wh-GLMR" = "WETH.wh-GLMR",
-  "WBTC.wh-GLMR" = "WBTC.wh-GLMR",
-  "STELLA-GLMR" = "STELLA-GLMR",
-  "CELR-GLMR" = "CELR-GLMR",
-  "ATOM-GLMR" = "ATOM-GLMR",
-  STELLA = "STELLA",
-  CELR = "CELR",
-  LDO = "LDO",
-  "LDO-GLMR" = "LDO-GLMR",
-  "wstDOT-DOT.xc" = "wstDOT-DOT.xc",
-  "base4pool" = "base4pool",
-
-  // BeamSwap
-  "GLMR-USDC" = "GLMR-USDC",
-  "GLMR-GLINT" = "GLMR-GLINT",
-  "WGLMR-xcDOT" = "WGLMR-xcDOT",
-
-  DOT = "DOT",
-  xcDOT = "xcDOT",
-  stDOT = "stDOT",
-  wstDOT = "wstDOT",
-  xcKSM = "xcKSM",
-  stKSM = "stKSM",
-  multiWBTC = "multiWBTC",
-  WBTC_wh = "WBTC.wh",
-  WETH_wh = "WETH.wh",
-  multiUSDC = "multiUSDC",
-  USDC_wh = "USDC.wh",
-  multiUSDT = "multiUSDT",
-  multiDAI = "multiDAI",
-  USDT_xc = "USDT.xc",
-  BUSD_wh = "BUSD.wh",
-  "3pool" = "3pool",
-  "xcDOT-stDOT" = "xcDOT-stDOT",
-
   // local
   TOUCH = "TOUCH",
   TRIBE = "TRIBE",
@@ -467,13 +393,7 @@ export enum assetSymbols {
   saddleFraxUsdtBP = "saddleFraxUsdtBP",
   USDs = "USDs",
 
-  // Fantom
-  WFTM = "WFTM",
-  multiBTC = "multiBTC",
-  multiETH = "multiETH",
-  aFTMc = "aFTMc",
   PAR_USDC_CURVE = "PAR_USDC CURVE",
-  fUSDT = "fUSDT",
   triCrypto = "triCrypto",
 
   // Mainnet
