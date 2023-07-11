@@ -64,7 +64,7 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
           ) : null}
         </VStack>
       }
-      popoverProps={{ placement: 'top-end' }}
+      popoverProps={{ placement: 'top-start' }}
     >
       <VStack alignItems="flex-start" spacing={1}>
         <HStack spacing={2}>
