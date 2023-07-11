@@ -5,8 +5,8 @@ export default task("oracle:set-price", "Set price of token")
   .addParam("price", "Price to set in the SPO for the token")
   .setAction(async ({ address: _address, price: _price }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(deployer);
     const mpo = sdk.createMasterPriceOracle(deployer);
 
     const underlyingOracle = await ethers.getContractAt(

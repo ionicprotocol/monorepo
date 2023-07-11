@@ -6,7 +6,7 @@ import axios from 'axios';
 import { utils } from 'ethers';
 
 import { aprDays } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
@@ -45,7 +45,7 @@ export interface resQuery {
 export function useAllFundedInfo() {
   const enabledChains = useEnabledChains();
   const { poolsPerChain } = useCrossFusePools([...enabledChains]);
-  const { getSdk, address } = useMultiMidas();
+  const { getSdk, address } = useMultiIonic();
 
   return useQuery<resQuery | null>(
     [

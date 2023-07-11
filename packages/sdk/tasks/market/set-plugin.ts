@@ -12,8 +12,8 @@ export default task("market:set-plugin", "Set's the plugin of a market")
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
 
     const comptroller = sdk.createComptroller(comptrollerAddress, signer);
 

@@ -1,8 +1,8 @@
 import { BigNumber, constants, Contract, providers } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import WhitePaperInterestRateModel from "../../../src/MidasSdk/irm/WhitePaperInterestRateModel";
-import * as utilsFns from "../../../src/MidasSdk/utils";
+import WhitePaperInterestRateModel from "../../../src/IonicSdk/irm/WhitePaperInterestRateModel";
+import * as utilsFns from "../../../src/IonicSdk/utils";
 import { expect } from "../../globalTestHook";
 import { mkAddress } from "../../helpers";
 

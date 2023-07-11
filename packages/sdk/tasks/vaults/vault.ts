@@ -79,8 +79,8 @@ task("optimized-vault:deploy")
         allocation: 0,
       })
     );
-    const flywheelLogic = await deployments.deploy("MidasFlywheel_Implementation", {
-      contract: "MidasFlywheel",
+    const flywheelLogic = await deployments.deploy("IonicFlywheel_Implementation", {
+      contract: "IonicFlywheel",
       from: deployer,
       args: [],
       log: true,

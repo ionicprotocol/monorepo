@@ -1,5 +1,5 @@
 import { chainIdToConfig } from "@ionicprotocol/chains";
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { assetSymbols, SupportedChains } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 import { restore } from "sinon";
@@ -13,7 +13,7 @@ import { getSigner } from "../helpers";
 
 describe("Feed verifier", () => {
   let feedVerifier: FeedVerifier;
-  let sdk: MidasSdk;
+  let sdk: IonicSdk;
 
   const chainConfig = chainIdToConfig[SupportedChains.bsc];
   const assetsToTest = [assetSymbols.WBNB, assetSymbols.BUSD, assetSymbols.BTCB, assetSymbols.USDT, assetSymbols.DAI];
@@ -23,7 +23,7 @@ describe("Feed verifier", () => {
 
   beforeEach(() => {
     const signer = getSigner(SupportedChains.bsc);
-    sdk = new MidasSdk(signer, chainIdToConfig[SupportedChains.bsc]);
+    sdk = new IonicSdk(signer, chainIdToConfig[SupportedChains.bsc]);
     feedVerifier = new FeedVerifier(sdk, assets[0], config);
   });
   afterEach(function () {

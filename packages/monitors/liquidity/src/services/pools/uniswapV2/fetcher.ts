@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { ERC20Abi, MidasSdk } from "@ionicprotocol/sdk";
+import { ERC20Abi, IonicSdk } from "@ionicprotocol/sdk";
 import { ChainConfig } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
@@ -10,7 +10,7 @@ export class V2Fetcher {
   public uniswapV2Factory: Contract;
   public provider: JsonRpcProvider;
 
-  public constructor(sdk: MidasSdk, uniswapV2Factory: string) {
+  public constructor(sdk: IonicSdk, uniswapV2Factory: string) {
     this.chainConfig = sdk.chainConfig;
     this.provider = sdk.provider;
     this.W_TOKEN = this.chainConfig.chainAddresses.W_TOKEN;

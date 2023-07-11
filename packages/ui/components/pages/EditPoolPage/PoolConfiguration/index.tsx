@@ -35,7 +35,7 @@ import { Center, Column } from '@ui/components/shared/Flex';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -56,7 +56,7 @@ const PoolConfiguration = ({
   const router = useRouter();
   const poolId = router.query.poolId as string;
 
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
 

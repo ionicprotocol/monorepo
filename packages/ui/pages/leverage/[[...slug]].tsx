@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import LeveragePageComp from '@ui/components/pages/LeveragePage/index';
 import { config } from '@ui/config/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const forgeAddress = ctx.params && ctx.params.slug ? ctx.params.slug[0] : '';
@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 const LeveragePage = ({ forgeAddress }: { forgeAddress: string }) => {
-  const { setGlobalLoading, setAddress, address } = useMultiMidas();
+  const { setGlobalLoading, setAddress, address } = useMultiIonic();
 
   useEffect(() => {
     if (

@@ -12,13 +12,13 @@
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
     "CErc20Delegate": {
-      "address": "0x96c9Bb0db7ad4222CB396bF676CDcd50Af887179"
+      "address": "0x5b7f3D1615e5306F5C5c587e96Db31751041C1A7"
     },
     "CErc20PluginDelegate": {
-      "address": "0x9064f2f3b3860eCbb71CafE3E29A5d6162Ab03F6"
+      "address": "0x367CF6D26e071a27c5B2863706790bB97175171D"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x2A0AF1E5e92dB2f10D705D450dcc34645423ddd1"
+      "address": "0x8810eA647510DCd4e28ba7EE14bA13f793443E9E"
     },
     "CErc20RewardsDelegate": {
       "address": "0x99d485eF4425862D90C8301725DF670c4b8B71EC"
@@ -27,7 +27,7 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0xAecc411ADD4732003DcB14dAAA7dFb611B82d76C"
+      "address": "0x7C3966dfa9b347471cBcDA9AcBfF7ACfBcf08139"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x219f7a75925D6d0312d1B62cEE6a4eE6F1A85217"
@@ -177,7 +177,7 @@
       "address": "0x074f1427cD25469F1051F51908751dA5409F3677"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x0B0892778472105E7447DaB8ED0887e72c72D44E"
+      "address": "0x8CA26295eC319ee163221dd3b417592639FeF12c"
     },
     "LooplessFlywheelBooster": {
       "address": "0x8ac339fB1857cc2986941C50c4234EfC47F73424"
@@ -256,6 +256,9 @@
     },
     "WhitePaperInterestRateModel": {
       "address": "0xFe44E528caF2F391dEBA6fd5beaa5d530b6bf8A3"
+    },
+    "WithdrawableFlywheelStaticRewards_TRT": {
+      "address": "0xF7a040Af0a2bd81Da65cC7692DCa3af23E64D982"
     },
     "XBombLiquidatorFunder": {
       "address": "0xC875a8D8E8a593953115131697a788faEAa37109"

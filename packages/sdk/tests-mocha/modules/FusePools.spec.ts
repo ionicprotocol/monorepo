@@ -2,15 +2,15 @@ import { ganache } from "@ionicprotocol/chains";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 
-import { MidasBaseConstructor } from "../../src";
-import { MidasBase } from "../../src/MidasSdk/index";
-import * as utilsFns from "../../src/MidasSdk/utils";
+import { IonicBaseConstructor } from "../../src";
+import { IonicBase } from "../../src/IonicSdk/index";
+import * as utilsFns from "../../src/IonicSdk/utils";
 import { withFusePools } from "../../src/modules/FusePools";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
 describe("FusePools", () => {
-  let FusePools: MidasBaseConstructor;
+  let FusePools: IonicBaseConstructor;
   let fusePools: any;
 
   let mockFusePoolLensContract: SinonStubbedInstance<Contract>;
@@ -41,7 +41,7 @@ describe("FusePools", () => {
     (mockProvider as any).getSigner = () => mkAddress("0xabcd");
     (mockProvider as any).getCode = (address: string) => address;
 
-    FusePools = withFusePools(MidasBase);
+    FusePools = withFusePools(IonicBase);
 
     ganache.chainDeployments = {
       CErc20Delegate: { abi: [], address: mkAddress("0xabc") },

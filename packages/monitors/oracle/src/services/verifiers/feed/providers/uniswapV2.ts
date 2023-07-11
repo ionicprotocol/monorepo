@@ -4,16 +4,16 @@ import { logger } from "../../../../logger";
 import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyUniswapV2PriceFeed(
-  { midasSdk, underlyingOracle, asset }: VerifyFeedParams,
+  { ionicSdk, underlyingOracle, asset }: VerifyFeedParams,
   config: FeedVerifierConfig
 ): Promise<PriceFeedValidity> {
   logger.debug(`Verifying Uniswap Twap oracle for ${asset.underlying}`);
 
   const baseToken = await underlyingOracle.callStatic.baseToken();
   const uniswapV2Factory = new Contract(
-    midasSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
+    ionicSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
     ["function getPair(address tokenA, address tokenB) view returns (address)"],
-    midasSdk.provider
+    ionicSdk.provider
   );
   const pair = await uniswapV2Factory.getPair(asset.underlying, baseToken);
 
@@ -23,7 +23,7 @@ export async function verifyUniswapV2PriceFeed(
     [
       "function workable(address[] calldata pairs, address[] calldata baseTokens, uint256[] calldata minPeriods, uint256[] calldata deviationThresholds) external view returns (bool[] memory) ",
     ],
-    midasSdk.provider
+    ionicSdk.provider
   );
 
   const workable = await rootTwapOracle.callStatic.workable(

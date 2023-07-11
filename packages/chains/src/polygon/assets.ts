@@ -10,7 +10,14 @@ import {
   tangibleDocsUsdr,
   wrappedAssetDocs,
 } from "../common";
-import { ankrCertificateDocs, clayStackDocs, lidoFinanceDocs, oneInchDocs, StaderXDocs } from "../common/docs";
+import {
+  ankrCertificateDocs,
+  clayStackDocs,
+  lidoFinanceDocs,
+  oneInchDocs,
+  pearlDocs,
+  StaderXDocs,
+} from "../common/docs";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
 export const WMATIC = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
@@ -45,6 +52,7 @@ const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
 const USDR = "0xb5DFABd7fF7F83BAB83995E72A52B97ABb7bcf63";
+const WUSDR = "0xAF0D9D65fC54de245cdA37af3d18cbEc860A4D4b";
 const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 
 // liquid staked assets
@@ -133,6 +141,11 @@ const arrakis_USDC_USDT_001 = "0x2817E729178471DBAC8b1FC190b4fd8e6F3984e3";
 const arrakis_USDC_USDT_005 = "0x869A75D6F7ae09810c9083684cf22e9A618c8B05";
 const arrakis_USDC_DAI_005 = "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA";
 const arrakis_WETH_DAI_03 = "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c";
+
+// pearl (solidly)
+const solidlyStableAMM_USDR_USDC = "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797";
+const solidlyVolatileAMM_stMATIC_USDR = "0x733eEEf37De013283da29cE9EB4758dC59CaFc87";
+const solidlyVolatileAMM_wUSDR_USDR = "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2";
 
 export const assets: SupportedAsset[] = [
   {
@@ -946,7 +959,15 @@ export const assets: SupportedAsset[] = [
     name: "Real USD ",
     decimals: 9,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: tangibleDocsUsdr(),
+    extraDocs: tangibleDocsUsdr("Mint"),
+  },
+  {
+    symbol: assetSymbols.WUSDR,
+    underlying: WUSDR,
+    name: "Wrappd Real USD ",
+    decimals: 9,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: tangibleDocsUsdr("Wrap"),
   },
   {
     symbol: assetSymbols.TNGBL,
@@ -1061,6 +1082,33 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", JRT),
     disabled: true,
+  },
+  {
+    symbol: assetSymbols["sAMM-USDC/USDR"],
+    underlying: solidlyStableAMM_USDR_USDC,
+    name: "Stable AMM - USDC/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyStableAMM_USDR_USDC),
+    originalSymbol: assetOriginalSymbols["sAMM-USDC/USDR"],
+  },
+  {
+    symbol: assetSymbols["vAMM-wUSDR/USDR"],
+    underlying: solidlyVolatileAMM_wUSDR_USDR,
+    name: "Volatile AMM - wUSDR/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_wUSDR_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-wUSDR/USDR"],
+  },
+  {
+    symbol: assetSymbols["vAMM-stMATIC/USDR"],
+    underlying: solidlyVolatileAMM_stMATIC_USDR,
+    name: "Stable V1 AMM - stMATIC/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_stMATIC_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-stMATIC/USDR"],
   },
 ];
 

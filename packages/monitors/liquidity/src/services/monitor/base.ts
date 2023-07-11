@@ -1,15 +1,15 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 
 import { LiquidityPoolKind, LiquidityValidity, ServiceConfig, TAssetConfig, VerifierInitValidity } from "../../types";
 
 export abstract class AbstractLiquidityVerifier {
   asset: TAssetConfig;
-  sdk: MidasSdk;
+  sdk: IonicSdk;
   config: ServiceConfig;
 
-  constructor(midasSdk: MidasSdk, asset: TAssetConfig, config: ServiceConfig) {
+  constructor(ionicSdk: IonicSdk, asset: TAssetConfig, config: ServiceConfig) {
     this.asset = asset;
-    this.sdk = midasSdk;
+    this.sdk = ionicSdk;
     this.config = config;
   }
   abstract init(): Promise<[AbstractLiquidityVerifier, VerifierInitValidity]>;

@@ -1,7 +1,7 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { BigNumber, utils } from "ethers";
 
-import { MidasSdk } from "../..";
+import { IonicSdk } from "../..";
 import { CreateContractsModule } from "../CreateContracts";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
@@ -21,7 +21,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
     ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
       const [fusePoolWithUsers, erroredPools] = await getAllFusePoolUsers(
-        this as unknown as MidasSdk,
+        this as unknown as IonicSdk,
         maxHealthFactor,
         excludedComptrollers
       );
@@ -32,7 +32,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
           ...configOverrides,
         };
       const [liquidatablePools, erroredLiquidations] = await gatherLiquidations(
-        this as unknown as MidasSdk,
+        this as unknown as IonicSdk,
         fusePoolWithUsers,
         this.chainLiquidationConfig
       );

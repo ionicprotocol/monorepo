@@ -7,8 +7,8 @@ export default task("irm:get-curve", "Get an IRM curve")
   .addParam("reserveFactor", "RF for asset", 5, types.int)
   .addParam("adminFee", "Admin fee of asset", 0, types.int)
   .setAction(async ({ irmAddress: _irmAddress, reserveFactor: _reserveFactor, adminFee: _adminFee }, { ethers }) => {
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
     const IRM = await sdk.identifyInterestRateModel(_irmAddress);
 
     await IRM._init(

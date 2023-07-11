@@ -7,7 +7,7 @@ import { useSwitchNetwork } from 'wagmi';
 
 import { CreatePositionButton } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/AdditionalInfo/CreatePositionButton/index';
 import type { NewPositionRowData } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { getChainConfig } from '@ui/utils/networkData';
@@ -28,7 +28,7 @@ export const AdditionalInfo = ({
   const chainId = Number(position.chainId);
   const [chainConfig] = useMemo(() => [getChainConfig(chainId)], [chainId]);
 
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();

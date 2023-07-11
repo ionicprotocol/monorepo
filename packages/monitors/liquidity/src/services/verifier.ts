@@ -1,4 +1,4 @@
-import { MidasSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 
 import { logger } from "..";
 import {
@@ -21,7 +21,7 @@ export class Verifier {
   adminService: AdminService;
   poolService: PoolService;
 
-  constructor(sdk: MidasSdk, service: TVerifier, asset: TAssetConfig, config: ServiceConfig) {
+  constructor(sdk: IonicSdk, service: TVerifier, asset: TAssetConfig, config: ServiceConfig) {
     this.poolService = new PoolService(sdk, asset.affectedAssets);
     this.adminService = new AdminService(sdk);
     this.liquidityService = new service(sdk, asset, config);
@@ -44,10 +44,10 @@ export class Verifier {
 
 export class BatchVerifier {
   assets: MonitoredAssetsConfig;
-  sdk: MidasSdk;
+  sdk: IonicSdk;
   alert: DiscordService;
 
-  constructor(sdk: MidasSdk, assets: MonitoredAssetsConfig) {
+  constructor(sdk: IonicSdk, assets: MonitoredAssetsConfig) {
     this.assets = assets;
     this.sdk = sdk;
     this.alert = new DiscordService(sdk.chainId);

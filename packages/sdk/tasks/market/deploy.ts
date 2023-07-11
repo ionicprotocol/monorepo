@@ -6,8 +6,8 @@ task("market:deploy", "deploy market")
   .addParam("comptroller", "Comptroller address", undefined, types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
     const comptroller = sdk.createComptroller(taskArgs.comptroller, signer);
 
     const constructorData =

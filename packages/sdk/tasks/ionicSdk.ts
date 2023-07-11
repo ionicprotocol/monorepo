@@ -4,10 +4,10 @@ import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/ty
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
-import { MidasSdk } from "../src";
+import { IonicSdk } from "../src";
 import { WETH } from "../typechain/WETH";
 
-let midasSdk: MidasSdk;
+let ionicSdk: IonicSdk;
 
 export const getCommonDeployments = async (chainDeployment: ChainDeployment) => {
   const CErc20Delegate = await ethers.getContract("CErc20Delegate");
@@ -57,11 +57,11 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
     abi: FusePoolLensSecondaryArtifact.abi,
     address: FusePoolLensSecondary.address,
   };
-  const MidasFlywheelLensRouter = await ethers.getContract("MidasFlywheelLensRouter");
-  const MidasFlywheelLensRouterArtifact = await deployments.getArtifact("MidasFlywheelLensRouter");
+  const IonicFlywheelLensRouter = await ethers.getContract("MidasFlywheelLensRouter");
+  const IonicFlywheelLensRouterArtifact = await deployments.getArtifact("MidasFlywheelLensRouter");
   chainDeployment.MidasFlywheelLensRouter = {
-    abi: MidasFlywheelLensRouterArtifact.abi,
-    address: MidasFlywheelLensRouter.address,
+    abi: IonicFlywheelLensRouterArtifact.abi,
+    address: IonicFlywheelLensRouter.address,
   };
   const FuseSafeLiquidator = await ethers.getContract("FuseSafeLiquidator");
   const FuseSafeLiquidatorArtifact = await deployments.getArtifact("FuseSafeLiquidator");
@@ -165,8 +165,8 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   return await getCommonDeployments(chainDeployment);
 };
 
-export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | string): Promise<MidasSdk> => {
-  if (!midasSdk) {
+export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | string): Promise<IonicSdk> => {
+  if (!ionicSdk) {
     let signer;
     if (!signerOrProviderOrSignerName) {
       signer = ethers.provider;
@@ -187,7 +187,7 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
 
     // for integration tests, always use live BSC deployments and config
     if (process.env.INTEGRATION_TEST!) {
-      return new MidasSdk(signer, bsc);
+      return new IonicSdk(signer, bsc);
     }
 
     switch (chainId) {
@@ -222,14 +222,14 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
       chainConfig.chainDeployments = chainDeployment;
     }
 
-    midasSdk = new MidasSdk(signer, chainConfig);
+    ionicSdk = new IonicSdk(signer, chainConfig);
 
     // patch WETH for local deployment
     if (chainId === 31337 || chainId === 1337) {
       const weth = (await ethers.getContract("WETH")) as WETH;
-      midasSdk.chainSpecificAddresses.W_TOKEN = weth.address;
+      ionicSdk.chainSpecificAddresses.W_TOKEN = weth.address;
     }
   }
 
-  return midasSdk;
+  return ionicSdk;
 };

@@ -145,7 +145,7 @@ export const ASSET_BORROWED_TOOLTIP =
 export const SUPPLY_CAP_WHITELIST_TOOLTIP = 'Add or remove address with no supply cap';
 export const BORROW_CAP_WHITELIST_TOOLTIP = 'Add or remove address with no borrow cap';
 export const DEBT_CEILING_WHITELIST_TOOLTIP = 'Add or remove address with no debt ceilings';
-export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
+export const IONIC_LOCALSTORAGE_KEYS = 'ionic_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
 export const SUPPLY_STEPS = (symbol: string) =>

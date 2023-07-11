@@ -12,7 +12,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -30,7 +30,7 @@ const ClaimableToken = ({
   rewardChainId: string;
 }) => {
   const { amount, rewardToken } = data;
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
   const { data: tokenData } = useTokenData(rewardToken, Number(rewardChainId));
 
   return (
@@ -79,7 +79,7 @@ export const ClaimMarketRewardsModal = ({
   onClose: () => void;
   poolAddress: string;
 }) => {
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
   const chainConfig = useChainConfig(Number(currentSdk?.chainId));

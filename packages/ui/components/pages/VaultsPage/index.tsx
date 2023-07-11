@@ -8,13 +8,13 @@ import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import VaultHero from '@ui/components/pages/VaultsPage/VaultHero/index';
 import { VaultsList } from '@ui/components/pages/VaultsPage/VaultsList/index';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { MIDAS_LOCALSTORAGE_KEYS, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { IONIC_LOCALSTORAGE_KEYS, VAULT, VAULT_COLUMNS } from '@ui/constants/index';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useVaultsPerChain } from '@ui/hooks/vault/useVaultsPerChain';
 
 const VaultsPage = memo(() => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
@@ -22,7 +22,7 @@ const VaultsPage = memo(() => {
   const { isLoading, vaultsPerChain } = useVaultsPerChain([...enabledChains]);
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
 
     if (
       oldData &&
