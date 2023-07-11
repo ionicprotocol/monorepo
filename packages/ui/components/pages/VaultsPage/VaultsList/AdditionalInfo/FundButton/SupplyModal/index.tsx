@@ -10,10 +10,10 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { WETHAbi } from '@midas-capital/sdk';
-import { getContract } from '@midas-capital/sdk/dist/cjs/src/MidasSdk/utils';
-import type { VaultData } from '@midas-capital/types';
-import { FundOperationMode } from '@midas-capital/types';
+import { WETHAbi } from '@ionicprotocol/sdk';
+import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
+import type { VaultData } from '@ionicprotocol/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -25,7 +25,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { VAULT_SUPPLY_STEPS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { fetchTokenBalance, useTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -43,7 +43,7 @@ interface SupplyModalProps {
 }
 
 export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 

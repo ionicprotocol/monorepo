@@ -1,10 +1,7 @@
-import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
-import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
+import { MidasFlywheelCore as IonicFlywheelCore } from "../../typechain/MidasFlywheelCore";
 
 task("loopless-booster", "deploy and a loopless booster for a flywheel")
   .addParam("flywheelAddress", "Address of the flywheel to set the booster to", undefined, types.string)
@@ -16,7 +13,7 @@ task("loopless-booster", "deploy and a loopless booster for a flywheel")
         "MidasFlywheelCore",
         flywheelAddress,
         deployer
-      )) as MidasFlywheelCore;
+      )) as IonicFlywheelCore;
       const currentBoosterAddress = await flywheel.callStatic.flywheelBooster();
       let oldBooster;
       if (chainid == "56") {
@@ -43,120 +40,21 @@ task("loopless-booster", "deploy and a loopless booster for a flywheel")
     }
   });
 
-task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, deployments, getChainId }) => {
-  const poolAddress = "0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185"; // stDOT Pool
-  const brokenFlywheelAddress = "0xbCeB5Cb9b7Ea70994d8a7cfAC5D48dEA849CED06";
-  const fxcDOTMarketAddress = "0xa9736bA05de1213145F688e4619E5A7e0dcf4C72";
-  //const fwstDOTMarketAddress = "0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563";
-
+task("configure-static-rewards-chapel", "").setAction(async ({}, { ethers, deployments, getChainId }) => {
   const deployer = await ethers.getNamedSigner("deployer");
-  const chainid = await getChainId();
-  if (chainid == "1284") {
-    const asComptrollerExtension = (await ethers.getContractAt(
-      "ComptrollerFirstExtension",
-      poolAddress,
-      deployer
-    )) as ComptrollerFirstExtension;
+  const staticRewardsAddress = "0xF7a040Af0a2bd81Da65cC7692DCa3af23E64D982";
+  const bombMarket = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
 
-    const asComptroller = (await ethers.getContractAt("Comptroller", poolAddress, deployer)) as Comptroller;
+  const staticRewards = (await ethers.getContractAt(
+    "FlywheelStaticRewards",
+    staticRewardsAddress,
+    deployer
+  )) as FlywheelStaticRewards;
 
-    const brokenFlywheel = (await ethers.getContractAt(
-      "MidasFlywheelCore",
-      brokenFlywheelAddress,
-      deployer
-    )) as MidasFlywheelCore;
-
-    const rewardToken = await brokenFlywheel.callStatic.rewardToken();
-    const flywheelBooster = await brokenFlywheel.callStatic.flywheelBooster();
-    const oldStaticRewardsAddress = await brokenFlywheel.callStatic.flywheelRewards();
-
-    const oldStaticRewards = (await ethers.getContractAt(
-      "FlywheelStaticRewards",
-      oldStaticRewardsAddress,
-      deployer
-    )) as FlywheelStaticRewards;
-
-    let tx = await oldStaticRewards.setRewardsInfo(fxcDOTMarketAddress, {
-      rewardsPerSecond: 0,
-      rewardsEndTimestamp: 1,
-    });
-    await tx.wait();
-    console.log("setRewardsInfo: ", tx.hash);
-
-    // tx = await oldStaticRewards.setRewardsInfo(fwstDOTMarketAddress, {
-    //   rewardsPerSecond: 0,
-    //   rewardsEndTimestamp: 1,
-    // });
-    // await tx.wait();
-    // console.log("setRewardsInfo: ", tx.hash);
-
-    const replacingFlywheel = await deployments.deploy("MidasFlywheel", {
-      contract: "MidasFlywheel",
-      from: deployer.address,
-      log: true,
-      proxy: {
-        proxyContract: "OpenZeppelinTransparentProxy",
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [rewardToken, constants.AddressZero, flywheelBooster, deployer.address],
-          },
-        },
-        owner: deployer.address,
-      },
-      waitConfirmations: 1,
-    });
-
-    // the replacing rewards contract is needed because on creation it makes an infinite approve to the flywheel
-    const replacingRewards = await deployments.deploy("FlywheelStaticRewards", {
-      contract: "FlywheelStaticRewards",
-      from: deployer.address,
-      log: true,
-      args: [
-        replacingFlywheel.address, // flywheel
-        deployer.address, // owner
-        constants.AddressZero, // Authority
-      ],
-      waitConfirmations: 1,
-    });
-
-    // this will transfer all the rewards from the old FlywheelStaticRewards contract
-    // which has an infinite approve only to the old flywheel
-    tx = await brokenFlywheel.setFlywheelRewards(replacingRewards.address);
-    await tx.wait();
-    console.log("setFlywheelRewards: ", tx.hash);
-
-    // probably it is better to remove the flywheel because it cannot pull rewards from the new FlywheelStaticRewards
-    // so whatever rewards were accrued, will be reset and cannot be claimed
-    tx = await asComptrollerExtension.addNonAccruingFlywheel(brokenFlywheelAddress);
-    await tx.wait();
-    console.log("addNonAccruingFlywheel: ", tx.hash);
-
-    // adding the new flywheel to the pool
-    tx = await asComptroller._addRewardsDistributor(replacingFlywheel.address);
-    await tx.wait();
-    console.log("_addRewardsDistributor: ", tx.hash);
-
-    // configuring the same two strategies/markets
-    const newFlywheel = (await ethers.getContractAt(
-      "MidasFlywheelCore",
-      replacingFlywheel.address,
-      deployer
-    )) as MidasFlywheelCore;
-
-    // the flywheel was initialized with address(0) for the rewards, so set it up
-    tx = await newFlywheel.setFlywheelRewards(replacingRewards.address);
-    await tx.wait();
-    console.log("setFlywheelRewards: ", tx.hash);
-
-    tx = await newFlywheel.addStrategyForRewards(fxcDOTMarketAddress);
-    await tx.wait();
-    console.log("addStrategyForRewards fxcDOT: ", tx.hash);
-
-    // tx = await newFlywheel.addStrategyForRewards(fwstDOTMarketAddress);
-    // await tx.wait();
-    // console.log("addStrategyForRewards fwstDOT: ", tx.hash);
-  } else {
-    console.log(`wrong chain`);
-  }
+  const tx = await staticRewards.setRewardsInfo(bombMarket, {
+    rewardsPerSecond: 1000000000,
+    rewardsEndTimestamp: 1751784923,
+  });
+  await tx.wait();
+  console.log("setRewardsInfo: ", tx.hash);
 });

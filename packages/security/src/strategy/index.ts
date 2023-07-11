@@ -1,4 +1,4 @@
-import { StrategyScore } from "@midas-capital/types";
+import { StrategyScore } from "@ionicprotocol/types";
 
 import { SecurityBaseConstructor } from "../";
 

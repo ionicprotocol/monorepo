@@ -1,5 +1,5 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { SupportedAsset } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { SupportedAsset } from "@ionicprotocol/types";
 import { task } from "hardhat/config";
 
 function difference(a: Set<any>, b: Set<any>): Set<any> {
@@ -18,8 +18,8 @@ export default task("validate:assets", "Get pools data").setAction(async (taskAr
 
   const chainRedemptionStrategies = chainIdToConfig[chainId].redemptionStrategies;
 
-  const midasSdkModule = await import("../midasSdk");
-  const sdk = await midasSdkModule.getOrCreateMidas();
+  const ionicSdkModule = await import("../ionicSdk");
+  const sdk = await ionicSdkModule.getOrCreateIonic();
 
   const liveAssets = await sdk.getLiveAssets();
   const underlingLiveAssets = new Set<string>(Array.from(liveAssets).map((x) => x.underlying));

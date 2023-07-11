@@ -19,7 +19,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -29,7 +29,7 @@ import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFlywheelEnabledMarkets } from '@ui/hooks/rewards/useFlywheelEnabledMarkets';
 import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
 import { useColors } from '@ui/hooks/useColors';
@@ -56,7 +56,7 @@ const EditFlywheelModal = ({
   onClose: () => void;
   pool: PoolData;
 }) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
 
   const { data: tokenData } = useTokenData(flywheel.rewardToken, currentSdk?.chainId);
   const isAdmin = address === flywheel.owner;

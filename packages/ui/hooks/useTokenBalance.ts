@@ -1,13 +1,13 @@
-import type { MidasSdk } from '@midas-capital/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   address?: string
 ): Promise<BigNumber> => {
   let balance = constants.Zero;
@@ -33,7 +33,7 @@ export const fetchTokenBalance = async (
 };
 
 export function useTokenBalance(tokenAddress?: string, chainId?: number, customAddress?: string) {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
 
   const addressToCheck = customAddress ?? address;

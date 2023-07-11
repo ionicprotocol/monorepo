@@ -1,4 +1,4 @@
-import { IrmTypes } from "@midas-capital/types";
+import { IrmTypes } from "@ionicprotocol/types";
 
 const baseIrms = [IrmTypes.WhitePaperInterestRateModel, IrmTypes.JumpRateModel];
 

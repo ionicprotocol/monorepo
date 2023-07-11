@@ -1,14 +1,13 @@
-import { bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { underlying } from "@midas-capital/types";
+import { bsc, polygon } from "@ionicprotocol/chains";
+import { underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
-  [moonbeam.chainId]: moonbeam.assets,
   [polygon.chainId]: polygon.assets,
 };
 
-// yarn workspace @midas-capital/sdk deploy-dynamic-rewards-market
+// yarn workspace @ionicprotocol/sdk deploy-dynamic-rewards-market
 // --comptroller 0xD265ff7e5487E9DD556a4BB900ccA6D087Eb3AD2
 // --symbol "EURE-JEUR"
 // --contract-name BeefyERC4626
@@ -23,8 +22,8 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
   .addParam("pluginExtraParams", "Extra plugin parameters", undefined, types.string)
   .setAction(async (taskArgs, { run, ethers, deployments }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
     const underlyings = underlyingsMapping[sdk.chainId];
 
     // task argument parsing

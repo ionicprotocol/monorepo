@@ -1,6 +1,6 @@
 import { TransactionRequest, TransactionResponse } from "@ethersproject/providers";
-import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
-import { LiquidationStrategy } from "@midas-capital/types";
+import { ERC20Abi, IonicSdk } from "@ionicprotocol/sdk";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, constants, Contract, Wallet } from "ethers";
 
 import config from "../config";
@@ -21,16 +21,16 @@ export default async function approveTokensToSafeLiquidator(liquidator: Liquidat
   }
 }
 
-async function approveTokenToSafeLiquidator(midasSdk: MidasSdk, erc20Address: string) {
+async function approveTokenToSafeLiquidator(ionicSdk: IonicSdk, erc20Address: string) {
   // Build data
-  const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
+  const signer = new Wallet(config.adminPrivateKey, ionicSdk.provider);
   let token = new Contract(erc20Address, ERC20Abi, signer);
 
   token = await token.connect(signer);
-  const txCount = await midasSdk.provider.getTransactionCount(config.adminAccount);
+  const txCount = await ionicSdk.provider.getTransactionCount(config.adminAccount);
 
   const data = token.interface.encodeFunctionData("approve", [
-    midasSdk.contracts.FuseSafeLiquidator.address,
+    ionicSdk.contracts.FuseSafeLiquidator.address,
     constants.MaxUint256,
   ]);
 
@@ -42,14 +42,14 @@ async function approveTokenToSafeLiquidator(midasSdk: MidasSdk, erc20Address: st
     data: data,
     nonce: txCount,
   };
-  const gasLimit = await fetchGasLimitForTransaction(midasSdk, "approve", tx);
+  const gasLimit = await fetchGasLimitForTransaction(ionicSdk, "approve", tx);
   const txRequest: TransactionRequest = {
     ...tx,
     gasLimit: gasLimit,
   };
 
   if (process.env.NODE_ENV !== "production")
-    midasSdk.logger.info("Signing and sending approval transaction for: " + erc20Address);
+    ionicSdk.logger.info("Signing and sending approval transaction for: " + erc20Address);
 
   // send transaction
   let sentTx: TransactionResponse;
@@ -63,6 +63,6 @@ async function approveTokenToSafeLiquidator(midasSdk: MidasSdk, erc20Address: st
   } catch (error) {
     throw "Error sending " + erc20Address + " approval transaction: " + error;
   }
-  midasSdk.logger.info("Successfully sent approval transaction for: " + erc20Address);
+  ionicSdk.logger.info("Successfully sent approval transaction for: " + erc20Address);
   return sentTx;
 }

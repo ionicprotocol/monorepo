@@ -1,9 +1,9 @@
-import { LiquidationStrategy } from "@midas-capital/types";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { CErc20Delegate } from "../../../typechain/CErc20Delegate";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
-import { MidasSdk } from "../../MidasSdk";
+import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
@@ -25,7 +25,7 @@ async function getLiquidationPenalty(collateralCToken: CErc20Delegate, liquidati
 }
 
 export default async function getPotentialLiquidation(
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   borrower: FusePoolUserWithAssets,
   closeFactor: BigNumber,
   liquidationIncentive: BigNumber,

@@ -1,5 +1,5 @@
 import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
-import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@midas-capital/types';
+import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';

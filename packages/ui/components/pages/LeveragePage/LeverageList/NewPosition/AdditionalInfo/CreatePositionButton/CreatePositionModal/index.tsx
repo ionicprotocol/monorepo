@@ -1,7 +1,7 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import { WETHAbi } from '@midas-capital/sdk';
-import { getContract } from '@midas-capital/sdk/dist/cjs/src/MidasSdk/utils';
-import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@midas-capital/types';
+import { WETHAbi } from '@ionicprotocol/sdk';
+import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
+import type { LeveredBorrowable, LeveredCollateral, SupportedChains } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -19,7 +19,7 @@ import { Column } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { CREATE_NEW_POSITION_STEPS, LEVERAGE_VALUE } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
@@ -53,7 +53,7 @@ export const CreatePositionModal = ({
     underlyingPrice,
     underlyingDecimals,
   } = collateralAsset;
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
 
   const errorToast = useErrorToast();

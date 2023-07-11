@@ -10,7 +10,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import type { ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
@@ -22,7 +22,7 @@ import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { RESERVE_FACTOR } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -40,7 +40,7 @@ export const ReserveFactor = ({
   poolChainId,
 }: ReserveFactorProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiIonic();
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();

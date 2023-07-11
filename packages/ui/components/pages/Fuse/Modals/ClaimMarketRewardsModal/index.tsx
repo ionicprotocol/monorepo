@@ -1,6 +1,6 @@
 import { Box, Button, HStack, Img, Spinner, Text, VStack } from '@chakra-ui/react';
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import type { SupportedAsset } from '@midas-capital/types';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
+import type { SupportedAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
@@ -12,7 +12,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -30,7 +30,7 @@ const ClaimableToken = ({
   rewardChainId: string;
 }) => {
   const { amount, rewardToken } = data;
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
   const { data: tokenData } = useTokenData(rewardToken, Number(rewardChainId));
 
   return (
@@ -79,7 +79,7 @@ export const ClaimMarketRewardsModal = ({
   onClose: () => void;
   poolAddress: string;
 }) => {
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
   const chainConfig = useChainConfig(Number(currentSdk?.chainId));

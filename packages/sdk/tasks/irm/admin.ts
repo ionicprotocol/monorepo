@@ -8,8 +8,8 @@ export default task("irm:set", "Set new IRM to ctoken")
   .setAction(async ({ ctokens: _ctokens, irmAddress: _irmAddress }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
 
     const ctokens = _ctokens.split(",");
 

@@ -1,5 +1,5 @@
 import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
-import type { OpenPosition } from '@midas-capital/types';
+import type { OpenPosition } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
 import { MidasBox } from '@ui/components/shared/Box';

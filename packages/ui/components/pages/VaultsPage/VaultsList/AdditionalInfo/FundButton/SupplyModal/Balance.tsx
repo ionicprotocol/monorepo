@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
+import type { VaultData } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
 import { Column, Row } from '@ui/components/shared/Flex';

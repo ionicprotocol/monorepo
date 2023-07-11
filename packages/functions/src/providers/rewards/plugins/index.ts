@@ -1,4 +1,4 @@
-import { Strategy } from '@midas-capital/types';
+import { Strategy } from '@ionicprotocol/types';
 import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPluginAPYProvider';
 import BeefyAPYProvider from './BeefyAPYProvider';
 import CurveGaugeAPYProvider from './CurveGaugeAPYProvider';
@@ -21,7 +21,7 @@ const providerMap: ProviderMap = {
   [Strategy.HelioHAY]: HelioAPYProvider,
   [Strategy.Stella]: StellaSwapAPYProvider,
   [Strategy.ThenaERC4626]: ThenaAPYProvider,
-  [Strategy.Dyson4626]: DysonAPYProvider
+  [Strategy.Dyson4626]: DysonAPYProvider,
 };
 
 export async function getAPYProviders(initObj: APYProviderInitObject): Promise<ProviderMap> {

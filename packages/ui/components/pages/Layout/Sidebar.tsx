@@ -9,14 +9,14 @@ import { SiVault } from 'react-icons/si';
 import Footer from '@ui/components/pages/Layout/Footer';
 import { config } from '@ui/config/index';
 import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
 export const Sidebar = () => {
   const router = useRouter();
   const { colorMode } = useColorMode();
   const { cPage, cCard, cSolidBtn } = useColors();
-  const { address, setGlobalLoading, isSidebarCollapsed } = useMultiMidas();
+  const { address, setGlobalLoading, isSidebarCollapsed } = useMultiIonic();
   const [isEnabledLeverageMenu, setIsEnabledLeverageMenu] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const Sidebar = () => {
           top={2}
         >
           <Image
-            alt="Midas Capital"
+            alt="Ionic Protocol"
             minWidth={isSidebarCollapsed ? '220px' : '190px'}
             src={colorMode === 'light' ? '/images/midas-light.svg' : '/images/midas-dark.svg'}
           />

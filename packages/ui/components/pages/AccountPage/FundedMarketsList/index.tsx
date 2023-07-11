@@ -64,10 +64,10 @@ import {
   CHAIN,
   COLLATERAL,
   HIDDEN,
+  IONIC_LOCALSTORAGE_KEYS,
   LIQUIDITY,
   MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
-  MIDAS_LOCALSTORAGE_KEYS,
   PAUSED,
   POOL_NAME,
   PROTECTED,
@@ -78,7 +78,7 @@ import {
   TOTAL_BORROW,
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { FundedAsset, resQuery } from '@ui/hooks/useAllFundedInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -119,7 +119,7 @@ export const FundedMarketsList = ({
     totalBorrowBalanceFiat,
   } = info;
 
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const [collateralCounts, protectedCounts, borrowableCounts, pausedCounts] = useMemo(() => {
     return [
       assets.filter((asset) => asset.membership).length,
@@ -447,7 +447,7 @@ export const FundedMarketsList = ({
   }, [searchText]);
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     let oldObj;
     if (oldData) {
       oldObj = JSON.parse(oldData);
@@ -459,7 +459,7 @@ export const FundedMarketsList = ({
       }
     });
     const data = { ...oldObj, userMarketColumnVisibility: arr, userMarketSorting: sorting };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 
   return (

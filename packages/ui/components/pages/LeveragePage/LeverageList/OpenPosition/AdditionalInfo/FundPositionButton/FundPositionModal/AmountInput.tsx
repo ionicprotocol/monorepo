@@ -1,5 +1,5 @@
 import { Box, Button, Input } from '@chakra-ui/react';
-import type { LeveredCollateral, SupportedChains } from '@midas-capital/types';
+import type { LeveredCollateral, SupportedChains } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -26,7 +26,7 @@ export const AmountInput = ({
   optionToWrap?: boolean;
   setAmount: (amount: BigNumber) => void;
 }) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);

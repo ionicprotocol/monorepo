@@ -11,12 +11,12 @@ import {
   MIDAS_TELEGRAM_URL,
   MIDAS_TWITTER_URL,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
 const Footer = () => {
   const { cPage } = useColors();
-  const { isSidebarCollapsed } = useMultiMidas();
+  const { isSidebarCollapsed } = useMultiIonic();
 
   return (
     <Column crossAxisAlignment="center" flexShrink={0} gap={2} mainAxisAlignment="center">
@@ -57,7 +57,7 @@ const Footer = () => {
           {!isSidebarCollapsed ? (
             <VStack spacing={0}>
               <Text color={cPage.primary.txtColor} size="sm" textAlign="center" width="100%">
-                © {new Date().getFullYear()} Midas Capital
+                © {new Date().getFullYear()} Ionic Protocol
               </Text>
               <Text color={cPage.primary.txtColor} size="sm" textAlign="center" width="100%">
                 All rights reserved

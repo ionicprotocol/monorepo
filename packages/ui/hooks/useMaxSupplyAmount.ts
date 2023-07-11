@@ -1,9 +1,9 @@
-import type { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -13,7 +13,7 @@ export function useMaxSupplyAmount(
   comptrollerAddress: string,
   chainId: number
 ) {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
   const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
     comptrollerAddress,

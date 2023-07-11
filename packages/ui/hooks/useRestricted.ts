@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import type { DebtCeilingPerCollateralType } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 
@@ -10,7 +10,7 @@ export const useRestricted = (
   debtCeilings: DebtCeilingPerCollateralType[] | null | undefined
 ) => {
   const sdk = useSdk(poolChainId);
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return useQuery(
     ['useRestricted', comptrollerAddress, debtCeilings, sdk?.chainId, address],

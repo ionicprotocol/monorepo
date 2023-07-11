@@ -1,4 +1,4 @@
-import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
 
 import { balancerDocs, defaultDocs, sommFinanceMainnetDocs, wrappedAssetDocs } from "../common";
 

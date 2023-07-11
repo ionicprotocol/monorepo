@@ -3,7 +3,7 @@ import { Contract } from "ethers";
 import { InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyFluxOraclePriceFeed({
-  midasSdk,
+  ionicSdk,
   underlyingOracle,
   asset,
 }: VerifyFeedParams): Promise<PriceFeedValidity> {
@@ -14,7 +14,7 @@ export async function verifyFluxOraclePriceFeed({
       "function latestRoundData() external view returns returns (uint80, int256, uint256, uint256, uint80)",
       "function getRoundData(uint80) external view returns (uint80,int256,uint256,uint256,uint80)",
     ],
-    midasSdk.provider
+    ionicSdk.provider
   );
   const [roundId, value, , updatedAt] = await fluxFeed.callStatic.latestRoundData();
   const [, previousValue] = await fluxFeed.callStatic.getRoundData(roundId.sub(1));

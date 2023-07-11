@@ -10,8 +10,8 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
-import { FundOperationMode } from '@midas-capital/types';
+import type { VaultData } from '@ionicprotocol/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -23,7 +23,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { VAULT_WITHDRAW_STEPS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -40,7 +40,7 @@ interface WithdrawModalProps {
 }
 
 export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 

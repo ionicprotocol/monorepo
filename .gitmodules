@@ -3,5 +3,5 @@
 	url = git@github.com:dapphub/ds-test
 [submodule "packages/sdk/lib/contracts"]
 	path = packages/sdk/lib/contracts
-	url = git@github.com:Midas-Protocol/contracts.git
+	url = git@github.com:ionicprotocol/contracts.git
 	branch = development

@@ -1,5 +1,5 @@
 import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
+import type { VaultData } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
 export const SupplyApy = ({ vault }: { vault: VaultData }) => {

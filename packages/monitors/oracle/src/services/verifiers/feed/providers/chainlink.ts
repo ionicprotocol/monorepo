@@ -4,7 +4,7 @@ import { logger } from "../../../../logger";
 import { InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyChainLinkOraclePriceFeed({
-  midasSdk,
+  ionicSdk,
   underlyingOracle,
   asset,
 }: VerifyFeedParams): Promise<PriceFeedValidity> {
@@ -17,7 +17,7 @@ export async function verifyChainLinkOraclePriceFeed({
       "function latestRoundData() external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
       "function getRoundData(uint80 roundId) external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
     ],
-    midasSdk.provider
+    ionicSdk.provider
   );
   const [roundId, value, , updatedAt] = await chainLinkFeed.callStatic.latestRoundData();
   const [, previousValue, ,] = await chainLinkFeed.callStatic.getRoundData(roundId.sub(1));

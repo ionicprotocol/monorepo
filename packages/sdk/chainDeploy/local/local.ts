@@ -1,5 +1,5 @@
-import { ganache } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset } from "@midas-capital/types";
+import { ganache } from "@ionicprotocol/chains";
+import { assetSymbols, SupportedAsset } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { FixedNativePriceOracle } from "../../typechain/FixedNativePriceOracle";

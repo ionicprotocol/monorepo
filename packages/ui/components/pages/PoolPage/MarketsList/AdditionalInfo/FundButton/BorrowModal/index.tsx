@@ -1,5 +1,5 @@
 import { Box, Button, Checkbox, Divider, HStack, Text } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -19,7 +19,7 @@ import { Column } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { BORROW_STEPS, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
@@ -53,7 +53,7 @@ export const BorrowModal = ({
   borrowBalanceFiat,
   comptrollerAddress,
 }: BorrowModalProps) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const addRecentTransaction = useAddRecentTransaction();

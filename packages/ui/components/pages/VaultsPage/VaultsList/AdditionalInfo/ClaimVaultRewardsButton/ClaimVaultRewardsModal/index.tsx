@@ -1,5 +1,5 @@
 import { Box, Button, HStack, Img, Text, VStack } from '@chakra-ui/react';
-import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@ionicprotocol/types';
 import { useAddRecentTransaction, useChainModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -11,7 +11,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { MidasModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useErrorToast } from '@ui/hooks/useToast';
 import type { TxStep } from '@ui/types/ComponentPropsType';
@@ -19,7 +19,7 @@ import { dynamicFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const ClaimableToken = ({ data, rewardChainId }: { data: RewardsInfo; rewardChainId: number }) => {
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
 
   const totalRewardsString = useMemo(
     () => utils.formatUnits(data.rewards, data.rewardTokenDecimals),
@@ -70,7 +70,7 @@ const ClaimVaultRewardsModal = ({
   refetch: any;
   reward: FlywheelRewardsInfoForVault;
 }) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
   const errorToast = useErrorToast();
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);

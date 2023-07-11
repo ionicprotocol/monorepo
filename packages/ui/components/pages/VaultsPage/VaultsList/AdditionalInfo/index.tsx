@@ -13,8 +13,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { Adapter, VaultData } from '@midas-capital/types';
-import { FundOperationMode } from '@midas-capital/types';
+import type { Adapter, VaultData } from '@ionicprotocol/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import type { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
@@ -29,7 +29,7 @@ import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { GradientText } from '@ui/components/shared/GradientText';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { ADMIN_FEE_TOOLTIP } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -59,7 +59,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
     [chainId]
   );
 
-  const { currentChain, setGlobalLoading } = useMultiMidas();
+  const { currentChain, setGlobalLoading } = useMultiIonic();
   const windowWidth = useWindowSize();
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();

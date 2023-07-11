@@ -1,6 +1,6 @@
 import type { BoxProps } from '@chakra-ui/react';
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@midas-capital/types';
+import type { NativePricedFuseAsset } from '@ionicprotocol/types';
 import React, { useState } from 'react';
 
 import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';

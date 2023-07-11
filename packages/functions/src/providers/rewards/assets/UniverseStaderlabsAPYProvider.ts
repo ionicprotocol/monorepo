@@ -1,4 +1,4 @@
-import { Reward, SupportedChains } from '@midas-capital/types';
+import { Reward, SupportedChains } from '@ionicprotocol/types';
 import axios from 'axios';
 import { AbstractAssetAPYProvider } from './AbstractAssetAPYProvider';
 
@@ -18,9 +18,6 @@ class UniverseStaderlabsAPYProvider extends AbstractAssetAPYProvider {
         break;
       case SupportedChains.bsc:
         chainKey = 'bnb';
-        break;
-      case SupportedChains.fantom:
-        chainKey = 'fantom';
         break;
       default:
         break;

@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedChains } from "@midas-capital/types";
+import { IonicSdk } from "@ionicprotocol/sdk";
+import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
 
 const BASE_CURVE_API = "https://api.curve.fi/api/getPools";
@@ -13,7 +13,7 @@ type CurvePoolResponse = {
   };
 };
 
-export async function fetchCurvePoolTvl(sdk: MidasSdk, poolAddress: string) {
+export async function fetchCurvePoolTvl(sdk: IonicSdk, poolAddress: string) {
   console.log("Fetching Curve pool TVL for", poolAddress);
   console.log({ chainId: sdk.chainId });
   const chainName = SupportedChains[sdk.chainId];

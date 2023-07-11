@@ -14,8 +14,8 @@ export default task("get-liquidations", "Get potential liquidations")
   )
   .addOptionalParam("maxHealth", "Filter pools by max health", "1", types.string)
   .setAction(async (taskArgs, hre) => {
-    const midasSdkModule = await import("./midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const ionicSdkModule = await import("./ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic();
 
     let excludedComptrollers: Array<string> = [];
     if (taskArgs.excludedComptrollers) excludedComptrollers = taskArgs.excludedComptrollers.split(",");

@@ -2,7 +2,7 @@ import { Text, VStack } from '@chakra-ui/react';
 
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -14,7 +14,7 @@ export const BorrowBalance = ({
   poolChainId: number;
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return (
     <>

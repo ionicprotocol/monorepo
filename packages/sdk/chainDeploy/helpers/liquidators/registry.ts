@@ -1,4 +1,4 @@
-import { chainIdToConfig } from "@midas-capital/chains";
+import { chainIdToConfig } from "@ionicprotocol/chains";
 
 import { ILiquidatorsRegistry } from "../../../typechain/ILiquidatorsRegistry";
 import { LiquidatorsRegistryConfigFnParams } from "../types";

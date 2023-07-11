@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
-import { ChainConfig } from "@midas-capital/types";
+import { ERC20Abi, IonicSdk } from "@ionicprotocol/sdk";
+import { ChainConfig } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
 import { Reserve } from "../../../types";
@@ -11,7 +11,7 @@ export class BalancerFetcher {
   public balancerPool: Contract;
   public provider: JsonRpcProvider;
 
-  public constructor(sdk: MidasSdk, poolAddress: string) {
+  public constructor(sdk: IonicSdk, poolAddress: string) {
     this.chainConfig = sdk.chainConfig;
     this.provider = sdk.provider;
     this.balancerPool = new Contract(

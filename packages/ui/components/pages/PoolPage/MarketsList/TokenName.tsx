@@ -121,7 +121,7 @@ export const TokenName = ({
                     This asset was paused by the pool administrator.
                     It cannot be supplied nor borrowed at the moment.
                     You can still repay and withdraw this asset.
-                    Follow Midas Capital on any outlet for more information.
+                    Follow Ionic Protocol on any outlet for more information.
                     "
               >
                 <Badge colorScheme="gray" px={1} textTransform="capitalize" variant="outline">

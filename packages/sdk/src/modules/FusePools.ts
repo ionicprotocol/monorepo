@@ -1,29 +1,17 @@
-import {
-  arbitrum,
-  bsc,
-  chapel,
-  ethereum,
-  evmos,
-  fantom,
-  ganache,
-  lineagoerli,
-  moonbeam,
-  neondevnet,
-  polygon,
-} from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, ethereum, ganache, lineagoerli, neondevnet, polygon } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   FusePoolData,
   NativePricedFuseAsset,
   SupportedAsset,
   SupportedChains,
-} from "@midas-capital/types";
+} from "@ionicprotocol/types";
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
-import { MidasBaseConstructor } from "..";
+import { IonicBaseConstructor } from "..";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../typechain/FusePoolLens";
-import { filterOnlyObjectProperties, filterPoolName } from "../MidasSdk/utils";
+import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
@@ -36,17 +24,14 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.bsc]: bsc.assets,
   [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: ganache.assets,
-  [SupportedChains.evmos]: evmos.assets,
   [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
-  [SupportedChains.fantom]: fantom.assets,
   [SupportedChains.lineagoerli]: lineagoerli.assets,
   [SupportedChains.ethereum]: ethereum.assets,
 };
 
-export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
+export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
     async fetchFusePoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData | null> {
       const {

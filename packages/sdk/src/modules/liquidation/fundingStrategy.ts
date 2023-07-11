@@ -1,8 +1,8 @@
-import { FundingStrategyContract } from "@midas-capital/types";
+import { FundingStrategyContract } from "@ionicprotocol/types";
 import { BytesLike, constants, ethers } from "ethers";
 
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 export type FundingStrategiesAndDatas = {
   strategies: string[];
@@ -11,12 +11,12 @@ export type FundingStrategiesAndDatas = {
 };
 
 export const getFundingStrategiesAndDatas = async (
-  midasSdk: MidasBase,
+  ionicSdk: IonicBase,
   debtToken: string
 ): Promise<FundingStrategiesAndDatas> => {
   const uniswapV2Factory = IUniswapV2Factory__factory.connect(
-    midasSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-    midasSdk.provider
+    ionicSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
+    ionicSdk.provider
   );
 
   const strategies: string[] = [];
@@ -24,14 +24,14 @@ export const getFundingStrategiesAndDatas = async (
   const tokenPath: string[] = [];
 
   let fundingToken = debtToken;
-  while (fundingToken in midasSdk.fundingStrategies) {
+  while (fundingToken in ionicSdk.fundingStrategies) {
     // chain the funding strategy that can give us the needed funding token
-    const [fundingStrategyContract, inputToken] = midasSdk.fundingStrategies[fundingToken];
+    const [fundingStrategyContract, inputToken] = ionicSdk.fundingStrategies[fundingToken];
 
     // avoid going in an endless loop
     if (tokenPath.find((p) => p == inputToken)) {
       // if we can supply the funding token with flash loan on uniswap, that's enough
-      const pair = await uniswapV2Factory.callStatic.getPair(midasSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
+      const pair = await uniswapV2Factory.callStatic.getPair(ionicSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
       if (pair !== constants.AddressZero) {
         break;
       } else {
@@ -45,8 +45,8 @@ export const getFundingStrategiesAndDatas = async (
 
     tokenPath.push(inputToken);
 
-    const strategyAddress = midasSdk.chainDeployment[fundingStrategyContract].address;
-    const strategyData = getStrategyData(midasSdk, fundingStrategyContract, inputToken, fundingToken);
+    const strategyAddress = ionicSdk.chainDeployment[fundingStrategyContract].address;
+    const strategyData = getStrategyData(ionicSdk, fundingStrategyContract, inputToken, fundingToken);
 
     strategies.push(strategyAddress);
     datas.push(strategyData);
@@ -63,7 +63,7 @@ export const getFundingStrategiesAndDatas = async (
 };
 
 function getStrategyData(
-  midasSdk: MidasBase,
+  ionicSdk: IonicBase,
   contract: FundingStrategyContract,
   inputToken: string,
   fundingToken: string
@@ -71,20 +71,20 @@ function getStrategyData(
   switch (contract) {
     // IFundsConversionStrategy should be also configured here
     case FundingStrategyContract.UniswapV3LiquidatorFunder:
-      const quoter = midasSdk.chainDeployment["Quoter"].address;
+      const quoter = ionicSdk.chainDeployment["Quoter"].address;
 
       return new ethers.utils.AbiCoder().encode(
         ["address", "address", "uint24", "address", "address"],
         [
           inputToken,
           fundingToken,
-          midasSdk.chainConfig.specificParams.metadata.uniswapV3Fees?.[inputToken][fundingToken] || 1000,
-          midasSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER,
+          ionicSdk.chainConfig.specificParams.metadata.uniswapV3Fees?.[inputToken][fundingToken] || 1000,
+          ionicSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER,
           quoter,
         ]
       );
     case FundingStrategyContract.JarvisLiquidatorFunder:
-      const jarvisPool = midasSdk.chainConfig.liquidationDefaults.jarvisPools.find(
+      const jarvisPool = ionicSdk.chainConfig.liquidationDefaults.jarvisPools.find(
         (p) => p.collateralToken == inputToken && p.syntheticToken == fundingToken
       );
       if (jarvisPool == null) {
@@ -101,13 +101,13 @@ function getStrategyData(
     case FundingStrategyContract.XBombLiquidatorFunder:
       return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
     case FundingStrategyContract.CurveSwapLiquidatorFunder:
-      const curveV1Oracle = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry;
-      const curveV2Oracle = midasSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry;
+      const curveV1Oracle = ionicSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry;
+      const curveV2Oracle = ionicSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry;
       const curveV1OracleAddress = curveV1Oracle ? curveV1Oracle.address : constants.AddressZero;
       const curveV2OracleAddress = curveV2Oracle ? curveV2Oracle.address : constants.AddressZero;
       return new ethers.utils.AbiCoder().encode(
         ["address", "address", "address", "address", "address"],
-        [curveV1OracleAddress, curveV2OracleAddress, inputToken, fundingToken, midasSdk.chainSpecificAddresses.W_TOKEN]
+        [curveV1OracleAddress, curveV2OracleAddress, inputToken, fundingToken, ionicSdk.chainSpecificAddresses.W_TOKEN]
       );
     default:
       return "";

@@ -36,7 +36,7 @@ export class PriceVerifier extends AbstractOracleVerifier {
     const { sdk, asset, mpoPrice } = this;
 
     const priceArgs: VerifyPriceParams = {
-      midasSdk: sdk,
+      ionicSdk: sdk,
       asset,
       mpoPrice,
     };

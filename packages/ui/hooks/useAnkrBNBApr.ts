@@ -1,6 +1,6 @@
-import type { MidasSdk } from '@midas-capital/sdk';
-import type { SupportedChains } from '@midas-capital/types';
-import { assetSymbols } from '@midas-capital/types';
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { SupportedChains } from '@ionicprotocol/types';
+import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
@@ -9,7 +9,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { getAnkrBNBContract } from '@ui/utils/contracts';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
-export const getAnkrBNBApr = async (poolChainId: number, sdk: MidasSdk) => {
+export const getAnkrBNBApr = async (poolChainId: number, sdk: IonicSdk) => {
   const ankrAsset = ChainSupportedAssets[poolChainId as SupportedChains].find(
     (asset) => asset.symbol === assetSymbols.ankrBNB
   );

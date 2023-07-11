@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 export default task("get-pool-data", "Get pools data")
@@ -12,9 +12,9 @@ export default task("get-pool-data", "Get pools data")
       throw "Invalid chain provided";
     }
 
-    const midasSdkModule = await import("../midasSdk");
+    const ionicSdkModule = await import("../ionicSdk");
     const poolModule = await import("./utils");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const sdk = await ionicSdkModule.getOrCreateIonic();
     if (taskArgs.address) {
       const pool = await poolModule.logPoolData(taskArgs.address, sdk);
       console.log(pool);
@@ -62,9 +62,9 @@ task("get-position-ratio", "Get unhealthy po data")
       throw "Invalid chain provided";
     }
 
-    const midasSdkModule = await import("../midasSdk");
+    const ionicSdkModule = await import("../ionicSdk");
     const poolModule = await import("./utils");
-    const sdk = await midasSdkModule.getOrCreateMidas();
+    const sdk = await ionicSdkModule.getOrCreateIonic();
 
     if (!taskArgs.namedUser && !taskArgs.userAddress) {
       throw "Must provide either a named user or an account address";
@@ -137,8 +137,8 @@ task("get-balance-of", "Get public pools")
   });
 
 task("get-chain-tvl", "Get chain's TVL").setAction(async (taskArgs, hre) => {
-  const midasSdkModule = await import("../midasSdk");
-  const sdk = await midasSdkModule.getOrCreateMidas();
+  const ionicSdkModule = await import("../ionicSdk");
+  const sdk = await ionicSdkModule.getOrCreateIonic();
 
   const { 2: fusePoolDataStructs } = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(
     false

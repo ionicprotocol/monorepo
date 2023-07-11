@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react';
-import { WETHAbi } from '@midas-capital/sdk';
-import { getContract } from '@midas-capital/sdk/dist/cjs/src/MidasSdk/utils';
-import { FundOperationMode } from '@midas-capital/types';
+import { WETHAbi } from '@ionicprotocol/sdk';
+import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -17,7 +17,7 @@ import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/Additiona
 import { Banner } from '@ui/components/shared/Banner';
 import { Column } from '@ui/components/shared/Flex';
 import { SUPPLY_STEPS } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -40,7 +40,7 @@ export const SupplyTab = ({
   poolChainId: number;
   setIsLoading: (value: boolean) => void;
 }) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 

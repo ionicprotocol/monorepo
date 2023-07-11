@@ -1,9 +1,9 @@
-import type { SupportedChains } from '@midas-capital/types';
+import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 interface AllRewardsType {
   amount: BigNumber;
@@ -12,7 +12,7 @@ interface AllRewardsType {
 }
 
 export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
-  const { address, getSdk } = useMultiMidas();
+  const { address, getSdk } = useMultiIonic();
 
   return useQuery(
     ['useAllClaimableRewards', chainIds, address],

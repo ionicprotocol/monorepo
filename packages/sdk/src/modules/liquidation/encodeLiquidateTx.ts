@@ -1,13 +1,13 @@
-import { LiquidationStrategy } from "@midas-capital/types";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 import { StrategiesAndDatas } from "./redemptionStrategy";
 import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
 
 export default async function encodeLiquidateTx(
-  sdk: MidasBase,
+  sdk: IonicBase,
   liquidationStrategy: LiquidationStrategy,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,

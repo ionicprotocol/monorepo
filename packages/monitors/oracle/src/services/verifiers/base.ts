@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { IonicSdk } from "@ionicprotocol/sdk";
+import { OracleTypes, SupportedAsset } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
 import { PriceFeedValidity, ServiceConfig, VerifierInitValidity } from "../../types";
@@ -7,16 +7,16 @@ import { PriceFeedValidity, ServiceConfig, VerifierInitValidity } from "../../ty
 export abstract class AbstractOracleVerifier {
   asset: SupportedAsset;
   oracleType: OracleTypes;
-  sdk: MidasSdk;
+  sdk: IonicSdk;
   mpo: Contract;
 
   config: ServiceConfig;
 
-  constructor(midasSdk: MidasSdk, asset: SupportedAsset, config: ServiceConfig) {
+  constructor(ionicSdk: IonicSdk, asset: SupportedAsset, config: ServiceConfig) {
     this.asset = asset;
-    this.sdk = midasSdk;
+    this.sdk = ionicSdk;
     this.config = config;
-    this.mpo = midasSdk.createMasterPriceOracle();
+    this.mpo = ionicSdk.createMasterPriceOracle();
   }
   abstract init(): Promise<[AbstractOracleVerifier, VerifierInitValidity]>;
   abstract verify(): Promise<PriceFeedValidity>;

@@ -1,13 +1,13 @@
-import type { MidasSdk } from '@midas-capital/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
-  const tvlNative = await midasSdk.getTotalValueLocked(false);
-  const decimals = midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
+export const fetchFuseNumberTVL = async (ionicSdk: IonicSdk) => {
+  const tvlNative = await ionicSdk.getTotalValueLocked(false);
+  const decimals = ionicSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
   return Number(utils.formatUnits(tvlNative, decimals));
 };
@@ -22,7 +22,7 @@ type CrossChainTVL = Map<
 >;
 
 export const useTVL = () => {
-  const { sdks } = useMultiMidas();
+  const { sdks } = useMultiIonic();
   const { data: prices, isLoading, error } = useAllUsdPrices();
 
   return useQuery<CrossChainTVL | null | undefined>(

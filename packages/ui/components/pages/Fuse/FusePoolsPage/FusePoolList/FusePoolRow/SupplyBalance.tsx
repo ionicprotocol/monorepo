@@ -2,11 +2,11 @@ import { Text } from '@chakra-ui/react';
 
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const SupplyBalance = ({ pool }: { pool: PoolData }) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   return (
     <>
       {!address ? (

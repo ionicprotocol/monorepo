@@ -1,9 +1,9 @@
 // pool utilities used across downstream tests
-import { FusePool, FusePoolData } from "@midas-capital/types";
+import { FusePool, FusePoolData } from "@ionicprotocol/types";
 
-import { MidasSdk } from "../../src";
+import { IonicSdk } from "../../src";
 
-export const getPoolIndex = async (poolAddress: string, sdk: MidasSdk) => {
+export const getPoolIndex = async (poolAddress: string, sdk: IonicSdk) => {
   const [indexes, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].comptroller === poolAddress) {
@@ -13,7 +13,7 @@ export const getPoolIndex = async (poolAddress: string, sdk: MidasSdk) => {
   return null;
 };
 
-export const getPoolByName = async (name: string, sdk: MidasSdk, address?: string): Promise<FusePoolData | null> => {
+export const getPoolByName = async (name: string, sdk: IonicSdk, address?: string): Promise<FusePoolData | null> => {
   const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].name === name) {
@@ -24,7 +24,7 @@ export const getPoolByName = async (name: string, sdk: MidasSdk, address?: strin
   return null;
 };
 
-export const getAllPools = async (sdk: MidasSdk): Promise<FusePool[]> => {
+export const getAllPools = async (sdk: IonicSdk): Promise<FusePool[]> => {
   const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
   return publicPools.map((pp) => {
     return {
@@ -37,7 +37,7 @@ export const getAllPools = async (sdk: MidasSdk): Promise<FusePool[]> => {
   });
 };
 
-export const logPoolData = async (poolAddress: string, sdk: MidasSdk) => {
+export const logPoolData = async (poolAddress: string, sdk: IonicSdk) => {
   const poolIndex = await getPoolIndex(poolAddress, sdk);
   const fusePoolData = await sdk.fetchFusePoolData(poolIndex!.toString());
   if (!fusePoolData) {

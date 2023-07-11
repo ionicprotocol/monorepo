@@ -1,5 +1,5 @@
 import { Divider } from '@chakra-ui/react';
-import type { FundOperationMode } from '@midas-capital/types';
+import type { FundOperationMode } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
@@ -11,7 +11,7 @@ import { Supplied } from '@ui/components/pages/PoolPage/MarketsList/AdditionalIn
 import { SupplyAPY } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn/SupplyAPY';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Column } from '@ui/components/shared/Flex';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
@@ -48,7 +48,7 @@ export const StatsColumn = ({
 
   const updatedAsset = updatedAssets ? updatedAssets[index] : undefined;
 
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiIonic();
   if (!currentSdk || !currentChain) throw new Error("SDK doesn't exist!");
 
   const {

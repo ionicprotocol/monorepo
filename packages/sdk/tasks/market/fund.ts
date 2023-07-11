@@ -1,10 +1,9 @@
-import { bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { assetFilter } from "@midas-capital/types";
+import { bsc, polygon } from "@ionicprotocol/chains";
+import { assetFilter } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
-  [moonbeam.chainId]: moonbeam.assets,
   [polygon.chainId]: polygon.assets,
 };
 
@@ -17,8 +16,8 @@ task("fund:mint", "deploy dynamic rewards plugin with flywheels")
   .addParam("enter", "Enter tx", false, types.boolean)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
-    const midasSdkModule = await import("../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
     const underlyings = underlyingsMapping[sdk.chainId];
 
     // task argument parsing

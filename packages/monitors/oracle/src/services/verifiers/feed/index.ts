@@ -1,4 +1,4 @@
-import { OracleTypes } from "@midas-capital/types";
+import { OracleTypes } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
 import ChainlinkPriceOracleV2ABI from "../../../../../../sdk/abis/ChainlinkPriceOracleV2";
@@ -65,7 +65,7 @@ export class FeedVerifier extends AbstractOracleVerifier {
   public async verify(): Promise<PriceFeedValidity> {
     const { sdk, asset, underlyingOracle } = this;
     const feedArgs: VerifyFeedParams = {
-      midasSdk: sdk,
+      ionicSdk: sdk,
       underlyingOracle: underlyingOracle,
       asset,
     };

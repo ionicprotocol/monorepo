@@ -1,4 +1,4 @@
-import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset } from "@ionicprotocol/types";
 
 const WNEON = "0xf1041596da0499c3438e3B1Eb7b95354C6Aed1f5";
 const MORA = "0x6dcDD1620Ce77B595E6490701416f6Dbf20D2f67";

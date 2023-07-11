@@ -1,5 +1,5 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import type { OpenPosition } from '@midas-capital/types';
+import type { OpenPosition } from '@ionicprotocol/types';
 
 import { RemovePositionModal } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/RemovePositionButton/RemovePositionModal/index';
 

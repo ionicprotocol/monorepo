@@ -1,5 +1,5 @@
-import { ethereum } from "@midas-capital/chains";
-import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
+import { ethereum } from "@ionicprotocol/chains";
+import { assetSymbols, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
 import { BytesLike, constants, Contract, ethers } from "ethers";
 
 import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";
@@ -7,7 +7,7 @@ import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 import SaddleLpPriceOracleABI from "../../../abis/SaddleLpPriceOracle";
 import { IPair__factory } from "../../../typechain/factories/IPair__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 export type StrategiesAndDatas = {
   strategies: string[];
@@ -21,7 +21,7 @@ export type StrategyAndData = {
 };
 
 export const getRedemptionStrategiesAndDatas = async (
-  midasSdk: MidasBase,
+  ionicSdk: IonicBase,
   inputToken: string,
   expectedOutputToken: string | null
 ): Promise<[StrategiesAndDatas, string[]]> => {
@@ -32,9 +32,9 @@ export const getRedemptionStrategiesAndDatas = async (
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
     // chain redemptions as long as it is redeemable and is not the needed output token
-    while (tokenToRedeem != expectedOutputToken && tokenToRedeem in midasSdk.redemptionStrategies) {
+    while (tokenToRedeem != expectedOutputToken && tokenToRedeem in ionicSdk.redemptionStrategies) {
       const { strategyAddress, strategyData, outputToken } = (await getStrategyAndData(
-        midasSdk,
+        ionicSdk,
         tokenToRedeem
       )) as StrategyAndData;
 
@@ -60,16 +60,16 @@ export const getRedemptionStrategiesAndDatas = async (
   ];
 };
 
-export const getUniswapV2Router = (midasSdk: MidasBase, asset: string): string => {
-  return Object.values(midasSdk.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER).includes(asset)
-    ? midasSdk.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER[asset]
-    : midasSdk.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
+export const getUniswapV2Router = (ionicSdk: IonicBase, asset: string): string => {
+  return Object.values(ionicSdk.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER).includes(asset)
+    ? ionicSdk.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER[asset]
+    : ionicSdk.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
 };
 
-const pickPreferredToken = (midasSdk: MidasBase, tokens: string[], strategyOutputToken: string): string => {
-  const wtoken = midasSdk.chainSpecificAddresses.W_TOKEN;
-  const stableToken = midasSdk.chainSpecificAddresses.STABLE_TOKEN;
-  const wBTCToken = midasSdk.chainSpecificAddresses.W_BTC_TOKEN;
+const pickPreferredToken = (ionicSdk: IonicBase, tokens: string[], strategyOutputToken: string): string => {
+  const wtoken = ionicSdk.chainSpecificAddresses.W_TOKEN;
+  const stableToken = ionicSdk.chainSpecificAddresses.STABLE_TOKEN;
+  const wBTCToken = ionicSdk.chainSpecificAddresses.W_BTC_TOKEN;
 
   if (tokens.find((t) => t == strategyOutputToken)) {
     return strategyOutputToken;
@@ -84,12 +84,12 @@ const pickPreferredToken = (midasSdk: MidasBase, tokens: string[], strategyOutpu
   }
 };
 
-const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Promise<StrategyAndData> => {
-  const [redemptionStrategy, outputToken] = midasSdk.redemptionStrategies[inputToken];
+const getStrategyAndData = async (ionicSdk: IonicBase, inputToken: string): Promise<StrategyAndData> => {
+  const [redemptionStrategy, outputToken] = ionicSdk.redemptionStrategies[inputToken];
   const redemptionStrategyContract = new Contract(
-    midasSdk.chainDeployment[redemptionStrategy].address,
+    ionicSdk.chainDeployment[redemptionStrategy].address,
     IRedemptionStrategyABI,
-    midasSdk.provider
+    ionicSdk.provider
   );
 
   let actualOutputToken;
@@ -97,11 +97,11 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
 
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
-      const curveLpOracleAddress = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
-      const curveLpOracle = new Contract(curveLpOracleAddress, CurveLpTokenPriceOracleNoRegistryABI, midasSdk.provider);
+      const curveLpOracleAddress = ionicSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
+      const curveLpOracle = new Contract(curveLpOracleAddress, CurveLpTokenPriceOracleNoRegistryABI, ionicSdk.provider);
 
       let tokens = await curveLpOracle.callStatic.getUnderlyingTokens(inputToken);
-      preferredOutputToken = pickPreferredToken(midasSdk, tokens, outputToken);
+      preferredOutputToken = pickPreferredToken(ionicSdk, tokens, outputToken);
 
       // the native asset is not a real erc20 token contract, converting to wrapped
       actualOutputToken = preferredOutputToken;
@@ -109,23 +109,23 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         preferredOutputToken == ethers.constants.AddressZero ||
         preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
       ) {
-        actualOutputToken = midasSdk.chainSpecificAddresses.W_TOKEN;
+        actualOutputToken = ionicSdk.chainSpecificAddresses.W_TOKEN;
       }
 
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address", "address"],
-          [preferredOutputToken, midasSdk.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
+          [preferredOutputToken, ionicSdk.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
         ),
         outputToken: actualOutputToken,
       };
     case RedemptionStrategyContract.SaddleLpTokenLiquidator:
-      const saddleLpOracleAddress = midasSdk.chainDeployment.SaddleLpPriceOracle.address;
-      const saddleLpOracle = new Contract(saddleLpOracleAddress, SaddleLpPriceOracleABI, midasSdk.provider);
+      const saddleLpOracleAddress = ionicSdk.chainDeployment.SaddleLpPriceOracle.address;
+      const saddleLpOracle = new Contract(saddleLpOracleAddress, SaddleLpPriceOracleABI, ionicSdk.provider);
 
       tokens = await saddleLpOracle.callStatic.getUnderlyingTokens(inputToken);
-      preferredOutputToken = pickPreferredToken(midasSdk, tokens, outputToken);
+      preferredOutputToken = pickPreferredToken(ionicSdk, tokens, outputToken);
 
       // the native asset is not a real erc20 token contract, converting to wrapped
       actualOutputToken = preferredOutputToken;
@@ -133,18 +133,18 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         preferredOutputToken == ethers.constants.AddressZero ||
         preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
       ) {
-        actualOutputToken = midasSdk.chainSpecificAddresses.W_TOKEN;
+        actualOutputToken = ionicSdk.chainSpecificAddresses.W_TOKEN;
       }
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address", "address"],
-          [preferredOutputToken, saddleLpOracleAddress, midasSdk.chainSpecificAddresses.W_TOKEN]
+          [preferredOutputToken, saddleLpOracleAddress, ionicSdk.chainSpecificAddresses.W_TOKEN]
         ),
         outputToken: actualOutputToken,
       };
     case RedemptionStrategyContract.SolidlyLpTokenLiquidator: {
-      const lpToken = IPair__factory.connect(inputToken, midasSdk.provider);
+      const lpToken = IPair__factory.connect(inputToken, ionicSdk.provider);
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();
@@ -157,14 +157,14 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address"],
-          [midasSdk.chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, outputToken]
+          [ionicSdk.chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, outputToken]
         ),
         outputToken,
       };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
     case RedemptionStrategyContract.GelatoGUniLiquidator: {
-      const lpToken = IUniswapV2Pair__factory.connect(inputToken, midasSdk.provider);
+      const lpToken = IUniswapV2Pair__factory.connect(inputToken, ionicSdk.provider);
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();
@@ -184,7 +184,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
-          [getUniswapV2Router(midasSdk, inputToken), swapToken0Path, swapToken1Path]
+          [getUniswapV2Router(ionicSdk, inputToken), swapToken0Path, swapToken1Path]
         ),
         outputToken,
       };
@@ -194,7 +194,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address"],
-          [outputToken, midasSdk.chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER]
+          [outputToken, ionicSdk.chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER]
         ),
         outputToken,
       };
@@ -204,7 +204,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address"],
-          [midasSdk.chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, outputToken]
+          [ionicSdk.chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER, outputToken]
         ),
         outputToken,
       };
@@ -215,13 +215,13 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]"],
-          [getUniswapV2Router(midasSdk, inputToken), swapPath]
+          [getUniswapV2Router(ionicSdk, inputToken), swapPath]
         ),
         outputToken,
       };
     }
     case RedemptionStrategyContract.JarvisLiquidatorFunder: {
-      const jarvisPool = midasSdk.chainConfig.liquidationDefaults.jarvisPools.find(
+      const jarvisPool = ionicSdk.chainConfig.liquidationDefaults.jarvisPools.find(
         (p) => p.collateralToken == outputToken && p.syntheticToken == inputToken
       );
       if (jarvisPool == null) {
@@ -240,23 +240,23 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
     }
     case RedemptionStrategyContract.CurveSwapLiquidatorFunder:
     case RedemptionStrategyContract.CurveSwapLiquidator: {
-      const curveV1Oracle = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry
-        ? midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address
+      const curveV1Oracle = ionicSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry
+        ? ionicSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address
         : constants.AddressZero;
-      const curveV2Oracle = midasSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry
-        ? midasSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address
+      const curveV2Oracle = ionicSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry
+        ? ionicSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address
         : constants.AddressZero;
 
       const strategyData = new ethers.utils.AbiCoder().encode(
         ["address", "address", "address", "address", "address"],
-        [curveV1Oracle, curveV2Oracle, inputToken, outputToken, midasSdk.chainSpecificAddresses.W_TOKEN]
+        [curveV1Oracle, curveV2Oracle, inputToken, outputToken, ionicSdk.chainSpecificAddresses.W_TOKEN]
       );
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     case RedemptionStrategyContract.BalancerSwapLiquidator: {
       let pool;
-      for (const balancerPoolConfig of midasSdk.chainConfig.liquidationDefaults.balancerPools) {
+      for (const balancerPoolConfig of ionicSdk.chainConfig.liquidationDefaults.balancerPools) {
         let inputFound = false;
         let outputFound = false;
         for (const underlying of balancerPoolConfig.underlyingTokens) {
@@ -320,10 +320,10 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         }
       }
 
-      const quoter = midasSdk.chainDeployment["Quoter"].address;
+      const quoter = ionicSdk.chainDeployment["Quoter"].address;
       const strategyData = new ethers.utils.AbiCoder().encode(
         ["address", "uint24", "address", "address[]", "address"],
-        [outputToken, fee, midasSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER, underlyingTokens, quoter]
+        [outputToken, fee, ionicSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER, underlyingTokens, quoter]
       );
       return {
         strategyAddress: redemptionStrategyContract.address,
@@ -335,7 +335,7 @@ const getStrategyAndData = async (midasSdk: MidasBase, inputToken: string): Prom
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address"],
-          [outputToken, midasSdk.chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER]
+          [outputToken, ionicSdk.chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER]
         ),
         outputToken,
       };

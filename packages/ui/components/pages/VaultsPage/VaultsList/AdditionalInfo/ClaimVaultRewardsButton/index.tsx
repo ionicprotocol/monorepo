@@ -1,5 +1,5 @@
 import { AvatarGroup, Box, HStack, Text, useDisclosure } from '@chakra-ui/react';
-import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@midas-capital/types';
+import type { FlywheelRewardsInfoForVault, RewardsInfo } from '@ionicprotocol/types';
 
 import ClaimVaultRewardsModal from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/ClaimVaultRewardsButton/ClaimVaultRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';

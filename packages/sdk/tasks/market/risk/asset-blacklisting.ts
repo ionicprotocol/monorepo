@@ -9,8 +9,8 @@ export default task("market:set-asset-blacklist", "Set borrow blacklist of colla
   .setAction(async ({ admin, collat, borrow, blacklist }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const midasSdkModule = await import("../../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
     const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
     const borrowCToken = sdk.createCTokenWithExtensions(borrow, signer);
@@ -52,8 +52,8 @@ task("market:set-asset-blacklist-whitelist", "Pauses borrowing on a market")
   .setAction(async ({ admin, collats, borrow, account, whitelist }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const midasSdkModule = await import("../../midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas(signer);
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
     const collterals = collats.split(",");
 

@@ -20,13 +20,13 @@ export async function verifyAMMLiquidity(
 ): Promise<LiquidityInvalidity | true> {
   switch (args.poolKind) {
     case LiquidityPoolKind.UniswapV2:
-      return await verifyUniswapV2LiquidityDepth(args.midasSdk, args.asset as UniswapV2AssetConfig, config);
+      return await verifyUniswapV2LiquidityDepth(args.ionicSdk, args.asset as UniswapV2AssetConfig, config);
     case LiquidityPoolKind.UniswapV3:
-      return await verifyUniswapV3LiquidityDepth(args.midasSdk, args.asset as UniswapV3AssetConfig, config);
+      return await verifyUniswapV3LiquidityDepth(args.ionicSdk, args.asset as UniswapV3AssetConfig, config);
     case LiquidityPoolKind.Curve:
-      return await verifyCurveLiquidityDepth(args.midasSdk, args.asset as CurvePoolConfig, config);
+      return await verifyCurveLiquidityDepth(args.ionicSdk, args.asset as CurvePoolConfig, config);
     case LiquidityPoolKind.Balancer:
-      return await verifyBalancerLiquidityDepth(args.midasSdk, args.asset as BalancerPoolConfig, config);
+      return await verifyBalancerLiquidityDepth(args.ionicSdk, args.asset as BalancerPoolConfig, config);
     default:
       return true;
   }

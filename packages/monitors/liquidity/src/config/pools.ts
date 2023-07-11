@@ -1,5 +1,5 @@
-import { bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { assetFilter, assetSymbols, underlying } from "@midas-capital/types";
+import { bsc, polygon } from "@ionicprotocol/chains";
+import { assetFilter, assetSymbols, underlying } from "@ionicprotocol/types";
 
 import { LiquidityMonitorChains, LiquidityPoolKind, MonitoredChainAssets } from "../types";
 
@@ -35,20 +35,5 @@ export const MONITORED_CHAIN_ASSETS: MonitoredChainAssets = {
         identifier: "Balancer MIMO_PAR_80_20",
       },
     ],
-  },
-  [LiquidityMonitorChains.moonbeam]: {
-    [LiquidityPoolKind.UniswapV2]: [],
-    [LiquidityPoolKind.UniswapV3]: [],
-    [LiquidityPoolKind.Curve]: [
-      {
-        poolAddress: underlying(moonbeam.assets, assetSymbols["xcDOT-stDOT"]),
-        affectedAssets: [
-          assetFilter(moonbeam.assets, assetSymbols.xcDOT),
-          assetFilter(moonbeam.assets, assetSymbols.stDOT),
-        ],
-        identifier: "Curve xcDOT-stDOT",
-      },
-    ],
-    [LiquidityPoolKind.Balancer]: [],
   },
 };

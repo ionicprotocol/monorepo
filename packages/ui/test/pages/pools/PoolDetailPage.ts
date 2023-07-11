@@ -1,5 +1,5 @@
 import type { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
-import { FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode } from '@ionicprotocol/types';
 
 import { AppPage } from '@ui/test/pages/AppPage';
 

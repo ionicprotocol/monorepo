@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 import { Contract, utils } from "ethers";
 
 import { logger } from "../../../../logger";
@@ -6,7 +6,7 @@ import { InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../
 import { getDefiLlamaPrice } from "../../../../utils";
 
 export async function verifyDiaOraclePriceFeed({
-  midasSdk,
+  ionicSdk,
   underlyingOracle,
   asset,
 }: VerifyFeedParams): Promise<PriceFeedValidity> {
@@ -15,13 +15,13 @@ export async function verifyDiaOraclePriceFeed({
   const diaFeed = new Contract(
     feed,
     ["function getValue(string memory key) external view returns (uint128, uint128)"],
-    midasSdk.provider
+    ionicSdk.provider
   );
   const [price, timestamp] = await diaFeed.callStatic.getValue(key);
   const updatedAtts = timestamp.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
 
-  const chainName = SupportedChains[midasSdk.chainId];
+  const chainName = SupportedChains[ionicSdk.chainId];
 
   const assetId = `${chainName}:${asset.underlying}`;
   const tokenPriceUSD = await getDefiLlamaPrice(assetId);

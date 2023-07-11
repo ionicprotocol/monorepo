@@ -6,11 +6,11 @@ import Terms from '@ui/components/pages/Fuse/Modals/Terms';
 import { Column } from '@ui/components/shared/Flex';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import { MIDAS_T_AND_C_ACCEPTED } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const { isGlobalLoading } = useMultiMidas();
+  const { isGlobalLoading } = useMultiIonic();
   const { cPage } = useColors();
   const [isAcceptedTerms, setAcceptedTerms] = useState<boolean | undefined>();
   const mounted = useRef(false);

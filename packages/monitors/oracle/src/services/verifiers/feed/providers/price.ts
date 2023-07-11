@@ -1,14 +1,14 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 import { utils } from "ethers";
 
 import { logger } from "../../../../logger";
 import { InvalidReason, PriceFeedValidity, VerifyPriceParams } from "../../../../types";
 import { getDefiLlamaPrice } from "../../../../utils";
 
-export async function verifyPriceValue({ midasSdk, asset, mpoPrice }: VerifyPriceParams): Promise<PriceFeedValidity> {
-  const chainName = SupportedChains[midasSdk.chainId];
+export async function verifyPriceValue({ ionicSdk, asset, mpoPrice }: VerifyPriceParams): Promise<PriceFeedValidity> {
+  const chainName = SupportedChains[ionicSdk.chainId];
 
-  const wrappedNativeId = `${chainName}:${midasSdk.chainSpecificAddresses.W_TOKEN}`;
+  const wrappedNativeId = `${chainName}:${ionicSdk.chainSpecificAddresses.W_TOKEN}`;
   const assetId = `${chainName}:${asset.underlying}`;
   const wrappedNativeTokenPriceUSD = await getDefiLlamaPrice(wrappedNativeId);
   const tokenPriceUSD = await getDefiLlamaPrice(assetId);

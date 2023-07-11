@@ -2,14 +2,14 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export async function getInitialProps() {
   return {};
 }
 
 const FusePage: NextPage = () => {
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading } = useMultiIonic();
 
   useEffect(() => {
     setGlobalLoading(false);
@@ -18,7 +18,7 @@ const FusePage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Midas Capital</title>
+        <title>Ionic Protocol</title>
       </Head>
     </>
   );

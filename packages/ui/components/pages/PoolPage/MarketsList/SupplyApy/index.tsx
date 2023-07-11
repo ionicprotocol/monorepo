@@ -1,5 +1,5 @@
 import { HStack, Link, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import { assetSymbols } from '@midas-capital/types';
+import { assetSymbols } from '@ionicprotocol/types';
 import { useEffect, useMemo, useState } from 'react';
 import { BsStars } from 'react-icons/bs';
 

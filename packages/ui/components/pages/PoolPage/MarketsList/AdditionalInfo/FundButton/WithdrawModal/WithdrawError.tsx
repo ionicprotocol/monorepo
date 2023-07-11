@@ -1,4 +1,4 @@
-import { ComptrollerErrorCodes, CTokenErrorCodes } from '@midas-capital/types';
+import { ComptrollerErrorCodes, CTokenErrorCodes } from '@ionicprotocol/types';
 
 export function WithdrawError(errorCode: number) {
   let err;

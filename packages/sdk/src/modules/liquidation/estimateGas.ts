@@ -1,13 +1,13 @@
-import { LiquidationStrategy } from "@midas-capital/types";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
-import { MidasBase } from "../../MidasSdk";
+import { IonicBase } from "../../IonicSdk";
 
 import { getUniswapV2Router, StrategiesAndDatas } from "./redemptionStrategy";
 import { FusePoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
-  fuse: MidasBase,
+  fuse: IonicBase,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,

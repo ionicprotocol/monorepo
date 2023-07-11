@@ -1,11 +1,11 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { DeployedPlugins } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { DeployedPlugins } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { MidasERC4626 } from "../../typechain/MidasERC4626";
+import { MidasERC4626 as IonicERC4626 } from "../../typechain/MidasERC4626";
 
 task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config list").setAction(
   async ({}, { ethers, getChainId, deployments }) => {
@@ -143,7 +143,7 @@ task("plugin:set-fee-recipient")
   .setAction(async ({ pluginAddress, feeRecipient }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
-    const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
+    const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as IonicERC4626;
 
     const currentFee = await plugin.callStatic.performanceFee();
     const currentFr = await plugin.callStatic.feeRecipient();

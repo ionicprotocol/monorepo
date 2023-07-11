@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
@@ -7,7 +7,7 @@ import ComptrollerABI from "../../abis/Comptroller";
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { Comptroller } from "../../typechain/Comptroller";
-import { getContract } from "../MidasSdk/utils";
+import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./FusePools";

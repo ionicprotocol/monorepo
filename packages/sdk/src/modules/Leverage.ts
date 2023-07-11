@@ -1,8 +1,8 @@
-import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo, SupportedChains } from "@midas-capital/types";
+import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo, SupportedChains } from "@ionicprotocol/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import { getContract } from "../MidasSdk/utils";
+import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./FusePools";
@@ -18,7 +18,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           const newPositions: NewPosition[] = [];
 
           const leveredPositionLens = this.createLeveredPositionLens();
-          const midasFlywheelLensRouter = this.createMidasFlywheelLensRouter();
+          const ionicFlywheelLensRouter = this.createIonicFlywheelLensRouter();
 
           const [
             {
@@ -37,7 +37,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             this.getPositionsByAccount(account),
           ]);
 
-          const rewards = await midasFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
+          const rewards = await ionicFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
 
           await Promise.all(
             collateralCTokens.map(async (collateralCToken, index) => {

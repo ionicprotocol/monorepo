@@ -3,12 +3,9 @@ export enum SupportedChains {
   bsc = 56,
   chapel = 97,
   ganache = 1337,
-  evmos = 9001,
-  moonbeam = 1284,
   neon_devnet = 245022926,
   polygon = 137,
   arbitrum = 42161,
-  fantom = 250,
   lineagoerli = 59140,
 }
 
@@ -25,14 +22,17 @@ export enum RedemptionStrategyContract {
   UniswapV3Liquidator = "UniswapV3Liquidator",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
   GammaLpTokenLiquidator = "GammaLpTokenLiquidator",
+  GammaLpTokenWrapper = "GammaLpTokenWrapper",
   CurveSwapLiquidator = "CurveSwapLiquidator",
   CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
+  CurveLpTokenWrapper = "CurveLpTokenWrapper",
   SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
   BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
   BalancerSwapLiquidator = "BalancerSwapLiquidator",
   ERC4626Liquidator = "ERC4626Liquidator",
   AlgebraSwapLiquidator = "AlgebraSwapLiquidator",
   SolidlyLpTokenLiquidator = "SolidlyLpTokenLiquidator",
+  SolidlyLpTokenWrapper = "SolidlyLpTokenWrapper",
   SolidlySwapLiquidator = "SolidlySwapLiquidator",
   AaveTokenLiquidator = "AaveTokenLiquidator",
 }
@@ -166,6 +166,9 @@ export enum assetOriginalSymbols {
   "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
   "sAMM-stkBNB/WBNB" = "stkBNB/WBNB Thena LP",
   "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
+  "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
+  "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
+  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP",
 }
 
 export enum assetSymbols {
@@ -276,80 +279,6 @@ export enum assetSymbols {
 
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
-  // evmos
-  kinesisUSDC = "kinesisUSDC",
-  kinesisUSDT = "kinesisUSDT",
-  saddleOptFraxUSD = "saddleOptFraxUSD",
-  saddleOptUSD = "saddleOptUSD",
-  WEVMOS = "WEVMOS",
-  ATOM = "ATOM",
-  OSMO = "OSMO",
-  JUNO = "JUNO",
-  // USD X
-  gUSDC = "gUSDC",
-  axlUSDC = "axlUSDC",
-  ceUSDC = "ceUSDC",
-  gUSDT = "gUSDT",
-  axlUSDT = "axlUSDT",
-  ceUSDT = "ceUSDT",
-  gDAI = "gDAI",
-  // WETH / BTC
-  ceWETH = "ceWETH",
-  axlWETH = "axlWETH",
-  gWBTC = "gWBTC",
-  gWETH = "gWETH",
-  axlWBTC = "axlWBTC",
-
-  DIFF = "DIFF",
-  GRAV = "GRAV",
-  "WEVMOS-JUNO" = "WEVMOS-JUNO",
-  "WEVMOS-gUSDC" = "WEVMOS-gUSDC",
-  "WEVMOS-ceUSDC" = "WEVMOS-ceUSDC",
-  "WEVMOS-gWETH" = "WEVMOS-gWETH",
-  "ceUSDC-ceUSDT" = "ceUSDC-ceUSDT",
-
-  // moonbeam
-  GLMR = "GLMR",
-  WGLMR = "WGLMR",
-  GLINT = "GLINT",
-  // Stella
-  "USDC.wh-GLMR" = "USDC.wh-GLMR",
-  "DOT.xc-GLMR" = "DOT.xc-GLMR",
-  "WETH.wh-GLMR" = "WETH.wh-GLMR",
-  "WBTC.wh-GLMR" = "WBTC.wh-GLMR",
-  "STELLA-GLMR" = "STELLA-GLMR",
-  "CELR-GLMR" = "CELR-GLMR",
-  "ATOM-GLMR" = "ATOM-GLMR",
-  STELLA = "STELLA",
-  CELR = "CELR",
-  LDO = "LDO",
-  "LDO-GLMR" = "LDO-GLMR",
-  "wstDOT-DOT.xc" = "wstDOT-DOT.xc",
-  "base4pool" = "base4pool",
-
-  // BeamSwap
-  "GLMR-USDC" = "GLMR-USDC",
-  "GLMR-GLINT" = "GLMR-GLINT",
-  "WGLMR-xcDOT" = "WGLMR-xcDOT",
-
-  DOT = "DOT",
-  xcDOT = "xcDOT",
-  stDOT = "stDOT",
-  wstDOT = "wstDOT",
-  xcKSM = "xcKSM",
-  stKSM = "stKSM",
-  multiWBTC = "multiWBTC",
-  WBTC_wh = "WBTC.wh",
-  WETH_wh = "WETH.wh",
-  multiUSDC = "multiUSDC",
-  USDC_wh = "USDC.wh",
-  multiUSDT = "multiUSDT",
-  multiDAI = "multiDAI",
-  USDT_xc = "USDT.xc",
-  BUSD_wh = "BUSD.wh",
-  "3pool" = "3pool",
-  "xcDOT-stDOT" = "xcDOT-stDOT",
-
   // local
   TOUCH = "TOUCH",
   TRIBE = "TRIBE",
@@ -412,6 +341,7 @@ export enum assetSymbols {
   "DAI-GNS" = "DAI-GNS",
   "IXT-USDT" = "IXT-USDT",
   USDR = "USDR",
+  WUSDR = "WUSDR",
   USDR3CRV = "USDR3CRV",
   TNGBL = "TNGBL",
 
@@ -445,6 +375,11 @@ export enum assetSymbols {
   arrakis_USDC_DAI_005 = "G-UNI USDC-DAI Vault (0.05)",
   arrakis_WETH_DAI_03 = "G-UNI WETH-DAI Vault (0.3)",
 
+  // Pearl
+  "sAMM-USDC/USDR" = "sAMM-USDC-USDR",
+  "vAMM-wUSDR/USDR" = "sAMM-wUSDR-USDR",
+  "vAMM-stMATIC/USDR" = "vAMM-stMATIC-USDR",
+
   // Arbitrum
   "2pool" = "2pool",
   GOHM = "GOHM",
@@ -458,13 +393,7 @@ export enum assetSymbols {
   saddleFraxUsdtBP = "saddleFraxUsdtBP",
   USDs = "USDs",
 
-  // Fantom
-  WFTM = "WFTM",
-  multiBTC = "multiBTC",
-  multiETH = "multiETH",
-  aFTMc = "aFTMc",
   PAR_USDC_CURVE = "PAR_USDC CURVE",
-  fUSDT = "fUSDT",
   triCrypto = "triCrypto",
 
   // Mainnet

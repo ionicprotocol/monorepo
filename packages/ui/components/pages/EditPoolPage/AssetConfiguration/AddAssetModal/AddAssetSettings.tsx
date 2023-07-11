@@ -12,7 +12,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import type { MarketConfig } from '@midas-capital/types';
+import type { MarketConfig } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
 import dynamic from 'next/dynamic';
@@ -30,7 +30,7 @@ import {
   LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -67,7 +67,7 @@ export const AddAssetSettings = ({
   poolName: string;
   tokenData: TokenData;
 }) => {
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiIonic();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();

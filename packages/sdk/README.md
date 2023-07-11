@@ -1,11 +1,11 @@
-# `@midas-capital/sdk`
+# `@ionicprotocol/sdk`
 
 ## Installation
 
-`npm install @midas-capital/sdk`
+`npm install @ionicprotocol/sdk`
 
 ```typescript
-import { MidasSdk } from "@midas-capital/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { ethers } from "ethers";
 
 const chainId = 56;
@@ -33,7 +33,7 @@ const supplyAPYAssetZero = sdk.ratePerBlockToAPY(
 
 `fetchFusePoolData(poolId: string, signer?: string): Promise<FusePoolData>`
 
-Fetch data about an individual pool on midas capital based on the pool id. The pool id can be extracted from the pool url `https://app.midascapital.xyz/56/pool/POOL_ID`
+Fetch data about an individual pool on ionic protocol based on the pool id. The pool id can be extracted from the pool url `https://ionic.money/56/pool/POOL_ID`
 
 ### ratePerBlockToAPY
 

@@ -1,5 +1,5 @@
 import { HStack, Skeleton, Text } from '@chakra-ui/react';
-import type { VaultData } from '@midas-capital/types';
+import type { VaultData } from '@ionicprotocol/types';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 

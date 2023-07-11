@@ -4,7 +4,7 @@ import type {
   OpenPosition,
   SupportedAsset,
   VaultData,
-} from '@midas-capital/types';
+} from '@ionicprotocol/types';
 
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 

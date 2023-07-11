@@ -20,7 +20,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import type { SupportedChains, VaultData } from '@midas-capital/types';
+import type { SupportedChains, VaultData } from '@ionicprotocol/types';
 import type {
   ColumnDef,
   FilterFn,
@@ -56,8 +56,8 @@ import {
   ALL,
   CHAIN,
   HIDDEN,
+  IONIC_LOCALSTORAGE_KEYS,
   MARKETS_COUNT_PER_PAGE,
-  MIDAS_LOCALSTORAGE_KEYS,
   POOL_NAME,
   SEARCH,
   SUPPLY_APY,
@@ -65,7 +65,7 @@ import {
   VAULT,
   VAULTS_COUNT_PER_PAGE,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -92,7 +92,7 @@ export const VaultsList = ({
   isLoading: boolean;
   vaultsPerChain: VaultsPerChainStatus;
 }) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [selectedFilteredVaults, setSelectedFilteredVaults] = useState<VaultData[]>([]);
@@ -315,7 +315,7 @@ export const VaultsList = ({
   }, [searchText]);
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     let oldObj;
     if (oldData) {
       oldObj = JSON.parse(oldData);
@@ -327,7 +327,7 @@ export const VaultsList = ({
       }
     });
     const data = { ...oldObj, vaultColumnVisibility: arr, vaultSorting: sorting };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
 
   useEffect(() => {

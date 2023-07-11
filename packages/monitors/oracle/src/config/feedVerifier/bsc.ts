@@ -1,5 +1,5 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { OracleTypes, SupportedChains } from "@midas-capital/types";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { OracleTypes, SupportedChains } from "@ionicprotocol/types";
 
 import { FeedVerifierAsset } from "../../types";
 

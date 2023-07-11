@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react';
-import type { PositionInfo } from '@midas-capital/types';
+import type { PositionInfo } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
 export const SafetyBuffer = ({ info }: { info?: PositionInfo }) => {

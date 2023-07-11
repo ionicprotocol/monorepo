@@ -1,5 +1,5 @@
-import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedChains } from "@midas-capital/types";
+import { IonicSdk } from "@ionicprotocol/sdk";
+import { SupportedChains } from "@ionicprotocol/types";
 import { BigNumber, utils } from "ethers";
 
 import { logger } from "../../..";
@@ -7,7 +7,7 @@ import { Reserve } from "../../../types";
 import { getDefiLlamaPrice } from "../../../utils";
 import { getTokenPrices } from "../utils";
 
-export async function getPoolTVL(sdk: MidasSdk, reserves: Reserve[]) {
+export async function getPoolTVL(sdk: IonicSdk, reserves: Reserve[]) {
   const tokenPrices = await getTokenPrices(
     sdk,
     reserves.map((r) => r.underlying.address)

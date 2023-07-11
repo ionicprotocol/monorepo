@@ -1,4 +1,4 @@
-import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
+import { assetSymbols, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
 
 import assets, { ankrBNB, BUSD, WBNB } from "./assets";
 

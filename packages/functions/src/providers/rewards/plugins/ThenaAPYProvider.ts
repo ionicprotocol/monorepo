@@ -1,12 +1,12 @@
-import { Reward, Strategy, ThenaERC4626Plugin } from '@midas-capital/types';
+import { Reward, Strategy, ThenaERC4626Plugin } from '@ionicprotocol/types';
 import { functionsAlert } from '../../../alert';
 import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPluginAPYProvider';
 import { Contract, utils } from 'ethers';
-import { chainIdToConfig } from '@midas-capital/chains';
-import { SupportedChains } from '@midas-capital/types';
-import { MidasSdk } from '@midas-capital/sdk';
+import { chainIdToConfig } from '@ionicprotocol/chains';
+import { SupportedChains } from '@ionicprotocol/types';
+import { IonicSdk } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { assetSymbols } from '@midas-capital/types';
+import { assetSymbols } from '@ionicprotocol/types';
 
 const VOTER_V3_ADDRESS = '0x3A1D0952809F4948d15EBCe8d345962A282C4fCb';
 const SECONDS_IN_A_DAY = 86400;
@@ -52,20 +52,21 @@ class ThenaAPYProvider extends AbstractPluginAPYProvider {
       this.provider
     );
 
-    const sdk = new MidasSdk(
+    const sdk = new IonicSdk(
       new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
       config
     );
     const mpo = sdk.createMasterPriceOracle();
-    const flywheelContract = sdk.createMidasFlywheel(pluginData.flywheel, sdk.provider);
+    const flywheelContract = sdk.createIonicFlywheel(pluginData.flywheel, sdk.provider);
 
-    const [theUsdPriceBig, lpTokenUsdPriceBig, rewardRateBig, totalSupplyBig, rewardToken] = await Promise.all([
-      mpo.callStatic.price(theAsset.underlying),
-      mpo.callStatic.price(pluginData.underlying),
-      gaugeV2Contract.callStatic.rewardRate(),
-      gaugeV2Contract.callStatic.totalSupply(),
-      flywheelContract.callStatic.rewardToken()
-    ]);
+    const [theUsdPriceBig, lpTokenUsdPriceBig, rewardRateBig, totalSupplyBig, rewardToken] =
+      await Promise.all([
+        mpo.callStatic.price(theAsset.underlying),
+        mpo.callStatic.price(pluginData.underlying),
+        gaugeV2Contract.callStatic.rewardRate(),
+        gaugeV2Contract.callStatic.totalSupply(),
+        flywheelContract.callStatic.rewardToken(),
+      ]);
     const rewardRate = Number(utils.formatUnits(rewardRateBig));
     const totalSupply = Number(utils.formatUnits(totalSupplyBig));
 
