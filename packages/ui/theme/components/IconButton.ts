@@ -46,17 +46,17 @@ export const IconButtonStyleConfig: ComponentStyleConfig = {
     _outline: (props) => ({
       _hover: {
         _disabled: {
-          bg: mode('whiteBg', 'raisinBlack')(props),
-          borderColor: mode('ecru', 'ecru')(props),
-          color: mode('ecru', 'ecru')(props),
+          bg: 'none',
+          borderColor: mode('iSeparator', 'iSeparator')(props),
+          color: mode('iSeparator', 'iSeparator')(props),
         },
-        bg: mode('ecru', 'ecru')(props),
-        borderColor: mode('ecru', 'ecru')(props),
-        color: mode('raisinBlack', 'raisinBlack')(props),
+        bg: 'none',
+        borderColor: mode('iWhite', 'iWhite')(props),
+        color: mode('iWhite', 'iWhite')(props),
       },
-      bg: mode('whiteBg', 'raisinBlack')(props),
-      borderColor: mode('ecru', 'ecru')(props),
-      color: mode('ecru', 'ecru')(props),
+      bg: 'none',
+      borderColor: mode('iWhite', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
     }),
     filter: (props) => ({
       _hover: {

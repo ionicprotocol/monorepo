@@ -11,7 +11,7 @@ export const SupplyBalance = ({ pool }: { pool: PoolData }) => {
     <>
       {!address ? (
         <SimpleTooltip label="Connect your wallet">
-          <Text fontWeight="medium" size="sm" textAlign="center">
+          <Text size="md" textAlign="center">
             -
           </Text>
         </SimpleTooltip>

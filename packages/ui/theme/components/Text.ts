@@ -10,6 +10,7 @@ export const TextStyleConfig: ComponentStyleConfig = {
     justifyContent: 'center',
   }),
   defaultProps: {
+    size: 'md',
     variant: 'default',
   },
   sizes: {

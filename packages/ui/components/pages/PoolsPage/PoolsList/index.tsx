@@ -493,7 +493,7 @@ const PoolsList = () => {
               gap={2}
               justifyContent="center"
             >
-              <Text>1 Supply</Text>
+              <Text size="md">1 Supply</Text>
               <PopoverTooltip
                 body={
                   <VStack alignItems="flex-start">

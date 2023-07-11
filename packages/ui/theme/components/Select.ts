@@ -10,24 +10,23 @@ export const SelectConfigStyle: ComponentStyleConfig = {
     outline: (props) => ({
       field: {
         _focus: {
-          borderColor: 'ecru',
+          borderColor: mode('iSeparator', 'iSeparator')(props),
           outline: 'none',
         },
         _hover: {
-          backgroundColor: mode('silverMetallic30', 'ecru30')(props),
-          borderColor: 'ecru',
+          backgroundColor: 'none',
         },
-        backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-        borderColor: 'ecru',
-        borderRadius: 'xl',
+        backgroundColor: 'none',
+        borderColor: mode('iSeparator', 'iSeparator')(props),
+        borderRadius: '14px',
         borderWidth: '2px',
         boxShadow: 'none !important',
-        color: mode('raisinBlack', 'white')(props),
+        color: mode('iWhite', 'iWhite')(props),
         cursor: 'pointer',
-        fontSize: '16px',
+        fontSize: '14px',
       },
       icon: {
-        color: mode('ecru', 'ecru')(props),
+        color: mode('iWhite', 'iWhite')(props),
       },
     }),
   },
