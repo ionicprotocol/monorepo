@@ -12,22 +12,22 @@
       "address": "0x3F56f8571988D03Cdc7E51fdaB19ADb032CCbe21"
     },
     "CErc20Delegate": {
-      "address": "0xC86CD4882a5019004675099CEEa90923BbF5cA72"
+      "address": "0xBe99e316BdCF1091450E4300202e3FCB5da55756"
     },
     "CErc20PluginDelegate": {
-      "address": "0x2a8541A102dE64aFf94f53558ABecfA9407a3086"
+      "address": "0xE2e734642F432d47b9f09bfA3bc5d65F9e949db4"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xd36568FEcBCe1b5784db43C2F988Df358E04bBA0"
+      "address": "0x889e1AB929534AB8aa966F6A8Cd9f348343Fa98F"
     },
     "CTokenFirstExtension": {
-      "address": "0x199E1B4354604B8A6F8d1a8453D6dB9cb4d705ED"
+      "address": "0x9bb5B30BF73E82A3b720eb7396407F43407ac537"
     },
     "Comptroller": {
-      "address": "0x83b073A6B10c11727916Db71DAe7D0eCD626A4Ff"
+      "address": "0x1f0847B260D736Ed16bCDacFa76b04f0EC6427ba"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x8d66e9A947bEE283650f25287E32C4DCd5BEF594"
+      "address": "0xc7107037D5871084Ece6010f648e3BE552c1582b"
     },
     "DefaultProxyAdmin": {
       "address": "0x47246c2e75409284b6409534d410245Ee48002c7"
@@ -72,25 +72,25 @@
       "address": "0x51Fc4413D3d32129a7C56c72fC8d273Cfe8306e6"
     },
     "LeveredPositionFactory": {
-      "address": "0x4C28C6c18481AE068b89e842bACEebB3150e84b8"
+      "address": "0x2a3720945D9416f6583770E402f2129c77479878"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0x726d0395Da1b6297693318c09505C476FC526103"
+      "address": "0x085a8522D81e1cab60547613b2626db6A94A64c4"
     },
     "LeveredPositionsLens": {
       "address": "0x5670E9d607666a8341313DA477B0220E70c98370"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0x60075925f1132e196064a5fA46af3c6941bA2B8c"
+      "address": "0x9565b6a207f4cd7e617A17f3A21B95dC855Df2dd"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x5670E9d607666a8341313DA477B0220E70c98370"
     },
     "LiquidatorsRegistry": {
-      "address": "0x7e84BD63951a1f8155681209C209D236dd3a6c8D"
+      "address": "0xDBCa7caD01cc7B9Ec67B4B29D610590a77E11720"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xFe5aF5765A7cCD1538E4ee4B501BC7fe93ec8EBa"
+      "address": "0x3aD81a1fe57189C613a711f4dF32D28ADEF7a0E6"
     },
     "LooplessFlywheelBooster": {
       "address": "0x63b484896Bd2A381f1E308088A65bf9E292FBc7a"
@@ -105,7 +105,7 @@
       "address": "0x5403C2E4D471f16dc01F343075A6e905a7594A35"
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x63b7F394328126a5769B9eA0552F275E7CC97Fec"
+      "address": "0x831036Ee05c5B47f964c9E2aD961E99EBb8D1e4e"
     },
     "OptimizedVaultsRegistry": {
       "address": "0x17De74d3E0763D3F2463d2aEB0c74C899BA57800"
