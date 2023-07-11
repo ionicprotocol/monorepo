@@ -48,11 +48,9 @@ interface CurveGaugeResponse {
 
 class CurveAPYProvider extends AbstractPluginAPYProvider {
   static apyEndpoints: Partial<Record<SupportedChains, string>> = {
-    [SupportedChains.moonbeam]: 'https://api.curve.fi/api/getFactoryAPYs-moonbeam',
     [SupportedChains.polygon]: 'https://api.curve.fi/api/getFactoryAPYs-polygon',
   };
   static gaugeEndpoints: Partial<Record<SupportedChains, string>> = {
-    [SupportedChains.moonbeam]: 'https://api.curve.fi/api/getFactoGauges/moonbeam',
     [SupportedChains.polygon]: 'https://api.curve.fi/api/getFactoGauges/polygon',
   };
 

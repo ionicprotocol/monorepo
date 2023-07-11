@@ -4,11 +4,8 @@ import {
   chainIdToConfig,
   chapel,
   ethereum,
-  evmos,
-  fantom,
   ganache,
   lineagoerli,
-  moonbeam,
   neondevnet,
   polygon,
 } from '@ionicprotocol/chains';
@@ -69,20 +66,11 @@ export function getEnabledChains() {
   if (config.isPolygonEnabled) {
     enabledChains.push(SupportedChains.polygon);
   }
-  if (config.isMoonbeamEnabled) {
-    enabledChains.push(SupportedChains.moonbeam);
-  }
   if (config.isArbitrumEnabled) {
     enabledChains.push(SupportedChains.arbitrum);
   }
-  if (config.isFantomEnabled) {
-    enabledChains.push(SupportedChains.fantom);
-  }
   if (config.isEthereumEnabled) {
     enabledChains.push(SupportedChains.ethereum);
-  }
-  if (config.isEvmosEnabled) {
-    enabledChains.push(SupportedChains.evmos);
   }
 
   if (config.isTestnetEnabled) {
@@ -98,12 +86,9 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.bsc]: bsc.assets,
   [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: ganache.assets,
-  [SupportedChains.evmos]: evmos.assets,
   [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
-  [SupportedChains.fantom]: fantom.assets,
   [SupportedChains.lineagoerli]: lineagoerli.assets,
   [SupportedChains.ethereum]: ethereum.assets,
 };
@@ -112,12 +97,9 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.bsc]: bsc.deployedPlugins,
   [SupportedChains.polygon]: polygon.deployedPlugins,
   [SupportedChains.ganache]: ganache.deployedPlugins,
-  [SupportedChains.evmos]: evmos.deployedPlugins,
   [SupportedChains.chapel]: chapel.deployedPlugins,
-  [SupportedChains.moonbeam]: moonbeam.deployedPlugins,
   [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
-  [SupportedChains.fantom]: fantom.deployedPlugins,
   [SupportedChains.lineagoerli]: lineagoerli.deployedPlugins,
   [SupportedChains.ethereum]: ethereum.deployedPlugins,
 };
