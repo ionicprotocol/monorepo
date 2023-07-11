@@ -17,17 +17,15 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useRewards } from '@ui/hooks/useRewards';
-import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const PoolPage = memo(() => {
-  const { setGlobalLoading, address } = useMultiIonic();
+  const { address } = useMultiIonic();
   const router = useRouter();
   const poolId = router.query.poolId as string;
   const chainId = router.query.chainId as string;
-  const { data, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
+  const { data } = useFusePoolData(poolId, Number(chainId));
   const { data: allRewards } = useRewards({ chainId: Number(chainId), poolId: poolId });
   const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
-  const isMobile = useIsMobile();
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
   const [initHidden, setInitHidden] = useState<boolean | undefined>();
@@ -148,7 +146,6 @@ const PoolPage = memo(() => {
               </>
             )}
           </CardBox>
-          <PoolDetails data={data} />
         </FusePageLayout>
       </PageTransitionLayout>
     </>

@@ -30,13 +30,7 @@ export const YourPerformance = () => {
         </Text>
         <Flex direction={{ base: 'row' }} gap="32px">
           <VStack alignItems="flex-start">
-            <Text
-              color={'iLightGray'}
-              fontSize="12px"
-              fontWeight={500}
-              lineHeight="18px"
-              textTransform="uppercase"
-            >
+            <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Total supply
             </Text>
             <Skeleton isLoaded={!isLoading} minW="80px">
@@ -44,13 +38,7 @@ export const YourPerformance = () => {
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
-            <Text
-              color={'iLightGray'}
-              fontSize="12px"
-              fontWeight={500}
-              lineHeight="18px"
-              textTransform="uppercase"
-            >
+            <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Total borrowed
             </Text>
             <Skeleton isLoaded={!isLoading} minW="80px">
@@ -59,13 +47,7 @@ export const YourPerformance = () => {
           </VStack>
           <VStack alignItems="flex-start">
             <Flex direction="row" gap={1} height="18px">
-              <Text
-                color={'iLightGray'}
-                fontSize="12px"
-                fontWeight={500}
-                lineHeight="18px"
-                textTransform="uppercase"
-              >
+              <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                 Net APR
               </Text>
               <SimpleTooltip label={'NET APR'}>
@@ -77,10 +59,7 @@ export const YourPerformance = () => {
                 />
               </SimpleTooltip>
             </Flex>
-
-            <Text color={'iWhite'} fontSize="20px" fontWeight={600} lineHeight="30px">
-              19.97%
-            </Text>
+            <Text size={'lg'}>19.97%</Text>
           </VStack>
         </Flex>
       </Flex>
