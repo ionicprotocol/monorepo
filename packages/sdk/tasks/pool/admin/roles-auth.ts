@@ -1,6 +1,7 @@
 import { task, types } from "hardhat/config";
 
-import { Comptroller, ComptrollerFirstExtension } from "../../../typechain";
+import { Comptroller } from "../../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
 
 task("pool:whitelist:borrowers", "Upgrade all upgradeable markets across all pools")
   .addParam("pool", "The address of the pool", undefined, types.string)

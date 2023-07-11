@@ -14,6 +14,7 @@ import { AddressesProvider } from "../typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
+import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
@@ -649,6 +650,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       "LeveredPositionFactory",
       deployer
     )) as LeveredPositionFactory;
+
     const currentLPFExtensions = await leveredPositionFactory._listExtensions();
     if (!currentLPFExtensions.length || currentLPFExtensions[0] != lpfExtDep.address) {
       let extToReplace;
@@ -683,6 +685,46 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     });
     if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
     console.log("LeveredPositionsLens: ", lpLens.address);
+
+    //// AUTHORITIES REGISTRY
+    await deployments.deploy("AuthoritiesRegistry", {
+      from: deployer,
+      args: [],
+      log: true,
+      proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [leveredPositionFactory.address],
+          },
+        },
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: deployer,
+      },
+      waitConfirmations: 1,
+    });
+
+    const authoritiesRegistryFactory = (await ethers.getContract(
+      "AuthoritiesRegistry",
+      deployer
+    )) as AuthoritiesRegistry;
+
+    // set the address in the FFD
+    await deployments.deploy("FuseFeeDistributor", {
+      from: deployer,
+      log: true,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          onUpgrade: {
+            methodName: "reinitialize",
+            args: [authoritiesRegistryFactory.address],
+          },
+        },
+        owner: deployer,
+      },
+    });
+    ////
   }
 
   /// EXTERNAL ADDRESSES
