@@ -10,5 +10,4 @@ export enum LiquidityPoolKind {
 export enum LiquidityMonitorChains {
   bsc = SupportedChains.bsc,
   polygon = SupportedChains.polygon,
-  moonbeam = SupportedChains.moonbeam,
 }
