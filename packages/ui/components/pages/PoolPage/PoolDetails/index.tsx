@@ -1,4 +1,5 @@
-import { Button, Grid, GridItem, HStack, Link, Skeleton, Text } from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import { Button, Grid, GridItem, HStack, Img, Link, Skeleton, Text } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
@@ -12,25 +13,17 @@ import { CardBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
-import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
-  const { assets, totalSuppliedFiat, totalBorrowedFiat, totalAvailableLiquidityFiat, comptroller } =
-    poolData || {
-      assets: [] as Array<MarketData>,
-      comptroller: '',
-      totalAvailableLiquidityFiat: 0,
-      totalBorrowedFiat: 0,
-      totalSuppliedFiat: 0,
-    };
-
+const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) => {
+  const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
   const { cCard } = useColors();
   const router = useRouter();
-  const poolId = router.query.poolId as string;
   const { data } = useExtraPoolInfo(poolData?.comptroller, poolData?.chainId);
 
   const { setGlobalLoading, currentSdk } = useMultiIonic();
@@ -41,21 +34,49 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
+  const chainConfig = useChainConfig(poolData?.chainId);
 
   const acceptOwnership = useCallback(async () => {
-    if (!comptroller || !currentSdk) return;
+    if (!poolData?.comptroller || !currentSdk) return;
     setIsLoading(true);
-    const unitroller = currentSdk.createUnitroller(comptroller);
+    const unitroller = currentSdk.createUnitroller(poolData.comptroller);
     const tx = await unitroller._acceptAdmin();
     addRecentTransaction({ description: 'Accept ownership', hash: tx.hash });
     await tx.wait();
     setIsLoading(false);
 
     await queryClient.refetchQueries();
-  }, [comptroller, currentSdk, queryClient, addRecentTransaction]);
+  }, [poolData?.comptroller, currentSdk, queryClient, addRecentTransaction]);
 
   return (
-    <CardBox height="auto" width="100%">
+    <CardBox>
+      <HStack spacing={4}>
+        <ArrowBackIcon
+          cursor="pointer"
+          fontSize="2xl"
+          fontWeight="extrabold"
+          onClick={() => {
+            setGlobalLoading(true);
+            router.back();
+          }}
+        />
+        {chainConfig ? (
+          <Img
+            alt={chainConfig.specificParams.metadata.name}
+            borderRadius="50%"
+            height="25px"
+            minHeight="25px"
+            minWidth="25px"
+            src={chainConfig.specificParams.metadata.img}
+            width="25px"
+          />
+        ) : null}
+        <Skeleton isLoaded={!isPoolDataLoading} minW={'100px'}>
+          <Text fontWeight="bold" size="2xl" textAlign="left">
+            {poolData ? poolData.name : 'Pool'}
+          </Text>
+        </Skeleton>
+      </HStack>
       <Column
         crossAxisAlignment="flex-start"
         height="100%"
@@ -105,25 +126,25 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Total Supplied</Text>
               <Text fontWeight="bold" size="md">
-                {smallUsdFormatter(totalSuppliedFiat, true)}
+                {smallUsdFormatter(poolData?.totalSuppliedFiat, true)}
               </Text>
             </HStack>
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Total Borrowed</Text>
               <Text fontWeight="bold" size="md">
-                {smallUsdFormatter(totalBorrowedFiat, true)}
+                {smallUsdFormatter(poolData?.totalBorrowedFiat, true)}
               </Text>
             </HStack>
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Available Liquidity</Text>
               <Text fontWeight="bold" size="md">
-                {smallUsdFormatter(totalAvailableLiquidityFiat, true)}
+                {smallUsdFormatter(poolData?.totalAvailableLiquidityFiat, true)}
               </Text>
             </HStack>
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Pool Utilization</Text>
               <Text fontWeight="bold" size="md">
-                {totalSuppliedFiat.toString() === '0'
+                {poolData?.totalSuppliedFiat.toString() === '0'
                   ? '0%'
                   : poolData.utilization.toFixed(2) + '%'}
               </Text>
@@ -166,15 +187,15 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Platform Fee</Text>
               <Text fontWeight="bold" size="md">
-                {assets.length > 0
-                  ? Number(utils.formatUnits(assets[0].fuseFee, 16)).toPrecision(2) + '%'
+                {poolData?.assets.length > 0
+                  ? Number(utils.formatUnits(poolData?.assets[0].fuseFee, 16)).toPrecision(2) + '%'
                   : '10%'}
               </Text>
             </HStack>
             <HStack borderColor={cCard.dividerColor} borderTopWidth={1} pb={3} pt={4} px={4}>
               <Text size="md">Average Admin Fee</Text>
               <Text fontWeight="bold" size="md">
-                {assets
+                {poolData?.assets
                   .reduce(
                     (a, b, _, { length }) => a + Number(utils.formatUnits(b.adminFee, 16)) / length,
                     0
@@ -225,22 +246,22 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
               >
                 <Text size="md">Pool Address:</Text>
                 <HStack>
-                  <SimpleTooltip label={`${scanUrl}/address/${comptroller}`}>
+                  <SimpleTooltip label={`${scanUrl}/address/${poolData?.comptroller}`}>
                     <Button
                       as={Link}
                       fontSize={{ base: 14, md: 16 }}
                       height="auto"
-                      href={`${scanUrl}/address/${comptroller}`}
+                      href={`${scanUrl}/address/${poolData?.comptroller}`}
                       isExternal
                       m={0}
                       minWidth={6}
                       p={0}
                       variant="_link"
                     >
-                      {shortAddress(comptroller, 6, 4)}
+                      {shortAddress(poolData?.comptroller, 6, 4)}
                     </Button>
                   </SimpleTooltip>
-                  <ClipboardValueIconButton value={comptroller} />
+                  <ClipboardValueIconButton value={poolData?.comptroller} />
                 </HStack>
               </HStack>
             </GridItem>

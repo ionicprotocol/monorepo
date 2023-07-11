@@ -1,5 +1,4 @@
-import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, Skeleton } from '@chakra-ui/react';
 import type { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -13,13 +12,7 @@ import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import {
-  IONIC_LOCALSTORAGE_KEYS,
-  MARKET_COLUMNS,
-  MARKET_LTV,
-  SHRINK_ASSETS,
-} from '@ui/constants/index';
+import { IONIC_LOCALSTORAGE_KEYS, MARKET_COLUMNS, MARKET_LTV } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -28,11 +21,10 @@ import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const PoolPage = memo(() => {
   const { setGlobalLoading, address } = useMultiIonic();
-
   const router = useRouter();
   const poolId = router.query.poolId as string;
   const chainId = router.query.chainId as string;
-  const { data } = useFusePoolData(poolId, Number(chainId));
+  const { data, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
   const { data: allRewards } = useRewards({ chainId: Number(chainId), poolId: poolId });
   const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
   const isMobile = useIsMobile();
@@ -92,78 +84,12 @@ const PoolPage = memo(() => {
 
       <PageTransitionLayout>
         <FusePageLayout>
-          <Stack direction={{ base: 'column', sm: 'row' }} mx="auto" spacing={4} width={'100%'}>
-            <HStack spacing={4}>
-              <ArrowBackIcon
-                cursor="pointer"
-                fontSize="2xl"
-                fontWeight="extrabold"
-                onClick={() => {
-                  setGlobalLoading(true);
-                  router.back();
-                }}
-              />
-              {data ? (
-                <Text fontWeight="bold" size="2xl" textAlign="left">
-                  {data.name}
-                </Text>
-              ) : (
-                <Skeleton height="54px">Pool Name</Skeleton>
-              )}
-            </HStack>
-
-            {data?.assets && data.assets.length > 0 ? (
-              <HStack spacing={0}>
-                <AvatarGroup max={30} size="sm">
-                  {!isMobile
-                    ? data.assets.map(
-                        ({
-                          underlyingToken,
-                          cToken,
-                        }: {
-                          cToken: string;
-                          underlyingToken: string;
-                        }) => (
-                          <TokenIcon
-                            address={underlyingToken}
-                            chainId={data.chainId}
-                            key={cToken}
-                          />
-                        )
-                      )
-                    : data.assets
-                        .slice(0, SHRINK_ASSETS)
-                        .map(
-                          ({
-                            underlyingToken,
-                            cToken,
-                          }: {
-                            cToken: string;
-                            underlyingToken: string;
-                          }) => {
-                            return (
-                              <TokenIcon
-                                address={underlyingToken}
-                                chainId={data.chainId}
-                                key={cToken}
-                              />
-                            );
-                          }
-                        )}
-                </AvatarGroup>
-                {isMobile && data.assets.length > SHRINK_ASSETS && (
-                  <Text fontWeight="bold" pt={1}>
-                    +{data.assets.length - SHRINK_ASSETS}
-                  </Text>
-                )}
-              </HStack>
-            ) : null}
-          </Stack>
-
+          <Flex>
+            <PoolDetails chainId={chainId} poolId={poolId} />
+          </Flex>
           {rewardTokens.length > 0 && data && (
             <RewardsBanner poolChainId={data.chainId} tokens={rewardTokens} />
           )}
-
           <PoolStats poolData={data} />
 
           <CardBox mb="4" overflowX="auto" width="100%">
