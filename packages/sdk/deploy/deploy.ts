@@ -11,10 +11,10 @@ import {
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
+import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
 import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
-import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
