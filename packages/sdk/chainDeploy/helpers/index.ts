@@ -10,7 +10,6 @@ export { deployChainlinkOracle } from "./oracles/chainlink";
 export { deployDiaOracle } from "./oracles/dia";
 export { deployGelatoGUniPriceOracle } from "./oracles/gelato";
 export { deployGammaPoolOracle } from "./oracles/gamma";
-export { deployNativeUsdPriceFeed } from "./oracles/nativeUsd";
 export { deployUmbrellaOracle } from "./oracles/umbrella";
 export { deployCurveV2LpOracle } from "./oracles/curveLp";
 export { deployStkBNBOracle } from "./oracles/stkBNBOracle";

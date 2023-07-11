@@ -5,7 +5,6 @@ import CurveGaugeAPYProvider from './CurveGaugeAPYProvider';
 import DotDotAPYProvider from './DotDotAPYProvider';
 import HelioAPYProvider from './HelioAPYProvider';
 import MimoAPYProvider from './MimoAPYProvider';
-import StellaSwapAPYProvider from './StellaSwapAPYProvider';
 import ThenaAPYProvider from './ThenaAPYProvider';
 import DysonAPYProvider from './DysonAPYProvider';
 
@@ -19,7 +18,6 @@ const providerMap: ProviderMap = {
   [Strategy.DotDot]: DotDotAPYProvider,
   [Strategy.CurveGauge]: CurveGaugeAPYProvider,
   [Strategy.HelioHAY]: HelioAPYProvider,
-  [Strategy.Stella]: StellaSwapAPYProvider,
   [Strategy.ThenaERC4626]: ThenaAPYProvider,
   [Strategy.Dyson4626]: DysonAPYProvider,
 };
