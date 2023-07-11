@@ -34,6 +34,7 @@ ops/**/tfvars.json
 # Local Netlify folder
 .netlify
 cypress
-monorepo.iml
+
+ionic-monorepo.iml
 
 .vscode
