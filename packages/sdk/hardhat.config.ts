@@ -144,16 +144,6 @@ const config: HardhatUserConfig = {
       chainId: 1,
       url: OVERRIDE_RPC_URL || "https://rpc.ankr.com/eth",
     },
-    evmos: {
-      accounts: { mnemonic },
-      chainId: 9001,
-      url: OVERRIDE_RPC_URL || "https://eth.bd.evmos.org:8545",
-    },
-    moonbeam: {
-      accounts: { mnemonic },
-      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
-      chainId: 1284,
-    },
     neondevnet: {
       accounts: { mnemonic },
       url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,
@@ -168,11 +158,6 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || `https://arb1.arbitrum.io/rpc`,
       accounts: { mnemonic },
       chainId: 42161,
-    },
-    fantom: {
-      url: OVERRIDE_RPC_URL || `https://rpcapi.fantom.network`,
-      accounts: { mnemonic },
-      chainId: 250,
     },
     lineagoerli: {
       url: OVERRIDE_RPC_URL || `https://rpc.goerli.linea.build`,

@@ -1,16 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import {
-  arbitrum,
-  bsc,
-  chapel,
-  ethereum,
-  evmos,
-  fantom,
-  ganache,
-  moonbeam,
-  neondevnet,
-  polygon,
-} from "@ionicprotocol/chains";
+import { arbitrum, bsc, chapel, ethereum, ganache, neondevnet, polygon } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -213,9 +202,6 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
       case SupportedChains.chapel:
         chainConfig = chapel;
         break;
-      case SupportedChains.moonbeam:
-        chainConfig = moonbeam;
-        break;
       case SupportedChains.neon_devnet:
         chainConfig = neondevnet;
         break;
@@ -224,12 +210,6 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.arbitrum:
         chainConfig = arbitrum;
-        break;
-      case SupportedChains.fantom:
-        chainConfig = fantom;
-        break;
-      case SupportedChains.evmos:
-        chainConfig = evmos;
         break;
       case SupportedChains.ethereum:
         chainConfig = ethereum;

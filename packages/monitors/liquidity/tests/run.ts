@@ -1,5 +1,4 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { moonbeam } from "@ionicprotocol/chains";
 import { assetFilter, assetSymbols, SupportedChains, underlying } from "@ionicprotocol/types";
 import { Wallet } from "ethers";
 
@@ -24,17 +23,7 @@ import { LiquidityPoolKind, Services } from "../src/types";
       // },
     ],
     [LiquidityPoolKind.UniswapV3]: [],
-    [LiquidityPoolKind.Curve]: [
-      {
-        identifier: "Curve xcDOT-stDOT",
-        poolAddress: underlying(moonbeam.assets, assetSymbols["xcDOT-stDOT"]),
-        affectedAssets: [
-          assetFilter(moonbeam.assets, assetSymbols.xcDOT),
-          assetFilter(moonbeam.assets, assetSymbols.wstDOT),
-        ],
-        minLiquidity: 10e6,
-      },
-    ],
+    [LiquidityPoolKind.Curve]: [],
     [LiquidityPoolKind.Balancer]: [],
   };
   runVerifier(ionicSdk, Services.LiquidityDepthVerifier, assets);

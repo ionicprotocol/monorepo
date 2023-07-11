@@ -19,9 +19,6 @@ class UniverseStaderlabsAPYProvider extends AbstractAssetAPYProvider {
       case SupportedChains.bsc:
         chainKey = 'bnb';
         break;
-      case SupportedChains.fantom:
-        chainKey = 'fantom';
-        break;
       default:
         break;
     }
