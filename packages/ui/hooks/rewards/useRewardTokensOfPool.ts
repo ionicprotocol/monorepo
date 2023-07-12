@@ -5,7 +5,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) => {
   const sdk = useSdk(chainId);
 
-  const { data } = useQuery(
+  return useQuery(
     ['useRewardTokensOfPool', sdk?.chainId, poolAddress],
     async () => {
       if (poolAddress && sdk) {
@@ -30,6 +30,4 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
       placeholderData: [],
     }
   );
-
-  return data || [];
 };

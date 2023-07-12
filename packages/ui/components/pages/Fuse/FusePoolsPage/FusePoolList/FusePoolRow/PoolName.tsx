@@ -24,7 +24,7 @@ export const PoolName = ({
   poolName: string;
 }) => {
   const { setGlobalLoading } = useMultiIonic();
-  const rewardTokens = useRewardTokensOfPool(comptroller, chainId);
+  const { data: rewardTokens } = useRewardTokensOfPool(comptroller, chainId);
   const { data: claimableRewards } = usePoolClaimableRewards(comptroller, chainId);
   const { cCard } = useColors();
   const router = useRouter();
@@ -75,7 +75,7 @@ export const PoolName = ({
           </Button>
         </SimpleTooltip>
       </Stack>
-      {rewardTokens.length && (
+      {rewardTokens && rewardTokens.length && (
         <HStack spacing={1}>
           <Text>Earn Rewards</Text>
           <AvatarGroup max={5} size="xs">

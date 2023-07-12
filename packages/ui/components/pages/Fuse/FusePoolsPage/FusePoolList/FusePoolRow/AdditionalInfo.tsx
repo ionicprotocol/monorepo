@@ -37,7 +37,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
       return undefined;
     }
   }, [usdPrices, pool.chainId]);
-  const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
+  const { data: rewardTokens } = useRewardTokensOfPool(pool.comptroller, pool.chainId);
   const { data: poolDetails } = usePoolDetails(pool.assets, pool.chainId);
   const sdk = useMemo(() => getSdk(pool.chainId), [getSdk, pool.chainId]);
   const scanUrl = useMemo(() => getScanUrlByChainId(pool.chainId), [pool.chainId]);
@@ -133,7 +133,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             }}
             w="100%"
           >
-            {rewardTokens.length > 0 && (
+            {rewardTokens && rewardTokens.length > 0 && (
               <VStack>
                 <Text mr={4} size="md" textAlign="center">
                   Offering Rewards

@@ -1,38 +1,31 @@
-import { Text } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+import { Flex, Skeleton, Text } from '@chakra-ui/react';
 
-import { Row } from '@ui/components/shared/Flex';
-import { GradientButton } from '@ui/components/shared/GradientButton';
+import { GradientText } from '@ui/components/shared/GradientText';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
+import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 
-export const RewardsBanner = ({
-  tokens = [],
-  poolChainId,
-}: {
-  poolChainId: number;
-  tokens: string[];
-}) => {
-  return (
-    <motion.div
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      initial={{ opacity: 0, y: 40 }}
-      style={{ width: '100%' }}
-    >
-      <GradientButton height="50px" isSelected justifyContent="flex-start" mt={4} width="100%">
-        <Row crossAxisAlignment="center" h="100%" mainAxisAlignment="flex-start" p={3} w="100">
-          <Text ml={2} mt="2px" size="md">
-            This pool is offering rewards
-          </Text>
+export const RewardsBanner = ({ chainId, poolId }: { chainId: string; poolId: string }) => {
+  const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
+  const { data: rewardTokens, isLoading: isRewardTokensLoading } = useRewardTokensOfPool(
+    poolData?.comptroller,
+    poolData?.chainId
+  );
+
+  return rewardTokens && rewardTokens.length > 0 && poolData ? (
+    <Skeleton isLoaded={!isPoolDataLoading && !isRewardTokensLoading} minW={'200px'}>
+      <GradientText isEnabled justifyContent="flex-start" width="100%">
+        <Flex alignContent="center" justifyContent="flex-start" w="100">
+          <Text size="md">This pool is offering rewards</Text>
           <TokenIconGroup
-            chainId={poolChainId}
+            chainId={poolData.chainId}
             ml={2}
             mr={2}
             popOnHover={true}
-            tokenAddresses={tokens}
+            tokenAddresses={rewardTokens}
           />
-        </Row>
-      </GradientButton>
-    </motion.div>
-  );
+        </Flex>
+      </GradientText>
+    </Skeleton>
+  ) : null;
 };
