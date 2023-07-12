@@ -57,28 +57,28 @@ export const configureFuseSafeLiquidator = async ({
   const arrayOfTrue: boolean[] = [];
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
 
-  for (const address in chainIdToConfig[chainId].redemptionStrategies) {
-    const [redemptionStrategyType] = chainIdToConfig[chainId].redemptionStrategies[address];
-    const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
+  for (const redemptionStrategy of chainIdToConfig[chainId].redemptionStrategies) {
+    const { strategy } = redemptionStrategy;
+    const redemptionStrategyContract = await ethers.getContract(strategy, deployer);
 
     const whitelistedAlready = await fuseSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
-      redemptionStrategy.address
+      redemptionStrategyContract.address
     );
     if (!whitelistedAlready) {
-      strategies.push(redemptionStrategy.address);
+      strategies.push(redemptionStrategyContract.address);
       arrayOfTrue.push(true);
     }
   }
 
-  for (const address in chainIdToConfig[chainId].fundingStrategies) {
-    const [fundingStrategyType] = chainIdToConfig[chainId].fundingStrategies[address];
-    const fundingStrategy = await ethers.getContract(fundingStrategyType, deployer);
+  for (const fundingStrategy of chainIdToConfig[chainId].fundingStrategies) {
+    const { strategy } = fundingStrategy;
+    const fundingStrategyContract = await ethers.getContract(strategy, deployer);
 
     const whitelistedAlready = await fuseSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
-      fundingStrategy.address
+      fundingStrategyContract.address
     );
     if (!whitelistedAlready) {
-      strategies.push(fundingStrategy.address);
+      strategies.push(fundingStrategyContract.address);
       arrayOfTrue.push(true);
     }
   }
@@ -100,31 +100,37 @@ export const configureAddressesProviderStrategies = async ({
   const { deployer } = await getNamedAccounts();
   const chainConfig = chainIdToConfig[chainId];
 
-  const redemptionStrategiesToUpdate: [string, string, string, string][] = [];
+  const redemptionStrategiesToUpdate: {
+    outputToken: string;
+    strategyAddress: string;
+    strategy: string;
+    inputToken: string;
+  }[] = [];
+
   const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
   // configure the redemption strategies in the AddressesProvider
-  for (const assetAddress in chainConfig.redemptionStrategies) {
-    const [redemptionStrategyType, outputToken]: string[] = chainConfig.redemptionStrategies[assetAddress];
-    const [onChainStrategyAddress, , onChainOutputToken] = await ap.callStatic.getRedemptionStrategy(assetAddress);
-    const redemptionStrategy = await ethers.getContract(redemptionStrategyType);
-    if (onChainStrategyAddress != redemptionStrategy.address || onChainOutputToken != outputToken) {
-      redemptionStrategiesToUpdate.push([
-        assetAddress,
-        redemptionStrategyType,
-        redemptionStrategy.address,
+  for (const redemptionStrategy of chainConfig.redemptionStrategies) {
+    const { inputToken, strategy, outputToken } = redemptionStrategy;
+    const [onChainStrategyAddress, , onChainOutputToken] = await ap.callStatic.getRedemptionStrategy(inputToken);
+    const redemptionStrategyContract = await ethers.getContract(strategy);
+    if (onChainStrategyAddress != redemptionStrategyContract.address || onChainOutputToken != outputToken) {
+      redemptionStrategiesToUpdate.push({
+        inputToken,
+        strategyAddress: redemptionStrategyContract.address,
+        strategy,
         outputToken,
-      ]);
+      });
     }
   }
 
   if (redemptionStrategiesToUpdate.length > 0) {
-    for (const key in redemptionStrategiesToUpdate) {
-      const [asset, type, strategy, outputToken] = redemptionStrategiesToUpdate[key];
+    for (const redemptionStrategy of redemptionStrategiesToUpdate) {
+      const { inputToken, strategyAddress, strategy, outputToken } = redemptionStrategy;
       console.log(
-        `configuring strategy ${strategy} of type ${type} for asset ${asset} and output token ${outputToken}`
+        `configuring strategy ${strategy} of type ${strategy} for asset ${inputToken} and output token ${outputToken}`
       );
-      const tx = await ap.setRedemptionStrategy(asset, strategy, type, outputToken);
+      const tx = await ap.setRedemptionStrategy(inputToken, strategyAddress, strategy, outputToken);
       console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("setRedemptionStrategy: ", tx.hash);
@@ -134,22 +140,35 @@ export const configureAddressesProviderStrategies = async ({
   }
 
   // configure the funding strategies in the AddressesProvider
-  const fundingStrategiesToUpdate: [string, string, string, string][] = [];
-  for (const assetAddress in chainConfig.fundingStrategies) {
-    const [fundingStrategyType, inputToken] = chainConfig.fundingStrategies[assetAddress];
-    const fundingStrategy = await ethers.getContract(fundingStrategyType);
+  const fundingStrategiesToUpdate: {
+    outputToken: string;
+    strategyAddress: string;
+    strategy: string;
+    inputToken: string;
+  }[] = [];
 
-    const [onChainStrategyAddress, , onChainInputToken] = await ap.callStatic.getFundingStrategy(assetAddress);
-    if (onChainStrategyAddress != fundingStrategy.address || onChainInputToken != inputToken) {
-      fundingStrategiesToUpdate.push([assetAddress, fundingStrategyType, fundingStrategy.address, inputToken]);
+  for (const fundingStrategy of chainConfig.fundingStrategies) {
+    const { inputToken, strategy, outputToken } = fundingStrategy;
+    const fundingStrategyContract = await ethers.getContract(strategy);
+
+    const [onChainStrategyAddress, , onChainInputToken] = await ap.callStatic.getFundingStrategy(inputToken);
+    if (onChainStrategyAddress != fundingStrategyContract.address || onChainInputToken != inputToken) {
+      fundingStrategiesToUpdate.push({
+        outputToken,
+        strategyAddress: fundingStrategyContract.address,
+        strategy,
+        inputToken,
+      });
     }
   }
 
   if (fundingStrategiesToUpdate.length > 0) {
-    for (const key in fundingStrategiesToUpdate) {
-      const [asset, type, strategy, inputToken] = fundingStrategiesToUpdate[key];
-      console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset} and input token ${inputToken}`);
-      const tx = await ap.setFundingStrategy(asset, strategy, type, inputToken);
+    for (const fundingStrategy of fundingStrategiesToUpdate) {
+      const { outputToken, inputToken, strategy, strategyAddress } = fundingStrategy;
+      console.log(
+        `configuring strategy ${strategy} of type ${strategy} for asset ${outputToken} and input token ${inputToken}`
+      );
+      const tx = await ap.setFundingStrategy(outputToken, strategyAddress, strategy, inputToken);
       console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("setFundingStrategy: ", tx.hash);
