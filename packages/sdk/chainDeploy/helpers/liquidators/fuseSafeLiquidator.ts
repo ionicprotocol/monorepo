@@ -1,10 +1,14 @@
 import { chainIdToConfig } from "@ionicprotocol/chains";
-import { JarvisLiquidityPool } from "@ionicprotocol/types";
 import { BigNumber, constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { FuseSafeLiquidator } from "../../../typechain/FuseSafeLiquidator";
-import { BalancerSwapTokenLiquidatorData, LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
+import {
+  AddressesProviderConfigFnParams,
+  BalancerSwapTokenLiquidatorData,
+  LiquidatorConfigFnParams,
+  LiquidatorDeployFnParams
+} from "../types";
 
 export const deployFuseSafeLiquidator = async ({
   ethers,
@@ -57,8 +61,8 @@ export const configureFuseSafeLiquidator = async ({
   const arrayOfTrue: boolean[] = [];
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
 
-  for (const redemptionStrategy of chainIdToConfig[chainId].redemptionStrategies) {
-    const { strategy } = redemptionStrategy;
+  for (const redemptionStrategyConfig of chainIdToConfig[chainId].redemptionStrategies) {
+    const { strategy } = redemptionStrategyConfig;
     const redemptionStrategyContract = await ethers.getContract(strategy, deployer);
 
     const whitelistedAlready = await fuseSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
@@ -92,154 +96,85 @@ export const configureFuseSafeLiquidator = async ({
   }
 };
 
-export const configureAddressesProviderStrategies = async ({
+export const configureAddressesProviderAddresses = async ({
   ethers,
   getNamedAccounts,
   chainId,
-}: LiquidatorConfigFnParams): Promise<void> => {
+  deployConfig
+}: AddressesProviderConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const chainConfig = chainIdToConfig[chainId];
+  const ap = (await ethers.getContractOrNull("AddressesProvider", deployer)) as AddressesProvider;
 
-  const redemptionStrategiesToUpdate: {
-    outputToken: string;
-    strategyAddress: string;
-    strategy: string;
-    inputToken: string;
-  }[] = [];
+  if (ap) {
+    /// EXTERNAL ADDRESSES
+    await configureAddress(ap, "IUniswapV2Factory", deployConfig.uniswap.uniswapV2FactoryAddress);
+    await configureAddress(ap, "IUniswapV2Router02", deployConfig.uniswap.uniswapV2RouterAddress);
+    await configureAddress(ap, "wtoken", deployConfig.wtoken);
+    await configureAddress(ap, "wBTCToken", deployConfig.wBTCToken);
+    await configureAddress(ap, "stableToken", deployConfig.stableToken);
+    await configureAddress(ap, "UNISWAP_V3_ROUTER", chainConfig.chainAddresses.UNISWAP_V3_ROUTER);
+    await configureAddress(ap, "ALGEBRA_SWAP_ROUTER", chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER);
+    await configureAddress(ap, "SOLIDLY_SWAP_ROUTER", chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER);
 
-  const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+    // CURVE ORACLES
+    const clpov1 = await ethers.getContractOrNull("CurveLpTokenPriceOracleNoRegistry");
+    await configureAddress(ap, "CurveLpTokenPriceOracleNoRegistry", clpov1?.address);
 
-  // configure the redemption strategies in the AddressesProvider
-  for (const redemptionStrategy of chainConfig.redemptionStrategies) {
-    const { inputToken, strategy, outputToken } = redemptionStrategy;
-    const [onChainStrategyAddress, , onChainOutputToken] = await ap.callStatic.getRedemptionStrategy(inputToken);
-    const redemptionStrategyContract = await ethers.getContract(strategy);
-    if (onChainStrategyAddress != redemptionStrategyContract.address || onChainOutputToken != outputToken) {
-      redemptionStrategiesToUpdate.push({
-        inputToken,
-        strategyAddress: redemptionStrategyContract.address,
-        strategy,
-        outputToken,
-      });
+    const clpov2 = await ethers.getContractOrNull("CurveV2LpTokenPriceOracleNoRegistry");
+    await configureAddress(ap, "CurveV2LpTokenPriceOracleNoRegistry", clpov2?.address);
+
+    // LIQUIDATORS
+    const csl = await ethers.getContractOrNull("CurveSwapLiquidator");
+    await configureAddress(ap, "CurveSwapLiquidator", csl?.address);
+
+    const jlf = await ethers.getContractOrNull("JarvisLiquidatorFunder");
+    await configureAddress(ap, "JarvisLiquidatorFunder", jlf?.address);
+
+    const uv2l = await ethers.getContractOrNull("UniswapV2Liquidator");
+    await configureAddress(ap, "UniswapV2Liquidator", uv2l?.address);
+
+    const clptlnr = await ethers.getContractOrNull("CurveLpTokenLiquidatorNoRegistry");
+    await configureAddress(ap, "CurveLpTokenLiquidatorNoRegistry", clptlnr?.address);
+
+    /// SYSTEM ADDRESSES
+    await configureAddress(ap, "deployer", deployer);
+
+    const masterPO = await ethers.getContractOrNull("MasterPriceOracle");
+    await configureAddress(ap, "MasterPriceOracle", masterPO?.address);
+
+    const fpd = await ethers.getContractOrNull("FusePoolDirectory");
+    await configureAddress(ap, "FusePoolDirectory", fpd?.address);
+
+    const ffd = await ethers.getContractOrNull("FuseFeeDistributor");
+    await configureAddress(ap, "FuseFeeDistributor", ffd?.address);
+
+    const fsl = await ethers.getContractOrNull("FuseSafeLiquidator");
+    await configureAddress(ap, "FuseSafeLiquidator", fsl?.address);
+
+    const dpa = await ethers.getContractOrNull("DefaultProxyAdmin");
+    await configureAddress(ap, "DefaultProxyAdmin", dpa?.address);
+
+    const quoter = await ethers.getContractOrNull("Quoter");
+    await configureAddress(ap, "Quoter", quoter?.address);
+
+    const lr = await ethers.getContractOrNull("LiquidatorsRegistry");
+    await configureAddress(ap, "LiquidatorsRegistry", lr?.address);
+
+    if (chainId !== 1) {
+      const ovr = await ethers.getContractOrNull("OptimizedVaultsRegistry");
+      await configureAddress(ap, "OptimizedVaultsRegistry", ovr?.address);
+
+      const lpf = await ethers.getContractOrNull("LeveredPositionFactory");
+      await configureAddress(ap, "LeveredPositionFactory", lpf?.address);
+
+      const lpl = await ethers.getContractOrNull("LeveredPositionsLens");
+      await configureAddress(ap, "LeveredPositionsLens", lpl?.address);
     }
+
+    const mflr = await ethers.getContractOrNull("MidasFlywheelLensRouter");
+    await configureAddress(ap, "MidasFlywheelLensRouter", mflr?.address);
   }
-
-  if (redemptionStrategiesToUpdate.length > 0) {
-    for (const redemptionStrategy of redemptionStrategiesToUpdate) {
-      const { inputToken, strategyAddress, strategy, outputToken } = redemptionStrategy;
-      console.log(
-        `configuring strategy ${strategy} of type ${strategy} for asset ${inputToken} and output token ${outputToken}`
-      );
-      const tx = await ap.setRedemptionStrategy(inputToken, strategyAddress, strategy, outputToken);
-      console.log("waiting for ", tx.hash);
-      await tx.wait();
-      console.log("setRedemptionStrategy: ", tx.hash);
-    }
-  } else {
-    console.log("no redemption strategies to configure");
-  }
-
-  // configure the funding strategies in the AddressesProvider
-  const fundingStrategiesToUpdate: {
-    outputToken: string;
-    strategyAddress: string;
-    strategy: string;
-    inputToken: string;
-  }[] = [];
-
-  for (const fundingStrategy of chainConfig.fundingStrategies) {
-    const { inputToken, strategy, outputToken } = fundingStrategy;
-    const fundingStrategyContract = await ethers.getContract(strategy);
-
-    const [onChainStrategyAddress, , onChainInputToken] = await ap.callStatic.getFundingStrategy(inputToken);
-    if (onChainStrategyAddress != fundingStrategyContract.address || onChainInputToken != inputToken) {
-      fundingStrategiesToUpdate.push({
-        outputToken,
-        strategyAddress: fundingStrategyContract.address,
-        strategy,
-        inputToken,
-      });
-    }
-  }
-
-  if (fundingStrategiesToUpdate.length > 0) {
-    for (const fundingStrategy of fundingStrategiesToUpdate) {
-      const { outputToken, inputToken, strategy, strategyAddress } = fundingStrategy;
-      console.log(
-        `configuring strategy ${strategy} of type ${strategy} for asset ${outputToken} and input token ${inputToken}`
-      );
-      const tx = await ap.setFundingStrategy(outputToken, strategyAddress, strategy, inputToken);
-      console.log("waiting for ", tx.hash);
-      await tx.wait();
-      console.log("setFundingStrategy: ", tx.hash);
-    }
-  } else {
-    console.log("no funding strategies to configure");
-  }
-
-  // configure the jarvis pools in the AddressesProvider
-  {
-    const configPools: JarvisLiquidityPool[] = chainConfig.liquidationDefaults.jarvisPools;
-    const onChainPools = await ap.callStatic.getJarvisPools();
-    for (const key in configPools) {
-      const configPool = configPools[key];
-      const onChainPool = onChainPools.find((ocp) => ocp.syntheticToken == configPool.syntheticToken);
-      if (
-        !onChainPool ||
-        configPool.liquidityPoolAddress != onChainPool.liquidityPool ||
-        configPool.collateralToken != onChainPool.collateralToken ||
-        !BigNumber.from(configPool.expirationTime).sub(onChainPool.expirationTime).isZero()
-      ) {
-        console.log(`updating ${JSON.stringify(onChainPool)} with ${JSON.stringify(configPool)}`);
-
-        const tx = await ap.setJarvisPool(
-          configPool.syntheticToken,
-          configPool.collateralToken,
-          configPool.liquidityPoolAddress,
-          configPool.expirationTime
-        );
-
-        console.log("waiting for ", tx.hash);
-        await tx.wait();
-        console.log("jarvis pool configured: ", tx.hash);
-      } else {
-        console.log(`no need to update jarvis pool config for ${configPool.syntheticToken}`);
-      }
-    }
-    for (const key in onChainPools) {
-      const onChainPool = onChainPools[key];
-      const configPool = configPools.find((cp) => cp.syntheticToken == onChainPool.syntheticToken);
-      if (!configPool) {
-        const tx = await ap.setJarvisPool(onChainPool.syntheticToken, constants.AddressZero, constants.AddressZero, 0);
-        await tx.wait();
-        console.log("jarvis pool removed: ", tx.hash);
-      }
-    }
-  }
-
-  // configure the curve oracles addresses in the AddressesProvider
-  const clpov1 = await ethers.getContractOrNull("CurveLpTokenPriceOracleNoRegistry");
-  await configureAddress(ap, "CurveLpTokenPriceOracleNoRegistry", clpov1?.address);
-
-  const clpov2 = await ethers.getContractOrNull("CurveV2LpTokenPriceOracleNoRegistry");
-  await configureAddress(ap, "CurveV2LpTokenPriceOracleNoRegistry", clpov2?.address);
-
-  // configure the redemption and funding strategies addresses
-  const csl = await ethers.getContractOrNull("CurveSwapLiquidator");
-  await configureAddress(ap, "CurveSwapLiquidator", csl?.address);
-
-  const jlf = await ethers.getContractOrNull("JarvisLiquidatorFunder");
-  await configureAddress(ap, "JarvisLiquidatorFunder", jlf?.address);
-
-  const uv2l = await ethers.getContractOrNull("UniswapV2Liquidator");
-  await configureAddress(ap, "UniswapV2Liquidator", uv2l?.address);
-
-  const clptlnr = await ethers.getContractOrNull("CurveLpTokenLiquidatorNoRegistry");
-  await configureAddress(ap, "CurveLpTokenLiquidatorNoRegistry", clptlnr?.address);
-
-  await configureAddress(ap, "UNISWAP_V3_ROUTER", chainConfig.chainAddresses.UNISWAP_V3_ROUTER);
-  await configureAddress(ap, "ALGEBRA_SWAP_ROUTER", chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER);
-  await configureAddress(ap, "SOLIDLY_SWAP_ROUTER", chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER);
 };
 
 async function configureAddress(ap: AddressesProvider, key: string, value?: string) {

@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-import { configureAddressesProviderStrategies } from "../../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
+import { configureAddressesProviderAddresses } from "../../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
 
 export default task(
@@ -9,7 +9,7 @@ export default task(
 ).setAction(async ({}, { ethers, getNamedAccounts, getChainId }) => {
   const chainId = parseInt(await getChainId());
 
-  await configureAddressesProviderStrategies({
+  await configureAddressesProviderAddresses({
     ethers,
     getNamedAccounts,
     chainId,

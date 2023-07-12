@@ -6,9 +6,9 @@ import {
   ChainDeployment,
   ChainParams,
   DeployedPlugins,
-  FundingStrategyContract,
+  FundingStrategy,
   InterestRateModel,
-  RedemptionStrategyContract,
+  RedemptionStrategy,
   SupportedAsset,
   SupportedChains,
 } from "@ionicprotocol/types";
@@ -105,8 +105,8 @@ export class IonicBase {
   public marketToPlugin: Record<string, string>;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
-  public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
-  public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
+  public redemptionStrategies: RedemptionStrategy[];
+  public fundingStrategies: FundingStrategy[];
 
   public logger: Logger;
 

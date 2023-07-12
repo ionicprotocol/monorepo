@@ -5,7 +5,7 @@ import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
-  configureAddressesProviderStrategies,
+  configureAddressesProviderAddresses,
   configureFuseSafeLiquidator,
   deployFuseSafeLiquidator,
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
@@ -727,146 +727,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     ////
   }
 
-  /// EXTERNAL ADDRESSES
-  const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
-  if (
-    uniswapV2FactoryAddress !== chainDeployParams.uniswap.uniswapV2FactoryAddress &&
-    chainDeployParams.uniswap.uniswapV2FactoryAddress
-  ) {
-    tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
-    await tx.wait();
-    console.log("setAddress IUniswapV2Factory: ", tx.hash);
-  }
-
-  const uniswapV2RouterAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Router02");
-  if (
-    uniswapV2RouterAddress !== chainDeployParams.uniswap.uniswapV2RouterAddress &&
-    chainDeployParams.uniswap.uniswapV2RouterAddress
-  ) {
-    tx = await addressesProvider.setAddress("IUniswapV2Router02", chainDeployParams.uniswap.uniswapV2RouterAddress);
-    await tx.wait();
-    console.log("setAddress IUniswapV2Router02: ", tx.hash);
-  }
-
-  const wtokenAddress = await addressesProvider.callStatic.getAddress("wtoken");
-  if (wtokenAddress !== chainDeployParams.wtoken) {
-    tx = await addressesProvider.setAddress("wtoken", chainDeployParams.wtoken);
-    await tx.wait();
-    console.log("setAddress wtoken: ", tx.hash);
-  }
-
-  const wBTCTokenAddress = await addressesProvider.callStatic.getAddress("wBTCToken");
-  if (wBTCTokenAddress !== chainDeployParams.wBTCToken && chainDeployParams.wBTCToken) {
-    tx = await addressesProvider.setAddress("wBTCToken", chainDeployParams.wBTCToken);
-    await tx.wait();
-    console.log("setAddress wBTCToken: ", tx.hash);
-  }
-
-  const stableTokenAddress = await addressesProvider.callStatic.getAddress("stableToken");
-  if (stableTokenAddress !== chainDeployParams.stableToken && chainDeployParams.stableToken) {
-    tx = await addressesProvider.setAddress("stableToken", chainDeployParams.stableToken);
-    await tx.wait();
-    console.log("setAddress stableToken: ", tx.hash);
-  }
-
-  /// SYSTEM ADDRESSES
-  const currentDeployer = await addressesProvider.callStatic.getAddress("deployer");
-  if (currentDeployer !== deployer) {
-    tx = await addressesProvider.setAddress("deployer", deployer);
-    await tx.wait();
-    console.log("setAddress deployer", tx.hash);
-  }
-
-  const masterPOAddress = await addressesProvider.callStatic.getAddress("MasterPriceOracle");
-  if (masterPOAddress !== masterPO.address) {
-    tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
-    await tx.wait();
-    console.log("setAddress MasterPriceOracle: ", tx.hash);
-  }
-
-  const fpdAddress = await addressesProvider.callStatic.getAddress("FusePoolDirectory");
-  if (fpdAddress !== fpd.address) {
-    tx = await addressesProvider.setAddress("FusePoolDirectory", fpd.address);
-    await tx.wait();
-    console.log("setAddress FusePoolDirectory: ", tx.hash);
-  }
-
-  const ffdAddress = await addressesProvider.callStatic.getAddress("FuseFeeDistributor");
-  if (ffdAddress !== ffd.address) {
-    tx = await addressesProvider.setAddress("FuseFeeDistributor", ffd.address);
-    await tx.wait();
-    console.log("setAddress FuseFeeDistributor: ", tx.hash);
-  }
-
-  const fsl = await ethers.getContract("FuseSafeLiquidator");
-  const fslAddress = await addressesProvider.callStatic.getAddress("FuseSafeLiquidator");
-  if (fslAddress !== fsl.address) {
-    tx = await addressesProvider.setAddress("FuseSafeLiquidator", fsl.address);
-    await tx.wait();
-    console.log("setAddress FuseSafeLiquidator: ", tx.hash);
-  }
-
-  const dpa = await ethers.getContract("DefaultProxyAdmin");
-  const dpaAddress = await addressesProvider.callStatic.getAddress("DefaultProxyAdmin");
-  if (dpaAddress !== dpa.address) {
-    tx = await addressesProvider.setAddress("DefaultProxyAdmin", dpa.address);
-    await tx.wait();
-    console.log("setAddress DefaultProxyAdmin: ", tx.hash);
-  }
-
-  const quoter = await ethers.getContractOrNull("Quoter");
-  if (quoter != null) {
-    const quoterAddress = await addressesProvider.callStatic.getAddress("Quoter");
-    if (quoterAddress !== quoter.address) {
-      tx = await addressesProvider.setAddress("Quoter", quoter.address);
-      await tx.wait();
-      console.log("setAddress Quoter: ", tx.hash);
-    }
-  }
-
-  const lr = await ethers.getContract("LiquidatorsRegistry");
-  const lrAddress = await addressesProvider.callStatic.getAddress("LiquidatorsRegistry");
-  if (lrAddress !== lr.address) {
-    tx = await addressesProvider.setAddress("LiquidatorsRegistry", lr.address);
-    await tx.wait();
-    console.log("setAddress LiquidatorsRegistry: ", tx.hash);
-  }
-
   if (chainId !== 1) {
-    const ovr = await ethers.getContract("OptimizedVaultsRegistry");
-    const ovrAddress = await addressesProvider.callStatic.getAddress("OptimizedVaultsRegistry");
-    if (ovrAddress !== ovr.address) {
-      tx = await addressesProvider.setAddress("OptimizedVaultsRegistry", ovr.address);
-      await tx.wait();
-      console.log("setAddress OptimizedVaultsRegistry: ", tx.hash);
-    }
-
-    const lpf = await ethers.getContract("LeveredPositionFactory");
-    const lpfAddress = await addressesProvider.callStatic.getAddress("LeveredPositionFactory");
-    if (lpfAddress !== lpf.address) {
-      tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
-      await tx.wait();
-      console.log("setAddress LeveredPositionFactory: ", tx.hash);
-    }
-
-    const lpl = await ethers.getContract("LeveredPositionsLens");
-    const lplAddress = await addressesProvider.callStatic.getAddress("LeveredPositionsLens");
-    if (lplAddress !== lpl.address) {
-      tx = await addressesProvider.setAddress("LeveredPositionsLens", lpl.address);
-      await tx.wait();
-      console.log("setAddress LeveredPositionsLens: ", tx.hash);
-    }
-  }
-
-  const mflr = await ethers.getContract("MidasFlywheelLensRouter");
-  const mflrAddress = await addressesProvider.callStatic.getAddress("MidasFlywheelLensRouter");
-  if (mflrAddress !== mflr.address) {
-    tx = await addressesProvider.setAddress("MidasFlywheelLensRouter", mflr.address);
-    await tx.wait();
-    console.log("setAddress MidasFlywheelLensRouter: ", tx.hash);
-  }
-  if (chainId !== 1) {
-    await configureAddressesProviderStrategies({
+    await configureAddressesProviderAddresses({
       ethers,
       getNamedAccounts,
       chainId,
