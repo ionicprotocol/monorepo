@@ -93,8 +93,8 @@ export type ChainConfig = {
   oracles: OracleTypes[];
   specificParams: ChainParams;
   deployedPlugins: DeployedPlugins;
-  redemptionStrategies: RedemptionStrategy;
-  fundingStrategies: FundingStrategy;
+  redemptionStrategies: RedemptionStrategy[];
+  fundingStrategies: FundingStrategy[];
   chainDeployments: ChainDeployment;
 };
 
