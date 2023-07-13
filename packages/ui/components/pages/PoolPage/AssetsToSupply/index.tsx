@@ -192,15 +192,15 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
         sortingFn: assetSort,
       },
       {
-        cell: ({ getValue }) => {
-          return <Supply asset={getValue<MarketData>()} />;
+        cell: ({ row }) => {
+          return <Supply asset={row.getValue(ASSET)} />;
         },
         header: () => null,
         id: SUPPLY,
       },
       {
-        cell: ({ getValue }) => {
-          return <Details asset={getValue<MarketData>()} />;
+        cell: ({ row }) => {
+          return <Details asset={row.getValue(ASSET)} />;
         },
         header: () => null,
         id: DETAILS,
