@@ -2,8 +2,8 @@ import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { MidasERC4626 as IonicERC4626 } from "../../typechain/MidasERC4626";
+import { FeeDistributor } from "../../typechain/FeeDistributor";
+import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
 
 export default task("plugin:retire", "Retires a plugin from its market")
   .addParam("market", "The address of the market whose plugin to retire", undefined, types.string)
@@ -14,7 +14,7 @@ export default task("plugin:retire", "Retires a plugin from its market")
     const pluginDelegate = await ethers.getContract("CErc20PluginDelegate");
     const simpleDelegate = await ethers.getContract("CErc20Delegate");
 
-    const ffd = (await ethers.getContract("FuseFeeDistributor")) as FuseFeeDistributor;
+    const ffd = (await ethers.getContract("FeeDistributor")) as FeeDistributor;
 
     const downgradeWhitelisted = await ffd.callStatic.cErc20DelegateWhitelist(
       pluginDelegate.address,
@@ -31,7 +31,7 @@ export default task("plugin:retire", "Retires a plugin from its market")
     const pluginMarket = (await ethers.getContractAt("CErc20PluginDelegate", market)) as CErc20PluginDelegate;
     const pluginAddress = await pluginMarket.callStatic.plugin();
 
-    const plugin = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as IonicERC4626;
+    const plugin = (await ethers.getContractAt("IonicERC4626", pluginAddress, deployer)) as IonicERC4626;
     tx = await plugin.emergencyWithdrawAndPause();
     console.log(`pausing the plugin with tx ${tx.hash}`);
     await tx.wait();

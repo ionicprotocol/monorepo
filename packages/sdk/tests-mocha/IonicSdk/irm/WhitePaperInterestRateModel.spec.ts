@@ -35,7 +35,7 @@ describe("whitePaperInterestRateModel", () => {
         value: {
           reserveFactorMantissa: () => Promise.resolve(constants.One),
           adminFeeMantissa: () => Promise.resolve(constants.Two),
-          fuseFeeMantissa: () => Promise.resolve(constants.One),
+          ionicFeeMantissa: () => Promise.resolve(constants.One),
         },
       });
 
@@ -79,13 +79,13 @@ describe("whitePaperInterestRateModel", () => {
       const modelAddress = mkAddress("0xabc");
       const reserveFactorMantissa = constants.Two;
       const adminFeeMantissa = constants.One;
-      const fuseFeeMantissa = constants.Two;
+      const ionicFeeMantissa = constants.Two;
 
       await whitePaperInterestRateModel._init(
         modelAddress,
         reserveFactorMantissa,
         adminFeeMantissa,
-        fuseFeeMantissa,
+        ionicFeeMantissa,
         mockProvider
       );
       expect(getwhitePaperInterestRateModelContractStub).to.be.calledOnce;
@@ -100,14 +100,14 @@ describe("whitePaperInterestRateModel", () => {
       const multiplierPerBlock = constants.Two;
       const reserveFactorMantissa = constants.One;
       const adminFeeMantissa = constants.One;
-      const fuseFeeMantissa = constants.Two;
+      const ionicFeeMantissa = constants.Two;
 
       await whitePaperInterestRateModel.__init(
         baseRatePerBlock,
         multiplierPerBlock,
         reserveFactorMantissa,
         adminFeeMantissa,
-        fuseFeeMantissa
+        ionicFeeMantissa
       );
       expect(whitePaperInterestRateModel.initialized).to.be.true;
       expect(whitePaperInterestRateModel.reserveFactorMantissa.toNumber()).to.equal(4);

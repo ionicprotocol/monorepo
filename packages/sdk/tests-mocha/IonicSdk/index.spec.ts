@@ -6,7 +6,7 @@ import JumpRateModelArtifact from "../../artifacts/JumpRateModel.json";
 import { IonicBase } from "../../src/IonicSdk/index";
 import JumpRateModel from "../../src/IonicSdk/irm/JumpRateModel";
 import * as utilsFns from "../../src/IonicSdk/utils";
-import { Comptroller, FusePoolDirectory, Unitroller } from "../../typechain";
+import { Comptroller, PoolDirectory, Unitroller } from "../../typechain";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
@@ -41,17 +41,17 @@ describe("Fuse Index", () => {
     (mockProvider as any).getCode = (address: string) => address;
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
     ganache.chainDeployments = {
-      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
-      MidasFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
-      FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
-      FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
-      FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
-      FuseSafeLiquidator: { abi: [], address: mkAddress("0xecc") },
+      FeeDistributor: { abi: [], address: mkAddress("0xfcc") },
+      IonicFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
+      PoolDirectory: { abi: [], address: mkAddress("0xacc") },
+      PoolLens: { abi: [], address: mkAddress("0xbcc") },
+      PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
+      IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
     };
     fuseBase = new IonicBase(mockProvider, ganache);
-    fuseBase.contracts = { FusePoolDirectory: mockContract as unknown as FusePoolDirectory };
+    fuseBase.contracts = { PoolDirectory: mockContract as unknown as PoolDirectory };
   });
   afterEach(function () {
     restore();

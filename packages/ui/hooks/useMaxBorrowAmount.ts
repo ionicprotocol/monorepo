@@ -28,7 +28,7 @@ export function useMaxBorrowAmount(
     async () => {
       if (sdk && address && borrowCapsDataForAsset?.nonWhitelistedTotalBorrows) {
         try {
-          const maxBorrow = (await sdk.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
+          const maxBorrow = (await sdk.contracts.PoolLensSecondary.callStatic.getMaxBorrow(
             address,
             asset.cToken
           )) as BigNumber;
