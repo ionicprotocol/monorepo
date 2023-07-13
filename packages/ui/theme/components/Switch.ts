@@ -25,6 +25,9 @@ const ghost = definePartsStyle((props) => {
   return {
     container: {},
     thumb: {
+      _checked: {
+        bg: mode('iBlack', 'iBlack')(props),
+      },
       bg: mode('iBlack', 'iWhite')(props),
     },
     track: {

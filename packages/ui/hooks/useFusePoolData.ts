@@ -6,7 +6,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
-export const useFusePoolData = (poolId: string, poolChainId: number) => {
+export const useFusePoolData = (poolId?: string, poolChainId?: number) => {
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
   const { data: usdPrices } = useAllUsdPrices();
@@ -65,7 +65,7 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
       }
     },
     {
-      enabled: !!poolId && !!usdPrice && !!sdk,
+      enabled: !!poolId && !!poolChainId && !!usdPrice && !!sdk,
     }
   );
 };

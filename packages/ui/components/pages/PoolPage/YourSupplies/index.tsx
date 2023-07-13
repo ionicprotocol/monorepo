@@ -5,6 +5,7 @@ import {
   Checkbox,
   Divider,
   Flex,
+  Flex,
   Hide,
   HStack,
   Icon,
@@ -15,6 +16,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Text,
   Th,
   Thead,
@@ -52,11 +54,9 @@ import { PoolName } from '@ui/components/pages/PoolsPage/PoolsList/PoolName';
 import { SupplyBalance } from '@ui/components/pages/PoolsPage/PoolsList/SupplyBalance';
 import { TotalBorrow } from '@ui/components/pages/PoolsPage/PoolsList/TotalBorrow';
 import { TotalSupply } from '@ui/components/pages/PoolsPage/PoolsList/TotalSupply';
-import { useAllPoolsData } from '@ui/components/pages/PoolsPage/PoolsList/useAllPoolsData';
-import { useLoadingStatusPerChain } from '@ui/components/pages/PoolsPage/PoolsList/useLoadingStatusPerChain';
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
-import { CardBox } from '@ui/components/shared/IonicBox';
+import { CardBox, CardBox } from '@ui/components/shared/IonicBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
@@ -89,7 +89,7 @@ export type PoolRowData = {
   totalSupply: PoolData;
 };
 
-const PoolsList = () => {
+export const YourSupplies = () => {
   const enabledChains = useEnabledChains();
   const { isLoading, poolsPerChain, allPools, error } = useCrossFusePools([...enabledChains]);
   const { address, setGlobalLoading } = useMultiIonic();
@@ -415,7 +415,7 @@ const PoolsList = () => {
           justifyContent={['center', 'center', 'space-between']}
           width="100%"
         >
-          <Text size="xl">Pools</Text>
+          <Text size="xl">Your Supplies</Text>
           <Flex
             alignItems="center"
             className="searchAsset"

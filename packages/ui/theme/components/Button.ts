@@ -22,12 +22,6 @@ const baseStyle = defineStyle({
   transitionProperty: 'common',
 });
 
-const outline = defineStyle({
-  border: '2px dashed', // change the appearance of the border
-  borderRadius: 0, // remove the border radius
-  fontWeight: 'semibold', // change the font weight
-});
-
 const ghost = defineStyle({
   _focus: {
     bg: 'none',
@@ -39,6 +33,50 @@ const ghost = defineStyle({
     textDecoration: 'unset',
   },
   height: 6,
+});
+
+const green = defineStyle((props) => {
+  return {
+    _disabled: {
+      bg: mode('iGray', 'iGray')(props),
+    },
+    _focus: {
+      bg: mode('iGreen', 'iGreen')(props),
+      color: mode('iBlack', 'iBlack')(props),
+    },
+    _hover: {
+      bg: mode('iGreen', 'iGreen')(props),
+      color: mode('iBlack', 'iBlack')(props),
+      textDecoration: 'unset',
+    },
+    bg: mode('iGreen', 'iGreen')(props),
+    borderRadius: { base: '12px' },
+    color: mode('iBlack', 'iBlack')(props),
+    height: { base: '40px' },
+    px: { base: '12px' },
+    py: { base: '8px' },
+  };
+});
+
+const outline = defineStyle((props) => {
+  return {
+    _focus: {
+      bg: 'none',
+      color: mode('iLightGray', 'iLightGray')(props),
+    },
+    _hover: {
+      bg: 'none',
+      color: mode('iLightGray', 'iLightGray')(props),
+      textDecoration: 'unset',
+    },
+    bg: 'none',
+    borderColor: mode('iLightGray', 'iLightGray')(props),
+    borderRadius: { base: '12px' },
+    color: mode('iLightGray', 'iLightGray')(props),
+    height: { base: '40px' },
+    px: { base: '12px' },
+    py: { base: '8px' },
+  };
 });
 
 const _filter = defineStyle((props) => {
@@ -60,5 +98,5 @@ export const ButtonStyleConfig = defineStyleConfig({
     size: 'sm',
     variant: 'ghost',
   },
-  variants: { _filter, ghost, outline },
+  variants: { _filter, ghost, green, outline },
 });

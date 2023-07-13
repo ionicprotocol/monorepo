@@ -327,3 +327,8 @@ export const LEVERAGE_VALUE = {
   MAX: 3.0,
   MIN: 1.0,
 };
+
+export const ASSET = 'Asset';
+export const WALLET_BALANCE = 'Wallet Balance';
+export const SUPPLY = 'Supply';
+export const DETAILS = 'Details';

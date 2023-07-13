@@ -10,7 +10,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const useTotalSupplyAPYs = (
-  assets: Pick<
+  assets?: Pick<
     MarketData,
     'cToken' | 'supplyRatePerBlock' | 'underlyingSymbol' | 'underlyingToken'
   >[],
@@ -20,7 +20,9 @@ export const useTotalSupplyAPYs = (
 ) => {
   const sdk = useSdk(chainId);
   const isEnabled = useMemo(() => {
-    return !!assets.find((asset) => asset.underlyingSymbol === assetSymbols.ankrBNB);
+    return assets
+      ? !!assets.find((asset) => asset.underlyingSymbol === assetSymbols.ankrBNB)
+      : false;
   }, [assets]);
 
   const { data: ankrBNBApr } = useAnkrBNBApr(isEnabled, chainId);
@@ -29,7 +31,7 @@ export const useTotalSupplyAPYs = (
     [
       'useTotalSupplyAPYs',
       { chain: sdk?.chainId },
-      { assets: assets.map((a) => a.cToken).sort() },
+      { assets: assets?.map((a) => a.cToken).sort() },
       { rewards: allRewards ? Object.keys(allRewards).sort() : undefined },
       { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined },
       ankrBNBApr,

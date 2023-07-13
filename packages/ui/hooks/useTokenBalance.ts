@@ -54,3 +54,38 @@ export function useTokenBalance(tokenAddress?: string, chainId?: number, customA
     }
   );
 }
+
+export function useTokensBalance(
+  tokenAddresses?: string[],
+  chainId?: number,
+  customAddress?: string
+) {
+  const { address } = useMultiIonic();
+  const sdk = useSdk(chainId);
+
+  const addressToCheck = customAddress ?? address;
+
+  return useQuery(
+    ['useTokensBalance', tokenAddresses?.sort(), addressToCheck, sdk?.chainId],
+    async () => {
+      const tokenToBalanceMap: { [underlying: string]: BigNumber } = {};
+
+      if (sdk && tokenAddresses && tokenAddresses.length > 0 && chainId) {
+        const balances = await Promise.all(
+          tokenAddresses.map(async (tokenAddress) => {
+            return await fetchTokenBalance(tokenAddress, sdk, addressToCheck);
+          })
+        );
+
+        balances.map((balance, index) => {
+          tokenToBalanceMap[tokenAddresses[index]] = balance;
+        });
+      }
+
+      return tokenToBalanceMap;
+    },
+    {
+      enabled: !!tokenAddresses && tokenAddresses.length > 0 && !!addressToCheck && !!sdk,
+    }
+  );
+}

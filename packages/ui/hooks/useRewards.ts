@@ -12,8 +12,8 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseRewardsProps {
-  chainId: number;
-  poolId: string;
+  chainId?: number;
+  poolId?: string;
 }
 
 export interface UseRewardsData {
@@ -120,7 +120,7 @@ export const fetchRewards = async (
 };
 
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
-  const { data: poolData } = useFusePoolData(poolId, Number(chainId));
+  const { data: poolData } = useFusePoolData(poolId, chainId);
   const { data: flywheelRewards } = useFlywheelRewards(poolData?.comptroller, chainId);
 
   return useQuery<UseRewardsData>(
