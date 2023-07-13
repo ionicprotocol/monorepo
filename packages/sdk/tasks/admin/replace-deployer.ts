@@ -86,10 +86,7 @@ async function ownable2StepAcceptOwnership(ethers, contractName, signer, newDepl
 const safeOwnableUpgrContracts = [
   "FuseFeeDistributor",
   "FusePoolDirectory",
-  "JarvisSafeLiquidator",
-  "MidasSafeLiquidator",
   "OptimizedVaultsRegistry",
-
   "AnkrCertificateTokenPriceOracle",
   "BalancerLpLinearPoolPriceOracle",
   "BalancerLpStablePoolPriceOracle",
@@ -100,9 +97,7 @@ const safeOwnableUpgrContracts = [
   "CurveLpTokenPriceOracleNoRegistry",
   "CurveV2LpTokenPriceOracleNoRegistry",
   "CurveV2PriceOracle",
-  "DiaStDotPriceOracle",
   "ERC4626Oracle",
-  "FluxPriceOracle",
   "GammaPoolPriceOracle",
   "PythPriceOracle",
   "SimplePriceOracle",

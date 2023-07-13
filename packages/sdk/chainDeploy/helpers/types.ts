@@ -86,14 +86,7 @@ export type DiaAsset = {
   key: string;
 };
 
-export type FluxAsset = {
-  underlying: string;
-  feed: string;
-};
-
-export type UmbrellaAsset = FluxAsset;
-
-export type AdrastiaAsset = {
+export type UmbrellaAsset = {
   underlying: string;
   feed: string;
 };
