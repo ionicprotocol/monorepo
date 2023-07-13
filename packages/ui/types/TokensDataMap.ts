@@ -29,4 +29,5 @@ export interface PoolData extends SDKFusePoolData {
   totalLiquidityFiat: number;
   totalSuppliedFiat: number;
   totalSupplyBalanceFiat: number;
+  totalCollateralSupplyBalanceFiat: number;
 }

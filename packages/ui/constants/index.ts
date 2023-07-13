@@ -336,3 +336,5 @@ export const AVAILABLE = 'Available';
 export const APR_VARIABLE = 'Apr, Variable';
 export const APR_STABLE = 'Apr, Stable';
 export const BORROW = 'Borrow';
+export const WITHDRAW = 'Withdraw';
+export const YOUR_BALANCE = 'Your Balance';

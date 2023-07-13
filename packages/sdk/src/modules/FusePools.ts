@@ -53,6 +53,7 @@ export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
       let totalLiquidityNative = 0;
       let totalAvailableLiquidityNative = 0;
       let totalSupplyBalanceNative = 0;
+      let totalCollateralSupplyBalanceNative = 0;
       let totalBorrowBalanceNative = 0;
       let totalSuppliedNative = 0;
       let totalBorrowedNative = 0;
@@ -96,6 +97,9 @@ export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
           Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
           Number(utils.formatUnits(asset.underlyingPrice, 18));
 
+        if (asset.membership) {
+          totalCollateralSupplyBalanceNative += asset.supplyBalanceNative;
+        }
         totalSupplyBalanceNative += asset.supplyBalanceNative;
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
@@ -155,6 +159,7 @@ export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
         totalSuppliedNative,
         totalBorrowedNative,
         totalSupplyBalanceNative,
+        totalCollateralSupplyBalanceNative,
         totalBorrowBalanceNative,
         blockPosted,
         timestampPosted,

@@ -173,15 +173,15 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         sortingFn: assetSort,
       },
       {
-        cell: ({ getValue }) => {
-          return <Borrow asset={getValue<MarketData>()} />;
+        cell: ({ row }) => {
+          return <Borrow asset={row.getValue(ASSET)} maxBorrowAmounts={maxBorrowAmounts} />;
         },
         header: () => null,
         id: BORROW,
       },
       {
-        cell: ({ getValue }) => {
-          return <Details asset={getValue<MarketData>()} />;
+        cell: ({ row }) => {
+          return <Details asset={row.getValue(ASSET)} />;
         },
         header: () => null,
         id: DETAILS,

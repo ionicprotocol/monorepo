@@ -43,6 +43,7 @@ export const COLOR_PALETTE = {
   iRowBg: '#2C2E34',
   iSeparator: '#3D3D3D',
   iWhite: '#F0F0F0',
+  iYellow: '#F1F996',
   raisinBlack: '#282828',
   raisinBlack80: '#282828CC',
   silverMetallic: '#A5ADB4',

@@ -82,6 +82,7 @@ export interface FusePoolData {
   totalBorrowedNative: number;
 
   totalSupplyBalanceNative: number;
+  totalCollateralSupplyBalanceNative: number;
   totalBorrowBalanceNative: number;
   blockPosted: BigNumber;
   timestampPosted: BigNumber;

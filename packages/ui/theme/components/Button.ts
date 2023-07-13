@@ -62,6 +62,33 @@ const green = defineStyle((props) => {
   };
 });
 
+const disabled = defineStyle((props) => {
+  return {
+    _disabled: {
+      bg: mode('iGray', 'iGray')(props),
+    },
+    _focus: {
+      bg: mode('iGray', 'iGray')(props),
+      color: mode('iBlack', 'iBlack')(props),
+    },
+    _hover: {
+      _disabled: {
+        bg: mode('iGray', 'iGray')(props),
+        color: mode('iBlack', 'iBlack')(props),
+      },
+      bg: mode('iGray', 'iGray')(props),
+      color: mode('iBlack', 'iBlack')(props),
+      textDecoration: 'unset',
+    },
+    bg: mode('iGray', 'iGray')(props),
+    borderRadius: { base: '12px' },
+    color: mode('iBlack', 'iBlack')(props),
+    height: { base: '40px' },
+    px: { base: '12px' },
+    py: { base: '8px' },
+  };
+});
+
 const outline = defineStyle((props) => {
   return {
     _focus: {
@@ -102,5 +129,5 @@ export const ButtonStyleConfig = defineStyleConfig({
     size: 'sm',
     variant: 'ghost',
   },
-  variants: { _filter, ghost, green, outline },
+  variants: { _filter, disabled, ghost, green, outline },
 });

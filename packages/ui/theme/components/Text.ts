@@ -57,6 +57,10 @@ export const TextStyleConfig: ComponentStyleConfig = {
   },
   variants: {
     default: {},
+    inherit: {
+      color: 'inherit',
+      fontSize: 'inherit',
+    },
     number: {
       fontFamily: "'Inter', sans-serif",
     },

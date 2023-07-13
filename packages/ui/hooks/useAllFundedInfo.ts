@@ -26,6 +26,7 @@ export interface FundedAsset extends MarketData {
   totalBorrowBalanceNative: number;
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
+  totalCollateralSupplyBalanceNative: number;
 }
 
 export interface resQuery {
@@ -40,6 +41,7 @@ export interface resQuery {
   totalSupplyAPYs: { [market: string]: { apy: number; totalApy: number } };
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
+  totalCollateralSupplyBalanceNative: number;
 }
 
 export function useAllFundedInfo() {
@@ -68,6 +70,7 @@ export function useAllFundedInfo() {
         let totalSupplyBalanceFiat = 0;
         let totalBorrowBalanceFiat = 0;
         let totalSupplyBalanceNative = 0;
+        let totalCollateralSupplyBalanceNative = 0;
         let totalBorrowBalanceNative = 0;
 
         await Promise.all(
@@ -114,6 +117,7 @@ export function useAllFundedInfo() {
                           totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
                           totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
                           totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
+                          totalCollateralSupplyBalanceNative: pool.totalCollateralSupplyBalanceNative,
                         });
                       });
                       const { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY } =
@@ -217,6 +221,7 @@ export function useAllFundedInfo() {
           totalSupplyAPYs,
           totalSupplyBalanceFiat,
           totalSupplyBalanceNative,
+          totalCollateralSupplyBalanceNative
         };
       }
 
