@@ -1,5 +1,5 @@
 import { chainIdToConfig } from "@ionicprotocol/chains";
-import { BigNumber, constants } from "ethers";
+import { constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { FuseSafeLiquidator } from "../../../typechain/FuseSafeLiquidator";
@@ -7,7 +7,7 @@ import {
   AddressesProviderConfigFnParams,
   BalancerSwapTokenLiquidatorData,
   LiquidatorConfigFnParams,
-  LiquidatorDeployFnParams
+  LiquidatorDeployFnParams,
 } from "../types";
 
 export const deployFuseSafeLiquidator = async ({
@@ -100,7 +100,7 @@ export const configureAddressesProviderAddresses = async ({
   ethers,
   getNamedAccounts,
   chainId,
-  deployConfig
+  deployConfig,
 }: AddressesProviderConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const chainConfig = chainIdToConfig[chainId];
