@@ -1,8 +1,8 @@
 import { task } from "hardhat/config";
 
+import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
 import { configureAddressesProviderAddresses } from "../../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
-import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
 
 export default task(
   "config:strategies",
