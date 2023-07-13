@@ -7,6 +7,7 @@ import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { AssetsToBorrow } from '@ui/components/pages/PoolPage/AssetsToBorrow/index';
 import { AssetsToSupply } from '@ui/components/pages/PoolPage/AssetsToSupply/index';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
+import { YourBorrows } from '@ui/components/pages/PoolPage/YourBorrows/index';
 import { YourSupplies } from '@ui/components/pages/PoolPage/YourSupplies/index';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
@@ -59,7 +60,7 @@ const PoolPage = memo(() => {
                   <Skeleton minW={'100%'} />
                 </VStack>
               ) : poolData ? (
-                <YourSupplies poolData={poolData} />
+                <YourBorrows poolData={poolData} />
               ) : (
                 <Center>
                   <Text>Something went wrong, Try again later</Text>
