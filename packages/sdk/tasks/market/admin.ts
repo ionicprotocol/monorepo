@@ -5,7 +5,7 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CToken } from "../../typechain/CToken";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { PoolDirectory } from "../../typechain/PoolDirectory";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("comptroller", "Comptroller Address", undefined, types.string)
@@ -140,7 +140,7 @@ task("markets:all:pause", "Pauses borrowing on a market")
   .setAction(async (taskArgs, hre) => {
     const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
 
-    const fusePoolDirectory = (await hre.ethers.getContract("FusePoolDirectory")) as FusePoolDirectory;
+    const fusePoolDirectory = (await hre.ethers.getContract("PoolDirectory")) as PoolDirectory;
 
     const [, poolData] = await fusePoolDirectory.callStatic.getActivePools();
 

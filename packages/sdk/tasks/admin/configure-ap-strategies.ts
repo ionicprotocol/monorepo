@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
-import { configureAddressesProviderAddresses } from "../../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
+import { configureAddressesProviderAddresses } from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
 
 export default task(

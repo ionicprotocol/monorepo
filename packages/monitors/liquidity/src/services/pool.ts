@@ -18,7 +18,7 @@ export class PoolService {
 
   async getPoolsWithAsset(): Promise<Comptroller[]> {
     const poolsWithAsset: Comptroller[] = [];
-    const [, pools] = await this.sdk.contracts.FusePoolDirectory.getActivePools();
+    const [, pools] = await this.sdk.contracts.PoolDirectory.getActivePools();
     for (const pool of pools) {
       const comptroller = this.sdk.createComptroller(pool.comptroller, this.sdk.signer);
       const promises = this.assets.map((asset) => {

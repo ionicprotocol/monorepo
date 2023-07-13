@@ -4,8 +4,8 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../../typechain/CTokenFirstExtension";
-import { FuseFeeDistributor } from "../../../typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../../typechain/FusePoolDirectory";
+import { FeeDistributor } from "../../../typechain/FeeDistributor";
+import { PoolDirectory } from "../../../typechain/PoolDirectory";
 import { Unitroller } from "../../../typechain/Unitroller";
 
 export default task("comptroller:implementation:whitelist", "Whitelists a new comptroller implementation upgrade")
@@ -19,7 +19,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       const currentLatestComptroller = await ethers.getContract("Comptroller");
       newImplementation = currentLatestComptroller.address;
     }
-    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
+    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
     const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(
       oldImplementation,
@@ -37,7 +37,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       );
       console.log(`_editComptrollerImplementationWhitelist with tx`, tx.hash);
       await tx.wait();
-      console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
+      console.log("FeeDistributor comptroller whitelist set", tx.hash);
     } else {
       console.log(`upgrade from ${oldImplementation} to ${newImplementation} is whitelisted already`);
     }
@@ -66,8 +66,8 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
   .setAction(async ({ forceUpgrade }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
-    const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
-    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
+    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
+    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
     const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
@@ -171,7 +171,7 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
   .setAction(async ({ enable, admin }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
+    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
     const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
@@ -206,7 +206,7 @@ task("pools:all:pause-guardian", "Sets the pause guardian for all pools that hav
   .setAction(async ({ replacingGuardian, admin }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
+    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
     const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];

@@ -8,7 +8,7 @@ import {
   configureAddressesProviderAddresses,
   configureIonicLiquidator,
   deployIonicLiquidator,
-} from "../chainDeploy/helpers/liquidators/ioniciquidator";
+} from "../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";

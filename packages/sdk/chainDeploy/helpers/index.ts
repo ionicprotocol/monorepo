@@ -25,4 +25,4 @@ export { deployFlywheelWithDynamicRewards } from "./dynamicFlywheels";
 export { deployErc4626PriceOracle } from "./oracles/erc4626";
 export { deployCurveV2Oracle } from "./oracles/curveV2";
 export { deployWstEthOracle } from "./oracles/wstEth";
-export { configureBalancerSwap } from "./liquidators/ioniciquidator";
+export { configureBalancerSwap } from "./liquidators/ionicLiquidator";
