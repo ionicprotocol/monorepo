@@ -203,6 +203,8 @@ export async function configureBalancerSwap(
       console.log(
         `setBalancerPoolForTokens input: ${swap.inputToken}, output: ${swap.outputToken}:, pool: ${swap.poolAddress} with tx: ${tx.hash}`
       );
+    } else {
+      console.log(`pool already configured for ${swap.inputToken} and ${swap.outputToken}`);
     }
   }
 }

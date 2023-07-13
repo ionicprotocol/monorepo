@@ -601,6 +601,46 @@ const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
     outputToken: underlying(assets, assetSymbols.WMATIC),
     poolAddress: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
   },
+  {
+    inputToken: underlying(assets, assetSymbols.MATICx),
+    outputToken: underlying(assets, assetSymbols.MaticX_bbaWMATIC),
+    poolAddress: underlying(assets, assetSymbols.MaticX_bbaWMATIC),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.MaticX_bbaWMATIC),
+    outputToken: underlying(assets, assetSymbols.MATICx),
+    poolAddress: underlying(assets, assetSymbols.MaticX_bbaWMATIC),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.PAR),
+    outputToken: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+    poolAddress: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+    outputToken: underlying(assets, assetSymbols.PAR),
+    poolAddress: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.MATICx),
+    outputToken: underlying(assets, assetSymbols.WMATIC),
+    poolAddress: underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WMATIC),
+    outputToken: underlying(assets, assetSymbols.MATICx),
+    poolAddress: underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.stMATIC),
+    outputToken: underlying(assets, assetSymbols.WMATIC),
+    poolAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_STABLE_BLP),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WMATIC),
+    outputToken: underlying(assets, assetSymbols.stMATIC),
+    poolAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_STABLE_BLP),
+  },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -837,7 +877,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
-  // CurveSwapLiquidator
+  // CurveLpTokenWrapper
   const curveLpTokenWrapper = await deployments.deploy("CurveLpTokenWrapper", {
     from: deployer,
     args: [],

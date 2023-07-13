@@ -20,6 +20,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.jBRL),
   },
   {
+    inputToken: underlying(assets, assetSymbols.jBRL),
+    strategy: RedemptionStrategyContract.CurveLpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols["2brl"]),
+  },
+  {
     inputToken: underlying(assets, assetSymbols["3brl"]),
     strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     outputToken: underlying(assets, assetSymbols.jBRL),

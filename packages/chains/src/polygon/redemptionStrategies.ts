@@ -224,6 +224,36 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.JEUR),
   },
   {
+    inputToken: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.PAR),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.PAR),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.MATICx),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WMATIC),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WMATIC),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.MATICx),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.stMATIC),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WMATIC),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WMATIC),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.stMATIC),
+  },
+  {
     inputToken: underlying(assets, assetSymbols.MAI),
     strategy: RedemptionStrategyContract.UniswapV2LiquidatorFunder,
     outputToken: underlying(assets, assetSymbols.USDC),
