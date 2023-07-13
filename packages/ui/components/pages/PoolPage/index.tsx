@@ -1,26 +1,18 @@
-import { Box, Center, Flex, Grid, Skeleton, Text, VStack } from '@chakra-ui/react';
-import type { SortingState } from '@tanstack/react-table';
+import { Center, Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { memo, useEffect, useMemo, useState } from 'react';
-
-import { AssetsToBorrow } from './AssetsToBorrow';
-import { AssetsToSupply } from './AssetsToSupply';
-import { YourSupplies } from './YourSupplies';
+import { memo, useMemo } from 'react';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
+import { AssetsToBorrow } from '@ui/components/pages/PoolPage/AssetsToBorrow/index';
+import { AssetsToSupply } from '@ui/components/pages/PoolPage/AssetsToSupply/index';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
-import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
-import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
+import { YourSupplies } from '@ui/components/pages/PoolPage/YourSupplies/index';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { IONIC_LOCALSTORAGE_KEYS, MARKET_COLUMNS, MARKET_LTV } from '@ui/constants/index';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useRewards } from '@ui/hooks/useRewards';
 
 const PoolPage = memo(() => {
-  const { address } = useMultiIonic();
   const router = useRouter();
   const poolId = useMemo(
     () => (router.isReady ? (router.query.poolId as string) : ''),
@@ -31,22 +23,6 @@ const PoolPage = memo(() => {
     [router.isReady, router.query.chainId]
   );
   const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
-  const { data: allRewards } = useRewards({ chainId: Number(chainId), poolId: poolId });
-  const [initSorting, setInitSorting] = useState<SortingState | undefined>();
-
-  useEffect(() => {
-    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
-
-    if (
-      oldData &&
-      JSON.parse(oldData).marketSorting &&
-      MARKET_COLUMNS.includes(JSON.parse(oldData).marketSorting[0].id)
-    ) {
-      setInitSorting(JSON.parse(oldData).marketSorting);
-    } else {
-      setInitSorting([{ desc: true, id: MARKET_LTV }]);
-    }
-  }, []);
 
   return (
     <>
