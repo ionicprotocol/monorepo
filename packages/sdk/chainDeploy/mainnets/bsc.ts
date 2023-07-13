@@ -612,6 +612,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
+  // CurveLpTokenWrapper
+  const curveLpTokenWrapper = await deployments.deploy("CurveLpTokenWrapper", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenWrapper.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenWrapper.transactionHash);
+  console.log("CurveLpTokenWrapper: ", curveLpTokenWrapper.address);
+
   // wombat Lp token liquidator
   const wombatLpTokenLiquidator = await deployments.deploy("WombatLpTokenLiquidator", {
     from: deployer,

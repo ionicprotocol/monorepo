@@ -732,6 +732,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       ethers,
       getNamedAccounts,
       chainId,
+      deployConfig: chainDeployParams,
     });
   }
   // upgrade any of the pools if necessary
