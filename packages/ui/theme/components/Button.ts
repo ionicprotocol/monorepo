@@ -45,6 +45,10 @@ const green = defineStyle((props) => {
       color: mode('iBlack', 'iBlack')(props),
     },
     _hover: {
+      _disabled: {
+        bg: mode('iGray', 'iGray')(props),
+        color: mode('iBlack', 'iBlack')(props),
+      },
       bg: mode('iGreen', 'iGreen')(props),
       color: mode('iBlack', 'iBlack')(props),
       textDecoration: 'unset',

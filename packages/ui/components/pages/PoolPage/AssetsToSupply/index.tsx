@@ -34,21 +34,18 @@ import { constants } from 'ethers';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Asset } from './Asset';
-import { Collateral } from './Collateral';
-import { Details } from './Details';
-import { Supply } from './Supply';
-import { SupplyApy } from './SupplyApy';
-import { useAssetsToSupplyData } from './useAssetsToSupplyData';
-import { WalletBalance } from './WalletBalance';
-
+import { Asset } from '@ui/components/pages/PoolPage/AssetsToSupply/Asset';
+import { Collateral } from '@ui/components/pages/PoolPage/AssetsToSupply/Collateral';
+import { Details } from '@ui/components/pages/PoolPage/AssetsToSupply/Details';
+import { Supply } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply';
+import { SupplyApy } from '@ui/components/pages/PoolPage/AssetsToSupply/SupplyApy';
+import { WalletBalance } from '@ui/components/pages/PoolPage/AssetsToSupply/WalletBalance';
 import { CIconButton } from '@ui/components/shared/Button';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   APY,
   ASSET,
-  ASSETS,
   COLLATERAL,
   DETAILS,
   MARKETS_COUNT_PER_PAGE,
@@ -57,6 +54,7 @@ import {
   SUPPLY,
   WALLET_BALANCE,
 } from '@ui/constants/index';
+import { useAssetsToSupplyData } from '@ui/hooks/assetsToSupply/useAssetsToSupplyData';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
 import { useRewards } from '@ui/hooks/useRewards';
@@ -64,7 +62,7 @@ import { useTokensBalance } from '@ui/hooks/useTokenBalance';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
-export type AssetRowData = {
+export type AssetToSupplyRowData = {
   apy: MarketData;
   asset: MarketData;
   collateral: MarketData;
@@ -93,7 +91,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
     chainId
   );
 
-  const assetFilter: FilterFn<AssetRowData> = useCallback(
+  const assetFilter: FilterFn<AssetToSupplyRowData> = useCallback(
     (row, columnId, value) => {
       const asset = row.original.asset;
 
@@ -111,7 +109,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
     [searchText]
   );
 
-  const assetSort: SortingFn<AssetRowData> = useCallback(
+  const assetSort: SortingFn<AssetToSupplyRowData> = useCallback(
     (rowA, rowB, columnId) => {
       if (columnId === ASSET) {
         return rowB.original.asset.underlyingSymbol.localeCompare(
@@ -146,7 +144,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
 
   const tableData = useAssetsToSupplyData(poolData?.assets);
 
-  const columns: ColumnDef<AssetRowData>[] = useMemo(() => {
+  const columns: ColumnDef<AssetToSupplyRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.asset,
@@ -162,8 +160,8 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
         cell: ({ getValue }) => <WalletBalance asset={getValue<MarketData>()} chainId={chainId} />,
         enableSorting: false,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{ASSETS}</TableHeaderCell>,
-        id: ASSETS,
+        header: (context) => <TableHeaderCell context={context}>{WALLET_BALANCE}</TableHeaderCell>,
+        id: WALLET_BALANCE,
       },
       {
         accessorFn: (row) => row.apy,

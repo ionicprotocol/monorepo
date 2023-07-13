@@ -61,10 +61,7 @@ export const TextStyleConfig: ComponentStyleConfig = {
       fontFamily: "'Inter', sans-serif",
     },
     'table-head': {
-      fontWeight: 'normal',
-      lineHeight: 1.25,
-      opacity: 0.9,
-      textAlign: 'right',
+      textTransform: 'uppercase',
     },
     tableHeader: {
       color: 'iLightGray',

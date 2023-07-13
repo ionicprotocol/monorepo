@@ -64,18 +64,14 @@ export const RewardsInfo = ({ reward, chainId, assetCToken }: RewardsInfoProps) 
 
       <HStack justifyContent="flex-end" maxWidth="100px" minWidth="max-content">
         {reward.status !== 'paused' && reward.apy !== undefined ? (
-          <Text fontWeight={'medium'} size="sm" title={reward.apy * 100 + '%'} variant="tnumber">
-            {(reward.apy * 100).toFixed(2) + '%'}
-          </Text>
+          <Text title={reward.apy * 100 + '%'}>{(reward.apy * 100).toFixed(2) + '%'}</Text>
         ) : (
           <Box marginTop="-2px !important">
             <InfoOutlineIcon />
           </Box>
         )}
       </HStack>
-      <Text fontWeight={'medium'} mr={-1} size="sm" variant="tnumber">
-        {rewardAsset?.symbol}
-      </Text>
+      <Text mr={-1}>{rewardAsset?.symbol}</Text>
       {endDate ? (
         <HStack justifyContent={'space-between'} width={'100%'}>
           <Text>{'(Ending: '}</Text>

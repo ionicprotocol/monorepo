@@ -332,3 +332,7 @@ export const ASSET = 'Asset';
 export const WALLET_BALANCE = 'Wallet Balance';
 export const SUPPLY = 'Supply';
 export const DETAILS = 'Details';
+export const AVAILABLE = 'Available';
+export const APR_VARIABLE = 'Apr, Variable';
+export const APR_STABLE = 'Apr, Stable';
+export const BORROW = 'Borrow';

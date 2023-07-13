@@ -10,11 +10,9 @@ export const WalletBalance = ({ asset, chainId }: { asset: MarketData; chainId: 
 
   return !isLoading ? (
     balance ? (
-      <Text variant="tnumber">
-        {smallFormatter(Number(utils.formatUnits(balance, asset.underlyingDecimals)))}
-      </Text>
+      <Text>{smallFormatter(Number(utils.formatUnits(balance, asset.underlyingDecimals)))}</Text>
     ) : (
-      <Text variant="tnumber">-</Text>
+      <Text>-</Text>
     )
   ) : (
     <Skeleton minW={'80px'} />

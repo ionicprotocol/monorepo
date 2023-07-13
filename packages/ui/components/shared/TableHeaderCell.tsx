@@ -19,8 +19,9 @@ export const TableHeaderCell = ({
     <HStack cursor={context.column.getCanSort() ? 'pointer' : 'default'} spacing={1}>
       <Text
         fontWeight={context.column.getIsSorted() ? 'bold' : 'normal'}
-        size="sm"
+        size={'sm'}
         variant="table-head"
+        whiteSpace={'nowrap'}
       >
         {children}
       </Text>

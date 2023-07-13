@@ -3,8 +3,8 @@ import { assetSymbols } from '@ionicprotocol/types';
 import { useEffect, useMemo, useState } from 'react';
 import { BsStars } from 'react-icons/bs';
 
-import { NoRewardInfo } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy/NoRewardInfo';
-import { RewardsInfo } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy/RewardsInfo';
+import { NoRewardInfo } from '@ui/components/pages/PoolPage/AssetsToSupply/SupplyApy/NoRewardInfo';
+import { RewardsInfo } from '@ui/components/pages/PoolPage/AssetsToSupply/SupplyApy/RewardsInfo';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
@@ -88,13 +88,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyPr
           <VStack alignItems={'flex-start'} spacing={1}>
             {supplyAPY !== undefined && (
               <HStack justifyContent="flex-start">
-                <Text
-                  fontWeight="medium"
-                  size="sm"
-                  textAlign="right"
-                  variant="tnumber"
-                  width="60px"
-                >
+                <Text textAlign="right" width="60px">
                   {supplyAPY.toFixed(2)}%
                 </Text>
                 <Text>Supply APY</Text>
@@ -107,13 +101,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyPr
 
                 return (
                   <HStack justifyContent="flex-start" key={`asset-reward-${index}`}>
-                    <Text
-                      fontWeight="medium"
-                      size="sm"
-                      textAlign="right"
-                      variant="tnumber"
-                      width="60px"
-                    >
+                    <Text textAlign="right" width="60px">
                       {Number(reward.apy * 100).toFixed(2)}%
                     </Text>
                     <Text>Compounding APY</Text>
@@ -124,13 +112,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyPr
             {/* // TODO remove hardcoded Ankr Stuff here  */}
             {ankrBNBApr && (
               <HStack justifyContent="flex-start">
-                <Text
-                  fontWeight="medium"
-                  size="sm"
-                  textAlign="right"
-                  variant="tnumber"
-                  width="60px"
-                >
+                <Text textAlign="right" width="60px">
                   {Number(ankrBNBApr).toFixed(2)}%
                 </Text>
                 <Text>ankrBNB APY</Text>
@@ -140,14 +122,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyPr
             {rewardsOfThisMarket.length > 0 ? (
               <VStack alignItems="flex-start" spacing={1}>
                 <HStack justifyContent="flex-start">
-                  <Text
-                    fontWeight="medium"
-                    maxWidth="max-content"
-                    minWidth="60px"
-                    size="sm"
-                    textAlign="right"
-                    variant="tnumber"
-                  >
+                  <Text maxWidth="max-content" minWidth="60px" textAlign="right">
                     {totalRewardApy.toFixed(2)}%
                   </Text>
                   {pluginInfo ? (
@@ -183,12 +158,8 @@ export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyPr
           <>
             {totalApy !== undefined && (
               <HStack justifyContent="flex-start" width="100%">
-                <Text fontWeight="bold" size="sm" variant="tnumber">
-                  {(totalApy * 100).toFixed(2)}%
-                </Text>
-                <Text fontWeight="bold" size="sm" variant="tnumber">
-                  Total APY
-                </Text>
+                <Text fontWeight="bold">{(totalApy * 100).toFixed(2)}%</Text>
+                <Text fontWeight="bold">Total APY</Text>
               </HStack>
             )}
           </>
@@ -200,9 +171,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyPr
           {hasRewardTooltip && <BsStars color={supplyApyColor} fill={supplyApyColor} size={16} />}
           <VStack alignItems={'flex-end'} spacing={0.5}>
             {totalApy !== undefined && (
-              <Text color={supplyApyColor} fontWeight="medium" size="sm" variant="tnumber">
-                {(totalApy * 100).toFixed(2)}%
-              </Text>
+              <Text color={supplyApyColor}>{(totalApy * 100).toFixed(2)}%</Text>
             )}
           </VStack>
         </HStack>

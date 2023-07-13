@@ -6,7 +6,6 @@ import {
   Hide,
   HStack,
   Select,
-  Switch,
   Table,
   Tbody,
   Td,
@@ -30,49 +29,44 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { constants } from 'ethers';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Asset } from './Asset';
-import { Collateral } from './Collateral';
-import { Details } from './Details';
-import { Supply } from './Supply';
-import { SupplyApy } from './SupplyApy';
-import { useAssetsToSupplyData } from './useAssetsToSupplyData';
-import { WalletBalance } from './WalletBalance';
-
+import { AprStable } from '@ui/components/pages/PoolPage/AssetsToBorrow/AprStable';
+import { AprVariable } from '@ui/components/pages/PoolPage/AssetsToBorrow/AprVariable';
+import { Asset } from '@ui/components/pages/PoolPage/AssetsToBorrow/Asset';
+import { Available } from '@ui/components/pages/PoolPage/AssetsToBorrow/Available';
+import { Borrow } from '@ui/components/pages/PoolPage/AssetsToBorrow/Borrow';
+import { Details } from '@ui/components/pages/PoolPage/AssetsToBorrow/Details';
 import { CIconButton } from '@ui/components/shared/Button';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
-  APY,
+  APR_STABLE,
+  APR_VARIABLE,
   ASSET,
-  ASSETS,
-  COLLATERAL,
+  AVAILABLE,
+  BORROW,
   DETAILS,
   MARKETS_COUNT_PER_PAGE,
   POOLS_COUNT_PER_PAGE,
   SEARCH,
-  SUPPLY,
-  WALLET_BALANCE,
 } from '@ui/constants/index';
-import { useAssets } from '@ui/hooks/useAssets';
+import { useAssetsToBorrowData } from '@ui/hooks/assetsToBorrow/useAssetsToBorrowData';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
-import { useRewards } from '@ui/hooks/useRewards';
-import { useTokensBalance } from '@ui/hooks/useTokenBalance';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
-export type AssetRowData = {
-  apy: MarketData;
+export type AssetToBorrowRowData = {
+  aprStable: MarketData;
+  aprVariable: MarketData;
   asset: MarketData;
-  collateral: MarketData;
-  walletBalance: MarketData;
+  available: MarketData;
 };
 
 export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
-  const { id: poolId, chainId } = poolData;
+  const { assets, chainId, comptroller } = poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -80,20 +74,10 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
   });
   const [globalFilter, setGlobalFilter] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
-  const { data: allRewards } = useRewards({ chainId, poolId: poolId.toString() });
-  const { data: assetInfos } = useAssets(chainId ? [chainId] : []);
-  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
-    poolData?.assets,
-    chainId,
-    allRewards,
-    assetInfos
-  );
-  const { data: balancePerAsset } = useTokensBalance(
-    poolData?.assets.map((asset) => asset.underlyingToken),
-    chainId
-  );
+  const { data: borrowApyPerAsset } = useBorrowAPYs(assets, chainId);
+  const { data: maxBorrowAmounts } = useMaxBorrowAmounts(assets, comptroller, chainId);
 
-  const assetFilter: FilterFn<AssetRowData> = useCallback(
+  const assetFilter: FilterFn<AssetToBorrowRowData> = useCallback(
     (row, columnId, value) => {
       const asset = row.original.asset;
 
@@ -111,42 +95,42 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
     [searchText]
   );
 
-  const assetSort: SortingFn<AssetRowData> = useCallback(
+  const assetSort: SortingFn<AssetToBorrowRowData> = useCallback(
     (rowA, rowB, columnId) => {
       if (columnId === ASSET) {
         return rowB.original.asset.underlyingSymbol.localeCompare(
           rowA.original.asset.underlyingSymbol
         );
-      } else if (columnId === WALLET_BALANCE) {
-        const rowABalance =
-          balancePerAsset && balancePerAsset[rowA.original.asset.underlyingToken]
-            ? balancePerAsset[rowA.original.asset.underlyingToken]
-            : constants.Zero;
-        const rowBBalance =
-          balancePerAsset && balancePerAsset[rowB.original.asset.underlyingToken]
-            ? balancePerAsset[rowB.original.asset.underlyingToken]
-            : constants.Zero;
-        return rowABalance.gt(rowBBalance) ? 1 : -1;
-      } else if (columnId === APY) {
-        const rowAAPY =
-          totalSupplyApyPerAsset && totalSupplyApyPerAsset[rowA.original.asset.cToken]
-            ? totalSupplyApyPerAsset[rowA.original.asset.cToken].totalApy
+      } else if (columnId === AVAILABLE) {
+        const rowAValue =
+          maxBorrowAmounts && maxBorrowAmounts[rowA.original.asset.cToken]
+            ? maxBorrowAmounts[rowA.original.asset.cToken].number
             : 0;
-        const rowBSupplyAPY =
-          totalSupplyApyPerAsset && totalSupplyApyPerAsset[rowA.original.asset.cToken]
-            ? totalSupplyApyPerAsset[rowB.original.asset.cToken].totalApy
+        const rowBValue =
+          maxBorrowAmounts && maxBorrowAmounts[rowB.original.asset.cToken]
+            ? maxBorrowAmounts[rowB.original.asset.cToken].number
             : 0;
-        return rowAAPY > rowBSupplyAPY ? 1 : -1;
+        return rowAValue > rowBValue ? 1 : -1;
+      } else if (columnId === APR_VARIABLE) {
+        const rowAValue =
+          borrowApyPerAsset && borrowApyPerAsset[rowA.original.asset.cToken]
+            ? borrowApyPerAsset[rowA.original.asset.cToken]
+            : 0;
+        const rowBValue =
+          borrowApyPerAsset && borrowApyPerAsset[rowA.original.asset.cToken]
+            ? borrowApyPerAsset[rowB.original.asset.cToken]
+            : 0;
+        return rowAValue > rowBValue ? 1 : -1;
       } else {
         return 1;
       }
     },
-    [totalSupplyApyPerAsset, balancePerAsset]
+    [maxBorrowAmounts, borrowApyPerAsset]
   );
 
-  const tableData = useAssetsToSupplyData(poolData?.assets);
+  const tableData = useAssetsToBorrowData(poolData?.assets);
 
-  const columns: ColumnDef<AssetRowData>[] = useMemo(() => {
+  const columns: ColumnDef<AssetToBorrowRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.asset,
@@ -158,47 +142,42 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         sortingFn: assetSort,
       },
       {
-        accessorFn: (row) => row.walletBalance,
-        cell: ({ getValue }) => <WalletBalance asset={getValue<MarketData>()} chainId={chainId} />,
+        accessorFn: (row) => row.available,
+        cell: ({ getValue }) => (
+          <Available asset={getValue<MarketData>()} maxBorrowAmounts={maxBorrowAmounts} />
+        ),
         enableSorting: false,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{ASSETS}</TableHeaderCell>,
-        id: ASSETS,
+        header: (context) => <TableHeaderCell context={context}>{AVAILABLE}</TableHeaderCell>,
+        id: AVAILABLE,
       },
       {
-        accessorFn: (row) => row.apy,
+        accessorFn: (row) => row.aprVariable,
         cell: ({ getValue }) => (
-          <SupplyApy
-            asset={getValue<MarketData>()}
-            poolChainId={chainId}
-            rewards={allRewards}
-            totalApy={
-              totalSupplyApyPerAsset
-                ? totalSupplyApyPerAsset[getValue<MarketData>().cToken]?.totalApy
-                : undefined
-            }
-          />
+          <AprVariable asset={getValue<MarketData>()} borrowApyPerAsset={borrowApyPerAsset} />
         ),
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{APY}</TableHeaderCell>,
-        id: APY,
+        header: (context) => <TableHeaderCell context={context}>{APR_VARIABLE}</TableHeaderCell>,
+        id: APR_VARIABLE,
         sortingFn: assetSort,
       },
       {
-        accessorFn: (row) => row.collateral,
-        cell: ({ getValue }) => <Collateral asset={getValue<MarketData>()} />,
+        accessorFn: (row) => row.aprStable,
+        cell: ({ getValue }) => (
+          <AprStable asset={getValue<MarketData>()} borrowApyPerAsset={borrowApyPerAsset} />
+        ),
         enableSorting: false,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{COLLATERAL}</TableHeaderCell>,
-        id: COLLATERAL,
+        header: (context) => <TableHeaderCell context={context}>{APR_STABLE}</TableHeaderCell>,
+        id: APR_STABLE,
         sortingFn: assetSort,
       },
       {
         cell: ({ getValue }) => {
-          return <Supply asset={getValue<MarketData>()} />;
+          return <Borrow asset={getValue<MarketData>()} />;
         },
         header: () => null,
-        id: SUPPLY,
+        id: BORROW,
       },
       {
         cell: ({ getValue }) => {
@@ -208,7 +187,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         id: DETAILS,
       },
     ];
-  }, [allRewards, assetFilter, assetSort, chainId, totalSupplyApyPerAsset]);
+  }, [assetFilter, assetSort, borrowApyPerAsset, chainId, maxBorrowAmounts]);
 
   const table = useReactTable({
     columns,
@@ -250,7 +229,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         justifyContent={['center', 'center', 'space-between']}
         width="100%"
       >
-        <Text size="xl">Assets to Supply</Text>
+        <Text size="xl">Assets to Borrow</Text>
         <Flex
           alignItems="center"
           className="searchAsset"
@@ -263,21 +242,6 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
             onSearch={(searchText) => setSearchText(searchText)}
             placeholder="Search by asset"
           />
-          <Center height={5}>
-            <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
-          </Center>
-          <HStack>
-            <Text size="md" width="max-content">
-              Show assets with 0 balance
-            </Text>
-            <Switch
-              h="20px"
-              // isChecked={true}
-              // isDisabled={isUpdating || !isEditableAdmin}
-              ml="auto"
-              // onChange={toggleBorrowState}
-            />
-          </HStack>
           <Center height={5}>
             <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
           </Center>
@@ -343,7 +307,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
                 </Tr>
               </Fragment>
             ))
-          ) : poolData.assets.length === 0 ? (
+          ) : assets.length === 0 ? (
             <Tr>
               <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
                 <Center py={8}>There are no assets to supply.</Center>
