@@ -11,7 +11,7 @@ import { getFundingStrategiesAndDatas } from "./fundingStrategy";
 import { getRedemptionStrategiesAndDatas } from "./redemptionStrategy";
 import {
   EncodedLiquidationTx,
-  FusePoolUserWithAssets,
+  PoolUserWithAssets,
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS,
 } from "./utils";
@@ -26,7 +26,7 @@ async function getLiquidationPenalty(collateralCToken: CErc20Delegate, liquidati
 
 export default async function getPotentialLiquidation(
   sdk: IonicSdk,
-  borrower: FusePoolUserWithAssets,
+  borrower: PoolUserWithAssets,
   closeFactor: BigNumber,
   liquidationIncentive: BigNumber,
   chainLiquidationConfig: ChainLiquidationConfig

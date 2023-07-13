@@ -9,14 +9,14 @@ import {
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
 import { IonicBaseConstructor } from "..";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
-import { FusePoolLens } from "../../typechain/FusePoolLens";
+import { PoolDirectory } from "../../typechain/PoolDirectory";
+import { PoolLens } from "../../typechain/PoolLens";
 import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
-  fusePools: FusePoolDirectory.FusePoolStructOutput[],
-  fusePoolsData: FusePoolLens.FusePoolDataStructOutput[],
+  fusePools: PoolDirectory.PoolStructOutput[],
+  fusePoolsData: PoolLens.FusePoolDataStructOutput[],
   errors: boolean[]
 ];
 
@@ -31,23 +31,23 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ethereum]: ethereum.assets,
 };
 
-export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
+export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
-    async fetchFusePoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData | null> {
+    async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData | null> {
       const {
         comptroller,
         name: _unfiliteredName,
         creator,
         blockPosted,
         timestampPosted,
-      } = await this.contracts.FusePoolDirectory.callStatic.pools(Number(poolId), overrides);
+      } = await this.contracts.PoolDirectory.callStatic.pools(Number(poolId), overrides);
       if (comptroller === constants.AddressZero) {
         return null;
       }
       const name = filterPoolName(_unfiliteredName);
 
       const assets: NativePricedFuseAsset[] = (
-        await this.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
+        await this.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
       ).map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
@@ -165,7 +165,7 @@ export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
     }
 
     async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(FusePoolData | null)[] | undefined> {
-      const [poolIndexes, pools] = await this.contracts.FusePoolDirectory.callStatic.getActivePools(overrides);
+      const [poolIndexes, pools] = await this.contracts.PoolDirectory.callStatic.getActivePools(overrides);
 
       if (!pools.length || !poolIndexes.length) {
         return undefined;
@@ -175,8 +175,8 @@ export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
         poolIndexes.map((poolId) => {
           if (this.chainId === SupportedChains.polygon && poolId.toString() === "1") return null;
 
-          return this.fetchFusePoolData(poolId.toString(), overrides).catch((error) => {
-            this.logger.error(`Pool ID ${poolId} wasn't able to be fetched from FusePoolLens without error.`, error);
+          return this.fetchPoolData(poolId.toString(), overrides).catch((error) => {
+            this.logger.error(`Pool ID ${poolId} wasn't able to be fetched from PoolLens without error.`, error);
             return null;
           });
         })
@@ -197,14 +197,14 @@ export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
       const isUnverifiedPools = filter === "unverified-pools";
 
       const req = isCreatedPools
-        ? this.contracts.FusePoolLens.callStatic.getPoolsByAccountWithData(options.from)
+        ? this.contracts.PoolLens.callStatic.getPoolsByAccountWithData(options.from)
         : isVerifiedPools
-        ? this.contracts.FusePoolDirectory.callStatic.getPublicPoolsByVerification(true)
+        ? this.contracts.PoolDirectory.callStatic.getPublicPoolsByVerification(true)
         : isUnverifiedPools
-        ? this.contracts.FusePoolDirectory.callStatic.getPublicPoolsByVerification(false)
-        : this.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
+        ? this.contracts.PoolDirectory.callStatic.getPublicPoolsByVerification(false)
+        : this.contracts.PoolLens.callStatic.getPublicPoolsWithData();
 
-      const whitelistedPoolsRequest = this.contracts.FusePoolLens.callStatic.getWhitelistedPoolsByAccountWithData(
+      const whitelistedPoolsRequest = this.contracts.PoolLens.callStatic.getWhitelistedPoolsByAccountWithData(
         options.from
       );
 
@@ -214,7 +214,7 @@ export function withFusePools<TBase extends IonicBaseConstructor>(Base: TBase) {
         responses.map(async (poolData) => {
           return await Promise.all(
             poolData[0].map((_id) => {
-              return this.fetchFusePoolData(_id.toString());
+              return this.fetchPoolData(_id.toString());
             })
           );
         })

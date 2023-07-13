@@ -1,11 +1,11 @@
 import { BigNumber, ethers } from "ethers";
 
-import { FusePoolLens as FusePoolLensType } from "../../../typechain/FusePoolLens";
+import { PoolLens } from "../../../typechain/PoolLens";
 import { IonicSdk } from "../../IonicSdk";
 
-import { ErroredPool, FusePoolUserStruct, PublicPoolUserWithData } from "./utils";
+import { ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
 
-function getUserTotals(assets: FusePoolLensType.FusePoolAssetStructOutput[]): {
+function getUserTotals(assets: PoolLens.PoolAssetStructOutput[]): {
   totalBorrow: BigNumber;
   totalCollateral: BigNumber;
 } {
@@ -38,11 +38,11 @@ async function getFusePoolUsers(
   comptroller: string,
   maxHealth: BigNumber
 ): Promise<PublicPoolUserWithData> {
-  const poolUsers: FusePoolUserStruct[] = [];
+  const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   for (const user of users) {
-    const assets = await sdk.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
+    const assets = await sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
       from: user,
     });
 
@@ -87,7 +87,7 @@ export default async function getAllFusePoolUsers(
   maxHealth: BigNumber,
   excludedComptrollers: Array<string>
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
-  const [, allPools] = await sdk.contracts.FusePoolDirectory.callStatic.getActivePools();
+  const [, allPools] = await sdk.contracts.PoolDirectory.callStatic.getActivePools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   for (const pool of allPools) {

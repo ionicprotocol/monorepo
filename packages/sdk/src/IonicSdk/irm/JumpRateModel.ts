@@ -29,7 +29,7 @@ export default class JumpRateModel implements InterestRateModel {
       BigNumber.from(await cTokenContract.callStatic.adminFeeMantissa())
     );
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(
-      BigNumber.from(await cTokenContract.callStatic.fuseFeeMantissa())
+      BigNumber.from(await cTokenContract.callStatic.ionicFeeMantissa())
     );
     this.initialized = true;
   }
@@ -38,7 +38,7 @@ export default class JumpRateModel implements InterestRateModel {
     interestRateModelAddress: string,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish,
+    ionicFeeMantissa: BigNumberish,
     provider: Web3Provider
   ): Promise<void> {
     const jumpRateModelContract = getContract(interestRateModelAddress, JumpRateModelArtifact.abi, provider);
@@ -49,7 +49,7 @@ export default class JumpRateModel implements InterestRateModel {
 
     this.reserveFactorMantissa = BigNumber.from(reserveFactorMantissa);
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(adminFeeMantissa));
-    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(fuseFeeMantissa));
+    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(ionicFeeMantissa));
 
     this.initialized = true;
   }
@@ -61,7 +61,7 @@ export default class JumpRateModel implements InterestRateModel {
     kink: BigNumberish,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish
+    ionicFeeMantissa: BigNumberish
   ) {
     this.baseRatePerBlock = BigNumber.from(baseRatePerBlock);
     this.multiplierPerBlock = BigNumber.from(multiplierPerBlock);
@@ -70,7 +70,7 @@ export default class JumpRateModel implements InterestRateModel {
 
     this.reserveFactorMantissa = BigNumber.from(reserveFactorMantissa);
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(adminFeeMantissa));
-    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(fuseFeeMantissa));
+    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(ionicFeeMantissa));
 
     this.initialized = true;
   }
