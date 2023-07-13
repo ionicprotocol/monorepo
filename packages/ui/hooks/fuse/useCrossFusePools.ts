@@ -68,14 +68,15 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
                       pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
                     totalBorrowedFiat:
                       pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
+                    totalCollateralSupplyBalanceFiat:
+                      pool.totalCollateralSupplyBalanceNative *
+                      prices[pool.chainId.toString()].value,
                     totalLiquidityFiat:
                       pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
                     totalSuppliedFiat:
                       pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
                     totalSupplyBalanceFiat:
                       pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
-                      totalCollateralSupplyBalanceFiat:
-                      pool.totalCollateralSupplyBalanceFiat * prices[pool.chainId.toString()].value,
                   };
 
                   return adaptedFusePoolData;

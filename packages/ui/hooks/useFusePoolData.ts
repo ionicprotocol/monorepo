@@ -54,10 +54,10 @@ export const useFusePoolData = (poolId?: string, poolChainId?: number) => {
           totalAvailableLiquidityFiat: response.totalAvailableLiquidityNative * usdPrice,
           totalBorrowBalanceFiat: response.totalBorrowBalanceNative * usdPrice,
           totalBorrowedFiat: response.totalBorrowedNative * usdPrice,
+          totalCollateralSupplyBalanceFiat: response.totalCollateralSupplyBalanceNative * usdPrice,
           totalLiquidityFiat: response.totalLiquidityNative * usdPrice,
           totalSuppliedFiat: response.totalSuppliedNative * usdPrice,
           totalSupplyBalanceFiat: response.totalSupplyBalanceNative * usdPrice,
-          totalCollateralSupplyBalanceFiat: response.totalCollateralSupplyBalanceNative * usdPrice,
         };
 
         return adaptedFusePoolData;

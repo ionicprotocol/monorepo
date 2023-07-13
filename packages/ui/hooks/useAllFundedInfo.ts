@@ -24,9 +24,9 @@ export interface FundedAsset extends MarketData {
   poolName: string;
   totalBorrowBalanceFiat: number;
   totalBorrowBalanceNative: number;
+  totalCollateralSupplyBalanceNative: number;
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
-  totalCollateralSupplyBalanceNative: number;
 }
 
 export interface resQuery {
@@ -38,10 +38,10 @@ export interface resQuery {
   rewards: UseRewardsData;
   totalBorrowBalanceFiat: number;
   totalBorrowBalanceNative: number;
+  totalCollateralSupplyBalanceNative: number;
   totalSupplyAPYs: { [market: string]: { apy: number; totalApy: number } };
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
-  totalCollateralSupplyBalanceNative: number;
 }
 
 export function useAllFundedInfo() {
@@ -70,7 +70,7 @@ export function useAllFundedInfo() {
         let totalSupplyBalanceFiat = 0;
         let totalBorrowBalanceFiat = 0;
         let totalSupplyBalanceNative = 0;
-        let totalCollateralSupplyBalanceNative = 0;
+        const totalCollateralSupplyBalanceNative = 0;
         let totalBorrowBalanceNative = 0;
 
         await Promise.all(
@@ -115,9 +115,10 @@ export function useAllFundedInfo() {
                           poolName: pool.name,
                           totalBorrowBalanceFiat: pool.totalBorrowBalanceFiat,
                           totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
+                          totalCollateralSupplyBalanceNative:
+                            pool.totalCollateralSupplyBalanceNative,
                           totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
                           totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
-                          totalCollateralSupplyBalanceNative: pool.totalCollateralSupplyBalanceNative,
                         });
                       });
                       const { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY } =
@@ -218,10 +219,10 @@ export function useAllFundedInfo() {
           rewards,
           totalBorrowBalanceFiat,
           totalBorrowBalanceNative,
+          totalCollateralSupplyBalanceNative,
           totalSupplyAPYs,
           totalSupplyBalanceFiat,
           totalSupplyBalanceNative,
-          totalCollateralSupplyBalanceNative
         };
       }
 
