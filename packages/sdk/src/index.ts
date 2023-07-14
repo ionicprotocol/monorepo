@@ -5,7 +5,6 @@ export { default as WETHAbi } from "../abis/WETH";
 import { IonicBase } from "./IonicSdk";
 import AnkrBNBInterestRateModel from "./IonicSdk/irm/AnkrBNBInterestRateModel";
 import AnkrFTMInterestRateModel from "./IonicSdk/irm/AnkrFTMInterestRateModel";
-import DAIInterestRateModelV2 from "./IonicSdk/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./IonicSdk/irm/JumpRateModel";
 
 export { filterOnlyObjectProperties } from "./IonicSdk/utils";
@@ -16,8 +15,4 @@ export type { ChainLiquidationConfig } from "./modules/liquidation/config";
 export type GConstructor<T> = new (...args: any[]) => T;
 export type IonicBaseConstructor = GConstructor<IonicBase>;
 
-export type InterestRateModelType =
-  | JumpRateModel
-  | DAIInterestRateModelV2
-  | AnkrFTMInterestRateModel
-  | AnkrBNBInterestRateModel;
+export type InterestRateModelType = JumpRateModel | AnkrFTMInterestRateModel | AnkrBNBInterestRateModel;
