@@ -182,7 +182,6 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                           borderWidth={'1px'}
                           height={'14px'}
                           ml={'55px'}
-                          position={'relative'}
                           width={'2px'}
                         />
                       </PopoverTooltip>
