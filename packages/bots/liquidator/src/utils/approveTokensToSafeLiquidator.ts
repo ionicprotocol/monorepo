@@ -30,7 +30,7 @@ async function approveTokenToSafeLiquidator(ionicSdk: IonicSdk, erc20Address: st
   const txCount = await ionicSdk.provider.getTransactionCount(config.adminAccount);
 
   const data = token.interface.encodeFunctionData("approve", [
-    ionicSdk.contracts.FuseSafeLiquidator.address,
+    ionicSdk.contracts.IonicLiquidator.address,
     constants.MaxUint256,
   ]);
 

@@ -31,7 +31,7 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
       BigNumber.from(await cTokenContract.callStatic.adminFeeMantissa())
     );
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(
-      BigNumber.from(await cTokenContract.callStatic.fuseFeeMantissa())
+      BigNumber.from(await cTokenContract.callStatic.ionicFeeMantissa())
     );
     this.initialized = true;
   }
@@ -40,7 +40,7 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
     interestRateModelAddress: string,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish,
+    ionicFeeMantissa: BigNumberish,
     provider: Web3Provider
   ) {
     const whitePaperModelContract = getContract(
@@ -54,7 +54,7 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
 
     this.reserveFactorMantissa = BigNumber.from(reserveFactorMantissa);
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(adminFeeMantissa));
-    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(fuseFeeMantissa));
+    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(ionicFeeMantissa));
 
     this.initialized = true;
   }
@@ -64,14 +64,14 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
     multiplierPerBlock: BigNumberish,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish
+    ionicFeeMantissa: BigNumberish
   ) {
     this.baseRatePerBlock = BigNumber.from(baseRatePerBlock);
     this.multiplierPerBlock = BigNumber.from(multiplierPerBlock);
 
     this.reserveFactorMantissa = BigNumber.from(reserveFactorMantissa);
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(adminFeeMantissa));
-    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(fuseFeeMantissa));
+    this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(ionicFeeMantissa));
     this.initialized = true;
   }
 

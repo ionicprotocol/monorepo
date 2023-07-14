@@ -35,10 +35,10 @@ export default class DAIInterestRateModelV2 extends JumpRateModel {
     interestRateModelAddress: string,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish,
+    ionicFeeMantissa: BigNumberish,
     provider: Web3Provider
   ) {
-    await super._init(interestRateModelAddress, reserveFactorMantissa, adminFeeMantissa, fuseFeeMantissa, provider);
+    await super._init(interestRateModelAddress, reserveFactorMantissa, adminFeeMantissa, ionicFeeMantissa, provider);
 
     const interestRateContract = getContract(interestRateModelAddress, DAIInterestRateModelV2Artifact.abi, provider);
     this.dsrPerBlock = BigNumber.from(await interestRateContract.callStatic.dsrPerBlock());
@@ -54,7 +54,7 @@ export default class DAIInterestRateModelV2 extends JumpRateModel {
     kink: BigNumberish,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish
+    ionicFeeMantissa: BigNumberish
   ) {
     await super.__init(
       baseRatePerBlock,
@@ -63,7 +63,7 @@ export default class DAIInterestRateModelV2 extends JumpRateModel {
       kink,
       reserveFactorMantissa,
       adminFeeMantissa,
-      fuseFeeMantissa
+      ionicFeeMantissa
     );
     this.dsrPerBlock = BigNumber.from(0); // TODO: Make this work if DSR ever goes positive again
     this.cash = BigNumber.from(0);

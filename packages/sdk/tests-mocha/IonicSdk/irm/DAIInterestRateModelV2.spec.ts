@@ -86,13 +86,13 @@ describe("DAIInterestRateModelV2", () => {
       const modelAddress = mkAddress("0xabc");
       const reserveFactorMantissa = constants.Two;
       const adminFeeMantissa = constants.One;
-      const fuseFeeMantissa = constants.Two;
+      const ionicFeeMantissa = constants.Two;
 
       await dAIInterestRateModelV2._init(
         modelAddress,
         reserveFactorMantissa,
         adminFeeMantissa,
-        fuseFeeMantissa,
+        ionicFeeMantissa,
         mockProvider
       );
       expect(getDAIInterestRateModelV2ContractStub).to.be.calledOnce;
@@ -113,7 +113,7 @@ describe("DAIInterestRateModelV2", () => {
       const kink = constants.Two;
       const reserveFactorMantissa = constants.One;
       const adminFeeMantissa = constants.One;
-      const fuseFeeMantissa = constants.Two;
+      const ionicFeeMantissa = constants.Two;
 
       await dAIInterestRateModelV2.__init(
         baseRatePerBlock,
@@ -122,7 +122,7 @@ describe("DAIInterestRateModelV2", () => {
         kink,
         reserveFactorMantissa,
         adminFeeMantissa,
-        fuseFeeMantissa
+        ionicFeeMantissa
       );
       expect(__initStub).to.be.calledOnce;
       expect(dAIInterestRateModelV2.dsrPerBlock.toNumber()).to.equal(0);

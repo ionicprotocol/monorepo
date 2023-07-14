@@ -4,11 +4,11 @@ import { BigNumber } from "ethers";
 import { IonicSdk } from "../../IonicSdk";
 
 import { getUniswapV2Router, StrategiesAndDatas } from "./redemptionStrategy";
-import { FusePoolUserWithAssets } from "./utils";
+import { PoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
   sdk: IonicSdk,
-  borrower: FusePoolUserWithAssets,
+  borrower: PoolUserWithAssets,
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,
   strategiesAndDatas: StrategiesAndDatas,
@@ -19,38 +19,30 @@ const estimateGas = async (
 ) => {
   switch (liquidationStrategy) {
     case LiquidationStrategy.DEFAULT:
-      return await sdk.contracts.FuseSafeLiquidator.estimateGas[
-        "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])"
-      ](
+      return await sdk.contracts.IonicLiquidator.estimateGas.safeLiquidate(
         borrower.account,
         liquidationAmount,
         borrower.debt[0].cToken,
         borrower.collateral[0].cToken,
         0,
-        exchangeToTokenAddress,
-        sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategiesAndDatas.strategies,
-        strategiesAndDatas.datas,
         {
           gasLimit: 1e9,
           from: process.env.ETHEREUM_ADMIN_ACCOUNT,
         }
       );
     case LiquidationStrategy.UNISWAP:
-      return await sdk.contracts.FuseSafeLiquidator.estimateGas.safeLiquidateToTokensWithFlashLoan(
+      return await sdk.contracts.IonicLiquidator.estimateGas.safeLiquidateToTokensWithFlashLoan(
         {
           borrower: borrower.account,
           repayAmount: liquidationAmount,
           cErc20: borrower.debt[0].cToken,
           cTokenCollateral: borrower.collateral[0].cToken,
           minProfitAmount: 0,
-          exchangeProfitTo: exchangeToTokenAddress,
           uniswapV2RouterForBorrow: sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER, // TODO ASSET_SPECIFIC_ROUTER
           uniswapV2RouterForCollateral: getUniswapV2Router(sdk, borrower.collateral[0].cToken),
           redemptionStrategies: strategiesAndDatas.strategies,
           strategyData: strategiesAndDatas.datas,
           flashSwapPair,
-          ethToCoinbase: 0,
           debtFundingStrategies,
           debtFundingStrategiesData,
         },

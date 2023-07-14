@@ -49,7 +49,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       // If reserveFactor or adminFee is greater than zero, we get fuse fee.
       // Sum of reserveFactor and adminFee should not be greater than fuse fee. ? i think
       if (reserveFactorBN.gt(constants.Zero) || adminFeeBN.gt(constants.Zero)) {
-        const fuseFee = await this.contracts.FuseFeeDistributor.interestFeeRate();
+        const fuseFee = await this.contracts.FeeDistributor.interestFeeRate();
         if (reserveFactorBN.add(adminFeeBN).add(BigNumber.from(fuseFee)).gt(constants.WeiPerEther))
           throw Error(
             "Sum of reserve factor and admin fee should range from 0 to " + (1 - fuseFee.div(1e18).toNumber()) + "."
@@ -107,7 +107,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       if (receipt.status != constants.One.toNumber()) {
         throw "Failed to deploy market ";
       }
-      const marketCounter = await this.contracts.FuseFeeDistributor.callStatic.marketsCounter();
+      const marketCounter = await this.contracts.FeeDistributor.callStatic.marketsCounter();
 
       const saltsHash = utils.solidityKeccak256(
         ["address", "address", "uint"],
@@ -115,7 +115,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       );
       const byteCodeHash = utils.keccak256(CErc20DelegatorArtifact.bytecode.object + constructorData.substring(2));
       const cErc20DelegatorAddress = utils.getCreate2Address(
-        this.chainDeployment.FuseFeeDistributor.address,
+        this.chainDeployment.FeeDistributor.address,
         saltsHash,
         byteCodeHash
       );

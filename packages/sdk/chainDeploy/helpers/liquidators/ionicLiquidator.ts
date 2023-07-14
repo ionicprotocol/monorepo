@@ -2,7 +2,7 @@ import { chainIdToConfig } from "@ionicprotocol/chains";
 import { constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
-import { FuseSafeLiquidator } from "../../../typechain/FuseSafeLiquidator";
+import { IonicLiquidator } from "../../../typechain/IonicLiquidator";
 import {
   AddressesProviderConfigFnParams,
   BalancerSwapTokenLiquidatorData,
@@ -10,14 +10,14 @@ import {
   LiquidatorDeployFnParams,
 } from "../types";
 
-export const deployFuseSafeLiquidator = async ({
+export const deployIonicLiquidator = async ({
   ethers,
   getNamedAccounts,
   deployments,
   deployConfig,
 }: LiquidatorDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const fsl = await deployments.deploy("FuseSafeLiquidator", {
+  const fsl = await deployments.deploy("IonicLiquidator", {
     from: deployer,
     log: true,
     proxy: {
@@ -43,14 +43,14 @@ export const deployFuseSafeLiquidator = async ({
     },
   });
   if (fsl.transactionHash) await ethers.provider.waitForTransaction(fsl.transactionHash);
-  console.log("FuseSafeLiquidator: ", fsl.address);
+  console.log("IonicLiquidator: ", fsl.address);
 
-  const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
+  const fuseSafeLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
   const fslOwner = await fuseSafeLiquidator.callStatic.owner();
-  console.log(`FuseSafeLiquidator owner is ${fslOwner}`);
+  console.log(`IonicLiquidator owner is ${fslOwner}`);
 };
 
-export const configureFuseSafeLiquidator = async ({
+export const configureIonicLiquidator = async ({
   ethers,
   getNamedAccounts,
   chainId,
@@ -59,7 +59,7 @@ export const configureFuseSafeLiquidator = async ({
 
   const strategies: string[] = [];
   const arrayOfTrue: boolean[] = [];
-  const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
+  const fuseSafeLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
 
   for (const redemptionStrategyConfig of chainIdToConfig[chainId].redemptionStrategies) {
     const { strategy } = redemptionStrategyConfig;
@@ -143,14 +143,14 @@ export const configureAddressesProviderAddresses = async ({
     const masterPO = await ethers.getContractOrNull("MasterPriceOracle");
     await configureAddress(ap, "MasterPriceOracle", masterPO?.address);
 
-    const fpd = await ethers.getContractOrNull("FusePoolDirectory");
-    await configureAddress(ap, "FusePoolDirectory", fpd?.address);
+    const fpd = await ethers.getContractOrNull("PoolDirectory");
+    await configureAddress(ap, "PoolDirectory", fpd?.address);
 
-    const ffd = await ethers.getContractOrNull("FuseFeeDistributor");
-    await configureAddress(ap, "FuseFeeDistributor", ffd?.address);
+    const ffd = await ethers.getContractOrNull("FeeDistributor");
+    await configureAddress(ap, "FeeDistributor", ffd?.address);
 
-    const fsl = await ethers.getContractOrNull("FuseSafeLiquidator");
-    await configureAddress(ap, "FuseSafeLiquidator", fsl?.address);
+    const fsl = await ethers.getContractOrNull("IonicLiquidator");
+    await configureAddress(ap, "IonicLiquidator", fsl?.address);
 
     const dpa = await ethers.getContractOrNull("DefaultProxyAdmin");
     await configureAddress(ap, "DefaultProxyAdmin", dpa?.address);
@@ -172,8 +172,8 @@ export const configureAddressesProviderAddresses = async ({
       await configureAddress(ap, "LeveredPositionsLens", lpl?.address);
     }
 
-    const mflr = await ethers.getContractOrNull("MidasFlywheelLensRouter");
-    await configureAddress(ap, "MidasFlywheelLensRouter", mflr?.address);
+    const mflr = await ethers.getContractOrNull("IonicFlywheelLensRouter");
+    await configureAddress(ap, "IonicFlywheelLensRouter", mflr?.address);
   }
 };
 

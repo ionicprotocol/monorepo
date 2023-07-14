@@ -66,7 +66,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     const provider = new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]);
     const sdk = new IonicSdk(provider, config);
 
-    const [poolIndexes, pools] = await sdk.contracts.FusePoolDirectory.callStatic.getActivePools();
+    const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.callStatic.getActivePools();
 
     if (!pools.length || !poolIndexes.length) {
       throw `Error occurred during saving assets total apy to database: pools not found`;
@@ -112,7 +112,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     await Promise.all(
       pools.map(async ({ comptroller }) => {
         const [_assets, flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-          sdk.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller).catch(() => []),
+          sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller).catch(() => []),
           sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
             console.error('Unable to get onchain Flywheel Rewards with APY', exception);
             return [];

@@ -1,11 +1,11 @@
 import { BigNumber, Contract } from "ethers";
 
-import IonicFlywheelABI from "../../abis/MidasFlywheel";
+import IonicFlywheelABI from "../../abis/IonicFlywheel";
 import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.json";
-import IonicFlywheelArtifact from "../../artifacts/MidasFlywheel.json";
+import IonicFlywheelArtifact from "../../artifacts/IonicFlywheel.json";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
-import { MidasFlywheel as IonicFlywheel } from "../../typechain/MidasFlywheel";
-import { MidasFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
+import { IonicFlywheel } from "../../typechain/IonicFlywheel";
+import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter";
 
 import { CreateContractsModule } from "./CreateContracts";
 
@@ -110,7 +110,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
 
     async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
-        this.contracts.MidasFlywheelLensRouter as IonicFlywheelLensRouter
+        this.contracts.IonicFlywheelLensRouter as IonicFlywheelLensRouter
       ).callStatic.getPoolMarketRewardsInfo(pool);
 
       const adaptedMarketRewards = marketRewards

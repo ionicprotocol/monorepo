@@ -17,34 +17,34 @@ import { BigNumber, Contract, Signer, utils } from "ethers";
 
 import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import FuseFeeDistributorABI from "../../abis/FuseFeeDistributor";
-import FusePoolDirectoryABI from "../../abis/FusePoolDirectory";
-import FusePoolLensABI from "../../abis/FusePoolLens";
-import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
-import FuseSafeLiquidatorABI from "../../abis/FuseSafeLiquidator";
-import IonicERC4626ABI from "../../abis/MidasERC4626";
-import IonicFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
+import FeeDistributorABI from "../../abis/FeeDistributor";
+import IonicERC4626ABI from "../../abis/IonicERC4626";
+import IonicFlywheelLensRouterABI from "../../abis/IonicFlywheelLensRouter";
+import IonicLiquidatorABI from "../../abis/IonicLiquidator";
+import PoolDirectoryABI from "../../abis/PoolDirectory";
+import PoolLensABI from "../../abis/PoolLens";
+import PoolLensSecondaryABI from "../../abis/PoolLensSecondary";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
-import { FusePoolLens } from "../../typechain/FusePoolLens";
-import { FusePoolLensSecondary } from "../../typechain/FusePoolLensSecondary";
-import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
-import { MidasERC4626 as IonicERC4626 } from "../../typechain/MidasERC4626";
-import { MidasFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
+import { FeeDistributor } from "../../typechain/FeeDistributor";
+import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
+import { IonicFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter";
+import { IonicLiquidator } from "../../typechain/IonicLiquidator";
+import { PoolDirectory } from "../../typechain/PoolDirectory";
+import { PoolLens } from "../../typechain/PoolLens";
+import { PoolLensSecondary } from "../../typechain/PoolLensSecondary";
 import { Unitroller } from "../../typechain/Unitroller";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
 import { withFlywheel } from "../modules/Flywheel";
 import { withFundOperations } from "../modules/FundOperations";
-import { withFusePoolLens } from "../modules/FusePoolLens";
-import { withFusePools } from "../modules/FusePools";
 import { withLeverage } from "../modules/Leverage";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
+import { withPoolLens } from "../modules/PoolLens";
+import { withPools } from "../modules/Pools";
 import { withVaults } from "../modules/Vaults";
 
 import { CTOKEN_ERROR_CODES } from "./config";
@@ -62,12 +62,12 @@ export type SupportedProvider = JsonRpcProvider | Web3Provider;
 export type SupportedSigners = Signer | SignerWithAddress;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
 export type StaticContracts = {
-  FuseFeeDistributor: FuseFeeDistributor;
+  FeeDistributor: FeeDistributor;
   IonicFlywheelLensRouter: IonicFlywheelLensRouter;
-  FusePoolDirectory: FusePoolDirectory;
-  FusePoolLens: FusePoolLens;
-  FusePoolLensSecondary: FusePoolLensSecondary;
-  FuseSafeLiquidator: FuseSafeLiquidator;
+  PoolDirectory: PoolDirectory;
+  PoolLens: PoolLens;
+  PoolLensSecondary: PoolLensSecondary;
+  IonicLiquidator: IonicLiquidator;
   [contractName: string]: Contract;
 };
 
@@ -127,33 +127,29 @@ export class IonicBase {
 
   public get contracts(): StaticContracts {
     return {
-      FusePoolDirectory: new Contract(
-        this.chainDeployment.FusePoolDirectory.address,
-        FusePoolDirectoryABI,
+      PoolDirectory: new Contract(
+        this.chainDeployment.PoolDirectory.address,
+        PoolDirectoryABI,
         this.provider
-      ) as FusePoolDirectory,
-      FusePoolLens: new Contract(
-        this.chainDeployment.FusePoolLens.address,
-        FusePoolLensABI,
+      ) as PoolDirectory,
+      PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensABI, this.provider) as PoolLens,
+      PoolLensSecondary: new Contract(
+        this.chainDeployment.PoolLensSecondary.address,
+        PoolLensSecondaryABI,
         this.provider
-      ) as FusePoolLens,
-      FusePoolLensSecondary: new Contract(
-        this.chainDeployment.FusePoolLensSecondary.address,
-        FusePoolLensSecondaryABI,
+      ) as PoolLensSecondary,
+      IonicLiquidator: new Contract(
+        this.chainDeployment.IonicLiquidator.address,
+        IonicLiquidatorABI,
         this.provider
-      ) as FusePoolLensSecondary,
-      FuseSafeLiquidator: new Contract(
-        this.chainDeployment.FuseSafeLiquidator.address,
-        FuseSafeLiquidatorABI,
+      ) as IonicLiquidator,
+      FeeDistributor: new Contract(
+        this.chainDeployment.FeeDistributor.address,
+        FeeDistributorABI,
         this.provider
-      ) as FuseSafeLiquidator,
-      FuseFeeDistributor: new Contract(
-        this.chainDeployment.FuseFeeDistributor.address,
-        FuseFeeDistributorABI,
-        this.provider
-      ) as FuseFeeDistributor,
+      ) as FeeDistributor,
       IonicFlywheelLensRouter: new Contract(
-        this.chainDeployment.MidasFlywheelLensRouter.address,
+        this.chainDeployment.IonicFlywheelLensRouter.address,
         IonicFlywheelLensRouterABI,
         this.provider
       ) as IonicFlywheelLensRouter,
@@ -224,13 +220,13 @@ export class IonicBase {
       // Deploy Comptroller implementation if necessary
       const implementationAddress = this.chainDeployment.Comptroller.address;
 
-      // Register new pool with FusePoolDirectory
-      const contract = this.contracts.FusePoolDirectory.connect(this.signer);
+      // Register new pool with PoolDirectory
+      const contract = this.contracts.PoolDirectory.connect(this.signer);
 
       const deployTx = await contract.deployPool(
         poolName,
         implementationAddress,
-        new utils.AbiCoder().encode(["address"], [this.chainDeployment.FuseFeeDistributor.address]),
+        new utils.AbiCoder().encode(["address"], [this.chainDeployment.FeeDistributor.address]),
         enforceWhitelist,
         closeFactor,
         liquidationIncentive,
@@ -257,8 +253,8 @@ export class IonicBase {
         addressOfSigner,
         poolName,
         existingPools.length,
-        this.chainDeployment.FuseFeeDistributor.address,
-        this.chainDeployment.FusePoolDirectory.address
+        this.chainDeployment.FeeDistributor.address,
+        this.chainDeployment.PoolDirectory.address
       );
 
       // Accept admin status via Unitroller
@@ -341,8 +337,8 @@ export class IonicBase {
     return new Contract(address, UnitrollerABI, signerOrProvider) as Unitroller;
   }
 
-  getFusePoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(this.chainDeployment.FusePoolDirectory.address, FusePoolDirectoryABI, signerOrProvider);
+  getPoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(this.chainDeployment.PoolDirectory.address, PoolDirectoryABI, signerOrProvider);
   }
 
   getErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
@@ -350,12 +346,10 @@ export class IonicBase {
   }
 }
 
-const IonicBaseWithModules = withFusePoolLens(
+const IonicBaseWithModules = withPoolLens(
   withFundOperations(
     withSafeLiquidator(
-      withFusePools(
-        withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(IonicBase))))))
-      )
+      withPools(withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(IonicBase)))))))
     )
   )
 );

@@ -6,8 +6,8 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { IERC20MetadataUpgradeable as IERC20 } from "../../typechain/IERC20MetadataUpgradeable";
 import { IERC20Mintable } from "../../typechain/IERC20Mintable";
+import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
-import { MidasFlywheel as IonicFlywheel } from "../../typechain/MidasFlywheel";
 import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
@@ -88,7 +88,7 @@ export default task("deploy-market-with-rewards").setAction(
         ionicPoolAddress,
         deployer
       )) as ComptrollerFirstExtension;
-      const ffd = await ethers.getContract("FuseFeeDistributor");
+      const ffd = await ethers.getContract("FeeDistributor");
       const jrm = await ethers.getContract("JumpRateModel");
       const rewardsDelegate = await ethers.getContract("CErc20RewardsDelegate");
       const spo = (await ethers.getContract("SimplePriceOracle", deployer)) as SimplePriceOracle;
@@ -145,7 +145,7 @@ export default task("deploy-market-with-rewards").setAction(
       {
         const flywheelDeployment = await deployments.deploy("ChapelRewardsFlywheel", {
           from: deployer,
-          contract: "MidasFlywheel",
+          contract: "IonicFlywheel",
           log: true,
           waitConfirmations: 1,
           proxy: {
@@ -167,7 +167,7 @@ export default task("deploy-market-with-rewards").setAction(
           args: [flywheelDeployment.address, 60 * 10], // new cycle every 10 minutes
         });
         const flywheel = (await ethers.getContractAt(
-          "MidasFlywheel",
+          "IonicFlywheel",
           flywheelDeployment.address,
           deployer
         )) as IonicFlywheel;
@@ -232,7 +232,7 @@ task("claim-chapel-rewards").setAction(async ({}, { ethers, getNamedAccounts }) 
 
   const flywheels = await vaultAsFirstExt.getAllFlywheels();
   for (const flywheelAddress of flywheels) {
-    const flywheel = (await ethers.getContractAt("MidasFlywheel", flywheelAddress, deployer)) as IonicFlywheel;
+    const flywheel = (await ethers.getContractAt("IonicFlywheel", flywheelAddress, deployer)) as IonicFlywheel;
     tx = await flywheel["accrue(address,address)"](market, deployer);
     await tx.wait();
     console.log(`accrued in the vault fw`);

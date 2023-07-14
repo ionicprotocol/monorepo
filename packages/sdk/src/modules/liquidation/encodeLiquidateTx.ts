@@ -4,12 +4,12 @@ import { BigNumber } from "ethers";
 import { IonicBase } from "../../IonicSdk";
 
 import { StrategiesAndDatas } from "./redemptionStrategy";
-import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
+import { EncodedLiquidationTx, logLiquidation, PoolUserWithAssets } from "./utils";
 
 export default async function encodeLiquidateTx(
   sdk: IonicBase,
   liquidationStrategy: LiquidationStrategy,
-  borrower: FusePoolUserWithAssets,
+  borrower: PoolUserWithAssets,
   exchangeToTokenAddress: string,
   strategiesAndDatas: StrategiesAndDatas,
   liquidationAmount: BigNumber,

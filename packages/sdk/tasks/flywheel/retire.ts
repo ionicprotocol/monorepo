@@ -1,7 +1,7 @@
 import { task, types } from "hardhat/config";
 
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
-import { MidasFlywheel as IonicFlywheel } from "../../typechain/MidasFlywheel";
+import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 
 export default task("flyhwheel:nonaccruing", "Sets a flywheel as non-accruing in the comptroller")
   .addParam("signer", "Named account to use fo tx", "deployer", types.string)
@@ -29,7 +29,7 @@ task("flywheel:remove", "remove a rewards distributor from a pool")
     const deployer = await hre.ethers.getNamedSigner(taskArgs.signer);
 
     // extract the leftover rewards to the deployer
-    const flywheel = (await hre.ethers.getContractAt("MidasFlywheel", taskArgs.flywheel, deployer)) as IonicFlywheel;
+    const flywheel = (await hre.ethers.getContractAt("IonicFlywheel", taskArgs.flywheel, deployer)) as IonicFlywheel;
     let tx = await flywheel.setFlywheelRewards(deployer.address);
     await tx.wait();
     console.log("setFlywheelRewards: ", tx.hash);
