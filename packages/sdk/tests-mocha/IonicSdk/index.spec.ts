@@ -48,7 +48,6 @@ describe("Fuse Index", () => {
       PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
       IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
-      WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
     };
     fuseBase = new IonicBase(mockProvider, ganache);
     fuseBase.contracts = { PoolDirectory: mockContract as unknown as PoolDirectory };

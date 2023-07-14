@@ -82,7 +82,6 @@ export enum OracleTypes {
 
 export enum IrmTypes {
   JumpRateModel = "JumpRateModel",
-  WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
   AnkrFTMInterestRateModel = "AnkrFTMInterestRateModel",
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
   AdjustableAnkrBNBIrm = "AdjustableAnkrBNBIrm",

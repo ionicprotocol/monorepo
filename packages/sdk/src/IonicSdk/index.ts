@@ -53,7 +53,6 @@ import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
 import AnkrBNBInterestRateModel from "./irm/AnkrBNBInterestRateModel";
 import AnkrFTMInterestRateModel from "./irm/AnkrFTMInterestRateModel";
 import JumpRateModel from "./irm/JumpRateModel";
-import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 utils.Logger.setLogLevel(LogLevel.OFF);
@@ -284,7 +283,6 @@ export class IonicBase {
     // Get interest rate model type from runtime bytecode hash and init class
     const interestRateModels: { [key: string]: any } = {
       JumpRateModel: JumpRateModel,
-      WhitePaperInterestRateModel: WhitePaperInterestRateModel,
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
       AnkrFTMInterestRateModel: AnkrFTMInterestRateModel,
       AdjustableJumpRateModel: AdjustableJumpRateModel,

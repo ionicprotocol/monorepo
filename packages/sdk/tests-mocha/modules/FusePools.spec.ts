@@ -55,7 +55,6 @@ describe("FusePools", () => {
       PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
       IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
-      WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
     };
 
     fusePools = new FusePools(mockProvider, ganache);

@@ -76,13 +76,6 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const SimplePriceOracleArtifact = await deployments.getArtifact("SimplePriceOracle");
   chainDeployment.SimplePriceOracle = { abi: SimplePriceOracleArtifact.abi, address: SimplePriceOracle.address };
 
-  const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
-  const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");
-  chainDeployment.WhitePaperInterestRateModel = {
-    abi: WhitePaperInterestRateModelArtifact.abi,
-    address: WhitePaperInterestRateModel.address,
-  };
-
   return chainDeployment;
 };
 
@@ -105,12 +98,6 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   chainDeployment.AnkrBNBInterestRateModel = {
     abi: AnkrBNBInterestRateModelArtifact.abi,
     address: AnkrBNBInterestRateModel.address,
-  };
-  const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
-  const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");
-  chainDeployment.WhitePaperInterestRateModel = {
-    abi: WhitePaperInterestRateModelArtifact.abi,
-    address: WhitePaperInterestRateModel.address,
   };
   const ChainlinkPriceOracleV2 = await ethers.getContract("ChainlinkPriceOracleV2");
   const ChainlinkPriceOracleV2Artifact = await deployments.getArtifact("ChainlinkPriceOracleV2");
