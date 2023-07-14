@@ -147,7 +147,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
       ) as LeveredPositionsLens;
     }
 
-    createFusePoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
+    createPoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.PoolLensSecondary.address,
         PoolLensSecondaryABI,

@@ -49,12 +49,12 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const PoolDirectoryArtifact = await deployments.getArtifact("PoolDirectory");
   chainDeployment.PoolDirectory = { abi: PoolDirectoryArtifact.abi, address: PoolDirectory.address };
   const PoolLens = await ethers.getContract("PoolLens");
-  const FusePoolLensArtifact = await deployments.getArtifact("PoolLens");
-  chainDeployment.PoolLens = { abi: FusePoolLensArtifact.abi, address: PoolLens.address };
+  const PoolLensArtifact = await deployments.getArtifact("PoolLens");
+  chainDeployment.PoolLens = { abi: PoolLensArtifact.abi, address: PoolLens.address };
   const PoolLensSecondary = await ethers.getContract("PoolLensSecondary");
-  const FusePoolLensSecondaryArtifact = await deployments.getArtifact("PoolLensSecondary");
+  const PoolLensSecondaryArtifact = await deployments.getArtifact("PoolLensSecondary");
   chainDeployment.PoolLensSecondary = {
-    abi: FusePoolLensSecondaryArtifact.abi,
+    abi: PoolLensSecondaryArtifact.abi,
     address: PoolLensSecondary.address,
   };
   const IonicFlywheelLensRouter = await ethers.getContract("IonicFlywheelLensRouter");
