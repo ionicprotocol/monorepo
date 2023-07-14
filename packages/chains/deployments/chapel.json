@@ -11,14 +11,23 @@
     "AddressesProvider_Proxy": {
       "address": "0x38742363597fBaE312B0bdcC351fCc6107E9E27E"
     },
+    "AuthoritiesRegistry": {
+      "address": "0x8099188e6118aAbE90Ba093f874bB8BD88bC2c4f"
+    },
+    "AuthoritiesRegistry_Implementation": {
+      "address": "0xEB31a9e3784ccD0D135FaB0638e02444B0403FD8"
+    },
+    "AuthoritiesRegistry_Proxy": {
+      "address": "0x8099188e6118aAbE90Ba093f874bB8BD88bC2c4f"
+    },
     "CErc20Delegate": {
-      "address": "0x5b7f3D1615e5306F5C5c587e96Db31751041C1A7"
+      "address": "0x7CdBA5A3D3951Da8A2f8C4736693C015A42FAB56"
     },
     "CErc20PluginDelegate": {
-      "address": "0x367CF6D26e071a27c5B2863706790bB97175171D"
+      "address": "0xDCec3F384F134F44005f2f050F9bCF1B13a16A96"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x8810eA647510DCd4e28ba7EE14bA13f793443E9E"
+      "address": "0xad7de301758eBFC5Bd0Fabc9cFF4bd77Daf23C2A"
     },
     "CErc20RewardsDelegate": {
       "address": "0x99d485eF4425862D90C8301725DF670c4b8B71EC"
@@ -27,7 +36,7 @@
       "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665"
     },
     "CTokenFirstExtension": {
-      "address": "0x7C3966dfa9b347471cBcDA9AcBfF7ACfBcf08139"
+      "address": "0x10A5684706976e433eB2d4828531997981edAD58"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x219f7a75925D6d0312d1B62cEE6a4eE6F1A85217"
@@ -90,10 +99,10 @@
       "address": "0x3379523a4ef49B19f411123053D455D5eC21C0aA"
     },
     "Comptroller": {
-      "address": "0x4682b914C351830e9e289C02ec312e453f017eE2"
+      "address": "0xaAAEF4A15321c170B419eDF7f965288b06bfD6e3"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xeAc9AD4C7266E72D26336E9a0703f6c4Fee40d12"
+      "address": "0xF83ef7B18fDcfA8780A81649d05505AFb377f0ff"
     },
     "DefaultProxyAdmin": {
       "address": "0x0C64dEFA0125678C77dDa2287FDD6000699737Cc"
@@ -105,7 +114,7 @@
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xF18EB6556E1704d5D4641ce9b49290C804939c12"
+      "address": "0x3b7012C63073161466Bf59206969F2fD95b01781"
     },
     "FuseFeeDistributor_Proxy": {
       "address": "0xFc1f56C58286E7215701A773b61bFf2e18A177dE"
@@ -162,7 +171,7 @@
       "address": "0xE55a7dd52D4e0577B1a8bbfeA7246d83b85A5B56"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0xa63714AD142885858b3820BC1d33605A76FD9A95"
+      "address": "0xd48001f7e5ac0989576CCAD53D6c2c6e9647C002"
     },
     "LeveredPositionsLens": {
       "address": "0x1023e4f4cC27E59620c7D42c6fE72f509fe26a54"

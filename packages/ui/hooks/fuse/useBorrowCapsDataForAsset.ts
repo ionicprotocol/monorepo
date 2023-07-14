@@ -17,9 +17,7 @@ export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: string[]) => {
 
   await Promise.all(
     cTokens.map(async (cToken) => {
-      const borrowCaps = await sdk.contracts.FusePoolLens.callStatic.getBorrowCapsDataForAsset(
-        cToken
-      );
+      const borrowCaps = await sdk.contracts.PoolLens.callStatic.getBorrowCapsDataForAsset(cToken);
 
       cTokenToBorrowCaps[cToken] = borrowCaps;
     })

@@ -12,7 +12,7 @@ export function useMaxWithdrawAmount(asset: NativePricedFuseAsset, chainId: numb
     ['useMaxWithdrawAmount', asset.cToken, sdk?.chainId, address],
     async () => {
       if (sdk && address) {
-        const maxRedeem = await sdk.contracts.FusePoolLensSecondary.callStatic
+        const maxRedeem = await sdk.contracts.PoolLensSecondary.callStatic
           .getMaxRedeem(address, asset.cToken, { from: address })
           .catch((e) => {
             console.warn(`Getting max withdraw amount error: `, { asset, chainId }, e);

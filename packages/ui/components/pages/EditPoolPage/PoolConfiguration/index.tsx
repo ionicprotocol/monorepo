@@ -374,8 +374,8 @@ const PoolConfiguration = ({
 
     try {
       setIsSaving(true);
-      const FusePoolDirectory = currentSdk.getFusePoolDirectoryInstance(currentSdk.signer);
-      const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
+      const PoolDirectory = currentSdk.getPoolDirectoryInstance(currentSdk.signer);
+      const tx = await PoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
       });
       await tx.wait();

@@ -86,14 +86,7 @@ export type DiaAsset = {
   key: string;
 };
 
-export type FluxAsset = {
-  underlying: string;
-  feed: string;
-};
-
-export type UmbrellaAsset = FluxAsset;
-
-export type AdrastiaAsset = {
+export type UmbrellaAsset = {
   underlying: string;
   feed: string;
 };
@@ -163,6 +156,13 @@ export type LiquidatorConfigFnParams = {
   chainId: number;
 };
 
+export type AddressesProviderConfigFnParams = {
+  ethers: HardhatRuntimeEnvironment["ethers"];
+  getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
+  chainId: number;
+  deployConfig: ChainDeployConfig;
+};
+
 export type LiquidatorsRegistryConfigFnParams = {
   ethers: HardhatRuntimeEnvironment["ethers"];
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
@@ -185,29 +185,11 @@ export type DiaDeployFnParams = ChainDeployFnParams & {
   diaNativeFeed?: Omit<DiaAsset, "symbol" | "underlying">;
 };
 
-export type FluxDeployFnParams = ChainDeployFnParams & {
-  fluxAssets: FluxAsset[];
-  deployConfig: ChainDeployConfig;
-  nativeUsdFeed: string;
-};
-
 export type UmbrellaDeployFnParams = ChainDeployFnParams & {
   registryAddress: string;
   umbrellaAssets: UmbrellaAsset[];
   deployConfig: ChainDeployConfig;
   nativeUsdFeed: string;
-};
-
-export type AdrastiaDeployFnParams = ChainDeployFnParams & {
-  adrastiaAssets: AdrastiaAsset[];
-  deployConfig: ChainDeployConfig;
-  nativeUsdFeed: string;
-};
-
-export type NativeUsdDeployFnParams = ChainDeployFnParams & {
-  deployConfig: ChainDeployConfig;
-  nativeUsdOracleAddress: string;
-  quoteAddress: string;
 };
 
 export type WombatDeployFnParams = ChainDeployFnParams & {
@@ -270,10 +252,6 @@ export type WstEthOracleFnParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
 };
 
-export type DiaStDotFnParams = ChainDeployFnParams & {
-  deployConfig: ChainDeployConfig;
-};
-
 export type BalancerLpFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   balancerLpAssets: BalancerLpAsset[] | BalancerStableLpAsset[];
@@ -301,8 +279,6 @@ export type aXXXcDeployParams = ChainDeployFnParams & {
 export type stkBNBOracleDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
 };
-
-export type BNBxOracleDeployParams = stkBNBOracleDeployParams;
 
 export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;

@@ -22,7 +22,7 @@ export const useFusePoolData = (poolId?: string, poolChainId?: number) => {
     ['useFusePoolData', poolId, address, sdk?.chainId, usdPrice],
     async () => {
       if (usdPrice && sdk?.chainId && poolId) {
-        const response = await sdk.fetchFusePoolData(poolId, { from: address }).catch((e) => {
+        const response = await sdk.fetchPoolData(poolId, { from: address }).catch((e) => {
           console.warn(`Getting fuse pool data error: `, { address, poolChainId, poolId }, e);
 
           return null;

@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 
 import { CErc20Delegate } from "../typechain/CErc20Delegate";
 import { ERC20 } from "../typechain/ERC20";
-import { FuseSafeLiquidator } from "../typechain/FuseSafeLiquidator";
+import { IonicLiquidator } from "../typechain/IonicLiquidator";
 
 export default task("get-liquidations", "Get potential liquidations")
   .addOptionalParam(
@@ -74,7 +74,7 @@ task("liquidate", "Liquidate a position without a flash loan")
     let receipt: providers.TransactionReceipt;
     const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
     const repayAmount = BigNumber.from(taskArgs.repayAmount);
-    const fuseSafeLiquidator = (await hre.ethers.getContract("FuseSafeLiquidator", signer)) as FuseSafeLiquidator;
+    const fuseSafeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
     const debtToken = (await hre.ethers.getContractAt("CErc20", taskArgs.debtCerc20, signer)) as CErc20Delegate;
 
@@ -132,10 +132,10 @@ task("liquidate:nonfl:hardcoded").setAction(async ({}, { run }) => {
 
 task("liquidate:hardcoded", "Liquidate a position without a flash loan").setAction(async (taskArgs, hre) => {
   const signer = await hre.ethers.getNamedSigner("deployer");
-  const fuseSafeLiquidator = (await hre.ethers.getContract("FuseSafeLiquidator", signer)) as FuseSafeLiquidator;
+  const fuseSafeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
   console.log(`Liquidating...`);
-  const vars: FuseSafeLiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
+  const vars: IonicLiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
     borrower: "0xF93A5F0A4925EeC32cD585641c88a498523f383C",
     repayAmount: "1372091245495",
     cErc20: "0xa9736bA05de1213145F688e4619E5A7e0dcf4C72",

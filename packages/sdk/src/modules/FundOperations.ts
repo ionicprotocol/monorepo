@@ -10,7 +10,7 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
-import { ChainSupportedAssets } from "./FusePools";
+import { ChainSupportedAssets } from "./Pools";
 
 export function withFundOperations<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class FundOperations extends Base {

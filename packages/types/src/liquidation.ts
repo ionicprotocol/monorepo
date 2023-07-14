@@ -17,11 +17,15 @@ export type LiquidationDefaults = {
 };
 
 export type RedemptionStrategy = {
-  [token: string]: [RedemptionStrategyContract, string];
+  inputToken: string;
+  outputToken: string;
+  strategy: RedemptionStrategyContract;
 };
 
 export type FundingStrategy = {
-  [token: string]: [FundingStrategyContract, string];
+  inputToken: string;
+  outputToken: string;
+  strategy: FundingStrategyContract;
 };
 
 export type JarvisLiquidityPool = {

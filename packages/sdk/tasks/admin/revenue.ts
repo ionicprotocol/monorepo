@@ -6,14 +6,14 @@ import { task, types } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { default as ERC20Abi } from "../../abis/EIP20Interface";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
-import { MidasERC4626 } from "../../typechain/MidasERC4626";
+import { IonicERC4626 } from "../../typechain/IonicERC4626";
+import { PoolDirectory } from "../../typechain/PoolDirectory";
 
 const LOG = process.env.LOG ? true : false;
 
 async function setUpFeeCalculation(hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.ethers.getNamedSigners();
-  const fpd = (await hre.ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
+  const fpd = (await hre.ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
   const mpo = await hre.ethers.getContract("MasterPriceOracle", deployer);
   const [, pools] = await fpd.callStatic.getActivePools();
   return { pools, fpd, mpo };
@@ -25,7 +25,7 @@ async function cgPrice(cgId: string) {
 }
 
 async function createComptroller(
-  pool: FusePoolDirectory.FusePoolStructOutput,
+  pool: PoolDirectory.FusePoolStructOutput,
   deployer: SignerWithAddress
 ): Promise<ComptrollerWithExtension | null> {
   const ionicSdkModule = await import("../ionicSdk");
@@ -33,9 +33,9 @@ async function createComptroller(
   const comptroller = sdk.createComptroller(pool.comptroller);
   const poolAdmin = await comptroller.callStatic.fuseAdmin();
 
-  if (poolAdmin != sdk.contracts.FuseFeeDistributor.address) {
+  if (poolAdmin != sdk.contracts.FeeDistributor.address) {
     if (LOG)
-      console.log(`Skipping pool: ${pool.name} (${pool.comptroller}) because it is not managed by FuseFeeDistributor`);
+      console.log(`Skipping pool: ${pool.name} (${pool.comptroller}) because it is not managed by FeeDistributor`);
     return null;
   }
   return comptroller;
@@ -124,7 +124,7 @@ task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance
           continue;
         }
         try {
-          const pluginContract = await hre.ethers.getContractAt("MidasERC4626", plugin);
+          const pluginContract = await hre.ethers.getContractAt("IonicERC4626", plugin);
           const pluginPerformanceFee = await pluginContract.callStatic.performanceFee();
 
           const shareValue = await pluginContract.callStatic.convertToAssets(
@@ -324,7 +324,7 @@ task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance 
       // const accTx = await cToken.accrueInterest();
       // await accTx.wait();
       const underlying = await cToken.callStatic.underlying();
-      const plugin = (await hre.ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
+      const plugin = (await hre.ethers.getContractAt("IonicERC4626", pluginAddress, deployer)) as IonicERC4626;
 
       console.log(`Harvesting fees from plugin ${plugins[pluginAddress].name}, (${pluginAddress})`);
       tx = await plugin.takePerformanceFee();

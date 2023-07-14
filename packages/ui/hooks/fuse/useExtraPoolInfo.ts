@@ -26,7 +26,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
           pendingAdmin,
           oracle,
         ] = await Promise.all([
-          sdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
+          sdk.contracts.PoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
           comptroller.callStatic.closeFactorMantissa(),
           comptroller.callStatic.liquidationIncentiveMantissa(),
           comptroller.callStatic

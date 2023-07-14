@@ -10,7 +10,7 @@ export default task("edit-deployers", "Edit deployers")
     console.log("deployers: ", deployers);
     const { deployer } = await getNamedAccounts();
 
-    const fpd = await ethers.getContract("FusePoolDirectory", deployer);
+    const fpd = await ethers.getContract("PoolDirectory", deployer);
     const tx = await fpd._editDeployerWhitelist(deployers, status);
 
     console.log("_editDeployerWhitelist tx: ", tx);
@@ -24,7 +24,7 @@ task("edit-deployer-whitelist-enforcement", "Edit deployer whitelist enforcement
     const enforce = _enforce === "true";
     const { deployer } = await getNamedAccounts();
 
-    const fpd = await ethers.getContract("FusePoolDirectory", deployer);
+    const fpd = await ethers.getContract("PoolDirectory", deployer);
     const current = await fpd.enforceDeployerWhitelist();
     console.log("current: ", current);
     if (current === enforce) {

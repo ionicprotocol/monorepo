@@ -187,9 +187,9 @@ task("chapel-close-remove-levered-position").setAction(async ({}, { ethers, getN
 });
 
 task("chapel-create-asset-deploy-market", "creates a new asset and deploy a market for it on chapel").setAction(
-  async ({}, { ethers, deployments, run, getNamedAccounts }) => {
+  async ({}, { ethers, run, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const ffd = await ethers.getContract("FuseFeeDistributor");
+    const ffd = await ethers.getContract("FeeDistributor");
     const jrm = await ethers.getContract("JumpRateModel");
     const rewardsDelegate = await ethers.getContract("CErc20RewardsDelegate");
 

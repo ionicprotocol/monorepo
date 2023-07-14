@@ -13,7 +13,7 @@ const provider = new ethers.providers.JsonRpcProvider("PROVIDER_URL");
 
 const sdk = new Fuse(provider, chainId);
 
-const poolOne = await sdk.fetchFusePoolData("1");
+const poolOne = await sdk.fetchPoolData("1");
 
 const assetZero = poolOne.assets[0];
 
@@ -29,9 +29,9 @@ const supplyAPYAssetZero = sdk.ratePerBlockToAPY(
 
 ## Functions
 
-### fetchFusePoolData
+### fetchPoolData
 
-`fetchFusePoolData(poolId: string, signer?: string): Promise<FusePoolData>`
+`fetchPoolData(poolId: string, signer?: string): Promise<FusePoolData>`
 
 Fetch data about an individual pool on ionic protocol based on the pool id. The pool id can be extracted from the pool url `https://ionic.money/56/pool/POOL_ID`
 

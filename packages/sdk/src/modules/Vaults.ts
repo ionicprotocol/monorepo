@@ -5,7 +5,7 @@ import EIP20InterfaceABI from "../../abis/EIP20Interface";
 import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
-import { ChainSupportedAssets } from "./FusePools";
+import { ChainSupportedAssets } from "./Pools";
 
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
