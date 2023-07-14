@@ -10,8 +10,9 @@ export const useBorrowCapsDataForAsset = (cTokenAddress: string, poolChainId?: n
     async () => {
       if (cTokenAddress && sdk) {
         try {
-          const borrowCapsData =
-            await sdk.contracts.FusePoolLens.callStatic.getBorrowCapsDataForAsset(cTokenAddress);
+          const borrowCapsData = await sdk.contracts.PoolLens.callStatic.getBorrowCapsDataForAsset(
+            cTokenAddress
+          );
 
           return borrowCapsData;
         } catch (e) {

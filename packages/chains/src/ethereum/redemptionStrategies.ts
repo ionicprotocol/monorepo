@@ -1,43 +1,91 @@
-import { assetSymbols, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
+import { assetSymbols, RedemptionStrategy, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
 
 import { assets, DAI, USDC, WETH, wstETH } from "./assets";
 
-const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
+const redemptionStrategies: RedemptionStrategy[] = [
   // SOMM
-  [underlying(assets, assetSymbols.realYieldUSD)]: [RedemptionStrategyContract.ERC4626Liquidator, USDC],
-  [underlying(assets, assetSymbols.realYieldETH)]: [RedemptionStrategyContract.ERC4626Liquidator, WETH],
-  [underlying(assets, assetSymbols.ethBtcTrend)]: [RedemptionStrategyContract.ERC4626Liquidator, WETH],
+  {
+    inputToken: underlying(assets, assetSymbols.realYieldUSD),
+    strategy: RedemptionStrategyContract.ERC4626Liquidator,
+    outputToken: USDC,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.realYieldETH),
+    strategy: RedemptionStrategyContract.ERC4626Liquidator,
+    outputToken: WETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.ethBtcTrend),
+    strategy: RedemptionStrategyContract.ERC4626Liquidator,
+    outputToken: WETH,
+  },
   // BLPs
-  [underlying(assets, assetSymbols.OHM50_DAI50_BPT)]: [RedemptionStrategyContract.BalancerSwapLiquidator, DAI],
-  [underlying(assets, assetSymbols.OHM50_WETH50_BPT)]: [RedemptionStrategyContract.BalancerSwapLiquidator, WETH],
-  [underlying(assets, assetSymbols.SWETH_BBA_WETH_BPT)]: [RedemptionStrategyContract.BalancerSwapLiquidator, WETH],
-  [underlying(assets, assetSymbols.WSTETH_WETH_STABLE_BPT)]: [RedemptionStrategyContract.BalancerSwapLiquidator, WETH],
-  [underlying(assets, assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT)]: [
-    RedemptionStrategyContract.BalancerSwapLiquidator,
-    wstETH,
-  ],
-  [underlying(assets, assetSymbols.WBETH_WSTETH_STABLE_BPT)]: [
-    RedemptionStrategyContract.BalancerSwapLiquidator,
-    wstETH,
-  ],
-  [underlying(assets, assetSymbols.WSTETH_CBETH_STABLE_BPT)]: [
-    RedemptionStrategyContract.BalancerSwapLiquidator,
-    wstETH,
-  ],
-  [underlying(assets, assetSymbols.AAVE_BOOSTED_STABLE_BPT)]: [
-    RedemptionStrategyContract.BalancerSwapLiquidator,
-    underlying(assets, assetSymbols.AAVE_LINEAR_USDC),
-  ],
-  [underlying(assets, assetSymbols.AAVE_LINEAR_USDC)]: [
-    RedemptionStrategyContract.BalancerSwapLiquidator,
-    underlying(assets, assetSymbols.USDC),
-  ],
-
+  {
+    inputToken: underlying(assets, assetSymbols.OHM50_DAI50_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: DAI,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.OHM50_WETH50_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: WETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.SWETH_BBA_WETH_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: WETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WSTETH_WETH_STABLE_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: WETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: wstETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WBETH_WSTETH_STABLE_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: wstETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WSTETH_CBETH_STABLE_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: wstETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.AAVE_BOOSTED_STABLE_BPT),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.AAVE_LINEAR_USDC),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.AAVE_LINEAR_USDC),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDC),
+  },
   // Balancer and Curve Swaps
-  [underlying(assets, assetSymbols.eUSD)]: [RedemptionStrategyContract.CurveSwapLiquidatorFunder, USDC],
-  [underlying(assets, assetSymbols.wstETH)]: [RedemptionStrategyContract.BalancerSwapLiquidator, WETH],
-  [underlying(assets, assetSymbols.rETH)]: [RedemptionStrategyContract.BalancerSwapLiquidator, wstETH],
-  [underlying(assets, assetSymbols.cbETH)]: [RedemptionStrategyContract.BalancerSwapLiquidator, wstETH],
-};
+  {
+    inputToken: underlying(assets, assetSymbols.eUSD),
+    strategy: RedemptionStrategyContract.CurveSwapLiquidatorFunder,
+    outputToken: USDC,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.wstETH),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: WETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.rETH),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: wstETH,
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.cbETH),
+    strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
+    outputToken: wstETH,
+  },
+];
 
 export default redemptionStrategies;

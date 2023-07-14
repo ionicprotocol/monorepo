@@ -1,28 +1,33 @@
-import { assetSymbols, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
+import { assetSymbols, RedemptionStrategy, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
 
 import { assets } from "./assets";
 
-const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
-  [underlying(assets, assetSymbols["WBNB-BUSD"])]: [
-    RedemptionStrategyContract.UniswapLpTokenLiquidator,
-    underlying(assets, assetSymbols.WBNB),
-  ],
-  [underlying(assets, assetSymbols.BOMB)]: [
-    RedemptionStrategyContract.XBombLiquidatorFunder,
-    underlying(assets, assetSymbols.TUSD),
-  ],
-  [underlying(assets, assetSymbols.BOMB)]: [
-    RedemptionStrategyContract.XBombLiquidatorFunder,
-    underlying(assets, assetSymbols.TDAI),
-  ],
-  [underlying(assets, assetSymbols.TUSD)]: [
-    RedemptionStrategyContract.XBombLiquidatorFunder,
-    underlying(assets, assetSymbols.BOMB),
-  ],
-  [underlying(assets, assetSymbols.TDAI)]: [
-    RedemptionStrategyContract.XBombLiquidatorFunder,
-    underlying(assets, assetSymbols.BOMB),
-  ],
-};
+const redemptionStrategies: RedemptionStrategy[] = [
+  {
+    inputToken: underlying(assets, assetSymbols["WBNB-BUSD"]),
+    strategy: RedemptionStrategyContract.UniswapLpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.WBNB),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.BOMB),
+    strategy: RedemptionStrategyContract.XBombLiquidatorFunder,
+    outputToken: underlying(assets, assetSymbols.TUSD),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.BOMB),
+    strategy: RedemptionStrategyContract.XBombLiquidatorFunder,
+    outputToken: underlying(assets, assetSymbols.TDAI),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.TUSD),
+    strategy: RedemptionStrategyContract.XBombLiquidatorFunder,
+    outputToken: underlying(assets, assetSymbols.BOMB),
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.TDAI),
+    strategy: RedemptionStrategyContract.XBombLiquidatorFunder,
+    outputToken: underlying(assets, assetSymbols.BOMB),
+  },
+];
 
 export default redemptionStrategies;

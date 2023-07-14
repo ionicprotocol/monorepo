@@ -4,7 +4,7 @@ import { FusePool, FusePoolData } from "@ionicprotocol/types";
 import { IonicSdk } from "../../src";
 
 export const getPoolIndex = async (poolAddress: string, sdk: IonicSdk) => {
-  const [indexes, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
+  const [indexes, publicPools] = await sdk.contracts.PoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].comptroller === poolAddress) {
       return indexes[j];
@@ -14,18 +14,18 @@ export const getPoolIndex = async (poolAddress: string, sdk: IonicSdk) => {
 };
 
 export const getPoolByName = async (name: string, sdk: IonicSdk, address?: string): Promise<FusePoolData | null> => {
-  const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
+  const [, publicPools] = await sdk.contracts.PoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].name === name) {
       const poolIndex = await getPoolIndex(publicPools[j].comptroller, sdk);
-      return await sdk.fetchFusePoolData(poolIndex!.toString(), { from: address });
+      return await sdk.fetchPoolData(poolIndex!.toString(), { from: address });
     }
   }
   return null;
 };
 
 export const getAllPools = async (sdk: IonicSdk): Promise<FusePool[]> => {
-  const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
+  const [, publicPools] = await sdk.contracts.PoolLens.callStatic.getPublicPoolsWithData();
   return publicPools.map((pp) => {
     return {
       name: pp.name,
@@ -39,7 +39,7 @@ export const getAllPools = async (sdk: IonicSdk): Promise<FusePool[]> => {
 
 export const logPoolData = async (poolAddress: string, sdk: IonicSdk) => {
   const poolIndex = await getPoolIndex(poolAddress, sdk);
-  const fusePoolData = await sdk.fetchFusePoolData(poolIndex!.toString());
+  const fusePoolData = await sdk.fetchPoolData(poolIndex!.toString());
   if (!fusePoolData) {
     throw `Pool with address ${poolAddress} is deprecated or cannot be found`;
   }

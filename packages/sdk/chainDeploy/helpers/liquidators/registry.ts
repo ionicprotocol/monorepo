@@ -21,11 +21,11 @@ export const configureLiquidatorsRegistry = async ({
   const inputTokens: string[] = [];
   const outputTokens: string[] = [];
 
-  for (const inputToken in chainIdToConfig[chainId].redemptionStrategies) {
-    const [redemptionStrategyType, outputToken] = chainIdToConfig[chainId].redemptionStrategies[inputToken];
-    const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
+  for (const redemptionStrategy of chainIdToConfig[chainId].redemptionStrategies) {
+    const { strategy, outputToken, inputToken } = redemptionStrategy;
+    const redemptionStrategyContract = await ethers.getContract(strategy, deployer);
 
-    strategies.push(redemptionStrategy.address);
+    strategies.push(redemptionStrategyContract.address);
     inputTokens.push(inputToken);
     outputTokens.push(outputToken);
   }

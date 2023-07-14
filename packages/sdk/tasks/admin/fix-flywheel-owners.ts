@@ -1,8 +1,8 @@
 import { BigNumber, providers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { MidasERC4626 } from "../../typechain/MidasERC4626";
-import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
+import { IonicERC4626 } from "../../typechain/IonicERC4626";
+import { IonicFlywheelCore } from "../../typechain/IonicFlywheelCore";
 
 task("deploy-fwr", "Changes the system admin to a new address")
   .addParam("signer", "The address of the current deployer", "deployer", types.string)
@@ -45,10 +45,10 @@ task("replace-fw-fee-recipient", "Changes the system admin to a new address")
     const flywheelAddresses = fwAddresses.split(",");
     for (const flywheelAddress of flywheelAddresses) {
       const flywheelCore = (await ethers.getContractAt(
-        "MidasFlywheelCore",
+        "IonicFlywheelCore",
         flywheelAddress,
         deployer
-      )) as MidasFlywheelCore;
+      )) as IonicFlywheelCore;
 
       const currentOwner = await flywheelCore.callStatic.owner();
       console.log(`current owner ${currentOwner} of the flywheel at ${flywheelCore.address}`);
@@ -77,7 +77,7 @@ export default task("replace-plugin-fee-recipient", "Changes the system admin to
 
     const strategyAddresses = strategies.split(",");
     for (const strategyAddress of strategyAddresses) {
-      const strategy = (await ethers.getContractAt("MidasERC4626", strategyAddress, deployer)) as MidasERC4626;
+      const strategy = (await ethers.getContractAt("IonicERC4626", strategyAddress, deployer)) as IonicERC4626;
 
       const currentOwner = await strategy.callStatic.owner();
       console.log(`current owner ${currentOwner} of the strategy at ${strategy.address}`);

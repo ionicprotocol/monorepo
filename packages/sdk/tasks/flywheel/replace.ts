@@ -4,9 +4,9 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FuseFlywheelDynamicRewardsPlugin } from "../../typechain/FuseFlywheelDynamicRewardsPlugin";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
-import { MidasFlywheel } from "../../typechain/MidasFlywheel";
-import { MidasReplacingFlywheel } from "../../typechain/MidasReplacingFlywheel";
+import { IonicFlywheel } from "../../typechain/IonicFlywheel";
+import { IonicReplacingFlywheel } from "../../typechain/IonicReplacingFlywheel";
+import { PoolDirectory } from "../../typechain/PoolDirectory";
 
 task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
   .addParam("flywheelToReplaceAddress", "address of flywheel to replace", undefined, types.string)
@@ -23,13 +23,13 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
     }
     const chainid = await getChainId();
     if (chainid == "56") {
-      const flywheelContractName = `MidasFlywheel_${flywheelName}`;
+      const flywheelContractName = `IonicFlywheel_${flywheelName}`;
 
       const flywheelToReplace = (await ethers.getContractAt(
-        "MidasFlywheel",
+        "IonicFlywheel",
         flywheelToReplaceAddress,
         deployer
-      )) as MidasFlywheel;
+      )) as IonicFlywheel;
 
       const oldRewardsAddress = await flywheelToReplace.callStatic.flywheelRewards();
       const oldRewards = (await ethers.getContractAt(
@@ -65,13 +65,13 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       if (replacingFw.transactionHash) {
         await ethers.provider.waitForTransaction(replacingFw.transactionHash);
       }
-      console.log("MidasReplacingFlywheel: ", replacingFw.address);
+      console.log("IonicReplacingFlywheel: ", replacingFw.address);
 
       const replacingFlywheel = (await ethers.getContractAt(
-        "MidasReplacingFlywheel",
+        "IonicReplacingFlywheel",
         replacingFw.address,
         deployer
-      )) as MidasReplacingFlywheel;
+      )) as IonicReplacingFlywheel;
 
       let tx = await replacingFlywheel.reinitialize(flywheelToReplaceAddress);
       await tx.wait();
@@ -118,7 +118,7 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
 task("flywheels:booster:update").setAction(async ({}, { ethers, getChainId, deployments }) => {
   const deployer = await ethers.getNamedSigner("deployer");
 
-  const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
+  const fusePoolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
   const newBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
 
   const [ids, poolDatas] = await fusePoolDirectory.callStatic.getActivePools();
@@ -131,7 +131,7 @@ task("flywheels:booster:update").setAction(async ({}, { ethers, getChainId, depl
     const fws = await pool.callStatic.getAccruingFlywheels();
 
     for (const fw of fws) {
-      const flywheel = (await ethers.getContractAt("MidasFlywheel", fw, deployer)) as MidasFlywheel;
+      const flywheel = (await ethers.getContractAt("IonicFlywheel", fw, deployer)) as IonicFlywheel;
       const currentBooster = await flywheel.callStatic.flywheelBooster();
       if (currentBooster != ethers.constants.AddressZero && currentBooster != newBooster.address) {
         const tx = await flywheel.setBooster(newBooster.address);

@@ -21,18 +21,4 @@ export const deployIRMs = async ({
   });
   if (jrm.transactionHash) await ethers.provider.waitForTransaction(jrm.transactionHash);
   console.log("JumpRateModel: ", jrm.address);
-
-  // taken from WhitePaperInterestRateModel used for cETH
-  // https://etherscan.io/address/0x0c3f8df27e1a00b47653fde878d68d35f00714c0#code
-  const wprm = await deployments.deploy("WhitePaperInterestRateModel", {
-    from: deployer,
-    args: [
-      deployConfig.blocksPerYear,
-      ethers.utils.parseEther("0.02").toString(), // baseRatePerYear
-      ethers.utils.parseEther("0.1").toString(), // multiplierPerYear
-    ],
-    log: true,
-  });
-  if (wprm.transactionHash) await ethers.provider.waitForTransaction(wprm.transactionHash);
-  console.log("WhitePaperInterestRateModel: ", wprm.address);
 };

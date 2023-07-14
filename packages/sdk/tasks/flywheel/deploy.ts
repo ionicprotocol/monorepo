@@ -16,8 +16,8 @@ task("flywheel:deploy-static-rewards-fw", "Deploy static rewards flywheel for LM
     const flywheelBooster = await ethers.getContract(booster, deployer);
 
     console.log({ signer, name, rewardToken, strategies, pool });
-    const flywheel = await deployments.deploy(`MidasFlywheel_${name}`, {
-      contract: "MidasFlywheel",
+    const flywheel = await deployments.deploy(`IonicFlywheel_${name}`, {
+      contract: "IonicFlywheel",
       from: deployer.address,
       log: true,
       proxy: {

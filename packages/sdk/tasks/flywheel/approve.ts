@@ -1,7 +1,7 @@
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
-import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 
 task("approve-market-flywheel")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
@@ -13,7 +13,7 @@ task("approve-market-flywheel")
     const flywheelAddress = taskArgs.fwAddress;
     const marketAddresses = taskArgs.markets.split(",");
 
-    const flywheel = (await ethers.getContractAt("MidasFlywheel", flywheelAddress, deployer)) as MidasFlywheel;
+    const flywheel = (await ethers.getContractAt("IonicFlywheel", flywheelAddress, deployer)) as IonicFlywheel;
     for (const marketAddress of marketAddresses) {
       const market = (await ethers.getContractAt(
         "CErc20PluginRewardsDelegate",
@@ -35,7 +35,7 @@ task("flywheel:set-fee-recipient")
   .setAction(async ({ fwAddress, feeRecipient }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
-    const flywheel = (await ethers.getContractAt("MidasFlywheel", fwAddress, deployer)) as MidasFlywheel;
+    const flywheel = (await ethers.getContractAt("IonicFlywheel", fwAddress, deployer)) as IonicFlywheel;
     const currentFee = await flywheel.callStatic.performanceFee();
 
     console.log(`updating the fee recipient to ${feeRecipient} for flywheel ${fwAddress}`);

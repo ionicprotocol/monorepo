@@ -1,7 +1,7 @@
 import { constants } from "ethers";
 
 import { FuseFlywheelDeployFnParams } from "..";
-import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 
 export const deployFlywheelWithDynamicRewards = async ({
   ethers,
@@ -21,8 +21,8 @@ export const deployFlywheelWithDynamicRewards = async ({
       const flywheelBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
       const flywheelToReplace = config.flywheelToReplace ? config.flywheelToReplace : constants.AddressZero;
 
-      //// MidasFlywheelCore with Dynamic Rewards
-      const fwc = await deployments.deploy(`MidasFlywheel_${config.name}`, {
+      //// IonicFlywheelCore with Dynamic Rewards
+      const fwc = await deployments.deploy(`IonicFlywheel_${config.name}`, {
         contract: "MidasReplacingFlywheel",
         from: deployer,
         log: true,
@@ -45,7 +45,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       if (fwc.transactionHash) {
         await ethers.provider.waitForTransaction(fwc.transactionHash);
       }
-      console.log("MidasFlywheel: ", fwc.address);
+      console.log("IonicFlywheel: ", fwc.address);
 
       const fdr = await deployments.deploy(`ReplacingFlywheelDynamicRewards_${config.name}`, {
         contract: "ReplacingFlywheelDynamicRewards",
@@ -59,7 +59,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       }
       console.log("ReplacingFlywheelDynamicRewards: ", fdr.address);
 
-      const flywheelCore = (await ethers.getContract(`MidasFlywheel_${config.name}`, deployer)) as MidasFlywheel;
+      const flywheelCore = (await ethers.getContract(`IonicFlywheel_${config.name}`, deployer)) as IonicFlywheel;
       const currentRewards = await flywheelCore.callStatic.flywheelRewards();
       if (currentRewards != fdr.address) {
         const tx = await flywheelCore.setFlywheelRewards(fdr.address);

@@ -12,14 +12,14 @@ export default async function sendTransactionToSafeLiquidator(
   value: number | BigNumber
 ) {
   // Build data
-  const data = sdk.contracts.FuseSafeLiquidator.interface.encodeFunctionData(method, params);
+  const data = sdk.contracts.IonicLiquidator.interface.encodeFunctionData(method, params);
   const txCount = await sdk.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!);
   const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, sdk.provider);
 
   // Build transaction
   const tx = {
     from: process.env.ETHEREUM_ADMIN_ACCOUNT,
-    to: sdk.contracts.FuseSafeLiquidator.address,
+    to: sdk.contracts.IonicLiquidator.address,
     value: value,
     data: data,
     nonce: txCount,

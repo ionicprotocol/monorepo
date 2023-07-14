@@ -1,73 +1,89 @@
-import { assetSymbols, FundingStrategyContract, underlying } from "@ionicprotocol/types";
+import { assetSymbols, FundingStrategy, FundingStrategyContract, underlying } from "@ionicprotocol/types";
 
 import { assets } from "./assets";
 
-const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } = {
+const fundingStrategies: FundingStrategy[] = [
   // TODO: group by input token or configure as predefined paths
-  [underlying(assets, assetSymbols.JAUD)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JGBP)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JCAD)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JCHF)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JCNY)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JEUR)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JJPY)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JKRW)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JMXN)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JNZD)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JPHP)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JPLN)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JSEK)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.JSGD)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols.PAR)]: [
-    FundingStrategyContract.UniswapV3LiquidatorFunder, // or CurveSwapLiquidatorFunder
-    underlying(assets, assetSymbols.USDC),
-  ],
-  [underlying(assets, assetSymbols["JEUR-EURT"])]: [
-    FundingStrategyContract.CurveSwapLiquidatorFunder,
-    underlying(assets, assetSymbols.JEUR),
-  ],
-};
+  {
+    outputToken: underlying(assets, assetSymbols.JAUD),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JGBP),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JCAD),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JCHF),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JCNY),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JEUR),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JJPY),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JKRW),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JMXN),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JNZD),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JPHP),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JPLN),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JSEK),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JSGD),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.PAR),
+    strategy: FundingStrategyContract.UniswapV3LiquidatorFunder, // or CurveSwapLiquidatorFunder
+    inputToken: underlying(assets, assetSymbols.USDC),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols["JEUR-EURT"]),
+    strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.JEUR),
+  },
+];
 
 export default fundingStrategies;

@@ -1,12 +1,12 @@
 import { ethers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
+import { FeeDistributor } from "../../typechain/FeeDistributor";
 
 export default task("plugin:whitelist", "Whitelists a plugin implementation")
   .addParam("oldImplementation", "The old plugin implementation address", undefined, types.string)
   .addParam("newImplementation", "The new plugin implementation address", undefined, types.string)
-  .addOptionalParam("admin", "Named account that is an admin of the FuseFeeDistributor", "deployer", types.string)
+  .addOptionalParam("admin", "Named account that is an admin of the FeeDistributor", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const oldPluginImplementation = taskArgs.oldImplementation;
     const newPluginImplementation = taskArgs.newImplementation;
@@ -15,7 +15,7 @@ export default task("plugin:whitelist", "Whitelists a plugin implementation")
     const oldImplementations = [];
     const newImplementations = [];
     const arrayOfTrue = [];
-    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
+    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
 
     let tx: ethers.ContractTransaction;
 

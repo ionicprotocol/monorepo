@@ -5,14 +5,14 @@ import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
-  configureAddressesProviderStrategies,
-  configureFuseSafeLiquidator,
-  deployFuseSafeLiquidator,
-} from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
+  configureAddressesProviderAddresses,
+  configureIonicLiquidator,
+  deployIonicLiquidator,
+} from "../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
-import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
+import { FeeDistributor } from "../typechain/FeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
@@ -39,7 +39,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
 
-  const ffd = await deployments.deploy("FuseFeeDistributor", {
+  const ffd = await deployments.deploy("FeeDistributor", {
     from: deployer,
     log: true,
     proxy: {
@@ -55,8 +55,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   if (ffd.transactionHash) await ethers.provider.waitForTransaction(ffd.transactionHash);
 
-  console.log("FuseFeeDistributor: ", ffd.address);
-  const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
+  console.log("FeeDistributor: ", ffd.address);
+  const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
   const ffdFee = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
   console.log(`ffd fee ${ffdFee}`);
@@ -83,7 +83,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       );
       tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
       await tx.wait();
-      console.log("FuseFeeDistributor pool limits set", tx.hash);
+      console.log("FeeDistributor pool limits set", tx.hash);
     } else {
       console.log(
         `current min borrow ${currentMinBorrow} is within 2% of the actual value ${minBorrow} - not updating it`
@@ -153,7 +153,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
   ////
   //// FUSE CORE CONTRACTS
-  const fpd = await deployments.deploy("FusePoolDirectory", {
+  const fpd = await deployments.deploy("PoolDirectory", {
     from: deployer,
     log: true,
     proxy: {
@@ -169,8 +169,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     waitConfirmations: 1,
   });
   if (fpd.transactionHash) await ethers.provider.waitForTransaction(fpd.transactionHash);
-  console.log("FusePoolDirectory: ", fpd.address);
-  const fusePoolDirectory = await ethers.getContract("FusePoolDirectory", deployer);
+  console.log("PoolDirectory: ", fpd.address);
+  const fusePoolDirectory = await ethers.getContract("PoolDirectory", deployer);
 
   const comptroller = await ethers.getContract("Comptroller", deployer);
   const oldComptrollerImplementations = [constants.AddressZero];
@@ -202,7 +202,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         comptrollerArrayOfTrue
       );
       await tx.wait();
-      console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
+      console.log("FeeDistributor comptroller whitelist set", tx.hash);
     }
   }
 
@@ -335,15 +335,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
-  const fplDeployment = await deployments.deploy("FusePoolLens", {
+  const fplDeployment = await deployments.deploy("PoolLens", {
     from: deployer,
     log: true,
     waitConfirmations: 1,
   });
 
   if (fplDeployment.transactionHash) await ethers.provider.waitForTransaction(fplDeployment.transactionHash);
-  console.log("FusePoolLens: ", fplDeployment.address);
-  const fusePoolLens = await ethers.getContract("FusePoolLens", deployer);
+  console.log("PoolLens: ", fplDeployment.address);
+  const fusePoolLens = await ethers.getContract("PoolLens", deployer);
   let directory = await fusePoolLens.directory();
   if (directory === constants.AddressZero) {
     tx = await fusePoolLens.initialize(
@@ -358,38 +358,38 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       chainDeployParams.uniswap.uniswapData.map((u) => u.lpDisplayName)
     );
     await tx.wait();
-    console.log("FusePoolLens initialized", tx.hash);
+    console.log("PoolLens initialized", tx.hash);
   } else {
-    console.log("FusePoolLens already initialized");
+    console.log("PoolLens already initialized");
   }
 
-  const fpls = await deployments.deploy("FusePoolLensSecondary", {
+  const fpls = await deployments.deploy("PoolLensSecondary", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1,
   });
   if (fpls.transactionHash) await ethers.provider.waitForTransaction(fpls.transactionHash);
-  console.log("FusePoolLensSecondary: ", fpls.address);
+  console.log("PoolLensSecondary: ", fpls.address);
 
-  const fusePoolLensSecondary = await ethers.getContract("FusePoolLensSecondary", deployer);
+  const fusePoolLensSecondary = await ethers.getContract("PoolLensSecondary", deployer);
   directory = await fusePoolLensSecondary.directory();
   if (directory === constants.AddressZero) {
     tx = await fusePoolLensSecondary.initialize(fusePoolDirectory.address);
     await tx.wait();
-    console.log("FusePoolLensSecondary initialized", tx.hash);
+    console.log("PoolLensSecondary initialized", tx.hash);
   } else {
-    console.log("FusePoolLensSecondary already initialized");
+    console.log("PoolLensSecondary already initialized");
   }
 
-  const mflrReceipt = await deployments.deploy("MidasFlywheelLensRouter", {
+  const mflrReceipt = await deployments.deploy("IonicFlywheelLensRouter", {
     from: deployer,
     args: [fpd.address],
     log: true,
     waitConfirmations: 1,
   });
   if (mflrReceipt.transactionHash) await ethers.provider.waitForTransaction(mflrReceipt.transactionHash);
-  console.log("MidasFlywheelLensRouter: ", mflrReceipt.address);
+  console.log("IonicFlywheelLensRouter: ", mflrReceipt.address);
 
   const booster = await deployments.deploy("LooplessFlywheelBooster", {
     from: deployer,
@@ -530,7 +530,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// Liquidator
-  await deployFuseSafeLiquidator({
+  await deployIonicLiquidator({
     run,
     ethers,
     getNamedAccounts,
@@ -548,7 +548,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// Configure Liquidator
-  await configureFuseSafeLiquidator({
+  await configureIonicLiquidator({
     ethers,
     getNamedAccounts,
     chainId,
@@ -710,7 +710,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     )) as AuthoritiesRegistry;
 
     // set the address in the FFD
-    await deployments.deploy("FuseFeeDistributor", {
+    await deployments.deploy("FeeDistributor", {
       from: deployer,
       log: true,
       proxy: {
@@ -727,149 +727,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     ////
   }
 
-  /// EXTERNAL ADDRESSES
-  const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
-  if (
-    uniswapV2FactoryAddress !== chainDeployParams.uniswap.uniswapV2FactoryAddress &&
-    chainDeployParams.uniswap.uniswapV2FactoryAddress
-  ) {
-    tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
-    await tx.wait();
-    console.log("setAddress IUniswapV2Factory: ", tx.hash);
-  }
-
-  const uniswapV2RouterAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Router02");
-  if (
-    uniswapV2RouterAddress !== chainDeployParams.uniswap.uniswapV2RouterAddress &&
-    chainDeployParams.uniswap.uniswapV2RouterAddress
-  ) {
-    tx = await addressesProvider.setAddress("IUniswapV2Router02", chainDeployParams.uniswap.uniswapV2RouterAddress);
-    await tx.wait();
-    console.log("setAddress IUniswapV2Router02: ", tx.hash);
-  }
-
-  const wtokenAddress = await addressesProvider.callStatic.getAddress("wtoken");
-  if (wtokenAddress !== chainDeployParams.wtoken) {
-    tx = await addressesProvider.setAddress("wtoken", chainDeployParams.wtoken);
-    await tx.wait();
-    console.log("setAddress wtoken: ", tx.hash);
-  }
-
-  const wBTCTokenAddress = await addressesProvider.callStatic.getAddress("wBTCToken");
-  if (wBTCTokenAddress !== chainDeployParams.wBTCToken && chainDeployParams.wBTCToken) {
-    tx = await addressesProvider.setAddress("wBTCToken", chainDeployParams.wBTCToken);
-    await tx.wait();
-    console.log("setAddress wBTCToken: ", tx.hash);
-  }
-
-  const stableTokenAddress = await addressesProvider.callStatic.getAddress("stableToken");
-  if (stableTokenAddress !== chainDeployParams.stableToken && chainDeployParams.stableToken) {
-    tx = await addressesProvider.setAddress("stableToken", chainDeployParams.stableToken);
-    await tx.wait();
-    console.log("setAddress stableToken: ", tx.hash);
-  }
-
-  /// SYSTEM ADDRESSES
-  const currentDeployer = await addressesProvider.callStatic.getAddress("deployer");
-  if (currentDeployer !== deployer) {
-    tx = await addressesProvider.setAddress("deployer", deployer);
-    await tx.wait();
-    console.log("setAddress deployer", tx.hash);
-  }
-
-  const masterPOAddress = await addressesProvider.callStatic.getAddress("MasterPriceOracle");
-  if (masterPOAddress !== masterPO.address) {
-    tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
-    await tx.wait();
-    console.log("setAddress MasterPriceOracle: ", tx.hash);
-  }
-
-  const fpdAddress = await addressesProvider.callStatic.getAddress("FusePoolDirectory");
-  if (fpdAddress !== fpd.address) {
-    tx = await addressesProvider.setAddress("FusePoolDirectory", fpd.address);
-    await tx.wait();
-    console.log("setAddress FusePoolDirectory: ", tx.hash);
-  }
-
-  const ffdAddress = await addressesProvider.callStatic.getAddress("FuseFeeDistributor");
-  if (ffdAddress !== ffd.address) {
-    tx = await addressesProvider.setAddress("FuseFeeDistributor", ffd.address);
-    await tx.wait();
-    console.log("setAddress FuseFeeDistributor: ", tx.hash);
-  }
-
-  const fsl = await ethers.getContract("FuseSafeLiquidator");
-  const fslAddress = await addressesProvider.callStatic.getAddress("FuseSafeLiquidator");
-  if (fslAddress !== fsl.address) {
-    tx = await addressesProvider.setAddress("FuseSafeLiquidator", fsl.address);
-    await tx.wait();
-    console.log("setAddress FuseSafeLiquidator: ", tx.hash);
-  }
-
-  const dpa = await ethers.getContract("DefaultProxyAdmin");
-  const dpaAddress = await addressesProvider.callStatic.getAddress("DefaultProxyAdmin");
-  if (dpaAddress !== dpa.address) {
-    tx = await addressesProvider.setAddress("DefaultProxyAdmin", dpa.address);
-    await tx.wait();
-    console.log("setAddress DefaultProxyAdmin: ", tx.hash);
-  }
-
-  const quoter = await ethers.getContractOrNull("Quoter");
-  if (quoter != null) {
-    const quoterAddress = await addressesProvider.callStatic.getAddress("Quoter");
-    if (quoterAddress !== quoter.address) {
-      tx = await addressesProvider.setAddress("Quoter", quoter.address);
-      await tx.wait();
-      console.log("setAddress Quoter: ", tx.hash);
-    }
-  }
-
-  const lr = await ethers.getContract("LiquidatorsRegistry");
-  const lrAddress = await addressesProvider.callStatic.getAddress("LiquidatorsRegistry");
-  if (lrAddress !== lr.address) {
-    tx = await addressesProvider.setAddress("LiquidatorsRegistry", lr.address);
-    await tx.wait();
-    console.log("setAddress LiquidatorsRegistry: ", tx.hash);
-  }
-
   if (chainId !== 1) {
-    const ovr = await ethers.getContract("OptimizedVaultsRegistry");
-    const ovrAddress = await addressesProvider.callStatic.getAddress("OptimizedVaultsRegistry");
-    if (ovrAddress !== ovr.address) {
-      tx = await addressesProvider.setAddress("OptimizedVaultsRegistry", ovr.address);
-      await tx.wait();
-      console.log("setAddress OptimizedVaultsRegistry: ", tx.hash);
-    }
-
-    const lpf = await ethers.getContract("LeveredPositionFactory");
-    const lpfAddress = await addressesProvider.callStatic.getAddress("LeveredPositionFactory");
-    if (lpfAddress !== lpf.address) {
-      tx = await addressesProvider.setAddress("LeveredPositionFactory", lpf.address);
-      await tx.wait();
-      console.log("setAddress LeveredPositionFactory: ", tx.hash);
-    }
-
-    const lpl = await ethers.getContract("LeveredPositionsLens");
-    const lplAddress = await addressesProvider.callStatic.getAddress("LeveredPositionsLens");
-    if (lplAddress !== lpl.address) {
-      tx = await addressesProvider.setAddress("LeveredPositionsLens", lpl.address);
-      await tx.wait();
-      console.log("setAddress LeveredPositionsLens: ", tx.hash);
-    }
-  }
-
-  const mflr = await ethers.getContract("MidasFlywheelLensRouter");
-  const mflrAddress = await addressesProvider.callStatic.getAddress("MidasFlywheelLensRouter");
-  if (mflrAddress !== mflr.address) {
-    tx = await addressesProvider.setAddress("MidasFlywheelLensRouter", mflr.address);
-    await tx.wait();
-    console.log("setAddress MidasFlywheelLensRouter: ", tx.hash);
-  }
-  if (chainId !== 1) {
-    await configureAddressesProviderStrategies({
+    await configureAddressesProviderAddresses({
       ethers,
       getNamedAccounts,
       chainId,
+      deployConfig: chainDeployParams,
     });
   }
   // upgrade any of the pools if necessary

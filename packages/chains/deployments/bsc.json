@@ -122,6 +122,9 @@
     "CurveLpTokenPriceOracleNoRegistry_Proxy": {
       "address": "0x4544d21EB5B368b3f8F98DcBd03f28aC0Cf6A0CA"
     },
+    "CurveLpTokenWrapper": {
+      "address": "0x287e93F5e03DA0cb8C8Cb92356969989773FA5d2"
+    },
     "CurveSwapLiquidator": {
       "address": "0x3e5114109cdcD592dE30D33F36545a005c78c335"
     },
@@ -309,7 +312,7 @@
       "address": "0xc2e30386EC3Dc8d42FC907DD03e9aeB3D5d2dFb6"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x4331156f5A56da09aC47eb006383D9c2e91Cb19A"
+      "address": "0xCcC4aCAdED11bF1b68DbeAa1464884a39E983462"
     },
     "LooplessFlywheelBooster": {
       "address": "0xb77ce603c7b894B9eFe9c0697D5B724dDdb9EaC6"
@@ -339,7 +342,7 @@
       "address": "0xEfF15E27eea8bA87C93D972145730165366A935E"
     },
     "MidasFlywheel_AUTOv2_Implementation": {
-      "address": "0x052f960e99FD9d139b8b81948EB60faC59aFfbA5"
+      "address": "0x6Fda4e420A1ec1b35e8B7141b25E35245e542D4d"
     },
     "MidasFlywheel_AUTOv2_Proxy": {
       "address": "0xEfF15E27eea8bA87C93D972145730165366A935E"
@@ -348,7 +351,7 @@
       "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5"
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0xb0562b226468FaF602B928EaDfD6E1695470a546"
+      "address": "0x654E614D3e2A30a2550FCbBf31Adce8dd29f35Aa"
     },
     "MidasFlywheel_DDD_Proxy": {
       "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5"
@@ -357,7 +360,7 @@
       "address": "0xF2E46295c684C541d618243558a0af17fb4a6862"
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0x0614E7AD514afB81451a3f01597aB19e72C3b1cF"
+      "address": "0x534814316d81E66F2d5843615e5FFAe6a6808F68"
     },
     "MidasFlywheel_EPX_Proxy": {
       "address": "0xF2E46295c684C541d618243558a0af17fb4a6862"

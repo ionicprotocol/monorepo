@@ -1,6 +1,6 @@
 import { IrmTypes } from "@ionicprotocol/types";
 
-const baseIrms = [IrmTypes.WhitePaperInterestRateModel, IrmTypes.JumpRateModel];
+const baseIrms = [IrmTypes.JumpRateModel];
 
 const irms: IrmTypes[] = [...baseIrms, IrmTypes.AdjustableJumpRateModel_JARVIS_jEUR];
 
