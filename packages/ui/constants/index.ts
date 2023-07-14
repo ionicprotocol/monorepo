@@ -343,3 +343,7 @@ export const DEBT = 'Debt';
 export const APR = 'Apr';
 export const APR_TYPE = 'Apr Type';
 export const REPAY = 'Repay';
+export const HEALTH_FACTOR = {
+  MAX: 100,
+  MIN: 0,
+};

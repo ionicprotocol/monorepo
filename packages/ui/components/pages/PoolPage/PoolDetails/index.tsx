@@ -18,9 +18,11 @@ import {
 } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
+import { colord, extend } from 'colord';
+import mixPlugin from 'colord/plugins/mix';
 import { utils } from 'ethers';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner/index';
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
@@ -28,6 +30,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { HEALTH_FACTOR } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
@@ -36,6 +39,8 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
+
+extend([mixPlugin]);
 
 const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) => {
   const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
@@ -55,6 +60,28 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
   const [isMoreInfo, setIsMoreInfo] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const chainConfig = useChainConfig(poolData?.chainId);
+  const [healthFactor, setHealthFactor] = useState(30);
+
+  useEffect(() => {
+    setHealthFactor(30);
+  }, []);
+
+  const mixedColor = useCallback((ratio: number) => {
+    let color1 = '';
+    let color2 = '';
+    let _ratio = 0;
+    if (ratio < 0.5) {
+      color1 = '#FF3864'; // iRed
+      color2 = '#F1F996'; // iYello
+      _ratio = ratio * 2;
+    } else {
+      _ratio = (ratio - 0.5) * 2;
+      color1 = '#F1F996'; // iYello
+      color2 = '#39FF88'; // iGreen
+    }
+
+    return colord(color1).mix(color2, _ratio).toHex();
+  }, []);
 
   const acceptOwnership = useCallback(async () => {
     if (!poolData?.comptroller || !currentSdk) return;
@@ -161,10 +188,22 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                       <Text color={'iLightGray'} textTransform="uppercase">
                         Health Factor
                       </Text>
-                      <Text color={'iYellow'}>1.55</Text>
+                      <Text color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)}>1.55</Text>
                     </Flex>
-                    <Slider aria-label="slider-ex-1" mt={'20px'} value={30} variant="health">
-                      <SliderMark value={30}>1.55</SliderMark>
+                    <Slider
+                      aria-label="slider-ex-1"
+                      max={HEALTH_FACTOR.MAX}
+                      min={HEALTH_FACTOR.MIN}
+                      mt={'20px'}
+                      value={healthFactor}
+                      variant="health"
+                    >
+                      <SliderMark
+                        color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)}
+                        value={healthFactor}
+                      >
+                        1.55
+                      </SliderMark>
                       <SliderTrack>
                         <SliderFilledTrack />
                       </SliderTrack>
@@ -210,7 +249,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               </PopoverTooltip>
             </Flex>
             <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-              <Text color={'iYellow'} size="lg">
+              <Text color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)} size="lg">
                 1.55
               </Text>
             </Skeleton>
