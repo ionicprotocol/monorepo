@@ -200,13 +200,13 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Details asset={row.getValue(ASSET)} />;
+          return <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />;
         },
         header: () => null,
         id: DETAILS,
       },
     ];
-  }, [allRewards, assetFilter, assetSort, chainId, totalSupplyApyPerAsset]);
+  }, [allRewards, assetFilter, assetSort, chainId, poolId, totalSupplyApyPerAsset]);
 
   const table = useReactTable({
     columns,
