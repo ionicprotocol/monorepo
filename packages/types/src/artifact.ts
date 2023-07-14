@@ -41,7 +41,7 @@ export interface InterestRateModel {
     interestRateModelAddress: string,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish,
+    ionicFeeMantissa: BigNumberish,
     provider: providers.Web3Provider | providers.JsonRpcProvider
   ): Promise<void>;
 
@@ -52,7 +52,7 @@ export interface InterestRateModel {
     kink: BigNumberish,
     reserveFactorMantissa: BigNumberish,
     adminFeeMantissa: BigNumberish,
-    fuseFeeMantissa: BigNumberish
+    ionicFeeMantissa: BigNumberish
   ): Promise<void>;
 
   getBorrowRate(utilizationRate: BigNumber): BigNumber;

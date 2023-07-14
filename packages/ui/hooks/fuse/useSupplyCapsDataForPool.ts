@@ -19,10 +19,9 @@ export const useSupplyCapsDataForPool = (comptrollerAddress: string, poolChainId
         try {
           const res: SupplyCapsDataForPoolType[] = [];
 
-          const supplyCapsData =
-            await sdk.contracts.FusePoolLens.callStatic.getSupplyCapsDataForPool(
-              comptrollerAddress
-            );
+          const supplyCapsData = await sdk.contracts.PoolLens.callStatic.getSupplyCapsDataForPool(
+            comptrollerAddress
+          );
 
           if (supplyCapsData) {
             supplyCapsData[0].map((data, i) => {

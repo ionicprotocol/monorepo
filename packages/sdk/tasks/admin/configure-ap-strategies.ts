@@ -1,6 +1,7 @@
 import { task } from "hardhat/config";
 
-import { configureAddressesProviderStrategies } from "../../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
+import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
+import { configureAddressesProviderAddresses } from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
 
 export default task(
@@ -9,10 +10,18 @@ export default task(
 ).setAction(async ({}, { ethers, getNamedAccounts, getChainId }) => {
   const chainId = parseInt(await getChainId());
 
-  await configureAddressesProviderStrategies({
+  if (!chainDeployConfig[chainId]) {
+    throw new Error(`Config invalid for ${chainId}`);
+  }
+  const { config: chainDeployParams }: { config: ChainDeployConfig; deployFunc: CallableFunction } =
+    chainDeployConfig[chainId];
+  console.log("chainDeployParams: ", chainDeployParams);
+
+  await configureAddressesProviderAddresses({
     ethers,
     getNamedAccounts,
     chainId,
+    deployConfig: chainDeployParams,
   });
 
   //// Configure Liquidators Registry

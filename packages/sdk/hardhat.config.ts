@@ -17,6 +17,7 @@ import "./tasks/pool";
 import "./tasks/swap";
 import "./tasks/validate";
 import "./tasks/vaults";
+import "./tasks/auth";
 import "./tasks/liquidation";
 import "./tasks/leverage/configurePair";
 

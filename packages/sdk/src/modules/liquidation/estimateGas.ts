@@ -1,15 +1,14 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
-import { IonicBase } from "../../IonicSdk";
+import { IonicSdk } from "../../IonicSdk";
 
 import { getUniswapV2Router, StrategiesAndDatas } from "./redemptionStrategy";
-import { FusePoolUserWithAssets } from "./utils";
+import { PoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
-  fuse: IonicBase,
-  borrower: FusePoolUserWithAssets,
-  exchangeToTokenAddress: string,
+  sdk: IonicSdk,
+  borrower: PoolUserWithAssets,
   liquidationAmount: BigNumber,
   strategiesAndDatas: StrategiesAndDatas,
   flashSwapPair: string,
@@ -19,38 +18,30 @@ const estimateGas = async (
 ) => {
   switch (liquidationStrategy) {
     case LiquidationStrategy.DEFAULT:
-      return await fuse.contracts.FuseSafeLiquidator.estimateGas[
-        "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])"
-      ](
+      return await sdk.contracts.IonicLiquidator.estimateGas.safeLiquidate(
         borrower.account,
         liquidationAmount,
         borrower.debt[0].cToken,
         borrower.collateral[0].cToken,
         0,
-        exchangeToTokenAddress,
-        fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategiesAndDatas.strategies,
-        strategiesAndDatas.datas,
         {
           gasLimit: 1e9,
           from: process.env.ETHEREUM_ADMIN_ACCOUNT,
         }
       );
     case LiquidationStrategy.UNISWAP:
-      return await fuse.contracts.FuseSafeLiquidator.estimateGas.safeLiquidateToTokensWithFlashLoan(
+      return await sdk.contracts.IonicLiquidator.estimateGas.safeLiquidateToTokensWithFlashLoan(
         {
           borrower: borrower.account,
           repayAmount: liquidationAmount,
           cErc20: borrower.debt[0].cToken,
           cTokenCollateral: borrower.collateral[0].cToken,
           minProfitAmount: 0,
-          exchangeProfitTo: exchangeToTokenAddress,
-          uniswapV2RouterForBorrow: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, // TODO ASSET_SPECIFIC_ROUTER
-          uniswapV2RouterForCollateral: getUniswapV2Router(fuse, borrower.collateral[0].cToken),
+          uniswapV2RouterForBorrow: sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER, // TODO ASSET_SPECIFIC_ROUTER
+          uniswapV2RouterForCollateral: getUniswapV2Router(sdk, borrower.collateral[0].cToken),
           redemptionStrategies: strategiesAndDatas.strategies,
           strategyData: strategiesAndDatas.datas,
           flashSwapPair,
-          ethToCoinbase: 0,
           debtFundingStrategies,
           debtFundingStrategiesData,
         },

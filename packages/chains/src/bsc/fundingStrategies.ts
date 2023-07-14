@@ -1,35 +1,41 @@
-import { assetSymbols, FundingStrategyContract, underlying } from "@ionicprotocol/types";
+import { assetSymbols, FundingStrategy, FundingStrategyContract, underlying } from "@ionicprotocol/types";
 
 import assets from "./assets";
 
-const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } = {
+const fundingStrategies: FundingStrategy[] = [
   // TODO: extract to predefined chained paths
   // jarvis
-  [underlying(assets, assetSymbols.jBRL)]: [
-    FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.BUSD),
-  ],
+  {
+    outputToken: underlying(assets, assetSymbols.jBRL),
+    strategy: FundingStrategyContract.JarvisLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.BUSD),
+  },
   // BOMB
-  [underlying(assets, assetSymbols.xBOMB)]: [
-    FundingStrategyContract.XBombLiquidatorFunder,
-    underlying(assets, assetSymbols.BOMB),
-  ],
-  [underlying(assets, assetSymbols.MAI)]: [
-    FundingStrategyContract.CurveSwapLiquidatorFunder,
-    underlying(assets, assetSymbols.val3EPS),
-  ],
-  [underlying(assets, assetSymbols.BRZ)]: [
-    FundingStrategyContract.CurveSwapLiquidatorFunder,
-    underlying(assets, assetSymbols.jBRL),
-  ],
-  [underlying(assets, assetSymbols.val3EPS)]: [
-    FundingStrategyContract.CurveSwapLiquidatorFunder,
-    underlying(assets, assetSymbols.BUSD),
-  ],
-  [underlying(assets, assetSymbols.JCHF)]: [
-    FundingStrategyContract.CurveSwapLiquidatorFunder,
-    underlying(assets, assetSymbols.BUSD),
-  ],
-};
+  {
+    outputToken: underlying(assets, assetSymbols.xBOMB),
+    strategy: FundingStrategyContract.XBombLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.BOMB),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.MAI),
+    strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.val3EPS),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.BRZ),
+    strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.jBRL),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.val3EPS),
+    strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.BUSD),
+  },
+  {
+    outputToken: underlying(assets, assetSymbols.JCHF),
+    strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
+    inputToken: underlying(assets, assetSymbols.BUSD),
+  },
+];
 
 export default fundingStrategies;

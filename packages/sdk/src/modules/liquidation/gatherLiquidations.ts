@@ -6,9 +6,9 @@ import { ChainLiquidationConfig } from "./config";
 import {
   EncodedLiquidationTx,
   ErroredPool,
-  FusePoolUserStruct,
-  FusePoolUserWithAssets,
   LiquidatablePool,
+  PoolUserStruct,
+  PoolUserWithAssets,
   PublicPoolUserWithData,
 } from "./utils";
 
@@ -16,14 +16,14 @@ import { getPotentialLiquidation } from "./index";
 
 async function getLiquidatableUsers(
   sdk: IonicSdk,
-  poolUsers: FusePoolUserStruct[],
+  poolUsers: PoolUserStruct[],
   pool: PublicPoolUserWithData,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<Array<EncodedLiquidationTx>> {
   const users: Array<EncodedLiquidationTx> = [];
   for (const user of poolUsers) {
-    const userAssets = await sdk.contracts.FusePoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
-    const userWithAssets: FusePoolUserWithAssets = {
+    const userAssets = await sdk.contracts.PoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
+    const userWithAssets: PoolUserWithAssets = {
       ...user,
       debt: [],
       collateral: [],

@@ -11,7 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 // import { FlywheelStaticRewards } from '@ionicprotocol/sdk/dist/cjs/typechain/FlywheelStaticRewards';
-// import { MidasFlywheel } from '@ionicprotocol/sdk/dist/cjs/typechain/MidasFlywheel';
+// import { IonicFlywheel } from '@ionicprotocol/sdk/dist/cjs/typechain/IonicFlywheel';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -81,7 +81,7 @@ const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
       setFailedStep(0);
       if (!rewardTokenData) throw new Error('No Token Data');
       setIsDeploying(true);
-      // let fwCore: MidasFlywheel;
+      // let fwCore: IonicFlywheel;
 
       try {
         setActiveStep(1);

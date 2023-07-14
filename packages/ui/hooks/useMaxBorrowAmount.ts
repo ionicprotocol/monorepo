@@ -30,7 +30,7 @@ export const fetchMaxBorrowAmount = async (
 
   await Promise.all(
     cTokens.map(async (cToken, index) => {
-      const maxBorrow = (await sdk.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
+      const maxBorrow = (await sdk.contracts.PoolLensSecondary.callStatic.getMaxBorrow(
         address,
         cToken
       )) as BigNumber;

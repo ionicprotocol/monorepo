@@ -42,30 +42,30 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
     abi: FixedNativePriceOracleArtifact.abi,
     address: FixedNativePriceOracle.address,
   };
-  const FuseFeeDistributor = await ethers.getContract("FuseFeeDistributor");
-  const FuseFeeDistributorArtifact = await deployments.getArtifact("FuseFeeDistributor");
-  chainDeployment.FuseFeeDistributor = { abi: FuseFeeDistributorArtifact.abi, address: FuseFeeDistributor.address };
-  const FusePoolDirectory = await ethers.getContract("FusePoolDirectory");
-  const FusePoolDirectoryArtifact = await deployments.getArtifact("FusePoolDirectory");
-  chainDeployment.FusePoolDirectory = { abi: FusePoolDirectoryArtifact.abi, address: FusePoolDirectory.address };
-  const FusePoolLens = await ethers.getContract("FusePoolLens");
-  const FusePoolLensArtifact = await deployments.getArtifact("FusePoolLens");
-  chainDeployment.FusePoolLens = { abi: FusePoolLensArtifact.abi, address: FusePoolLens.address };
-  const FusePoolLensSecondary = await ethers.getContract("FusePoolLensSecondary");
-  const FusePoolLensSecondaryArtifact = await deployments.getArtifact("FusePoolLensSecondary");
-  chainDeployment.FusePoolLensSecondary = {
-    abi: FusePoolLensSecondaryArtifact.abi,
-    address: FusePoolLensSecondary.address,
+  const FeeDistributor = await ethers.getContract("FeeDistributor");
+  const FeeDistributorArtifact = await deployments.getArtifact("FeeDistributor");
+  chainDeployment.FeeDistributor = { abi: FeeDistributorArtifact.abi, address: FeeDistributor.address };
+  const PoolDirectory = await ethers.getContract("PoolDirectory");
+  const PoolDirectoryArtifact = await deployments.getArtifact("PoolDirectory");
+  chainDeployment.PoolDirectory = { abi: PoolDirectoryArtifact.abi, address: PoolDirectory.address };
+  const PoolLens = await ethers.getContract("PoolLens");
+  const PoolLensArtifact = await deployments.getArtifact("PoolLens");
+  chainDeployment.PoolLens = { abi: PoolLensArtifact.abi, address: PoolLens.address };
+  const PoolLensSecondary = await ethers.getContract("PoolLensSecondary");
+  const PoolLensSecondaryArtifact = await deployments.getArtifact("PoolLensSecondary");
+  chainDeployment.PoolLensSecondary = {
+    abi: PoolLensSecondaryArtifact.abi,
+    address: PoolLensSecondary.address,
   };
-  const IonicFlywheelLensRouter = await ethers.getContract("MidasFlywheelLensRouter");
-  const IonicFlywheelLensRouterArtifact = await deployments.getArtifact("MidasFlywheelLensRouter");
-  chainDeployment.MidasFlywheelLensRouter = {
+  const IonicFlywheelLensRouter = await ethers.getContract("IonicFlywheelLensRouter");
+  const IonicFlywheelLensRouterArtifact = await deployments.getArtifact("IonicFlywheelLensRouter");
+  chainDeployment.IonicFlywheelLensRouter = {
     abi: IonicFlywheelLensRouterArtifact.abi,
     address: IonicFlywheelLensRouter.address,
   };
-  const FuseSafeLiquidator = await ethers.getContract("FuseSafeLiquidator");
-  const FuseSafeLiquidatorArtifact = await deployments.getArtifact("FuseSafeLiquidator");
-  chainDeployment.FuseSafeLiquidator = { abi: FuseSafeLiquidatorArtifact.abi, address: FuseSafeLiquidator.address };
+  const IonicLiquidator = await ethers.getContract("IonicLiquidator");
+  const IonicLiquidatorArtifact = await deployments.getArtifact("IonicLiquidator");
+  chainDeployment.IonicLiquidator = { abi: IonicLiquidatorArtifact.abi, address: IonicLiquidator.address };
   const JumpRateModel = await ethers.getContract("JumpRateModel");
   const JumpRateModelArtifact = await deployments.getArtifact("JumpRateModel");
   chainDeployment.JumpRateModel = { abi: JumpRateModelArtifact.abi, address: JumpRateModel.address };
@@ -75,13 +75,6 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const SimplePriceOracle = await ethers.getContract("SimplePriceOracle");
   const SimplePriceOracleArtifact = await deployments.getArtifact("SimplePriceOracle");
   chainDeployment.SimplePriceOracle = { abi: SimplePriceOracleArtifact.abi, address: SimplePriceOracle.address };
-
-  const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
-  const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");
-  chainDeployment.WhitePaperInterestRateModel = {
-    abi: WhitePaperInterestRateModelArtifact.abi,
-    address: WhitePaperInterestRateModel.address,
-  };
 
   return chainDeployment;
 };
@@ -105,12 +98,6 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   chainDeployment.AnkrBNBInterestRateModel = {
     abi: AnkrBNBInterestRateModelArtifact.abi,
     address: AnkrBNBInterestRateModel.address,
-  };
-  const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
-  const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");
-  chainDeployment.WhitePaperInterestRateModel = {
-    abi: WhitePaperInterestRateModelArtifact.abi,
-    address: WhitePaperInterestRateModel.address,
   };
   const ChainlinkPriceOracleV2 = await ethers.getContract("ChainlinkPriceOracleV2");
   const ChainlinkPriceOracleV2Artifact = await deployments.getArtifact("ChainlinkPriceOracleV2");

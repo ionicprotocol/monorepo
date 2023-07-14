@@ -24,35 +24,35 @@ export const getFundingStrategiesAndDatas = async (
   const tokenPath: string[] = [];
 
   let fundingToken = debtToken;
-  while (fundingToken in ionicSdk.fundingStrategies) {
-    // chain the funding strategy that can give us the needed funding token
-    const [fundingStrategyContract, inputToken] = ionicSdk.fundingStrategies[fundingToken];
 
-    // avoid going in an endless loop
-    if (tokenPath.find((p) => p == inputToken)) {
-      // if we can supply the funding token with flash loan on uniswap, that's enough
-      const pair = await uniswapV2Factory.callStatic.getPair(ionicSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
-      if (pair !== constants.AddressZero) {
-        break;
-      } else {
-        throw new Error(
-          `circular path in the chain of funding for ${debtToken}: ${JSON.stringify(
-            tokenPath
-          )} already includes ${inputToken}`
-        );
+  for (const fundingStrategy of ionicSdk.fundingStrategies) {
+    const { inputToken, strategy, outputToken } = fundingStrategy;
+    if (fundingToken === outputToken) {
+      // avoid going in an endless loop
+      if (tokenPath.find((p) => p == inputToken)) {
+        // if we can supply the funding token with flash loan on uniswap, that's enough
+        const pair = await uniswapV2Factory.callStatic.getPair(ionicSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
+        if (pair !== constants.AddressZero) {
+          break;
+        } else {
+          throw new Error(
+            `circular path in the chain of funding for ${debtToken}: ${JSON.stringify(
+              tokenPath
+            )} already includes ${inputToken}`
+          );
+        }
       }
+      tokenPath.push(inputToken);
+
+      const strategyAddress = ionicSdk.chainDeployment[strategy].address;
+      const strategyData = getStrategyData(ionicSdk, strategy, inputToken, fundingToken);
+
+      strategies.push(strategyAddress);
+      datas.push(strategyData);
+
+      // the new input token on the chain is the next funding token that we should find a way to supply it
+      fundingToken = inputToken;
     }
-
-    tokenPath.push(inputToken);
-
-    const strategyAddress = ionicSdk.chainDeployment[fundingStrategyContract].address;
-    const strategyData = getStrategyData(ionicSdk, fundingStrategyContract, inputToken, fundingToken);
-
-    strategies.push(strategyAddress);
-    datas.push(strategyData);
-
-    // the new input token on the chain is the next funding token that we should find a way to supply it
-    fundingToken = inputToken;
   }
 
   return {

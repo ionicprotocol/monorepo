@@ -3,16 +3,17 @@ import { SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 
 import { IonicBaseConstructor } from "..";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { PoolDirectory } from "../../typechain/PoolDirectory";
 
-export function withFusePoolLens<TBase extends IonicBaseConstructor>(Base: TBase) {
-  return class FusePoolLens extends Base {
+export function withPoolLens<TBase extends IonicBaseConstructor>(Base: TBase) {
+  return class PoolLens extends Base {
     /**
      * @returns the TVL on current chain in native asset value
      */
     async getTotalValueLocked(whitelistedAdmin = true) {
-      const { 2: fusePoolDataStructs } =
-        await this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(whitelistedAdmin);
+      const { 2: fusePoolDataStructs } = await this.contracts.PoolLens.callStatic.getPublicPoolsByVerificationWithData(
+        whitelistedAdmin
+      );
 
       const totalSupply = fusePoolDataStructs
         .map((data) => data.totalSupply)
@@ -28,11 +29,11 @@ export function withFusePoolLens<TBase extends IonicBaseConstructor>(Base: TBase
      * @returns a set of the currently live assets on our platform on the current chain
      */
     async getLiveAssets(): Promise<Set<SupportedAsset>> {
-      const pools: FusePoolDirectory.FusePoolStruct[] = await this.contracts.FusePoolDirectory.callStatic.getAllPools();
+      const pools: PoolDirectory.PoolStruct[] = await this.contracts.PoolDirectory.callStatic.getAllPools();
 
       const allAssets = new Set<SupportedAsset>();
       for (const pool of pools) {
-        const [, , ulTokens] = await this.contracts.FusePoolLens.callStatic.getPoolSummary(pool.comptroller);
+        const [, , ulTokens] = await this.contracts.PoolLens.callStatic.getPoolSummary(pool.comptroller);
         for (const token of ulTokens) {
           const asset = chainIdToConfig[this.chainId].assets.find((x) => x.underlying === token);
           if (!asset) {

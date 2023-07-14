@@ -15,7 +15,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       config
     );
 
-    const [poolIndexes, pools] = await sdk.contracts.FusePoolDirectory.callStatic.getActivePools();
+    const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.callStatic.getActivePools();
 
     if (!pools.length || !poolIndexes.length) {
       throw `Error occurred during saving assets tvl to database: pools not found`;
@@ -32,9 +32,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
     await Promise.all(
       pools.map(async ({ comptroller }) => {
         const assets: NativePricedFuseAsset[] = (
-          await sdk.contracts.FusePoolLens.callStatic
-            .getPoolAssetsWithData(comptroller)
-            .catch(() => [])
+          await sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller).catch(() => [])
         ).map(filterOnlyObjectProperties);
 
         totalAssets.push(...assets);

@@ -5,7 +5,7 @@ import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 import { IonicBaseConstructor } from "../../src";
 import { IonicBase } from "../../src/IonicSdk/index";
 import * as utilsFns from "../../src/IonicSdk/utils";
-import { withFusePools } from "../../src/modules/FusePools";
+import { withPools } from "../../src/modules/Pools";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
@@ -14,7 +14,7 @@ describe("FusePools", () => {
   let fusePools: any;
 
   let mockFusePoolLensContract: SinonStubbedInstance<Contract>;
-  let mockFusePoolDirectoryContract: SinonStubbedInstance<Contract>;
+  let mockPoolDirectoryContract: SinonStubbedInstance<Contract>;
   let mockGetAssetContract: SinonStubbedInstance<Contract>;
   const CErc20PluginDelegateAddress = mkAddress("0xCErc20PluginDelegate");
   const PluginAddress = mkAddress("0xPlugin");
@@ -41,21 +41,20 @@ describe("FusePools", () => {
     (mockProvider as any).getSigner = () => mkAddress("0xabcd");
     (mockProvider as any).getCode = (address: string) => address;
 
-    FusePools = withFusePools(IonicBase);
+    FusePools = withPools(IonicBase);
 
     ganache.chainDeployments = {
       CErc20Delegate: { abi: [], address: mkAddress("0xabc") },
       CErc20PluginDelegate: { abi: [], address: CErc20PluginDelegateAddress },
       CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
       Comptroller: { abi: [], address: mkAddress("0xabc") },
-      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
-      MidasFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
-      FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
-      FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
-      FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
-      FuseSafeLiquidator: { abi: [], address: mkAddress("0xecc") },
+      FeeDistributor: { abi: [], address: mkAddress("0xfcc") },
+      IonicFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
+      PoolDirectory: { abi: [], address: mkAddress("0xacc") },
+      PoolLens: { abi: [], address: mkAddress("0xbcc") },
+      PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
+      IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
-      WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
     };
 
     fusePools = new FusePools(mockProvider, ganache);
@@ -70,8 +69,8 @@ describe("FusePools", () => {
       },
     });
 
-    mockFusePoolDirectoryContract = createStubInstance(Contract);
-    Object.defineProperty(mockFusePoolDirectoryContract, "callStatic", {
+    mockPoolDirectoryContract = createStubInstance(Contract);
+    Object.defineProperty(mockPoolDirectoryContract, "callStatic", {
       value: {
         pools: stub().resolves({
           comptroller: "_comptroller",
@@ -85,7 +84,7 @@ describe("FusePools", () => {
       },
     });
 
-    fusePools.contracts = { FusePoolDirectory: mockFusePoolDirectoryContract, FusePoolLens: mockFusePoolLensContract };
+    fusePools.contracts = { PoolDirectory: mockPoolDirectoryContract, PoolLens: mockFusePoolLensContract };
 
     mockGetAssetContract = createStubInstance(Contract);
     Object.defineProperty(mockGetAssetContract, "callStatic", {
@@ -98,8 +97,8 @@ describe("FusePools", () => {
     stub(utilsFns, "getContract").onCall(0).returns(mockGetAssetContract);
   });
 
-  it("fetchFusePoolData", async () => {
-    const res = await fusePools.fetchFusePoolData("123");
+  it("fetchPoolData", async () => {
+    const res = await fusePools.fetchPoolData("123");
     expect(res.id).to.be.eq(123);
     expect(res.name).to.be.eq("  ");
     expect(res.creator).to.be.eq(mkAddress("0xabd"));

@@ -140,7 +140,7 @@ export const AddAssetSettings = ({
       bypassPriceFeedCheck: true,
       collateralFactor: collateralFactor,
       comptroller: comptrollerAddress,
-      fuseFeeDistributor: currentSdk.chainDeployment.FuseFeeDistributor.address,
+      fuseFeeDistributor: currentSdk.chainDeployment.FeeDistributor.address,
       interestRateModel: interestRateModel,
       name: poolName + ' ' + tokenData.name,
       plugin: plugin,

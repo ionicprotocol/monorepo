@@ -27,19 +27,19 @@ export default task("get-pool-data", "Get pools data")
     }
     if (taskArgs.creator) {
       const account = await hre.ethers.getNamedSigner(taskArgs.creator);
-      const pools = await sdk.contracts.FusePoolLens.callStatic.getPoolsByAccountWithData(account.address);
+      const pools = await sdk.contracts.PoolLens.callStatic.getPoolsByAccountWithData(account.address);
       console.log(pools);
       return;
     }
     if (taskArgs.poolId || taskArgs.poolId === 0) {
-      const pools = await sdk.fetchFusePoolData(taskArgs.poolId.toString(), undefined);
+      const pools = await sdk.fetchPoolData(taskArgs.poolId.toString(), undefined);
       console.log(pools);
       return;
     }
     if (!taskArgs.name && !taskArgs.creator) {
-      const fpd = await hre.ethers.getContract("FusePoolLens", (await hre.ethers.getNamedSigner("deployer")).address);
+      const fpd = await hre.ethers.getContract("PoolLens", (await hre.ethers.getNamedSigner("deployer")).address);
       console.log(await fpd.directory());
-      const pools = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
+      const pools = await sdk.contracts.PoolLens.callStatic.getPublicPoolsWithData();
       console.log(pools);
       return;
     }
@@ -83,7 +83,7 @@ task("get-position-ratio", "Get unhealthy po data")
 
     const fusePoolData = taskArgs.name
       ? await poolModule.getPoolByName(taskArgs.name, sdk, poolUser)
-      : await sdk.fetchFusePoolData(taskArgs.poolId.toString(), { from: poolUser });
+      : await sdk.fetchPoolData(taskArgs.poolId.toString(), { from: poolUser });
     if (fusePoolData === null) {
       throw "Pool not found or deprecated";
     }
@@ -118,7 +118,7 @@ task("get-position-ratio", "Get unhealthy po data")
 task("get-public-pools", "Get public pools").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
-  const fpd = await ethers.getContract("FusePoolLens", deployer);
+  const fpd = await ethers.getContract("PoolLens", deployer);
   const pools = await fpd.callStatic.getPublicPoolsWithData();
   console.log("pools: ", pools);
 });
@@ -140,7 +140,7 @@ task("get-chain-tvl", "Get chain's TVL").setAction(async (taskArgs, hre) => {
   const ionicSdkModule = await import("../ionicSdk");
   const sdk = await ionicSdkModule.getOrCreateIonic();
 
-  const { 2: fusePoolDataStructs } = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(
+  const { 2: fusePoolDataStructs } = await sdk.contracts.PoolLens.callStatic.getPublicPoolsByVerificationWithData(
     false
   );
 

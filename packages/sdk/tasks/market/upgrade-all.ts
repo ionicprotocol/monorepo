@@ -4,8 +4,8 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { FeeDistributor } from "../../typechain/FeeDistributor";
+import { PoolDirectory } from "../../typechain/PoolDirectory";
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
   .addOptionalParam(
@@ -34,7 +34,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
     const setLatest = taskArgs.setLatest;
 
-    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
+    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
     const erc20Delegate = await ethers.getContract("CErc20Delegate", signer);
     const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", signer);
     const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", signer);
@@ -196,8 +196,8 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.admin);
 
-    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
-    const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
+    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
+    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
     const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
@@ -303,7 +303,7 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
     const oldErc20PluginDelegate = taskArgs.oldPluginDelegate;
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
 
-    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
+    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
 
     const erc20Del = await ethers.getContract("CErc20Delegate", signer);
     const erc20PluginDel = await ethers.getContract("CErc20PluginDelegate", signer);

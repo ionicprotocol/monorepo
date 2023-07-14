@@ -42,7 +42,7 @@ describe("JumpRateModel", () => {
         value: {
           reserveFactorMantissa: () => Promise.resolve(constants.One),
           adminFeeMantissa: () => Promise.resolve(constants.Two),
-          fuseFeeMantissa: () => Promise.resolve(constants.One),
+          ionicFeeMantissa: () => Promise.resolve(constants.One),
         },
       });
 
@@ -86,9 +86,9 @@ describe("JumpRateModel", () => {
       const modelAddress = mkAddress("0xabc");
       const reserveFactorMantissa = constants.Two;
       const adminFeeMantissa = constants.One;
-      const fuseFeeMantissa = constants.Two;
+      const ionicFeeMantissa = constants.Two;
 
-      await jumpRateModel._init(modelAddress, reserveFactorMantissa, adminFeeMantissa, fuseFeeMantissa, mockProvider);
+      await jumpRateModel._init(modelAddress, reserveFactorMantissa, adminFeeMantissa, ionicFeeMantissa, mockProvider);
       expect(getJumpRateModelContractStub).to.be.calledOnce;
       expect(jumpRateModel.initialized).to.equal(true);
       expect(jumpRateModel.reserveFactorMantissa.toNumber()).to.equal(5);
@@ -103,7 +103,7 @@ describe("JumpRateModel", () => {
       const kink = constants.Two;
       const reserveFactorMantissa = constants.One;
       const adminFeeMantissa = constants.One;
-      const fuseFeeMantissa = constants.Two;
+      const ionicFeeMantissa = constants.Two;
 
       await jumpRateModel.__init(
         baseRatePerBlock,
@@ -112,7 +112,7 @@ describe("JumpRateModel", () => {
         kink,
         reserveFactorMantissa,
         adminFeeMantissa,
-        fuseFeeMantissa
+        ionicFeeMantissa
       );
       expect(jumpRateModel.initialized).to.equal(true);
       expect(jumpRateModel.multiplierPerBlock.toNumber()).to.equal(2);
