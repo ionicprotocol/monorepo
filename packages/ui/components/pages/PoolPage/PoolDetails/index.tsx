@@ -1,5 +1,21 @@
-import { ArrowBackIcon, ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import { Button, Divider, Flex, HStack, Img, Link, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { ArrowBackIcon, ChevronDownIcon, ChevronUpIcon, InfoOutlineIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  HStack,
+  Img,
+  Link,
+  Skeleton,
+  Slider,
+  SliderFilledTrack,
+  SliderMark,
+  SliderThumb,
+  SliderTrack,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
@@ -10,6 +26,7 @@ import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner/index
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
@@ -114,41 +131,88 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
         <Flex flexWrap="wrap" gap="32px">
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
-              Total Supply
+              Net Worth
             </Text>
             <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
               <Text color={'iWhite'} size="lg">
-                {poolData ? smallUsdFormatter(poolData.totalSuppliedFiat, true) : '-'}
+                $0.96M
               </Text>
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
-              Total Borrowed
+              Net Apr
             </Text>
             <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
               <Text color={'iWhite'} size="lg">
-                {poolData ? smallUsdFormatter(poolData.totalBorrowedFiat, true) : '-'}
+                1.56%
               </Text>
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
-            <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
-              Total Liquidity
-            </Text>
-            <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                {poolData ? smallUsdFormatter(poolData.totalLiquidityFiat, true) : '-'}
+            <Flex direction="row" gap={1} height="18px">
+              <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
+                Health Factor
               </Text>
-            </Skeleton>
-          </VStack>
-          <VStack alignItems="flex-start">
-            <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
-              Pool Utilization
-            </Text>
+              <PopoverTooltip
+                body={
+                  <Flex alignItems={'flex-start'} direction={{ base: 'column' }} gap={'8px'}>
+                    <Flex justifyContent={'space-between'} width={'100%'}>
+                      <Text color={'iLightGray'} textTransform="uppercase">
+                        Health Factor
+                      </Text>
+                      <Text color={'iYellow'}>1.55</Text>
+                    </Flex>
+                    <Slider aria-label="slider-ex-1" mt={'20px'} value={30} variant="health">
+                      <SliderMark value={30}>1.55</SliderMark>
+                      <SliderTrack>
+                        <SliderFilledTrack />
+                      </SliderTrack>
+                      <PopoverTooltip
+                        body={
+                          <VStack spacing={1}>
+                            <Text color={'iRed'}>1.00</Text>
+                            <Text color={'iRed'}>Liquidation value</Text>
+                          </VStack>
+                        }
+                        popoverProps={{ isOpen: true, placement: 'bottom', variant: 'ghost' }}
+                      >
+                        <Box
+                          borderColor={'iRed'}
+                          borderWidth={'1px'}
+                          height={'14px'}
+                          ml={'55px'}
+                          position={'relative'}
+                          width={'2px'}
+                        />
+                      </PopoverTooltip>
+
+                      <SliderThumb />
+                    </Slider>
+                    <Center mb={'5px'} mt={'50px'} width={'100%'}>
+                      <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
+                    </Center>
+                    <Text color={'iWhite'}>
+                      If the health factor goes below 1, the liquidation of your collateral might be
+                      triggered
+                    </Text>
+                  </Flex>
+                }
+                bodyProps={{ p: 0 }}
+                contentProps={{ width: '340px' }}
+                popoverProps={{ placement: 'top' }}
+              >
+                <InfoOutlineIcon
+                  color={'iLightGray'}
+                  height="fit-content"
+                  ml={1}
+                  verticalAlign="baseLine"
+                />
+              </PopoverTooltip>
+            </Flex>
             <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                {poolData ? `${poolData.utilization.toFixed(2)}%` : '-'}
+              <Text color={'iYellow'} size="lg">
+                1.55
               </Text>
             </Skeleton>
           </VStack>
@@ -161,8 +225,54 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
             {isMoreInfo ? <ChevronUpIcon /> : <ChevronDownIcon />}
           </HStack>
         </Flex>
+
         {isMoreInfo ? (
           <>
+            <Center height={5} mb={'20px'}>
+              <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
+            </Center>
+            <Flex flexWrap="wrap" gap="32px" mb={'10px'}>
+              <VStack alignItems="flex-start">
+                <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
+                  Total Supply
+                </Text>
+                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
+                  <Text color={'iWhite'} size="lg">
+                    {poolData ? smallUsdFormatter(poolData.totalSuppliedFiat, true) : '-'}
+                  </Text>
+                </Skeleton>
+              </VStack>
+              <VStack alignItems="flex-start">
+                <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
+                  Total Borrowed
+                </Text>
+                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
+                  <Text color={'iWhite'} size="lg">
+                    {poolData ? smallUsdFormatter(poolData.totalBorrowedFiat, true) : '-'}
+                  </Text>
+                </Skeleton>
+              </VStack>
+              <VStack alignItems="flex-start">
+                <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
+                  Total Liquidity
+                </Text>
+                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
+                  <Text color={'iWhite'} size="lg">
+                    {poolData ? smallUsdFormatter(poolData.totalLiquidityFiat, true) : '-'}
+                  </Text>
+                </Skeleton>
+              </VStack>
+              <VStack alignItems="flex-start">
+                <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
+                  Pool Utilization
+                </Text>
+                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
+                  <Text color={'iWhite'} size="lg">
+                    {poolData ? `${poolData.utilization.toFixed(2)}%` : '-'}
+                  </Text>
+                </Skeleton>
+              </VStack>
+            </Flex>
             <Center height={5} mb={'20px'}>
               <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
             </Center>

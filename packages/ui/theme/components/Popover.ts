@@ -10,11 +10,12 @@ const baseStyle = definePartsStyle((props) => {
       borderWidth: 0,
     },
     content: {
-      [$arrowBg.variable]: mode('iBlack', 'iBlack')(props),
-      backgroundColor: mode('iBlack', 'iBlack')(props),
+      [$arrowBg.variable]: mode('iCardBg', 'iCardBg')(props),
+      backgroundColor: mode('iCardBg', 'iCardBg')(props),
       borderColor: mode('iSeparator', 'iSeparator')(props),
       borderRadius: '10px',
       borderWidth: 1,
+      p: { base: '12px' },
     },
     popper: {
       borderRadius: 0,
@@ -50,8 +51,26 @@ const warning = definePartsStyle((props) => {
   };
 });
 
+const ghost = definePartsStyle((props) => {
+  return {
+    body: defineStyle({
+      border: 'none',
+      padding: '0px',
+    }),
+    content: defineStyle({
+      bg: 'none',
+      border: 'none',
+      color: mode('iWhite', 'iWhite')(props),
+      fontSize: { base: '12px' },
+      fontWeight: { base: 600 },
+      lineHeight: { base: '18px' },
+      padding: '0px',
+    }),
+  };
+});
+
 export const PopoverStyleConfig = defineMultiStyleConfig({
   baseStyle,
   sizes,
-  variants: { warning },
+  variants: { ghost, warning },
 });
