@@ -5,7 +5,7 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FuseFlywheelDynamicRewardsPlugin } from "../../typechain/FuseFlywheelDynamicRewardsPlugin";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
-import { MidasReplacingFlywheel } from "../../typechain/MidasReplacingFlywheel";
+import { IonicReplacingFlywheel } from "../../typechain/IonicReplacingFlywheel";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 
 task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
@@ -65,13 +65,13 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       if (replacingFw.transactionHash) {
         await ethers.provider.waitForTransaction(replacingFw.transactionHash);
       }
-      console.log("MidasReplacingFlywheel: ", replacingFw.address);
+      console.log("IonicReplacingFlywheel: ", replacingFw.address);
 
       const replacingFlywheel = (await ethers.getContractAt(
-        "MidasReplacingFlywheel",
+        "IonicReplacingFlywheel",
         replacingFw.address,
         deployer
-      )) as MidasReplacingFlywheel;
+      )) as IonicReplacingFlywheel;
 
       let tx = await replacingFlywheel.reinitialize(flywheelToReplaceAddress);
       await tx.wait();
