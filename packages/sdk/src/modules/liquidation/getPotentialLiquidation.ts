@@ -179,7 +179,6 @@ export default async function getPotentialLiquidation(
     expectedGasAmount = await estimateGas(
       sdk,
       borrower,
-      exchangeToTokenAddress,
       repayAmount,
       strategyAndData,
       flashSwapPair,

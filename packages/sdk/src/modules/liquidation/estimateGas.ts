@@ -9,7 +9,6 @@ import { PoolUserWithAssets } from "./utils";
 const estimateGas = async (
   sdk: IonicSdk,
   borrower: PoolUserWithAssets,
-  exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,
   strategiesAndDatas: StrategiesAndDatas,
   flashSwapPair: string,
