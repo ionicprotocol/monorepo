@@ -12,6 +12,7 @@ import { MenuStyleConfig } from '@ui/theme/components/Menu';
 import { ModalStyleConfig } from '@ui/theme/components/Modal';
 import { PopoverStyleConfig } from '@ui/theme/components/Popover';
 import { SelectConfigStyle } from '@ui/theme/components/Select';
+import { SliderConfigStyle } from '@ui/theme/components/Slider';
 import { StatStyleConfig } from '@ui/theme/components/Stat';
 import { SwitchConfigStyle } from '@ui/theme/components/Switch';
 import { TabsStyleConfig } from '@ui/theme/components/Tabs';
@@ -39,11 +40,14 @@ export const COLOR_PALETTE = {
   iCardBg: '#212227',
   iGray: '#666',
   iGreen: '#39FF88',
+  iGreen50: '#39FF8850',
   iLightGray: '#A6A6A6',
+  iRed: '#FF3864',
   iRowBg: '#2C2E34',
   iSeparator: '#3D3D3D',
   iWhite: '#F0F0F0',
   iYellow: '#F1F996',
+  iYellow50: '#F1F99650',
   raisinBlack: '#282828',
   raisinBlack80: '#282828CC',
   silverMetallic: '#A5ADB4',
@@ -129,6 +133,7 @@ export const theme = extendTheme({
     NumberInput: InputConfigStyle,
     Popover: PopoverStyleConfig,
     Select: SelectConfigStyle,
+    Slider: SliderConfigStyle,
     Stat: StatStyleConfig,
     Switch: SwitchConfigStyle,
     Tabs: TabsStyleConfig,

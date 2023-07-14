@@ -1,4 +1,14 @@
-import { Center, Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
+import {
+  Center,
+  Flex,
+  Skeleton,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useMemo } from 'react';
@@ -38,6 +48,30 @@ const PoolPage = memo(() => {
           <Flex mb={'20px'}>
             <PoolDetails chainId={chainId} poolId={poolId} />
           </Flex>
+          <Slider aria-label="slider-ex-1" defaultValue={30} variant="health">
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb />
+          </Slider>
+          <Slider aria-label="slider-ex-1" defaultValue={30} variant="green">
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb />
+          </Slider>
+          <Slider aria-label="slider-ex-1" defaultValue={30} variant="yellow">
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb />
+          </Slider>
+          <Slider aria-label="slider-ex-1" defaultValue={30} variant="red">
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb />
+          </Slider>
           <Flex direction={{ base: 'column', md: 'row' }} gap={'20px'}>
             <CardBox overflowX="auto" width="100%">
               {isPoolDataLoading ? (
