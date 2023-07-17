@@ -323,7 +323,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
         const feeData = await ethers.provider.getFeeData();
         const chainId = ethers.provider.network.chainId;
-        if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas && chainId != 137 && chainId != 250) {
+        if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas && chainId != 137 && chainId != 250 && chainId != 97) {
           transaction.maxFeePerGas = feeData.maxFeePerGas;
           transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas; //.div(2);
         } else {
