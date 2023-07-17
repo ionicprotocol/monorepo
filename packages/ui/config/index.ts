@@ -19,6 +19,7 @@ type CONFIG = {
   supabasePublicKey: string;
   supabaseUrl: string;
   supabaseVaultApyTableName: string;
+  walletConnectProjectId: string;
 };
 
 const config: CONFIG = {
@@ -44,6 +45,7 @@ const config: CONFIG = {
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabaseUrl: process.env.SUPABASE_URL ?? '',
   supabaseVaultApyTableName: process.env.SUPABASE_VAULT_APY_TABLE_NAME ?? '',
+  walletConnectProjectId: process.env.WALLET_CONNECT_PROJECT_ID ?? ''
 };
 
 export { config };

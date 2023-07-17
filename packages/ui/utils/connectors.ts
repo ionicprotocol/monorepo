@@ -6,6 +6,7 @@ import { configureChains } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
+import { config } from '@ui/config/index';
 import { getSupportedChains } from '@ui/utils/networkData';
 
 const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) => {
@@ -37,5 +38,5 @@ export const { chains, provider } = configureChains(supportedChains, [
 export const { connectors } = getDefaultWallets({
   appName: 'Ionic Protocol',
   chains,
-  projectId: 'Ionic Protocol'
+  projectId: config.walletConnectProjectId
 });
