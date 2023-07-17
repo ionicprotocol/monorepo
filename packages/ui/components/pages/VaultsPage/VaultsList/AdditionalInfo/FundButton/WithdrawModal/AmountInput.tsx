@@ -14,7 +14,7 @@ import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const AmountInput = ({
   setAmount,
-  vault,
+  vault
 }: {
   setAmount: (amount: BigNumber) => void;
   vault: VaultData;

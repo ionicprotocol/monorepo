@@ -16,11 +16,11 @@ const specificParams: ChainParams = {
     blockExplorerUrls: { default: { name: "etherscan", url: "https://etherscan.io" } },
     rpcUrls: {
       default: { http: ["https://rpc.ankr.com/eth"] },
-      public: { http: ["https://rpc.ankr.com/eth"] },
+      public: { http: ["https://rpc.ankr.com/eth"] }
     },
     nativeCurrency: {
       symbol: "ETH",
-      name: "ETH",
+      name: "ETH"
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WETH,
@@ -29,9 +29,9 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#7A88A1",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.png",
-    },
-  },
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.png"
+    }
+  }
 };
 
 export default specificParams;

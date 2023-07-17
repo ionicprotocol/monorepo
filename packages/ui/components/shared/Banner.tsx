@@ -2,7 +2,7 @@ import type {
   AlertDescriptionProps,
   AlertIconProps,
   AlertProps,
-  AlertTitleProps,
+  AlertTitleProps
 } from '@chakra-ui/alert';
 import { Alert, AlertDescription, AlertIcon } from '@chakra-ui/alert';
 import type { TextProps } from '@chakra-ui/react';
@@ -15,7 +15,7 @@ export const Banner = ({
   alertProps,
   alertIconProps,
   alertTitleProps,
-  alertDescriptionProps,
+  alertDescriptionProps
 }: {
   alertDescriptionProps?: AlertDescriptionProps;
   alertIconProps?: AlertIconProps;

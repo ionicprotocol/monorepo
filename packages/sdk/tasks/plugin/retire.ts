@@ -73,7 +73,7 @@ task("plugins:beefy:retire", "Retires the Beefy plugin that are marked as EOL").
     for (let i = 0; i < markets.length; i++) {
       const market = markets[i];
       await run("retire:plugin", {
-        market,
+        market
       });
     }
   }

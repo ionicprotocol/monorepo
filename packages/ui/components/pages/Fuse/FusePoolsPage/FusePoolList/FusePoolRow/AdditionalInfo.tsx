@@ -7,7 +7,7 @@ import {
   HStack,
   Link,
   Text,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type { Row } from '@tanstack/react-table';
 import { useMemo } from 'react';
@@ -71,7 +71,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
         gap={4}
         templateColumns={{
           base: 'repeat(1, 1fr)',
-          lg: 'repeat(2, 1fr)',
+          lg: 'repeat(2, 1fr)'
         }}
         w="100%"
       >
@@ -81,7 +81,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={4}
             templateColumns={{
               base: 'repeat(1, 1fr)',
-              lg: 'repeat(2, 1fr)',
+              lg: 'repeat(2, 1fr)'
             }}
             w="100%"
           >
@@ -129,7 +129,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={4}
             templateColumns={{
               base: 'repeat(1, 1fr)',
-              lg: 'repeat(2, 1fr)',
+              lg: 'repeat(2, 1fr)'
             }}
             w="100%"
           >
@@ -153,7 +153,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
-              lg: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)'
             }}
             w="100%"
           >
@@ -186,7 +186,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
-              lg: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)'
             }}
             w="100%"
           >
@@ -217,7 +217,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
-              lg: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)'
             }}
             w="100%"
           >
@@ -249,7 +249,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             py={2}
             templateColumns={{
               base: 'repeat(13, 1fr)',
-              lg: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)'
             }}
             w="100%"
           >

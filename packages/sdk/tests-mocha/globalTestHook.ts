@@ -14,5 +14,5 @@ export const mochaHooks = {
   afterEach() {
     restore();
     reset();
-  },
+  }
 };

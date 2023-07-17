@@ -8,7 +8,7 @@ export const deployUniswapOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  deployConfig,
+  deployConfig
 }: UniswapDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
@@ -18,7 +18,7 @@ export const deployUniswapOracle = async ({
   const utpo = await deployments.deploy("UniswapTwapPriceOracleV2", {
     from: deployer,
     args: [],
-    log: true,
+    log: true
   });
   if (utpo.transactionHash) await ethers.provider.waitForTransaction(utpo.transactionHash);
   console.log("UniswapTwapPriceOracleV2: ", utpo.address);
@@ -26,7 +26,7 @@ export const deployUniswapOracle = async ({
   const utpor = await deployments.deploy("UniswapTwapPriceOracleV2Root", {
     from: deployer,
     args: [deployConfig.wtoken],
-    log: true,
+    log: true
   });
   if (utpor.transactionHash) await ethers.provider.waitForTransaction(utpor.transactionHash);
   console.log("UniswapTwapPriceOracleV2Root: ", utpor.address);
@@ -34,7 +34,7 @@ export const deployUniswapOracle = async ({
   const utpof = await deployments.deploy("UniswapTwapPriceOracleV2Factory", {
     from: deployer,
     args: [utpor.address, utpo.address, deployConfig.wtoken],
-    log: true,
+    log: true
   });
   if (utpof.transactionHash) await ethers.provider.waitForTransaction(utpof.transactionHash);
   console.log("UniswapTwapPriceOracleV2Factory: ", utpof.address);
@@ -45,7 +45,7 @@ export const deployUniswapOracle = async ({
     from: deployer,
     args: [[], utpor.address],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (twapPriceOracleResolver.transactionHash) {
     await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
@@ -71,7 +71,7 @@ export const deployUniswapOracle = async ({
         pair: uniConfig.pair,
         baseToken: uniConfig.baseToken,
         minPeriod: uniConfig.minPeriod,
-        deviationThreshold: uniConfig.deviationThreshold,
+        deviationThreshold: uniConfig.deviationThreshold
       });
       await tx.wait();
       console.log(`UniswapTwapPriceOracleV2Resolver pair added - ${uniConfig.pair}`);

@@ -6,7 +6,7 @@ export enum SupportedChains {
   neon_devnet = 245022926,
   polygon = 137,
   arbitrum = 42161,
-  lineagoerli = 59140,
+  lineagoerli = 59140
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -34,20 +34,20 @@ export enum RedemptionStrategyContract {
   SolidlyLpTokenLiquidator = "SolidlyLpTokenLiquidator",
   SolidlyLpTokenWrapper = "SolidlyLpTokenWrapper",
   SolidlySwapLiquidator = "SolidlySwapLiquidator",
-  AaveTokenLiquidator = "AaveTokenLiquidator",
+  AaveTokenLiquidator = "AaveTokenLiquidator"
 }
 
 export enum FundingStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   XBombLiquidatorFunder = "XBombLiquidatorFunder",
   UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
-  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
+  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder"
 }
 
 export enum DelegateContractName {
   CErc20Delegate = "CErc20Delegate",
   CErc20PluginDelegate = "CErc20PluginDelegate",
-  CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate",
+  CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate"
 }
 
 export enum OracleTypes {
@@ -77,7 +77,7 @@ export enum OracleTypes {
   SaddleLpPriceOracle = "SaddleLpPriceOracle",
   SolidlyLpTokenPriceOracle = "SolidlyLpTokenPriceOracle",
   WSTEthPriceOracle = "WSTEthPriceOracle",
-  ERC4626Oracle = "ERC4626Oracle",
+  ERC4626Oracle = "ERC4626Oracle"
 }
 
 export enum IrmTypes {
@@ -92,12 +92,12 @@ export enum IrmTypes {
   AdjustableJumpRateModel_STADER_WBNB = "AdjustableJumpRateModel_STADER_WBNB",
   AdjustableJumpRateModel_MIXBYTES_USDC = "AdjustableJumpRateModel_MIXBYTES_USDC",
   AdjustableJumpRateModel_JARVIS_jBRL = "AdjustableJumpRateModel_JARVIS_jBRL",
-  AdjustableJumpRateModel_JARVIS_jEUR = "AdjustableJumpRateModel_JARVIS_jEUR",
+  AdjustableJumpRateModel_JARVIS_jEUR = "AdjustableJumpRateModel_JARVIS_jEUR"
 }
 
 export enum LiquidationStrategy {
   DEFAULT = "DEFAULT",
-  UNISWAP = "UNISWAP",
+  UNISWAP = "UNISWAP"
 }
 
 export enum ComptrollerErrorCodes {
@@ -121,7 +121,7 @@ export enum ComptrollerErrorCodes {
   TOO_MUCH_REPAY,
   SUPPLIER_NOT_WHITELISTED,
   BORROW_BELOW_MIN,
-  SUPPLY_ABOVE_MAX,
+  SUPPLY_ABOVE_MAX
 }
 
 export enum CTokenErrorCodes {
@@ -142,14 +142,14 @@ export enum CTokenErrorCodes {
   TOKEN_INSUFFICIENT_CASH,
   TOKEN_TRANSFER_IN_FAILED,
   TOKEN_TRANSFER_OUT_FAILED,
-  UTILIZATION_ABOVE_MAX,
+  UTILIZATION_ABOVE_MAX
 }
 
 export enum FundOperationMode {
   SUPPLY,
   WITHDRAW,
   BORROW,
-  REPAY,
+  REPAY
 }
 
 export enum assetOriginalSymbols {
@@ -163,7 +163,7 @@ export enum assetOriginalSymbols {
   "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
   "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
   "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
-  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP",
+  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP"
 }
 
 export enum assetSymbols {
@@ -417,5 +417,5 @@ export enum assetSymbols {
   AAVE_LINEAR_USDT = "AAVE-LINEAR-USDT",
   AAVE_LINEAR_WETH = "AAVE-LINEAR-WETH",
 
-  TDAI = "TDAI",
+  TDAI = "TDAI"
 }

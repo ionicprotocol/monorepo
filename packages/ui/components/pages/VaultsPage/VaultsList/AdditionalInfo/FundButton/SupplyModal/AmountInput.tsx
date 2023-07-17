@@ -18,7 +18,7 @@ import { toFixedNoRound } from '@ui/utils/formatNumber';
 export const AmountInput = ({
   optionToWrap,
   setAmount,
-  vault,
+  vault
 }: {
   optionToWrap?: boolean;
   setAmount: (amount: BigNumber) => void;
@@ -77,11 +77,11 @@ export const AmountInput = ({
       const sentryProperties = {
         asset: vault.asset,
         chainId: vault.chainId,
-        vault: vault.vault,
+        vault: vault.vault
       };
       const sentryInfo = {
         contextName: 'Fetching max supply vault',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }

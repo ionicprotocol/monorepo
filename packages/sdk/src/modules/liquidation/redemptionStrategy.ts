@@ -21,9 +21,9 @@ export const getRedemptionStrategiesAndDatas = async (
   return [
     {
       strategies,
-      datas,
+      datas
     },
-    tokenPath,
+    tokenPath
   ];
 };
 

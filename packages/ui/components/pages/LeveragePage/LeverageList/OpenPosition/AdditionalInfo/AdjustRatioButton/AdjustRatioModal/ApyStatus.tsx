@@ -14,7 +14,7 @@ import { smallFormatter } from '@ui/utils/bigUtils';
 
 export const ApyStatus = ({
   position,
-  leverageValue,
+  leverageValue
 }: {
   leverageValue: number;
   position: OpenPosition;
@@ -23,7 +23,7 @@ export const ApyStatus = ({
     collateral: collateralAsset,
     borrowable: borrowAsset,
     chainId,
-    address: positionAddress,
+    address: positionAddress
   } = position;
   const {
     cToken: collateralCToken,
@@ -31,17 +31,17 @@ export const ApyStatus = ({
     pool: poolAddress,
     supplyRatePerBlock,
     plugin,
-    underlyingToken: collateralUnderlying,
+    underlyingToken: collateralUnderlying
   } = collateralAsset;
   const { cToken: borrowCToken } = borrowAsset;
 
   const { data: allRewards } = useRewardsForMarket({
     asset: {
       cToken: collateralCToken,
-      plugin,
+      plugin
     },
     chainId: Number(chainId),
-    poolAddress,
+    poolAddress
   });
   const { data: assetInfos } = useAssets([chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
@@ -50,8 +50,8 @@ export const ApyStatus = ({
         cToken: collateralCToken,
         supplyRatePerBlock,
         underlyingSymbol: collateralSymbol,
-        underlyingToken: collateralUnderlying,
-      },
+        underlyingToken: collateralUnderlying
+      }
     ],
     chainId,
     allRewards,

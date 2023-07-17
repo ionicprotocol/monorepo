@@ -34,7 +34,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
       const thisUnderlying = await cTokenInstances[index].callStatic.underlying();
       console.log({
         underlying: thisUnderlying,
-        market: cTokenInstances[index].address,
+        market: cTokenInstances[index].address
       });
       if (!cTokenInstance && thisUnderlying === underlying) {
         cTokenInstance = cTokenInstances[index];

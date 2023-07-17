@@ -36,7 +36,7 @@ export const CreatePositionModal = ({
   chainId,
   collateralAsset,
   isOpen,
-  onClose,
+  onClose
 }: {
   borrowAsset: LeveredBorrowable;
   chainId: SupportedChains;
@@ -51,7 +51,7 @@ export const CreatePositionModal = ({
     cToken,
     totalSupplied,
     underlyingPrice,
-    underlyingDecimals,
+    underlyingDecimals
   } = collateralAsset;
   const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
@@ -94,8 +94,8 @@ export const CreatePositionModal = ({
       cToken,
       totalSupply: totalSupplied,
       underlyingDecimals,
-      underlyingPrice,
-    },
+      underlyingPrice
+    }
   });
 
   const { data: maxSupplyAmount, isLoading } = useMaxSupplyAmount(
@@ -162,7 +162,7 @@ export const CreatePositionModal = ({
       borrowCToken: debouncedBorrowAsset.cToken,
       chainId: currentSdk.chainId,
       collateralCToken: cToken,
-      fundingAsset: underlyingToken,
+      fundingAsset: underlyingToken
     };
 
     setIsConfirmed(true);
@@ -185,23 +185,23 @@ export const CreatePositionModal = ({
 
           addRecentTransaction({
             description: `Wrap ${currentChain.nativeCurrency?.symbol}`,
-            hash: tx.hash,
+            hash: tx.hash
           });
           _steps[0] = {
             ..._steps[0],
-            txHash: tx.hash,
+            txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
           await tx.wait();
           _steps[0] = {
             ..._steps[0],
             done: true,
-            txHash: tx.hash,
+            txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Wrapped!',
-            id: 'Wrapped - ' + Math.random().toString(),
+            id: 'Wrapped - ' + Math.random().toString()
           });
         } catch (error) {
           setFailedStep(1);
@@ -224,11 +224,11 @@ export const CreatePositionModal = ({
 
           addRecentTransaction({
             description: `Approve ${symbol}`,
-            hash: tx.hash,
+            hash: tx.hash
           });
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
-            txHash: tx.hash,
+            txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
 
@@ -237,18 +237,18 @@ export const CreatePositionModal = ({
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
             done: true,
-            txHash: tx.hash,
+            txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Approved!',
-            id: 'Approved - ' + Math.random().toString(),
+            id: 'Approved - ' + Math.random().toString()
           });
         } else {
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
             desc: 'Already approved!',
-            done: true,
+            done: true
           };
           setConfirmedSteps([..._steps]);
         }
@@ -270,12 +270,12 @@ export const CreatePositionModal = ({
 
         addRecentTransaction({
           description: 'Creating levered position.',
-          hash: tx.hash,
+          hash: tx.hash
         });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
@@ -287,14 +287,14 @@ export const CreatePositionModal = ({
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
         successToast({
           description: 'Successfully created levered position',
           id: 'Levered position - ' + Math.random().toString(),
-          title: 'Created',
+          title: 'Created'
         });
       } catch (error) {
         setFailedStep(optionToWrap ? 3 : 2);
@@ -303,7 +303,7 @@ export const CreatePositionModal = ({
     } catch (error) {
       const sentryInfo = {
         contextName: 'Position - Creating',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
@@ -322,7 +322,7 @@ export const CreatePositionModal = ({
       if (optionToWrap) {
         _steps = [
           { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
-          ..._steps,
+          ..._steps
         ];
       }
 
@@ -439,11 +439,11 @@ export const CreatePositionModal = ({
                         text: `${smallFormatter(supplyCap.tokenCap)} ${symbol} / ${smallFormatter(
                           supplyCap.tokenCap
                         )} ${symbol}`,
-                        textProps: { display: 'block', fontWeight: 'bold' },
+                        textProps: { display: 'block', fontWeight: 'bold' }
                       },
                       {
-                        text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.',
-                      },
+                        text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.'
+                      }
                     ]}
                   />
                 )}

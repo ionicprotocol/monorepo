@@ -8,7 +8,7 @@ export const deployGelatoGUniPriceOracle = async ({
   getNamedAccounts,
   deployments,
   deployConfig,
-  gelatoAssets,
+  gelatoAssets
 }: gelatoGUniPriceOracleDeployParams): Promise<{ gUniOracle: GelatoGUniPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
 
@@ -18,7 +18,7 @@ export const deployGelatoGUniPriceOracle = async ({
   const gelatoGUniPriceOracle = await deployments.deploy("GelatoGUniPriceOracle", {
     from: deployer,
     args: [deployConfig.wtoken],
-    log: true,
+    log: true
   });
 
   if (gelatoGUniPriceOracle.transactionHash)

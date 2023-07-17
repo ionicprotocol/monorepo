@@ -24,17 +24,17 @@ export const deployConfig: ChainDeployConfig = {
     hardcoded: [],
     uniswapData: [],
     uniswapOracleInitialDeployTokens: [],
-    flashSwapFee: 0,
+    flashSwapFee: 0
   },
   dynamicFlywheels: [
     {
       // 0x681cEEE3d6781394b2ECD7a4b9d5214f537aFeEb
       rewardToken: "0x02Ec29Fd9f0bB212eD2C4926ACe1aeab732ed620", // TOUCH
       cycleLength: 100000,
-      name: "TOUCH",
-    },
+      name: "TOUCH"
+    }
   ],
-  cgId: "ethereum",
+  cgId: "ethereum"
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: ChainDeployFnParams): Promise<void> => {
@@ -46,7 +46,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
 
   console.log("WETH", weth.address);
@@ -54,7 +54,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     from: deployer,
     args: [ethers.utils.parseEther("1250000000"), deployer],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("TRIBEToken: ", tribe.address);
   const tribeToken = await ethers.getContractAt("TRIBEToken", tribe.address, deployer);
@@ -67,7 +67,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     from: deployer,
     args: [ethers.utils.parseEther("2250000000"), deployer],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("TOUCHToken: ", touch.address);
   const touchToken = await ethers.getContractAt("TOUCHToken", touch.address, deployer);
@@ -109,7 +109,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     getNamedAccounts,
     deployments,
     run,
-    deployConfig,
+    deployConfig
   });
   ////
 };

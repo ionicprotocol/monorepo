@@ -124,7 +124,7 @@ task("liquidate:nonfl:hardcoded").setAction(async ({}, { run }) => {
     exchangeSeizedTo: "0x191cf2602Ca2e534c5Ccae7BCBF4C46a704bb949",
     uniswapV2Router: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
     redemptionStrategies: [],
-    strategyData: [],
+    strategyData: []
   });
 });
 
@@ -150,11 +150,11 @@ task("liquidate:hardcoded", "Liquidate a position without a flash loan").setActi
     ethToCoinbase: BigNumber.from(0),
     debtFundingStrategies: ["0xB8423EE8aa0476a909786D079dF5C0766cB09142"],
     debtFundingStrategiesData: [
-      "0x00000000000000000000000070085a09d30d6f8c4ecf6ee10120d1847383bb5700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000002000000000000000000000000931715FEE2d06333043d11F658C8CE934aC61D0c000000000000000000000000ffffffff1fcacbd218edc0eba20fc2308c778080",
-    ],
+      "0x00000000000000000000000070085a09d30d6f8c4ecf6ee10120d1847383bb5700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000002000000000000000000000000931715FEE2d06333043d11F658C8CE934aC61D0c000000000000000000000000ffffffff1fcacbd218edc0eba20fc2308c778080"
+    ]
   };
   const tx: providers.TransactionResponse = await fuseSafeLiquidator.safeLiquidateToTokensWithFlashLoan(vars, {
-    gasLimit: 2100000,
+    gasLimit: 2100000
   });
   const receipt: providers.TransactionReceipt = await tx.wait();
   console.log(`Liquidated ${receipt.transactionHash}`);

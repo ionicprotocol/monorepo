@@ -17,8 +17,8 @@ const deployedPlugins: DeployedPlugins = {
       "0xF2E46295c684C541d618243558a0af17fb4a6862", // _epxFlywheel
       "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
       "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba", // _rewardsDestination
-      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)], // _rewardTokens
-    ],
+      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)] // _rewardTokens
+    ]
   },
   // No plugin deployment file stored
   "0xBE0cCFA6B09eB1f3C0c62D406aE00F528e20594b": {
@@ -34,8 +34,8 @@ const deployedPlugins: DeployedPlugins = {
       "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
       "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
       "0x383158Db17719d2Cf1Ce10Ccb9a6Dd7cC1f54EF3", // _rewardsDestination
-      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)], // _rewardTokens
-    ],
+      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)] // _rewardTokens
+    ]
   },
   // DotDotLpERC4626_val3EPS_0xccc9BEF35C50A3545e01Ef72Cc957E0aec8B2e7C.json
   "0xe38A0F34DB15fCC47510cdB0519E149eC20c8806": {
@@ -51,8 +51,8 @@ const deployedPlugins: DeployedPlugins = {
       "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
       "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
       "0xccc9BEF35C50A3545e01Ef72Cc957E0aec8B2e7C", // _rewardsDestination
-      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)], // _rewardTokens
-    ],
+      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)] // _rewardTokens
+    ]
   },
   // DotDotLpERC4626_valdai3EPS_0x7479dd29b9256aB74c9bf84d6f9CE6e30014d248.json
   "0xc2Af1451dBFbf564FB32E57f275d419395F5BC92": {
@@ -68,8 +68,8 @@ const deployedPlugins: DeployedPlugins = {
       "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
       "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
       "0x7479dd29b9256aB74c9bf84d6f9CE6e30014d248", // _rewardsDestination
-      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)], // _rewardTokens
-    ],
+      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)] // _rewardTokens
+    ]
   },
   // DotDotLpERC4626_3EPS_0x6f9B6ccD027d1c6Ed09ee215B9Ca5B85a57C6eA1
   "0x628C6d2236fC1712D66Df5fbFf9041f7809C959C": {
@@ -85,8 +85,8 @@ const deployedPlugins: DeployedPlugins = {
       "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
       "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
       "0x6f9B6ccD027d1c6Ed09ee215B9Ca5B85a57C6eA1", // _rewardsDestination
-      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)],
-    ],
+      [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)]
+    ]
   },
   // BeefyERC4626_jCHF-BUSD_0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267.json
   "0x29b2aB4102d7aF1CDCF9c84D29D18dC2cFf11f1A": {
@@ -98,7 +98,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["3EPS"]),
     otherParams: ["0x80ACf5C89A284C4b6Fdbc851Ba9844D29d4c6BEd", "0"], // Beefy Vault, withdraw fee
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_stkBNB-WBNB_0x906Ab4476221ADc91Dc112c25081A374E0bd29C0.json
   "0xcfB267a90974a172c38Af238b1010672DE4479Ad": {
@@ -110,7 +110,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
     underlying: underlying(assets, assetSymbols["stkBNB-WBNB"]),
     otherParams: ["0xd23ef71883a98c55Eb7ED67ED61fABF554aDEd21", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_3brl_0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a.json
   "0xCeB429c710D523d8243833018852Bbad2CEA9Bb4": {
@@ -122,7 +122,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
     underlying: underlying(assets, assetSymbols["3brl"]),
     otherParams: ["0xF46E3e2eb855baE2A32eD941f0c03b1D9b7b96a0", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_epsBNBx-BNB_0x373E0F759828c891EF837b6457a0E7584107dbAb.json
   "0x643fd5AB2485dF7D9Ad43C4c210AbEc8Ae7e44D8": {
@@ -134,7 +134,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
     underlying: underlying(assets, assetSymbols["epsBNBx-BNB"]),
     otherParams: ["0x56ec6031dC969CfA035F6D65e65D8595d5660fB4", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_ApeSwap BNBx-WBNB LP_0xF0baaE2dc101e6Ff1439Ed3C9f27b30715d1E6AA.json
   "0x0b4444F3FB85264427397Fede0f94704aa3828b9": {
@@ -146,7 +146,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
     underlying: underlying(assets, assetSymbols["asBNBx-WBNB"]),
     otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_2brl_0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F.json
   "0xBCAc816440f7ef66Fea896b307352b86a83F94E8": {
@@ -158,7 +158,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
     underlying: underlying(assets, assetSymbols["2brl"]),
     otherParams: ["0xf867cD98F3762D899F5F26FF5Dd62A5C566A3E0C", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_ApeSwap%20BNBx-WBNB%20LP_0xA057E4f8Ff4a9102F3ee2FF614b9cBC0286F2287.json
   "0xac99ced1a1310fB04618d4801888120ccDD7B87B": {
@@ -170,7 +170,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["asBNBx-WBNB"]),
     otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_epsBNBx-BNB_0xD96643Ba2Bf96e73509C4bb73c0cb259dAf34de1.json
   "0xA331FaA3Bb84A70466c801E9b14523d8f15f328E": {
@@ -182,7 +182,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["epsBNBx-BNB"]),
     otherParams: ["0x56ec6031dC969CfA035F6D65e65D8595d5660fB4", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_valdai3EPS_0xBEE206C085f228674a2273F8A33ceaD9e34c3d48.json
   "0x7B77E7713FB2950326B0dE483852da0e1d975d4C": {
@@ -194,7 +194,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols.valdai3EPS),
     otherParams: ["0x047d08f4eFB9a0BC166447A12326d39A5167138f", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_mai3EPS_0xcB710DD270fa9d57edFadD141BAF3efC0f776716.json
   "0xDE1A82D80082e6b6E9cbe70002857716A09EA18b": {
@@ -206,7 +206,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols.mai3EPS),
     otherParams: ["0xc1beA7B6b749D1f3A812F39afeB8795a97402dfF", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // HelioERC4626_HAY_0xAB7d4760E2c54c0Da1efEC7C358F171d72e14153.json
   "0x369ddC01E8feF7350Eb740f4a32647E8640F0A17": {
@@ -218,7 +218,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols.mai3EPS),
     otherParams: ["0x0a1Fd12F73432928C190CAF0810b3B767A59717e"], // JAR
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/helio.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/helio.png"
   },
   // BeefyERC4626_sAMM-jBRL-BRZ_0x9C170d5c6264b04419a06492bf4FbC65ecd63f4D.json
   "0x33395bbe8fcA14368003f9aCE2Deb0Ba5103c670": {
@@ -230,7 +230,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
     underlying: underlying(assets, assetSymbols["sAMM-jBRL/BRZ"]),
     otherParams: ["0xb36fffD0174B2eC18D82d21BB2e24b132ecBA5b0", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // ThenaLpERC4626_vAMM-HAY-ankrBNB_0x04b6895d7AD8b10a1a13C749159226249a3b8515
   "0xE141ce7507656f9b2c45d06d649961Eb84e19f82": {
@@ -241,7 +241,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"]),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_vAMM-ANKR-HAY_0xbc65FE441545E9e8f97E50F70526B7E8963826bc.json
   "0x52156377Dbe031706cfAb4e759cA102e58A19953": {
@@ -252,7 +252,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols["vAMM-ANKR/HAY"]),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_vAMM-ANKR-ankrBNB_0x71693C84486B37096192c9942852f542543639Bf.json
   "0x0c0e8ED68a72c31E657Ce5F03A615FB96753C9b5": {
@@ -263,7 +263,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"]),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_sAMM-HAY-BUSD_0xF8527Dc5611B589CbB365aCACaac0d1DC70b25cB.json
   "0x02706A482fc9f6B20238157B56763391a45bE60E": {
@@ -274,7 +274,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols["sAMM-HAY/BUSD"]),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // BeefyERC4626_sAMM-stkBNB-WBNB_0x17A610C49C8BaaACFb92681be1fcC62fdB17B2f8.json
   "0x3FCA4C8D345340Ef47a698f96e4813e8c4f6076C": {
@@ -286,7 +286,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
     underlying: underlying(assets, assetSymbols["sAMM-stkBNB/WBNB"]),
     otherParams: ["0xAd36A6a7fC6D6B2aeBB77B48A85a0B58D0f3AB28", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_aWBNB-STKBNB_0x1A8fF97a26B1ab7Eb17bD8E607B09F4f4382584B.json
   "0x7D6679bDbD5E23833F11B777Fd55275a104aD8e5": {
@@ -298,7 +298,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
     underlying: underlying(assets, assetSymbols["aWBNB_STKBNB"]),
     otherParams: ["0x33D0F945F77660F4A9e56949500265313f6D08fb", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_aWBNB-BTCB_0x3E03A4e68553311f1273529C9b2b9Fd756736cA6.json
   "0x3cDB6f8b8bDAEB684d917A3973D737220aE2292a": {
@@ -310,7 +310,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
     underlying: underlying(assets, assetSymbols["aWBNB_BTCB"]),
     otherParams: ["0x960eE6caC56912D94cE5c83D7Fb0CD873b5c5099", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // BeefyERC4626_aWBNB-ETH_0x274bA3f7bc996275D7cdEB6239B1B240FFE14198.json
   "0xFd25A63B7e387a79f9aa28272530DcEe5Efa2FBC": {
@@ -322,7 +322,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
     underlying: underlying(assets, assetSymbols["aWBNB_ETH"]),
     otherParams: ["0xbCFcE18C5c33463316f93A067b1f50d75b00dc09", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png"
   },
   // ThenaLpERC4626_aANKRBNB-ANKR-W_0x6F55B262cA509e112cb27b15402EF0c8cd330F0b.json
   "0xDbC22fE3F4aAE46bA4509b4e13b200E87375b5ab": {
@@ -333,7 +333,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols.aANKRBNB_ANKR_W),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_aANKRBNB-ANKR-N_0x0f3590D7010f3D5AD5d618BD2c223eb394bB5432
   "0x7A5D376F717732C65d5ac63Fd05F73a287324B05": {
@@ -344,7 +344,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols.aANKRBNB_ANKR_N),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_aANKRBNB-RDNT-N_0xA443a78906B534069a703BC5E186994CA4F90aCC.json
   "0xE706134f898320dc1b1772362566bA6646C569c1": {
@@ -355,7 +355,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols.aANKRBNB_RDNT_N),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_aANKRBNB-RDNT-W_0x525fE855718680DE71F3FE761F893a0b763500E4.json
   "0x2841f61C4D0Dd34010a3E75241c1C80AFc99D202": {
@@ -366,7 +366,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols.aANKRBNB_RDNT_W),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_aANKRBNB-THE-N_0x336378365892Ae2C706BB97cd9f23b339951ab01.json
   "0x5bEb4BD2164D286CdE9c672910c548dF643a2Caa": {
@@ -377,7 +377,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols.aANKRBNB_THE_N),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
   },
   // ThenaLpERC4626_aANKRBNB-THE-W_0x0B2ed08ba628bAF7287536A452C3060826422a13.json
   "0xbe79A4B9Cb6892ae0d383038C6e7b25fF79FBc14": {
@@ -388,8 +388,8 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: [],
     underlying: underlying(assets, assetSymbols.aANKRBNB_THE_W),
     flywheel: "0x9f21e2bE2dD52083A5DA90a2BEe817d9F8228A74",
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png",
-  },
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/thena.png"
+  }
 };
 
 export default deployedPlugins;

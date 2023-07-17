@@ -13,7 +13,7 @@ export const BorrowsMarket = ({
   asset,
   updatedAsset,
   borrowLimitMarket,
-  updatedBorrowLimitMarket,
+  updatedBorrowLimitMarket
 }: BorrowsMarketProps) => (
   <VStack alignItems={'flex-start'} spacing={0} width="100%">
     <Text flexShrink={0} size="sm">

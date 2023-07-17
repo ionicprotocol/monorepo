@@ -13,7 +13,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from 'recharts';
 
 import { APY, MILLI_SECONDS_PER_DAY } from '@ui/constants/index';
@@ -32,13 +32,13 @@ const YAxisTitles: { [x: string]: string } = {
   rewardApy: 'Reward APY',
   supplyApy: 'Supply APY',
   totalSupplyApy: 'Total Supply APY',
-  tvl: 'TVL',
+  tvl: 'TVL'
 };
 
 const HistoryChart = ({
   historyData,
   milliSeconds,
-  mode,
+  mode
 }: {
   historyData: ChartData[];
   milliSeconds: number;
@@ -66,7 +66,7 @@ const HistoryChart = ({
     rewardApy: useColorModeValue('#6B46C1', '#B794F4'),
     supplyApy: useColorModeValue('#38A169', '#9AE6B4'),
     totalSupplyApy: useColorModeValue('#00B5D8', 'cyan'),
-    tvl: useColorModeValue('#38A169', '#9AE6B4'),
+    tvl: useColorModeValue('#38A169', '#9AE6B4')
   };
 
   const { cCard } = useColors();
@@ -84,7 +84,7 @@ const HistoryChart = ({
     setLineProps({
       ...lineProps,
       hover: null,
-      [key]: !lineProps[key],
+      [key]: !lineProps[key]
     });
   };
 
@@ -111,7 +111,7 @@ const HistoryChart = ({
             Math.floor(length / 4),
             Math.floor(length / 2),
             Math.floor((length * 3) / 4),
-            Math.floor(length - 1),
+            Math.floor(length - 1)
           ]}
         >
           <Label fill={cCard.txtColor} offset={0} position="insideBottom" value="" />

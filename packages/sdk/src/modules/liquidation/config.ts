@@ -27,6 +27,6 @@ export const getChainLiquidationConfig = (sdk: IonicBase): ChainLiquidationConfi
       : sdk.liquidationConfig.MINIMUM_PROFIT_NATIVE,
     LIQUIDATION_INTERVAL_SECONDS: process.env.LIQUIDATION_INTERVAL_SECONDS
       ? parseInt(process.env.LIQUIDATION_INTERVAL_SECONDS)
-      : sdk.liquidationConfig.LIQUIDATION_INTERVAL_SECONDS,
+      : sdk.liquidationConfig.LIQUIDATION_INTERVAL_SECONDS
   };
 };

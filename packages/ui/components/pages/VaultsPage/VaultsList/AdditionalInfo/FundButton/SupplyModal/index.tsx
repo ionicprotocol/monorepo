@@ -8,7 +8,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { WETHAbi } from '@ionicprotocol/sdk';
 import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
@@ -110,7 +110,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
       amount: amount,
       asset: vault.asset,
       chainId: vault.chainId,
-      vault: vault.vault,
+      vault: vault.vault
     };
 
     setIsConfirmed(true);
@@ -133,28 +133,28 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
 
         addRecentTransaction({
           description: `Wrap ${nativeSymbol}`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         _steps[0] = {
           ..._steps[0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
         await tx.wait();
         _steps[0] = {
           ..._steps[0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
         successToast({
           description: 'Successfully Wrapped!',
-          id: 'Wrapped - ' + Math.random().toString(),
+          id: 'Wrapped - ' + Math.random().toString()
         });
       } catch (error) {
         const sentryInfo = {
           contextName: 'Vault Supply - Wrapping native token',
-          properties: sentryProperties,
+          properties: sentryProperties
         };
         handleGenericError({ error, sentryInfo, toast: errorToast });
         setFailedStep(1);
@@ -173,11 +173,11 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
 
         addRecentTransaction({
           description: `Approve ${vault.symbol}`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         _steps[optionToWrap ? 1 : 0] = {
           ..._steps[optionToWrap ? 1 : 0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
@@ -186,25 +186,25 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
         _steps[optionToWrap ? 1 : 0] = {
           ..._steps[optionToWrap ? 1 : 0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
         successToast({
           description: 'Successfully Approved!',
-          id: 'Approved - ' + Math.random().toString(),
+          id: 'Approved - ' + Math.random().toString()
         });
       } else {
         _steps[optionToWrap ? 1 : 0] = {
           ..._steps[optionToWrap ? 1 : 0],
           desc: 'Already approved!',
-          done: true,
+          done: true
         };
         setConfirmedSteps([..._steps]);
       }
     } catch (error) {
       const sentryInfo = {
         contextName: 'Vault Supply - Approving',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(optionToWrap ? 2 : 1);
@@ -216,11 +216,11 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
 
       addRecentTransaction({
         description: `${vault.symbol} Vault Supply`,
-        hash: tx.hash,
+        hash: tx.hash
       });
       _steps[optionToWrap ? 2 : 1] = {
         ..._steps[optionToWrap ? 2 : 1],
-        txHash: tx.hash,
+        txHash: tx.hash
       };
       setConfirmedSteps([..._steps]);
 
@@ -230,13 +230,13 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
       _steps[optionToWrap ? 2 : 1] = {
         ..._steps[optionToWrap ? 2 : 1],
         done: true,
-        txHash: tx.hash,
+        txHash: tx.hash
       };
       setConfirmedSteps([..._steps]);
     } catch (error) {
       const sentryInfo = {
         contextName: 'Vault Supply - Depositing',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(optionToWrap ? 3 : 2);
@@ -256,7 +256,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
       if (optionToWrap) {
         _steps = [
           { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
-          ..._steps,
+          ..._steps
         ];
       }
 

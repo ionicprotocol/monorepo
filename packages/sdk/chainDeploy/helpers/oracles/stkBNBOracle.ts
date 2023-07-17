@@ -8,7 +8,7 @@ export const deployStkBNBOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  assets,
+  assets
 }: stkBNBOracleDeployParams): Promise<{ stkBNBOracle: any }> => {
   const { deployer } = await getNamedAccounts();
 
@@ -24,12 +24,12 @@ export const deployStkBNBOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [],
-        },
+          args: []
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (stkBNBOracle.transactionHash) await ethers.provider.waitForTransaction(stkBNBOracle.transactionHash);
   console.log("stkBNBOracle: ", stkBNBOracle.address);

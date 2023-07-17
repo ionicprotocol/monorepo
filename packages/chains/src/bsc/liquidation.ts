@@ -12,7 +12,7 @@ const liquidationDefaults: LiquidationDefaults = {
     [underlying(assets, assetSymbols["sAMM-HAY/BUSD"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109",
     [underlying(assets, assetSymbols["vAMM-ANKR/HAY"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109",
     [underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109",
-    [underlying(assets, assetSymbols["sAMM-jBRL/BRZ"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109",
+    [underlying(assets, assetSymbols["sAMM-jBRL/BRZ"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109"
   },
   SUPPORTED_OUTPUT_CURRENCIES: [constants.AddressZero, ankrBNB, WBNB, HAY, BUSD],
   SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, WBNB],
@@ -24,10 +24,10 @@ const liquidationDefaults: LiquidationDefaults = {
       expirationTime: 40 * 60,
       liquidityPoolAddress: "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49",
       syntheticToken: underlying(assets, assetSymbols.jBRL),
-      collateralToken: underlying(assets, assetSymbols.BUSD),
-    },
+      collateralToken: underlying(assets, assetSymbols.BUSD)
+    }
   ],
-  balancerPools: [],
+  balancerPools: []
 };
 
 export default liquidationDefaults;

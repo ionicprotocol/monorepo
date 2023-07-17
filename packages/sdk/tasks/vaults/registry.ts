@@ -9,13 +9,13 @@ export default task("optimized-vaults-registry:upgrade").setAction(async ({}, { 
       execute: {
         init: {
           methodName: "initialize",
-          args: [],
-        },
+          args: []
+        }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
+      owner: deployer
     },
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
 
   console.log(`upgraded the optimized vaults registry at ${vaultsRegistry.address}`);

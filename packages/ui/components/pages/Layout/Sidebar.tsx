@@ -63,7 +63,7 @@ export const Sidebar = () => {
       <Flex
         _hover={{
           bg: cCard.hoverBgColor,
-          color: cCard.txtColor,
+          color: cCard.txtColor
         }}
         align="center"
         bg={
@@ -91,7 +91,7 @@ export const Sidebar = () => {
       <Flex
         _hover={{
           bg: cCard.hoverBgColor,
-          color: cCard.txtColor,
+          color: cCard.txtColor
         }}
         align="center"
         bg={router.pathname === '/vaults' ? cSolidBtn.primary.bgColor : undefined}
@@ -116,7 +116,7 @@ export const Sidebar = () => {
         <Flex
           _hover={{
             bg: cCard.hoverBgColor,
-            color: cCard.txtColor,
+            color: cCard.txtColor
           }}
           align="center"
           bg={router.pathname === '/leverage' ? cSolidBtn.primary.bgColor : undefined}
@@ -142,7 +142,7 @@ export const Sidebar = () => {
         <Flex
           _hover={{
             bg: cCard.hoverBgColor,
-            color: cCard.txtColor,
+            color: cCard.txtColor
           }}
           align="center"
           bg={router.pathname.includes('/account') ? cSolidBtn.primary.bgColor : undefined}
@@ -167,7 +167,7 @@ export const Sidebar = () => {
       <Flex
         _hover={{
           bg: cCard.hoverBgColor,
-          color: cCard.txtColor,
+          color: cCard.txtColor
         }}
         align="center"
         bg={router.pathname === '/create-pool' ? cSolidBtn.primary.bgColor : undefined}
@@ -197,7 +197,7 @@ export const Sidebar = () => {
         <Flex
           _hover={{
             bg: cCard.hoverBgColor,
-            color: cCard.txtColor,
+            color: cCard.txtColor
           }}
           align="center"
           borderRadius="lg"

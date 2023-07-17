@@ -15,7 +15,7 @@ import { toFixedNoRound } from '@ui/utils/formatNumber';
 export const AmountInput = ({
   asset,
   poolChainId,
-  setAmount,
+  setAmount
 }: {
   asset: MarketData;
   poolChainId: number;
