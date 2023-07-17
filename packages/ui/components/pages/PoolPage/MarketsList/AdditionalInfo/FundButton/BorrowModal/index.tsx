@@ -16,7 +16,7 @@ import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/Additiona
 import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { BORROW_STEPS, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -227,7 +227,7 @@ export const BorrowModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Column
           bg={cCard.bgColor}

@@ -8,7 +8,7 @@ import { useSwitchNetwork } from 'wagmi';
 
 import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/ClaimVaultRewardsButton/ClaimVaultRewardsModal/PendingTransaction';
 import { Center } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -159,7 +159,7 @@ const ClaimVaultRewardsModal = ({
   );
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <VStack m={4} maxHeight="450px" overflowY="auto">
           {reward.rewardsInfo.length === 0 ? (

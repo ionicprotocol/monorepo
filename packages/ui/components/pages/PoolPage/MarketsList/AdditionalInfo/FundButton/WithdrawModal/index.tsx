@@ -13,7 +13,7 @@ import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/Ad
 import { WithdrawError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/WithdrawModal/WithdrawError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { WITHDRAW_STEPS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -157,7 +157,7 @@ export const WithdrawModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Column
           bg={cCard.bgColor}

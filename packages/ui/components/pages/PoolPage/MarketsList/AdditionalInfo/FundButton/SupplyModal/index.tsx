@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SupplyTab } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SupplyTab';
 import { SwapTab } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SwapTab';
 import { Column } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { useColors } from '@ui/hooks/useColors';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -34,7 +34,7 @@ export const SupplyModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Column
           bg={cCard.bgColor}

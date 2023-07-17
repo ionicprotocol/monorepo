@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -221,7 +221,7 @@ const CreateFlywheelModal = ({
   ...createFlywheelProps
 }: CreateFlywheelModalProps) => {
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Center p={4}>
           <CreateFlywheel {...createFlywheelProps} onSuccess={onClose} />

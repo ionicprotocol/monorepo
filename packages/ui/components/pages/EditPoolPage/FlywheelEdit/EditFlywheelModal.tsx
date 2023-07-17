@@ -27,7 +27,7 @@ import DatePicker from 'react-datepicker';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFlywheelEnabledMarkets } from '@ui/hooks/rewards/useFlywheelEnabledMarkets';
@@ -238,7 +238,7 @@ const EditFlywheelModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <>
           <VStack alignItems={'flex-start'} p={4}>

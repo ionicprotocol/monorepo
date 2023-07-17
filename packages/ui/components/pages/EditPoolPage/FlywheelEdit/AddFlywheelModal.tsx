@@ -14,7 +14,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFlywheel } from '@ui/hooks/rewards/useFlywheel';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -121,7 +121,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
 
 const AddFlywheelModal = ({ isOpen, onClose, ...rest }: AddFlywheelModalProps) => {
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Center p={4}>
           <AddFlywheel {...rest} onSuccess={onClose} />

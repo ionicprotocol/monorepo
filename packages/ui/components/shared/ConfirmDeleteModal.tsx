@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react';
 
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 
 export default function ConfirmDeleteModal({
   onClose,
@@ -16,7 +16,7 @@ export default function ConfirmDeleteModal({
   title: string;
 }) {
   return (
-    <MidasModal
+    <IonicModal
       body={description}
       footer={
         <>

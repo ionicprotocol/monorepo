@@ -9,7 +9,7 @@ import { LeverageSlider } from '@ui/components/pages/LeveragePage/LeverageList/O
 import { PendingTransaction } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/AdjustRatioButton/AdjustRatioModal/PendingTransaction';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { ADJUST_LEVERAGE_RATIO_STEPS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -147,7 +147,7 @@ export const AdjustRatioModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Column
           bg={cCard.bgColor}

@@ -3,7 +3,7 @@ import { utils } from 'ethers';
 import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -59,7 +59,7 @@ const TransferOwnershipModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <VStack m={4}>
           <Center px={4} width="100%">

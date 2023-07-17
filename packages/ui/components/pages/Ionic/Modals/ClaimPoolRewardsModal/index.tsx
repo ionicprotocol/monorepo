@@ -10,7 +10,7 @@ import { useSwitchNetwork } from 'wagmi';
 
 import { PendingTransaction } from '@ui/components/pages/Ionic/Modals/ClaimAllRewardsModal/PendingTransaction';
 import { Center } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -186,7 +186,7 @@ export const ClaimPoolRewardsModal = ({
   ]);
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <VStack m={4} maxHeight="450px" overflowY="auto">
           {!poolRewards || poolRewards.length === 0 ? (

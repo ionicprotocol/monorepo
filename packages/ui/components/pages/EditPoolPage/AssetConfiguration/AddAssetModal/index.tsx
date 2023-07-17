@@ -19,7 +19,7 @@ import type { SupportedAsset } from '@ionicprotocol/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetModal/AddAssetSettings';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -275,7 +275,7 @@ const AddAssetModal = ({
   poolChainId: number;
 }) => {
   return (
-    <MidasModal
+    <IonicModal
       body={<AddAsset onSuccess={onClose} poolChainId={poolChainId} {...addAssetProps} />}
       header="Add Asset"
       isOpen={isOpen}

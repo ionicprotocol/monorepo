@@ -1,7 +1,7 @@
 import { Button, Flex, ListItem, Spacer, Text, UnorderedList, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { MIDAS_T_AND_C_ACCEPTED } from '@ui/constants/index';
 
 const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
@@ -16,7 +16,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
   }, [hasAcceptedTerms]);
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <>
           <Text fontWeight="bold" size="lg">

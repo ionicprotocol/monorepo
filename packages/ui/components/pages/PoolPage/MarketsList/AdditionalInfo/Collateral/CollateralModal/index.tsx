@@ -9,7 +9,7 @@ import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/Ad
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
@@ -166,7 +166,7 @@ export const CollateralModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Column
           bg={cCard.bgColor}

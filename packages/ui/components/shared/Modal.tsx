@@ -17,7 +17,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 
-export const MidasModal = ({
+export const IonicModal = ({
   isOpen,
   onClose,
   modalProps,

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { PendingTransaction } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/ClosePositionButton/ClosePositionModal/PendingTransaction';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
-import { MidasModal } from '@ui/components/shared/Modal';
+import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { CLOSE_OPEN_POSITION_STEPS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -134,7 +134,7 @@ export const ClosePositionModal = ({
   };
 
   return (
-    <MidasModal
+    <IonicModal
       body={
         <Column
           bg={cCard.bgColor}
