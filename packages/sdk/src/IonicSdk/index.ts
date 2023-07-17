@@ -129,28 +129,28 @@ export class IonicBase {
       PoolDirectory: new Contract(
         this.chainDeployment.PoolDirectory.address,
         PoolDirectoryABI,
-        this.provider
+        this.provider,
       ) as PoolDirectory,
       PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensABI, this.provider) as PoolLens,
       PoolLensSecondary: new Contract(
         this.chainDeployment.PoolLensSecondary.address,
         PoolLensSecondaryABI,
-        this.provider
+        this.provider,
       ) as PoolLensSecondary,
       IonicLiquidator: new Contract(
         this.chainDeployment.IonicLiquidator.address,
         IonicLiquidatorABI,
-        this.provider
+        this.provider,
       ) as IonicLiquidator,
       FeeDistributor: new Contract(
         this.chainDeployment.FeeDistributor.address,
         FeeDistributorABI,
-        this.provider
+        this.provider,
       ) as FeeDistributor,
       IonicFlywheelLensRouter: new Contract(
         this.chainDeployment.IonicFlywheelLensRouter.address,
         IonicFlywheelLensRouterABI,
-        this.provider
+        this.provider,
       ) as IonicFlywheelLensRouter,
       ...this._contracts,
     };
@@ -213,7 +213,7 @@ export class IonicBase {
     closeFactor: BigNumber,
     liquidationIncentive: BigNumber,
     priceOracle: string, // Contract address
-    whitelist: string[] // An array of whitelisted addresses
+    whitelist: string[], // An array of whitelisted addresses
   ): Promise<[string, string, string, number?]> {
     try {
       // Deploy Comptroller implementation if necessary
@@ -229,7 +229,7 @@ export class IonicBase {
         enforceWhitelist,
         closeFactor,
         liquidationIncentive,
-        priceOracle
+        priceOracle,
       );
       const deployReceipt = await deployTx.wait();
       this.logger.info(`Deployment of pool ${poolName} succeeded!`, deployReceipt.status);
@@ -253,7 +253,7 @@ export class IonicBase {
         poolName,
         existingPools.length,
         this.chainDeployment.FeeDistributor.address,
-        this.chainDeployment.PoolDirectory.address
+        this.chainDeployment.PoolDirectory.address,
       );
 
       // Accept admin status via Unitroller
@@ -347,9 +347,9 @@ export class IonicBase {
 const IonicBaseWithModules = withPoolLens(
   withFundOperations(
     withSafeLiquidator(
-      withPools(withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(IonicBase)))))))
-    )
-  )
+      withPools(withAsset(withFlywheel(withVaults(withLeverage(withCreateContracts(withConvertMantissa(IonicBase))))))),
+    ),
+  ),
 );
 export class IonicSdk extends IonicBaseWithModules {}
 export default IonicSdk;
