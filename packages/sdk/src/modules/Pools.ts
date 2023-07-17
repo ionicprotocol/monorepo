@@ -178,8 +178,6 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
 
       const poolData = await Promise.all(
         poolIndexes.map((poolId) => {
-          if (this.chainId === SupportedChains.polygon && poolId.toString() === "1") return null;
-
           return this.fetchPoolData(poolId.toString(), overrides).catch((error) => {
             this.logger.error(`Pool ID ${poolId} wasn't able to be fetched from PoolLens without error.`, error);
             return null;
