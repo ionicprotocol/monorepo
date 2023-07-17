@@ -37,6 +37,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { useRouter } from 'next/router';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import * as React from 'react';
+
 import { AdditionalInfo } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/AdditionalInfo';
 import { Assets } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/Assets';
 import { BorrowBalance } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/BorrowBalance';
@@ -48,10 +52,6 @@ import { PoolName } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/
 import { SupplyBalance } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/SupplyBalance';
 import { TotalBorrow } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/TotalBorrow';
 import { TotalSupply } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/TotalSupply';
-import { useRouter } from 'next/router';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import * as React from 'react';
-
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
 import { CardBox } from '@ui/components/shared/IonicBox';

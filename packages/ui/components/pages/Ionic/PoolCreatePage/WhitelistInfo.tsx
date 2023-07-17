@@ -1,9 +1,9 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { IconButton, Input, Text } from '@chakra-ui/react';
 import { isAddress } from '@ethersproject/address';
-import { OptionRow } from '@ui/components/pages/Ionic/PoolCreatePage/OptionRow';
 import { useState } from 'react';
 
+import { OptionRow } from '@ui/components/pages/Ionic/PoolCreatePage/OptionRow';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
