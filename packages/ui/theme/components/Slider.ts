@@ -59,18 +59,58 @@ const green = definePartsStyle((props) => {
     mark: defineStyle({}),
     thumb: defineStyle({
       _focus: {
-        boxShadow: '0px 0px 0px 3px #F0F0F055',
+        boxShadow: '0px 0px 0px 3px #39FF8855',
       },
-      bg: mode('iWhite', 'iWhite')(props),
-      boxShadow: '0px 0px 0px 3px #F0F0F055',
+      bg: mode('iGreen', 'iGreen')(props),
+      boxShadow: '0px 0px 0px 3px #39FF8855',
       height: '9px',
       width: '9px',
     }),
-    track: defineStyle({ bg: 'iGreen50', height: '4px' }),
+    track: defineStyle({ bg: 'iGray', height: '4px' }),
   };
 });
 
 const yellow = definePartsStyle((props) => {
+  return {
+    container: defineStyle({
+      rounded: '100px',
+    }),
+    filledTrack: defineStyle({ bg: 'iYellow', height: '4px' }),
+    mark: defineStyle({}),
+    thumb: defineStyle({
+      _focus: {
+        boxShadow: '0px 0px 0px 3px #F1F99655',
+      },
+      bg: mode('iYellow', 'iYellow')(props),
+      boxShadow: '0px 0px 0px 3px #F1F99655',
+      height: '9px',
+      width: '9px',
+    }),
+    track: defineStyle({ bg: 'iGray', height: '4px' }),
+  };
+});
+
+const red = definePartsStyle((props) => {
+  return {
+    container: defineStyle({
+      rounded: '100px',
+    }),
+    filledTrack: defineStyle({ bg: 'iRed', height: '4px' }),
+    mark: defineStyle({}),
+    thumb: defineStyle({
+      _focus: {
+        boxShadow: '0px 0px 0px 3px #FF386455',
+      },
+      bg: mode('iRed', 'iRed')(props),
+      boxShadow: '0px 0px 0px 3px #FF386455',
+      height: '9px',
+      width: '9px',
+    }),
+    track: defineStyle({ bg: 'iGray', height: '4px' }),
+  };
+});
+
+const limitedYellow = definePartsStyle((props) => {
   return {
     container: defineStyle({
       rounded: '100px',
@@ -87,11 +127,11 @@ const yellow = definePartsStyle((props) => {
       height: '14px',
       width: '2px',
     }),
-    track: defineStyle({ bg: 'iYellow50', height: '4px' }),
+    track: defineStyle({ bg: 'iGray', height: '4px' }),
   };
 });
 
-const red = definePartsStyle((props) => {
+const limitedRed = definePartsStyle((props) => {
   return {
     container: defineStyle({
       rounded: '100px',
@@ -116,5 +156,5 @@ export const SliderConfigStyle = defineMultiStyleConfig({
   baseStyle,
   defaultProps: {},
   sizes,
-  variants: { green, health, red, yellow },
+  variants: { green, health, limitedRed, limitedYellow, red, yellow },
 });

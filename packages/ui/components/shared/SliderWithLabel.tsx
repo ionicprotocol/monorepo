@@ -15,7 +15,6 @@ import {
 import type { ReactNode } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
-import { useColors } from '@ui/hooks/useColors';
 
 export const SliderWithLabel = ({
   min,
@@ -36,8 +35,6 @@ export const SliderWithLabel = ({
   reff: any;
   value: number;
 }) => {
-  const { cSlider } = useColors();
-
   return (
     <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" {...others}>
       <InputGroup width="120px">
@@ -75,17 +72,13 @@ export const SliderWithLabel = ({
         onChange={onChange}
         step={1}
         value={value}
+        variant={'green'}
         width="150px"
       >
-        <SliderTrack backgroundColor={cSlider.trackBgColor}>
-          <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />
+        <SliderTrack>
+          <SliderFilledTrack />
         </SliderTrack>
-        <SliderThumb
-          bgColor={cSlider.thumbBgColor}
-          borderColor={cSlider.thumbBorderColor}
-          borderWidth={2}
-          boxSize={4}
-        />
+        <SliderThumb />
       </Slider>
     </Row>
   );

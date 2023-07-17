@@ -18,7 +18,6 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/ionic/useIsComptrollerAdmin';
 import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { useColors } from '@ui/hooks/useColors';
 import { usePoolData } from '@ui/hooks/usePoolData';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 
@@ -47,7 +46,6 @@ const EditPoolPage = memo(() => {
   }, [usdPrices, poolChainId]);
   const { data: isAdmin, isLoading } = useIsComptrollerAdmin(data?.comptroller, data?.chainId);
   const isEditableAdmin = useIsEditableAdmin(data?.comptroller, Number(poolChainId));
-  const { cPage } = useColors();
 
   useEffect(() => {
     if (!isEditableAdmin) {
@@ -78,11 +76,8 @@ const EditPoolPage = memo(() => {
             poolID={poolId}
             poolName={data.name}
           />
-
           <Flex
             alignItems="flex-start"
-            bgColor={cPage.primary.bgColor}
-            color={cPage.primary.txtColor}
             flexDir="column"
             justifyContent="flex-start"
             mx="auto"
