@@ -27,9 +27,6 @@ export const deployIonicLiquidator = async ({
           args: [
             deployConfig.wtoken,
             deployConfig.uniswap.uniswapV2RouterAddress,
-            deployConfig.stableToken ?? constants.AddressZero,
-            deployConfig.wBTCToken ?? constants.AddressZero,
-            deployConfig.uniswap.pairInitHashCode ?? "0x",
             deployConfig.uniswap.flashSwapFee,
           ],
         },

@@ -9,6 +9,8 @@ export default task(
   "Configure the redemption and funding strategies in the AddressesProvider for testing purposes"
 ).setAction(async ({}, { ethers, getNamedAccounts, getChainId }) => {
   const chainId = parseInt(await getChainId());
+  const { deployer } = await getNamedAccounts();
+  console.log(`deployer ${deployer}`);
 
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);
