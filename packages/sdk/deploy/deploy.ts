@@ -704,26 +704,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       waitConfirmations: 1,
     });
 
-    const authoritiesRegistryFactory = (await ethers.getContract(
-      "AuthoritiesRegistry",
-      deployer
-    )) as AuthoritiesRegistry;
+    const authoritiesRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
 
     // set the address in the FFD
-    await deployments.deploy("FeeDistributor", {
-      from: deployer,
-      log: true,
-      proxy: {
-        proxyContract: "OpenZeppelinTransparentProxy",
-        execute: {
-          onUpgrade: {
-            methodName: "reinitialize",
-            args: [authoritiesRegistryFactory.address],
-          },
-        },
-        owner: deployer,
-      },
-    });
+    tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
+    await tx.wait();
+    console.log(`configured the auth registry in the FFD`);
     ////
   }
 
