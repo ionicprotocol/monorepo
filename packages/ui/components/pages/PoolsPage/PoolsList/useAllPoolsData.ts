@@ -14,12 +14,12 @@ export const useAllPoolsData = (allPools: PoolData[]) => {
           poolName: pool,
           supplyBalance: pool,
           totalBorrow: pool,
-          totalSupply: pool,
+          totalSupply: pool
         };
       });
     },
     {
-      enabled: allPools.length > 0,
+      enabled: allPools.length > 0
     }
   );
 

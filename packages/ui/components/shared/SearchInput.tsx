@@ -10,7 +10,7 @@ export const SearchInput = ({
   inputProps,
   localStorageKey,
   onSearch,
-  placeholder,
+  placeholder
 }: {
   inputProps?: InputProps;
   localStorageKey?: string;

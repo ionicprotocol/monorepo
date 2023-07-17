@@ -7,7 +7,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export const Details = ({
   asset,
   chainId,
-  poolId,
+  poolId
 }: {
   asset: MarketData;
   chainId: number;

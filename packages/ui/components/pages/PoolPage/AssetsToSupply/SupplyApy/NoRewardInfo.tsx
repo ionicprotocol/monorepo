@@ -5,7 +5,7 @@ import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 
 export const NoRewardInfo = ({
   pluginAddress,
-  poolChainId,
+  poolChainId
 }: {
   pluginAddress?: string;
   poolChainId: number;

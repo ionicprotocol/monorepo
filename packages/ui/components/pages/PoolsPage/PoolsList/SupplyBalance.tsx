@@ -18,7 +18,7 @@ export const SupplyBalance = ({ pool }: { pool: PoolData }) => {
       ) : (
         <BalanceCell
           primary={{
-            value: pool.totalSupplyBalanceFiat,
+            value: pool.totalSupplyBalanceFiat
           }}
         />
       )}

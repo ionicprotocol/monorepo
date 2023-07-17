@@ -102,8 +102,8 @@ const EditPoolPage = memo(() => {
                 alertProps={{ mt: 2, variant: 'ghost' }}
                 descriptions={[
                   {
-                    text: 'Checking if you are the admin of this pool...',
-                  },
+                    text: 'Checking if you are the admin of this pool...'
+                  }
                 ]}
               />
             ) : (

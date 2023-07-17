@@ -15,7 +15,7 @@ export const useLoadingStatusPerChain = (poolsPerChain: PoolsPerChainStatus) => 
       return _loadingStatusPerChain;
     },
     {
-      enabled: Object.values(poolsPerChain).length > 0,
+      enabled: Object.values(poolsPerChain).length > 0
     }
   );
 

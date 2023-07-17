@@ -13,7 +13,7 @@ export const ChainFilterButtons = ({
   isLoading,
   loadingStatusPerChain,
   onFilter,
-  props,
+  props
 }: {
   globalFilter: (SupportedChains | string)[];
   isLoading: boolean;
@@ -67,7 +67,7 @@ const ChainFilterButton = ({
   chainId,
   onFilter,
   globalFilter,
-  isLoading,
+  isLoading
 }: {
   chainId: SupportedChains;
   globalFilter: (SupportedChains | string)[];

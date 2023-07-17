@@ -5,7 +5,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Apr = ({
   asset,
-  borrowApyPerAsset,
+  borrowApyPerAsset
 }: {
   asset: MarketData;
   borrowApyPerAsset: { [market: string]: number } | null | undefined;

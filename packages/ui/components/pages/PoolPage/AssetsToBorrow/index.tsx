@@ -12,14 +12,14 @@ import {
   Text,
   Th,
   Thead,
-  Tr,
+  Tr
 } from '@chakra-ui/react';
 import type {
   ColumnDef,
   FilterFn,
   PaginationState,
   SortingFn,
-  SortingState,
+  SortingState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -27,7 +27,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
@@ -50,7 +50,7 @@ import {
   DETAILS,
   MARKETS_COUNT_PER_PAGE,
   POOLS_COUNT_PER_PAGE,
-  SEARCH,
+  SEARCH
 } from '@ui/constants/index';
 import { useAssetsToBorrowData } from '@ui/hooks/assetsToBorrow/useAssetsToBorrowData';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
@@ -70,7 +70,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: POOLS_COUNT_PER_PAGE[0],
+    pageSize: POOLS_COUNT_PER_PAGE[0]
   });
   const [globalFilter, setGlobalFilter] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -139,7 +139,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{ASSET}</TableHeaderCell>,
         id: ASSET,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.available,
@@ -149,7 +149,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{AVAILABLE}</TableHeaderCell>,
-        id: AVAILABLE,
+        id: AVAILABLE
       },
       {
         accessorFn: (row) => row.aprVariable,
@@ -159,7 +159,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{APR_VARIABLE}</TableHeaderCell>,
         id: APR_VARIABLE,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.aprStable,
@@ -170,22 +170,22 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{APR_STABLE}</TableHeaderCell>,
         id: APR_STABLE,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         cell: ({ row }) => {
           return <Borrow asset={row.getValue(ASSET)} maxBorrowAmounts={maxBorrowAmounts} />;
         },
         header: () => null,
-        id: BORROW,
+        id: BORROW
       },
       {
         cell: ({ row }) => {
           return <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />;
         },
         header: () => null,
-        id: DETAILS,
-      },
+        id: DETAILS
+      }
     ];
   }, [assetFilter, assetSort, borrowApyPerAsset, chainId, maxBorrowAmounts, poolId]);
 
@@ -205,8 +205,8 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
     state: {
       globalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { cCard, cIPage, cIRow } = useColors();

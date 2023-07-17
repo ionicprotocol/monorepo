@@ -16,7 +16,7 @@ const PoolsPage = memo(() => {
           gap={5}
           templateColumns={{
             base: 'repeat(1, 1fr)',
-            lg: 'repeat(2, 1fr)',
+            lg: 'repeat(2, 1fr)'
           }}
           w="100%"
         >

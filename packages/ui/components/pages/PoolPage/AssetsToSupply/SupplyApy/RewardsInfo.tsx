@@ -81,7 +81,7 @@ export const RewardsInfo = ({ reward, chainId, assetCToken }: RewardsInfoProps) 
               hour: '2-digit',
               minute: '2-digit',
               month: 'numeric',
-              year: 'numeric',
+              year: 'numeric'
             })}`}
             {')'}
           </Text>

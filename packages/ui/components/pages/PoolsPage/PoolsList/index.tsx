@@ -19,7 +19,7 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ import type {
   FilterFn,
   PaginationState,
   SortingFn,
-  SortingState,
+  SortingState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -37,7 +37,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -71,7 +71,7 @@ import {
   SEARCH,
   SUPPLY_BALANCE,
   TOTAL_BORROW,
-  TOTAL_SUPPLY,
+  TOTAL_SUPPLY
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
@@ -95,11 +95,11 @@ const PoolsList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
-    { desc: true, id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY },
+    { desc: true, id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY }
   ]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: POOLS_COUNT_PER_PAGE[0],
+    pageSize: POOLS_COUNT_PER_PAGE[0]
   });
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [searchText, setSearchText] = useState('');
@@ -113,7 +113,7 @@ const PoolsList = () => {
       'selectedFilteredPools',
       globalFilter,
       allPools.map((pool) => pool.comptroller),
-      Object.values(poolsPerChain).map((query) => query.data?.map((pool) => pool.comptroller)),
+      Object.values(poolsPerChain).map((query) => query.data?.map((pool) => pool.comptroller))
     ],
     () => {
       const pools: PoolData[] = [];
@@ -134,7 +134,7 @@ const PoolsList = () => {
       return null;
     },
     {
-      enabled: Object.values(poolsPerChain).length > 0 && allPools.length > 0,
+      enabled: Object.values(poolsPerChain).length > 0 && allPools.length > 0
     }
   );
 
@@ -212,7 +212,7 @@ const PoolsList = () => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{POOL_NAME}</TableHeaderCell>,
         id: POOL_NAME,
-        sortingFn: poolSort,
+        sortingFn: poolSort
       },
       {
         accessorFn: (row) => row.assets,
@@ -220,7 +220,7 @@ const PoolsList = () => {
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{ASSETS}</TableHeaderCell>,
-        id: ASSETS,
+        id: ASSETS
       },
       {
         accessorFn: (row) => row.supplyBalance,
@@ -228,7 +228,7 @@ const PoolsList = () => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_BALANCE}</TableHeaderCell>,
         id: SUPPLY_BALANCE,
-        sortingFn: poolSort,
+        sortingFn: poolSort
       },
       {
         accessorFn: (row) => row.borrowBalance,
@@ -236,7 +236,7 @@ const PoolsList = () => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{BORROW_BALANCE}</TableHeaderCell>,
         id: BORROW_BALANCE,
-        sortingFn: poolSort,
+        sortingFn: poolSort
       },
       {
         accessorFn: (row) => row.totalSupply,
@@ -244,7 +244,7 @@ const PoolsList = () => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
         id: TOTAL_SUPPLY,
-        sortingFn: poolSort,
+        sortingFn: poolSort
       },
       {
         accessorFn: (row) => row.totalBorrow,
@@ -252,8 +252,8 @@ const PoolsList = () => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{TOTAL_BORROW}</TableHeaderCell>,
         id: TOTAL_BORROW,
-        sortingFn: poolSort,
-      },
+        sortingFn: poolSort
+      }
     ];
   }, [poolFilter]);
 
@@ -275,8 +275,8 @@ const PoolsList = () => {
     state: {
       globalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { data: tableData } = useQuery(['PoolsTableData', table], () => {
@@ -285,7 +285,7 @@ const PoolsList = () => {
       canPreviousPage: table.getCanPreviousPage(),
       filteredRows: table.getFilteredRowModel().rows,
       headerGroups: table.getHeaderGroups(),
-      rows: table.getRowModel().rows,
+      rows: table.getRowModel().rows
     };
   });
 
@@ -352,7 +352,7 @@ const PoolsList = () => {
       isAllLoading,
       Object.values(poolsPerChain).map((query) => {
         return [query.data?.map((pool) => pool.comptroller), query.isLoading];
-      }),
+      })
     ],
     () => {
       const selectedChainIds = Object.keys(poolsPerChain).filter((chainId) =>
@@ -371,7 +371,7 @@ const PoolsList = () => {
       return null;
     },
     {
-      enabled: Object.values(poolsPerChain).length > 0,
+      enabled: Object.values(poolsPerChain).length > 0
     }
   );
 
@@ -408,12 +408,12 @@ const PoolsList = () => {
           height: '2xs',
           justifyContent: 'center',
           status: 'warning',
-          textAlign: 'center',
+          textAlign: 'center'
         }}
         descriptions={[
           {
-            text: `Unable to retrieve Pools. Please try again later.`,
-          },
+            text: `Unable to retrieve Pools. Please try again later.`
+          }
         ]}
         title={error.reason ? error.reason : 'Unexpected Error'}
       />

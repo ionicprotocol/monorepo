@@ -14,7 +14,7 @@ import {
   SliderThumb,
   SliderTrack,
   Text,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';

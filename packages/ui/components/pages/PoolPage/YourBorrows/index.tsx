@@ -13,14 +13,14 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type {
   ColumnDef,
   FilterFn,
   PaginationState,
   SortingFn,
-  SortingState,
+  SortingState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -28,7 +28,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
@@ -56,7 +56,7 @@ import {
   MARKETS_COUNT_PER_PAGE,
   REPAY,
   SEARCH,
-  YOUR_BALANCE,
+  YOUR_BALANCE
 } from '@ui/constants/index';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
@@ -76,7 +76,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: MARKETS_COUNT_PER_PAGE[0],
+    pageSize: MARKETS_COUNT_PER_PAGE[0]
   });
   const [globalFilter, setGlobalFilter] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -109,7 +109,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
             borrowed: smallFormatter(borrowedNum),
             estimated: borrowApyPerAsset[asset.cToken] * borrowedNum,
             symbol: asset.underlyingSymbol,
-            underlying: asset.underlyingToken,
+            underlying: asset.underlyingToken
           });
         }
       });
@@ -120,7 +120,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
         estimatedPerAsset: _estimatedPerAsset,
         estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
-        totalBorrowed: totalBorrowBalanceFiat,
+        totalBorrowed: totalBorrowBalanceFiat
       };
     }
 
@@ -183,7 +183,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{ASSET}</TableHeaderCell>,
         id: ASSET,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.debt,
@@ -191,7 +191,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{YOUR_BALANCE}</TableHeaderCell>,
-        id: YOUR_BALANCE,
+        id: YOUR_BALANCE
       },
       {
         accessorFn: (row) => row.apr,
@@ -201,7 +201,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{APR}</TableHeaderCell>,
         id: APR,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.aprType,
@@ -210,22 +210,22 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{APR_TYPE}</TableHeaderCell>,
         id: APR_TYPE,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         cell: ({ row }) => {
           return <Repay asset={row.getValue(ASSET)} />;
         },
         header: () => null,
-        id: REPAY,
+        id: REPAY
       },
       {
         cell: ({ row }) => {
           return <Borrow asset={row.getValue(ASSET)} />;
         },
         header: () => null,
-        id: BORROW,
-      },
+        id: BORROW
+      }
     ];
   }, [assetFilter, assetSort, borrowApyPerAsset, chainId]);
 
@@ -245,8 +245,8 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
     state: {
       globalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { cCard, cIPage, cIRow } = useColors();

@@ -13,7 +13,7 @@ import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 export const AssetInfo = ({
   cToken,
   chainId,
-  poolId,
+  poolId
 }: {
   cToken: string;
   chainId: number;

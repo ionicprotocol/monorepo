@@ -13,14 +13,14 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type {
   ColumnDef,
   FilterFn,
   PaginationState,
   SortingFn,
-  SortingState,
+  SortingState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -28,7 +28,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
@@ -54,7 +54,7 @@ import {
   SEARCH,
   SWITCH,
   WITHDRAW,
-  YOUR_BALANCE,
+  YOUR_BALANCE
 } from '@ui/constants/index';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
@@ -78,12 +78,12 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
     assets,
     totalSupplyBalanceFiat,
     totalSupplyBalanceNative,
-    totalCollateralSupplyBalanceFiat,
+    totalCollateralSupplyBalanceFiat
   } = poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: MARKETS_COUNT_PER_PAGE[0],
+    pageSize: MARKETS_COUNT_PER_PAGE[0]
   });
   const [globalFilter, setGlobalFilter] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -144,7 +144,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
                 netSuppliedNum,
             supplied: smallFormatter(suppliedNum),
             symbol: asset.underlyingSymbol,
-            underlying: asset.underlyingToken,
+            underlying: asset.underlyingToken
           });
         }
       });
@@ -153,7 +153,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
         estimatedPerAsset: _estimatedPerAsset,
         estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
-        totalSupplied: totalSupplyBalanceFiat,
+        totalSupplied: totalSupplyBalanceFiat
       };
     }
 
@@ -216,7 +216,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{ASSET}</TableHeaderCell>,
         id: ASSET,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.yourBalance,
@@ -224,7 +224,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{YOUR_BALANCE}</TableHeaderCell>,
-        id: YOUR_BALANCE,
+        id: YOUR_BALANCE
       },
       {
         accessorFn: (row) => row.apy,
@@ -243,7 +243,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{APY}</TableHeaderCell>,
         id: APY,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.collateral,
@@ -252,22 +252,22 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{COLLATERAL}</TableHeaderCell>,
         id: COLLATERAL,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         cell: ({ row }) => {
           return <Withdraw asset={row.getValue(ASSET)} />;
         },
         header: () => null,
-        id: WITHDRAW,
+        id: WITHDRAW
       },
       {
         cell: ({ row }) => {
           return <Switch asset={row.getValue(ASSET)} />;
         },
         header: () => null,
-        id: SWITCH,
-      },
+        id: SWITCH
+      }
     ];
   }, [allRewards, assetFilter, assetSort, chainId, totalSupplyApyPerAsset]);
 
@@ -287,8 +287,8 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
     state: {
       globalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { cCard, cIPage, cIRow } = useColors();

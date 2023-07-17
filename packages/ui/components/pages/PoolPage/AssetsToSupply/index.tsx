@@ -13,14 +13,14 @@ import {
   Text,
   Th,
   Thead,
-  Tr,
+  Tr
 } from '@chakra-ui/react';
 import type {
   ColumnDef,
   FilterFn,
   PaginationState,
   SortingFn,
-  SortingState,
+  SortingState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -28,7 +28,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { constants } from 'ethers';
 import * as React from 'react';
@@ -52,7 +52,7 @@ import {
   POOLS_COUNT_PER_PAGE,
   SEARCH,
   SUPPLY,
-  WALLET_BALANCE,
+  WALLET_BALANCE
 } from '@ui/constants/index';
 import { useAssetsToSupplyData } from '@ui/hooks/assetsToSupply/useAssetsToSupplyData';
 import { useAssets } from '@ui/hooks/useAssets';
@@ -74,7 +74,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: POOLS_COUNT_PER_PAGE[0],
+    pageSize: POOLS_COUNT_PER_PAGE[0]
   });
   const [globalFilter, setGlobalFilter] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -153,7 +153,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{ASSET}</TableHeaderCell>,
         id: ASSET,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.walletBalance,
@@ -161,7 +161,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{WALLET_BALANCE}</TableHeaderCell>,
-        id: WALLET_BALANCE,
+        id: WALLET_BALANCE
       },
       {
         accessorFn: (row) => row.apy,
@@ -180,7 +180,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{APY}</TableHeaderCell>,
         id: APY,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.collateral,
@@ -189,22 +189,22 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{COLLATERAL}</TableHeaderCell>,
         id: COLLATERAL,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         cell: ({ row }) => {
           return <Supply asset={row.getValue(ASSET)} />;
         },
         header: () => null,
-        id: SUPPLY,
+        id: SUPPLY
       },
       {
         cell: ({ row }) => {
           return <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />;
         },
         header: () => null,
-        id: DETAILS,
-      },
+        id: DETAILS
+      }
     ];
   }, [allRewards, assetFilter, assetSort, chainId, poolId, totalSupplyApyPerAsset]);
 
@@ -224,8 +224,8 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
     state: {
       globalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { cCard, cIPage, cIRow } = useColors();

@@ -7,7 +7,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Borrow = ({
   asset,
-  maxBorrowAmounts,
+  maxBorrowAmounts
 }: {
   asset: MarketData;
   maxBorrowAmounts?: CTokenToMaxBorrow | null;

@@ -23,12 +23,12 @@ export const Debt = ({ asset, chainId }: { asset: MarketData; chainId: number })
       ) : (
         <BalanceCell
           primary={{
-            value: asset.borrowBalanceFiat,
+            value: asset.borrowBalanceFiat
           }}
           secondary={{
             decimals: asset.underlyingDecimals.toNumber(),
             symbol: tokenData?.symbol || '',
-            value: asset.borrowBalance,
+            value: asset.borrowBalance
           }}
         />
       )}

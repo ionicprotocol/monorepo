@@ -6,7 +6,7 @@ import { CIconButton } from '@ui/components/shared/Button';
 export const ExpanderArrow = ({
   getToggleExpandedHandler,
   isExpanded,
-  canExpand,
+  canExpand
 }: {
   canExpand: boolean;
   getToggleExpandedHandler: () => void;
