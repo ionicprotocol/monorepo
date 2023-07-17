@@ -15,7 +15,7 @@ export const PoolName = ({
   chainId,
   poolName,
   poolId,
-  isDisabledTooltip,
+  isDisabledTooltip
 }: {
   chainId: number;
   comptroller: string;

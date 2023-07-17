@@ -7,7 +7,7 @@ import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 
 export const RewardsBanner = ({
   tokens = [],
-  poolChainId,
+  poolChainId
 }: {
   poolChainId: number;
   tokens: string[];

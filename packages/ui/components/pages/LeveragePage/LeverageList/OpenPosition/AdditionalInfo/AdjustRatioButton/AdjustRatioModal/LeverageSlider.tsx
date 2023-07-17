@@ -10,7 +10,7 @@ import {
   SliderMark,
   SliderThumb,
   SliderTrack,
-  Text,
+  Text
 } from '@chakra-ui/react';
 
 import { LEVERAGE_VALUE } from '@ui/constants/index';
@@ -18,7 +18,7 @@ import { useColors } from '@ui/hooks/useColors';
 
 export const LeverageSlider = ({
   leverageValue,
-  setLeverageValue,
+  setLeverageValue
 }: {
   leverageValue: string;
   setLeverageValue: (value: string) => void;

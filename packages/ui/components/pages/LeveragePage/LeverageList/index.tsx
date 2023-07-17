@@ -14,7 +14,7 @@ import {
   CREATED_POSITIONS_COLUMNS,
   IONIC_LOCALSTORAGE_KEYS,
   POSITION_CREATION_COLUMNS,
-  SEARCH,
+  SEARCH
 } from '@ui/constants/index';
 import { usePositionsPerChain } from '@ui/hooks/leverage/usePositionsPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -155,7 +155,7 @@ export const LeverageList = () => {
           gap={4}
           templateColumns={{
             base: 'repeat(1, 1fr)',
-            lg: 'repeat(2, 1fr)',
+            lg: 'repeat(2, 1fr)'
           }}
           width="100%"
         >

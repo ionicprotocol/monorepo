@@ -16,7 +16,7 @@ export const FundButton = ({
   mode,
   isDisabled,
   poolChainId,
-  borrowBalanceFiat,
+  borrowBalanceFiat
 }: {
   asset: MarketData;
   assets: MarketData[];

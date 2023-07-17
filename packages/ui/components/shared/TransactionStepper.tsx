@@ -10,7 +10,7 @@ import {
   Flex,
   Icon,
   Link,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { Spinner } from '@chakra-ui/spinner';
 import { useMemo } from 'react';
@@ -26,7 +26,7 @@ const TransactionStepper = ({
   steps,
   failedStep,
   isLoading,
-  poolChainId,
+  poolChainId
 }: {
   activeStep: number;
   failedStep: number;

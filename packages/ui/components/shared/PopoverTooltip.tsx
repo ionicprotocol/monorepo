@@ -4,7 +4,7 @@ import type {
   PopoverContentProps,
   PopoverFooterProps,
   PopoverHeaderProps,
-  PopoverProps,
+  PopoverProps
 } from '@chakra-ui/react';
 import {
   Box,
@@ -14,7 +14,7 @@ import {
   PopoverContent,
   PopoverFooter,
   PopoverHeader,
-  PopoverTrigger,
+  PopoverTrigger
 } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
@@ -33,7 +33,7 @@ export const PopoverTooltip = ({
   hideArrow = true,
   visible = true,
   contentProps,
-  popoverProps,
+  popoverProps
 }: {
   body?: PopoverBodyProps['children'];
   bodyProps?: PopoverBodyProps;
@@ -70,7 +70,7 @@ export const PopoverTooltip = ({
             {!hideArrow && (
               <PopoverArrow
                 sx={{
-                  '--popper-arrow-shadow-color': cPage.primary.borderColor,
+                  '--popper-arrow-shadow-color': cPage.primary.borderColor
                 }}
               />
             )}

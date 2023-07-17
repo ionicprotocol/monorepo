@@ -12,7 +12,7 @@ const querySchema = yup.object().shape({
     .matches(VALID_ADDRESS_REGEX, 'Not a valid underlying address')
     .required(),
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
-  milliSeconds: yup.string().required(),
+  milliSeconds: yup.string().required()
 });
 type Query = yup.InferType<typeof querySchema>;
 

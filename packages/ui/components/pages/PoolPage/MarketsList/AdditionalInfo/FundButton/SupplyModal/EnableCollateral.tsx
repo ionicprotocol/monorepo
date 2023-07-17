@@ -4,7 +4,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 
 export const EnableCollateral = ({
   enableAsCollateral,
-  setEnableAsCollateral,
+  setEnableAsCollateral
 }: {
   enableAsCollateral: boolean;
   setEnableAsCollateral: (enabling: boolean) => void;

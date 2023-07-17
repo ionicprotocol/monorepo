@@ -7,7 +7,7 @@ import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 const AddAssetButton = ({
   openAddAssetModal,
   comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   comptrollerAddress: string;
   openAddAssetModal: () => void;

@@ -25,7 +25,7 @@ import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 const ClaimableToken = ({
   data,
-  rewardChainId,
+  rewardChainId
 }: {
   data: FlywheelClaimableRewards;
   rewardChainId: string;
@@ -56,7 +56,7 @@ const ClaimableToken = ({
           >
             {dynamicFormatter(Number(utils.formatUnits(amount, tokenData?.decimals)), {
               maximumFractionDigits: 8,
-              minimumFractionDigits: 4,
+              minimumFractionDigits: 4
             })}
           </Text>
         </SimpleTooltip>
@@ -72,7 +72,7 @@ export const ClaimPoolRewardsModal = ({
   isLoading,
   onClose,
   poolAddress,
-  poolChainId,
+  poolChainId
 }: {
   isLoading: boolean;
   isOpen: boolean;
@@ -127,8 +127,8 @@ export const ClaimPoolRewardsModal = ({
           .filter((symbol) => !!symbol)
           .join(', ')} rewards from Midas`,
         done: false,
-        title: `Claim rewards on ${currentChain.network}`,
-      },
+        title: `Claim rewards on ${currentChain.network}`
+      }
     ];
 
     setSteps(_steps);
@@ -141,12 +141,12 @@ export const ClaimPoolRewardsModal = ({
 
       addRecentTransaction({
         description: `Claim rewards on pool`,
-        hash: tx.hash,
+        hash: tx.hash
       });
 
       _steps[0] = {
         ..._steps[0],
-        txHash: tx.hash,
+        txHash: tx.hash
       };
 
       setSteps([..._steps]);
@@ -156,7 +156,7 @@ export const ClaimPoolRewardsModal = ({
       _steps[0] = {
         ..._steps[0],
         done: true,
-        txHash: tx.hash,
+        txHash: tx.hash
       };
       setSteps([..._steps]);
 
@@ -164,11 +164,11 @@ export const ClaimPoolRewardsModal = ({
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        poolAddress,
+        poolAddress
       };
       const sentryInfo = {
         contextName: `Claiming rewards on pool ${poolAddress}`,
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(1);
@@ -182,7 +182,7 @@ export const ClaimPoolRewardsModal = ({
     poolAddress,
     addRecentTransaction,
     queryClient,
-    errorToast,
+    errorToast
   ]);
 
   return (

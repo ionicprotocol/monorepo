@@ -21,7 +21,7 @@ export interface ComptrollerToPool {
 
 export const AdditionalInfo = ({
   positionInfo,
-  row,
+  row
 }: {
   positionInfo: PositionInfo | null;
   row: Row<OpenPositionRowData>;
@@ -83,7 +83,7 @@ export const AdditionalInfo = ({
         mt={4}
         templateColumns={{
           base: 'repeat(1, 1fr)',
-          lg: 'repeat(1, 1fr)',
+          lg: 'repeat(1, 1fr)'
         }}
         w="100%"
       >

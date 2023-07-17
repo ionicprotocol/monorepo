@@ -7,7 +7,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export const PositionValue = ({
   info,
-  position,
+  position
 }: {
   info?: PositionInfo;
   position: OpenPosition;
@@ -20,7 +20,7 @@ export const PositionValue = ({
         supplyBalance: info.positionSupplyAmount,
         supplyBalanceFiat: Number(utils.formatUnits(info.positionValue)) * usdPrice,
         underlyingDecimals: position.collateral.underlyingDecimals,
-        underlyingToken: position.collateral.underlyingToken,
+        underlyingToken: position.collateral.underlyingToken
       }}
       poolChainId={position.chainId}
     />
