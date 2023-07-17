@@ -45,7 +45,7 @@ const config: CONFIG = {
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabaseUrl: process.env.SUPABASE_URL ?? '',
   supabaseVaultApyTableName: process.env.SUPABASE_VAULT_APY_TABLE_NAME ?? '',
-  walletConnectProjectId: process.env.WALLET_CONNECT_PROJECT_ID ?? ''
+  walletConnectProjectId: process.env.WALLET_CONNECT_PROJECT_ID ?? 'Ionic Protocol'
 };
 
 export { config };
