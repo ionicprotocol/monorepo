@@ -32,7 +32,6 @@ export const Alerts = ({
     <>
       {asset.liquidity.isZero() ? (
         <Banner
-          alertDescriptionProps={{ fontSize: 'md' }}
           alertProps={{ status: 'info' }}
           descriptions={[
             {
@@ -43,7 +42,6 @@ export const Alerts = ({
       ) : (
         <>
           <Banner
-            alertDescriptionProps={{ fontSize: 'lg' }}
             alertProps={{ status: 'info' }}
             descriptions={[
               {
@@ -64,7 +62,6 @@ export const Alerts = ({
           />
           {restricted && restricted.length > 0 && (
             <Banner
-              alertDescriptionProps={{ fontSize: 'lg' }}
               alertProps={{ status: 'info' }}
               descriptions={[
                 {

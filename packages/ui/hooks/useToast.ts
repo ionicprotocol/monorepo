@@ -16,6 +16,7 @@ const useSuccessToast = (options?: UseToastOptions) => {
       position: 'bottom-right',
       status: 'success',
       title: 'Success!',
+      variant: 'success',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -36,6 +37,7 @@ const useErrorToast = (options?: UseToastOptions) => {
       position: 'bottom-right',
       status: 'error',
       title: 'Error!',
+      variant: 'error',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -56,6 +58,7 @@ const useWarningToast = (options?: UseToastOptions) => {
       position: 'bottom-right',
       status: 'warning',
       title: 'Warning!',
+      variant: 'warning',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -76,6 +79,7 @@ const useInfoToast = (options?: UseToastOptions) => {
       position: 'bottom-right',
       status: 'info',
       title: 'Info!',
+      variant: 'info',
       ..._options,
     } as UseToastOptions;
   }, [options]);

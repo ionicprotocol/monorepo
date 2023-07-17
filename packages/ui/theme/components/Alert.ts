@@ -6,19 +6,21 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
   alertAnatomy.keys
 );
 
-const baseStyle = definePartsStyle({
-  container: {
-    background: 'none',
-    borderRadius: { base: '12px' },
-    borderWidth: '1px',
-    padding: { base: '12px' },
-  },
-  description: {
-    fontSize: { base: '14px' },
-  },
-  icon: { strokeWidth: '0.5px' },
-  spinner: {},
-  title: {},
+const baseStyle = definePartsStyle((props) => {
+  return {
+    container: {
+      background: mode('iCardBg', 'iCardBg')(props),
+      borderRadius: { base: '12px' },
+      borderWidth: '1px',
+      padding: { base: '12px' },
+    },
+    description: {
+      fontSize: { base: '14px' },
+    },
+    icon: { strokeWidth: '0.5px' },
+    spinner: {},
+    title: {},
+  };
 });
 
 const xl = defineStyle({

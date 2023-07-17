@@ -4,7 +4,6 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export const Alerts = ({ asset }: { asset: MarketData }) => {
   return (
     <Banner
-      alertDescriptionProps={{ fontSize: 'md' }}
       alertProps={{ status: 'info' }}
       descriptions={[
         {
