@@ -4,7 +4,7 @@ import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
-  [polygon.chainId]: polygon.assets,
+  [polygon.chainId]: polygon.assets
 };
 
 // yarn workspace @ionicprotocol/sdk deploy-dynamic-rewards-market
@@ -53,12 +53,12 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
         execute: {
           init: {
             methodName: "initialize",
-            args: deployArgs,
-          },
+            args: deployArgs
+          }
         },
-        owner: signer.address,
+        owner: signer.address
       },
-      log: true,
+      log: true
     });
 
     console.log(deployment.transactionHash);
@@ -83,7 +83,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     await run("plugin:whitelist", {
       oldImplementation: pluginAddress,
       newImplementation: pluginAddress,
-      admin: taskArgs.signer,
+      admin: taskArgs.signer
     });
 
     // STEP 3: whitelist upgradfe path from CErc20Delegate-> CErc20PluginRewardsDelegate
@@ -92,7 +92,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     );
     await run("market:updatewhitelist", {
       oldPluginDelegate: cTokenImplementation,
-      admin: taskArgs.signer,
+      admin: taskArgs.signer
     });
 
     console.log("Upgrade path whitelisted");
@@ -104,7 +104,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
       underlying: underlyingAddress,
       implementationAddress: sdk.chainDeployment.CErc20PluginDelegate.address,
       pluginAddress: pluginAddress,
-      signer: taskArgs.signer,
+      signer: taskArgs.signer
     });
     console.log("Market upgraded");
   });

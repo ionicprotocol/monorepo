@@ -37,7 +37,7 @@ export const CollateralModal = ({
   assets,
   comptrollerAddress,
   onClose,
-  poolChainId,
+  poolChainId
 }: CollateralModalProps) => {
   const { currentSdk, address } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
@@ -57,8 +57,8 @@ export const CollateralModal = ({
         asset.underlyingSymbol
       } to be used as collateral`,
       done: false,
-      title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral',
-    },
+      title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral'
+    }
   ]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
 
@@ -102,13 +102,13 @@ export const CollateralModal = ({
             description:
               'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
             id: 'Disabling collateral - ' + Math.random().toString(),
-            title: 'Error! Code: ' + call,
+            title: 'Error! Code: ' + call
           });
         } else {
           errorToast({
             description: 'You cannot enable this asset as collateral at this time.',
             id: 'Enabling collateral - ' + Math.random().toString(),
-            title: 'Error! Code: ' + call,
+            title: 'Error! Code: ' + call
           });
         }
 
@@ -118,7 +118,7 @@ export const CollateralModal = ({
       addRecentTransaction({ description: 'Toggle collateral', hash: call.hash });
       _steps[0] = {
         ..._steps[0],
-        txHash: call.hash,
+        txHash: call.hash
       };
       setConfirmedSteps([..._steps]);
       await call.wait();
@@ -127,17 +127,17 @@ export const CollateralModal = ({
       _steps[0] = {
         ..._steps[0],
         done: true,
-        txHash: call.hash,
+        txHash: call.hash
       };
       setConfirmedSteps([..._steps]);
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        token: asset.cToken,
+        token: asset.cToken
       };
       const sentryInfo = {
         contextName: 'Toggle collateral',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(1);
@@ -157,8 +157,8 @@ export const CollateralModal = ({
             asset.underlyingSymbol
           } to be used as collateral`,
           done: false,
-          title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral',
-        },
+          title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral'
+        }
       ];
 
       setSteps(_steps);

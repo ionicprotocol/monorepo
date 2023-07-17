@@ -10,7 +10,7 @@ import {
   Slider,
   SliderFilledTrack,
   SliderThumb,
-  SliderTrack,
+  SliderTrack
 } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 

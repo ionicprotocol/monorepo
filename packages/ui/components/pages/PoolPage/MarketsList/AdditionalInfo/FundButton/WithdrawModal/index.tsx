@@ -40,7 +40,7 @@ export const WithdrawModal = ({
   assets,
   onClose,
   poolChainId,
-  comptrollerAddress,
+  comptrollerAddress
 }: WithdrawModalProps) => {
   const { currentSdk, address, currentChain } = useMultiIonic();
   const addRecentTransaction = useAddRecentTransaction();
@@ -109,11 +109,11 @@ export const WithdrawModal = ({
         const tx = resp.tx;
         addRecentTransaction({
           description: `${asset.underlyingSymbol} Token Withdraw`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         _steps[0] = {
           ..._steps[0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setSteps([..._steps]);
 
@@ -129,12 +129,12 @@ export const WithdrawModal = ({
         _steps[0] = {
           ..._steps[0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setSteps([..._steps]);
         successToast({
           description: 'Successfully withdrew!',
-          id: 'Withdraw - ' + Math.random().toString(),
+          id: 'Withdraw - ' + Math.random().toString()
         });
       }
     } catch (error) {
@@ -144,11 +144,11 @@ export const WithdrawModal = ({
         amount,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken,
+        token: asset.cToken
       };
       const sentryInfo = {
         contextName: 'Withdrawing',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {

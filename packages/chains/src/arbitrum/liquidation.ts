@@ -16,9 +16,9 @@ const liquidationDefaults: LiquidationDefaults = {
   balancerPools: [
     {
       poolAddress: "0x89dc7e71e362faF88D92288fE2311D25c6a1B5E0",
-      underlyingTokens: [underlying(assets, assetSymbols.WETH), underlying(assets, assetSymbols.OHM)],
-    },
-  ],
+      underlyingTokens: [underlying(assets, assetSymbols.WETH), underlying(assets, assetSymbols.OHM)]
+    }
+  ]
 };
 
 export default liquidationDefaults;

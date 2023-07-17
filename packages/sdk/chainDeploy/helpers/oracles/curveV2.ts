@@ -8,7 +8,7 @@ export const deployCurveV2Oracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  curveV2OraclePools,
+  curveV2OraclePools
 }: CurveV2OracleLpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   let tx: providers.TransactionResponse;
@@ -25,12 +25,12 @@ export const deployCurveV2Oracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [curveV2OraclePools.map((c) => c.token), curveV2OraclePools.map((c) => c.pool)],
-        },
+          args: [curveV2OraclePools.map((c) => c.token), curveV2OraclePools.map((c) => c.pool)]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("CurveV2PriceOracle: ", cpo.address);

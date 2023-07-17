@@ -13,18 +13,18 @@ const specificParams: ChainParams = {
     shortName: "Arbitrum",
     uniswapV3Fees: {
       [underlying(assets, assetSymbols.USDC)]: {
-        [underlying(assets, assetSymbols.GMX)]: 3000,
-      },
+        [underlying(assets, assetSymbols.GMX)]: 3000
+      }
     },
     img: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg",
     blockExplorerUrls: { default: { name: "arbiscan", url: "https://arbiscan.io" } },
     rpcUrls: {
       default: { http: ["https://rpc.ankr.com/arbitrum"] },
-      public: { http: ["https://rpc.ankr.com/arbitrum"] },
+      public: { http: ["https://rpc.ankr.com/arbitrum"] }
     },
     nativeCurrency: {
       symbol: "ETH",
-      name: "ETH",
+      name: "ETH"
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WETH,
@@ -33,9 +33,9 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#7A88A1",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg",
-    },
-  },
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg"
+    }
+  }
 };
 
 export default specificParams;

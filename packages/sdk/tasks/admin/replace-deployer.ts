@@ -104,7 +104,7 @@ const safeOwnableUpgrContracts = [
   "SolidlyPriceOracle",
   "StkBNBPriceOracle",
   "WSTEthPriceOracle",
-  "NativeUSDPriceOracle",
+  "NativeUSDPriceOracle"
 ];
 
 const ownable2StepContracts = ["LiquidatorsRegistry", "LeveredPositionFactory", "OptimizedAPRVault"];
@@ -272,7 +272,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           console.log("market", {
             cTokenName: await cTokenInstance.callStatic.name(),
             cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
-            implementation: await cTokenInstance.callStatic.implementation(),
+            implementation: await cTokenInstance.callStatic.implementation()
           });
 
           let pluginAddress;
@@ -316,7 +316,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         const transaction: providers.TransactionRequest = {
           to: newDeployer,
           value: oldDeployerBalance,
-          gasLimit: 21000,
+          gasLimit: 21000
         };
 
         transaction.gasLimit = await ethers.provider.estimateGas(transaction);

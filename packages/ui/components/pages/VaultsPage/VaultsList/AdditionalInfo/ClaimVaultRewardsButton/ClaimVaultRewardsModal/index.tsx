@@ -48,7 +48,7 @@ const ClaimableToken = ({ data, rewardChainId }: { data: RewardsInfo; rewardChai
           >
             {dynamicFormatter(Number(totalRewardsString), {
               maximumFractionDigits: 8,
-              minimumFractionDigits: 4,
+              minimumFractionDigits: 4
             })}
           </Text>
         </SimpleTooltip>
@@ -62,7 +62,7 @@ const ClaimVaultRewardsModal = ({
   isOpen,
   onClose,
   reward,
-  refetch,
+  refetch
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -106,8 +106,8 @@ const ClaimVaultRewardsModal = ({
         {
           desc: `Claims ${symbols} rewards from Midas`,
           done: false,
-          title: `Claim ${symbols}`,
-        },
+          title: `Claim ${symbols}`
+        }
       ];
 
       setSteps(_steps);
@@ -121,12 +121,12 @@ const ClaimVaultRewardsModal = ({
 
         addRecentTransaction({
           description: `Claims ${symbols} rewards`,
-          hash: tx.hash,
+          hash: tx.hash
         });
 
         _steps[0] = {
           ..._steps[0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setSteps([..._steps]);
 
@@ -135,7 +135,7 @@ const ClaimVaultRewardsModal = ({
         _steps[0] = {
           ..._steps[0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setSteps([..._steps]);
         refetch();
@@ -143,11 +143,11 @@ const ClaimVaultRewardsModal = ({
         const sentryProperties = {
           chainId: reward.chainId,
           rewards: reward.rewardsInfo,
-          vault: reward.vault,
+          vault: reward.vault
         };
         const sentryInfo = {
           contextName: 'Claiming rewards for vault',
-          properties: sentryProperties,
+          properties: sentryProperties
         };
         handleGenericError({ error, sentryInfo, toast: errorToast });
         setFailedStep(1);

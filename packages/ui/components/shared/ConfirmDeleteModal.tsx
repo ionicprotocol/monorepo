@@ -7,7 +7,7 @@ export default function ConfirmDeleteModal({
   onConfirm,
   isOpen,
   title = 'Are you sure?',
-  description = "You can't undo this action afterwards.",
+  description = "You can't undo this action afterwards."
 }: {
   description: string;
   isOpen: boolean;

@@ -13,7 +13,7 @@ import {
   Text,
   VStack,
   Wrap,
-  WrapItem,
+  WrapItem
 } from '@chakra-ui/react';
 import type { SupportedAsset } from '@ionicprotocol/types';
 import { useEffect, useMemo, useState } from 'react';
@@ -40,7 +40,7 @@ const AddAsset = ({
   onSuccess,
   poolID,
   poolName,
-  poolChainId,
+  poolChainId
 }: AddAssetProps) => {
   const { currentSdk } = useMultiIonic();
 
@@ -145,18 +145,18 @@ const AddAsset = ({
                 '&::-webkit-scrollbar': {
                   display: 'block',
                   height: '4px',
-                  width: '4px',
+                  width: '4px'
                 },
                 '&::-webkit-scrollbar-corner': {
-                  display: 'none',
+                  display: 'none'
                 },
                 '&::-webkit-scrollbar-thumb': {
-                  background: cPage.primary.borderColor,
+                  background: cPage.primary.borderColor
                 },
                 '&::-webkit-scrollbar-track': {
                   height: '4px',
-                  width: '4px',
-                },
+                  width: '4px'
+                }
               }}
               justify="flex-start"
               maxHeight="200px"
@@ -200,18 +200,18 @@ const AddAsset = ({
                     '&::-webkit-scrollbar': {
                       display: 'block',
                       height: '4px',
-                      width: '4px',
+                      width: '4px'
                     },
                     '&::-webkit-scrollbar-corner': {
-                      display: 'none',
+                      display: 'none'
                     },
                     '&::-webkit-scrollbar-thumb': {
-                      background: cPage.primary.borderColor,
+                      background: cPage.primary.borderColor
                     },
                     '&::-webkit-scrollbar-track': {
                       height: '4px',
-                      width: '4px',
-                    },
+                      width: '4px'
+                    }
                   }}
                   direction="column"
                   maxHeight="400px"

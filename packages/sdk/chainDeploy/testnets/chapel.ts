@@ -7,7 +7,7 @@ import {
   ChainlinkFeedBaseCurrency,
   deployChainlinkOracle,
   deployUniswapLpOracle,
-  deployUniswapOracle,
+  deployUniswapOracle
 } from "../helpers";
 import { ChainlinkAsset } from "../helpers/types";
 
@@ -26,8 +26,8 @@ export const deployConfig: ChainDeployConfig = {
       {
         name: "Binance Bitcoin",
         symbol: "BTCB",
-        address: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
-      },
+        address: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying
+      }
     ],
     uniswapData: [],
     // see: https://bsc.kiemtienonline360.com/ for addresses
@@ -37,12 +37,12 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleLpTokens: [
       assets.find((a) => a.symbol === assetSymbols["BUSD-USDT"])!.underlying, // BUSD-USDT PCS LP
       assets.find((a) => a.symbol === assetSymbols["WBNB-DAI"])!.underlying, // WBNB-DAI PCS LP
-      assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying, // WBNB-BUSD PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying // WBNB-BUSD PCS LP
     ],
     uniswapOracleInitialDeployTokens: [],
-    flashSwapFee: 30,
+    flashSwapFee: 30
   },
-  cgId: chapel.specificParams.cgId,
+  cgId: chapel.specificParams.cgId
 };
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
@@ -53,18 +53,18 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     {
       symbol: "BUSD",
       aggregator: "0x9331b55D9830EF609A2aBCfAc0FBCE050A52fdEa",
-      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     {
       symbol: "BTCB",
       aggregator: "0x5741306c21795FdCBb9b265Ea0255F499DFe515C",
-      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     {
       symbol: "ETH",
       aggregator: "0x143db3CEEfbdfe5631aDD3E50f7614B6ba708BA7",
-      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-    },
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    }
   ];
 
   //// ChainLinkV2 Oracle
@@ -75,7 +75,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployConfig,
     assets: assets,
     chainlinkAssets,
-    run,
+    run
   });
   ////
 
@@ -85,7 +85,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     ethers,
     getNamedAccounts,
     deployments,
-    deployConfig,
+    deployConfig
   });
 
   //// UniswapLp Oracle
@@ -94,7 +94,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     ethers,
     getNamedAccounts,
     deployments,
-    deployConfig,
+    deployConfig
   });
 
   //// Liquidator Redemption Strategies
@@ -102,7 +102,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (uniswapLpTokenLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(uniswapLpTokenLiquidator.transactionHash);

@@ -18,7 +18,7 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type { SupportedChains, VaultData } from '@ionicprotocol/types';
 import type {
@@ -27,7 +27,7 @@ import type {
   PaginationState,
   SortingFn,
   SortingState,
-  VisibilityState,
+  VisibilityState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -36,7 +36,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
@@ -63,7 +63,7 @@ import {
   SUPPLY_APY,
   TOTAL_SUPPLY,
   VAULT,
-  VAULTS_COUNT_PER_PAGE,
+  VAULTS_COUNT_PER_PAGE
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -85,7 +85,7 @@ export const VaultsList = ({
   vaultsPerChain,
   initSorting,
   initColumnVisibility,
-  isLoading,
+  isLoading
 }: {
   initColumnVisibility: VisibilityState;
   initSorting: SortingState;
@@ -100,7 +100,7 @@ export const VaultsList = ({
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: VAULTS_COUNT_PER_PAGE[0],
+    pageSize: VAULTS_COUNT_PER_PAGE[0]
   });
 
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
@@ -186,7 +186,7 @@ export const VaultsList = ({
         chain: vault,
         supplyApy: vault,
         totalSupply: vault,
-        vault: vault,
+        vault: vault
       };
     });
   }, [allVaults]);
@@ -200,7 +200,7 @@ export const VaultsList = ({
         footer: (props) => props.column.id,
         header: () => null,
         id: CHAIN,
-        sortingFn: vaultSort,
+        sortingFn: vaultSort
       },
       {
         accessorFn: (row) => row.vault,
@@ -216,7 +216,7 @@ export const VaultsList = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{VAULT}</TableHeaderCell>,
         id: VAULT,
-        sortingFn: vaultSort,
+        sortingFn: vaultSort
       },
       {
         accessorFn: (row) => row.supplyApy,
@@ -224,7 +224,7 @@ export const VaultsList = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
         id: SUPPLY_APY,
-        sortingFn: vaultSort,
+        sortingFn: vaultSort
       },
       {
         accessorFn: (row) => row.totalSupply,
@@ -232,8 +232,8 @@ export const VaultsList = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
         id: TOTAL_SUPPLY,
-        sortingFn: vaultSort,
-      },
+        sortingFn: vaultSort
+      }
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -258,8 +258,8 @@ export const VaultsList = ({
       columnVisibility,
       globalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { cCard } = useColors();
@@ -446,12 +446,12 @@ export const VaultsList = ({
               height: '2xs',
               justifyContent: 'center',
               status: 'warning',
-              textAlign: 'center',
+              textAlign: 'center'
             }}
             descriptions={[
               {
-                text: `Unable to retrieve Vaults. Please try again later.`,
-              },
+                text: `Unable to retrieve Vaults. Please try again later.`
+              }
             ]}
             title={err.reason ? err.reason : 'Unexpected Error'}
           />
@@ -469,7 +469,7 @@ export const VaultsList = ({
                         onClick={header.column.getToggleSortingHandler()}
                         px={{
                           base: header.column.id === VAULT ? 2 : 1,
-                          lg: header.column.id === VAULT ? 4 : 2,
+                          lg: header.column.id === VAULT ? 4 : 2
                         }}
                         py={6}
                         textTransform="capitalize"

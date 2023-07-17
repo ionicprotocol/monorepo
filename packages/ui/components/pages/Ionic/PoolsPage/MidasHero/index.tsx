@@ -11,7 +11,7 @@ import {
   MIDAS_DISCORD_URL,
   MIDAS_DOCS_URL,
   MIDAS_TELEGRAM_URL,
-  MIDAS_TWITTER_URL,
+  MIDAS_TWITTER_URL
 } from '@ui/constants/index';
 import { useTotalSupplyAndBorrow } from '@ui/hooks/ionic/useTotalSupplyAndBorrow';
 import { useColors } from '@ui/hooks/useColors';

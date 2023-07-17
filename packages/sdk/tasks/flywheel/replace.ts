@@ -50,17 +50,17 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
           execute: {
             init: {
               methodName: "initialize",
-              args: [rewardToken, constants.AddressZero, booster, deployer.address],
+              args: [rewardToken, constants.AddressZero, booster, deployer.address]
             },
             onUpgrade: {
               methodName: "reinitialize",
-              args: [flywheelToReplaceAddress],
-            },
+              args: [flywheelToReplaceAddress]
+            }
           },
           proxyContract: "OpenZeppelinTransparentProxy",
-          owner: deployer.address,
+          owner: deployer.address
         },
-        waitConfirmations: 1,
+        waitConfirmations: 1
       });
       if (replacingFw.transactionHash) {
         await ethers.provider.waitForTransaction(replacingFw.transactionHash);
@@ -82,7 +82,7 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       const replacingRewards = await deployments.deploy("ReplacingFlywheelDynamicRewards", {
         from: deployer.address,
         log: true,
-        args: [flywheelToReplaceAddress, replacingFw.address, oldRewardsCycleLen],
+        args: [flywheelToReplaceAddress, replacingFw.address, oldRewardsCycleLen]
       });
       if (replacingRewards.transactionHash) {
         await ethers.provider.waitForTransaction(replacingRewards.transactionHash);

@@ -12,7 +12,7 @@ import {
   thenaDocs,
   thenaDocsV2,
   wombatDocs,
-  wrappedAssetDocs,
+  wrappedAssetDocs
 } from "../common";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
@@ -105,7 +105,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
     extraDocs: defaultDocs("https://bscscan.com", BNB),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.WBNB,
@@ -113,7 +113,7 @@ const assets: SupportedAsset[] = [
     name: "Wrapped Binance Network Token",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.bsc),
+    extraDocs: wrappedAssetDocs(SupportedChains.bsc)
   },
   {
     symbol: assetSymbols.BUSD,
@@ -121,7 +121,7 @@ const assets: SupportedAsset[] = [
     name: "Binance USD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", BUSD),
+    extraDocs: defaultDocs("https://bscscan.com", BUSD)
   },
   {
     symbol: assetSymbols.BTCB,
@@ -129,7 +129,7 @@ const assets: SupportedAsset[] = [
     name: "Binance BTC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", BTCB),
+    extraDocs: defaultDocs("https://bscscan.com", BTCB)
   },
   {
     symbol: assetSymbols.DAI,
@@ -137,7 +137,7 @@ const assets: SupportedAsset[] = [
     name: "Binance DAI",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", DAI),
+    extraDocs: defaultDocs("https://bscscan.com", DAI)
   },
   {
     symbol: assetSymbols.ETH,
@@ -145,7 +145,7 @@ const assets: SupportedAsset[] = [
     name: "Binance ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", ETH),
+    extraDocs: defaultDocs("https://bscscan.com", ETH)
   },
   // CZ
   {
@@ -155,7 +155,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", BETH),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.CAKE,
@@ -163,7 +163,7 @@ const assets: SupportedAsset[] = [
     name: "PancakeSwap Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", CAKE),
+    extraDocs: defaultDocs("https://bscscan.com", CAKE)
   },
   //
   {
@@ -173,7 +173,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", AUTO),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.BIFI,
@@ -182,7 +182,7 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     decimals: 18,
     extraDocs: defaultDocs("https://bscscan.com", BIFI),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.FRAX,
@@ -190,7 +190,7 @@ const assets: SupportedAsset[] = [
     name: "Frax",
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     decimals: 18,
-    extraDocs: defaultDocs("https://bscscan.com", FRAX),
+    extraDocs: defaultDocs("https://bscscan.com", FRAX)
   },
   {
     symbol: assetSymbols.ALPACA,
@@ -199,7 +199,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", ALPACA),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.THE,
@@ -207,7 +207,7 @@ const assets: SupportedAsset[] = [
     name: "THENA",
     decimals: 18,
     oracle: OracleTypes.AlgebraPriceOracle,
-    extraDocs: defaultDocs("https://bscscan.com", THE),
+    extraDocs: defaultDocs("https://bscscan.com", THE)
   },
   {
     symbol: assetSymbols.RDNT,
@@ -215,7 +215,7 @@ const assets: SupportedAsset[] = [
     name: "Radiant Capital",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", RDNT),
+    extraDocs: defaultDocs("https://bscscan.com", RDNT)
   },
   // stables
   {
@@ -224,7 +224,7 @@ const assets: SupportedAsset[] = [
     name: "Binance-Peg USD Coin",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", USDC),
+    extraDocs: defaultDocs("https://bscscan.com", USDC)
   },
   {
     symbol: assetSymbols.USDT,
@@ -232,7 +232,7 @@ const assets: SupportedAsset[] = [
     name: "Binance-Peg BSC-USD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", USDT),
+    extraDocs: defaultDocs("https://bscscan.com", USDT)
   },
   {
     symbol: assetSymbols.TUSD,
@@ -241,7 +241,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", TUSD),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.MAI,
@@ -249,7 +249,7 @@ const assets: SupportedAsset[] = [
     name: "Mai Stablecoin",
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: defaultDocs("https://bscscan.com", MAI),
+    extraDocs: defaultDocs("https://bscscan.com", MAI)
   },
   {
     symbol: assetSymbols.HAY,
@@ -257,7 +257,7 @@ const assets: SupportedAsset[] = [
     name: "HAY",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", HAY),
+    extraDocs: defaultDocs("https://bscscan.com", HAY)
   },
   // Ellipsis
   {
@@ -266,7 +266,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance 3EPS (BUSD/USDC/USDT)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0x160CAed03795365F3A589f10C379FfA7d75d4E76", "3EPS", threeEPS),
+    extraDocs: ellipsisDocs("0x160CAed03795365F3A589f10C379FfA7d75d4E76", "3EPS", threeEPS)
   },
   {
     symbol: assetSymbols.mai3EPS,
@@ -274,7 +274,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance MAI 3EPS (MAI/BUSD/USDC/USDT)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322", "mai3EPS", maiThreeEPS),
+    extraDocs: ellipsisDocs("0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322", "mai3EPS", maiThreeEPS)
   },
   {
     symbol: assetSymbols.val3EPS,
@@ -282,7 +282,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance val3EPS (BUSD/USDC/USDT)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d", "val3EPS", val3EPS),
+    extraDocs: ellipsisDocs("0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d", "val3EPS", val3EPS)
   },
   {
     symbol: assetSymbols.valdai3EPS,
@@ -290,7 +290,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance valdai3EPS (DAI, val3EPS)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5", "valdai3EPS", valdai3EPS),
+    extraDocs: ellipsisDocs("0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5", "valdai3EPS", valdai3EPS)
   },
   {
     symbol: assetSymbols["2brl"],
@@ -298,7 +298,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance 2BRL (BRZ, jBRL)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3", "2brl", twoBRL),
+    extraDocs: ellipsisDocs("0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3", "2brl", twoBRL)
   },
   {
     symbol: assetSymbols["3brl"],
@@ -306,7 +306,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance 3BRL (jBRL, BRZ, BRZ (Wormhole))",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a", "3brl", threeBRL),
+    extraDocs: ellipsisDocs("0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a", "3brl", threeBRL)
   },
   {
     symbol: assetSymbols["JCHF-BUSD"],
@@ -314,7 +314,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance JCHF-BUSD",
     decimals: 18,
     oracle: OracleTypes.CurveV2LpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", "eps BUSD jCHF", epsBUSD_jCHF),
+    extraDocs: ellipsisDocs("0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", "eps BUSD jCHF", epsBUSD_jCHF)
   },
   // Bomb
   {
@@ -324,14 +324,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", BOMB),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.xBOMB,
     underlying: xBOMB,
     name: "xBOMB",
     decimals: 18,
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.ankrBNB,
@@ -339,7 +339,7 @@ const assets: SupportedAsset[] = [
     name: "Ankr Staked BNB ",
     decimals: 18,
     oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
-    extraDocs: ankrCertificateDocs("ankrBNB", "BNB"),
+    extraDocs: ankrCertificateDocs("ankrBNB", "BNB")
   },
   {
     symbol: assetSymbols.stkBNB,
@@ -347,7 +347,7 @@ const assets: SupportedAsset[] = [
     name: "Staked BNB (Persistance)",
     decimals: 18,
     oracle: OracleTypes.StkBNBPriceOracle,
-    extraDocs: stkBNBDocs(),
+    extraDocs: stkBNBDocs()
   },
   {
     symbol: assetSymbols.BNBx,
@@ -355,7 +355,7 @@ const assets: SupportedAsset[] = [
     name: "Liquid Staked BNB (Stader)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: StaderXDocs("bnbchain", "BNBx"),
+    extraDocs: StaderXDocs("bnbchain", "BNBx")
   },
   {
     symbol: assetSymbols["epsBNBx-BNB"],
@@ -363,7 +363,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance epsBNBx (BNBx/BNB)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA", "BNBx/BNB", epsBNBx_BNB),
+    extraDocs: ellipsisDocs("0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA", "BNBx/BNB", epsBNBx_BNB)
   },
   {
     symbol: assetSymbols["asBNBx-WBNB"],
@@ -371,7 +371,7 @@ const assets: SupportedAsset[] = [
     name: "BNBx-BNB ApeSwap LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: apeSwapDocs(WBNB, BNBx, "BNBx-WBNB", asBNBx_WBNB),
+    extraDocs: apeSwapDocs(WBNB, BNBx, "BNBx-WBNB", asBNBx_WBNB)
   },
   {
     symbol: assetSymbols["BTCB-BOMB"],
@@ -379,7 +379,7 @@ const assets: SupportedAsset[] = [
     name: "BOMB-BTC PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(BTCB, BOMB, "BOMB-BTC", BTCB_BOMB),
+    extraDocs: pancakeSwapDocs(BTCB, BOMB, "BOMB-BTC", BTCB_BOMB)
   },
   {
     symbol: assetSymbols["stkBNB-WBNB"],
@@ -387,7 +387,7 @@ const assets: SupportedAsset[] = [
     name: "stkBNB-WBNB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(WBNB, stkBNB, "stkBNB-WBNB", stkBNB_WBNB),
+    extraDocs: pancakeSwapDocs(WBNB, stkBNB, "stkBNB-WBNB", stkBNB_WBNB)
   },
   {
     symbol: assetSymbols["ANKR-ankrBNB"],
@@ -395,7 +395,7 @@ const assets: SupportedAsset[] = [
     name: "ANKR-ankrBNB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(ANKR, ankrBNB, "ANKR-ankrBNB", ANKR_ankrBNB),
+    extraDocs: pancakeSwapDocs(ANKR, ankrBNB, "ANKR-ankrBNB", ANKR_ankrBNB)
   },
   {
     symbol: assetSymbols["asANKR-ankrBNB"],
@@ -403,7 +403,7 @@ const assets: SupportedAsset[] = [
     name: "ANKR-ankrBNB ApeSwap LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: apeSwapDocs(ANKR, ankrBNB, "ANKR-ankrBNB", asANKR_ankrBNB),
+    extraDocs: apeSwapDocs(ANKR, ankrBNB, "ANKR-ankrBNB", asANKR_ankrBNB)
   },
   // Jarvis
   {
@@ -412,7 +412,7 @@ const assets: SupportedAsset[] = [
     name: "Jarvis Synthetic Brazilian Real",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v1"),
+    extraDocs: jarvisDocs("v1")
   },
   {
     symbol: assetSymbols.JCHF,
@@ -420,7 +420,7 @@ const assets: SupportedAsset[] = [
     name: "Jarvis Synthetic Swiss Franc",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v1"),
+    extraDocs: jarvisDocs("v1")
   },
   {
     symbol: assetSymbols.JEUR,
@@ -428,7 +428,7 @@ const assets: SupportedAsset[] = [
     name: "Jarvis Synthetic Euro",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v1"),
+    extraDocs: jarvisDocs("v1")
   },
   {
     symbol: assetSymbols.JGBP,
@@ -436,7 +436,7 @@ const assets: SupportedAsset[] = [
     name: "Jarvis Synthetic British Pound",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v1"),
+    extraDocs: jarvisDocs("v1")
   },
   {
     symbol: assetSymbols.JMXN,
@@ -444,7 +444,7 @@ const assets: SupportedAsset[] = [
     name: "Jarvis Synthetic Mexican Peso",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v1"),
+    extraDocs: jarvisDocs("v1")
   },
   {
     symbol: assetSymbols.BRZ,
@@ -453,7 +453,7 @@ const assets: SupportedAsset[] = [
     decimals: 4,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`,
+    <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`
   },
   {
     symbol: assetSymbols.BRZw,
@@ -462,7 +462,7 @@ const assets: SupportedAsset[] = [
     decimals: 4,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>This is the Wormhole-bridged version of BRZ. To get it, you can bridge BRZ from Solana to BSC using the <a href="https://www.portalbridge.com/#/transfer" target="_blank" style="color: #BCAC83; cursor="pointer">Official Bridge</></p>`,
+    <p>This is the Wormhole-bridged version of BRZ. To get it, you can bridge BRZ from Solana to BSC using the <a href="https://www.portalbridge.com/#/transfer" target="_blank" style="color: #BCAC83; cursor="pointer">Official Bridge</></p>`
   },
   {
     symbol: assetSymbols["WBNB-BUSD"],
@@ -470,7 +470,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-BUSD PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(WBNB, BUSD, "WBNB-BUSD", WBNB_BUSD),
+    extraDocs: pancakeSwapDocs(WBNB, BUSD, "WBNB-BUSD", WBNB_BUSD)
   },
   {
     symbol: assetSymbols["WBNB-DAI"],
@@ -478,7 +478,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-DAI PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(WBNB, DAI, "WBNB-DAI", WBNB_DAI),
+    extraDocs: pancakeSwapDocs(WBNB, DAI, "WBNB-DAI", WBNB_DAI)
   },
   {
     symbol: assetSymbols["WBNB-USDC"],
@@ -486,7 +486,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-USDC PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(WBNB, USDC, "WBNB-USDC", WBNB_USDC),
+    extraDocs: pancakeSwapDocs(WBNB, USDC, "WBNB-USDC", WBNB_USDC)
   },
   {
     symbol: assetSymbols["WBNB-USDT"],
@@ -494,7 +494,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-USDT PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(WBNB, USDT, "WBNB-USDT", WBNB_USDT),
+    extraDocs: pancakeSwapDocs(WBNB, USDT, "WBNB-USDT", WBNB_USDT)
   },
   {
     symbol: assetSymbols["WBNB-ETH"],
@@ -502,7 +502,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(WBNB, ETH, "WBNB-ETH", WBNB_ETH),
+    extraDocs: pancakeSwapDocs(WBNB, ETH, "WBNB-ETH", WBNB_ETH)
   },
   {
     symbol: assetSymbols["BUSD-USDT"],
@@ -510,7 +510,7 @@ const assets: SupportedAsset[] = [
     name: "BUSD-USDT PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(BUSD, USDT, "BUSD-USDT", BUSD_USDT),
+    extraDocs: pancakeSwapDocs(BUSD, USDT, "BUSD-USDT", BUSD_USDT)
   },
   {
     symbol: assetSymbols["BUSD-BTCB"],
@@ -518,7 +518,7 @@ const assets: SupportedAsset[] = [
     name: "BUSD-BTCB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(BUSD, BTCB, "BUSD-BTCB", BUSD_BTCB),
+    extraDocs: pancakeSwapDocs(BUSD, BTCB, "BUSD-BTCB", BUSD_BTCB)
   },
   {
     symbol: assetSymbols["USDC-BUSD"],
@@ -526,7 +526,7 @@ const assets: SupportedAsset[] = [
     name: "USDC-BUSD PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(USDC, BUSD, "USDC-BUSD", USDC_BUSD),
+    extraDocs: pancakeSwapDocs(USDC, BUSD, "USDC-BUSD", USDC_BUSD)
   },
   {
     symbol: assetSymbols["USDC-ETH"],
@@ -534,7 +534,7 @@ const assets: SupportedAsset[] = [
     name: "USDC-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(USDC, ETH, "USDC-ETH", USDC_ETH),
+    extraDocs: pancakeSwapDocs(USDC, ETH, "USDC-ETH", USDC_ETH)
   },
   {
     symbol: assetSymbols["CAKE-WBNB"],
@@ -542,7 +542,7 @@ const assets: SupportedAsset[] = [
     name: "CAKE-WBNB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(CAKE, WBNB, "CAKE-WBNB", CAKE_WBNB),
+    extraDocs: pancakeSwapDocs(CAKE, WBNB, "CAKE-WBNB", CAKE_WBNB)
   },
   {
     symbol: assetSymbols["BTCB-ETH"],
@@ -550,7 +550,7 @@ const assets: SupportedAsset[] = [
     name: "BTCB-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pancakeSwapDocs(BTCB, ETH, "BTCB-ETH", BTCB_ETH),
+    extraDocs: pancakeSwapDocs(BTCB, ETH, "BTCB-ETH", BTCB_ETH)
   },
   {
     symbol: assetSymbols.EPX,
@@ -559,7 +559,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", EPX),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.DDD,
@@ -568,7 +568,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", DDD),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.pSTAKE,
@@ -577,7 +577,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", pSTAKE),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.SD,
@@ -586,7 +586,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", SD),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.ANKR,
@@ -594,7 +594,7 @@ const assets: SupportedAsset[] = [
     name: "Ankr",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: defaultDocs("https://bscscan.com", ANKR),
+    extraDocs: defaultDocs("https://bscscan.com", ANKR)
   },
   {
     symbol: assetSymbols["WOMBATLP-WBNB"],
@@ -602,7 +602,7 @@ const assets: SupportedAsset[] = [
     name: "WombatLp WBNB",
     decimals: 18,
     oracle: OracleTypes.WombatLpTokenPriceOracle,
-    extraDocs: wombatDocs("BNB", "WBNB"),
+    extraDocs: wombatDocs("BNB", "WBNB")
   },
   // Thena
   {
@@ -612,7 +612,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_jBRL_BRZ),
-    originalSymbol: assetOriginalSymbols["sAMM-jBRL/BRZ"],
+    originalSymbol: assetOriginalSymbols["sAMM-jBRL/BRZ"]
   },
   {
     symbol: assetSymbols["vAMM-ANKR/ankrBNB"],
@@ -621,7 +621,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_ankrBNB),
-    originalSymbol: assetOriginalSymbols["vAMM-ANKR/ankrBNB"],
+    originalSymbol: assetOriginalSymbols["vAMM-ANKR/ankrBNB"]
   },
   {
     symbol: assetSymbols["vAMM-ANKR/HAY"],
@@ -630,7 +630,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyVolatileAMM_ANKR_HAY),
-    originalSymbol: assetOriginalSymbols["vAMM-ANKR/HAY"],
+    originalSymbol: assetOriginalSymbols["vAMM-ANKR/HAY"]
   },
   {
     symbol: assetSymbols["vAMM-HAY/ankrBNB"],
@@ -639,7 +639,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyVolatileAMM_HAY_ankrBNB),
-    originalSymbol: assetOriginalSymbols["vAMM-HAY/ankrBNB"],
+    originalSymbol: assetOriginalSymbols["vAMM-HAY/ankrBNB"]
   },
   {
     symbol: assetSymbols["sAMM-HAY/BUSD"],
@@ -648,7 +648,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_HAY_BUSD),
-    originalSymbol: assetOriginalSymbols["sAMM-HAY/BUSD"],
+    originalSymbol: assetOriginalSymbols["sAMM-HAY/BUSD"]
   },
   {
     symbol: assetSymbols["sAMM-stkBNB/WBNB"],
@@ -657,7 +657,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: thenaDocs(solidlyStableAMM_stkBNB_WBNB),
-    originalSymbol: assetOriginalSymbols["sAMM-stkBNB/WBNB"],
+    originalSymbol: assetOriginalSymbols["sAMM-stkBNB/WBNB"]
   },
   {
     symbol: assetSymbols.aWBNB_STKBNB,
@@ -665,7 +665,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Stable stkBNB/WBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(WBNB, stkBNB, solidlyGammaStable_stkBNB_WBNB, "GAMMA_STABLE"),
+    extraDocs: thenaDocsV2(WBNB, stkBNB, solidlyGammaStable_stkBNB_WBNB, "GAMMA_STABLE")
   },
   {
     symbol: assetSymbols.aWBNB_BTCB,
@@ -673,7 +673,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Stable BTCB/WBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(BTCB, WBNB, solidlyGammaNarrow_BTCB_WBNB, "GAMMA_NARROW"),
+    extraDocs: thenaDocsV2(BTCB, WBNB, solidlyGammaNarrow_BTCB_WBNB, "GAMMA_NARROW")
   },
   {
     symbol: assetSymbols.aWBNB_ETH,
@@ -681,7 +681,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Stable ETH/WBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(ETH, WBNB, solidlyGammaNarrow_ETH_WBNB, "GAMMA_NARROW"),
+    extraDocs: thenaDocsV2(ETH, WBNB, solidlyGammaNarrow_ETH_WBNB, "GAMMA_NARROW")
   },
   {
     symbol: assetSymbols.aANKRBNB_ANKR_N,
@@ -689,7 +689,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Narrow ANKR/ankrBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaNarrow_ANKR_ankrBNB, "GAMMA_NARROW"),
+    extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaNarrow_ANKR_ankrBNB, "GAMMA_NARROW")
   },
   {
     symbol: assetSymbols.aANKRBNB_ANKR_W,
@@ -697,7 +697,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Wide ANKR/ankrBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaWide_ANKR_ankrBNB, "GAMMA_WIDE"),
+    extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaWide_ANKR_ankrBNB, "GAMMA_WIDE")
   },
   {
     symbol: assetSymbols.aANKRBNB_RDNT_W,
@@ -705,7 +705,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Wide RDNT/ankrBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(RDNT, ankrBNB, solidlyGammaWide_RDNT_ankrBNB, "GAMMA_WIDE"),
+    extraDocs: thenaDocsV2(RDNT, ankrBNB, solidlyGammaWide_RDNT_ankrBNB, "GAMMA_WIDE")
   },
   {
     symbol: assetSymbols.aANKRBNB_RDNT_N,
@@ -713,7 +713,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Narrow RDNT/ankrBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(RDNT, ankrBNB, solidlyGammaNarrow_RDNT_ankrBNB, "GAMMA_NARROW"),
+    extraDocs: thenaDocsV2(RDNT, ankrBNB, solidlyGammaNarrow_RDNT_ankrBNB, "GAMMA_NARROW")
   },
   {
     symbol: assetSymbols.aANKRBNB_THE_W,
@@ -721,7 +721,7 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Wide THE/ankrBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(THE, ankrBNB, solidlyGammaWide_THE_ankrBNB, "GAMMA_WIDE"),
+    extraDocs: thenaDocsV2(THE, ankrBNB, solidlyGammaWide_THE_ankrBNB, "GAMMA_WIDE")
   },
   {
     symbol: assetSymbols.aANKRBNB_THE_N,
@@ -729,8 +729,8 @@ const assets: SupportedAsset[] = [
     name: "Fusion V2 AMM - Narrow THE/ankrBNB",
     decimals: 18,
     oracle: OracleTypes.GammaPoolPriceOracle,
-    extraDocs: thenaDocsV2(THE, ankrBNB, solidlyGammaNarrow_THE_ankrBNB, "GAMMA_NARROW"),
-  },
+    extraDocs: thenaDocsV2(THE, ankrBNB, solidlyGammaNarrow_THE_ankrBNB, "GAMMA_NARROW")
+  }
 ];
 
 export default assets;

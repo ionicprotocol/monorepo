@@ -21,12 +21,12 @@ export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChain
       ) : (
         <BalanceCell
           primary={{
-            value: asset.liquidityFiat,
+            value: asset.liquidityFiat
           }}
           secondary={{
             decimals: asset.underlyingDecimals.toNumber(),
             symbol: tokenData?.symbol || '',
-            value: asset.liquidity,
+            value: asset.liquidity
           }}
         />
       )}

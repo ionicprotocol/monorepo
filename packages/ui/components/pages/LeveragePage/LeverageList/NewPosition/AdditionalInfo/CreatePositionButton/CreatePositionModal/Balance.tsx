@@ -12,7 +12,7 @@ export const Balance = ({
   chainId,
   underlyingDecimals,
   underlyingToken,
-  underlyingSymbol,
+  underlyingSymbol
 }: {
   chainId: SupportedChains;
   underlyingDecimals: BigNumber;

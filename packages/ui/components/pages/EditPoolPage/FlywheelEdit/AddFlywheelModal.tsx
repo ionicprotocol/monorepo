@@ -8,7 +8,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -43,19 +43,19 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
       setIsAdding(true);
       const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
       const tx = await comptroller.functions._addRewardsDistributor(flywheel?.address, {
-        from: address,
+        from: address
       });
       await tx.wait();
       successToast({
         description: 'Flywheel added to pool!',
-        id: 'Added flywheel - ' + Math.random().toString(),
+        id: 'Added flywheel - ' + Math.random().toString()
       });
       if (onSuccess) onSuccess();
     } catch (e) {
       console.error(e);
       errorToast({
         description: e as string,
-        id: 'Adding flywheel - ' + Math.random().toString(),
+        id: 'Adding flywheel - ' + Math.random().toString()
       });
     } finally {
       setIsAdding(false);

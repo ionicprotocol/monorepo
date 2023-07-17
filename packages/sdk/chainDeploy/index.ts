@@ -19,7 +19,7 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   245022926: { config: deployConfig245022926, deployFunc: deploy245022926 },
   // local
   1337: { config: deployConfig1337, deployFunc: deploy1337 },
-  59140: { config: deployConfig59140, deployFunc: deploy59140 },
+  59140: { config: deployConfig59140, deployFunc: deploy59140 }
 };
 
 export * from "./helpers/types";

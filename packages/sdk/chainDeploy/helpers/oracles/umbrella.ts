@@ -11,7 +11,7 @@ export const deployUmbrellaOracle = async ({
   deployments,
   umbrellaAssets,
   nativeUsdFeed,
-  registryAddress,
+  registryAddress
 }: UmbrellaDeployFnParams): Promise<{ umbrellaOracle: UmbrellaPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
 
@@ -26,12 +26,12 @@ export const deployUmbrellaOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [nativeUsdFeed, registryAddress],
-        },
+          args: [nativeUsdFeed, registryAddress]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
 
   if (umbrella.transactionHash) await ethers.provider.waitForTransaction(umbrella.transactionHash);

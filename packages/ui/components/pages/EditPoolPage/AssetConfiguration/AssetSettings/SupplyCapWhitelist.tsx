@@ -9,7 +9,7 @@ import {
   HStack,
   Input,
   Spacer,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -24,7 +24,7 @@ import {
   ADD,
   REMOVE,
   SUPPLY_CAP_WHITELIST,
-  SUPPLY_CAP_WHITELIST_TOOLTIP,
+  SUPPLY_CAP_WHITELIST_TOOLTIP
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
@@ -40,7 +40,7 @@ interface SupplyCapWhitelistProps {
 export const SupplyCapWhitelist = ({
   comptrollerAddress,
   selectedAsset,
-  poolChainId,
+  poolChainId
 }: SupplyCapWhitelistProps) => {
   const { cToken: cTokenAddress, underlyingSymbol } = selectedAsset;
   const { currentSdk } = useMultiIonic();
@@ -57,12 +57,12 @@ export const SupplyCapWhitelist = ({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       addressWhitelisted: SUPPLY_CAP_WHITELIST.DEFAULT,
-      mode: ADD,
-    },
+      mode: ADD
+    }
   });
 
   const watchAddressWhitelisted = watch('addressWhitelisted', SUPPLY_CAP_WHITELIST.DEFAULT);
@@ -70,7 +70,7 @@ export const SupplyCapWhitelist = ({
 
   const updateSupplyCapWhitelist = async ({
     addressWhitelisted,
-    mode,
+    mode
   }: {
     addressWhitelisted: string;
     mode: string;
@@ -96,20 +96,20 @@ export const SupplyCapWhitelist = ({
           description: `${
             mode === ADD ? 'Adding' : 'Removing'
           } ${validAddress} in whitelist to supply ${underlyingSymbol}`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         await tx.wait();
 
         successToast({
           description: `Successfully ${mode === ADD ? 'added' : 'removed'} in whitelist.`,
-          id: 'Updated supply cap whitelist - ' + Math.random().toString(),
+          id: 'Updated supply cap whitelist - ' + Math.random().toString()
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in whitelist.`,
-          id: 'Already added or removed - ' + Math.random().toString(),
+          id: 'Already added or removed - ' + Math.random().toString()
         });
       }
     } catch (error) {
@@ -117,11 +117,11 @@ export const SupplyCapWhitelist = ({
         account: addressWhitelisted,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating Supply Cap Whitelist',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -187,8 +187,8 @@ export const SupplyCapWhitelist = ({
                       rules={{
                         required: 'Address is required',
                         validate: {
-                          isValidAdress: (v) => utils.isAddress(v) || 'Invalid address',
-                        },
+                          isValidAdress: (v) => utils.isAddress(v) || 'Invalid address'
+                        }
                       }}
                     />
 

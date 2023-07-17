@@ -22,7 +22,7 @@ interface ToggleBorrowProps {
 export const ToggleBorrow = ({
   comptrollerAddress,
   selectedAsset,
-  poolChainId,
+  poolChainId
 }: ToggleBorrowProps) => {
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
@@ -48,11 +48,11 @@ export const ToggleBorrow = ({
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating borrow status',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {

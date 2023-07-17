@@ -9,7 +9,7 @@ import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/ind
 const querySchema = yup.object().shape({
   cTokenAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid cToken address').required(),
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
-  milliSeconds: yup.string().required(),
+  milliSeconds: yup.string().required()
 });
 type Query = yup.InferType<typeof querySchema>;
 

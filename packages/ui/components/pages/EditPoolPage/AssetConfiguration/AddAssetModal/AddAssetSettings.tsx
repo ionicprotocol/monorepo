@@ -10,7 +10,7 @@ import {
   Select,
   Stack,
   Text,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type { MarketConfig } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ import {
   ADMIN_FEE_TOOLTIP,
   LOAN_TO_VALUE,
   LOAN_TO_VALUE_TOOLTIP,
-  RESERVE_FACTOR,
+  RESERVE_FACTOR
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
@@ -40,7 +40,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 const IRMChart = dynamic(
   () => import('@ui/components/pages/EditPoolPage/AssetConfiguration/IRMChart'),
   {
-    ssr: false,
+    ssr: false
   }
 );
 
@@ -58,7 +58,7 @@ export const AddAssetSettings = ({
   poolID,
   poolName,
   tokenData,
-  poolChainId,
+  poolChainId
 }: {
   comptrollerAddress: string;
   onSuccess?: () => void;
@@ -84,15 +84,15 @@ export const AddAssetSettings = ({
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       adminFee: ADMIN_FEE.DEFAULT,
       collateralFactor: LOAN_TO_VALUE.DEFAULT,
       interestRateModel: currentSdk.chainDeployment.JumpRateModel.address,
       pluginIndex: -1,
-      reserveFactor: RESERVE_FACTOR.DEFAULT,
-    },
+      reserveFactor: RESERVE_FACTOR.DEFAULT
+    }
   });
 
   const watchAdminFee = watch('adminFee', ADMIN_FEE.DEFAULT);
@@ -114,7 +114,7 @@ export const AddAssetSettings = ({
           errorToast({
             description:
               'This asset is not supported. The price oracle is not available for this asset',
-            id: 'Asset not supported - ' + Math.random().toString(),
+            id: 'Asset not supported - ' + Math.random().toString()
           });
 
           return;
@@ -146,7 +146,7 @@ export const AddAssetSettings = ({
       plugin: plugin,
       reserveFactor: reserveFactor,
       symbol: 'f' + tokenData.symbol + '-' + poolID,
-      underlying: tokenData.address,
+      underlying: tokenData.address
     };
 
     try {
@@ -157,7 +157,7 @@ export const AddAssetSettings = ({
       successToast({
         description: 'You may now lend and borrow with this asset.',
         id: 'Added asset - ' + Math.random().toString(),
-        title: 'You have successfully added an asset to this pool!',
+        title: 'You have successfully added an asset to this pool!'
       });
 
       if (onSuccess) onSuccess();
@@ -166,11 +166,11 @@ export const AddAssetSettings = ({
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         symbol: tokenData.symbol,
-        underlying: tokenData.address,
+        underlying: tokenData.address
       };
       const sentryInfo = {
         contextName: 'Adding asset',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -186,18 +186,18 @@ export const AddAssetSettings = ({
           '&::-webkit-scrollbar': {
             display: 'block',
             height: '4px',
-            width: '4px',
+            width: '4px'
           },
           '&::-webkit-scrollbar-corner': {
-            display: 'none',
+            display: 'none'
           },
           '&::-webkit-scrollbar-thumb': {
-            background: cPage.primary.borderColor,
+            background: cPage.primary.borderColor
           },
           '&::-webkit-scrollbar-track': {
             height: '4px',
-            width: '4px',
-          },
+            width: '4px'
+          }
         }}
         maxH={'40vh'}
         overflowY="scroll"
@@ -238,13 +238,13 @@ export const AddAssetSettings = ({
                 rules={{
                   max: {
                     message: `Loan-to-Value must be no more than ${LOAN_TO_VALUE.MAX}%`,
-                    value: LOAN_TO_VALUE.MAX,
+                    value: LOAN_TO_VALUE.MAX
                   },
                   min: {
                     message: `Loan-to-Value must be at least ${LOAN_TO_VALUE.MIN}%`,
-                    value: LOAN_TO_VALUE.MIN,
+                    value: LOAN_TO_VALUE.MIN
                   },
-                  required: 'Loan-to-Value is required',
+                  required: 'Loan-to-Value is required'
                 }}
               />
               <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -294,13 +294,13 @@ export const AddAssetSettings = ({
                 rules={{
                   max: {
                     message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
-                    value: RESERVE_FACTOR.MAX,
+                    value: RESERVE_FACTOR.MAX
                   },
                   min: {
                     message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
-                    value: RESERVE_FACTOR.MIN,
+                    value: RESERVE_FACTOR.MIN
                   },
-                  required: 'Reserve factor is required',
+                  required: 'Reserve factor is required'
                 }}
               />
               <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -346,13 +346,13 @@ export const AddAssetSettings = ({
                 rules={{
                   max: {
                     message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
-                    value: ADMIN_FEE.MAX,
+                    value: ADMIN_FEE.MAX
                   },
                   min: {
                     message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
-                    value: ADMIN_FEE.MIN,
+                    value: ADMIN_FEE.MIN
                   },
-                  required: 'Admin fee is required',
+                  required: 'Admin fee is required'
                 }}
               />
               <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -401,7 +401,7 @@ export const AddAssetSettings = ({
               <Select
                 id="pluginIndex"
                 {...register('pluginIndex', {
-                  required: 'Plugin is required',
+                  required: 'Plugin is required'
                 })}
               >
                 <option style={{ color: cSelect.txtColor }} value={-1}>
@@ -444,7 +444,7 @@ export const AddAssetSettings = ({
               <Select
                 id="interestRateModel"
                 {...register('interestRateModel', {
-                  required: 'interestRateModel is required',
+                  required: 'interestRateModel is required'
                 })}
                 cursor="pointer"
                 ml="auto"

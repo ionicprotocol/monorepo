@@ -23,7 +23,7 @@ export const SupplyModal = ({
   assets,
   comptrollerAddress,
   onClose,
-  poolChainId,
+  poolChainId
 }: SupplyModalProps) => {
   const { cCard } = useColors();
   const [tabIndex, setTabIndex] = useState<number>(1);

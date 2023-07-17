@@ -11,7 +11,7 @@ import {
   Select,
   Spinner,
   Switch,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
@@ -66,7 +66,7 @@ export const CreatePoolConfiguration = () => {
     register,
     watch,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       closeFactor: 50,
@@ -74,8 +74,8 @@ export const CreatePoolConfiguration = () => {
       liquidationIncentive: 8,
       name: '',
       oracle: '',
-      whitelist: [],
-    },
+      whitelist: []
+    }
   });
 
   const watchIsWhitelisted = watch('isWhitelisted', false);
@@ -116,17 +116,17 @@ export const CreatePoolConfiguration = () => {
       successToast({
         description: 'You may now add assets to it.',
         id: 'Pool deployed - ' + Math.random().toString(),
-        title: 'Your pool has been deployed!',
+        title: 'Your pool has been deployed!'
       });
 
       await router.push(`/${currentChain.id}/pool/${poolId}`);
     } catch (error) {
       const sentryProperties = {
-        chainId: currentSdk.chainId,
+        chainId: currentSdk.chainId
       };
       const sentryInfo = {
         contextName: 'Creating pool',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
       setIsCreating(false);
@@ -153,9 +153,9 @@ export const CreatePoolConfiguration = () => {
             alertProps={{ status: 'warning' }}
             descriptions={[
               {
-                text: 'We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, ',
+                text: 'We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, '
               },
-              { text: 'please contact us via Discord.', url: 'https://discord.gg/NYqKtJPYAB' },
+              { text: 'please contact us via Discord.', url: 'https://discord.gg/NYqKtJPYAB' }
             ]}
           />
         )}
@@ -172,7 +172,7 @@ export const CreatePoolConfiguration = () => {
                   id="name"
                   placeholder="Type Pool name"
                   {...register('name', {
-                    required: 'Pool name is required',
+                    required: 'Pool name is required'
                   })}
                   isDisabled={!address || !currentChain || !isAllowedAddress}
                 />
@@ -193,7 +193,7 @@ export const CreatePoolConfiguration = () => {
                   id="oracle"
                   placeholder="Select Oracle"
                   {...register('oracle', {
-                    required: 'Oracle is required',
+                    required: 'Oracle is required'
                   })}
                   isDisabled={!address || !currentChain || !isAllowedAddress}
                 >
@@ -300,13 +300,13 @@ export const CreatePoolConfiguration = () => {
                   rules={{
                     max: {
                       message: `Close Factor must be no more than ${CLOSE_FACTOR.MAX}%`,
-                      value: CLOSE_FACTOR.MAX,
+                      value: CLOSE_FACTOR.MAX
                     },
                     min: {
                       message: `Close Factor must be at least ${CLOSE_FACTOR.MIN}%`,
-                      value: CLOSE_FACTOR.MIN,
+                      value: CLOSE_FACTOR.MIN
                     },
-                    required: 'Close factor is required',
+                    required: 'Close factor is required'
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -349,13 +349,13 @@ export const CreatePoolConfiguration = () => {
                   rules={{
                     max: {
                       message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
-                      value: LIQUIDATION_INCENTIVE.MAX,
+                      value: LIQUIDATION_INCENTIVE.MAX
                     },
                     min: {
                       message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
-                      value: LIQUIDATION_INCENTIVE.MIN,
+                      value: LIQUIDATION_INCENTIVE.MIN
                     },
-                    required: 'Liquidation incentive is required',
+                    required: 'Liquidation incentive is required'
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="270px">

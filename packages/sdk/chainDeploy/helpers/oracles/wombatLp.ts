@@ -7,7 +7,7 @@ export const deployWombatOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  wombatAssets,
+  wombatAssets
 }: WombatDeployFnParams): Promise<{ wombatOracle: WombatLpTokenPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
 
@@ -17,7 +17,7 @@ export const deployWombatOracle = async ({
   const wombat = await deployments.deploy("WombatLpTokenPriceOracle", {
     from: deployer,
     args: [],
-    log: true,
+    log: true
   });
   if (wombat.transactionHash) {
     await ethers.provider.waitForTransaction(wombat.transactionHash);

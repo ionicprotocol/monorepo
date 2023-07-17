@@ -13,7 +13,7 @@ export const WhitelistInfo = ({
   value,
   onChange,
   addToWhitelist,
-  removeFromWhitelist,
+  removeFromWhitelist
 }: {
   addToWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
   onChange: (v: string[]) => void;
@@ -35,7 +35,7 @@ export const WhitelistInfo = ({
       errorToast({
         description:
           'This is not a valid ethereum address (or you have already entered this address)',
-        id: 'Invalid address - ' + Math.random().toString(),
+        id: 'Invalid address - ' + Math.random().toString()
       });
     }
   };

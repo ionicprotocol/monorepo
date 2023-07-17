@@ -8,7 +8,7 @@ import {
   jarvisDocs,
   quickSwapDocs,
   tangibleDocsUsdr,
-  wrappedAssetDocs,
+  wrappedAssetDocs
 } from "../common";
 import {
   ankrCertificateDocs,
@@ -16,7 +16,7 @@ import {
   lidoFinanceDocs,
   oneInchDocs,
   pearlDocs,
-  StaderXDocs,
+  StaderXDocs
 } from "../common/docs";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
@@ -155,7 +155,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", AAVE),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.ALCX,
@@ -164,7 +164,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", ALCX),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.BAL,
@@ -173,7 +173,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", BAL),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.oBNB,
@@ -182,7 +182,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", oBNB),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.BUSD,
@@ -191,7 +191,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", BUSD),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.CRV,
@@ -200,7 +200,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", CRV),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.CVX,
@@ -209,7 +209,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", CVX),
-    disabled: true,
+    disabled: true
   },
 
   {
@@ -218,7 +218,7 @@ export const assets: SupportedAsset[] = [
     name: "Dai Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/DAI"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/DAI")
   },
   {
     symbol: assetSymbols.WETH,
@@ -226,7 +226,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", WETH),
+    extraDocs: defaultDocs("https://polygonscan.com", WETH)
   },
   {
     symbol: assetSymbols.FRAX,
@@ -234,7 +234,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/FRAX"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/FRAX")
   },
   {
     symbol: assetSymbols.FTM,
@@ -243,7 +243,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", FTM),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.FXS,
@@ -252,7 +252,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", FXS),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.GHST,
@@ -261,7 +261,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", GHST),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.GRT,
@@ -270,7 +270,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", GRT),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.GNS,
@@ -278,7 +278,7 @@ export const assets: SupportedAsset[] = [
     name: "Gains Network Token",
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
-    extraDocs: defaultDocs("https://polygonscan.com", GNS),
+    extraDocs: defaultDocs("https://polygonscan.com", GNS)
   },
   {
     symbol: assetSymbols.IXT,
@@ -286,7 +286,7 @@ export const assets: SupportedAsset[] = [
     name: "PlanetIX",
     decimals: 18,
     oracle: OracleTypes.AlgebraPriceOracle,
-    extraDocs: defaultDocs("https://polygonscan.com", IXT),
+    extraDocs: defaultDocs("https://polygonscan.com", IXT)
   },
   {
     symbol: assetSymbols.LINK,
@@ -295,7 +295,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", LINK),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.MAI,
@@ -303,7 +303,7 @@ export const assets: SupportedAsset[] = [
     name: "miMATIC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", MAI),
+    extraDocs: defaultDocs("https://polygonscan.com", MAI)
   },
   {
     symbol: assetSymbols.MKR,
@@ -312,7 +312,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", MKR),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.RAI,
@@ -321,7 +321,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", RAI),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.SNX,
@@ -330,7 +330,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", SNX),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.SD,
@@ -339,7 +339,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.AlgebraPriceOracle,
     extraDocs: defaultDocs("https://polygonscan.com", SD),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.SOL,
@@ -348,7 +348,7 @@ export const assets: SupportedAsset[] = [
     decimals: 9,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", SOL),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.SUSHI,
@@ -357,7 +357,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/SUSHI"),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.YFI,
@@ -366,7 +366,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", YFI),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.USDC,
@@ -374,7 +374,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin (PoS)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDC"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDC")
   },
   {
     symbol: assetSymbols.USDT,
@@ -382,7 +382,7 @@ export const assets: SupportedAsset[] = [
     name: "Tether USD (PoS)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDT"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDT")
   },
   {
     symbol: assetSymbols.WBTC,
@@ -390,7 +390,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped BTC (PoS)",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/WBTC"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/WBTC")
   },
   {
     symbol: assetSymbols.WMATIC,
@@ -398,7 +398,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Matic",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.polygon),
+    extraDocs: wrappedAssetDocs(SupportedChains.polygon)
   },
   {
     symbol: assetSymbols.MIMO,
@@ -406,7 +406,7 @@ export const assets: SupportedAsset[] = [
     name: "MIMO Parallel Governance Token (PoS) ",
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/MIMO"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/MIMO")
   },
   {
     symbol: assetSymbols.MATICx,
@@ -414,7 +414,7 @@ export const assets: SupportedAsset[] = [
     name: "Liquid Staking Matic (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: StaderXDocs("polygon", "MATICx"),
+    extraDocs: StaderXDocs("polygon", "MATICx")
   },
 
   {
@@ -423,7 +423,7 @@ export const assets: SupportedAsset[] = [
     name: "Staked MATIC (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: lidoFinanceDocs("polygon", "MATIC", "stMATIC"),
+    extraDocs: lidoFinanceDocs("polygon", "MATIC", "stMATIC")
   },
   {
     symbol: assetSymbols.aMATICc,
@@ -431,7 +431,7 @@ export const assets: SupportedAsset[] = [
     name: "Ankr MATIC Reward Bearing Certificate",
     decimals: 18,
     oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
-    extraDocs: ankrCertificateDocs("aMATICc", "MATIC"),
+    extraDocs: ankrCertificateDocs("aMATICc", "MATIC")
   },
   {
     symbol: assetSymbols.csMATIC,
@@ -439,7 +439,7 @@ export const assets: SupportedAsset[] = [
     name: "ClayStack Staked MATIC",
     decimals: 18,
     oracle: OracleTypes.BalancerRateProviderOracle,
-    extraDocs: clayStackDocs("MATIC", "polygon"),
+    extraDocs: clayStackDocs("MATIC", "polygon")
   },
 
   // QuickSwap LPs
@@ -450,7 +450,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WMATIC, USDC, "WMATIC-USDC", WMATIC_USDC),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols["WMATIC-USDT"],
@@ -459,7 +459,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WMATIC, USDT, "WMATIC-USDT", WMATIC_USDT),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols["WMATIC-ETH"],
@@ -468,7 +468,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WMATIC, WETH, "WMATIC-ETH", WMATIC_ETH),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols["WMATIC-MATICx"],
@@ -476,7 +476,7 @@ export const assets: SupportedAsset[] = [
     name: "WMATIC-MATICx LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: quickSwapDocs(WMATIC, MATICx, "WMATIC-MATICx", WMATIC_MATICx),
+    extraDocs: quickSwapDocs(WMATIC, MATICx, "WMATIC-MATICx", WMATIC_MATICx)
   },
   {
     symbol: assetSymbols["WETH-WBTC"],
@@ -485,7 +485,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WETH, WBTC, "WETH-WBTC", WETH_WBTC),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols["MAI-USDC"],
@@ -493,7 +493,7 @@ export const assets: SupportedAsset[] = [
     name: "MAI-USDC LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: quickSwapDocs(MAI, USDC, "MAI-USDC", MAI_USDC),
+    extraDocs: quickSwapDocs(MAI, USDC, "MAI-USDC", MAI_USDC)
   },
   {
     symbol: assetSymbols["DAI-GNS"],
@@ -501,7 +501,7 @@ export const assets: SupportedAsset[] = [
     name: "DAI-GNS LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: quickSwapDocs(DAI, GNS, "DAI-GNS", DAI_GNS),
+    extraDocs: quickSwapDocs(DAI, GNS, "DAI-GNS", DAI_GNS)
   },
   {
     symbol: assetSymbols["IXT-USDT"],
@@ -509,7 +509,7 @@ export const assets: SupportedAsset[] = [
     name: "IXT-USDT LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: quickSwapDocs(IXT, USDT, "IXT-USDT", IXT_USDT),
+    extraDocs: quickSwapDocs(IXT, USDT, "IXT-USDT", IXT_USDT)
   },
   // curve.fi LP tokens
   {
@@ -518,7 +518,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis agEUR-jEUR LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(209, "AGEUR-JEUR", AGEUR_JEUR, true),
+    extraDocs: curveFinancePolygonDocs(209, "AGEUR-JEUR", AGEUR_JEUR, true)
   },
   {
     symbol: assetSymbols["JEUR-PAR"],
@@ -526,7 +526,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis jEUR-PAR LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(285, "JEUR-PAR", JEUR_PAR, true),
+    extraDocs: curveFinancePolygonDocs(285, "JEUR-PAR", JEUR_PAR, true)
   },
   {
     symbol: assetSymbols["JJPY-JPYC"],
@@ -534,7 +534,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis jJPY-JPYC LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(255, "JJPY-JPYC", JJPY_JPYC, true),
+    extraDocs: curveFinancePolygonDocs(255, "JJPY-JPYC", JJPY_JPYC, true)
   },
   {
     symbol: assetSymbols["JCAD-CADC"],
@@ -542,7 +542,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis jCAD-CADC LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(23, "JCAD-CADC", JCAD_CADC, true),
+    extraDocs: curveFinancePolygonDocs(23, "JCAD-CADC", JCAD_CADC, true)
   },
   {
     symbol: assetSymbols["JSGD-XSGD"],
@@ -550,7 +550,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis jSGD-XSGD LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(22, "JSGD-XSGD", JSGD_XSGD, true),
+    extraDocs: curveFinancePolygonDocs(22, "JSGD-XSGD", JSGD_XSGD, true)
   },
   {
     symbol: assetSymbols["JNZD-NZDS"],
@@ -558,7 +558,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JNZD-NZDS LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(228, "JNZD-NZDS", JNZD_NZDS, true),
+    extraDocs: curveFinancePolygonDocs(228, "JNZD-NZDS", JNZD_NZDS, true)
   },
   {
     symbol: assetSymbols["JEUR-EURT"],
@@ -566,7 +566,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JEUR-EURT LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(286, "JEUR-EURT", JEUR_EURT, true),
+    extraDocs: curveFinancePolygonDocs(286, "JEUR-EURT", JEUR_EURT, true)
   },
   {
     symbol: assetSymbols["EURE-JEUR"],
@@ -574,7 +574,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis EURE-JEUR LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", EURE_JEUR, true),
+    extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", EURE_JEUR, true)
   },
   {
     symbol: assetSymbols.amUSDC,
@@ -583,7 +583,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `https://app.aave.com/reserve-overview/?underlyingAsset=${USDC}&marketName=proto_polygon_v3`,
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.am3CRV,
@@ -591,7 +591,7 @@ export const assets: SupportedAsset[] = [
     name: "Curve.fi amDAI/amUSDC/amUSDT",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs("aave", "am3CRV", am3CRV, false),
+    extraDocs: curveFinancePolygonDocs("aave", "am3CRV", am3CRV, false)
   },
   {
     symbol: assetSymbols.USDR3CRV,
@@ -599,7 +599,7 @@ export const assets: SupportedAsset[] = [
     name: "Curve.fi USDR/DAI/USDC/USDT",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(339, "USDR3CRV", USDR3CRV, true),
+    extraDocs: curveFinancePolygonDocs(339, "USDR3CRV", USDR3CRV, true)
   },
   // Balancer
   {
@@ -613,7 +613,7 @@ export const assets: SupportedAsset[] = [
       "0x82d7f08026e21c7713cfad1071df7c8271b17eae0002000000000000000004b6",
       "80MIMO-20PAR",
       MIMO_PAR_80_20
-    ),
+    )
   },
   {
     symbol: assetSymbols.WMATIC_MATICX_STABLE_BLP,
@@ -627,7 +627,7 @@ export const assets: SupportedAsset[] = [
       "WMATIC-MATICx BLP",
       WMATIC_MATICX_STABLE_BLP
     ),
-    originalSymbol: assetOriginalSymbols.WMATIC_MATICX_STABLE_BLP,
+    originalSymbol: assetOriginalSymbols.WMATIC_MATICX_STABLE_BLP
   },
   {
     symbol: assetSymbols.WMATIC_CSMATIC_STABLE_BLP,
@@ -640,7 +640,7 @@ export const assets: SupportedAsset[] = [
       "0x02d2e2d7a89d6c5cb3681cfcb6f7dac02a55eda400000000000000000000088f",
       "WMATIC-csMATIC BLP",
       WMATIC_CSMATIC_STABLE_BLP
-    ),
+    )
   },
   {
     symbol: assetSymbols.WMATIC_STMATIC_STABLE_BLP,
@@ -653,7 +653,7 @@ export const assets: SupportedAsset[] = [
       "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
       "WMATIC-stMATIC Stable BLP",
       WMATIC_STMATIC_STABLE_BLP
-    ),
+    )
   },
   {
     symbol: assetSymbols.BRZ_JBRL_STABLE_BLP,
@@ -666,7 +666,7 @@ export const assets: SupportedAsset[] = [
       "0xe22483774bd8611be2ad2f4194078dac9159f4ba0000000000000000000008f0",
       "BRZ-jBRL Stable BLP",
       BRZ_JBRL_STABLE_BLP
-    ),
+    )
   },
   {
     symbol: assetSymbols.TETU_BOOSTED_STABLE_BLP,
@@ -680,7 +680,7 @@ export const assets: SupportedAsset[] = [
       "Tetu Boosted Stable BLP",
       TETU_BOOSTED_STABLE_BLP
     ),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.JEUR_PAR_STABLE_BLP,
@@ -693,7 +693,7 @@ export const assets: SupportedAsset[] = [
       "0x513cdee00251f39de280d9e5f771a6eafebcc88e000000000000000000000a6b",
       "jEUR-PAR Stable BLP",
       JEUR_PAR_STABLE_BLP
-    ),
+    )
   },
   {
     symbol: assetSymbols.MaticX_bbaWMATIC,
@@ -706,7 +706,7 @@ export const assets: SupportedAsset[] = [
       "0xe78b25c06db117fdf8f98583cdaaa6c92b79e917000000000000000000000b2b",
       "MaticX-bbaWMATIC Stable BLP",
       MATICX_AAVE_WMATIC_STABLE_BLP
-    ),
+    )
   },
   {
     symbol: assetSymbols.StMatic_bbaWMATIC,
@@ -719,7 +719,7 @@ export const assets: SupportedAsset[] = [
       "0x216690738aac4aa0c4770253ca26a28f0115c595000000000000000000000b2c",
       "StMatic-bbaWMATIC Stable BLP",
       stMATIC_AAVE_WMATIC_STABLE_BLP
-    ),
+    )
   },
   {
     symbol: assetSymbols.TETU_LINEAR_USDT,
@@ -728,7 +728,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.TETU_LINEAR_USDC,
@@ -737,7 +737,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.TETU_LINEAR_DAI,
@@ -746,7 +746,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "https://app.tetu.io/vault/0xf2fB1979C4bed7E71E6ac829801E0A8a4eFa8513",
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.AAVE_LINEAR_WMATIC,
@@ -756,7 +756,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs:
       "https://app.balancer.fi/#/polygon/pool/0xe78b25c06db117fdf8f98583cdaaa6c92b79e917000000000000000000000b2b",
-    disabled: true,
+    disabled: true
   },
 
   // stable forex
@@ -766,7 +766,7 @@ export const assets: SupportedAsset[] = [
     name: "agEUR Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/agEUR"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/agEUR")
   },
   {
     symbol: assetSymbols.JEUR,
@@ -774,7 +774,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JEUR Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.PAR,
@@ -782,21 +782,21 @@ export const assets: SupportedAsset[] = [
     name: "PAR Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/PAR"),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/PAR")
   },
   {
     symbol: assetSymbols.EURT,
     underlying: EURT,
     name: "Euro Tether (PoS)",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.ChainlinkPriceOracleV2
   },
   {
     symbol: assetSymbols.EURE,
     underlying: EURE,
     name: "Monerium EUR emoney",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.ChainlinkPriceOracleV2
   },
   {
     symbol: assetSymbols.JJPY,
@@ -804,14 +804,14 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JJPY Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JPYC,
     underlying: JPYC,
     name: "JPY Coin",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.ChainlinkPriceOracleV2
   },
   {
     symbol: assetSymbols.JCAD,
@@ -820,7 +820,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: jarvisDocs("v2"),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.CADC,
@@ -828,7 +828,7 @@ export const assets: SupportedAsset[] = [
     name: "CAD Coin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.JSGD,
@@ -836,7 +836,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JSGD Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JCHF,
@@ -844,7 +844,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JCHF Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JMXN,
@@ -852,7 +852,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JMXN Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JGBP,
@@ -860,7 +860,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JGPB Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JCNY,
@@ -868,7 +868,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JCNY Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JAUD,
@@ -876,7 +876,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JAUD Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JNZD,
@@ -884,7 +884,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JNZD Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JPLN,
@@ -892,7 +892,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JPLN Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JSEK,
@@ -900,7 +900,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JSEK Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JKRW,
@@ -908,7 +908,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JKRW Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.JPHP,
@@ -916,7 +916,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JPHP Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.NZDS,
@@ -925,7 +925,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>Learn more on how to acquire NZDS at <a href="https://www.techemynt.com/#buy_nzds" target="_blank" style="color: #BCAC83; cursor="pointer">Techemynt</a></p>`,
+    <p>Learn more on how to acquire NZDS at <a href="https://www.techemynt.com/#buy_nzds" target="_blank" style="color: #BCAC83; cursor="pointer">Techemynt</a></p>`
   },
   {
     symbol: assetSymbols.XSGD,
@@ -934,7 +934,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>Learn more on how to acquire NZDS at <a href="https://www.straitsx.com/sg/xsgd" target="_blank" style="color: #BCAC83; cursor="pointer">Stratis X</a></p>`,
+    <p>Learn more on how to acquire NZDS at <a href="https://www.straitsx.com/sg/xsgd" target="_blank" style="color: #BCAC83; cursor="pointer">Stratis X</a></p>`
   },
   {
     symbol: assetSymbols.BRZ,
@@ -943,7 +943,7 @@ export const assets: SupportedAsset[] = [
     decimals: 4,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`,
+    <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`
   },
   {
     symbol: assetSymbols.jBRL,
@@ -951,7 +951,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis JBRL Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
+    extraDocs: jarvisDocs("v2")
   },
   {
     symbol: assetSymbols.USDR,
@@ -959,7 +959,7 @@ export const assets: SupportedAsset[] = [
     name: "Real USD ",
     decimals: 9,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: tangibleDocsUsdr("Mint"),
+    extraDocs: tangibleDocsUsdr("Mint")
   },
   {
     symbol: assetSymbols.WUSDR,
@@ -967,7 +967,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrappd Real USD ",
     decimals: 9,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: tangibleDocsUsdr("Wrap"),
+    extraDocs: tangibleDocsUsdr("Wrap")
   },
   {
     symbol: assetSymbols.TNGBL,
@@ -975,7 +975,7 @@ export const assets: SupportedAsset[] = [
     name: "Tangible ",
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
-    extraDocs: defaultDocs("https://polygonscan.com", TNGBL),
+    extraDocs: defaultDocs("https://polygonscan.com", TNGBL)
   },
   // Arrakis Vaults
   {
@@ -984,7 +984,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 USDC/WETH 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_WETH_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_WETH_005)
   },
   {
     symbol: assetSymbols["arrakis_WBTC_WETH_005"],
@@ -992,7 +992,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 WBTC/WETH 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_WBTC_WETH_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_WBTC_WETH_005)
   },
   {
     symbol: assetSymbols["arrakis_USDC_PAR_005"],
@@ -1000,7 +1000,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 USDC/PAR 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_PAR_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_PAR_005)
   },
   {
     symbol: assetSymbols["arrakis_WMATIC_USDC_005"],
@@ -1008,7 +1008,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 WMATIC/USDC 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_WMATIC_USDC_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_WMATIC_USDC_005)
   },
   {
     symbol: assetSymbols["arrakis_USDC_agEUR_001"],
@@ -1016,7 +1016,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 USDC/agEUR 0.01",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_agEUR_001),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_agEUR_001)
   },
   {
     symbol: assetSymbols["arrakis_WMATIC_WETH_005"],
@@ -1024,7 +1024,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 WMATIC/WETH 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_WMATIC_WETH_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_WMATIC_WETH_005)
   },
   {
     symbol: assetSymbols["arrakis_WMATIC_AAVE_03"],
@@ -1032,7 +1032,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 WMATIC/AAVE 0.3",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_WMATIC_AAVE_03),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_WMATIC_AAVE_03)
   },
   {
     symbol: assetSymbols["arrakis_USDC_MAI_005"],
@@ -1040,7 +1040,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 USDC/MAI 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_MAI_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_MAI_005)
   },
   {
     symbol: assetSymbols["arrakis_USDC_USDT_001"],
@@ -1048,7 +1048,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 USDC/USDT 0.01",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_USDT_001),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_USDT_001)
   },
   {
     symbol: assetSymbols["arrakis_USDC_USDT_005"],
@@ -1056,7 +1056,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 USDC/USDT 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_USDT_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_USDT_005)
   },
   {
     symbol: assetSymbols["arrakis_USDC_DAI_005"],
@@ -1064,7 +1064,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 USDC/DAI 0.05",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_DAI_005),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_USDC_DAI_005)
   },
   {
     symbol: assetSymbols["arrakis_WETH_DAI_03"],
@@ -1072,7 +1072,7 @@ export const assets: SupportedAsset[] = [
     name: "Arrakis Vault V1 WETH/DAI 0.3",
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
-    extraDocs: arrakisDocs("Polygon", 137, arrakis_WETH_DAI_03),
+    extraDocs: arrakisDocs("Polygon", 137, arrakis_WETH_DAI_03)
   },
   {
     symbol: assetSymbols.JRT,
@@ -1081,7 +1081,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", JRT),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols["sAMM-USDC/USDR"],
@@ -1090,7 +1090,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: pearlDocs(solidlyStableAMM_USDR_USDC),
-    originalSymbol: assetOriginalSymbols["sAMM-USDC/USDR"],
+    originalSymbol: assetOriginalSymbols["sAMM-USDC/USDR"]
   },
   {
     symbol: assetSymbols["vAMM-wUSDR/USDR"],
@@ -1099,7 +1099,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: pearlDocs(solidlyVolatileAMM_wUSDR_USDR),
-    originalSymbol: assetOriginalSymbols["vAMM-wUSDR/USDR"],
+    originalSymbol: assetOriginalSymbols["vAMM-wUSDR/USDR"]
   },
   {
     symbol: assetSymbols["vAMM-stMATIC/USDR"],
@@ -1108,8 +1108,8 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: pearlDocs(solidlyVolatileAMM_stMATIC_USDR),
-    originalSymbol: assetOriginalSymbols["vAMM-stMATIC/USDR"],
-  },
+    originalSymbol: assetOriginalSymbols["vAMM-stMATIC/USDR"]
+  }
 ];
 
 export default assets;

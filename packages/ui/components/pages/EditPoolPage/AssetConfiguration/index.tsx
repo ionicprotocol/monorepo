@@ -54,7 +54,7 @@ const AssetConfiguration = ({
   openAddAssetModal,
   assets,
   comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   assets: NativePricedIonicAsset[];
   comptrollerAddress: string;

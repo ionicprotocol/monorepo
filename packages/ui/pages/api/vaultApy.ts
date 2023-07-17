@@ -8,7 +8,7 @@ import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/ind
 
 const querySchema = yup.object().shape({
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
-  vaultAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid plugin address').required(),
+  vaultAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid plugin address').required()
 });
 type Query = yup.InferType<typeof querySchema>;
 
@@ -39,7 +39,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<VaultA
     return response.json(
       databaseResponse.data.map((data) => ({
         ...data.info,
-        createdAt: new Date(data.created_at).getTime(),
+        createdAt: new Date(data.created_at).getTime()
       }))
     );
   } else {

@@ -25,7 +25,7 @@ export const SimpleTooltip = ({
         label={label}
         placement={'top'}
         sx={{
-          '--popper-arrow-shadow-color': `${cIPage.dividerColor}`,
+          '--popper-arrow-shadow-color': `${cIPage.dividerColor}`
         }}
         {...tooltipProps}
       >

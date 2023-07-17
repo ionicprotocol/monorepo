@@ -10,7 +10,7 @@ import { Column } from '@ui/components/shared/Flex';
 import {
   DEBT_RATIO_TOOLTIP,
   EQUITY_VALUE_TOOLTIP,
-  LIQUIDATION_THRESHOLD_TOOLTIP,
+  LIQUIDATION_THRESHOLD_TOOLTIP
 } from '@ui/constants/index';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
@@ -23,7 +23,7 @@ import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 export const PositionDetails = ({
   position,
-  positionInfo,
+  positionInfo
 }: {
   position: OpenPosition;
   positionInfo: PositionInfo | null;
@@ -38,10 +38,10 @@ export const PositionDetails = ({
   const { data: allRewards } = useRewardsForMarket({
     asset: {
       cToken: position.collateral.cToken,
-      plugin: position.collateral.plugin,
+      plugin: position.collateral.plugin
     },
     chainId: Number(position.chainId),
-    poolAddress: position.collateral.pool,
+    poolAddress: position.collateral.pool
   });
   const { data: assetInfos } = useAssets([position.chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
@@ -50,8 +50,8 @@ export const PositionDetails = ({
         cToken: position.collateral.cToken,
         supplyRatePerBlock: position.collateral.supplyRatePerBlock,
         underlyingSymbol: position.collateral.symbol,
-        underlyingToken: position.collateral.underlyingToken,
-      },
+        underlyingToken: position.collateral.underlyingToken
+      }
     ],
     position.chainId,
     allRewards,
@@ -137,7 +137,7 @@ export const PositionDetails = ({
                     plugin: position.collateral.plugin,
                     supplyRatePerBlock: position.collateral.supplyRatePerBlock,
                     underlyingSymbol: position.collateral.symbol,
-                    underlyingToken: position.collateral.underlyingToken,
+                    underlyingToken: position.collateral.underlyingToken
                   }}
                   poolChainId={position.chainId}
                   rewards={allRewards}

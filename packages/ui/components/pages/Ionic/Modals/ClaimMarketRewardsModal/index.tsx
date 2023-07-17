@@ -24,7 +24,7 @@ import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 const ClaimableToken = ({
   data,
-  rewardChainId,
+  rewardChainId
 }: {
   data: FlywheelClaimableRewards;
   rewardChainId: string;
@@ -55,7 +55,7 @@ const ClaimableToken = ({
           >
             {dynamicFormatter(Number(utils.formatUnits(amount, tokenData?.decimals)), {
               maximumFractionDigits: 8,
-              minimumFractionDigits: 4,
+              minimumFractionDigits: 4
             })}
           </Text>
         </SimpleTooltip>
@@ -71,7 +71,7 @@ export const ClaimMarketRewardsModal = ({
   isLoading,
   marketAddress,
   onClose,
-  poolAddress,
+  poolAddress
 }: {
   isLoading: boolean;
   isOpen: boolean;
@@ -122,8 +122,8 @@ export const ClaimMarketRewardsModal = ({
           .filter((symbol) => !!symbol)
           .join(', ')} rewards from Midas`,
         done: false,
-        title: `Claim rewards on ${currentChain.network}`,
-      },
+        title: `Claim rewards on ${currentChain.network}`
+      }
     ];
 
     setSteps(_steps);
@@ -136,12 +136,12 @@ export const ClaimMarketRewardsModal = ({
 
       addRecentTransaction({
         description: `Claim rewards on market`,
-        hash: tx.hash,
+        hash: tx.hash
       });
 
       _steps[0] = {
         ..._steps[0],
-        txHash: tx.hash,
+        txHash: tx.hash
       };
 
       setSteps([..._steps]);
@@ -151,7 +151,7 @@ export const ClaimMarketRewardsModal = ({
       _steps[0] = {
         ..._steps[0],
         done: true,
-        txHash: tx.hash,
+        txHash: tx.hash
       };
       setSteps([..._steps]);
 
@@ -160,11 +160,11 @@ export const ClaimMarketRewardsModal = ({
       const sentryProperties = {
         chainId: currentSdk.chainId,
         flywheels,
-        marketAddress,
+        marketAddress
       };
       const sentryInfo = {
         contextName: `Claiming rewards on market ${marketAddress}`,
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
       setFailedStep(1);
@@ -178,7 +178,7 @@ export const ClaimMarketRewardsModal = ({
     marketAddress,
     addRecentTransaction,
     queryClient,
-    errorToast,
+    errorToast
   ]);
 
   return (

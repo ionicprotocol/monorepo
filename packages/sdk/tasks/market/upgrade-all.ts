@@ -219,7 +219,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
         const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
         console.log("market", {
           cTokenName: await cTokenInstance.callStatic.name(),
-          cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
+          cTokenNameSymbol: await cTokenInstance.callStatic.symbol()
         });
 
         const implBefore = await cTokenInstance.callStatic.implementation();
@@ -232,7 +232,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
           marketsToUpgrade.push({
             address: market,
             implBefore,
-            latestImpl,
+            latestImpl
           });
         }
       }

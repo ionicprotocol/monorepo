@@ -4,7 +4,7 @@ import type {
   ModalContentProps,
   ModalFooterProps,
   ModalHeaderProps,
-  ModalProps,
+  ModalProps
 } from '@chakra-ui/react';
 import {
   Divider,
@@ -14,7 +14,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay,
+  ModalOverlay
 } from '@chakra-ui/react';
 
 export const IonicModal = ({
@@ -28,7 +28,7 @@ export const IonicModal = ({
   modalFooterProps,
   header,
   body,
-  footer,
+  footer
 }: {
   body: ModalBodyProps['children'];
   footer?: ModalFooterProps['children'];

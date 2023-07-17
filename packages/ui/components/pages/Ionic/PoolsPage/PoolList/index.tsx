@@ -19,12 +19,12 @@ const PoolList = () => {
           height: '2xs',
           justifyContent: 'center',
           status: 'warning',
-          textAlign: 'center',
+          textAlign: 'center'
         }}
         descriptions={[
           {
-            text: `Unable to retrieve Pools. Please try again later.`,
-          },
+            text: `Unable to retrieve Pools. Please try again later.`
+          }
         ]}
         title={error.reason ? error.reason : 'Unexpected Error'}
       />

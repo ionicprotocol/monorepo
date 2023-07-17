@@ -8,7 +8,7 @@ export const deployBalancerLpPriceOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  balancerLpAssets,
+  balancerLpAssets
 }: BalancerLpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -22,12 +22,12 @@ export const deployBalancerLpPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [mpo.address],
-        },
+          args: [mpo.address]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (blpo.transactionHash) await ethers.provider.waitForTransaction(blpo.transactionHash);
   console.log("BalancerLpTokenPriceOracle: ", blpo.address);
@@ -40,7 +40,7 @@ export const deployBalancerStableLpPriceOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  balancerLpAssets,
+  balancerLpAssets
 }: BalancerLpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -55,12 +55,12 @@ export const deployBalancerStableLpPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [],
-        },
+          args: []
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (blpso.transactionHash) await ethers.provider.waitForTransaction(blpso.transactionHash);
   console.log("BalancerLpStablePoolPriceOracle: ", blpso.address);
@@ -74,7 +74,7 @@ export const deployBalancerRateProviderPriceOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  balancerRateProviderAssets,
+  balancerRateProviderAssets
 }: BalancerRateProviderFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -92,12 +92,12 @@ export const deployBalancerRateProviderPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [rateProviders, baseTokens, tokens],
-        },
+          args: [rateProviders, baseTokens, tokens]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (brpo.transactionHash) await ethers.provider.waitForTransaction(brpo.transactionHash);
   console.log("BalancerRateProviderOracle: ", brpo.address);
@@ -125,7 +125,7 @@ export const deployBalancerLinearPoolPriceOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  balancerLinerPoolAssets,
+  balancerLinerPoolAssets
 }: BalancerLinearPoolFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -141,12 +141,12 @@ export const deployBalancerLinearPoolPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [underlyings],
-        },
+          args: [underlyings]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (blpo.transactionHash) await ethers.provider.waitForTransaction(blpo.transactionHash);
   console.log("BalancerLpLinearPoolPriceOracle: ", blpo.address);

@@ -81,7 +81,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
         implementationAddress,
         implementationData,
         reserveFactorBN,
-        adminFeeBN,
+        adminFeeBN
       ];
 
       const constructorData = abiCoder.encode(
@@ -149,7 +149,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
               : constants.Zero
-          ),
+          )
         };
       } else if (mode === FundOperationMode.WITHDRAW) {
         const supplyBalance = assetToBeUpdated.supplyBalance.sub(amount);
@@ -165,7 +165,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
               : constants.Zero
-          ),
+          )
         };
       } else if (mode === FundOperationMode.BORROW) {
         const borrowBalance = assetToBeUpdated.borrowBalance.add(amount);
@@ -181,7 +181,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
             assetToBeUpdated.totalSupply.gt(constants.Zero)
               ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
               : constants.Zero
-          ),
+          )
         };
       } else if (mode === FundOperationMode.REPAY) {
         const borrowBalance = assetToBeUpdated.borrowBalance.sub(amount);
@@ -199,7 +199,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
           borrowBalanceNative:
             Number(utils.formatUnits(borrowBalance, assetToBeUpdated.underlyingDecimals)) *
             Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
-          borrowRatePerBlock,
+          borrowRatePerBlock
         };
       }
 

@@ -23,9 +23,9 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x6dcDD1620Ce77B595E6490701416f6Dbf20D2f67",
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
-    flashSwapFee: 30,
+    flashSwapFee: 30
   },
-  cgId: neondevnet.specificParams.cgId,
+  cgId: neondevnet.specificParams.cgId
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise<void> => {
@@ -35,7 +35,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("Pyth: ", pyth.address);
 

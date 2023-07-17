@@ -4,7 +4,7 @@ import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
 export enum ChainlinkFeedBaseCurrency {
   ETH,
-  USD,
+  USD
 }
 
 export type TokenPair = {

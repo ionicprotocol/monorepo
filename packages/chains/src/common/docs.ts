@@ -10,32 +10,32 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
   const wrapAddress = {
     [SupportedChains.bsc]: {
       swapName: "PancakeSwap",
-      swapAddress: "https://pancakeswap.finance/swap?outputCurrency=0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+      swapAddress: "https://pancakeswap.finance/swap?outputCurrency=0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
     },
     [SupportedChains.polygon]: {
       swapName: "SushiSwap",
       swapAddress:
-        "https://app.sushi.com/swap?tokens=MATIC&tokens=0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270&chainId=137",
+        "https://app.sushi.com/swap?tokens=MATIC&tokens=0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270&chainId=137"
     },
     [SupportedChains.arbitrum]: {
       swapName: "SushiSwap",
       swapAddress:
-        "https://app.sushi.com/swap?inputCurrency=ETH&outputCurrency=0x82aF49447D8a07e3bd95BD0d56f35241523fBab1&chainId=42161",
+        "https://app.sushi.com/swap?inputCurrency=ETH&outputCurrency=0x82aF49447D8a07e3bd95BD0d56f35241523fBab1&chainId=42161"
     },
     [SupportedChains.ganache]: {},
     [SupportedChains.neon_devnet]: {
       swapName: "MoraSwap",
-      swapAddress: "https://moraswap.com/exchange/swap",
+      swapAddress: "https://moraswap.com/exchange/swap"
     },
     [SupportedChains.chapel]: {},
     [SupportedChains.lineagoerli]: {
       swapName: "Uniswap",
-      swapAddress: "https://swap.goerli.linea.build/#/swap",
+      swapAddress: "https://swap.goerli.linea.build/#/swap"
     },
     [SupportedChains.ethereum]: {
       swapName: "Uniswap",
-      swapAddress: "https://app.uniswap.org/#/swap?outputCurrency=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-    },
+      swapAddress: "https://app.uniswap.org/#/swap?outputCurrency=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+    }
   }[chainId];
 
   return `

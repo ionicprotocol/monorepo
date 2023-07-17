@@ -22,13 +22,13 @@ export default async function sendTransactionToSafeLiquidator(
     to: sdk.contracts.IonicLiquidator.address,
     value: value,
     data: data,
-    nonce: txCount,
+    nonce: txCount
   };
   // Estimate gas for transaction
   const gasLimit = await fetchGasLimitForTransaction(sdk, method, tx);
   const txRequest: TransactionRequest = {
     ...tx,
-    gasLimit: gasLimit,
+    gasLimit: gasLimit
   };
 
   sdk.logger.info("Signing and sending", method, "transaction:", tx);

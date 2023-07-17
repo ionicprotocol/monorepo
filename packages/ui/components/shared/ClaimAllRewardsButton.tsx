@@ -15,7 +15,7 @@ const ClaimAllRewardsButton: React.FC = () => {
   const {
     isOpen: isClaimModalOpen,
     onOpen: openClaimModal,
-    onClose: closeClaimModal,
+    onClose: closeClaimModal
   } = useDisclosure();
   const { cIPage } = useColors();
   const { currentChain } = useMultiIonic();

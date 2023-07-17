@@ -9,7 +9,7 @@ import {
   HStack,
   Input,
   Spacer,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -24,7 +24,7 @@ import {
   ADD,
   BORROW_CAP_WHITELIST,
   BORROW_CAP_WHITELIST_TOOLTIP,
-  REMOVE,
+  REMOVE
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
@@ -40,7 +40,7 @@ interface BorrowCapWhitelistProps {
 export const BorrowCapWhitelist = ({
   comptrollerAddress,
   selectedAsset,
-  poolChainId,
+  poolChainId
 }: BorrowCapWhitelistProps) => {
   const { cToken: cTokenAddress, underlyingSymbol } = selectedAsset;
   const { currentSdk } = useMultiIonic();
@@ -57,12 +57,12 @@ export const BorrowCapWhitelist = ({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       addressWhitelisted: BORROW_CAP_WHITELIST.DEFAULT,
-      mode: ADD,
-    },
+      mode: ADD
+    }
   });
 
   const watchAddressWhitelisted = watch('addressWhitelisted', BORROW_CAP_WHITELIST.DEFAULT);
@@ -70,7 +70,7 @@ export const BorrowCapWhitelist = ({
 
   const updateBorrowCapWhitelist = async ({
     addressWhitelisted,
-    mode,
+    mode
   }: {
     addressWhitelisted: string;
     mode: string;
@@ -96,20 +96,20 @@ export const BorrowCapWhitelist = ({
           description: `${
             mode === ADD ? 'Adding' : 'Removing'
           } ${validAddress} in whitelist to borrow ${underlyingSymbol}`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         await tx.wait();
 
         successToast({
           description: `Successfully ${mode === ADD ? 'added' : 'removed'} in whitelist.`,
-          id: 'Whitelist - ' + Math.random().toString(),
+          id: 'Whitelist - ' + Math.random().toString()
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in whitelist.`,
-          id: 'Already added - ' + Math.random().toString(),
+          id: 'Already added - ' + Math.random().toString()
         });
       }
     } catch (error) {
@@ -117,11 +117,11 @@ export const BorrowCapWhitelist = ({
         account: addressWhitelisted,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating Borrow Cap Whitelist',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -187,8 +187,8 @@ export const BorrowCapWhitelist = ({
                       rules={{
                         required: 'Address is required',
                         validate: {
-                          isValidAdress: (v) => utils.isAddress(v) || 'Invalid address',
-                        },
+                          isValidAdress: (v) => utils.isAddress(v) || 'Invalid address'
+                        }
                       }}
                     />
 

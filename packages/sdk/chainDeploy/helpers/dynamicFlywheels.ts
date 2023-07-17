@@ -7,7 +7,7 @@ export const deployFlywheelWithDynamicRewards = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  deployConfig,
+  deployConfig
 }: FuseFlywheelDeployFnParams): Promise<Array<string>> => {
   const { deployer } = await getNamedAccounts();
 
@@ -30,17 +30,17 @@ export const deployFlywheelWithDynamicRewards = async ({
           execute: {
             init: {
               methodName: "initialize",
-              args: [config.rewardToken, constants.AddressZero, flywheelBooster.address, deployer],
+              args: [config.rewardToken, constants.AddressZero, flywheelBooster.address, deployer]
             },
             onUpgrade: {
               methodName: "reinitialize",
-              args: [flywheelToReplace],
-            },
+              args: [flywheelToReplace]
+            }
           },
           proxyContract: "OpenZeppelinTransparentProxy",
-          owner: deployer,
+          owner: deployer
         },
-        waitConfirmations: 1,
+        waitConfirmations: 1
       });
       if (fwc.transactionHash) {
         await ethers.provider.waitForTransaction(fwc.transactionHash);
@@ -52,7 +52,7 @@ export const deployFlywheelWithDynamicRewards = async ({
         from: deployer,
         args: [flywheelToReplace, fwc.address, config.cycleLength],
         log: true,
-        waitConfirmations: 1,
+        waitConfirmations: 1
       });
       if (fdr.transactionHash) {
         await ethers.provider.waitForTransaction(fdr.transactionHash);

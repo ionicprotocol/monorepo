@@ -24,7 +24,7 @@ export const AdditionalInfo = ({
   comptrollerAddress,
   supplyBalanceFiat,
   borrowBalanceFiat,
-  poolChainId,
+  poolChainId
 }: {
   borrowBalanceFiat: number;
   comptrollerAddress: string;
@@ -126,7 +126,7 @@ export const AdditionalInfo = ({
         mt={4}
         templateColumns={{
           base: 'repeat(1, 1fr)',
-          lg: 'repeat(2, 1fr)',
+          lg: 'repeat(2, 1fr)'
         }}
         w="100%"
       >

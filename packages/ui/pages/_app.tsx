@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 const client = createClient({
   autoConnect: true,
   connectors,
-  provider,
+  provider
 });
 
 function MidasDapp({ Component, pageProps }: AppProps) {

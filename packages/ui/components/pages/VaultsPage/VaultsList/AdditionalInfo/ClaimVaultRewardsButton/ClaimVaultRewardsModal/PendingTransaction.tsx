@@ -15,7 +15,7 @@ export const PendingTransaction = ({
   steps,
   isClaiming,
   poolChainId,
-  reward,
+  reward
 }: {
   activeStep: number;
   failedStep: number;
@@ -45,7 +45,7 @@ export const PendingTransaction = ({
                     decimals: info.rewardTokenDecimals,
                     name: info.rewardTokenSymbol,
                     symbol: info.rewardTokenSymbol,
-                    underlying: info.rewardToken,
+                    underlying: info.rewardToken
                   }}
                   key={info.rewardToken}
                 />
@@ -94,7 +94,7 @@ const AddTokenToWalletButton = ({ asset }: { asset: SupportedAsset }) => {
     successToast,
     underlyingAddress: asset.underlying,
     underlyingDecimals: asset.decimals,
-    underlyingSymbol: asset.symbol,
+    underlyingSymbol: asset.symbol
   });
 
   return (

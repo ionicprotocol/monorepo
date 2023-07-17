@@ -37,7 +37,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     async getFlywheelMarketRewardsByPool(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const [flywheelsOfPool, marketsOfPool] = await Promise.all([
         this.getFlywheelsByPool(pool),
-        this.createComptroller(pool, this.provider).callStatic.getAllMarkets(),
+        this.createComptroller(pool, this.provider).callStatic.getAllMarkets()
       ]);
       const strategiesOfFlywheels = await Promise.all(flywheelsOfPool.map((fw) => fw.callStatic.getAllStrategies()));
 
@@ -54,13 +54,13 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
                 rewardTokens.push(rewardToken);
                 return {
                   rewardToken,
-                  flywheel: fw.address,
+                  flywheel: fw.address
                 };
               })
           );
           return {
             market,
-            rewardsInfo,
+            rewardsInfo
           };
         })
       );
@@ -96,7 +96,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       ) as IonicFlywheel;
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
         flywheelCoreInstance.callStatic.flywheelRewards(),
-        flywheelCoreInstance.callStatic.getAllStrategies(),
+        flywheelCoreInstance.callStatic.getAllStrategies()
       ]);
       const fwStatic = new Contract(fwStaticAddress, FlywheelStaticRewardsArtifact.abi, this.provider);
       const rewardsInfos: Record<string, any> = {};
@@ -117,7 +117,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         .map((marketReward) => ({
           underlyingPrice: marketReward.underlyingPrice,
           market: marketReward.market,
-          rewardsInfo: marketReward.rewardsInfo.filter((info) => info.rewardSpeedPerSecondPerToken.gt(0)),
+          rewardsInfo: marketReward.rewardsInfo.filter((info) => info.rewardSpeedPerSecondPerToken.gt(0))
         }))
         .filter((marketReward) => marketReward.rewardsInfo.length > 0);
       return adaptedMarketRewards;
@@ -129,11 +129,11 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       const fwRewardsInstance = this.createFlywheelStaticRewards(fwRewardsAddress, this.provider);
       const [marketState, rewardsInfo] = await Promise.all([
         fwCoreInstance.callStatic.marketState(marketAddress),
-        fwRewardsInstance.callStatic.rewardsInfo(marketAddress),
+        fwRewardsInstance.callStatic.rewardsInfo(marketAddress)
       ]);
       return {
         enabled: marketState[1] > 0,
-        ...rewardsInfo,
+        ...rewardsInfo
       };
     }
 
@@ -158,7 +158,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         return {
           flywheel,
           rewardToken: rewardTokens[i],
-          amount: rewards[i],
+          amount: rewards[i]
         };
       });
     }
@@ -184,7 +184,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         return {
           flywheel,
           rewardToken: rewardTokens[i],
-          amount: rewards[i],
+          amount: rewards[i]
         };
       });
     }
@@ -201,7 +201,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
         return {
           flywheel,
           rewardToken: rewardTokens[i],
-          amount: rewards[i],
+          amount: rewards[i]
         };
       });
     }
@@ -214,7 +214,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       return rewardTokens.map((rewardToken, i) => {
         return {
           rewardToken,
-          amount: rewards[i],
+          amount: rewards[i]
         };
       });
     }

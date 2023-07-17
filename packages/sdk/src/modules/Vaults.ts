@@ -52,7 +52,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 performanceFee: data.performanceFee,
                 depositFee: data.depositFee,
                 withdrawalFee: data.withdrawalFee,
-                managementFee: data.managementFee,
+                managementFee: data.managementFee
               };
             })
           );
@@ -91,7 +91,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
                 flywheel: reward.flywheel,
                 rewards: reward.rewards,
                 rewardTokenDecimals: reward.rewardTokenDecimals,
-                rewardTokenSymbol,
+                rewardTokenSymbol
               };
 
               const rewardsAdded = rewardsInfoForVaults.find((info) => info.vault === vault);
@@ -153,7 +153,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
           ...vault,
           totalSupply,
           totalSupplyNative,
-          supplyApy,
+          supplyApy
         };
       } else if (mode === FundOperationMode.WITHDRAW) {
         const totalSupply = vault.totalSupply.sub(amount);
@@ -164,7 +164,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
           ...vault,
           totalSupply,
           totalSupplyNative,
-          supplyApy,
+          supplyApy
         };
       }
 

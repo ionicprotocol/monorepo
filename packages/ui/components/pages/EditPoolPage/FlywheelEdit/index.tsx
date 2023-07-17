@@ -13,7 +13,7 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react';
 import type { SupportedChains } from '@ionicprotocol/types';
 import { utils } from 'ethers';
@@ -49,7 +49,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
   const {
     data: flywheels,
     refetch: refetchFlywheels,
-    isLoading,
+    isLoading
   } = useFlywheelsForPool(pool.comptroller, pool.chainId);
   const isUpgradeable = useIsUpgradeable(pool.comptroller, pool.chainId);
 
@@ -153,7 +153,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
 const FlywheelRow = ({
   flywheel,
   pool,
-  onClick,
+  onClick
 }: {
   flywheel: Flywheel;
   onClick: (fw: Flywheel) => void;

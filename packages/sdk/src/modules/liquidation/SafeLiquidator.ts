@@ -29,7 +29,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
       if (configOverrides)
         this.chainLiquidationConfig = {
           ...this.chainLiquidationConfig,
-          ...configOverrides,
+          ...configOverrides
         };
       const [liquidatablePools, erroredLiquidations] = await gatherLiquidations(
         this as unknown as IonicSdk,

@@ -20,7 +20,7 @@ export default task("boost:tx", "increase the max gas fees to speed up a tx")
       data: tr.data,
       gasLimit: tr.gasLimit,
       maxFeePerGas: tr.maxFeePerGas?.mul(120).div(100),
-      maxPriorityFeePerGas: tr.maxPriorityFeePerGas?.mul(120).div(100),
+      maxPriorityFeePerGas: tr.maxPriorityFeePerGas?.mul(120).div(100)
     });
     console.log(`new tx hash ${tx.hash}`);
     await tx.wait();
@@ -41,7 +41,7 @@ task("cancel:tx", "cancel a tx with the same nonce")
       value: 0,
       nonce,
       maxFeePerGas: ethers.utils.parseUnits("300", "gwei"),
-      maxPriorityFeePerGas: ethers.utils.parseUnits("120", "gwei"),
+      maxPriorityFeePerGas: ethers.utils.parseUnits("120", "gwei")
     });
     console.log(`cancelling tx hash ${tx.hash}`);
     await tx.wait();

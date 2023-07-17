@@ -4,7 +4,7 @@ import { CardBox } from '@ui/components/shared/IonicBox';
 
 export const EnableCollateral = ({
   enableAsCollateral,
-  setEnableAsCollateral,
+  setEnableAsCollateral
 }: {
   enableAsCollateral: boolean;
   setEnableAsCollateral: (enabling: boolean) => void;

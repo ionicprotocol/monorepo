@@ -24,7 +24,7 @@ export default task("deploy-optimized:all")
     for (let i = 0; i < markets.length; i++) {
       const marketAddress = markets[i];
       await run("optimized-adapters:deploy", {
-        marketAddress,
+        marketAddress
       });
 
       const adapter = (await ethers.getContract(
@@ -36,19 +36,19 @@ export default task("deploy-optimized:all")
 
     await run("optimized-vault:deploy", {
       assetAddress: asset,
-      adaptersAddresses: adapters.join(","),
+      adaptersAddresses: adapters.join(",")
     });
   });
 
 task("deploy-optimized:wbnb:chapel").setAction(async ({}, { run }) => {
   await run("deploy-optimized:all", {
-    marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830",
+    marketsAddresses: "0xc436c7848C6144cf04fa241ac8311864F8572ed3,0xddA148e5917A1c2DCfF98139aBBaa41636840830"
   });
 });
 
 task("deploy-optimized:bomb:chapel").setAction(async ({}, { run }) => {
   await run("deploy-optimized:all", {
-    marketsAddresses: "0xfa60851E76728eb31EFeA660937cD535C887fDbD",
+    marketsAddresses: "0xfa60851E76728eb31EFeA660937cD535C887fDbD"
   });
 });
 

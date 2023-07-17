@@ -13,7 +13,7 @@ import {
   NumberInput,
   NumberInputField,
   Spacer,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -41,7 +41,7 @@ interface SupplyAndBorrowCapsProps {
 export const SupplyAndBorrowCaps = ({
   comptrollerAddress,
   selectedAsset,
-  poolChainId,
+  poolChainId
 }: SupplyAndBorrowCapsProps) => {
   const queryClient = useQueryClient();
   const { cToken: cTokenAddress } = selectedAsset;
@@ -67,12 +67,12 @@ export const SupplyAndBorrowCaps = ({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       borrowCap: BORROW_CAP.DEFAULT,
-      supplyCap: SUPPLY_CAP.DEFAULT,
-    },
+      supplyCap: SUPPLY_CAP.DEFAULT
+    }
   });
 
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
@@ -106,29 +106,29 @@ export const SupplyAndBorrowCaps = ({
       await tx.wait();
 
       await queryClient.refetchQueries({
-        queryKey: ['useSupplyCap'],
+        queryKey: ['useSupplyCap']
       });
       await queryClient.refetchQueries({
-        queryKey: ['useMaxSupplyAmount'],
+        queryKey: ['useMaxSupplyAmount']
       });
       await queryClient.refetchQueries({
-        queryKey: ['useCTokenData'],
+        queryKey: ['useCTokenData']
       });
 
       successToast({
         description: 'Successfully updated max supply amount!',
-        id: 'Updated max supply - ' + Math.random().toString(),
+        id: 'Updated max supply - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         supplyCap,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating max supply amount',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -151,29 +151,29 @@ export const SupplyAndBorrowCaps = ({
       await tx.wait();
 
       await queryClient.refetchQueries({
-        queryKey: ['useBorrowCap'],
+        queryKey: ['useBorrowCap']
       });
       await queryClient.refetchQueries({
-        queryKey: ['useMaxBorrowAmount'],
+        queryKey: ['useMaxBorrowAmount']
       });
       await queryClient.refetchQueries({
-        queryKey: ['useCTokenData'],
+        queryKey: ['useCTokenData']
       });
 
       successToast({
         description: 'Successfully updated max total borrow amount!',
-        id: 'Updated max total borrow - ' + Math.random().toString(),
+        id: 'Updated max total borrow - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         borrowCap,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating max total borrow amount',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -285,9 +285,9 @@ export const SupplyAndBorrowCaps = ({
                   rules={{
                     min: {
                       message: `Supply caps must be at least ${SUPPLY_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
-                      value: SUPPLY_CAP.MIN,
+                      value: SUPPLY_CAP.MIN
                     },
-                    required: 'Supply caps is required',
+                    required: 'Supply caps is required'
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="200px">
@@ -401,9 +401,9 @@ export const SupplyAndBorrowCaps = ({
                   rules={{
                     min: {
                       message: `Borrow cap must be at least ${BORROW_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
-                      value: BORROW_CAP.MIN,
+                      value: BORROW_CAP.MIN
                     },
-                    required: 'Borrow cap is required',
+                    required: 'Borrow cap is required'
                   }}
                 />
                 <FormErrorMessage marginBottom="-10px" maxWidth="200px">

@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+  enabled: process.env.ANALYZE === 'true'
 });
 const { withSentryConfig } = require('@sentry/nextjs');
 
@@ -31,13 +31,14 @@ nextConfig = {
     SUPABASE_PLUGIN_TABLE_NAME: process.env.SUPABASE_PLUGIN_TABLE_NAME,
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_VAULT_APY_TABLE_NAME: process.env.SUPABASE_VAULT_APY_TABLE_NAME,
+    WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID
   },
   productionBrowserSourceMaps: true,
   reactStrictMode: true,
   sentry: {
     disableClientWebpackPlugin: true,
-    disableServerWebpackPlugin: true,
-  },
+    disableServerWebpackPlugin: true
+  }
 };
 
 module.exports = withSentryConfig(withBundleAnalyzer(nextConfig));

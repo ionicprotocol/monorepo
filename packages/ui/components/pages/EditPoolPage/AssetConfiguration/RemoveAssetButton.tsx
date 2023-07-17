@@ -16,7 +16,7 @@ const RemoveAssetButton = ({
   asset,
   poolChainId,
   setSelectedAsset,
-  assets,
+  assets
 }: {
   asset: NativePricedIonicAsset;
   assets: NativePricedIonicAsset[];
@@ -59,17 +59,17 @@ const RemoveAssetButton = ({
 
       successToast({
         description: 'You have successfully removed an asset from this pool!',
-        id: 'Removed asset - ' + Math.random().toString(),
+        id: 'Removed asset - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken,
+        token: asset.cToken
       };
       const sentryInfo = {
         contextName: 'Removing asset',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
 

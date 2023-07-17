@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from 'recharts';
 
 import { useColors } from '@ui/hooks/useColors';
@@ -42,7 +42,7 @@ const VaultChart = ({ vaultApyInfo }: { vaultApyInfo: VaultInfo }) => {
     setLineProps({
       ...lineProps,
       hover: null,
-      [key]: !lineProps[key],
+      [key]: !lineProps[key]
     });
   };
 

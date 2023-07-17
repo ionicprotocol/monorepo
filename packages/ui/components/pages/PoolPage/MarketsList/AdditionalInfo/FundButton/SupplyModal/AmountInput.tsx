@@ -19,7 +19,7 @@ export const AmountInput = ({
   optionToWrap,
   poolChainId,
   setAmount,
-  comptrollerAddress,
+  comptrollerAddress
 }: {
   asset: MarketData;
   comptrollerAddress: string;
@@ -77,11 +77,11 @@ export const AmountInput = ({
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken,
+        token: asset.cToken
       };
       const sentryInfo = {
         contextName: 'Fetching max supply amount',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }

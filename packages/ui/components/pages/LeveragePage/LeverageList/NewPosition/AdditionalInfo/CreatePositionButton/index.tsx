@@ -6,7 +6,7 @@ import { CreatePositionModal } from '@ui/components/pages/LeveragePage/LeverageL
 export const CreatePositionButton = ({
   collateralAsset,
   borrowAsset,
-  chainId,
+  chainId
 }: {
   borrowAsset: LeveredBorrowable;
   chainId: SupportedChains;

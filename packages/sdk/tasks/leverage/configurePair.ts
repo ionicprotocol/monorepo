@@ -248,7 +248,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
         rewardsDelegate.address,
         new ethers.utils.AbiCoder().encode([], []),
         0,
-        0,
+        0
       ]
     );
 
@@ -281,7 +281,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     await run("levered-positions:configure-pair", {
       collateralMarketAddress: testingBombMarket,
       borrowMarketAddress: newMarketAddress,
-      liquidatorName: "XBombLiquidatorFunder",
+      liquidatorName: "XBombLiquidatorFunder"
     });
   }
 );

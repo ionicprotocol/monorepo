@@ -20,7 +20,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 export const RemovePositionModal = ({
   isOpen,
   onClose,
-  position,
+  position
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -51,7 +51,7 @@ export const RemovePositionModal = ({
 
     const sentryProperties = {
       chainId: currentSdk.chainId,
-      position: positionAddress,
+      position: positionAddress
     };
 
     setIsConfirmed(true);
@@ -68,12 +68,12 @@ export const RemovePositionModal = ({
 
         addRecentTransaction({
           description: 'Removing closed position.',
-          hash: tx.hash,
+          hash: tx.hash
         });
 
         _steps[0] = {
           ..._steps[0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
@@ -84,14 +84,14 @@ export const RemovePositionModal = ({
         _steps[0] = {
           ..._steps[0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
         successToast({
           description: 'Successfully removed closed position',
           id: 'Remove closed position - ' + Math.random().toString(),
-          title: 'Removed',
+          title: 'Removed'
         });
       } catch (error) {
         setFailedStep(1);
@@ -100,7 +100,7 @@ export const RemovePositionModal = ({
     } catch (error) {
       const sentryInfo = {
         contextName: 'Position - Removing',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }

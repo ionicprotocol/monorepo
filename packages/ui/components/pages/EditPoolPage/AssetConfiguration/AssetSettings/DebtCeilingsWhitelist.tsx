@@ -10,7 +10,7 @@ import {
   Input,
   Select,
   Spacer,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -25,7 +25,7 @@ import {
   ADD,
   DEBT_CEILING_WHITELIST,
   DEBT_CEILING_WHITELIST_TOOLTIP,
-  REMOVE,
+  REMOVE
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
@@ -44,7 +44,7 @@ export const DebtCeilingsWhitelist = ({
   comptrollerAddress,
   selectedAsset,
   assets,
-  poolChainId,
+  poolChainId
 }: DebtCeilingsWhitelistProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
   const { currentSdk } = useMultiIonic();
@@ -61,14 +61,14 @@ export const DebtCeilingsWhitelist = ({
     setValue,
     register,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       addressWhitelisted: DEBT_CEILING_WHITELIST.DEFAULT,
       collateralAsset:
         assets.find((a) => a.cToken !== selectedAsset.cToken)?.cToken ?? assets[0].cToken,
-      mode: ADD,
-    },
+      mode: ADD
+    }
   });
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const addRecentTransaction = useAddRecentTransaction();
@@ -97,7 +97,7 @@ export const DebtCeilingsWhitelist = ({
   const updateDebtCeilingWhitelist = async ({
     collateralAsset: collateralAssetAddress,
     addressWhitelisted,
-    mode,
+    mode
   }: {
     addressWhitelisted: string;
     collateralAsset: string;
@@ -123,7 +123,7 @@ export const DebtCeilingsWhitelist = ({
           selectedAsset.cToken,
           collateralAssetAddress,
           validAddress
-        ),
+        )
       ]);
 
       if (
@@ -140,7 +140,7 @@ export const DebtCeilingsWhitelist = ({
           description: `${
             mode === ADD ? 'Adding' : 'Removing'
           } ${validAddress} in asset-blacklist whitelist`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         await tx.wait();
 
@@ -148,14 +148,14 @@ export const DebtCeilingsWhitelist = ({
           description: `Successfully ${
             mode === ADD ? 'added' : 'removed'
           } in asset-blacklist whitelist.`,
-          id: 'Asset-blacklist - ' + Math.random().toString(),
+          id: 'Asset-blacklist - ' + Math.random().toString()
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in asset-blacklist whitelist.`,
-          id: 'Asset-blacklist' + Math.random().toString(),
+          id: 'Asset-blacklist' + Math.random().toString()
         });
       }
 
@@ -173,7 +173,7 @@ export const DebtCeilingsWhitelist = ({
           description: `${
             mode === ADD ? 'Adding' : 'Removing'
           } ${validAddress} in debt-ceiling whitelist`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         await tx.wait();
 
@@ -181,14 +181,14 @@ export const DebtCeilingsWhitelist = ({
           description: `Successfully ${
             mode === ADD ? 'added' : 'removed'
           } in debt-ceiling whitelist.`,
-          id: 'Debt-ceiling - ' + Math.random().toString(),
+          id: 'Debt-ceiling - ' + Math.random().toString()
         });
       } else {
         infoToast({
           description: `This address is already ${
             mode === ADD ? 'added' : 'removed'
           } in debt-ceiling whitelist.`,
-          id: 'Debt-ceiling - ' + Math.random().toString(),
+          id: 'Debt-ceiling - ' + Math.random().toString()
         });
       }
     } catch (error) {
@@ -198,11 +198,11 @@ export const DebtCeilingsWhitelist = ({
         collateralAsset,
         comptroller: comptrollerAddress,
         selectedAsset,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating debt ceiling Whitelist',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -243,7 +243,7 @@ export const DebtCeilingsWhitelist = ({
                 <Select
                   id="collateralAsset"
                   {...register('collateralAsset', {
-                    required: 'collateralAsset is required',
+                    required: 'collateralAsset is required'
                   })}
                   cursor="pointer"
                   isDisabled={!isEditableAdmin}
@@ -281,8 +281,8 @@ export const DebtCeilingsWhitelist = ({
                   rules={{
                     required: 'Address is required',
                     validate: {
-                      isValidAdress: (v) => utils.isAddress(v) || 'Invalid address',
-                    },
+                      isValidAdress: (v) => utils.isAddress(v) || 'Invalid address'
+                    }
                   }}
                 />
 

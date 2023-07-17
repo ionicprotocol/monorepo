@@ -8,7 +8,7 @@ import {
   FormLabel,
   HStack,
   Spacer,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -50,11 +50,11 @@ export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: Adm
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
-      adminFee: ADMIN_FEE.DEFAULT,
-    },
+      adminFee: ADMIN_FEE.DEFAULT
+    }
   });
 
   const watchAdminFee = Number(watch('adminFee', ADMIN_FEE.DEFAULT));
@@ -87,17 +87,17 @@ export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: Adm
 
       successToast({
         description: 'Successfully updated admin fee!',
-        id: 'Updated admin fee - ' + Math.random().toString(),
+        id: 'Updated admin fee - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating admin fee',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -168,13 +168,13 @@ export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: Adm
                     rules={{
                       max: {
                         message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
-                        value: ADMIN_FEE.MAX,
+                        value: ADMIN_FEE.MAX
                       },
                       min: {
                         message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
-                        value: ADMIN_FEE.MIN,
+                        value: ADMIN_FEE.MIN
                       },
-                      required: 'Admin fee is required',
+                      required: 'Admin fee is required'
                     }}
                   />
                   <FormErrorMessage marginBottom="-10px" maxWidth="270px">

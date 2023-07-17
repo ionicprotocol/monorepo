@@ -34,7 +34,7 @@ export const StatsColumn = ({
   amount,
   enableAsCollateral = false,
   poolChainId,
-  comptrollerAddress,
+  comptrollerAddress
 }: StatsColumnProps) => {
   const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
   // Get the new representation of a user's NativePricedIonicAssets after proposing a supply amount.
@@ -43,7 +43,7 @@ export const StatsColumn = ({
     assets,
     index,
     mode,
-    poolChainId,
+    poolChainId
   });
 
   const updatedAsset = updatedAssets ? updatedAssets[index] : undefined;
@@ -59,7 +59,7 @@ export const StatsColumn = ({
     supplyBalanceFrom,
     supplyBalanceTo,
     totalBorrows,
-    updatedTotalBorrows,
+    updatedTotalBorrows
   } = useMemo(() => {
     const blocksPerMinute = getBlockTimePerMinuteByChainId(currentChain.id);
     return {
@@ -82,14 +82,14 @@ export const StatsColumn = ({
         : undefined,
       updatedTotalBorrows: updatedAssets
         ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
-        : undefined,
+        : undefined
     };
   }, [currentChain, updatedAsset, asset, assets, updatedAssets, currentSdk]);
 
   // Calculate Old and new Borrow Limits
   const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
   const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets ?? [], poolChainId, {
-    ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
+    ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined
   });
   const { data: borrowLimitMarket } = useBorrowLimitMarket(
     asset,
@@ -103,7 +103,7 @@ export const StatsColumn = ({
     poolChainId,
     comptrollerAddress,
     {
-      ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
+      ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined
     }
   );
 

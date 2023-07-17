@@ -15,7 +15,7 @@ import {
   Spinner,
   Switch,
   Text,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react';
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { ComptrollerErrorCodes } from '@ionicprotocol/types';
@@ -46,7 +46,7 @@ const PoolConfiguration = ({
   assets,
   comptrollerAddress,
   poolName,
-  poolChainId,
+  poolChainId
 }: {
   assets: NativePricedIonicAsset[];
   comptrollerAddress: string;
@@ -84,13 +84,13 @@ const PoolConfiguration = ({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
       closeFactor: CLOSE_FACTOR.DEFAULT,
       liquidationIncentive: LIQUIDATION_INCENTIVE.DEFAULT,
-      whitelist: [],
-    },
+      whitelist: []
+    }
   });
 
   const watchCloseFactor = Number(watch('closeFactor', CLOSE_FACTOR.DEFAULT));
@@ -101,7 +101,7 @@ const PoolConfiguration = ({
   const {
     isOpen: isTransferOwnershipModalOpen,
     onOpen: openTransferOwnershipModalOpen,
-    onClose: closeTransferOwnershipModalOpen,
+    onClose: closeTransferOwnershipModalOpen
   } = useDisclosure();
 
   const changeWhitelistStatus = async (enforce: boolean) => {
@@ -122,17 +122,17 @@ const PoolConfiguration = ({
 
       successToast({
         description: 'Successfully changed whitelist status!',
-        id: 'Whitelist status - ' + Math.random().toString(),
+        id: 'Whitelist status - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        status: enforce,
+        status: enforce
       };
       const sentryInfo = {
         contextName: 'Changing whitelist status',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
@@ -166,17 +166,17 @@ const PoolConfiguration = ({
 
       successToast({
         description: 'Successfully added!',
-        id: 'Added to whitelist - ' + Math.random().toString(),
+        id: 'Added to whitelist - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        newUser,
+        newUser
       };
       const sentryInfo = {
         contextName: 'Adding to whitelist',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
@@ -217,17 +217,17 @@ const PoolConfiguration = ({
 
       successToast({
         description: 'Successfully removed from the whitelist!',
-        id: 'Removed from whitelist - ' + Math.random().toString(),
+        id: 'Removed from whitelist - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        removeUser,
+        removeUser
       };
       const sentryInfo = {
         contextName: 'Removing from whitelist',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
@@ -252,16 +252,16 @@ const PoolConfiguration = ({
 
       successToast({
         description: 'Successfully changed admin rights!',
-        id: 'Changed admin rights - ' + Math.random().toString(),
+        id: 'Changed admin rights - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
+        comptroller: comptrollerAddress
       };
       const sentryInfo = {
         contextName: 'Changing admin rights',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
@@ -303,17 +303,17 @@ const PoolConfiguration = ({
 
       successToast({
         description: 'Successfully updated close factor!',
-        id: 'Updated close factor - ' + Math.random().toString(),
+        id: 'Updated close factor - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         closeFactor: bigCloseFactor,
-        comptroller: comptrollerAddress,
+        comptroller: comptrollerAddress
       };
       const sentryInfo = {
         contextName: 'Updating close factor',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -322,7 +322,7 @@ const PoolConfiguration = ({
   };
 
   const updateLiquidationIncentive = async ({
-    liquidationIncentive,
+    liquidationIncentive
   }: {
     liquidationIncentive: number;
   }) => {
@@ -353,17 +353,17 @@ const PoolConfiguration = ({
 
       successToast({
         description: 'Successfully updated liquidation incentive!',
-        id: 'Updated liquidation incentive - ' + Math.random().toString(),
+        id: 'Updated liquidation incentive - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        liquidationIncentive: bigLiquidationIncentive,
+        liquidationIncentive: bigLiquidationIncentive
       };
       const sentryInfo = {
         contextName: 'Updating liquidation incentive',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
@@ -376,18 +376,18 @@ const PoolConfiguration = ({
       setIsSaving(true);
       const PoolDirectory = currentSdk.getPoolDirectoryInstance(currentSdk.signer);
       const tx = await PoolDirectory.setPoolName(poolId, inputPoolName, {
-        from: address,
+        from: address
       });
       await tx.wait();
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         poolId,
-        poolName: inputPoolName,
+        poolName: inputPoolName
       };
       const sentryInfo = {
         contextName: 'Setting pool name',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -625,13 +625,13 @@ const PoolConfiguration = ({
                       rules={{
                         max: {
                           message: `Close factor must be no more than ${CLOSE_FACTOR.MAX}%`,
-                          value: CLOSE_FACTOR.MAX,
+                          value: CLOSE_FACTOR.MAX
                         },
                         min: {
                           message: `Close factor must be at least ${CLOSE_FACTOR.MIN}%`,
-                          value: CLOSE_FACTOR.MIN,
+                          value: CLOSE_FACTOR.MIN
                         },
-                        required: 'Close factor is required',
+                        required: 'Close factor is required'
                       }}
                     />
                     <FormErrorMessage marginBottom="-10px" maxWidth="270px">
@@ -694,13 +694,13 @@ const PoolConfiguration = ({
                       rules={{
                         max: {
                           message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
-                          value: LIQUIDATION_INCENTIVE.MAX,
+                          value: LIQUIDATION_INCENTIVE.MAX
                         },
                         min: {
                           message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
-                          value: LIQUIDATION_INCENTIVE.MIN,
+                          value: LIQUIDATION_INCENTIVE.MIN
                         },
-                        required: 'Liquidation incentive is required',
+                        required: 'Liquidation incentive is required'
                       }}
                     />
                     <FormErrorMessage marginBottom="-10px" maxWidth="270px">

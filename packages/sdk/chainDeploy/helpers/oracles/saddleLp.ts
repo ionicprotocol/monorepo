@@ -8,7 +8,7 @@ export const deploySaddleLpOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  saddlePools,
+  saddlePools
 }: SaddleLpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   let tx: providers.TransactionResponse;
@@ -23,12 +23,12 @@ export const deploySaddleLpOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], [], []],
-        },
+          args: [[], [], []]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (spo.transactionHash) await ethers.provider.waitForTransaction(spo.transactionHash);
   console.log("SaddleLpPriceOracle: ", spo.address);

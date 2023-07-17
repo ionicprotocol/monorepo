@@ -8,7 +8,7 @@ import {
   FormLabel,
   HStack,
   Spacer,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -37,7 +37,7 @@ interface ReserveFactorProps {
 export const ReserveFactor = ({
   comptrollerAddress,
   selectedAsset,
-  poolChainId,
+  poolChainId
 }: ReserveFactorProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
   const { currentSdk, currentChain } = useMultiIonic();
@@ -53,11 +53,11 @@ export const ReserveFactor = ({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
-      reserveFactor: RESERVE_FACTOR.DEFAULT,
-    },
+      reserveFactor: RESERVE_FACTOR.DEFAULT
+    }
   });
 
   const watchReserveFactor = Number(watch('reserveFactor', RESERVE_FACTOR.DEFAULT));
@@ -91,17 +91,17 @@ export const ReserveFactor = ({
 
       successToast({
         description: 'Successfully updated reserve factor!',
-        id: 'Updated reserve factor - ' + Math.random().toString(),
+        id: 'Updated reserve factor - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating reserve factor',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -176,13 +176,13 @@ export const ReserveFactor = ({
                     rules={{
                       max: {
                         message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
-                        value: RESERVE_FACTOR.MAX,
+                        value: RESERVE_FACTOR.MAX
                       },
                       min: {
                         message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
-                        value: RESERVE_FACTOR.MIN,
+                        value: RESERVE_FACTOR.MIN
                       },
-                      required: 'Reserve factor is required',
+                      required: 'Reserve factor is required'
                     }}
                   />
                   <FormErrorMessage marginBottom="-10px" maxWidth="270px">

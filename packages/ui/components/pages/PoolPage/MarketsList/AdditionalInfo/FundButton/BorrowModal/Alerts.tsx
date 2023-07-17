@@ -10,7 +10,7 @@ export const Alerts = ({
   asset,
   assets,
   comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   assets: MarketData[];
@@ -18,13 +18,13 @@ export const Alerts = ({
   poolChainId: number;
 }) => {
   const {
-    data: { minBorrowAsset, minBorrowUSD },
+    data: { minBorrowAsset, minBorrowUSD }
   } = useBorrowMinimum(asset, poolChainId);
   const { data: debtCeilings } = useDebtCeilingForAssetForCollateral({
     assets: [asset],
     collaterals: assets,
     comptroller: comptrollerAddress,
-    poolChainId,
+    poolChainId
   });
   const { data: restricted } = useRestricted(poolChainId, comptrollerAddress, debtCeilings);
 
@@ -35,8 +35,8 @@ export const Alerts = ({
           alertProps={{ status: 'info' }}
           descriptions={[
             {
-              text: 'Unable to borrow this asset yet. The asset does not have enough liquidity. Feel free to supply this asset to be borrowed by others in this pool to earn interest.',
-            },
+              text: 'Unable to borrow this asset yet. The asset does not have enough liquidity. Feel free to supply this asset to be borrowed by others in this pool to earn interest.'
+            }
           ]}
         />
       ) : (
@@ -45,7 +45,7 @@ export const Alerts = ({
             alertProps={{ status: 'info' }}
             descriptions={[
               {
-                text: 'Minimum Borrow Amount of ',
+                text: 'Minimum Borrow Amount of '
               },
               {
                 text: `$${minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100}${
@@ -56,8 +56,8 @@ export const Alerts = ({
                       )} ${asset.underlyingSymbol}`
                     : ''
                 }`,
-                textProps: { fontWeight: 'bold' },
-              },
+                textProps: { fontWeight: 'bold' }
+              }
             ]}
           />
           {restricted && restricted.length > 0 && (
@@ -65,12 +65,12 @@ export const Alerts = ({
               alertProps={{ status: 'info' }}
               descriptions={[
                 {
-                  text: 'Use of collateral to borrow this asset is further restricted for the security of the pool. More detailed information about this soon. Contact ',
+                  text: 'Use of collateral to borrow this asset is further restricted for the security of the pool. More detailed information about this soon. Contact '
                 },
                 {
                   text: 'Discord',
-                  url: 'https://discord.com/invite/85YxVuPeMt',
-                },
+                  url: 'https://discord.com/invite/85YxVuPeMt'
+                }
               ]}
               title="Restricted"
             />

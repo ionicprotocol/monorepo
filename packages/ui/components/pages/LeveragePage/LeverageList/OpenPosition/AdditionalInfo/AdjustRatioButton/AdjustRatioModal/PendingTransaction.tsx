@@ -16,7 +16,7 @@ export const PendingTransaction = ({
   isAdjusting,
   chainId,
   collateralAsset,
-  leverageValue,
+  leverageValue
 }: {
   activeStep: number;
   chainId: number;
@@ -34,7 +34,7 @@ export const PendingTransaction = ({
     successToast,
     underlyingAddress: collateralAsset.underlyingToken,
     underlyingDecimals: Number(collateralAsset.underlyingDecimals),
-    underlyingSymbol: collateralAsset.symbol,
+    underlyingSymbol: collateralAsset.symbol
   });
 
   return (

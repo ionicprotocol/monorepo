@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from 'recharts';
 
 import { useColors } from '@ui/hooks/useColors';
@@ -24,7 +24,7 @@ type LineProps = {
 
 const UtilizationChart = ({
   irmToCurve,
-  currentUtilization,
+  currentUtilization
 }: {
   currentUtilization?: string;
   irmToCurve: IRMToCurveData;
@@ -47,7 +47,7 @@ const UtilizationChart = ({
     setLineProps({
       ...lineProps,
       hover: null,
-      [key]: !lineProps[key],
+      [key]: !lineProps[key]
     });
   };
 
@@ -93,7 +93,7 @@ const UtilizationChart = ({
               fill: cCard.txtColor,
               fillOpacity: 0.7,
               position: 'top',
-              value: 'Current',
+              value: 'Current'
             }}
             stroke={cCard.txtColor}
             strokeOpacity={0.7}

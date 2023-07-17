@@ -6,7 +6,7 @@ import { LiquidatorsRegistryConfigFnParams } from "../types";
 export const configureLiquidatorsRegistry = async ({
   ethers,
   getNamedAccounts,
-  chainId,
+  chainId
 }: LiquidatorsRegistryConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 

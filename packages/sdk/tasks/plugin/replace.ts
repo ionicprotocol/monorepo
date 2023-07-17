@@ -56,12 +56,12 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
           execute: {
             init: {
               methodName: "initialize",
-              args: deployArgs,
-            },
+              args: deployArgs
+            }
           },
-          owner: deployer.address,
+          owner: deployer.address
         },
-        log: true,
+        log: true
       });
 
       if (deployment.transactionHash) await ethers.provider.waitForTransaction(deployment.transactionHash);

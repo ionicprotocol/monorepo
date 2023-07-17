@@ -33,7 +33,7 @@ const ClipboardValue = ({
     if (hasCopied) {
       infoToast({
         id: 'Copied - ' + Math.random().toString(),
-        title: 'Copied to clipboard',
+        title: 'Copied to clipboard'
       });
     }
   }, [hasCopied, infoToast]);
@@ -66,7 +66,7 @@ export const ClipboardValueIconButton = ({
     if (hasCopied) {
       infoToast({
         id: 'Copied - ' + Math.random().toString(),
-        title: 'Copied to clipboard',
+        title: 'Copied to clipboard'
       });
     }
   }, [hasCopied, infoToast]);

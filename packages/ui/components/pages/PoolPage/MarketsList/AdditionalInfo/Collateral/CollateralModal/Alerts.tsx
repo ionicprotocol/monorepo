@@ -9,8 +9,8 @@ export const Alerts = ({ asset }: { asset: MarketData }) => {
         {
           text: `${
             asset.membership ? 'Disabling' : 'Enabling'
-          } this asset as collateral affecting your borrowing power`,
-        },
+          } this asset as collateral affecting your borrowing power`
+        }
       ]}
     />
   );
