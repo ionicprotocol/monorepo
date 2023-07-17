@@ -1,33 +1,56 @@
-import type { ComponentStyleConfig } from '@chakra-ui/theme';
+import { modalAnatomy as parts } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/styled-system';
 import { mode } from '@chakra-ui/theme-tools';
 
-export const ModalStyleConfig: ComponentStyleConfig = {
-  baseStyle: (props) => ({
+const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(parts.keys);
+
+const baseStyle = definePartsStyle((props) => {
+  return {
     body: {},
     closeButton: {
       boxShadow: 'none',
       outline: 'none',
     },
     dialog: {
-      backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-      borderColor: mode('ecru', 'ecru')(props),
-      borderRadius: 'xl',
-      borderWidth: 2,
+      backgroundColor: mode('iCardBg', 'iCardBg')(props),
+      border: 'none',
+      borderRadius: { base: '24px' },
     },
     header: {
-      fontSize: {
-        base: 18,
-        lg: 24,
-        md: 22,
-        sm: 20,
-      },
+      fontSize: { base: '24px' },
       textAlign: 'left',
     },
-  }),
-  defaultProps: {
-    motionPreset: 'slideInBottom',
-    size: 'lg',
-  },
-  parts: ['dialog', 'header', 'body', 'closeButton'],
-  sizes: {},
+    overlay: {},
+  };
+});
+
+const xl = defineStyle({
+  fontSize: 'xl',
+  px: '6',
+  py: '2',
+});
+
+const sm = defineStyle({
+  fontSize: 'sm',
+  py: '6',
+});
+
+const sizes = {
+  xl: definePartsStyle({ dialog: xl, header: sm }),
 };
+
+const purple = definePartsStyle((props) => {
+  return {
+    dialog: {
+      bg: mode('iCardBg', 'iCardBg')(props),
+      borderRadius: 'md',
+    },
+  };
+});
+
+export const ModalStyleConfig = defineMultiStyleConfig({
+  baseStyle,
+  defaultProps: {},
+  sizes,
+  variants: { purple },
+});
