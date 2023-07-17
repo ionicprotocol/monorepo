@@ -1,6 +1,5 @@
 import type { IonicPoolData, SupportedChains } from '@ionicprotocol/types';
 import { useQueries } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
@@ -98,32 +97,28 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
     }),
   });
 
-  const [allPools, poolsPerChain, isLoading, error] = useMemo(() => {
-    const _poolsPerChain: PoolsPerChainStatus = {};
-    const allPools: PoolData[] = [];
+  const poolsPerChain: PoolsPerChainStatus = {};
+  const allPools: PoolData[] = [];
 
-    let isLoading = true;
-    let isError = true;
-    let error: Err | undefined;
+  let isAllLoading = false;
+  let isError = false;
+  let error: Err | undefined;
 
-    poolsQueries.map((pools, index) => {
-      isLoading = isLoading && pools.isLoading;
-      isError = isError && pools.isError;
-      error = isError ? (pools.error as Err) : undefined;
-      const _chainId = chainIds[index];
-      _poolsPerChain[_chainId.toString()] = {
-        data: poolSortByAddress(pools.data ?? []),
-        error: pools.error as Err | undefined,
-        isLoading: pools.isLoading,
-      };
+  poolsQueries.map((pools, index) => {
+    isAllLoading = isAllLoading || pools.isLoading;
+    isError = isError || pools.isError;
+    error = isError ? (pools.error as Err) : undefined;
+    const _chainId = chainIds[index];
+    poolsPerChain[_chainId.toString()] = {
+      data: poolSortByAddress(pools.data ?? []),
+      error: pools.error as Err | undefined,
+      isLoading: pools.isLoading,
+    };
 
-      if (pools.data) {
-        allPools.push(...poolSortByAddress(pools.data));
-      }
-    });
+    if (pools.data) {
+      allPools.push(...poolSortByAddress(pools.data));
+    }
+  });
 
-    return [allPools, _poolsPerChain, isLoading, error];
-  }, [poolsQueries, chainIds]);
-
-  return { allPools, error, isLoading, poolsPerChain };
+  return { allPools, error, isAllLoading, poolsPerChain };
 };

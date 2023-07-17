@@ -5,7 +5,7 @@ import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 const PoolList = () => {
   const enabledChains = useEnabledChains();
-  const { isLoading, poolsPerChain, error } = useCrossPools([...enabledChains]);
+  const { isAllLoading, poolsPerChain, error } = useCrossPools([...enabledChains]);
 
   if (error && error.code !== 'NETWORK_ERROR') {
     return (
@@ -31,7 +31,7 @@ const PoolList = () => {
     );
   }
 
-  return <PoolsRowList isLoading={isLoading} poolsPerChain={poolsPerChain} />;
+  return <PoolsRowList isLoading={isAllLoading} poolsPerChain={poolsPerChain} />;
 };
 
 export default PoolList;

@@ -41,7 +41,7 @@ import {
 } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import * as React from 'react';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { Assets } from '@ui/components/pages/PoolsPage/PoolsList/Assets';
@@ -77,7 +77,6 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
-import type { Err } from '@ui/types/ComponentPropsType';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
 export type PoolRowData = {
@@ -91,10 +90,9 @@ export type PoolRowData = {
 
 const PoolsList = () => {
   const enabledChains = useEnabledChains();
-  const { isLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
+  const { isAllLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
   const { address, setGlobalLoading } = useMultiIonic();
-  const [err, setErr] = useState<Err | undefined>();
-  const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
     { desc: true, id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY },
@@ -140,31 +138,34 @@ const PoolsList = () => {
     }
   );
 
-  const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
-    const pool = row.original.poolName;
-    const namesAndSymbols: string[] = [];
-    pool.assets.map((asset) => {
-      namesAndSymbols.push(
-        asset.underlyingName.toLowerCase(),
-        asset.underlyingSymbol.toLowerCase()
-      );
-    });
-    if (
-      !searchText ||
-      (value.includes(SEARCH) &&
-        (pool.comptroller.toLowerCase().includes(searchText.toLowerCase()) ||
-          pool.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          namesAndSymbols.some((ns) => ns.includes(searchText.toLowerCase()))))
-    ) {
-      if (value.includes(ALL) || value.includes(pool.chainId)) {
-        return true;
+  const poolFilter: FilterFn<PoolRowData> = useCallback(
+    (row, columnId, value) => {
+      const pool = row.original.poolName;
+      const namesAndSymbols: string[] = [];
+      pool.assets.map((asset) => {
+        namesAndSymbols.push(
+          asset.underlyingName.toLowerCase(),
+          asset.underlyingSymbol.toLowerCase()
+        );
+      });
+      if (
+        !searchText ||
+        (value.includes(SEARCH) &&
+          (pool.comptroller.toLowerCase().includes(searchText.toLowerCase()) ||
+            pool.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            namesAndSymbols.some((ns) => ns.includes(searchText.toLowerCase()))))
+      ) {
+        if (value.includes(ALL) || value.includes(pool.chainId)) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
-    } else {
-      return false;
-    }
-  };
+    },
+    [searchText]
+  );
 
   const poolSort: SortingFn<PoolRowData> = (rowA, rowB, columnId) => {
     if (columnId === POOL_NAME) {
@@ -254,8 +255,7 @@ const PoolsList = () => {
         sortingFn: poolSort,
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [poolFilter]);
 
   const table = useReactTable({
     columns,
@@ -277,6 +277,16 @@ const PoolsList = () => {
       pagination,
       sorting,
     },
+  });
+
+  const { data: tableData } = useQuery(['PoolsTableData', table], () => {
+    return {
+      canNextPage: table.getCanNextPage(),
+      canPreviousPage: table.getCanPreviousPage(),
+      filteredRows: table.getFilteredRowModel().rows,
+      headerGroups: table.getHeaderGroups(),
+      rows: table.getRowModel().rows,
+    };
   });
 
   const { cCard, cIPage, cIRow } = useColors();
@@ -339,18 +349,23 @@ const PoolsList = () => {
     [
       'statusPerChain',
       globalFilter,
-      Object.values(poolsPerChain).map((query) => query.data?.map((pool) => pool.comptroller)),
+      isAllLoading,
+      Object.values(poolsPerChain).map((query) => {
+        return [query.data?.map((pool) => pool.comptroller), query.isLoading];
+      }),
     ],
     () => {
-      const selectedChainId = Object.keys(poolsPerChain).find((chainId) =>
+      const selectedChainIds = Object.keys(poolsPerChain).filter((chainId) =>
         globalFilter.includes(Number(chainId))
       );
-      if (selectedChainId) {
-        setErr(poolsPerChain[selectedChainId].error);
-        setIsLoadingPerChain(poolsPerChain[selectedChainId].isLoading);
+      if (selectedChainIds.length > 0) {
+        let _isLoading = true;
+        selectedChainIds.map((chainId) => {
+          _isLoading = _isLoading && poolsPerChain[chainId].isLoading;
+        });
+        setIsLoading(_isLoading);
       } else {
-        setErr(undefined);
-        setIsLoadingPerChain(false);
+        setIsLoading(isAllLoading);
       }
 
       return null;
@@ -552,172 +567,151 @@ const PoolsList = () => {
             </Flex>
           </Flex>
         </Flex>
-        {!isLoading && !isLoadingPerChain ? (
-          <Table style={{ borderCollapse: 'separate', borderSpacing: '0 16px' }}>
-            <Thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <Th
-                        border="none"
-                        color={cCard.txtColor}
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        px={{ base: '16px' }}
-                        textTransform="capitalize"
-                      >
-                        <HStack justifyContent={'flex-start'}>
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                        </HStack>
-                      </Th>
-                    );
-                  })}
-                </Tr>
-              ))}
-            </Thead>
-            <Tbody>
-              {err && err.code !== 'NETWORK_ERROR' ? (
-                <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Banner
-                      alertDescriptionProps={{ fontSize: 'lg' }}
-                      alertIconProps={{ boxSize: 12 }}
-                      alertProps={{
-                        alignItems: 'center',
-                        flexDirection: 'column',
-                        gap: 4,
-                        height: '2xs',
-                        justifyContent: 'center',
-                        status: 'warning',
-                        textAlign: 'center',
-                      }}
-                      descriptions={[
-                        {
-                          text: `Unable to retrieve Pools. Please try again later.`,
-                        },
-                      ]}
-                      title={err.reason ? err.reason : 'Unexpected Error'}
-                    />
-                  </Td>
-                </Tr>
-              ) : table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <Fragment key={row.id}>
-                    <Tr
-                      _hover={{ bg: cIRow.bgColor }}
-                      borderRadius={{ base: '20px' }}
-                      cursor="pointer"
-                      key={row.id}
-                      onClick={() => {
-                        setGlobalLoading(true);
-                        router.push(
-                          `/${row.original.poolName.chainId}/pool/${row.original.poolName.id}`
-                        );
-                      }}
-                    >
-                      {row.getVisibleCells().map((cell, index) => {
+        {tableData ? (
+          <>
+            {!isLoading ? (
+              <Table style={{ borderCollapse: 'separate', borderSpacing: '0 16px' }}>
+                <Thead>
+                  {tableData.headerGroups.map((headerGroup) => (
+                    <Tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => {
                         return (
-                          <Td
-                            background={cIRow.bgColor}
+                          <Th
                             border="none"
-                            borderLeftRadius={index === 0 ? '20px' : 0}
-                            borderRightRadius={
-                              index === row.getVisibleCells().length - 1 ? '20px' : 0
-                            }
-                            // height={16}
-                            key={cell.id}
-                            minW={10}
+                            color={cCard.txtColor}
+                            key={header.id}
+                            onClick={header.column.getToggleSortingHandler()}
                             px={{ base: '16px' }}
-                            py={{ base: '16px' }}
+                            textTransform="capitalize"
                           >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </Td>
+                            <HStack justifyContent={'flex-start'}>
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                            </HStack>
+                          </Th>
                         );
                       })}
                     </Tr>
-                  </Fragment>
-                ))
-              ) : selectedFilteredPools.length === 0 ? (
-                <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>There are no pools.</Center>
-                  </Td>
-                </Tr>
-              ) : (
-                <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>There are no results</Center>
-                  </Td>
-                </Tr>
-              )}
-            </Tbody>
-          </Table>
-        ) : (
-          <Stack>
-            <Skeleton height={16} />
-            <Skeleton height={60} />
-          </Stack>
-        )}
-        <Flex
-          alignItems="center"
-          className="pagination"
-          gap={4}
-          justifyContent="flex-end"
-          px={3}
-          py={4}
-          width={'100%'}
-        >
-          <HStack>
-            <Hide below="lg">
-              <Text size="md">Pools Per Page</Text>
-            </Hide>
-            <Select
-              maxW="max-content"
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              value={pagination.pageSize}
+                  ))}
+                </Thead>
+                <Tbody>
+                  {tableData.rows && tableData.rows.length !== 0 ? (
+                    tableData.rows.map((row) => (
+                      <Fragment key={row.id}>
+                        <Tr
+                          _hover={{ bg: cIRow.bgColor }}
+                          borderRadius={{ base: '20px' }}
+                          cursor="pointer"
+                          key={row.id}
+                          onClick={() => {
+                            setGlobalLoading(true);
+                            router.push(
+                              `/${row.original.poolName.chainId}/pool/${row.original.poolName.id}`
+                            );
+                          }}
+                        >
+                          {row.getVisibleCells().map((cell, index) => {
+                            return (
+                              <Td
+                                background={cIRow.bgColor}
+                                border="none"
+                                borderLeftRadius={index === 0 ? '20px' : 0}
+                                borderRightRadius={
+                                  index === row.getVisibleCells().length - 1 ? '20px' : 0
+                                }
+                                // height={16}
+                                key={cell.id}
+                                minW={10}
+                                px={{ base: '16px' }}
+                                py={{ base: '16px' }}
+                              >
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </Td>
+                            );
+                          })}
+                        </Tr>
+                      </Fragment>
+                    ))
+                  ) : selectedFilteredPools.length === 0 ? (
+                    <Tr>
+                      <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
+                        <Center py={8}>There are no pools.</Center>
+                      </Td>
+                    </Tr>
+                  ) : (
+                    <Tr>
+                      <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
+                        <Center py={8}>There are no results</Center>
+                      </Td>
+                    </Tr>
+                  )}
+                </Tbody>
+              </Table>
+            ) : (
+              <Stack>
+                <Skeleton height={16} />
+                <Skeleton height={60} />
+              </Stack>
+            )}
+            <Flex
+              alignItems="center"
+              className="pagination"
+              gap={4}
+              justifyContent="flex-end"
+              px={3}
+              py={4}
+              width={'100%'}
             >
-              {POOLS_COUNT_PER_PAGE.map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </Select>
-          </HStack>
-          <HStack gap={2}>
-            <Text size="md">
-              {table.getFilteredRowModel().rows.length === 0
-                ? 0
-                : pagination.pageIndex * pagination.pageSize + 1}{' '}
-              -{' '}
-              {(pagination.pageIndex + 1) * pagination.pageSize >
-              table.getFilteredRowModel().rows.length
-                ? table.getFilteredRowModel().rows.length
-                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-              of {table.getFilteredRowModel().rows.length}
-            </Text>
-            <HStack>
-              <CIconButton
-                aria-label="toPrevious"
-                icon={<ChevronLeftIcon fontSize={30} />}
-                isDisabled={!table.getCanPreviousPage()}
-                isRound
-                onClick={() => table.previousPage()}
-                variant="_outline"
-              />
-              <CIconButton
-                aria-label="toNext"
-                icon={<ChevronRightIcon fontSize={30} />}
-                isDisabled={!table.getCanNextPage()}
-                isRound
-                onClick={() => table.nextPage()}
-                variant="_outline"
-              />
-            </HStack>
-          </HStack>
-        </Flex>
+              <HStack>
+                <Hide below="lg">
+                  <Text size="md">Pools Per Page</Text>
+                </Hide>
+                <Select
+                  maxW="max-content"
+                  onChange={(e) => {
+                    table.setPageSize(Number(e.target.value));
+                  }}
+                  value={pagination.pageSize}
+                >
+                  {POOLS_COUNT_PER_PAGE.map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      {pageSize}
+                    </option>
+                  ))}
+                </Select>
+              </HStack>
+              <HStack gap={2}>
+                <Text size="md">
+                  {!tableData || tableData.filteredRows.length === 0
+                    ? 0
+                    : pagination.pageIndex * pagination.pageSize + 1}{' '}
+                  -{' '}
+                  {(pagination.pageIndex + 1) * pagination.pageSize > tableData.filteredRows.length
+                    ? tableData.filteredRows.length
+                    : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+                  of {tableData.filteredRows.length}
+                </Text>
+                <HStack>
+                  <CIconButton
+                    aria-label="toPrevious"
+                    icon={<ChevronLeftIcon fontSize={30} />}
+                    isDisabled={!tableData.canPreviousPage}
+                    isRound
+                    onClick={() => table.previousPage()}
+                    variant="_outline"
+                  />
+                  <CIconButton
+                    aria-label="toNext"
+                    icon={<ChevronRightIcon fontSize={30} />}
+                    isDisabled={!tableData.canNextPage}
+                    isRound
+                    onClick={() => table.nextPage()}
+                    variant="_outline"
+                  />
+                </HStack>
+              </HStack>
+            </Flex>
+          </>
+        ) : null}
       </Flex>
     </CardBox>
   );
