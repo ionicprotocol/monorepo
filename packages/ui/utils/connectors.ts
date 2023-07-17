@@ -17,11 +17,11 @@ const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) 
     nativeCurrency: {
       decimals: 18,
       name: data.specificParams.metadata.nativeCurrency.name,
-      symbol: data.specificParams.metadata.nativeCurrency.symbol,
+      symbol: data.specificParams.metadata.nativeCurrency.symbol
     },
     network: data.specificParams.metadata.name,
     rpcUrls: data.specificParams.metadata.rpcUrls,
-    testnet: data.specificParams.metadata.testnet,
+    testnet: data.specificParams.metadata.testnet
   };
 });
 
@@ -29,12 +29,13 @@ export const { chains, provider } = configureChains(supportedChains, [
   publicProvider(),
   jsonRpcProvider({
     rpc: (chain) => ({
-      http: chain.rpcUrls.default.http[0],
-    }),
-  }),
+      http: chain.rpcUrls.default.http[0]
+    })
+  })
 ]);
 
 export const { connectors } = getDefaultWallets({
   appName: 'Ionic Protocol',
   chains,
+  projectId: 'Ionic Protocol'
 });
