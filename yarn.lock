@@ -3519,7 +3519,7 @@ __metadata:
     react-jazzicon: ^1.0.4
     recharts: ^2.7.2
     typescript: 5.1.6
-    wagmi: ^0.12.19
+    wagmi: ^0.12.10
     yup: ^1.2.0
   languageName: unknown
   linkType: soft
@@ -26468,7 +26468,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.12.19":
+"wagmi@npm:^0.12.10":
   version: 0.12.19
   resolution: "wagmi@npm:0.12.19"
   dependencies:
