@@ -18,14 +18,14 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const CErc20PluginDelegateArtifact = await deployments.getArtifact("CErc20PluginDelegate");
   chainDeployment.CErc20PluginDelegate = {
     abi: CErc20PluginDelegateArtifact.abi,
-    address: CErc20PluginDelegate.address,
+    address: CErc20PluginDelegate.address
   };
 
   const CErc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate");
   const CErc20PluginRewardsArtifact = await deployments.getArtifact("CErc20PluginRewardsDelegate");
   chainDeployment.CErc20PluginRewardsDelegate = {
     abi: CErc20PluginRewardsArtifact.abi,
-    address: CErc20PluginRewardsDelegate.address,
+    address: CErc20PluginRewardsDelegate.address
   };
   const Comptroller = await ethers.getContract("Comptroller");
   const ComptrollerArtifact = await deployments.getArtifact("Comptroller.sol:Comptroller");
@@ -34,13 +34,13 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const ComptrollerFirstExtensionArtifact = await deployments.getArtifact("ComptrollerFirstExtension");
   chainDeployment.ComptrollerFirstExtension = {
     abi: ComptrollerFirstExtensionArtifact.abi,
-    address: ComptrollerFirstExtension.address,
+    address: ComptrollerFirstExtension.address
   };
   const FixedNativePriceOracle = await ethers.getContract("FixedNativePriceOracle");
   const FixedNativePriceOracleArtifact = await deployments.getArtifact("FixedNativePriceOracle");
   chainDeployment.FixedNativePriceOracle = {
     abi: FixedNativePriceOracleArtifact.abi,
-    address: FixedNativePriceOracle.address,
+    address: FixedNativePriceOracle.address
   };
   const FeeDistributor = await ethers.getContract("FeeDistributor");
   const FeeDistributorArtifact = await deployments.getArtifact("FeeDistributor");
@@ -55,13 +55,13 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const FusePoolLensSecondaryArtifact = await deployments.getArtifact("PoolLensSecondary");
   chainDeployment.PoolLensSecondary = {
     abi: FusePoolLensSecondaryArtifact.abi,
-    address: PoolLensSecondary.address,
+    address: PoolLensSecondary.address
   };
   const IonicFlywheelLensRouter = await ethers.getContract("IonicFlywheelLensRouter");
   const IonicFlywheelLensRouterArtifact = await deployments.getArtifact("IonicFlywheelLensRouter");
   chainDeployment.IonicFlywheelLensRouter = {
     abi: IonicFlywheelLensRouterArtifact.abi,
-    address: IonicFlywheelLensRouter.address,
+    address: IonicFlywheelLensRouter.address
   };
   const IonicLiquidator = await ethers.getContract("IonicLiquidator");
   const IonicLiquidatorArtifact = await deployments.getArtifact("IonicLiquidator");
@@ -97,57 +97,57 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   const AnkrBNBInterestRateModelArtifact = await deployments.getArtifact("AnkrBNBInterestRateModel");
   chainDeployment.AnkrBNBInterestRateModel = {
     abi: AnkrBNBInterestRateModelArtifact.abi,
-    address: AnkrBNBInterestRateModel.address,
+    address: AnkrBNBInterestRateModel.address
   };
   const ChainlinkPriceOracleV2 = await ethers.getContract("ChainlinkPriceOracleV2");
   const ChainlinkPriceOracleV2Artifact = await deployments.getArtifact("ChainlinkPriceOracleV2");
   chainDeployment.ChainlinkPriceOracleV2 = {
     abi: ChainlinkPriceOracleV2Artifact.abi,
-    address: ChainlinkPriceOracleV2.address,
+    address: ChainlinkPriceOracleV2.address
   };
 
   const UniswapTwapPriceOracleV2Root = await ethers.getContract("UniswapTwapPriceOracleV2Root");
   const UniswapTwapPriceOracleV2RootArtifact = await deployments.getArtifact("UniswapTwapPriceOracleV2Root");
   chainDeployment.UniswapTwapPriceOracleV2Root = {
     abi: UniswapTwapPriceOracleV2RootArtifact.abi,
-    address: UniswapTwapPriceOracleV2Root.address,
+    address: UniswapTwapPriceOracleV2Root.address
   };
 
   const UniswapTwapPriceOracleV2 = await ethers.getContract("UniswapTwapPriceOracleV2");
   const UniswapTwapPriceOracleV2Artifact = await deployments.getArtifact("UniswapTwapPriceOracleV2");
   chainDeployment.UniswapTwapPriceOracleV2 = {
     abi: UniswapTwapPriceOracleV2Artifact.abi,
-    address: UniswapTwapPriceOracleV2.address,
+    address: UniswapTwapPriceOracleV2.address
   };
   const CurveLpTokenPriceOracleNoRegistry = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry");
   const CurveLpTokenPriceOracleNoRegistryArtifact = await deployments.getArtifact("CurveLpTokenPriceOracleNoRegistry");
   chainDeployment.CurveLpTokenPriceOracleNoRegistry = {
     abi: CurveLpTokenPriceOracleNoRegistryArtifact.abi,
-    address: CurveLpTokenPriceOracleNoRegistry.address,
+    address: CurveLpTokenPriceOracleNoRegistry.address
   };
   const XBombLiquidatorFunder = await ethers.getContract("XBombLiquidatorFunder");
   const XBombLiquidatorFunderArtifact = await deployments.getArtifact("XBombLiquidatorFunder");
   chainDeployment.XBombLiquidatorFunder = {
     abi: XBombLiquidatorFunderArtifact.abi,
-    address: XBombLiquidatorFunder.address,
+    address: XBombLiquidatorFunder.address
   };
   const JarvisLiquidatorFunder = await ethers.getContract("JarvisLiquidatorFunder");
   const JarvisLiquidatorFunderArtifact = await deployments.getArtifact("JarvisLiquidatorFunder");
   chainDeployment.JarvisLiquidatorFunder = {
     abi: JarvisLiquidatorFunderArtifact.abi,
-    address: JarvisLiquidatorFunder.address,
+    address: JarvisLiquidatorFunder.address
   };
   const CurveLpTokenLiquidatorNoRegistry = await ethers.getContract("CurveLpTokenLiquidatorNoRegistry");
   const CurveLpTokenLiquidatorNoRegistryArtifact = await deployments.getArtifact("CurveLpTokenLiquidatorNoRegistry");
   chainDeployment.CurveLpTokenLiquidatorNoRegistry = {
     abi: CurveLpTokenLiquidatorNoRegistryArtifact.abi,
-    address: CurveLpTokenLiquidatorNoRegistry.address,
+    address: CurveLpTokenLiquidatorNoRegistry.address
   };
   const CurveSwapLiquidator = await ethers.getContract("CurveSwapLiquidator");
   const CurveSwapLiquidatorArtifact = await deployments.getArtifact("CurveSwapLiquidator");
   chainDeployment.CurveSwapLiquidator = {
     abi: CurveSwapLiquidatorArtifact.abi,
-    address: CurveSwapLiquidator.address,
+    address: CurveSwapLiquidator.address
   };
   return await getCommonDeployments(chainDeployment);
 };

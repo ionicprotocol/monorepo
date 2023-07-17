@@ -25,7 +25,7 @@ task("market:deploy", "deploy market")
       // max:         7920027
       gasLimit: 20020027,
       maxFeePerGas: ethers.utils.parseUnits("240", "gwei"),
-      maxPriorityFeePerGas: ethers.utils.parseUnits("50", "gwei"),
+      maxPriorityFeePerGas: ethers.utils.parseUnits("50", "gwei")
     });
     console.log("tx", tx.hash, tx.nonce);
 

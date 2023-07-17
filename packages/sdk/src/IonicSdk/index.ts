@@ -10,7 +10,7 @@ import {
   InterestRateModel,
   RedemptionStrategy,
   SupportedAsset,
-  SupportedChains,
+  SupportedChains
 } from "@ionicprotocol/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
@@ -152,7 +152,7 @@ export class IonicBase {
         IonicFlywheelLensRouterABI,
         this.provider
       ) as IonicFlywheelLensRouter,
-      ...this._contracts,
+      ...this._contracts
     };
   }
 
@@ -286,7 +286,7 @@ export class IonicBase {
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
       AnkrFTMInterestRateModel: AnkrFTMInterestRateModel,
       AdjustableJumpRateModel: AdjustableJumpRateModel,
-      AdjustableAnkrBNBIrm: AdjustableAnkrBNBIrm,
+      AdjustableAnkrBNBIrm: AdjustableAnkrBNBIrm
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 

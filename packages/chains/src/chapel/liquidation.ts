@@ -9,17 +9,17 @@ const liquidationDefaults: LiquidationDefaults = {
   ASSET_SPECIFIC_ROUTER: {},
   SUPPORTED_OUTPUT_CURRENCIES: [
     constants.AddressZero,
-    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
+    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying
   ],
   SUPPORTED_INPUT_CURRENCIES: [
     constants.AddressZero,
-    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
+    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying
   ],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 60,
   jarvisPools: [],
-  balancerPools: [],
+  balancerPools: []
 };
 
 export default liquidationDefaults;

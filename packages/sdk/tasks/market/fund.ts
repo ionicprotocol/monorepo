@@ -4,7 +4,7 @@ import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
-  [polygon.chainId]: polygon.assets,
+  [polygon.chainId]: polygon.assets
 };
 
 task("fund:mint", "deploy dynamic rewards plugin with flywheels")

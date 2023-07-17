@@ -17,7 +17,7 @@ import {
   MARKET_COLUMNS,
   MARKET_LTV,
   TOTAL_BORROW,
-  TOTAL_SUPPLY,
+  TOTAL_SUPPLY
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
@@ -156,12 +156,12 @@ const AccountPage = memo(() => {
                 height: '2xs',
                 justifyContent: 'center',
                 status: 'warning',
-                textAlign: 'center',
+                textAlign: 'center'
               }}
               descriptions={[
                 {
-                  text: `Please connect your wallet.`,
-                },
+                  text: `Please connect your wallet.`
+                }
               ]}
               title="Wallet not detected!"
             />

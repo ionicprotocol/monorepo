@@ -24,7 +24,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 export const AdjustRatioModal = ({
   position,
   isOpen,
-  onClose,
+  onClose
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -34,7 +34,7 @@ export const AdjustRatioModal = ({
     collateral: collateralAsset,
     borrowable: borrowAsset,
     chainId,
-    address: positionAddress,
+    address: positionAddress
   } = position;
   const { underlyingToken, symbol, cToken } = collateralAsset;
   const { currentSdk, address, currentChain } = useMultiIonic();
@@ -74,7 +74,7 @@ export const AdjustRatioModal = ({
       chainId: currentSdk.chainId,
       collateralCToken: cToken,
       fundingAsset: underlyingToken,
-      leverageValue: debouncedLeverageNum,
+      leverageValue: debouncedLeverageNum
     };
 
     setIsConfirmed(true);
@@ -92,12 +92,12 @@ export const AdjustRatioModal = ({
 
         addRecentTransaction({
           description: 'Adjust leverage ratio.',
-          hash: tx.hash,
+          hash: tx.hash
         });
 
         _steps[0] = {
           ..._steps[0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
@@ -110,14 +110,14 @@ export const AdjustRatioModal = ({
         _steps[0] = {
           ..._steps[0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
         successToast({
           description: 'Successfully adjusted leverage ratio',
           id: 'Adjust leverage ratio - ' + Math.random().toString(),
-          title: 'Adjusted',
+          title: 'Adjusted'
         });
       } catch (error) {
         setFailedStep(1);
@@ -126,7 +126,7 @@ export const AdjustRatioModal = ({
     } catch (error) {
       const sentryInfo = {
         contextName: 'Position - Creating',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }

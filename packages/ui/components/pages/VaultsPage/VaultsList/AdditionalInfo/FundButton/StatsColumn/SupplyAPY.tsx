@@ -2,7 +2,7 @@ import { HStack, Skeleton, Text } from '@chakra-ui/react';
 
 export const SupplyAPY = ({
   current: supplyAPY,
-  new: updatedSupplyAPY,
+  new: updatedSupplyAPY
 }: {
   current: number;
   new?: number;

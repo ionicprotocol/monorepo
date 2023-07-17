@@ -25,7 +25,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
       comptroller: '',
       totalAvailableLiquidityFiat: 0,
       totalBorrowedFiat: 0,
-      totalSuppliedFiat: 0,
+      totalSuppliedFiat: 0
     };
 
   const { cCard } = useColors();
@@ -98,7 +98,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
               base: 'repeat(1, 1fr)',
               lg: 'repeat(4, 1fr)',
               md: 'repeat(2, 1fr)',
-              sm: 'repeat(2, 1fr)',
+              sm: 'repeat(2, 1fr)'
             }}
             width="100%"
           >

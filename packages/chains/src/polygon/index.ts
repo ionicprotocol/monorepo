@@ -23,7 +23,7 @@ const chainConfig: ChainConfig = {
   deployedPlugins,
   redemptionStrategies,
   fundingStrategies,
-  chainDeployments: deployments.contracts,
+  chainDeployments: deployments.contracts
 };
 
 export default chainConfig;

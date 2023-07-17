@@ -6,7 +6,7 @@ import {
   SliderMark,
   SliderThumb,
   SliderTrack,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -31,7 +31,7 @@ function MaxBorrowSlider({
   updateAmount,
   borrowableAmount,
   asset,
-  poolChainId,
+  poolChainId
 }: MaxBorrowSliderProps) {
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
@@ -55,7 +55,7 @@ function MaxBorrowSlider({
     return {
       borrowableLimit,
       borrowablePercent,
-      borrowedPercent,
+      borrowedPercent
     };
   }, [asset.underlyingPrice, borrowBalanceFiat, borrowableAmount, price]);
 

@@ -2,7 +2,7 @@ import { HStack, Skeleton, Text } from '@chakra-ui/react';
 
 export const BorrowAPY = ({
   current: borrowAPR,
-  new: updatedBorrowAPR,
+  new: updatedBorrowAPR
 }: {
   current: number;
   new?: number;

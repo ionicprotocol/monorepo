@@ -13,7 +13,7 @@ export const PendingTransaction = ({
   steps,
   isClosing,
   chainId,
-  collateralAsset,
+  collateralAsset
 }: {
   activeStep: number;
   chainId: number;

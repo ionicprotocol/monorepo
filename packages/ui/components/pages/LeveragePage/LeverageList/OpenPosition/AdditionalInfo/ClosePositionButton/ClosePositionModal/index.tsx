@@ -20,7 +20,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 export const ClosePositionModal = ({
   isOpen,
   onClose,
-  position,
+  position
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -52,7 +52,7 @@ export const ClosePositionModal = ({
 
     const sentryProperties = {
       chainId: currentSdk.chainId,
-      position: positionAddress,
+      position: positionAddress
     };
 
     setIsConfirmed(true);
@@ -71,7 +71,7 @@ export const ClosePositionModal = ({
           infoToast({
             description: 'Already closed levered position',
             id: 'Already Closed levered position - ' + Math.random().toString(),
-            title: 'Info',
+            title: 'Info'
           });
 
           setIsClosing(false);
@@ -82,12 +82,12 @@ export const ClosePositionModal = ({
 
         addRecentTransaction({
           description: 'Closing levered position.',
-          hash: tx.hash,
+          hash: tx.hash
         });
 
         _steps[0] = {
           ..._steps[0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
@@ -99,14 +99,14 @@ export const ClosePositionModal = ({
         _steps[0] = {
           ..._steps[0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
         successToast({
           description: 'Successfully closed levered position',
           id: 'Close levered position - ' + Math.random().toString(),
-          title: 'Closed',
+          title: 'Closed'
         });
       } catch (error) {
         setFailedStep(1);
@@ -115,7 +115,7 @@ export const ClosePositionModal = ({
     } catch (error) {
       const sentryInfo = {
         contextName: 'Position - Creating',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }

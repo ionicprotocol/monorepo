@@ -13,7 +13,7 @@ export const BorrowsTotal = ({
   borrowLimitTotal,
   totalBorrows,
   updatedBorrowLimitTotal,
-  updatedTotalBorrows,
+  updatedTotalBorrows
 }: BorrowsTotalProps) => (
   <VStack alignItems={'flex-start'} spacing={0} width="100%">
     <Text flexShrink={0} size="sm">

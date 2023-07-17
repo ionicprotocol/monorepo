@@ -17,7 +17,7 @@ export const TokenName = ({
   asset,
   assets,
   poolAddress,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   assets: MarketData[];
@@ -34,7 +34,7 @@ export const TokenName = ({
     assets: [asset],
     collaterals: assets,
     comptroller: poolAddress,
-    poolChainId,
+    poolChainId
   });
   const { data: restricted } = useRestricted(poolChainId, poolAddress, debtCeilingsOfAsset);
 
@@ -49,7 +49,7 @@ export const TokenName = ({
             {asset.extraDocs || asset.underlyingSymbol ? (
               <Text
                 dangerouslySetInnerHTML={{
-                  __html: asset.extraDocs || asset.underlyingSymbol,
+                  __html: asset.extraDocs || asset.underlyingSymbol
                 }}
                 pt={4}
                 wordBreak="break-word"
@@ -80,7 +80,7 @@ export const TokenName = ({
                 {asset.extraDocs || asset.underlyingSymbol ? (
                   <Text
                     dangerouslySetInnerHTML={{
-                      __html: asset.extraDocs || asset.underlyingSymbol,
+                      __html: asset.extraDocs || asset.underlyingSymbol
                     }}
                     pt={4}
                     wordBreak="break-word"

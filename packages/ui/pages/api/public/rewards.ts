@@ -10,7 +10,7 @@ export type RewardsResponse = Reward[];
 
 const querySchema = yup.object().shape({
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
-  pluginAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid plugin address').required(),
+  pluginAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid plugin address').required()
 });
 type Query = yup.InferType<typeof querySchema>;
 

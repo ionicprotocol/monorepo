@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { useAssetChartData } from '@ui/hooks/useAssetChartData';
 
 const UtilizationChart = dynamic(() => import('@ui/components/shared/UtilizationChart'), {
-  ssr: false,
+  ssr: false
 });
 
 interface IRMChartProps {
@@ -19,7 +19,7 @@ const IRMChart = ({
   interestRateModelAddress,
   reserveFactor,
   adminFee,
-  poolChainId,
+  poolChainId
 }: IRMChartProps) => {
   const { data, isLoading, error } = useAssetChartData(
     interestRateModelAddress,

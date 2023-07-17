@@ -12,7 +12,7 @@ const liquidationDefaults: LiquidationDefaults = {
     underlying(assets, assetSymbols.WETH),
     underlying(assets, assetSymbols.USDC),
     underlying(assets, assetSymbols.USDT),
-    underlying(assets, assetSymbols.DAI),
+    underlying(assets, assetSymbols.DAI)
   ],
   SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, WETH],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
@@ -22,33 +22,33 @@ const liquidationDefaults: LiquidationDefaults = {
   balancerPools: [
     {
       poolAddress: underlying(assets, assetSymbols.WSTETH_WETH_STABLE_BPT),
-      underlyingTokens: [underlying(assets, assetSymbols.WETH), wstETH],
+      underlyingTokens: [underlying(assets, assetSymbols.WETH), wstETH]
     },
     {
       poolAddress: underlying(assets, assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT),
-      underlyingTokens: [wstETH, underlying(assets, assetSymbols.rETH), underlying(assets, assetSymbols.frxETH)],
+      underlyingTokens: [wstETH, underlying(assets, assetSymbols.rETH), underlying(assets, assetSymbols.frxETH)]
     },
     {
       poolAddress: underlying(assets, assetSymbols.WSTETH_CBETH_STABLE_BPT),
-      underlyingTokens: [wstETH, underlying(assets, assetSymbols.cbETH)],
+      underlyingTokens: [wstETH, underlying(assets, assetSymbols.cbETH)]
     },
     {
       poolAddress: underlying(assets, assetSymbols.WSTETH_CBETH_STABLE_BPT),
-      underlyingTokens: [wstETH, underlying(assets, assetSymbols.cbETH)],
+      underlyingTokens: [wstETH, underlying(assets, assetSymbols.cbETH)]
     },
     {
       poolAddress: underlying(assets, assetSymbols.AAVE_BOOSTED_STABLE_BPT),
       underlyingTokens: [
         underlying(assets, assetSymbols.AAVE_LINEAR_DAI),
         underlying(assets, assetSymbols.AAVE_LINEAR_USDC),
-        underlying(assets, assetSymbols.AAVE_LINEAR_USDT),
-      ],
+        underlying(assets, assetSymbols.AAVE_LINEAR_USDT)
+      ]
     },
     {
       poolAddress: underlying(assets, assetSymbols.AAVE_LINEAR_USDC),
-      underlyingTokens: [USDC, underlying(assets, assetSymbols.AAVE_LINEAR_USDC)],
-    },
-  ],
+      underlyingTokens: [USDC, underlying(assets, assetSymbols.AAVE_LINEAR_USDC)]
+    }
+  ]
 };
 
 export default liquidationDefaults;

@@ -10,12 +10,12 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 const UtilizationChart = dynamic(() => import('@ui/components/shared/UtilizationChart'), {
-  ssr: false,
+  ssr: false
 });
 
 export const UtilizationRate = ({
   asset,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   poolChainId: number;

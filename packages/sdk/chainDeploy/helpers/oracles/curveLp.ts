@@ -8,7 +8,7 @@ export const deployCurveLpOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  curvePools,
+  curvePools
 }: CurveLpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   let tx: providers.TransactionResponse;
@@ -23,12 +23,12 @@ export const deployCurveLpOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], [], []],
-        },
+          args: [[], [], []]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("CurveLpTokenPriceOracleNoRegistry: ", cpo.address);
@@ -58,7 +58,7 @@ export const deployCurveV2LpOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  curveV2Pools,
+  curveV2Pools
 }: CurveV2LpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   let tx: providers.TransactionResponse;
@@ -75,12 +75,12 @@ export const deployCurveV2LpOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], []],
-        },
+          args: [[], []]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("CurveV2LpTokenPriceOracleNoRegistry: ", cpo.address);

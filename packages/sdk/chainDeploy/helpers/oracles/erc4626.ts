@@ -6,7 +6,7 @@ export const deployErc4626PriceOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  erc4626Assets,
+  erc4626Assets
 }: Erc4626OracleFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -20,12 +20,12 @@ export const deployErc4626PriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [],
-        },
+          args: []
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (e4626o.transactionHash) await ethers.provider.waitForTransaction(e4626o.transactionHash);
   console.log("ERC4626Oracle: ", e4626o.address);

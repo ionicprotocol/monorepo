@@ -3,7 +3,7 @@ import {
   LiquidationDefaults,
   LiquidationStrategy,
   SupportedAsset,
-  underlying,
+  underlying
 } from "@ionicprotocol/types";
 import { BigNumber, constants } from "ethers";
 
@@ -19,7 +19,7 @@ const liquidationDefaults: LiquidationDefaults = {
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 2,
   jarvisPools: [],
-  balancerPools: [],
+  balancerPools: []
 };
 
 export default liquidationDefaults;

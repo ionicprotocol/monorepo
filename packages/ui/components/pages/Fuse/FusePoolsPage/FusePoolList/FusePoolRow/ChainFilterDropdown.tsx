@@ -9,7 +9,7 @@ import {
   Img,
   Spinner,
   Text,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type { SupportedChains } from '@ionicprotocol/types';
 
@@ -23,7 +23,7 @@ export const ChainFilterDropdown = ({
   isLoading,
   loadingStatusPerChain,
   onFilter,
-  props,
+  props
 }: {
   globalFilter: (SupportedChains | string)[];
   isLoading: boolean;
@@ -93,7 +93,7 @@ export const ChainFilterDropdown = ({
 
 const IconChainName = ({
   chainId,
-  isLoading,
+  isLoading
 }: {
   chainId: SupportedChains;
   isLoading: boolean;
@@ -122,7 +122,7 @@ const ChainFilterCheckbox = ({
   chainId,
   onFilter,
   globalFilter,
-  isLoading,
+  isLoading
 }: {
   chainId: SupportedChains;
   globalFilter: (SupportedChains | string)[];

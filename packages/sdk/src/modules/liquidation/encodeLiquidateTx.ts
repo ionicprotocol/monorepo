@@ -40,9 +40,9 @@ export default async function encodeLiquidateTx(
           exchangeToTokenAddress,
           sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
           strategiesAndDatas.strategies,
-          strategiesAndDatas.datas,
+          strategiesAndDatas.datas
         ],
-        value: BigNumber.from(0),
+        value: BigNumber.from(0)
       };
     case LiquidationStrategy.UNISWAP:
       return {
@@ -62,10 +62,10 @@ export default async function encodeLiquidateTx(
             strategyData: strategiesAndDatas.datas,
             ethToCoinbase: 0,
             debtFundingStrategies,
-            debtFundingStrategiesData,
-          },
+            debtFundingStrategiesData
+          }
         ],
-        value: BigNumber.from(0),
+        value: BigNumber.from(0)
       };
   }
 }

@@ -43,7 +43,7 @@ async function getFusePoolUsers(
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   for (const user of users) {
     const assets = await sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
-      from: user,
+      from: user
     });
 
     const { totalBorrow, totalCollateral } = getUserTotals(assets);
@@ -57,7 +57,7 @@ async function getFusePoolUsers(
     comptroller,
     users: poolUsers,
     closeFactor: await comptrollerInstance.callStatic.closeFactorMantissa(),
-    liquidationIncentive: await comptrollerInstance.callStatic.liquidationIncentiveMantissa(),
+    liquidationIncentive: await comptrollerInstance.callStatic.liquidationIncentiveMantissa()
   };
 }
 

@@ -5,7 +5,7 @@ const baseOracles = [OracleTypes.FixedNativePriceOracle, OracleTypes.MasterPrice
 const oracles: OracleTypes[] = [
   ...baseOracles,
   OracleTypes.ChainlinkPriceOracleV2,
-  OracleTypes.UniswapTwapPriceOracleV2,
+  OracleTypes.UniswapTwapPriceOracleV2
 ];
 
 export default oracles;

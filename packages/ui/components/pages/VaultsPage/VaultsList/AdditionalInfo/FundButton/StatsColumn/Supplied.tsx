@@ -6,7 +6,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 export const Supplied = ({
   current: totalSupplyFrom,
   new: totalSupplyTo,
-  vault,
+  vault
 }: {
   current: string;
   new?: string;

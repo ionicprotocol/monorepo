@@ -21,9 +21,9 @@ task("deploy-fwr", "Changes the system admin to a new address")
       args: [
         flywheel, // flywheel
         deployer.address, // owner
-        ethers.constants.AddressZero, // Authority
+        ethers.constants.AddressZero // Authority
       ],
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
 
     const ionicSdkModule = await import("../ionicSdk");

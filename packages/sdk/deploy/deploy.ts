@@ -7,7 +7,7 @@ import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
   configureAddressesProviderAddresses,
   configureIonicLiquidator,
-  deployIonicLiquidator,
+  deployIonicLiquidator
 } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
@@ -50,11 +50,11 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       execute: {
         init: {
           methodName: "initialize",
-          args: [ethers.utils.parseEther("0.1")],
-        },
+          args: [ethers.utils.parseEther("0.1")]
+        }
       },
-      owner: deployer,
-    },
+      owner: deployer
+    }
   });
   if (ffd.transactionHash) await ethers.provider.waitForTransaction(ffd.transactionHash);
 
@@ -99,7 +99,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     contract: "Comptroller.sol:Comptroller",
     from: deployer,
     args: [ffd.address],
-    log: true,
+    log: true
   });
   if (comp.transactionHash) await ethers.provider.waitForTransaction(comp.transactionHash);
   console.log("Comptroller ", comp.address);
@@ -108,7 +108,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     contract: "ComptrollerFirstExtension",
     from: deployer,
     args: [],
-    log: true,
+    log: true
   });
   if (compFirstExtension.transactionHash) await ethers.provider.waitForTransaction(compFirstExtension.transactionHash);
   console.log("ComptrollerFirstExtension", compFirstExtension.address);
@@ -121,7 +121,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     contract: "CTokenFirstExtension",
     from: deployer,
     args: [],
-    log: true,
+    log: true
   });
   if (cTokenFirstExtension.transactionHash)
     await ethers.provider.waitForTransaction(cTokenFirstExtension.transactionHash);
@@ -131,7 +131,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (erc20Del.transactionHash) await ethers.provider.waitForTransaction(erc20Del.transactionHash);
   console.log("CErc20Delegate: ", erc20Del.address);
@@ -140,7 +140,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("CErc20PluginDelegate: ", erc20PluginDel.address);
 
@@ -148,7 +148,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
   ////
@@ -161,12 +161,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       execute: {
         init: {
           methodName: "initialize",
-          args: [false, []],
-        },
+          args: [false, []]
+        }
       },
-      owner: deployer,
+      owner: deployer
     },
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (fpd.transactionHash) await ethers.provider.waitForTransaction(fpd.transactionHash);
   console.log("PoolDirectory: ", fpd.address);
@@ -301,7 +301,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     erc20PluginRewardsDelExtensions[0] != cTokenFirstExtension.address
   ) {
     tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDel.address, [
-      cTokenFirstExtension.address,
+      cTokenFirstExtension.address
     ]);
     await tx.wait();
     console.log(`configured the extensions for the CErc20PluginRewardsDelegate ${erc20PluginRewardsDel.address}`);
@@ -338,7 +338,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const fplDeployment = await deployments.deploy("PoolLens", {
     from: deployer,
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
 
   if (fplDeployment.transactionHash) await ethers.provider.waitForTransaction(fplDeployment.transactionHash);
@@ -367,7 +367,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (fpls.transactionHash) await ethers.provider.waitForTransaction(fpls.transactionHash);
   console.log("PoolLensSecondary: ", fpls.address);
@@ -386,7 +386,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [fpd.address],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (mflrReceipt.transactionHash) await ethers.provider.waitForTransaction(mflrReceipt.transactionHash);
   console.log("IonicFlywheelLensRouter: ", mflrReceipt.address);
@@ -395,7 +395,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     log: true,
     args: [],
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (booster.transactionHash) await ethers.provider.waitForTransaction(booster.transactionHash);
   console.log("LooplessFlywheelBooster: ", booster.address);
@@ -457,7 +457,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const fixedNativePO = await deployments.deploy("FixedNativePriceOracle", {
     from: deployer,
     args: [],
-    log: true,
+    log: true
   });
   console.log("FixedNativePriceOracle: ", fixedNativePO.address);
 
@@ -469,13 +469,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       execute: {
         init: {
           methodName: "initialize",
-          args: [],
-        },
+          args: []
+        }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
+      owner: deployer
     },
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
   console.log("SimplePriceOracle: ", simplePO.address);
@@ -493,14 +493,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
             constants.AddressZero,
             deployer,
             true,
-            chainDeployParams.wtoken,
-          ],
-        },
+            chainDeployParams.wtoken
+          ]
+        }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
+      owner: deployer
     },
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log(
     `Initialised MPO with for tokens: ${constants.AddressZero}: ${fixedNativePO.address}, ${chainDeployParams.wtoken}: ${fixedNativePO.address}`
@@ -515,13 +515,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployer],
-        },
+          args: [deployer]
+        }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
+      owner: deployer
     },
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
 
   ////
@@ -535,7 +535,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     ethers,
     getNamedAccounts,
     deployments,
-    deployConfig: chainDeployParams,
+    deployConfig: chainDeployParams
   });
   ///
 
@@ -551,7 +551,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   await configureIonicLiquidator({
     ethers,
     getNamedAccounts,
-    chainId,
+    chainId
   });
   ///
 
@@ -566,13 +566,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         execute: {
           init: {
             methodName: "initialize",
-            args: [],
-          },
+            args: []
+          }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer,
+        owner: deployer
       },
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
     if (vaultsRegistry.transactionHash) await ethers.provider.waitForTransaction(vaultsRegistry.transactionHash);
     console.log("OptimizedVaultsRegistry: ", vaultsRegistry.address);
@@ -585,7 +585,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const liquidatorsRegistryDep = await deployments.deploy("LiquidatorsRegistry", {
     from: deployer,
     log: true,
-    args: [addressesProvider.address],
+    args: [addressesProvider.address]
   });
   if (liquidatorsRegistryDep.transactionHash)
     await ethers.provider.waitForTransaction(liquidatorsRegistryDep.transactionHash);
@@ -593,7 +593,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const liquidatorsRegistryExtensionDep = await deployments.deploy("LiquidatorsRegistryExtension", {
     from: deployer,
     log: true,
-    args: [],
+    args: []
   });
   if (liquidatorsRegistryExtensionDep.transactionHash)
     await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
@@ -621,7 +621,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   await configureLiquidatorsRegistry({
     ethers,
     getNamedAccounts,
-    chainId,
+    chainId
   });
   ///
   ////
@@ -632,7 +632,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       from: deployer,
       log: true,
       args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
     if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
     console.log("LeveredPositionFactory: ", lpfDep.address);
@@ -641,7 +641,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       from: deployer,
       log: true,
       args: [],
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
     if (lpfExtDep.transactionHash) await ethers.provider.waitForTransaction(lpfExtDep.transactionHash);
     console.log("LeveredPositionFactoryExtension: ", lpfExtDep.address);
@@ -676,12 +676,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         execute: {
           init: {
             methodName: "initialize",
-            args: [leveredPositionFactory.address],
-          },
+            args: [leveredPositionFactory.address]
+          }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer,
-      },
+        owner: deployer
+      }
     });
     if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
     console.log("LeveredPositionsLens: ", lpLens.address);
@@ -695,13 +695,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         execute: {
           init: {
             methodName: "initialize",
-            args: [leveredPositionFactory.address],
-          },
+            args: [leveredPositionFactory.address]
+          }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer,
+        owner: deployer
       },
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
 
     const authoritiesRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
@@ -718,7 +718,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       ethers,
       getNamedAccounts,
       chainId,
-      deployConfig: chainDeployParams,
+      deployConfig: chainDeployParams
     });
   }
   // upgrade any of the pools if necessary

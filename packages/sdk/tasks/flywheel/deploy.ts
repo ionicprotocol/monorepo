@@ -25,12 +25,12 @@ task("flywheel:deploy-static-rewards-fw", "Deploy static rewards flywheel for LM
         execute: {
           init: {
             methodName: "initialize",
-            args: [rewardToken, ethers.constants.AddressZero, flywheelBooster.address, deployer.address],
-          },
+            args: [rewardToken, ethers.constants.AddressZero, flywheelBooster.address, deployer.address]
+          }
         },
-        owner: deployer.address,
+        owner: deployer.address
       },
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
 
     console.log(`Deployed flywheel: ${flywheel.address}`);
@@ -63,9 +63,9 @@ task("flywheel:deploy-static-rewards", "Deploy static rewards flywheel for LM re
       args: [
         flywheel, // flywheel
         deployer.address, // owner
-        ethers.constants.AddressZero, // Authority
+        ethers.constants.AddressZero // Authority
       ],
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
 
     const ionicSdkModule = await import("../ionicSdk");

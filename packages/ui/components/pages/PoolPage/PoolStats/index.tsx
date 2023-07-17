@@ -10,7 +10,7 @@ import {
   sortTopBorrowedAssets,
   sortTopLiquidityAssets,
   sortTopSuppliedAssets,
-  sortTopUtilizationAssets,
+  sortTopUtilizationAssets
 } from '@ui/utils/sorts';
 
 export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined }) => {
@@ -21,7 +21,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
           sortTopBorrowedAssets(poolData.assets),
           sortTopSuppliedAssets(poolData.assets),
           sortTopLiquidityAssets(poolData.assets),
-          sortTopUtilizationAssets(poolData.assets),
+          sortTopUtilizationAssets(poolData.assets)
         ];
       } else {
         return [[], [], [], []];

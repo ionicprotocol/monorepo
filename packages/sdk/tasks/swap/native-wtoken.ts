@@ -14,7 +14,7 @@ task("swap:native-wtoken", "Wrap native token")
       [
         "function deposit() public payable",
         "function approve(address guy, uint wad) public returns (bool)",
-        "function balanceOf(address owner) public returns (uint256)",
+        "function balanceOf(address owner) public returns (uint256)"
       ],
       account
     );

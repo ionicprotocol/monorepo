@@ -10,7 +10,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Balance = ({
   asset,
-  chainId,
+  chainId
 }: {
   asset: Pick<MarketData, 'underlyingDecimals' | 'underlyingSymbol' | 'underlyingToken'>;
   chainId: SupportedChains;

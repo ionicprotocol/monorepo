@@ -9,7 +9,7 @@ import {
   HStack,
   Select,
   Spacer,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { NativePricedFuseAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -35,7 +35,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 const IRMChart = dynamic(
   () => import('@ui/components/pages/EditPoolPage/AssetConfiguration/IRMChart'),
   {
-    ssr: false,
+    ssr: false
   }
 );
 
@@ -48,7 +48,7 @@ interface InterestRateModelProps {
 export const InterestRateModel = ({
   comptrollerAddress,
   selectedAsset,
-  poolChainId,
+  poolChainId
 }: InterestRateModelProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
   const { currentSdk } = useMultiIonic();
@@ -66,11 +66,11 @@ export const InterestRateModel = ({
     setValue,
     register,
     watch,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     defaultValues: {
-      interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
-    },
+      interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : ''
+    }
   });
 
   const watchInterestRateModel = watch(
@@ -103,18 +103,18 @@ export const InterestRateModel = ({
 
       successToast({
         description: 'Successfully updated interest rate model!',
-        id: 'Updated interest rate model - ' + Math.random().toString(),
+        id: 'Updated interest rate model - ' + Math.random().toString()
       });
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
         interestRateModel,
-        token: cTokenAddress,
+        token: cTokenAddress
       };
       const sentryInfo = {
         contextName: 'Updating interest rate model',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -169,7 +169,7 @@ export const InterestRateModel = ({
                     <Select
                       id="interestRateModel"
                       {...register('interestRateModel', {
-                        required: 'interestRateModel is required',
+                        required: 'interestRateModel is required'
                       })}
                       cursor="pointer"
                       isDisabled={!isEditableAdmin}

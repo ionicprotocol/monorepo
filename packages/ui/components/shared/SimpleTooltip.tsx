@@ -25,7 +25,7 @@ export const SimpleTooltip = ({
         label={label}
         placement={'top'}
         sx={{
-          '--popper-arrow-shadow-color': `${cPage.primary.borderColor}`,
+          '--popper-arrow-shadow-color': `${cPage.primary.borderColor}`
         }}
         {...tooltipProps}
       >

@@ -15,7 +15,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin",
     decimals: 6,
     oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("https://explorer.goerli.linea.build", USDC),
+    extraDocs: defaultDocs("https://explorer.goerli.linea.build", USDC)
   },
   {
     symbol: assetSymbols.WBTC,
@@ -23,7 +23,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped BTC",
     decimals: 18,
     oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("https://explorer.goerli.linea.build", WBTC),
+    extraDocs: defaultDocs("https://explorer.goerli.linea.build", WBTC)
   },
   {
     symbol: assetSymbols.WETH,
@@ -31,7 +31,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.ethereum),
+    extraDocs: wrappedAssetDocs(SupportedChains.ethereum)
   },
   {
     symbol: assetSymbols.DAI,
@@ -39,7 +39,7 @@ export const assets: SupportedAsset[] = [
     name: "DAI Token",
     decimals: 18,
     oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("https://explorer.goerli.linea.build", DAI),
+    extraDocs: defaultDocs("https://explorer.goerli.linea.build", DAI)
   },
   {
     symbol: assetSymbols.USDT,
@@ -47,8 +47,8 @@ export const assets: SupportedAsset[] = [
     name: "USD Tether",
     decimals: 6,
     oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("https://explorer.goerli.linea.build", USDT),
-  },
+    extraDocs: defaultDocs("https://explorer.goerli.linea.build", USDT)
+  }
 ];
 
 export default assets;

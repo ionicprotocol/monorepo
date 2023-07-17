@@ -12,7 +12,7 @@ export const AmountInput = ({
   asset,
   poolChainId,
   userEnteredAmount,
-  updateAmount,
+  updateAmount
 }: {
   asset: MarketData;
   poolChainId: number;
@@ -21,7 +21,7 @@ export const AmountInput = ({
 }) => {
   const {
     data: { minBorrowAsset },
-    isLoading,
+    isLoading
   } = useBorrowMinimum(asset, poolChainId);
 
   const setToMin = () => {

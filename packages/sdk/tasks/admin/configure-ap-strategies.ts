@@ -23,13 +23,13 @@ export default task(
     ethers,
     getNamedAccounts,
     chainId,
-    deployConfig: chainDeployParams,
+    deployConfig: chainDeployParams
   });
 
   //// Configure Liquidators Registry
   await configureLiquidatorsRegistry({
     ethers,
     getNamedAccounts,
-    chainId,
+    chainId
   });
 });

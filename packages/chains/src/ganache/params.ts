@@ -15,7 +15,7 @@ const specificParams: ChainParams = {
     blockExplorerUrls: { default: { name: "Etherscan", url: "http://localhost:3000" } },
     nativeCurrency: {
       symbol: "ETH",
-      name: "Ganache",
+      name: "Ganache"
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WETH,
@@ -24,10 +24,10 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/hardhat.png",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/hardhat.png"
     },
-    testnet: true,
-  },
+    testnet: true
+  }
 };
 
 export default specificParams;

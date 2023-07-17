@@ -90,14 +90,14 @@ describe("FundOperation", () => {
     it("Mint success", async () => {
       Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
+          mint: stub().resolves(BigNumber.from(mintResponse))
+        }
       });
 
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
+          mint: stub().resolves(BigNumber.from(mintResponse))
+        }
       });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
@@ -112,14 +112,14 @@ describe("FundOperation", () => {
       mintResponse = 2;
       Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
+          mint: stub().resolves(BigNumber.from(mintResponse))
+        }
       });
 
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
+          mint: stub().resolves(BigNumber.from(mintResponse))
+        }
       });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
@@ -142,8 +142,8 @@ describe("FundOperation", () => {
 
       Object.defineProperty(mockTokenContract, "callStatic", {
         value: {
-          allowance: stub().resolves(BigNumber.from(4)),
-        },
+          allowance: stub().resolves(BigNumber.from(4))
+        }
       });
 
       mockcTokenContract = createStubInstance(Contract);
@@ -153,8 +153,8 @@ describe("FundOperation", () => {
     it("Repaying max", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          repayBorrow: stub().resolves(BigNumber.from(0)),
-        },
+          repayBorrow: stub().resolves(BigNumber.from(0))
+        }
       });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
@@ -168,8 +168,8 @@ describe("FundOperation", () => {
     it("Not repaying max", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          repayBorrow: stub().resolves(BigNumber.from(0)),
-        },
+          repayBorrow: stub().resolves(BigNumber.from(0))
+        }
       });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
@@ -183,8 +183,8 @@ describe("FundOperation", () => {
     it("repay fail", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          repayBorrow: stub().resolves(BigNumber.from(2)),
-        },
+          repayBorrow: stub().resolves(BigNumber.from(2))
+        }
       });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
@@ -207,13 +207,13 @@ describe("FundOperation", () => {
     it("success", async () => {
       Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
-          borrow: stub().resolves(BigNumber.from(0)),
-        },
+          borrow: stub().resolves(BigNumber.from(0))
+        }
       });
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          borrow: stub().resolves(BigNumber.from(0)),
-        },
+          borrow: stub().resolves(BigNumber.from(0))
+        }
       });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
@@ -227,13 +227,13 @@ describe("FundOperation", () => {
     it("fail", async () => {
       Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
-          borrow: stub().resolves(BigNumber.from(2)),
-        },
+          borrow: stub().resolves(BigNumber.from(2))
+        }
       });
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          borrow: stub().resolves(BigNumber.from(2)),
-        },
+          borrow: stub().resolves(BigNumber.from(2))
+        }
       });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
@@ -256,8 +256,8 @@ describe("FundOperation", () => {
     it("success", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          redeemUnderlying: stub().resolves(BigNumber.from(0)),
-        },
+          redeemUnderlying: stub().resolves(BigNumber.from(0))
+        }
       });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
@@ -271,8 +271,8 @@ describe("FundOperation", () => {
     it("fail", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
-          redeemUnderlying: stub().resolves(BigNumber.from(2)),
-        },
+          redeemUnderlying: stub().resolves(BigNumber.from(2))
+        }
       });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);

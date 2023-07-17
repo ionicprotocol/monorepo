@@ -10,28 +10,28 @@ import {
   MILLI_SECONDS_PER_WEEK,
   MILLI_SECONDS_PER_YEAR,
   PRICE,
-  TVL,
+  TVL
 } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { useHistoryData } from '@ui/hooks/useHistoryData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 const HistoryChart = dynamic(() => import('@ui/components/shared/HistoryChart'), {
-  ssr: false,
+  ssr: false
 });
 
 export const TimeFrames = [
   { label: '1D', milliSeconds: MILLI_SECONDS_PER_DAY },
   { label: '1W', milliSeconds: MILLI_SECONDS_PER_WEEK },
   { label: '1M', milliSeconds: MILLI_SECONDS_PER_MONTH },
-  { label: '1Y', milliSeconds: MILLI_SECONDS_PER_YEAR },
+  { label: '1Y', milliSeconds: MILLI_SECONDS_PER_YEAR }
 ];
 
 export const Modes = [APY, PRICE, TVL];
 
 export const HistoricalRate = ({
   asset,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   poolChainId: number;

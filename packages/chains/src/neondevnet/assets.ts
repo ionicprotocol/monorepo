@@ -10,22 +10,22 @@ export const assets: SupportedAsset[] = [
     underlying: WNEON,
     name: "Wrapped NEON ",
     decimals: 18,
-    oracle: OracleTypes.FixedNativePriceOracle,
+    oracle: OracleTypes.FixedNativePriceOracle
   },
   {
     symbol: assetSymbols.MORA,
     underlying: MORA,
     name: "Moraswap Token",
     decimals: 18,
-    oracle: OracleTypes.SimplePriceOracle,
+    oracle: OracleTypes.SimplePriceOracle
   },
   {
     symbol: assetSymbols.USDC,
     underlying: USDC,
     name: "USD Coin",
     decimals: 6,
-    oracle: OracleTypes.SimplePriceOracle,
-  },
+    oracle: OracleTypes.SimplePriceOracle
+  }
 ];
 
 export default assets;

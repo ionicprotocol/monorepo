@@ -30,12 +30,12 @@ export default task("deploy-market-with-rewards").setAction(
           execute: {
             init: {
               methodName: "initialize",
-              args: ["Testing Bomb Token", "TBOMB"],
-            },
+              args: ["Testing Bomb Token", "TBOMB"]
+            }
           },
           proxyContract: "OpenZeppelinTransparentProxy",
-          owner: deployer,
-        },
+          owner: deployer
+        }
       });
       if (testingBombErc20.transactionHash) await ethers.provider.waitForTransaction(testingBombErc20.transactionHash);
       console.log(`deployed a dummy bomb token at ${testingBombErc20.address}`);
@@ -60,12 +60,12 @@ export default task("deploy-market-with-rewards").setAction(
           execute: {
             init: {
               methodName: "initialize",
-              args: ["Testing Rewards Token", "TRT"],
-            },
+              args: ["Testing Rewards Token", "TRT"]
+            }
           },
           proxyContract: "OpenZeppelinTransparentProxy",
-          owner: deployer,
-        },
+          owner: deployer
+        }
       });
       if (rewardsErc20.transactionHash) await ethers.provider.waitForTransaction(rewardsErc20.transactionHash);
       console.log(`deployed a dummy rewards token at ${rewardsErc20.address}`);
@@ -113,7 +113,7 @@ export default task("deploy-market-with-rewards").setAction(
           rewardsDelegate.address,
           new ethers.utils.AbiCoder().encode([], []),
           0,
-          0,
+          0
         ]
       );
       tx = await ionicPool._deployMarket(false, constructorData, ethers.utils.parseEther("0.9"));
@@ -152,19 +152,19 @@ export default task("deploy-market-with-rewards").setAction(
             execute: {
               init: {
                 methodName: "initialize",
-                args: [rewardsErc20.address, constants.AddressZero, constants.AddressZero, deployer],
-              },
+                args: [rewardsErc20.address, constants.AddressZero, constants.AddressZero, deployer]
+              }
             },
             proxyContract: "OpenZeppelinTransparentProxy",
-            owner: deployer,
-          },
+            owner: deployer
+          }
         });
         const rewardsDeployment = await deployments.deploy("ChapelRewardsContract", {
           from: deployer,
           contract: "FuseFlywheelDynamicRewards",
           log: true,
           waitConfirmations: 1,
-          args: [flywheelDeployment.address, 60 * 10], // new cycle every 10 minutes
+          args: [flywheelDeployment.address, 60 * 10] // new cycle every 10 minutes
         });
         const flywheel = (await ethers.getContractAt(
           "IonicFlywheel",

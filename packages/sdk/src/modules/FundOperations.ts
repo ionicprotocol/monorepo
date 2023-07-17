@@ -20,7 +20,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
           (
             await this.provider.estimateGas({
               from: address,
-              value: amount.div(BigNumber.from(2)),
+              value: amount.div(BigNumber.from(2))
             })
           ).toNumber() * 3.13
         ).toFixed(0)
@@ -134,7 +134,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         return {
           underlyingToken: token,
           underlyingSymbol: _asset?.originalSymbol ?? _asset?.symbol ?? token,
-          underlyingDecimals: _asset?.decimals ?? 18,
+          underlyingDecimals: _asset?.decimals ?? 18
         };
       });
     }
@@ -144,7 +144,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const account = await this.signer.getAddress();
 
       return await iLiquidatorsRegistry.callStatic.amountOutAndSlippageOfSwap(inputToken, amount, outputToken, {
-        from: account,
+        from: account
       });
     }
   };

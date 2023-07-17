@@ -9,7 +9,7 @@ import {
   LiquidatablePool,
   PoolUserStruct,
   PoolUserWithAssets,
-  PublicPoolUserWithData,
+  PublicPoolUserWithData
 } from "./utils";
 
 import { getPotentialLiquidation } from "./index";
@@ -27,7 +27,7 @@ async function getLiquidatableUsers(
       ...user,
       debt: [],
       collateral: [],
-      assets: userAssets,
+      assets: userAssets
     };
 
     const encodedLiquidationTX = await getPotentialLiquidation(
@@ -63,14 +63,14 @@ export default async function gatherLiquidations(
       if (liquidatableUsers.length > 0) {
         liquidations.push({
           comptroller: pool.comptroller,
-          liquidations: liquidatableUsers,
+          liquidations: liquidatableUsers
         });
       }
     } catch (e) {
       erroredPools.push({
         msg: "Error while fetching liquidatable users " + (e as Error).stack,
         comptroller: pool.comptroller,
-        error: e,
+        error: e
       });
     }
   }

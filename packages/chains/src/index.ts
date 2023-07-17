@@ -19,5 +19,5 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ganache.chainId]: ganache,
   [neondevnet.chainId]: neondevnet,
   [lineagoerli.chainId]: lineagoerli,
-  [ethereum.chainId]: ethereum,
+  [ethereum.chainId]: ethereum
 };

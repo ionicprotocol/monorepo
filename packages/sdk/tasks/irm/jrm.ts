@@ -30,7 +30,7 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
         baseRatePerYear.toString(),
         multiplierPerYear.toString(),
         jumpMultiplierPerYear.toString(),
-        kink.toString(),
+        kink.toString()
       ];
       console.log(`Deploying JRM with arguments: ${args.join(", ")}`);
     } else if (_irm === "AdjustableJumpRateModel") {
@@ -40,8 +40,8 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
           baseRatePerYear: baseRatePerYear.toString(),
           multiplierPerYear: multiplierPerYear.toString(),
           jumpMultiplierPerYear: jumpMultiplierPerYear.toString(),
-          kink: kink.toString(),
-        },
+          kink: kink.toString()
+        }
       ];
       console.log(`Deploying JRM with arguments: ${args[0]}`);
     } else {
@@ -55,7 +55,7 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
       contract: _irm,
       from: deployer.address,
       args: args,
-      log: true,
+      log: true
     });
 
     if (deployment.transactionHash) await ethers.provider.waitForTransaction(deployment.transactionHash);
@@ -83,7 +83,7 @@ task("irm:edit:adjustable-jrm-params", "Edit adjustable JRM parameters")
       irm.callStatic.blocksPerYear(),
       irm.callStatic.multiplierPerBlock(),
       irm.callStatic.baseRatePerBlock(),
-      irm.callStatic.kink(),
+      irm.callStatic.kink()
     ];
 
     [blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_] = await (
@@ -100,7 +100,7 @@ task("irm:edit:adjustable-jrm-params", "Edit adjustable JRM parameters")
       baseRatePerYear: baseRatePerYear.toString(),
       multiplierPerYear: multiplierPerYear.toString(),
       jumpMultiplierPerYear: jumpMultiplierPerYear.toString(),
-      kink: kink.toString(),
+      kink: kink.toString()
     };
 
     console.log({ args });
@@ -113,7 +113,7 @@ task("irm:edit:adjustable-jrm-params", "Edit adjustable JRM parameters")
       irm.callStatic.blocksPerYear(),
       irm.callStatic.multiplierPerBlock(),
       irm.callStatic.baseRatePerBlock(),
-      irm.callStatic.kink(),
+      irm.callStatic.kink()
     ];
 
     [blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_] = await (

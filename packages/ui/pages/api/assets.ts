@@ -14,7 +14,7 @@ const querySchema = yup.object().shape({
   chainIds: yup
     .array()
     .of(yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required())
-    .required(),
+    .required()
 });
 type Query = yup.InferType<typeof querySchema>;
 

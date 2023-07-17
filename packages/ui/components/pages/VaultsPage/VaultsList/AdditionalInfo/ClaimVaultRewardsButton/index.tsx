@@ -9,7 +9,7 @@ import { useColors } from '@ui/hooks/useColors';
 const ClaimVaultRewardsButton = ({
   chainId,
   reward,
-  refetch,
+  refetch
 }: {
   chainId: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,7 +19,7 @@ const ClaimVaultRewardsButton = ({
   const {
     isOpen: isClaimModalOpen,
     onOpen: openClaimModal,
-    onClose: closeClaimModal,
+    onClose: closeClaimModal
   } = useDisclosure();
   const { cPage } = useColors();
 

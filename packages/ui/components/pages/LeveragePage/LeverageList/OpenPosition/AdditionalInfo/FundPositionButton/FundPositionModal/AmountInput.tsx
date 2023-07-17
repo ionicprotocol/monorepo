@@ -19,7 +19,7 @@ export const AmountInput = ({
   collateralAsset,
   chainId,
   optionToWrap,
-  setAmount,
+  setAmount
 }: {
   chainId: SupportedChains;
   collateralAsset: LeveredCollateral;
@@ -76,11 +76,11 @@ export const AmountInput = ({
     } catch (error) {
       const sentryProperties = {
         chainId: sdk.chainId,
-        collateralToken: collateralAsset.cToken,
+        collateralToken: collateralAsset.cToken
       };
       const sentryInfo = {
         contextName: 'Fetching leverage max supply amount',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }

@@ -26,7 +26,7 @@ const estimateGas = async (
         0,
         {
           gasLimit: 1e9,
-          from: process.env.ETHEREUM_ADMIN_ACCOUNT,
+          from: process.env.ETHEREUM_ADMIN_ACCOUNT
         }
       );
     case LiquidationStrategy.UNISWAP:
@@ -43,11 +43,11 @@ const estimateGas = async (
           strategyData: strategiesAndDatas.datas,
           flashSwapPair,
           debtFundingStrategies,
-          debtFundingStrategiesData,
+          debtFundingStrategiesData
         },
         {
           gasLimit: 1e9,
-          from: process.env.ETHEREUM_ADMIN_ACCOUNT,
+          from: process.env.ETHEREUM_ADMIN_ACCOUNT
         }
       );
   }

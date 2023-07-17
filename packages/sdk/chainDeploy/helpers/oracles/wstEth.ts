@@ -8,7 +8,7 @@ export const deployWstEthOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  assets,
+  assets
 }: WstEthOracleFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -23,12 +23,12 @@ export const deployWstEthOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [],
-        },
+          args: []
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (wst.transactionHash) await ethers.provider.waitForTransaction(wst.transactionHash);
   console.log("WSTEthPriceOracle: ", wst.address);

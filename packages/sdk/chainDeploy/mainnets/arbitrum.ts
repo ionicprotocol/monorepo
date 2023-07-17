@@ -8,14 +8,14 @@ import {
   deployCurveLpOracle,
   deploySaddleLpOracle,
   deployUniswapLpOracle,
-  deployUniswapV3Oracle,
+  deployUniswapV3Oracle
 } from "../helpers";
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
   ChainlinkFeedBaseCurrency,
   ConcentratedLiquidityOracleConfig,
-  CurvePoolConfig,
+  CurvePoolConfig
 } from "../helpers/types";
 
 const assets = arbitrum.assets;
@@ -38,10 +38,10 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3FactoryAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
     uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [],
-    flashSwapFee: 25,
+    flashSwapFee: 25
   },
   dynamicFlywheels: [],
-  cgId: arbitrum.specificParams.cgId,
+  cgId: arbitrum.specificParams.cgId
 };
 
 const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
@@ -49,92 +49,92 @@ const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     assetAddress: underlying(assets, assetSymbols.GMX),
     poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
     twapWindow: ethers.BigNumber.from(30 * 60),
-    baseToken: WETH,
+    baseToken: WETH
   },
   {
     assetAddress: underlying(assets, assetSymbols.USDs),
     poolAddress: "0x50450351517117Cb58189edBa6bbaD6284D45902",
     twapWindow: ethers.BigNumber.from(30 * 60),
-    baseToken: USDC,
-  },
+    baseToken: USDC
+  }
 ];
 
 const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.BAL,
     aggregator: "0xBE5eA816870D11239c543F84b71439511D70B94f",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.BNB,
     aggregator: "0x6970460aabF80C5BE983C6b74e5D06dEDCA95D4A",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.CRV,
     aggregator: "0xaebDA2c976cfd1eE1977Eac079B4382acb849325",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.DAI,
     aggregator: "0xc5C8E77B397E531B8EC06BFb0048328B30E9eCfB",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.FRAX,
     aggregator: "0x0809E3d38d1B4214958faf06D8b1B1a2b73f2ab8",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.FXS,
     aggregator: "0x36a121448D74Fa81450c992A1a44B9b7377CD3a5",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.LINK,
     aggregator: "0xb7c8Fb1dB45007F98A68Da0588e1AA524C317f27",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.SUSHI,
     aggregator: "0xb2A8BA74cbca38508BA1632761b56C897060147C",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.USDC,
     aggregator: "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.USDT,
     aggregator: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.WBTC,
     aggregator: "0x6ce185860a4963106506C203335A2910413708e9",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.MAGIC,
     aggregator: "0x47E55cCec6582838E173f252D08Afd8116c2202d",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.DPX,
     aggregator: "0xc373B9DB0707fD451Bc56bA5E9b029ba26629DF0",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.wstETH,
     aggregator: "0xb523AE262D20A936BC152e6023996e46FDC2A95D",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   },
   {
     symbol: assetSymbols.OHM,
     aggregator: "0x761aaeBf021F19F198D325D7979965D0c7C9e53b",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+  }
 ];
 
 // https://arbitrum.curve.fi/
@@ -142,8 +142,8 @@ const curvePools: CurvePoolConfig[] = [
   {
     lpToken: underlying(assets, assetSymbols["2pool"]),
     pool: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
-    underlyings: [USDC, underlying(assets, assetSymbols.USDT)],
-  },
+    underlyings: [USDC, underlying(assets, assetSymbols.USDT)]
+  }
 ];
 
 // https://saddle.exchange/
@@ -151,18 +151,18 @@ const saddlePools: CurvePoolConfig[] = [
   {
     lpToken: underlying(assets, assetSymbols.saddleFraxBP),
     pool: "0x401AFbc31ad2A3Bc0eD8960d63eFcDEA749b4849",
-    underlyings: [USDC, underlying(assets, assetSymbols.FRAX)],
+    underlyings: [USDC, underlying(assets, assetSymbols.FRAX)]
   },
   {
     lpToken: underlying(assets, assetSymbols.saddleFraxUsdsBP),
     pool: "0xa5bD85ed9fA27ba23BfB702989e7218E44fd4706",
-    underlyings: [underlying(assets, assetSymbols.USDs), underlying(assets, assetSymbols.saddleFraxBP)],
+    underlyings: [underlying(assets, assetSymbols.USDs), underlying(assets, assetSymbols.saddleFraxBP)]
   },
   {
     lpToken: underlying(assets, assetSymbols.saddleFraxUsdtBP),
     pool: "0xf8504e92428d65E56e495684A38f679C1B1DC30b",
-    underlyings: [underlying(assets, assetSymbols.USDT), underlying(assets, assetSymbols.saddleFraxBP)],
-  },
+    underlyings: [underlying(assets, assetSymbols.USDT), underlying(assets, assetSymbols.saddleFraxBP)]
+  }
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -175,7 +175,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    concentratedLiquidityOracleTokens: uniswapV3OracleTokens,
+    concentratedLiquidityOracleTokens: uniswapV3OracleTokens
   });
 
   //// ORACLES
@@ -190,7 +190,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     assets: assets,
-    chainlinkAssets,
+    chainlinkAssets
   });
 
   //// Uniswap Lp Oracle
@@ -203,7 +203,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    curvePools,
+    curvePools
   });
 
   //// Saddle LP Oracle
@@ -213,7 +213,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    saddlePools,
+    saddlePools
   });
 
   // Quoter
@@ -221,7 +221,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [deployConfig.uniswap.uniswapV3FactoryAddress],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("Quoter: ", quoter.address);
 
@@ -232,7 +232,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
@@ -243,7 +243,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (saddleLpTokenLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(saddleLpTokenLiquidator.transactionHash);
@@ -254,7 +254,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (curveSwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
@@ -265,7 +265,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
@@ -274,7 +274,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 
@@ -283,7 +283,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (balancerLpTokenLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(balancerLpTokenLiquidator.transactionHash);
@@ -294,7 +294,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (balancerSwapTokenLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(balancerSwapTokenLiquidator.transactionHash);

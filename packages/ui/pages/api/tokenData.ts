@@ -17,7 +17,7 @@ const querySchema = yup.object().shape({
       .matches(/^0x[a-fA-F0-9]{40}$/, 'Not a valid Wallet address')
       .required()
   ),
-  chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
+  chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required()
 });
 
 const handler = async (request: NextApiRequest, response: NextApiResponse<TokenDataResponse[]>) => {
@@ -43,7 +43,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
         Promise.all([
           contract.callStatic.name().catch(() => undefined),
           contract.callStatic.symbol(),
-          contract.callStatic.decimals().catch(() => 18),
+          contract.callStatic.decimals().catch(() => 18)
         ])
       )
     );
@@ -56,7 +56,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
           ? config.iconServerURL + '/token/96x96/' + data[1].toLowerCase() + '.png'
           : undefined,
         name: data[0] || data[1] || 'Undefined',
-        symbol: data[1] || data[0] || 'Undefined',
+        symbol: data[1] || data[0] || 'Undefined'
       });
     });
   } catch {

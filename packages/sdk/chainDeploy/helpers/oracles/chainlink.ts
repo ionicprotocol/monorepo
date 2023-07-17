@@ -12,7 +12,7 @@ export const deployChainlinkOracle = async ({
   deployments,
   deployConfig,
   assets,
-  chainlinkAssets,
+  chainlinkAssets
 }: ChainlinkDeployFnParams): Promise<{ cpo: any; chainLinkv2: any }> => {
   const { deployer } = await getNamedAccounts();
   let tx: providers.TransactionResponse;
@@ -21,7 +21,7 @@ export const deployChainlinkOracle = async ({
   const cpo = await deployments.deploy("ChainlinkPriceOracleV2", {
     from: deployer,
     args: [deployer, true, deployConfig.wtoken, deployConfig.nativeTokenUsdChainlinkFeed],
-    log: true,
+    log: true
   });
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("ChainlinkPriceOracleV2: ", cpo.address);

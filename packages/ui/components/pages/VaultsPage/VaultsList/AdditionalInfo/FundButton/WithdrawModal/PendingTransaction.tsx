@@ -17,7 +17,7 @@ export const PendingTransaction = ({
   steps,
   isWithdrawing,
   amount,
-  vault,
+  vault
 }: {
   activeStep: number;
   amount: BigNumber;
@@ -36,7 +36,7 @@ export const PendingTransaction = ({
     successToast,
     underlyingAddress: vault.asset,
     underlyingDecimals: vault.decimals,
-    underlyingSymbol: vault.symbol,
+    underlyingSymbol: vault.symbol
   });
 
   return (

@@ -18,7 +18,7 @@ import {
   IONIC_LOCALSTORAGE_KEYS,
   MARKET_COLUMNS,
   MARKET_LTV,
-  SHRINK_ASSETS,
+  SHRINK_ASSETS
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
@@ -119,7 +119,7 @@ const PoolPage = memo(() => {
                     ? data.assets.map(
                         ({
                           underlyingToken,
-                          cToken,
+                          cToken
                         }: {
                           cToken: string;
                           underlyingToken: string;
@@ -136,7 +136,7 @@ const PoolPage = memo(() => {
                         .map(
                           ({
                             underlyingToken,
-                            cToken,
+                            cToken
                           }: {
                             cToken: string;
                             underlyingToken: string;

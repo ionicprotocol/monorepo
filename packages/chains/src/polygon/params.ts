@@ -13,18 +13,18 @@ const specificParams: ChainParams = {
     shortName: "Polygon",
     uniswapV3Fees: {
       [underlying(assets, assetSymbols.USDC)]: {
-        [underlying(assets, assetSymbols.PAR)]: 500,
-      },
+        [underlying(assets, assetSymbols.PAR)]: 500
+      }
     },
     img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://polygonscan.com" } },
     rpcUrls: {
       default: { http: ["https://polygon.llamarpc.com"] },
-      public: { http: ["https://polygon.llamarpc.com"] },
+      public: { http: ["https://polygon.llamarpc.com"] }
     },
     nativeCurrency: {
       symbol: "MATIC",
-      name: "MATIC",
+      name: "MATIC"
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WMATIC,
@@ -33,9 +33,9 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
-    },
-  },
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg"
+    }
+  }
 };
 
 export default specificParams;

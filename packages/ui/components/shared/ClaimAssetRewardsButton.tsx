@@ -11,7 +11,7 @@ import { useColors } from '@ui/hooks/useColors';
 const ClaimAssetRewardsButton = ({
   poolAddress,
   marketAddress,
-  poolChainId,
+  poolChainId
 }: {
   marketAddress: string;
   poolAddress: string;
@@ -20,7 +20,7 @@ const ClaimAssetRewardsButton = ({
   const {
     isOpen: isClaimModalOpen,
     onOpen: openClaimModal,
-    onClose: closeClaimModal,
+    onClose: closeClaimModal
   } = useDisclosure();
   const { cPage } = useColors();
   const { currentChain } = useMultiIonic();
@@ -29,7 +29,7 @@ const ClaimAssetRewardsButton = ({
     data: claimableRewards,
     refetch: refetchRewards,
     isLoading,
-    isRefetching,
+    isRefetching
   } = useAssetClaimableRewards(marketAddress, poolAddress, poolChainId);
 
   return (

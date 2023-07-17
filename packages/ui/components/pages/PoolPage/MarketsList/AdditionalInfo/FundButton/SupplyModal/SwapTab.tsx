@@ -32,7 +32,7 @@ import { toFixedNoRound } from '@ui/utils/formatNumber';
 export const SwapTab = ({
   asset,
   poolChainId,
-  setIsLoading,
+  setIsLoading
 }: {
   asset: MarketData;
   poolChainId: number;
@@ -106,7 +106,7 @@ export const SwapTab = ({
       chainId: currentSdk.chainId,
       inputToken: selectedToken,
       outputToken: asset,
-      token: asset.cToken,
+      token: asset.cToken
     };
 
     setIsLoading(true);
@@ -136,11 +136,11 @@ export const SwapTab = ({
 
           addRecentTransaction({
             description: `Approve ${selectedToken.underlyingSymbol}`,
-            hash: tx.hash,
+            hash: tx.hash
           });
           _steps[0] = {
             ..._steps[0],
-            txHash: tx.hash,
+            txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
 
@@ -149,18 +149,18 @@ export const SwapTab = ({
           _steps[0] = {
             ..._steps[0],
             done: true,
-            txHash: tx.hash,
+            txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
           successToast({
             description: 'Successfully Approved!',
-            id: 'Approved - ' + Math.random().toString(),
+            id: 'Approved - ' + Math.random().toString()
           });
         } else {
           _steps[0] = {
             ..._steps[0],
             desc: 'Already approved!',
-            done: true,
+            done: true
           };
           setConfirmedSteps([..._steps]);
         }
@@ -179,12 +179,12 @@ export const SwapTab = ({
 
         addRecentTransaction({
           description: `${selectedToken.underlyingSymbol} Token Swap`,
-          hash: tx.hash,
+          hash: tx.hash
         });
 
         _steps[1] = {
           ..._steps[1],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
 
@@ -196,12 +196,12 @@ export const SwapTab = ({
         _steps[1] = {
           ..._steps[1],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
         successToast({
           description: 'Successfully swapped!',
-          id: 'Swap - ' + Math.random().toString(),
+          id: 'Swap - ' + Math.random().toString()
         });
       } catch (error) {
         setFailedStep(2);
@@ -210,7 +210,7 @@ export const SwapTab = ({
     } catch (error) {
       const sentryInfo = {
         contextName: 'Swapping',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     }
@@ -224,9 +224,10 @@ export const SwapTab = ({
       activeStep={activeStep}
       asset={asset}
       failedStep={failedStep}
-      info={`You swapped ${utils.formatUnits(debouncedAmount, selectedToken?.underlyingDecimals)} ${
-        selectedToken?.underlyingSymbol
-      }, got ${
+      info={`You swapped ${utils.formatUnits(
+        debouncedAmount,
+        selectedToken?.underlyingDecimals
+      )} ${selectedToken?.underlyingSymbol}, got ${
         swapAmount ? utils.formatUnits(swapAmount.outputAmount, asset.underlyingDecimals) : ''
       } ${asset.underlyingSymbol}`}
       isLoading={isSwapping}
@@ -279,7 +280,7 @@ export const SwapTab = ({
                             return (
                               <HStack
                                 _hover={{
-                                  background: cCard.hoverBgColor,
+                                  background: cCard.hoverBgColor
                                 }}
                                 cursor="pointer"
                                 justifyContent="space-between"

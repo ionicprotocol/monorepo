@@ -32,7 +32,7 @@ export const getAllPools = async (sdk: IonicSdk): Promise<FusePool[]> => {
       comptroller: pp.comptroller,
       creator: pp.creator,
       blockPosted: pp.blockPosted.toNumber(),
-      timestampPosted: pp.timestampPosted.toNumber(),
+      timestampPosted: pp.timestampPosted.toNumber()
     };
   });
 };

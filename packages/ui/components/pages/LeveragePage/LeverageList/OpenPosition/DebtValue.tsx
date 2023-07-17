@@ -14,7 +14,7 @@ export const DebtValue = ({ info, position }: { info?: PositionInfo; position: O
         supplyBalance: info.debtAmount,
         supplyBalanceFiat: Number(utils.formatUnits(info.debtValue)) * usdPrice,
         underlyingDecimals: BigNumber.from(position.borrowable.underlyingDecimals.toString()),
-        underlyingToken: position.borrowable.underlyingToken,
+        underlyingToken: position.borrowable.underlyingToken
       }}
       poolChainId={position.chainId}
     />

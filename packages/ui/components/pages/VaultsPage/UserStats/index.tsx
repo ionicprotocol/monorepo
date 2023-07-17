@@ -14,7 +14,7 @@ export const UserStats = ({
   assets,
   totalSupplyApyPerAsset,
   totalSupplyBalanceNative,
-  totalSupplyBalanceFiat,
+  totalSupplyBalanceFiat
 }: {
   assets: FundedAsset[];
   totalSupplyApyPerAsset: { [market: string]: number };
@@ -60,7 +60,7 @@ export const UserStats = ({
             estimated: totalSupplyApyPerAsset[asset.cToken] * suppliedNum,
             supplied: smallFormatter(suppliedNum),
             symbol: asset.underlyingSymbol,
-            underlying: asset.underlyingToken,
+            underlying: asset.underlyingToken
           });
         }
       });
@@ -71,7 +71,7 @@ export const UserStats = ({
         estimatedPerAsset: _estimatedPerAsset,
         estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
-        totalSupplied: totalSupplyBalanceFiat,
+        totalSupplied: totalSupplyBalanceFiat
       };
     }
 

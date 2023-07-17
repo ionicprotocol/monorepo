@@ -4,7 +4,7 @@ import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
-  [polygon.chainId]: polygon.assets,
+  [polygon.chainId]: polygon.assets
 };
 
 task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywheels")
@@ -51,12 +51,12 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
         execute: {
           init: {
             methodName: "initialize",
-            args: deployArgs,
-          },
+            args: deployArgs
+          }
         },
-        owner: signer.address,
+        owner: signer.address
       },
-      log: true,
+      log: true
     });
 
     console.log(deployment.transactionHash);
@@ -79,7 +79,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     await run("plugin:whitelist", {
       oldImplementation: pluginAddress,
       newImplementation: pluginAddress,
-      admin: taskArgs.signer,
+      admin: taskArgs.signer
     });
 
     // STEP 3: whitelist upgradfe path from CErc20Delegate-> CErc20PluginRewardsDelegate
@@ -88,7 +88,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     );
     await run("market:updatewhitelist", {
       oldPluginRewardsDelegate: cTokenImplementation,
-      admin: taskArgs.signer,
+      admin: taskArgs.signer
     });
     console.log("Upgrade path whitelisted");
 
@@ -99,7 +99,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
       underlying: underlyingAddress,
       implementationAddress: sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
       pluginAddress: pluginAddress,
-      signer: taskArgs.signer,
+      signer: taskArgs.signer
     });
     console.log("Market upgraded");
 

@@ -17,7 +17,7 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type {
   ColumnDef,
@@ -25,7 +25,7 @@ import type {
   PaginationState,
   SortingFn,
   SortingState,
-  VisibilityState,
+  VisibilityState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -34,7 +34,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
@@ -76,7 +76,7 @@ import {
   SUPPLY_APY,
   SUPPLY_BALANCE,
   TOTAL_BORROW,
-  TOTAL_SUPPLY,
+  TOTAL_SUPPLY
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { FundedAsset, resQuery } from '@ui/hooks/useAllFundedInfo';
@@ -101,7 +101,7 @@ export type Market = {
 export const FundedMarketsList = ({
   info,
   initSorting,
-  initColumnVisibility,
+  initColumnVisibility
 }: {
   info: resQuery;
   initColumnVisibility: VisibilityState;
@@ -116,7 +116,7 @@ export const FundedMarketsList = ({
     totalSupplyBalanceNative,
     totalSupplyBalanceFiat,
     totalBorrowBalanceNative,
-    totalBorrowBalanceFiat,
+    totalBorrowBalanceFiat
   } = info;
 
   const { address } = useMultiIonic();
@@ -125,7 +125,7 @@ export const FundedMarketsList = ({
       assets.filter((asset) => asset.membership).length,
       assets.filter((asset) => asset.isBorrowPaused && !asset.isSupplyPaused).length,
       assets.filter((asset) => !asset.isBorrowPaused).length,
-      assets.filter((asset) => asset.isBorrowPaused && asset.isSupplyPaused).length,
+      assets.filter((asset) => asset.isBorrowPaused && asset.isSupplyPaused).length
     ];
   }, [assets]);
 
@@ -231,7 +231,7 @@ export const FundedMarketsList = ({
         supplyApy: asset,
         supplyBalance: asset,
         totalBorrow: asset,
-        totalSupply: asset,
+        totalSupply: asset
       };
     });
   }, [assets]);
@@ -245,7 +245,7 @@ export const FundedMarketsList = ({
         footer: (props) => props.column.id,
         header: () => null,
         id: CHAIN,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.market,
@@ -262,7 +262,7 @@ export const FundedMarketsList = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Market / LTV</TableHeaderCell>,
         id: MARKET_LTV,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.poolName,
@@ -279,7 +279,7 @@ export const FundedMarketsList = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
         id: POOL_NAME,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.supplyApy,
@@ -296,7 +296,7 @@ export const FundedMarketsList = ({
 
         header: (context) => <TableHeaderCell context={context}>Supply APY</TableHeaderCell>,
         id: SUPPLY_APY,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.borrowApy,
@@ -306,7 +306,7 @@ export const FundedMarketsList = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>Borrow APY</TableHeaderCell>,
         id: BORROW_APY,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.supplyBalance,
@@ -320,7 +320,7 @@ export const FundedMarketsList = ({
         header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
 
         id: SUPPLY_BALANCE,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.borrowBalance,
@@ -334,7 +334,7 @@ export const FundedMarketsList = ({
         header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
 
         id: BORROW_BALANCE,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.totalSupply,
@@ -349,7 +349,7 @@ export const FundedMarketsList = ({
         header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
 
         id: TOTAL_SUPPLY,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.totalBorrow,
@@ -364,7 +364,7 @@ export const FundedMarketsList = ({
         header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
 
         id: TOTAL_BORROW,
-        sortingFn: assetSort,
+        sortingFn: assetSort
       },
       {
         accessorFn: (row) => row.liquidity,
@@ -378,8 +378,8 @@ export const FundedMarketsList = ({
         header: (context) => <TableHeaderCell context={context}>Liquidity</TableHeaderCell>,
 
         id: LIQUIDITY,
-        sortingFn: assetSort,
-      },
+        sortingFn: assetSort
+      }
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rewards, totalSupplyApyPerAsset, assets, borrowApyPerAsset]);
@@ -387,7 +387,7 @@ export const FundedMarketsList = ({
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: MARKETS_COUNT_PER_PAGE[0],
+    pageSize: MARKETS_COUNT_PER_PAGE[0]
   });
   const isSemiSmallScreen = useIsSemiSmallScreen();
 
@@ -415,8 +415,8 @@ export const FundedMarketsList = ({
       columnVisibility,
       globalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { cCard } = useColors();
@@ -649,7 +649,7 @@ export const FundedMarketsList = ({
                     px={{
                       base:
                         header.column.id === MARKET_LTV || header.column.id === POOL_NAME ? 2 : 1,
-                      lg: header.column.id === MARKET_LTV || header.column.id === POOL_NAME ? 4 : 2,
+                      lg: header.column.id === MARKET_LTV || header.column.id === POOL_NAME ? 4 : 2
                     }}
                     py={4}
                     textTransform="capitalize"

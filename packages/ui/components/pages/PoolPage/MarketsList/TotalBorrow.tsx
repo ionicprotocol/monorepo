@@ -8,7 +8,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export const TotalBorrow = ({
   asset,
   comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   comptrollerAddress: string;
@@ -19,7 +19,7 @@ export const TotalBorrow = ({
   const { data: borrowCap } = useBorrowCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,
-    market: asset,
+    market: asset
   });
 
   return (
@@ -34,12 +34,12 @@ export const TotalBorrow = ({
         <BalanceCell
           cap={borrowCap}
           primary={{
-            value: asset.totalBorrowFiat,
+            value: asset.totalBorrowFiat
           }}
           secondary={{
             decimals: asset.underlyingDecimals.toNumber(),
             symbol: tokenData?.symbol || '',
-            value: asset.totalBorrow,
+            value: asset.totalBorrow
           }}
         />
       )}

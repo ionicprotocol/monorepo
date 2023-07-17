@@ -7,7 +7,7 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 export const TokenName = ({
   chainId,
   symbol,
-  underlying,
+  underlying
 }: {
   chainId: number;
   symbol: string;

@@ -35,15 +35,15 @@ describe("JumpRateModel", () => {
           baseRatePerBlock: () => Promise.resolve(constants.One),
           multiplierPerBlock: () => Promise.resolve(constants.One),
           jumpMultiplierPerBlock: () => Promise.resolve(constants.Two),
-          kink: () => Promise.resolve(constants.Two),
-        },
+          kink: () => Promise.resolve(constants.Two)
+        }
       });
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
           reserveFactorMantissa: () => Promise.resolve(constants.One),
           adminFeeMantissa: () => Promise.resolve(constants.Two),
-          ionicFeeMantissa: () => Promise.resolve(constants.One),
-        },
+          ionicFeeMantissa: () => Promise.resolve(constants.One)
+        }
       });
 
       stub(utilsFns, "getContract")
@@ -75,8 +75,8 @@ describe("JumpRateModel", () => {
           baseRatePerBlock: () => Promise.resolve(constants.One),
           multiplierPerBlock: () => Promise.resolve(constants.One),
           jumpMultiplierPerBlock: () => Promise.resolve(constants.Two),
-          kink: () => Promise.resolve(constants.Two),
-        },
+          kink: () => Promise.resolve(constants.Two)
+        }
       });
 
       getJumpRateModelContractStub = stub(utilsFns, "getContract").returns(mockJumpRateModelContract);

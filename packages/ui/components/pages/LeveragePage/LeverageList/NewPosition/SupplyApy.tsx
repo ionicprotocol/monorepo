@@ -9,10 +9,10 @@ export const SupplyApy = ({ position }: { position: NewPosition }) => {
   const { data: allRewards } = useRewardsForMarket({
     asset: {
       cToken: position.collateral.cToken,
-      plugin: position.collateral.plugin,
+      plugin: position.collateral.plugin
     },
     chainId: Number(position.chainId),
-    poolAddress: position.collateral.pool,
+    poolAddress: position.collateral.pool
   });
   const { data: assetInfos } = useAssets([position.chainId]);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
@@ -21,8 +21,8 @@ export const SupplyApy = ({ position }: { position: NewPosition }) => {
         cToken: position.collateral.cToken,
         supplyRatePerBlock: position.collateral.supplyRatePerBlock,
         underlyingSymbol: position.collateral.symbol,
-        underlyingToken: position.collateral.underlyingToken,
-      },
+        underlyingToken: position.collateral.underlyingToken
+      }
     ],
     position.chainId,
     allRewards,
@@ -36,7 +36,7 @@ export const SupplyApy = ({ position }: { position: NewPosition }) => {
         plugin: position.collateral.plugin,
         supplyRatePerBlock: position.collateral.supplyRatePerBlock,
         underlyingSymbol: position.collateral.symbol,
-        underlyingToken: position.collateral.underlyingToken,
+        underlyingToken: position.collateral.underlyingToken
       }}
       poolChainId={position.chainId}
       rewards={allRewards}

@@ -11,7 +11,7 @@ export const deployDiaOracle = async ({
   deployments,
   deployConfig,
   diaAssets,
-  diaNativeFeed,
+  diaNativeFeed
 }: DiaDeployFnParams): Promise<{ diaOracle: DiaPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
@@ -26,9 +26,9 @@ export const deployDiaOracle = async ({
       diaNativeFeed.feed,
       diaNativeFeed.key,
       diaNativeFeed.feed === constants.AddressZero ? mpo.address : constants.AddressZero,
-      diaNativeFeed.feed === constants.AddressZero ? deployConfig.stableToken : constants.AddressZero,
+      diaNativeFeed.feed === constants.AddressZero ? deployConfig.stableToken : constants.AddressZero
     ],
-    log: true,
+    log: true
   });
   if (dia.transactionHash) await ethers.provider.waitForTransaction(dia.transactionHash);
   console.log("DiaPriceOracle: ", dia.address);

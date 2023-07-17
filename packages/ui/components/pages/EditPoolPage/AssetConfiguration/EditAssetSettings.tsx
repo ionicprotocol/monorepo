@@ -10,7 +10,7 @@ const EditAssetSettings = ({
   selectedAsset,
   poolChainId,
   setSelectedAsset,
-  assets,
+  assets
 }: {
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
