@@ -704,10 +704,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       waitConfirmations: 1,
     });
 
-    const authoritiesRegistry = (await ethers.getContract(
-      "AuthoritiesRegistry",
-      deployer
-    )) as AuthoritiesRegistry;
+    const authoritiesRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
 
     // set the address in the FFD
     tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
