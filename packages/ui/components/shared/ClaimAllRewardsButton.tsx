@@ -2,7 +2,7 @@ import { AvatarGroup, Button, HStack, useDisclosure } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
-import { ClaimAllRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimAllRewardsModal/index';
+import { ClaimAllRewardsModal } from '@ui/components/pages/Ionic/Modals/ClaimAllRewardsModal/index';
 import { GradientText } from '@ui/components/shared/GradientText';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';

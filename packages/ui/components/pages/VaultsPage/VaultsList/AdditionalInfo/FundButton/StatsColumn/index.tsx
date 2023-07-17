@@ -5,7 +5,7 @@ import { utils } from 'ethers';
 
 import { Column } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
-import { useUpdatedUserVault } from '@ui/hooks/fuse/useUpdatedUserVaults';
+import { useUpdatedUserVault } from '@ui/hooks/ionic/useUpdatedUserVaults';
 import { Supplied } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/Supplied';
 import { SupplyAPY } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/StatsColumn/SupplyAPY';
 

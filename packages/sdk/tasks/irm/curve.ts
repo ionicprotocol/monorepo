@@ -21,7 +21,7 @@ export default task("irm:get-curve", "Get an IRM curve")
       // adminFee * 1e16,
       ethers.utils.parseEther((_adminFee / 100).toString()),
 
-      // hardcoded 10% Fuse fee
+      // hardcoded 10% Ionic fee
       ethers.utils.parseEther((10 / 100).toString()),
       sdk.provider
     );

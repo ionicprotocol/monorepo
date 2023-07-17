@@ -7,7 +7,7 @@ import { utils } from 'ethers';
 
 import { aprDays } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
+import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
 import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -46,7 +46,7 @@ export interface resQuery {
 
 export function useAllFundedInfo() {
   const enabledChains = useEnabledChains();
-  const { poolsPerChain } = useCrossFusePools([...enabledChains]);
+  const { poolsPerChain } = useCrossPools([...enabledChains]);
   const { getSdk, address } = useMultiIonic();
 
   return useQuery<resQuery | null>(

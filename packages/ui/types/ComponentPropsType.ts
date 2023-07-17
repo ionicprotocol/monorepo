@@ -1,7 +1,7 @@
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import type {
-  NativePricedFuseAsset,
+  NativePricedIonicAsset,
   NewPosition,
   OpenPosition,
   VaultData,
@@ -12,7 +12,7 @@ import type { ReactNode } from 'react';
 
 import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 
-export type FusePageLayoutProps = {
+export type PageLayoutProps = {
   children?: ReactNode;
 };
 
@@ -67,12 +67,12 @@ export type RowProps = FlexProps & {
 };
 
 export type AssetsMapWithTokenDataReturn = {
-  assetsArrayWithTokenData: NativePricedFuseAssetWithTokenData[][] | null; // Fuse Asset with additional info about the token appended on
+  assetsArrayWithTokenData: NativePricedIonicAssetWithTokenData[][] | null; // Ionic Asset with additional info about the token appended on
   tokensDataMap: TokensDataHash; // hashmap of unique assets and their token data
 };
 
 export type CTokenDataForRewards = Pick<
-  NativePricedFuseAsset,
+  NativePricedIonicAsset,
   'cToken' | 'totalSupply' | 'underlyingPrice' | 'underlyingToken'
 >;
 
@@ -80,7 +80,7 @@ export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
 // interfaces
 
-export interface NativePricedFuseAssetWithTokenData extends NativePricedFuseAsset {
+export interface NativePricedIonicAssetWithTokenData extends NativePricedIonicAsset {
   tokenData: TokenData;
 }
 
@@ -104,7 +104,7 @@ export interface ExtraData {
 }
 
 export interface AssetHash {
-  [address: string]: NativePricedFuseAsset;
+  [address: string]: NativePricedIonicAsset;
 }
 export interface TokensDataHash {
   [address: string]: TokenData;

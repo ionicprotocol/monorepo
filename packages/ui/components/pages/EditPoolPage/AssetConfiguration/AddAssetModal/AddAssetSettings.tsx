@@ -31,7 +31,7 @@ import {
   RESERVE_FACTOR,
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import type { TokenData } from '@ui/types/ComponentPropsType';
@@ -140,7 +140,7 @@ export const AddAssetSettings = ({
       bypassPriceFeedCheck: true,
       collateralFactor: collateralFactor,
       comptroller: comptrollerAddress,
-      fuseFeeDistributor: currentSdk.chainDeployment.FeeDistributor.address,
+      feeDistributor: currentSdk.chainDeployment.FeeDistributor.address,
       interestRateModel: interestRateModel,
       name: poolName + ' ' + tokenData.name,
       plugin: plugin,
@@ -152,7 +152,7 @@ export const AddAssetSettings = ({
     try {
       await currentSdk.deployAsset(marketConfig);
 
-      await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
+      await queryClient.refetchQueries({ queryKey: ['usePoolData'] });
 
       successToast({
         description: 'You may now lend and borrow with this asset.',

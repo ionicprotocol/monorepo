@@ -11,7 +11,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
 import { useState } from 'react';
@@ -27,14 +27,14 @@ import {
   SUPPLY_CAP_WHITELIST_TOOLTIP,
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface SupplyCapWhitelistProps {
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
+  selectedAsset: NativePricedIonicAsset;
 }
 
 export const SupplyCapWhitelist = ({

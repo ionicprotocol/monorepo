@@ -2,7 +2,7 @@ import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/m
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const usePoolClaimableRewards = (poolAddress: string, poolChainId?: number) => {
   const { address } = useMultiIonic();

@@ -1,13 +1,13 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { ComptrollerErrorCodes } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import ConfirmDeleteModal from '@ui/components/shared/ConfirmDeleteModal';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
-import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
+import { useIsUpgradeable } from '@ui/hooks/ionic/useIsUpgradable';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -18,11 +18,11 @@ const RemoveAssetButton = ({
   setSelectedAsset,
   assets,
 }: {
-  asset: NativePricedFuseAsset;
-  assets: NativePricedFuseAsset[];
+  asset: NativePricedIonicAsset;
+  assets: NativePricedIonicAsset[];
   comptrollerAddress: string;
   poolChainId: number;
-  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  setSelectedAsset: (value: NativePricedIonicAsset) => void;
 }) => {
   const { currentSdk } = useMultiIonic();
   const errorToast = useErrorToast();

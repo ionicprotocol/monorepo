@@ -23,7 +23,7 @@ import { MidasModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePoolData } from '@ui/hooks/usePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { sortSupportedAssets } from '@ui/utils/sorts';
 
@@ -56,7 +56,7 @@ const AddAsset = ({
 
   const [availableAssets, setAvailableAssets] = useState<SupportedAsset[] | []>([]);
   const [addedAssets, setAddedAssets] = useState<string[] | undefined>();
-  const { data: poolData } = useFusePoolData(poolID, poolChainId);
+  const { data: poolData } = usePoolData(poolID, poolChainId);
 
   const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress, poolData?.chainId);
 

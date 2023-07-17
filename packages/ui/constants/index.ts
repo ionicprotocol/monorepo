@@ -82,7 +82,7 @@ export const DEFAULT_DECIMALS = 18;
 
 // enums
 
-export enum FusePoolMetric {
+export enum PoolMetric {
   totalLiquidityNative,
   totalSuppliedNative,
   totalBorrowedNative,

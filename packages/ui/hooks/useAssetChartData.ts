@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 export function useAssetChartData(
@@ -42,7 +42,7 @@ export function useAssetChartData(
           // adminFee * 1e16,
           utils.parseEther((adminFee / 100).toString()),
 
-          // hardcoded 10% Fuse fee
+          // hardcoded 10% Ionic fee
           utils.parseEther((10 / 100).toString()),
           sdk.provider
         );

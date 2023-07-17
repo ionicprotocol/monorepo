@@ -1,12 +1,12 @@
 import { TransactionRequest } from "@ethersproject/providers";
-import { FuseAsset, LiquidationStrategy } from "@ionicprotocol/types";
+import { IonicAsset, LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { PoolLens } from "../../../typechain/PoolLens";
 import { IonicBase } from "../../IonicSdk";
 
 export const SCALE_FACTOR_ONE_18_WEI = BigNumber.from(10).pow(18);
-export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: FuseAsset) =>
+export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: IonicAsset) =>
   BigNumber.from(10).pow(18 - asset.underlyingDecimals.toNumber());
 
 export type ExtendedPoolAssetStructOutput = PoolLens.PoolAssetStructOutput & {

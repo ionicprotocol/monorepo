@@ -81,13 +81,13 @@ task("get-position-ratio", "Get unhealthy po data")
       poolUser = taskArgs.userAddress;
     }
 
-    const fusePoolData = taskArgs.name
+    const poolData = taskArgs.name
       ? await poolModule.getPoolByName(taskArgs.name, sdk, poolUser)
       : await sdk.fetchPoolData(taskArgs.poolId.toString(), { from: poolUser });
-    if (fusePoolData === null) {
+    if (poolData === null) {
       throw "Pool not found or deprecated";
     }
-    const maxBorrowR = fusePoolData.assets.map((a) => {
+    const maxBorrowR = poolData.assets.map((a) => {
       const mult = parseFloat(hre.ethers.utils.formatUnits(a.collateralFactor, a.underlyingDecimals));
       if (taskArgs.logData) {
         console.log(
@@ -110,7 +110,7 @@ task("get-position-ratio", "Get unhealthy po data")
       return a.supplyBalanceNative * parseFloat(hre.ethers.utils.formatUnits(a.collateralFactor, a.underlyingDecimals));
     });
     const maxBorrow = maxBorrowR.reduce((a, b) => a + b, 0);
-    const ratio = (fusePoolData.totalBorrowBalanceNative / maxBorrow) * 100;
+    const ratio = (poolData.totalBorrowBalanceNative / maxBorrow) * 100;
     console.log(`Ratio of total borrow / max borrow: ${ratio} %`);
     return ratio;
   });
@@ -140,11 +140,9 @@ task("get-chain-tvl", "Get chain's TVL").setAction(async (taskArgs, hre) => {
   const ionicSdkModule = await import("../ionicSdk");
   const sdk = await ionicSdkModule.getOrCreateIonic();
 
-  const { 2: fusePoolDataStructs } = await sdk.contracts.PoolLens.callStatic.getPublicPoolsByVerificationWithData(
-    false
-  );
+  const { 2: poolDataStructs } = await sdk.contracts.PoolLens.callStatic.getPublicPoolsByVerificationWithData(false);
 
-  const tvl = fusePoolDataStructs
+  const tvl = poolDataStructs
     .map((data) => data.totalSupply)
     .reduce((prev, cur) => prev.add(cur), hre.ethers.BigNumber.from(0));
   console.log("tvl: ", hre.ethers.utils.formatEther(tvl));

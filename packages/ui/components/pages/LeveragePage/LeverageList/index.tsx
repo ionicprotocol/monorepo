@@ -4,8 +4,8 @@ import type { SortingState } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
-import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
+import { ChainFilterButtons } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/ChainFilterButtons';
+import { ChainFilterDropdown } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/ChainFilterDropdown';
 import { NewPositionComp } from '@ui/components/pages/LeveragePage/LeverageList/NewPosition/index';
 import { OpenPositionComp } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/index';
 import {

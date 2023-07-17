@@ -1,5 +1,5 @@
 import { Divider } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { ComptrollerErrorCodes, CTokenErrorCodes } from '@ionicprotocol/types';
 import type { BigNumber, ContractFunction } from 'ethers';
 
@@ -17,7 +17,7 @@ import { ToggleBorrow } from '@ui/components/pages/EditPoolPage/AssetConfigurati
 import RemoveAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/RemoveAssetButton';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';
-import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
 import type { TokenData } from '@ui/types/ComponentPropsType';
 
 export async function testForCTokenErrorAndSend(
@@ -53,11 +53,11 @@ export async function testForCTokenErrorAndSend(
 }
 
 interface AssetSettingsProps {
-  assets: NativePricedFuseAsset[];
+  assets: NativePricedIonicAsset[];
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
-  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  selectedAsset: NativePricedIonicAsset;
+  setSelectedAsset: (value: NativePricedIonicAsset) => void;
   tokenData: TokenData;
 }
 

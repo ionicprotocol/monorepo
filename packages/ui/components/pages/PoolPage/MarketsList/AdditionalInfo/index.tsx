@@ -14,7 +14,7 @@ import { StrategySafetyScore } from '@ui/components/pages/PoolPage/MarketsList/A
 import { UtilizationRate } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/UtilizationRate';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
+import { useStrategyRating } from '@ui/hooks/ionic/useStrategyRating';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getChainConfig } from '@ui/utils/networkData';
 

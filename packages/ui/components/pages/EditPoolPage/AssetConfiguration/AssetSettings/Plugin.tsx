@@ -1,6 +1,6 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Link, Spacer, Text } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';
@@ -9,7 +9,7 @@ import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 
 interface PluginProps {
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
+  selectedAsset: NativePricedIonicAsset;
 }
 
 export const Plugin = ({ selectedAsset, poolChainId }: PluginProps) => {

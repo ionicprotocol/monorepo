@@ -15,7 +15,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -26,8 +26,8 @@ import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { BORROW_CAP, DEFAULT_DECIMALS, SUPPLY_CAP } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -35,7 +35,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 interface SupplyAndBorrowCapsProps {
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
+  selectedAsset: NativePricedIonicAsset;
 }
 
 export const SupplyAndBorrowCaps = ({

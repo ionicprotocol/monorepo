@@ -11,15 +11,15 @@ export function withPoolLens<TBase extends IonicBaseConstructor>(Base: TBase) {
      * @returns the TVL on current chain in native asset value
      */
     async getTotalValueLocked(whitelistedAdmin = true) {
-      const { 2: fusePoolDataStructs } = await this.contracts.PoolLens.callStatic.getPublicPoolsByVerificationWithData(
+      const { 2: poolDataStructs } = await this.contracts.PoolLens.callStatic.getPublicPoolsByVerificationWithData(
         whitelistedAdmin
       );
 
-      const totalSupply = fusePoolDataStructs
+      const totalSupply = poolDataStructs
         .map((data) => data.totalSupply)
         .reduce((prev, cur) => prev.add(cur), BigNumber.from(0));
 
-      const totalBorrow = fusePoolDataStructs
+      const totalBorrow = poolDataStructs
         .map((data) => data.totalBorrow)
         .reduce((prev, cur) => prev.add(cur), BigNumber.from(0));
 

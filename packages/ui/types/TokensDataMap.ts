@@ -1,4 +1,7 @@
-import type { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@ionicprotocol/types';
+import type {
+  NativePricedIonicAsset,
+  IonicPoolData as SDKIonicPoolData,
+} from '@ionicprotocol/types';
 
 export type MidasApiTokenData = {
   address: string;
@@ -12,7 +15,7 @@ export type MidasApiTokenData = {
 
 export type TokensDataMap = { [address: string]: MidasApiTokenData };
 
-export interface MarketData extends NativePricedFuseAsset {
+export interface MarketData extends NativePricedIonicAsset {
   borrowBalanceFiat: number;
   liquidityFiat: number;
   netSupplyBalanceFiat: number;
@@ -21,7 +24,7 @@ export interface MarketData extends NativePricedFuseAsset {
   totalSupplyFiat: number;
 }
 
-export interface PoolData extends SDKFusePoolData {
+export interface PoolData extends SDKIonicPoolData {
   assets: MarketData[];
   totalAvailableLiquidityFiat: number;
   totalBorrowBalanceFiat: number;

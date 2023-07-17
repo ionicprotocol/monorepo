@@ -30,7 +30,7 @@ import { GradientText } from '@ui/components/shared/GradientText';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { ADMIN_FEE_TOOLTIP } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
+import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
@@ -67,7 +67,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   const { switchNetworkAsync } = useSwitchNetwork();
   const { data: usdPrices } = useAllUsdPrices();
   const enabledChains = useEnabledChains();
-  const { allPools } = useCrossFusePools([...enabledChains]);
+  const { allPools } = useCrossPools([...enabledChains]);
   const { data: vaultApyInfo } = useVaultApyInfo(vault.vault, Number(vault.chainId));
   const { data: claimableRewardsForVaults, refetch } = useClaimableRewardsForVaults([
     ...enabledChains,

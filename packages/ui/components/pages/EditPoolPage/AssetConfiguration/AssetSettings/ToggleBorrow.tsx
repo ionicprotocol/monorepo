@@ -1,6 +1,6 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Spacer, Switch, Text } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -8,15 +8,15 @@ import { useState } from 'react';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface ToggleBorrowProps {
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
+  selectedAsset: NativePricedIonicAsset;
 }
 
 export const ToggleBorrow = ({

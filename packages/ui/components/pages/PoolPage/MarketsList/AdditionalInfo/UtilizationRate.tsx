@@ -3,7 +3,7 @@ import { Box, Button, Center, Flex, Link, Spinner, Text, VStack } from '@chakra-
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 
-import { useIRM } from '@ui/hooks/fuse/useIRM';
+import { useIRM } from '@ui/hooks/ionic/useIRM';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
 import type { MarketData } from '@ui/types/TokensDataMap';

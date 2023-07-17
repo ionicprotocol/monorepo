@@ -1,5 +1,5 @@
 import { Spinner, Text } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 import { AssetSettings } from '@ui/components/pages/EditPoolPage/AssetConfiguration/AssetSettings/index';
 import { Center } from '@ui/components/shared/Flex';
@@ -12,11 +12,11 @@ const EditAssetSettings = ({
   setSelectedAsset,
   assets,
 }: {
-  assets: NativePricedFuseAsset[];
+  assets: NativePricedIonicAsset[];
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
-  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  selectedAsset: NativePricedIonicAsset;
+  setSelectedAsset: (value: NativePricedIonicAsset) => void;
 }) => {
   const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken, poolChainId);
   if (isLoading) {

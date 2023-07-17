@@ -140,9 +140,9 @@ task("markets:all:pause", "Pauses borrowing on a market")
   .setAction(async (taskArgs, hre) => {
     const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
 
-    const fusePoolDirectory = (await hre.ethers.getContract("PoolDirectory")) as PoolDirectory;
+    const poolDirectory = (await hre.ethers.getContract("PoolDirectory")) as PoolDirectory;
 
-    const [, poolData] = await fusePoolDirectory.callStatic.getActivePools();
+    const [, poolData] = await poolDirectory.callStatic.getActivePools();
 
     for (const pool of poolData) {
       const poolExtension = (await hre.ethers.getContractAt(

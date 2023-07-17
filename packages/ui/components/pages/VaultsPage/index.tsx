@@ -3,7 +3,7 @@ import type { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { memo, useEffect, useState } from 'react';
 
-import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
+import PageLayout from '@ui/components/pages/Layout/PageLayout';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import VaultHero from '@ui/components/pages/VaultsPage/VaultHero/index';
 import { VaultsList } from '@ui/components/pages/VaultsPage/VaultsList/index';
@@ -59,7 +59,7 @@ const VaultsPage = memo(() => {
         <title key="title">Vaults</title>
       </Head>
       <PageTransitionLayout>
-        <FusePageLayout>
+        <PageLayout>
           <VaultHero />
           {vaultsPerChain && initSorting && initColumnVisibility ? (
             <VaultsList
@@ -107,7 +107,7 @@ const VaultsPage = memo(() => {
               <Skeleton height={360} width="100%" />
             </>
           )}
-        </FusePageLayout>
+        </PageLayout>
       </PageTransitionLayout>
     </>
   );

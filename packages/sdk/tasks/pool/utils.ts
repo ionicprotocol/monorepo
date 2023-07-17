@@ -1,5 +1,5 @@
 // pool utilities used across downstream tests
-import { FusePool, FusePoolData } from "@ionicprotocol/types";
+import { IonicPool, PoolData } from "@ionicprotocol/types";
 
 import { IonicSdk } from "../../src";
 
@@ -13,7 +13,7 @@ export const getPoolIndex = async (poolAddress: string, sdk: IonicSdk) => {
   return null;
 };
 
-export const getPoolByName = async (name: string, sdk: IonicSdk, address?: string): Promise<FusePoolData | null> => {
+export const getPoolByName = async (name: string, sdk: IonicSdk, address?: string): Promise<PoolData | null> => {
   const [, publicPools] = await sdk.contracts.PoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].name === name) {
@@ -24,7 +24,7 @@ export const getPoolByName = async (name: string, sdk: IonicSdk, address?: strin
   return null;
 };
 
-export const getAllPools = async (sdk: IonicSdk): Promise<FusePool[]> => {
+export const getAllPools = async (sdk: IonicSdk): Promise<IonicPool[]> => {
   const [, publicPools] = await sdk.contracts.PoolLens.callStatic.getPublicPoolsWithData();
   return publicPools.map((pp) => {
     return {
@@ -39,11 +39,11 @@ export const getAllPools = async (sdk: IonicSdk): Promise<FusePool[]> => {
 
 export const logPoolData = async (poolAddress: string, sdk: IonicSdk) => {
   const poolIndex = await getPoolIndex(poolAddress, sdk);
-  const fusePoolData = await sdk.fetchPoolData(poolIndex!.toString());
-  if (!fusePoolData) {
+  const poolData = await sdk.fetchPoolData(poolIndex!.toString());
+  if (!poolData) {
     throw `Pool with address ${poolAddress} is deprecated or cannot be found`;
   }
-  const poolAssets = fusePoolData.assets.map((a) => a.underlyingSymbol).join(", ");
-  console.log(`Operating on pool with address ${poolAddress}, name: ${fusePoolData.name}, assets ${poolAssets}`);
-  return fusePoolData;
+  const poolAssets = poolData.assets.map((a) => a.underlyingSymbol).join(", ");
+  console.log(`Operating on pool with address ${poolAddress}, name: ${poolData.name}, assets ${poolAssets}`);
+  return poolData;
 };

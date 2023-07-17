@@ -2,14 +2,14 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import FusePoolCreate from '@ui/components/pages/Fuse/FusePoolCreatePage';
+import PoolCreate from '@ui/components/pages/Ionic/PoolCreatePage';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export async function getInitialProps() {
   return {};
 }
 
-const FusePoolCreatePage: NextPage = () => {
+const PoolCreatePage: NextPage = () => {
   const { setGlobalLoading } = useMultiIonic();
   useEffect(() => {
     setGlobalLoading(false);
@@ -20,9 +20,9 @@ const FusePoolCreatePage: NextPage = () => {
       <Head>
         <title>Create Pool</title>
       </Head>
-      <FusePoolCreate />
+      <PoolCreate />
     </>
   );
 };
 
-export default FusePoolCreatePage;
+export default PoolCreatePage;

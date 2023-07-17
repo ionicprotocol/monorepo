@@ -1,5 +1,5 @@
 import type { IonicSdk } from '@ionicprotocol/sdk';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
@@ -8,8 +8,8 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import {
   useBorrowCapsDataForAsset,
   useBorrowCapsForAssets,
-} from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+} from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export interface CTokenToMaxBorrow {
   [cToken: string]: {
@@ -67,7 +67,7 @@ export const fetchMaxBorrowAmount = async (
 };
 
 export function useMaxBorrowAmount(
-  asset: Pick<NativePricedFuseAsset, 'cToken' | 'underlyingDecimals'>,
+  asset: Pick<NativePricedIonicAsset, 'cToken' | 'underlyingDecimals'>,
   comptrollerAddress: string,
   chainId: number
 ) {
@@ -123,7 +123,7 @@ export function useMaxBorrowAmount(
 }
 
 export function useMaxBorrowAmounts(
-  assets: Pick<NativePricedFuseAsset, 'cToken' | 'underlyingDecimals'>[],
+  assets: Pick<NativePricedIonicAsset, 'cToken' | 'underlyingDecimals'>[],
   comptrollerAddress: string,
   chainId: number
 ) {

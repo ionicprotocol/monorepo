@@ -5,7 +5,7 @@ import { utils } from 'ethers';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export const Balance = ({

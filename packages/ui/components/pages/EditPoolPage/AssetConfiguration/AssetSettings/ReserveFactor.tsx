@@ -10,7 +10,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import type { ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
@@ -23,15 +23,15 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { RESERVE_FACTOR } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
+import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface ReserveFactorProps {
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
+  selectedAsset: NativePricedIonicAsset;
 }
 
 export const ReserveFactor = ({

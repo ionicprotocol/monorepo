@@ -2,7 +2,7 @@ import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
-import { useTotalSupplyAndBorrow } from '@ui/hooks/fuse/useTotalSupplyAndBorrow';
+import { useTotalSupplyAndBorrow } from '@ui/hooks/ionic/useTotalSupplyAndBorrow';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const Platform = () => {

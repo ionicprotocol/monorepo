@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { LEVERAGE_VALUE } from '@ui/constants/index';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';

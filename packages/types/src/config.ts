@@ -17,7 +17,7 @@ export interface MarketConfig {
 
   // REFACTOR below:
   bypassPriceFeedCheck: boolean;
-  fuseFeeDistributor: string; // TODO: Remove this? We should always use our Fee Distributor!
+  feeDistributor: string; // TODO: Remove this? We should always use our Fee Distributor!
   symbol: string; // TODO: Same as name
   name: string; // TODO: Make optional, should be set inside SDK for default value mToken or so
 }

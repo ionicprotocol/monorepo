@@ -1,8 +1,8 @@
 import { arbitrum, bsc, chapel, ethereum, ganache, lineagoerli, neondevnet, polygon } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
-  FusePoolData,
-  NativePricedFuseAsset,
+  IonicPoolData,
+  NativePricedIonicAsset,
   SupportedAsset,
   SupportedChains,
 } from "@ionicprotocol/types";
@@ -15,8 +15,8 @@ import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
-  fusePools: PoolDirectory.PoolStructOutput[],
-  fusePoolsData: PoolLens.FusePoolDataStructOutput[],
+  ionicPools: PoolDirectory.PoolStructOutput[],
+  ionicPoolsData: PoolLens.FusePoolDataStructOutput[],
   errors: boolean[]
 ];
 
@@ -32,8 +32,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
 };
 
 export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
-  return class FusePools extends Base {
-    async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData | null> {
+  return class IonicPools extends Base {
+    async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<IonicPoolData | null> {
       const {
         comptroller,
         name: _unfiliteredName,
@@ -46,7 +46,7 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
       }
       const name = filterPoolName(_unfiliteredName);
 
-      const assets: NativePricedFuseAsset[] = (
+      const assets: NativePricedIonicAsset[] = (
         await this.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
       ).map(filterOnlyObjectProperties);
 
@@ -169,7 +169,7 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
       };
     }
 
-    async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(FusePoolData | null)[] | undefined> {
+    async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(IonicPoolData | null)[] | undefined> {
       const [poolIndexes, pools] = await this.contracts.PoolDirectory.callStatic.getActivePools(overrides);
 
       if (!pools.length || !poolIndexes.length) {
@@ -194,7 +194,7 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
     }: {
       filter: string | null;
       options: { from: string };
-    }): Promise<FusePoolData[]> {
+    }): Promise<IonicPoolData[]> {
       const isCreatedPools = filter === "created-pools";
       const isVerifiedPools = filter === "verified-pools";
       const isUnverifiedPools = filter === "unverified-pools";
@@ -226,7 +226,7 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
       const whitelistedIds = whitelistedPools.map((pool) => pool?.id);
       const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));
 
-      return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as FusePoolData[];
+      return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as IonicPoolData[];
     }
   };
 }

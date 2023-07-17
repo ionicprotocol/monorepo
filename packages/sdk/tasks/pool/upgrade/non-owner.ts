@@ -11,7 +11,7 @@ task("non-owner-pool:upgrade")
   .addParam("poolAddress", "The pool address", undefined, types.string)
   .setAction(async ({ comptrollerAddress, poolAddress }, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
     // pools to upgrade
     const pools: string[] = [poolAddress];
     const firstExtension = await ethers.getContract("ComptrollerFirstExtension");
@@ -35,7 +35,7 @@ task("non-owner-pool:upgrade")
         console.log(`should be ${comptrollerImpl.address}`);
         if (pendingImpl != comptrollerImpl.address) {
           // asUnitroller._setPendingImplementation(comptrollerImpl.address); // e992a041
-          const tx = await fuseFeeDistributor["_callPool(address[],bytes[])"](
+          const tx = await feeDistributor["_callPool(address[],bytes[])"](
             [pools[i]],
             [`0xe992a041000000000000000000000000${comptrollerImpl.address.slice(2)}`]
           );
@@ -51,7 +51,7 @@ task("non-owner-pool:upgrade")
 
         console.log(`becoming the new impl`);
         // asUnitroller._become(poolAddress)
-        const tx = await fuseFeeDistributor["_callPool(address[],bytes[])"](
+        const tx = await feeDistributor["_callPool(address[],bytes[])"](
           [comptrollerImpl.address],
           [`0x1d504dc6000000000000000000000000${sliced}`]
         );
@@ -64,7 +64,7 @@ task("non-owner-pool:upgrade")
       // const autoOn = await asComptroller.callStatic.autoImplementation();
       // if (!autoOn) {
       //   const toggleOnTx = {
-      //     to: fuseFeeDistributor.address,
+      //     to: feeDistributor.address,
       //     data: `0xb01b86fd000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000001000000000000000000000000${sliced}0000000000000000000000000000000000000000000000000000000000000024d5333166000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000`,
       //   };
       //
@@ -79,7 +79,7 @@ task("non-owner-pool:upgrade")
       if (!extensions.length) {
         console.log(`pool ${pools[i]} needs to register the first extension ${firstExtension.address}`);
         // asComptroller._registerExtension(extToAdd, extToReplace)
-        const tx = await fuseFeeDistributor["_callPool(address[],bytes[])"](
+        const tx = await feeDistributor["_callPool(address[],bytes[])"](
           [pools[i]],
           [
             `0x89cd9855000000000000000000000000${firstExtension.address.slice(
@@ -98,8 +98,8 @@ task("non-owner-pool:upgrade")
 task("non-owner-pool:toggle-autoimpl:all")
   .addParam("enable", "If autoimpl should be enabled", false, types.boolean)
   .setAction(async ({ enable }, { ethers, run }) => {
-    const fusePoolDirectory = (await ethers.getContract("PoolDirectory")) as PoolDirectory;
-    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+    const poolDirectory = (await ethers.getContract("PoolDirectory")) as PoolDirectory;
+    const [, pools] = await poolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log(`pool address ${pool.comptroller}`);
@@ -116,7 +116,7 @@ task("non-owner-pool:toggle-autoimpl")
   .addParam("enable", "If autoimpl should be enabled", false, types.boolean)
   .setAction(async ({ poolAddress, enable }, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
     const sliced = poolAddress.slice(2);
     const comptroller = (await ethers.getContractAt("Comptroller", poolAddress, signer)) as Comptroller;
 
@@ -127,7 +127,7 @@ task("non-owner-pool:toggle-autoimpl")
     const isAutOn = await comptroller.autoImplementation();
     if (!isAutOn && enable) {
       const toggleOnTx = {
-        to: fuseFeeDistributor.address,
+        to: feeDistributor.address,
         data: `0xb01b86fd000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000001000000000000000000000000${sliced}0000000000000000000000000000000000000000000000000000000000000024d5333166000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000`,
       };
 
@@ -136,7 +136,7 @@ task("non-owner-pool:toggle-autoimpl")
       console.log(`toggled on with ${tx.hash}`);
     } else if (isAutOn && !enable) {
       const toggleOffTx = {
-        to: fuseFeeDistributor.address,
+        to: feeDistributor.address,
         data: `0xb01b86fd000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000001000000000000000000000000${sliced}0000000000000000000000000000000000000000000000000000000000000024d5333166000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`,
       };
 

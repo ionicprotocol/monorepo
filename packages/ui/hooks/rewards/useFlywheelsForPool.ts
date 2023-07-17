@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import type { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: number) => {

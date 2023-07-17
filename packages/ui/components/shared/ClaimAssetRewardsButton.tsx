@@ -1,7 +1,7 @@
 import { AvatarGroup, Box, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 
-import { ClaimMarketRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimMarketRewardsModal/index';
+import { ClaimMarketRewardsModal } from '@ui/components/pages/Ionic/Modals/ClaimMarketRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';

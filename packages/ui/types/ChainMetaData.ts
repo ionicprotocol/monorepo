@@ -8,7 +8,7 @@ import {
   neondevnet,
   polygon,
 } from '@ionicprotocol/chains';
-import type { FusePoolData } from '@ionicprotocol/types';
+import type { IonicPoolData } from '@ionicprotocol/types';
 
 import { config } from '@ui/config/index';
 
@@ -34,6 +34,6 @@ export const supportedChainIdToConfig: {
   [ethereum.chainId]: { enabled: true, supported: config.isEthereumEnabled },
 };
 
-export interface FusePoolsPerChain {
-  [chainId: string]: FusePoolData[];
+export interface PoolsPerChain {
+  [chainId: string]: IonicPoolData[];
 }

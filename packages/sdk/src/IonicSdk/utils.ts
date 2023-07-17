@@ -22,9 +22,9 @@ export const getSaltsHash = (from: string, poolName: string, blockNumber: number
   return utils.solidityKeccak256(["address", "string", "uint"], [from, poolName, blockNumber]);
 };
 
-export const getBytecodeHash = (fuseFeeDistributorAddress: string): string => {
+export const getBytecodeHash = (feeDistributorAddress: string): string => {
   return utils.keccak256(
-    UnitrollerArtifact.bytecode.object + new utils.AbiCoder().encode(["address"], [fuseFeeDistributorAddress]).slice(2)
+    UnitrollerArtifact.bytecode.object + new utils.AbiCoder().encode(["address"], [feeDistributorAddress]).slice(2)
   );
 };
 
@@ -32,13 +32,13 @@ export const getPoolAddress = (
   from: string,
   poolName: string,
   marketsCounter: number,
-  fuseFeeDistributorAddress: string,
-  fusePoolDirectoryAddress: string
+  feeDistributorAddress: string,
+  poolDirectoryAddress: string
 ): string => {
   return utils.getCreate2Address(
-    fusePoolDirectoryAddress,
+    poolDirectoryAddress,
     getSaltsHash(from, poolName, marketsCounter),
-    getBytecodeHash(fuseFeeDistributorAddress)
+    getBytecodeHash(feeDistributorAddress)
   );
 };
 

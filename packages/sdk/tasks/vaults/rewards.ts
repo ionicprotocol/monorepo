@@ -161,7 +161,7 @@ export default task("deploy-market-with-rewards").setAction(
         });
         const rewardsDeployment = await deployments.deploy("ChapelRewardsContract", {
           from: deployer,
-          contract: "FuseFlywheelDynamicRewards",
+          contract: "FlywheelDynamicRewards",
           log: true,
           waitConfirmations: 1,
           args: [flywheelDeployment.address, 60 * 10], // new cycle every 10 minutes

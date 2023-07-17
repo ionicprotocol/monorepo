@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
   const sdk = useSdk(chainId);

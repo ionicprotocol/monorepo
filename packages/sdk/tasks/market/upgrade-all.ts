@@ -34,7 +34,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
     const setLatest = taskArgs.setLatest;
 
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
     const erc20Delegate = await ethers.getContract("CErc20Delegate", signer);
     const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", signer);
     const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", signer);
@@ -67,7 +67,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
 
     let tx;
     if (oldImplementations.length) {
-      tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
+      tx = await feeDistributor._editCErc20DelegateWhitelist(
         oldImplementations,
         newImplementations,
         arrayOfFalse,
@@ -82,10 +82,10 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
 
     const cfe = (await ethers.getContract("CTokenFirstExtension")) as CTokenFirstExtension;
     {
-      const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Delegate.address);
+      const exts = await feeDistributor.callStatic.getCErc20DelegateExtensions(erc20Delegate.address);
       if (!exts.length) {
         console.log(`setting the extension for delegate ${erc20Delegate.address}`);
-        tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20Delegate.address, [cfe.address]);
+        tx = await feeDistributor._setCErc20DelegateExtensions(erc20Delegate.address, [cfe.address]);
         console.log(`tx ${tx.hash}`);
         await tx.wait();
         console.log(`mined ${tx.hash}`);
@@ -95,10 +95,10 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     }
 
     {
-      const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginDelegate.address);
+      const exts = await feeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginDelegate.address);
       if (!exts.length) {
         console.log(`setting the extension for plugin delegate ${erc20PluginDelegate.address}`);
-        tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginDelegate.address, [cfe.address]);
+        tx = await feeDistributor._setCErc20DelegateExtensions(erc20PluginDelegate.address, [cfe.address]);
         console.log(`tx ${tx.hash}`);
         await tx.wait();
         console.log(`mined ${tx.hash}`);
@@ -108,10 +108,10 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     }
 
     {
-      const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginRewardsDelegate.address);
+      const exts = await feeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginRewardsDelegate.address);
       if (!exts.length) {
         console.log(`setting the extension for plugin rewards delegate ${erc20PluginRewardsDelegate.address}`);
-        tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDelegate.address, [cfe.address]);
+        tx = await feeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDelegate.address, [cfe.address]);
         console.log(`tx ${tx.hash}`);
         await tx.wait();
         console.log(`mined ${tx.hash}`);
@@ -123,14 +123,9 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     if (setLatest) {
       const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
       if (oldErc20Delegate) {
-        const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate);
+        const [latestCErc20Delegate] = await feeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate);
         if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Delegate.address) {
-          tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-            oldErc20Delegate,
-            erc20Delegate.address,
-            false,
-            "0x00"
-          );
+          tx = await feeDistributor._setLatestCErc20Delegate(oldErc20Delegate, erc20Delegate.address, false, "0x00");
           console.log("_setLatestCErc20Delegate:", tx.hash);
           await tx.wait();
         } else {
@@ -140,14 +135,14 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
 
       if (oldErc20PluginDelegate) {
         // CErc20PluginDelegate
-        const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
+        const [latestCErc20PluginDelegate] = await feeDistributor.callStatic.latestCErc20Delegate(
           oldErc20PluginDelegate
         );
         if (
           latestCErc20PluginDelegate === constants.AddressZero ||
           latestCErc20PluginDelegate !== erc20PluginDelegate.address
         ) {
-          tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          tx = await feeDistributor._setLatestCErc20Delegate(
             oldErc20PluginDelegate,
             erc20PluginDelegate.address,
             false,
@@ -161,14 +156,14 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
       }
 
       if (oldErc20PluginRewardsDelegate) {
-        const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
+        const [latestCErc20PluginRewardsDelegate] = await feeDistributor.callStatic.latestCErc20Delegate(
           oldErc20PluginRewardsDelegate
         );
         if (
           latestCErc20PluginRewardsDelegate === constants.AddressZero ||
           latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDelegate.address
         ) {
-          tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          tx = await feeDistributor._setLatestCErc20Delegate(
             oldErc20PluginRewardsDelegate,
             erc20PluginRewardsDelegate.address,
             false,
@@ -196,9 +191,9 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.admin);
 
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
-    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
-    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+    const feeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
+    const poolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
+    const [, pools] = await poolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
@@ -229,7 +224,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
 
         const implBefore = await cTokenInstance.callStatic.implementation();
         console.log(`implementation before ${implBefore}`);
-        const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
+        const [latestImpl] = await feeDistributor.callStatic.latestCErc20Delegate(implBefore);
         if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
@@ -303,7 +298,7 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
     const oldErc20PluginDelegate = taskArgs.oldPluginDelegate;
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
 
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
 
     const erc20Del = await ethers.getContract("CErc20Delegate", signer);
     const erc20PluginDel = await ethers.getContract("CErc20PluginDelegate", signer);
@@ -315,9 +310,9 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
 
     if (oldErc20Delegate) {
       // CErc20Delegate
-      const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate);
+      const [latestCErc20Delegate] = await feeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate);
       if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
-        tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+        tx = await feeDistributor._setLatestCErc20Delegate(
           oldErc20Delegate,
           erc20Del.address,
           false,
@@ -332,14 +327,12 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
 
     if (oldErc20PluginDelegate) {
       // CErc20PluginDelegate
-      const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
-        oldErc20PluginDelegate
-      );
+      const [latestCErc20PluginDelegate] = await feeDistributor.callStatic.latestCErc20Delegate(oldErc20PluginDelegate);
       if (
         latestCErc20PluginDelegate === constants.AddressZero ||
         latestCErc20PluginDelegate !== erc20PluginDel.address
       ) {
-        tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+        tx = await feeDistributor._setLatestCErc20Delegate(
           oldErc20PluginDelegate,
           erc20PluginDel.address,
           false,
@@ -356,14 +349,14 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
 
     if (oldErc20PluginRewardsDelegate) {
       // CErc20PluginRewardsDelegate
-      const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
+      const [latestCErc20PluginRewardsDelegate] = await feeDistributor.latestCErc20Delegate(
         oldErc20PluginRewardsDelegate
       );
       if (
         latestCErc20PluginRewardsDelegate === constants.AddressZero ||
         latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
       ) {
-        tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+        tx = await feeDistributor._setLatestCErc20Delegate(
           oldErc20PluginRewardsDelegate,
           erc20PluginRewardsDel.address,
           false,

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
 import { aprDays } from '@ui/constants/index';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { getAnkrBNBContract } from '@ui/utils/contracts';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 

@@ -5,14 +5,14 @@ import { memo, useMemo } from 'react';
 
 import { AssetInfo } from './AssetInfo';
 
-import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
+import PageLayout from '@ui/components/pages/Layout/PageLayout';
 import { AssetsToBorrow } from '@ui/components/pages/PoolPage/AssetsToBorrow/index';
 import { AssetsToSupply } from '@ui/components/pages/PoolPage/AssetsToSupply/index';
 import { YourBorrows } from '@ui/components/pages/PoolPage/YourBorrows/index';
 import { YourSupplies } from '@ui/components/pages/PoolPage/YourSupplies/index';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePoolData } from '@ui/hooks/usePoolData';
 
 const MarketPage = memo(() => {
   const router = useRouter();
@@ -29,7 +29,7 @@ const MarketPage = memo(() => {
     [router.isReady, router.query.cToken]
   );
 
-  const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
+  const { data: poolData, isLoading: isPoolDataLoading } = usePoolData(poolId, Number(chainId));
   const asset = poolData?.assets.find((asset) => asset.cToken === cToken);
 
   return (
@@ -41,7 +41,7 @@ const MarketPage = memo(() => {
       )}
 
       <PageTransitionLayout>
-        <FusePageLayout>
+        <PageLayout>
           <Flex mb={'20px'}>
             <AssetInfo cToken={cToken} chainId={Number(chainId)} poolId={poolId} />
           </Flex>
@@ -105,7 +105,7 @@ const MarketPage = memo(() => {
               )}
             </CardBox>
           </Flex>
-        </FusePageLayout>
+        </PageLayout>
       </PageTransitionLayout>
     </>
   );

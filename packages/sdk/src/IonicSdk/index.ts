@@ -275,7 +275,7 @@ export class IonicBase {
 
       return [poolAddress, implementationAddress, priceOracle, poolId];
     } catch (error) {
-      throw Error(`Deployment of new Fuse pool failed:  ${error instanceof Error ? error.message : error}`);
+      throw Error(`Deployment of new ionic pool failed:  ${error instanceof Error ? error.message : error}`);
     }
   }
 

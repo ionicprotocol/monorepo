@@ -9,17 +9,17 @@ import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration
 import AddAssetModal from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetModal';
 import FlywheelEdit from '@ui/components/pages/EditPoolPage/FlywheelEdit';
 import PoolConfiguration from '@ui/components/pages/EditPoolPage/PoolConfiguration';
-import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
+import PageLayout from '@ui/components/pages/Layout/PageLayout';
 import { Banner } from '@ui/components/shared/Banner';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useIsComptrollerAdmin } from '@ui/hooks/ionic/useIsComptrollerAdmin';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePoolData } from '@ui/hooks/usePoolData';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 
 const EditPoolPage = memo(() => {
@@ -36,7 +36,7 @@ const EditPoolPage = memo(() => {
   const router = useRouter();
   const poolId = router.query.poolId as string;
   const poolChainId = router.query.chainId as string;
-  const { data } = useFusePoolData(poolId, Number(poolChainId));
+  const { data } = usePoolData(poolId, Number(poolChainId));
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
     if (usdPrices && poolChainId && usdPrices[poolChainId.toString()]) {
@@ -69,7 +69,7 @@ const EditPoolPage = memo(() => {
         <title key="title">{`Edit: ${data.name}`}</title>
       </Head>
       <PageTransitionLayout>
-        <FusePageLayout>
+        <PageLayout>
           <AddAssetModal
             comptrollerAddress={data.comptroller}
             isOpen={isAddAssetModalOpen}
@@ -159,7 +159,7 @@ const EditPoolPage = memo(() => {
             </RowOrColumn>
             <FlywheelEdit pool={data} />
           </Flex>
-        </FusePageLayout>
+        </PageLayout>
       </PageTransitionLayout>
     </>
   );

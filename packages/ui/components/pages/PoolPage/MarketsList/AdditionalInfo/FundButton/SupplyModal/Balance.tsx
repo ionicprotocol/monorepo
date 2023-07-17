@@ -4,7 +4,7 @@ import { utils } from 'ethers';
 
 import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import type { MarketData } from '@ui/types/TokensDataMap';
 

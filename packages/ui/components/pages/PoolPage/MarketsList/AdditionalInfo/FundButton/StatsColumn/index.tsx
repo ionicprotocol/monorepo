@@ -12,7 +12,7 @@ import { SupplyAPY } from '@ui/components/pages/PoolPage/MarketsList/AdditionalI
 import { Column } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
+import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -37,7 +37,7 @@ export const StatsColumn = ({
   comptrollerAddress,
 }: StatsColumnProps) => {
   const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
-  // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
+  // Get the new representation of a user's NativePricedIonicAssets after proposing a supply amount.
   const { data: updatedAssets } = useUpdatedUserAssets({
     amount,
     assets,

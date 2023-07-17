@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const getPositionInfo = async (position: string, supplyApy: BigNumber, sdk: IonicSdk) => {
   const info = await sdk.getPositionInfo(position, supplyApy).catch((e) => {

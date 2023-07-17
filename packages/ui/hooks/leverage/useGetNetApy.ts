@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export function useGetNetApy(
   collateralMarket: string,

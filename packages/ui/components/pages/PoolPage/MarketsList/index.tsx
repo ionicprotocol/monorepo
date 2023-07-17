@@ -77,7 +77,7 @@ import {
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';

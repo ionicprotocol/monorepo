@@ -11,7 +11,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import type { ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
@@ -25,9 +25,9 @@ import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useCTokenData } from '@ui/hooks/ionic/useCTokenData';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -42,7 +42,7 @@ const IRMChart = dynamic(
 interface InterestRateModelProps {
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
+  selectedAsset: NativePricedIonicAsset;
 }
 
 export const InterestRateModel = ({

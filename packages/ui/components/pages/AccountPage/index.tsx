@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
 
 import { FundedMarketsList } from '@ui/components/pages/AccountPage/FundedMarketsList/index';
-import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
+import PageLayout from '@ui/components/pages/Layout/PageLayout';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { Banner } from '@ui/components/shared/Banner';
 import { CardBox } from '@ui/components/shared/IonicBox';
@@ -77,7 +77,7 @@ const AccountPage = memo(() => {
       </Head>
 
       <PageTransitionLayout>
-        <FusePageLayout>
+        <PageLayout>
           {address ? (
             <>
               <HStack mb={4} mx="auto" spacing={4} width={'100%'}>
@@ -166,7 +166,7 @@ const AccountPage = memo(() => {
               title="Wallet not detected!"
             />
           )}
-        </FusePageLayout>
+        </PageLayout>
       </PageTransitionLayout>
     </>
   );

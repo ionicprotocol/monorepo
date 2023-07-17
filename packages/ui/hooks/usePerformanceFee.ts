@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const usePerformanceFee = (poolChainId: number, pluginAddress?: string) => {
   const sdk = useSdk(poolChainId);

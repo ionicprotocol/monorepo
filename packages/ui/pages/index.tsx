@@ -9,7 +9,7 @@ export async function getInitialProps() {
   return {};
 }
 
-const FusePage: NextPage = () => {
+const IonicPage: NextPage = () => {
   const { setGlobalLoading } = useMultiIonic();
 
   useEffect(() => {
@@ -26,4 +26,4 @@ const FusePage: NextPage = () => {
   );
 };
 
-export default FusePage;
+export default IonicPage;

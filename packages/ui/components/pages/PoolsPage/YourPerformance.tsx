@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useTotalSupplyAndBorrow } from '@ui/hooks/fuse/useTotalSupplyAndBorrow';
+import { useTotalSupplyAndBorrow } from '@ui/hooks/ionic/useTotalSupplyAndBorrow';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const YourPerformance = () => {

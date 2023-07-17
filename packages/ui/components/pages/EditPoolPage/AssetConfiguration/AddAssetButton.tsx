@@ -1,8 +1,8 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
-import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
+import { useIsUpgradeable } from '@ui/hooks/ionic/useIsUpgradable';
 
 const AddAssetButton = ({
   openAddAssetModal,

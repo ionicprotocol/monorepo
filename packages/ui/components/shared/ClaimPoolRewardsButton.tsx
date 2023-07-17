@@ -2,7 +2,7 @@ import { AvatarGroup, Box, HStack, Text, useDisclosure } from '@chakra-ui/react'
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import React from 'react';
 
-import { ClaimPoolRewardsModal } from '@ui/components/pages/Fuse/Modals/ClaimPoolRewardsModal/index';
+import { ClaimPoolRewardsModal } from '@ui/components/pages/Ionic/Modals/ClaimPoolRewardsModal/index';
 import { GradientButton } from '@ui/components/shared//GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';

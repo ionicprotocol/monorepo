@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useMemo } from 'react';
 
-import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
+import PageLayout from '@ui/components/pages/Layout/PageLayout';
 import { AssetsToBorrow } from '@ui/components/pages/PoolPage/AssetsToBorrow/index';
 import { AssetsToSupply } from '@ui/components/pages/PoolPage/AssetsToSupply/index';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
@@ -11,7 +11,7 @@ import { YourBorrows } from '@ui/components/pages/PoolPage/YourBorrows/index';
 import { YourSupplies } from '@ui/components/pages/PoolPage/YourSupplies/index';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePoolData } from '@ui/hooks/usePoolData';
 
 const PoolPage = memo(() => {
   const router = useRouter();
@@ -23,7 +23,7 @@ const PoolPage = memo(() => {
     () => (router.isReady ? (router.query.chainId as string) : ''),
     [router.isReady, router.query.chainId]
   );
-  const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
+  const { data: poolData, isLoading: isPoolDataLoading } = usePoolData(poolId, Number(chainId));
 
   return (
     <>
@@ -34,7 +34,7 @@ const PoolPage = memo(() => {
       )}
 
       <PageTransitionLayout>
-        <FusePageLayout>
+        <PageLayout>
           <Flex mb={'20px'}>
             <PoolDetails chainId={chainId} poolId={poolId} />
           </Flex>
@@ -98,7 +98,7 @@ const PoolPage = memo(() => {
               )}
             </CardBox>
           </Flex>
-        </FusePageLayout>
+        </PageLayout>
       </PageTransitionLayout>
     </>
   );

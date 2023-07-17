@@ -32,10 +32,10 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { HEALTH_FACTOR } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePoolData } from '@ui/hooks/usePoolData';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
@@ -43,7 +43,7 @@ import { shortAddress } from '@ui/utils/shortAddress';
 extend([mixPlugin]);
 
 const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) => {
-  const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
+  const { data: poolData, isLoading: isPoolDataLoading } = usePoolData(poolId, Number(chainId));
   const router = useRouter();
   const { data: extraPoolInfo, isLoading: isExtraPoolInfoLoading } = useExtraPoolInfo(
     poolData?.comptroller,

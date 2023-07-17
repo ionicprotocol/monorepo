@@ -7,8 +7,8 @@ import { utils } from 'ethers';
 
 import type { RewardsResponse } from '../pages/api/rewards';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { usePoolData } from '@ui/hooks/usePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseRewardsProps {
@@ -120,7 +120,7 @@ export const fetchRewards = async (
 };
 
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
-  const { data: poolData } = useFusePoolData(poolId, chainId);
+  const { data: poolData } = usePoolData(poolId, chainId);
   const { data: flywheelRewards } = useFlywheelRewards(poolData?.comptroller, chainId);
 
   return useQuery<UseRewardsData>(

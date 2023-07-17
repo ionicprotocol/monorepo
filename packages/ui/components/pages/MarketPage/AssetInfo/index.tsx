@@ -7,7 +7,7 @@ import { CardBox } from '@ui/components/shared/IonicBox';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePoolData } from '@ui/hooks/usePoolData';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const AssetInfo = ({
@@ -19,7 +19,7 @@ export const AssetInfo = ({
   chainId: number;
   poolId: string;
 }) => {
-  const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, chainId);
+  const { data: poolData, isLoading: isPoolDataLoading } = usePoolData(poolId, chainId);
 
   const router = useRouter();
   const { setGlobalLoading } = useMultiIonic();

@@ -12,7 +12,7 @@ import {
   PERFORMANCE_FEE_TOOLTIP,
   RESERVE_FACTOR_TOOLTIP,
 } from '@ui/constants/index';
-import { useOracle } from '@ui/hooks/fuse/useOracle';
+import { useOracle } from '@ui/hooks/ionic/useOracle';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useColors } from '@ui/hooks/useColors';
 import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';

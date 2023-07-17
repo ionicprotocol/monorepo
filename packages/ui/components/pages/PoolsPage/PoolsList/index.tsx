@@ -74,7 +74,7 @@ import {
   TOTAL_SUPPLY,
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
+import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import type { Err } from '@ui/types/ComponentPropsType';
@@ -91,7 +91,7 @@ export type PoolRowData = {
 
 const PoolsList = () => {
   const enabledChains = useEnabledChains();
-  const { isLoading, poolsPerChain, allPools, error } = useCrossFusePools([...enabledChains]);
+  const { isLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
   const { address, setGlobalLoading } = useMultiIonic();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);

@@ -12,8 +12,8 @@ import { mkAddress } from "../helpers";
 
 const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [constants.Two] }] as any, blockNumber: 1 };
 
-describe("Fuse Index", () => {
-  let fuseBase: IonicBase;
+describe("Ionic Index", () => {
+  let ionicBase: IonicBase;
   let mockContract: SinonStubbedInstance<Contract>;
 
   beforeEach(() => {
@@ -49,8 +49,8 @@ describe("Fuse Index", () => {
       IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
     };
-    fuseBase = new IonicBase(mockProvider, ganache);
-    fuseBase.contracts = { PoolDirectory: mockContract as unknown as PoolDirectory };
+    ionicBase = new IonicBase(mockProvider, ganache);
+    ionicBase.contracts = { PoolDirectory: mockContract as unknown as PoolDirectory };
   });
   afterEach(function () {
     restore();
@@ -61,8 +61,8 @@ describe("Fuse Index", () => {
         from: string,
         poolName: string,
         blockNumber: number,
-        fuseFeeDistributorAddress: string,
-        fusePoolDirectoryAddress: string
+        feeDistributorAddress: string,
+        poolDirectoryAddress: string
       ],
       string
     >;
@@ -85,8 +85,8 @@ describe("Fuse Index", () => {
       restore();
     });
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is false", async () => {
-      fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
+      ionicBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
+      await ionicBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
         mkAddress("0xccc"),
@@ -111,8 +111,8 @@ describe("Fuse Index", () => {
     });
 
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is true", async () => {
-      fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool("Test", true, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
+      ionicBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
+      await ionicBase.deployPool("Test", true, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
 
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
@@ -128,8 +128,8 @@ describe("Fuse Index", () => {
     });
 
     it("should deploy a pool when comptroller is not deployed", async () => {
-      fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
+      ionicBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
+      await ionicBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
         mkAddress("0xccc"),
@@ -148,12 +148,12 @@ describe("Fuse Index", () => {
 
     it("should throw error when model address hash mismatches", async () => {
       interestRateModelAddress = mkAddress("0xabc");
-      await expect(fuseBase.identifyInterestRateModel(interestRateModelAddress)).to.be.rejectedWith(Error);
+      await expect(ionicBase.identifyInterestRateModel(interestRateModelAddress)).to.be.rejectedWith(Error);
     });
 
     it("should return new IRM when model address hash matches", async () => {
       interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
-      model = await fuseBase.identifyInterestRateModel(interestRateModelAddress);
+      model = await ionicBase.identifyInterestRateModel(interestRateModelAddress);
       expect(model).not.to.be.null;
     });
   });
@@ -174,7 +174,7 @@ describe("Fuse Index", () => {
         },
       });
       getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
-      model = fuseBase.getInterestRateModel(mkAddress("0xabc"));
+      model = ionicBase.getInterestRateModel(mkAddress("0xabc"));
       await expect(model).to.be.rejectedWith(Error);
       expect(getAssetContractStub).to.be.calledOnce;
     });
@@ -188,7 +188,7 @@ describe("Fuse Index", () => {
         },
       });
       getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
-      model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));
+      model = await ionicBase.getInterestRateModel(mkAddress("0xabc"));
       expect(initStub).to.be.calledOnce;
       expect(getAssetContractStub).to.be.calledOnce;
       expect(model).not.to.be.null;
@@ -199,7 +199,7 @@ describe("Fuse Index", () => {
     let name: string;
 
     it("should return text when oracle is not found", async () => {
-      name = await fuseBase.getPriceOracle(mkAddress("0xabc"));
+      name = await ionicBase.getPriceOracle(mkAddress("0xabc"));
       expect(name).to.equal("Unrecognized Oracle");
     });
   });

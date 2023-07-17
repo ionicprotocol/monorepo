@@ -38,7 +38,7 @@ import { constants, utils } from 'ethers';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
+import { Chain } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/Chain';
 import { AdditionalInfo } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/AdditionalInfo/index';
 import { DebtValue } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/DebtValue';
 import { NetApy } from '@ui/components/pages/LeveragePage/LeverageList/OpenPosition/NetApy';

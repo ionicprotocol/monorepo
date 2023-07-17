@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 export function useChartData(market: string, poolChainId: number) {

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export interface SwapTokenType {
   underlyingDecimals: BigNumber;

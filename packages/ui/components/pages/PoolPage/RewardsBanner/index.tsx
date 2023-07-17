@@ -3,10 +3,10 @@ import { Flex, Skeleton, Text } from '@chakra-ui/react';
 import { GradientText } from '@ui/components/shared/GradientText';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePoolData } from '@ui/hooks/usePoolData';
 
 export const RewardsBanner = ({ chainId, poolId }: { chainId: string; poolId: string }) => {
-  const { data: poolData, isLoading: isPoolDataLoading } = useFusePoolData(poolId, Number(chainId));
+  const { data: poolData, isLoading: isPoolDataLoading } = usePoolData(poolId, Number(chainId));
   const { data: rewardTokens, isLoading: isRewardTokensLoading } = useRewardTokensOfPool(
     poolData?.comptroller,
     poolData?.chainId

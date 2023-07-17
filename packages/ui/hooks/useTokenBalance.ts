@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,

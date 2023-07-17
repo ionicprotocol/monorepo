@@ -17,7 +17,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { ComptrollerErrorCodes } from '@ionicprotocol/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
@@ -29,15 +29,15 @@ import { Controller, useForm } from 'react-hook-form';
 import { useSwitchNetwork } from 'wagmi';
 
 import TransferOwnershipModal from '@ui/components/pages/EditPoolPage/PoolConfiguration/TransferOwnershipModal';
-import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
+import { WhitelistInfo } from '@ui/components/pages/Ionic/PoolCreatePage/WhitelistInfo';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { getChainConfig } from '@ui/utils/networkData';
@@ -48,7 +48,7 @@ const PoolConfiguration = ({
   poolName,
   poolChainId,
 }: {
-  assets: NativePricedFuseAsset[];
+  assets: NativePricedIonicAsset[];
   comptrollerAddress: string;
   poolChainId: number;
   poolName: string;

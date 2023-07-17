@@ -12,7 +12,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -28,16 +28,16 @@ import {
   REMOVE,
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 interface DebtCeilingsWhitelistProps {
-  assets: NativePricedFuseAsset[];
+  assets: NativePricedIonicAsset[];
   comptrollerAddress: string;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
+  selectedAsset: NativePricedIonicAsset;
 }
 
 export const DebtCeilingsWhitelist = ({

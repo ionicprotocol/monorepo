@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@ionicprotocol/types";
+import { FundOperationMode, MarketConfig, NativePricedIonicAsset } from "@ionicprotocol/types";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import CErc20DelegatorArtifact from "../../artifacts/CErc20Delegator.json";
@@ -8,9 +8,9 @@ import { COMPTROLLER_ERROR_CODES } from "../IonicSdk/config";
 import { withCreateContracts } from "./CreateContracts";
 import { withFlywheel } from "./Flywheel";
 
-type FuseBaseConstructorWithModules = ReturnType<typeof withCreateContracts> & ReturnType<typeof withFlywheel>;
+type IonicBaseConstructorWithModules = ReturnType<typeof withCreateContracts> & ReturnType<typeof withFlywheel>;
 
-export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TBase) {
+export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: TBase) {
   return class PoolAsset extends Base {
     public COMPTROLLER_ERROR_CODES: Array<string> = COMPTROLLER_ERROR_CODES;
 
@@ -25,7 +25,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
         return [assetAddress, implementationAddress, receipt];
       } catch (error) {
         this.logger.error(`deployAsset raw error:  ${error} using MarketConfig: ${JSON.stringify(config)}`);
-        throw Error("Deployment of asset to Fuse pool failed: " + (error instanceof Error ? error.message : error));
+        throw Error("Deployment of asset to Ionic pool failed: " + (error instanceof Error ? error.message : error));
       }
     }
 
@@ -42,17 +42,17 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       if (!collateralFactorBN.gte(constants.Zero) || collateralFactorBN.gt(utils.parseEther("0.9")))
         throw Error("Collateral factor must range from 0 to 0.9.");
 
-      // Check reserve factor + admin fee + Fuse fee
+      // Check reserve factor + admin fee + ionic fee
       if (!reserveFactorBN.gte(constants.Zero)) throw Error("Reserve factor cannot be negative.");
       if (!adminFeeBN.gte(constants.Zero)) throw Error("Admin fee cannot be negative.");
 
-      // If reserveFactor or adminFee is greater than zero, we get fuse fee.
-      // Sum of reserveFactor and adminFee should not be greater than fuse fee. ? i think
+      // If reserveFactor or adminFee is greater than zero, we get ionic fee.
+      // Sum of reserveFactor and adminFee should not be greater than ionic fee. ? i think
       if (reserveFactorBN.gt(constants.Zero) || adminFeeBN.gt(constants.Zero)) {
-        const fuseFee = await this.contracts.FeeDistributor.interestFeeRate();
-        if (reserveFactorBN.add(adminFeeBN).add(BigNumber.from(fuseFee)).gt(constants.WeiPerEther))
+        const ionicFee = await this.contracts.FeeDistributor.interestFeeRate();
+        if (reserveFactorBN.add(adminFeeBN).add(BigNumber.from(ionicFee)).gt(constants.WeiPerEther))
           throw Error(
-            "Sum of reserve factor and admin fee should range from 0 to " + (1 - fuseFee.div(1e18).toNumber()) + "."
+            "Sum of reserve factor and admin fee should range from 0 to " + (1 - ionicFee.div(1e18).toNumber()) + "."
           );
       }
     }
@@ -74,7 +74,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       const deployArgs = [
         config.underlying,
         config.comptroller,
-        config.fuseFeeDistributor,
+        config.feeDistributor,
         config.interestRateModel,
         config.name,
         config.symbol,
@@ -124,11 +124,16 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       return [cErc20DelegatorAddress, implementationAddress, receipt];
     }
 
-    async getUpdatedAssets(mode: FundOperationMode, index: number, assets: NativePricedFuseAsset[], amount: BigNumber) {
+    async getUpdatedAssets(
+      mode: FundOperationMode,
+      index: number,
+      assets: NativePricedIonicAsset[],
+      amount: BigNumber
+    ) {
       const assetToBeUpdated = assets[index];
       const interestRateModel = await this.getInterestRateModel(assetToBeUpdated.cToken);
 
-      let updatedAsset: NativePricedFuseAsset;
+      let updatedAsset: NativePricedIonicAsset;
 
       if (mode === FundOperationMode.SUPPLY) {
         const supplyBalance = assetToBeUpdated.supplyBalance.add(amount);

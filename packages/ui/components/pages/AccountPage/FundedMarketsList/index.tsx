@@ -40,8 +40,8 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
 import { UserStats } from '@ui/components/pages/AccountPage/UserStats/index';
-import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Chain';
-import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/PoolName';
+import { Chain } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/Chain';
+import { PoolName } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/PoolName';
 import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';

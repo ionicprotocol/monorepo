@@ -118,10 +118,10 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
 task("flywheels:booster:update").setAction(async ({}, { ethers, getChainId, deployments }) => {
   const deployer = await ethers.getNamedSigner("deployer");
 
-  const fusePoolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
+  const poolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
   const newBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
 
-  const [ids, poolDatas] = await fusePoolDirectory.callStatic.getActivePools();
+  const [ids, poolDatas] = await poolDirectory.callStatic.getActivePools();
   for (const poolData of poolDatas) {
     const pool = (await ethers.getContractAt(
       "ComptrollerFirstExtension",

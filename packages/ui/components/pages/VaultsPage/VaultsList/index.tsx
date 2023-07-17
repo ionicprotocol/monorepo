@@ -41,8 +41,8 @@ import {
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { ChainFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterButtons';
-import { ChainFilterDropdown } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ChainFilterDropdown';
+import { ChainFilterButtons } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/ChainFilterButtons';
+import { ChainFilterDropdown } from '@ui/components/pages/Ionic/PoolsPage/PoolList/PoolRow/ChainFilterDropdown';
 import { Chain } from '@ui/components/pages/VaultsPage/VaultsList/Chain';
 import { SupplyApy } from '@ui/components/pages/VaultsPage/VaultsList/SupplyApy';
 import { TokenName } from '@ui/components/pages/VaultsPage/VaultsList/TokenName';

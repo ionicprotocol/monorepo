@@ -2,10 +2,10 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import FusePoolEditPage from '@ui/components/pages/EditPoolPage';
+import PoolEditPage from '@ui/components/pages/EditPoolPage';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-const FusePoolEditPageNext: NextPage = () => {
+const PoolEditPageNext: NextPage = () => {
   const { setGlobalLoading } = useMultiIonic();
   useEffect(() => {
     setGlobalLoading(false);
@@ -16,9 +16,9 @@ const FusePoolEditPageNext: NextPage = () => {
       <Head>
         <title key="title">Edit Pool</title>
       </Head>
-      <FusePoolEditPage />
+      <PoolEditPage />
     </>
   );
 };
 
-export default FusePoolEditPageNext;
+export default PoolEditPageNext;

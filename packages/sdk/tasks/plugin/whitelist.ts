@@ -15,7 +15,7 @@ export default task("plugin:whitelist", "Whitelists a plugin implementation")
     const oldImplementations = [];
     const newImplementations = [];
     const arrayOfTrue = [];
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", signer)) as FeeDistributor;
 
     let tx: ethers.ContractTransaction;
 
@@ -24,16 +24,12 @@ export default task("plugin:whitelist", "Whitelists a plugin implementation")
       newImplementations.push(newPluginImplementation);
       arrayOfTrue.push(true);
 
-      tx = await fuseFeeDistributor._setLatestPluginImplementation(oldPluginImplementation, newPluginImplementation);
+      tx = await feeDistributor._setLatestPluginImplementation(oldPluginImplementation, newPluginImplementation);
       await tx.wait();
       console.log(`Set latest plugin implementation to: ${newPluginImplementation} from ${newPluginImplementation}`);
     }
 
-    tx = await fuseFeeDistributor._editPluginImplementationWhitelist(
-      oldImplementations,
-      newImplementations,
-      arrayOfTrue
-    );
+    tx = await feeDistributor._editPluginImplementationWhitelist(oldImplementations, newImplementations, arrayOfTrue);
     const receipt = await tx.wait();
     console.log("Set whitelist for plugins with status:", receipt.status);
   });

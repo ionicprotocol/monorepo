@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { constants } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const useAssetClaimableRewards = (
   marketAddress: string,

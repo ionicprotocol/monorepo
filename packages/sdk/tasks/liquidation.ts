@@ -74,7 +74,7 @@ task("liquidate", "Liquidate a position without a flash loan")
     let receipt: providers.TransactionReceipt;
     const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
     const repayAmount = BigNumber.from(taskArgs.repayAmount);
-    const fuseSafeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
+    const safeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
     const debtToken = (await hre.ethers.getContractAt("CErc20", taskArgs.debtCerc20, signer)) as CErc20Delegate;
 
@@ -85,20 +85,20 @@ task("liquidate", "Liquidate a position without a flash loan")
     console.log(`Signer ${signer.address} has balance of underlying ${signerBorrowedTokenBalance}`);
 
     const repayAmountPlus = repayAmount.mul(2);
-    let fslUnderlyingAllowance = await underlying.callStatic.allowance(signer.address, fuseSafeLiquidator.address);
+    let fslUnderlyingAllowance = await underlying.callStatic.allowance(signer.address, safeLiquidator.address);
     if (fslUnderlyingAllowance.lt(repayAmountPlus)) {
       console.log(`FSL has insufficient allowance of underlying from the signer, increasing to ${repayAmountPlus}`);
-      tx = await underlying.approve(fuseSafeLiquidator.address, repayAmountPlus);
+      tx = await underlying.approve(safeLiquidator.address, repayAmountPlus);
       receipt = await tx.wait();
-      fslUnderlyingAllowance = await underlying.callStatic.allowance(signer.address, fuseSafeLiquidator.address);
+      fslUnderlyingAllowance = await underlying.callStatic.allowance(signer.address, safeLiquidator.address);
       console.log(
-        `Approved FSL ${fuseSafeLiquidator.address} to spend ${fslUnderlyingAllowance} from ${signer.address} with tx ${receipt.transactionHash}`
+        `Approved FSL ${safeLiquidator.address} to spend ${fslUnderlyingAllowance} from ${signer.address} with tx ${receipt.transactionHash}`
       );
     }
     console.log(`FSL has allowance for the underlying ${fslUnderlyingAllowance} to pull from ${signer.address}`);
 
     console.log(`Liquidating...`);
-    tx = await fuseSafeLiquidator[
+    tx = await safeLiquidator[
       "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])"
     ](
       taskArgs.borrower,
@@ -132,7 +132,7 @@ task("liquidate:nonfl:hardcoded").setAction(async ({}, { run }) => {
 
 task("liquidate:hardcoded", "Liquidate a position without a flash loan").setAction(async (taskArgs, hre) => {
   const signer = await hre.ethers.getNamedSigner("deployer");
-  const fuseSafeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
+  const safeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
   console.log(`Liquidating...`);
   const vars: IonicLiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
@@ -153,7 +153,7 @@ task("liquidate:hardcoded", "Liquidate a position without a flash loan").setActi
       "0x00000000000000000000000070085a09d30d6f8c4ecf6ee10120d1847383bb5700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000002000000000000000000000000931715FEE2d06333043d11F658C8CE934aC61D0c000000000000000000000000ffffffff1fcacbd218edc0eba20fc2308c778080",
     ],
   };
-  const tx: providers.TransactionResponse = await fuseSafeLiquidator.safeLiquidateToTokensWithFlashLoan(vars, {
+  const tx: providers.TransactionResponse = await safeLiquidator.safeLiquidateToTokensWithFlashLoan(vars, {
     gasLimit: 2100000,
   });
   const receipt: providers.TransactionReceipt = await tx.wait();

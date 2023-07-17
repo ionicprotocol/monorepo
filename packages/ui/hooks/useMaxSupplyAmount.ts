@@ -1,15 +1,15 @@
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export function useMaxSupplyAmount(
-  asset: Pick<NativePricedFuseAsset, 'cToken' | 'underlyingDecimals' | 'underlyingToken'>,
+  asset: Pick<NativePricedIonicAsset, 'cToken' | 'underlyingDecimals' | 'underlyingToken'>,
   comptrollerAddress: string,
   chainId: number
 ) {

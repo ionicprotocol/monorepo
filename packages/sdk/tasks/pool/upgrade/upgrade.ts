@@ -19,9 +19,9 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       const currentLatestComptroller = await ethers.getContract("Comptroller");
       newImplementation = currentLatestComptroller.address;
     }
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
-    const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(
+    const whitelisted = await feeDistributor.callStatic.comptrollerImplementationWhitelist(
       oldImplementation,
       newImplementation
     );
@@ -30,7 +30,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       const oldComptrollerImplementations = [oldImplementation];
       const comptrollerArrayOfTrue = [true];
 
-      tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
+      tx = await feeDistributor._editComptrollerImplementationWhitelist(
         oldComptrollerImplementations,
         newComptrollerImplementations,
         comptrollerArrayOfTrue
@@ -43,7 +43,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     }
 
     if (setLatest) {
-      const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
+      const latestComptrollerImplementation = await feeDistributor.callStatic.latestComptrollerImplementation(
         oldImplementation
       );
       if (
@@ -51,7 +51,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
         latestComptrollerImplementation !== newImplementation
       ) {
         console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
-        tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
+        tx = await feeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
         console.log("_setLatestComptrollerImplementation", tx.hash);
         await tx.wait();
         console.log("latest impl set", tx.hash);
@@ -66,10 +66,10 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
   .setAction(async ({ forceUpgrade }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
-    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
+    const poolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
-    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+    const [, pools] = await poolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool", { name: pool.name, address: pool.comptroller });
@@ -85,7 +85,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
 
       try {
         const implBefore = await unitroller.callStatic.comptrollerImplementation();
-        const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
+        const latestImpl = await feeDistributor.callStatic.latestComptrollerImplementation(implBefore);
         console.log(`current impl ${implBefore} latest ${latestImpl}`);
 
         let shouldUpgrade = forceUpgrade || implBefore != latestImpl;
@@ -102,7 +102,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
             const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
             const implBefore = await cTokenInstance.callStatic.implementation();
             console.log(`implementation before ${implBefore}`);
-            const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
+            const [latestImpl] = await feeDistributor.callStatic.latestCErc20Delegate(implBefore);
             if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
               console.log(`No auto upgrade with latest implementation ${latestImpl}`);
             } else {
@@ -114,7 +114,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         }
 
         if (shouldUpgrade) {
-          const tx = await fuseFeeDistributor.autoUpgradePool(pool.comptroller);
+          const tx = await feeDistributor.autoUpgradePool(pool.comptroller);
           console.log(`bulk upgrading pool with tx ${tx.hash}`);
           await tx.wait();
           console.log(`bulk upgraded pool ${pool.comptroller}`);
@@ -123,7 +123,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         // check the extensions if the latest impl
         const implAfter = await unitroller.callStatic.comptrollerImplementation();
         if (implAfter == latestImpl) {
-          const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(latestImpl);
+          const comptrollerExtensions = await feeDistributor.callStatic.getComptrollerExtensions(latestImpl);
           const currentExtensions = await asComptroller.callStatic._listExtensions();
           let different = false;
           for (let j = 0; j < currentExtensions.length; j++) {
@@ -146,7 +146,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
             console.log(
               `replacing extension ${currentExtensions[0]} with ${comptrollerExtensions[0]} for pool ${pool.comptroller}`
             );
-            const tx = await fuseFeeDistributor._registerComptrollerExtension(
+            const tx = await feeDistributor._registerComptrollerExtension(
               pool.comptroller,
               comptrollerExtensions[0],
               currentExtensions[0]
@@ -171,8 +171,8 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
   .setAction(async ({ enable, admin }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
-    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+    const poolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
+    const [, pools] = await poolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log(`pool address ${pool.comptroller}`);
@@ -206,8 +206,8 @@ task("pools:all:pause-guardian", "Sets the pause guardian for all pools that hav
   .setAction(async ({ replacingGuardian, admin }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
 
-    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
-    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+    const poolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
+    const [, pools] = await poolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log(`pool address ${pool.comptroller}`);

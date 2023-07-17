@@ -6,7 +6,7 @@ import { BsStars } from 'react-icons/bs';
 import { NoRewardInfo } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy/NoRewardInfo';
 import { RewardsInfo } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy/RewardsInfo';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import { useAssets } from '@ui/hooks/useAssets';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';

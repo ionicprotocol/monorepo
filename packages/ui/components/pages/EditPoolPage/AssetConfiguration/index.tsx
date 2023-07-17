@@ -1,6 +1,6 @@
 import type { BoxProps } from '@chakra-ui/react';
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import React, { useState } from 'react';
 
 import AddAssetButton from '@ui/components/pages/EditPoolPage/AssetConfiguration/AddAssetButton';
@@ -9,15 +9,15 @@ import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useIsEditableAdmin } from '@ui/hooks/ionic/useIsEditableAdmin';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
 interface AssetButtonProps extends BoxProps {
-  asset: NativePricedFuseAsset;
+  asset: NativePricedIonicAsset;
   isEditableAdmin?: boolean | null;
   poolChainId: number;
-  selectedAsset: NativePricedFuseAsset;
-  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  selectedAsset: NativePricedIonicAsset;
+  setSelectedAsset: (value: NativePricedIonicAsset) => void;
 }
 
 const AssetButton = ({
@@ -56,7 +56,7 @@ const AssetConfiguration = ({
   comptrollerAddress,
   poolChainId,
 }: {
-  assets: NativePricedFuseAsset[];
+  assets: NativePricedIonicAsset[];
   comptrollerAddress: string;
   openAddAssetModal: () => void;
   poolChainId: number;

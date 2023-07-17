@@ -2,7 +2,7 @@ import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import type { UseRewardsData } from '@ui/hooks/useRewards';

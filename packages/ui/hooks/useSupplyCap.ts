@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { Cap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';

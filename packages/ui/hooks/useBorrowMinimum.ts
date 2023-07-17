@@ -1,4 +1,4 @@
-import type { FuseAsset } from '@ionicprotocol/types';
+import type { IonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
+export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
   const { currentSdk } = useMultiIonic();
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {

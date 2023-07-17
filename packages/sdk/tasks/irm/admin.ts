@@ -26,13 +26,13 @@ task("irm:set-non-owner", "Set new IRM to ctoken")
   .addParam("irmAddress", "Irm address to use ", undefined, types.string)
   .setAction(async ({ ctokens: _ctokens, irmAddress: _irmAddress }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
-    const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
+    const feeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
     const sliced = _irmAddress.slice(2);
     const cTokens = _ctokens.split(",");
 
     for (const cToken of cTokens) {
       // cToken._setInterestRateModel(irmAddress);
-      const tx = await fuseFeeDistributor["_callPool(address[],bytes[])"](
+      const tx = await feeDistributor["_callPool(address[],bytes[])"](
         [cToken],
         [`0xf2b3abbd000000000000000000000000${sliced}`]
       );
