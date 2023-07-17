@@ -45,7 +45,7 @@ const EditPoolPage = memo(() => {
       return undefined;
     }
   }, [usdPrices, poolChainId]);
-  const isAdmin = useIsComptrollerAdmin(data?.comptroller, data?.chainId);
+  const { data: isAdmin, isLoading } = useIsComptrollerAdmin(data?.comptroller, data?.chainId);
   const isEditableAdmin = useIsEditableAdmin(data?.comptroller, Number(poolChainId));
   const { cPage } = useColors();
 
@@ -102,10 +102,18 @@ const EditPoolPage = memo(() => {
                 Back
               </Text>
             </HStack>
-            {!!data && (
+            {isLoading ? (
               <Banner
-                alertDescriptionProps={{ fontSize: 'lg' }}
-                alertProps={{ mt: 2, status: isAdmin ? 'info' : 'warning' }}
+                alertProps={{ mt: 2, variant: 'ghost' }}
+                descriptions={[
+                  {
+                    text: 'Checking if you are the admin of this pool...',
+                  },
+                ]}
+              />
+            ) : (
+              <Banner
+                alertProps={{ mt: 2, variant: isAdmin ? 'info' : 'warning' }}
                 descriptions={[
                   {
                     text: `You are ${isAdmin ? '' : 'not'} the admin of this Pool!`,

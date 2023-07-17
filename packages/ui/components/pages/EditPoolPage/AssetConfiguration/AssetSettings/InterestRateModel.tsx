@@ -182,12 +182,6 @@ export const InterestRateModel = ({
                       >
                         JumpRateModel
                       </option>
-                      <option
-                        style={{ color: cSelect.txtColor }}
-                        value={sdk ? sdk.chainDeployment.WhitePaperInterestRateModel.address : ''}
-                      >
-                        WhitePaperInterestRateModel
-                      </option>
                     </Select>
                     <FormErrorMessage marginBottom="-10px">
                       {errors.interestRateModel && errors.interestRateModel.message}

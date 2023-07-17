@@ -1,5 +1,6 @@
 import { theme as DefaultTheme, extendTheme } from '@chakra-ui/react';
 
+import { AlertStyleConfig } from '@ui/theme/components/Alert';
 import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
 import { BadgeStyleConfig } from '@ui/theme/components/Badge';
 import { ButtonStyleConfig } from '@ui/theme/components/Button';
@@ -120,6 +121,7 @@ export const theme = extendTheme({
     ...COLOR_PALETTE,
   },
   components: {
+    Alert: AlertStyleConfig,
     Avatar: AvatarStyleConfig,
     Badge: BadgeStyleConfig,
     Button: ButtonStyleConfig,
