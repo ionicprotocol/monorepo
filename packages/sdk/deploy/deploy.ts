@@ -35,6 +35,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     chainDeployConfig[chainId];
   console.log("chainDeployParams: ", chainDeployParams);
 
+  const cgPrice = await getCgPrice(chainDeployParams.cgId);
+  const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
+
   ////
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
@@ -70,9 +73,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   } else {
     console.log(`not updating the ffd fee`);
   }
-
-  const cgPrice = await getCgPrice(chainDeployParams.cgId);
-  const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
 
   try {
     const currentMinBorrow = await fuseFeeDistributor.callStatic.minBorrowEth();
@@ -480,7 +480,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
   console.log("SimplePriceOracle: ", simplePO.address);
 
-  const masterPO = await deployments.deploy("MasterPriceOracle", {
+  await deployments.deploy("MasterPriceOracle", {
     from: deployer,
     log: true,
     proxy: {

@@ -1,5 +1,5 @@
 {
-  "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
+  "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
   "abi": [
     {
       "anonymous": false,
@@ -128,95 +128,6 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "rewardsDelta",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "rewardsIndex",
-          "type": "uint256"
-        }
-      ],
-      "name": "AccrueRewards",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newStrategy",
-          "type": "address"
-        }
-      ],
-      "name": "AddStrategy",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "ClaimRewards",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newBooster",
-          "type": "address"
-        }
-      ],
-      "name": "FlywheelBoosterUpdate",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newFlywheelRewards",
-          "type": "address"
-        }
-      ],
-      "name": "FlywheelRewardsUpdate",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
           "indexed": false,
           "internalType": "uint8",
           "name": "version",
@@ -284,39 +195,349 @@
       "type": "event"
     },
     {
-      "anonymous": false,
+      "inputs": [],
+      "name": "_acceptOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "oldPerformanceFee",
-          "type": "uint256"
+          "internalType": "address[]",
+          "name": "targets",
+          "type": "address[]"
         },
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "newPerformanceFee",
-          "type": "uint256"
+          "internalType": "bytes[]",
+          "name": "data",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "_callPool",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "targets",
+          "type": "address[]"
         },
         {
-          "indexed": false,
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "_callPool",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "oldImplementations",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "newImplementations",
+          "type": "address[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "allowResign",
+          "type": "bool[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "statuses",
+          "type": "bool[]"
+        }
+      ],
+      "name": "_editCErc20DelegateWhitelist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "oldImplementations",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "newImplementations",
+          "type": "address[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "statuses",
+          "type": "bool[]"
+        }
+      ],
+      "name": "_editComptrollerImplementationWhitelist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "oldImplementations",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "newImplementations",
+          "type": "address[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "statuses",
+          "type": "bool[]"
+        }
+      ],
+      "name": "_editPluginImplementationWhitelist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
-          "name": "oldFeeRecipient",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "newFeeRecipient",
+          "name": "",
           "type": "address"
         }
       ],
-      "name": "UpdatedFeeSettings",
-      "type": "event"
+      "name": "_latestCErc20Delegate",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "implementation",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "allowResign",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes",
+          "name": "becomeImplementationData",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
-      "inputs": [],
-      "name": "_acceptOwner",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "_latestCEtherDelegate",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "implementation",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "allowResign",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes",
+          "name": "becomeImplementationData",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "_latestPluginImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "contract DiamondExtension",
+          "name": "extensionToAdd",
+          "type": "address"
+        },
+        {
+          "internalType": "contract DiamondExtension",
+          "name": "extensionToReplace",
+          "type": "address"
+        }
+      ],
+      "name": "_registerComptrollerExtension",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "cErc20Delegate",
+          "type": "address"
+        },
+        {
+          "internalType": "contract DiamondExtension[]",
+          "name": "extensions",
+          "type": "address[]"
+        }
+      ],
+      "name": "_setCErc20DelegateExtensions",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "comptroller",
+          "type": "address"
+        },
+        {
+          "internalType": "contract DiamondExtension[]",
+          "name": "extensions",
+          "type": "address[]"
+        }
+      ],
+      "name": "_setComptrollerExtensions",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "comptroller",
+          "type": "address"
+        },
+        {
+          "internalType": "int256",
+          "name": "rate",
+          "type": "int256"
+        }
+      ],
+      "name": "_setCustomInterestFeeRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_defaultInterestFeeRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "_setDefaultInterestFeeRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "oldImplementation",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "newImplementation",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "allowResign",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes",
+          "name": "becomeImplementationData",
+          "type": "bytes"
+        }
+      ],
+      "name": "_setLatestCErc20Delegate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "oldImplementation",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "newImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "_setLatestComptrollerImplementation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "oldImplementation",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "newImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "_setLatestPluginImplementation",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -337,70 +558,22 @@
     {
       "inputs": [
         {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "accrue",
-      "outputs": [
-        {
           "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "secondUser",
-          "type": "address"
-        }
-      ],
-      "name": "accrue",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
+          "name": "_minBorrowEth",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_maxSupplyEth",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxUtilizationRate",
           "type": "uint256"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        }
-      ],
-      "name": "addMarketForRewards",
+      "name": "_setPoolLimits",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -408,12 +581,57 @@
     {
       "inputs": [
         {
-          "internalType": "contract ERC20",
-          "name": "strategy",
+          "internalType": "address",
+          "name": "cDelegator",
           "type": "address"
         }
       ],
-      "name": "addStrategyForRewards",
+      "name": "_upgradePluginToLatestImplementation",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "erc20Contract",
+          "type": "address"
+        }
+      ],
+      "name": "_withdrawAssets",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "authoritiesRegistry",
+      "outputs": [
+        {
+          "internalType": "contract AuthoritiesRegistry",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IComptroller",
+          "name": "pool",
+          "type": "address"
+        }
+      ],
+      "name": "autoUpgradePool",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -421,15 +639,20 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
       ],
-      "name": "allStrategies",
+      "name": "cErc20DelegateExtensions",
       "outputs": [
         {
-          "internalType": "contract ERC20",
+          "internalType": "contract DiamondExtension",
           "name": "",
           "type": "address"
         }
@@ -441,29 +664,156 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "user",
+          "name": "",
           "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
         }
       ],
-      "name": "claimRewards",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "name": "cErc20DelegateWhitelist",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
         {
           "internalType": "address",
-          "name": "user",
+          "name": "",
           "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
         }
       ],
-      "name": "compAccrued",
+      "name": "cEtherDelegateWhitelist",
       "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes4",
+          "name": "functionSig",
+          "type": "bytes4"
+        }
+      ],
+      "name": "canCall",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "name": "comptrollerExtensions",
+      "outputs": [
+        {
+          "internalType": "contract DiamondExtension",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "comptrollerImplementationWhitelist",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "customInterestFeeRates",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
         }
       ],
       "stateMutability": "view",
@@ -471,25 +821,12 @@
     },
     {
       "inputs": [],
-      "name": "feeRecipient",
+      "name": "defaultInterestFeeRate",
       "outputs": [
         {
-          "internalType": "address",
+          "internalType": "uint256",
           "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "flywheelBooster",
-      "outputs": [
-        {
-          "internalType": "contract IFlywheelBooster",
-          "name": "",
-          "type": "address"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -498,81 +835,34 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "market",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "borrower",
-          "type": "address"
+          "internalType": "bytes",
+          "name": "constructorData",
+          "type": "bytes"
         }
       ],
-      "name": "flywheelPreBorrowerAction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "market",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "supplier",
-          "type": "address"
-        }
-      ],
-      "name": "flywheelPreSupplierAction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "market",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "src",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "dst",
-          "type": "address"
-        }
-      ],
-      "name": "flywheelPreTransferAction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "flywheelRewards",
+      "name": "deployCErc20",
       "outputs": [
         {
-          "internalType": "contract IFlywheelRewards",
+          "internalType": "address",
           "name": "",
           "type": "address"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getAllStrategies",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "cErc20Delegate",
+          "type": "address"
+        }
+      ],
+      "name": "getCErc20DelegateExtensions",
       "outputs": [
         {
-          "internalType": "contract ERC20[]",
+          "internalType": "contract DiamondExtension[]",
           "name": "",
           "type": "address[]"
         }
@@ -583,24 +873,47 @@
     {
       "inputs": [
         {
-          "internalType": "contract ERC20",
-          "name": "_rewardToken",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IFlywheelRewards",
-          "name": "_flywheelRewards",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IFlywheelBooster",
-          "name": "_flywheelBooster",
-          "type": "address"
-        },
-        {
           "internalType": "address",
-          "name": "_owner",
+          "name": "comptroller",
           "type": "address"
+        }
+      ],
+      "name": "getComptrollerExtensions",
+      "outputs": [
+        {
+          "internalType": "contract DiamondExtension[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ICErc20",
+          "name": "_ctoken",
+          "type": "address"
+        }
+      ],
+      "name": "getMinBorrowEth",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_defaultInterestFeeRate",
+          "type": "uint256"
         }
       ],
       "name": "initialize",
@@ -610,25 +923,12 @@
     },
     {
       "inputs": [],
-      "name": "isFlywheel",
+      "name": "interestFeeRate",
       "outputs": [
         {
-          "internalType": "bool",
+          "internalType": "uint256",
           "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "isRewardsDistributor",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -637,22 +937,117 @@
     {
       "inputs": [
         {
-          "internalType": "contract ERC20",
-          "name": "strategy",
+          "internalType": "address",
+          "name": "oldImplementation",
           "type": "address"
         }
       ],
-      "name": "marketState",
+      "name": "latestCErc20Delegate",
       "outputs": [
         {
-          "internalType": "uint224",
+          "internalType": "address",
           "name": "",
-          "type": "uint224"
+          "type": "address"
         },
         {
-          "internalType": "uint32",
+          "internalType": "bool",
           "name": "",
-          "type": "uint32"
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "oldImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "latestComptrollerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "oldImplementation",
+          "type": "address"
+        }
+      ],
+      "name": "latestPluginImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "marketsCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "maxSupplyEth",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "maxUtilizationRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "minBorrowEth",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -685,16 +1080,40 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "performanceFee",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "pluginImplementationWhitelist",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "bool",
           "name": "",
-          "type": "uint256"
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract AuthoritiesRegistry",
+          "name": "_ar",
+          "type": "address"
+        }
+      ],
+      "name": "reinitialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -705,84 +1124,20 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "rewardToken",
-      "outputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "user",
+          "internalType": "contract IComptroller",
+          "name": "pool",
           "type": "address"
-        }
-      ],
-      "name": "rewardsAccrued",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IFlywheelBooster",
-          "name": "newBooster",
-          "type": "address"
-        }
-      ],
-      "name": "setBooster",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IFlywheelRewards",
-          "name": "newFlywheelRewards",
-          "type": "address"
-        }
-      ],
-      "name": "setFlywheelRewards",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        }
-      ],
-      "name": "strategyState",
-      "outputs": [
-        {
-          "internalType": "uint224",
-          "name": "index",
-          "type": "uint224"
         },
         {
-          "internalType": "uint32",
-          "name": "lastUpdatedTimestamp",
-          "type": "uint32"
+          "internalType": "bool",
+          "name": "enabled",
+          "type": "bool"
         }
       ],
+      "name": "toggleAutoimplementations",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -790,54 +1145,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "",
+          "name": "newOwner",
           "type": "address"
         }
       ],
       "name": "transferOwnership",
       "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_performanceFee",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_feeRecipient",
-          "type": "address"
-        }
-      ],
-      "name": "updateFeeSettings",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "userIndex",
-      "outputs": [
-        {
-          "internalType": "uint224",
-          "name": "",
-          "type": "uint224"
-        }
-      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -863,106 +1176,92 @@
       "type": "constructor"
     }
   ],
-  "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
+  "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
   "receipt": {
     "to": null,
-    "from": "0x27521eae4eE4153214CaDc3eCD703b9B0326C908",
-    "contractAddress": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
-    "transactionIndex": 5,
-    "gasUsed": "844457",
-    "logsBloom": "0x00000000000000400000000000000010440000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000001000000400000000000000000000000000000020000000000000000000800000010800000000000000000000000400000000000000000000000000000000000000000000080000000000000800000400000000000200000000000000400000000000400000000000000000000000000000020000000000000000000040000000000000400000000000000000020000000000000000000000000000000000000000000000000008000000000000000",
-    "blockHash": "0xaccb298737842e93214f7f9e212b8e934dae2ff00b64044f07c801fcf506aff7",
-    "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
+    "from": "0x9308dddeC9B5cCd8a2685A46E913C892FE31C826",
+    "contractAddress": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+    "transactionIndex": 4,
+    "gasUsed": "838604",
+    "logsBloom": "0x00000000000000000000000000000000402000000000000000800000000000000000000000000008100000000000000000000000000000000000000000000000000000000000000000000000000002000001000000000000000000000000000000000000020000000000000000000800000000800000000000000000000000400000000000000000000000000000000000000000000080000000000000800000000000000100000000000000000400000000080000000000000400000000000000000020000000000000000000040000000000100400000000000000000020000000000000000000000000000000000000000000000100000000000000000040",
+    "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9",
+    "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
     "logs": [
       {
-        "transactionIndex": 5,
-        "blockNumber": 28532730,
-        "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
-        "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
+        "transactionIndex": 4,
+        "blockNumber": 31575204,
+        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
+        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
         "topics": [
           "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-          "0x000000000000000000000000c8cfbfce1d07b8017659aed821836a4fafb4cf4e"
+          "0x000000000000000000000000291d0bd5ccc3c560fdceb54f12adcdfc22484707"
         ],
         "data": "0x",
-        "logIndex": 30,
-        "blockHash": "0xaccb298737842e93214f7f9e212b8e934dae2ff00b64044f07c801fcf506aff7"
+        "logIndex": 5,
+        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
       },
       {
-        "transactionIndex": 5,
-        "blockNumber": 28532730,
-        "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
-        "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
+        "transactionIndex": 4,
+        "blockNumber": 31575204,
+        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
+        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "0x00000000000000000000000027521eae4ee4153214cadc3ecd703b9b0326c908"
+          "0x0000000000000000000000009308dddec9b5ccd8a2685a46e913c892fe31c826"
         ],
         "data": "0x",
-        "logIndex": 31,
-        "blockHash": "0xaccb298737842e93214f7f9e212b8e934dae2ff00b64044f07c801fcf506aff7"
+        "logIndex": 6,
+        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
       },
       {
-        "transactionIndex": 5,
-        "blockNumber": 28532730,
-        "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
-        "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
+        "transactionIndex": 4,
+        "blockNumber": 31575204,
+        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
+        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
-          "0x00000000000000000000000027521eae4ee4153214cadc3ecd703b9b0326c908",
-          "0x00000000000000000000000027521eae4ee4153214cadc3ecd703b9b0326c908"
+          "0x0000000000000000000000009308dddec9b5ccd8a2685a46e913c892fe31c826",
+          "0x0000000000000000000000009308dddec9b5ccd8a2685a46e913c892fe31c826"
         ],
         "data": "0x",
-        "logIndex": 32,
-        "blockHash": "0xaccb298737842e93214f7f9e212b8e934dae2ff00b64044f07c801fcf506aff7"
+        "logIndex": 7,
+        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
       },
       {
-        "transactionIndex": 5,
-        "blockNumber": 28532730,
-        "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
-        "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
-        "topics": [
-          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
-          "0x00000000000000000000000027521eae4ee4153214cadc3ecd703b9b0326c908",
-          "0x00000000000000000000000027521eae4ee4153214cadc3ecd703b9b0326c908"
-        ],
-        "data": "0x",
-        "logIndex": 33,
-        "blockHash": "0xaccb298737842e93214f7f9e212b8e934dae2ff00b64044f07c801fcf506aff7"
-      },
-      {
-        "transactionIndex": 5,
-        "blockNumber": 28532730,
-        "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
-        "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
+        "transactionIndex": 4,
+        "blockNumber": 31575204,
+        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
+        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
         "topics": [
           "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
         ],
         "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "logIndex": 34,
-        "blockHash": "0xaccb298737842e93214f7f9e212b8e934dae2ff00b64044f07c801fcf506aff7"
+        "logIndex": 8,
+        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
       },
       {
-        "transactionIndex": 5,
-        "blockNumber": 28532730,
-        "transactionHash": "0x698f52db5f086b4d47f2d51a93150f9beb898f3c43dd31cd57b38b83fff7fc14",
-        "address": "0xed81328eb30fad8806e1E9B53FAaa085282cCb38",
+        "transactionIndex": 4,
+        "blockNumber": 31575204,
+        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
+        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
         "topics": [
           "0x7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f"
         ],
-        "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c64defa0125678c77dda2287fdd6000699737cc",
-        "logIndex": 35,
-        "blockHash": "0xaccb298737842e93214f7f9e212b8e934dae2ff00b64044f07c801fcf506aff7"
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001dbb0edc5acb5804626744a7fcfaf1b34d28dd61",
+        "logIndex": 9,
+        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
       }
     ],
-    "blockNumber": 28532730,
-    "cumulativeGasUsed": "2023572",
+    "blockNumber": 31575204,
+    "cumulativeGasUsed": "1077815",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0xC8cfBfCE1D07b8017659AED821836a4Fafb4CF4E",
-    "0x0C64dEFA0125678C77dDa2287FDD6000699737Cc",
-    "0xf8c8765e000000000000000000000000f97e8f094c4428e6436b3bf86264d176a2606bc40000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000027521eae4ee4153214cadc3ecd703b9b0326c908"
+    "0x291d0bd5CCc3C560FDcEb54f12aDcdfC22484707",
+    "0x1dBb0edC5ACb5804626744A7fCFaf1b34D28dD61",
+    "0xfe4b84df000000000000000000000000000000000000000000000000016345785d8a0000"
   ],
   "numDeployments": 1,
   "solcInputHash": "0e89febeebc7444140de8e67c9067d2c",
@@ -972,13 +1271,13 @@
   "execute": {
     "methodName": "initialize",
     "args": [
-      "0xf97e8F094c4428e6436b3bf86264D176A2606bC4",
-      "0x0000000000000000000000000000000000000000",
-      "0x0000000000000000000000000000000000000000",
-      "0x27521eae4eE4153214CaDc3eCD703b9B0326C908"
+      {
+        "type": "BigNumber",
+        "hex": "0x016345785d8a0000"
+      }
     ]
   },
-  "implementation": "0xC8cfBfCE1D07b8017659AED821836a4Fafb4CF4E",
+  "implementation": "0x291d0bd5CCc3C560FDcEb54f12aDcdfC22484707",
   "devdoc": {
     "details": "This contract implements a proxy that is upgradeable by an admin. To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector clashing], which can potentially be used in an attack, this contract uses the https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two things that go hand in hand: 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if that call matches one of the admin functions exposed by the proxy itself. 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the implementation. If the admin tries to call a function on the implementation it will fail with an error that says \"admin cannot fallback to proxy target\". These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due to sudden errors when trying to call a function from the proxy implementation. Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way, you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.",
     "kind": "dev",
