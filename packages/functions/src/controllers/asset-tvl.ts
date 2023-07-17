@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset, SupportedChains } from '@ionicprotocol/types';
+import { NativePricedIonicAsset, SupportedChains } from '@ionicprotocol/types';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
@@ -21,7 +21,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       throw `Error occurred during saving assets tvl to database: pools not found`;
     }
 
-    const totalAssets: NativePricedFuseAsset[] = [];
+    const totalAssets: NativePricedIonicAsset[] = [];
     const results: {
       cTokenAddress: string;
       underlyingAddress: string;
@@ -31,7 +31,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
 
     await Promise.all(
       pools.map(async ({ comptroller }) => {
-        const assets: NativePricedFuseAsset[] = (
+        const assets: NativePricedIonicAsset[] = (
           await sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller).catch(() => [])
         ).map(filterOnlyObjectProperties);
 

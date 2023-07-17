@@ -1,5 +1,5 @@
 import {
-  NativePricedFuseAsset,
+  NativePricedIonicAsset,
   SupportedChains,
   assetSymbols,
   Reward,
@@ -73,7 +73,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     }
 
     const allPluginRewards: PluginRewards[] = [];
-    const totalAssets: NativePricedFuseAsset[] = [];
+    const totalAssets: NativePricedIonicAsset[] = [];
     const allFlywheelRewards: FlywheelMarketRewardsInfo[] = [];
     const results: TotalApy[] = [];
 
