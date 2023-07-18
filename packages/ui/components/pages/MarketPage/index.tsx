@@ -6,7 +6,7 @@ import { memo, useMemo } from 'react';
 import AssetDetails from './AssetDetails';
 import { AssetInfo } from './AssetInfo';
 import { FundInfo } from './FundInfo';
-import { InterestRateModel } from './InterestRateModel';
+import { UtilizationRate } from './UtilizationRate';
 import { YourInfo } from './YourInfo';
 
 import PageLayout from '@ui/components/pages/Layout/PageLayout';
@@ -47,7 +47,7 @@ const MarketPage = memo(() => {
                 <Flex direction={{ base: 'column' }} flex={2} gap={'24px'}>
                   <AssetDetails asset={asset} chainId={Number(chainId)} />
                   <FundInfo asset={asset} chainId={Number(chainId)} />
-                  <InterestRateModel asset={asset} chainId={Number(chainId)} />
+                  <UtilizationRate asset={asset} chainId={Number(chainId)} />
                 </Flex>
                 <Flex display={'block'} flex={1}>
                   <YourInfo />

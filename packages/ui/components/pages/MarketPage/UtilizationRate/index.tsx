@@ -10,7 +10,7 @@ import { useChartData } from '@ui/hooks/useChartData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
-export const InterestRateModel = ({ asset, chainId }: { asset: MarketData; chainId: number }) => {
+export const UtilizationRate = ({ asset, chainId }: { asset: MarketData; chainId: number }) => {
   const scanUrl = useMemo(() => getScanUrlByChainId(chainId), [chainId]);
   const { data } = useChartData(asset.cToken, chainId);
   const { data: irm } = useIRM(asset.cToken, chainId);
@@ -18,7 +18,7 @@ export const InterestRateModel = ({ asset, chainId }: { asset: MarketData; chain
   return (
     <CardBox>
       <Flex justifyContent={{ base: 'space-between' }}>
-        <Text size={'xl'}>Interest Rate Model</Text>
+        <Text size={'xl'}>Utilization Rate</Text>
         {irm && (!asset.isBorrowPaused || !asset.totalBorrow.isZero()) && (
           <Link href={`${scanUrl}/address/${irm}`} isExternal rel="noreferrer">
             <Button
