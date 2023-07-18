@@ -52,7 +52,7 @@ task("optimized-vault:deploy")
       from: deployer,
       log: true,
       waitConfirmations: 1,
-      args: [],
+      args: []
     });
     if (optimizedVaultDep.transactionHash) await ethers.provider.waitForTransaction(optimizedVaultDep.transactionHash);
     console.log("OptimizedAPRVault: ", optimizedVaultDep.address);
@@ -61,7 +61,7 @@ task("optimized-vault:deploy")
       deposit: 0,
       withdrawal: 0,
       management: 0,
-      performance: ethers.utils.parseEther("0.05"), // 1e18 == 100%, 5e16 = 5%
+      performance: ethers.utils.parseEther("0.05") // 1e18 == 100%, 5e16 = 5%
     };
 
     // start with an even allocations distribution
@@ -69,14 +69,14 @@ task("optimized-vault:deploy")
     const adapters = adaptersAddressesArray.map((adapterAddress: string) => {
       return {
         adapter: adapterAddress,
-        allocation: constants.WeiPerEther.div(adaptersAddressesArray.length),
+        allocation: constants.WeiPerEther.div(adaptersAddressesArray.length)
       };
     });
 
     const tenAdapters = adapters.concat(
       new Array(10 - adapters.length).fill({
         adapter: constants.AddressZero,
-        allocation: 0,
+        allocation: 0
       })
     );
     const flywheelLogic = await deployments.deploy("IonicFlywheel_Implementation", {
@@ -85,20 +85,20 @@ task("optimized-vault:deploy")
       args: [],
       log: true,
       waitConfirmations: 1,
-      skipIfAlreadyDeployed: true,
+      skipIfAlreadyDeployed: true
     });
     const registry = await ethers.getContract("OptimizedVaultsRegistry");
     const vaultFirstExtDep = await deployments.deploy("OptimizedAPRVaultFirstExtension", {
       from: deployer,
       log: true,
       waitConfirmations: 1,
-      args: [],
+      args: []
     });
     const vaultSecondExtDep = await deployments.deploy("OptimizedAPRVaultSecondExtension", {
       from: deployer,
       log: true,
       waitConfirmations: 1,
-      args: [],
+      args: []
     });
     const initData = new ethers.utils.AbiCoder().encode(
       [
@@ -109,7 +109,7 @@ task("optimized-vault:deploy")
         "address",
         "uint256",
         "address",
-        "address",
+        "address"
       ],
       [
         assetAddress,
@@ -119,7 +119,7 @@ task("optimized-vault:deploy")
         deployer, // fee recipient
         constants.MaxUint256, // deposit limit
         registry.address,
-        flywheelLogic.address,
+        flywheelLogic.address
       ]
     );
 
@@ -134,7 +134,7 @@ task("optimized-vault:deploy")
     console.log(`initialized the vault at ${optimizedVault.address}`);
 
     await run("optimized-vault:add", {
-      vaultAddress: optimizedVault.address,
+      vaultAddress: optimizedVault.address
     });
   });
 
@@ -150,13 +150,13 @@ task("optimized-vault:upgrade")
       from: deployer,
       log: true,
       waitConfirmations: 1,
-      args: [],
+      args: []
     });
     const vaultSecondExtDep = await deployments.deploy("OptimizedAPRVaultSecondExtension", {
       from: deployer,
       log: true,
       waitConfirmations: 1,
-      args: [],
+      args: []
     });
 
     console.log(`configuring the latest extensions in the registry...`);

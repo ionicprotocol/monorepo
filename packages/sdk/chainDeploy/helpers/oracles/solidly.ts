@@ -11,14 +11,14 @@ export const deploySolidlyLpOracle = async ({
   getNamedAccounts,
   deployments,
   deployConfig,
-  solidlyLps,
+  solidlyLps
 }: SolidlyDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const lpTokenPriceOracle = await deployments.deploy("SolidlyLpTokenPriceOracle", {
     from: deployer,
     args: [deployConfig.wtoken],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("SolidlyLpTokenPriceOracle: ", lpTokenPriceOracle.address);
 
@@ -34,7 +34,7 @@ export const deploySolidlyPriceOracle = async ({
   deployments,
   deployConfig,
   supportedBaseTokens,
-  assets,
+  assets
 }: SolidlyOracleDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const solidlyPriceOracle = await deployments.deploy("SolidlyPriceOracle", {
@@ -45,12 +45,12 @@ export const deploySolidlyPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, supportedBaseTokens],
-        },
+          args: [deployConfig.wtoken, supportedBaseTokens]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   if (solidlyPriceOracle.transactionHash) await ethers.provider.waitForTransaction(solidlyPriceOracle.transactionHash);
   console.log("SolidlyPriceOracle: ", solidlyPriceOracle.address);

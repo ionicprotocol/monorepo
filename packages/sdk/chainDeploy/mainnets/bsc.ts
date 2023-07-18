@@ -19,7 +19,7 @@ import {
   deployStkBNBOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
-  deployWombatOracle,
+  deployWombatOracle
 } from "../helpers";
 import {
   ChainDeployFnParams,
@@ -31,7 +31,7 @@ import {
   GammaLpAsset,
   SolidlyLpAsset,
   SolidlyOracleAssetConfig,
-  WombatAsset,
+  WombatAsset
 } from "../helpers/types";
 
 const assets = bsc.assets;
@@ -51,8 +51,8 @@ export const deployConfig: ChainDeployConfig = {
       {
         lpDisplayName: "PancakeSwap",
         lpName: "Pancake LPs",
-        lpSymbol: "Cake-LP",
-      },
+        lpSymbol: "Cake-LP"
+      }
     ],
     pairInitHashCode: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
     uniswapV2RouterAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
@@ -63,15 +63,15 @@ export const deployConfig: ChainDeployConfig = {
         pair: "0xc19956eCA8A3333671490EF6D6d4329Df049dddD", // WBNB-DDD
         baseToken: wbnb,
         minPeriod: 1800,
-        deviationThreshold: "50000000000000000", // 5%
+        deviationThreshold: "50000000000000000" // 5%
       },
       {
         token: underlying(assets, assetSymbols.EPX),
         pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EPX
         baseToken: wbnb,
         minPeriod: 1800,
-        deviationThreshold: "50000000000000000", // 5%
-      },
+        deviationThreshold: "50000000000000000" // 5%
+      }
     ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WBNB-BUSD"]), // WBNB-BUSD PCS LP
@@ -90,35 +90,35 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
       underlying(assets, assetSymbols["asBNBx-WBNB"]), // BNBx-WBNB ApeSwap LP
       underlying(assets, assetSymbols["ANKR-ankrBNB"]), // ANKR-ankrBNB PCS LP
-      underlying(assets, assetSymbols["asANKR-ankrBNB"]), // ANKR-ankrBNB ApeSwap LP
+      underlying(assets, assetSymbols["asANKR-ankrBNB"]) // ANKR-ankrBNB ApeSwap LP
     ],
-    flashSwapFee: 25,
+    flashSwapFee: 25
   },
   dynamicFlywheels: [
     {
       rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
       cycleLength: 1,
       name: "DDD",
-      flywheelToReplace: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
+      flywheelToReplace: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c"
     },
     {
       rewardToken: "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71",
       cycleLength: 1,
       name: "EPX",
-      flywheelToReplace: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
+      flywheelToReplace: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4"
     },
     {
       rewardToken: "0xa184088a740c695E156F91f5cC086a06bb78b827",
       cycleLength: 1,
-      name: "AUTOv2",
+      name: "AUTOv2"
     },
     {
       rewardToken: underlying(assets, assetSymbols.THE),
       cycleLength: 1,
-      name: "THE",
-    },
+      name: "THE"
+    }
   ],
-  cgId: bsc.specificParams.cgId,
+  cgId: bsc.specificParams.cgId
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -126,117 +126,117 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.BUSD,
     aggregator: "0xcBb98864Ef56E9042e7d2efef76141f15731B82f",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.BTCB,
     aggregator: "0x264990fbd0A4796A3E3d8E37C4d5F87a3aCa5Ebf",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.DAI,
     aggregator: "0x132d3C0B1D2cEa0BC552588063bdBb210FDeecfA",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.ETH,
     aggregator: "0x9ef1B8c0E4F7dc8bF5719Ea496883DC6401d5b2e",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   // CZ
   {
     symbol: assetSymbols.BETH,
     aggregator: "0x2A3796273d47c4eD363b361D3AEFb7F7E2A13782",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.CAKE,
     aggregator: "0xB6064eD41d4f67e353768aA239cA86f4F73665a1",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   //
   {
     symbol: assetSymbols.AUTO,
     aggregator: "0x88E71E6520E5aC75f5338F5F0c9DeD9d4f692cDA",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.BIFI,
     aggregator: "0xaB827b69daCd586A37E80A7d552a4395d576e645",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   // stables
   {
     symbol: assetSymbols.USDC,
     aggregator: "0x51597f405303C4377E36123cBc172b13269EA163",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.USDT,
     aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.TUSD,
     aggregator: "0xa3334A9762090E827413A7495AfeCE76F41dFc06",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   // Jarvis
   {
     symbol: assetSymbols.jBRL,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.JCHF,
     aggregator: "0x964261740356cB4aaD0C3D2003Ce808A4176a46d",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.JEUR,
     aggregator: "0x0bf79F617988C472DcA68ff41eFe1338955b9A80",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.JMXN,
     aggregator: "0x16c0C1f971b1780F952572670A9d5ce4123582a1",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.JGBP,
     aggregator: "0x8FAf16F710003E538189334541F5D4a391Da46a0",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.BRZ,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.BRZw,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.ALPACA,
     aggregator: "0xe0073b60833249ffd1bb2af809112c2fbf221DF6",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.BNBx,
     aggregator: "0xc4429B539397a3166eF3ef132c29e34715a3ABb4",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.FRAX,
     aggregator: "0x13A9c98b07F098c5319f4FF786eB16E22DC738e1",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
     symbol: assetSymbols.RDNT,
     aggregator: "0x20123C6ebd45c6496102BeEA86e1a6616Ca547c6",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+  }
 ];
 
 // TODO use these as funding and redemption strategies
@@ -249,8 +249,8 @@ const curvePools: CurvePoolConfig[] = [
     underlyings: [
       underlying(assets, assetSymbols.BUSD),
       underlying(assets, assetSymbols.USDC),
-      underlying(assets, assetSymbols.USDT),
-    ],
+      underlying(assets, assetSymbols.USDT)
+    ]
   },
   {
     // val3EPS metapool
@@ -259,20 +259,20 @@ const curvePools: CurvePoolConfig[] = [
     underlyings: [
       underlying(assets, assetSymbols.BUSD),
       underlying(assets, assetSymbols.USDC),
-      underlying(assets, assetSymbols.USDT),
-    ],
+      underlying(assets, assetSymbols.USDT)
+    ]
   },
   {
     // valdai3EPS metapool
     lpToken: underlying(assets, assetSymbols.valdai3EPS),
     pool: "0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5",
-    underlyings: [underlying(assets, assetSymbols.DAI), underlying(assets, assetSymbols.val3EPS)],
+    underlyings: [underlying(assets, assetSymbols.DAI), underlying(assets, assetSymbols.val3EPS)]
   },
   {
     // 2BRL pool
     lpToken: underlying(assets, assetSymbols["2brl"]),
     pool: "0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3",
-    underlyings: [underlying(assets, assetSymbols.jBRL), underlying(assets, assetSymbols.BRZ)],
+    underlyings: [underlying(assets, assetSymbols.jBRL), underlying(assets, assetSymbols.BRZ)]
   },
   {
     // 3BRL pool
@@ -281,28 +281,28 @@ const curvePools: CurvePoolConfig[] = [
     underlyings: [
       underlying(assets, assetSymbols.jBRL),
       underlying(assets, assetSymbols.BRZ),
-      underlying(assets, assetSymbols.BRZw),
-    ],
+      underlying(assets, assetSymbols.BRZw)
+    ]
   },
   {
     // MAI 3EPS pool
     lpToken: underlying(assets, assetSymbols.mai3EPS),
     pool: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
-    underlyings: [underlying(assets, assetSymbols.MAI), underlying(assets, assetSymbols.val3EPS)],
-  },
+    underlyings: [underlying(assets, assetSymbols.MAI), underlying(assets, assetSymbols.val3EPS)]
+  }
 ];
 
 const curveV2Pools: CurveV2PoolConfig[] = [
   {
     // eps BUSD jCHF
     lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
-    pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2",
+    pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2"
   },
   {
     // BNBx-BNB pool
     lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
-    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
-  },
+    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA"
+  }
 ];
 
 const diaAssets: DiaAsset[] = [
@@ -310,15 +310,15 @@ const diaAssets: DiaAsset[] = [
     symbol: assetSymbols.MAI,
     underlying: underlying(assets, assetSymbols.MAI),
     feed: "0xA6f83D792372487d7986657320e66b62DccfeC67",
-    key: "miMATIC/USD",
-  },
+    key: "miMATIC/USD"
+  }
 ];
 
 const wombatAssets: WombatAsset[] = [
   {
     symbol: assetSymbols["WOMBATLP-WBNB"],
-    underlying: underlying(assets, assetSymbols["WOMBATLP-WBNB"]),
-  },
+    underlying: underlying(assets, assetSymbols["WOMBATLP-WBNB"])
+  }
 ];
 
 const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
@@ -326,8 +326,8 @@ const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     assetAddress: underlying(assets, assetSymbols.THE),
     poolAddress: "0x51Bd5e6d3da9064D59BcaA5A76776560aB42cEb8",
     twapWindow: ethers.BigNumber.from(30 * 60),
-    baseToken: underlying(assets, assetSymbols.WBNB),
-  },
+    baseToken: underlying(assets, assetSymbols.WBNB)
+  }
 ];
 
 const solidlyLps: SolidlyLpAsset[] = [
@@ -335,37 +335,37 @@ const solidlyLps: SolidlyLpAsset[] = [
   { lpTokenAddress: underlying(assets, assetSymbols["sAMM-HAY/BUSD"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/ankrBNB"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-ANKR/HAY"]) },
-  { lpTokenAddress: underlying(assets, assetSymbols["sAMM-stkBNB/WBNB"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["sAMM-stkBNB/WBNB"]) }
 ];
 
 const gammaLps: GammaLpAsset[] = [
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aWBNB_STKBNB),
+    lpTokenAddress: underlying(assets, assetSymbols.aWBNB_STKBNB)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aWBNB_BTCB),
+    lpTokenAddress: underlying(assets, assetSymbols.aWBNB_BTCB)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aWBNB_ETH),
+    lpTokenAddress: underlying(assets, assetSymbols.aWBNB_ETH)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_ANKR_N),
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_ANKR_N)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_ANKR_W),
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_ANKR_W)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_RDNT_N),
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_RDNT_N)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_RDNT_W),
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_RDNT_W)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_THE_N),
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_THE_N)
   },
   {
-    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_THE_W),
-  },
+    lpTokenAddress: underlying(assets, assetSymbols.aANKRBNB_THE_W)
+  }
 ];
 
 const solidlyOracleSupportedStables: string[] = [
@@ -373,30 +373,30 @@ const solidlyOracleSupportedStables: string[] = [
   underlying(assets, assetSymbols.USDC),
   underlying(assets, assetSymbols.ankrBNB),
   underlying(assets, assetSymbols.FRAX),
-  underlying(assets, assetSymbols.BUSD),
+  underlying(assets, assetSymbols.BUSD)
 ];
 
 const solidlyOracles: SolidlyOracleAssetConfig[] = [
   {
     underlying: underlying(assets, assetSymbols.HAY),
     poolAddress: "0x93B32a8dfE10e9196403dd111974E325219aec24", // sAMM-HAY-BUSD
-    baseToken: underlying(assets, assetSymbols.BUSD),
+    baseToken: underlying(assets, assetSymbols.BUSD)
   },
   {
     underlying: underlying(assets, assetSymbols.ANKR),
     poolAddress: "0x7ef540f672Cd643B79D2488344944499F7518b1f", // vAMM-ankrBNB-ANKR
-    baseToken: underlying(assets, assetSymbols.ankrBNB),
+    baseToken: underlying(assets, assetSymbols.ankrBNB)
   },
   {
     underlying: underlying(assets, assetSymbols.MAI),
     poolAddress: "0x49ad051F4263517BD7204f75123b7C11aF9Fd31C", // sAMM-MAI-FRAX
-    baseToken: underlying(assets, assetSymbols.FRAX),
+    baseToken: underlying(assets, assetSymbols.FRAX)
   },
   {
     underlying: underlying(assets, assetSymbols.pSTAKE),
     poolAddress: "0x67e51F1DE32318f3a27265287ed766839A62Cf13", // sAMM-BUSD-pSTAKE
-    baseToken: underlying(assets, assetSymbols.BUSD),
-  },
+    baseToken: underlying(assets, assetSymbols.BUSD)
+  }
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -411,7 +411,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     assets: assets,
-    chainlinkAssets,
+    chainlinkAssets
   });
 
   //// deploy algebra price oracle
@@ -421,7 +421,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    concentratedLiquidityOracleTokens: algebraOracleTokens,
+    concentratedLiquidityOracleTokens: algebraOracleTokens
   });
 
   //// Uniswap Oracle
@@ -430,7 +430,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     ethers,
     getNamedAccounts,
     deployments,
-    deployConfig,
+    deployConfig
   });
 
   //// Solidly Price Oracle
@@ -441,7 +441,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     supportedBaseTokens: solidlyOracleSupportedStables,
-    assets: solidlyOracles,
+    assets: solidlyOracles
   });
 
   // set Native BNB price
@@ -461,7 +461,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     ethers,
     getNamedAccounts,
     deployments,
-    wombatAssets,
+    wombatAssets
   });
 
   //// Dia Price Oracle
@@ -472,7 +472,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     diaAssets,
     deployConfig,
-    diaNativeFeed: { feed: constants.AddressZero, key: "BNB/USD" },
+    diaNativeFeed: { feed: constants.AddressZero, key: "BNB/USD" }
   });
 
   ////
@@ -483,7 +483,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     ethers,
     getNamedAccounts,
     deployments,
-    deployConfig,
+    deployConfig
   });
 
   //// Solidly LP Oracle
@@ -493,7 +493,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    solidlyLps,
+    solidlyLps
   });
 
   //// Gamma LP Oracle
@@ -503,7 +503,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    gammaLps,
+    gammaLps
   });
 
   //// Curve LP Oracle
@@ -513,7 +513,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    curvePools,
+    curvePools
   });
 
   //// Curve V2 LP Oracle
@@ -523,7 +523,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    curveV2Pools,
+    curveV2Pools
   });
 
   //// stk BNB  oracle
@@ -532,7 +532,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     ethers,
     getNamedAccounts,
     deployments,
-    assets,
+    assets
   });
 
   // Ankr BNB Certificate oracle
@@ -542,7 +542,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     assets,
-    certificateAssetSymbol: assetSymbols.ankrBNB,
+    certificateAssetSymbol: assetSymbols.ankrBNB
   });
 
   //// Liquidator Redemption Strategies
@@ -550,7 +550,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (uniswapLpTokenLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(uniswapLpTokenLiquidator.transactionHash);
@@ -561,7 +561,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (algebraSwapLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(algebraSwapLiquidator.transactionHash);
@@ -572,7 +572,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (solidlyLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(solidlyLiquidator.transactionHash);
@@ -583,7 +583,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (solidlyLpTokenLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(solidlyLpTokenLiquidator.transactionHash);
@@ -595,7 +595,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
@@ -606,7 +606,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (curveSwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
@@ -617,7 +617,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (curveLpTokenWrapper.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenWrapper.transactionHash);
@@ -627,7 +627,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const wombatLpTokenLiquidator = await deployments.deploy("WombatLpTokenLiquidator", {
     from: deployer,
     args: [],
-    log: true,
+    log: true
   });
   if (wombatLpTokenLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(wombatLpTokenLiquidator.transactionHash);
@@ -638,7 +638,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (gammaLpTokenLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(gammaLpTokenLiquidator.transactionHash);
@@ -652,7 +652,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (uniswapV2LiquidatorFunder.transactionHash) {
     await ethers.provider.waitForTransaction(uniswapV2LiquidatorFunder.transactionHash);
@@ -664,7 +664,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (xbombLiquidatorFunder.transactionHash)
     await ethers.provider.waitForTransaction(xbombLiquidatorFunder.transactionHash);
@@ -675,7 +675,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (jarvisLiquidatorFunder.transactionHash)
     await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
@@ -686,7 +686,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (curveSwapLiquidatorFunder.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
@@ -700,15 +700,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
         blocksPerYear: deployConfig.blocksPerYear,
         multiplierPerYear: ethers.utils.parseEther("0.4").toString(),
         jumpMultiplierPerYear: ethers.utils.parseEther("4").toString(),
-        kink: ethers.utils.parseEther("0.75").toString(),
+        kink: ethers.utils.parseEther("0.75").toString()
       },
       {
         day: 3,
         rate_provider: "0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eBa",
-        abond: "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827",
-      },
+        abond: "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827"
+      }
     ],
-    log: true,
+    log: true
   });
   if (abairm.transactionHash) await ethers.provider.waitForTransaction(abairm.transactionHash);
   console.log("AnkrBNBInterestRateModel: ", abairm.address);
@@ -723,9 +723,9 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
       ethers.utils.parseEther("0.8").toString(),
       3,
       "0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eBa",
-      "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827",
+      "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827"
     ],
-    log: true,
+    log: true
   });
   if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
   console.log("AnkrBNBInterestRateModel: ", abirm.address);
@@ -736,7 +736,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     run,
-    deployConfig,
+    deployConfig
   });
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 

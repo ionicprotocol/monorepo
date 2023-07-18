@@ -23,32 +23,32 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3FactoryAddress: "0x865412B6cDf424bE36088fE3DeC2A072a26Cc494",
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
-    flashSwapFee: 30,
+    flashSwapFee: 30
   },
-  cgId: lineagoerli.specificParams.cgId,
+  cgId: lineagoerli.specificParams.cgId
 };
 
 const umbrellaAssets: UmbrellaAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.USDC),
-    feed: "USDC-USD",
+    feed: "USDC-USD"
   },
   {
     underlying: underlying(assets, assetSymbols.WETH),
-    feed: "ETH-USD",
+    feed: "ETH-USD"
   },
   {
     underlying: underlying(assets, assetSymbols.WBTC),
-    feed: "BTC-USD",
+    feed: "BTC-USD"
   },
   {
     underlying: underlying(assets, assetSymbols.USDT),
-    feed: "USDT-USD",
+    feed: "USDT-USD"
   },
   {
     underlying: underlying(assets, assetSymbols.DAI),
-    feed: "DAI-USD",
-  },
+    feed: "DAI-USD"
+  }
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
@@ -62,6 +62,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployConfig,
     umbrellaAssets,
     nativeUsdFeed: "ETH-USD",
-    registryAddress: "0x92010E763d476A732021191562134c488ca92a1F",
+    registryAddress: "0x92010E763d476A732021191562134c488ca92a1F"
   });
 };

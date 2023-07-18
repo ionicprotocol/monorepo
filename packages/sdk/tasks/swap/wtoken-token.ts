@@ -37,7 +37,7 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
       ethers.BigNumber.from(2).pow(ethers.BigNumber.from(256)).sub(ethers.constants.One),
       {
         gasLimit: 100000,
-        gasPrice: 5e9,
+        gasPrice: 5e9
       }
     );
 
@@ -45,7 +45,7 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
     const uniRouter = new ethers.Contract(
       sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
       [
-        "function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)",
+        "function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)"
       ],
       account
     );
@@ -59,7 +59,7 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
     const txn = await uniRouter.swapExactETHForTokens(0, path, account.address, expiryDate, {
       gasLimit: 1000000,
       gasPrice: ethers.utils.parseUnits("10", "gwei"),
-      value: ethAmount,
+      value: ethAmount
     });
     await txn.wait();
     const afterBalance = ethers.utils.formatEther(await tokenContract.balanceOf(account.address));

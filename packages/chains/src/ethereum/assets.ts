@@ -55,7 +55,7 @@ export const assets: SupportedAsset[] = [
     name: "Balancer",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", BAL),
+    extraDocs: defaultDocs("https://etherscan.io", BAL)
   },
   {
     symbol: assetSymbols.DAI,
@@ -63,7 +63,7 @@ export const assets: SupportedAsset[] = [
     name: "Dai Stablecoin",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", DAI),
+    extraDocs: defaultDocs("https://etherscan.io", DAI)
   },
   {
     symbol: assetSymbols.FRAX,
@@ -71,7 +71,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", FRAX),
+    extraDocs: defaultDocs("https://etherscan.io", FRAX)
   },
   {
     symbol: assetSymbols.MIM,
@@ -79,7 +79,7 @@ export const assets: SupportedAsset[] = [
     name: "Magic Internet Money",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", MIM),
+    extraDocs: defaultDocs("https://etherscan.io", MIM)
   },
   {
     symbol: assetSymbols.GOHM,
@@ -87,7 +87,7 @@ export const assets: SupportedAsset[] = [
     name: "Governance OHM",
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
-    extraDocs: defaultDocs("https://etherscan.io", GOHM),
+    extraDocs: defaultDocs("https://etherscan.io", GOHM)
   },
   {
     symbol: assetSymbols.OHM,
@@ -95,7 +95,7 @@ export const assets: SupportedAsset[] = [
     name: "Olympus V2",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", OHM),
+    extraDocs: defaultDocs("https://etherscan.io", OHM)
   },
   {
     symbol: assetSymbols.PAR,
@@ -103,7 +103,7 @@ export const assets: SupportedAsset[] = [
     name: "PAR Stablecoin",
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
-    extraDocs: defaultDocs("https://etherscan.io", PAR),
+    extraDocs: defaultDocs("https://etherscan.io", PAR)
   },
   {
     symbol: assetSymbols.ANKR,
@@ -111,7 +111,7 @@ export const assets: SupportedAsset[] = [
     name: "Ankr Network Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", ANKR),
+    extraDocs: defaultDocs("https://etherscan.io", ANKR)
   },
   {
     symbol: assetSymbols.USDC,
@@ -119,7 +119,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", USDC),
+    extraDocs: defaultDocs("https://etherscan.io", USDC)
   },
   {
     symbol: assetSymbols.USDT,
@@ -127,7 +127,7 @@ export const assets: SupportedAsset[] = [
     name: "Tether USD",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", USDT),
+    extraDocs: defaultDocs("https://etherscan.io", USDT)
   },
   {
     symbol: assetSymbols.eUSD,
@@ -135,7 +135,7 @@ export const assets: SupportedAsset[] = [
     name: "eUSD",
     decimals: 18,
     oracle: OracleTypes.CurveV2PriceOracle,
-    extraDocs: defaultDocs("https://etherscan.io", eUSD),
+    extraDocs: defaultDocs("https://etherscan.io", eUSD)
   },
   {
     symbol: assetSymbols.WBTC,
@@ -143,7 +143,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped BTC",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://etherscan.io", WBTC),
+    extraDocs: defaultDocs("https://etherscan.io", WBTC)
   },
   {
     symbol: assetSymbols.WETH,
@@ -151,7 +151,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.ethereum),
+    extraDocs: wrappedAssetDocs(SupportedChains.ethereum)
   },
   {
     symbol: assetSymbols.stETH,
@@ -161,7 +161,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
-    <p>You can get stETH by staking your ETH </code> on <a href="https://stake.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Mainnet</a></p>`,
+    <p>You can get stETH by staking your ETH </code> on <a href="https://stake.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Mainnet</a></p>`
   },
   {
     symbol: assetSymbols.wstETH,
@@ -171,7 +171,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.WSTEthPriceOracle,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
-    <p>You can get wstETH by wrapping your stETH </code> on <a href="https://stake.lido.fi/wrap" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Mainnet</a></p>`,
+    <p>You can get wstETH by wrapping your stETH </code> on <a href="https://stake.lido.fi/wrap" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Mainnet</a></p>`
   },
   {
     symbol: assetSymbols.rETH,
@@ -181,7 +181,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
-    <p>You can get rETH by staking your ETH </code> on <a href="https://stake.rocketpool.net/" target="_blank" style="color: #BCAC83; cursor="pointer">RocketPool on Mainnet</a></p>`,
+    <p>You can get rETH by staking your ETH </code> on <a href="https://stake.rocketpool.net/" target="_blank" style="color: #BCAC83; cursor="pointer">RocketPool on Mainnet</a></p>`
   },
   {
     symbol: assetSymbols.cbETH,
@@ -191,7 +191,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
-    <p>You can get cbETH by staking your ETH </code> on <a href="https://www.coinbase.com/earn" target="_blank" style="color: #BCAC83; cursor="pointer">Coinbase</a></p>`,
+    <p>You can get cbETH by staking your ETH </code> on <a href="https://www.coinbase.com/earn" target="_blank" style="color: #BCAC83; cursor="pointer">Coinbase</a></p>`
   },
   {
     symbol: assetSymbols.swETH,
@@ -201,7 +201,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
-    <p>You can get swETH by staking your ETH </code> on <a href="https://app.swellnetwork.io/" target="_blank" style="color: #BCAC83; cursor="pointer">Swell</a></p>`,
+    <p>You can get swETH by staking your ETH </code> on <a href="https://app.swellnetwork.io/" target="_blank" style="color: #BCAC83; cursor="pointer">Swell</a></p>`
   },
   {
     symbol: assetSymbols.frxETH,
@@ -211,7 +211,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.CurveV2PriceOracle,
     extraDocs: `
     <p><b>How to acquire this token</b><p/><br />
-    <p>You can get frxETH by minting it with your ETH </code> on <a href="https://app.frax.finance/frxeth/mint" target="_blank" style="color: #BCAC83; cursor="pointer">Frax Finance</a></p>`,
+    <p>You can get frxETH by minting it with your ETH </code> on <a href="https://app.frax.finance/frxeth/mint" target="_blank" style="color: #BCAC83; cursor="pointer">Frax Finance</a></p>`
   },
   // Sommelier Finance
   {
@@ -223,8 +223,8 @@ export const assets: SupportedAsset[] = [
     extraDocs: sommFinanceMainnetDocs("Real-Yield-USD", realYieldUSD, [
       assetSymbols.USDC,
       assetSymbols.USDT,
-      assetSymbols.DAI,
-    ]),
+      assetSymbols.DAI
+    ])
   },
   {
     symbol: assetSymbols.realYieldETH,
@@ -236,8 +236,8 @@ export const assets: SupportedAsset[] = [
       assetSymbols.cbETH,
       assetSymbols.rETH,
       assetSymbols.stETH,
-      assetSymbols.WETH,
-    ]),
+      assetSymbols.WETH
+    ])
   },
   {
     symbol: assetSymbols.ethBtcTrend,
@@ -245,7 +245,7 @@ export const assets: SupportedAsset[] = [
     name: "Sommelier Finance ETH/BTC Trend",
     decimals: 18,
     oracle: OracleTypes.ERC4626Oracle,
-    extraDocs: sommFinanceMainnetDocs("ETH-BTC-Trend", ethBtcTrend, [assetSymbols.WETH, assetSymbols.WBTC]),
+    extraDocs: sommFinanceMainnetDocs("ETH-BTC-Trend", ethBtcTrend, [assetSymbols.WETH, assetSymbols.WBTC])
   },
   {
     symbol: assetSymbols.SWETH_BBA_WETH_BPT,
@@ -258,7 +258,7 @@ export const assets: SupportedAsset[] = [
       "0x02d928e68d8f10c0358566152677db51e1e2dc8c00000000000000000000051e",
       "SwETH/Boosted Aave V3 WETH",
       SWETH_BBA_WETH_BPT
-    ),
+    )
   },
   {
     symbol: assetSymbols.WSTETH_WETH_STABLE_BPT,
@@ -271,7 +271,7 @@ export const assets: SupportedAsset[] = [
       "0x32296969ef14eb0c6d29669c550d4a0449130230000200000000000000000080",
       "wstETH/WETH Stable LP",
       WSTETH_WETH_STABLE_BPT
-    ),
+    )
   },
   {
     symbol: assetSymbols.WSTETH_RETH_FRXETH_STABLE_BPT,
@@ -284,7 +284,7 @@ export const assets: SupportedAsset[] = [
       "0x5aee1e99fe86960377de9f88689616916d5dcabe000000000000000000000467",
       "wstETH/rETH/frxETH Stable LP",
       WSTETH_RETH_FRXETH_STABLE_BPT
-    ),
+    )
   },
   {
     symbol: assetSymbols.WBETH_WSTETH_STABLE_BPT,
@@ -297,7 +297,7 @@ export const assets: SupportedAsset[] = [
       "0x2e848426aec6dbf2260535a5bea048ed94d9ff3d000000000000000000000536",
       "wBETH/wstETH Stable LP",
       WBETH_WSTETH_STABLE_BPT
-    ),
+    )
   },
   {
     symbol: assetSymbols.WSTETH_CBETH_STABLE_BPT,
@@ -310,7 +310,7 @@ export const assets: SupportedAsset[] = [
       "0x9c6d47ff73e0f5e51be5fd53236e3f595c5793f200020000000000000000042c",
       "wstETH/cbETH Stable LP",
       WSTETH_CBETH_STABLE_BPT
-    ),
+    )
   },
   {
     symbol: assetSymbols.OHM50_DAI50_BPT,
@@ -323,7 +323,7 @@ export const assets: SupportedAsset[] = [
       "0x76fcf0e8c7ff37a47a799fa2cd4c13cde0d981c90002000000000000000003d2",
       "OHM50/DAI50 Weighed LP",
       OHM50_DAI50_BPT
-    ),
+    )
   },
   {
     symbol: assetSymbols.OHM50_WETH50_BPT,
@@ -336,7 +336,7 @@ export const assets: SupportedAsset[] = [
       "0xd1ec5e215e8148d76f4460e4097fd3d5ae0a35580002000000000000000003d3",
       "OHM50/WETH50 Weighed LP",
       OHM50_WETH50_BPT
-    ),
+    )
   },
   {
     symbol: assetSymbols.AAVE_LINEAR_WETH,
@@ -345,7 +345,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "",
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.AAVE_LINEAR_USDT,
@@ -354,7 +354,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "",
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.AAVE_LINEAR_USDC,
@@ -363,7 +363,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "",
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.AAVE_LINEAR_DAI,
@@ -372,7 +372,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.BalancerLpLinearPoolPriceOracle,
     extraDocs: "",
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.AAVE_BOOSTED_STABLE_BPT,
@@ -385,8 +385,8 @@ export const assets: SupportedAsset[] = [
       "0xfebb0bbf162e64fb9d0dfe186e517d84c395f016000000000000000000000502",
       "AAVE Boosted Stable LP",
       AAVE_BOOSTED_STABLE_BPT
-    ),
-  },
+    )
+  }
 ];
 
 export default assets;

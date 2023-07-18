@@ -19,7 +19,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
     if (poolData && poolData.assets.length > 0) {
       return [
         sortTopUserSuppliedAssets(poolData.assets),
-        sortTopUserBorrowedAssets(poolData.assets),
+        sortTopUserBorrowedAssets(poolData.assets)
       ];
     } else {
       return [[], []];
@@ -29,7 +29,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
   const { data: assetInfos } = useAssets([poolData.chainId]);
   const { data: allRewards } = useRewards({
     chainId: poolData.chainId,
-    poolId: poolData.id.toString(),
+    poolId: poolData.id.toString()
   });
 
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
@@ -89,7 +89,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
                 netSuppliedNum,
             supplied: smallFormatter(suppliedNum),
             symbol: asset.underlyingSymbol,
-            underlying: asset.underlyingToken,
+            underlying: asset.underlyingToken
           });
         }
       });
@@ -98,7 +98,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         estimatedPerAsset: _estimatedPerAsset,
         estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
-        totalSupplied: poolData.totalSupplyBalanceFiat,
+        totalSupplied: poolData.totalSupplyBalanceFiat
       };
     }
 
@@ -107,7 +107,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
     poolData.assets,
     poolData.totalSupplyBalanceNative,
     poolData.totalSupplyBalanceFiat,
-    totalSupplyApyPerAsset,
+    totalSupplyApyPerAsset
   ]);
 
   const totalBorrowApy = useMemo(() => {
@@ -138,7 +138,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
             borrowed: smallFormatter(borrowedNum),
             estimated: borrowApyPerAsset[asset.cToken] * borrowedNum,
             symbol: asset.underlyingSymbol,
-            underlying: asset.underlyingToken,
+            underlying: asset.underlyingToken
           });
         }
       });
@@ -149,7 +149,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
         estimatedPerAsset: _estimatedPerAsset,
         estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
-        totalBorrowed: poolData.totalBorrowBalanceFiat,
+        totalBorrowed: poolData.totalBorrowBalanceFiat
       };
     }
 
@@ -158,7 +158,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
     poolData.assets,
     poolData.totalBorrowBalanceNative,
     poolData.totalBorrowBalanceFiat,
-    borrowApyPerAsset,
+    borrowApyPerAsset
   ]);
 
   const { cCard } = useColors();

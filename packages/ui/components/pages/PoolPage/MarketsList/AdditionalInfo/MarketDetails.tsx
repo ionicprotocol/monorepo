@@ -10,7 +10,7 @@ import {
   ASSET_SUPPLIED_TOOLTIP,
   LOAN_TO_VALUE_TOOLTIP,
   PERFORMANCE_FEE_TOOLTIP,
-  RESERVE_FACTOR_TOOLTIP,
+  RESERVE_FACTOR_TOOLTIP
 } from '@ui/constants/index';
 import { useOracle } from '@ui/hooks/fuse/useOracle';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
@@ -24,7 +24,7 @@ import { getScanUrlByChainId } from '@ui/utils/networkData';
 export const MarketDetails = ({
   asset,
   comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   comptrollerAddress: string;
@@ -36,12 +36,12 @@ export const MarketDetails = ({
   const { data: supplyCaps } = useSupplyCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,
-    market: asset,
+    market: asset
   });
   const { data: borrowCaps } = useBorrowCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,
-    market: asset,
+    market: asset
   });
   const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);
 

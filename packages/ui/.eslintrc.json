@@ -67,6 +67,7 @@
       }
     ],
     "sort-keys": 0, // disable default eslint sort-keys
-    "sort-keys/sort-keys-fix": 2
+    "sort-keys/sort-keys-fix": 2,
+    "comma-dangle": "off"
   }
 }

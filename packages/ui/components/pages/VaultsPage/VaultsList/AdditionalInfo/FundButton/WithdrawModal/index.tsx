@@ -8,7 +8,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import type { VaultData } from '@ionicprotocol/types';
 import { FundOperationMode } from '@ionicprotocol/types';
@@ -53,7 +53,7 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [steps, setSteps] = useState<TxStep[]>([
-    ...VAULT_WITHDRAW_STEPS(tokenData?.symbol || vault.symbol),
+    ...VAULT_WITHDRAW_STEPS(tokenData?.symbol || vault.symbol)
   ]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
@@ -98,11 +98,11 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
       const tx = resp.tx;
       addRecentTransaction({
         description: `${tokenData?.symbol || vault.symbol} Token Withdraw`,
-        hash: tx.hash,
+        hash: tx.hash
       });
       _steps[0] = {
         ..._steps[0],
-        txHash: tx.hash,
+        txHash: tx.hash
       };
       setSteps([..._steps]);
 
@@ -112,12 +112,12 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
       _steps[0] = {
         ..._steps[0],
         done: true,
-        txHash: tx.hash,
+        txHash: tx.hash
       };
       setSteps([..._steps]);
       successToast({
         description: 'Successfully withdrew!',
-        id: 'Withdraw - ' + Math.random().toString(),
+        id: 'Withdraw - ' + Math.random().toString()
       });
     } catch (error) {
       setFailedStep(1);
@@ -126,11 +126,11 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
         amount,
         asset: vault.asset,
         chainId: vault.chainId,
-        vault: vault.vault,
+        vault: vault.vault
       };
       const sentryInfo = {
         contextName: 'Withdrawing',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {

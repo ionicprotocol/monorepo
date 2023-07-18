@@ -8,7 +8,7 @@ export const deployGammaPoolOracle = async ({
   getNamedAccounts,
   deployments,
   deployConfig,
-  gammaLps,
+  gammaLps
 }: GammaDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const lpTokenPriceOracle = await deployments.deploy("GammaPoolPriceOracle", {
@@ -19,12 +19,12 @@ export const deployGammaPoolOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken],
-        },
+          args: [deployConfig.wtoken]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
   console.log("GammaPoolPriceOracle: ", lpTokenPriceOracle.address);
 

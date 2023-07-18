@@ -13,7 +13,7 @@ import {
   EncodedLiquidationTx,
   PoolUserWithAssets,
   SCALE_FACTOR_ONE_18_WEI,
-  SCALE_FACTOR_UNDERLYING_DECIMALS,
+  SCALE_FACTOR_UNDERLYING_DECIMALS
 } from "./utils";
 
 import { estimateGas } from "./index";

@@ -22,17 +22,17 @@ export default task("optimized-adapters:deploy")
         execute: {
           init: {
             methodName: "initialize",
-            args: [marketAddress, deployConfig.blocksPerYear, registry.address],
+            args: [marketAddress, deployConfig.blocksPerYear, registry.address]
           },
           onUpgrade: {
             methodName: "reinitialize",
-            args: [registry.address],
-          },
+            args: [registry.address]
+          }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer,
+        owner: deployer
       },
-      waitConfirmations: 1,
+      waitConfirmations: 1
     });
     if (marketERC4626Deployment.transactionHash)
       await ethers.provider.waitForTransaction(marketERC4626Deployment.transactionHash);

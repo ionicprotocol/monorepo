@@ -17,8 +17,8 @@ describe("PoolLens", () => {
       { totalSupply: BigNumber.from(1) },
       { totalSupply: BigNumber.from(1) },
       { totalSupply: BigNumber.from(1) },
-      { totalSupply: BigNumber.from(1) },
-    ],
+      { totalSupply: BigNumber.from(1) }
+    ]
   };
 
   beforeEach(() => {
@@ -33,8 +33,8 @@ describe("PoolLens", () => {
 
     Object.defineProperty(mockContract, "callStatic", {
       value: {
-        getPublicPoolsByVerificationWithData: stub().resolves(totalLockedData),
-      },
+        getPublicPoolsByVerificationWithData: stub().resolves(totalLockedData)
+      }
     });
     fusePoolLens.contracts = { PoolLens: mockContract };
   });

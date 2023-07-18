@@ -66,7 +66,7 @@ export const AssetSettings = ({
   selectedAsset,
   assets,
   poolChainId,
-  setSelectedAsset,
+  setSelectedAsset
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress } = selectedAsset;
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);

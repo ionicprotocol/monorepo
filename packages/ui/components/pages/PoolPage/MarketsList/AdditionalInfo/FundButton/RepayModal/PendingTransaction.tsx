@@ -18,7 +18,7 @@ export const PendingTransaction = ({
   isRepaying,
   poolChainId,
   amount,
-  asset,
+  asset
 }: {
   activeStep: number;
   amount: BigNumber;
@@ -39,7 +39,7 @@ export const PendingTransaction = ({
     successToast,
     underlyingAddress: asset.underlyingToken,
     underlyingDecimals: Number(asset.underlyingDecimals),
-    underlyingSymbol: asset.underlyingSymbol,
+    underlyingSymbol: asset.underlyingSymbol
   });
 
   return (

@@ -8,7 +8,7 @@ enum Roles {
   SUPPLIER_ROLE,
   BORROWER_ROLE,
   LIQUIDATOR_ROLE,
-  LEVERED_POSITION_ROLE,
+  LEVERED_POSITION_ROLE
 }
 
 task("auth:set-user-role", "Sets the role of a new user")

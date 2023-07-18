@@ -13,7 +13,7 @@ export const PendingTransaction = ({
   steps,
   isLoading,
   poolChainId,
-  asset,
+  asset
 }: {
   activeStep: number;
   asset: MarketData;

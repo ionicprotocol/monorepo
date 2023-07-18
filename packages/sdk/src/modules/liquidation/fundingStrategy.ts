@@ -58,7 +58,7 @@ export const getFundingStrategiesAndDatas = async (
   return {
     strategies,
     datas,
-    flashSwapFundingToken: fundingToken,
+    flashSwapFundingToken: fundingToken
   };
 };
 
@@ -80,7 +80,7 @@ function getStrategyData(
           fundingToken,
           ionicSdk.chainConfig.specificParams.metadata.uniswapV3Fees?.[inputToken][fundingToken] || 1000,
           ionicSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER,
-          quoter,
+          quoter
         ]
       );
     case FundingStrategyContract.JarvisLiquidatorFunder:

@@ -13,7 +13,7 @@ task("fork:create-pool", "Create pool on forking node").setAction(async (taskArg
     priceOracle: sdk.chainDeployment.MasterPriceOracle.address,
     closeFactor: "50",
     liquidationIncentive: "8",
-    enforceWhitelist: "false",
+    enforceWhitelist: "false"
   });
 
   console.log("Pool created!");
@@ -29,7 +29,7 @@ task("fork:create-pool", "Create pool on forking node").setAction(async (taskArg
     await hre.run("market:create", {
       comptroller: poolAddress,
       underlying,
-      signer: "deployer",
+      signer: "deployer"
     });
   }
 

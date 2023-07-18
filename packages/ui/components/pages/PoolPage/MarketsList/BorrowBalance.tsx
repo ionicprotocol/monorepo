@@ -8,7 +8,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const BorrowBalance = ({
   asset,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   poolChainId: number;
@@ -29,12 +29,12 @@ export const BorrowBalance = ({
       ) : (
         <BalanceCell
           primary={{
-            value: asset.borrowBalanceFiat,
+            value: asset.borrowBalanceFiat
           }}
           secondary={{
             decimals: asset.underlyingDecimals.toNumber(),
             symbol: tokenData?.symbol || '',
-            value: asset.borrowBalance,
+            value: asset.borrowBalance
           }}
         />
       )}

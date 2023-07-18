@@ -30,8 +30,8 @@ describe("FusePools", () => {
       liquidity: BigNumber.from(1),
       underlyingTokens: [],
       underlyingSymbols: [],
-      whitelistedAdmin: false,
-    },
+      whitelistedAdmin: false
+    }
   ];
 
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe("FusePools", () => {
       PoolLens: { abi: [], address: mkAddress("0xbcc") },
       PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
       IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
-      JumpRateModel: { abi: [], address: mkAddress("0xaac") },
+      JumpRateModel: { abi: [], address: mkAddress("0xaac") }
     };
 
     fusePools = new FusePools(mockProvider, ganache);
@@ -65,8 +65,8 @@ describe("FusePools", () => {
         getPoolSummary: stub().resolves(poolSummaryRawData),
         getPoolAssetsWithData: stub().resolves(poolSummaryStruct),
         getPoolsByAccountWithData: stub().resolves([[12]]),
-        getWhitelistedPoolsByAccountWithData: stub().resolves([[]]),
-      },
+        getWhitelistedPoolsByAccountWithData: stub().resolves([[]])
+      }
     });
 
     mockPoolDirectoryContract = createStubInstance(Contract);
@@ -77,11 +77,11 @@ describe("FusePools", () => {
           name: "R1",
           creator: mkAddress("0xabd"),
           blockPosted: BigNumber.from(1),
-          timestampPosted: BigNumber.from(2),
+          timestampPosted: BigNumber.from(2)
         }),
         getPublicPoolsByVerification: stub().resolves([[12]]),
-        getActivePools: stub().resolves([[0], ["0"]]),
-      },
+        getActivePools: stub().resolves([[0], ["0"]])
+      }
     });
 
     fusePools.contracts = { PoolDirectory: mockPoolDirectoryContract, PoolLens: mockFusePoolLensContract };
@@ -90,8 +90,8 @@ describe("FusePools", () => {
     Object.defineProperty(mockGetAssetContract, "callStatic", {
       value: {
         implementation: stub().resolves(CErc20PluginDelegateAddress),
-        plugin: stub().resolves(PluginAddress),
-      },
+        plugin: stub().resolves(PluginAddress)
+      }
     });
 
     stub(utilsFns, "getContract").onCall(0).returns(mockGetAssetContract);
@@ -115,8 +115,8 @@ describe("FusePools", () => {
     const result = await fusePools.fetchPools({
       filter: "created-pools",
       options: {
-        from: mkAddress("0xadb"),
-      },
+        from: mkAddress("0xadb")
+      }
     });
     expect(result[0].id).to.be.eq(12);
     expect(result[0].creator).to.be.eq(mkAddress("0xabd"));

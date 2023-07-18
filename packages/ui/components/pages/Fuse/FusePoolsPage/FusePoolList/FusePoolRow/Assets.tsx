@@ -9,7 +9,7 @@ export const Assets = ({ pool }: { pool: PoolData }) => {
   const tokens = useMemo(() => {
     return pool.underlyingTokens.map((address, index) => ({
       address,
-      symbol: pool.underlyingSymbols[index],
+      symbol: pool.underlyingSymbols[index]
     }));
   }, [pool.underlyingSymbols, pool.underlyingTokens]);
   if (pool.underlyingTokens.length === 0) return null;

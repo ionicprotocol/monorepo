@@ -6,7 +6,7 @@ import {
   Hide,
   HStack,
   Skeleton,
-  StatHelpText,
+  StatHelpText
 } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
@@ -44,7 +44,7 @@ const Stat = (props: StatProps) => {
 export const UserStat = ({
   value,
   secondValue,
-  label,
+  label
 }: {
   label: string;
   secondValue?: string;

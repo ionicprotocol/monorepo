@@ -9,7 +9,7 @@ export const deployAnkrCertificateTokenPriceOracle = async ({
   getNamedAccounts,
   deployments,
   assets,
-  certificateAssetSymbol,
+  certificateAssetSymbol
 }: aXXXcDeployParams): Promise<{ ankrCertificateTokenPriceOracle: any }> => {
   const { deployer } = await getNamedAccounts();
 
@@ -23,14 +23,14 @@ export const deployAnkrCertificateTokenPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [aXXXc],
-        },
+          args: [aXXXc]
+        }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
+      owner: deployer
     },
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   if (ankrCertificateTokenPriceOracle.transactionHash)
     await ethers.provider.waitForTransaction(ankrCertificateTokenPriceOracle.transactionHash);

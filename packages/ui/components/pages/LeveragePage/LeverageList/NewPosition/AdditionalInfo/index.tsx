@@ -18,7 +18,7 @@ export interface ComptrollerToPool {
 
 export const AdditionalInfo = ({
   row,
-  selectedBorrowableAssets,
+  selectedBorrowableAssets
 }: {
   row: Row<NewPositionRowData>;
   selectedBorrowableAssets?: { [collateral: string]: LeveredBorrowable };

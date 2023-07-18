@@ -4,7 +4,7 @@ import {
   FusePoolData,
   NativePricedFuseAsset,
   SupportedAsset,
-  SupportedChains,
+  SupportedChains
 } from "@ionicprotocol/types";
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
@@ -28,7 +28,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.neon]: neon.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.lineagoerli]: lineagoerli.assets,
-  [SupportedChains.ethereum]: ethereum.assets,
+  [SupportedChains.ethereum]: ethereum.assets
 };
 
 export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
@@ -39,7 +39,7 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
         name: _unfiliteredName,
         creator,
         blockPosted,
-        timestampPosted,
+        timestampPosted
       } = await this.contracts.PoolDirectory.callStatic.pools(Number(poolId), overrides);
       if (comptroller === constants.AddressZero) {
         return null;
@@ -160,7 +160,7 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
         timestampPosted,
         underlyingTokens: assets.map((a) => a.underlyingToken),
         underlyingSymbols: assets.map((a) => a.underlyingSymbol),
-        utilization,
+        utilization
       };
     }
 
@@ -187,7 +187,7 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
 
     async fetchPools({
       filter,
-      options,
+      options
     }: {
       filter: string | null;
       options: { from: string };

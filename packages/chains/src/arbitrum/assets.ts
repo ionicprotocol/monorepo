@@ -44,7 +44,7 @@ export const assets: SupportedAsset[] = [
     name: "Balancer",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", BAL),
+    extraDocs: defaultDocs("https://arbiscan.io", BAL)
   },
   {
     symbol: assetSymbols.BNB,
@@ -52,7 +52,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance Network",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", BNB),
+    extraDocs: defaultDocs("https://arbiscan.io", BNB)
   },
   {
     symbol: assetSymbols.CRV,
@@ -60,7 +60,7 @@ export const assets: SupportedAsset[] = [
     name: "Curve DAO Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", CRV),
+    extraDocs: defaultDocs("https://arbiscan.io", CRV)
   },
   {
     symbol: assetSymbols.DAI,
@@ -68,7 +68,7 @@ export const assets: SupportedAsset[] = [
     name: "Dai Stablecoin",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", DAI),
+    extraDocs: defaultDocs("https://arbiscan.io", DAI)
   },
   {
     symbol: assetSymbols.WETH,
@@ -76,7 +76,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: wrappedAssetDocs(SupportedChains.arbitrum),
+    extraDocs: wrappedAssetDocs(SupportedChains.arbitrum)
   },
   {
     symbol: assetSymbols.FRAX,
@@ -84,7 +84,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", FRAX),
+    extraDocs: defaultDocs("https://arbiscan.io", FRAX)
   },
   {
     symbol: assetSymbols.FXS,
@@ -92,7 +92,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax Share",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", FXS),
+    extraDocs: defaultDocs("https://arbiscan.io", FXS)
   },
 
   {
@@ -101,7 +101,7 @@ export const assets: SupportedAsset[] = [
     name: "ChainLink Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", LINK),
+    extraDocs: defaultDocs("https://arbiscan.io", LINK)
   },
   {
     symbol: assetSymbols.SUSHI,
@@ -109,7 +109,7 @@ export const assets: SupportedAsset[] = [
     name: "SushiToken",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", SUSHI),
+    extraDocs: defaultDocs("https://arbiscan.io", SUSHI)
   },
   {
     symbol: assetSymbols.USDC,
@@ -117,7 +117,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin (Arb1)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", USDC),
+    extraDocs: defaultDocs("https://arbiscan.io", USDC)
   },
   {
     symbol: assetSymbols.USDT,
@@ -125,7 +125,7 @@ export const assets: SupportedAsset[] = [
     name: "Tether USD",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", USDT),
+    extraDocs: defaultDocs("https://arbiscan.io", USDT)
   },
   {
     symbol: assetSymbols.USDs,
@@ -133,7 +133,7 @@ export const assets: SupportedAsset[] = [
     name: "Sperax USD",
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
-    extraDocs: defaultDocs("https://arbiscan.io", USDs),
+    extraDocs: defaultDocs("https://arbiscan.io", USDs)
   },
   // Awaiting price feeds
   // {
@@ -158,7 +158,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped BTC",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", WBTC),
+    extraDocs: defaultDocs("https://arbiscan.io", WBTC)
   },
   {
     symbol: assetSymbols.GOHM,
@@ -167,7 +167,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://arbiscan.io", GOHM),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.DPX,
@@ -175,7 +175,7 @@ export const assets: SupportedAsset[] = [
     name: "Dopex Governance Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", DPX),
+    extraDocs: defaultDocs("https://arbiscan.io", DPX)
   },
   {
     symbol: assetSymbols.MAGIC,
@@ -183,7 +183,7 @@ export const assets: SupportedAsset[] = [
     name: "MAGIC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", MAGIC),
+    extraDocs: defaultDocs("https://arbiscan.io", MAGIC)
   },
   {
     symbol: assetSymbols.GMX,
@@ -192,7 +192,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
     extraDocs: defaultDocs("https://arbiscan.io", GMX),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols.OHM,
@@ -200,7 +200,7 @@ export const assets: SupportedAsset[] = [
     name: "Olympus",
     decimals: 9,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", OHM),
+    extraDocs: defaultDocs("https://arbiscan.io", OHM)
   },
   {
     symbol: assetSymbols.wstETH,
@@ -208,7 +208,7 @@ export const assets: SupportedAsset[] = [
     name: "Lido Wrapped Staked Ether",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.io", wstETH),
+    extraDocs: defaultDocs("https://arbiscan.io", wstETH)
   },
   // Curve LP tokens
   {
@@ -217,7 +217,7 @@ export const assets: SupportedAsset[] = [
     name: "Curve.fi USDC/USDT",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinanceArbitrumDocs("2pool", TWOPOOL),
+    extraDocs: curveFinanceArbitrumDocs("2pool", TWOPOOL)
   },
   // Saddle LP tokens
   {
@@ -226,7 +226,7 @@ export const assets: SupportedAsset[] = [
     name: "Saddle Frax/USDC",
     decimals: 18,
     oracle: OracleTypes.SaddleLpPriceOracle,
-    extraDocs: saddleFinanceDocs("FRAX-USDC-BP", saddleFraxBP),
+    extraDocs: saddleFinanceDocs("FRAX-USDC-BP", saddleFraxBP)
   },
   {
     symbol: assetSymbols["saddleFraxUsdsBP"],
@@ -235,7 +235,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SaddleLpPriceOracle,
     extraDocs: saddleFinanceDocs("FRAXBP-USDs", saddleFraxUsdsBP),
-    disabled: true,
+    disabled: true
   },
   {
     symbol: assetSymbols["saddleFraxUsdtBP"],
@@ -243,8 +243,8 @@ export const assets: SupportedAsset[] = [
     name: "Saddle Frax/USDT",
     decimals: 18,
     oracle: OracleTypes.SaddleLpPriceOracle,
-    extraDocs: saddleFinanceDocs("FRAXBP-USDT", saddleFraxUsdtBP),
-  },
+    extraDocs: saddleFinanceDocs("FRAXBP-USDT", saddleFraxUsdtBP)
+  }
 ];
 
 export default assets;

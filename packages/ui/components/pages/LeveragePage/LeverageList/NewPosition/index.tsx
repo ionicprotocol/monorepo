@@ -15,7 +15,7 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type { LeveredBorrowable, NewPosition, SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -23,7 +23,7 @@ import type {
   FilterFn,
   PaginationState,
   SortingFn,
-  SortingState,
+  SortingState
 } from '@tanstack/react-table';
 import {
   flexRender,
@@ -32,7 +32,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
@@ -56,7 +56,7 @@ import {
   MARKETS_COUNT_PER_PAGE,
   POSITION_CREATION_PER_PAGE,
   SEARCH,
-  SUPPLY_APY,
+  SUPPLY_APY
 } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
@@ -75,7 +75,7 @@ export const NewPositionComp = ({
   isLoading,
   positionsPerChain,
   initSearchText,
-  setGlobalFilter,
+  setGlobalFilter
 }: {
   initGlobalFilter: (SupportedChains | string)[];
   initSearchText: string;
@@ -90,7 +90,7 @@ export const NewPositionComp = ({
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: POSITION_CREATION_PER_PAGE[0],
+    pageSize: POSITION_CREATION_PER_PAGE[0]
   });
 
   const [selectedBorrowableAssets, setSelectedBorrowableAssets] = useState<{
@@ -194,7 +194,7 @@ export const NewPositionComp = ({
         borrowableAsset: position,
         chain: position,
         collateralAsset: position,
-        supplyApy: position,
+        supplyApy: position
       };
     });
   }, [allNewPositions]);
@@ -208,7 +208,7 @@ export const NewPositionComp = ({
         footer: (props) => props.column.id,
         header: () => null,
         id: CHAIN,
-        sortingFn: positionSort,
+        sortingFn: positionSort
       },
       {
         accessorFn: (row) => row.collateralAsset,
@@ -226,7 +226,7 @@ export const NewPositionComp = ({
           <TableHeaderCell context={context}>{COLLATERAL_ASSET}</TableHeaderCell>
         ),
         id: COLLATERAL_ASSET,
-        sortingFn: positionSort,
+        sortingFn: positionSort
       },
       {
         accessorFn: (row) => row.supplyApy,
@@ -234,7 +234,7 @@ export const NewPositionComp = ({
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{SUPPLY_APY}</TableHeaderCell>,
         id: SUPPLY_APY,
-        sortingFn: positionSort,
+        sortingFn: positionSort
       },
       {
         accessorFn: (row) => row.borrowableAsset,
@@ -250,8 +250,8 @@ export const NewPositionComp = ({
         header: (context) => (
           <TableHeaderCell context={context}>{BORROWABLE_ASSET}</TableHeaderCell>
         ),
-        id: BORROWABLE_ASSET,
-      },
+        id: BORROWABLE_ASSET
+      }
     ];
   }, [positionFilter, positionSort, selectedBorrowableAssets]);
 
@@ -273,8 +273,8 @@ export const NewPositionComp = ({
     state: {
       globalFilter: initGlobalFilter,
       pagination,
-      sorting,
-    },
+      sorting
+    }
   });
 
   const { cCard } = useColors();
@@ -330,12 +330,12 @@ export const NewPositionComp = ({
               height: '2xs',
               justifyContent: 'center',
               status: 'warning',
-              textAlign: 'center',
+              textAlign: 'center'
             }}
             descriptions={[
               {
-                text: `Unable to retrieve Leverages. Please try again later.`,
-              },
+                text: `Unable to retrieve Leverages. Please try again later.`
+              }
             ]}
             title={err.reason ? err.reason : 'Unexpected Error'}
           />
@@ -353,7 +353,7 @@ export const NewPositionComp = ({
                         onClick={header.column.getToggleSortingHandler()}
                         px={{
                           base: header.column.id === COLLATERAL_ASSET ? 2 : 1,
-                          lg: header.column.id === COLLATERAL_ASSET ? 4 : 2,
+                          lg: header.column.id === COLLATERAL_ASSET ? 4 : 2
                         }}
                         py={6}
                         textTransform="capitalize"

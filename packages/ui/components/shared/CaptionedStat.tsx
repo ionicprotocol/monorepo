@@ -13,7 +13,7 @@ const CaptionedStat = ({
   caption,
   spacing,
   crossAxisAlignment,
-  tooltip,
+  tooltip
 }: CaptionedStatProps) => {
   const crossAxisAlignmentStatic = useMaybeResponsiveProp(crossAxisAlignment);
   const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as SystemProps['textAlign'];

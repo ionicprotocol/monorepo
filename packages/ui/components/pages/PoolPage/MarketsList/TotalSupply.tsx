@@ -6,7 +6,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export const TotalSupply = ({
   asset,
   comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   comptrollerAddress: string;
@@ -16,19 +16,19 @@ export const TotalSupply = ({
   const { data: supplyCaps } = useSupplyCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,
-    market: asset,
+    market: asset
   });
 
   return (
     <BalanceCell
       cap={supplyCaps}
       primary={{
-        value: asset.totalSupplyFiat,
+        value: asset.totalSupplyFiat
       }}
       secondary={{
         decimals: asset.underlyingDecimals.toNumber(),
         symbol: tokenData?.symbol || '',
-        value: asset.totalSupply,
+        value: asset.totalSupply
       }}
     />
   );

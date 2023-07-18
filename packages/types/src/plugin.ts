@@ -9,7 +9,7 @@ export enum Strategy {
   MiniChefV2 = "MiniChefV2",
   HelioHAY = "HelioHAY",
   ThenaERC4626 = "ThenaERC4626",
-  Dyson4626 = "Dyson4626",
+  Dyson4626 = "Dyson4626"
 }
 
 export interface AbstractPlugin {
@@ -120,56 +120,56 @@ export declare type DeployedPlugins = {
 export enum StrategyComplexity {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
+  HIGH = "HIGH"
 }
 
 export enum StrategyTimeInMarket {
   NEW = "NEW",
   EXPERIMENTAL = "EXPERIMENTAL",
-  BATTLE_TESTED = "BATTLE_TESTED",
+  BATTLE_TESTED = "BATTLE_TESTED"
 }
 
 export enum AssetRiskIL {
   NONE = "NONE",
   LOW = "LOW",
-  HIGH = "HIGH",
+  HIGH = "HIGH"
 }
 
 export enum AssetRiskLiquidity {
   LOW = "LOW",
-  HIGH = "HIGH",
+  HIGH = "HIGH"
 }
 
 export enum AssetRiskMktCap {
   LARGE = "LARGE",
   MEDIUM = "MEDIUM",
   SMALL = "SMALL",
-  MICRO = "MICRO",
+  MICRO = "MICRO"
 }
 
 export enum AssetRiskSupply {
   CENTRALIZED = "CENTRALIZED",
-  DECENTRALIZED = "DECENTRALIZED",
+  DECENTRALIZED = "DECENTRALIZED"
 }
 
 export enum PlatformRiskReputation {
   ESTABLISHED = "ESTABLISHED",
-  NEW = "NEW",
+  NEW = "NEW"
 }
 
 export enum PlatformRiskAudit {
   AUDIT = "AUDIT",
-  NO_AUDIT = "NO_AUDIT",
+  NO_AUDIT = "NO_AUDIT"
 }
 
 export enum PlatformRiskContractsVerified {
   CONTRACTS_VERIFIED = "CONTRACTS_VERIFIED",
-  CONTRACTS_UNVERIFIED = "CONTRACTS_UNVERIFIED",
+  CONTRACTS_UNVERIFIED = "CONTRACTS_UNVERIFIED"
 }
 
 export enum PlatformRiskAdminWithTimelock {
   ADMIN_WITH_TIMELOCK = "ADMIN_WITH_TIMELOCK",
-  ADMIN_WITHOUT_TIMELOCK = "ADMIN_WITHOUT_TIMELOCK",
+  ADMIN_WITHOUT_TIMELOCK = "ADMIN_WITHOUT_TIMELOCK"
 }
 
 export type ERC4626Strategy = {

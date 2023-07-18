@@ -12,7 +12,7 @@ export const deployAlgebraPriceOracle = async ({
   getNamedAccounts,
   deployments,
   deployConfig,
-  concentratedLiquidityOracleTokens,
+  concentratedLiquidityOracleTokens
 }: ConcentratedLiquidityDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
@@ -26,12 +26,12 @@ export const deployAlgebraPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, [deployConfig.stableToken]],
-        },
+          args: [deployConfig.wtoken, [deployConfig.stableToken]]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
 
   if (apo.transactionHash) await ethers.provider.waitForTransaction(apo.transactionHash);
@@ -50,7 +50,7 @@ export const deployUniswapV3Oracle = async ({
   getNamedAccounts,
   deployments,
   deployConfig,
-  concentratedLiquidityOracleTokens,
+  concentratedLiquidityOracleTokens
 }: ConcentratedLiquidityDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
@@ -64,12 +64,12 @@ export const deployUniswapV3Oracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, [deployConfig.stableToken]],
-        },
+          args: [deployConfig.wtoken, [deployConfig.stableToken]]
+        }
       },
       owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy",
-    },
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
   });
 
   if (utpo.transactionHash) await ethers.provider.waitForTransaction(utpo.transactionHash);
@@ -130,7 +130,7 @@ async function configureOracle(
       return {
         poolAddress: assetConfig.poolAddress,
         twapWindow: assetConfig.twapWindow,
-        baseToken: assetConfig.baseToken,
+        baseToken: assetConfig.baseToken
       };
     });
     const tx = await oracle.setPoolFeeds(underlyings, feedConfigs);

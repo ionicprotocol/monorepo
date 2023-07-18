@@ -30,12 +30,12 @@ export const TotalSupply = ({ vault }: { vault: VaultData }) => {
   return (
     <BalanceCell
       primary={{
-        value: usdBalance,
+        value: usdBalance
       }}
       secondary={{
         decimals: vault.decimals,
         symbol: tokenData?.symbol || '',
-        value: vault.totalSupply,
+        value: vault.totalSupply
       }}
     />
   );

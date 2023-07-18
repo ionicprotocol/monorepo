@@ -12,7 +12,7 @@ const querySchema = yup.object().shape({
   underlyingAddress: yup
     .string()
     .matches(VALID_ADDRESS_REGEX, 'Not a valid underlying address')
-    .required(),
+    .required()
 });
 type Query = yup.InferType<typeof querySchema>;
 

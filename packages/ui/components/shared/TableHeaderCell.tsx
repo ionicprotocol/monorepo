@@ -8,7 +8,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 export const TableHeaderCell = ({
   context,
   children,
-  description,
+  description
 }: {
   children: ReactNode;
   /* eslint-disable  @typescript-eslint/no-explicit-any */

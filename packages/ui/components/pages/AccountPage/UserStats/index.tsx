@@ -17,7 +17,7 @@ export const UserStats = ({
   totalSupplyBalanceNative,
   totalSupplyBalanceFiat,
   totalBorrowBalanceNative,
-  totalBorrowBalanceFiat,
+  totalBorrowBalanceFiat
 }: {
   assets: FundedAsset[];
   borrowApyPerAsset: { [market: string]: number };
@@ -85,7 +85,7 @@ export const UserStats = ({
                 netSuppliedNum,
             supplied: smallFormatter(suppliedNum),
             symbol: asset.underlyingSymbol,
-            underlying: asset.underlyingToken,
+            underlying: asset.underlyingToken
           });
         }
       });
@@ -94,7 +94,7 @@ export const UserStats = ({
         estimatedPerAsset: _estimatedPerAsset,
         estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
-        totalSupplied: totalSupplyBalanceFiat,
+        totalSupplied: totalSupplyBalanceFiat
       };
     }
 
@@ -130,7 +130,7 @@ export const UserStats = ({
             chainId: Number(asset.chainId),
             estimated: borrowApyPerAsset[asset.cToken] * borrowedNum,
             symbol: asset.underlyingSymbol,
-            underlying: asset.underlyingToken,
+            underlying: asset.underlyingToken
           });
         }
       });
@@ -141,7 +141,7 @@ export const UserStats = ({
         estimatedPerAsset: _estimatedPerAsset,
         estimatedUsd: _estimatedUsd,
         totalApy: _totalApy * 100,
-        totalBorrowed: totalBorrowBalanceFiat,
+        totalBorrowed: totalBorrowBalanceFiat
       };
     }
 

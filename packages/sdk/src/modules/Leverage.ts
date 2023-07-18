@@ -29,12 +29,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
               symbols: collateralsymbols,
               ratesPerBlock: supplyRatePerBlock,
               underlyingPrices: collateralUnderlyingPrices,
-              poolOfMarket,
+              poolOfMarket
             },
-            positions,
+            positions
           ] = await Promise.all([
             leveredPositionLens.callStatic.getCollateralMarkets(),
-            this.getPositionsByAccount(account),
+            this.getPositionsByAccount(account)
           ]);
 
           const rewards = await ionicFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
@@ -50,7 +50,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                 symbols: borrowableSymbols,
                 rates: borrowableRates,
                 decimals: borrowableDecimals,
-                underlyingsPrices: borrowableUnderlyingPrices,
+                underlyingsPrices: borrowableUnderlyingPrices
               } = await leveredPositionLens.callStatic.getBorrowableMarketsAndRates(collateralCToken);
 
               // get rewards
@@ -76,11 +76,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                       ? borrowableAsset.originalSymbol
                       : borrowableAsset.symbol
                     : borrowableSymbols[i],
-                  rate: borrowableRates[i],
+                  rate: borrowableRates[i]
                 };
 
                 leveredBorrowable.push({
-                  ...borrowable,
+                  ...borrowable
                 });
 
                 if (position) {
@@ -102,11 +102,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                       reward,
                       pool: poolOfMarket[index],
                       plugin: this.marketToPlugin[collateralCToken],
-                      underlyingPrice: collateralUnderlyingPrices[index],
+                      underlyingPrice: collateralUnderlyingPrices[index]
                     },
                     borrowable,
                     address: position.position,
-                    isClosed: position.isClosed,
+                    isClosed: position.isClosed
                   });
                 }
               });
@@ -129,9 +129,9 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   reward,
                   pool: poolOfMarket[index],
                   plugin: this.marketToPlugin[collateralCToken],
-                  underlyingPrice: collateralUnderlyingPrices[index],
+                  underlyingPrice: collateralUnderlyingPrices[index]
                 },
-                borrowable: leveredBorrowable,
+                borrowable: leveredBorrowable
               });
             })
           );
@@ -159,7 +159,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           const state = states[index];
           const [collateralMarket, borrowMarket] = await Promise.all([
             positionContract.callStatic.collateralMarket(),
-            positionContract.callStatic.stableMarket(),
+            positionContract.callStatic.stableMarket()
           ]);
 
           return { collateralMarket, borrowMarket, position, isClosed: state };
@@ -242,7 +242,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
 
       return await Promise.all([
         leveredPosition.callStatic.getMinLeverageRatio(),
-        leveredPosition.callStatic.getMaxLeverageRatio(),
+        leveredPosition.callStatic.getMaxLeverageRatio()
       ]);
     }
 

@@ -3,7 +3,7 @@ import {
   Stat as ChakraStat,
   StatLabel as ChakraStatLabel,
   StatNumber as ChakraStatNumber,
-  Skeleton,
+  Skeleton
 } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';

@@ -6,7 +6,7 @@ const oracles: OracleTypes[] = [
   ...baseOracles,
   OracleTypes.ChainlinkPriceOracleV2,
   OracleTypes.ERC4626Oracle,
-  OracleTypes.WSTEthPriceOracle,
+  OracleTypes.WSTEthPriceOracle
 ];
 
 export default oracles;

@@ -28,7 +28,7 @@ const EditPoolPage = memo(() => {
   const {
     isOpen: isAddAssetModalOpen,
     onOpen: openAddAssetModal,
-    onClose: closeAddAssetModal,
+    onClose: closeAddAssetModal
   } = useDisclosure();
 
   const { setGlobalLoading } = useMultiIonic();
@@ -108,8 +108,8 @@ const EditPoolPage = memo(() => {
                 alertProps={{ mt: 2, status: isAdmin ? 'info' : 'warning' }}
                 descriptions={[
                   {
-                    text: `You are ${isAdmin ? '' : 'not'} the admin of this Pool!`,
-                  },
+                    text: `You are ${isAdmin ? '' : 'not'} the admin of this Pool!`
+                  }
                 ]}
               />
             )}

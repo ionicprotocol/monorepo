@@ -41,7 +41,7 @@ const FusePageLayout = ({ children }: FusePageLayoutProps) => {
           p={{ base: 4, md: 8 }}
           width={{
             base: '100%',
-            md: isSidebarCollapsed ? 'calc(100% - 86px)' : 'calc(100% - 240px)',
+            md: isSidebarCollapsed ? 'calc(100% - 86px)' : 'calc(100% - 240px)'
           }}
         >
           {children}

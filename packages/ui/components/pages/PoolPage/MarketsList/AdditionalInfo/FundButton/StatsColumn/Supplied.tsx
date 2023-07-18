@@ -6,7 +6,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export const Supplied = ({
   asset,
   current: supplyBalanceFrom,
-  new: supplyBalanceTo,
+  new: supplyBalanceTo
 }: {
   asset: MarketData;
   current: string;

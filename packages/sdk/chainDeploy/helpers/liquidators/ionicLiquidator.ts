@@ -7,14 +7,14 @@ import {
   AddressesProviderConfigFnParams,
   BalancerSwapTokenLiquidatorData,
   LiquidatorConfigFnParams,
-  LiquidatorDeployFnParams,
+  LiquidatorDeployFnParams
 } from "../types";
 
 export const deployIonicLiquidator = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  deployConfig,
+  deployConfig
 }: LiquidatorDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const fsl = await deployments.deploy("IonicLiquidator", {
@@ -24,16 +24,16 @@ export const deployIonicLiquidator = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV2RouterAddress, deployConfig.uniswap.flashSwapFee],
+          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV2RouterAddress, deployConfig.uniswap.flashSwapFee]
         },
         onUpgrade: {
           methodName: "_becomeImplementation",
-          args: [new ethers.utils.AbiCoder().encode(["uint8"], [deployConfig.uniswap.flashSwapFee])],
-        },
+          args: [new ethers.utils.AbiCoder().encode(["uint8"], [deployConfig.uniswap.flashSwapFee])]
+        }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer,
-    },
+      owner: deployer
+    }
   });
   if (fsl.transactionHash) await ethers.provider.waitForTransaction(fsl.transactionHash);
   console.log("IonicLiquidator: ", fsl.address);
@@ -46,7 +46,7 @@ export const deployIonicLiquidator = async ({
 export const configureIonicLiquidator = async ({
   ethers,
   getNamedAccounts,
-  chainId,
+  chainId
 }: LiquidatorConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -93,7 +93,7 @@ export const configureAddressesProviderAddresses = async ({
   ethers,
   getNamedAccounts,
   chainId,
-  deployConfig,
+  deployConfig
 }: AddressesProviderConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const chainConfig = chainIdToConfig[chainId];

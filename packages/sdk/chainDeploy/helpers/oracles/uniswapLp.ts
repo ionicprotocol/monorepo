@@ -9,14 +9,14 @@ export const deployUniswapLpOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  deployConfig,
+  deployConfig
 }: UniswapDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const lpTokenPriceOralce = await deployments.deploy("UniswapLpTokenPriceOracle", {
     from: deployer,
     args: [deployConfig.wtoken],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("UniswapLpTokenPriceOracle: ", lpTokenPriceOralce.address);
 

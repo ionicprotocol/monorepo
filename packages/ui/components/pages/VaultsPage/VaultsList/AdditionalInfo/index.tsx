@@ -11,7 +11,7 @@ import {
   Spinner,
   Stack,
   Text,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import type { Adapter, VaultData } from '@ionicprotocol/types';
 import { FundOperationMode } from '@ionicprotocol/types';
@@ -42,7 +42,7 @@ import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 import { FundButton } from 'ui/components/pages/VaultsPage/VaultsList/AdditionalInfo/FundButton/index';
 
 const VaultChart = dynamic(() => import('@ui/components/shared/VaultChart'), {
-  ssr: false,
+  ssr: false
 });
 
 export interface ComptrollerToPool {
@@ -70,7 +70,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   const { allPools } = useCrossFusePools([...enabledChains]);
   const { data: vaultApyInfo } = useVaultApyInfo(vault.vault, Number(vault.chainId));
   const { data: claimableRewardsForVaults, refetch } = useClaimableRewardsForVaults([
-    ...enabledChains,
+    ...enabledChains
   ]);
 
   const reward = useMemo(() => {
@@ -109,11 +109,14 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
   };
 
   const comptrollerToPool = useMemo(() => {
-    const adapters = vault.adapters.reduce((res, adapter) => {
-      res[adapter.pool] = adapter;
+    const adapters = vault.adapters.reduce(
+      (res, adapter) => {
+        res[adapter.pool] = adapter;
 
-      return res;
-    }, {} as { [comp: string]: Adapter });
+        return res;
+      },
+      {} as { [comp: string]: Adapter }
+    );
 
     const _comptrollerToPool: ComptrollerToPool = {};
     allPools.map((pool) => {
@@ -122,7 +125,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
           allocation: Number(utils.formatUnits(adapters[pool.comptroller].allocation)),
           chainId: Number(vault.chainId),
           poolId: pool.id,
-          poolName: pool.name,
+          poolName: pool.name
         };
       }
     });
@@ -166,7 +169,7 @@ export const AdditionalInfo = ({ row }: { row: Row<VaultRowData> }) => {
         mt={4}
         templateColumns={{
           base: 'repeat(1, 1fr)',
-          lg: 'repeat(2, 1fr)',
+          lg: 'repeat(2, 1fr)'
         }}
         w="100%"
       >

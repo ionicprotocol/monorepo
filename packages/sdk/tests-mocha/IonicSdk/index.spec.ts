@@ -23,12 +23,12 @@ describe("Fuse Index", () => {
       value: {
         getActivePools: stub().resolves([
           [0, 1],
-          ["0", "1"],
-        ]),
-      },
+          ["0", "1"]
+        ])
+      }
     });
     mockContract.deployPool = stub().resolves({
-      wait: () => Promise.resolve(mockReceipt),
+      wait: () => Promise.resolve(mockReceipt)
     });
 
     const mockSigner = createStubInstance(Signer);
@@ -47,7 +47,7 @@ describe("Fuse Index", () => {
       PoolLens: { abi: [], address: mkAddress("0xbcc") },
       PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
       IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
-      JumpRateModel: { abi: [], address: mkAddress("0xaac") },
+      JumpRateModel: { abi: [], address: mkAddress("0xaac") }
     };
     fuseBase = new IonicBase(mockProvider, ganache);
     fuseBase.contracts = { PoolDirectory: mockContract as unknown as PoolDirectory };
@@ -170,8 +170,8 @@ describe("Fuse Index", () => {
     it("should be rejected with Error when interestRateModel is null", async () => {
       Object.defineProperty(mockAssetContract, "callStatic", {
         value: {
-          interestRateModel: () => Promise.resolve(mkAddress("0xabc")),
-        },
+          interestRateModel: () => Promise.resolve(mkAddress("0xabc"))
+        }
       });
       getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
       model = fuseBase.getInterestRateModel(mkAddress("0xabc"));
@@ -184,8 +184,8 @@ describe("Fuse Index", () => {
       const interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
       Object.defineProperty(mockAssetContract, "callStatic", {
         value: {
-          interestRateModel: () => Promise.resolve(interestRateModelAddress),
-        },
+          interestRateModel: () => Promise.resolve(interestRateModelAddress)
+        }
       });
       getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
       model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));

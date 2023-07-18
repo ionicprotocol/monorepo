@@ -12,7 +12,7 @@ export const Collateral = ({
   asset,
   assets,
   comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   asset: MarketData;
   assets: MarketData[];

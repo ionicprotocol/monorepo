@@ -18,7 +18,7 @@ export const BorrowBalance = ({ pool }: { pool: PoolData }) => {
       ) : (
         <BalanceCell
           primary={{
-            value: pool.totalBorrowBalanceFiat,
+            value: pool.totalBorrowBalanceFiat
           }}
         />
       )}

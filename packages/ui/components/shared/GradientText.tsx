@@ -23,7 +23,7 @@ export const GradientText = ({
               background: gradientBackground,
               // eslint-disable-next-line sort-keys/sort-keys-fix
               WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              WebkitTextFillColor: 'transparent'
             }
           : {}
       }
@@ -33,7 +33,7 @@ export const GradientText = ({
               background: gradientBackground[0],
               // eslint-disable-next-line sort-keys/sort-keys-fix
               WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              WebkitTextFillColor: 'transparent'
             }
           : {}
       }
@@ -41,7 +41,7 @@ export const GradientText = ({
         duration: 3,
         ease: 'linear',
         repeat: Infinity,
-        repeatType: 'loop',
+        repeatType: 'loop'
       }}
       {...props}
     >

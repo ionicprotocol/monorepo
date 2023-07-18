@@ -11,7 +11,7 @@ import { useColors } from '@ui/hooks/useColors';
 
 const ClaimPoolRewardsButton = ({
   poolAddress,
-  poolChainId,
+  poolChainId
 }: {
   poolAddress: string;
   poolChainId: number;
@@ -19,7 +19,7 @@ const ClaimPoolRewardsButton = ({
   const {
     isOpen: isClaimModalOpen,
     onOpen: openClaimModal,
-    onClose: closeClaimModal,
+    onClose: closeClaimModal
   } = useDisclosure();
   const { cPage } = useColors();
   const { currentChain } = useMultiIonic();
@@ -28,7 +28,7 @@ const ClaimPoolRewardsButton = ({
     data: claimableRewards,
     refetch: refetchRewards,
     isLoading,
-    isRefetching,
+    isRefetching
   } = usePoolClaimableRewards(poolAddress, poolChainId);
 
   return (

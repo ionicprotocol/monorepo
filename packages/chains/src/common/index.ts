@@ -20,5 +20,5 @@ export {
   thenaDocs,
   thenaDocsV2,
   wombatDocs,
-  sommFinanceMainnetDocs,
+  sommFinanceMainnetDocs
 } from "./docs";

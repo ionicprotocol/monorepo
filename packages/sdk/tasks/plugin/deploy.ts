@@ -30,12 +30,12 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
         execute: {
           init: {
             methodName: "initialize",
-            args: deployArgs,
-          },
+            args: deployArgs
+          }
         },
-        owner: signer.address,
+        owner: signer.address
       },
-      log: true,
+      log: true
     });
 
     if (deployment.transactionHash) await ethers.provider.waitForTransaction(deployment.transactionHash);

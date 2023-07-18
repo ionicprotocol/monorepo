@@ -51,7 +51,7 @@ export const BorrowModal = ({
   onClose,
   poolChainId,
   borrowBalanceFiat,
-  comptrollerAddress,
+  comptrollerAddress
 }: BorrowModalProps) => {
   const { currentSdk, address, currentChain } = useMultiIonic();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
@@ -91,7 +91,7 @@ export const BorrowModal = ({
   const { data: borrowCaps } = useBorrowCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,
-    market: asset,
+    market: asset
   });
   const { data: maxBorrowAmount } = useMaxBorrowAmount(asset, comptrollerAddress, poolChainId);
 
@@ -133,7 +133,7 @@ export const BorrowModal = ({
 
   const {
     data: { minBorrowAsset, minBorrowUSD },
-    isLoading,
+    isLoading
   } = useBorrowMinimum(asset, poolChainId);
 
   useEffect(() => {
@@ -180,11 +180,11 @@ export const BorrowModal = ({
         const tx = resp.tx;
         addRecentTransaction({
           description: `${asset.underlyingSymbol} Token Borrow`,
-          hash: tx.hash,
+          hash: tx.hash
         });
         _steps[0] = {
           ..._steps[0],
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setSteps([..._steps]);
 
@@ -200,12 +200,12 @@ export const BorrowModal = ({
         _steps[0] = {
           ..._steps[0],
           done: true,
-          txHash: tx.hash,
+          txHash: tx.hash
         };
         setSteps([..._steps]);
         successToast({
           description: 'Successfully borrowed!',
-          id: 'Borrowed - ' + Math.random().toString(),
+          id: 'Borrowed - ' + Math.random().toString()
         });
       }
     } catch (error) {
@@ -214,11 +214,11 @@ export const BorrowModal = ({
         amount,
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken,
+        token: asset.cToken
       };
       const sentryInfo = {
         contextName: 'Borrowing',
-        properties: sentryProperties,
+        properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
     } finally {
@@ -343,11 +343,11 @@ export const BorrowModal = ({
                         text: `${smallFormatter(borrowCaps.tokenCap)} ${
                           asset.underlyingSymbol
                         } / ${smallFormatter(borrowCaps.tokenCap)} ${asset.underlyingSymbol}`,
-                        textProps: { display: 'block', fontWeight: 'bold' },
+                        textProps: { display: 'block', fontWeight: 'bold' }
                       },
                       {
-                        text: 'The maximum borrow of assets for this asset has been reached. Once assets are repaid or the limit is increased you can again borrow from this market.',
-                      },
+                        text: 'The maximum borrow of assets for this asset has been reached. Once assets are repaid or the limit is increased you can again borrow from this market.'
+                      }
                     ]}
                   />
                 )}
