@@ -12,6 +12,7 @@ import { LinkStyleConfig } from '@ui/theme/components/Link';
 import { MenuStyleConfig } from '@ui/theme/components/Menu';
 import { ModalStyleConfig } from '@ui/theme/components/Modal';
 import { PopoverStyleConfig } from '@ui/theme/components/Popover';
+import { ProgressStyleConfig } from '@ui/theme/components/Progress';
 import { SelectConfigStyle } from '@ui/theme/components/Select';
 import { SliderConfigStyle } from '@ui/theme/components/Slider';
 import { StatStyleConfig } from '@ui/theme/components/Stat';
@@ -134,6 +135,7 @@ export const theme = extendTheme({
     Modal: ModalStyleConfig,
     NumberInput: InputConfigStyle,
     Popover: PopoverStyleConfig,
+    Progress: ProgressStyleConfig,
     Select: SelectConfigStyle,
     Slider: SliderConfigStyle,
     Stat: StatStyleConfig,

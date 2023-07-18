@@ -7,8 +7,8 @@ import {
   APY,
   MILLI_SECONDS_PER_DAY,
   MILLI_SECONDS_PER_MONTH,
-  MILLI_SECONDS_PER_WEEK,
   MILLI_SECONDS_PER_YEAR,
+  MILLI_SECONDS_SIX_MONTH,
   PRICE,
   TVL
 } from '@ui/constants/index';
@@ -21,9 +21,8 @@ const HistoryChart = dynamic(() => import('@ui/components/shared/HistoryChart'),
 });
 
 export const TimeFrames = [
-  { label: '1D', milliSeconds: MILLI_SECONDS_PER_DAY },
-  { label: '1W', milliSeconds: MILLI_SECONDS_PER_WEEK },
   { label: '1M', milliSeconds: MILLI_SECONDS_PER_MONTH },
+  { label: '6M', milliSeconds: MILLI_SECONDS_SIX_MONTH },
   { label: '1Y', milliSeconds: MILLI_SECONDS_PER_YEAR }
 ];
 
