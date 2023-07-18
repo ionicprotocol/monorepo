@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@ionicprotocol/types";
 
-import deployments from "../../deployments/neondevnet.json";
+import deployments from "../../deployments/neon.json";
 
 import chainAddresses from "./addresses";
 import assets from "./assets";
@@ -13,7 +13,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.neon_devnet,
+  chainId: SupportedChains.neon,
   chainAddresses,
   assets,
   irms,

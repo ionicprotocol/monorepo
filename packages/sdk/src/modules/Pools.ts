@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, ethereum, ganache, lineagoerli, neondevnet, polygon } from "@ionicprotocol/chains";
+import { arbitrum, bsc, chapel, ethereum, ganache, lineagoerli, neon, polygon } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   FusePoolData,
@@ -25,7 +25,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: ganache.assets,
   [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.neon_devnet]: neondevnet.assets,
+  [SupportedChains.neon]: neon.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.lineagoerli]: lineagoerli.assets,
   [SupportedChains.ethereum]: ethereum.assets,

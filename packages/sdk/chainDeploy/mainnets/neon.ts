@@ -1,10 +1,10 @@
-import { neondevnet } from "@ionicprotocol/chains";
+import { neon } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { ChainDeployConfig } from "../helpers";
 
-const assets = neondevnet.assets;
+const assets = neon.assets;
 const BN = ethers.utils.parseEther("1");
 const NEON_FIXED_PRICE_USD_BN = BN.mul(86).div(100);
 
@@ -14,7 +14,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenName: "Neon (Testnet)",
   nativeTokenSymbol: "NEON",
   stableToken: underlying(assets, assetSymbols.USDC),
-  blocksPerYear: neondevnet.specificParams.blocksPerYear.toNumber(),
+  blocksPerYear: neon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [],
@@ -25,7 +25,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleInitialDeployTokens: [],
     flashSwapFee: 30,
   },
-  cgId: neondevnet.specificParams.cgId,
+  cgId: neon.specificParams.cgId,
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise<void> => {
