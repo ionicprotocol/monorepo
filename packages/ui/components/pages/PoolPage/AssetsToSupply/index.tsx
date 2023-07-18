@@ -15,6 +15,7 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import type {
   ColumnDef,
   FilterFn,
@@ -142,7 +143,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
     [totalSupplyApyPerAsset, balancePerAsset]
   );
 
-  const tableData = useAssetsToSupplyData(poolData?.assets);
+  const data = useAssetsToSupplyData(poolData?.assets);
 
   const columns: ColumnDef<AssetToSupplyRowData>[] = useMemo(() => {
     return [
@@ -210,7 +211,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
 
   const table = useReactTable({
     columns,
-    data: tableData,
+    data,
     enableSortingRemoval: false,
     getColumnCanGlobalFilter: () => true,
     getCoreRowModel: getCoreRowModel(),
@@ -226,6 +227,16 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
       pagination,
       sorting
     }
+  });
+
+  const { data: tableData } = useQuery(['AssetsToSupplyTableData', table], () => {
+    return {
+      canNextPage: table.getCanNextPage(),
+      canPreviousPage: table.getCanPreviousPage(),
+      filteredRows: table.getFilteredRowModel().rows,
+      headerGroups: table.getHeaderGroups(),
+      rows: table.getRowModel().rows
+    };
   });
 
   const { cCard, cIPage, cIRow } = useColors();
@@ -287,15 +298,15 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
           </HStack>
         </Flex>
       </Flex>
-      {tableData.length === 0 ? (
+      {data.length === 0 ? (
         <Flex>
           <Text color={'iGray'}>No assets to supply</Text>
         </Flex>
-      ) : (
+      ) : tableData ? (
         <>
           <Table style={{ borderCollapse: 'separate', borderSpacing: '0 16px' }}>
             <Thead>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {tableData.headerGroups.map((headerGroup) => (
                 <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
@@ -317,8 +328,8 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
               ))}
             </Thead>
             <Tbody>
-              {table.getRowModel().rows && table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
+              {tableData.rows && tableData.rows.length > 0 ? (
+                tableData.rows.map((row) => (
                   <Fragment key={row.id}>
                     <Tr
                       _hover={{ bg: cIRow.bgColor }}
@@ -350,13 +361,13 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
                 ))
               ) : poolData.assets.length === 0 ? (
                 <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                  <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
                     <Center py={8}>There are no assets to supply.</Center>
                   </Td>
                 </Tr>
               ) : (
                 <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                  <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
                     <Center py={8}>There are no search results</Center>
                   </Td>
                 </Tr>
@@ -392,21 +403,20 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
             </HStack>
             <HStack gap={2}>
               <Text size="md">
-                {table.getFilteredRowModel().rows.length === 0
+                {tableData.filteredRows.length === 0
                   ? 0
                   : pagination.pageIndex * pagination.pageSize + 1}{' '}
                 -{' '}
-                {(pagination.pageIndex + 1) * pagination.pageSize >
-                table.getFilteredRowModel().rows.length
-                  ? table.getFilteredRowModel().rows.length
+                {(pagination.pageIndex + 1) * pagination.pageSize > tableData.filteredRows.length
+                  ? tableData.filteredRows.length
                   : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-                of {table.getFilteredRowModel().rows.length}
+                of {tableData.filteredRows.length}
               </Text>
               <HStack>
                 <CIconButton
                   aria-label="toPrevious"
                   icon={<ChevronLeftIcon fontSize={30} />}
-                  isDisabled={!table.getCanPreviousPage()}
+                  isDisabled={!tableData.canPreviousPage}
                   isRound
                   onClick={() => table.previousPage()}
                   variant="_outline"
@@ -414,7 +424,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
                 <CIconButton
                   aria-label="toNext"
                   icon={<ChevronRightIcon fontSize={30} />}
-                  isDisabled={!table.getCanNextPage()}
+                  isDisabled={!tableData.canNextPage}
                   isRound
                   onClick={() => table.nextPage()}
                   variant="_outline"
@@ -423,7 +433,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
             </HStack>
           </Flex>
         </>
-      )}
+      ) : null}
     </Flex>
   );
 };

@@ -50,7 +50,7 @@ export function useTokenBalance(tokenAddress?: string, chainId?: number, customA
     {
       cacheTime: 0,
       enabled: !!tokenAddress && !!addressToCheck && !!sdk,
-      staleTime: 0,
+      staleTime: 0
     }
   );
 }
@@ -85,7 +85,7 @@ export function useTokensBalance(
       return tokenToBalanceMap;
     },
     {
-      enabled: !!tokenAddresses && tokenAddresses.length > 0 && !!addressToCheck && !!sdk,
+      enabled: !!tokenAddresses && tokenAddresses.length > 0 && !!addressToCheck && !!sdk
     }
   );
 }

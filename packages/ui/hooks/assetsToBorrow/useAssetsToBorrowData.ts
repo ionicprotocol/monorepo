@@ -18,7 +18,7 @@ export const useAssetsToBorrowData = (assets?: MarketData[]) => {
             aprStable: asset,
             aprVariable: asset,
             asset: asset,
-            available: asset,
+            available: asset
           });
         });
       }
@@ -26,7 +26,7 @@ export const useAssetsToBorrowData = (assets?: MarketData[]) => {
       return res;
     },
     {
-      enabled: !!assets && assets.length > 0,
+      enabled: !!assets && assets.length > 0
     }
   );
 

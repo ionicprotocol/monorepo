@@ -22,7 +22,7 @@ export function useSwapTokens(outputToken: string, chainId: number) {
           return tokens.map((token) => {
             return {
               ...token,
-              underlyingDecimals: BigNumber.from(token.underlyingDecimals),
+              underlyingDecimals: BigNumber.from(token.underlyingDecimals)
             };
           });
         } catch (e) {
@@ -35,7 +35,7 @@ export function useSwapTokens(outputToken: string, chainId: number) {
       }
     },
     {
-      enabled: !!outputToken && !!sdk,
+      enabled: !!outputToken && !!sdk
     }
   );
 }

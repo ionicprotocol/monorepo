@@ -9,6 +9,8 @@ const useSuccessToast = (options?: UseToastOptions) => {
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
+        p: '4px',
+        wordBreak: 'break-word'
       },
       duration: 5000,
       id: 'success',
@@ -17,7 +19,7 @@ const useSuccessToast = (options?: UseToastOptions) => {
       status: 'success',
       title: 'Success!',
       variant: 'success',
-      ..._options,
+      ..._options
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);
@@ -30,6 +32,8 @@ const useErrorToast = (options?: UseToastOptions) => {
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
+        p: '4px',
+        wordBreak: 'break-word'
       },
       duration: 10000,
       id: 'error',
@@ -38,7 +42,7 @@ const useErrorToast = (options?: UseToastOptions) => {
       status: 'error',
       title: 'Error!',
       variant: 'error',
-      ..._options,
+      ..._options
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);
@@ -51,6 +55,8 @@ const useWarningToast = (options?: UseToastOptions) => {
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
+        p: '4px',
+        wordBreak: 'break-word'
       },
       duration: 10000,
       id: 'warning',
@@ -59,7 +65,7 @@ const useWarningToast = (options?: UseToastOptions) => {
       status: 'warning',
       title: 'Warning!',
       variant: 'warning',
-      ..._options,
+      ..._options
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);
@@ -72,6 +78,8 @@ const useInfoToast = (options?: UseToastOptions) => {
       containerStyle: {
         maxHeight: '400px',
         overflowY: 'auto',
+        p: '4px',
+        wordBreak: 'break-word'
       },
       duration: 5000,
       id: 'info',
@@ -80,7 +88,7 @@ const useInfoToast = (options?: UseToastOptions) => {
       status: 'info',
       title: 'Info!',
       variant: 'info',
-      ..._options,
+      ..._options
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);

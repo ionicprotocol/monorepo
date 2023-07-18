@@ -7,7 +7,7 @@ import { constants, utils } from 'ethers';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import {
   useBorrowCapsDataForAsset,
-  useBorrowCapsForAssets,
+  useBorrowCapsForAssets
 } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
@@ -38,7 +38,7 @@ export const fetchMaxBorrowAmount = async (
       const comptroller = sdk.createComptroller(comptrollerAddress);
       const [borrowCap, isWhitelisted] = await Promise.all([
         comptroller.callStatic.borrowCaps(cToken),
-        comptroller.callStatic.isBorrowCapWhitelisted(cToken, address),
+        comptroller.callStatic.isBorrowCapWhitelisted(cToken, address)
       ]);
 
       let bigNumber: BigNumber;
@@ -58,7 +58,7 @@ export const fetchMaxBorrowAmount = async (
 
       cTokenToMaxBorrowAmount[cToken] = {
         bigNumber,
-        number: Number(utils.formatUnits(bigNumber, underlyingDecimals[index])),
+        number: Number(utils.formatUnits(bigNumber, underlyingDecimals[index]))
       };
     })
   );
@@ -83,7 +83,7 @@ export function useMaxBorrowAmount(
       asset.underlyingDecimals,
       sdk?.chainId,
       address,
-      borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+      borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
     ],
     async () => {
       if (sdk && address && borrowCapsDataForAsset?.nonWhitelistedTotalBorrows) {
@@ -117,7 +117,7 @@ export function useMaxBorrowAmount(
         !!asset &&
         !!sdk &&
         !!comptrollerAddress &&
-        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
     }
   );
 }
@@ -145,7 +145,7 @@ export function useMaxBorrowAmounts(
         ? Object.entries(borrowCapsForAssets)
             .map(([key, value]) => key + value.nonWhitelistedTotalBorrows)
             .sort()
-        : null,
+        : null
     ],
     async () => {
       if (sdk && address && assets && assets.length > 0 && borrowCapsForAssets) {
@@ -171,7 +171,7 @@ export function useMaxBorrowAmounts(
         Object.values(borrowCapsForAssets).reduce(
           (res, cap) => res && !!cap.nonWhitelistedTotalBorrows,
           true
-        ),
+        )
     }
   );
 }

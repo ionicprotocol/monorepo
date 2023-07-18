@@ -8,7 +8,7 @@ export const useAddTokenToWallet = ({
   underlyingDecimals,
   logoUrl,
   errorToast,
-  successToast,
+  successToast
 }: {
   errorToast: (options?: UseToastOptions | undefined) => ToastId;
   logoUrl?: string;
@@ -24,7 +24,7 @@ export const useAddTokenToWallet = ({
       errorToast({
         description: 'Wallet could not be found!',
         id: 'Wallet not found - ' + Math.random().toString(),
-        title: 'Error',
+        title: 'Error'
       });
 
       return false;
@@ -38,9 +38,9 @@ export const useAddTokenToWallet = ({
             address: underlyingAddress,
             decimals: underlyingDecimals,
             image: logoUrl,
-            symbol: underlyingSymbol,
+            symbol: underlyingSymbol
           },
-          type: 'ERC20',
+          type: 'ERC20'
         } as {
           options: {
             address: Address;
@@ -49,14 +49,14 @@ export const useAddTokenToWallet = ({
             symbol: string;
           };
           type: 'ERC20';
-        },
+        }
       });
 
       if (added) {
         successToast({
           description: 'Token is successfully added to wallet',
           id: 'Added token - ' + Math.random().toString(),
-          title: 'Added',
+          title: 'Added'
         });
       }
 

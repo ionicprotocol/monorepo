@@ -15,6 +15,7 @@ import {
   Tr,
   VStack
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import type {
   ColumnDef,
   FilterFn,
@@ -205,7 +206,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
     [totalSupplyApyPerAsset]
   );
 
-  const tableData = useYourSuppliesRowData(assets);
+  const data = useYourSuppliesRowData(assets);
 
   const columns: ColumnDef<YourSupplyRowData>[] = useMemo(() => {
     return [
@@ -273,7 +274,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
 
   const table = useReactTable({
     columns,
-    data: tableData,
+    data,
     enableSortingRemoval: false,
     getColumnCanGlobalFilter: () => true,
     getCoreRowModel: getCoreRowModel(),
@@ -289,6 +290,16 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
       pagination,
       sorting
     }
+  });
+
+  const { data: tableData } = useQuery(['YourSuppliesTableData', table], () => {
+    return {
+      canNextPage: table.getCanNextPage(),
+      canPreviousPage: table.getCanPreviousPage(),
+      filteredRows: table.getFilteredRowModel().rows,
+      headerGroups: table.getHeaderGroups(),
+      rows: table.getRowModel().rows
+    };
   });
 
   const { cCard, cIPage, cIRow } = useColors();
@@ -411,136 +422,141 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
           <Center>
             <Divider bg={cIPage.dividerColor} orientation="horizontal" />
           </Center>
-
-          <Table style={{ borderCollapse: 'separate', borderSpacing: '0 16px' }}>
-            <Thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <Th
-                        border="none"
-                        color={cCard.txtColor}
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        px={{ base: '16px' }}
-                        textTransform="capitalize"
-                      >
-                        <HStack justifyContent={header.id === COLLATERAL ? 'center' : 'flex-start'}>
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                        </HStack>
-                      </Th>
-                    );
-                  })}
-                </Tr>
-              ))}
-            </Thead>
-            <Tbody>
-              {table.getRowModel().rows && table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <Fragment key={row.id}>
-                    <Tr
-                      _hover={{ bg: cIRow.bgColor }}
-                      borderRadius={{ base: '20px' }}
-                      cursor="pointer"
-                      key={row.id}
-                    >
-                      {row.getVisibleCells().map((cell, index) => {
+          {tableData ? (
+            <>
+              <Table style={{ borderCollapse: 'separate', borderSpacing: '0 16px' }}>
+                <Thead>
+                  {tableData.headerGroups.map((headerGroup) => (
+                    <Tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => {
                         return (
-                          <Td
-                            background={cIRow.bgColor}
+                          <Th
                             border="none"
-                            borderLeftRadius={index === 0 ? '20px' : 0}
-                            borderRightRadius={
-                              index === row.getVisibleCells().length - 1 ? '20px' : 0
-                            }
-                            // height={16}
-                            key={cell.id}
-                            minW={10}
+                            color={cCard.txtColor}
+                            key={header.id}
+                            onClick={header.column.getToggleSortingHandler()}
                             px={{ base: '16px' }}
-                            py={{ base: '16px' }}
+                            textTransform="capitalize"
                           >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </Td>
+                            <HStack
+                              justifyContent={header.id === COLLATERAL ? 'center' : 'flex-start'}
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                            </HStack>
+                          </Th>
                         );
                       })}
                     </Tr>
-                  </Fragment>
-                ))
-              ) : assets.length === 0 ? (
-                <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>There are no assets to supply.</Center>
-                  </Td>
-                </Tr>
-              ) : (
-                <Tr>
-                  <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                    <Center py={8}>There are no search results</Center>
-                  </Td>
-                </Tr>
-              )}
-            </Tbody>
-          </Table>
-          <Flex
-            alignItems="center"
-            className="pagination"
-            gap={4}
-            justifyContent="flex-end"
-            px={3}
-            py={4}
-            width={'100%'}
-          >
-            <HStack>
-              <Hide below="lg">
-                <Text size="md">Assets Per Page</Text>
-              </Hide>
-              <Select
-                maxW="max-content"
-                onChange={(e) => {
-                  table.setPageSize(Number(e.target.value));
-                }}
-                value={pagination.pageSize}
+                  ))}
+                </Thead>
+                <Tbody>
+                  {tableData.rows && tableData.rows.length > 0 ? (
+                    tableData.rows.map((row) => (
+                      <Fragment key={row.id}>
+                        <Tr
+                          _hover={{ bg: cIRow.bgColor }}
+                          borderRadius={{ base: '20px' }}
+                          cursor="pointer"
+                          key={row.id}
+                        >
+                          {row.getVisibleCells().map((cell, index) => {
+                            return (
+                              <Td
+                                background={cIRow.bgColor}
+                                border="none"
+                                borderLeftRadius={index === 0 ? '20px' : 0}
+                                borderRightRadius={
+                                  index === row.getVisibleCells().length - 1 ? '20px' : 0
+                                }
+                                // height={16}
+                                key={cell.id}
+                                minW={10}
+                                px={{ base: '16px' }}
+                                py={{ base: '16px' }}
+                              >
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </Td>
+                            );
+                          })}
+                        </Tr>
+                      </Fragment>
+                    ))
+                  ) : assets.length === 0 ? (
+                    <Tr>
+                      <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
+                        <Center py={8}>There are no assets to supply.</Center>
+                      </Td>
+                    </Tr>
+                  ) : (
+                    <Tr>
+                      <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
+                        <Center py={8}>There are no search results</Center>
+                      </Td>
+                    </Tr>
+                  )}
+                </Tbody>
+              </Table>
+              <Flex
+                alignItems="center"
+                className="pagination"
+                gap={4}
+                justifyContent="flex-end"
+                px={3}
+                py={4}
+                width={'100%'}
               >
-                {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    {pageSize}
-                  </option>
-                ))}
-              </Select>
-            </HStack>
-            <HStack gap={2}>
-              <Text size="md">
-                {table.getFilteredRowModel().rows.length === 0
-                  ? 0
-                  : pagination.pageIndex * pagination.pageSize + 1}{' '}
-                -{' '}
-                {(pagination.pageIndex + 1) * pagination.pageSize >
-                table.getFilteredRowModel().rows.length
-                  ? table.getFilteredRowModel().rows.length
-                  : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-                of {table.getFilteredRowModel().rows.length}
-              </Text>
-              <HStack>
-                <CIconButton
-                  aria-label="toPrevious"
-                  icon={<ChevronLeftIcon fontSize={30} />}
-                  isDisabled={!table.getCanPreviousPage()}
-                  isRound
-                  onClick={() => table.previousPage()}
-                  variant="_outline"
-                />
-                <CIconButton
-                  aria-label="toNext"
-                  icon={<ChevronRightIcon fontSize={30} />}
-                  isDisabled={!table.getCanNextPage()}
-                  isRound
-                  onClick={() => table.nextPage()}
-                  variant="_outline"
-                />
-              </HStack>
-            </HStack>
-          </Flex>
+                <HStack>
+                  <Hide below="lg">
+                    <Text size="md">Assets Per Page</Text>
+                  </Hide>
+                  <Select
+                    maxW="max-content"
+                    onChange={(e) => {
+                      table.setPageSize(Number(e.target.value));
+                    }}
+                    value={pagination.pageSize}
+                  >
+                    {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
+                      <option key={pageSize} value={pageSize}>
+                        {pageSize}
+                      </option>
+                    ))}
+                  </Select>
+                </HStack>
+                <HStack gap={2}>
+                  <Text size="md">
+                    {tableData.filteredRows.length === 0
+                      ? 0
+                      : pagination.pageIndex * pagination.pageSize + 1}{' '}
+                    -{' '}
+                    {(pagination.pageIndex + 1) * pagination.pageSize >
+                    tableData.filteredRows.length
+                      ? tableData.filteredRows.length
+                      : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+                    of {tableData.filteredRows.length}
+                  </Text>
+                  <HStack>
+                    <CIconButton
+                      aria-label="toPrevious"
+                      icon={<ChevronLeftIcon fontSize={30} />}
+                      isDisabled={!tableData.canPreviousPage}
+                      isRound
+                      onClick={() => table.previousPage()}
+                      variant="_outline"
+                    />
+                    <CIconButton
+                      aria-label="toNext"
+                      icon={<ChevronRightIcon fontSize={30} />}
+                      isDisabled={!tableData.canNextPage}
+                      isRound
+                      onClick={() => table.nextPage()}
+                      variant="_outline"
+                    />
+                  </HStack>
+                </HStack>
+              </Flex>
+            </>
+          ) : null}
         </>
       )}
     </Flex>

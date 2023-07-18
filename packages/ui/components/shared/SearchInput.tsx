@@ -23,7 +23,8 @@ export const SearchInput = ({
 
   useEffect(() => {
     onSearch(debouncedText);
-  }, [debouncedText, onSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedText]);
 
   useEffect(() => {
     if (localStorageKey) {
