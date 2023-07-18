@@ -205,6 +205,8 @@ task("market:liquidate-borrow", "Liquidate a position directly at the market")
     console.log(`Liquidated ${receipt.transactionHash}`);
   });
 
+// npx hardhat liquidate-borrow:hardcoded --network neondevnet
+
 task("liquidate-borrow:hardcoded", "Liquidate a specific position at a specific market").setAction(async (taskArgs, hre) => {
   await hre.run("market:liquidate-borrow", {
     borrower: "0x351b24e425052d644EfdF7add29312a7f5864Ddf",
