@@ -159,3 +159,57 @@ task("liquidate:hardcoded", "Liquidate a position without a flash loan").setActi
   const receipt: providers.TransactionReceipt = await tx.wait();
   console.log(`Liquidated ${receipt.transactionHash}`);
 });
+
+task("market:liquidate-borrow", "Liquidate a position directly at the market")
+  .addParam(
+    "borrower",
+    "The address of the borrower whose debt will be repaid and collateral will be seized",
+    undefined,
+    types.string,
+    false
+  )
+  .addParam("repayAmount", "The amount to repay to liquidate the unhealthy loan", undefined, types.string, false)
+  .addParam("debtCerc20", "The borrowed cErc20 to repay", undefined, types.string, false)
+  .addParam("collateralCerc20", "The cToken collateral to be liquidated", undefined, types.string, false)
+  .addOptionalParam("signer", "The signer address", "deployer", types.string)
+  .setAction(async (taskArgs, hre) => {
+    let tx: providers.TransactionResponse;
+    let receipt: providers.TransactionReceipt;
+    const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
+    const repayAmount = BigNumber.from(taskArgs.repayAmount);
+
+    const debtToken = (await hre.ethers.getContractAt("CErc20", taskArgs.debtCerc20, signer)) as CErc20Delegate;
+
+    const underlyingAddress = await debtToken.callStatic.underlying();
+    const underlying = (await hre.ethers.getContractAt("ERC20", underlyingAddress, signer)) as ERC20;
+    const signerBorrowedTokenBalance = await underlying.callStatic.balanceOf(signer.address);
+
+    console.log(`Signer ${signer.address} has balance of underlying ${signerBorrowedTokenBalance}`);
+
+    let debtMarketAllowance = await underlying.callStatic.allowance(signer.address, taskArgs.debtCerc20);
+    if (debtMarketAllowance.lt(repayAmount)) {
+      console.log(`debt market has insufficient allowance of underlying from the signer, increasing to ${repayAmount}`);
+      tx = await underlying.approve(taskArgs.debtCerc20, repayAmount);
+      receipt = await tx.wait();
+      debtMarketAllowance = await underlying.callStatic.allowance(signer.address, taskArgs.debtCerc20);
+      console.log(
+        `Approved debt market ${taskArgs.debtCerc20} to spend ${debtMarketAllowance} from ${signer.address} with tx ${receipt.transactionHash}`
+      );
+    } else {
+      console.log(`debt market has allowance for the underlying ${debtMarketAllowance} to pull from ${signer.address}`);
+    }
+
+    console.log(`Liquidating...`);
+    tx = await debtToken.liquidateBorrow(taskArgs.borrower, repayAmount, taskArgs.collateralCerc20);
+    receipt = await tx.wait();
+    console.log(`Liquidated ${receipt.transactionHash}`);
+  });
+
+task("liquidate-borrow:hardcoded", "Liquidate a specific position at a specific market").setAction(async (taskArgs, hre) => {
+  await hre.run("market:liquidate-borrow", {
+    borrower: "0x351b24e425052d644EfdF7add29312a7f5864Ddf",
+    repayAmount: "290453099130387116141",
+    debtCerc20: "0x3Ca993ec15Dfa961777b276b11C8fc5B0f516eCA",
+    collateralCerc20: "0x5E1565244a49778433575E0e618161d193d64909",
+  });
+});
