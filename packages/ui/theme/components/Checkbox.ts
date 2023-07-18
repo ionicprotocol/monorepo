@@ -1,29 +1,34 @@
-import type { ComponentStyleConfig } from '@chakra-ui/theme';
+import { checkboxAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
-export const CheckboxStyleConfig: ComponentStyleConfig = {
-  baseStyle: (props) => ({
+const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(
+  checkboxAnatomy.keys
+);
+
+const baseStyle = definePartsStyle((props) => {
+  return {
     container: {},
     control: {
       _checked: {
         _hover: {
-          bg: 'iSeparator',
-          borderColor: 'iSeparator',
+          bg: mode('iGreen', 'iGreen')(props),
+          borderColor: mode('iGreen', 'iGreen')(props),
           color: mode('iWhite', 'iBlack')(props)
         },
-        bg: 'iSeparator',
-        borderColor: 'iSeparator',
+        bg: mode('iGreen', 'iGreen')(props),
+        borderColor: mode('iGreen', 'iGreen')(props),
         color: mode('iWhite', 'iBlack')(props)
       },
       _hover: {
-        bg: mode('silverMetallic30', 'iSeparator')(props),
+        bg: 'none',
         color: mode('iWhite', 'iBlack')(props)
       },
       _indeterminate: {
         bg: 'iSeparator',
         color: mode('iWhite', 'iBlack')(props)
       },
-      borderColor: 'iSeparator',
+      borderColor: mode('iBlack', 'iWhite')(props),
       boxShadow: 'none',
       outline: 'none'
     },
@@ -32,6 +37,32 @@ export const CheckboxStyleConfig: ComponentStyleConfig = {
       color: mode('iBlack', 'iWhite')(props),
       pt: '2px'
     }
-  }),
-  parts: ['icon', 'container', 'control', 'label']
+  };
+});
+
+const sizes = {
+  xl: definePartsStyle({
+    control: defineStyle({
+      boxSize: 14
+    }),
+    label: defineStyle({
+      fontSize: '2xl',
+      marginLeft: 6
+    })
+  })
 };
+
+const variants = {
+  circular: definePartsStyle({
+    control: defineStyle({
+      rounded: 'full'
+    })
+  })
+};
+
+export const CheckboxStyleConfig = defineMultiStyleConfig({
+  baseStyle,
+  defaultProps: {},
+  sizes,
+  variants
+});
