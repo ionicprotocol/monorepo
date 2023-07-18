@@ -38,7 +38,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { Asset } from '@ui/components/pages/PoolPage/AssetsToSupply/Asset';
 import { Collateral } from '@ui/components/pages/PoolPage/AssetsToSupply/Collateral';
 import { Details } from '@ui/components/pages/PoolPage/AssetsToSupply/Details';
-import { Supply } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply';
+import { Supply } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/index';
 import { SupplyApy } from '@ui/components/pages/PoolPage/AssetsToSupply/SupplyApy';
 import { WalletBalance } from '@ui/components/pages/PoolPage/AssetsToSupply/WalletBalance';
 import { CIconButton } from '@ui/components/shared/Button';
@@ -71,7 +71,7 @@ export type AssetToSupplyRowData = {
 };
 
 export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
-  const { id: poolId, chainId } = poolData;
+  const { id: poolId, chainId, comptroller, assets } = poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -82,13 +82,13 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
   const { data: allRewards } = useRewards({ chainId, poolId: poolId.toString() });
   const { data: assetInfos } = useAssets(chainId ? [chainId] : []);
   const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
-    poolData?.assets,
+    assets,
     chainId,
     allRewards,
     assetInfos
   );
   const { data: balancePerAsset } = useTokensBalance(
-    poolData?.assets.map((asset) => asset.underlyingToken),
+    assets.map((asset) => asset.underlyingToken),
     chainId
   );
 
@@ -143,7 +143,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
     [totalSupplyApyPerAsset, balancePerAsset]
   );
 
-  const data = useAssetsToSupplyData(poolData?.assets);
+  const data = useAssetsToSupplyData(assets);
 
   const columns: ColumnDef<AssetToSupplyRowData>[] = useMemo(() => {
     return [
@@ -194,7 +194,14 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Supply asset={row.getValue(ASSET)} />;
+          return (
+            <Supply
+              asset={row.getValue(ASSET)}
+              assets={assets}
+              chainId={chainId}
+              comptroller={comptroller}
+            />
+          );
         },
         header: () => null,
         id: SUPPLY
@@ -207,7 +214,16 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
         id: DETAILS
       }
     ];
-  }, [allRewards, assetFilter, assetSort, chainId, poolId, totalSupplyApyPerAsset]);
+  }, [
+    allRewards,
+    assetFilter,
+    assetSort,
+    chainId,
+    comptroller,
+    poolId,
+    totalSupplyApyPerAsset,
+    assets
+  ]);
 
   const table = useReactTable({
     columns,
@@ -359,7 +375,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
                     </Tr>
                   </Fragment>
                 ))
-              ) : poolData.assets.length === 0 ? (
+              ) : assets.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
                     <Center py={8}>There are no assets to supply.</Center>

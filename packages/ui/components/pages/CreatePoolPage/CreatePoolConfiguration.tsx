@@ -19,8 +19,8 @@ import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { OptionRow } from '@ui/components/pages/Ionic/PoolCreatePage/OptionRow';
-import { WhitelistInfo } from '@ui/components/pages/Ionic/PoolCreatePage/WhitelistInfo';
+import { OptionRow } from '@ui/components/pages/CreatePoolPage/OptionRow';
+import { WhitelistInfo } from '@ui/components/pages/CreatePoolPage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';

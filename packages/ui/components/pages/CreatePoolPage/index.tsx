@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-import { CreatePoolConfiguration } from '@ui/components/pages/Ionic/PoolCreatePage/CreatePoolConfiguration';
+import { CreatePoolConfiguration } from '@ui/components/pages/CreatePoolPage/CreatePoolConfiguration';
 import PageLayout from '@ui/components/pages/Layout/PageLayout';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 
