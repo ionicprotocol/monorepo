@@ -1,5 +1,4 @@
 import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
-import { useMemo } from 'react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { useTotalSupplyAndBorrow } from '@ui/hooks/ionic/useTotalSupplyAndBorrow';
@@ -7,12 +6,6 @@ import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const Platform = () => {
   const { data, isLoading } = useTotalSupplyAndBorrow();
-
-  const totalTVL = useMemo(() => {
-    if (data) {
-      return [...data.values()].reduce((a, c) => a + c.totalSupply, 0);
-    }
-  }, [data]);
 
   return (
     <CardBox>
@@ -27,7 +20,7 @@ export const Platform = () => {
             </Text>
             <Skeleton isLoaded={!isLoading} minW="80px">
               <Text color={'iWhite'} size={'lg'}>
-                {totalTVL ? smallUsdFormatter(totalTVL, true) : '-'}
+                {data ? smallUsdFormatter(data.totalSupply, true) : '-'}
               </Text>
             </Skeleton>
           </VStack>

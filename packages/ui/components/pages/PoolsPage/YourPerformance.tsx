@@ -1,6 +1,5 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
-import { useMemo } from 'react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -9,18 +8,6 @@ import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const YourPerformance = () => {
   const { data, isLoading } = useTotalSupplyAndBorrow();
-
-  const totalSupply = useMemo(() => {
-    if (data) {
-      return [...data.values()].reduce((a, c) => a + c.totalSupply, 0);
-    }
-  }, [data]);
-
-  const totalBorrow = useMemo(() => {
-    if (data) {
-      return [...data.values()].reduce((a, c) => a + c.totalBorrow, 0);
-    }
-  }, [data]);
 
   return (
     <CardBox>
@@ -31,18 +18,26 @@ export const YourPerformance = () => {
         <Flex direction={{ base: 'row' }} gap="32px">
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
-              Total supply
+              Total Supply
             </Text>
-            <Skeleton isLoaded={!isLoading} minW="80px">
-              <Text size="lg">{totalSupply ? smallUsdFormatter(totalSupply, true) : '-'}</Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <Text>Total Supply</Text>
+              ) : (
+                <Text size="lg">{data ? smallUsdFormatter(data.totalSupply, true) : '-'}</Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
-              Total borrowed
+              Total Borrowed
             </Text>
-            <Skeleton isLoaded={!isLoading} minW="80px">
-              <Text size="lg">{totalBorrow ? smallUsdFormatter(totalBorrow, true) : '-'}</Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <Text>Total Borrowed</Text>
+              ) : (
+                <Text size="lg">{data ? smallUsdFormatter(data.totalBorrow, true) : '-'}</Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">

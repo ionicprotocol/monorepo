@@ -1,7 +1,6 @@
 import type { FlexProps } from '@chakra-ui/react';
 import { Avatar, Box, Flex, HStack, Link, Spinner, Text, VStack } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
@@ -21,12 +20,6 @@ const MotionFlex = motion<FlexProps>(Flex);
 
 const MidasHero = () => {
   const { data, isLoading } = useTotalSupplyAndBorrow();
-
-  const totalTVL = useMemo(() => {
-    if (data) {
-      return [...data.values()].reduce((a, c) => a + c.totalSupply, 0);
-    }
-  }, [data]);
   const { cPage } = useColors();
 
   return (
@@ -102,7 +95,7 @@ const MidasHero = () => {
         body={
           data ? (
             <VStack alignItems="flex-start" spacing={0} width={'100%'}>
-              {[...data.values()].map((chainTVL, index) => (
+              {[...data.chainTVLs.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
@@ -132,12 +125,12 @@ const MidasHero = () => {
           position="relative"
           px={{ lg: '10vw' }}
         >
-          {isLoading || totalTVL === undefined ? (
+          {isLoading || !data ? (
             <Spinner />
           ) : (
             <>
               <Text color="raisinBlack" fontWeight="bold" lineHeight={['60px']} size="3xl">
-                {smallUsdFormatter(totalTVL)}
+                {smallUsdFormatter(data.totalSupply)}
               </Text>
             </>
           )}

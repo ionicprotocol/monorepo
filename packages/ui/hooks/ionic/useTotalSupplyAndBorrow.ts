@@ -29,7 +29,7 @@ export const useTotalSupplyAndBorrow = () => {
   const { sdks } = useMultiIonic();
   const { data: prices, isLoading, error } = useAllUsdPrices();
 
-  return useQuery<CrossChainTVL | null | undefined>(
+  return useQuery(
     [
       'useTotalSupplyAndBorrow',
       prices && Object.values(prices).sort(),
@@ -61,7 +61,10 @@ export const useTotalSupplyAndBorrow = () => {
           [...chainTVLs].sort((a, b) => b[1].totalSupply - a[1].totalSupply)
         );
 
-        return resSorted;
+        const totalSupply = [...resSorted.values()].reduce((a, c) => a + c.totalSupply, 0);
+        const totalBorrow = [...resSorted.values()].reduce((a, c) => a + c.totalBorrow, 0);
+
+        return { chainTVLs, totalBorrow, totalSupply };
       }
 
       return null;
