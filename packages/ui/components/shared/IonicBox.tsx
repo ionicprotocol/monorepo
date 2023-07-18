@@ -35,7 +35,6 @@ export const RowBox = ({ children, ...props }: IonicBoxProps) => {
       color={cIRow.txtColor}
       px={{ base: '16px' }}
       py={{ base: '16px' }}
-      width={'100%'}
       {...props}
     >
       {children}
