@@ -28,7 +28,7 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
               const visiblePools: IonicPoolData[] = !pools
                 ? []
                 : poolSort(
-                    pools.map((p) => ({ ...p, chainId: Number(sdk.chainId) } as IonicPoolData))
+                    pools.map((p) => ({ ...p, chainId: Number(sdk.chainId) }) as IonicPoolData)
                   );
 
               chainPools[sdk.chainId] = visiblePools;
@@ -54,7 +54,7 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
                         totalBorrowFiat:
                           asset.totalBorrowNative * prices[pool.chainId.toString()].value,
                         totalSupplyFiat:
-                          asset.totalSupplyNative * prices[pool.chainId.toString()].value,
+                          asset.totalSupplyNative * prices[pool.chainId.toString()].value
                       });
                     });
                   }
@@ -75,7 +75,7 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
                     totalSuppliedFiat:
                       pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
                     totalSupplyBalanceFiat:
-                      pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
+                      pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value
                   };
 
                   return adaptedIonicPoolData;
@@ -92,9 +92,9 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        queryKey: ['useCrossPools', chainId, address, prices && prices[chainId.toString()]],
+        queryKey: ['useCrossPools', chainId, address, prices && prices[chainId.toString()]]
       };
-    }),
+    })
   });
 
   const poolsPerChain: PoolsPerChainStatus = {};
@@ -112,7 +112,7 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
     poolsPerChain[_chainId.toString()] = {
       data: poolSortByAddress(pools.data ?? []),
       error: pools.error as Err | undefined,
-      isLoading: pools.isLoading,
+      isLoading: pools.isLoading
     };
 
     if (pools.data) {

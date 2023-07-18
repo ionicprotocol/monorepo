@@ -9,7 +9,7 @@ export const LinkStyleConfig: ComponentStyleConfig = {
     ...theme.components.Link.variants,
     color: (props) => ({
       color: mode('ecru', 'ecru')(props),
-      textDecoration: 'underline',
-    }),
-  },
+      textDecoration: 'underline'
+    })
+  }
 };

@@ -3,7 +3,7 @@ import type {
   NewPosition,
   OpenPosition,
   SupportedAsset,
-  VaultData,
+  VaultData
 } from '@ionicprotocol/types';
 
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';

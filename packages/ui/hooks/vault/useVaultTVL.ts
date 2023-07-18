@@ -35,7 +35,7 @@ export const useVaultTVL = () => {
       'useVaultTVL',
       prices && Object.values(prices).sort(),
       isLoading,
-      sdks.map((sdk) => sdk.chainId).sort(),
+      sdks.map((sdk) => sdk.chainId).sort()
     ],
     async () => {
       if (!isLoading && error) throw new Error('Could not get USD price');
@@ -47,7 +47,7 @@ export const useVaultTVL = () => {
               chainVaultTVLs.set(sdk.chainId.toString(), {
                 logo: sdk.chainSpecificParams.metadata.img,
                 name: sdk.chainSpecificParams.metadata.name,
-                value: (await fetchVaultNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
+                value: (await fetchVaultNumberTVL(sdk)) * prices[sdk.chainId.toString()].value
               });
             } catch (e) {
               console.warn(`Unable to fetch TVL for chain ${sdk.chainId}`, e);

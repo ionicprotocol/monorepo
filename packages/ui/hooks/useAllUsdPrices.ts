@@ -36,7 +36,7 @@ export function useAllUsdPrices() {
               if (data.coins[`coingecko:${_cgId}`] && data.coins[`coingecko:${_cgId}`].price) {
                 prices[id.toString()] = {
                   symbol: '$',
-                  value: data.coins[`coingecko:${_cgId}`].price,
+                  value: data.coins[`coingecko:${_cgId}`].price
                 };
               }
             }
@@ -45,12 +45,12 @@ export function useAllUsdPrices() {
               if (config.chainId === chainIdToConfig[SupportedChains.neon_devnet].chainId) {
                 prices[id.toString()] = {
                   symbol: config.specificParams.metadata.nativeCurrency.symbol,
-                  value: 1.2,
+                  value: 1.2
                 };
               } else {
                 prices[id.toString()] = {
                   symbol: config.specificParams.metadata.nativeCurrency.symbol,
-                  value: 1,
+                  value: 1
                 };
               }
             }

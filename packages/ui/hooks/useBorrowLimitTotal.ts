@@ -24,12 +24,12 @@ export const useBorrowLimitTotal = (
     [
       'useBorrowLimitTotal',
       {
-        assets,
+        assets
       },
       {
-        ignoreIsEnabledCheckFor: !!options?.ignoreIsEnabledCheckFor,
+        ignoreIsEnabledCheckFor: !!options?.ignoreIsEnabledCheckFor
       },
-      { usdPrice },
+      { usdPrice }
     ],
     () => {
       if (!usdPrice) return undefined;

@@ -7,10 +7,10 @@ export const BadgeStyleConfig: ComponentStyleConfig = {
     display: 'inline-flex',
     fontFamily: 'heading',
     justifyContent: 'center',
-    px: '2',
+    px: '2'
   },
   defaultProps: {
     size: 'md',
-    variant: 'solid',
-  },
+    variant: 'solid'
+  }
 };

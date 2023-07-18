@@ -22,7 +22,7 @@ export const usePoolClaimableRewards = (poolAddress: string, poolChainId?: numbe
             {
               address,
               poolAddress,
-              poolChainId,
+              poolChainId
             },
             e
           );
@@ -34,7 +34,7 @@ export const usePoolClaimableRewards = (poolAddress: string, poolChainId?: numbe
       return null;
     },
     {
-      enabled: !!poolAddress && !!address && !!sdk,
+      enabled: !!poolAddress && !!address && !!sdk
     }
   );
 };

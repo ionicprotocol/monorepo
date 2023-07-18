@@ -59,7 +59,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
           );
 
           return '';
-        }),
+        })
       ]);
 
       return {
@@ -68,12 +68,12 @@ export const useFlywheel = (flywheelAddress?: string) => {
         markets,
         owner,
         rewardToken,
-        rewards,
+        rewards
       } as Flywheel;
     },
     {
       enabled: !!flywheelAddress && !!currentSdk,
-      initialData: undefined,
+      initialData: undefined
     }
   );
 };

@@ -25,9 +25,9 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        queryKey: ['useVaultsPerChain', chainId, address],
+        queryKey: ['useVaultsPerChain', chainId, address]
       };
-    }),
+    })
   });
 
   const [vaultsPerChain, isLoading] = useMemo(() => {
@@ -41,7 +41,7 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
       _vaultsPerChain[_chainId.toString()] = {
         data: vaults.data,
         error: vaults.error as Err | undefined,
-        isLoading: vaults.isLoading,
+        isLoading: vaults.isLoading
       };
     });
 

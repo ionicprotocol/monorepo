@@ -47,7 +47,7 @@ export const useBorrowCapsDataForAsset = (cTokenAddress: string, poolChainId?: n
       }
     },
     {
-      enabled: !!cTokenAddress && !!sdk,
+      enabled: !!cTokenAddress && !!sdk
     }
   );
 };
@@ -71,7 +71,7 @@ export const useBorrowCapsForAssets = (cTokens?: string[], poolChainId?: number)
       }
     },
     {
-      enabled: !!cTokens && cTokens.length > 0 && !!sdk,
+      enabled: !!cTokens && cTokens.length > 0 && !!sdk
     }
   );
 };

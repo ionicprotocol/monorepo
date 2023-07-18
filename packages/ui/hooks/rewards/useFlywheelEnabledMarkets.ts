@@ -19,7 +19,7 @@ export const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
       return null;
     },
     {
-      enabled: !!flywheelAddress && !!currentSdk,
+      enabled: !!flywheelAddress && !!currentSdk
     }
   );
 };

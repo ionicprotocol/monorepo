@@ -50,7 +50,7 @@ export function useHistoryData(
             tvls.map((data: AssetTvl) => {
               info.push({
                 createdAt: data.createdAt,
-                tvl: data.tvlNative * usdPrice,
+                tvl: data.tvlNative * usdPrice
               });
             });
           } else if (mode === APY) {
@@ -64,7 +64,7 @@ export function useHistoryData(
               const { createdAt, ...rest } = data;
               info.push({
                 createdAt,
-                ...rest,
+                ...rest
               });
             });
           }
@@ -80,7 +80,7 @@ export function useHistoryData(
       }
     },
     {
-      enabled: !!mode && !!chainId && !!underlyingAddress && !!cTokenAddress && !!milliSeconds,
+      enabled: !!mode && !!chainId && !!underlyingAddress && !!cTokenAddress && !!milliSeconds
     }
   );
 }

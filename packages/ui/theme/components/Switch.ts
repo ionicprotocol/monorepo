@@ -9,16 +9,16 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 const baseStyle = definePartsStyle({
   container: {
     minHeight: { base: '20px' },
-    p: { base: 0 },
+    p: { base: 0 }
   },
   thumb: {
     minHeight: { base: '16px' },
-    minWidth: { base: '16px' },
+    minWidth: { base: '16px' }
   },
   track: {
     minHeight: { base: '16px' },
-    minWidth: { base: '32px' },
-  },
+    minWidth: { base: '32px' }
+  }
 });
 
 const ghost = definePartsStyle((props) => {
@@ -26,23 +26,23 @@ const ghost = definePartsStyle((props) => {
     container: {},
     thumb: {
       _checked: {
-        bg: mode('iBlack', 'iBlack')(props),
+        bg: mode('iBlack', 'iBlack')(props)
       },
-      bg: mode('iBlack', 'iWhite')(props),
+      bg: mode('iBlack', 'iWhite')(props)
     },
     track: {
       _checked: {
-        bg: mode('iGreen', 'iGreen')(props),
+        bg: mode('iGreen', 'iGreen')(props)
       },
-      bg: mode('iGray', 'iGray')(props),
-    },
+      bg: mode('iGray', 'iGray')(props)
+    }
   };
 });
 
 export const SwitchConfigStyle = defineMultiStyleConfig({
   baseStyle,
   defaultProps: {
-    variant: 'ghost',
+    variant: 'ghost'
   },
-  variants: { ghost },
+  variants: { ghost }
 });

@@ -56,7 +56,7 @@ export function useSwapAmount(
               amount,
               chainId: currentSdk.chainId,
               inputToken,
-              outputToken,
+              outputToken
             },
             e
           );
@@ -70,7 +70,7 @@ export function useSwapAmount(
       }
     },
     {
-      enabled: !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address,
+      enabled: !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address
     }
   );
 }

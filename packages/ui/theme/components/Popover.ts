@@ -7,7 +7,7 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 const baseStyle = definePartsStyle((props) => {
   return {
     arrow: {
-      borderWidth: 0,
+      borderWidth: 0
     },
     content: {
       [$arrowBg.variable]: mode('iCardBg', 'iCardBg')(props),
@@ -15,11 +15,11 @@ const baseStyle = definePartsStyle((props) => {
       borderColor: mode('iSeparator', 'iSeparator')(props),
       borderRadius: '10px',
       borderWidth: 1,
-      p: { base: '12px' },
+      p: { base: '12px' }
     },
     popper: {
-      borderRadius: 0,
-    },
+      borderRadius: 0
+    }
   };
 });
 
@@ -27,12 +27,12 @@ const sizes = {
   xl: definePartsStyle({
     content: defineStyle({
       fontSize: '2xl',
-      marginLeft: 6,
+      marginLeft: 6
     }),
     header: defineStyle({
-      padding: 14,
-    }),
-  }),
+      padding: 14
+    })
+  })
 };
 
 const warning = definePartsStyle((props) => {
@@ -46,8 +46,8 @@ const warning = definePartsStyle((props) => {
       fontSize: { base: '14px' },
       fontWeight: { base: 600 },
       lineHeight: { base: '20px' },
-      padding: '12px',
-    }),
+      padding: '12px'
+    })
   };
 });
 
@@ -55,7 +55,7 @@ const ghost = definePartsStyle((props) => {
   return {
     body: defineStyle({
       border: 'none',
-      padding: '0px',
+      padding: '0px'
     }),
     content: defineStyle({
       bg: 'none',
@@ -64,13 +64,13 @@ const ghost = definePartsStyle((props) => {
       fontSize: { base: '12px' },
       fontWeight: { base: 600 },
       lineHeight: { base: '18px' },
-      padding: '0px',
-    }),
+      padding: '0px'
+    })
   };
 });
 
 export const PopoverStyleConfig = defineMultiStyleConfig({
   baseStyle,
   sizes,
-  variants: { ghost, warning },
+  variants: { ghost, warning }
 });

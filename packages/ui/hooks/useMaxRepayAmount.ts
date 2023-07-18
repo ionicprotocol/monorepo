@@ -22,7 +22,7 @@ export function useMaxRepayAmount(asset: NativePricedIonicAsset, chainId: number
       }
     },
     {
-      enabled: !!address && !!asset && !!sdk,
+      enabled: !!address && !!asset && !!sdk
     }
   );
 }

@@ -54,7 +54,7 @@ export function useAllFundedInfo() {
       'useAllFundedInfo',
       enabledChains,
       Object.values(poolsPerChain).map((query) => query.data),
-      address,
+      address
     ],
     async () => {
       if (poolsPerChain && enabledChains.length > 0) {
@@ -118,7 +118,7 @@ export function useAllFundedInfo() {
                           totalCollateralSupplyBalanceNative:
                             pool.totalCollateralSupplyBalanceNative,
                           totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
-                          totalSupplyBalanceNative: pool.totalSupplyBalanceNative,
+                          totalSupplyBalanceNative: pool.totalSupplyBalanceNative
                         });
                       });
                       const { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY } =
@@ -222,14 +222,14 @@ export function useAllFundedInfo() {
           totalCollateralSupplyBalanceNative,
           totalSupplyAPYs,
           totalSupplyBalanceFiat,
-          totalSupplyBalanceNative,
+          totalSupplyBalanceNative
         };
       }
 
       return null;
     },
     {
-      enabled: enabledChains.length > 0 && !!poolsPerChain,
+      enabled: enabledChains.length > 0 && !!poolsPerChain
     }
   );
 }

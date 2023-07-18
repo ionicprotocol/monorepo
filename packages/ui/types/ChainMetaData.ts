@@ -6,7 +6,7 @@ import {
   ganache,
   lineagoerli,
   neondevnet,
-  polygon,
+  polygon
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
@@ -19,19 +19,19 @@ export const supportedChainIdToConfig: {
   [polygon.chainId]: { enabled: config.isBscEnabled, supported: true },
   [arbitrum.chainId]: {
     enabled: true,
-    supported: config.isArbitrumEnabled,
+    supported: config.isArbitrumEnabled
   },
   [neondevnet.chainId]: {
     enabled: true,
-    supported: config.isDevelopment || config.isTestnetEnabled,
+    supported: config.isDevelopment || config.isTestnetEnabled
   },
   [lineagoerli.chainId]: {
     enabled: true,
-    supported: config.isDevelopment || config.isTestnetEnabled,
+    supported: config.isDevelopment || config.isTestnetEnabled
   },
   [chapel.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
-  [ethereum.chainId]: { enabled: true, supported: config.isEthereumEnabled },
+  [ethereum.chainId]: { enabled: true, supported: config.isEthereumEnabled }
 };
 
 export interface PoolsPerChain {

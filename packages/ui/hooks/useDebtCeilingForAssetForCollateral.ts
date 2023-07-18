@@ -15,7 +15,7 @@ export const useDebtCeilingForAssetForCollateral = ({
   assets,
   collaterals,
   comptroller: comptrollerAddress,
-  poolChainId,
+  poolChainId
 }: {
   assets: NativePricedIonicAsset[];
   collaterals: NativePricedIonicAsset[];
@@ -32,7 +32,7 @@ export const useDebtCeilingForAssetForCollateral = ({
       assets.map((asset) => asset.cToken).sort(),
       collaterals.map((asset) => asset.cToken).sort(),
       comptrollerAddress,
-      address,
+      address
     ],
     async () => {
       if (!sdk || collaterals.length === 0 || !address) return null;
@@ -56,7 +56,7 @@ export const useDebtCeilingForAssetForCollateral = ({
                     debtCeilingPerCollateral.push({
                       asset,
                       collateralAsset,
-                      debtCeiling: -1,
+                      debtCeiling: -1
                     });
                   } else {
                     const debtCeiling = await comptroller.callStatic.borrowCapForCollateral(
@@ -70,7 +70,7 @@ export const useDebtCeilingForAssetForCollateral = ({
                         collateralAsset,
                         debtCeiling: Number(
                           utils.formatUnits(debtCeiling, asset.underlyingDecimals)
-                        ),
+                        )
                       });
                     }
                   }
@@ -90,7 +90,7 @@ export const useDebtCeilingForAssetForCollateral = ({
       return debtCeilingPerCollateral;
     },
     {
-      enabled: !!sdk && collaterals.length > 0 && !!address,
+      enabled: !!sdk && collaterals.length > 0 && !!address
     }
   );
 };

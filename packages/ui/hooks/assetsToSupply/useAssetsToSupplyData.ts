@@ -18,7 +18,7 @@ export const useAssetsToSupplyData = (assets?: MarketData[]) => {
             apy: asset,
             asset: asset,
             collateral: asset,
-            walletBalance: asset,
+            walletBalance: asset
           });
         });
       }
@@ -26,7 +26,7 @@ export const useAssetsToSupplyData = (assets?: MarketData[]) => {
       return res;
     },
     {
-      enabled: !!assets && assets.length > 0,
+      enabled: !!assets && assets.length > 0
     }
   );
 

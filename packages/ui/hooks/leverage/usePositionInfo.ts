@@ -33,7 +33,7 @@ export function usePositionInfo(position: string, supplyApy?: BigNumber, chainId
       }
     },
     {
-      enabled: !!sdk && !!position && !!supplyApy && !!chainId,
+      enabled: !!sdk && !!position && !!supplyApy && !!chainId
     }
   );
 }
@@ -73,7 +73,7 @@ export function usePositionsInfo(
       }
     },
     {
-      enabled: !!positions && !!totalApys && !!chainIds,
+      enabled: !!positions && !!totalApys && !!chainIds
     }
   );
 }

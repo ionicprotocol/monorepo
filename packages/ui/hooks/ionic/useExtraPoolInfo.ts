@@ -24,7 +24,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
           enforceWhitelist,
           whitelist,
           pendingAdmin,
-          oracle,
+          oracle
         ] = await Promise.all([
           sdk.contracts.PoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
           comptroller.callStatic.closeFactorMantissa(),
@@ -38,9 +38,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
             .then((x: string[]) => x)
             .catch(() => []),
           comptroller.callStatic.pendingAdmin(),
-          comptroller.callStatic
-            .oracle()
-            .then((oracleAddress) => sdk.getPriceOracle(oracleAddress)),
+          comptroller.callStatic.oracle().then((oracleAddress) => sdk.getPriceOracle(oracleAddress))
         ]);
 
         return {
@@ -53,7 +51,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
           oracle,
           pendingAdmin,
           upgradeable,
-          whitelist: whitelist as string[],
+          whitelist: whitelist as string[]
         };
       } catch (e) {
         console.warn(`Getting extra pool info error: `, { comptrollerAddress, poolChainId }, e);
@@ -62,7 +60,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
       }
     },
     {
-      enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
+      enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk
     }
   );
 };

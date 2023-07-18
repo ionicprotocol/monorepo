@@ -35,7 +35,7 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
                   allRewards.push({
                     amount: reward.amount,
                     chainId,
-                    rewardToken: reward.rewardToken,
+                    rewardToken: reward.rewardToken
                   });
                 }
               });
@@ -49,7 +49,7 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
       return null;
     },
     {
-      enabled: !!address || chainIds.length > 0,
+      enabled: !!address || chainIds.length > 0
     }
   );
 };

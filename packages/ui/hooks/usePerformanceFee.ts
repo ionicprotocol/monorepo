@@ -25,7 +25,7 @@ export const usePerformanceFee = (poolChainId: number, pluginAddress?: string) =
       }
     },
     {
-      enabled: !!pluginAddress && !!sdk,
+      enabled: !!pluginAddress && !!sdk
     }
   );
 };

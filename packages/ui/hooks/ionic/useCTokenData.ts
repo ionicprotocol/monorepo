@@ -23,7 +23,7 @@ export const useCTokenData = (
             decimals,
             { collateralFactorMantissa },
             supplyCap,
-            borrowCap,
+            borrowCap
           ] = await Promise.all([
             cToken.callStatic.adminFeeMantissa(),
             cToken.callStatic.reserveFactorMantissa(),
@@ -31,7 +31,7 @@ export const useCTokenData = (
             cToken.callStatic.decimals(),
             comptroller.callStatic.markets(cTokenAddress),
             comptroller.callStatic.supplyCaps(cTokenAddress),
-            comptroller.callStatic.borrowCaps(cTokenAddress),
+            comptroller.callStatic.borrowCaps(cTokenAddress)
           ]);
 
           return {
@@ -41,7 +41,7 @@ export const useCTokenData = (
             decimals,
             interestRateModelAddress,
             reserveFactorMantissa,
-            supplyCap,
+            supplyCap
           };
         } catch (e) {
           console.warn(
@@ -57,7 +57,7 @@ export const useCTokenData = (
       }
     },
     {
-      enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk,
+      enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk
     }
   );
 };

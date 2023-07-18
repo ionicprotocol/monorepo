@@ -9,29 +9,29 @@ export const CheckboxStyleConfig: ComponentStyleConfig = {
         _hover: {
           bg: 'iSeparator',
           borderColor: 'iSeparator',
-          color: mode('iWhite', 'iBlack')(props),
+          color: mode('iWhite', 'iBlack')(props)
         },
         bg: 'iSeparator',
         borderColor: 'iSeparator',
-        color: mode('iWhite', 'iBlack')(props),
+        color: mode('iWhite', 'iBlack')(props)
       },
       _hover: {
         bg: mode('silverMetallic30', 'iSeparator')(props),
-        color: mode('iWhite', 'iBlack')(props),
+        color: mode('iWhite', 'iBlack')(props)
       },
       _indeterminate: {
         bg: 'iSeparator',
-        color: mode('iWhite', 'iBlack')(props),
+        color: mode('iWhite', 'iBlack')(props)
       },
       borderColor: 'iSeparator',
       boxShadow: 'none',
-      outline: 'none',
+      outline: 'none'
     },
     icon: {},
     label: {
       color: mode('iBlack', 'iWhite')(props),
-      pt: '2px',
-    },
+      pt: '2px'
+    }
   }),
-  parts: ['icon', 'container', 'control', 'label'],
+  parts: ['icon', 'container', 'control', 'label']
 };

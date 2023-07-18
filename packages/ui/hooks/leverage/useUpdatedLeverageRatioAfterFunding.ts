@@ -21,7 +21,7 @@ export function useUpdatedLeverageRatioAfterFunding(
             {
               amount,
               chainId,
-              positionAddress,
+              positionAddress
             },
             e
           );
@@ -35,7 +35,7 @@ export function useUpdatedLeverageRatioAfterFunding(
       }
     },
     {
-      enabled: !!sdk && !!amount && !!positionAddress,
+      enabled: !!sdk && !!amount && !!positionAddress
     }
   );
 }

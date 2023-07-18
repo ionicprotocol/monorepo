@@ -68,7 +68,7 @@ export class CreatePoolPage extends AppPage {
           await this.blockingWait(5);
           await Promise.race([
             this.Metamask.confirmTransaction(),
-            new Promise((resolve) => setTimeout(resolve, 5000)),
+            new Promise((resolve) => setTimeout(resolve, 5000))
           ]).catch();
 
           await this.Page.bringToFront();

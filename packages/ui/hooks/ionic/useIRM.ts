@@ -25,7 +25,7 @@ export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
       }
     },
     {
-      enabled: !!cTokenAddress && !!sdk,
+      enabled: !!cTokenAddress && !!sdk
     }
   );
 };

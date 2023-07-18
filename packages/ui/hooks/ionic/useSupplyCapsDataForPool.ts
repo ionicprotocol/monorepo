@@ -28,7 +28,7 @@ export const useSupplyCapsDataForPool = (comptrollerAddress: string, poolChainId
               res.push({
                 cTokenAddress: data,
                 nonWhitelistedTotalSupply: supplyCapsData[2][i],
-                supplyCaps: supplyCapsData[1][i],
+                supplyCaps: supplyCapsData[1][i]
               });
             });
           }
@@ -44,7 +44,7 @@ export const useSupplyCapsDataForPool = (comptrollerAddress: string, poolChainId
       }
     },
     {
-      enabled: !!comptrollerAddress && !!sdk,
+      enabled: !!comptrollerAddress && !!sdk
     }
   );
 };
@@ -60,7 +60,7 @@ export const useSupplyCapsDataForAsset = (
     [
       'useSupplyCapsDataForAsset',
       supplyCapsDataForPool?.sort((a, b) => a.cTokenAddress.localeCompare(b.cTokenAddress)),
-      cTokenAddress,
+      cTokenAddress
     ],
     () => {
       if (supplyCapsDataForPool && cTokenAddress) {
@@ -76,7 +76,7 @@ export const useSupplyCapsDataForAsset = (
       }
     },
     {
-      enabled: !!supplyCapsDataForPool && !!cTokenAddress,
+      enabled: !!supplyCapsDataForPool && !!cTokenAddress
     }
   );
 };

@@ -5,25 +5,25 @@ export const StatStyleConfig: ComponentStyleConfig = {
   baseStyle: (props) => ({
     container: {
       backgroundColor: mode('whiteBg', 'raisinBlack')(props),
-      borderRadius: 'xl',
-    },
+      borderRadius: 'xl'
+    }
   }),
   defaultProps: {
-    size: 'lg',
+    size: 'lg'
   },
   parts: ['container', 'label', 'helpText', 'number', 'icon'],
   sizes: {
     lg: {
       helpText: {
-        fontSize: 'lg',
+        fontSize: 'lg'
       },
       label: {
-        fontSize: 'lg',
+        fontSize: 'lg'
       },
       number: {
         fontSize: '2xl',
-        fontWeight: 'bold',
-      },
-    },
-  },
+        fontWeight: 'bold'
+      }
+    }
+  }
 };

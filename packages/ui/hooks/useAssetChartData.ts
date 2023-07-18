@@ -58,7 +58,7 @@ export function useAssetChartData(
         !!adminFee.toString() &&
         !!reserveFactor.toString() &&
         !!sdk &&
-        !!poolChainId,
+        !!poolChainId
     }
   );
 }

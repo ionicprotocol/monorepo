@@ -9,33 +9,33 @@ export const MenuStyleConfig: ComponentStyleConfig = {
       fontSize: 'sm',
       letterSpacing: 'tighter',
       opacity: '0.8',
-      pl: '4',
+      pl: '4'
     },
     divider: {
       borderColor: mode('silverMetallic50', 'ecru30')(props),
-      my: 2,
+      my: 2
     },
     groupTitle: {
       color: mode('raisinBlack', 'whiteBg')(props),
       fontWeight: 'bold',
-      textAlign: 'center',
+      textAlign: 'center'
     },
     item: {
       _focus: {
-        bg: mode('silverMetallic30', 'ecru30')(props),
+        bg: mode('silverMetallic30', 'ecru30')(props)
       },
       _hover: {
-        bg: mode('silverMetallic20', 'ecru20')(props),
+        bg: mode('silverMetallic20', 'ecru20')(props)
       },
-      color: mode('raisinBlack', 'whiteBg')(props),
+      color: mode('raisinBlack', 'whiteBg')(props)
     },
     list: {
       backgroundColor: mode('whiteBg', 'raisinBlack')(props),
       borderColor: mode('silverMetallic50', 'ecru30')(props),
       borderRadius: 'md',
       borderWidth: 1,
-      pt: '4',
-    },
+      pt: '4'
+    }
   }),
-  parts: ['button', 'list', 'item', 'groupTitle', 'command', 'divider'],
+  parts: ['button', 'list', 'item', 'groupTitle', 'command', 'divider']
 };

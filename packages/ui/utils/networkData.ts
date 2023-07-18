@@ -7,12 +7,12 @@ import {
   ganache,
   lineagoerli,
   neondevnet,
-  polygon,
+  polygon
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
-  DeployedPlugins as DeployedPluginsType,
+  DeployedPlugins as DeployedPluginsType
 } from '@ionicprotocol/types';
 import { SupportedChains } from '@ionicprotocol/types';
 import { BigNumber } from 'ethers';
@@ -90,7 +90,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.lineagoerli]: lineagoerli.assets,
-  [SupportedChains.ethereum]: ethereum.assets,
+  [SupportedChains.ethereum]: ethereum.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -101,5 +101,5 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.lineagoerli]: lineagoerli.deployedPlugins,
-  [SupportedChains.ethereum]: ethereum.deployedPlugins,
+  [SupportedChains.ethereum]: ethereum.deployedPlugins
 };

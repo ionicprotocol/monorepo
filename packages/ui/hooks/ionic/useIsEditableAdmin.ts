@@ -13,7 +13,7 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
       comptrollerAddress,
       poolInfo?.isPowerfulAdmin,
       currentChain?.id,
-      poolChainId,
+      poolChainId
     ],
     async () => {
       if (
@@ -29,7 +29,7 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
     },
     {
       enabled:
-        !!comptrollerAddress && !!poolInfo?.isPowerfulAdmin && !!currentChain?.id && !!poolChainId,
+        !!comptrollerAddress && !!poolInfo?.isPowerfulAdmin && !!currentChain?.id && !!poolChainId
     }
   );
 

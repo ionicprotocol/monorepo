@@ -5,7 +5,7 @@ export const TabsStyleConfig: ComponentStyleConfig = {
   baseStyle: {
     tab: {},
     tablist: {},
-    tabpanel: {},
+    tabpanel: {}
   },
   defaultProps: {},
   parts: ['root', 'tab', 'tablist', 'tabpanel', 'tabpanels'],
@@ -14,11 +14,11 @@ export const TabsStyleConfig: ComponentStyleConfig = {
     line: (props) => ({
       tab: {
         borderBottomWidth: 2,
-        color: mode('whiteBg', 'raisinBlack')(props),
+        color: mode('whiteBg', 'raisinBlack')(props)
       },
       tablist: {
-        borderBottomWidth: 0,
-      },
-    }),
-  },
+        borderBottomWidth: 0
+      }
+    })
+  }
 };

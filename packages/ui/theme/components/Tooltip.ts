@@ -11,7 +11,7 @@ const baseStyle = defineStyle((props) => {
     borderWidth: '1px',
     color: mode('light', 'light')(props),
     textAlign: 'center',
-    [$arrowBg.variable]: mode('iBlack', 'iBlack')(props),
+    [$arrowBg.variable]: mode('iBlack', 'iBlack')(props)
     // zIndex: 999999999,
   };
 });
@@ -22,32 +22,32 @@ const sizes = {
     fontSize: 'lg',
     maxW: '350px',
     px: '4',
-    py: '2',
+    py: '2'
   }),
   md: defineStyle({
     fontSize: 'md',
     maxW: '300px',
     px: '3',
-    py: '2',
+    py: '2'
   }),
   sm: defineStyle({
     fontSize: 'sm',
     maxW: '200px',
     px: '2',
-    py: '1',
-  }),
+    py: '1'
+  })
 };
 
 // define styles for custom variant
 const colorfulVariant = defineStyle((props) => {
   return {
-    bg: mode('iWhite', 'iBlack')(props),
+    bg: mode('iWhite', 'iBlack')(props)
   };
 });
 
 // define custom variants
 const variants = {
-  colorful: colorfulVariant,
+  colorful: colorfulVariant
 };
 
 const defaultProps = {};

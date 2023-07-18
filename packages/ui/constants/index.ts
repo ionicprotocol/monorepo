@@ -17,62 +17,62 @@ export const MIDAS_TWITTER_URL = 'https://twitter.com/MidasCapitalxyz';
 export const CLOSE_FACTOR = {
   DEFAULT: 50,
   MAX: 90,
-  MIN: 5,
+  MIN: 5
 };
 
 export const LIQUIDATION_INCENTIVE = {
   DEFAULT: 8,
   MAX: 50,
-  MIN: 0,
+  MIN: 0
 };
 
 export const LOAN_TO_VALUE = {
   DEFAULT: 50,
   MAX: 90,
-  MIN: 5,
+  MIN: 5
 };
 
 export const RESERVE_FACTOR = {
   DEFAULT: 10,
   MAX: 50,
-  MIN: 0,
+  MIN: 0
 };
 
 export const ADMIN_FEE = {
   DEFAULT: 5,
   MAX: 30,
-  MIN: 0,
+  MIN: 0
 };
 
 export const SUPPLY_CAP = {
   DEFAULT: 0,
-  MIN: 0,
+  MIN: 0
 };
 
 export const BORROW_CAP = {
   DEFAULT: 0,
-  MIN: 0,
+  MIN: 0
 };
 
 export const DEBT_CEILING = {
   DEFAULT: 0,
-  MIN: -1, // -1: blacklisted, 0: unlimited
+  MIN: -1 // -1: blacklisted, 0: unlimited
 };
 
 export const SUPPLY_CAP_WHITELIST = {
-  DEFAULT: '',
+  DEFAULT: ''
 };
 
 export const BORROW_CAP_WHITELIST = {
-  DEFAULT: '',
+  DEFAULT: ''
 };
 
 export const ASSET_BLACKLIST_WHITELIST = {
-  DEFAULT: '',
+  DEFAULT: ''
 };
 
 export const DEBT_CEILING_WHITELIST = {
-  DEFAULT: '',
+  DEFAULT: ''
 };
 
 export const POOLS_PER_PAGE = 6;
@@ -85,12 +85,12 @@ export const DEFAULT_DECIMALS = 18;
 export enum PoolMetric {
   totalLiquidityNative,
   totalSuppliedNative,
-  totalBorrowedNative,
+  totalBorrowedNative
 }
 
 export enum UserAction {
   NO_ACTION,
-  WAITING_FOR_TRANSACTIONS,
+  WAITING_FOR_TRANSACTIONS
 }
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
@@ -105,13 +105,13 @@ export const ankrBNBContractABI = [
   {
     inputs: [
       { internalType: 'address', name: 'addr', type: 'address' },
-      { internalType: 'uint256', name: 'day', type: 'uint256' },
+      { internalType: 'uint256', name: 'day', type: 'uint256' }
     ],
     name: 'averagePercentageRate',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
-    type: 'function',
-  },
+    type: 'function'
+  }
 ];
 
 export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
@@ -154,19 +154,19 @@ export const SUPPLY_STEPS = (symbol: string) =>
     {
       desc: 'Allows supplied assets to be used as collateral',
       done: false,
-      title: 'Enable Collateral',
+      title: 'Enable Collateral'
     },
     {
       desc: `Mints tokens which represent your share in the ${symbol} market`,
       done: false,
-      title: 'Mint Market Share',
-    },
+      title: 'Mint Market Share'
+    }
   ] as TxStep[];
 
 export const SWAP_STEPS = (inputSymbol: string, outputSymbol: string) =>
   [
     { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
-    { desc: `Swaps from ${inputSymbol} to get ${outputSymbol}`, done: false, title: 'Swap' },
+    { desc: `Swaps from ${inputSymbol} to get ${outputSymbol}`, done: false, title: 'Swap' }
   ] as TxStep[];
 export const BORROW_STEPS = (symbol: string) =>
   [{ desc: `Borrows ${symbol} from the pool`, done: false, title: 'Borrow' }] as TxStep[];
@@ -175,13 +175,13 @@ export const WITHDRAW_STEPS = (symbol: string) =>
     {
       desc: `Withdraws supplied liquidity of ${symbol} from the pool`,
       done: false,
-      title: 'Withdraw',
-    },
+      title: 'Withdraw'
+    }
   ] as TxStep[];
 export const REPAY_STEPS = (symbol: string) =>
   [
     { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
-    { desc: `Repays a borrow position of ${symbol} token`, done: false, title: 'Repay' },
+    { desc: `Repays a borrow position of ${symbol} token`, done: false, title: 'Repay' }
   ] as TxStep[];
 export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
   [
@@ -189,8 +189,8 @@ export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
     {
       desc: `Creates new levered position with ${symbol} market`,
       done: false,
-      title: 'Create position',
-    },
+      title: 'Create position'
+    }
   ] as TxStep[];
 
 export const ADJUST_LEVERAGE_RATIO_STEPS = (symbol: string) =>
@@ -198,8 +198,8 @@ export const ADJUST_LEVERAGE_RATIO_STEPS = (symbol: string) =>
     {
       desc: `Adjusts leverage ratio on ${symbol} market`,
       done: false,
-      title: 'Adjust leverage ratio',
-    },
+      title: 'Adjust leverage ratio'
+    }
   ] as TxStep[];
 
 export const CLOSE_OPEN_POSITION_STEPS = (symbol: string) =>
@@ -207,8 +207,8 @@ export const CLOSE_OPEN_POSITION_STEPS = (symbol: string) =>
     {
       desc: `Closes open levered position with ${symbol} market`,
       done: false,
-      title: 'Close position',
-    },
+      title: 'Close position'
+    }
   ] as TxStep[];
 
 export const REMOVE_CLOSED_POSITION_STEPS = (symbol: string) =>
@@ -216,8 +216,8 @@ export const REMOVE_CLOSED_POSITION_STEPS = (symbol: string) =>
     {
       desc: `Removes closed levered position with ${symbol} market`,
       done: false,
-      title: 'Remove position',
-    },
+      title: 'Remove position'
+    }
   ] as TxStep[];
 
 export const FUND_POSITION_STEPS = (symbol: string) =>
@@ -226,8 +226,8 @@ export const FUND_POSITION_STEPS = (symbol: string) =>
     {
       desc: `Funds position with ${symbol} market`,
       done: false,
-      title: 'Fund position',
-    },
+      title: 'Fund position'
+    }
   ] as TxStep[];
 
 export const SCORE_LIMIT = 0.6;
@@ -248,7 +248,7 @@ export const MARKET_COLUMNS = [
   BORROW_BALANCE,
   TOTAL_SUPPLY,
   TOTAL_BORROW,
-  LIQUIDITY,
+  LIQUIDITY
 ];
 
 export const VAULT = 'Vault';
@@ -285,7 +285,7 @@ export const POOLS_COLUMNS = [
   SUPPLY_BALANCE,
   BORROW_BALANCE,
   TOTAL_SUPPLY,
-  TOTAL_BORROW,
+  TOTAL_BORROW
 ];
 export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-requests';
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
@@ -298,8 +298,8 @@ export const VAULT_SUPPLY_STEPS = (symbol: string) =>
     {
       desc: `Mints tokens which represent your share in the ${symbol} vault`,
       done: false,
-      title: 'Mint Vault Share',
-    },
+      title: 'Mint Vault Share'
+    }
   ] as TxStep[];
 
 export const VAULT_WITHDRAW_STEPS = (symbol: string) =>
@@ -307,8 +307,8 @@ export const VAULT_WITHDRAW_STEPS = (symbol: string) =>
     {
       desc: `Withdraws supplied liquidity of ${symbol} from the vault`,
       done: false,
-      title: 'Withdraw',
-    },
+      title: 'Withdraw'
+    }
   ] as TxStep[];
 
 export const PRICE = 'Price';
@@ -325,7 +325,7 @@ export const REMOVE = 'Remove';
 export const LEVERAGE_VALUE = {
   DEFAULT: 1.0,
   MAX: 3.0,
-  MIN: 1.0,
+  MIN: 1.0
 };
 
 export const ASSET = 'Asset';
@@ -345,5 +345,5 @@ export const APR_TYPE = 'Apr Type';
 export const REPAY = 'Repay';
 export const HEALTH_FACTOR = {
   MAX: 100,
-  MIN: 0,
+  MIN: 0
 };

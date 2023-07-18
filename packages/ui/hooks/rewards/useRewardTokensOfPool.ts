@@ -27,7 +27,7 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
     },
     {
       enabled: !!poolAddress && !!sdk,
-      placeholderData: [],
+      placeholderData: []
     }
   );
 };

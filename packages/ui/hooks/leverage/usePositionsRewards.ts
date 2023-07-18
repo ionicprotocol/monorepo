@@ -32,7 +32,7 @@ export function useFlywheelRewardsForPositions(pools?: string[], chainIds?: numb
         !!chainIds &&
         pools.length > 0 &&
         chainIds.length > 0 &&
-        pools.length === chainIds.length,
+        pools.length === chainIds.length
     }
   );
 }
@@ -71,7 +71,7 @@ export function useRewardsForPositions(
       return {};
     },
     {
-      enabled: !!assets && !!pools && !!chainIds,
+      enabled: !!assets && !!pools && !!chainIds
     }
   );
 }

@@ -42,7 +42,7 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
               netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
               supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
               totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-              totalSupplyFiat: asset.totalSupplyNative * usdPrice,
+              totalSupplyFiat: asset.totalSupplyNative * usdPrice
             });
           });
         }
@@ -57,7 +57,7 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
           totalCollateralSupplyBalanceFiat: response.totalCollateralSupplyBalanceNative * usdPrice,
           totalLiquidityFiat: response.totalLiquidityNative * usdPrice,
           totalSuppliedFiat: response.totalSuppliedNative * usdPrice,
-          totalSupplyBalanceFiat: response.totalSupplyBalanceNative * usdPrice,
+          totalSupplyBalanceFiat: response.totalSupplyBalanceNative * usdPrice
         };
 
         return adaptedPoolData;
@@ -66,7 +66,7 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
       }
     },
     {
-      enabled: !!poolId && !!poolChainId && !!usdPrice && !!sdk,
+      enabled: !!poolId && !!poolChainId && !!usdPrice && !!sdk
     }
   );
 };

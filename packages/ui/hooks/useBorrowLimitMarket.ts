@@ -25,7 +25,7 @@ export const useBorrowLimitMarket = (
   const { data: borrowCaps } = useBorrowCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,
-    market: asset,
+    market: asset
   });
 
   return useQuery(
@@ -36,7 +36,7 @@ export const useBorrowLimitMarket = (
       assets,
       options?.ignoreIsEnabledCheckFor,
       usdPrice,
-      borrowCaps,
+      borrowCaps
     ],
     () => {
       if (!usdPrice) return undefined;

@@ -46,6 +46,7 @@
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/self-closing-comp": ["error", { "component": true, "html": true }],
     "react-hooks/exhaustive-deps": "error",
+    "react-hooks/rules-of-hooks": "error",
     "react/display-name": "off",
     "react/jsx-sort-props": "error",
     "react/prop-types": "off",

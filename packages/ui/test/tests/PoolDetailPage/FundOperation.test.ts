@@ -23,7 +23,7 @@ describe.skip('Fund Operation:', () => {
       chainId,
       networkName,
       rpc,
-      symbol,
+      symbol
     });
 
     poolDetailPage = new PoolDetailPage(page, metamask, testUrl);

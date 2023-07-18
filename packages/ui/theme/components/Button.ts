@@ -5,87 +5,87 @@ const baseStyle = defineStyle({
   _disabled: {
     boxShadow: 'none',
     cursor: 'not-allowed',
-    opacity: 0.4,
+    opacity: 0.4
   },
   _focusVisible: {
-    boxShadow: 'outline',
+    boxShadow: 'outline'
   },
   _hover: {
     _disabled: {
-      bg: 'initial',
-    },
+      bg: 'initial'
+    }
   },
   borderRadius: 'md',
   fontWeight: 'semibold',
   lineHeight: '1.2',
   transitionDuration: 'normal',
-  transitionProperty: 'common',
+  transitionProperty: 'common'
 });
 
 const ghost = defineStyle({
   _focus: {
     bg: 'none',
-    color: 'none',
+    color: 'none'
   },
   _hover: {
     bg: 'none',
     color: 'none',
-    textDecoration: 'unset',
+    textDecoration: 'unset'
   },
-  height: 6,
+  height: 6
 });
 
 const green = defineStyle((props) => {
   return {
     _disabled: {
-      bg: mode('iGray', 'iGray')(props),
+      bg: mode('iGray', 'iGray')(props)
     },
     _focus: {
       bg: mode('iGreen', 'iGreen')(props),
-      color: mode('iBlack', 'iBlack')(props),
+      color: mode('iBlack', 'iBlack')(props)
     },
     _hover: {
       _disabled: {
         bg: mode('iGray', 'iGray')(props),
-        color: mode('iBlack', 'iBlack')(props),
+        color: mode('iBlack', 'iBlack')(props)
       },
       bg: mode('iGreen', 'iGreen')(props),
       color: mode('iBlack', 'iBlack')(props),
-      textDecoration: 'unset',
+      textDecoration: 'unset'
     },
     bg: mode('iGreen', 'iGreen')(props),
     borderRadius: { base: '12px' },
     color: mode('iBlack', 'iBlack')(props),
     height: { base: '40px' },
     px: { base: '12px' },
-    py: { base: '8px' },
+    py: { base: '8px' }
   };
 });
 
 const disabled = defineStyle((props) => {
   return {
     _disabled: {
-      bg: mode('iGray', 'iGray')(props),
+      bg: mode('iGray', 'iGray')(props)
     },
     _focus: {
       bg: mode('iGray', 'iGray')(props),
-      color: mode('iBlack', 'iBlack')(props),
+      color: mode('iBlack', 'iBlack')(props)
     },
     _hover: {
       _disabled: {
         bg: mode('iGray', 'iGray')(props),
-        color: mode('iBlack', 'iBlack')(props),
+        color: mode('iBlack', 'iBlack')(props)
       },
       bg: mode('iGray', 'iGray')(props),
       color: mode('iBlack', 'iBlack')(props),
-      textDecoration: 'unset',
+      textDecoration: 'unset'
     },
     bg: mode('iGray', 'iGray')(props),
     borderRadius: { base: '12px' },
     color: mode('iBlack', 'iBlack')(props),
     height: { base: '40px' },
     px: { base: '12px' },
-    py: { base: '8px' },
+    py: { base: '8px' }
   };
 });
 
@@ -93,12 +93,12 @@ const outline = defineStyle((props) => {
   return {
     _focus: {
       bg: 'none',
-      color: mode('iLightGray', 'iLightGray')(props),
+      color: mode('iLightGray', 'iLightGray')(props)
     },
     _hover: {
       bg: 'none',
       color: mode('iLightGray', 'iLightGray')(props),
-      textDecoration: 'unset',
+      textDecoration: 'unset'
     },
     bg: 'none',
     borderColor: mode('iLightGray', 'iLightGray')(props),
@@ -106,7 +106,7 @@ const outline = defineStyle((props) => {
     color: mode('iLightGray', 'iLightGray')(props),
     height: { base: '40px' },
     px: { base: '12px' },
-    py: { base: '8px' },
+    py: { base: '8px' }
   };
 });
 
@@ -119,7 +119,7 @@ const _filter = defineStyle((props) => {
       : mode('iLightGray', 'iLightGray')(props),
     height: '36px',
     minW: '40px',
-    mr: '-px',
+    mr: '-px'
   };
 });
 
@@ -127,7 +127,7 @@ export const ButtonStyleConfig = defineStyleConfig({
   baseStyle,
   defaultProps: {
     size: 'sm',
-    variant: 'ghost',
+    variant: 'ghost'
   },
-  variants: { _filter, disabled, ghost, green, outline },
+  variants: { _filter, disabled, ghost, green, outline }
 });

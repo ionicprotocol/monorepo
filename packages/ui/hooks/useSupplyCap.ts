@@ -18,7 +18,7 @@ interface UseSupplyCapParams {
 export const useSupplyCap = ({
   comptroller: comptrollerAddress,
   chainId,
-  market,
+  market
 }: UseSupplyCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
   const { address } = useMultiIonic();
@@ -47,7 +47,7 @@ export const useSupplyCap = ({
       market.underlyingDecimals,
       usdPrice,
       address,
-      supplyCapsDataForAsset,
+      supplyCapsDataForAsset
     ],
     async () => {
       if (sdk && usdPrice && market && address && supplyCapsDataForAsset) {
@@ -55,7 +55,7 @@ export const useSupplyCap = ({
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
             comptroller.callStatic.supplyCaps(market.cToken),
-            comptroller.callStatic.isSupplyCapWhitelisted(market.cToken, address),
+            comptroller.callStatic.isSupplyCapWhitelisted(market.cToken, address)
           ]);
 
           if (isSupplyCapWhitelist || supplyCap.eq(constants.Zero)) {
@@ -86,7 +86,7 @@ export const useSupplyCap = ({
       }
     },
     {
-      enabled: !!sdk && !!usdPrice && !!market && !!address && !!supplyCapsDataForAsset,
+      enabled: !!sdk && !!usdPrice && !!market && !!address && !!supplyCapsDataForAsset
     }
   );
 };

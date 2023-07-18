@@ -3,7 +3,7 @@ import { mode } from '@chakra-ui/theme-tools';
 
 export const SelectConfigStyle: ComponentStyleConfig = {
   defaultProps: {
-    variant: 'outline',
+    variant: 'outline'
   },
   parts: ['field', 'icon'],
   variants: {
@@ -11,10 +11,10 @@ export const SelectConfigStyle: ComponentStyleConfig = {
       field: {
         _focus: {
           borderColor: mode('iSeparator', 'iSeparator')(props),
-          outline: 'none',
+          outline: 'none'
         },
         _hover: {
-          backgroundColor: 'none',
+          backgroundColor: 'none'
         },
         backgroundColor: 'none',
         borderColor: mode('iSeparator', 'iSeparator')(props),
@@ -23,11 +23,11 @@ export const SelectConfigStyle: ComponentStyleConfig = {
         boxShadow: 'none !important',
         color: mode('iWhite', 'iWhite')(props),
         cursor: 'pointer',
-        fontSize: '14px',
+        fontSize: '14px'
       },
       icon: {
-        color: mode('iWhite', 'iWhite')(props),
-      },
-    }),
-  },
+        color: mode('iWhite', 'iWhite')(props)
+      }
+    })
+  }
 };

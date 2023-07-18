@@ -33,7 +33,7 @@ export const useRestricted = (
                   debtCeiling.asset.cToken,
                   debtCeiling.collateralAsset.cToken,
                   address
-                ),
+                )
               ]);
 
               if (!isAssetBlacklistWhitelist && !isDebtCeilingWhitelist) {
@@ -50,7 +50,7 @@ export const useRestricted = (
     },
     {
       enabled:
-        !!comptrollerAddress && !!debtCeilings && debtCeilings.length > 0 && !!address && !!sdk,
+        !!comptrollerAddress && !!debtCeilings && debtCeilings.length > 0 && !!address && !!sdk
     }
   );
 };

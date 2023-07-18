@@ -25,7 +25,7 @@ interface UseBorrowCapParams {
 export const useBorrowCap = ({
   comptroller: comptrollerAddress,
   chainId,
-  market,
+  market
 }: UseBorrowCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
   const { address } = useMultiIonic();
@@ -50,7 +50,7 @@ export const useBorrowCap = ({
       market.totalBorrow,
       usdPrice,
       borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
-      address,
+      address
     ],
     async () => {
       if (
@@ -64,7 +64,7 @@ export const useBorrowCap = ({
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [borrowCap, isBorrowCapWhitelist] = await Promise.all([
             comptroller.callStatic.borrowCaps(market.cToken),
-            comptroller.callStatic.isBorrowCapWhitelisted(market.cToken, address),
+            comptroller.callStatic.isBorrowCapWhitelisted(market.cToken, address)
           ]);
 
           if (isBorrowCapWhitelist || borrowCap.eq(constants.Zero)) {
@@ -101,7 +101,7 @@ export const useBorrowCap = ({
         !!usdPrice &&
         !!market &&
         !!address &&
-        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
     }
   );
 };

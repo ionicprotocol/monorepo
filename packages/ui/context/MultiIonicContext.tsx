@@ -168,7 +168,7 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
       setAddress,
       setGlobalLoading,
       setIsSidebarCollapsed,
-      signer,
+      signer
     };
   }, [
     sdks,
@@ -186,7 +186,7 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
     signer,
     setAddress,
     isSidebarCollapsed,
-    setIsSidebarCollapsed,
+    setIsSidebarCollapsed
   ]);
 
   return <MultiIonicContext.Provider value={value}>{children}</MultiIonicContext.Provider>;

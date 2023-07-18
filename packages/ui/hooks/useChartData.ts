@@ -26,7 +26,7 @@ export function useChartData(market: string, poolChainId: number) {
       }
     },
     {
-      enabled: !!sdk && !!market,
+      enabled: !!sdk && !!market
     }
   );
 }

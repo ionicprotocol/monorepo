@@ -9,42 +9,42 @@ const baseStyle = definePartsStyle((props) => {
     body: {},
     closeButton: {
       boxShadow: 'none',
-      outline: 'none',
+      outline: 'none'
     },
     dialog: {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
-      borderRadius: { base: '24px' },
+      borderRadius: { base: '24px' }
     },
     header: {
       fontSize: { base: '24px' },
-      textAlign: 'left',
+      textAlign: 'left'
     },
-    overlay: {},
+    overlay: {}
   };
 });
 
 const xl = defineStyle({
   fontSize: 'xl',
   px: '6',
-  py: '2',
+  py: '2'
 });
 
 const sm = defineStyle({
   fontSize: 'sm',
-  py: '6',
+  py: '6'
 });
 
 const sizes = {
-  xl: definePartsStyle({ dialog: xl, header: sm }),
+  xl: definePartsStyle({ dialog: xl, header: sm })
 };
 
 const purple = definePartsStyle((props) => {
   return {
     dialog: {
       bg: mode('iCardBg', 'iCardBg')(props),
-      borderRadius: 'md',
-    },
+      borderRadius: 'md'
+    }
   };
 });
 
@@ -52,5 +52,5 @@ export const ModalStyleConfig = defineMultiStyleConfig({
   baseStyle,
   defaultProps: {},
   sizes,
-  variants: { purple },
+  variants: { purple }
 });

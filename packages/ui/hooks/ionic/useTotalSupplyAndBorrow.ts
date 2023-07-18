@@ -11,7 +11,7 @@ export const fetchTotalSupplyAndBorrow = async (ionicSdk: IonicSdk) => {
 
   return {
     totalBorrow: Number(utils.formatUnits(totalBorrow, decimals)),
-    totalSupply: Number(utils.formatUnits(totalSupply, decimals)),
+    totalSupply: Number(utils.formatUnits(totalSupply, decimals))
   };
 };
 
@@ -34,7 +34,7 @@ export const useTotalSupplyAndBorrow = () => {
       'useTotalSupplyAndBorrow',
       prices && Object.values(prices).sort(),
       isLoading,
-      sdks.map((sdk) => sdk.chainId).sort(),
+      sdks.map((sdk) => sdk.chainId).sort()
     ],
     async () => {
       if (!isLoading && error) throw new Error('Could not get USD price');
@@ -49,7 +49,7 @@ export const useTotalSupplyAndBorrow = () => {
                 logo: sdk.chainSpecificParams.metadata.img,
                 name: sdk.chainSpecificParams.metadata.name,
                 totalBorrow: totalBorrow * prices[sdk.chainId.toString()].value,
-                totalSupply: totalSupply * prices[sdk.chainId.toString()].value,
+                totalSupply: totalSupply * prices[sdk.chainId.toString()].value
               });
             } catch (e) {
               console.warn(`Unable to fetch total supply and borrow for chain ${sdk.chainId}`, e);

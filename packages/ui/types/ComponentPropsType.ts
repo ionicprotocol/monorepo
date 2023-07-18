@@ -4,7 +4,7 @@ import type {
   NativePricedIonicAsset,
   NewPosition,
   OpenPosition,
-  VaultData,
+  VaultData
 } from '@ionicprotocol/types';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';

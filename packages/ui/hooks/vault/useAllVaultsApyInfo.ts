@@ -69,7 +69,7 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
               supplyApy,
               totalSupplyRated,
               totalSupplyUsd,
-              xAxis: info.createdAt,
+              xAxis: info.createdAt
             };
           });
         } else {
@@ -80,7 +80,7 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
       return null;
     },
     {
-      enabled: Object.keys(vaultsPerChain).length > 0,
+      enabled: Object.keys(vaultsPerChain).length > 0
     }
   );
 }

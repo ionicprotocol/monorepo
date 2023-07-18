@@ -34,7 +34,7 @@ export const useTotalSupplyAPYs = (
       { assets: assets?.map((a) => a.cToken).sort() },
       { rewards: allRewards ? Object.keys(allRewards).sort() : undefined },
       { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined },
-      ankrBNBApr,
+      ankrBNBApr
     ],
     async () => {
       if (!sdk || !assets || !chainId) return null;

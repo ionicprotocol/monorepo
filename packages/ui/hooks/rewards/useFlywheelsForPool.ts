@@ -63,7 +63,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
               );
 
               return '';
-            }),
+            })
           ]);
 
           return {
@@ -72,7 +72,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
             markets,
             owner,
             rewardToken,
-            rewards,
+            rewards
           };
         })
       );
@@ -80,7 +80,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
       return flywheels;
     },
     {
-      enabled: !!comptrollerAddress && !!sdk,
+      enabled: !!comptrollerAddress && !!sdk
     }
   );
   return queryResult;

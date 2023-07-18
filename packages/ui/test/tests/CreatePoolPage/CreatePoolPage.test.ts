@@ -26,7 +26,7 @@ describe('Create Pool:', () => {
       chainId,
       networkName,
       rpc,
-      symbol,
+      symbol
     });
 
     createPoolPage = new CreatePoolPage(page, metamask, testUrl);

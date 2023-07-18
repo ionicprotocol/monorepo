@@ -1,6 +1,6 @@
 import type {
   NativePricedIonicAsset,
-  IonicPoolData as SDKIonicPoolData,
+  IonicPoolData as SDKIonicPoolData
 } from '@ionicprotocol/types';
 
 export type MidasApiTokenData = {

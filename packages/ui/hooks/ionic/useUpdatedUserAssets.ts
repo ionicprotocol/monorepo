@@ -20,7 +20,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
   index,
   assets,
   amount,
-  poolChainId,
+  poolChainId
 }: UseUpdatedUserAssetsResult<T>) => {
   const { currentSdk, currentChain } = useMultiIonic();
   const { data: usdPrices } = useAllUsdPrices();
@@ -41,7 +41,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
       assets?.map((a) => a.cToken).sort(),
       amount,
       usdPrice,
-      currentSdk?.chainId,
+      currentSdk?.chainId
     ],
     async () => {
       if (!assets || !assets.length || !usdPrice || !currentSdk) return [];
@@ -63,7 +63,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
             netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
             supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
             totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-            totalSupplyFiat: asset.totalSupplyNative * usdPrice,
+            totalSupplyFiat: asset.totalSupplyNative * usdPrice
           });
         });
       }

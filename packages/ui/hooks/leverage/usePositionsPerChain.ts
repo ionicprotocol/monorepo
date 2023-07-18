@@ -25,9 +25,9 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        queryKey: ['usePositionsPerChain', chainId, address],
+        queryKey: ['usePositionsPerChain', chainId, address]
       };
-    }),
+    })
   });
 
   const [positionsPerChain, isLoading] = useMemo(() => {
@@ -41,7 +41,7 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
       _positionsPerChain[_chainId.toString()] = {
         data: leverage.data,
         error: leverage.error as Err | undefined,
-        isLoading: leverage.isLoading,
+        isLoading: leverage.isLoading
       };
     });
 

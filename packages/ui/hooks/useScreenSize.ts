@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState({
     height: 1080,
-    width: 1920,
+    width: 1920
   });
 
   useEffect(() => {
     function handleResize() {
       setWindowSize({
         height: window.innerHeight,
-        width: window.innerWidth,
+        width: window.innerWidth
       });
     }
 

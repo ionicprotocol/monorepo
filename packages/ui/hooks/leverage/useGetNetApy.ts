@@ -22,7 +22,7 @@ export function useGetNetApy(
       collateralMarket,
       borrowableMarket,
       leverageRatio,
-      sdk?.chainId,
+      sdk?.chainId
     ],
     async () => {
       if (sdk && supplyApy !== undefined && amount && leverageRatio) {
@@ -50,7 +50,7 @@ export function useGetNetApy(
       }
     },
     {
-      enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
+      enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio
     }
   );
 }

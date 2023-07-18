@@ -37,7 +37,7 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
       }
     },
     {
-      enabled: !!currentSdk,
+      enabled: !!currentSdk
     }
   );
 
@@ -46,7 +46,7 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
       return {
         minBorrowAsset: undefined,
         minBorrowNative: undefined,
-        minBorrowUSD: undefined,
+        minBorrowUSD: undefined
       };
     }
 
@@ -55,12 +55,12 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
         .mul(utils.parseUnits('1', asset.underlyingDecimals))
         .div(asset.underlyingPrice),
       minBorrowNative: response.data,
-      minBorrowUSD: Number(utils.formatUnits(response.data, 18)) * usdPrice,
+      minBorrowUSD: Number(utils.formatUnits(response.data, 18)) * usdPrice
     };
   }, [response, usdPrice, asset]);
 
   return {
     ...response,
-    data,
+    data
   };
 };

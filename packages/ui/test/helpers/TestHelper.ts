@@ -2,7 +2,7 @@ import type {
   Dappeteer,
   DappeteerBrowser,
   DappeteerLaunchOptions,
-  DappeteerPage,
+  DappeteerPage
 } from '@chainsafe/dappeteer';
 import { launch, RECOMMENDED_METAMASK_VERSION, setupMetaMask } from '@chainsafe/dappeteer';
 
@@ -64,7 +64,7 @@ export class TestHelper {
   private static async getBrowser(): Promise<DappeteerBrowser> {
     let browser: DappeteerBrowser;
     const options: DappeteerLaunchOptions = {
-      metaMaskVersion: RECOMMENDED_METAMASK_VERSION,
+      metaMaskVersion: RECOMMENDED_METAMASK_VERSION
     };
 
     try {

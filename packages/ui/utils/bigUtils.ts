@@ -8,7 +8,7 @@ export const smallFormatter = (num: number, isCompacted?: boolean, digits = 2) =
   return dynamicFormatter(num, {
     maximumFractionDigits: digits,
     minimumFractionDigits: digits,
-    notation: isCompacted ? 'compact' : undefined,
+    notation: isCompacted ? 'compact' : undefined
   });
 };
 

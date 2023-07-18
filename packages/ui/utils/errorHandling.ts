@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/nextjs';
 export const handleGenericError = ({
   error,
   toast,
-  sentryInfo,
+  sentryInfo
 }: {
   error: any;
   sentryInfo: { contextName: string; properties: { [key: string]: any } };
@@ -38,12 +38,12 @@ export const handleGenericError = ({
         description: 'Your transaction has been rejected!',
         id: 'Error action rejected - ' + Math.random().toString(),
         status: 'warning',
-        title: 'Action Rejected!',
+        title: 'Action Rejected!'
       });
     } else if (error.method === 'estimateGas') {
       toast({
         description: 'Gas cannot be estimated!',
-        id: 'Error estimate gas - ' + Math.random().toString(),
+        id: 'Error estimate gas - ' + Math.random().toString()
       });
     } else {
       toast({ description: message, id: 'Error - ' + Math.random().toString() });

@@ -18,7 +18,7 @@ export const useYourBorrowsRowData = (assets?: MarketData[]) => {
             apr: asset,
             aprType: asset,
             asset: asset,
-            debt: asset,
+            debt: asset
           });
         });
       }
@@ -26,7 +26,7 @@ export const useYourBorrowsRowData = (assets?: MarketData[]) => {
       return res;
     },
     {
-      enabled: !!assets && assets.length > 0,
+      enabled: !!assets && assets.length > 0
     }
   );
 

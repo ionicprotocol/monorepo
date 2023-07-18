@@ -30,7 +30,7 @@ export const useClaimableRewardsForVaults = (chainIds: SupportedChains[]) => {
       return res;
     },
     {
-      enabled: !!address,
+      enabled: !!address
     }
   );
 };

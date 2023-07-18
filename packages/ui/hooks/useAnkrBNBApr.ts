@@ -47,7 +47,7 @@ export const useAnkrBNBApr = (isEnabled: boolean, poolChainId?: number) => {
       return null;
     },
     {
-      enabled: !!sdk && !!poolChainId && isEnabled,
+      enabled: !!sdk && !!poolChainId && isEnabled
     }
   );
 };

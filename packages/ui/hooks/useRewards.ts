@@ -32,7 +32,7 @@ export const fetchFlywheelRewards = async (comptroller: string, sdk: IonicSdk) =
     sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
       console.error('Unable to get onchain Flywheel Rewards without APY', error);
       return [];
-    }),
+    })
   ]);
 
   return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
@@ -51,7 +51,7 @@ export function useFlywheelRewards(comptroller?: string, chainId?: number) {
       return null;
     },
     {
-      enabled: !!comptroller && !!chainId,
+      enabled: !!comptroller && !!chainId
     }
   );
 }
@@ -102,7 +102,7 @@ export const fetchRewards = async (
                   : undefined,
                 flywheel: info.flywheel,
                 token: info.rewardToken,
-                updated_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
               } as FlywheelReward);
             }
           }
@@ -128,7 +128,7 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
       'useRewards',
       chainId,
       poolData?.assets.map((asset) => [asset.cToken, asset.plugin]),
-      flywheelRewards,
+      flywheelRewards
     ],
     async () => {
       if (chainId && poolData && flywheelRewards) {
@@ -143,7 +143,7 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
       return {};
     },
     {
-      enabled: !!poolData && !!flywheelRewards,
+      enabled: !!poolData && !!flywheelRewards
     }
   );
 }
@@ -151,7 +151,7 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
 export function useRewardsForMarket({
   asset,
   chainId,
-  poolAddress,
+  poolAddress
 }: {
   asset: Pick<MarketData, 'cToken' | 'plugin'>;
   chainId: number;
@@ -174,7 +174,7 @@ export function useRewardsForMarket({
       return {};
     },
     {
-      enabled: !!asset && !!poolAddress,
+      enabled: !!asset && !!poolAddress
     }
   );
 }

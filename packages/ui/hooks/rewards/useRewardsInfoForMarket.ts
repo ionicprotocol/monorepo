@@ -29,7 +29,7 @@ export const useRewardsInfoForMarket = (
       }
     },
     {
-      enabled: !!flywheelAddress && !!marketAddress && !!sdk,
+      enabled: !!flywheelAddress && !!marketAddress && !!sdk
     }
   );
 };

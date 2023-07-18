@@ -25,7 +25,7 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
       }
     },
     {
-      enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
+      enabled: !!comptrollerAddress && !!currentChain && !!currentSdk
     }
   );
 

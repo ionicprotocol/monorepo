@@ -31,7 +31,7 @@ export const fetchTokenData = async (
             : undefined,
           name: asset.name,
           originalSymbol: asset.originalSymbol,
-          symbol: asset.symbol,
+          symbol: asset.symbol
         });
       } else {
         apiAddresses.push(address);
@@ -42,7 +42,7 @@ export const fetchTokenData = async (
       const res = await axios
         .post('/api/tokenData', {
           addresses: apiAddresses,
-          chain: chainId,
+          chain: chainId
         })
         .catch((e) => {
           console.warn(`Getting token data from api error: `, { addresses, chainId }, e);

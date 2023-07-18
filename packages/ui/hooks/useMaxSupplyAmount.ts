@@ -30,7 +30,7 @@ export function useMaxSupplyAmount(
       comptrollerAddress,
       sdk?.chainId,
       address,
-      supplyCapsDataForAsset,
+      supplyCapsDataForAsset
     ],
     async () => {
       if (sdk && address && supplyCapsDataForAsset) {
@@ -40,7 +40,7 @@ export function useMaxSupplyAmount(
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isWhitelisted] = await Promise.all([
             comptroller.callStatic.supplyCaps(asset.cToken),
-            comptroller.callStatic.isSupplyCapWhitelisted(asset.cToken, address),
+            comptroller.callStatic.isSupplyCapWhitelisted(asset.cToken, address)
           ]);
 
           let bigNumber: BigNumber;
@@ -60,7 +60,7 @@ export function useMaxSupplyAmount(
 
           return {
             bigNumber: bigNumber,
-            number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
+            number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals))
           };
         } catch (e) {
           console.warn(
@@ -76,7 +76,7 @@ export function useMaxSupplyAmount(
       }
     },
     {
-      enabled: !!address && !!asset && !!sdk && !!comptrollerAddress,
+      enabled: !!address && !!asset && !!sdk && !!comptrollerAddress
     }
   );
 }

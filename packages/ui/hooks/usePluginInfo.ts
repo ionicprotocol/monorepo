@@ -16,14 +16,14 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
               icon: '',
               market: '',
               name: `Unnamed (${pluginAddress})`,
-              strategyDocsUrl: '',
+              strategyDocsUrl: ''
             };
       } else {
         return null;
       }
     },
     {
-      enabled: !!pluginAddress && !!sdk,
+      enabled: !!pluginAddress && !!sdk
     }
   );
 };

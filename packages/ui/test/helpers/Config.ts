@@ -42,28 +42,28 @@ export class Config {
           chainId: SupportedChains.chapel,
           networkName: 'chapel',
           rpc: chapel.specificParams.metadata.rpcUrls.default.http[0],
-          symbol: 'BNB',
+          symbol: 'BNB'
         };
       case SupportedChains.bsc:
         return {
           chainId: SupportedChains.bsc,
           networkName: 'ForkedBSC',
           rpc: FORKED_RPC,
-          symbol: 'FORK',
+          symbol: 'FORK'
         };
       case SupportedChains.polygon:
         return {
           chainId: SupportedChains.polygon,
           networkName: 'ForkedPolygon',
           rpc: FORKED_RPC,
-          symbol: 'MATIC',
+          symbol: 'MATIC'
         };
       default:
         return {
           chainId: SupportedChains.chapel,
           networkName: 'chapel',
           rpc: chapel.specificParams.metadata.rpcUrls.default.http[0],
-          symbol: 'BNB',
+          symbol: 'BNB'
         };
     }
   }
@@ -77,7 +77,7 @@ export class Config {
           repayAmount: '1',
           supplyAmount: '5',
           testUrl: `${BASE_URL}/97/pool/25`,
-          withdrawAmount: '3',
+          withdrawAmount: '3'
         };
       case SupportedChains.bsc:
         return {
@@ -87,7 +87,7 @@ export class Config {
           repayAmount: '1',
           supplyAmount: '5',
           testUrl: `${BASE_URL}/56/pool/1`, // Jarvis pool
-          withdrawAmount: '3',
+          withdrawAmount: '3'
         };
       case SupportedChains.polygon:
         return {
@@ -97,7 +97,7 @@ export class Config {
           repayAmount: '1',
           supplyAmount: '5',
           testUrl: `${BASE_URL}/137/pool/1`,
-          withdrawAmount: '3',
+          withdrawAmount: '3'
         };
       // use chapel as default
       default:
@@ -108,7 +108,7 @@ export class Config {
           repayAmount: '1',
           supplyAmount: '5',
           testUrl: `${BASE_URL}/97/pool/25`,
-          withdrawAmount: '3',
+          withdrawAmount: '3'
         };
     }
   }
@@ -118,7 +118,7 @@ export class Config {
       liquidationIncentive: '8',
       name: 'e2e testing',
       oracle: '0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA',
-      testUrl: `${BASE_URL}/create-pool`,
+      testUrl: `${BASE_URL}/create-pool`
     };
   }
 }

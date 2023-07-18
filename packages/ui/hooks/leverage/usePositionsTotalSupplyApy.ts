@@ -25,7 +25,7 @@ export const usePositionsTotalSupplyApy = (
       chainIds,
       { assets: assets.map((a) => a.cToken).sort() },
       { rewards: allRewards ? Object.keys(allRewards).sort() : undefined },
-      { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined },
+      { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined }
     ],
     async () => {
       if (assets && chainIds && chainIds.length > 0) {

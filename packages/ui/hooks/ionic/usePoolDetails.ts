@@ -20,7 +20,7 @@ export const usePoolDetails = (assets?: NativePricedIonicAsset[], poolChainId?: 
         .map(
           (asset) => (asset.totalSupplyNative, asset.supplyRatePerBlock, asset.borrowRatePerBlock)
         ),
-      sdk?.chainId,
+      sdk?.chainId
     ],
     async () => {
       if (assets && assets.length && sdk && blocksPerMinute) {
@@ -49,7 +49,7 @@ export const usePoolDetails = (assets?: NativePricedIonicAsset[], poolChainId?: 
           return {
             mostSuppliedAsset,
             topBorrowAPRAsset,
-            topLendingAPYAsset,
+            topLendingAPYAsset
           };
         } catch (e) {
           console.warn(`Getting pool details error: `, { poolChainId }, e);
@@ -59,7 +59,7 @@ export const usePoolDetails = (assets?: NativePricedIonicAsset[], poolChainId?: 
       }
     },
     {
-      enabled: !!assets && assets.length > 0 && !!sdk && !!blocksPerMinute,
+      enabled: !!assets && assets.length > 0 && !!sdk && !!blocksPerMinute
     }
   );
 };

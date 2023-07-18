@@ -25,7 +25,7 @@ export function useUpdatedNetApyAfterFunding(
                 amount,
                 chainId,
                 positionAddress,
-                supplyApy,
+                supplyApy
               },
               e
             );
@@ -39,7 +39,7 @@ export function useUpdatedNetApyAfterFunding(
       }
     },
     {
-      enabled: !!sdk && supplyApy !== undefined && !!amount && !!positionAddress,
+      enabled: !!sdk && supplyApy !== undefined && !!amount && !!positionAddress
     }
   );
 }

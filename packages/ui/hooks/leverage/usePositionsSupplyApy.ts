@@ -11,7 +11,7 @@ export function usePositionsSupplyApy(collaterals: LeveredCollateral[], chainIds
       plugin: collateral.plugin,
       supplyRatePerBlock: collateral.supplyRatePerBlock,
       underlyingSymbol: collateral.symbol,
-      underlyingToken: collateral.underlyingToken,
+      underlyingToken: collateral.underlyingToken
     };
   });
 

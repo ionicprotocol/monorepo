@@ -10,26 +10,26 @@ const baseStyle = definePartsStyle({
   field: {
     _disabled: {
       cursor: 'not-allowed',
-      opacity: 0.4,
+      opacity: 0.4
     },
     _focusVisible: {
       boxShadow: 'none',
-      outline: 'none',
+      outline: 'none'
     },
     appearance: 'none',
     minWidth: 0,
-    outline: 0,
-  },
+    outline: 0
+  }
 });
 
 const xl = defineStyle({
   fontSize: 'lg',
   h: '12',
-  px: '4',
+  px: '4'
 });
 
 const sizes = {
-  xl: definePartsStyle({ addon: xl, field: xl }),
+  xl: definePartsStyle({ addon: xl, field: xl })
 };
 
 const ghost = definePartsStyle((props) => {
@@ -42,32 +42,32 @@ const ghost = definePartsStyle((props) => {
       justifyContent: 'center',
       pointerEvents: 'none',
       px: { base: 0 },
-      width: { base: '20px' },
+      width: { base: '20px' }
     },
     element: {
       color: mode('iBlack', 'iWhite')(props),
       fontSize: { base: '12px' },
       height: '20px',
       pointerEvents: 'none',
-      width: '20px',
+      width: '20px'
     },
     field: {
       _focus: {
-        border: 'none',
+        border: 'none'
       },
       _focusVisible: {
         boxShadow: 'none',
-        outline: 'none',
+        outline: 'none'
       },
       _hover: {
-        border: 'none',
+        border: 'none'
       },
       _placeholder: { color: mode('iGray', 'iGray')(props) },
       _readOnly: {
         _focus: { border: 'none' },
         border: 'none',
         cursor: 'auto',
-        outline: 'none',
+        outline: 'none'
       },
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
@@ -75,16 +75,16 @@ const ghost = definePartsStyle((props) => {
       fontSize: '14px',
       height: { base: '20px' },
       paddingInlineEnd: 0,
-      paddingInlineStart: '10px',
-    },
+      paddingInlineStart: '10px'
+    }
   };
 });
 
 export const InputConfigStyle = defineMultiStyleConfig({
   baseStyle,
   defaultProps: {
-    variant: 'ghost',
+    variant: 'ghost'
   },
   sizes,
-  variants: { ghost },
+  variants: { ghost }
 });

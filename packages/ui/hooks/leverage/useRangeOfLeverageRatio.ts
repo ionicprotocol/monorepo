@@ -18,14 +18,14 @@ export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
 
         return {
           max: Number(Number(utils.formatUnits(maxBignum)).toFixed(3)),
-          min: Number(Number(utils.formatUnits(minBignum)).toFixed(3)),
+          min: Number(Number(utils.formatUnits(minBignum)).toFixed(3))
         };
       } else {
         return null;
       }
     },
     {
-      enabled: !!address && !!sdk,
+      enabled: !!address && !!sdk
     }
   );
 }

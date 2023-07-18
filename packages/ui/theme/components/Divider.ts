@@ -3,14 +3,14 @@ import { mode } from '@chakra-ui/theme-tools';
 
 export const DividierStyleConfig: ComponentStyleConfig = {
   defaultProps: {
-    variant: 'normal',
+    variant: 'normal'
   },
   variants: {
     normal: (props) => ({
       bgColor: mode('silverMetallic50', 'ecru20')(props),
       borderWidth: 0,
       height: '1px',
-      width: '100%',
-    }),
-  },
+      width: '100%'
+    })
+  }
 };

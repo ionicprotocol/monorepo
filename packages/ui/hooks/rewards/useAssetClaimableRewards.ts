@@ -31,7 +31,7 @@ export const useAssetClaimableRewards = (
             address,
             marketAddress,
             poolAddress,
-            poolChainId,
+            poolChainId
           });
 
           return null;
@@ -41,7 +41,7 @@ export const useAssetClaimableRewards = (
       return null;
     },
     {
-      enabled: !!poolAddress && !!marketAddress && !!address && !!sdk,
+      enabled: !!poolAddress && !!marketAddress && !!address && !!sdk
     }
   );
 };
@@ -76,7 +76,7 @@ export const getAssetsClaimableRewards = async (
 export const useAssetsClaimableRewards = ({
   poolAddress,
   assetsAddress,
-  poolChainId,
+  poolChainId
 }: {
   assetsAddress: string[];
   poolAddress: string;
@@ -95,7 +95,7 @@ export const useAssetsClaimableRewards = ({
       return null;
     },
     {
-      enabled: !!poolAddress && !!address && !!sdk,
+      enabled: !!poolAddress && !!address && !!sdk
     }
   );
 };

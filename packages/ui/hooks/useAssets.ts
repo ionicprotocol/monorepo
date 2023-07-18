@@ -14,7 +14,7 @@ export function useAssets(chainIds?: number[]) {
       if (chainIds && chainIds.length > 0) {
         try {
           const res = await axios.post('/api/assets', {
-            chainIds,
+            chainIds
           });
 
           assetsRewards = { ...res.data };
@@ -26,7 +26,7 @@ export function useAssets(chainIds?: number[]) {
       return assetsRewards;
     },
     {
-      enabled: !!chainIds && chainIds.length > 0,
+      enabled: !!chainIds && chainIds.length > 0
     }
   );
 }

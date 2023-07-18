@@ -26,7 +26,7 @@ export function useMaxWithdrawAmount(asset: NativePricedIonicAsset, chainId: num
       }
     },
     {
-      enabled: !!address && !!asset && !!sdk,
+      enabled: !!address && !!asset && !!sdk
     }
   );
 }

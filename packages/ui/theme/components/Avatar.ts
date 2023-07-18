@@ -10,12 +10,12 @@ const baseStyle = definePartsStyle({
   container: {
     bg: 'transparent',
     borderColor: 'transparent',
-    color: (props) => mode('raisinBlack', 'raisinBlack')(props),
+    color: (props) => mode('raisinBlack', 'raisinBlack')(props)
   },
   excessLabel: {
     bg: 'ecru',
-    color: 'rasinBlack',
-  },
+    color: 'rasinBlack'
+  }
 });
 
 export const AvatarStyleConfig = defineMultiStyleConfig({ baseStyle });
