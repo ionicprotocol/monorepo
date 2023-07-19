@@ -29,6 +29,9 @@
     "CErc20PluginRewardsDelegate": {
       "address": "0xB758A3BFec4451f21c79b4A281CBa8cD83e70d00"
     },
+    "CErc20RewardsDelegate": {
+      "address": "0xC0d653C60CD5B4280a3D94dc39e162601A77A838"
+    },
     "CTokenFirstExtension": {
       "address": "0x56F15D070cf5C01dDD78BbCbC362d67a323D57Eb"
     },

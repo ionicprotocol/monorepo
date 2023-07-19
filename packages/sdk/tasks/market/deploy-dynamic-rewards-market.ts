@@ -74,15 +74,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     }
     console.log({ pluginAddress: plugin.address });
 
-    // STEP 2: whitelist plugins
-    console.log(`Whitelisting plugin: ${pluginAddress} ...`);
-    await run("plugin:whitelist", {
-      oldImplementation: pluginAddress,
-      newImplementation: pluginAddress,
-      admin: taskArgs.signer
-    });
-
-    // STEP 3: upgrade markets to the new implementation
+    // STEP 2: upgrade markets to the new implementation
     console.log(`Upgrading market: ${underlyingAddress} to CErc20PluginRewardsDelegate with plugin: ${pluginAddress}`);
     await run("market:upgrade", {
       comptroller,
