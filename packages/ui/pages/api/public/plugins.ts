@@ -1,12 +1,4 @@
-import {
-  arbitrum,
-  bsc,
-  chapel,
-  ethereum,
-  ganache,
-  neondevnet,
-  polygon
-} from '@ionicprotocol/chains';
+import { arbitrum, bsc, chapel, ethereum, ganache, neon, polygon } from '@ionicprotocol/chains';
 import type { DeployedPlugins as DeployedPluginsType } from '@ionicprotocol/types';
 import { SupportedChains } from '@ionicprotocol/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -25,7 +17,7 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.polygon]: polygon.deployedPlugins,
   [SupportedChains.ganache]: ganache.deployedPlugins,
   [SupportedChains.chapel]: chapel.deployedPlugins,
-  [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
+  [SupportedChains.neon]: neon.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.ethereum]: ethereum.deployedPlugins
 };

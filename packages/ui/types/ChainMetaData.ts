@@ -5,7 +5,7 @@ import {
   ethereum,
   ganache,
   lineagoerli,
-  neondevnet,
+  neon,
   polygon,
 } from '@ionicprotocol/chains';
 import type { FusePoolData } from '@ionicprotocol/types';
@@ -21,7 +21,7 @@ export const supportedChainIdToConfig: {
     enabled: true,
     supported: config.isArbitrumEnabled,
   },
-  [neondevnet.chainId]: {
+  [neon.chainId]: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled,
   },

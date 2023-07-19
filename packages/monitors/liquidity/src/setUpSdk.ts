@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { bsc, chapel, ethereum, ganache, neondevnet, polygon } from "@ionicprotocol/chains";
+import { bsc, chapel, ethereum, ganache, neon, polygon } from "@ionicprotocol/chains";
 import { IonicSdk } from "@ionicprotocol/sdk";
 import { ChainConfig } from "@ionicprotocol/types";
 import { Signer } from "ethers";
@@ -7,7 +7,7 @@ import { Signer } from "ethers";
 const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
   [polygon.chainId]: polygon,
-  [neondevnet.chainId]: neondevnet,
+  [neon.chainId]: neon,
   [chapel.chainId]: chapel,
   [ganache.chainId]: ganache,
   [ethereum.chainId]: ethereum,

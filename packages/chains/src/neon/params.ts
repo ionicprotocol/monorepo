@@ -6,12 +6,12 @@ const specificParams: ChainParams = {
   cgId: "neon",
   metadata: {
     chainIdHex: "0xE9AC0CE",
-    name: "Neon Devnet",
-    shortName: "Neon Devnet",
+    name: "Neon",
+    shortName: "Neon",
     img: "https://d1912tcoux65lj.cloudfront.net/network/neon.jpg",
     rpcUrls: {
-      default: { http: ["https://devnet.neonevm.org"] },
-      public: { http: ["https://devnet.neonevm.org"] }
+      default: { http: ["https://neon-proxy-mainnet.solana.p2p.org"] },
+      public: { http: ["https://neon-proxy-mainnet.solana.p2p.org"] }
     },
     blockExplorerUrls: {
       default: { name: "NeonScan", url: "https://neonscan.org" },
@@ -19,12 +19,12 @@ const specificParams: ChainParams = {
     },
     nativeCurrency: {
       symbol: "NEON",
-      name: "Neon Devnet"
+      name: "Neon"
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WNEON,
       address: "",
-      name: "Neon Devnet",
+      name: "Neon",
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
