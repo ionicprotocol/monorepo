@@ -1,11 +1,11 @@
-import { lineagoerli } from "@ionicprotocol/chains";
+import { linea } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployUmbrellaOracle } from "../helpers";
 import { UmbrellaAsset } from "../helpers/types";
 
-const assets = lineagoerli.assets;
+const assets = linea.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: underlying(assets, assetSymbols.WETH),
@@ -13,7 +13,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenName: "Linea (Goerli)",
   nativeTokenSymbol: "ETH",
   stableToken: underlying(assets, assetSymbols.USDC),
-  blocksPerYear: lineagoerli.specificParams.blocksPerYear.toNumber(),
+  blocksPerYear: linea.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [],
@@ -25,7 +25,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleInitialDeployTokens: [],
     flashSwapFee: 30
   },
-  cgId: lineagoerli.specificParams.cgId
+  cgId: linea.specificParams.cgId
 };
 
 const umbrellaAssets: UmbrellaAsset[] = [

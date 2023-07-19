@@ -12,11 +12,11 @@ const specificParams: ChainParams = {
     name: "Linea Goerli Testnet",
     shortName: "Linea Goerli",
     uniswapV3Fees: {},
-    img: "https://d1912tcoux65lj.cloudfront.net/network/lineagoerli.png",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/linea.png",
     blockExplorerUrls: { default: { name: "lineascan", url: "https://goerli.lineascan.build/" } },
     rpcUrls: {
-      default: { http: ["https://rpc.goerli.linea.build"] },
-      public: { http: ["https://rpc.goerli.linea.build"] }
+      default: { http: ["https://linea-mainnet.infura.io/v3/"] },
+      public: { http: ["https://linea-mainnet.infura.io/v3/"] }
     },
     nativeCurrency: {
       symbol: "ETH",

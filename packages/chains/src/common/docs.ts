@@ -28,9 +28,9 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapAddress: "https://moraswap.com/exchange/swap"
     },
     [SupportedChains.chapel]: {},
-    [SupportedChains.lineagoerli]: {
+    [SupportedChains.linea]: {
       swapName: "Uniswap",
-      swapAddress: "https://swap.goerli.linea.build/#/swap"
+      swapAddress: "https://swap.linea.build/#/swap"
     },
     [SupportedChains.ethereum]: {
       swapName: "Uniswap",
