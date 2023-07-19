@@ -10,12 +10,6 @@ const fundingStrategies: FundingStrategy[] = [
     strategy: FundingStrategyContract.JarvisLiquidatorFunder,
     inputToken: underlying(assets, assetSymbols.BUSD)
   },
-  // BOMB
-  {
-    outputToken: underlying(assets, assetSymbols.xBOMB),
-    strategy: FundingStrategyContract.XBombLiquidatorFunder,
-    inputToken: underlying(assets, assetSymbols.BOMB)
-  },
   {
     outputToken: underlying(assets, assetSymbols.MAI),
     strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
@@ -28,11 +22,6 @@ const fundingStrategies: FundingStrategy[] = [
   },
   {
     outputToken: underlying(assets, assetSymbols.val3EPS),
-    strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
-    inputToken: underlying(assets, assetSymbols.BUSD)
-  },
-  {
-    outputToken: underlying(assets, assetSymbols.JCHF),
     strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
     inputToken: underlying(assets, assetSymbols.BUSD)
   }

@@ -38,10 +38,6 @@ const assets: PriceVerifierAsset[] = [
     ...assetFilter(chainAssets, assetSymbols.JEUR),
     maxPriceDeviation: priceDeviations.STABLE,
   },
-  {
-    ...assetFilter(chainAssets, assetSymbols.JGBP),
-    maxPriceDeviation: priceDeviations.STABLE,
-  },
 ];
 
 export default assets;
