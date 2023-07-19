@@ -30,11 +30,6 @@ const fundingStrategies: FundingStrategy[] = [
     outputToken: underlying(assets, assetSymbols.val3EPS),
     strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
     inputToken: underlying(assets, assetSymbols.BUSD)
-  },
-  {
-    outputToken: underlying(assets, assetSymbols.JCHF),
-    strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
-    inputToken: underlying(assets, assetSymbols.BUSD)
   }
 ];
 
