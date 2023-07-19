@@ -28,7 +28,11 @@ task("auth:set-user-role", "Sets the role of a new user")
       console.log(`Pool authority for pool ${pool} does not exist`);
       return;
     }
-    const poolAuth = (await ethers.getContractAt("PoolRolesAuthority", poolAuthAddress, deployer)) as PoolRolesAuthority;
+    const poolAuth = (await ethers.getContractAt(
+      "PoolRolesAuthority",
+      poolAuthAddress,
+      deployer
+    )) as PoolRolesAuthority;
     const userHasCapability = await poolAuth.callStatic.doesUserHaveRole(user, role);
     if (userHasCapability === enabled) {
       console.log(`User ${user} already has ${Roles[role]} role for pool ${pool}`);
