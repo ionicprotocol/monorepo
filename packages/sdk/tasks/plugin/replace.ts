@@ -4,7 +4,6 @@ import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
-import { FeeDistributor } from "../../typechain/FeeDistributor";
 import { IonicERC4626 } from "../../typechain/IonicERC4626";
 
 task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config list").setAction(
@@ -12,29 +11,15 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     const deployer = await ethers.getNamedSigner("deployer");
 
     console.log({ deployer: deployer.address });
-    const ffd = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
     const chainid = parseInt(await getChainId());
     const pluginConfigs: DeployedPlugins = chainIdToConfig[chainid].deployedPlugins;
-
-    const oldImplementations = [];
-    const newImplementations = [];
-    const arrayOfTrue = [];
 
     const pluginAddresses = Object.keys(pluginConfigs);
 
     for (const pluginAddress of pluginAddresses) {
       const conf = pluginConfigs[pluginAddress];
       console.log({ conf });
-
-      const market = (await ethers.getContractAt(
-        "CErc20PluginRewardsDelegate",
-        conf.market
-      )) as CErc20PluginRewardsDelegate;
-
-      const currentPlugin = await market.callStatic.plugin();
-      if (currentPlugin != pluginAddress) throw new Error(`wrong plugin address/config for market ${conf.market}`);
-      oldImplementations.push(currentPlugin);
 
       let deployArgs;
       if (conf.otherParams) {
@@ -66,14 +51,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
 
       if (deployment.transactionHash) await ethers.provider.waitForTransaction(deployment.transactionHash);
       console.log("ERC4626 Strategy: ", deployment.address);
-
-      newImplementations.push(deployment.address);
-      arrayOfTrue.push(true);
     }
-
-    const tx = await ffd._editPluginImplementationWhitelist(oldImplementations, newImplementations, arrayOfTrue);
-    await tx.wait();
-    console.log("_editPluginImplementationWhitelist: ", tx.hash);
 
     for (const pluginAddress in pluginConfigs) {
       const conf = pluginConfigs[pluginAddress];

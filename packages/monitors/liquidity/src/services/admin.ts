@@ -23,7 +23,7 @@ export class AdminService {
   async pauseAllPoolsWithUnderlying(pools: Array<ComptrollerWithExtension>, underlying: string) {
     for (const pool of pools) {
       const cTokenAddress = await pool.callStatic.cTokensByUnderlying(underlying);
-      const cToken = this.sdk.createCTokenWithExtensions(cTokenAddress, this.admin);
+      const cToken = this.sdk.createICErc20(cTokenAddress, this.admin);
       await this.pauseMarketActivity(pool, cToken);
     }
   }

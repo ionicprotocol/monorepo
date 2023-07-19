@@ -37,7 +37,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
       .createComptroller(comptroller, signer)
       .callStatic.cTokensByUnderlying(underlyingAddress);
 
-    const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
+    const cToken = await sdk.createICErc20PluginRewards(marketAddress);
 
     const cTokenImplementation = await cToken.callStatic.implementation();
     console.log({ underlyingAddress, marketAddress, cTokenImplementation });
@@ -78,26 +78,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     }
     console.log({ pluginAddress: plugin.address });
 
-    // STEP 2: whitelist plugins
-    console.log(`Whitelisting plugin: ${pluginAddress} ...`);
-    await run("plugin:whitelist", {
-      oldImplementation: pluginAddress,
-      newImplementation: pluginAddress,
-      admin: taskArgs.signer
-    });
-
-    // STEP 3: whitelist upgradfe path from CErc20Delegate-> CErc20PluginRewardsDelegate
-    console.log(
-      `Whitelisting upgrade path from CErc20Delegate: ${cTokenImplementation} -> CErc20PluginDelegate: ${sdk.chainDeployment.CErc20PluginDelegate.address}`
-    );
-    await run("market:updatewhitelist", {
-      oldPluginDelegate: cTokenImplementation,
-      admin: taskArgs.signer
-    });
-
-    console.log("Upgrade path whitelisted");
-
-    // STEP 4: upgrade markets to the new implementation
+    // STEP 2: upgrade markets to the new implementation
     console.log(`Upgrading market: ${underlyingAddress} to CErc20PluginDelegate with plugin: ${pluginAddress}`);
     await run("market:upgrade", {
       comptroller,
