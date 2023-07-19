@@ -214,11 +214,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     await tx.wait();
     console.log(`added the SPO to the MPO for the testing DAI token`);
 
-    const bombPool = (await ethers.getContractAt(
-      "Comptroller",
-      bombPoolAddress,
-      deployer
-    )) as Comptroller;
+    const bombPool = (await ethers.getContractAt("Comptroller", bombPoolAddress, deployer)) as Comptroller;
 
     const bombPoolExt = (await ethers.getContractAt(
       "ComptrollerFirstExtension",
@@ -307,11 +303,7 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
 task("chapel-adjust-ratio-levered-position").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
-  const leveredPosition = (await ethers.getContractAt(
-    "LeveredPosition",
-    "",
-    deployer
-  )) as LeveredPosition;
+  const leveredPosition = (await ethers.getContractAt("LeveredPosition", "", deployer)) as LeveredPosition;
 
   const ratio = ethers.utils.parseEther("1.44");
   const tx = await leveredPosition.adjustLeverageRatio(ratio);
@@ -354,8 +346,7 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
   }
 );
 
-task("trasnfer-test-tokens")
-.setAction(async ({}, { ethers, getNamedAccounts }) => {
+task("trasnfer-test-tokens").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
   const newDeployer = "0x9308dddeC9B5cCd8a2685A46E913C892FE31C826";
@@ -367,23 +358,11 @@ task("trasnfer-test-tokens")
 
   const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
-  const testingStableMintable = (await ethers.getContractAt(
-    "ERC20",
-    stableAddress,
-    deployer
-  )) as ERC20;
+  const testingStableMintable = (await ethers.getContractAt("ERC20", stableAddress, deployer)) as ERC20;
 
-  const tdai = (await ethers.getContractAt(
-    "ERC20",
-    testingDai,
-    deployer
-  )) as ERC20;
+  const tdai = (await ethers.getContractAt("ERC20", testingDai, deployer)) as ERC20;
 
-  const testingRT = (await ethers.getContractAt(
-    "ERC20",
-    testingRewardToken,
-    deployer
-  )) as ERC20;
+  const testingRT = (await ethers.getContractAt("ERC20", testingRewardToken, deployer)) as ERC20;
 
   const tusdBalance = await testingStableMintable.callStatic.balanceOf(deployer);
   const tdaiBalance = await tdai.callStatic.balanceOf(deployer);
@@ -403,5 +382,4 @@ task("trasnfer-test-tokens")
   tx = await testingRT.transfer(newDeployer, trtBalance);
   await tx.wait();
   console.log(`transferred the TRT ${trtBalance}`);
-
-})
+});
