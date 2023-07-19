@@ -12,8 +12,8 @@ export default task("market:set-asset-blacklist", "Set borrow blacklist of colla
     const ionicSdkModule = await import("../../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
-    const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
-    const borrowCToken = sdk.createCTokenWithExtensions(borrow, signer);
+    const collatCToken = sdk.createICErc20(collat, signer);
+    const borrowCToken = sdk.createICErc20(borrow, signer);
 
     const comptroller = await collatCToken.callStatic.comptroller();
     if (comptroller !== (await borrowCToken.callStatic.comptroller())) {
@@ -57,7 +57,7 @@ task("market:set-asset-blacklist-whitelist", "Pauses borrowing on a market")
 
     const collterals = collats.split(",");
 
-    const borrowCToken = sdk.createCTokenWithExtensions(borrow, signer);
+    const borrowCToken = sdk.createICErc20(borrow, signer);
 
     const comptroller = await borrowCToken.callStatic.comptroller();
 
@@ -66,7 +66,7 @@ task("market:set-asset-blacklist-whitelist", "Pauses borrowing on a market")
         throw new Error("Comptrollers do not match");
       }
       const pool = sdk.createComptroller(comptroller, signer);
-      const collatCToken = sdk.createCTokenWithExtensions(collat, signer);
+      const collatCToken = sdk.createICErc20(collat, signer);
 
       const whitelistStatus = await pool.callStatic.isBorrowingAgainstCollateralBlacklistWhitelisted(
         borrowCToken.address,

@@ -89,7 +89,7 @@ export const InterestRateModel = ({
   const updateInterestRateModel = async ({ interestRateModel }: { interestRateModel: string }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = currentSdk.createCTokenWithExtensions(cTokenAddress || '', currentSdk.signer);
+    const cToken = currentSdk.createICErc20(cTokenAddress || '', currentSdk.signer);
 
     try {
       const tx: ContractTransaction = await testForCTokenErrorAndSend(

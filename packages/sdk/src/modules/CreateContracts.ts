@@ -1,13 +1,12 @@
 import { Contract, ContractInterface } from "ethers";
 
 import { IonicBaseConstructor } from "..";
-import CErc20DelegateABI from "../../abis/CErc20Delegate";
-import CErc20PluginRewardsDelegateABI from "../../abis/CErc20PluginRewardsDelegate";
 import CompoundMarketERC4626ABI from "../../abis/CompoundMarketERC4626";
 import ComptrollerABI from "../../abis/Comptroller";
 import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
-import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
+import ICErc20ABI from "../../abis/ICErc20";
+import ICErc20PluginRewardsABI from "../../abis/ICErc20PluginRewards";
 import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
 import ILiquidatorsRegistryABI from "../../abis/ILiquidatorsRegistry";
 import IonicFlywheelABI from "../../abis/IonicFlywheel";
@@ -21,13 +20,12 @@ import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSec
 import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
 import PoolLensSecondaryABI from "../../abis/PoolLensSecondary";
 import UnitrollerABI from "../../abis/Unitroller";
-import { CErc20Delegate } from "../../typechain/CErc20Delegate";
-import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
 import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
-import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { ICErc20 } from "../../typechain/ICErc20";
+import { ICErc20PluginRewards } from "../../typechain/ICErc20PluginRewards";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
@@ -44,7 +42,6 @@ import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../IonicSdk";
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
-type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
 type OptimizedAPRVaultWithExtensions = OptimizedAPRVaultFirstExtension & OptimizedAPRVaultSecondExtension;
 
 export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TBase) {
@@ -71,24 +68,12 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
       return new Contract(comptrollerAddress, ComptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
     }
 
-    createCTokenWithExtensions(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      if (this.chainDeployment.CTokenFirstExtension) {
-        return new Contract(
-          address,
-          [...CErc20DelegateABI, ...CTokenFirstExtensionABI],
-          signerOrProvider
-        ) as CTokenWithExtensions;
-      }
-
-      return new Contract(address, CErc20DelegateABI, signerOrProvider) as CTokenWithExtensions;
+    createICErc20(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(address, ICErc20ABI, signerOrProvider) as ICErc20;
     }
 
-    createCErc20PluginRewardsDelegate(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        cTokenAddress,
-        CErc20PluginRewardsDelegateABI,
-        signerOrProvider
-      ) as CErc20PluginRewardsDelegate;
+    createICErc20PluginRewards(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(cTokenAddress, ICErc20PluginRewardsABI, signerOrProvider) as ICErc20PluginRewards;
     }
 
     createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.provider) {
@@ -147,7 +132,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
       ) as LeveredPositionsLens;
     }
 
-    createFusePoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
+    createPoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.PoolLensSecondary.address,
         PoolLensSecondaryABI,

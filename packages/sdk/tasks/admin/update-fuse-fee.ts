@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { Comptroller } from "../../typechain/Comptroller";
 
-export default task("fusefee:update", "Update FuseFee")
+export default task("ionicfee:update", "Update IonicFee")
   .addParam("signer", "Named account to use for the tx", "deployer", types.string)
   .addParam("cToken", "Asset cToken Address", undefined, types.string)
   .addParam("adminFee", "AdminFee", undefined, types.string)
@@ -13,7 +13,7 @@ export default task("fusefee:update", "Update FuseFee")
 
     const ionicSdkModule = await import("../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic(signer);
-    const cToken = sdk.createCTokenWithExtensions(taskArgs.cToken);
+    const cToken = sdk.createICErc20(taskArgs.cToken);
     await cToken._setAdminFee(adminFee);
   });
 
