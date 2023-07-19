@@ -315,7 +315,7 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
 
-    const borrowMarketAddress = "";
+    const borrowMarketAddress = "0x66b05c1711094c32c99a65d2734C72dE0A1C3c81";
 
     let tx;
     const borrowMarket = (await ethers.getContractAt(
@@ -324,15 +324,16 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
       deployer
     )) as CErc20Delegate;
     const stableAddress = await borrowMarket.callStatic.underlying();
-    const testingStableMintable = (await ethers.getContractAt(
-      "IERC20Mintable",
-      stableAddress,
-      deployer
-    )) as IERC20Mintable;
-
-    tx = await testingStableMintable.mint(deployer, ethers.utils.parseEther("54321").mul(1_000_000));
-    await tx.wait();
-    console.log(`minted stables`);
+    // const testingStableMintable = (await ethers.getContractAt(
+    //   "IERC20Mintable",
+    //   stableAddress,
+    //   deployer
+    // )) as IERC20Mintable;
+    //
+    // tx = await testingStableMintable.mint(deployer, ethers.utils.parseEther("543213"));
+    //
+    // await tx.wait();
+    // console.log(`minted stables`);
 
     const testingStable = (await ethers.getContractAt("ERC20", stableAddress, deployer)) as ERC20;
 
@@ -340,7 +341,7 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
     await tx.wait();
     console.log(`approved to mint`);
 
-    tx = await borrowMarket.mint(ethers.utils.parseEther("4321").mul(1_000_000));
+    tx = await borrowMarket.mint(ethers.utils.parseEther("4323").mul(1_000));
     await tx.wait();
     console.log(`minted in the stable market`);
   }
