@@ -80,11 +80,6 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: WBNB
   },
   {
-    inputToken: underlying(assets, assetSymbols["asBNBx-WBNB"]),
-    strategy: RedemptionStrategyContract.UniswapLpTokenLiquidator,
-    outputToken: WBNB
-  },
-  {
     inputToken: underlying(assets, assetSymbols.BNBx),
     strategy: RedemptionStrategyContract.UniswapV2LiquidatorFunder,
     outputToken: WBNB

@@ -244,7 +244,6 @@ export enum assetSymbols {
   "stkBNB-WBNB" = "stkBNB-WBNB",
   BNBx = "BNBx",
   "epsBNBx-BNB" = "epsBNBx-BNB",
-  "asBNBx-WBNB" = "ApeSwap BNBx-WBNB LP",
   "asANKR-ankrBNB" = "ApeSwap ANKR-ankrBNB LP",
 
   DDD = "DDD",

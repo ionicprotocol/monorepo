@@ -7,7 +7,6 @@ import assets, { ankrBNB, BUSD, HAY, WBNB } from "./assets";
 const liquidationDefaults: LiquidationDefaults = {
   DEFAULT_ROUTER: chainAddresses.UNISWAP_V2_ROUTER,
   ASSET_SPECIFIC_ROUTER: {
-    [underlying(assets, assetSymbols["asBNBx-WBNB"])]: "0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7",
     [underlying(assets, assetSymbols["vAMM-HAY/ankrBNB"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109", // Thena Solidly Router
     [underlying(assets, assetSymbols["sAMM-HAY/BUSD"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109",
     [underlying(assets, assetSymbols["vAMM-ANKR/HAY"])]: "0xd4ae6eCA985340Dd434D38F470aCCce4DC78D109",
