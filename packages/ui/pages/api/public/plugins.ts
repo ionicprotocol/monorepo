@@ -1,12 +1,3 @@
-import {
-  arbitrum,
-  bsc,
-  chapel,
-  ethereum,
-  ganache,
-  neondevnet,
-  polygon
-} from '@ionicprotocol/chains';
 import { arbitrum, bsc, chapel, ethereum, ganache, neon, polygon } from '@ionicprotocol/chains';
 import type { DeployedPlugins as DeployedPluginsType } from '@ionicprotocol/types';
 import { SupportedChains } from '@ionicprotocol/types';
