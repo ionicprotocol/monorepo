@@ -20,7 +20,7 @@ task("market:deploy", "deploy market")
       throw `Unable to _deployMarket: ${sdk.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
     }
     // Make actual Transaction
-    const tx = await comptroller._deployMarket(false, constructorData, collateralFactor, {
+    const tx = await comptroller._deployMarket(1, constructorData, becomeImplData, collateralFactor, {
       // suggested: 394700457
       // max:         7920027
       gasLimit: 20020027,
