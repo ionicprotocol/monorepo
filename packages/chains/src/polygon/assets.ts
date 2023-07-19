@@ -47,7 +47,6 @@ const SUSHI = "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a";
 const YFI = "0xDA537104D6A5edd53c6fBba9A898708E465260b6";
 const USDT = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
-const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
 const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
@@ -84,20 +83,14 @@ const amUSDC = "0x1a13F4Ca1d028320A707D99520AbFefca3998b7F";
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
 const USDR3CRV = "0xa138341185a9D0429B0021A11FB717B225e13e1F";
+
 // QuickSwap
 const WMATIC_USDC = "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827";
 const WMATIC_USDT = "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3";
 const WMATIC_ETH = "0xadbF1854e5883eB8aa7BAf50705338739e558E5b";
 const WMATIC_MATICx = "0xb0e69f24982791dd49e316313fD3A791020B8bF7";
 const WETH_WBTC = "0xdC9232E2Df177d7a12FdFf6EcBAb114E2231198D";
-const AGEUR_JEUR = "0x2fFbCE9099cBed86984286A54e5932414aF4B717";
 const JEUR_PAR = "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97";
-const JJPY_JPYC = "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc";
-const JCAD_CADC = "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F";
-const JSGD_XSGD = "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA";
-const JNZD_NZDS = "0x976A750168801F58E8AEdbCfF9328138D544cc09";
-const JEUR_EURT = "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1";
-const EURE_JEUR = "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4";
 const MAI_USDC = "0x160532D2536175d65C03B97b0630A9802c274daD";
 const DAI_GNS = "0x6E53cB6942e518376E9e763554dB1A45DDCd25c4";
 const IXT_USDT = "0x304e57c752E854E9A233Ae82fcC42F7568b81180";
@@ -108,25 +101,8 @@ const JEUR = "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c";
 const EURE = "0x18ec0A6E18E5bc3784fDd3a3634b31245ab704F6";
 const EURT = "0x7BDF330f423Ea880FF95fC41A280fD5eCFD3D09f";
 const PAR = "0xE2Aa7db6dA1dAE97C5f5C6914d285fBfCC32A128";
-const JJPY = "0x8343091F2499FD4b6174A46D067A920a3b851FF9";
-const JPYC = "0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB";
-const JCAD = "0x8ca194A3b22077359b5732DE53373D4afC11DeE3";
-const CADC = "0x5d146d8B1dACb1EBBA5cb005ae1059DA8a1FbF57";
-const JSGD = "0xa926db7a4CC0cb1736D5ac60495ca8Eb7214B503";
-const JCHF = "0xbD1463F02f61676d53fd183C2B19282BFF93D099";
-const JMXN = "0xBD1fe73e1f12bD2bc237De9b626F056f21f86427";
-const JGBP = "0x767058F11800FBA6A682E73A6e79ec5eB74Fac8c";
-const JCNY = "0x84526c812D8f6c4fD6C1a5B68713AFF50733E772";
-const JAUD = "0xCB7F1Ef7246D1497b985f7FC45A1A31F04346133";
-const JNZD = "0x6b526Daf03B4C47AF2bcc5860B12151823Ff70E0";
-const JPLN = "0x08E6d1F0c4877Ef2993Ad733Fc6F1D022d0E9DBf";
-const JSEK = "0x197E5d6CcfF265AC3E303a34Db360ee1429f5d1A";
-const JKRW = "0xa22f6bc96f13bcC84dF36109c973d3c0505a067E";
-const JPHP = "0x486880FB16408b47f928F472f57beC55AC6089d1";
-const NZDS = "0xeaFE31Cd9e8E01C8f0073A2C974f728Fb80e9DcE";
 const BRZ = "0x491a4eB4f1FC3BfF8E1d2FC856a6A46663aD556f";
 const jBRL = "0xf2f77FE7b8e66571E0fca7104c4d670BF1C8d722";
-const XSGD = "0x769434dcA303597C8fc4997Bf3DAB233e961Eda2";
 
 // arrakis vault
 const arrakis_USDC_WETH_005 = "0xA173340f1E942c2845bcBCe8EBD411022E18EB13";
@@ -513,68 +489,12 @@ export const assets: SupportedAsset[] = [
   },
   // curve.fi LP tokens
   {
-    symbol: assetSymbols["AGEUR-JEUR"],
-    underlying: AGEUR_JEUR,
-    name: "Jarvis agEUR-jEUR LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(209, "AGEUR-JEUR", AGEUR_JEUR, true)
-  },
-  {
     symbol: assetSymbols["JEUR-PAR"],
     underlying: JEUR_PAR,
     name: "Jarvis jEUR-PAR LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs(285, "JEUR-PAR", JEUR_PAR, true)
-  },
-  {
-    symbol: assetSymbols["JJPY-JPYC"],
-    underlying: JJPY_JPYC,
-    name: "Jarvis jJPY-JPYC LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(255, "JJPY-JPYC", JJPY_JPYC, true)
-  },
-  {
-    symbol: assetSymbols["JCAD-CADC"],
-    underlying: JCAD_CADC,
-    name: "Jarvis jCAD-CADC LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(23, "JCAD-CADC", JCAD_CADC, true)
-  },
-  {
-    symbol: assetSymbols["JSGD-XSGD"],
-    underlying: JSGD_XSGD,
-    name: "Jarvis jSGD-XSGD LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(22, "JSGD-XSGD", JSGD_XSGD, true)
-  },
-  {
-    symbol: assetSymbols["JNZD-NZDS"],
-    underlying: JNZD_NZDS,
-    name: "Jarvis JNZD-NZDS LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(228, "JNZD-NZDS", JNZD_NZDS, true)
-  },
-  {
-    symbol: assetSymbols["JEUR-EURT"],
-    underlying: JEUR_EURT,
-    name: "Jarvis JEUR-EURT LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(286, "JEUR-EURT", JEUR_EURT, true)
-  },
-  {
-    symbol: assetSymbols["EURE-JEUR"],
-    underlying: EURE_JEUR,
-    name: "Jarvis EURE-JEUR LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", EURE_JEUR, true)
   },
   {
     symbol: assetSymbols.amUSDC,
@@ -799,144 +719,6 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2
   },
   {
-    symbol: assetSymbols.JJPY,
-    underlying: JJPY,
-    name: "Jarvis JJPY Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JPYC,
-    underlying: JPYC,
-    name: "JPY Coin",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2
-  },
-  {
-    symbol: assetSymbols.JCAD,
-    underlying: JCAD,
-    name: "Jarvis JCAD Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2"),
-    disabled: true
-  },
-  {
-    symbol: assetSymbols.CADC,
-    underlying: CADC,
-    name: "CAD Coin (PoS)",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    disabled: true
-  },
-  {
-    symbol: assetSymbols.JSGD,
-    underlying: JSGD,
-    name: "Jarvis JSGD Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JCHF,
-    underlying: JCHF,
-    name: "Jarvis JCHF Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JMXN,
-    underlying: JMXN,
-    name: "Jarvis JMXN Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JGBP,
-    underlying: JGBP,
-    name: "Jarvis JGPB Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JCNY,
-    underlying: JCNY,
-    name: "Jarvis JCNY Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JAUD,
-    underlying: JAUD,
-    name: "Jarvis JAUD Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JNZD,
-    underlying: JNZD,
-    name: "Jarvis JNZD Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JPLN,
-    underlying: JPLN,
-    name: "Jarvis JPLN Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JSEK,
-    underlying: JSEK,
-    name: "Jarvis JSEK Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JKRW,
-    underlying: JKRW,
-    name: "Jarvis JKRW Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.JPHP,
-    underlying: JPHP,
-    name: "Jarvis JPHP Token",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: jarvisDocs("v2")
-  },
-  {
-    symbol: assetSymbols.NZDS,
-    underlying: NZDS,
-    name: "NZD Stablecoin (PoS)",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>Learn more on how to acquire NZDS at <a href="https://www.techemynt.com/#buy_nzds" target="_blank" style="color: #BCAC83; cursor="pointer">Techemynt</a></p>`
-  },
-  {
-    symbol: assetSymbols.XSGD,
-    underlying: XSGD,
-    name: "StratisX Singapore Dollar (PoS)",
-    decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>Learn more on how to acquire NZDS at <a href="https://www.straitsx.com/sg/xsgd" target="_blank" style="color: #BCAC83; cursor="pointer">Stratis X</a></p>`
-  },
-  {
     symbol: assetSymbols.BRZ,
     underlying: BRZ,
     name: "BRZ Token",
@@ -1073,15 +855,6 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
     extraDocs: arrakisDocs("Polygon", 137, arrakis_WETH_DAI_03)
-  },
-  {
-    symbol: assetSymbols.JRT,
-    underlying: JRT,
-    name: "Jarivs Reward Token",
-    decimals: 18,
-    oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", JRT),
-    disabled: true
   },
   {
     symbol: assetSymbols["sAMM-USDC/USDR"],
