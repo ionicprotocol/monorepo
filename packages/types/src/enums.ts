@@ -301,8 +301,6 @@ export enum assetSymbols {
   CADC = "CADC",
   JEUR = "jEUR",
   PAR = "PAR",
-  NZDS = "NZDS",
-  XSGD = "XSGD",
   MIMO = "MIMO",
   JRT = "JRT",
   aMATICb = "aMATICb",
