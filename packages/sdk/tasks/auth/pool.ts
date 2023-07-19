@@ -12,7 +12,7 @@ task("auth:pool:create-authority", "Deploys a pool authority for a pool")
     console.log({ pool });
     const authRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
     const poolAuth = await authRegistry.poolsAuthorities(pool);
-    if (poolAuth !== ethers.constants.AddressZero) {
+    if (poolAuth == ethers.constants.AddressZero) {
       const tx = await authRegistry.createPoolAuthority(pool);
       await tx.wait();
       console.log(`Created pool authority for pool ${pool}: ${tx.hash}`);

@@ -25,13 +25,13 @@ async function cgPrice(cgId: string) {
 }
 
 async function createComptroller(
-  pool: PoolDirectory.FusePoolStructOutput,
+  pool: PoolDirectory.IonicPoolStructOutput,
   deployer: SignerWithAddress
 ): Promise<ComptrollerWithExtension | null> {
   const ionicSdkModule = await import("../ionicSdk");
   const sdk = await ionicSdkModule.getOrCreateIonic(deployer);
   const comptroller = sdk.createComptroller(pool.comptroller);
-  const poolAdmin = await comptroller.callStatic.fuseAdmin();
+  const poolAdmin = await comptroller.callStatic.ionicAdmin();
 
   if (poolAdmin != sdk.contracts.FeeDistributor.address) {
     if (LOG)
@@ -49,7 +49,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
     const sdk = await ionicSdkModule.getOrCreateIonic();
 
     const { pools, mpo } = await setUpFeeCalculation(hre);
-    let fuseFeeTotal = BigNumber.from(0);
+    let ionicFeeTotal = BigNumber.from(0);
 
     for (const pool of pools) {
       const comptroller = await createComptroller(pool, deployer);
@@ -57,39 +57,41 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
         continue;
       }
       const markets = await comptroller.callStatic.getAllMarkets();
-      let poolFuseFeesTotal = BigNumber.from(0);
+      let poolIonicFeesTotal = BigNumber.from(0);
 
       for (const market of markets) {
-        const cToken = sdk.createCTokenWithExtensions(market, deployer);
+        const cToken = sdk.createICErc20(market, deployer);
         const underlying = await cToken.callStatic.underlying();
         const underlyingPrice = await mpo.callStatic.getUnderlyingPrice(market);
 
-        const fuseFee = await cToken.callStatic.totalFuseFees();
+        const ionicFee = await cToken.callStatic.totalIonicFees();
 
-        if (fuseFee.gt(0)) {
-          const nativeFee = fuseFee.mul(underlyingPrice).div(BigNumber.from(10).pow(18));
-          fuseFeeTotal = fuseFeeTotal.add(nativeFee);
-          poolFuseFeesTotal = poolFuseFeesTotal.add(nativeFee);
+        if (ionicFee.gt(0)) {
+          const nativeFee = ionicFee.mul(underlyingPrice).div(BigNumber.from(10).pow(18));
+          ionicFeeTotal = ionicFeeTotal.add(nativeFee);
+          poolIonicFeesTotal = poolIonicFeesTotal.add(nativeFee);
 
           if (LOG)
             console.log(
               `Pool: ${pool.name} (${
                 pool.comptroller
-              }) - Market: ${market} (underlying: ${underlying}) - Fuse Fee: ${hre.ethers.utils.formatEther(nativeFee)}`
+              }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${hre.ethers.utils.formatEther(
+                nativeFee
+              )}`
             );
         } else {
-          if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Fuse Fees`);
+          if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
         }
       }
       if (LOG)
         console.log(
-          `Pool: ${pool.name} (${pool.comptroller}) - Total Fuse Fee: ${hre.ethers.utils.formatEther(
-            poolFuseFeesTotal
+          `Pool: ${pool.name} (${pool.comptroller}) - Total Ionic Fee: ${hre.ethers.utils.formatEther(
+            poolIonicFeesTotal
           )}`
         );
     }
-    console.log(`Total Fuse Fees: ${hre.ethers.utils.formatEther(fuseFeeTotal)}`);
-    return fuseFeeTotal;
+    console.log(`Total Ionic Fees: ${hre.ethers.utils.formatEther(ionicFeeTotal)}`);
+    return ionicFeeTotal;
   }
 );
 
@@ -112,7 +114,7 @@ task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance
       let pluginFeesPool = BigNumber.from(0);
 
       for (const market of markets) {
-        const cToken = sdk.createCErc20PluginRewardsDelegate(market, deployer);
+        const cToken = sdk.createICErc20PluginRewards(market, deployer);
         const underlying = await cToken.callStatic.underlying();
         const underlyingDecimals = await cToken.callStatic.decimals();
 
@@ -153,7 +155,7 @@ task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance
       }
       if (LOG)
         console.log(
-          `Pool: ${pool.name} (${pool.comptroller}) - Total Fuse Fee: ${hre.ethers.utils.formatEther(pluginFeesPool)}`
+          `Pool: ${pool.name} (${pool.comptroller}) - Total Ionic Fee: ${hre.ethers.utils.formatEther(pluginFeesPool)}`
         );
     }
     console.log(`Total Plugin Fees: ${hre.ethers.utils.formatEther(pluginFeesTotal)}`);
@@ -211,7 +213,9 @@ task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Perfor
       }
       if (LOG)
         console.log(
-          `Pool: ${pool.name} (${pool.comptroller}) - Total Fuse Fee: ${hre.ethers.utils.formatEther(flywheelFeesPool)}`
+          `Pool: ${pool.name} (${pool.comptroller}) - Total Ionic Fee: ${hre.ethers.utils.formatEther(
+            flywheelFeesPool
+          )}`
         );
     }
     console.log(`Total Flywheel Fees: ${hre.ethers.utils.formatEther(flywheelFeesTotal)}`);
@@ -230,7 +234,7 @@ task("revenue:all:calculate", "Calculate the fees accrued from 4626 Performance 
 
 task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
   .addParam("signer", "The address of the current deployer", "deployer", types.string)
-  .addParam("threshold", "Threshold for fuse fee seizing denominated in native", "0.01", types.string)
+  .addParam("threshold", "Threshold for ionic fee seizing denominated in native", "0.01", types.string)
   .setAction(async (taskArgs, hre) => {
     const deployer = await hre.ethers.getNamedSigner("deployer");
 
@@ -250,30 +254,30 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
       const priceUsd = await cgPrice(cgId);
 
       for (const market of markets) {
-        const cToken = sdk.createCTokenWithExtensions(market, deployer);
+        const cToken = sdk.createICErc20(market, deployer);
         const underlying = await cToken.callStatic.underlying();
-        const fuseFee = await cToken.callStatic.totalFuseFees();
+        const ionicFee = await cToken.callStatic.totalIonicFees();
         const nativePrice = await mpo.callStatic.price(underlying);
         console.log("native price", hre.ethers.utils.formatEther(nativePrice));
-        const nativeFee = fuseFee.mul(nativePrice).div(BigNumber.from(10).pow(18));
+        const nativeFee = ionicFee.mul(nativePrice).div(BigNumber.from(10).pow(18));
 
         console.log("USD FEE VALUE", parseFloat(hre.ethers.utils.formatEther(nativeFee)) * priceUsd);
         console.log("USD THRESHOLD VALUE", parseFloat(taskArgs.threshold) * priceUsd);
 
-        if (fuseFee.gt(threshold)) {
+        if (ionicFee.gt(threshold)) {
           // const accTx = await cToken.accrueInterest();
           // await accTx.wait();
           console.log(`Withdrawing fee from ${await cToken.callStatic.symbol()} (underlying: ${underlying})`);
-          const tx = await cToken._withdrawFuseFees(fuseFee);
+          const tx = await cToken._withdrawIonicFees(ionicFee);
           await tx.wait();
           if (LOG)
             console.log(
-              `Pool: ${comptroller} - Market: ${market} (underlying: ${underlying}) - Fuse Fee: ${hre.ethers.utils.formatEther(
+              `Pool: ${comptroller} - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${hre.ethers.utils.formatEther(
                 nativeFee
               )}`
             );
         } else {
-          if (LOG) console.log(`Pool: ${comptroller} - Market: ${market} - No Fuse Fees`);
+          if (LOG) console.log(`Pool: ${comptroller} - Market: ${market} - No Ionic Fees`);
         }
       }
     }
@@ -281,7 +285,7 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
 
 task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance Fees")
   .addParam("signer", "The address of the current deployer", "deployer", types.string)
-  .addParam("threshold", "Threshold for fuse fee seizing denominated in native", "0.01", types.string)
+  .addParam("threshold", "Threshold for ionic fee seizing denominated in native", "0.01", types.string)
   .setAction(async (taskArgs, hre) => {
     let tx: providers.TransactionResponse;
     const deployer = await hre.ethers.getNamedSigner("deployer");
@@ -320,7 +324,7 @@ task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance 
         continue;
       }
       const market = plugins[pluginAddress].market;
-      const cToken = sdk.createCTokenWithExtensions(market, deployer);
+      const cToken = sdk.createICErc20(market, deployer);
       // const accTx = await cToken.accrueInterest();
       // await accTx.wait();
       const underlying = await cToken.callStatic.underlying();
@@ -352,10 +356,10 @@ task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance 
           console.log(
             `Plugin: ${
               plugins[pluginAddress].name
-            } - Market: ${market} (underlying: ${underlying}) - Fuse Fee: ${hre.ethers.utils.formatEther(nativeFee)}`
+            } - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${hre.ethers.utils.formatEther(nativeFee)}`
           );
       } else {
-        if (LOG) console.log(`Pool: ${await cToken.callStatic.comptroller()} - Market: ${market} - No Fuse Fees`);
+        if (LOG) console.log(`Pool: ${await cToken.callStatic.comptroller()} - Market: ${market} - No Ionic Fees`);
       }
     }
   });

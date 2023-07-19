@@ -62,11 +62,11 @@ export default task("levered-positions:configure-pair")
 task("chapel-borrow-tusd", "creates and funds a levered position on chapel").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e"; // TUSD market
+    const borrowMarketAddress = ""; // TUSD market
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // BOMB
     const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
-    const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
-    const chapelIonicPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
+    const collateralMarketAddress = ""; // BOMB market
+    const bombPoolAddress = "0xd8F11Bb4167Df3a0A598eD3B2212167a1A11E501";
 
     // const collateralMarket = (await ethers.getContractAt(
     //   "CErc20Delegate",
@@ -89,7 +89,7 @@ task("chapel-borrow-tusd", "creates and funds a levered position on chapel").set
     // }
 
     let tx;
-    const pool = (await ethers.getContractAt("Comptroller", chapelIonicPool, deployer)) as Comptroller;
+    const pool = (await ethers.getContractAt("Comptroller", bombPoolAddress, deployer)) as Comptroller;
     tx = await pool.enterMarkets([collateralMarketAddress, borrowMarketAddress]);
     await tx.wait();
     console.log(`entered markets ${tx.hash}`);
@@ -115,8 +115,8 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
     const { deployer } = await getNamedAccounts();
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"; // BOMB
     const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
-    const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e"; // TUSD market
-    const collateralMarketAddress = "0xfa60851E76728eb31EFeA660937cD535C887fDbD"; // BOMB market
+    const borrowMarketAddress = ""; // TUSD market
+    const collateralMarketAddress = ""; // BOMB market
 
     const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
     const factory = (await ethers.getContractAt(
@@ -191,36 +191,21 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     const { deployer } = await getNamedAccounts();
     const ffd = await ethers.getContract("FeeDistributor");
     const jrm = await ethers.getContract("JumpRateModel");
-    const rewardsDelegate = await ethers.getContract("CErc20RewardsDelegate");
-
-    // const tdaiDep = await deployments.deploy("TestingDAI", {
-    //   contract: "ERC20PresetMinterPauser",
-    //   from: deployer,
-    //   log: true,
-    //   skipIfAlreadyDeployed: true,
-    //   args: ["Testing DAI", "DAI"],
-    //   waitConfirmations: 1,
-    // });
+    const rewardsDelegate = (await ethers.getContract("CErc20RewardsDelegate")) as CErc20RewardsDelegate;
 
     const tdai = (await ethers.getContractAt(
       "ERC20",
       "0x8870f7102F1DcB1c35b01af10f1baF1B00aD6805", //tdaiDep.address,
       deployer
     )) as ERC20;
+    const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
+    const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
-    // const ts = await tdai.callStatic.totalSupply();
-    // if (ts == 0) {
-    //   const mintAmount = ethers.utils.parseEther("87654321");
-    //   const tx = await tdai.mint(deployer, mintAmount);
-    //   await tx.wait();
-    //   console.log(`minted some tokens to the deployer`);
-    // }
-
-    const chapelIonicPool = "0x044c436b2f3EF29D30f89c121f9240cf0a08Ca4b";
+    const bombPoolAddress = "0xd8F11Bb4167Df3a0A598eD3B2212167a1A11E501";
     const spo = (await ethers.getContract("SimplePriceOracle", deployer)) as SimplePriceOracle;
 
     let tx;
-    tx = await spo.setDirectPrice(tdai.address, ethers.utils.parseEther("0.67"));
+    tx = await spo.setDirectPrice(tdai.address, ethers.utils.parseEther("0.00067"));
     await tx.wait();
     console.log(`set the price of the testing DAI`);
 
@@ -229,35 +214,31 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     await tx.wait();
     console.log(`added the SPO to the MPO for the testing DAI token`);
 
-    const pool = (await ethers.getContractAt("Comptroller", chapelIonicPool, deployer)) as Comptroller;
-    const ionicPoolAsExt = (await ethers.getContractAt(
+    const bombPool = (await ethers.getContractAt("Comptroller", bombPoolAddress, deployer)) as Comptroller;
+
+    const bombPoolExt = (await ethers.getContractAt(
       "ComptrollerFirstExtension",
-      chapelIonicPool,
+      bombPoolAddress,
       deployer
     )) as ComptrollerFirstExtension;
 
+    const becomeImplData = new ethers.utils.AbiCoder().encode([], []);
     const constructorData = new ethers.utils.AbiCoder().encode(
-      ["address", "address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
-      [
-        tdai.address,
-        chapelIonicPool,
-        ffd.address,
-        jrm.address,
-        "M Testing BOMB",
-        "MTB",
-        rewardsDelegate.address,
-        new ethers.utils.AbiCoder().encode([], []),
-        0,
-        0
-      ]
+      ["address", "address", "address", "address", "string", "string", "uint256", "uint256"],
+      [tdai.address, bombPoolAddress, ffd.address, jrm.address, "IO Testing BOMB", "ITB", 0, 0]
     );
 
-    tx = await pool._deployMarket(false, constructorData, ethers.utils.parseEther("0.9"));
+    tx = await bombPool._deployMarket(
+      await rewardsDelegate.callStatic.delegateType(),
+      constructorData,
+      becomeImplData,
+      ethers.utils.parseEther("0.9")
+    );
     console.log(`mining tx ${tx.hash}`);
     await tx.wait();
     console.log(`deployed a testing DAI market`);
 
-    const allMarkets = await ionicPoolAsExt.callStatic.getAllMarkets();
+    const allMarkets = await bombPoolExt.callStatic.getAllMarkets();
     const newMarketAddress = allMarkets[allMarkets.length - 1];
 
     tx = await tdai.approve(newMarketAddress, ethers.constants.MaxUint256);
@@ -277,7 +258,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
       console.log(`minted some cTokens from the testing DAI market`);
     }
 
-    const testingBombMarket = "0xfa60851E76728eb31EFeA660937cD535C887fDbD";
+    const testingBombMarket = "";
     await run("levered-positions:configure-pair", {
       collateralMarketAddress: testingBombMarket,
       borrowMarketAddress: newMarketAddress,
@@ -304,7 +285,7 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
 
     const leveredPosition = (await ethers.getContractAt(
       "LeveredPosition",
-      "0x653BB36eF45BAee27A71C339F12Cc730CFb0EcBe", //deployerPositions[0],
+      "", //deployerPositions[0],
       deployer
     )) as LeveredPosition;
 
@@ -322,11 +303,7 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
 task("chapel-adjust-ratio-levered-position").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
-  const leveredPosition = (await ethers.getContractAt(
-    "LeveredPosition",
-    "0x8EfC6FC5A7A29f9E93E1FA9fB1929B52FC812B8A",
-    deployer
-  )) as LeveredPosition;
+  const leveredPosition = (await ethers.getContractAt("LeveredPosition", "", deployer)) as LeveredPosition;
 
   const ratio = ethers.utils.parseEther("1.44");
   const tx = await leveredPosition.adjustLeverageRatio(ratio);
@@ -338,7 +315,7 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
 
-    const borrowMarketAddress = "0x8c4FaB47f0E5F4263A37e5Dbe65Dd275EAF6687e";
+    const borrowMarketAddress = "0x66b05c1711094c32c99a65d2734C72dE0A1C3c81";
 
     let tx;
     const borrowMarket = (await ethers.getContractAt(
@@ -347,15 +324,16 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
       deployer
     )) as CErc20Delegate;
     const stableAddress = await borrowMarket.callStatic.underlying();
-    const testingStableMintable = (await ethers.getContractAt(
-      "IERC20Mintable",
-      stableAddress,
-      deployer
-    )) as IERC20Mintable;
-
-    tx = await testingStableMintable.mint(deployer, ethers.utils.parseEther("54321").mul(1_000_000));
-    await tx.wait();
-    console.log(`minted stables`);
+    // const testingStableMintable = (await ethers.getContractAt(
+    //   "IERC20Mintable",
+    //   stableAddress,
+    //   deployer
+    // )) as IERC20Mintable;
+    //
+    // tx = await testingStableMintable.mint(deployer, ethers.utils.parseEther("543213"));
+    //
+    // await tx.wait();
+    // console.log(`minted stables`);
 
     const testingStable = (await ethers.getContractAt("ERC20", stableAddress, deployer)) as ERC20;
 
@@ -363,8 +341,46 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
     await tx.wait();
     console.log(`approved to mint`);
 
-    tx = await borrowMarket.mint(ethers.utils.parseEther("4321").mul(1_000_000));
+    tx = await borrowMarket.mint(ethers.utils.parseEther("4323").mul(1_000));
     await tx.wait();
     console.log(`minted in the stable market`);
   }
 );
+
+task("trasnfer-test-tokens").setAction(async ({}, { ethers, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+
+  const newDeployer = "0x9308dddeC9B5cCd8a2685A46E913C892FE31C826";
+
+  const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
+  const stableAddress = "0x4f1885D25eF219D3D4Fa064809D6D4985FAb9A0b"; // TUSD
+  const testingDai = "0x8870f7102F1DcB1c35b01af10f1baF1B00aD6805"; // TDAI
+  const testingRewardToken = "0xf97e8F094c4428e6436b3bf86264D176A2606bC4"; // TRT
+
+  const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
+
+  const testingStableMintable = (await ethers.getContractAt("ERC20", stableAddress, deployer)) as ERC20;
+
+  const tdai = (await ethers.getContractAt("ERC20", testingDai, deployer)) as ERC20;
+
+  const testingRT = (await ethers.getContractAt("ERC20", testingRewardToken, deployer)) as ERC20;
+
+  const tusdBalance = await testingStableMintable.callStatic.balanceOf(deployer);
+  const tdaiBalance = await tdai.callStatic.balanceOf(deployer);
+  const tbombBalance = await testingBomb.callStatic.balanceOf(deployer);
+  const trtBalance = await testingRT.callStatic.balanceOf(deployer);
+
+  let tx;
+  tx = await testingStableMintable.transfer(newDeployer, tusdBalance);
+  await tx.wait();
+  console.log(`transferred the TUSD ${tusdBalance}`);
+  tx = await tdai.transfer(newDeployer, tdaiBalance);
+  await tx.wait();
+  console.log(`transferred the TDAI ${tdaiBalance}`);
+  tx = await testingBomb.transfer(newDeployer, tbombBalance);
+  await tx.wait();
+  console.log(`transferred the BOMB ${tbombBalance}`);
+  tx = await testingRT.transfer(newDeployer, trtBalance);
+  await tx.wait();
+  console.log(`transferred the TRT ${trtBalance}`);
+});

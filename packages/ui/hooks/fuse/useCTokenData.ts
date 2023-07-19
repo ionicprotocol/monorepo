@@ -15,7 +15,7 @@ export const useCTokenData = (
       if (comptrollerAddress && cTokenAddress && sdk) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
-          const cToken = sdk.createCTokenWithExtensions(cTokenAddress);
+          const cToken = sdk.createICErc20(cTokenAddress);
           const [
             adminFeeMantissa,
             reserveFactorMantissa,

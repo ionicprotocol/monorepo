@@ -1,5 +1,5 @@
 {
-  "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+  "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141",
   "abi": [
     {
       "anonymous": false,
@@ -240,157 +240,6 @@
     {
       "inputs": [
         {
-          "internalType": "address[]",
-          "name": "oldImplementations",
-          "type": "address[]"
-        },
-        {
-          "internalType": "address[]",
-          "name": "newImplementations",
-          "type": "address[]"
-        },
-        {
-          "internalType": "bool[]",
-          "name": "allowResign",
-          "type": "bool[]"
-        },
-        {
-          "internalType": "bool[]",
-          "name": "statuses",
-          "type": "bool[]"
-        }
-      ],
-      "name": "_editCErc20DelegateWhitelist",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "oldImplementations",
-          "type": "address[]"
-        },
-        {
-          "internalType": "address[]",
-          "name": "newImplementations",
-          "type": "address[]"
-        },
-        {
-          "internalType": "bool[]",
-          "name": "statuses",
-          "type": "bool[]"
-        }
-      ],
-      "name": "_editComptrollerImplementationWhitelist",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "oldImplementations",
-          "type": "address[]"
-        },
-        {
-          "internalType": "address[]",
-          "name": "newImplementations",
-          "type": "address[]"
-        },
-        {
-          "internalType": "bool[]",
-          "name": "statuses",
-          "type": "bool[]"
-        }
-      ],
-      "name": "_editPluginImplementationWhitelist",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "_latestCErc20Delegate",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "implementation",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "allowResign",
-          "type": "bool"
-        },
-        {
-          "internalType": "bytes",
-          "name": "becomeImplementationData",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "_latestCEtherDelegate",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "implementation",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "allowResign",
-          "type": "bool"
-        },
-        {
-          "internalType": "bytes",
-          "name": "becomeImplementationData",
-          "type": "bytes"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "_latestPluginImplementation",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address payable",
           "name": "pool",
           "type": "address"
@@ -481,19 +330,14 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "oldImplementation",
-          "type": "address"
+          "internalType": "uint8",
+          "name": "delegateType",
+          "type": "uint8"
         },
         {
           "internalType": "address",
           "name": "newImplementation",
           "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "allowResign",
-          "type": "bool"
         },
         {
           "internalType": "bytes",
@@ -560,11 +404,6 @@
         {
           "internalType": "uint256",
           "name": "_minBorrowEth",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_maxSupplyEth",
           "type": "uint256"
         },
         {
@@ -664,64 +503,6 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "name": "cErc20DelegateWhitelist",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "name": "cEtherDelegateWhitelist",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "pool",
           "type": "address"
         },
@@ -782,30 +563,6 @@
           "internalType": "address",
           "name": "",
           "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "comptrollerImplementationWhitelist",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
         }
       ],
       "name": "customInterestFeeRates",
@@ -835,8 +592,18 @@
     {
       "inputs": [
         {
+          "internalType": "uint8",
+          "name": "delegateType",
+          "type": "uint8"
+        },
+        {
           "internalType": "bytes",
           "name": "constructorData",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "becomeImplData",
           "type": "bytes"
         }
       ],
@@ -937,9 +704,9 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "oldImplementation",
-          "type": "address"
+          "internalType": "uint8",
+          "name": "delegateType",
+          "type": "uint8"
         }
       ],
       "name": "latestCErc20Delegate",
@@ -948,11 +715,6 @@
           "internalType": "address",
           "name": "",
           "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
         },
         {
           "internalType": "bytes",
@@ -1004,19 +766,6 @@
     {
       "inputs": [],
       "name": "marketsCounter",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "maxSupplyEth",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1082,30 +831,6 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "pluginImplementationWhitelist",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "contract AuthoritiesRegistry",
           "name": "_ar",
           "type": "address"
@@ -1119,24 +844,6 @@
     {
       "inputs": [],
       "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IComptroller",
-          "name": "pool",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "enabled",
-          "type": "bool"
-        }
-      ],
-      "name": "toggleAutoimplementations",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1176,91 +883,91 @@
       "type": "constructor"
     }
   ],
-  "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
+  "transactionHash": "0xd087a522fdd1d21530383572033cf2db5ecd3794b234b432be3d53d03766fff4",
   "receipt": {
     "to": null,
     "from": "0x9308dddeC9B5cCd8a2685A46E913C892FE31C826",
-    "contractAddress": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+    "contractAddress": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141",
     "transactionIndex": 4,
-    "gasUsed": "838604",
-    "logsBloom": "0x00000000000000000000000000000000402000000000000000800000000000000000000000000008100000000000000000000000000000000000000000000000000000000000000000000000000002000001000000000000000000000000000000000000020000000000000000000800000000800000000000000000000000400000000000000000000000000000000000000000000080000000000000800000000000000100000000000000000400000000080000000000000400000000000000000020000000000000000000040000000000100400000000000000000020000000000000000000000000000000000000000000000100000000000000000040",
-    "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9",
-    "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
+    "gasUsed": "816495",
+    "logsBloom": "0x00000000000000000000000000000000400000000000000020800000000000008000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000002000001000000000000000000000000000000000000020001000000000000000800000000800000000000000000000000400000000000000001000000000000000000000000000080000000000000800000000000000000000000000000000400000000080000000000000400000000000040000020000000000000000000040000000000000400000000000000000020000000000000000000000000000000000000000000000100000000000000000000",
+    "blockHash": "0x47c7fe12695a92ea021eccf951e0c0967a72112d502b53efe6d26b35119d9bab",
+    "transactionHash": "0xd087a522fdd1d21530383572033cf2db5ecd3794b234b432be3d53d03766fff4",
     "logs": [
       {
         "transactionIndex": 4,
-        "blockNumber": 31575204,
-        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
-        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+        "blockNumber": 31689526,
+        "transactionHash": "0xd087a522fdd1d21530383572033cf2db5ecd3794b234b432be3d53d03766fff4",
+        "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141",
         "topics": [
           "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-          "0x000000000000000000000000291d0bd5ccc3c560fdceb54f12adcdfc22484707"
+          "0x00000000000000000000000015f3b250f4fdda6c1d10ed0f1c093f61bcb29df5"
         ],
         "data": "0x",
-        "logIndex": 5,
-        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
+        "logIndex": 2,
+        "blockHash": "0x47c7fe12695a92ea021eccf951e0c0967a72112d502b53efe6d26b35119d9bab"
       },
       {
         "transactionIndex": 4,
-        "blockNumber": 31575204,
-        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
-        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+        "blockNumber": 31689526,
+        "transactionHash": "0xd087a522fdd1d21530383572033cf2db5ecd3794b234b432be3d53d03766fff4",
+        "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000000000000000000000000000000000000000000000",
           "0x0000000000000000000000009308dddec9b5ccd8a2685a46e913c892fe31c826"
         ],
         "data": "0x",
-        "logIndex": 6,
-        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
+        "logIndex": 3,
+        "blockHash": "0x47c7fe12695a92ea021eccf951e0c0967a72112d502b53efe6d26b35119d9bab"
       },
       {
         "transactionIndex": 4,
-        "blockNumber": 31575204,
-        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
-        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+        "blockNumber": 31689526,
+        "transactionHash": "0xd087a522fdd1d21530383572033cf2db5ecd3794b234b432be3d53d03766fff4",
+        "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000009308dddec9b5ccd8a2685a46e913c892fe31c826",
           "0x0000000000000000000000009308dddec9b5ccd8a2685a46e913c892fe31c826"
         ],
         "data": "0x",
-        "logIndex": 7,
-        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
+        "logIndex": 4,
+        "blockHash": "0x47c7fe12695a92ea021eccf951e0c0967a72112d502b53efe6d26b35119d9bab"
       },
       {
         "transactionIndex": 4,
-        "blockNumber": 31575204,
-        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
-        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+        "blockNumber": 31689526,
+        "transactionHash": "0xd087a522fdd1d21530383572033cf2db5ecd3794b234b432be3d53d03766fff4",
+        "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141",
         "topics": [
           "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
         ],
         "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "logIndex": 8,
-        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
+        "logIndex": 5,
+        "blockHash": "0x47c7fe12695a92ea021eccf951e0c0967a72112d502b53efe6d26b35119d9bab"
       },
       {
         "transactionIndex": 4,
-        "blockNumber": 31575204,
-        "transactionHash": "0x954b8ac77b022611530b81287b9aa02b73a2cf497cae5d5365253665cbf53005",
-        "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c",
+        "blockNumber": 31689526,
+        "transactionHash": "0xd087a522fdd1d21530383572033cf2db5ecd3794b234b432be3d53d03766fff4",
+        "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141",
         "topics": [
           "0x7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f"
         ],
-        "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001dbb0edc5acb5804626744a7fcfaf1b34d28dd61",
-        "logIndex": 9,
-        "blockHash": "0x1aa47b96c2dd0cc31607a5bd345e3cf2db4329c63122a1bf52260674f871b4d9"
+        "data": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000df3e44a2614fe4f88d696498af43c35989cc8bd8",
+        "logIndex": 6,
+        "blockHash": "0x47c7fe12695a92ea021eccf951e0c0967a72112d502b53efe6d26b35119d9bab"
       }
     ],
-    "blockNumber": 31575204,
-    "cumulativeGasUsed": "1077815",
+    "blockNumber": 31689526,
+    "cumulativeGasUsed": "1076409",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0x291d0bd5CCc3C560FDcEb54f12aDcdfC22484707",
-    "0x1dBb0edC5ACb5804626744A7fCFaf1b34D28dD61",
+    "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5",
+    "0xDF3e44a2614fe4F88d696498aF43C35989cc8bD8",
     "0xfe4b84df000000000000000000000000000000000000000000000000016345785d8a0000"
   ],
   "numDeployments": 1,
@@ -1277,7 +984,7 @@
       }
     ]
   },
-  "implementation": "0x291d0bd5CCc3C560FDcEb54f12aDcdfC22484707",
+  "implementation": "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5",
   "devdoc": {
     "details": "This contract implements a proxy that is upgradeable by an admin. To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector clashing], which can potentially be used in an attack, this contract uses the https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two things that go hand in hand: 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if that call matches one of the admin functions exposed by the proxy itself. 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the implementation. If the admin tries to call a function on the implementation it will fail with an error that says \"admin cannot fallback to proxy target\". These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due to sudden errors when trying to call a function from the proxy implementation. Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way, you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.",
     "kind": "dev",
