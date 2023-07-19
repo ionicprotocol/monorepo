@@ -82,17 +82,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
       admin: taskArgs.signer
     });
 
-    // STEP 3: whitelist upgradfe path from CErc20Delegate-> CErc20PluginRewardsDelegate
-    console.log(
-      `Whitelisting upgrade path from CErc20Delegate: ${cTokenImplementation} -> CErc20PluginRewardsDelegate: ${sdk.chainDeployment.CErc20PluginRewardsDelegate.address}`
-    );
-    await run("market:updatewhitelist", {
-      oldPluginRewardsDelegate: cTokenImplementation,
-      admin: taskArgs.signer
-    });
-    console.log("Upgrade path whitelisted");
-
-    // STEP 4: upgrade markets to the new implementation
+    // STEP 3: upgrade markets to the new implementation
     console.log(`Upgrading market: ${underlyingAddress} to CErc20PluginRewardsDelegate with plugin: ${pluginAddress}`);
     await run("market:upgrade", {
       comptroller,

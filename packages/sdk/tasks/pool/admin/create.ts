@@ -24,19 +24,18 @@ task("pool:create", "Create pool if does not exist")
       throw "If enforcing whitelist, a whitelist array of addresses must be provided";
     }
 
-    let poolAddress: string;
     if (await getPoolByName(taskArgs.name, sdk)) {
       throw "Pool already exists";
-    } else {
-      [poolAddress] = await sdk.deployPool(
-        taskArgs.name,
-        taskArgs.enforceWhitelist === "true",
-        parseUnits(taskArgs.closeFactor, 16),
-        parseEther((Number(taskArgs.liquidationIncentive) / 100 + 1).toString()),
-        taskArgs.priceOracle,
-        whitelist
-      );
     }
+
+    const [poolAddress, implementationAddress, priceOracle, poolId] = await sdk.deployPool(
+      taskArgs.name,
+      taskArgs.enforceWhitelist === "true",
+      parseUnits(taskArgs.closeFactor, 16),
+      parseEther((Number(taskArgs.liquidationIncentive) / 100 + 1).toString()),
+      taskArgs.priceOracle,
+      whitelist
+    );
 
     await logPoolData(poolAddress, sdk);
     return poolAddress;
