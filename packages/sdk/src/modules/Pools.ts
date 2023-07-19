@@ -16,7 +16,7 @@ import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 export type LensPoolsWithData = [
   ids: BigNumberish[],
   fusePools: PoolDirectory.PoolStructOutput[],
-  fusePoolsData: PoolLens.FusePoolDataStructOutput[],
+  fusePoolsData: PoolLens.IonicPoolDataStructOutput[],
   errors: boolean[]
 ];
 

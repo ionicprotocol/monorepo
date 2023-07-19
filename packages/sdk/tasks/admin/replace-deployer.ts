@@ -2,7 +2,7 @@ import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { AddressesProvider } from "../../typechain/AddressesProvider";
-import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
+import { ICErc20Plugin } from "../../typechain/ICErc20Plugin";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { DiaPriceOracle } from "../../typechain/DiaPriceOracle";
 import { IonicERC4626 } from "../../typechain/IonicERC4626";
@@ -203,8 +203,8 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         }
       }
 
-      const fusePoolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
-      const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+      const poolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
+      const [, pools] = await poolDirectory.callStatic.getActivePools();
       for (let i = 0; i < pools.length; i++) {
         const pool = pools[i];
         console.log("pool name", pool.name);
@@ -264,10 +264,10 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           const market = markets[j];
           console.log(`market ${market}`);
           const cTokenInstance = (await ethers.getContractAt(
-            "CErc20PluginDelegate",
+            "ICErc20Plugin",
             market,
             deployer
-          )) as CErc20PluginDelegate;
+          )) as ICErc20Plugin;
 
           console.log("market", {
             cTokenName: await cTokenInstance.callStatic.name(),
@@ -379,8 +379,8 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
       await ownable2StepAcceptOwnership(ethers, ownableContract, deployer, newDeployer);
     }
 
-    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
-    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+    const poolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
+    const [, pools] = await poolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
@@ -444,10 +444,10 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
           const market = markets[j];
           console.log(`market ${market}`);
           const cTokenInstance = (await ethers.getContractAt(
-            "CErc20PluginDelegate",
+            "ICErc20Plugin",
             market,
             deployer
-          )) as CErc20PluginDelegate;
+          )) as ICErc20Plugin;
 
           let pluginAddress;
           try {

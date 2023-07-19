@@ -3,16 +3,15 @@ import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
-import { CTokenFirstExtension } from "../../../typechain/CTokenFirstExtension";
 import { FeeDistributor } from "../../../typechain/FeeDistributor";
 import { PoolDirectory } from "../../../typechain/PoolDirectory";
 import { Unitroller } from "../../../typechain/Unitroller";
+import { ICErc20 } from "../../../typechain/ICErc20";
 
-export default task("comptroller:implementation:whitelist", "Whitelists a new comptroller implementation upgrade")
+export default task("comptroller:implementation:set-latest", "Configures a latest comptroller implementation upgrade")
   .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)
   .addOptionalParam("newImplementation", "The address of the new comptroller implementation", undefined, types.string)
-  .addFlag("setLatest", "Set the new implementation as the latest for the autoimplementations")
-  .setAction(async ({ oldImplementation, newImplementation, setLatest }, { ethers }) => {
+  .setAction(async ({ oldImplementation, newImplementation }, { ethers }) => {
     let tx;
     const deployer = await ethers.getNamedSigner("deployer");
     if (!newImplementation) {
@@ -21,43 +20,21 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     }
     const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
-    const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(
-      oldImplementation,
-      newImplementation
+    const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
+      oldImplementation
     );
-    if (!whitelisted) {
-      const newComptrollerImplementations = [newImplementation];
-      const oldComptrollerImplementations = [oldImplementation];
-      const comptrollerArrayOfTrue = [true];
 
-      tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
-        oldComptrollerImplementations,
-        newComptrollerImplementations,
-        comptrollerArrayOfTrue
-      );
-      console.log(`_editComptrollerImplementationWhitelist with tx`, tx.hash);
+    if (
+      latestComptrollerImplementation === constants.AddressZero ||
+      latestComptrollerImplementation !== newImplementation
+    ) {
+      console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
+      tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
+      console.log("_setLatestComptrollerImplementation", tx.hash);
       await tx.wait();
-      console.log("FeeDistributor comptroller whitelist set", tx.hash);
+      console.log("latest impl set", tx.hash);
     } else {
-      console.log(`upgrade from ${oldImplementation} to ${newImplementation} is whitelisted already`);
-    }
-
-    if (setLatest) {
-      const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
-        oldImplementation
-      );
-      if (
-        latestComptrollerImplementation === constants.AddressZero ||
-        latestComptrollerImplementation !== newImplementation
-      ) {
-        console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
-        tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
-        console.log("_setLatestComptrollerImplementation", tx.hash);
-        await tx.wait();
-        console.log("latest impl set", tx.hash);
-      } else {
-        console.log(`No change in the latest Comptroller implementation ${newImplementation}`);
-      }
+      console.log(`No change in the latest Comptroller implementation ${newImplementation}`);
     }
   });
 
@@ -99,7 +76,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
           for (let j = 0; j < markets.length; j++) {
             const market = markets[j];
             console.log(`market address ${market}`);
-            const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
+            const cTokenInstance = (await ethers.getContractAt("ICErc20", market)) as ICErc20;
             const implBefore = await cTokenInstance.callStatic.implementation();
             console.log(`implementation before ${implBefore}`);
             const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
@@ -119,83 +96,8 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
           await tx.wait();
           console.log(`bulk upgraded pool ${pool.comptroller}`);
         }
-
-        // check the extensions if the latest impl
-        const implAfter = await unitroller.callStatic.comptrollerImplementation();
-        if (implAfter == latestImpl) {
-          const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(latestImpl);
-          const currentExtensions = await asComptroller.callStatic._listExtensions();
-          let different = false;
-          for (let j = 0; j < currentExtensions.length; j++) {
-            let found = false;
-            for (let k = 0; k < comptrollerExtensions.length; k++) {
-              if (currentExtensions[j] == comptrollerExtensions[k]) {
-                found = true;
-                break;
-              }
-            }
-            if (!found) {
-              different = true;
-              break;
-            }
-          }
-
-          if (different) {
-            if (currentExtensions.length > 1)
-              throw new Error(`implement fn to remove extensions for ${pool.comptroller}`);
-            console.log(
-              `replacing extension ${currentExtensions[0]} with ${comptrollerExtensions[0]} for pool ${pool.comptroller}`
-            );
-            const tx = await fuseFeeDistributor._registerComptrollerExtension(
-              pool.comptroller,
-              comptrollerExtensions[0],
-              currentExtensions[0]
-            );
-            await tx.wait();
-            console.log(`replaced the first extension for pool ${pool.comptroller} with tx ${tx.hash}`);
-          } else {
-            console.log(`no need to replace all extensions`);
-          }
-        } else {
-          console.log(`FAILED TO UPGRADE ${pool.comptroller} FROM ${implBefore} TO ${latestImpl}`);
-        }
       } catch (e) {
         console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);
-      }
-    }
-  });
-
-task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed pools")
-  .addOptionalParam("enable", "If autoimplementations should be on or off", false, types.boolean)
-  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
-  .setAction(async ({ enable, admin }, { ethers }) => {
-    const signer = await ethers.getNamedSigner(admin);
-
-    const fusePoolDirectory = (await ethers.getContract("PoolDirectory", signer)) as PoolDirectory;
-    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
-    for (let i = 0; i < pools.length; i++) {
-      const pool = pools[i];
-      console.log(`pool address ${pool.comptroller}`);
-      const comptroller = (await ethers.getContractAt(
-        "Comptroller.sol:Comptroller",
-        pool.comptroller,
-        signer
-      )) as Comptroller;
-      const admin = await comptroller.callStatic.admin();
-      console.log(`pool name ${pool.name} admin ${admin}`);
-
-      const autoImplOn = await comptroller.callStatic.autoImplementation();
-      if (autoImplOn != enable) {
-        if (admin === signer.address) {
-          const tx = await comptroller._toggleAutoImplementations(enable);
-          console.log(`_toggleAutoImplementations ${tx.hash}`);
-          const receipt = await tx.wait();
-          console.log(`toggled to ${enable} with ${receipt.transactionHash}`);
-        } else {
-          console.log(`signer is not the admin`);
-        }
-      } else {
-        console.log(`autoimplementations for the pool is ${autoImplOn}`);
       }
     }
   });

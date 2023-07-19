@@ -1,7 +1,8 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { task, types } from "hardhat/config";
 
-import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
+import { ICErc20Plugin } from "../../typechain/ICErc20Plugin";
+import { CErc20Delegator } from "../../typechain/CErc20Delegator";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
@@ -25,7 +26,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const allMarkets = await comptroller.callStatic.getAllMarkets();
 
     const cTokenInstances = allMarkets.map((marketAddress) =>
-      sdk.createCErc20PluginRewardsDelegate(marketAddress, signer)
+      sdk.createICErc20PluginRewards(marketAddress, signer)
     );
 
     let cTokenInstance = undefined;
@@ -79,15 +80,15 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    const cTokenInstance = (await ethers.getContractAt(
-      "CErc20PluginDelegate",
+    const cTokenDelegator = (await ethers.getContractAt(
+      "CErc20Delegator",
       marketAddress,
       signer
-    )) as CErc20PluginDelegate;
+    )) as CErc20Delegator;
 
     const cfe = (await ethers.getContract("CTokenFirstExtension")) as CTokenFirstExtension;
-    const impl = await cTokenInstance.callStatic.implementation();
-    const extensions = await cTokenInstance.callStatic._listExtensions();
+    const impl = await cTokenDelegator.callStatic.implementation();
+    const extensions = await cTokenDelegator.callStatic._listExtensions();
 
     if (
       impl.toLowerCase() != implementationAddress.toLowerCase() ||
@@ -102,9 +103,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
       const implementationData = abiCoder.encode(["address"], [pluginAddress]);
 
       console.log(`Setting implementation to ${implementationAddress} with plugin ${pluginAddress}`);
-      const setImplementationTx = await cTokenInstance._setImplementationSafe(
+      const setImplementationTx = await cTokenDelegator._setImplementationSafe(
         implementationAddress,
-        false,
         implementationData
       );
 
@@ -113,8 +113,14 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
         throw `Failed set implementation to ${implementationAddress}`;
       }
       console.log(`Implementation successfully set to ${implementationAddress}`);
-      if (pluginAddress != ethers.constants.AddressZero)
-        console.log(`with plugin ${await cTokenInstance.callStatic.plugin()}`);
+      if (pluginAddress != ethers.constants.AddressZero) {
+        const cTokenPluginInstance = (await ethers.getContractAt(
+          "ICErc20Plugin",
+          marketAddress,
+          signer
+        )) as ICErc20Plugin;
+        console.log(`with plugin ${await cTokenPluginInstance.callStatic.plugin()}`);
+      }
     } else {
       console.log(
         `market ${marketAddress} impl ${impl} already eq ${implementationAddress} and extension ${cfe.address} eq ${extensions[0]}`
