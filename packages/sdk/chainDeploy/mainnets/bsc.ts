@@ -188,32 +188,12 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
-    symbol: assetSymbols.JCHF,
-    aggregator: "0x964261740356cB4aaD0C3D2003Ce808A4176a46d",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
     symbol: assetSymbols.JEUR,
     aggregator: "0x0bf79F617988C472DcA68ff41eFe1338955b9A80",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
-    symbol: assetSymbols.JMXN,
-    aggregator: "0x16c0C1f971b1780F952572670A9d5ce4123582a1",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JGBP,
-    aggregator: "0x8FAf16F710003E538189334541F5D4a391Da46a0",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
     symbol: assetSymbols.BRZ,
-    aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.BRZw,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
@@ -253,51 +233,14 @@ const curvePools: CurvePoolConfig[] = [
     ]
   },
   {
-    // val3EPS metapool
-    lpToken: underlying(assets, assetSymbols.val3EPS),
-    pool: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d",
-    underlyings: [
-      underlying(assets, assetSymbols.BUSD),
-      underlying(assets, assetSymbols.USDC),
-      underlying(assets, assetSymbols.USDT)
-    ]
-  },
-  {
-    // valdai3EPS metapool
-    lpToken: underlying(assets, assetSymbols.valdai3EPS),
-    pool: "0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5",
-    underlyings: [underlying(assets, assetSymbols.DAI), underlying(assets, assetSymbols.val3EPS)]
-  },
-  {
     // 2BRL pool
     lpToken: underlying(assets, assetSymbols["2brl"]),
     pool: "0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3",
     underlyings: [underlying(assets, assetSymbols.jBRL), underlying(assets, assetSymbols.BRZ)]
-  },
-  {
-    // 3BRL pool
-    lpToken: underlying(assets, assetSymbols["3brl"]),
-    pool: "0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a",
-    underlyings: [
-      underlying(assets, assetSymbols.jBRL),
-      underlying(assets, assetSymbols.BRZ),
-      underlying(assets, assetSymbols.BRZw)
-    ]
-  },
-  {
-    // MAI 3EPS pool
-    lpToken: underlying(assets, assetSymbols.mai3EPS),
-    pool: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
-    underlyings: [underlying(assets, assetSymbols.MAI), underlying(assets, assetSymbols.val3EPS)]
   }
 ];
 
 const curveV2Pools: CurveV2PoolConfig[] = [
-  {
-    // eps BUSD jCHF
-    lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
-    pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2"
-  },
   {
     // BNBx-BNB pool
     lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
