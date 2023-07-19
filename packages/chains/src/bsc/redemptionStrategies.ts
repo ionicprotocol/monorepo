@@ -25,26 +25,6 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols["2brl"])
   },
   {
-    inputToken: underlying(assets, assetSymbols["3brl"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.jBRL)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.val3EPS),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.BUSD)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.valdai3EPS),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.val3EPS)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.BUSD)
-  },
-  {
     inputToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
     strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     outputToken: underlying(assets, assetSymbols.WBNB)
@@ -53,21 +33,6 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.MAI),
     strategy: RedemptionStrategyContract.CurveSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.val3EPS)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JCHF),
-    strategy: RedemptionStrategyContract.CurveSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.BUSD)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.BOMB),
-    strategy: RedemptionStrategyContract.UniswapV2LiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.BTCB)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.xBOMB),
-    strategy: RedemptionStrategyContract.XBombLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.BOMB)
   },
   {
     inputToken: underlying(assets, assetSymbols.jBRL),
@@ -153,11 +118,6 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols["USDC-ETH"]),
     strategy: RedemptionStrategyContract.UniswapLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["BTCB-BOMB"]),
-    strategy: RedemptionStrategyContract.UniswapLpTokenLiquidator,
-    outputToken: underlying(assets, assetSymbols.BTCB)
   },
   {
     inputToken: underlying(assets, assetSymbols["BTCB-ETH"]),

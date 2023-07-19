@@ -1,6 +1,6 @@
 import { bsc } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
-import { constants, ethers } from "ethers";
+import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
@@ -11,7 +11,6 @@ import {
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployCurveV2LpOracle,
-  deployDiaOracle,
   deployFlywheelWithDynamicRewards,
   deployGammaPoolOracle,
   deploySolidlyLpOracle,
@@ -27,7 +26,6 @@ import {
   ConcentratedLiquidityOracleConfig,
   CurvePoolConfig,
   CurveV2PoolConfig,
-  DiaAsset,
   GammaLpAsset,
   SolidlyLpAsset,
   SolidlyOracleAssetConfig,
@@ -85,10 +83,8 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["WBNB-ETH"]), // WBNB-ETH PCS LP
       underlying(assets, assetSymbols["USDC-BUSD"]), // USDC-BUSD PCS LP
       underlying(assets, assetSymbols["BUSD-USDT"]), // BUSD-USDT PCS LP
-      underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB-BTC PCS LP
       underlying(assets, assetSymbols["BTCB-ETH"]), // BTCB-ETH PCS LP
       underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
-      underlying(assets, assetSymbols["asBNBx-WBNB"]), // BNBx-WBNB ApeSwap LP
       underlying(assets, assetSymbols["ANKR-ankrBNB"]), // ANKR-ankrBNB PCS LP
       underlying(assets, assetSymbols["asANKR-ankrBNB"]) // ANKR-ankrBNB ApeSwap LP
     ],
@@ -248,15 +244,6 @@ const curveV2Pools: CurveV2PoolConfig[] = [
   }
 ];
 
-const diaAssets: DiaAsset[] = [
-  {
-    symbol: assetSymbols.MAI,
-    underlying: underlying(assets, assetSymbols.MAI),
-    feed: "0xA6f83D792372487d7986657320e66b62DccfeC67",
-    key: "miMATIC/USD"
-  }
-];
-
 const wombatAssets: WombatAsset[] = [
   {
     symbol: assetSymbols["WOMBATLP-WBNB"],
@@ -406,19 +393,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     wombatAssets
   });
-
-  //// Dia Price Oracle
-  await deployDiaOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    diaAssets,
-    deployConfig,
-    diaNativeFeed: { feed: constants.AddressZero, key: "BNB/USD" }
-  });
-
-  ////
 
   //// Uniswap LP Oracle
   await deployUniswapLpOracle({
@@ -601,17 +575,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(uniswapV2LiquidatorFunder.transactionHash);
   }
   console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
-
-  /// xBOMB<>BOMB
-  const xbombLiquidatorFunder = await deployments.deploy("XBombLiquidatorFunder", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  if (xbombLiquidatorFunder.transactionHash)
-    await ethers.provider.waitForTransaction(xbombLiquidatorFunder.transactionHash);
-  console.log("XBombLiquidatorFunder: ", xbombLiquidatorFunder.address);
 
   //// JarvisLiquidatorFunder
   const jarvisLiquidatorFunder = await deployments.deploy("JarvisLiquidatorFunder", {

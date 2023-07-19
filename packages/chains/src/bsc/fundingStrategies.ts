@@ -10,12 +10,6 @@ const fundingStrategies: FundingStrategy[] = [
     strategy: FundingStrategyContract.JarvisLiquidatorFunder,
     inputToken: underlying(assets, assetSymbols.BUSD)
   },
-  // BOMB
-  {
-    outputToken: underlying(assets, assetSymbols.xBOMB),
-    strategy: FundingStrategyContract.XBombLiquidatorFunder,
-    inputToken: underlying(assets, assetSymbols.BOMB)
-  },
   {
     outputToken: underlying(assets, assetSymbols.MAI),
     strategy: FundingStrategyContract.CurveSwapLiquidatorFunder,
