@@ -6,7 +6,7 @@ import {
   ethereum,
   ganache,
   lineagoerli,
-  neondevnet,
+  neon,
   polygon,
 } from '@ionicprotocol/chains';
 import type {
@@ -74,7 +74,7 @@ export function getEnabledChains() {
   }
 
   if (config.isTestnetEnabled) {
-    enabledChains.push(SupportedChains.neon_devnet);
+    enabledChains.push(SupportedChains.neon);
     enabledChains.push(SupportedChains.chapel);
     enabledChains.push(SupportedChains.lineagoerli);
   }
@@ -87,7 +87,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: ganache.assets,
   [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.neon_devnet]: neondevnet.assets,
+  [SupportedChains.neon]: neon.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.lineagoerli]: lineagoerli.assets,
   [SupportedChains.ethereum]: ethereum.assets,
@@ -98,7 +98,7 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.polygon]: polygon.deployedPlugins,
   [SupportedChains.ganache]: ganache.deployedPlugins,
   [SupportedChains.chapel]: chapel.deployedPlugins,
-  [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
+  [SupportedChains.neon]: neon.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.lineagoerli]: lineagoerli.deployedPlugins,
   [SupportedChains.ethereum]: ethereum.deployedPlugins,

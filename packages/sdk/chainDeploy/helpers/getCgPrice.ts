@@ -1,4 +1,4 @@
-import { neondevnet } from "@ionicprotocol/chains";
+import { neon } from "@ionicprotocol/chains";
 import axios from "axios";
 
 export const getCgPrice = async (coingeckoId: string) => {
@@ -23,7 +23,7 @@ export const getCgPrice = async (coingeckoId: string) => {
   if (usdPrice) {
     return usdPrice;
   } else {
-    if (coingeckoId === neondevnet.specificParams.cgId) {
+    if (coingeckoId === neon.specificParams.cgId) {
       return 1.2;
     } else {
       return 1;
