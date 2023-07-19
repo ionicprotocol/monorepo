@@ -207,11 +207,13 @@ task("market:liquidate-borrow", "Liquidate a position directly at the market")
 
 // npx hardhat liquidate-borrow:hardcoded --network neondevnet
 
-task("liquidate-borrow:hardcoded", "Liquidate a specific position at a specific market").setAction(async (taskArgs, hre) => {
-  await hre.run("market:liquidate-borrow", {
-    borrower: "0x351b24e425052d644EfdF7add29312a7f5864Ddf",
-    repayAmount: "290453099130387116141",
-    debtCerc20: "0x3Ca993ec15Dfa961777b276b11C8fc5B0f516eCA",
-    collateralCerc20: "0x5E1565244a49778433575E0e618161d193d64909",
-  });
-});
+task("liquidate-borrow:hardcoded", "Liquidate a specific position at a specific market").setAction(
+  async (taskArgs, hre) => {
+    await hre.run("market:liquidate-borrow", {
+      borrower: "0x351b24e425052d644EfdF7add29312a7f5864Ddf",
+      repayAmount: "290453099130387116141",
+      debtCerc20: "0x3Ca993ec15Dfa961777b276b11C8fc5B0f516eCA",
+      collateralCerc20: "0x5E1565244a49778433575E0e618161d193d64909"
+    });
+  }
+);
