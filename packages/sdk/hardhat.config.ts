@@ -160,10 +160,10 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 42161
     },
-    lineagoerli: {
-      url: OVERRIDE_RPC_URL || `https://rpc.goerli.linea.build`,
+    linea: {
+      url: OVERRIDE_RPC_URL || `https://linea-mainnet.infura.io/v3/`,
       accounts: { mnemonic },
-      chainId: 59140
+      chainId: 59144
     }
   }
 };

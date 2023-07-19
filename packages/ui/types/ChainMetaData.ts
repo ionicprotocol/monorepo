@@ -4,7 +4,7 @@ import {
   chapel,
   ethereum,
   ganache,
-  lineagoerli,
+  linea,
   neon,
   polygon,
 } from '@ionicprotocol/chains';
@@ -25,7 +25,7 @@ export const supportedChainIdToConfig: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled,
   },
-  [lineagoerli.chainId]: {
+  [linea.chainId]: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled,
   },

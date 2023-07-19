@@ -6,7 +6,7 @@ export enum SupportedChains {
   neon = 245022934,
   polygon = 137,
   arbitrum = 42161,
-  lineagoerli = 59140
+  linea = 59144
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
