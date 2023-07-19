@@ -1,9 +1,9 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { task, types } from "hardhat/config";
 
-import { ICErc20Plugin } from "../../typechain/ICErc20Plugin";
 import { CErc20Delegator } from "../../typechain/CErc20Delegator";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
+import { ICErc20Plugin } from "../../typechain/ICErc20Plugin";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("comptroller", "address of comptroller", undefined, types.string) // TODO I would rather use id or comptroller address directly.
@@ -25,9 +25,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     const allMarkets = await comptroller.callStatic.getAllMarkets();
 
-    const cTokenInstances = allMarkets.map((marketAddress) =>
-      sdk.createICErc20PluginRewards(marketAddress, signer)
-    );
+    const cTokenInstances = allMarkets.map((marketAddress) => sdk.createICErc20PluginRewards(marketAddress, signer));
 
     let cTokenInstance = undefined;
 
@@ -80,11 +78,7 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    const cTokenDelegator = (await ethers.getContractAt(
-      "CErc20Delegator",
-      marketAddress,
-      signer
-    )) as CErc20Delegator;
+    const cTokenDelegator = (await ethers.getContractAt("CErc20Delegator", marketAddress, signer)) as CErc20Delegator;
 
     const cfe = (await ethers.getContract("CTokenFirstExtension")) as CTokenFirstExtension;
     const impl = await cTokenDelegator.callStatic.implementation();

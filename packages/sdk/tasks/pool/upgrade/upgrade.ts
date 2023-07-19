@@ -4,9 +4,9 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
 import { FeeDistributor } from "../../../typechain/FeeDistributor";
+import { ICErc20 } from "../../../typechain/ICErc20";
 import { PoolDirectory } from "../../../typechain/PoolDirectory";
 import { Unitroller } from "../../../typechain/Unitroller";
-import { ICErc20 } from "../../../typechain/ICErc20";
 
 export default task("comptroller:implementation:set-latest", "Configures a latest comptroller implementation upgrade")
   .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)

@@ -75,7 +75,9 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
             console.log(
               `Pool: ${pool.name} (${
                 pool.comptroller
-              }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${hre.ethers.utils.formatEther(nativeFee)}`
+              }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${hre.ethers.utils.formatEther(
+                nativeFee
+              )}`
             );
         } else {
           if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
@@ -211,7 +213,9 @@ task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Perfor
       }
       if (LOG)
         console.log(
-          `Pool: ${pool.name} (${pool.comptroller}) - Total Ionic Fee: ${hre.ethers.utils.formatEther(flywheelFeesPool)}`
+          `Pool: ${pool.name} (${pool.comptroller}) - Total Ionic Fee: ${hre.ethers.utils.formatEther(
+            flywheelFeesPool
+          )}`
         );
     }
     console.log(`Total Flywheel Fees: ${hre.ethers.utils.formatEther(flywheelFeesTotal)}`);

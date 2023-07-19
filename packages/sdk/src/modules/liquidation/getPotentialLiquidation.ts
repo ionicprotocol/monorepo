@@ -1,8 +1,8 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
-import { ICErc20 } from "../../../typechain/ICErc20";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
+import { ICErc20 } from "../../../typechain/ICErc20";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
@@ -82,10 +82,7 @@ export default async function getPotentialLiquidation(
 
   // USDC: 6 decimals
   let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
-  const penalty = await getLiquidationPenalty(
-    sdk.createICErc20(collateralAsset.cToken),
-    liquidationIncentive
-  );
+  const penalty = await getLiquidationPenalty(sdk.createICErc20(collateralAsset.cToken), liquidationIncentive);
 
   // Scale to 18 decimals
   let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));

@@ -90,7 +90,7 @@ export default task("deploy-market-with-rewards").setAction(
       )) as ComptrollerFirstExtension;
       const ffd = await ethers.getContract("FeeDistributor");
       const jrm = await ethers.getContract("JumpRateModel");
-      const rewardsDelegate = await ethers.getContract("CErc20RewardsDelegate") as CErc20RewardsDelegate;
+      const rewardsDelegate = (await ethers.getContract("CErc20RewardsDelegate")) as CErc20RewardsDelegate;
       const spo = (await ethers.getContract("SimplePriceOracle", deployer)) as SimplePriceOracle;
       const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
       tx = await mpo.add([testingBombErc20.address], [spo.address]);
@@ -104,18 +104,14 @@ export default task("deploy-market-with-rewards").setAction(
       const becomeImplData = new ethers.utils.AbiCoder().encode([], []);
       const constructorData = new ethers.utils.AbiCoder().encode(
         ["address", "address", "address", "address", "string", "string", "uint256", "uint256"],
-        [
-          bombToken.address,
-          ionicPool.address,
-          ffd.address,
-          jrm.address,
-          "M Testing BOMB",
-          "MTB",
-          0,
-          0
-        ]
+        [bombToken.address, ionicPool.address, ffd.address, jrm.address, "M Testing BOMB", "MTB", 0, 0]
       );
-      tx = await ionicPool._deployMarket((await rewardsDelegate.callStatic.delegateType()), constructorData, becomeImplData, ethers.utils.parseEther("0.9"));
+      tx = await ionicPool._deployMarket(
+        await rewardsDelegate.callStatic.delegateType(),
+        constructorData,
+        becomeImplData,
+        ethers.utils.parseEther("0.9")
+      );
       console.log(`mining tx ${tx.hash}`);
       await tx.wait();
       console.log(`deployed a testing BOMB market`);

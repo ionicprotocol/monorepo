@@ -91,7 +91,12 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       );
 
       // Test Transaction
-      const errorCode = await comptroller.callStatic._deployMarket(delegateType, constructorData, implementationData, collateralFactorBN);
+      const errorCode = await comptroller.callStatic._deployMarket(
+        delegateType,
+        constructorData,
+        implementationData,
+        collateralFactorBN
+      );
       if (errorCode.toNumber() !== 0) {
         throw `Unable to _deployMarket: ${this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
       }

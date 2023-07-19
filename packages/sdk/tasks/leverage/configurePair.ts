@@ -191,7 +191,7 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     const { deployer } = await getNamedAccounts();
     const ffd = await ethers.getContract("FeeDistributor");
     const jrm = await ethers.getContract("JumpRateModel");
-    const rewardsDelegate = await ethers.getContract("CErc20RewardsDelegate") as CErc20RewardsDelegate;
+    const rewardsDelegate = (await ethers.getContract("CErc20RewardsDelegate")) as CErc20RewardsDelegate;
 
     // const tdaiDep = await deployments.deploy("TestingDAI", {
     //   contract: "ERC20PresetMinterPauser",
@@ -239,19 +239,15 @@ task("chapel-create-asset-deploy-market", "creates a new asset and deploy a mark
     const becomeImplData = new ethers.utils.AbiCoder().encode([], []);
     const constructorData = new ethers.utils.AbiCoder().encode(
       ["address", "address", "address", "address", "string", "string", "uint256", "uint256"],
-      [
-        tdai.address,
-        chapelIonicPool,
-        ffd.address,
-        jrm.address,
-        "M Testing BOMB",
-        "MTB",
-        0,
-        0
-      ]
+      [tdai.address, chapelIonicPool, ffd.address, jrm.address, "M Testing BOMB", "MTB", 0, 0]
     );
 
-    tx = await pool._deployMarket((await rewardsDelegate.callStatic.delegateType()), constructorData, becomeImplData, ethers.utils.parseEther("0.9"));
+    tx = await pool._deployMarket(
+      await rewardsDelegate.callStatic.delegateType(),
+      constructorData,
+      becomeImplData,
+      ethers.utils.parseEther("0.9")
+    );
     console.log(`mining tx ${tx.hash}`);
     await tx.wait();
     console.log(`deployed a testing DAI market`);

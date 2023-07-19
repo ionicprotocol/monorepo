@@ -12,12 +12,12 @@ import {
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
-import { FeeDistributor } from "../typechain/FeeDistributor";
-import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
-import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 import { CErc20Delegate } from "../typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../typechain/CErc20PluginRewardsDelegate";
+import { FeeDistributor } from "../typechain/FeeDistributor";
+import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
+import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
@@ -113,9 +113,11 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (compFirstExtension.transactionHash) await ethers.provider.waitForTransaction(compFirstExtension.transactionHash);
   console.log("ComptrollerFirstExtension", compFirstExtension.address);
 
-  const oldErc20Delegate = await ethers.getContractOrNull("CErc20Delegate") as CErc20Delegate;
-  const oldErc20PluginDelegate = await ethers.getContractOrNull("CErc20PluginDelegate") as CErc20PluginDelegate;
-  const oldErc20PluginRewardsDelegate = await ethers.getContractOrNull("CErc20PluginRewardsDelegate") as CErc20PluginRewardsDelegate;
+  const oldErc20Delegate = (await ethers.getContractOrNull("CErc20Delegate")) as CErc20Delegate;
+  const oldErc20PluginDelegate = (await ethers.getContractOrNull("CErc20PluginDelegate")) as CErc20PluginDelegate;
+  const oldErc20PluginRewardsDelegate = (await ethers.getContractOrNull(
+    "CErc20PluginRewardsDelegate"
+  )) as CErc20PluginRewardsDelegate;
 
   const cTokenFirstExtension = await deployments.deploy("CTokenFirstExtension", {
     contract: "CTokenFirstExtension",
@@ -216,11 +218,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     // CErc20Delegate
     const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate.address);
     if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
-      tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-        1,
-        erc20Del.address,
-        becomeImplementationData
-      );
+      tx = await fuseFeeDistributor._setLatestCErc20Delegate(1, erc20Del.address, becomeImplementationData);
       await tx.wait();
       console.log(`Set the latest CErc20Delegate implementation from ${latestCErc20Delegate} to ${erc20Del.address}`);
     } else {
@@ -245,11 +243,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       oldErc20PluginDelegate.address
     );
     if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
-      tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-        2,
-        erc20PluginDel.address,
-        becomeImplementationData
-      );
+      tx = await fuseFeeDistributor._setLatestCErc20Delegate(2, erc20PluginDel.address, becomeImplementationData);
       await tx.wait();
       console.log(
         `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`

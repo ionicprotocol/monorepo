@@ -1,12 +1,12 @@
 import { Contract, ContractInterface } from "ethers";
 
 import { IonicBaseConstructor } from "..";
-import ICErc20ABI from "../../abis/ICErc20";
-import ICErc20PluginRewardsABI from "../../abis/ICErc20PluginRewards";
 import CompoundMarketERC4626ABI from "../../abis/CompoundMarketERC4626";
 import ComptrollerABI from "../../abis/Comptroller";
 import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
+import ICErc20ABI from "../../abis/ICErc20";
+import ICErc20PluginRewardsABI from "../../abis/ICErc20PluginRewards";
 import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
 import ILiquidatorsRegistryABI from "../../abis/ILiquidatorsRegistry";
 import IonicFlywheelABI from "../../abis/IonicFlywheel";
@@ -20,12 +20,12 @@ import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSec
 import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
 import PoolLensSecondaryABI from "../../abis/PoolLensSecondary";
 import UnitrollerABI from "../../abis/Unitroller";
-import { ICErc20 } from "../../typechain/ICErc20";
-import { ICErc20PluginRewards } from "../../typechain/ICErc20PluginRewards";
 import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { ICErc20 } from "../../typechain/ICErc20";
+import { ICErc20PluginRewards } from "../../typechain/ICErc20PluginRewards";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
@@ -73,11 +73,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
     }
 
     createICErc20PluginRewards(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        cTokenAddress,
-        ICErc20PluginRewardsABI,
-        signerOrProvider
-      ) as ICErc20PluginRewards;
+      return new Contract(cTokenAddress, ICErc20PluginRewardsABI, signerOrProvider) as ICErc20PluginRewards;
     }
 
     createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.provider) {
