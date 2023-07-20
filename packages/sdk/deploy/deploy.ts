@@ -12,9 +12,6 @@ import {
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
-import { CErc20Delegate } from "../typechain/CErc20Delegate";
-import { CErc20PluginDelegate } from "../typechain/CErc20PluginDelegate";
-import { CErc20PluginRewardsDelegate } from "../typechain/CErc20PluginRewardsDelegate";
 import { FeeDistributor } from "../typechain/FeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
@@ -23,7 +20,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
-  const MIN_BORROW_USD = chainId === 97;
+  const MIN_BORROW_USD = chainId === 97 ? 0 : 100;
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
   const balance = await ethers.provider.getBalance(deployer);
