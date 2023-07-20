@@ -15,15 +15,13 @@ export const deployFlywheelWithDynamicRewards = async ({
 
   for (const config of deployConfig.dynamicFlywheels!) {
     if (config) {
-      console.log(
-        `Deploying MidasReplacingFlywheel & ReplacingFlywheelDynamicRewards for ${config.rewardToken} reward token`
-      );
+      console.log(`Deploying IonicFlywheel & ReplacingFlywheelDynamicRewards for ${config.rewardToken} reward token`);
       const flywheelBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
       const flywheelToReplace = config.flywheelToReplace ? config.flywheelToReplace : constants.AddressZero;
 
       //// IonicFlywheelCore with Dynamic Rewards
       const fwc = await deployments.deploy(`IonicFlywheel_${config.name}`, {
-        contract: "MidasReplacingFlywheel",
+        contract: "IonicFlywheel",
         from: deployer,
         log: true,
         proxy: {
@@ -31,10 +29,6 @@ export const deployFlywheelWithDynamicRewards = async ({
             init: {
               methodName: "initialize",
               args: [config.rewardToken, constants.AddressZero, flywheelBooster.address, deployer]
-            },
-            onUpgrade: {
-              methodName: "reinitialize",
-              args: [flywheelToReplace]
             }
           },
           proxyContract: "OpenZeppelinTransparentProxy",
