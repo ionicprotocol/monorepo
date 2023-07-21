@@ -194,11 +194,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
-    symbol: assetSymbols.GRT,
-    aggregator: "0x3FabBfb300B1e2D7c9B84512fe9D30aeDF24C410",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
     symbol: assetSymbols.LINK,
     aggregator: "0xd9FFdb71EbE7496cC440152d43986Aae0AB76665",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
@@ -239,16 +234,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
-    symbol: assetSymbols.SUSHI,
-    aggregator: "0x49B0c695039243BBfEb8EcD054EB70061fd54aa0",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.YFI,
-    aggregator: "0x9d3A43c111E7b2C6601705D9fcF7a70c95b1dc55",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
     symbol: assetSymbols.USDC,
     aggregator: "0xfE4A8cc5b5B2366C1B58Bea3858e81843581b2F7",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
@@ -284,91 +269,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   },
   {
-    symbol: assetSymbols.JJPY,
-    aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JPYC,
-    aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JCAD,
-    aggregator: "0xACA44ABb8B04D07D883202F99FA5E3c53ed57Fb5",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.CADC,
-    aggregator: "0xACA44ABb8B04D07D883202F99FA5E3c53ed57Fb5",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JSGD,
-    aggregator: "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.XSGD,
-    aggregator: "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JNZD,
-    aggregator: "0xa302a0B8a499fD0f00449df0a490DedE21105955",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.NZDS,
-    aggregator: "0xa302a0B8a499fD0f00449df0a490DedE21105955",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JCHF,
-    aggregator: "0xc76f762CedF0F78a439727861628E0fdfE1e70c2",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JMXN,
-    aggregator: "0x171b16562EA3476F5C61d1b8dad031DbA0768545",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JGBP,
-    aggregator: "0x099a2540848573e94fb1Ca0Fa420b00acbBc845a",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JCNY,
-    aggregator: "0x04bB437Aa63E098236FA47365f0268547f6EAB32",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JAUD,
-    aggregator: "0x062Df9C4efd2030e243ffCc398b652e8b8F95C6f",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JPLN,
-    aggregator: "0xB34BCE11040702f71c11529D00179B2959BcE6C0",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JSEK,
-    aggregator: "0xbd92B4919ae82be8473859295dEF0e778A626302",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JKRW,
-    aggregator: "0x24B820870F726dA9B0D83B0B28a93885061dbF50",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.JPHP,
-    aggregator: "0x218231089Bebb2A31970c3b77E96eCfb3BA006D1",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
     symbol: assetSymbols.jBRL,
     aggregator: "0xB90DA3ff54C3ED09115abf6FbA0Ff4645586af2c",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
@@ -383,44 +283,9 @@ const chainlinkAssets: ChainlinkAsset[] = [
 // https://polygon.curve.fi/
 const curvePools: CurvePoolConfig[] = [
   {
-    lpToken: underlying(assets, assetSymbols["AGEUR-JEUR"]),
-    pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
-    underlyings: [underlying(assets, assetSymbols.AGEUR), underlying(assets, assetSymbols.JEUR)]
-  },
-  {
     lpToken: underlying(assets, assetSymbols["JEUR-PAR"]),
     pool: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
     underlyings: [underlying(assets, assetSymbols.PAR), underlying(assets, assetSymbols.JEUR)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols["JEUR-EURT"]),
-    pool: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
-    underlyings: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.EURT)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols["EURE-JEUR"]),
-    pool: "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4",
-    underlyings: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.EURE)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols["JJPY-JPYC"]),
-    pool: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
-    underlyings: [underlying(assets, assetSymbols.JJPY), underlying(assets, assetSymbols.JPYC)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols["JCAD-CADC"]),
-    pool: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
-    underlyings: [underlying(assets, assetSymbols.JCAD), underlying(assets, assetSymbols.CADC)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols["JSGD-XSGD"]),
-    pool: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
-    underlyings: [underlying(assets, assetSymbols.JSGD), underlying(assets, assetSymbols.XSGD)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols["JNZD-NZDS"]),
-    pool: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
-    underlyings: [underlying(assets, assetSymbols.JNZD), underlying(assets, assetSymbols.NZDS)]
   },
   {
     lpToken: underlying(assets, assetSymbols.am3CRV),
@@ -506,13 +371,13 @@ const diaAssets: DiaAsset[] = [
     underlying: underlying(assets, assetSymbols.PAR),
     feed: "0xd3709072C338689F94a4072a26Bb993559D9a026",
     key: "PAR/USD"
+  },
+  {
+    symbol: assetSymbols.USDR,
+    underlying: underlying(assets, assetSymbols.USDR),
+    feed: "0x763F20F3Fcdd30e11EF633A70B4396B91C149189",
+    key: "USDR/USD"
   }
-  // {
-  //   symbol: assetSymbols.USDR,
-  //   underlying: underlying(assets, assetSymbols.USDR),
-  //   feed: "0x763F20F3Fcdd30e11EF633A70B4396B91C149189",
-  //   key: "USDR/USD",
-  // },
 ];
 
 const balancerLpAssets: BalancerLpAsset[] = [
@@ -578,11 +443,6 @@ const solidlyOracleSupportedStables: string[] = [
 ];
 
 const solidlyOracles: SolidlyOracleAssetConfig[] = [
-  {
-    underlying: underlying(assets, assetSymbols.USDR),
-    poolAddress: "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797", // sAMM-USDC-USDR
-    baseToken: underlying(assets, assetSymbols.USDC)
-  },
   {
     underlying: underlying(assets, assetSymbols.WUSDR),
     poolAddress: "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2", // vAMM-wUSDR-USDR

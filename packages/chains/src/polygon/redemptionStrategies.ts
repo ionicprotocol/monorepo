@@ -9,77 +9,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.USDC)
   },
   {
-    inputToken: underlying(assets, assetSymbols.JAUD),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JCAD),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JCHF),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JCNY),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
     inputToken: underlying(assets, assetSymbols.JEUR),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JCAD),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JGBP),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JJPY),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JKRW),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JSGD),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JMXN),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JNZD),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JPLN),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JSEK),
-    strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.JPHP),
     strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
     outputToken: underlying(assets, assetSymbols.USDC)
   },
@@ -149,42 +79,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.WMATIC)
   },
   {
-    inputToken: underlying(assets, assetSymbols["AGEUR-JEUR"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.JEUR)
-  },
-  {
     inputToken: underlying(assets, assetSymbols["JEUR-PAR"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.JEUR)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["JJPY-JPYC"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.JJPY)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["JCAD-CADC"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.JCAD)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["JSGD-XSGD"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.JSGD)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["JNZD-NZDS"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.JNZD)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["JEUR-EURT"]),
-    strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    outputToken: underlying(assets, assetSymbols.JEUR)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols["EURE-JEUR"]),
     strategy: RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     outputToken: underlying(assets, assetSymbols.JEUR)
   },

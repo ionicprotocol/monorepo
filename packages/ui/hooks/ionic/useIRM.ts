@@ -10,7 +10,7 @@ export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
     async () => {
       if (cTokenAddress && sdk) {
         try {
-          const cToken = sdk.createCTokenWithExtensions(cTokenAddress);
+          const cToken = sdk.createICErc20(cTokenAddress);
 
           const irm = await cToken.callStatic.interestRateModel();
 

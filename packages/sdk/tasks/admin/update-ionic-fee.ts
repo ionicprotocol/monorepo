@@ -13,7 +13,7 @@ export default task("ionicfee:update", "Update IonicFee")
 
     const ionicSdkModule = await import("../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic(signer);
-    const cToken = sdk.createCTokenWithExtensions(taskArgs.cToken);
+    const cToken = sdk.createICErc20(taskArgs.cToken);
     await cToken._setAdminFee(adminFee);
   });
 

@@ -11,7 +11,7 @@ export default task("market:set-supply-cap", "Pauses borrowing on a market")
     const ionicSdkModule = await import("../../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
-    const cToken = sdk.createCTokenWithExtensions(market, signer);
+    const cToken = sdk.createICErc20(market, signer);
     const comptroller = await cToken.callStatic.comptroller();
     const pool = sdk.createComptroller(comptroller, signer);
 
@@ -42,7 +42,7 @@ task("market:set-supply-cap-whitelist", "Pauses borrowing on a market")
     const ionicSdkModule = await import("../../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic(signer);
 
-    const cToken = sdk.createCTokenWithExtensions(market, signer);
+    const cToken = sdk.createICErc20(market, signer);
     const comptroller = await cToken.callStatic.comptroller();
     const pool = sdk.createComptroller(comptroller, signer);
 

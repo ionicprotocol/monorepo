@@ -168,7 +168,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getPositionSupplyApy(cTokenAddress: string, amount: BigNumber) {
-      const cToken = this.createCTokenWithExtensions(cTokenAddress);
+      const cToken = this.createICErc20(cTokenAddress);
 
       return await cToken.callStatic.supplyRatePerBlockAfterDeposit(amount);
     }

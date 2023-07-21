@@ -25,7 +25,7 @@ async function cgPrice(cgId: string) {
 }
 
 async function createComptroller(
-  pool: PoolDirectory.PoolStructOutput,
+  pool: PoolDirectory.IonicPoolStructOutput,
   deployer: SignerWithAddress
 ): Promise<ComptrollerWithExtension | null> {
   const ionicSdkModule = await import("../ionicSdk");
@@ -60,7 +60,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
       let poolIonicFeesTotal = BigNumber.from(0);
 
       for (const market of markets) {
-        const cToken = sdk.createCTokenWithExtensions(market, deployer);
+        const cToken = sdk.createICErc20(market, deployer);
         const underlying = await cToken.callStatic.underlying();
         const underlyingPrice = await mpo.callStatic.getUnderlyingPrice(market);
 
@@ -114,7 +114,7 @@ task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance
       let pluginFeesPool = BigNumber.from(0);
 
       for (const market of markets) {
-        const cToken = sdk.createCErc20PluginRewardsDelegate(market, deployer);
+        const cToken = sdk.createICErc20PluginRewards(market, deployer);
         const underlying = await cToken.callStatic.underlying();
         const underlyingDecimals = await cToken.callStatic.decimals();
 
@@ -254,7 +254,7 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
       const priceUsd = await cgPrice(cgId);
 
       for (const market of markets) {
-        const cToken = sdk.createCTokenWithExtensions(market, deployer);
+        const cToken = sdk.createICErc20(market, deployer);
         const underlying = await cToken.callStatic.underlying();
         const ionicFee = await cToken.callStatic.totalIonicFees();
         const nativePrice = await mpo.callStatic.price(underlying);
@@ -268,7 +268,7 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
           // const accTx = await cToken.accrueInterest();
           // await accTx.wait();
           console.log(`Withdrawing fee from ${await cToken.callStatic.symbol()} (underlying: ${underlying})`);
-          const tx = await cToken._withdrawFuseFees(ionicFee);
+          const tx = await cToken._withdrawIonicFees(ionicFee);
           await tx.wait();
           if (LOG)
             console.log(
@@ -324,7 +324,7 @@ task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance 
         continue;
       }
       const market = plugins[pluginAddress].market;
-      const cToken = sdk.createCTokenWithExtensions(market, deployer);
+      const cToken = sdk.createICErc20(market, deployer);
       // const accTx = await cToken.accrueInterest();
       // await accTx.wait();
       const underlying = await cToken.callStatic.underlying();

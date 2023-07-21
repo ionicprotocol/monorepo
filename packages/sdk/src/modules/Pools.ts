@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, ethereum, ganache, lineagoerli, neondevnet, polygon } from "@ionicprotocol/chains";
+import { arbitrum, bsc, chapel, ethereum, ganache, linea, neon, polygon } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -16,7 +16,7 @@ import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 export type LensPoolsWithData = [
   ids: BigNumberish[],
   ionicPools: PoolDirectory.PoolStructOutput[],
-  ionicPoolsData: PoolLens.FusePoolDataStructOutput[],
+  ionicPoolsData: PoolLens.IonicPoolDataStructOutput[],
   errors: boolean[]
 ];
 
@@ -25,9 +25,9 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: ganache.assets,
   [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.neon_devnet]: neondevnet.assets,
+  [SupportedChains.neon]: neon.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
-  [SupportedChains.lineagoerli]: lineagoerli.assets,
+  [SupportedChains.linea]: linea.assets,
   [SupportedChains.ethereum]: ethereum.assets
 };
 

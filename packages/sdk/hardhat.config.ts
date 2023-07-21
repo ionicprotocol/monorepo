@@ -145,10 +145,10 @@ const config: HardhatUserConfig = {
       chainId: 1,
       url: OVERRIDE_RPC_URL || "https://rpc.ankr.com/eth"
     },
-    neondevnet: {
+    neon: {
       accounts: { mnemonic },
-      url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,
-      chainId: 245022926
+      url: OVERRIDE_RPC_URL || `https://neon-proxy-mainnet.solana.p2p.org`,
+      chainId: 245022934
     },
     polygon: {
       url: OVERRIDE_RPC_URL || `https://polygon-mainnet.g.alchemy.com/v2/tldbE3dxJ4U5mH6aBYL3HhJAwwPWKVWw`,
@@ -160,10 +160,10 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 42161
     },
-    lineagoerli: {
-      url: OVERRIDE_RPC_URL || `https://rpc.goerli.linea.build`,
+    linea: {
+      url: OVERRIDE_RPC_URL || `https://linea-mainnet.infura.io/v3/`,
       accounts: { mnemonic },
-      chainId: 59140
+      chainId: 59144
     }
   }
 };

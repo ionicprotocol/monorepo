@@ -42,7 +42,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
     await Promise.all(
       totalAssets.map(async (asset) => {
         try {
-          const cTokenContract = sdk.createCTokenWithExtensions(asset.cToken);
+          const cTokenContract = sdk.createICErc20(asset.cToken);
           const tvlUnderlyingBig = await cTokenContract.callStatic.getTotalUnderlyingSupplied();
           const tvlUnderlying = Number(
             utils.formatUnits(tvlUnderlyingBig, asset.underlyingDecimals)

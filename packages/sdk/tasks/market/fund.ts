@@ -27,7 +27,7 @@ task("fund:mint", "deploy dynamic rewards plugin with flywheels")
     const { underlying, decimals } = assetFilter(underlyings, symbol);
     const marketAddress = await sdk.createComptroller(comptroller, signer).callStatic.cTokensByUnderlying(underlying);
 
-    const cToken = sdk.createCErc20PluginRewardsDelegate(marketAddress);
+    const cToken = sdk.createICErc20PluginRewards(marketAddress);
     console.log("cToken: ", cToken.address);
 
     let tx;

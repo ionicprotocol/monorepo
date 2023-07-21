@@ -19,7 +19,7 @@ export default task("market:set-plugin", "Set's the plugin of a market")
 
     const allMarkets = await comptroller.callStatic.getAllMarkets();
 
-    const cTokenInstances = allMarkets.map((marketAddress) => sdk.createCErc20PluginRewardsDelegate(marketAddress));
+    const cTokenInstances = allMarkets.map((marketAddress) => sdk.createICErc20PluginRewards(marketAddress));
 
     const cTokenInstance = cTokenInstances.find(async (cToken) => {
       return (await cToken.callStatic.underlying()) == underlying;

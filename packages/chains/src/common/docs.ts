@@ -23,14 +23,14 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
         "https://app.sushi.com/swap?inputCurrency=ETH&outputCurrency=0x82aF49447D8a07e3bd95BD0d56f35241523fBab1&chainId=42161"
     },
     [SupportedChains.ganache]: {},
-    [SupportedChains.neon_devnet]: {
+    [SupportedChains.neon]: {
       swapName: "MoraSwap",
       swapAddress: "https://moraswap.com/exchange/swap"
     },
     [SupportedChains.chapel]: {},
-    [SupportedChains.lineagoerli]: {
+    [SupportedChains.linea]: {
       swapName: "Uniswap",
-      swapAddress: "https://swap.goerli.linea.build/#/swap"
+      swapAddress: "https://swap.linea.build/#/swap"
     },
     [SupportedChains.ethereum]: {
       swapName: "Uniswap",

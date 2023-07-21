@@ -22,18 +22,6 @@ const assets: PriceVerifierAsset[] = [
     ...assetFilter(chainAssets, assetSymbols.ankrBNB),
     maxPriceDeviation: priceDeviations.LSD,
   },
-  // {
-  //   ...assetFilter(chainAssets, assetSymbols.BRZ),
-  //   maxPriceDeviation: priceDeviations.STABLE,
-  // },
-  // {
-  //   ...assetFilter(chainAssets, assetSymbols.jBRL),
-  //   maxPriceDeviation: priceDeviations.STABLE,
-  // },
-  {
-    ...assetFilter(chainAssets, assetSymbols.JCHF),
-    maxPriceDeviation: priceDeviations.STABLE,
-  },
 ];
 
 export default assets;

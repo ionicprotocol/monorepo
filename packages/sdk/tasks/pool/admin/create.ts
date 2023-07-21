@@ -3,6 +3,17 @@ import { task, types } from "hardhat/config";
 
 import { getPoolByName, logPoolData } from "../utils";
 
+task("pool:create:chapel").setAction(async ({}, { run, ethers }) => {
+  await run("pool:create", {
+    name: "IONIC Test BOMB Pool",
+    creator: "deployer",
+    priceOracle: "0xc625139B9471432Abea0F9f97A84611BCDC4cbdD", // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 // update the MPO=0x429041250873643235cb3788871447c6fF3205aA
 // npx hardhat pool:create --name Test --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
 
@@ -24,19 +35,18 @@ task("pool:create", "Create pool if does not exist")
       throw "If enforcing whitelist, a whitelist array of addresses must be provided";
     }
 
-    let poolAddress: string;
     if (await getPoolByName(taskArgs.name, sdk)) {
       throw "Pool already exists";
-    } else {
-      [poolAddress] = await sdk.deployPool(
-        taskArgs.name,
-        taskArgs.enforceWhitelist === "true",
-        parseUnits(taskArgs.closeFactor, 16),
-        parseEther((Number(taskArgs.liquidationIncentive) / 100 + 1).toString()),
-        taskArgs.priceOracle,
-        whitelist
-      );
     }
+
+    const [poolAddress, implementationAddress, priceOracle, poolId] = await sdk.deployPool(
+      taskArgs.name,
+      taskArgs.enforceWhitelist === "true",
+      parseUnits(taskArgs.closeFactor, 16),
+      parseEther((Number(taskArgs.liquidationIncentive) / 100 + 1).toString()),
+      taskArgs.priceOracle,
+      whitelist
+    );
 
     await logPoolData(poolAddress, sdk);
     return poolAddress;

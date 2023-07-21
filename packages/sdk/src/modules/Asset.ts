@@ -68,6 +68,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
 
       // Use Default CErc20Delegate
       const implementationAddress = this.chainDeployment.CErc20Delegate.address;
+      const delegateType = 1; // regular delegate = CErc20Delegate
       const implementationData = "0x00";
 
       // Prepare Transaction Data
@@ -90,15 +91,21 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
       );
 
       // Test Transaction
-      const errorCode = await comptroller.callStatic._deployMarket(false, constructorData, collateralFactorBN);
+      const errorCode = await comptroller.callStatic._deployMarket(
+        delegateType,
+        constructorData,
+        implementationData,
+        collateralFactorBN
+      );
       if (errorCode.toNumber() !== 0) {
         throw `Unable to _deployMarket: ${this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
       }
 
       // Make actual Transaction
       const tx: ethers.providers.TransactionResponse = await comptroller._deployMarket(
-        false,
+        delegateType,
         constructorData,
+        implementationData,
         collateralFactorBN
       );
 

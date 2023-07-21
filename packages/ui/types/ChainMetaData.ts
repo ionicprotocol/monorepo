@@ -4,8 +4,8 @@ import {
   chapel,
   ethereum,
   ganache,
-  lineagoerli,
-  neondevnet,
+  linea,
+  neon,
   polygon
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
@@ -21,11 +21,11 @@ export const supportedChainIdToConfig: {
     enabled: true,
     supported: config.isArbitrumEnabled
   },
-  [neondevnet.chainId]: {
+  [neon.chainId]: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled
   },
-  [lineagoerli.chainId]: {
+  [linea.chainId]: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled
   },

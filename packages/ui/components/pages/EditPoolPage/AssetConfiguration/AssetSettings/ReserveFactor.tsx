@@ -73,7 +73,7 @@ export const ReserveFactor = ({
   const updateReserveFactor = async ({ reserveFactor }: { reserveFactor: number }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = currentSdk.createCTokenWithExtensions(cTokenAddress || '', currentSdk.signer);
+    const cToken = currentSdk.createICErc20(cTokenAddress || '', currentSdk.signer);
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());

@@ -1,5 +1,4 @@
 import { chainIdToConfig } from '@ionicprotocol/chains';
-import { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -42,17 +41,10 @@ export function useAllUsdPrices() {
             }
 
             if (!prices[id.toString()]) {
-              if (config.chainId === chainIdToConfig[SupportedChains.neon_devnet].chainId) {
-                prices[id.toString()] = {
-                  symbol: config.specificParams.metadata.nativeCurrency.symbol,
-                  value: 1.2
-                };
-              } else {
-                prices[id.toString()] = {
-                  symbol: config.specificParams.metadata.nativeCurrency.symbol,
-                  value: 1
-                };
-              }
+              prices[id.toString()] = {
+                symbol: config.specificParams.metadata.nativeCurrency.symbol,
+                value: 1
+              };
             }
           }
         })

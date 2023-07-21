@@ -12,13 +12,6 @@ export const MONITORED_CHAIN_ASSETS: MonitoredChainAssets = {
         affectedAssets: [assetFilter(bsc.assets, assetSymbols.stkBNB)],
         identifier: "PCS stkBNB-WBNB",
       },
-      {
-        token0: underlying(bsc.assets, assetSymbols.BNBx),
-        token1: underlying(bsc.assets, assetSymbols.WBNB),
-        affectedAssets: [assetFilter(bsc.assets, assetSymbols.BNBx)],
-        alternativeFactory: "0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6",
-        identifier: "ApeSwap BNBx-WBNB",
-      },
     ],
     [LiquidityPoolKind.UniswapV3]: [],
     [LiquidityPoolKind.Curve]: [],

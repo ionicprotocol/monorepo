@@ -69,7 +69,7 @@ export const AdminFee = ({ comptrollerAddress, selectedAsset, poolChainId }: Adm
   const updateAdminFee = async ({ adminFee }: { adminFee: number }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = currentSdk.createCTokenWithExtensions(cTokenAddress || '', currentSdk.signer);
+    const cToken = currentSdk.createICErc20(cTokenAddress || '', currentSdk.signer);
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());

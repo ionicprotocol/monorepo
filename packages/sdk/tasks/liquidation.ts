@@ -142,12 +142,10 @@ task("liquidate:hardcoded", "Liquidate a position without a flash loan").setActi
     cTokenCollateral: "0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563",
     flashSwapPair: "0xa927E1e1E044CA1D9fe1854585003477331fE2Af",
     minProfitAmount: BigNumber.from("0"),
-    exchangeProfitTo: hre.ethers.constants.AddressZero,
     uniswapV2RouterForBorrow: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
     uniswapV2RouterForCollateral: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
     redemptionStrategies: [],
     strategyData: [],
-    ethToCoinbase: BigNumber.from(0),
     debtFundingStrategies: ["0xB8423EE8aa0476a909786D079dF5C0766cB09142"],
     debtFundingStrategiesData: [
       "0x00000000000000000000000070085a09d30d6f8c4ecf6ee10120d1847383bb5700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000002000000000000000000000000931715FEE2d06333043d11F658C8CE934aC61D0c000000000000000000000000ffffffff1fcacbd218edc0eba20fc2308c778080"

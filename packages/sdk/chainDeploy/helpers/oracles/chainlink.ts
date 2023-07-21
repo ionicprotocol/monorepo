@@ -18,10 +18,22 @@ export const deployChainlinkOracle = async ({
   let tx: providers.TransactionResponse;
 
   //// Chainlink Oracle
+
   const cpo = await deployments.deploy("ChainlinkPriceOracleV2", {
     from: deployer,
-    args: [deployer, true, deployConfig.wtoken, deployConfig.nativeTokenUsdChainlinkFeed],
-    log: true
+    args: [],
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [deployConfig.stableToken, deployConfig.nativeTokenUsdChainlinkFeed]
+        }
+      },
+      owner: deployer,
+      proxyContract: "OpenZeppelinTransparentProxy"
+    },
+    waitConfirmations: 1
   });
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("ChainlinkPriceOracleV2: ", cpo.address);
