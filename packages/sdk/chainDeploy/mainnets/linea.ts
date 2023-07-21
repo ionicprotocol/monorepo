@@ -10,7 +10,7 @@ const assets = linea.assets;
 export const deployConfig: ChainDeployConfig = {
   wtoken: underlying(assets, assetSymbols.WETH),
   nativeTokenUsdChainlinkFeed: "",
-  nativeTokenName: "Linea (Goerli)",
+  nativeTokenName: "Linea",
   nativeTokenSymbol: "ETH",
   stableToken: underlying(assets, assetSymbols.USDC),
   blocksPerYear: linea.specificParams.blocksPerYear.toNumber(),
@@ -54,14 +54,14 @@ const umbrellaAssets: UmbrellaAsset[] = [
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
-  await deployUmbrellaOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    umbrellaAssets,
-    nativeUsdFeed: "ETH-USD",
-    registryAddress: "0x92010E763d476A732021191562134c488ca92a1F"
-  });
+  // await deployUmbrellaOracle({
+  //   run,
+  //   ethers,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   umbrellaAssets,
+  //   nativeUsdFeed: "ETH-USD",
+  //   registryAddress: "0x92010E763d476A732021191562134c488ca92a1F"
+  // });
 };

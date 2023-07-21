@@ -503,7 +503,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   // OPTIMIZED VAULTS
   // Deploy vaults registry
-  if (chainId !== 1) {
+  if (chainId !== 1 && chainId !== 59144) {
     console.log("Deploying the optimized APR vaults registry");
     const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
       from: deployer,
@@ -573,7 +573,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// LEVERED POSITIONS FACTORY
-  if (chainId !== 1) {
+  if (chainId !== 1 && chainId !== 59144) {
     const lpfDep = await deployments.deploy("LeveredPositionFactory", {
       from: deployer,
       log: true,
