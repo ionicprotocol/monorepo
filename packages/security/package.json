@@ -1,0 +1,59 @@
+{
+  "name": "@ionicprotocol/security",
+  "repository": "git://github.com:ionicprotocol/monorepo.git",
+  "version": "0.3.1",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "description": "",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "files": [
+    "/dist/"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
+    "build:esm": "tsc -p tsconfig-sdk.json",
+    "build:cjs": "tsc -p tsconfig-cjs.json",
+    "clean": "rm -rf dist",
+    "prettier:ts": "prettier --write 'src/**/*.ts'",
+    "lint": "eslint . -c .eslintrc.json --ext ts,json",
+    "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
+    "test": "nyc ts-mocha --require 'tests/globalTestHook.ts' --check-leaks --exit --timeout 60000 'tests/**/*.spec.ts'"
+  },
+  "keywords": [],
+  "author": "Ionic Protocol",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/chai-as-promised": "^7",
+    "@types/chai-subset": "^1",
+    "@types/mocha": "^9.1.1",
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
+    "chai-subset": "^1.6.0",
+    "eslint": "^8.23.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "lint-staged": "13.0.3",
+    "nyc": "^15.1.0",
+    "prettier": "2.7.1",
+    "sinon": "^14.0.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.8.2"
+  },
+  "dependencies": {
+    "@ethersproject/providers": "^5.7.1",
+    "@ionicprotocol/chains": "workspace:*",
+    "@ionicprotocol/types": "workspace:*",
+    "@types/node-cache": "^4.2.5",
+    "axios": "^0.27.2",
+    "decimal.js": "^10.4.0",
+    "ethers": "^5.7.0",
+    "node-cache": "^5.1.2",
+    "utf-8-validate": "^5.0.9"
+  }
+}

@@ -1,0 +1,242 @@
+name: Liquidator-Bot/Push/PR - Create and publish a Docker image & Deploy
+
+on:
+  push:
+    branches: [main, development]
+    paths:
+      - '.github/workflows/deploy-bots.yaml'
+      - 'packages/bots/**'
+      - 'packages/monitors/**'
+      - 'docker/liquidator/**'
+      - 'docker/oracles-monitor/**'
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'ops/**'
+  pull_request:
+    branches: [main, development]
+    paths:
+      - '.github/workflows/deploy-bots.yaml'
+      - 'packages/bots/**'
+      - 'packages/monitors/**'
+      - 'docker/liquidator/**'
+      - 'docker/oracles-monitor/**'
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'ops/**'
+
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  terraform-infra:
+    runs-on: ubuntu-latest
+    name: Deploy Infra to AWS
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Plan
+        working-directory: ./ops
+        run: make infra-plan
+
+      - name: Terraform Deploy
+        working-directory: ./ops
+        run: make infra-deploy
+
+  lint-bots:
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build `sdk`
+        run: yarn build:sdk
+
+      - name: Lint `liquidator`
+        run: yarn workspace @ionicprotocol/liquidator lint
+
+      - name: Lint `oracles-monitor`
+        run: yarn workspace @ionicprotocol/oracles-monitor lint
+
+  build-and-push-liquidator-image:
+    needs: [terraform-infra]
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: 347632749353.dkr.ecr.us-east-1.amazonaws.com
+      REPOSITORY: ionic-liquidator
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Login to Private ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Avoids rate limits error on pulling from public ECR
+      - name: Login to Public ECR
+        uses: docker/login-action@v2
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Log in to GH Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        run: |
+          docker build -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
+
+  build-and-push-oracles-monitor-image:
+    needs: [terraform-infra]
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: 347632749353.dkr.ecr.us-east-1.amazonaws.com
+      REPOSITORY: ionic-oracles-monitor
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Login to Private ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Avoids rate limits error on pulling from public ECR
+      - name: Login to Public ECR
+        uses: docker/login-action@v2
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Log in to GH Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        run: |
+          docker build -f docker/oracles-monitor/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
+
+  smoke-tests:
+    runs-on: ubuntu-latest
+    needs: [build-and-push-liquidator-image, build-and-push-oracles-monitor-image, lint-bots]
+    env:
+      ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
+      ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: run smoke tests for liquidator bot
+        working-directory: ./ops
+        run: make liquidator-smoke-test
+
+      - name: run smoke tests for feed verifier
+        working-directory: ./ops
+        run: make feed-verifier-smoke-test
+
+      - name: run smoke tests for price verifier
+        working-directory: ./ops
+        run: make price-verifier-smoke-test
+
+      - name: run smoke tests for price change verifier
+        working-directory: ./ops
+        run: make price-change-verifier-smoke-test
+
+  terraform-deploy-bots:
+    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [smoke-tests]
+    name: Deploy bots to ECS
+    env:
+      ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
+      ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
+      POKT_API_KEY: '${{ secrets.POKT_API_KEY }}'
+      CHAINSTACK_BSC_RPC_URL: '${{ secrets.CHAINSTACK_BSC_RPC_URL }}'
+      CHAINSTACK_POLYGON_RPC_URL: '${{ secrets.CHAINSTACK_POLYGON_RPC_URL }}'
+      LIQUIDATION_DISCORD_WEBHOOK_URL: ${{ secrets.LIQUIDATION_DISCORD_WEBHOOK_URL }}
+      ECS_NOTIFIER_DISCORD_WEBHOOK_URL: ${{ secrets.ECS_NOTIFIER_DISCORD_WEBHOOK_URL }}
+      ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Plan
+        working-directory: ./ops
+        run: make prod-plan
+
+      - name: Terraform Deploy
+        working-directory: ./ops
+        run: make prod-deploy

@@ -1,0 +1,54 @@
+{
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "baseUrl": "./packages",
+    "paths": {
+      "@ui/components/*": ["ui/components/*"],
+      "@ui/config/*": ["ui/config/*"],
+      "@ui/constants/*": ["ui/constants/*"],
+      "@ui/context/*": ["ui/context/*"],
+      "@ui/hooks/*": ["ui/hooks/*"],
+      "@ui/types/*": ["ui/types/*"],
+      "@ui/utils/*": ["ui/utils/*"],
+      "@ui/theme/*": ["ui/theme/*"],
+      "@ui/styles/*": ["ui/styles/*"],
+      "@ui/images/*": ["ui/public/images/*"],
+      "@ui/icons/*": ["ui/public/icons/*"],
+      "@ui/test/*": ["ui/test/*"],
+      "@chains/polygon/*": ["chains/src/polygon/*"],
+      "@chains/bsc/*": ["chains/src/bsc/*"],
+      "@chains/moonbeam/*": ["chains/src/moonbeam/*"],
+      "@chains/chapel/*": ["chains/src/chapel/*"]
+    }
+  },
+  "references": [
+    {
+      "path": "./packages/sdk"
+    },
+    {
+      "path": "./packages/types"
+    },
+    {
+      "path": "./packages/chains"
+    },
+    {
+      "path": "./packages/ui"
+    },
+    {
+      "path": "./packages/functions"
+    },
+    {
+      "path": "./packages/security"
+    },
+    {
+      "path": "./packages/bots/liquidator"
+    },
+    {
+      "path": "./packages/monitors/oracle"
+    },
+    {
+      "path": "./packages/monitors/liquidity"
+    }
+  ]
+}

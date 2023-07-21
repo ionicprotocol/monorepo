@@ -1,0 +1,48 @@
+name: UI - deploy UI
+
+on:
+  pull_request:
+    branches: [main, development]
+    types: [labeled, opened,synchronize,reopened]
+    paths:
+      - 'packages/ui/**'
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - 'packages/functions/**'
+      - '.github/workflows/package-ui-deploy.yaml'
+      - 'yarn.lock'
+      - 'netlify.toml'
+
+jobs:
+  deploy-preview:
+    if: contains(github.event.pull_request.labels.*.name, 'preview')
+    runs-on: ubuntu-latest
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install `foundry`
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Deploy `Preview`
+        run: |
+          netlify link --id ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
+          netlify deploy --prod --build --context preview
+

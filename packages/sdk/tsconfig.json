@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "target": "ES2015",
+    "rootDirs": ["./src", "./tests"],
+    "outDir": "./dist/cjs",
+    "composite": true
+  },
+  "exclude": []
+}
