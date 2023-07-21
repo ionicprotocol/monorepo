@@ -7,7 +7,7 @@ import { ChainlinkAsset } from "../helpers/types";
 
 const assets = neon.assets;
 const BN = ethers.utils.parseEther("1");
-const NEON_FIXED_PRICE_USD_BN = BN.mul(20).div(100);
+const NEON_FIXED_PRICE_USD_BN = BN.mul(11).div(100);
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: underlying(assets, assetSymbols.WNEON),

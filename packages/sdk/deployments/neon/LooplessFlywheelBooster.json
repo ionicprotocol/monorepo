@@ -1,0 +1,454 @@
+{
+  "address": "0xd214ca76441c19b319e39bCFb7368FE5d784C52d",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "BOOSTER_TYPE",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "boostedBalanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "boostedTotalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xd4c3152e17d6a9ca4971a47e01805f7da78df99fd86c4c2e2096d60899ba89f4",
+  "receipt": {
+    "to": null,
+    "from": "0x9308dddeC9B5cCd8a2685A46E913C892FE31C826",
+    "contractAddress": "0xd214ca76441c19b319e39bCFb7368FE5d784C52d",
+    "transactionIndex": 0,
+    "gasUsed": "22925360",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x0f19527c6de0b228f269a2a47a187f7c537728749259d6af85d2eb222fd491c9",
+    "transactionHash": "0xd4c3152e17d6a9ca4971a47e01805f7da78df99fd86c4c2e2096d60899ba89f4",
+    "logs": [],
+    "blockNumber": 206404842,
+    "cumulativeGasUsed": "22925360",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "metadata": {
+    "compiler": {
+      "version": "0.8.10+commit.fc410830"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "BOOSTER_TYPE",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "boostedBalanceOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "boostedTotalSupply",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {
+          "boostedBalanceOf(address,address)": {
+            "params": {
+              "strategy": "the strategy to calculate boosted balance of",
+              "user": "the user to calculate boosted balance of"
+            },
+            "returns": {
+              "_0": "the boosted balance"
+            }
+          },
+          "boostedTotalSupply(address)": {
+            "params": {
+              "strategy": "the strategy to calculate boosted supply of"
+            },
+            "returns": {
+              "_0": "the boosted supply"
+            }
+          }
+        },
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {
+          "boostedBalanceOf(address,address)": {
+            "notice": "calculate the boosted balance of a user in a given strategy."
+          },
+          "boostedTotalSupply(address)": {
+            "notice": "calculate the boosted supply of a strategy."
+          }
+        },
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@openzeppelin/=lib/openzeppelin-contracts/",
+        ":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        ":ds-test/=lib/ds-test/src/",
+        ":flywheel-v2/=lib/flywheel-v2/src/",
+        ":flywheel/=lib/flywheel-v2/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":fuse-flywheel/=lib/fuse-flywheel/src/",
+        ":libcompound/=lib/fuse-flywheel/lib/libcompound/src/",
+        ":openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+        ":openzeppelin-contracts/=lib/openzeppelin-contracts/",
+        ":ops/=lib/ops/contracts/",
+        ":pyth-neon/=lib/pyth-neon/contracts/",
+        ":pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        ":redstone-oracles-monorepo/=lib/redstone-oracles-monorepo/",
+        ":solidity-bytes-utils/=lib/solidity-bytes-utils/",
+        ":solmate/=lib/solmate/src/",
+        ":weird-erc20/=lib/fuse-flywheel/lib/libcompound/lib/solmate/lib/weird-erc20/src/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "none"
+      },
+      "compilationTarget": {
+        "contracts/ionic/strategies/flywheel/LooplessFlywheelBooster.sol": "LooplessFlywheelBooster"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "contracts/compound/CTokenInterfaces.sol": {
+        "keccak256": "0xe9fb6da8159c644e6387cccaef1da0c48f2b5e9a585ab145c700df3b9411c531",
+        "urls": [
+          "bzz-raw://ac514f91278e6162f960a72f9104d8ce9eca3b4517f501d557270464a7bb06f0",
+          "dweb:/ipfs/QmQ59Mr6Qchg8SbcnGQPw7yVphT3BoihXZHJXdXP1U8JcM"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/compound/ComptrollerInterface.sol": {
+        "keccak256": "0xbe25e5c31dac1da63bd2875e8a78b1ef95ea60fa3d427903c36fd1f9a9c682b7",
+        "urls": [
+          "bzz-raw://e81b5bede8e7d3a3a20bff11b041b1abc7bbb20e6f4c05e61cc90b035edf2220",
+          "dweb:/ipfs/QmTCR21HLGDVevvQmGzYeumiY6yALdktQ5aPH1yoFn1y8D"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/compound/ComptrollerStorage.sol": {
+        "keccak256": "0x57a3395bfc4159595f279878fa5cde37272e937634e6dfcee9958ec384552e32",
+        "urls": [
+          "bzz-raw://d39368b0a9113ff87eca7cc802f39787e7783da33f4963aefaf0d3e279e0c90c",
+          "dweb:/ipfs/QmZ9E2LMT6dSP4SoKMWFpiZuULURtu8etyvV5mcbuTxnxw"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/compound/IFeeDistributor.sol": {
+        "keccak256": "0xa822e2942e6a88851968d5f3bda48709713c84d556031a1dd3db5dfd06121d3e",
+        "urls": [
+          "bzz-raw://7441bc263a37d23d3d91404f3134dcfd00eadb6387bd8d30dd68586134db6f50",
+          "dweb:/ipfs/QmS1nD4sdTbjTYA9PqrtxHXnDqrRjhnfSn5SREKTn2Q5Vn"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/compound/InterestRateModel.sol": {
+        "keccak256": "0x587a54b49d48df2cd91583eac93ddde4e2849f79d0441f179bf835e9dffe24e9",
+        "urls": [
+          "bzz-raw://b202a68cbe90a5ecaa547808852641d7bfe93f9b8e3f3f3f6010423c182781d2",
+          "dweb:/ipfs/QmYEzQQHVXNCMmhhFrv4hak2WDfs21SXs6DSh5q5wJ25AB"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/ionic/AuthoritiesRegistry.sol": {
+        "keccak256": "0x9d9041d32612a9c5260b60a073cd83f9d2a002d101c29abc0972ba950afbbb9c",
+        "urls": [
+          "bzz-raw://80b6146b9039095b5524d4195c896986fa71ff8459fcc56fcf7774e7b183baab",
+          "dweb:/ipfs/Qmbw9s1VUhBiJKcmgLabWZKdHVX5as3mrTgyGSzBr2rSMD"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/ionic/DiamondExtension.sol": {
+        "keccak256": "0x7251a691ae160cb4e7fe5d0c2a210225e751c2c62fad7b270baf3e31d7eb80f1",
+        "urls": [
+          "bzz-raw://c864c39b4d7891885151b69cf46889df88ef1f7c80b8319f3777a1c0030a5d07",
+          "dweb:/ipfs/QmdFxroGxbMaWYfkFUM6E9JTAM2xeX3b2Kc2ZPed5ahGNK"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/ionic/PoolRolesAuthority.sol": {
+        "keccak256": "0x889f0af7c9603dbfda324df1af6f6f38753d2dac706e2a60dca3df90caa8c1fc",
+        "urls": [
+          "bzz-raw://db885c40250f08c4e1cb173e057f7683271a861eb5417b2cf497df650af34e0d",
+          "dweb:/ipfs/QmaEagQVfyMkHiyRakHwczEmUjauFmCH13UTmzi5aE4ZY3"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/ionic/SafeOwnableUpgradeable.sol": {
+        "keccak256": "0x73f50a022ee86874b63ebd7e418b5948ef2913e32cb80024fe3cd4f17be7f2a5",
+        "urls": [
+          "bzz-raw://e42280c355155c2cf136d93a05cb4dd20b0d7f7977da5bcd2042d6ca588ff080",
+          "dweb:/ipfs/QmaBDYMAsenHXgFzYQQWFEyB1UXbappq2JFe3vZVQ8BK5U"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/ionic/strategies/flywheel/LooplessFlywheelBooster.sol": {
+        "keccak256": "0x6fe3d8ad696e69d45ed7ff12c7270bf129cdf1f4447d43254b54658c3df6418e",
+        "urls": [
+          "bzz-raw://1e0c045cffabee935758957ff694dba2d04b96e530a52b0538f3cbec1609e89f",
+          "dweb:/ipfs/QmYJaCQ97y3a7xn8EQEjGFx2j4PSUD8Fym2YwJtamAdGSX"
+        ],
+        "license": "AGPL-3.0-only"
+      },
+      "contracts/oracles/BasePriceOracle.sol": {
+        "keccak256": "0xed2a27a8dc71a4280c0ef19d3165ff237d8066ae782e750b071bb39d12e73404",
+        "urls": [
+          "bzz-raw://8e5daa9bb9ddc85f0294c25b173cb33ca9001f4146ddd9b642fa87b74f17ef02",
+          "dweb:/ipfs/QmX7Jcs7toepthqTQipP7FNXRDhi7nC9D7DpJ8cZfTvTmK"
+        ],
+        "license": "UNLICENSED"
+      },
+      "lib/flywheel-v2/src/interfaces/IFlywheelBooster.sol": {
+        "keccak256": "0x37dd3fce4e213452f8483c6647f5eaa862087af6673828b16e844a1be40a8b39",
+        "urls": [
+          "bzz-raw://23164e5512573e53d24174c4115babab94cd85ad91125fc1ee2d05e20dcffc96",
+          "dweb:/ipfs/QmXn7Ucmb7iZR2iz1jxf2nPg4Kx5KPZSg3KGhefXDo6scn"
+        ],
+        "license": "AGPL-3.0-only"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol": {
+        "keccak256": "0x247c62047745915c0af6b955470a72d1696ebad4352d7d3011aef1a2463cd888",
+        "urls": [
+          "bzz-raw://d7fc8396619de513c96b6e00301b88dd790e83542aab918425633a5f7297a15a",
+          "dweb:/ipfs/QmXbP4kiZyp7guuS7xe8KaybnwkRPGrBc2Kbi3vhcTfpxb"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol": {
+        "keccak256": "0x6c2b54ec184943843041ab77f61988b5060f6f03acbfe92cdc125f95f00891da",
+        "urls": [
+          "bzz-raw://efc212a7612f6ea70f7aa1f68b9c26e7ceaa412333e23dcf66740f9d51fa689b",
+          "dweb:/ipfs/QmTkcTYoF14eN12FxyX2GQRc9KwdhYfjoJ3XJt1yvJWcaB"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol": {
+        "keccak256": "0x0a3b4afc301241e2629ad192fa02e0f8626e3cf38ab6f45342bfd7afbde16ee0",
+        "urls": [
+          "bzz-raw://b189423f1102ff4487e9c59a65ec400b98cc4aeef478dac8272b482e9f5ad7de",
+          "dweb:/ipfs/QmdpYHrzD8wPe5DMuEiWkXiVLsTkqD7C4tbBjWwkBQwJi2"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol": {
+        "keccak256": "0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149",
+        "urls": [
+          "bzz-raw://d6520943ea55fdf5f0bafb39ed909f64de17051bc954ff3e88c9e5621412c79c",
+          "dweb:/ipfs/QmWZ4rAKTQbNG2HxGs46AcTXShsVytKeLs7CUCdCSv5N7a"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC1822.sol": {
+        "keccak256": "0x1d4afe6cb24200cc4545eed814ecf5847277dfe5d613a1707aad5fceecebcfff",
+        "urls": [
+          "bzz-raw://383fb7b8181016ac5ccf07bc9cdb7c1b5045ea36e2cc4df52bcbf20396fc7688",
+          "dweb:/ipfs/QmYJ7Cg4WmE3rR8KGQxjUCXFfTH6TcwZ2Z1f6tPrq7jHFr"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol": {
+        "keccak256": "0xa2b22da3032e50b55f95ec1d13336102d675f341167aa76db571ef7f8bb7975d",
+        "urls": [
+          "bzz-raw://96b6d77a20bebd4eb06b801d3d020c7e82be13bd535cb0d0a6b7181c51dab5d5",
+          "dweb:/ipfs/QmPUR9Cv9jNFdQX6PtBfaBW1ZCnKwiu65R2VD5kbdanDyn"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Upgrade.sol": {
+        "keccak256": "0xabf3f59bc0e5423eae45e459dbe92e7052c6983628d39008590edc852a62f94a",
+        "urls": [
+          "bzz-raw://89c2a0f70157c13845be5cb49b078a6374fee3a78fa950052a3af26190255da8",
+          "dweb:/ipfs/QmUcvMEQH1oMM2pUyMuDiBUKdvvnTz1NRB8bmPHrVq8725"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol": {
+        "keccak256": "0xc130fe33f1b2132158531a87734153293f6d07bc263ff4ac90e85da9c82c0e27",
+        "urls": [
+          "bzz-raw://8831721b6f4cc26534d190f9f1631c3f59c9ff38efdd911f85e0882b8e360472",
+          "dweb:/ipfs/QmQZnLErZNStirSQ13ZNWQgvEYUtGE5tXYwn4QUPaVUfPN"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol": {
+        "keccak256": "0xd50a3421ac379ccb1be435fa646d66a65c986b4924f0849839f08692f39dde61",
+        "urls": [
+          "bzz-raw://ada1e030c0231db8d143b44ce92b4d1158eedb087880cad6d8cc7bd7ebe7b354",
+          "dweb:/ipfs/QmWZ2NHZweRpz1U9GF6R1h65ri76dnX7fNxLBeM2t5N5Ce"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol": {
+        "keccak256": "0xa6a787e7a901af6511e19aa53e1a00352db215a011d2c7a438d0582dd5da76f9",
+        "urls": [
+          "bzz-raw://a6c4477d480bac20d681ade0e712b77ad828acf530a1d5c0abc5fb78068a05a1",
+          "dweb:/ipfs/QmdBqsK8CcUceTeWzhHwFDEvKMoHimwtV96Lbim7ZBtCb8"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/Address.sol": {
+        "keccak256": "0xb94eac067c85cd79a4195c0a1f4a878e9827329045c12475a0199f1ae17b9700",
+        "urls": [
+          "bzz-raw://2ad84b5dbf40ba9e944cc25bd0a98c51bafd49cff30efe5ef5aef921a70081de",
+          "dweb:/ipfs/Qme8iCeqe9VdNgWktTTsSxUfHcJEXuvPaJpshWDzoWj56V"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+        "keccak256": "0xd5c50c54bf02740ebd122ff06832546cb5fa84486d52695a9ccfd11666e0c81d",
+        "urls": [
+          "bzz-raw://39e096c60a6eb1c6a257122d515496bd92d0c6a693a8f07acb6aa4b1263e95d4",
+          "dweb:/ipfs/QmPs5trJBacCiSkezP6tpevapuRYWNY6mqSFzsMCJj7e6B"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/structs/EnumerableSet.sol": {
+        "keccak256": "0x636eab608b4563c01e88042aba9330e6fe69af2c567fe1adf4d85731974ac81d",
+        "urls": [
+          "bzz-raw://e35967fa779d58a99de2f6d7ac23ef489d09bc18a5668fd231753905e0a9f633",
+          "dweb:/ipfs/QmWUSbnhG7z4fDUYMbCuyJ4nyhqKwzL2jbeFEnVLDxo6R6"
+        ],
+        "license": "MIT"
+      },
+      "lib/solmate/src/auth/Auth.sol": {
+        "keccak256": "0xd5cf8213a40d727af89c93dd359ad68984c123c1a1a93fc9ad7ba62b3436fb75",
+        "urls": [
+          "bzz-raw://70e87bbc23f0b02fe804779714d65f559db59827d48e5243ee029eaf1c48289d",
+          "dweb:/ipfs/QmZtq71QoREyPjoPU3ozq9Fae62jP5kjrcgcEnh4ytFPhf"
+        ],
+        "license": "AGPL-3.0-only"
+      },
+      "lib/solmate/src/auth/authorities/RolesAuthority.sol": {
+        "keccak256": "0x278247a2c5b0accb60af8d3749e34ab5d4436ee4f35a8fff301aaa25ab690762",
+        "urls": [
+          "bzz-raw://d4623d497366937c5549b8842c75f9faee45db5fc5a40ca21353b058dc0f434b",
+          "dweb:/ipfs/QmQ2QGBAiwgzjQqUK12uTwM2ciYL35xiCWV57xntUa1RdR"
+        ],
+        "license": "AGPL-3.0-only"
+      },
+      "lib/solmate/src/tokens/ERC20.sol": {
+        "keccak256": "0xcdfd8db76b2a3415620e4d18cc5545f3d50de792dbf2c3dd5adb40cbe6f94b10",
+        "urls": [
+          "bzz-raw://57b3ab70cde374af1cf2c9888636e8de6cf660f087b1c9abd805e9271e19fa35",
+          "dweb:/ipfs/QmNrLDBAHYFjpjSd12jerm1AdBkDqEYUUaXgnT854BUZ97"
+        ],
+        "license": "AGPL-3.0-only"
+      }
+    },
+    "version": 1
+  },
+  "bytecode": {
+    "object": "0x608060405234801561001057600080fd5b50610414806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80631a50ef2f146100465780631e1932fb1461006c5780639a8cca551461007f575b600080fd5b6100596100543660046102ce565b6100c8565b6040519081526020015b60405180910390f35b61005961007a366004610307565b61024c565b6100bb6040518060400160405280601781526020017f4c6f6f706c657373466c79776865656c426f6f7374657200000000000000000081525081565b604051610063919061032b565b6040516370a0823160e01b81526001600160a01b03828116600483015260009182918516906370a0823190602401602060405180830381865afa158015610113573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101379190610380565b905060008490506000816001600160a01b031663bd6d894d6040518163ffffffff1660e01b8152600401602060405180830381865afa15801561017e573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101a29190610380565b6040516305eff7ef60e21b81526001600160a01b0387811660048301528416906317bfdfbc90602401602060405180830381865afa1580156101e8573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061020c9190610380565b61021e90670de0b6b3a76400006103af565b61022891906103ce565b9050808311610238576000610242565b61024281846103f0565b9695505050505050565b6000816001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa15801561028c573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102b09190610380565b92915050565b6001600160a01b03811681146102cb57600080fd5b50565b600080604083850312156102e157600080fd5b82356102ec816102b6565b915060208301356102fc816102b6565b809150509250929050565b60006020828403121561031957600080fd5b8135610324816102b6565b9392505050565b600060208083528351808285015260005b818110156103585785810183015185820160400152820161033c565b8181111561036a576000604083870101525b50601f01601f1916929092016040019392505050565b60006020828403121561039257600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b60008160001904831182151516156103c9576103c9610399565b500290565b6000826103eb57634e487b7160e01b600052601260045260246000fd5b500490565b60008282101561040257610402610399565b50039056fea164736f6c634300080a000a",
+    "sourceMap": "185:1055:139:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c80631a50ef2f146100465780631e1932fb1461006c5780639a8cca551461007f575b600080fd5b6100596100543660046102ce565b6100c8565b6040519081526020015b60405180910390f35b61005961007a366004610307565b61024c565b6100bb6040518060400160405280601781526020017f4c6f6f706c657373466c79776865656c426f6f7374657200000000000000000081525081565b604051610063919061032b565b6040516370a0823160e01b81526001600160a01b03828116600483015260009182918516906370a0823190602401602060405180830381865afa158015610113573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101379190610380565b905060008490506000816001600160a01b031663bd6d894d6040518163ffffffff1660e01b8152600401602060405180830381865afa15801561017e573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101a29190610380565b6040516305eff7ef60e21b81526001600160a01b0387811660048301528416906317bfdfbc90602401602060405180830381865afa1580156101e8573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061020c9190610380565b61021e90670de0b6b3a76400006103af565b61022891906103ce565b9050808311610238576000610242565b61024281846103f0565b9695505050505050565b6000816001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa15801561028c573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102b09190610380565b92915050565b6001600160a01b03811681146102cb57600080fd5b50565b600080604083850312156102e157600080fd5b82356102ec816102b6565b915060208301356102fc816102b6565b809150509250929050565b60006020828403121561031957600080fd5b8135610324816102b6565b9392505050565b600060208083528351808285015260005b818110156103585785810183015185820160400152820161033c565b8181111561036a576000604083870101525b50601f01601f1916929092016040019392505050565b60006020828403121561039257600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b60008160001904831182151516156103c9576103c9610399565b500290565b6000826103eb57634e487b7160e01b600052601260045260246000fd5b500490565b60008282101561040257610402610399565b50039056fea164736f6c634300080a000a",
+    "sourceMap": "185:1055:139:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;850:388;;;;;;:::i;:::-;;:::i;:::-;;;726:25:406;;;714:2;699:18;850:388:139;;;;;;;;481:116;;;;;;:::i;:::-;;:::i;242:63::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;850:388::-;969:24;;-1:-1:-1;;;969:24:139;;-1:-1:-1;;;;;1803:32:406;;;969:24:139;;;1785:51:406;929:7:139;;;;969:18;;;;;1758::406;;969:24:139;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;944:49;;999:16;1034:8;999:45;;1050:21;1121:8;-1:-1:-1;;;;;1121:28:139;;:30;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;1075:35;;-1:-1:-1;;;1075:35:139;;-1:-1:-1;;;;;1803:32:406;;;1075:35:139;;;1785:51:406;1075:29:139;;;;;1758:18:406;;1075:35:139;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;:42;;1113:4;1075:42;:::i;:::-;1074:77;;;;:::i;:::-;1050:101;;1182:13;1165:14;:30;1164:69;;1232:1;1164:69;;;1199:30;1216:13;1199:14;:30;:::i;:::-;1157:76;850:388;-1:-1:-1;;;;;;850:388:139:o;481:116::-;548:7;570:8;-1:-1:-1;;;;;570:20:139;;:22;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;563:29;481:116;-1:-1:-1;;481:116:139:o;14:138:406:-;-1:-1:-1;;;;;96:31:406;;86:42;;76:70;;142:1;139;132:12;76:70;14:138;:::o;157:418::-;241:6;249;302:2;290:9;281:7;277:23;273:32;270:52;;;318:1;315;308:12;270:52;357:9;344:23;376:38;408:5;376:38;:::i;:::-;433:5;-1:-1:-1;490:2:406;475:18;;462:32;503:40;462:32;503:40;:::i;:::-;562:7;552:17;;;157:418;;;;;:::o;762:270::-;837:6;890:2;878:9;869:7;865:23;861:32;858:52;;;906:1;903;896:12;858:52;945:9;932:23;964:38;996:5;964:38;:::i;:::-;1021:5;762:270;-1:-1:-1;;;762:270:406:o;1037:597::-;1149:4;1178:2;1207;1196:9;1189:21;1239:6;1233:13;1282:6;1277:2;1266:9;1262:18;1255:34;1307:1;1317:140;1331:6;1328:1;1325:13;1317:140;;;1426:14;;;1422:23;;1416:30;1392:17;;;1411:2;1388:26;1381:66;1346:10;;1317:140;;;1475:6;1472:1;1469:13;1466:91;;;1545:1;1540:2;1531:6;1520:9;1516:22;1512:31;1505:42;1466:91;-1:-1:-1;1618:2:406;1597:15;-1:-1:-1;;1593:29:406;1578:45;;;;1625:2;1574:54;;1037:597;-1:-1:-1;;;1037:597:406:o;1847:184::-;1917:6;1970:2;1958:9;1949:7;1945:23;1941:32;1938:52;;;1986:1;1983;1976:12;1938:52;-1:-1:-1;2009:16:406;;1847:184;-1:-1:-1;1847:184:406:o;2036:127::-;2097:10;2092:3;2088:20;2085:1;2078:31;2128:4;2125:1;2118:15;2152:4;2149:1;2142:15;2168:168;2208:7;2274:1;2270;2266:6;2262:14;2259:1;2256:21;2251:1;2244:9;2237:17;2233:45;2230:71;;;2281:18;;:::i;:::-;-1:-1:-1;2321:9:406;;2168:168::o;2341:217::-;2381:1;2407;2397:132;;2451:10;2446:3;2442:20;2439:1;2432:31;2486:4;2483:1;2476:15;2514:4;2511:1;2504:15;2397:132;-1:-1:-1;2543:9:406;;2341:217::o;2563:125::-;2603:4;2631:1;2628;2625:8;2622:34;;;2636:18;;:::i;:::-;-1:-1:-1;2673:9:406;;2563:125::o",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "BOOSTER_TYPE()": "9a8cca55",
+    "boostedBalanceOf(address,address)": "1a50ef2f",
+    "boostedTotalSupply(address)": "1e1932fb"
+  }
+}

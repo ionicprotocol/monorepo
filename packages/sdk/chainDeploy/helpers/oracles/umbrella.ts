@@ -31,7 +31,8 @@ export const deployUmbrellaOracle = async ({
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy"
-    }
+    },
+    waitConfirmations: 1
   });
 
   if (umbrella.transactionHash) await ethers.provider.waitForTransaction(umbrella.transactionHash);

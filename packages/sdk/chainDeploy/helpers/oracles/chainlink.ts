@@ -32,7 +32,8 @@ export const deployChainlinkOracle = async ({
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy"
-    }
+    },
+    waitConfirmations: 1
   });
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("ChainlinkPriceOracleV2: ", cpo.address);
