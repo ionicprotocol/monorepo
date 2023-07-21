@@ -18,7 +18,12 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { CREATE_NEW_POSITION_STEPS, LEVERAGE_VALUE } from '@ui/constants/index';
+import {
+  COMPLETE,
+  CREATE_NEW_POSITION_STEPS,
+  INCOMPLETE,
+  LEVERAGE_VALUE
+} from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -195,7 +200,7 @@ export const CreatePositionModal = ({
           await tx.wait();
           _steps[0] = {
             ..._steps[0],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -236,7 +241,7 @@ export const CreatePositionModal = ({
 
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -247,8 +252,8 @@ export const CreatePositionModal = ({
         } else {
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
-            desc: 'Already approved!',
-            done: true
+            description: 'Already approved!',
+            status: COMPLETE
           };
           setConfirmedSteps([..._steps]);
         }
@@ -286,7 +291,7 @@ export const CreatePositionModal = ({
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
@@ -321,7 +326,7 @@ export const CreatePositionModal = ({
 
       if (optionToWrap) {
         _steps = [
-          { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
+          { description: 'Wrap Native Token', status: INCOMPLETE, title: 'Wrap Native Token' },
           ..._steps
         ];
       }
@@ -334,7 +339,10 @@ export const CreatePositionModal = ({
     let _steps = [...CREATE_NEW_POSITION_STEPS(symbol)];
 
     if (optionToWrap) {
-      _steps = [{ desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' }, ..._steps];
+      _steps = [
+        { description: 'Wrap Native Token', status: INCOMPLETE, title: 'Wrap Native Token' },
+        ..._steps
+      ];
     }
 
     setSteps(_steps);

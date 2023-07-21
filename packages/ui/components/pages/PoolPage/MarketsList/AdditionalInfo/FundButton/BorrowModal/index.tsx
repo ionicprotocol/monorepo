@@ -18,7 +18,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { BORROW_STEPS, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
+import { BORROW_STEPS, COMPLETE, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
@@ -199,7 +199,7 @@ export const BorrowModal = ({
 
         _steps[0] = {
           ..._steps[0],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setSteps([..._steps]);

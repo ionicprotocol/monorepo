@@ -296,8 +296,9 @@ export type IRMToCurveData = {
 export type UtilizationChartData = { borrowRate: number; depositRate: number; utilization: number };
 
 export type TxStep = {
-  desc: string;
-  done: boolean;
+  description: string;
+  index: number;
+  status: string;
   title: string;
   txHash?: string;
 };

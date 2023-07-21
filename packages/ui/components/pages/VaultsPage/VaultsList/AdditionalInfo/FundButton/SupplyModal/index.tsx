@@ -24,7 +24,7 @@ import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/A
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { VAULT_SUPPLY_STEPS } from '@ui/constants/index';
+import { COMPLETE, VAULT_SUPPLY_STEPS, VAULT_SUPPLY_STEPS_WITH_WRAP } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -143,7 +143,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
         await tx.wait();
         _steps[0] = {
           ..._steps[0],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
@@ -185,7 +185,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
 
         _steps[optionToWrap ? 1 : 0] = {
           ..._steps[optionToWrap ? 1 : 0],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);
@@ -196,8 +196,8 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
       } else {
         _steps[optionToWrap ? 1 : 0] = {
           ..._steps[optionToWrap ? 1 : 0],
-          desc: 'Already approved!',
-          done: true
+          description: 'Already approved!',
+          status: COMPLETE
         };
         setConfirmedSteps([..._steps]);
       }
@@ -229,7 +229,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
 
       _steps[optionToWrap ? 2 : 1] = {
         ..._steps[optionToWrap ? 2 : 1],
-        done: true,
+        status: COMPLETE,
         txHash: tx.hash
       };
       setConfirmedSteps([..._steps]);
@@ -254,10 +254,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
       let _steps = [...VAULT_SUPPLY_STEPS(vault.symbol)];
 
       if (optionToWrap) {
-        _steps = [
-          { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
-          ..._steps
-        ];
+        _steps = [...VAULT_SUPPLY_STEPS_WITH_WRAP(vault.symbol)];
       }
 
       setSteps(_steps);
@@ -268,7 +265,7 @@ export const SupplyModal = ({ isOpen, onClose, vault }: SupplyModalProps) => {
     let _steps = [...VAULT_SUPPLY_STEPS(vault.symbol)];
 
     if (optionToWrap) {
-      _steps = [{ desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' }, ..._steps];
+      _steps = [...VAULT_SUPPLY_STEPS_WITH_WRAP(vault.symbol)];
     }
 
     setSteps(_steps);

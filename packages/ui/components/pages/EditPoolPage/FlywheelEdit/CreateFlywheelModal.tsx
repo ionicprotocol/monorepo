@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { Center } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
+import { INCOMPLETE } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -26,23 +27,27 @@ import type { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/Co
 
 const steps = [
   {
-    desc: 'Deploying Flywheel Core',
-    done: false,
+    description: 'Deploying Flywheel Core',
+    index: 1,
+    status: INCOMPLETE,
     title: 'Deploying Flywheel Core'
   },
   {
-    desc: 'Deploying Flywheel Rewards',
-    done: false,
+    description: 'Deploying Flywheel Rewards',
+    index: 2,
+    status: INCOMPLETE,
     title: 'Deploying Flywheel Rewards'
   },
   {
-    desc: 'Adding Rewards to Flywheel',
-    done: false,
+    description: 'Adding Rewards to Flywheel',
+    index: 3,
+    status: INCOMPLETE,
     title: 'Adding Rewards to Flywheel'
   },
   {
-    desc: 'Adding Flywheel to Pool',
-    done: false,
+    description: 'Adding Flywheel to Pool',
+    index: 4,
+    status: INCOMPLETE,
     title: 'Adding Flywheel to Pool'
   }
 ];

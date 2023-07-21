@@ -185,7 +185,14 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         accessorFn: (row) => row.collateral,
-        cell: ({ getValue }) => <Collateral asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <Collateral
+            asset={getValue<MarketData>()}
+            assets={assets}
+            chainId={chainId}
+            comptroller={comptroller}
+          />
+        ),
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{COLLATERAL}</TableHeaderCell>,

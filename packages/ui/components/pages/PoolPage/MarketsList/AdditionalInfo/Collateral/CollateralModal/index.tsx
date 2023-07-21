@@ -11,6 +11,7 @@ import { Column, Row } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { COMPLETE, INCOMPLETE } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useColors } from '@ui/hooks/useColors';
@@ -53,10 +54,11 @@ export const CollateralModal = ({
 
   const [steps, setSteps] = useState<TxStep[]>([
     {
-      desc: `${asset.membership ? 'Disallows' : 'Allows'} ${
+      description: `${asset.membership ? 'Disallows' : 'Allows'} ${
         asset.underlyingSymbol
       } to be used as collateral`,
-      done: false,
+      index: 1,
+      status: INCOMPLETE,
       title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral'
     }
   ]);
@@ -126,7 +128,7 @@ export const CollateralModal = ({
 
       _steps[0] = {
         ..._steps[0],
-        done: true,
+        status: COMPLETE,
         txHash: call.hash
       };
       setConfirmedSteps([..._steps]);
@@ -153,10 +155,11 @@ export const CollateralModal = ({
       setIsConfirmed(false);
       const _steps = [
         {
-          desc: `${asset.membership ? 'Disallows' : 'Allows'} ${
+          description: `${asset.membership ? 'Disallows' : 'Allows'} ${
             asset.underlyingSymbol
           } to be used as collateral`,
-          done: false,
+          index: 1,
+          status: INCOMPLETE,
           title: asset.membership ? 'Disable as Collateral' : 'Enable as Collateral'
         }
       ];

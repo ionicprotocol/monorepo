@@ -15,7 +15,7 @@ import { CardBox } from '@ui/components/shared/IonicBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { SWAP_STEPS } from '@ui/constants/index';
+import { COMPLETE, SWAP_STEPS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -148,7 +148,7 @@ export const SwapTab = ({
 
           _steps[0] = {
             ..._steps[0],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -159,8 +159,8 @@ export const SwapTab = ({
         } else {
           _steps[0] = {
             ..._steps[0],
-            desc: 'Already approved!',
-            done: true
+            description: 'Already approved!',
+            status: COMPLETE
           };
           setConfirmedSteps([..._steps]);
         }
@@ -195,7 +195,7 @@ export const SwapTab = ({
 
         _steps[1] = {
           ..._steps[1],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);

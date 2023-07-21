@@ -7,7 +7,6 @@ import type {
   ModalProps
 } from '@chakra-ui/react';
 import {
-  Divider,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -48,7 +47,6 @@ export const IonicModal = ({
       closeOnOverlayClick={false}
       isCentered
       isOpen={isOpen}
-      motionPreset="slideInBottom"
       onClose={onClose}
       {...modalProps}
     >
@@ -56,7 +54,6 @@ export const IonicModal = ({
       <ModalContent {...modalContentProps}>
         {header && <ModalHeader {...modalHeaderProps}>{header}</ModalHeader>}
         <ModalCloseButton top={4} {...modalCloseButtonProps} />
-        <Divider />
         <ModalBody p={0} {...modalBodyProps}>
           {body}
         </ModalBody>

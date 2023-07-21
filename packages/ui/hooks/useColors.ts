@@ -3,6 +3,8 @@ import { useColorModeValue } from '@chakra-ui/react';
 import { COLOR_PALETTE } from '@ui/theme/index';
 
 export function useColors() {
+  const cGreen = useColorModeValue(COLOR_PALETTE.iGreen, COLOR_PALETTE.iGreen);
+
   const cIPage = {
     bgColor: useColorModeValue(COLOR_PALETTE.iBlack, COLOR_PALETTE.iBlack),
     dividerColor: useColorModeValue(COLOR_PALETTE.iSeparator, COLOR_PALETTE.iSeparator),
@@ -117,6 +119,7 @@ export function useColors() {
     cAlert,
     cCard,
     cChart,
+    cGreen,
     cICard,
     cIPage,
     cIRow,

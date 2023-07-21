@@ -13,6 +13,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { COMPLETE, INCOMPLETE } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
@@ -122,11 +123,12 @@ export const ClaimPoolRewardsModal = ({
 
     const _steps: TxStep[] = [
       {
-        desc: `Claim ${Object.values(_assetPerRewardToken)
+        description: `Claim ${Object.values(_assetPerRewardToken)
           .map((asset) => asset?.symbol)
           .filter((symbol) => !!symbol)
           .join(', ')} rewards from Midas`,
-        done: false,
+        index: 1,
+        status: INCOMPLETE,
         title: `Claim rewards on ${currentChain.network}`
       }
     ];
@@ -155,7 +157,7 @@ export const ClaimPoolRewardsModal = ({
 
       _steps[0] = {
         ..._steps[0],
-        done: true,
+        status: COMPLETE,
         txHash: tx.hash
       };
       setSteps([..._steps]);

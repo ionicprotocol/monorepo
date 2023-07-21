@@ -11,9 +11,13 @@ export const TextStyleConfig: ComponentStyleConfig = {
   }),
   defaultProps: {
     size: 'md',
-    variant: 'default'
+    variant: 'inherit'
   },
   sizes: {
+    inherit: {
+      fontSize: 'inherit',
+      lineHeight: 'inherit'
+    },
     lg: {
       fontSize: {
         base: '20px'
@@ -58,9 +62,15 @@ export const TextStyleConfig: ComponentStyleConfig = {
   variants: {
     default: {},
     inherit: {
-      color: 'inherit',
-      fontSize: 'inherit'
+      color: 'inherit'
     },
+    itemDesc: (props) => ({
+      color: mode('iBlack', 'iWhite')(props)
+    }),
+    itemTitle: (props) => ({
+      color: mode('iLightGray', 'iLightGray')(props),
+      textTransform: 'uppercase'
+    }),
     number: {
       fontFamily: "'Inter', sans-serif"
     },

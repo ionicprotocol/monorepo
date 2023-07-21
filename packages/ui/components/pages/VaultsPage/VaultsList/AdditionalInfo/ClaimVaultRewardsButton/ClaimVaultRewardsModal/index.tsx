@@ -11,6 +11,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { COMPLETE, INCOMPLETE } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -104,8 +105,9 @@ const ClaimVaultRewardsModal = ({
       const symbols = reward.rewardsInfo.map((info) => info.rewardTokenSymbol).join(',');
       const _steps: TxStep[] = [
         {
-          desc: `Claims ${symbols} rewards from Midas`,
-          done: false,
+          description: `Claims ${symbols} rewards from Midas`,
+          index: 1,
+          status: INCOMPLETE,
           title: `Claim ${symbols}`
         }
       ];
@@ -134,7 +136,7 @@ const ClaimVaultRewardsModal = ({
 
         _steps[0] = {
           ..._steps[0],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setSteps([..._steps]);

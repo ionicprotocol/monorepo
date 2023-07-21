@@ -9,7 +9,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { REMOVE_CLOSED_POSITION_STEPS } from '@ui/constants/index';
+import { COMPLETE, REMOVE_CLOSED_POSITION_STEPS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -83,7 +83,7 @@ export const RemovePositionModal = ({
 
         _steps[0] = {
           ..._steps[0],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setConfirmedSteps([..._steps]);

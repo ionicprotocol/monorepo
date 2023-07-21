@@ -90,7 +90,7 @@ const TransactionStepper = ({
                 </h2>
                 <AccordionPanel py={2}>
                   <VStack alignItems="flex-start" ml={12} spacing={0}>
-                    <Text>{step.desc}</Text>
+                    <Text>{step.description}</Text>
                     <Flex justifyContent="flex-end" width="100%">
                       {step.txHash ? (
                         <Link href={`${scanUrl}/tx/${step.txHash}`} isExternal rel="noreferrer">

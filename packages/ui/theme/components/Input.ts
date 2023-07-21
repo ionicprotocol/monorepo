@@ -1,5 +1,5 @@
 import { inputAnatomy } from '@chakra-ui/anatomy';
-import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
 const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(
@@ -22,14 +22,93 @@ const baseStyle = definePartsStyle({
   }
 });
 
-const xl = defineStyle({
-  fontSize: 'lg',
-  h: '12',
-  px: '4'
-});
-
 const sizes = {
-  xl: definePartsStyle({ addon: xl, field: xl })
+  lg: definePartsStyle({
+    addon: {
+      height: { base: '30px' },
+      width: { base: '30px' }
+    },
+    element: { height: { base: '30px' }, width: { base: '30px' } },
+    field: {
+      fontSize: {
+        base: '20px'
+      },
+      height: { base: '30px' },
+      lineHeight: {
+        base: '30px'
+      }
+    }
+  }),
+  md: definePartsStyle({
+    addon: { height: { base: '20px' }, width: { base: '20px' } },
+    element: { height: { base: '20px' }, width: { base: '20px' } },
+    field: {
+      fontSize: {
+        base: '14px'
+      },
+      height: { base: '20px' },
+      lineHeight: {
+        base: '20px'
+      }
+    }
+  }),
+  sm: definePartsStyle({
+    addon: {
+      height: { base: '18px' },
+      width: { base: '18px' }
+    },
+    element: {
+      height: { base: '18px' },
+      width: { base: '18px' }
+    },
+    field: {
+      fontSize: {
+        base: '12px'
+      },
+      height: { base: '18px' },
+      lineHeight: {
+        base: '18px'
+      }
+    }
+  }),
+  xl: definePartsStyle({
+    addon: {
+      height: { base: '34px' },
+      width: { base: '34px' }
+    },
+    element: {
+      height: { base: '34px' },
+      width: { base: '34px' }
+    },
+    field: {
+      fontSize: {
+        base: '24px'
+      },
+      height: { base: '34px' },
+      lineHeight: {
+        base: '34px'
+      }
+    }
+  }),
+  xs: definePartsStyle({
+    addon: {
+      height: { base: '14px' },
+      width: { base: '14px' }
+    },
+    element: {
+      height: { base: '14px' },
+      width: { base: '14px' }
+    },
+    field: {
+      fontSize: {
+        base: '10px'
+      },
+      height: { base: '14px' },
+      lineHeight: {
+        base: '14px'
+      }
+    }
+  })
 };
 
 const ghost = definePartsStyle((props) => {
@@ -38,18 +117,14 @@ const ghost = definePartsStyle((props) => {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
       color: mode('iBlack', 'iWhite')(props),
-      height: { base: '20px' },
       justifyContent: 'center',
+      pl: { base: 0 },
       pointerEvents: 'none',
-      px: { base: 0 },
-      width: { base: '20px' }
+      pr: { base: '10px' }
     },
     element: {
       color: mode('iBlack', 'iWhite')(props),
-      fontSize: { base: '12px' },
-      height: '20px',
-      pointerEvents: 'none',
-      width: '20px'
+      pointerEvents: 'none'
     },
     field: {
       _focus: {
@@ -72,10 +147,8 @@ const ghost = definePartsStyle((props) => {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
       color: mode('iBlack', 'iWhite')(props),
-      fontSize: '14px',
-      height: { base: '20px' },
       paddingInlineEnd: 0,
-      paddingInlineStart: '10px'
+      paddingInlineStart: 0
     }
   };
 });
@@ -83,6 +156,7 @@ const ghost = definePartsStyle((props) => {
 export const InputConfigStyle = defineMultiStyleConfig({
   baseStyle,
   defaultProps: {
+    size: 'md',
     variant: 'ghost'
   },
   sizes,

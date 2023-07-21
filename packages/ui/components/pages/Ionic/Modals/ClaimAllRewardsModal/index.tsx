@@ -13,6 +13,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { COMPLETE, INCOMPLETE } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -188,8 +189,9 @@ export const ClaimAllRewardsModal = ({
 
       const _steps: TxStep[] = [
         {
-          desc: `Claim ${asset ? asset.symbol : ''} rewards from Midas`,
-          done: false,
+          description: `Claim ${asset ? asset.symbol : ''} rewards from Midas`,
+          index: 1,
+          status: INCOMPLETE,
           title: `Claim rewards on ${currentChain.network}`
         }
       ];
@@ -217,7 +219,7 @@ export const ClaimAllRewardsModal = ({
 
         _steps[0] = {
           ..._steps[0],
-          done: true,
+          status: COMPLETE,
           txHash: tx.hash
         };
         setSteps([..._steps]);
@@ -258,11 +260,12 @@ export const ClaimAllRewardsModal = ({
 
     const _steps: TxStep[] = [
       {
-        desc: `Claim ${Object.values(_assetPerRewardToken)
+        description: `Claim ${Object.values(_assetPerRewardToken)
           .map((asset) => asset?.symbol)
           .filter((symbol) => !!symbol)
           .join(', ')} rewards from Midas`,
-        done: false,
+        index: 1,
+        status: INCOMPLETE,
         title: `Claim rewards on ${currentChain.network}`
       }
     ];
@@ -291,7 +294,7 @@ export const ClaimAllRewardsModal = ({
 
       _steps[0] = {
         ..._steps[0],
-        done: true,
+        status: COMPLETE,
         txHash: tx.hash
       };
       setSteps([..._steps]);

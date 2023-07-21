@@ -8,7 +8,7 @@ const baseStyle = definePartsStyle({
   filledTrack: {
     bg: 'iGreen'
   },
-  mark: { ml: { base: '-15px' }, mt: { base: '-25px' } },
+  mark: { ml: { base: '-15px' }, mt: { base: '-30px' } },
   thumb: {
     bg: 'iWhite'
   }

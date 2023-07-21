@@ -17,7 +17,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { REPAY_STEPS } from '@ui/constants/index';
+import { COMPLETE, REPAY_STEPS, REPAY_STEPS_WITH_WRAP } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
@@ -142,7 +142,7 @@ export const RepayModal = ({
           await tx.wait();
           _steps[0] = {
             ..._steps[0],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -180,7 +180,7 @@ export const RepayModal = ({
 
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -191,8 +191,8 @@ export const RepayModal = ({
         } else {
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
-            desc: 'Already approved!',
-            done: true
+            description: 'Already approved!',
+            status: COMPLETE
           };
           setConfirmedSteps([..._steps]);
         }
@@ -231,7 +231,7 @@ export const RepayModal = ({
 
           _steps[optionToWrap ? 2 : 1] = {
             ..._steps[optionToWrap ? 2 : 1],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -262,10 +262,7 @@ export const RepayModal = ({
 
   useEffect(() => {
     optionToWrap
-      ? setSteps([
-          { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
-          ...REPAY_STEPS(asset.underlyingSymbol)
-        ])
+      ? setSteps([...REPAY_STEPS_WITH_WRAP(asset.underlyingSymbol)])
       : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
   }, [optionToWrap, asset.underlyingSymbol]);
 
@@ -358,10 +355,7 @@ export const RepayModal = ({
           setAmount(constants.Zero);
           setIsConfirmed(false);
           optionToWrap
-            ? setSteps([
-                { desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' },
-                ...REPAY_STEPS(asset.underlyingSymbol)
-              ])
+            ? setSteps([...REPAY_STEPS_WITH_WRAP(asset.underlyingSymbol)])
             : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
         }
       }}

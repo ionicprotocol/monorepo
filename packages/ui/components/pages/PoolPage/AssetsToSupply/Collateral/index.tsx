@@ -1,10 +1,9 @@
-import { Button, Flex, useDisclosure } from '@chakra-ui/react';
+import { Flex, Switch, useDisclosure } from '@chakra-ui/react';
 
-import { SupplyModal } from './Modal';
-
+import { CollateralModal } from '@ui/components/pages/PoolPage/AssetsToSupply/Collateral/Modal/index';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-export const Supply = ({
+export const Collateral = ({
   asset,
   assets,
   chainId,
@@ -16,20 +15,17 @@ export const Supply = ({
   comptroller: string;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
-  // const { data: tokenData } = useTokenData(asset.underlyingToken, chainId);
 
   return (
-    <Flex justifyContent={'flex-end'}>
-      <Button onClick={openModal} variant={'green'}>
-        Supply
-      </Button>
-      <SupplyModal
+    <Flex justifyContent={{ base: 'center' }}>
+      <Switch isChecked={asset.membership} onChange={openModal} />
+      <CollateralModal
         asset={asset}
         assets={assets}
-        chainId={chainId}
         comptrollerAddress={comptroller}
         isOpen={isModalOpen}
         onClose={closeModal}
+        poolChainId={chainId}
       />
     </Flex>
   );

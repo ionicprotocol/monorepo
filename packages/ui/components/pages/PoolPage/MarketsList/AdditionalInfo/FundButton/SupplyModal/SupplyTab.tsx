@@ -16,7 +16,7 @@ import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/Ad
 import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
 import { Banner } from '@ui/components/shared/Banner';
 import { Column } from '@ui/components/shared/Flex';
-import { SUPPLY_STEPS } from '@ui/constants/index';
+import { COMPLETE, SUPPLY_STEPS, SUPPLY_STEPS_WITH_WRAP } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
@@ -166,7 +166,7 @@ export const SupplyTab = ({
           await tx.wait();
           _steps[0] = {
             ..._steps[0],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -204,7 +204,7 @@ export const SupplyTab = ({
 
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -215,8 +215,8 @@ export const SupplyTab = ({
         } else {
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
-            desc: 'Already approved!',
-            done: true
+            description: 'Already approved!',
+            status: COMPLETE
           };
           setConfirmedSteps([..._steps]);
         }
@@ -242,7 +242,7 @@ export const SupplyTab = ({
 
           _steps[optionToWrap ? 2 : 1] = {
             ..._steps[optionToWrap ? 2 : 1],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -293,7 +293,7 @@ export const SupplyTab = ({
             ..._steps[
               optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
             ],
-            done: true,
+            status: COMPLETE,
             txHash: tx.hash
           };
           setConfirmedSteps([..._steps]);
@@ -328,7 +328,7 @@ export const SupplyTab = ({
     }
 
     if (optionToWrap) {
-      _steps = [{ desc: 'Wrap Native Token', done: false, title: 'Wrap Native Token' }, ..._steps];
+      _steps = [...SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)];
     }
 
     setSteps(_steps);

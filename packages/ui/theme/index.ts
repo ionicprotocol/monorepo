@@ -16,6 +16,7 @@ import { ProgressStyleConfig } from '@ui/theme/components/Progress';
 import { SelectConfigStyle } from '@ui/theme/components/Select';
 import { SliderConfigStyle } from '@ui/theme/components/Slider';
 import { StatStyleConfig } from '@ui/theme/components/Stat';
+import { StepperStyleConfig } from '@ui/theme/components/Stepper';
 import { SwitchConfigStyle } from '@ui/theme/components/Switch';
 import { TabsStyleConfig } from '@ui/theme/components/Tabs';
 import { TextStyleConfig } from '@ui/theme/components/Text';
@@ -139,6 +140,7 @@ export const theme = extendTheme({
     Select: SelectConfigStyle,
     Slider: SliderConfigStyle,
     Stat: StatStyleConfig,
+    Stepper: StepperStyleConfig,
     Switch: SwitchConfigStyle,
     Tabs: TabsStyleConfig,
     Text: TextStyleConfig,

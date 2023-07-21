@@ -16,8 +16,9 @@ const baseStyle = defineStyle({
     }
   },
   borderRadius: 'md',
-  fontWeight: 'semibold',
-  lineHeight: '1.2',
+  fontSize: { base: '14px' },
+  fontWeight: 600,
+  lineHeight: { base: '24px' },
   transitionDuration: 'normal',
   transitionProperty: 'common'
 });
@@ -32,7 +33,9 @@ const ghost = defineStyle({
     color: 'none',
     textDecoration: 'unset'
   },
-  height: 6
+  color: 'inherit',
+  height: 'fit-content',
+  p: 0
 });
 
 const green = defineStyle((props) => {
@@ -42,20 +45,20 @@ const green = defineStyle((props) => {
     },
     _focus: {
       bg: mode('iGreen', 'iGreen')(props),
-      color: mode('iBlack', 'iBlack')(props)
+      color: mode('iCardBg', 'iCardBg')(props)
     },
     _hover: {
       _disabled: {
         bg: mode('iGray', 'iGray')(props),
-        color: mode('iBlack', 'iBlack')(props)
+        color: mode('iCardBg', 'iCardBg')(props)
       },
       bg: mode('iGreen', 'iGreen')(props),
-      color: mode('iBlack', 'iBlack')(props),
+      color: mode('iCardBg', 'iCardBg')(props),
       textDecoration: 'unset'
     },
     bg: mode('iGreen', 'iGreen')(props),
     borderRadius: { base: '12px' },
-    color: mode('iBlack', 'iBlack')(props),
+    color: mode('iCardBg', 'iCardBg')(props),
     height: { base: '40px' },
     px: { base: '12px' },
     py: { base: '8px' }

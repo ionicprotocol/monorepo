@@ -22,7 +22,7 @@ import { PendingTransaction } from '@ui/components/pages/VaultsPage/VaultsList/A
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { VAULT_WITHDRAW_STEPS } from '@ui/constants/index';
+import { COMPLETE, VAULT_WITHDRAW_STEPS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -111,7 +111,7 @@ export const WithdrawModal = ({ isOpen, onClose, vault }: WithdrawModalProps) =>
 
       _steps[0] = {
         ..._steps[0],
-        done: true,
+        status: COMPLETE,
         txHash: tx.hash
       };
       setSteps([..._steps]);
