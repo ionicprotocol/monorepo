@@ -21,7 +21,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import {
   COMPLETE,
   CREATE_NEW_POSITION_STEPS,
-  INCOMPLETE,
+  CREATE_NEW_POSITION_STEPS_WITH_WRAP,
   LEVERAGE_VALUE
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -325,10 +325,7 @@ export const CreatePositionModal = ({
       let _steps = [...CREATE_NEW_POSITION_STEPS(symbol)];
 
       if (optionToWrap) {
-        _steps = [
-          { description: 'Wrap Native Token', status: INCOMPLETE, title: 'Wrap Native Token' },
-          ..._steps
-        ];
+        _steps = [...CREATE_NEW_POSITION_STEPS_WITH_WRAP(symbol)];
       }
 
       setSteps(_steps);
@@ -339,10 +336,7 @@ export const CreatePositionModal = ({
     let _steps = [...CREATE_NEW_POSITION_STEPS(symbol)];
 
     if (optionToWrap) {
-      _steps = [
-        { description: 'Wrap Native Token', status: INCOMPLETE, title: 'Wrap Native Token' },
-        ..._steps
-      ];
+      _steps = [...CREATE_NEW_POSITION_STEPS_WITH_WRAP(symbol)];
     }
 
     setSteps(_steps);
