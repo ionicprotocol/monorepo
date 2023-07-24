@@ -1,20 +1,7 @@
-import {
-  Box,
-  Button,
-  Center,
-  Divider,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Image,
-  Link,
-  Text,
-  useColorMode
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, IconButton, Image, Link, Text, useColorMode } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { FiMenu, FiMoon, FiSun } from 'react-icons/fi';
+import { FiMenu } from 'react-icons/fi';
 
 import { WalletButtons } from '@ui/components/shared/WalletButtons';
 import { config } from '@ui/config/index';
@@ -24,7 +11,7 @@ import { useColors } from '@ui/hooks/useColors';
 
 export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const router = useRouter();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const { cIPage } = useColors();
   const { setGlobalLoading, address } = useMultiIonic();
 
@@ -195,7 +182,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
       />
       <HStack spacing={4}>
         <WalletButtons />
-        <Center height={6}>
+        {/* <Center height={6}>
           <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
         </Center>
         <Button ml={2} onClick={toggleColorMode} p={0} variant="ghost">
@@ -204,7 +191,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
           ) : (
             <Icon as={FiSun} color={'iWhite'} height={6} width={6} />
           )}
-        </Button>
+        </Button> */}
       </HStack>
     </HStack>
   );
