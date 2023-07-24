@@ -30,7 +30,7 @@ export const YourInfo = () => {
             <Text size={'lg'}>51,469.01 USDC</Text>
             <Text color={'iGray'}>$51,462.58</Text>
           </Flex>
-          <Button variant={'green'}>Supply</Button>
+          <Button variant={'solidGreen'}>Supply</Button>
         </Flex>
         <Flex alignItems={'center'} justifyContent={'space-between'} mb={{ base: '20px' }}>
           <Flex direction={{ base: 'column' }}>
@@ -40,7 +40,7 @@ export const YourInfo = () => {
             <Text size={'lg'}>0 USDC</Text>
             <Text color={'iGray'}>$0</Text>
           </Flex>
-          <Button variant={'gray'}>Borrow</Button>
+          <Button variant={'solidGray'}>Borrow</Button>
         </Flex>
         <Banner
           alertProps={{ variant: 'warning' }}

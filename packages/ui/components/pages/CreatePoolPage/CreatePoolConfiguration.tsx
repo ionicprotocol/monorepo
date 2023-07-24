@@ -385,7 +385,7 @@ export const CreatePoolConfiguration = () => {
             maxWidth={'550px'}
             mt={4}
             type="submit"
-            variant={'green'}
+            variant={'solidGreen'}
             width="100%"
           >
             <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">

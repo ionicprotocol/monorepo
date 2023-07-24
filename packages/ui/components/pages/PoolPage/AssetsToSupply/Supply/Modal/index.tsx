@@ -41,6 +41,7 @@ import {
   ACTIVE,
   COMPLETE,
   FAILED,
+  READY,
   SUPPLY_STEPS,
   SUPPLY_STEPS_WITH_WRAP
 } from '@ui/constants/index';
@@ -271,8 +272,12 @@ export const SupplyModal = ({
         ..._steps[0],
         status: COMPLETE
       };
+      _steps[1] = {
+        ..._steps[1],
+        status: READY
+      };
       setSteps(_steps);
-      setActiveStep(steps[1]);
+      setActiveStep(_steps[1]);
       successToast({
         description: 'Successfully Wrapped!',
         id: 'Wrapped - ' + Math.random().toString()
@@ -283,6 +288,7 @@ export const SupplyModal = ({
         status: FAILED
       };
       setSteps(_steps);
+      setActiveStep(_steps[0]);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -337,6 +343,10 @@ export const SupplyModal = ({
           ..._steps[optionToWrap ? 1 : 0],
           status: COMPLETE
         };
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          status: READY
+        };
         setSteps(_steps);
 
         successToast({
@@ -348,16 +358,21 @@ export const SupplyModal = ({
           ..._steps[optionToWrap ? 1 : 0],
           status: COMPLETE
         };
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          status: READY
+        };
         setSteps(_steps);
       }
 
-      setActiveStep(steps[optionToWrap ? 2 : 1]);
+      setActiveStep(_steps[optionToWrap ? 2 : 1]);
     } catch (error) {
       _steps[optionToWrap ? 1 : 0] = {
         ..._steps[optionToWrap ? 1 : 0],
         status: FAILED
       };
       setSteps(_steps);
+      setActiveStep(_steps[optionToWrap ? 1 : 0]);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -418,7 +433,6 @@ export const SupplyModal = ({
           status: COMPLETE
         };
         setSteps(_steps);
-        setActiveStep(steps[optionToWrap ? 3 : 2]);
         successToast({
           description: 'Successfully supplied!',
           id: 'Supply - ' + Math.random().toString()
@@ -430,6 +444,7 @@ export const SupplyModal = ({
         status: FAILED
       };
       setSteps(_steps);
+      setActiveStep(_steps[optionToWrap ? 2 : 1]);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -634,7 +649,7 @@ export const SupplyModal = ({
                 isDisabled={isLoading || activeStep.index < 1}
                 isLoading={activeStep.index === 1 && isLoading}
                 onClick={onWrapNativeToken}
-                variant={'green'}
+                variant={'solidGreen'}
               >
                 Wrap Native Token
               </Button>
@@ -642,11 +657,14 @@ export const SupplyModal = ({
             <Button
               flex={1}
               isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1)}
-              isLoading={activeStep.index === 2 && isLoading}
+              isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
               onClick={onApprove}
-              variant={'green'}
+              variant={
+                activeStep.index === (optionToWrap ? 2 : 1) ? 'solidGreen' : 'outlineLightGray'
+              }
             >
-              Approve {asset.underlyingSymbol}
+              {activeStep.index === (optionToWrap ? 2 : 1) ? `Approve ` : 'Approved'}{' '}
+              {asset.underlyingSymbol}
             </Button>
             <Flex flex={1}>
               <PopoverTooltip
@@ -665,7 +683,13 @@ export const SupplyModal = ({
                   isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2)}
                   isLoading={activeStep.index === 3 && isLoading}
                   onClick={isAmountValid ? onSupply : undefined}
-                  variant={isAmountValid ? 'green' : 'gray'}
+                  variant={
+                    isAmountValid && activeStep.index === (optionToWrap ? 3 : 2)
+                      ? activeStep.status === FAILED
+                        ? 'outlineRed'
+                        : 'solidGreen'
+                      : 'solidGray'
+                  }
                   width={'100%'}
                 >
                   Supply {asset.underlyingSymbol}

@@ -7,7 +7,7 @@ export const Withdraw = ({ asset }: { asset: MarketData }) => {
 
   return (
     <Flex justifyContent={'flex-end'}>
-      <Button variant={'green'}>Withdraw</Button>
+      <Button variant={'solidGreen'}>Withdraw</Button>
     </Flex>
   );
 };

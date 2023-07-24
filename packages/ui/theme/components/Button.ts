@@ -38,7 +38,7 @@ const ghost = defineStyle({
   p: 0
 });
 
-const green = defineStyle((props) => {
+const solidGreen = defineStyle((props) => {
   return {
     _disabled: {
       bg: mode('iGray', 'iGray')(props)
@@ -65,7 +65,7 @@ const green = defineStyle((props) => {
   };
 });
 
-const gray = defineStyle((props) => {
+const solidGray = defineStyle((props) => {
   return {
     _disabled: {
       bg: mode('iGray', 'iGray')(props)
@@ -92,21 +92,48 @@ const gray = defineStyle((props) => {
   };
 });
 
-const outline = defineStyle((props) => {
+const outlineLightGray = defineStyle((props) => {
   return {
     _focus: {
       bg: 'none',
+      borderColor: mode('iLightGray', 'iLightGray')(props),
       color: mode('iLightGray', 'iLightGray')(props)
     },
     _hover: {
       bg: 'none',
+      borderColor: mode('iLightGray', 'iLightGray')(props),
       color: mode('iLightGray', 'iLightGray')(props),
       textDecoration: 'unset'
     },
     bg: 'none',
     borderColor: mode('iLightGray', 'iLightGray')(props),
     borderRadius: { base: '12px' },
+    borderWidth: '1px',
     color: mode('iLightGray', 'iLightGray')(props),
+    height: { base: '40px' },
+    px: { base: '12px' },
+    py: { base: '8px' }
+  };
+});
+
+const outlineRed = defineStyle((props) => {
+  return {
+    _focus: {
+      bg: 'none',
+      borderColor: mode('iRed', 'iRed')(props),
+      color: mode('iRed', 'iRed')(props)
+    },
+    _hover: {
+      bg: 'none',
+      borderColor: mode('iRed', 'iRed')(props),
+      color: mode('iRed', 'iRed')(props),
+      textDecoration: 'unset'
+    },
+    bg: 'none',
+    borderColor: mode('iRed', 'iRed')(props),
+    borderRadius: { base: '12px' },
+    borderWidth: '1px',
+    color: mode('iRed', 'iRed')(props),
     height: { base: '40px' },
     px: { base: '12px' },
     py: { base: '8px' }
@@ -132,5 +159,5 @@ export const ButtonStyleConfig = defineStyleConfig({
     size: 'sm',
     variant: 'ghost'
   },
-  variants: { _filter, ghost, gray, green, outline }
+  variants: { _filter, ghost, outlineLightGray, outlineRed, solidGray, solidGreen }
 });

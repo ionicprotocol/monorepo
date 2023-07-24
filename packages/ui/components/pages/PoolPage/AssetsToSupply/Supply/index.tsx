@@ -22,7 +22,7 @@ export const Supply = ({
 
   return (
     <Flex justifyContent={'flex-end'}>
-      <Button onClick={openModal} variant={'green'}>
+      <Button onClick={openModal} variant={'solidGreen'}>
         Supply
       </Button>
       <SupplyModal
