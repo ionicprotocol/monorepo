@@ -40,7 +40,7 @@ export const YourInfo = () => {
             <Text size={'lg'}>0 USDC</Text>
             <Text color={'iGray'}>$0</Text>
           </Flex>
-          <Button variant={'disabled'}>Borrow</Button>
+          <Button variant={'gray'}>Borrow</Button>
         </Flex>
         <Banner
           alertProps={{ variant: 'warning' }}
