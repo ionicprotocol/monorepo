@@ -17,6 +17,7 @@ import {
   deployCurveLpOracle,
   deployDiaOracle,
   deployGelatoGUniPriceOracle,
+  deploySolidlyLpOracle,
   deploySolidlyPriceOracle,
   deployUniswapLpOracle,
   deployUniswapV3Oracle
@@ -34,6 +35,7 @@ import {
   CurvePoolConfig,
   DiaAsset,
   GelatoGUniAsset,
+  SolidlyLpAsset,
   SolidlyOracleAssetConfig
 } from "../helpers/types";
 
@@ -436,6 +438,16 @@ const balancerRateProviderAssets: BalancerRateProviderAsset[] = [
   }
 ];
 
+const solidlyLps: SolidlyLpAsset[] = [
+  { lpTokenAddress: underlying(assets, assetSymbols["sAMM-USDC/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-wUSDR/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["sAMM-DAI/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-TNGBL/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-WBTC/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-WETH/USDR"]) }
+];
+
 const solidlyOracleSupportedStables: string[] = [
   deployConfig.stableToken!,
   underlying(assets, assetSymbols.USDC),
@@ -647,6 +659,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     assets,
     certificateAssetSymbol: assetSymbols.aMATICc
+  });
+
+  //// Solidly LP Oracle
+  await deploySolidlyLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    solidlyLps
   });
 
   // Plugins & Rewards
