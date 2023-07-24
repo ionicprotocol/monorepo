@@ -1,7 +1,6 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
 import { FeeDistributor } from "../../../typechain/FeeDistributor";
 import { ICErc20 } from "../../../typechain/ICErc20";
@@ -20,7 +19,7 @@ export default task("comptroller:implementation:set-latest", "Configures a lates
     }
     const feeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
-    const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
+    const latestComptrollerImplementation = await feeDistributor.callStatic.latestComptrollerImplementation(
       oldImplementation
     );
 
@@ -29,7 +28,7 @@ export default task("comptroller:implementation:set-latest", "Configures a lates
       latestComptrollerImplementation !== newImplementation
     ) {
       console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
-      tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
+      tx = await feeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
       console.log("_setLatestComptrollerImplementation", tx.hash);
       await tx.wait();
       console.log("latest impl set", tx.hash);
@@ -51,12 +50,6 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
       const pool = pools[i];
       console.log("pool", { name: pool.name, address: pool.comptroller });
       const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
-      const asComptroller = (await ethers.getContractAt(
-        "Comptroller.sol:Comptroller",
-        pool.comptroller,
-        deployer
-      )) as Comptroller;
-
       const admin = await unitroller.callStatic.admin();
       console.log("pool admin", admin);
 
@@ -76,10 +69,12 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
           for (let j = 0; j < markets.length; j++) {
             const market = markets[j];
             console.log(`market address ${market}`);
-            const cTokenInstance = (await ethers.getContractAt("ICErc20", market)) as ICErc20;
+            const cTokenInstance = (await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", market)) as ICErc20;
             const implBefore = await cTokenInstance.callStatic.implementation();
             console.log(`implementation before ${implBefore}`);
-            const [latestImpl] = await feeDistributor.callStatic.latestCErc20Delegate(implBefore);
+            const [latestImpl] = await feeDistributor.callStatic.latestCErc20Delegate(
+              await cTokenInstance.callStatic.delegateType()
+            );
             if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
               console.log(`No auto upgrade with latest implementation ${latestImpl}`);
             } else {
