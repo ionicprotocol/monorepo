@@ -15,9 +15,6 @@ export const WalletButtons = memo(() => {
   return (
     <Row crossAxisAlignment="center" gap={4} mainAxisAlignment="center">
       <ClaimAllRewardsButton />
-      <Center height={6}>
-        <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
-      </Center>
       <ConnectButton.Custom>
         {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
           const ready = mounted;
