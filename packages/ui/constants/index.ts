@@ -147,7 +147,7 @@ export const BORROW_CAP_WHITELIST_TOOLTIP = 'Add or remove address with no borro
 export const DEBT_CEILING_WHITELIST_TOOLTIP = 'Add or remove address with no debt ceilings';
 export const IONIC_LOCALSTORAGE_KEYS = 'ionic_localstorage_keys';
 export const SHRINK_ASSETS = 10;
-export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
+export const IONIC_T_AND_C_ACCEPTED = 'IonicTandCAccepted';
 
 export const COMPLETE = 'complete';
 export const INCOMPLETE = 'incomplete';

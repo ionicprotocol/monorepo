@@ -65,7 +65,7 @@ const green = defineStyle((props) => {
   };
 });
 
-const disabled = defineStyle((props) => {
+const gray = defineStyle((props) => {
   return {
     _disabled: {
       bg: mode('iGray', 'iGray')(props)
@@ -132,5 +132,5 @@ export const ButtonStyleConfig = defineStyleConfig({
     size: 'sm',
     variant: 'ghost'
   },
-  variants: { _filter, disabled, ghost, green, outline }
+  variants: { _filter, ghost, gray, green, outline }
 });

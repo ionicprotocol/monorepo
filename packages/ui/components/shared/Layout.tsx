@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import Terms from '@ui/components/pages/Ionic/Modals/Terms';
 import { Column } from '@ui/components/shared/Flex';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
-import { MIDAS_T_AND_C_ACCEPTED } from '@ui/constants/index';
+import { IONIC_T_AND_C_ACCEPTED } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
@@ -19,7 +19,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     mounted.current = true;
 
     if (mounted.current) {
-      setAcceptedTerms(localStorage.getItem(MIDAS_T_AND_C_ACCEPTED) === 'true');
+      setAcceptedTerms(localStorage.getItem(IONIC_T_AND_C_ACCEPTED) === 'true');
     }
 
     return () => {

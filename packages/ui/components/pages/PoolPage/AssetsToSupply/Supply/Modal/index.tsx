@@ -593,7 +593,7 @@ export const SupplyModal = ({
                   isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2)}
                   isLoading={activeStep.index === 3 && isLoading}
                   onClick={isAmountValid ? onSupply : undefined}
-                  variant={isAmountValid ? 'green' : 'disabled'}
+                  variant={isAmountValid ? 'green' : 'gray'}
                   width={'100%'}
                 >
                   Supply {asset.underlyingSymbol}

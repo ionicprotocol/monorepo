@@ -30,7 +30,7 @@ export const Borrow = ({
         popoverProps={{ placement: 'top', variant: 'warning' }}
         visible={!isActive}
       >
-        <Button variant={isActive ? 'green' : 'disabled'}>Borrow</Button>
+        <Button variant={isActive ? 'green' : 'gray'}>Borrow</Button>
       </PopoverTooltip>
     </Flex>
   );
