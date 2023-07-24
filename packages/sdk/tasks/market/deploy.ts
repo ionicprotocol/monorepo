@@ -41,13 +41,13 @@ task("market:deploy", "deploy market")
       config.interestRateModel,
       config.name,
       config.symbol,
-      implementationData,
       reserveFactorBN,
       adminFeeBN
     ];
-
+    console.log("deployArgs", deployArgs);
+    console.log("collateralFactorBN", collateralFactorBN.toString());
     const constructorData = abiCoder.encode(
-      ["address", "address", "address", "address", "string", "string", "bytes", "uint256", "uint256"],
+      ["address", "address", "address", "address", "string", "string", "uint256", "uint256"],
       deployArgs
     );
 
@@ -62,7 +62,7 @@ task("market:deploy", "deploy market")
       throw `Unable to _deployMarket: ${sdk.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
     }
     // Make actual Transaction
-    const tx = await comptroller._deployMarket(1, constructorData, implementationData, collateralFactorBN);
+    const tx = await comptroller._deployMarket(delegateType, constructorData, implementationData, collateralFactorBN);
     console.log("tx", tx.hash, tx.nonce);
 
     // Recreate Address of Deployed Market
