@@ -7,7 +7,7 @@ export const Borrow = ({ asset }: { asset: MarketData }) => {
 
   return (
     <Flex justifyContent={'flex-end'}>
-      <Button variant={'outline'}>Borrow</Button>
+      <Button variant={'outlineLightGray'}>Borrow</Button>
     </Flex>
   );
 };
