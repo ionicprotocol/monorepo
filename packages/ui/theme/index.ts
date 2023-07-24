@@ -147,7 +147,7 @@ export const theme = extendTheme({
     Tooltip: TooltipStyleConfig
   },
   config: {
-    initialColorMode: 'light',
+    initialColorMode: 'dark',
     useSystemColorMode: false
   },
   fonts: {

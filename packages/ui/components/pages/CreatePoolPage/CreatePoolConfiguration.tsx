@@ -369,7 +369,10 @@ export const CreatePoolConfiguration = () => {
       <Center>
         {currentChain?.id && address ? (
           <Button
-            disabled={
+            fontSize="xl"
+            height={12}
+            id="createPool"
+            isDisabled={
               !address ||
               isCreating ||
               !!errors.name ||
@@ -378,13 +381,11 @@ export const CreatePoolConfiguration = () => {
               !!errors.liquidationIncentive ||
               !isAllowedAddress
             }
-            fontSize="xl"
-            height={12}
-            id="createPool"
             isLoading={isCreating}
             maxWidth={'550px'}
             mt={4}
             type="submit"
+            variant={'green'}
             width="100%"
           >
             <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">

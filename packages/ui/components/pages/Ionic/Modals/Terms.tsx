@@ -2,7 +2,7 @@ import { Button, Flex, ListItem, Spacer, Text, UnorderedList, VStack } from '@ch
 import { useEffect, useState } from 'react';
 
 import { IonicModal } from '@ui/components/shared/Modal';
-import { MIDAS_T_AND_C_ACCEPTED } from '@ui/constants/index';
+import { IONIC_T_AND_C_ACCEPTED } from '@ui/constants/index';
 
 const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState<boolean>(isAcceptedTerms);
@@ -12,13 +12,13 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
   };
 
   useEffect(() => {
-    localStorage.setItem(MIDAS_T_AND_C_ACCEPTED, 'true');
+    localStorage.setItem(IONIC_T_AND_C_ACCEPTED, 'true');
   }, [hasAcceptedTerms]);
 
   return (
     <IonicModal
       body={
-        <>
+        <Flex flexDir={'column'} pr={2}>
           <Text fontWeight="bold" size="lg">
             1. Acceptance of Terms
           </Text>
@@ -474,11 +474,11 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
               </ListItem>
             </UnorderedList>
           </Text>
-        </>
+        </Flex>
       }
       footer={
         <>
-          <Button id="termsAcceptBtn" onClick={accept}>
+          <Button id="termsAcceptBtn" onClick={accept} variant={'green'}>
             Accept
           </Button>
           <Button
@@ -486,14 +486,15 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             onClick={() => {
               window.location.replace('https://google.com');
             }}
+            variant={'gray'}
           >
             Decline
           </Button>
         </>
       }
       header={
-        <Flex alignItems="flex-end">
-          <Text variant="title">Terms & Conditions</Text>
+        <Flex alignItems="flex-end" mr={8}>
+          <Text>Terms & Conditions</Text>
           <Spacer />
           <VStack spacing={0}>
             <Text>Last Revised: </Text>
