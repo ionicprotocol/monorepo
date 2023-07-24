@@ -6,7 +6,27 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 
 const baseStyle = definePartsStyle((props) => {
   return {
-    body: { color: mode('iLightGray', 'iLightGray')(props), p: { base: 0 } },
+    body: {
+      '&::-webkit-scrollbar': {
+        display: 'block',
+        height: '4px',
+        width: '4px'
+      },
+      '&::-webkit-scrollbar-corner': {
+        display: 'none'
+      },
+      '&::-webkit-scrollbar-thumb': {
+        background: mode('iLightGray', 'iLightGray')(props)
+      },
+
+      '&::-webkit-scrollbar-track': {
+        height: '4px',
+        width: '8px'
+      },
+      color: mode('iLightGray', 'iLightGray')(props),
+      overflowY: 'scroll',
+      p: { base: 0 }
+    },
     closeButton: {
       boxShadow: 'none',
       outline: 'none',
@@ -16,6 +36,7 @@ const baseStyle = definePartsStyle((props) => {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
       borderRadius: { base: '24px' },
+      color: mode('iLightGray', 'iLightGray')(props),
       gap: { base: '20px' },
       minWidth: { base: '600px' },
       px: { base: '32px' },
@@ -23,8 +44,9 @@ const baseStyle = definePartsStyle((props) => {
       width: { base: '600px' }
     },
     dialogContainer: {},
-    footer: {},
+    footer: { p: { base: 0 } },
     header: {
+      color: mode('iLightGray', 'iLightGray')(props),
       fontSize: { base: '24px' },
       fontWeight: 600,
       lineHeight: { base: '34px' },
