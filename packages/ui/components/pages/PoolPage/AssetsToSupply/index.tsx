@@ -207,6 +207,7 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
               assets={assets}
               chainId={chainId}
               comptroller={comptroller}
+              poolId={poolId}
             />
           );
         },

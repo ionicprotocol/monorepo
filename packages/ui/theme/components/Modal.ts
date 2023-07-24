@@ -24,7 +24,6 @@ const baseStyle = definePartsStyle((props) => {
         width: '8px'
       },
       color: mode('iLightGray', 'iLightGray')(props),
-      overflowY: 'scroll',
       p: { base: 0 }
     },
     closeButton: {

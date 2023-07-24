@@ -503,7 +503,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
         </Flex>
       }
       isOpen={!hasAcceptedTerms}
-      modalBodyProps={{ maxHeight: '60vh' }}
+      modalBodyProps={{ maxHeight: '60vh', overflowY: 'scroll' }}
       modalHeaderProps={{ alignSelf: 'center', width: '100%' }}
       modalProps={{ size: '6xl' }}
       onClose={accept}
