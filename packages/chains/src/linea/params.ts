@@ -9,7 +9,7 @@ const specificParams: ChainParams = {
   cgId: "ethereum",
   metadata: {
     chainIdHex: "0xE704",
-    name: "Linea Testnet",
+    name: "Linea Mainnet",
     shortName: "Linea",
     uniswapV3Fees: {},
     img: "https://d1912tcoux65lj.cloudfront.net/network/linea.png",
