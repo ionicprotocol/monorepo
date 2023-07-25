@@ -4,6 +4,7 @@ import { COLOR_PALETTE } from '@ui/theme/index';
 
 export function useColors() {
   const cGreen = useColorModeValue(COLOR_PALETTE.iGreen, COLOR_PALETTE.iGreen);
+  const cRed = useColorModeValue(COLOR_PALETTE.iRed, COLOR_PALETTE.iRed);
   const cLightGray = useColorModeValue(COLOR_PALETTE.iLightGray, COLOR_PALETTE.iLightGray);
 
   const cIPage = {
@@ -129,6 +130,7 @@ export function useColors() {
     cOutlineBtn,
     cPage,
     cRadio,
+    cRed,
     cSelect,
     cSlider,
     cSolidBtn,

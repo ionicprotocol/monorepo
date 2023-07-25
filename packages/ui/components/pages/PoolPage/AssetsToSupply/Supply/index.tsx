@@ -1,7 +1,6 @@
 import { Button, Flex, useDisclosure } from '@chakra-ui/react';
 
-import { SupplyModal } from './Modal';
-
+import { SupplyModal } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/Modal/index';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const Supply = ({
