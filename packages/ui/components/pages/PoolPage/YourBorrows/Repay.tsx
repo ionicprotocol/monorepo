@@ -7,7 +7,7 @@ export const Repay = ({ asset }: { asset: MarketData }) => {
 
   return (
     <Flex justifyContent={'flex-end'}>
-      <Button variant={'green'}>Repay</Button>
+      <Button variant={'solidGreen'}>Repay</Button>
     </Flex>
   );
 };

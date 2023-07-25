@@ -120,8 +120,12 @@ const arrakis_WETH_DAI_03 = "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c";
 
 // pearl (solidly)
 const solidlyStableAMM_USDR_USDC = "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797";
+const solidlyStableAMM_DAI_USDR = "0x6ab291A9BB3C20F0017f2E93A6d1196842D09bF4";
 const solidlyVolatileAMM_stMATIC_USDR = "0x733eEEf37De013283da29cE9EB4758dC59CaFc87";
 const solidlyVolatileAMM_wUSDR_USDR = "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2";
+const solidlyVolatileAMM_TNGBL_USDR = "0x16e9D19221DF563CfB15628953B5c51E4a2Be30c";
+const solidlyVolatileAMM_WETH_USDR = "0x6B3aA71C74042e113Bd0b055224d70a131334761";
+const solidlyVolatileAMM_WBTC_USDR = "0x413dEd0698B0947105bEb3c81786Dcf718AA24D1";
 
 export const assets: SupportedAsset[] = [
   {
@@ -882,6 +886,42 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: pearlDocs(solidlyVolatileAMM_stMATIC_USDR),
     originalSymbol: assetOriginalSymbols["vAMM-stMATIC/USDR"]
+  },
+  {
+    symbol: assetSymbols["vAMM-TNGBL/USDR"],
+    underlying: solidlyVolatileAMM_TNGBL_USDR,
+    name: "Stable V1 AMM - TNGBL/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_TNGBL_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-TNGBL/USDR"]
+  },
+  {
+    symbol: assetSymbols["sAMM-DAI/USDR"],
+    underlying: solidlyStableAMM_DAI_USDR,
+    name: "Stable V1 AMM - DAI/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyStableAMM_DAI_USDR),
+    originalSymbol: assetOriginalSymbols["sAMM-DAI/USDR"]
+  },
+  {
+    symbol: assetSymbols["vAMM-WBTC/USDR"],
+    underlying: solidlyVolatileAMM_WBTC_USDR,
+    name: "Volatile V1 AMM - WBTC/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_WBTC_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-WBTC/USDR"]
+  },
+  {
+    symbol: assetSymbols["vAMM-WETH/USDR"],
+    underlying: solidlyVolatileAMM_WETH_USDR,
+    name: "Volatile V1 AMM - WETH/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_WETH_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-WETH/USDR"]
   }
 ];
 

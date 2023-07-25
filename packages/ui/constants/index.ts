@@ -149,6 +149,7 @@ export const IONIC_LOCALSTORAGE_KEYS = 'ionic_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const IONIC_T_AND_C_ACCEPTED = 'IonicTandCAccepted';
 
+export const READY = 'ready';
 export const COMPLETE = 'complete';
 export const INCOMPLETE = 'incomplete';
 export const ACTIVE = 'active';
@@ -162,7 +163,7 @@ export const SUPPLY_STEPS = (symbol: string) =>
     {
       description: 'Allow Ionic to use your tokens',
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: `Approve ${symbol}`
     },
     {
@@ -178,7 +179,7 @@ export const SUPPLY_STEPS_WITH_WRAP = (symbol: string) =>
     {
       description: 'Wrap Native Token',
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: `Wrap Native Token`
     },
     {
@@ -200,7 +201,7 @@ export const SWAP_STEPS = (inputSymbol: string, outputSymbol: string) =>
     {
       description: 'Allow Midas to use your tokens',
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Approve'
     },
     {
@@ -215,7 +216,7 @@ export const BORROW_STEPS = (symbol: string) =>
     {
       description: `Borrows ${symbol} from the pool`,
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Borrow'
     }
   ] as TxStep[];
@@ -224,7 +225,7 @@ export const WITHDRAW_STEPS = (symbol: string) =>
     {
       description: `Withdraws supplied liquidity of ${symbol} from the pool`,
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Withdraw'
     }
   ] as TxStep[];
@@ -233,7 +234,7 @@ export const REPAY_STEPS = (symbol: string) =>
     {
       description: 'Allow Midas to use your tokens',
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Approve'
     },
     {
@@ -245,7 +246,7 @@ export const REPAY_STEPS = (symbol: string) =>
   ] as TxStep[];
 export const REPAY_STEPS_WITH_WRAP = (symbol: string) =>
   [
-    { description: 'Wrap Native Token', index: 1, status: INCOMPLETE, title: 'Wrap Native Token' },
+    { description: 'Wrap Native Token', index: 1, status: READY, title: 'Wrap Native Token' },
     {
       description: 'Allow Midas to use your tokens',
       index: 2,
@@ -264,7 +265,7 @@ export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
     {
       description: 'Allow Midas to use your tokens',
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Approve'
     },
     {
@@ -277,7 +278,7 @@ export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
 
 export const CREATE_NEW_POSITION_STEPS_WITH_WRAP = (symbol: string) =>
   [
-    { description: 'Wrap Native Token', index: 1, status: INCOMPLETE, title: 'Wrap Native Token' },
+    { description: 'Wrap Native Token', index: 1, status: READY, title: 'Wrap Native Token' },
     {
       description: 'Allow Midas to use your tokens',
       index: 2,
@@ -297,7 +298,7 @@ export const ADJUST_LEVERAGE_RATIO_STEPS = (symbol: string) =>
     {
       description: `Adjusts leverage ratio on ${symbol} market`,
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Adjust leverage ratio'
     }
   ] as TxStep[];
@@ -307,7 +308,7 @@ export const CLOSE_OPEN_POSITION_STEPS = (symbol: string) =>
     {
       description: `Closes open levered position with ${symbol} market`,
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Close position'
     }
   ] as TxStep[];
@@ -317,7 +318,7 @@ export const REMOVE_CLOSED_POSITION_STEPS = (symbol: string) =>
     {
       description: `Removes closed levered position with ${symbol} market`,
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Remove position'
     }
   ] as TxStep[];
@@ -327,7 +328,7 @@ export const FUND_POSITION_STEPS = (symbol: string) =>
     {
       description: 'Allow Midas to use your tokens',
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Approve'
     },
     {
@@ -340,7 +341,7 @@ export const FUND_POSITION_STEPS = (symbol: string) =>
 
 export const FUND_POSITION_STEPS_WITH_WRAP = (symbol: string) =>
   [
-    { description: 'Wrap Native Token', index: 1, status: INCOMPLETE, title: 'Wrap Native Token' },
+    { description: 'Wrap Native Token', index: 1, status: READY, title: 'Wrap Native Token' },
     {
       description: 'Allow Midas to use your tokens',
       index: 2,
@@ -422,7 +423,7 @@ export const VAULT_SUPPLY_STEPS = (symbol: string) =>
     {
       description: 'Allow Midas to use your tokens',
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Approve'
     },
     {
@@ -435,7 +436,7 @@ export const VAULT_SUPPLY_STEPS = (symbol: string) =>
 
 export const VAULT_SUPPLY_STEPS_WITH_WRAP = (symbol: string) =>
   [
-    { description: 'Wrap Native Token', index: 1, status: INCOMPLETE, title: 'Wrap Native Token' },
+    { description: 'Wrap Native Token', index: 1, status: READY, title: 'Wrap Native Token' },
     {
       description: 'Allow Midas to use your tokens',
       index: 2,
@@ -455,7 +456,7 @@ export const VAULT_WITHDRAW_STEPS = (symbol: string) =>
     {
       description: `Withdraws supplied liquidity of ${symbol} from the vault`,
       index: 1,
-      status: INCOMPLETE,
+      status: READY,
       title: 'Withdraw'
     }
   ] as TxStep[];

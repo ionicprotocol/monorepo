@@ -139,7 +139,7 @@ export const CollateralModal = ({
             <Text textTransform={'uppercase'}>Borrow Limit Used</Text>
             <Text color={'iWhite'}>0% ➡ 0%</Text>
           </Flex>
-          <Button isLoading={isLoading} onClick={onConfirm} variant={'green'} width="100%">
+          <Button isLoading={isLoading} onClick={onConfirm} variant={'solidGreen'} width="100%">
             {!asset.membership ? 'Enable' : 'Disable'} {asset.underlyingSymbol} as collateral
           </Button>
         </Flex>

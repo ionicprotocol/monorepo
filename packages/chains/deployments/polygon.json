@@ -266,6 +266,9 @@
     "SolidlyLpTokenLiquidator": {
       "address": "0xd7565F6209fd3A8d6eA71410258b52694d30C209"
     },
+    "SolidlyLpTokenPriceOracle": {
+      "address": "0x7eF0F04fB605f643b9E2c41C757B4b7c7E0CA1E4"
+    },
     "SolidlyLpTokenWrapper": {
       "address": "0xeF069aF908D7223220D848370986c8102d5eE93f"
     },

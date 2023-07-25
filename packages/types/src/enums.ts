@@ -160,10 +160,16 @@ export enum assetOriginalSymbols {
   "vAMM-ANKR/HAY" = "HAY/ANKR Thena LP",
   "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
   "sAMM-stkBNB/WBNB" = "stkBNB/WBNB Thena LP",
+  // Balancer
   "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
+  // Pearl
   "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
+  "sAMM-DAI/USDR" = "DAI/USDR Pearl Stable LP",
   "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
-  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP"
+  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP",
+  "vAMM-WBTC/USDR" = "WBTC/USDR Pearl Variable LP",
+  "vAMM-WETH/USDR" = "WETH/USDR Pearl Variable LP",
+  "vAMM-TNGBL/USDR" = "TNGBL/USDR Pearl Variable LP"
 }
 
 export enum assetSymbols {
@@ -347,8 +353,12 @@ export enum assetSymbols {
 
   // Pearl
   "sAMM-USDC/USDR" = "sAMM-USDC-USDR",
+  "sAMM-DAI/USDR" = "sAMM-DAI-USDR",
   "vAMM-wUSDR/USDR" = "sAMM-wUSDR-USDR",
   "vAMM-stMATIC/USDR" = "vAMM-stMATIC-USDR",
+  "vAMM-TNGBL/USDR" = "vAMM-TNGBL-USDR",
+  "vAMM-WBTC/USDR" = "vAMM-WBTC-USDR",
+  "vAMM-WETH/USDR" = "vAMM-WETH-USDR",
 
   // Arbitrum
   "2pool" = "2pool",

@@ -478,7 +478,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
       }
       footer={
         <>
-          <Button id="termsAcceptBtn" onClick={accept} variant={'green'}>
+          <Button id="termsAcceptBtn" onClick={accept} variant={'solidGreen'}>
             Accept
           </Button>
           <Button
@@ -486,7 +486,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
             onClick={() => {
               window.location.replace('https://google.com');
             }}
-            variant={'gray'}
+            variant={'solidGray'}
           >
             Decline
           </Button>
@@ -503,7 +503,7 @@ const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
         </Flex>
       }
       isOpen={!hasAcceptedTerms}
-      modalBodyProps={{ maxHeight: '60vh' }}
+      modalBodyProps={{ maxHeight: '60vh', overflowY: 'scroll' }}
       modalHeaderProps={{ alignSelf: 'center', width: '100%' }}
       modalProps={{ size: '6xl' }}
       onClose={accept}

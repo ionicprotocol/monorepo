@@ -8,19 +8,21 @@ export const Supply = ({
   asset,
   assets,
   chainId,
-  comptroller
+  comptroller,
+  poolId
 }: {
   asset: MarketData;
   assets: MarketData[];
   chainId: number;
   comptroller: string;
+  poolId: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
   // const { data: tokenData } = useTokenData(asset.underlyingToken, chainId);
 
   return (
     <Flex justifyContent={'flex-end'}>
-      <Button onClick={openModal} variant={'green'}>
+      <Button onClick={openModal} variant={'solidGreen'}>
         Supply
       </Button>
       <SupplyModal
@@ -30,6 +32,7 @@ export const Supply = ({
         comptrollerAddress={comptroller}
         isOpen={isModalOpen}
         onClose={closeModal}
+        poolId={poolId}
       />
     </Flex>
   );
