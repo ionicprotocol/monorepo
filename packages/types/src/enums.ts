@@ -165,7 +165,7 @@ export enum assetOriginalSymbols {
   // Pearl
   "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
   "sAMM-DAI/USDR" = "DAI/USDR Pearl Stable LP",
-  "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
+  "vAMM-wUSDR/USDR" = "vUSDR/USDR Pearl Variable LP",
   "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP",
   "vAMM-WBTC/USDR" = "WBTC/USDR Pearl Variable LP",
   "vAMM-WETH/USDR" = "WETH/USDR Pearl Variable LP",
@@ -354,7 +354,7 @@ export enum assetSymbols {
   // Pearl
   "sAMM-USDC/USDR" = "sAMM-USDC-USDR",
   "sAMM-DAI/USDR" = "sAMM-DAI-USDR",
-  "vAMM-wUSDR/USDR" = "sAMM-wUSDR-USDR",
+  "vAMM-wUSDR/USDR" = "vAMM-wUSDR-USDR",
   "vAMM-stMATIC/USDR" = "vAMM-stMATIC-USDR",
   "vAMM-TNGBL/USDR" = "vAMM-TNGBL-USDR",
   "vAMM-WBTC/USDR" = "vAMM-WBTC-USDR",
