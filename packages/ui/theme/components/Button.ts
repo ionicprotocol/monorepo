@@ -15,13 +15,46 @@ const baseStyle = defineStyle({
       bg: 'initial'
     }
   },
-  borderRadius: 'md',
+  borderRadius: '1px',
   fontSize: { base: '14px' },
   fontWeight: 600,
   lineHeight: { base: '24px' },
   transitionDuration: 'normal',
   transitionProperty: 'common'
 });
+
+const sizes = {
+  lg: defineStyle({
+    borderRadius: { base: '14px' },
+    height: { base: '44px' },
+    px: { base: '14px' },
+    py: { base: '10px' }
+  }),
+  md: defineStyle({
+    borderRadius: { base: '12px' },
+    height: { base: '40px' },
+    px: { base: '12px' },
+    py: { base: '8px' }
+  }),
+  sm: defineStyle({
+    borderRadius: { base: '10px' },
+    height: { base: '36px' },
+    px: { base: '10px' },
+    py: { base: '6px' }
+  }),
+  xl: defineStyle({
+    borderRadius: { base: '8px' },
+    height: { base: '32px' },
+    px: { base: '8px' },
+    py: { base: '4px' }
+  }),
+  xs: defineStyle({
+    borderRadius: { base: '6px' },
+    height: { base: '28px' },
+    px: { base: '6px' },
+    py: { base: '2px' }
+  })
+};
 
 const ghost = defineStyle({
   _focus: {
@@ -57,11 +90,7 @@ const solidGreen = defineStyle((props) => {
       textDecoration: 'unset'
     },
     bg: mode('iGreen', 'iGreen')(props),
-    borderRadius: { base: '12px' },
-    color: mode('iCardBg', 'iCardBg')(props),
-    height: { base: '40px' },
-    px: { base: '12px' },
-    py: { base: '8px' }
+    color: mode('iCardBg', 'iCardBg')(props)
   };
 });
 
@@ -84,11 +113,7 @@ const solidGray = defineStyle((props) => {
       textDecoration: 'unset'
     },
     bg: mode('iGray', 'iGray')(props),
-    borderRadius: { base: '12px' },
-    color: mode('iBlack', 'iBlack')(props),
-    height: { base: '40px' },
-    px: { base: '12px' },
-    py: { base: '8px' }
+    color: mode('iBlack', 'iBlack')(props)
   };
 });
 
@@ -107,12 +132,7 @@ const outlineLightGray = defineStyle((props) => {
     },
     bg: 'none',
     borderColor: mode('iLightGray', 'iLightGray')(props),
-    borderRadius: { base: '12px' },
-    borderWidth: '1px',
-    color: mode('iLightGray', 'iLightGray')(props),
-    height: { base: '40px' },
-    px: { base: '12px' },
-    py: { base: '8px' }
+    color: mode('iLightGray', 'iLightGray')(props)
   };
 });
 
@@ -131,12 +151,7 @@ const outlineRed = defineStyle((props) => {
     },
     bg: 'none',
     borderColor: mode('iRed', 'iRed')(props),
-    borderRadius: { base: '12px' },
-    borderWidth: '1px',
-    color: mode('iRed', 'iRed')(props),
-    height: { base: '40px' },
-    px: { base: '12px' },
-    py: { base: '8px' }
+    color: mode('iRed', 'iRed')(props)
   };
 });
 
@@ -156,8 +171,9 @@ const _filter = defineStyle((props) => {
 export const ButtonStyleConfig = defineStyleConfig({
   baseStyle,
   defaultProps: {
-    size: 'sm',
+    size: 'md',
     variant: 'ghost'
   },
+  sizes,
   variants: { _filter, ghost, outlineLightGray, outlineRed, solidGray, solidGreen }
 });

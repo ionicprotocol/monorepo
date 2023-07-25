@@ -15,7 +15,24 @@ const baseStyle = definePartsStyle((props) => {
       padding: { base: '12px' }
     },
     description: {
-      fontSize: { base: '14px' }
+      '&::-webkit-scrollbar': {
+        display: 'block',
+        height: '4px',
+        width: '4px'
+      },
+      '&::-webkit-scrollbar-corner': {
+        display: 'none'
+      },
+      '&::-webkit-scrollbar-thumb': {
+        background: mode('iLightGray', 'iLightGray')(props)
+      },
+      '&::-webkit-scrollbar-track': {
+        height: '4px',
+        width: '8px'
+      },
+      fontSize: { base: '14px' },
+      maxHeight: '400px',
+      overflowY: 'auto'
     },
     icon: { strokeWidth: '0.5px' },
     spinner: {},

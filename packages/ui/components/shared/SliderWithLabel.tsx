@@ -37,7 +37,7 @@ export const SliderWithLabel = ({
 }) => {
   return (
     <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" {...others}>
-      <InputGroup width="120px">
+      <InputGroup variant={'outlineLightGray'} width="120px">
         <NumberInput
           allowMouseWheel
           clampValueOnBlur={false}
@@ -49,19 +49,21 @@ export const SliderWithLabel = ({
           value={value}
         >
           <NumberInputField
-            borderRightRadius={0}
+            height={'100%'}
             name={name}
             paddingLeft={2}
             paddingRight={7}
             ref={reff}
             textAlign="center"
           />
-          <NumberInputStepper>
+          <NumberInputStepper m={0}>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
           </NumberInputStepper>
         </NumberInput>
-        <InputRightAddon px={2}>%</InputRightAddon>
+        <InputRightAddon alignSelf={'center'} px={2}>
+          %
+        </InputRightAddon>
       </InputGroup>
       <Slider
         focusThumbOnChange={false}

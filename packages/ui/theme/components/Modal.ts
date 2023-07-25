@@ -27,8 +27,8 @@ const baseStyle = definePartsStyle((props) => {
       p: { base: 0 }
     },
     closeButton: {
-      boxShadow: 'none',
-      outline: 'none',
+      boxShadow: 'none !important',
+      outline: 'none !important',
       right: { base: '24px' }
     },
     dialog: {

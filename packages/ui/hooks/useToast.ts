@@ -7,8 +7,6 @@ const useSuccessToast = (options?: UseToastOptions) => {
     const _options = options ? options : {};
     return {
       containerStyle: {
-        maxHeight: '400px',
-        overflowY: 'auto',
         p: '4px',
         wordBreak: 'break-word'
       },
@@ -30,8 +28,6 @@ const useErrorToast = (options?: UseToastOptions) => {
     const _options = options ? options : {};
     return {
       containerStyle: {
-        maxHeight: '400px',
-        overflowY: 'auto',
         p: '4px',
         wordBreak: 'break-word'
       },
@@ -53,8 +49,6 @@ const useWarningToast = (options?: UseToastOptions) => {
     const _options = options ? options : {};
     return {
       containerStyle: {
-        maxHeight: '400px',
-        overflowY: 'auto',
         p: '4px',
         wordBreak: 'break-word'
       },
@@ -76,8 +70,6 @@ const useInfoToast = (options?: UseToastOptions) => {
     const _options = options ? options : {};
     return {
       containerStyle: {
-        maxHeight: '400px',
-        overflowY: 'auto',
         p: '4px',
         wordBreak: 'break-word'
       },
