@@ -175,7 +175,15 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Borrow asset={row.getValue(ASSET)} maxBorrowAmounts={maxBorrowAmounts} />;
+          return (
+            <Borrow
+              asset={row.getValue(ASSET)}
+              assets={assets}
+              chainId={chainId}
+              comptroller={comptroller}
+              maxBorrowAmounts={maxBorrowAmounts}
+            />
+          );
         },
         header: () => null,
         id: BORROW
@@ -188,7 +196,16 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
         id: DETAILS
       }
     ];
-  }, [assetFilter, assetSort, borrowApyPerAsset, chainId, maxBorrowAmounts, poolId]);
+  }, [
+    assetFilter,
+    assetSort,
+    assets,
+    borrowApyPerAsset,
+    chainId,
+    comptroller,
+    maxBorrowAmounts,
+    poolId
+  ]);
 
   const table = useReactTable({
     columns,
