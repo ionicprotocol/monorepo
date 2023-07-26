@@ -22,7 +22,7 @@ import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { BsExclamationCircle } from 'react-icons/bs';
 
-import { SupplyError } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/Modal/SupplyError';
+import { BorrowError } from '@ui/components/pages/PoolPage/AssetsToBorrow/Borrow/Modal/BorrowError';
 import { Banner } from '@ui/components/shared/Banner';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Center } from '@ui/components/shared/Flex';
@@ -224,27 +224,29 @@ export const BorrowModal = ({
 
     const _steps = [...steps];
 
-    _steps[optionToWrap ? 2 : 1] = {
-      ..._steps[optionToWrap ? 2 : 1],
+    _steps[0] = {
+      ..._steps[0],
       status: ACTIVE
     };
     setSteps(_steps);
+    setActiveStep(_steps[0]);
 
     try {
-      const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
+      const { tx, errorCode } = await currentSdk.borrow(asset.cToken, amount);
       if (errorCode !== null) {
-        SupplyError(errorCode);
+        BorrowError(errorCode, minBorrowUSD);
       } else {
         addRecentTransaction({
-          description: `${asset.underlyingSymbol} Token Supply`,
+          description: `${asset.underlyingSymbol} Token Borrow`,
           hash: tx.hash
         });
 
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
+        _steps[0] = {
+          ..._steps[0],
           txHash: tx.hash
         };
         setSteps(_steps);
+        setActiveStep(_steps[0]);
 
         await tx.wait();
         await queryClient.refetchQueries({ queryKey: ['usePoolData'] });
@@ -255,23 +257,24 @@ export const BorrowModal = ({
         await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
 
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
+        _steps[0] = {
+          ..._steps[0],
           status: COMPLETE
         };
         setSteps(_steps);
+        setActiveStep(_steps[0]);
         successToast({
-          description: 'Successfully supplied!',
-          id: 'Supply - ' + Math.random().toString()
+          description: 'Successfully borrowed!',
+          id: 'Borrow - ' + Math.random().toString()
         });
       }
     } catch (error) {
-      _steps[optionToWrap ? 2 : 1] = {
-        ..._steps[optionToWrap ? 2 : 1],
+      _steps[0] = {
+        ..._steps[0],
         status: FAILED
       };
       setSteps(_steps);
-      setActiveStep(_steps[optionToWrap ? 2 : 1]);
+      setActiveStep(_steps[0]);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -280,7 +283,7 @@ export const BorrowModal = ({
       };
 
       const sentryInfo = {
-        contextName: 'Supply - Minting',
+        contextName: 'Borrow',
         properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
