@@ -15,7 +15,7 @@ const baseStyle = defineStyle({
       bg: 'initial'
     }
   },
-  borderRadius: '1px',
+  borderWidth: '1px',
   fontSize: { base: '14px' },
   fontWeight: 600,
   lineHeight: { base: '24px' },
