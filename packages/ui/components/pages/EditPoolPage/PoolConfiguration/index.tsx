@@ -8,9 +8,8 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   Input,
-  InputGroup,
-  InputLeftElement,
   Spacer,
   Spinner,
   Switch,
@@ -438,43 +437,49 @@ const PoolConfiguration = ({
       <Divider />
       {data ? (
         <Column expand overflowY="auto">
-          <Flex direction={{ base: 'column', md: 'row' }} px={{ base: 4, md: 8 }} py={4} w="100%">
-            <InputGroup width="100%">
-              <InputLeftElement>
-                <Text size="md">Pool Name:</Text>
-              </InputLeftElement>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            justifyContent={'space-between'}
+            px={{ base: 4, md: 8 }}
+            py={4}
+            w="100%"
+          >
+            <HStack>
+              <Text minW={'fit-content'}>Pool Name:</Text>
               <Input
                 borderWidth={isEditable ? 1 : 0}
-                ml="110px"
                 onChange={(e) => setInputPoolName(e.target.value)}
+                p={4}
                 readOnly={!isEditable}
                 value={inputPoolName}
+                variant={'outlineLightGray'}
               />
-            </InputGroup>
+            </HStack>
             {isEditable ? (
-              <ButtonGroup ml="auto" mt={{ base: 2, md: 0 }}>
+              <ButtonGroup mt={{ base: 2, md: 0 }}>
                 <Button
                   isDisabled={poolName === inputPoolName}
                   isLoading={isSaving}
                   ml={4}
                   onClick={onSave}
                   px={6}
+                  variant={'solidGreen'}
                 >
-                  <Center fontWeight="bold">Save</Center>
+                  Save
                 </Button>
-                <Button isDisabled={isSaving} ml={2} onClick={onCancel} px={6} variant="silver">
-                  <Center fontWeight="bold">Cancel</Center>
+                <Button isDisabled={isSaving} ml={2} onClick={onCancel} px={6} variant="solidGray">
+                  Cancel
                 </Button>
               </ButtonGroup>
             ) : (
               <Button
                 isDisabled={!isEditableAdmin}
-                ml="auto"
                 mt={{ base: 2, sm: 0 }}
                 onClick={() => setIsEditable(true)}
                 px={6}
+                variant={'solidGreen'}
               >
-                <Center fontWeight="bold">Edit</Center>
+                Edit
               </Button>
             )}
           </Flex>
@@ -550,17 +555,21 @@ const PoolConfiguration = ({
           <Divider />
 
           <ConfigRow>
-            <Flex direction={{ base: 'column', md: 'row' }} w="100%">
+            <Flex
+              alignItems={'center'}
+              direction={{ base: 'column', md: 'row' }}
+              justifyContent={'space-between'}
+              w="100%"
+            >
               <Text size="md">Ownable:</Text>
               {data.upgradeable ? (
-                <Flex flexWrap="wrap" gap={2} ml="auto" mt={{ base: 2, md: 0 }}>
+                <Flex flexWrap="wrap" gap={2} mt={{ base: 2, md: 0 }}>
                   <Button
-                    height="35px"
                     isDisabled={!isEditableAdmin}
-                    ml="auto"
                     onClick={openTransferOwnershipModalOpen}
+                    variant={'solidGreen'}
                   >
-                    <Center fontWeight="bold">Transfer Ownership</Center>
+                    Transfer Ownership
                   </Button>
                   <TransferOwnershipModal
                     comptrollerAddress={comptrollerAddress}
@@ -568,12 +577,11 @@ const PoolConfiguration = ({
                     onClose={closeTransferOwnershipModalOpen}
                   />
                   <Button
-                    height="35px"
                     isDisabled={!isEditableAdmin}
-                    ml="auto"
                     onClick={renounceOwnership}
+                    variant={'solidGreen'}
                   >
-                    <Center fontWeight="bold">Renounce Ownership</Center>
+                    Renounce Ownership
                   </Button>
                 </Flex>
               ) : (
