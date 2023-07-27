@@ -8,11 +8,12 @@ import { UmbrellaAsset } from "../helpers/types";
 const assets = linea.assets;
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: underlying(assets, assetSymbols.WETH),
+  wtoken: linea.chainAddresses.W_TOKEN,
   nativeTokenUsdChainlinkFeed: "",
   nativeTokenName: "Linea",
   nativeTokenSymbol: "ETH",
-  stableToken: underlying(assets, assetSymbols.USDC),
+  stableToken: linea.chainAddresses.STABLE_TOKEN,
+  wBTCToken: linea.chainAddresses.W_BTC_TOKEN,
   blocksPerYear: linea.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],

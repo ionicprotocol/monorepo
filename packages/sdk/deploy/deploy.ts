@@ -38,6 +38,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const cgPrice = await getCgPrice(chainDeployParams.cgId);
   const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
 
+  console.log("Running deployment for chain: ", chainId);
+  if (deployFunc) {
+    await deployFunc({ run, ethers, getNamedAccounts, deployments });
+  }
   ////
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
