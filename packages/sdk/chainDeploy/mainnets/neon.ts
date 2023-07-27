@@ -3,18 +3,19 @@ import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle } from "../helpers";
+import { getCgPrice } from "../helpers/getCgPrice";
 import { ChainlinkAsset } from "../helpers/types";
 
 const assets = neon.assets;
 const BN = ethers.utils.parseEther("1");
-const NEON_FIXED_PRICE_USD_BN = BN.mul(11).div(100);
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: underlying(assets, assetSymbols.WNEON),
+  wtoken: neon.chainAddresses.W_TOKEN,
   nativeTokenUsdChainlinkFeed: ethers.constants.AddressZero,
   nativeTokenName: "Neon (Testnet)",
   nativeTokenSymbol: "NEON",
-  stableToken: underlying(assets, assetSymbols.USDC),
+  stableToken: neon.chainAddresses.STABLE_TOKEN,
+  wBTCToken: neon.chainAddresses.W_BTC_TOKEN,
   blocksPerYear: neon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
@@ -56,17 +57,13 @@ const chainlinkAssets: ChainlinkAsset[] = [
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
-  const pyth = await deployments.deploy("Pyth", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  console.log("Pyth: ", pyth.address);
-
+  const cgPrice = await getCgPrice(deployConfig.cgId);
   const masterPriceOracle = await ethers.getContract("MasterPriceOracle", deployer);
   const simplePriceOracle = await ethers.getContract("SimplePriceOracle", deployer);
   let tx;
+
+  const NEON_FIXED_PRICE_USD_BN = ethers.utils.parseEther(cgPrice.toString());
+  console.log(NEON_FIXED_PRICE_USD_BN.toString());
 
   tx = await simplePriceOracle.setDirectPrice(
     underlying(assets, assetSymbols.USDC),

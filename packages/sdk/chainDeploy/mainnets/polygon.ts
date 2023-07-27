@@ -40,15 +40,14 @@ import {
 } from "../helpers/types";
 
 const assets = polygon.assets;
-const wmatic = underlying(assets, assetSymbols.WMATIC);
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: wmatic,
+  wtoken: polygon.chainAddresses.W_TOKEN,
   nativeTokenUsdChainlinkFeed: "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0",
   nativeTokenName: "Matic Token",
   nativeTokenSymbol: "MATIC",
-  stableToken: underlying(assets, assetSymbols.USDC),
-  wBTCToken: underlying(assets, assetSymbols.WBTC),
+  stableToken: polygon.chainAddresses.STABLE_TOKEN,
+  wBTCToken: polygon.chainAddresses.W_BTC_TOKEN,
   blocksPerYear: polygon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
