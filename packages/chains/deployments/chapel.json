@@ -72,7 +72,7 @@
       "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141"
     },
     "FeeDistributor_Implementation": {
-      "address": "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5"
+      "address": "0xFb6da5b2d98A32387d4856f63FD4738C028Bac05"
     },
     "FeeDistributor_Proxy": {
       "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141"
@@ -96,7 +96,7 @@
       "address": "0x327D7217205Fdd06bF72E8e80adba1c9f6C635CC"
     },
     "LeveredPositionFactory": {
-      "address": "0x642d9cB1ECCb296BfDe1b34045e4450DD36a935e"
+      "address": "0xd1Ad5412930724B6117a4eA463961330E04613AD"
     },
     "LeveredPositionFactoryExtension": {
       "address": "0xfe1DCDA6F77A47Af1599f4d1bEe3632762b3baa2"
@@ -111,7 +111,7 @@
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
     },
     "LiquidatorsRegistry": {
-      "address": "0x135fF045efaF131B8ea00D2a30e53cC7cB551F34"
+      "address": "0x0c2C97c8FE70326a25f2913F8905a38a9d7c9C2E"
     },
     "LiquidatorsRegistryExtension": {
       "address": "0xC9c5303ae73e6390AA4f0D8Ad1cd7cc460E95F3d"
@@ -141,7 +141,7 @@
       "address": "0xf0609635Fa55971360E0430771D8Cb2d2bF7d726"
     },
     "PoolDirectory_Implementation": {
-      "address": "0xd43b5ecaB738373cB1e02572fC04E5c406dd9802"
+      "address": "0x45b0DCACAdaEB523094069F578B29d1CEEb0c0F6"
     },
     "PoolDirectory_Proxy": {
       "address": "0xf0609635Fa55971360E0430771D8Cb2d2bF7d726"

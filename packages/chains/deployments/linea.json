@@ -39,7 +39,7 @@
       "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c"
     },
     "FeeDistributor_Implementation": {
-      "address": "0x291d0bd5CCc3C560FDcEb54f12aDcdfC22484707"
+      "address": "0x50b6A0c226bF5C4a83c9e865ce44d7c88cfB4d04"
     },
     "FeeDistributor_Proxy": {
       "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c"
@@ -63,7 +63,7 @@
       "address": "0x6f310Cb96eFbC9da0b3d517428336E60dB7ffa93"
     },
     "LiquidatorsRegistry": {
-      "address": "0x663DF67aCAE4909AAfbB997f48af14ca534b9d21"
+      "address": "0xDf64C5cf6014A6b037255505ad8e8d55284caa78"
     },
     "LiquidatorsRegistryExtension": {
       "address": "0xf984A8034e7b0A247915a9F785461ff433866037"
@@ -84,7 +84,7 @@
       "address": "0x1AdF21132Dd7d0B3002f02630c8cAe516134B07d"
     },
     "PoolDirectory_Implementation": {
-      "address": "0x297a15F615aCdf87580af1Fc497EE57424975Dae"
+      "address": "0x4B5a108466ea2783f72205cD55c6F7c0655e0a61"
     },
     "PoolDirectory_Proxy": {
       "address": "0x1AdF21132Dd7d0B3002f02630c8cAe516134B07d"
