@@ -16,6 +16,7 @@ export { deployStkBNBOracle } from "./oracles/stkBNBOracle";
 export { deployWombatOracle } from "./oracles/wombatLp";
 export { deploySaddleLpOracle } from "./oracles/saddleLp";
 export { deploySolidlyLpOracle } from "./oracles/solidly";
+export { deployPythPriceOracle } from "./oracles/pyth";
 export { deploySolidlyPriceOracle } from "./oracles/solidly";
 export { deployBalancerLpPriceOracle } from "./oracles/balancerLp";
 export { deployBalancerStableLpPriceOracle } from "./oracles/balancerLp";

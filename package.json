@@ -4,6 +4,7 @@
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
+    "packages/bots/pyth-updater",
     "packages/functions",
     "packages/monitors/oracle",
     "packages/monitors/liquidity",
