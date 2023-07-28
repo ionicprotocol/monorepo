@@ -2,8 +2,8 @@ import { linea } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
-import { ChainDeployConfig, deployUmbrellaOracle } from "../helpers";
-import { UmbrellaAsset } from "../helpers/types";
+import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
+import { PythAsset, UmbrellaAsset } from "../helpers/types";
 
 const assets = linea.assets;
 
@@ -29,40 +29,55 @@ export const deployConfig: ChainDeployConfig = {
   cgId: linea.specificParams.cgId
 };
 
-const umbrellaAssets: UmbrellaAsset[] = [
+// const umbrellaAssets: UmbrellaAsset[] = [
+//   {
+//     underlying: underlying(assets, assetSymbols.USDC),
+//     feed: "USDC-USD"
+//   },
+//   {
+//     underlying: underlying(assets, assetSymbols.WETH),
+//     feed: "ETH-USD"
+//   },
+//   {
+//     underlying: underlying(assets, assetSymbols.WBTC),
+//     feed: "BTC-USD"
+//   },
+//   {
+//     underlying: underlying(assets, assetSymbols.USDT),
+//     feed: "USDT-USD"
+//   },
+//   {
+//     underlying: underlying(assets, assetSymbols.DAI),
+//     feed: "DAI-USD"
+//   }
+// ];
+
+const pythAssets: PythAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.USDC),
-    feed: "USDC-USD"
+    feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
   },
   {
     underlying: underlying(assets, assetSymbols.WETH),
-    feed: "ETH-USD"
+    feed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
   },
   {
     underlying: underlying(assets, assetSymbols.WBTC),
-    feed: "BTC-USD"
-  },
-  {
-    underlying: underlying(assets, assetSymbols.USDT),
-    feed: "USDT-USD"
-  },
-  {
-    underlying: underlying(assets, assetSymbols.DAI),
-    feed: "DAI-USD"
+    feed: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43"
   }
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-
-  // await deployUmbrellaOracle({
-  //   run,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   deployConfig,
-  //   umbrellaAssets,
-  //   nativeUsdFeed: "ETH-USD",
-  //   registryAddress: "0x92010E763d476A732021191562134c488ca92a1F"
-  // });
+  await deployPythPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    pythAssets,
+    pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
+    nativeTokenUsdFeed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+    usdToken: underlying(assets, assetSymbols.USDC)
+  });
 };

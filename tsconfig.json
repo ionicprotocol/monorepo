@@ -18,7 +18,8 @@
       "@ui/test/*": ["ui/test/*"],
       "@chains/polygon/*": ["chains/src/polygon/*"],
       "@chains/bsc/*": ["chains/src/bsc/*"],
-      "@chains/moonbeam/*": ["chains/src/moonbeam/*"],
+      "@chains/linea/*": ["chains/src/linea/*"],
+      "@chains/neon/*": ["chains/src/neon/*"],
       "@chains/chapel/*": ["chains/src/chapel/*"]
     }
   },
@@ -49,6 +50,9 @@
     },
     {
       "path": "./packages/monitors/liquidity"
+    },
+    {
+      "path": "./packages/bots/pyth-updater"
     }
   ]
 }

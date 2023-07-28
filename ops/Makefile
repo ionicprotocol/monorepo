@@ -63,13 +63,11 @@ prod-plan:
 	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
-	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
-	export TF_VAR_chainstack_bsc_rpc_url=${CHAINSTACK_BSC_RPC_URL} && \
-	export TF_VAR_chainstack_polygon_rpc_url=${CHAINSTACK_POLYGON_RPC_URL} && \
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
-	export TF_VAR_ecs_notifier_discord_webhook_url=${ECS_NOTIFIER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_infura_api_key=${INFURA_API_KEY} && \
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	terraform init && \
 	terraform plan
@@ -79,13 +77,11 @@ prod-deploy:
 	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
-	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
-	export TF_VAR_chainstack_bsc_rpc_url=${CHAINSTACK_BSC_RPC_URL} && \
-	export TF_VAR_chainstack_polygon_rpc_url=${CHAINSTACK_POLYGON_RPC_URL} && \
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
-	export TF_VAR_ecs_notifier_discord_webhook_url=${ECS_NOTIFIER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_infura_api_key=${INFURA_API_KEY} && \
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	terraform init && \
 	terraform apply -auto-approve
