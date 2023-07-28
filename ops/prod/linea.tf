@@ -31,6 +31,7 @@ module "linea_mainnet_pyth_updater_rpc_0" {
   chain_id            = local.linea_mainnet_chain_id
   container_env_vars = merge(
     local.pyth_updater_lambda_variables,
+    { LOG_LEVEL = "debug" },
     { WEB3_HTTP_PROVIDER_URL = local.linea_mainnet_rpc_1 }
   )
   schedule_expression = "rate(2 minutes)"

@@ -86,6 +86,16 @@ export class Updater {
         this.sdk.logger.error(`Error sending transaction to Pyth: ${e}`);
         this.alert.sendPriceUpdateFailure(assetConfigsToUpdate, JSON.stringify(e));
       }
+    } else {
+      this.sdk.logger.info('No price feeds need updating');
+      this.sdk.logger.debug(
+        `Prices: ${assetConfigsToUpdate.map(
+          (a) =>
+            `priceId: ${a.priceId}:  - current price ${a.currentPrice!.price}\n  - last price ${
+              a.lastPrice!.price
+            } `
+        )}`
+      );
     }
     return null;
   }

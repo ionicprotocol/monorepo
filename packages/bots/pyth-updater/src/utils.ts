@@ -110,14 +110,14 @@ export default async function sendTransactionToPyth(
     to,
     value,
     data,
-    nonce: txCount + 1,
+    nonce: txCount,
   };
   // Estimate gas for transaction
   const gasLimit = await fetchGasLimitForTransaction(sdk, tx);
   const txRequest: TransactionRequest = {
     ...tx,
     gasLimit: gasLimit,
-    gasPrice: await sdk.provider.getGasPrice(),
+    gasPrice: (await sdk.provider.getGasPrice()).mul(15).div(10),
   };
 
   sdk.logger.info('Signing and sending update price transaction:', tx);
@@ -138,7 +138,7 @@ export default async function sendTransactionToPyth(
 
 export async function fetchGasLimitForTransaction(sdk: IonicSdk, tx: TransactionRequest) {
   try {
-    return (await sdk.provider.estimateGas(tx)).mul(12).div(10);
+    return (await sdk.provider.estimateGas(tx)).mul(15).div(10);
   } catch (error) {
     throw `Failed to estimate gas before signing and sending transaction: ${error}`;
   }
