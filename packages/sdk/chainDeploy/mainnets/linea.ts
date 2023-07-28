@@ -58,12 +58,25 @@ const pythAssets: PythAsset[] = [
     feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
   },
   {
+    underlying: underlying(assets, assetSymbols.WBTC),
+    feed: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43"
+  },
+  {
     underlying: underlying(assets, assetSymbols.WETH),
     feed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
   },
+
   {
-    underlying: underlying(assets, assetSymbols.WBTC),
-    feed: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43"
+    underlying: underlying(assets, assetSymbols.BUSD),
+    feed: "0x5bc91f13e412c07599167bae86f07543f076a638962b8d6017ec19dab4a82814"
+  },
+  {
+    underlying: underlying(assets, assetSymbols.WBNB),
+    feed: "0x2f95862b045670cd22bee3114c39763a4a08beeb663b145d283c31d7d1101c4f"
+  },
+  {
+    underlying: underlying(assets, assetSymbols.WMATIC),
+    feed: "0x5de33a9112c2b700b8d30b8a3402c103578ccfa2765696471cc672bd5cf6ac52"
   }
 ];
 
@@ -77,7 +90,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployConfig,
     pythAssets,
     pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
-    nativeTokenUsdFeed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
     usdToken: underlying(assets, assetSymbols.USDC)
   });
 };

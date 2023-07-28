@@ -13,7 +13,7 @@ const specificParams: ChainParams = {
     shortName: "Linea",
     uniswapV3Fees: {},
     img: "https://d1912tcoux65lj.cloudfront.net/network/linea.png",
-    blockExplorerUrls: { default: { name: "lineascan", url: "https://goerli.lineascan.build/" } },
+    blockExplorerUrls: { default: { name: "lineascan", url: "https://lineascan.build" } },
     rpcUrls: {
       default: { http: ["https://linea-mainnet.infura.io/v3/"] },
       public: { http: ["https://linea-mainnet.infura.io/v3/"] }
