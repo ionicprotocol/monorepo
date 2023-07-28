@@ -34,7 +34,7 @@ module "linea_mainnet_pyth_updater_rpc_0" {
     { LOG_LEVEL = "debug" },
     { WEB3_HTTP_PROVIDER_URL = local.linea_mainnet_rpc_0 }
   )
-  schedule_expression = "rate(2 minutes)"
+  schedule_expression = "rate(5 minutes)"
   timeout             = 700
   memory_size         = 256
 }
