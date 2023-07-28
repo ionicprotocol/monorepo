@@ -9,7 +9,7 @@ const config = {
   adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? '',
   adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? '',
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? '',
-  priceServiceEndpoint: 'https://xc-mainnet.pyth.network',
+  priceServiceEndpoint: 'https://hermes.pyth.network/',
 };
 
 export default config;

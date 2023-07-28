@@ -3,7 +3,7 @@ import { IonicSdk } from '@ionicprotocol/sdk';
 import { IPyth } from '@ionicprotocol/sdk/typechain/IPyth';
 import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
 import PythAbi from '@pythnetwork/pyth-sdk-solidity/abis/IPyth.json';
-import { Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
 
 import config from '../config/service';
 import { PythAssetConfig } from '../types';
@@ -19,10 +19,10 @@ export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
   pythPriceOracle: Contract;
-  pythNetworkAddress: string;
+  pythNetworkAddress: string = ethers.constants.AddressZero;
   connection: EvmPriceServiceConnection;
-  assetConfigs: PythAssetConfig[];
-  pythContract: IPyth;
+  assetConfigs: PythAssetConfig[] = [];
+  pythContract: IPyth = {} as IPyth;
 
   constructor(ionicSdk: IonicSdk) {
     this.sdk = ionicSdk;
