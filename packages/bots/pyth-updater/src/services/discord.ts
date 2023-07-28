@@ -1,11 +1,10 @@
 import { TransactionResponse } from '@ethersproject/providers';
-
 import { SupportedChains } from '@ionicprotocol/types';
 import { MessageBuilder, Webhook } from 'discord-webhook-node';
 
+import config from '../config/service';
 import { logger } from '../logger';
 import { AssetConfigWithPrice } from '../utils';
-import config from '../config/service';
 
 export class DiscordService {
   chainId: SupportedChains;
@@ -41,12 +40,16 @@ export class DiscordService {
       .addField('IDs', assetConfigsToUpdate.map((a) => a.priceId).join(', '), true)
       .addField(
         'Last Prices',
-        assetConfigsToUpdate.map((a) => a.lastPrice!.price.toString()).join(', '),
+        assetConfigsToUpdate
+          .map((a) => (a.lastPrice ? a.lastPrice!.price.toString() : ''))
+          .join(', '),
         true
       )
       .addField(
         'Current Prices',
-        assetConfigsToUpdate.map((a) => a.currentPrice!.price.toString()).join(', '),
+        assetConfigsToUpdate
+          .map((a) => (a.currentPrice ? a.currentPrice!.price.toString() : ''))
+          .join(', '),
         true
       )
       // Max limit of embed size

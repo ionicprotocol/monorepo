@@ -2,11 +2,11 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { Wallet } from 'ethers';
 
+import { chainIdToConfig } from './config';
+import config from './config/service';
 import { logger } from './logger';
 import { Updater } from './services';
 import { setUpSdk } from './utils';
-import config from './config/service';
-import { chainIdToConfig } from './config';
 
 export const handler = async (
   event: APIGatewayEvent,

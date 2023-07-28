@@ -1,18 +1,19 @@
+import { TransactionResponse } from '@ethersproject/providers';
 import { IonicSdk } from '@ionicprotocol/sdk';
+import { IPyth } from '@ionicprotocol/sdk/typechain/IPyth';
+import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
+import PythAbi from '@pythnetwork/pyth-sdk-solidity/abis/IPyth.json';
+import { Contract } from 'ethers';
 
 import config from '../config/service';
-import PythAbi from '@pythnetwork/pyth-sdk-solidity/abis/IPyth.json';
-import { DiscordService } from './discord';
-import { Contract } from 'ethers';
-import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
-import { TransactionResponse } from '@ethersproject/providers';
+import { PythAssetConfig } from '../types';
 import sendTransactionToPyth, {
   getCurrentPrices,
   getLastPrices,
   priceFeedNeedsUpdate,
 } from '../utils';
-import { IPyth } from '@ionicprotocol/sdk/typechain/IPyth';
-import { PythAssetConfig } from '../types';
+
+import { DiscordService } from './discord';
 
 export class Updater {
   sdk: IonicSdk;

@@ -4,7 +4,7 @@
     "es2021": true
   },
   "extends": [
-    "../../.eslintrc.json",
+    "../../../.eslintrc.json",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "plugin:import/errors",
@@ -47,12 +47,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "tasks/**/*.ts",
-        "tests/**/*.ts",
-        "chainDeploy/**/*.ts",
-        "deploy/**/*.ts"
-      ],
+      "files": ["tasks/**/*.ts", "tests/**/*.ts", "chainDeploy/**/*.ts", "deploy/**/*.ts"],
       "rules": {
         "no-console": ["off"],
         "@typescript-eslint/no-non-null-assertion": ["off"]

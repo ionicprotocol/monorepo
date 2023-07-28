@@ -1,10 +1,11 @@
-import { EvmPriceServiceConnection, Price } from '@pythnetwork/pyth-evm-js';
-import { logger } from './logger';
 import { JsonRpcProvider, TransactionRequest } from '@ethersproject/providers';
 import { chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk } from '@ionicprotocol/sdk';
-import { Signer, Wallet } from 'ethers';
 import { IPyth } from '@ionicprotocol/sdk/typechain/IPyth';
+import { EvmPriceServiceConnection, Price } from '@pythnetwork/pyth-evm-js';
+import { Signer, Wallet } from 'ethers';
+
+import { logger } from './logger';
 import { PythAssetConfig } from './types';
 
 export interface PythConfigStorage {
@@ -81,7 +82,7 @@ export const priceFeedNeedsUpdate = (sdk: IonicSdk, assetConfig: AssetConfigWith
   let priceDiff = BigInt(lastPrice!.price) - BigInt(currentPrice!.price);
   priceDiff = priceDiff < 0 ? -priceDiff : priceDiff;
   priceDiff *= BigInt(10000); // bps
-  priceDiff /= BigInt(lastPrice?.price!);
+  priceDiff /= BigInt(lastPrice!.price!);
   const priceExceedsDiff = priceDiff >= deviationThresholdBps;
   const priceIsStale = currentPrice!.publishTime - lastPrice!.publishTime > validTimePeriodSeconds;
   sdk.logger.debug(`
@@ -136,7 +137,7 @@ export default async function sendTransactionToPyth(
 
 export async function fetchGasLimitForTransaction(sdk: IonicSdk, tx: TransactionRequest) {
   try {
-    return (await sdk.provider.estimateGas(tx)).mul(11).div(10);
+    return (await sdk.provider.estimateGas(tx)).mul(199).div(10);
   } catch (error) {
     throw `Failed to estimate gas before signing and sending transaction: ${error}`;
   }

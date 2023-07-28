@@ -1,6 +1,7 @@
-import { neon, linea } from '@ionicprotocol/chains';
-import { pythConfig as neonPythConfig } from './neon';
+import { linea, neon } from '@ionicprotocol/chains';
+
 import { pythConfig as lineaPythConfig } from './linea';
+import { pythConfig as neonPythConfig } from './neon';
 
 export const chainIdToConfig = {
   [neon.chainId]: neonPythConfig,

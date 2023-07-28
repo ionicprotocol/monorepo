@@ -1,10 +1,10 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
+import { Wallet } from 'ethers';
 
 import { chainIdToConfig } from '../src/config';
+import config from '../src/config/service';
 import { Updater } from '../src/services';
 import { setUpSdk } from '../src/utils';
-import { Wallet } from 'ethers';
-import config from '../src/config/service';
 
 (async function () {
   const provider = new JsonRpcProvider(config.rpcUrl);

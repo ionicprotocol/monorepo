@@ -1,5 +1,6 @@
-import { pythConfig as commonPythConfig } from './common';
 import { PythAssetConfig } from '../types';
+
+import { pythConfig as commonPythConfig } from './common';
 
 export const pythConfig: PythAssetConfig[] = [
   ...commonPythConfig,
