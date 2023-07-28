@@ -35,7 +35,7 @@ COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
 COPY packages/types/package.json /tmp/build/packages/types/
 COPY packages/chains/package.json /tmp/build/packages/chains/
-COPY packages/bots/liquidator/package.json /tmp/build/packages/bots/liquidator/
+COPY packages/bots/pyth-updater/package.json /tmp/build/packages/bots/pyth-updater/
 COPY yarn.lock /tmp/build/
 
 # ----- Install dependencies -----
@@ -46,7 +46,7 @@ RUN yarn install --inline-builds --mode=skip-build
 COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/types /tmp/build/packages/types
 COPY packages/chains /tmp/build/packages/chains
-COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
+COPY packages/bots/pyth-updater /tmp/build/packages/bots/pyth-updater
 
 # ----- build -----
 RUN yarn build:deploy:pyth-updater
@@ -63,5 +63,5 @@ ENV NODE_ENV=production
 WORKDIR ${LAMBDA_TASK_ROOT}
 COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 
-CMD ["packages/bots/liquidator/build/src/index.handler"]
+CMD ["packages/bots/pyth-updater/build/src/index.handler"]
 
