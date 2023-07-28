@@ -3,7 +3,7 @@ import { chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk } from '@ionicprotocol/sdk';
 import { IPyth } from '@ionicprotocol/sdk/typechain/IPyth';
 import { EvmPriceServiceConnection, Price } from '@pythnetwork/pyth-evm-js';
-import { Signer, Wallet } from 'ethers';
+import { ethers, Signer, Wallet } from 'ethers';
 
 import { logger } from './logger';
 import { PythAssetConfig } from './types';
@@ -117,6 +117,7 @@ export default async function sendTransactionToPyth(
   const txRequest: TransactionRequest = {
     ...tx,
     gasLimit: gasLimit,
+    gasPrice: await sdk.provider.getGasPrice(),
   };
 
   sdk.logger.info('Signing and sending update price transaction:', tx);
