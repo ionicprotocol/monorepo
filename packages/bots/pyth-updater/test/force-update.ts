@@ -16,5 +16,5 @@ import config from '../src/config/service';
 
   sdk.logger.info(`Starting update loop bot on chain: ${config.chainId}`);
   sdk.logger.info(`Config for bot: ${JSON.stringify(config)}`);
-  await updater.updateFeeds();
+  await updater.forceUpdateFeeds(assetConfig);
 })();

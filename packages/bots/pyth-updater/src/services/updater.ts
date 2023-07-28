@@ -42,7 +42,6 @@ export class Updater {
   }
 
   async updateFeeds(): Promise<TransactionResponse | null> {
-    this.pythNetworkAddress = await this.pythPriceOracle.callStatic.PYTH();
     const configWithCurrentPrices = await getCurrentPrices(
       this.sdk,
       this.assetConfigs,
@@ -81,11 +80,29 @@ export class Updater {
       try {
         const tx = await sendTransactionToPyth(this.sdk, this.pythNetworkAddress, callData, fee);
         this.alert.sendPriceUpdateSuccess(assetConfigsToUpdate, tx);
+        return tx;
       } catch (e) {
         this.sdk.logger.error(`Error sending transaction to Pyth: ${e}`);
         this.alert.sendPriceUpdateFailure(assetConfigsToUpdate, JSON.stringify(e));
       }
     }
     return null;
+  }
+  async forceUpdateFeeds(assetConfig: PythAssetConfig[]): Promise<TransactionResponse | null> {
+    const priceIdsToUpdate = assetConfig.map((assetConfig) => assetConfig.priceId);
+    const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
+    const fee = (await this.pythContract.callStatic.getUpdateFee(updatePriceData)).toString();
+    const callData = this.pythContract.interface.encodeFunctionData('updatePriceFeeds', [
+      updatePriceData,
+    ]);
+    try {
+      const tx = await sendTransactionToPyth(this.sdk, this.pythNetworkAddress, callData, fee);
+      this.alert.sendPriceUpdateSuccess(assetConfig, tx);
+      return tx;
+    } catch (e) {
+      this.sdk.logger.error(`Error sending transaction to Pyth: ${e}`);
+      this.alert.sendPriceUpdateFailure(assetConfig, JSON.stringify(e));
+      return null;
+    }
   }
 }
