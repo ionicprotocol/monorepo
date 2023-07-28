@@ -14,7 +14,7 @@ module "linea_mainnet_liquidation_rpc_0" {
   chain_id            = local.linea_mainnet_chain_id
   container_env_vars = merge(
     local.liquidation_variables,
-    { WEB3_HTTP_PROVIDER_URL = local.linea_mainnet_rpc_1 }
+    { WEB3_HTTP_PROVIDER_URL = local.linea_mainnet_rpc_0 }
   )
   schedule_expression = "rate(2 minutes)"
   timeout             = 700
@@ -32,7 +32,7 @@ module "linea_mainnet_pyth_updater_rpc_0" {
   container_env_vars = merge(
     local.pyth_updater_lambda_variables,
     { LOG_LEVEL = "debug" },
-    { WEB3_HTTP_PROVIDER_URL = local.linea_mainnet_rpc_1 }
+    { WEB3_HTTP_PROVIDER_URL = local.linea_mainnet_rpc_0 }
   )
   schedule_expression = "rate(2 minutes)"
   timeout             = 700

@@ -1,9 +1,7 @@
 
 locals {
-
-  bsc_mainnet_rpc_0    = var.chainstack_bsc_rpc_url
-  bsc_mainnet_rpc_1    = "https://bsc-dataseed4.binance.org"
-  bsc_mainnet_rpc_2    = "https://rpc.ankr.com/bsc"
+  bsc_mainnet_rpc_0    = "https://bsc-dataseed4.binance.org"
+  bsc_mainnet_rpc_1    = "https://rpc.ankr.com/bsc"
   bsc_mainnet_chain_id = "56"
 }
 
