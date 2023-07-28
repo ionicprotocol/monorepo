@@ -573,7 +573,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// LEVERED POSITIONS FACTORY
-  if (chainId !== 1 && chainId !== 59144) {
+  if (chainId !== 1) {
     const lpfDep = await deployments.deploy("LeveredPositionFactory", {
       from: deployer,
       log: true,

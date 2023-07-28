@@ -11,6 +11,15 @@
     "AddressesProvider_Proxy": {
       "address": "0x914694DA0bED80e74ef1a28029f016119782C0f1"
     },
+    "AuthoritiesRegistry": {
+      "address": "0xCad55B06F6C9d4C027FE122105Ef29e77ABdeBEa"
+    },
+    "AuthoritiesRegistry_Implementation": {
+      "address": "0x56F15D070cf5C01dDD78BbCbC362d67a323D57Eb"
+    },
+    "AuthoritiesRegistry_Proxy": {
+      "address": "0xCad55B06F6C9d4C027FE122105Ef29e77ABdeBEa"
+    },
     "CErc20Delegate": {
       "address": "0x4fB258d146398B7E778f01A3C45B3DE39cEDF409"
     },
@@ -61,6 +70,21 @@
     },
     "JumpRateModel": {
       "address": "0x6f310Cb96eFbC9da0b3d517428336E60dB7ffa93"
+    },
+    "LeveredPositionFactory": {
+      "address": "0xDF3e44a2614fe4F88d696498aF43C35989cc8bD8"
+    },
+    "LeveredPositionFactoryExtension": {
+      "address": "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5"
+    },
+    "LeveredPositionsLens": {
+      "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
+    },
+    "LeveredPositionsLens_Implementation": {
+      "address": "0xACfEB3fFa839EF75C4897089e4C9D8c74a279af6"
+    },
+    "LeveredPositionsLens_Proxy": {
+      "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
     },
     "LiquidatorsRegistry": {
       "address": "0xDf64C5cf6014A6b037255505ad8e8d55284caa78"
