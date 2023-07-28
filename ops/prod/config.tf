@@ -1,7 +1,8 @@
 
 locals {
-  liquidator_ecr_repository_name = "ionic-liquidator"
+  liquidator_ecr_repository_name      = "ionic-liquidator"
   oracles_monitor_ecr_repository_name = "ionic-oracles-monitor"
+  pyth_updater_ecr_repository_name    = "ionic-pyth-updater"
   shared_env_vars_lambda = {
     ETHEREUM_ADMIN_ACCOUNT     = var.ethereum_admin_account,
     ETHEREUM_ADMIN_PRIVATE_KEY = var.ethereum_admin_private_key,
@@ -31,5 +32,9 @@ locals {
     local.shared_env_vars_lambda,
     { SERVICE = "feed-verifier" },
     { DISCORD_WEBHOOK_URL = var.oracles_discord_webhook_url }
+  )
+  pyth_updater_lambda_variables = merge(
+    local.shared_env_vars_lambda,
+    { DISCORD_WEBHOOK_URL = var.pyth_updater_discord_webhook_url }
   )
 }

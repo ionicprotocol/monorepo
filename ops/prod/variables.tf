@@ -18,15 +18,7 @@ variable "ethereum_admin_private_key" {
   type = string
 }
 
-variable "chainstack_bsc_rpc_url" {
-  type = string
-}
-
-variable "pokt_api_key" {
-  type = string
-}
-
-variable "chainstack_polygon_rpc_url" {
+variable "infura_api_key" {
   type = string
 }
 
@@ -43,6 +35,9 @@ variable "oracles_discord_webhook_url" {
   type = string
 }
 
+variable "pyth_updater_discord_webhook_url" {
+  type = string
+}
 
 variable "liquidation_discord_webhook_url" {
   type = string
