@@ -77,7 +77,8 @@ export enum OracleTypes {
   SaddleLpPriceOracle = "SaddleLpPriceOracle",
   SolidlyLpTokenPriceOracle = "SolidlyLpTokenPriceOracle",
   WSTEthPriceOracle = "WSTEthPriceOracle",
-  ERC4626Oracle = "ERC4626Oracle"
+  ERC4626Oracle = "ERC4626Oracle",
+  PythPriceOracle = "PythPriceOracle"
 }
 
 export enum IrmTypes {

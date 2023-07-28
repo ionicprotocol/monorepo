@@ -10,10 +10,10 @@
 #   value = module.bsc_mainnet_oracle_price_verifier.lambda_cron_service_name
 # }
 # output "bsc-mainnet-liquidation-1" {
-#   value = module.bsc_mainnet_liquidation_rpc_1.lambda_cron_service_name
+#   value = module.bsc_mainnet_liquidation_rpc_0.lambda_cron_service_name
 # }
 # output "bsc-mainnet-liquidation-2" {
-#   value = module.bsc_mainnet_liquidation_rpc_2.lambda_cron_service_name
+#   value = module.bsc_mainnet_liquidation_rpc_1.lambda_cron_service_name
 # }
 
 # POLYGON
@@ -27,10 +27,10 @@
 #   value = module.polygon_mainnet_oracle_price_verifier.lambda_cron_service_name
 # }
 # output "polygon-mainnet-liquidation-1" {
-#   value = module.polygon_mainnet_liquidation_rpc_1.lambda_cron_service_name
+#   value = module.polygon_mainnet_liquidation_rpc_0.lambda_cron_service_name
 # }
 # output "polygon-mainnet-liquidation-2" {
-#   value = module.polygon_mainnet_liquidation_rpc_2.lambda_cron_service_name
+#   value = module.polygon_mainnet_liquidation_rpc_1.lambda_cron_service_name
 # }
 
 # FANTOM
