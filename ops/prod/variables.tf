@@ -27,10 +27,6 @@ variable "bots_image_tag" {
   default = "latest"
 }
 
-variable "ecs_notifier_discord_webhook_url" {
-  type = string
-}
-
 variable "oracles_discord_webhook_url" {
   type = string
 }
