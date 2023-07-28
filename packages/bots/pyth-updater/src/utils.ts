@@ -137,7 +137,7 @@ export default async function sendTransactionToPyth(
 
 export async function fetchGasLimitForTransaction(sdk: IonicSdk, tx: TransactionRequest) {
   try {
-    return (await sdk.provider.estimateGas(tx)).mul(199).div(10);
+    return (await sdk.provider.estimateGas(tx)).mul(12).div(10);
   } catch (error) {
     throw `Failed to estimate gas before signing and sending transaction: ${error}`;
   }
