@@ -13,7 +13,7 @@ const baseStyle = definePartsStyle((props) => {
       _selected: {
         bg: 'none',
         border: 'none',
-        color: mode('iBlack', 'iWhite')(props),
+        color: mode('iWhite', 'iWhite')(props),
         mb: '-2px'
       },
       bg: 'none',
@@ -54,7 +54,7 @@ const ghost = definePartsStyle((props) => {
       _selected: {
         bg: 'none',
         border: 'none',
-        color: mode('iBlack', 'iWhite')(props),
+        color: mode('iWhite', 'iWhite')(props),
         mb: '-2px'
       },
       bg: 'none',

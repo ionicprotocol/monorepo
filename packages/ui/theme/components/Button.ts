@@ -1,26 +1,31 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
-const baseStyle = defineStyle({
-  _disabled: {
-    boxShadow: 'none',
-    cursor: 'not-allowed',
-    opacity: 0.4
-  },
-  _focusVisible: {
-    boxShadow: 'outline'
-  },
-  _hover: {
+const baseStyle = defineStyle((props) => {
+  return {
+    '&[data-loading]': {
+      color: mode('iGreen', 'iGreen')(props)
+    },
     _disabled: {
-      bg: 'initial'
-    }
-  },
-  borderWidth: '1px',
-  fontSize: { base: '14px' },
-  fontWeight: 600,
-  lineHeight: { base: '24px' },
-  transitionDuration: 'normal',
-  transitionProperty: 'common'
+      boxShadow: 'none',
+      cursor: 'not-allowed',
+      opacity: 0.4
+    },
+    _focusVisible: {
+      boxShadow: 'outline'
+    },
+    _hover: {
+      _disabled: {
+        bg: 'initial'
+      }
+    },
+    borderWidth: '1px',
+    fontSize: { base: '14px' },
+    fontWeight: 600,
+    lineHeight: { base: '24px' },
+    transitionDuration: 'normal',
+    transitionProperty: 'common'
+  };
 });
 
 const sizes = {
@@ -159,12 +164,11 @@ const outlineRed = defineStyle((props) => {
 const _filter = defineStyle((props) => {
   return {
     _active: { bg: mode('iCardBg', 'iCardBg')(props) },
-    bg: props.isSelected ? mode('iCardBg', 'iCardBg')(props) : mode('iRowBg', 'iRowBg')(props),
+    bg: props.isSelected ? mode('iCardBg', 'iCardBg')(props) : 'none',
     border: 'none',
     color: props.isSelected
       ? mode('iGreen', 'iGreen')(props)
       : mode('iLightGray', 'iLightGray')(props),
-    height: '36px',
     minW: '40px',
     mr: '-px'
   };

@@ -41,7 +41,7 @@ const sizes = {
 // define styles for custom variant
 const colorfulVariant = defineStyle((props) => {
   return {
-    bg: mode('iWhite', 'iBlack')(props)
+    bg: mode('iBlack', 'iBlack')(props)
   };
 });
 
