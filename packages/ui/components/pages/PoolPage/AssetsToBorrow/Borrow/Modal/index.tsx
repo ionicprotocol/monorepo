@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -123,13 +123,13 @@ export const BorrowModal = ({
   });
   const { data: restricted } = useRestricted(chainId, comptrollerAddress, debtCeilings);
 
-  useEffect(() => {
+  useQuery([amount, maxBorrowAmount, minBorrowAsset], () => {
     if (amount.isZero() || !maxBorrowAmount || !minBorrowAsset) {
       setIsAmountValid(false);
     } else {
       setIsAmountValid(amount.lte(maxBorrowAmount.bigNumber) && amount.gte(minBorrowAsset));
     }
-  }, [amount, maxBorrowAmount, minBorrowAsset]);
+  });
 
   useEffect(() => {
     if (price && !amount.isZero()) {
