@@ -27,7 +27,7 @@ export const PoolName = ({
   const { setGlobalLoading } = useMultiIonic();
   const { data: rewardTokens } = useRewardTokensOfPool(comptroller, chainId);
   const { data: claimableRewards } = usePoolClaimableRewards(comptroller, chainId);
-  const { cCard, cIRow } = useColors();
+  const { cGreen, cIRow } = useColors();
   const router = useRouter();
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const chainConfig = useChainConfig(chainId);
@@ -68,12 +68,12 @@ export const PoolName = ({
                 setIsHovering(false);
               }}
               p={0}
-              variant="_link"
+              variant="ghost"
               width="fit-content"
             >
               <Box maxWidth="100%" width="fit-content">
                 <GradientText
-                  _hover={{ color: cCard.borderColor }}
+                  _hover={{ color: cGreen }}
                   fontWeight="bold"
                   isEnabled={
                     claimableRewards && claimableRewards.length > 0 && !isHovering ? true : false

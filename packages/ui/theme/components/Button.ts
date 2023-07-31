@@ -66,6 +66,7 @@ const ghost = defineStyle({
     color: 'none',
     textDecoration: 'unset'
   },
+  border: 'none',
   color: 'inherit',
   height: 'fit-content',
   p: 0
@@ -159,6 +160,7 @@ const _filter = defineStyle((props) => {
   return {
     _active: { bg: mode('iCardBg', 'iCardBg')(props) },
     bg: props.isSelected ? mode('iCardBg', 'iCardBg')(props) : mode('iRowBg', 'iRowBg')(props),
+    border: 'none',
     color: props.isSelected
       ? mode('iGreen', 'iGreen')(props)
       : mode('iLightGray', 'iLightGray')(props),
