@@ -420,6 +420,7 @@ export const SupplyModal = ({
         setSteps(_steps);
 
         await tx.wait();
+
         await queryClient.refetchQueries({ queryKey: ['usePoolData'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
@@ -427,6 +428,8 @@ export const SupplyModal = ({
         await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
+        await queryClient.refetchQueries({ queryKey: ['useYourSuppliesRowData'] });
+        await queryClient.refetchQueries({ queryKey: ['useAssetsToSupplyData'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],

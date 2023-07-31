@@ -56,7 +56,7 @@ const green = definePartsStyle((props) => {
       '&[data-value=complete]': {
         bg: mode('iLightGray', 'iLightGray')(props),
         borderColor: mode('iLightGray', 'iLightGray')(props),
-        color: 'none'
+        color: mode('iBlack', 'iBlack')(props)
       },
       '&[data-value=failed]': {
         bg: mode('iRed', 'iRed')(props),
@@ -70,8 +70,8 @@ const green = definePartsStyle((props) => {
       },
       '&[data-value=ready]': {
         bg: mode('iGreen', 'iGreen')(props),
-        border: mode('iGreen', 'iGreen')(props),
-        color: 'none'
+        borderColor: mode('iGreen', 'iGreen')(props),
+        color: mode('iBlack', 'iBlack')(props)
       }
     },
     number: {},
