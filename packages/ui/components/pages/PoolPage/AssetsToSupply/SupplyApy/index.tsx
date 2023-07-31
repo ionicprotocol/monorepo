@@ -39,7 +39,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId, totalApy }: SupplyApyPr
     }
   }, [sdk, asset.supplyRatePerBlock]);
 
-  const supplyApyColor = useColorModeValue('#0B0B0B', '#F0F0F0');
+  const supplyApyColor = useColorModeValue('#F0F0F0', '#F0F0F0');
 
   const rewardsOfThisMarket = useMemo(() => {
     if (rewards && asset.cToken && rewards[asset.cToken]) {
