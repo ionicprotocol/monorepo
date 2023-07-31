@@ -6,7 +6,7 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
   inputAnatomy.keys
 );
 
-const baseStyle = definePartsStyle({
+const baseStyle = definePartsStyle((props) => ({
   addon: {},
   element: {},
   field: {
@@ -19,10 +19,11 @@ const baseStyle = definePartsStyle({
       outline: 'none !important'
     },
     appearance: 'none',
+    color: mode('iWhite', 'iWhite')(props),
     minWidth: 0,
     outline: 0
   }
-});
+}));
 
 const sizes = {
   lg: definePartsStyle({
@@ -153,7 +154,7 @@ const ghost = definePartsStyle((props) => {
       },
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       paddingInlineEnd: 0,
       paddingInlineStart: 0
     }

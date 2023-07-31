@@ -249,6 +249,7 @@ export const BorrowModal = ({
         setActiveStep(_steps[0]);
 
         await tx.wait();
+
         await queryClient.refetchQueries({ queryKey: ['usePoolData'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
@@ -256,8 +257,8 @@ export const BorrowModal = ({
         await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
-        await queryClient.refetchQueries({ queryKey: ['useAssetsToBorrowData'] });
         await queryClient.refetchQueries({ queryKey: ['useYourBorrowsRowData'] });
+        await queryClient.refetchQueries({ queryKey: ['useAssetsToBorrowData'] });
 
         _steps[0] = {
           ..._steps[0],

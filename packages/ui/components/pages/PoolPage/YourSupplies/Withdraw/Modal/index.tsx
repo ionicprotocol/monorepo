@@ -215,6 +215,7 @@ export const WithdrawModal = ({
         setActiveStep(_steps[0]);
 
         await tx.wait();
+
         await queryClient.refetchQueries({ queryKey: ['usePoolData'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
@@ -222,6 +223,8 @@ export const WithdrawModal = ({
         await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
+        await queryClient.refetchQueries({ queryKey: ['useYourSuppliesRowData'] });
+        await queryClient.refetchQueries({ queryKey: ['useAssetsToSupplyData'] });
 
         _steps[0] = {
           ..._steps[0],
