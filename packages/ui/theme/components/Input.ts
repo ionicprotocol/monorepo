@@ -123,14 +123,14 @@ const ghost = definePartsStyle((props) => {
     addon: {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       justifyContent: 'center',
       pl: { base: 0 },
       pointerEvents: 'none',
       pr: { base: '10px' }
     },
     element: {
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       pointerEvents: 'none'
     },
     field: {
@@ -165,14 +165,14 @@ const outlineLightGray = definePartsStyle((props) => {
     addon: {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       borderColor: mode('iGray', 'iGray')(props),
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       justifyContent: 'center',
       pl: { base: 0 },
       pointerEvents: 'none',
       pr: { base: '10px' }
     },
     element: {
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       pointerEvents: 'none'
     },
     field: {
@@ -196,7 +196,7 @@ const outlineLightGray = definePartsStyle((props) => {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       borderColor: mode('iGray', 'iGray')(props),
       borderWidth: '1px',
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       paddingInlineEnd: 0,
       paddingInlineStart: 0
     }

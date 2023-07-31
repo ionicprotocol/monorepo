@@ -1,26 +1,31 @@
 import { defineStyle, defineStyleConfig } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
-const baseStyle = defineStyle({
-  _disabled: {
-    boxShadow: 'none',
-    cursor: 'not-allowed',
-    opacity: 0.4
-  },
-  _focusVisible: {
-    boxShadow: 'outline'
-  },
-  _hover: {
+const baseStyle = defineStyle((props) => {
+  return {
+    '&[data-loading]': {
+      color: mode('iGreen', 'iGreen')(props)
+    },
     _disabled: {
-      bg: 'initial'
-    }
-  },
-  borderWidth: '1px',
-  fontSize: { base: '14px' },
-  fontWeight: 600,
-  lineHeight: { base: '24px' },
-  transitionDuration: 'normal',
-  transitionProperty: 'common'
+      boxShadow: 'none',
+      cursor: 'not-allowed',
+      opacity: 0.4
+    },
+    _focusVisible: {
+      boxShadow: 'outline'
+    },
+    _hover: {
+      _disabled: {
+        bg: 'initial'
+      }
+    },
+    borderWidth: '1px',
+    fontSize: { base: '14px' },
+    fontWeight: 600,
+    lineHeight: { base: '24px' },
+    transitionDuration: 'normal',
+    transitionProperty: 'common'
+  };
 });
 
 const sizes = {
@@ -66,56 +71,55 @@ const ghost = defineStyle({
     color: 'none',
     textDecoration: 'unset'
   },
+  border: 'none',
   color: 'inherit',
   height: 'fit-content',
   p: 0
 });
 
-const solidGreen = defineStyle((props) => {
-  return {
-    _disabled: {
-      bg: mode('iGray', 'iGray')(props)
-    },
-    _focus: {
-      bg: mode('iGreen', 'iGreen')(props),
-      color: mode('iCardBg', 'iCardBg')(props)
-    },
-    _hover: {
-      _disabled: {
-        bg: mode('iGray', 'iGray')(props),
-        color: mode('iCardBg', 'iCardBg')(props)
-      },
-      bg: mode('iGreen', 'iGreen')(props),
-      color: mode('iCardBg', 'iCardBg')(props),
-      textDecoration: 'unset'
-    },
+const solidGreen = defineStyle((props) => ({
+  _disabled: {
+    bg: mode('iGray', 'iGray')(props)
+  },
+  _focus: {
     bg: mode('iGreen', 'iGreen')(props),
     color: mode('iCardBg', 'iCardBg')(props)
-  };
-});
-
-const solidGray = defineStyle((props) => {
-  return {
+  },
+  _hover: {
     _disabled: {
-      bg: mode('iGray', 'iGray')(props)
+      bg: mode('iGray', 'iGray')(props),
+      color: mode('iCardBg', 'iCardBg')(props)
     },
-    _focus: {
+    bg: mode('iGreen', 'iGreen')(props),
+    color: mode('iCardBg', 'iCardBg')(props),
+    textDecoration: 'unset'
+  },
+  bg: mode('iGreen', 'iGreen')(props),
+  borderColor: mode('iGreen', 'iGreen')(props),
+  color: mode('iCardBg', 'iCardBg')(props)
+}));
+
+const solidGray = defineStyle((props) => ({
+  _disabled: {
+    bg: mode('iGray', 'iGray')(props)
+  },
+  _focus: {
+    bg: mode('iGray', 'iGray')(props),
+    color: mode('iBlack', 'iBlack')(props)
+  },
+  _hover: {
+    _disabled: {
       bg: mode('iGray', 'iGray')(props),
       color: mode('iBlack', 'iBlack')(props)
     },
-    _hover: {
-      _disabled: {
-        bg: mode('iGray', 'iGray')(props),
-        color: mode('iBlack', 'iBlack')(props)
-      },
-      bg: mode('iGray', 'iGray')(props),
-      color: mode('iBlack', 'iBlack')(props),
-      textDecoration: 'unset'
-    },
     bg: mode('iGray', 'iGray')(props),
-    color: mode('iBlack', 'iBlack')(props)
-  };
-});
+    color: mode('iBlack', 'iBlack')(props),
+    textDecoration: 'unset'
+  },
+  bg: mode('iGray', 'iGray')(props),
+  borderColor: mode('iGray', 'iGray')(props),
+  color: mode('iBlack', 'iBlack')(props)
+}));
 
 const outlineLightGray = defineStyle((props) => {
   return {
@@ -158,11 +162,11 @@ const outlineRed = defineStyle((props) => {
 const _filter = defineStyle((props) => {
   return {
     _active: { bg: mode('iCardBg', 'iCardBg')(props) },
-    bg: props.isSelected ? mode('iCardBg', 'iCardBg')(props) : mode('iRowBg', 'iRowBg')(props),
+    bg: props.isSelected ? mode('iCardBg', 'iCardBg')(props) : 'none',
+    border: 'none',
     color: props.isSelected
       ? mode('iGreen', 'iGreen')(props)
       : mode('iLightGray', 'iLightGray')(props),
-    height: '36px',
     minW: '40px',
     mr: '-px'
   };

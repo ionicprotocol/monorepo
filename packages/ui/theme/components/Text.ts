@@ -4,7 +4,7 @@ import { mode } from '@chakra-ui/theme-tools';
 export const TextStyleConfig: ComponentStyleConfig = {
   baseStyle: (props) => ({
     alignItems: 'center',
-    color: mode('iBlack', 'iWhite')(props),
+    color: mode('iWhite', 'iWhite')(props),
     fontFamily: "'Inter', sans-serif",
     fontWeight: 600,
     justifyContent: 'center'
@@ -65,7 +65,7 @@ export const TextStyleConfig: ComponentStyleConfig = {
       color: 'inherit'
     },
     itemDesc: (props) => ({
-      color: mode('iBlack', 'iWhite')(props)
+      color: mode('iWhite', 'iWhite')(props)
     }),
     itemTitle: (props) => ({
       color: mode('iLightGray', 'iLightGray')(props),
