@@ -1,6 +1,16 @@
 [[plugins]]
 package = "@netlify/plugin-nextjs"
 
+[[redirects]]
+from = "https://linea.development.ionic.money"
+to = "https://development.ionic.money/59144/pool/1"
+status = 200
+
+[[redirects]]
+from = "https://linea.development.ionic.money/horizon-dex"
+to = "https://development.ionic.money/59144/pool/0"
+status = 200
+
 [build]
 base = "./"
 publish = "./packages/ui/.next"
