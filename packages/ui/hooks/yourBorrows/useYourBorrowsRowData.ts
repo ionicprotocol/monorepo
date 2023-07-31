@@ -6,7 +6,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const useYourBorrowsRowData = (assets?: MarketData[]) => {
   const response = useQuery(
-    ['useYourBorrowsRowData', assets?.map((asset) => asset.cToken).sort()],
+    ['useYourBorrowsRowData', assets?.map((asset) => asset.cToken + asset.borrowBalance).sort()],
     () => {
       const res: YourBorrowRowData[] = [];
 

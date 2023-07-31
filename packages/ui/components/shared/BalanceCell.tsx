@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import type { Cap } from '@ui/hooks/useBorrowCap';
-import { useColors } from '@ui/hooks/useColors';
 import { smallFormatter } from '@ui/utils/bigUtils';
 
 interface BalanceCellProps {
@@ -21,7 +20,6 @@ interface BalanceCellProps {
 }
 
 export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
-  const { cCard } = useColors();
   const capRatio = useMemo(
     () =>
       cap && cap.usdCap ? parseInt(((primary.value * 100) / cap.usdCap).toString()) : undefined,
@@ -69,42 +67,24 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
       <VStack alignItems="flex-start" spacing={1}>
         <HStack spacing={2}>
           <HStack spacing={0.5}>
-            <Text color={cCard.txtColor} fontWeight={'medium'} size="sm" variant="tnumber">
+            <Text fontWeight={'medium'} size="sm" variant="tnumber">
               {'$'}
             </Text>
-            <Text color={cCard.txtColor} fontWeight={'medium'} size="sm" variant="tnumber">
+            <Text fontWeight={'medium'} size="sm" variant="tnumber">
               {smallFormatter(primary.value)}
             </Text>
           </HStack>
           {cap && (
-            <Text
-              color={cCard.txtColor}
-              fontWeight={'medium'}
-              opacity={0.6}
-              size="sm"
-              variant="tnumber"
-            >
+            <Text fontWeight={'medium'} opacity={0.6} size="sm" variant="tnumber">
               {'/'}
             </Text>
           )}
           {cap && (
             <HStack spacing={0.5}>
-              <Text
-                color={cCard.txtColor}
-                fontWeight={'medium'}
-                opacity={0.6}
-                size="xs"
-                variant="tnumber"
-              >
+              <Text fontWeight={'medium'} opacity={0.6} size="xs" variant="tnumber">
                 {'$'}
               </Text>
-              <Text
-                color={cCard.txtColor}
-                fontWeight={'medium'}
-                opacity={0.6}
-                size="xs"
-                variant="tnumber"
-              >
+              <Text fontWeight={'medium'} opacity={0.6} size="xs" variant="tnumber">
                 {smallFormatter(cap.usdCap, true)}
               </Text>
             </HStack>
@@ -134,13 +114,7 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
             </HStack>
 
             {cap && (
-              <Text
-                color={cCard.txtColor}
-                fontWeight={'medium'}
-                opacity={0.6}
-                size="sm"
-                variant="tnumber"
-              >
+              <Text fontWeight={'medium'} opacity={0.6} size="sm" variant="tnumber">
                 {'/'}
               </Text>
             )}
