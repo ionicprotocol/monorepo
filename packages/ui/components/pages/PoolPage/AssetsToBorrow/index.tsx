@@ -345,7 +345,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
               ) : assets.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
-                    <Center py={8}>There are no assets to supply.</Center>
+                    <Center py={8}>There are no assets to borrow.</Center>
                   </Td>
                 </Tr>
               ) : (

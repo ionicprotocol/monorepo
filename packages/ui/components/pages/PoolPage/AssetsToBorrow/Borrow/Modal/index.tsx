@@ -39,10 +39,8 @@ import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useRestricted } from '@ui/hooks/useRestricted';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import type { TxStep } from '@ui/types/ComponentPropsType';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -76,12 +74,6 @@ export const BorrowModal = ({
   const { cIPage, cRed } = useColors();
   const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, chainId);
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken, chainId);
-  const { data: myNativeBalance } = useTokenBalance(
-    'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
-    chainId
-  );
   const { data: maxBorrowAmount } = useMaxBorrowAmount(asset, comptrollerAddress, chainId);
   const { data: borrowApyPerAsset, isLoading: isBorrowApyLoading } = useBorrowAPYs(assets, chainId);
 
@@ -131,32 +123,13 @@ export const BorrowModal = ({
   });
   const { data: restricted } = useRestricted(chainId, comptrollerAddress, debtCeilings);
 
-  const optionToWrap = useMemo(() => {
-    return (
-      asset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
-      myBalance?.isZero() &&
-      !myNativeBalance?.isZero()
-    );
-  }, [
-    asset.underlyingToken,
-    currentSdk?.chainSpecificAddresses.W_TOKEN,
-    myBalance,
-    myNativeBalance
-  ]);
-
   useEffect(() => {
-    setSteps([...BORROW_STEPS(asset.underlyingSymbol)]);
-    setActiveStep(BORROW_STEPS(asset.underlyingSymbol)[0]);
-  }, [asset.underlyingSymbol, optionToWrap]);
-
-  useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
+    if (amount.isZero() || !maxBorrowAmount || !minBorrowAsset) {
       setIsAmountValid(false);
     } else {
-      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-      setIsAmountValid(amount.lte(max));
+      setIsAmountValid(amount.lte(maxBorrowAmount.bigNumber) && amount.gte(minBorrowAsset));
     }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+  }, [amount, maxBorrowAmount, minBorrowAsset]);
 
   useEffect(() => {
     if (price && !amount.isZero()) {
@@ -294,12 +267,6 @@ export const BorrowModal = ({
 
     setIsLoading(false);
   };
-
-  useEffect(() => {
-    const _steps = [...BORROW_STEPS(asset.underlyingSymbol)];
-
-    setSteps(_steps);
-  }, [optionToWrap, asset.underlyingSymbol]);
 
   return (
     <IonicModal
