@@ -227,7 +227,7 @@ const AddAsset = ({
                         justifyContent="flex-start"
                         key={index}
                         onClick={() => setNameOrAddress(asset.underlying)}
-                        variant="listed"
+                        variant="ghost"
                         width="100%"
                       >
                         <Flex alignContent="center" direction="row" py={2}>

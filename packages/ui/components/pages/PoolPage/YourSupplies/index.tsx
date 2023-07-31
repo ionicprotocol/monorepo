@@ -35,9 +35,9 @@ import { utils } from 'ethers';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { Asset } from '@ui/components/pages/PoolPage/YourSupplies/Asset';
-import { Collateral } from '@ui/components/pages/PoolPage/YourSupplies/Collateral';
-import { SupplyApy } from '@ui/components/pages/PoolPage/YourSupplies/SupplyApy';
+import { Asset } from '@ui/components/pages/PoolPage/AssetsToSupply/Asset';
+import { Collateral } from '@ui/components/pages/PoolPage/AssetsToSupply/Collateral';
+import { SupplyApy } from '@ui/components/pages/PoolPage/AssetsToSupply/SupplyApy/index';
 import { Switch } from '@ui/components/pages/PoolPage/YourSupplies/Switch';
 import { Withdraw } from '@ui/components/pages/PoolPage/YourSupplies/Withdraw';
 import { YourBalance } from '@ui/components/pages/PoolPage/YourSupplies/YourBalance';
@@ -79,7 +79,8 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
     assets,
     totalSupplyBalanceFiat,
     totalSupplyBalanceNative,
-    totalCollateralSupplyBalanceFiat
+    totalCollateralSupplyBalanceFiat,
+    comptroller
   } = poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
@@ -248,7 +249,14 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         accessorFn: (row) => row.collateral,
-        cell: ({ getValue }) => <Collateral asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <Collateral
+            asset={getValue<MarketData>()}
+            assets={assets}
+            chainId={chainId}
+            comptroller={comptroller}
+          />
+        ),
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{COLLATERAL}</TableHeaderCell>,
@@ -257,7 +265,14 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Withdraw asset={row.getValue(ASSET)} />;
+          return (
+            <Withdraw
+              asset={row.getValue(ASSET)}
+              assets={assets}
+              chainId={chainId}
+              comptroller={comptroller}
+            />
+          );
         },
         header: () => null,
         id: WITHDRAW
@@ -270,7 +285,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
         id: SWITCH
       }
     ];
-  }, [allRewards, assetFilter, assetSort, chainId, totalSupplyApyPerAsset]);
+  }, [allRewards, assetFilter, assetSort, assets, chainId, comptroller, totalSupplyApyPerAsset]);
 
   const table = useReactTable({
     columns,

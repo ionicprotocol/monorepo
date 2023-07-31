@@ -28,10 +28,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { BsCheck, BsExclamationCircle, BsInfinity, BsX } from 'react-icons/bs';
+import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
 
-import { SupplyError } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/Modal/SupplyError';
-import { Banner } from '@ui/components/shared/Banner';
+import { RepayError } from '@ui/components/pages/PoolPage/YourBorrows/Repay/Modal/RepayError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Center } from '@ui/components/shared/Flex';
 import { IonicModal } from '@ui/components/shared/Modal';
@@ -42,48 +41,49 @@ import {
   COMPLETE,
   FAILED,
   READY,
-  SUPPLY_STEPS,
-  SUPPLY_STEPS_WITH_WRAP
+  REPAY_STEPS,
+  REPAY_STEPS_WITH_WRAP
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
-import { useAssets } from '@ui/hooks/useAssets';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useColors } from '@ui/hooks/useColors';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-import { useRewards } from '@ui/hooks/useRewards';
-import { useSupplyCap } from '@ui/hooks/useSupplyCap';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { TxStep } from '@ui/types/ComponentPropsType';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
-interface SupplyModalProps {
+interface RepayModalProps {
   asset: MarketData;
   assets: MarketData[];
   chainId: number;
   comptrollerAddress: string;
   isOpen: boolean;
   onClose: () => void;
-  poolId: number;
 }
 
-export const SupplyModal = ({
+export const RepayModal = ({
   isOpen,
   asset,
   assets,
   comptrollerAddress,
   onClose,
-  chainId,
-  poolId
-}: SupplyModalProps) => {
-  const { totalSupplyFiat, underlyingDecimals, underlyingPrice, collateralFactor } = asset;
+  chainId
+}: RepayModalProps) => {
+  const {
+    underlyingDecimals,
+    underlyingPrice,
+    underlyingToken,
+    underlyingSymbol,
+    cToken,
+    borrowBalance
+  } = asset;
 
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();
@@ -94,38 +94,21 @@ export const SupplyModal = ({
   const { cIPage, cGreen } = useColors();
   const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, chainId);
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken, chainId);
+  const { data: maxRepayAmount } = useMaxRepayAmount(asset, chainId);
+  const { data: myBalance } = useTokenBalance(underlyingToken, chainId);
   const { data: myNativeBalance } = useTokenBalance(
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
     chainId
   );
-  const { data: supplyCap } = useSupplyCap({
-    chainId,
-    comptroller: comptrollerAddress,
-    market: asset
-  });
-  const { data: allRewards } = useRewards({ chainId, poolId: poolId.toString() });
-  const { data: assetInfos } = useAssets(chainId ? [chainId] : []);
-  const { data: totalSupplyApyPerAsset, isLoading: isTotalSupplyApyLoading } = useTotalSupplyAPYs(
-    assets,
-    chainId,
-    allRewards,
-    assetInfos
-  );
 
   const nativeSymbol = sdk?.chainSpecificParams.metadata.nativeCurrency.symbol;
 
-  const ltv = useMemo(
-    () => parseFloat(utils.formatUnits(collateralFactor, 16)),
-    [collateralFactor]
-  );
-  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
+  const [steps, setSteps] = useState<TxStep[]>([...REPAY_STEPS(underlyingSymbol)]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const [usdAmount, setUsdAmount] = useState<number>(0);
-  const [activeStep, setActiveStep] = useState<TxStep>(SUPPLY_STEPS(asset.underlyingSymbol)[0]);
+  const [activeStep, setActiveStep] = useState<TxStep>(REPAY_STEPS(underlyingSymbol)[0]);
   const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
 
   const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, chainId);
@@ -134,7 +117,7 @@ export const SupplyModal = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [assets.map((asset) => asset.borrowBalanceFiat)]
   );
-  const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
+  const index = useMemo(() => assets.findIndex((a) => a.cToken === cToken), [assets, cToken]);
   const { data: updatedAssets } = useUpdatedUserAssets({
     amount,
     assets,
@@ -146,35 +129,30 @@ export const SupplyModal = ({
 
   const optionToWrap = useMemo(() => {
     return (
-      asset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
+      underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
       myBalance?.isZero() &&
       !myNativeBalance?.isZero()
     );
-  }, [
-    asset.underlyingToken,
-    currentSdk?.chainSpecificAddresses.W_TOKEN,
-    myBalance,
-    myNativeBalance
-  ]);
+  }, [underlyingToken, currentSdk?.chainSpecificAddresses.W_TOKEN, myBalance, myNativeBalance]);
 
   useEffect(() => {
     if (optionToWrap) {
-      setSteps([...SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)]);
-      setActiveStep(SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)[0]);
+      setSteps([...REPAY_STEPS_WITH_WRAP(underlyingSymbol)]);
+      setActiveStep(REPAY_STEPS_WITH_WRAP(underlyingSymbol)[0]);
     } else {
-      setSteps([...SUPPLY_STEPS(asset.underlyingSymbol)]);
-      setActiveStep(SUPPLY_STEPS(asset.underlyingSymbol)[0]);
+      setSteps([...REPAY_STEPS(underlyingSymbol)]);
+      setActiveStep(REPAY_STEPS(underlyingSymbol)[0]);
     }
-  }, [asset.underlyingSymbol, optionToWrap]);
+  }, [underlyingSymbol, optionToWrap]);
 
   useEffect(() => {
-    if (amount.isZero() || !maxSupplyAmount) {
+    if (amount.isZero() || !maxRepayAmount) {
       setIsAmountValid(false);
     } else {
-      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
+      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxRepayAmount;
       setIsAmountValid(amount.lte(max));
     }
-  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+  }, [amount, maxRepayAmount, myNativeBalance, optionToWrap]);
 
   useEffect(() => {
     if (price && !amount.isZero()) {
@@ -198,8 +176,8 @@ export const SupplyModal = ({
     try {
       setUserEnteredAmount(newAmount);
       const bigAmount = utils.parseUnits(
-        toFixedNoRound(newAmount, Number(asset.underlyingDecimals)),
-        Number(asset.underlyingDecimals)
+        toFixedNoRound(newAmount, Number(underlyingDecimals)),
+        Number(underlyingDecimals)
       );
       setAmount(bigAmount);
     } catch (e) {
@@ -208,15 +186,24 @@ export const SupplyModal = ({
   };
 
   const setToMax = async () => {
-    if (!currentSdk || !address || !maxSupplyAmount) return;
+    if (!currentSdk || !address || !maxRepayAmount) return;
 
     setIsLoading(true);
 
     try {
-      if (maxSupplyAmount.bigNumber.lt(constants.Zero) || maxSupplyAmount.bigNumber.isZero()) {
+      let maxBN = undefined;
+
+      if (optionToWrap) {
+        const debt = borrowBalance;
+        const balance = await currentSdk.signer.getBalance();
+        maxBN = balance.gt(debt) ? debt : balance;
+      } else {
+        maxBN = maxRepayAmount;
+      }
+      if (!maxBN || maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
       } else {
-        const str = utils.formatUnits(maxSupplyAmount.bigNumber, asset.underlyingDecimals);
+        const str = utils.formatUnits(maxBN, underlyingDecimals);
         updateAmount(str);
       }
 
@@ -225,10 +212,10 @@ export const SupplyModal = ({
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken
+        token: cToken
       };
       const sentryInfo = {
-        contextName: 'Fetching max supply amount',
+        contextName: 'Fetching max repay amount',
         properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
@@ -293,10 +280,10 @@ export const SupplyModal = ({
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken
+        token: cToken
       };
       const sentryInfo = {
-        contextName: 'Supply - Wrapping Native Token',
+        contextName: 'Repay - Wrapping Native Token',
         properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
@@ -318,16 +305,14 @@ export const SupplyModal = ({
     setSteps(_steps);
 
     try {
-      const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
-      const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
-        amount
-      );
+      const token = currentSdk.getEIP20TokenInstance(underlyingToken, currentSdk.signer);
+      const hasApprovedEnough = (await token.callStatic.allowance(address, cToken)).gte(amount);
 
       if (!hasApprovedEnough) {
-        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
+        const tx = await currentSdk.approve(cToken, underlyingToken);
 
         addRecentTransaction({
-          description: `Approve ${asset.underlyingSymbol}`,
+          description: `Approve ${underlyingSymbol}`,
           hash: tx.hash
         });
 
@@ -336,6 +321,7 @@ export const SupplyModal = ({
           txHash: tx.hash
         };
         setSteps(_steps);
+        setActiveStep(_steps[optionToWrap ? 1 : 0]);
 
         await tx.wait();
 
@@ -348,6 +334,7 @@ export const SupplyModal = ({
           status: READY
         };
         setSteps(_steps);
+        setActiveStep(_steps[optionToWrap ? 1 : 0]);
 
         successToast({
           description: 'Successfully Approved!',
@@ -377,11 +364,11 @@ export const SupplyModal = ({
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken
+        token: cToken
       };
 
       const sentryInfo = {
-        contextName: 'Supply - Approving',
+        contextName: 'Repay - Approving',
         properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
@@ -390,7 +377,7 @@ export const SupplyModal = ({
     setIsLoading(false);
   };
 
-  const onSupply = async () => {
+  const onRepay = async () => {
     if (!currentSdk || !address) return;
 
     setIsLoading(true);
@@ -402,14 +389,16 @@ export const SupplyModal = ({
       status: ACTIVE
     };
     setSteps(_steps);
+    setActiveStep(_steps[optionToWrap ? 2 : 1]);
 
     try {
-      const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
+      const isRepayingMax = amount.eq(borrowBalance);
+      const { tx, errorCode } = await currentSdk.repay(cToken, isRepayingMax, amount);
       if (errorCode !== null) {
-        SupplyError(errorCode);
+        RepayError(errorCode);
       } else {
         addRecentTransaction({
-          description: `${asset.underlyingSymbol} Token Supply`,
+          description: `${underlyingSymbol} Token Repay`,
           hash: tx.hash
         });
 
@@ -418,9 +407,9 @@ export const SupplyModal = ({
           txHash: tx.hash
         };
         setSteps(_steps);
+        setActiveStep(_steps[optionToWrap ? 2 : 1]);
 
         await tx.wait();
-
         await queryClient.refetchQueries({ queryKey: ['usePoolData'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
@@ -428,17 +417,18 @@ export const SupplyModal = ({
         await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
-        await queryClient.refetchQueries({ queryKey: ['useYourSuppliesRowData'] });
-        await queryClient.refetchQueries({ queryKey: ['useAssetsToSupplyData'] });
+        await queryClient.refetchQueries({ queryKey: ['useAssetsToBorrowData'] });
+        await queryClient.refetchQueries({ queryKey: ['useYourBorrowsRowData'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
           status: COMPLETE
         };
         setSteps(_steps);
+        setActiveStep(_steps[optionToWrap ? 2 : 1]);
         successToast({
-          description: 'Successfully supplied!',
-          id: 'Supply - ' + Math.random().toString()
+          description: 'Successfully repaied!',
+          id: 'Repay - ' + Math.random().toString()
         });
       }
     } catch (error) {
@@ -452,11 +442,11 @@ export const SupplyModal = ({
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptrollerAddress,
-        token: asset.cToken
+        token: cToken
       };
 
       const sentryInfo = {
-        contextName: 'Supply - Minting',
+        contextName: 'Repay',
         properties: sentryProperties
       };
       handleGenericError({ error, sentryInfo, toast: errorToast });
@@ -466,14 +456,14 @@ export const SupplyModal = ({
   };
 
   useEffect(() => {
-    let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
+    let _steps = [...REPAY_STEPS(underlyingSymbol)];
 
     if (optionToWrap) {
-      _steps = [...SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)];
+      _steps = [...REPAY_STEPS_WITH_WRAP(underlyingSymbol)];
     }
 
     setSteps(_steps);
-  }, [optionToWrap, asset.underlyingSymbol]);
+  }, [optionToWrap, underlyingSymbol]);
 
   return (
     <IonicModal
@@ -488,10 +478,7 @@ export const SupplyModal = ({
                 <Text size={'sm'}>Wallet Balance: </Text>
                 <Text size={'sm'}>
                   {myBalance
-                    ? smallFormatter(
-                        Number(utils.formatUnits(myBalance, asset.underlyingDecimals)),
-                        true
-                      )
+                    ? smallFormatter(Number(utils.formatUnits(myBalance, underlyingDecimals)), true)
                     : 0}
                 </Text>
                 <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
@@ -512,7 +499,7 @@ export const SupplyModal = ({
               />
               <Box height={8} mr={1} width={8}>
                 <TokenIcon
-                  address={asset.underlyingToken}
+                  address={underlyingToken}
                   chainId={chainId}
                   size="sm"
                   withMotion={false}
@@ -524,70 +511,48 @@ export const SupplyModal = ({
                   maxWidth="80px"
                   mr={2}
                   size="md"
-                  tooltip={asset.underlyingSymbol}
+                  tooltip={underlyingSymbol}
                 >
-                  {asset.underlyingSymbol}
+                  {underlyingSymbol}
                 </EllipsisText>
               </Flex>
             </Flex>
             <Flex justifyContent={'space-between'}>
               <Text color={'iGray'}>{smallUsdFormatter(usdAmount)}</Text>
             </Flex>
+            <Slider value={0} variant={'green'}>
+              <SliderMark ml={'0px'} value={0}>
+                0%
+              </SliderMark>
+              <SliderMark ml={'0px'} value={25}>
+                25%
+              </SliderMark>
+              <SliderMark value={50}>50%</SliderMark>
+              <SliderMark value={75}>75%</SliderMark>
+              <SliderMark ml={'-35px'} value={100}>
+                100%
+              </SliderMark>
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb zIndex={2} />
+            </Slider>
           </Flex>
           <Center height={'1px'} my={'10px'}>
             <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
           </Center>
           <Flex direction="column" gap={{ base: '8px' }}>
             <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Supply Apr</Text>
-              <Skeleton isLoaded={!isTotalSupplyApyLoading}>
-                <Text variant={'itemDesc'}>
-                  {isTotalSupplyApyLoading
-                    ? 'Supply Apr'
-                    : totalSupplyApyPerAsset
-                    ? totalSupplyApyPerAsset[asset.cToken].totalApy
-                    : '--'}{' '}
-                  %
-                </Text>
+              <Text variant={'itemTitle'}>Currently Borrowing</Text>
+              <Skeleton isLoaded={true}>
+                <Text variant={'itemDesc'}>0.50</Text>
               </Skeleton>
             </Flex>
-            <Flex alignItems={'flex-end'} justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Collateralization</Text>
-              {asset.membership ? (
-                <HStack alignItems={'flex-end'}>
-                  <Icon as={BsCheck} color={'iGreen'} height={'24px'} width={'24px'} />
-                  <Text color={cGreen} variant={'itemDesc'}>
-                    Enabled
-                  </Text>
-                </HStack>
-              ) : (
-                <Text variant={'itemDesc'}>Not Enabled</Text>
-              )}
-            </Flex>
-          </Flex>
-          <Center height={'1px'} my={'10px'}>
-            <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
-          </Center>
-          <Flex direction="column" gap={{ base: '8px' }}>
             <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Total Health Ratio</Text>
-              <Icon as={BsInfinity} color={'iWhite'} height={'20px'} width={'20px'} />
-            </Flex>
-            <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>My Total Borrow</Text>
-              <HStack>
-                <Text variant={'itemDesc'}>{smallUsdFormatter(totalBorrows)} </Text>
-                <Text color={'iLightGray'}>
-                  (max {borrowLimitTotal !== undefined ? smallUsdFormatter(borrowLimitTotal) : '--'}
-                </Text>
-                <Text variant={'itemDesc'}>➡</Text>
-                <Text color={'iLightGray'}>
-                  {updatedBorrowLimitTotal !== undefined
-                    ? smallUsdFormatter(updatedBorrowLimitTotal)
-                    : '--'}
-                  )
-                </Text>
-              </HStack>
+              <Text variant={'itemTitle'}>Borrow Apr</Text>
+              <Skeleton isLoaded={true}>
+                <Text variant={'itemDesc'}>4.10%</Text>
+              </Skeleton>
             </Flex>
           </Flex>
           <Center height={'1px'} my={'10px'}>
@@ -596,9 +561,7 @@ export const SupplyModal = ({
           <Flex direction="column" gap={{ base: '10px' }}>
             <Flex flexDir={'column'} gap={'40px'}>
               <HStack>
-                <Text variant={'itemTitle'}>
-                  LTV {parseFloat(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0)}%
-                </Text>
+                <Text variant={'itemTitle'}>Borrowing Utilization</Text>
                 <InfoOutlineIcon
                   color={'iLightGray'}
                   height="fit-content"
@@ -606,9 +569,9 @@ export const SupplyModal = ({
                   verticalAlign="baseLine"
                 />
               </HStack>
-              <Slider value={ltv} variant={'green'}>
-                <SliderMark ml={'0px'} value={0}>
-                  0%
+              <Slider max={100} min={60} value={75} variant={'yellow'}>
+                <SliderMark ml={'0px'} value={60}>
+                  60%
                 </SliderMark>
                 <SliderMark value={80}>80%</SliderMark>
                 <SliderMark ml={'-35px'} value={100}>
@@ -624,27 +587,32 @@ export const SupplyModal = ({
           <Center height={'1px'} my={'10px'}>
             <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
           </Center>
-          <Flex justifyContent={'space-between'}>
-            <Text variant={'itemTitle'}>Gas Fee</Text>
-            <Text variant={'itemDesc'}>-</Text>
+          <Flex direction="column" gap={{ base: '8px' }}>
+            <Flex justifyContent={'space-between'}>
+              <Text variant={'itemTitle'}>Collateral Balance ({underlyingSymbol})</Text>
+              <Text variant={'itemDesc'}>1.0000031</Text>
+            </Flex>
+            <Flex justifyContent={'space-between'}>
+              <Text variant={'itemTitle'}>Borrow Limit</Text>
+              <HStack>
+                <Text variant={'itemDesc'}>{smallUsdFormatter(totalBorrows)} </Text>
+                <Text color={'iLightGray'}>
+                  (max {borrowLimitTotal !== undefined ? smallUsdFormatter(borrowLimitTotal) : '--'}
+                </Text>
+                <Text variant={'itemDesc'}>➡</Text>
+                <Text color={'iLightGray'}>
+                  {updatedBorrowLimitTotal !== undefined
+                    ? smallUsdFormatter(updatedBorrowLimitTotal)
+                    : '--'}
+                  )
+                </Text>
+              </HStack>
+            </Flex>
+            <Flex justifyContent={'space-between'}>
+              <Text variant={'itemTitle'}>Daily Earnings</Text>
+              <Text variant={'itemDesc'}>{`<$0.01`}</Text>
+            </Flex>
           </Flex>
-          {supplyCap && totalSupplyFiat >= supplyCap.usdCap ? (
-            <Banner
-              alertDescriptionProps={{ fontSize: 'lg' }}
-              alertProps={{ status: 'info' }}
-              descriptions={[
-                {
-                  text: `${smallFormatter(supplyCap.tokenCap)} ${
-                    asset.underlyingSymbol
-                  } / ${smallFormatter(supplyCap.tokenCap)} ${asset.underlyingSymbol}`,
-                  textProps: { display: 'block', fontWeight: 'bold' }
-                },
-                {
-                  text: 'The maximum supply of assets for this asset has been reached. Once assets are withdrawn or the limit is increased you can again supply to this market.'
-                }
-              ]}
-            />
-          ) : null}
           <Flex gap={'12px'} justifyContent={'column'} mt={{ base: '10px' }}>
             {optionToWrap ? (
               <Button
@@ -667,7 +635,7 @@ export const SupplyModal = ({
               }
             >
               {activeStep.index === (optionToWrap ? 2 : 1) ? `Approve ` : 'Approved'}{' '}
-              {asset.underlyingSymbol}
+              {underlyingSymbol}
             </Button>
             <Flex flex={1}>
               <PopoverTooltip
@@ -685,7 +653,7 @@ export const SupplyModal = ({
                 <Button
                   isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2)}
                   isLoading={activeStep.index === 3 && isLoading}
-                  onClick={isAmountValid ? onSupply : undefined}
+                  onClick={isAmountValid ? onRepay : undefined}
                   variant={
                     isAmountValid && activeStep.index === (optionToWrap ? 3 : 2)
                       ? activeStep.status === FAILED
@@ -695,7 +663,7 @@ export const SupplyModal = ({
                   }
                   width={'100%'}
                 >
-                  Supply {asset.underlyingSymbol}
+                  Repay {underlyingSymbol}
                 </Button>
               </PopoverTooltip>
             </Flex>
@@ -733,7 +701,7 @@ export const SupplyModal = ({
           </Flex>
         </Flex>
       }
-      header={<Text size={'inherit'}>Supply {asset.underlyingSymbol}</Text>}
+      header={<Text size={'inherit'}>Repay {underlyingSymbol}</Text>}
       isOpen={isOpen}
       modalCloseButtonProps={{ hidden: isLoading }}
       onClose={() => {
@@ -742,7 +710,7 @@ export const SupplyModal = ({
         if (!isLoading) {
           setUserEnteredAmount('');
           setAmount(constants.Zero);
-          setSteps([...SUPPLY_STEPS(asset.underlyingSymbol)]);
+          setSteps([...REPAY_STEPS(underlyingSymbol)]);
         }
       }}
     />

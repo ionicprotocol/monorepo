@@ -73,7 +73,8 @@ export type YourBorrowRowData = {
 };
 
 export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
-  const { chainId, assets, totalBorrowBalanceNative, totalBorrowBalanceFiat } = poolData;
+  const { chainId, assets, totalBorrowBalanceNative, totalBorrowBalanceFiat, comptroller } =
+    poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -215,7 +216,14 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Repay asset={row.getValue(ASSET)} />;
+          return (
+            <Repay
+              asset={row.getValue(ASSET)}
+              assets={assets}
+              chainId={chainId}
+              comptroller={comptroller}
+            />
+          );
         },
         header: () => null,
         id: REPAY
@@ -228,7 +236,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
         id: BORROW
       }
     ];
-  }, [assetFilter, assetSort, borrowApyPerAsset, chainId]);
+  }, [assetFilter, assetSort, assets, borrowApyPerAsset, chainId, comptroller]);
 
   const table = useReactTable({
     columns,

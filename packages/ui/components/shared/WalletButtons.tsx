@@ -34,7 +34,12 @@ export const WalletButtons = memo(() => {
               {(() => {
                 if (!connected) {
                   return (
-                    <Button fontSize="14px" onClick={openConnectModal} variant="ghost">
+                    <Button
+                      color={'iWhite'}
+                      fontSize="14px"
+                      onClick={openConnectModal}
+                      variant="ghost"
+                    >
                       Connect Wallet
                     </Button>
                   );
@@ -50,7 +55,7 @@ export const WalletButtons = memo(() => {
 
                 return (
                   <Flex alignItems="center" gap={4}>
-                    <Button onClick={openChainModal} px={2} variant="ghost">
+                    <Button color={'iWhite'} onClick={openChainModal} px={2}>
                       {chain.iconUrl && (
                         <Img
                           alt={chain.name ?? 'Chain icon'}
@@ -68,7 +73,7 @@ export const WalletButtons = memo(() => {
                     <Center height={6}>
                       <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
                     </Center>
-                    <Button onClick={openAccountModal} px={2} variant="ghost">
+                    <Button color={'iWhite'} onClick={openAccountModal} px={2}>
                       {account.hasPendingTransactions ? (
                         <HStack>
                           <Center height="100%">

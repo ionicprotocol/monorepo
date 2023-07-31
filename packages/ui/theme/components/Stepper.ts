@@ -45,7 +45,7 @@ const green = definePartsStyle((props) => {
   return {
     description: {},
     icon: {
-      color: mode('iWhite', 'iBlack')(props)
+      color: mode('iBlack', 'iBlack')(props)
     },
     indicator: {
       '&[data-value=active]': {
@@ -56,12 +56,12 @@ const green = definePartsStyle((props) => {
       '&[data-value=complete]': {
         bg: mode('iLightGray', 'iLightGray')(props),
         borderColor: mode('iLightGray', 'iLightGray')(props),
-        color: 'none'
+        color: mode('iBlack', 'iBlack')(props)
       },
       '&[data-value=failed]': {
         bg: mode('iRed', 'iRed')(props),
         borderColor: mode('iRed', 'iRed')(props),
-        color: mode('iWhite', 'iBlack')(props)
+        color: mode('iBlack', 'iBlack')(props)
       },
       '&[data-value=incomplete]': {
         bg: 'none',
@@ -70,8 +70,8 @@ const green = definePartsStyle((props) => {
       },
       '&[data-value=ready]': {
         bg: mode('iGreen', 'iGreen')(props),
-        border: mode('iGreen', 'iGreen')(props),
-        color: 'none'
+        borderColor: mode('iGreen', 'iGreen')(props),
+        color: mode('iBlack', 'iBlack')(props)
       }
     },
     number: {},

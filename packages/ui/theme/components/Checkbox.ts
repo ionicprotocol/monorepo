@@ -14,27 +14,27 @@ const baseStyle = definePartsStyle((props) => {
         _hover: {
           bg: mode('iGreen', 'iGreen')(props),
           borderColor: mode('iGreen', 'iGreen')(props),
-          color: mode('iWhite', 'iBlack')(props)
+          color: mode('iBlack', 'iBlack')(props)
         },
         bg: mode('iGreen', 'iGreen')(props),
         borderColor: mode('iGreen', 'iGreen')(props),
-        color: mode('iWhite', 'iBlack')(props)
+        color: mode('iBlack', 'iBlack')(props)
       },
       _hover: {
         bg: 'none',
-        color: mode('iWhite', 'iBlack')(props)
+        color: mode('iBlack', 'iBlack')(props)
       },
       _indeterminate: {
         bg: 'iSeparator',
-        color: mode('iWhite', 'iBlack')(props)
+        color: mode('iBlack', 'iBlack')(props)
       },
-      borderColor: mode('iBlack', 'iWhite')(props),
+      borderColor: mode('iWhite', 'iWhite')(props),
       boxShadow: 'none',
       outline: 'none'
     },
     icon: {},
     label: {
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       pt: '2px'
     }
   };
