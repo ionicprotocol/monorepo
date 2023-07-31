@@ -33,6 +33,7 @@ const AssetButton = ({
   return (
     <Box mb={2} mr={2} {...boxProps}>
       <CButton
+        height={'inherit'}
         isDisabled={!isEditableAdmin}
         isSelected={asset.cToken === selectedAsset.cToken}
         onClick={() => {

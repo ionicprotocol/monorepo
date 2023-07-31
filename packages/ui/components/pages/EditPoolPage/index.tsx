@@ -83,7 +83,7 @@ const EditPoolPage = memo(() => {
             mx="auto"
             width="100%"
           >
-            <HStack mx="auto" spacing={6} width="100%">
+            <HStack color={'iWhite'} mx="auto" spacing={6} width="100%">
               <ArrowBackIcon
                 cursor="pointer"
                 fontSize="2xl"

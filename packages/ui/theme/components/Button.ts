@@ -77,51 +77,49 @@ const ghost = defineStyle({
   p: 0
 });
 
-const solidGreen = defineStyle((props) => {
-  return {
-    _disabled: {
-      bg: mode('iGray', 'iGray')(props)
-    },
-    _focus: {
-      bg: mode('iGreen', 'iGreen')(props),
-      color: mode('iCardBg', 'iCardBg')(props)
-    },
-    _hover: {
-      _disabled: {
-        bg: mode('iGray', 'iGray')(props),
-        color: mode('iCardBg', 'iCardBg')(props)
-      },
-      bg: mode('iGreen', 'iGreen')(props),
-      color: mode('iCardBg', 'iCardBg')(props),
-      textDecoration: 'unset'
-    },
+const solidGreen = defineStyle((props) => ({
+  _disabled: {
+    bg: mode('iGray', 'iGray')(props)
+  },
+  _focus: {
     bg: mode('iGreen', 'iGreen')(props),
     color: mode('iCardBg', 'iCardBg')(props)
-  };
-});
-
-const solidGray = defineStyle((props) => {
-  return {
+  },
+  _hover: {
     _disabled: {
-      bg: mode('iGray', 'iGray')(props)
+      bg: mode('iGray', 'iGray')(props),
+      color: mode('iCardBg', 'iCardBg')(props)
     },
-    _focus: {
+    bg: mode('iGreen', 'iGreen')(props),
+    color: mode('iCardBg', 'iCardBg')(props),
+    textDecoration: 'unset'
+  },
+  bg: mode('iGreen', 'iGreen')(props),
+  borderColor: mode('iGreen', 'iGreen')(props),
+  color: mode('iCardBg', 'iCardBg')(props)
+}));
+
+const solidGray = defineStyle((props) => ({
+  _disabled: {
+    bg: mode('iGray', 'iGray')(props)
+  },
+  _focus: {
+    bg: mode('iGray', 'iGray')(props),
+    color: mode('iBlack', 'iBlack')(props)
+  },
+  _hover: {
+    _disabled: {
       bg: mode('iGray', 'iGray')(props),
       color: mode('iBlack', 'iBlack')(props)
     },
-    _hover: {
-      _disabled: {
-        bg: mode('iGray', 'iGray')(props),
-        color: mode('iBlack', 'iBlack')(props)
-      },
-      bg: mode('iGray', 'iGray')(props),
-      color: mode('iBlack', 'iBlack')(props),
-      textDecoration: 'unset'
-    },
     bg: mode('iGray', 'iGray')(props),
-    color: mode('iBlack', 'iBlack')(props)
-  };
-});
+    color: mode('iBlack', 'iBlack')(props),
+    textDecoration: 'unset'
+  },
+  bg: mode('iGray', 'iGray')(props),
+  borderColor: mode('iGray', 'iGray')(props),
+  color: mode('iBlack', 'iBlack')(props)
+}));
 
 const outlineLightGray = defineStyle((props) => {
   return {
