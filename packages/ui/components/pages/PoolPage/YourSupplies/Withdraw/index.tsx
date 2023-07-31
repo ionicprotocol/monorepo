@@ -7,14 +7,12 @@ export const Withdraw = ({
   asset,
   assets,
   chainId,
-  comptroller,
-  poolId
+  comptroller
 }: {
   asset: MarketData;
   assets: MarketData[];
   chainId: number;
   comptroller: string;
-  poolId: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
   // const { data: tokenData } = useTokenData(asset.underlyingToken, chainId);
@@ -31,7 +29,6 @@ export const Withdraw = ({
         comptrollerAddress={comptroller}
         isOpen={isModalOpen}
         onClose={closeModal}
-        poolId={poolId}
       />
     </Flex>
   );

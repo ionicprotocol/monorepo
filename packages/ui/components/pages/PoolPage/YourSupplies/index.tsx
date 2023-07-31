@@ -79,7 +79,8 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
     assets,
     totalSupplyBalanceFiat,
     totalSupplyBalanceNative,
-    totalCollateralSupplyBalanceFiat
+    totalCollateralSupplyBalanceFiat,
+    comptroller
   } = poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
@@ -257,7 +258,14 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Withdraw asset={row.getValue(ASSET)} />;
+          return (
+            <Withdraw
+              asset={row.getValue(ASSET)}
+              assets={assets}
+              chainId={chainId}
+              comptroller={comptroller}
+            />
+          );
         },
         header: () => null,
         id: WITHDRAW
@@ -270,7 +278,7 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
         id: SWITCH
       }
     ];
-  }, [allRewards, assetFilter, assetSort, chainId, totalSupplyApyPerAsset]);
+  }, [allRewards, assetFilter, assetSort, assets, chainId, comptroller, totalSupplyApyPerAsset]);
 
   const table = useReactTable({
     columns,

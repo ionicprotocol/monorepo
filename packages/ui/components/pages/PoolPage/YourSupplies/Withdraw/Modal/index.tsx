@@ -5,7 +5,6 @@ import {
   Divider,
   Flex,
   HStack,
-  Icon,
   Input,
   Skeleton,
   Slider,
@@ -13,11 +12,6 @@ import {
   SliderMark,
   SliderThumb,
   SliderTrack,
-  Spinner,
-  Step,
-  StepIndicator,
-  Stepper,
-  StepSeparator,
   Text
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@ionicprotocol/types';
@@ -26,7 +20,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
+import { BsExclamationCircle } from 'react-icons/bs';
 
 import { WithdrawError } from '@ui/components/pages/PoolPage/YourSupplies/Withdraw/Modal/WithdrawError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -55,7 +49,6 @@ interface WithdrawModalProps {
   comptrollerAddress: string;
   isOpen: boolean;
   onClose: () => void;
-  poolId: number;
 }
 
 export const WithdrawModal = ({
@@ -73,7 +66,7 @@ export const WithdrawModal = ({
   const queryClient = useQueryClient();
   const successToast = useSuccessToast();
 
-  const { cIPage, cGreen } = useColors();
+  const { cIPage } = useColors();
   const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
   const { data: maxWithdrawAmount } = useMaxWithdrawAmount(asset, chainId);
@@ -422,37 +415,6 @@ export const WithdrawModal = ({
                 </Button>
               </PopoverTooltip>
             </Flex>
-          </Flex>
-          <Flex justifyContent={'center'} mt={'20px'}>
-            <Stepper index={activeStep.index} variant={'green'} width={'400px'}>
-              {steps.map((step, index) => (
-                <Step key={index}>
-                  <StepIndicator data-value={step.status}>
-                    {step.status === 'active' ? (
-                      <Flex>
-                        <Spinner
-                          borderWidth={2}
-                          color={cGreen}
-                          height={{ base: '32px' }}
-                          left={0}
-                          position={'absolute'}
-                          top={0}
-                          width={{ base: '32px' }}
-                        />
-                        <Text>{index + 1}</Text>
-                      </Flex>
-                    ) : step.status === 'complete' ? (
-                      <Icon as={BsCheck} height={'24px'} width={'24px'} />
-                    ) : step.status === 'failed' ? (
-                      <Icon as={BsX} height={'24px'} width={'24px'} />
-                    ) : (
-                      <Text>{index + 1}</Text>
-                    )}
-                  </StepIndicator>
-                  <StepSeparator data-value={step.status} />
-                </Step>
-              ))}
-            </Stepper>
           </Flex>
         </Flex>
       }
