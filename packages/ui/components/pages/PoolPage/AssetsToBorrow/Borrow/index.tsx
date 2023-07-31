@@ -38,7 +38,10 @@ export const Borrow = ({
         popoverProps={{ placement: 'top', variant: 'warning' }}
         visible={!isActive}
       >
-        <Button onClick={openModal} variant={isActive ? 'solidGreen' : 'solidGray'}>
+        <Button
+          onClick={isActive ? openModal : undefined}
+          variant={isActive ? 'solidGreen' : 'solidGray'}
+        >
           Borrow
         </Button>
       </PopoverTooltip>
