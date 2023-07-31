@@ -129,6 +129,8 @@ export const BorrowModal = ({
     } else {
       setIsAmountValid(amount.lte(maxBorrowAmount.bigNumber) && amount.gte(minBorrowAsset));
     }
+
+    return null;
   });
 
   useEffect(() => {
