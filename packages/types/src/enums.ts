@@ -369,9 +369,9 @@ export enum assetSymbols {
   DPX = "DPX",
   MAGIC = "MAGIC",
   GMX = "GMX",
-  saddleFraxBP = "saddleFraxBP",
-  saddleFraxUsdsBP = "saddleFraxUsdsBP",
-  saddleFraxUsdtBP = "saddleFraxUsdtBP",
+  // saddleFraxBP = "saddleFraxBP",
+  // saddleFraxUsdsBP = "saddleFraxUsdsBP",
+  // saddleFraxUsdtBP = "saddleFraxUsdtBP",
   USDs = "USDs",
 
   PAR_USDC_CURVE = "PAR_USDC CURVE",
