@@ -34,7 +34,7 @@ class MyDocument extends Document {
           />
           <meta content="https://ionic.money/" key="twurl" name="twitter:url" />
           <meta
-            content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
+            content="https://d1912tcoux65lj.cloudfront.net/social/ionic_social_preview.png"
             key="twimage"
             name="twitter:image"
           />
@@ -42,7 +42,7 @@ class MyDocument extends Document {
           <meta content="website" key="ogtype" property="og:type" />
           <meta content="Ionic Protocol" key="ogsitename" property="og:site_name" />
           <meta
-            content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
+            content="https://d1912tcoux65lj.cloudfront.net/social/ionic_social_preview.png"
             key="ogimage"
             property="og:image"
           />
