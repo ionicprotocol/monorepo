@@ -23,7 +23,7 @@ class MyDocument extends Document {
 
           <meta content="summary_large_image" key="twcard" name="twitter:card" />
           <meta
-            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
+            content="Ionic - Money markets for all. Lending and borrowing pools for any asset."
             key="twtitle"
             name="twitter:title"
           />
@@ -47,7 +47,7 @@ class MyDocument extends Document {
             property="og:image"
           />
           <meta
-            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
+            content="Ionic - Money markets for all. Lending and borrowing pools for any asset."
             key="ogtitle"
             property="og:title"
           />
