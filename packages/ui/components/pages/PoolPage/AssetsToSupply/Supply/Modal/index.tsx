@@ -41,6 +41,7 @@ import {
   ACTIVE,
   COMPLETE,
   FAILED,
+  INCOMPLETE,
   READY,
   SUPPLY_STEPS,
   SUPPLY_STEPS_WITH_WRAP
@@ -95,8 +96,11 @@ export const SupplyModal = ({
   const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
   const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, chainId);
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken, chainId);
-  const { data: myNativeBalance } = useTokenBalance(
+  const { data: myBalance, isLoading: isBalanceLoading } = useTokenBalance(
+    asset.underlyingToken,
+    chainId
+  );
+  const { data: myNativeBalance, isLoading: isNativeBalanceLoading } = useTokenBalance(
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
     chainId
   );
@@ -213,10 +217,18 @@ export const SupplyModal = ({
     setIsLoading(true);
 
     try {
-      if (maxSupplyAmount.bigNumber.lt(constants.Zero) || maxSupplyAmount.bigNumber.isZero()) {
+      let maxBN;
+
+      if (optionToWrap) {
+        maxBN = await currentSdk.signer.getBalance();
+      } else {
+        maxBN = maxSupplyAmount.bigNumber;
+      }
+
+      if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
       } else {
-        const str = utils.formatUnits(maxSupplyAmount.bigNumber, asset.underlyingDecimals);
+        const str = utils.formatUnits(maxBN, asset.underlyingDecimals);
         updateAmount(str);
       }
 
@@ -485,16 +497,27 @@ export const SupplyModal = ({
                 Amount
               </Text>
               <HStack>
-                <Text size={'sm'}>Wallet Balance: </Text>
                 <Text size={'sm'}>
-                  {myBalance
+                  {optionToWrap ? 'Wallet Native Balance: ' : 'Wallet Balance: '}
+                </Text>
+                <Text size={'sm'}>
+                  {optionToWrap
+                    ? myNativeBalance
+                      ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
+                      : 0
+                    : myBalance
                     ? smallFormatter(
                         Number(utils.formatUnits(myBalance, asset.underlyingDecimals)),
                         true
                       )
                     : 0}
                 </Text>
-                <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
+                <Button
+                  color={'iGreen'}
+                  isLoading={optionToWrap ? isNativeBalanceLoading : isBalanceLoading}
+                  onClick={setToMax}
+                  variant={'ghost'}
+                >
                   MAX
                 </Button>
               </HStack>
@@ -649,24 +672,22 @@ export const SupplyModal = ({
             {optionToWrap ? (
               <Button
                 flex={1}
-                isDisabled={isLoading || activeStep.index < 1}
+                isDisabled={isLoading || !isAmountValid}
                 isLoading={activeStep.index === 1 && isLoading}
                 onClick={onWrapNativeToken}
-                variant={'solidGreen'}
+                variant={getVariant(steps[0].status)}
               >
-                Wrap Native Token
+                {steps[0].status === COMPLETE ? 'Wrapped' : 'Wrap Native Token'}
               </Button>
             ) : null}
             <Button
               flex={1}
-              isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1)}
+              isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1) || !isAmountValid}
               isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
               onClick={onApprove}
-              variant={
-                activeStep.index === (optionToWrap ? 2 : 1) ? 'solidGreen' : 'outlineLightGray'
-              }
+              variant={getVariant(steps[optionToWrap ? 1 : 0].status)}
             >
-              {activeStep.index === (optionToWrap ? 2 : 1) ? `Approve ` : 'Approved'}{' '}
+              {steps[optionToWrap ? 1 : 0].status !== COMPLETE ? `Approve ` : 'Approved'}{' '}
               {asset.underlyingSymbol}
             </Button>
             <Flex flex={1}>
@@ -683,16 +704,12 @@ export const SupplyModal = ({
                 visible={!isAmountValid}
               >
                 <Button
-                  isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2)}
+                  isDisabled={
+                    isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid
+                  }
                   isLoading={activeStep.index === 3 && isLoading}
                   onClick={isAmountValid ? onSupply : undefined}
-                  variant={
-                    isAmountValid && activeStep.index === (optionToWrap ? 3 : 2)
-                      ? activeStep.status === FAILED
-                        ? 'outlineRed'
-                        : 'solidGreen'
-                      : 'solidGray'
-                  }
+                  variant={getVariant(steps[optionToWrap ? 2 : 1].status)}
                   width={'100%'}
                 >
                   Supply {asset.underlyingSymbol}
@@ -747,4 +764,13 @@ export const SupplyModal = ({
       }}
     />
   );
+};
+
+export const getVariant = (status: string) => {
+  if (status === COMPLETE) return 'outlineLightGray';
+  if (status === FAILED) return 'outlineRed';
+  if (status === ACTIVE || status === READY) return 'solidGreen';
+  if (status === INCOMPLETE) return 'solidGray';
+
+  return 'solidGreen';
 };
