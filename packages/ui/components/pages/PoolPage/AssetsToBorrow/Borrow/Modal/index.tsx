@@ -74,7 +74,11 @@ export const BorrowModal = ({
   const { cIPage, cRed } = useColors();
   const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
-  const { data: maxBorrowAmount } = useMaxBorrowAmount(asset, comptrollerAddress, chainId);
+  const { data: maxBorrowAmount, isLoading: isMaxLoading } = useMaxBorrowAmount(
+    asset,
+    comptrollerAddress,
+    chainId
+  );
   const { data: borrowApyPerAsset, isLoading: isBorrowApyLoading } = useBorrowAPYs(assets, chainId);
 
   const ltv = useMemo(
@@ -284,7 +288,12 @@ export const BorrowModal = ({
                 <Text size={'sm'}>
                   {maxBorrowAmount ? smallFormatter(maxBorrowAmount.number, true) : 0}
                 </Text>
-                <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
+                <Button
+                  color={'iGreen'}
+                  isLoading={isMaxLoading}
+                  onClick={setToMax}
+                  variant={'ghost'}
+                >
                   MAX
                 </Button>
               </HStack>

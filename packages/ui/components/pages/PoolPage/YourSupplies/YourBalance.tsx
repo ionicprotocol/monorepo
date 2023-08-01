@@ -12,21 +12,21 @@ export const YourBalance = ({ asset, chainId }: { asset: MarketData; chainId: nu
 
   return (
     <>
-      {!address || (asset.borrowBalance.isZero() && asset.isBorrowPaused) ? (
+      {!address ? (
         <VStack alignItems="flex-end">
-          <SimpleTooltip isDisabled={!!address} label="Connect your wallet">
+          <SimpleTooltip label="Connect your wallet">
             <Text textAlign="center">-</Text>
           </SimpleTooltip>
         </VStack>
       ) : (
         <BalanceCell
           primary={{
-            value: asset.borrowBalanceFiat
+            value: asset.supplyBalanceFiat
           }}
           secondary={{
             decimals: asset.underlyingDecimals.toNumber(),
             symbol: tokenData?.symbol || '',
-            value: asset.borrowBalance
+            value: asset.supplyBalance
           }}
         />
       )}
