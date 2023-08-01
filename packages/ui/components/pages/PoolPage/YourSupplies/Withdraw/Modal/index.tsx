@@ -69,7 +69,7 @@ export const WithdrawModal = ({
   const { cIPage } = useColors();
   const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
-  const { data: maxWithdrawAmount } = useMaxWithdrawAmount(asset, chainId);
+  const { data: maxWithdrawAmount, isLoading: isMaxLoading } = useMaxWithdrawAmount(asset, chainId);
   const withdrawableAmount = useMemo(() => {
     if (maxWithdrawAmount) {
       return utils.formatUnits(maxWithdrawAmount, asset.underlyingDecimals);
@@ -280,7 +280,12 @@ export const WithdrawModal = ({
               <HStack>
                 <Text size={'sm'}>Withdrawable amount: </Text>
                 <Text size={'sm'}>{smallFormatter(Number(withdrawableAmount), true)}</Text>
-                <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
+                <Button
+                  color={'iGreen'}
+                  isLoading={isMaxLoading}
+                  onClick={setToMax}
+                  variant={'ghost'}
+                >
                   MAX
                 </Button>
               </HStack>
