@@ -36,20 +36,11 @@ export const TimeFrames = [
 export const SupplyInfo = ({ asset, chainId }: { asset?: MarketData; chainId: number }) => {
   const { cIPage } = useColors();
   const [milliSeconds, setMilliSeconds] = useState<number>(MILLI_SECONDS_PER_MONTH);
-  console.warn(asset, chainId);
-  // const { data: historyData, isLoading } = useHistoryData(
-  //   APY,
-  //   asset.underlyingToken,
-  //   asset.cToken,
-  //   chainId,
-  //   milliSeconds
-  // );
-
   const { data: historyData, isLoading } = useHistoryData(
     APY,
-    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-    '0x3Af258d24EBdC03127ED6cEb8e58cA90835fbca5',
-    56,
+    asset?.underlyingToken,
+    asset?.cToken,
+    chainId,
     milliSeconds
   );
 

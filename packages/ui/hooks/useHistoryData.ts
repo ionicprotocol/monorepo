@@ -8,15 +8,15 @@ import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export function useHistoryData(
   mode: string,
-  underlyingAddress: string,
-  cTokenAddress: string,
-  chainId: number,
-  milliSeconds: number
+  underlyingAddress?: string,
+  cTokenAddress?: string,
+  chainId?: number,
+  milliSeconds?: number
 ) {
   const { data: usdPrices } = useAllUsdPrices();
 
   const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[chainId.toString()]) {
+    if (chainId && usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
     } else {
       return undefined;
