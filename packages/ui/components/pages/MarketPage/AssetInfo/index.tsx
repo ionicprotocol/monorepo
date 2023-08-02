@@ -152,7 +152,7 @@ export const AssetInfo = ({
                   <IconButton
                     alignSelf={'center'}
                     aria-label="asset link"
-                    icon={<BiLinkExternal fontSize={'24px'} strokeWidth={'0.5px'} />}
+                    icon={<BiLinkExternal fontSize={'20px'} strokeWidth={'0.5px'} />}
                   />
                 </HStack>
               </VStack>

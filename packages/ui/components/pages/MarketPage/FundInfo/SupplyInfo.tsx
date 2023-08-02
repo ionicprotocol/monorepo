@@ -140,7 +140,7 @@ export const SupplyInfo = ({ asset, chainId }: { asset?: MarketData; chainId: nu
                       key={tf.label}
                       onClick={() => setMilliSeconds(tf.milliSeconds)}
                       p={2}
-                      variant="filter"
+                      variant="_filter"
                     >
                       <Center fontWeight="bold" height="100%" width="100%">
                         {tf.label}

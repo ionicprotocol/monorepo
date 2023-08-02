@@ -48,7 +48,14 @@ const MarketPage = memo(() => {
               <UtilizationRate asset={asset} chainId={Number(chainId)} isLoading={isLoading} />
             </Flex>
             <Flex display={'block'} flex={1}>
-              <YourInfo />
+              <YourInfo
+                asset={asset}
+                assets={poolData?.assets}
+                chainId={Number(chainId)}
+                comptroller={poolData?.comptroller}
+                isLoading={isLoading}
+                poolId={poolId}
+              />
             </Flex>
           </Flex>
         </PageLayout>
