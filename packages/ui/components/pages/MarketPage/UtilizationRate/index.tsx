@@ -38,7 +38,7 @@ export const UtilizationRate = ({
           </Link>
         )}
       </Flex>
-      <Skeleton isLoaded={!isLoading || !isChartLoading}>
+      <Skeleton isLoaded={!isLoading && !isChartLoading}>
         <Box height="250px" pb={4} width="100%">
           {asset ? (
             asset.isBorrowPaused && asset.totalBorrow.isZero() ? (

@@ -32,12 +32,22 @@ export const YourInfo = ({
 }) => {
   const { cIPage } = useColors();
   const [usdAmount, setUsdAmount] = useState<number>(0);
-  const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
+  const {
+    isOpen: isSupplyModalOpen,
+    onOpen: openSupplyModal,
+    onClose: closeSupplyModal
+  } = useDisclosure();
+  const {
+    isOpen: isBorrowModalOpen,
+    onOpen: openBorrowModal,
+    onClose: closeBorrowModal
+  } = useDisclosure();
   const { data: price } = useUsdPrice(chainId.toString());
   const { data: balance, isLoading: isBalanceLoading } = useTokenBalance(
     asset?.underlyingToken,
     chainId
   );
+
   const { data: supplyCap, isLoading: isSupplyCapLoading } = useSupplyCap({
     chainId,
     comptroller,
@@ -76,9 +86,9 @@ export const YourInfo = ({
             ) : (
               <Text size={'lg'}>
                 {asset && balance
-                  ? `${utils.formatUnits(balance, asset.underlyingDecimals)} ${
-                      asset.underlyingSymbol
-                    }`
+                  ? `${smallFormatter(
+                      Number(utils.formatUnits(balance, asset.underlyingDecimals))
+                    )} ${asset.underlyingSymbol}`
                   : '-'}
               </Text>
             )}
@@ -111,7 +121,7 @@ export const YourInfo = ({
           </Flex>
           {asset && assets && comptroller && poolId && (
             <>
-              <Button onClick={openModal} variant={'solidGreen'}>
+              <Button onClick={openSupplyModal} variant={'solidGreen'}>
                 Supply
               </Button>
               <SupplyModal
@@ -119,8 +129,8 @@ export const YourInfo = ({
                 assets={assets}
                 chainId={chainId}
                 comptrollerAddress={comptroller}
-                isOpen={isModalOpen}
-                onClose={closeModal}
+                isOpen={isSupplyModalOpen}
+                onClose={closeSupplyModal}
                 poolId={Number(poolId)}
               />
             </>
@@ -151,7 +161,7 @@ export const YourInfo = ({
           {asset && assets && comptroller && poolId && (
             <>
               <Button
-                onClick={isActive ? openModal : undefined}
+                onClick={isActive ? openBorrowModal : undefined}
                 variant={isActive ? 'solidGreen' : 'solidGray'}
               >
                 Borrow
@@ -161,8 +171,8 @@ export const YourInfo = ({
                 assets={assets}
                 chainId={chainId}
                 comptrollerAddress={comptroller}
-                isOpen={isModalOpen}
-                onClose={closeModal}
+                isOpen={isBorrowModalOpen}
+                onClose={closeBorrowModal}
               />
             </>
           )}

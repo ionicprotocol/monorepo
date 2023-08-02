@@ -44,7 +44,14 @@ const MarketPage = memo(() => {
           <Flex direction={{ base: 'column', md: 'row' }} gap={'20px'}>
             <Flex direction={{ base: 'column' }} flex={2} gap={'24px'}>
               <AssetDetails asset={asset} chainId={Number(chainId)} isLoading={isLoading} />
-              <FundInfo asset={asset} chainId={Number(chainId)} />
+              <FundInfo
+                asset={asset}
+                assets={poolData?.assets}
+                chainId={Number(chainId)}
+                comptroller={poolData?.comptroller}
+                isLoading={isLoading}
+                poolId={poolId}
+              />
               <UtilizationRate asset={asset} chainId={Number(chainId)} isLoading={isLoading} />
             </Flex>
             <Flex display={'block'} flex={1}>

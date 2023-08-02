@@ -100,6 +100,7 @@ export const SupplyModal = ({
     asset.underlyingToken,
     chainId
   );
+
   const { data: myNativeBalance, isLoading: isNativeBalanceLoading } = useTokenBalance(
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
     chainId
