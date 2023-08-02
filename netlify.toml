@@ -33,6 +33,7 @@ POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
 ETHEREUM = "true"
+ZKEVM = "true"
 IS_SENTRY_ENABLED = "false"
 
 [context.development.environment]
@@ -44,6 +45,7 @@ POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
 ETHEREUM = "true"
+ZKEVM = "true"
 IS_SENTRY_ENABLED = "false"
 
 [context.production.environment]
@@ -55,6 +57,7 @@ POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
 ETHEREUM = "true"
+ZKEVM = "false"
 IS_SENTRY_ENABLED = "true"
 
 [functions]

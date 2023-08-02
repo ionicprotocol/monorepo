@@ -164,6 +164,11 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || `https://linea-mainnet.infura.io/v3/`,
       accounts: { mnemonic },
       chainId: 59144
+    },
+    zkevm: {
+      url: OVERRIDE_RPC_URL || `https://zkevm-rpc.com`,
+      accounts: { mnemonic },
+      chainId: 1101
     }
   }
 };
