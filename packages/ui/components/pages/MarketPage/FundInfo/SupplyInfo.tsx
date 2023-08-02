@@ -33,7 +33,7 @@ export const TimeFrames = [
   { label: '1Y', milliSeconds: MILLI_SECONDS_PER_YEAR }
 ];
 
-export const SupplyInfo = ({ asset, chainId }: { asset: MarketData; chainId: number }) => {
+export const SupplyInfo = ({ asset, chainId }: { asset?: MarketData; chainId: number }) => {
   const { cIPage } = useColors();
   const [milliSeconds, setMilliSeconds] = useState<number>(MILLI_SECONDS_PER_MONTH);
   console.warn(asset, chainId);

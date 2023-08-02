@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { BiLinkExternal, BiWallet } from 'react-icons/bi';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
+import { LoadingText } from '@ui/components/shared/LoadingText';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
@@ -58,14 +59,22 @@ export const AssetInfo = ({
               />
               <HStack alignItems={'baseline'}>
                 <Skeleton isLoaded={!isPoolDataLoading}>
-                  <Text size="xl" textAlign="left">
-                    {asset ? asset.underlyingName : 'Asset Name'}
-                  </Text>
+                  {isPoolDataLoading ? (
+                    <LoadingText size={'xl'} />
+                  ) : (
+                    <Text size="xl" textAlign="left">
+                      {asset ? asset.underlyingName : '--'}
+                    </Text>
+                  )}
                 </Skeleton>
                 <Skeleton isLoaded={!isPoolDataLoading}>
-                  <Text color={'iGray'} textAlign="left">
-                    {asset ? asset.underlyingSymbol : 'Asset Name'}
-                  </Text>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iGray'} textAlign="left">
+                      {asset ? asset.underlyingSymbol : '--'}
+                    </Text>
+                  )}
                 </Skeleton>
               </HStack>
               <HStack spacing={1}>
@@ -89,9 +98,13 @@ export const AssetInfo = ({
                   Reserve Size
                 </Text>
                 <Skeleton isLoaded={!isPoolDataLoading}>
-                  <Text color={'iWhite'} size="lg">
-                    $213.00M
-                  </Text>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iWhite'} size="lg">
+                      $213.00M
+                    </Text>
+                  )}
                 </Skeleton>
               </VStack>
               <VStack alignItems="flex-start">
@@ -99,9 +112,13 @@ export const AssetInfo = ({
                   Available Liquidity
                 </Text>
                 <Skeleton isLoaded={!isPoolDataLoading}>
-                  <Text color={'iWhite'} size="lg">
-                    {asset ? smallUsdFormatter(asset.liquidityFiat, true) : 'liquidity'}
-                  </Text>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iWhite'} size="lg">
+                      {asset ? smallUsdFormatter(asset.liquidityFiat, true) : '--'}
+                    </Text>
+                  )}
                 </Skeleton>
               </VStack>
               <VStack alignItems="flex-start">
@@ -109,9 +126,13 @@ export const AssetInfo = ({
                   Utilization Rate
                 </Text>
                 <Skeleton isLoaded={!isPoolDataLoading}>
-                  <Text color={'iWhite'} size="lg">
-                    {asset ? `${smallFormatter(asset.utilization, true)}%` : 'utilization'}
-                  </Text>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iWhite'} size="lg">
+                      {asset ? `${smallFormatter(asset.utilization, true)}%` : '--'}
+                    </Text>
+                  )}
                 </Skeleton>
               </VStack>
               <VStack alignItems="flex-start">
@@ -120,9 +141,13 @@ export const AssetInfo = ({
                 </Text>
                 <HStack>
                   <Skeleton isLoaded={!isPriceLoading}>
-                    <Text color={'iWhite'} size="lg">
-                      {usdPrice ? smallUsdFormatter(usdPrice, true) : 'asset price'}
-                    </Text>
+                    {isPriceLoading ? (
+                      <LoadingText />
+                    ) : (
+                      <Text color={'iWhite'} size="lg">
+                        {usdPrice ? smallUsdFormatter(usdPrice, true) : '--'}
+                      </Text>
+                    )}
                   </Skeleton>
                   <IconButton
                     alignSelf={'center'}

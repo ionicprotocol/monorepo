@@ -28,35 +28,31 @@ const MarketPage = memo(() => {
     [router.isReady, router.query.cToken]
   );
 
-  const { data: poolData } = usePoolData(poolId, Number(chainId));
+  const { data: poolData, isLoading } = usePoolData(poolId, Number(chainId));
   const asset = poolData?.assets.find((asset) => asset.cToken === cToken);
 
   return (
     <>
-      {asset && (
-        <>
-          <Head>
-            <title key="title">{asset.underlyingName}</title>
-          </Head>
-          <PageTransitionLayout>
-            <PageLayout>
-              <Flex mb={'20px'}>
-                <AssetInfo cToken={cToken} chainId={Number(chainId)} poolId={poolId} />
-              </Flex>
-              <Flex direction={{ base: 'column', md: 'row' }} gap={'20px'}>
-                <Flex direction={{ base: 'column' }} flex={2} gap={'24px'}>
-                  <AssetDetails asset={asset} chainId={Number(chainId)} />
-                  <FundInfo asset={asset} chainId={Number(chainId)} />
-                  <UtilizationRate asset={asset} chainId={Number(chainId)} />
-                </Flex>
-                <Flex display={'block'} flex={1}>
-                  <YourInfo />
-                </Flex>
-              </Flex>
-            </PageLayout>
-          </PageTransitionLayout>
-        </>
-      )}
+      <Head>
+        <title key="title">{asset ? asset.underlyingName : 'Market Details'}</title>
+      </Head>
+      <PageTransitionLayout>
+        <PageLayout>
+          <Flex mb={'20px'}>
+            <AssetInfo cToken={cToken} chainId={Number(chainId)} poolId={poolId} />
+          </Flex>
+          <Flex direction={{ base: 'column', md: 'row' }} gap={'20px'}>
+            <Flex direction={{ base: 'column' }} flex={2} gap={'24px'}>
+              <AssetDetails asset={asset} chainId={Number(chainId)} isLoading={isLoading} />
+              <FundInfo asset={asset} chainId={Number(chainId)} />
+              <UtilizationRate asset={asset} chainId={Number(chainId)} isLoading={isLoading} />
+            </Flex>
+            <Flex display={'block'} flex={1}>
+              <YourInfo />
+            </Flex>
+          </Flex>
+        </PageLayout>
+      </PageTransitionLayout>
     </>
   );
 });
