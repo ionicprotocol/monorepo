@@ -39,7 +39,7 @@ export const assets: SupportedAsset[] = [
     extraDocs: wrappedAssetDocs(SupportedChains.zkevm)
   },
   {
-    symbol: assetSymbols.DAI,
+    symbol: assetSymbols.USDT,
     underlying: USDT,
     name: "Tether USD",
     decimals: 6,
