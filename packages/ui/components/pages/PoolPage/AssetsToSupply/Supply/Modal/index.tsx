@@ -100,6 +100,7 @@ export const SupplyModal = ({
     asset.underlyingToken,
     chainId
   );
+
   const { data: myNativeBalance, isLoading: isNativeBalanceLoading } = useTokenBalance(
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
     chainId
@@ -148,18 +149,10 @@ export const SupplyModal = ({
   });
   const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets ?? [], chainId);
 
-  const optionToWrap = useMemo(() => {
-    return (
-      asset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
-      myBalance?.isZero() &&
-      !myNativeBalance?.isZero()
-    );
-  }, [
-    asset.underlyingToken,
-    currentSdk?.chainSpecificAddresses.W_TOKEN,
-    myBalance,
-    myNativeBalance
-  ]);
+  const optionToWrap =
+    asset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
+    myBalance?.isZero() &&
+    !myNativeBalance?.isZero();
 
   useEffect(() => {
     if (optionToWrap) {
@@ -685,7 +678,7 @@ export const SupplyModal = ({
               isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1) || !isAmountValid}
               isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
               onClick={onApprove}
-              variant={getVariant(steps[optionToWrap ? 1 : 0].status)}
+              variant={getVariant(steps[optionToWrap ? 1 : 0]?.status)}
             >
               {steps[optionToWrap ? 1 : 0].status !== COMPLETE ? `Approve ` : 'Approved'}{' '}
               {asset.underlyingSymbol}
@@ -709,7 +702,7 @@ export const SupplyModal = ({
                   }
                   isLoading={activeStep.index === 3 && isLoading}
                   onClick={isAmountValid ? onSupply : undefined}
-                  variant={getVariant(steps[optionToWrap ? 2 : 1].status)}
+                  variant={getVariant(steps[optionToWrap ? 2 : 1]?.status)}
                   width={'100%'}
                 >
                   Supply {asset.underlyingSymbol}
@@ -759,7 +752,11 @@ export const SupplyModal = ({
         if (!isLoading) {
           setUserEnteredAmount('');
           setAmount(constants.Zero);
-          setSteps([...SUPPLY_STEPS(asset.underlyingSymbol)]);
+          setSteps(
+            optionToWrap
+              ? [...SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)]
+              : [...SUPPLY_STEPS(asset.underlyingSymbol)]
+          );
         }
       }}
     />

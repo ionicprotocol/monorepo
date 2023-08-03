@@ -48,7 +48,6 @@ import {
   APY,
   ASSET,
   COLLATERAL,
-  DETAILS,
   MARKETS_COUNT_PER_PAGE,
   POOLS_COUNT_PER_PAGE,
   SEARCH,
@@ -202,24 +201,20 @@ export const AssetsToSupply = ({ poolData }: { poolData: PoolData }) => {
       {
         cell: ({ row }) => {
           return (
-            <Supply
-              asset={row.getValue(ASSET)}
-              assets={assets}
-              chainId={chainId}
-              comptroller={comptroller}
-              poolId={poolId}
-            />
+            <HStack justifyContent={'flex-end'}>
+              <Supply
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+                poolId={poolId}
+              />
+              <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />
+            </HStack>
           );
         },
         header: () => null,
         id: SUPPLY
-      },
-      {
-        cell: ({ row }) => {
-          return <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />;
-        },
-        header: () => null,
-        id: DETAILS
       }
     ];
   }, [

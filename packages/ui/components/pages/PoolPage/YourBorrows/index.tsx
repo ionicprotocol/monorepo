@@ -35,10 +35,13 @@ import { utils } from 'ethers';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
+import { Borrow } from '../AssetsToBorrow/Borrow';
+
+import { Details } from './Details';
+
 import { Apr } from '@ui/components/pages/PoolPage/YourBorrows/Apr';
 import { AprType } from '@ui/components/pages/PoolPage/YourBorrows/AprType';
 import { Asset } from '@ui/components/pages/PoolPage/YourBorrows/Asset';
-import { Borrow } from '@ui/components/pages/PoolPage/YourBorrows/Borrow';
 import { Debt } from '@ui/components/pages/PoolPage/YourBorrows/Debt';
 import { Repay } from '@ui/components/pages/PoolPage/YourBorrows/Repay';
 import { CIconButton } from '@ui/components/shared/Button';
@@ -51,7 +54,6 @@ import {
   APR,
   APR_TYPE,
   ASSET,
-  BORROW,
   COLLATERAL,
   DEBT,
   MARKETS_COUNT_PER_PAGE,
@@ -61,6 +63,7 @@ import {
 } from '@ui/constants/index';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
+import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmount';
 import { useYourBorrowsRowData } from '@ui/hooks/yourBorrows/useYourBorrowsRowData';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -73,8 +76,14 @@ export type YourBorrowRowData = {
 };
 
 export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
-  const { chainId, assets, totalBorrowBalanceNative, totalBorrowBalanceFiat, comptroller } =
-    poolData;
+  const {
+    chainId,
+    assets,
+    totalBorrowBalanceNative,
+    totalBorrowBalanceFiat,
+    comptroller,
+    id: poolId
+  } = poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -83,6 +92,7 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
   const [globalFilter, setGlobalFilter] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
   const { data: borrowApyPerAsset } = useBorrowAPYs(assets, chainId);
+  const { data: maxBorrowAmounts } = useMaxBorrowAmounts(assets, comptroller, chainId);
 
   const totalBorrowApy = useMemo(() => {
     if (borrowApyPerAsset) {
@@ -217,26 +227,38 @@ export const YourBorrows = ({ poolData }: { poolData: PoolData }) => {
       {
         cell: ({ row }) => {
           return (
-            <Repay
-              asset={row.getValue(ASSET)}
-              assets={assets}
-              chainId={chainId}
-              comptroller={comptroller}
-            />
+            <HStack justifyContent={'flex-end'}>
+              <Borrow
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+                maxBorrowAmounts={maxBorrowAmounts}
+              />
+              <Repay
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+              />
+              <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />
+            </HStack>
           );
         },
         header: () => null,
         id: REPAY
-      },
-      {
-        cell: ({ row }) => {
-          return <Borrow asset={row.getValue(ASSET)} />;
-        },
-        header: () => null,
-        id: BORROW
       }
     ];
-  }, [assetFilter, assetSort, assets, borrowApyPerAsset, chainId, comptroller]);
+  }, [
+    assetFilter,
+    assetSort,
+    assets,
+    borrowApyPerAsset,
+    chainId,
+    comptroller,
+    maxBorrowAmounts,
+    poolId
+  ]);
 
   const table = useReactTable({
     columns,
