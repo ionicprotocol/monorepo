@@ -1,5 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, HStack, IconButton, Img, Link, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { utils } from 'ethers';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { BiLinkExternal, BiWallet } from 'react-icons/bi';
@@ -13,6 +14,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { usePoolData } from '@ui/hooks/usePoolData';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { useTotalReserves } from '@ui/hooks/useTotalReserves';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
@@ -33,6 +35,7 @@ export const AssetInfo = ({
   const { data: usdPrice, isLoading: isPriceLoading } = useUsdPrice(chainId.toString());
   const scanUrl = useMemo(() => getScanUrlByChainId(chainId), [chainId]);
   const asset = poolData?.assets.find((asset) => asset.cToken === cToken);
+  const { data: reserves, isLoading: isReserveLoading } = useTotalReserves(asset?.cToken, chainId);
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -121,12 +124,16 @@ export const AssetInfo = ({
                 <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                   Reserve Size
                 </Text>
-                <Skeleton isLoaded={!isPoolDataLoading}>
-                  {isPoolDataLoading ? (
+                <Skeleton isLoaded={!isPoolDataLoading && !isReserveLoading}>
+                  {isPoolDataLoading || isReserveLoading ? (
                     <LoadingText />
                   ) : (
                     <Text color={'iWhite'} size="lg">
-                      $213.00M*
+                      {asset && reserves
+                        ? smallUsdFormatter(
+                            Number(utils.formatUnits(reserves, asset.underlyingDecimals))
+                          )
+                        : '--'}
                     </Text>
                   )}
                 </Skeleton>
