@@ -9,7 +9,7 @@ export interface SupplyCapsDataForPoolType {
   supplyCaps: BigNumber;
 }
 
-export const useSupplyCapsDataForPool = (comptrollerAddress: string, poolChainId?: number) => {
+export const useSupplyCapsDataForPool = (comptrollerAddress?: string, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
@@ -50,8 +50,8 @@ export const useSupplyCapsDataForPool = (comptrollerAddress: string, poolChainId
 };
 
 export const useSupplyCapsDataForAsset = (
-  comptrollerAddress: string,
-  cTokenAddress: string,
+  comptrollerAddress?: string,
+  cTokenAddress?: string,
   poolChainId?: number
 ) => {
   const { data: supplyCapsDataForPool } = useSupplyCapsDataForPool(comptrollerAddress, poolChainId);

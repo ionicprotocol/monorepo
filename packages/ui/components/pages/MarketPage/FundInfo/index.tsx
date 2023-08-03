@@ -6,7 +6,21 @@ import { SupplyInfo } from './SupplyInfo';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-export const FundInfo = ({ asset, chainId }: { asset: MarketData; chainId: number }) => {
+export const FundInfo = ({
+  asset,
+  assets,
+  chainId,
+  comptroller,
+  isLoading,
+  poolId
+}: {
+  asset?: MarketData;
+  assets?: MarketData[];
+  chainId: number;
+  comptroller?: string;
+  isLoading: boolean;
+  poolId: string;
+}) => {
   return (
     <CardBox>
       <Tabs>
@@ -16,10 +30,23 @@ export const FundInfo = ({ asset, chainId }: { asset: MarketData; chainId: numbe
         </TabList>
         <TabPanels>
           <TabPanel p={0}>
-            <SupplyInfo asset={asset} chainId={Number(chainId)} />
+            <SupplyInfo
+              asset={asset}
+              assets={assets}
+              chainId={Number(chainId)}
+              comptroller={comptroller}
+              isLoading={isLoading}
+              poolId={poolId}
+            />
           </TabPanel>
           <TabPanel p={0}>
-            <BorrowInfo />
+            <BorrowInfo
+              asset={asset}
+              assets={assets}
+              chainId={Number(chainId)}
+              comptroller={comptroller}
+              isLoading={isLoading}
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>

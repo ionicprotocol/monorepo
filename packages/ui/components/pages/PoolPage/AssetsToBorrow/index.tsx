@@ -48,7 +48,6 @@ import {
   ASSET,
   AVAILABLE,
   BORROW,
-  DETAILS,
   MARKETS_COUNT_PER_PAGE,
   POOLS_COUNT_PER_PAGE,
   SEARCH
@@ -176,24 +175,20 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
       {
         cell: ({ row }) => {
           return (
-            <Borrow
-              asset={row.getValue(ASSET)}
-              assets={assets}
-              chainId={chainId}
-              comptroller={comptroller}
-              maxBorrowAmounts={maxBorrowAmounts}
-            />
+            <HStack justifyContent={'flex-end'}>
+              <Borrow
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+                maxBorrowAmounts={maxBorrowAmounts}
+              />
+              <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />
+            </HStack>
           );
         },
         header: () => null,
         id: BORROW
-      },
-      {
-        cell: ({ row }) => {
-          return <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />;
-        },
-        header: () => null,
-        id: DETAILS
       }
     ];
   }, [

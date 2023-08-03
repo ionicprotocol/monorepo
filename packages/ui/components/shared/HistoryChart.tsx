@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Grid, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import { Grid, HStack, Text, VStack } from '@chakra-ui/react';
 import type { ChartData } from '@ionicprotocol/types';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
@@ -44,6 +44,7 @@ const HistoryChart = ({
   milliSeconds: number;
   mode: string;
 }) => {
+  const { cGreen, cCardBg, cWhite } = useColors();
   const [min, max, length] = useMemo(() => {
     const yVaules: number[] = [];
 
@@ -59,17 +60,17 @@ const HistoryChart = ({
   }, [historyData]);
   const keys = historyData.length > 0 ? Object.keys(historyData[0]) : [];
   const colors: any = {
-    ankrBNBApr: useColorModeValue('#B83280', '#F687B3'),
-    borrowApy: useColorModeValue('#DD6B20', 'orange'),
-    compoundingApy: useColorModeValue('#2C7A7B', '#4FD1C5'),
-    price: useColorModeValue('#38A169', '#9AE6B4'),
-    rewardApy: useColorModeValue('#6B46C1', '#B794F4'),
-    supplyApy: useColorModeValue('#38A169', '#9AE6B4'),
-    totalSupplyApy: useColorModeValue('#00B5D8', 'cyan'),
-    tvl: useColorModeValue('#38A169', '#9AE6B4')
+    ankrBNBApr: cWhite,
+    borrowApy: cGreen,
+    compoundingApy: cWhite,
+    price: cGreen,
+    rewardApy: cWhite,
+    supplyApy: cWhite,
+    totalSupplyApy: cGreen,
+    tvl: cGreen
   };
 
-  const { cCard } = useColors();
+  const { cLightGray } = useColors();
 
   const [lineProps, setLineProps] = useState<LineProps>(
     keys.reduce((a, key) => {
@@ -101,10 +102,25 @@ const HistoryChart = ({
   return (
     <ResponsiveContainer height="100%" width="100%">
       <AreaChart data={historyData} margin={{ bottom: 10, left: 20, right: 40, top: -40 }}>
-        <CartesianGrid strokeWidth={0} />
+        <defs>
+          {keys.map((key, index) => (
+            <linearGradient id={key} key={index} x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor={colors[key]} stopOpacity={1} />
+              <stop offset="100%" stopColor={cCardBg} stopOpacity={1} />
+            </linearGradient>
+          ))}
+        </defs>
+        <CartesianGrid
+          stroke={cLightGray}
+          strokeDasharray="5 5"
+          strokeOpacity={0.5}
+          strokeWidth={1}
+          vertical={false}
+        />
         <XAxis
           minTickGap={10}
           padding={{ left: 0, right: 10 }}
+          stroke={cCardBg}
           tick={<CustomXAxisTick historyData={historyData} milliSeconds={milliSeconds} />}
           ticks={[
             0,
@@ -114,14 +130,15 @@ const HistoryChart = ({
             Math.floor(length - 1)
           ]}
         >
-          <Label fill={cCard.txtColor} offset={0} position="insideBottom" value="" />
+          <Label fill={cLightGray} offset={0} position="insideBottom" value="" />
         </XAxis>
         <YAxis
           domain={[0, Math.ceil(max * 1.5)]}
+          stroke={cCardBg}
           tick={<CustomYAxisTick mode={mode} />}
-          ticks={[Math.floor(min), Math.ceil((min + max) / 2), Math.ceil(max)]}
+          ticks={[0, Math.floor(min), Math.ceil((min + max) / 2), Math.ceil(max)]}
         >
-          <Label angle={-90} fill={cCard.txtColor} offset={0} position="insideLeft" value="" />
+          <Label angle={-90} fill={cLightGray} offset={0} position="insideLeft" value="" />
         </YAxis>
         <Tooltip
           content={<CustomTooltip historyData={historyData} mode={mode} />}
@@ -142,10 +159,10 @@ const HistoryChart = ({
           keys.map((key, i) =>
             key !== 'createdAt' ? (
               <Area
-                activeDot={{ r: 5, strokeWidth: 0 }}
+                activeDot={{ r: 5, stroke: colors[key], strokeOpacity: 0.2, strokeWidth: 10 }}
                 dataKey={key}
                 dot={{ r: 0 }}
-                fill={colors[key]}
+                fill={`url(#${key})`}
                 fillOpacity={0.2}
                 hide={lineProps[key] === true}
                 key={i}
@@ -164,13 +181,13 @@ const HistoryChart = ({
 
 const CustomXAxisTick = (props: any) => {
   const { x, y, payload, historyData, milliSeconds } = props;
-  const { cCard } = useColors();
+  const { cLightGray } = useColors();
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text fill={cCard.txtColor} fillOpacity={0.5} textAnchor="start" x={-20} y={20}>
+      <text fill={cLightGray} fillOpacity={0.5} textAnchor="start" x={-20} y={20}>
         {moment(historyData[payload.value].createdAt).format(
-          milliSeconds === MILLI_SECONDS_PER_DAY ? 'HH:mm' : 'MM/DD'
+          milliSeconds === MILLI_SECONDS_PER_DAY ? 'HH:mm' : 'MMM DD'
         )}
       </text>
     </g>
@@ -179,11 +196,11 @@ const CustomXAxisTick = (props: any) => {
 
 const CustomYAxisTick = (props: any) => {
   const { x, y, payload, mode } = props;
-  const { cCard } = useColors();
+  const { cLightGray } = useColors();
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <text fill={cCard.txtColor} fillOpacity={0.5} textAnchor="end" x={0} y={0}>
+      <text fill={cLightGray} fillOpacity={0.5} textAnchor="end" x={0} y={0}>
         {mode !== APY ? '$' : ''}
         {smallFormatter(payload.value, true)}
         {mode === APY ? '%' : ''}
@@ -193,22 +210,16 @@ const CustomYAxisTick = (props: any) => {
 };
 
 const CustomTooltip = (props: any) => {
-  const { cCard } = useColors();
+  const { cRowBg, cISeparator, cLightGray } = useColors();
   const { active, payload, label, historyData, mode } = props;
 
   if (active && payload && payload.length) {
     return (
-      <VStack
-        bgColor={cCard.bgColor}
-        borderColor={cCard.borderColor}
-        borderRadius={4}
-        borderWidth={2}
-        spacing={2}
-      >
+      <VStack bgColor={cRowBg} borderColor={cRowBg} borderRadius={4} borderWidth={2} spacing={2}>
         <Text
-          bgColor="ecru20alpha"
-          borderBottomColor={cCard.borderColor}
+          borderBottomColor={cISeparator}
           borderBottomWidth={1}
+          color={cLightGray}
           fontWeight="bold"
           p={2}
           textAlign="left"
@@ -240,7 +251,7 @@ const CustomLegend = (
   }
 ) => {
   const { payload, lineProps, selectLine, handleLegendMouseEnter, handleLegendMouseLeave } = props;
-  const { cCard } = useColors();
+  const { cGray } = useColors();
 
   return (
     <VStack alignItems="flex-start" justifyContent="flex-start" ml="60px" pb={2} spacing={1}>
@@ -256,10 +267,10 @@ const CustomLegend = (
                 onMouseLeave={() => handleLegendMouseLeave()}
               >
                 <AiOutlineLineChart
-                  color={lineProps[item.dataKey] ? cCard.txtColor : item.color}
+                  color={lineProps[item.dataKey] ? cGray : item.color}
                   fontSize={20}
                 />
-                <Text color={lineProps[item.dataKey] ? cCard.txtColor : item.color}>
+                <Text color={lineProps[item.dataKey] ? cGray : item.color}>
                   {YAxisTitles[item.value]}
                 </Text>
               </HStack>

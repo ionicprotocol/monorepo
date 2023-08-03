@@ -37,8 +37,9 @@ import * as React from 'react';
 
 import { Asset } from '@ui/components/pages/PoolPage/AssetsToSupply/Asset';
 import { Collateral } from '@ui/components/pages/PoolPage/AssetsToSupply/Collateral';
+import { Supply } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/index';
 import { SupplyApy } from '@ui/components/pages/PoolPage/AssetsToSupply/SupplyApy/index';
-import { Switch } from '@ui/components/pages/PoolPage/YourSupplies/Switch';
+import { Details } from '@ui/components/pages/PoolPage/YourSupplies/Details';
 import { Withdraw } from '@ui/components/pages/PoolPage/YourSupplies/Withdraw';
 import { YourBalance } from '@ui/components/pages/PoolPage/YourSupplies/YourBalance';
 import { CIconButton } from '@ui/components/shared/Button';
@@ -53,7 +54,6 @@ import {
   COLLATERAL,
   MARKETS_COUNT_PER_PAGE,
   SEARCH,
-  SWITCH,
   WITHDRAW,
   YOUR_BALANCE
 } from '@ui/constants/index';
@@ -266,26 +266,38 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
       {
         cell: ({ row }) => {
           return (
-            <Withdraw
-              asset={row.getValue(ASSET)}
-              assets={assets}
-              chainId={chainId}
-              comptroller={comptroller}
-            />
+            <HStack justifyContent={'flex-end'}>
+              <Supply
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+                poolId={poolId}
+              />
+              <Withdraw
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+              />
+              <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />
+            </HStack>
           );
         },
         header: () => null,
         id: WITHDRAW
-      },
-      {
-        cell: ({ row }) => {
-          return <Switch asset={row.getValue(ASSET)} />;
-        },
-        header: () => null,
-        id: SWITCH
       }
     ];
-  }, [allRewards, assetFilter, assetSort, assets, chainId, comptroller, totalSupplyApyPerAsset]);
+  }, [
+    allRewards,
+    assetFilter,
+    assetSort,
+    assets,
+    chainId,
+    comptroller,
+    poolId,
+    totalSupplyApyPerAsset
+  ]);
 
   const table = useReactTable({
     columns,

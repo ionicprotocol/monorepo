@@ -26,7 +26,7 @@ export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: string[]) => {
   return cTokenToBorrowCaps;
 };
 
-export const useBorrowCapsDataForAsset = (cTokenAddress: string, poolChainId?: number) => {
+export const useBorrowCapsDataForAsset = (cTokenAddress?: string, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(

@@ -5,13 +5,13 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const useBorrowAPYs = (
-  assets: Pick<MarketData, 'borrowRatePerBlock' | 'cToken'>[],
+  assets?: Pick<MarketData, 'borrowRatePerBlock' | 'cToken'>[],
   chainId?: number
 ) => {
   const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useBorrowAPYs', { chain: sdk?.chainId }, { assets: assets.map((a) => a.cToken).sort() }],
+    ['useBorrowAPYs', { chain: sdk?.chainId }, { assets: assets?.map((a) => a.cToken).sort() }],
     () => {
       if (!sdk || !assets || !chainId) return null;
 

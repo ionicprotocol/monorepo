@@ -1,15 +1,26 @@
 import { Button, Flex, HStack, Link, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { utils } from 'ethers';
 import { useMemo } from 'react';
 import { BiLinkExternal } from 'react-icons/bi';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
+import { LoadingText } from '@ui/components/shared/LoadingText';
 import { useOracle } from '@ui/hooks/ionic/useOracle';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
-const AssetDetails = ({ asset, chainId }: { asset: MarketData; chainId: number }) => {
+const AssetDetails = ({
+  asset,
+  chainId,
+  isLoading
+}: {
+  asset?: MarketData;
+  chainId: number;
+  isLoading: boolean;
+}) => {
   const scanUrl = useMemo(() => getScanUrlByChainId(chainId), [chainId]);
-  const { data: oracle } = useOracle(asset.underlyingToken, chainId);
+  const { data: oracle } = useOracle(asset?.underlyingToken, chainId);
 
   return (
     <CardBox>
@@ -36,7 +47,7 @@ const AssetDetails = ({ asset, chainId }: { asset: MarketData; chainId: number }
                 </Button>
               </Link>
             )}
-            <Link href={`${scanUrl}/address/${asset.underlyingToken}`} isExternal rel="noreferrer">
+            <Link href={`${scanUrl}/address/${asset?.underlyingToken}`} isExternal rel="noreferrer">
               <Button
                 rightIcon={<BiLinkExternal fontSize={'20px'} strokeWidth={'0.5px'} />}
                 variant={'ghost'}
@@ -44,7 +55,7 @@ const AssetDetails = ({ asset, chainId }: { asset: MarketData; chainId: number }
                 Token Contract
               </Button>
             </Link>
-            <Link href={`${scanUrl}/address/${asset.cToken}`} isExternal rel="noreferrer">
+            <Link href={`${scanUrl}/address/${asset?.cToken}`} isExternal rel="noreferrer">
               <Button
                 rightIcon={<BiLinkExternal fontSize={'20px'} strokeWidth={'0.5px'} />}
                 variant={'ghost'}
@@ -61,60 +72,88 @@ const AssetDetails = ({ asset, chainId }: { asset: MarketData; chainId: number }
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Asset Supplied
             </Text>
-            <Skeleton isLoaded={true} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                $0.96M
-              </Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  {asset ? `${smallUsdFormatter(asset.supplyBalanceFiat, true)}` : '--'}
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Asset Borrowed
             </Text>
-            <Skeleton isLoaded={true} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                1.56%
-              </Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  {asset ? `${smallUsdFormatter(asset.borrowBalanceFiat, true)}` : '--'}
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Asset Utilization
             </Text>
-            <Skeleton isLoaded={true} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                --
-              </Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  {asset ? `${smallFormatter(asset.utilization, true)}%` : '--'}
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Loan-To-Value
             </Text>
-            <Skeleton isLoaded={true} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                70%
-              </Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  {asset
+                    ? `${Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0)}%`
+                    : '--'}
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Reserve Factor
             </Text>
-            <Skeleton isLoaded={true} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                0%
-              </Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  {asset
+                    ? `${Number(utils.formatUnits(asset.reserveFactor, 16)).toFixed(0)}%`
+                    : '--'}
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Admin Fee
             </Text>
-            <Skeleton isLoaded={true} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                0.00%
-              </Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  {asset ? `${Number(utils.formatUnits(asset.adminFee, 16)).toFixed(0)}%` : '--'}
+                </Text>
+              )}
             </Skeleton>
           </VStack>
         </Flex>
