@@ -22,7 +22,8 @@ import {
   APY,
   MILLI_SECONDS_PER_MONTH,
   MILLI_SECONDS_PER_YEAR,
-  MILLI_SECONDS_SIX_MONTH
+  MILLI_SECONDS_SIX_MONTH,
+  SUPPLY_APY
 } from '@ui/constants/index';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
@@ -57,12 +58,20 @@ export const SupplyInfo = ({
   const { cIPage } = useColors();
   const [milliSeconds, setMilliSeconds] = useState<number>(MILLI_SECONDS_PER_MONTH);
   const { data: historyData, isLoading: isHistoryDataLoading } = useHistoryData(
-    APY,
+    SUPPLY_APY,
     asset?.underlyingToken,
     asset?.cToken,
     chainId,
     milliSeconds
   );
+
+  // const { data: historyData, isLoading: isHistoryDataLoading } = useHistoryData(
+  //   SUPPLY_APY,
+  //   '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  //   '0x3Af258d24EBdC03127ED6cEb8e58cA90835fbca5',
+  //   56,
+  //   milliSeconds
+  // );
   const { data: supplyCap, isLoading: isSupplyCapLoading } = useSupplyCap({
     chainId,
     comptroller,
@@ -88,9 +97,22 @@ export const SupplyInfo = ({
               size="74px"
               thickness="12px"
               trackColor={'iGray'}
-              value={12.1}
+              value={
+                supplyCap && asset
+                  ? (Number(utils.formatUnits(asset.totalSupply)) * 100) / supplyCap.tokenCap
+                  : 0
+              }
             >
-              <CircularProgressLabel fontSize={'12px'}>12.10%</CircularProgressLabel>
+              <CircularProgressLabel fontSize={'12px'}>
+                {supplyCap && asset ? (
+                  (
+                    (Number(utils.formatUnits(asset.totalSupply)) * 100) /
+                    supplyCap.tokenCap
+                  ).toFixed(2)
+                ) : (
+                  <Text fontSize={'48px'}>∞</Text>
+                )}
+              </CircularProgressLabel>
             </CircularProgress>
             <Flex direction={{ base: 'column' }} gap={{ base: '4px' }}>
               <Text variant={'itemTitle'}>Total Supplied</Text>
@@ -150,11 +172,11 @@ export const SupplyInfo = ({
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Text variant={'itemTitle'}>Liquidation Thershold</Text>
-                <Text>79.00%</Text>
+                <Text>79.00%*</Text>
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Text variant={'itemTitle'}>Liquidation Penalty</Text>
-                <Text>4.50%</Text>
+                <Text>4.50%*</Text>
               </Flex>
             </Flex>
           </Flex>

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
 
-import { APY, PRICE, TVL } from '@ui/constants/index';
+import { BORROW_APY, PRICE, SUPPLY_APY, TVL } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export function useHistoryData(
@@ -53,7 +53,7 @@ export function useHistoryData(
                 tvl: data.tvlNative * usdPrice
               });
             });
-          } else if (mode === APY) {
+          } else if (mode === SUPPLY_APY || mode === BORROW_APY) {
             const { data: apys } = await axios.get(
               `/api/assetTotalApy?chainId=${chainId}&cTokenAddress=${cTokenAddress}&milliSeconds=${
                 Date.now() - milliSeconds
@@ -61,11 +61,18 @@ export function useHistoryData(
             );
 
             apys.map((data: AssetTotalApy) => {
-              const { createdAt, ...rest } = data;
-              info.push({
-                createdAt,
-                ...rest
-              });
+              const { createdAt, borrowApy, ...rest } = data;
+              if (mode === SUPPLY_APY) {
+                info.push({
+                  createdAt,
+                  ...rest
+                });
+              } else {
+                info.push({
+                  borrowApy: borrowApy ?? 0,
+                  createdAt
+                });
+              }
             });
           }
 

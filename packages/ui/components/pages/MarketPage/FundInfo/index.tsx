@@ -40,7 +40,13 @@ export const FundInfo = ({
             />
           </TabPanel>
           <TabPanel p={0}>
-            <BorrowInfo />
+            <BorrowInfo
+              asset={asset}
+              assets={assets}
+              chainId={Number(chainId)}
+              comptroller={comptroller}
+              isLoading={isLoading}
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>

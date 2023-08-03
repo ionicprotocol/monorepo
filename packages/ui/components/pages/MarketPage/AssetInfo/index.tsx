@@ -1,15 +1,20 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Flex, HStack, IconButton, Img, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { Flex, HStack, IconButton, Img, Link, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 import { BiLinkExternal, BiWallet } from 'react-icons/bi';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { LoadingText } from '@ui/components/shared/LoadingText';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { usePoolData } from '@ui/hooks/usePoolData';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 export const AssetInfo = ({
   cToken,
@@ -26,8 +31,18 @@ export const AssetInfo = ({
   const { setGlobalLoading } = useMultiIonic();
   const chainConfig = useChainConfig(poolData?.chainId);
   const { data: usdPrice, isLoading: isPriceLoading } = useUsdPrice(chainId.toString());
-
+  const scanUrl = useMemo(() => getScanUrlByChainId(chainId), [chainId]);
   const asset = poolData?.assets.find((asset) => asset.cToken === cToken);
+
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
+  const addToken = useAddTokenToWallet({
+    errorToast,
+    successToast,
+    underlyingAddress: asset?.underlyingToken,
+    underlyingDecimals: Number(asset?.underlyingDecimals),
+    underlyingSymbol: asset?.underlyingSymbol
+  });
 
   return (
     <CardBox py={0}>
@@ -78,16 +93,25 @@ export const AssetInfo = ({
                 </Skeleton>
               </HStack>
               <HStack spacing={1}>
-                <IconButton
-                  alignSelf={'center'}
-                  aria-label="asset wallet"
-                  icon={<BiWallet fontSize={'24px'} strokeWidth={'0.5px'} />}
-                />
-                <IconButton
-                  alignSelf={'center'}
-                  aria-label="asset link"
-                  icon={<BiLinkExternal fontSize={'24px'} strokeWidth={'0.5px'} />}
-                />
+                <SimpleTooltip label={'Add token to wallet'}>
+                  <IconButton
+                    alignSelf={'center'}
+                    aria-label="asset wallet"
+                    icon={<BiWallet fontSize={'24px'} strokeWidth={'0.5px'} />}
+                    onClick={addToken}
+                  />
+                </SimpleTooltip>
+                <Link
+                  href={`${scanUrl}/address/${asset?.underlyingToken}`}
+                  isExternal
+                  rel="noreferrer"
+                >
+                  <IconButton
+                    alignSelf={'center'}
+                    aria-label="asset link"
+                    icon={<BiLinkExternal fontSize={'24px'} strokeWidth={'0.5px'} />}
+                  />
+                </Link>
               </HStack>
             </HStack>
           </Flex>
@@ -102,7 +126,7 @@ export const AssetInfo = ({
                     <LoadingText />
                   ) : (
                     <Text color={'iWhite'} size="lg">
-                      $213.00M
+                      $213.00M*
                     </Text>
                   )}
                 </Skeleton>
