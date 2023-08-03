@@ -28,6 +28,7 @@ import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner/index
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
 import { CardBox } from '@ui/components/shared/IonicBox';
+import { LoadingText } from '@ui/components/shared/LoadingText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { HEALTH_FACTOR } from '@ui/constants/index';
@@ -160,20 +161,28 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Net Worth
             </Text>
-            <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                $0.96M
-              </Text>
+            <Skeleton isLoaded={!isPoolDataLoading}>
+              {isPoolDataLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  $0.96M
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Net Apr
             </Text>
-            <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-              <Text color={'iWhite'} size="lg">
-                1.56%
-              </Text>
+            <Skeleton isLoaded={!isPoolDataLoading}>
+              {isPoolDataLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size="lg">
+                  1.56%
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">
@@ -248,10 +257,14 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                 />
               </PopoverTooltip>
             </Flex>
-            <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-              <Text color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)} size="lg">
-                1.55
-              </Text>
+            <Skeleton isLoaded={!isPoolDataLoading}>
+              {isPoolDataLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)} size="lg">
+                  1.55
+                </Text>
+              )}
             </Skeleton>
           </VStack>
         </Flex>
@@ -274,40 +287,56 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                 <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                   Total Supply
                 </Text>
-                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-                  <Text color={'iWhite'} size="lg">
-                    {poolData ? smallUsdFormatter(poolData.totalSuppliedFiat, true) : '-'}
-                  </Text>
+                <Skeleton isLoaded={!isPoolDataLoading}>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iWhite'} size="lg">
+                      {poolData ? smallUsdFormatter(poolData.totalSuppliedFiat, true) : '-'}
+                    </Text>
+                  )}
                 </Skeleton>
               </VStack>
               <VStack alignItems="flex-start">
                 <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                   Total Borrowed
                 </Text>
-                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-                  <Text color={'iWhite'} size="lg">
-                    {poolData ? smallUsdFormatter(poolData.totalBorrowedFiat, true) : '-'}
-                  </Text>
+                <Skeleton isLoaded={!isPoolDataLoading}>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iWhite'} size="lg">
+                      {poolData ? smallUsdFormatter(poolData.totalBorrowedFiat, true) : '-'}
+                    </Text>
+                  )}
                 </Skeleton>
               </VStack>
               <VStack alignItems="flex-start">
                 <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                   Total Liquidity
                 </Text>
-                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-                  <Text color={'iWhite'} size="lg">
-                    {poolData ? smallUsdFormatter(poolData.totalLiquidityFiat, true) : '-'}
-                  </Text>
+                <Skeleton isLoaded={!isPoolDataLoading}>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iWhite'} size="lg">
+                      {poolData ? smallUsdFormatter(poolData.totalLiquidityFiat, true) : '-'}
+                    </Text>
+                  )}
                 </Skeleton>
               </VStack>
               <VStack alignItems="flex-start">
                 <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                   Pool Utilization
                 </Text>
-                <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-                  <Text color={'iWhite'} size="lg">
-                    {poolData ? `${poolData.utilization.toFixed(2)}%` : '-'}
-                  </Text>
+                <Skeleton isLoaded={!isPoolDataLoading}>
+                  {isPoolDataLoading ? (
+                    <LoadingText />
+                  ) : (
+                    <Text color={'iWhite'} size="lg">
+                      {poolData ? `${poolData.utilization.toFixed(2)}%` : '-'}
+                    </Text>
+                  )}
                 </Skeleton>
               </VStack>
             </Flex>
@@ -320,18 +349,24 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                   <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                     Upgradeable
                   </Text>
-                  <Skeleton isLoaded={!isExtraPoolInfoLoading} minW="80px">
-                    <Text color={'iWhite'} textAlign={'end'}>
-                      {extraPoolInfo ? (extraPoolInfo.upgradeable ? 'Yes' : 'No') : '-'}
-                    </Text>
+                  <Skeleton isLoaded={!isExtraPoolInfoLoading}>
+                    {isExtraPoolInfoLoading ? (
+                      <LoadingText />
+                    ) : (
+                      <Text color={'iWhite'} textAlign={'end'}>
+                        {extraPoolInfo ? (extraPoolInfo.upgradeable ? 'Yes' : 'No') : '-'}
+                      </Text>
+                    )}
                   </Skeleton>
                 </Flex>
                 <Flex justifyContent={'space-between'} width={'100%'}>
                   <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                     Admin
                   </Text>
-                  <Skeleton isLoaded={!isExtraPoolInfoLoading} minW="80px">
-                    {extraPoolInfo ? (
+                  <Skeleton isLoaded={!isExtraPoolInfoLoading}>
+                    {isExtraPoolInfoLoading ? (
+                      <LoadingText />
+                    ) : extraPoolInfo ? (
                       <HStack>
                         <SimpleTooltip label={`${scanUrl}/address/${extraPoolInfo.admin}`}>
                           <Button
@@ -361,12 +396,16 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                   <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                     Close Factor
                   </Text>
-                  <Skeleton isLoaded={!isExtraPoolInfoLoading} minW="80px">
-                    <Text color={'iWhite'} textAlign={'end'}>
-                      {extraPoolInfo
-                        ? Number(utils.formatUnits(extraPoolInfo.closeFactor, 16)) + '%'
-                        : '-'}
-                    </Text>
+                  <Skeleton isLoaded={!isExtraPoolInfoLoading}>
+                    {isExtraPoolInfoLoading ? (
+                      <LoadingText />
+                    ) : (
+                      <Text color={'iWhite'} textAlign={'end'}>
+                        {extraPoolInfo
+                          ? Number(utils.formatUnits(extraPoolInfo.closeFactor, 16)) + '%'
+                          : '-'}
+                      </Text>
+                    )}
                   </Skeleton>
                 </Flex>
               </VStack>
@@ -378,28 +417,38 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                   <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                     Oracle
                   </Text>
-                  <Skeleton isLoaded={!isExtraPoolInfoLoading} minW="80px">
-                    <Text color={'iWhite'} textAlign={'end'}>
-                      {extraPoolInfo ? extraPoolInfo.oracle : '-'}
-                    </Text>
+                  <Skeleton isLoaded={!isExtraPoolInfoLoading}>
+                    {isExtraPoolInfoLoading ? (
+                      <LoadingText />
+                    ) : (
+                      <Text color={'iWhite'} textAlign={'end'}>
+                        {extraPoolInfo ? extraPoolInfo.oracle : '-'}
+                      </Text>
+                    )}
                   </Skeleton>
                 </Flex>
                 <Flex justifyContent={'space-between'} width={'100%'}>
                   <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                     Whitelist
                   </Text>
-                  <Skeleton isLoaded={!isExtraPoolInfoLoading} minW="80px">
-                    <Text color={'iWhite'} textAlign={'end'}>
-                      {extraPoolInfo ? (extraPoolInfo.enforceWhitelist ? 'Yes' : 'No') : '-'}
-                    </Text>
+                  <Skeleton isLoaded={!isExtraPoolInfoLoading}>
+                    {isExtraPoolInfoLoading ? (
+                      <LoadingText />
+                    ) : (
+                      <Text color={'iWhite'} textAlign={'end'}>
+                        {extraPoolInfo ? (extraPoolInfo.enforceWhitelist ? 'Yes' : 'No') : '-'}
+                      </Text>
+                    )}
                   </Skeleton>
                 </Flex>
                 <Flex justifyContent={'space-between'} width={'100%'}>
                   <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                     Pool Address
                   </Text>
-                  <Skeleton isLoaded={!isPoolDataLoading} minW="80px">
-                    {poolData ? (
+                  <Skeleton isLoaded={!isPoolDataLoading}>
+                    {isPoolDataLoading ? (
+                      <LoadingText />
+                    ) : poolData ? (
                       <HStack>
                         <SimpleTooltip label={`${scanUrl}/address/${poolData.comptroller}`}>
                           <Button

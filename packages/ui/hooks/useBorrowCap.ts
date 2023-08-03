@@ -18,9 +18,9 @@ export interface Cap {
 }
 
 interface UseBorrowCapParams {
-  chainId: number;
-  comptroller: string;
-  market: MarketData;
+  chainId?: number;
+  comptroller?: string;
+  market?: MarketData;
 }
 export const useBorrowCap = ({
   comptroller: comptrollerAddress,
@@ -30,7 +30,7 @@ export const useBorrowCap = ({
   const { data: usdPrices } = useAllUsdPrices();
   const { address } = useMultiIonic();
   const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[chainId.toString()]) {
+    if (chainId && usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
     } else {
       return undefined;
@@ -38,16 +38,16 @@ export const useBorrowCap = ({
   }, [usdPrices, chainId]);
 
   const sdk = useSdk(chainId);
-  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(market.cToken, chainId);
+  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(market?.cToken, chainId);
 
   return useQuery<Cap | null | undefined>(
     [
       'useBorrowCap',
       comptrollerAddress,
       sdk?.chainId,
-      market.underlyingPrice,
-      market.cToken,
-      market.totalBorrow,
+      market?.underlyingPrice,
+      market?.cToken,
+      market?.totalBorrow,
       usdPrice,
       borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
       address
@@ -56,6 +56,7 @@ export const useBorrowCap = ({
       if (
         sdk &&
         usdPrice &&
+        comptrollerAddress &&
         market &&
         address &&
         borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
@@ -101,6 +102,7 @@ export const useBorrowCap = ({
         !!usdPrice &&
         !!market &&
         !!address &&
+        !!comptrollerAddress &&
         !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
     }
   );

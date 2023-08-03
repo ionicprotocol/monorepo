@@ -30,6 +30,7 @@ import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
 
+import { getVariant } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/Modal/index';
 import { RepayError } from '@ui/components/pages/PoolPage/YourBorrows/Repay/Modal/RepayError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Center } from '@ui/components/shared/Flex';
@@ -200,6 +201,7 @@ export const RepayModal = ({
       } else {
         maxBN = maxRepayAmount;
       }
+
       if (!maxBN || maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
       } else {
@@ -475,10 +477,19 @@ export const RepayModal = ({
                 Amount
               </Text>
               <HStack>
-                <Text size={'sm'}>Wallet Balance: </Text>
                 <Text size={'sm'}>
-                  {myBalance
-                    ? smallFormatter(Number(utils.formatUnits(myBalance, underlyingDecimals)), true)
+                  {optionToWrap ? 'Wallet Native Balance: ' : 'Wallet Balance: '}
+                </Text>
+                <Text size={'sm'}>
+                  {optionToWrap
+                    ? myNativeBalance
+                      ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
+                      : 0
+                    : myBalance
+                    ? smallFormatter(
+                        Number(utils.formatUnits(myBalance, asset.underlyingDecimals)),
+                        true
+                      )
                     : 0}
                 </Text>
                 <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
@@ -617,22 +628,20 @@ export const RepayModal = ({
             {optionToWrap ? (
               <Button
                 flex={1}
-                isDisabled={isLoading || activeStep.index < 1}
+                isDisabled={isLoading || !isAmountValid}
                 isLoading={activeStep.index === 1 && isLoading}
                 onClick={onWrapNativeToken}
-                variant={'solidGreen'}
+                variant={getVariant(steps[0].status)}
               >
                 Wrap Native Token
               </Button>
             ) : null}
             <Button
               flex={1}
-              isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1)}
+              isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1) || !isAmountValid}
               isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
               onClick={onApprove}
-              variant={
-                activeStep.index === (optionToWrap ? 2 : 1) ? 'solidGreen' : 'outlineLightGray'
-              }
+              variant={getVariant(steps[optionToWrap ? 1 : 0].status)}
             >
               {activeStep.index === (optionToWrap ? 2 : 1) ? `Approve ` : 'Approved'}{' '}
               {underlyingSymbol}
@@ -651,16 +660,12 @@ export const RepayModal = ({
                 visible={!isAmountValid}
               >
                 <Button
-                  isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2)}
+                  isDisabled={
+                    isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid
+                  }
                   isLoading={activeStep.index === 3 && isLoading}
                   onClick={isAmountValid ? onRepay : undefined}
-                  variant={
-                    isAmountValid && activeStep.index === (optionToWrap ? 3 : 2)
-                      ? activeStep.status === FAILED
-                        ? 'outlineRed'
-                        : 'solidGreen'
-                      : 'solidGray'
-                  }
+                  variant={getVariant(steps[optionToWrap ? 2 : 1].status)}
                   width={'100%'}
                 >
                   Repay {underlyingSymbol}

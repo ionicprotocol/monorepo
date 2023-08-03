@@ -15,8 +15,8 @@ const specificParams: ChainParams = {
     img: "https://d1912tcoux65lj.cloudfront.net/network/linea.png",
     blockExplorerUrls: { default: { name: "lineascan", url: "https://lineascan.build" } },
     rpcUrls: {
-      default: { http: ["https://linea-mainnet.infura.io/v3/"] },
-      public: { http: ["https://linea-mainnet.infura.io/v3/"] }
+      default: { http: ["https://rpc.linea.build"] },
+      public: { http: ["https://rpc.linea.build"] }
     },
     nativeCurrency: {
       symbol: "ETH",
