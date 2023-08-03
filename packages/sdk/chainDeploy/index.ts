@@ -6,7 +6,7 @@ import { deploy as deploy1, deployConfig as deployConfig1 } from "./mainnets/eth
 import { deploy as deploy59144, deployConfig as deployConfig59144 } from "./mainnets/linea";
 import { deploy as deploy245022934, deployConfig as deployConfig245022934 } from "./mainnets/neon";
 import { deploy as deploy137, deployConfig as deployConfig137 } from "./mainnets/polygon";
-import { deploy as deploy1101, deployConfig as deployConfig1101 } from "./mainnets/zkevem";
+import { deploy as deploy1101, deployConfig as deployConfig1101 } from "./mainnets/zkevm";
 import { deploy as deploy97, deployConfig as deployConfig97 } from "./testnets/chapel";
 
 export const chainDeployConfig: Record<number, { config: ChainDeployConfig; deployFunc: any }> = {
