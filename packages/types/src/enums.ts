@@ -322,6 +322,7 @@ export enum assetSymbols {
   WUSDR = "WUSDR",
   USDR3CRV = "USDR3CRV",
   TNGBL = "TNGBL",
+  DUSD = "DUSD",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",

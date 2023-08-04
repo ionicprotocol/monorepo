@@ -252,6 +252,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.stMATIC),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
     outputToken: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"])
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.DUSD),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, USDC)
   }
 ];
 export default redemptionStrategies;
