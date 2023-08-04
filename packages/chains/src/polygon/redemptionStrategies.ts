@@ -6,52 +6,52 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.jBRL),
     strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.JEUR),
     strategy: RedemptionStrategyContract.JarvisLiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_WETH_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_DAI_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_MAI_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_PAR_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_USDT_001),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_USDT_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_WETH_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_USDC_agEUR_001),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_WBTC_WETH_005),
@@ -91,7 +91,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.amUSDC),
     strategy: RedemptionStrategyContract.AaveTokenLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.USDR3CRV),
@@ -151,7 +151,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.MAI),
     strategy: RedemptionStrategyContract.UniswapV2LiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.JEUR_PAR_STABLE_BLP),
@@ -181,7 +181,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.TETU_LINEAR_USDC),
     strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols.MaticX_bbaWMATIC),
@@ -219,7 +219,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.USDR)
   },
   {
-    inputToken: underlying(assets, assetSymbols.USDC),
+    inputToken: USDC,
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
     outputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"])
   },
