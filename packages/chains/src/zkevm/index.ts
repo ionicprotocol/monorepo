@@ -13,7 +13,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.linea,
+  chainId: SupportedChains.zkevm,
   chainAddresses,
   assets,
   irms,

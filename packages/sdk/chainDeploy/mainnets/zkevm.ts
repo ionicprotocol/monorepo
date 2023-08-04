@@ -2,13 +2,20 @@ import { zkevm } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
+import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
+  configureBalancerSwap,
   deployAlgebraPriceOracle,
   deployBalancerRateProviderPriceOracle,
   deployPythPriceOracle
 } from "../helpers";
-import { BalancerRateProviderAsset, ConcentratedLiquidityOracleConfig, PythAsset } from "../helpers/types";
+import {
+  BalancerRateProviderAsset,
+  BalancerSwapTokenLiquidatorData,
+  ConcentratedLiquidityOracleConfig,
+  PythAsset
+} from "../helpers/types";
 
 const assets = zkevm.assets;
 
@@ -71,6 +78,12 @@ const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     poolAddress: "0xC4aD89d0A07081871f3007079f816B0757D2638E",
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: underlying(assets, assetSymbols.USDC)
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.frxETH),
+    poolAddress: "0x0B19F0144bD78528C8ACDB6FC38914D855CDb0fa",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.WETH)
   }
 ];
 
@@ -84,6 +97,19 @@ const balancerRateProviderAssets: BalancerRateProviderAsset[] = [
     tokenAddress: underlying(assets, assetSymbols.wstETH),
     baseToken: underlying(assets, assetSymbols.WETH),
     rateProviderAddress: "0x00346D2Fd4B2Dc3468fA38B857409BC99f832ef8"
+  }
+];
+
+const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
+  {
+    inputToken: underlying(assets, assetSymbols.rETH),
+    outputToken: underlying(assets, assetSymbols.WETH),
+    poolAddress: "0x1d0A8a31CDb04efAC3153237526Fb15cc65A2520"
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.wstETH),
+    outputToken: underlying(assets, assetSymbols.WETH),
+    poolAddress: "0xe1F2c039a68A216dE6DD427Be6c60dEcf405762A"
   }
 ];
 
@@ -118,4 +144,28 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployConfig,
     balancerRateProviderAssets
   });
+
+  const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (algebraSwapLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(algebraSwapLiquidator.transactionHash);
+  }
+  console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
+
+  //// Balancer Swap token liquidator
+  const balancerSwapTokenLiquidator = await deployments.deploy("BalancerSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (balancerSwapTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerSwapTokenLiquidator.transactionHash);
+  console.log("BalancerSwapLiquidator: ", balancerSwapTokenLiquidator.address);
+  const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+  await configureBalancerSwap(addressesProvider, balancerSwapLiquidatorData);
 };

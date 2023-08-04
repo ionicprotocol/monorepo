@@ -11,7 +11,7 @@ export const FRAX = "0xFf8544feD5379D9ffa8D47a74cE6b91e632AC44D";
 export const WMATIC = "0xa2036f0538221a77A3937F1379699f44945018d0";
 
 export const rETH = "0xb23C20EFcE6e24Acca0Cef9B7B7aA196b84EC942";
-export const sfrxETH = "0x7c2aF1Fb79D0b1c67d4eb802d44C673D0A1D2C04";
+export const frxETH = "0xCf7eceE185f19e2E970a301eE37F93536ed66179";
 export const wstETH = "0x5D8cfF95D7A57c0BF50B30b43c7CC0D52825D4a9";
 
 export const assets: SupportedAsset[] = [
@@ -72,12 +72,12 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", WMATIC)
   },
   {
-    symbol: assetSymbols.sfrxETH,
-    underlying: sfrxETH,
-    name: "Staked Frax Ether",
+    symbol: assetSymbols.frxETH,
+    underlying: frxETH,
+    name: "Frax Ether",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://zkevm.polygonscan.com", sfrxETH)
+    oracle: OracleTypes.AlgebraPriceOracle,
+    extraDocs: defaultDocs("https://zkevm.polygonscan.com", frxETH)
   },
   {
     symbol: assetSymbols.rETH,

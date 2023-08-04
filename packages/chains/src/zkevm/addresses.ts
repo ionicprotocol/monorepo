@@ -13,7 +13,8 @@ const chainAddresses: ChainAddresses = {
   UNISWAP_V3_ROUTER: ethers.constants.AddressZero,
   PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
   STABLE_TOKEN: underlying(assets, assetSymbols.USDC),
-  W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC)
+  W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
+  ALGEBRA_SWAP_ROUTER: "0xF6Ad3CcF71Abb3E12beCf6b3D2a74C963859ADCd"
 };
 
 export default chainAddresses;

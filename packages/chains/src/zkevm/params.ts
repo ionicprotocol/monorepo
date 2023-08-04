@@ -12,8 +12,8 @@ const specificParams: ChainParams = {
     name: "Polygon zkEVM",
     shortName: "zkEVM",
     uniswapV3Fees: {},
-    img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.png",
-    blockExplorerUrls: { default: { name: "lineascan", url: "https://zkevm.polygonscan.com" } },
+    img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
+    blockExplorerUrls: { default: { name: "polygonscan", url: "https://zkevm.polygonscan.com" } },
     rpcUrls: {
       default: { http: ["https://zkevm-rpc.com"] },
       public: { http: ["https://zkevm-rpc.com"] }
