@@ -17,6 +17,7 @@ const DPX = "0x6C2C06790b3E3E3c38e12Ee22F8183b37a13EE55";
 const GOHM = "0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1";
 const OHM = "0xf0cb2dc0db5e6c66B9a70Ac27B06b878da017028";
 const wstETH = "0x5979D7b546E38E414F7E9822514be443A4800529";
+const rETH = "0xEC70Dcb4A1EFa46b8F2D97C310C9c4790ba5ffA8";
 const MAGIC = "0x539bdE0d7Dbd336b79148AA742883198BBF60342";
 const GMX = "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a";
 const USDs = "0xD74f5255D557944cf7Dd0E45FF521520002D5748";
@@ -201,6 +202,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://arbiscan.io", wstETH)
+  },
+  {
+    symbol: assetSymbols.rETH,
+    underlying: rETH,
+    name: "Rocket Pool ETH",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://arbiscan.io", rETH)
   }
 ];
 
