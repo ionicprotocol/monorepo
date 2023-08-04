@@ -31,9 +31,9 @@ export const deployConfig: ChainDeployConfig = {
     hardcoded: [],
     uniswapData: [],
     pairInitHashCode: ethers.utils.hexlify("0x1f475d88284b09799561ca05d87dc757c1ff4a9f48983cdb84d1dd6e209d3ae2"),
-    uniswapV2RouterAddress: "0xbdFa4a05372a10172EeEB75075c85FCbff521625",
-    uniswapV2FactoryAddress: "",
-    uniswapV3FactoryAddress: "0x865412B6cDf424bE36088fE3DeC2A072a26Cc494",
+    uniswapV2RouterAddress: ethers.constants.AddressZero,
+    uniswapV2FactoryAddress: ethers.constants.AddressZero,
+    uniswapV3FactoryAddress: ethers.constants.AddressZero,
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
     flashSwapFee: 30
