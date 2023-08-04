@@ -65,6 +65,12 @@ const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     poolAddress: "0x9591b8A30c3a52256ea93E98dA49EE43Afa136A8",
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: underlying(assets, assetSymbols.USDC)
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.FRAX),
+    poolAddress: "0xC4aD89d0A07081871f3007079f816B0757D2638E",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.USDC)
   }
 ];
 

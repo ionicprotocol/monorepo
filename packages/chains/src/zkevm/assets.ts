@@ -7,6 +7,7 @@ export const WBTC = "0xEA034fb02eB1808C2cc3adbC15f447B93CbE08e1";
 export const USDC = "0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035";
 export const USDT = "0x1E4a5963aBFD975d8c9021ce480b42188849D41d";
 export const DAI = "0xC5015b9d9161Dca7e18e32f6f25C4aD850731Fd4";
+export const FRAX = "0xFf8544feD5379D9ffa8D47a74cE6b91e632AC44D";
 export const WMATIC = "0xa2036f0538221a77A3937F1379699f44945018d0";
 
 export const rETH = "0xb23C20EFcE6e24Acca0Cef9B7B7aA196b84EC942";
@@ -45,6 +46,14 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", USDT)
+  },
+  {
+    symbol: assetSymbols.FRAX,
+    underlying: FRAX,
+    name: "Frax Stablecoin",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    extraDocs: defaultDocs("https://zkevm.polygonscan.com", FRAX)
   },
   {
     symbol: assetSymbols.DAI,
