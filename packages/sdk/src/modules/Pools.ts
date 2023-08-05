@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, ethereum, ganache, linea, neon, polygon } from "@ionicprotocol/chains";
+import { arbitrum, bsc, chapel, ethereum, ganache, linea, neon, polygon, zkevm } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -28,7 +28,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.neon]: neon.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.linea]: linea.assets,
-  [SupportedChains.ethereum]: ethereum.assets
+  [SupportedChains.ethereum]: ethereum.assets,
+  [SupportedChains.zkevm]: zkevm.assets
 };
 
 export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {

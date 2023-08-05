@@ -53,6 +53,7 @@ const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
 const USDR = "0xb5DFABd7fF7F83BAB83995E72A52B97ABb7bcf63";
 const WUSDR = "0xAF0D9D65fC54de245cdA37af3d18cbEc860A4D4b";
 const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
+const DUSD = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -363,6 +364,14 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDT")
+  },
+  {
+    symbol: assetSymbols.DUSD,
+    underlying: DUSD,
+    name: "Davos",
+    decimals: 18,
+    oracle: OracleTypes.AlgebraPriceOracle,
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/simple/swap/USDC/DAVOS")
   },
   {
     symbol: assetSymbols.WBTC,

@@ -58,7 +58,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Matic",
     decimals: 18,
     oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://lineascan.build/", USDT)
+    extraDocs: defaultDocs("https://lineascan.build/", WMATIC)
   },
   {
     symbol: assetSymbols.WBNB,

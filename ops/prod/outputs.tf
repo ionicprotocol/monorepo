@@ -53,3 +53,11 @@ output "linea-mainnet-pyth-updater" {
   value = module.linea_mainnet_pyth_updater_rpc_0.lambda_cron_service_name
 }
 
+# ZKEVM
+output "zkevm-mainnet-liquidation" {
+  value = module.zkevm_mainnet_liquidation_rpc_0.lambda_cron_service_name
+}
+output "zkevm-mainnet-pyth-updater" {
+  value = module.zkevm_mainnet_pyth_updater_rpc_0.lambda_cron_service_name
+}
+

@@ -35,6 +35,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
     [SupportedChains.ethereum]: {
       swapName: "Uniswap",
       swapAddress: "https://app.uniswap.org/#/swap?outputCurrency=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+    },
+    [SupportedChains.zkevm]: {
+      swapName: "Quickswap",
+      swapAddress: "https://quickswap.exchange/#/swap?swapIndex=2&currency1=0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9"
     }
   }[chainId];
 
