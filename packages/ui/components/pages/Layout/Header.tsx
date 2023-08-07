@@ -65,6 +65,23 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
             cursor="pointer"
             onClick={() => {
               setGlobalLoading(true);
+              router.push('/dashboard');
+            }}
+          >
+            <Text
+              color={router.pathname === '/dashboard' ? cIPage.txtSelectedColor : cIPage.txtColor}
+              fontSize="14px"
+              fontWeight={600}
+              lineHeight="20px"
+            >
+              Dashboard
+            </Text>
+          </Flex>
+          <Flex
+            align="center"
+            cursor="pointer"
+            onClick={() => {
+              setGlobalLoading(true);
               router.push('/');
             }}
           >
