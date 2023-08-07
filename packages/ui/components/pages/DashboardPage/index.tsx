@@ -1,18 +1,16 @@
-import { Center, Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
+import { Borrows } from './Borrows';
 import { Claimable } from './Claimable';
+import { LendingStrategy } from './LendingStrategy';
+import { LendingVaults } from './LendingVaults';
 import { NetApr } from './NetApr';
 import { NetAssetValue } from './NetAssetValue';
 
 import PageLayout from '@ui/components/pages/Layout/PageLayout';
-import { AssetsToBorrow } from '@ui/components/pages/PoolPage/AssetsToBorrow/index';
-import { AssetsToSupply } from '@ui/components/pages/PoolPage/AssetsToSupply/index';
-import { YourBorrows } from '@ui/components/pages/PoolPage/YourBorrows/index';
-import { YourSupplies } from '@ui/components/pages/PoolPage/YourSupplies/index';
-import { CardBox } from '@ui/components/shared/IonicBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { usePoolData } from '@ui/hooks/usePoolData';
 
@@ -46,65 +44,14 @@ export const Dashboard = () => {
               <Claimable />
             </Flex>
           </Flex>
-          <Flex direction={{ base: 'column', md: 'row' }} gap={'20px'}>
-            <CardBox overflowX="auto" width="100%">
-              {isPoolDataLoading ? (
-                <VStack>
-                  <Skeleton minW={'80px'} />
-                  <Skeleton minW={'100%'} />
-                </VStack>
-              ) : poolData ? (
-                <YourSupplies poolData={poolData} />
-              ) : (
-                <Center>
-                  <Text>Something went wrong, Try again later</Text>
-                </Center>
-              )}
-            </CardBox>
-            <CardBox overflowX="auto" width="100%">
-              {isPoolDataLoading ? (
-                <VStack>
-                  <Skeleton minW={'80px'} />
-                  <Skeleton minW={'100%'} />
-                </VStack>
-              ) : poolData ? (
-                <YourBorrows poolData={poolData} />
-              ) : (
-                <Center>
-                  <Text>Something went wrong, Try again later</Text>
-                </Center>
-              )}
-            </CardBox>
+          <Flex mb={'20px'}>
+            <Borrows />
           </Flex>
-          <Flex direction={{ base: 'column', md: 'row' }} gap={'20px'}>
-            <CardBox mt={{ base: '24px' }} overflowX="auto" width="100%">
-              {isPoolDataLoading ? (
-                <VStack>
-                  <Skeleton minW={'80px'} />
-                  <Skeleton minW={'100%'} />
-                </VStack>
-              ) : poolData ? (
-                <AssetsToSupply poolData={poolData} />
-              ) : (
-                <Center>
-                  <Text>Something went wrong, Try again later</Text>
-                </Center>
-              )}
-            </CardBox>
-            <CardBox mt={{ base: '24px' }} overflowX="auto" width="100%">
-              {isPoolDataLoading ? (
-                <VStack>
-                  <Skeleton minW={'80px'} />
-                  <Skeleton minW={'100%'} />
-                </VStack>
-              ) : poolData ? (
-                <AssetsToBorrow poolData={poolData} />
-              ) : (
-                <Center>
-                  <Text>Something went wrong, Try again later</Text>
-                </Center>
-              )}
-            </CardBox>
+          <Flex mb={'20px'}>
+            <LendingVaults />
+          </Flex>
+          <Flex mb={'20px'}>
+            <LendingStrategy />
           </Flex>
         </PageLayout>
       </PageTransitionLayout>
