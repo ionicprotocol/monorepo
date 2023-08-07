@@ -166,7 +166,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                 <LoadingText />
               ) : (
                 <Text color={'iWhite'} size="lg">
-                  $0.96M
+                  {poolData ? smallUsdFormatter(poolData.totalSuppliedFiat, true) : '--'}
                 </Text>
               )}
             </Skeleton>
