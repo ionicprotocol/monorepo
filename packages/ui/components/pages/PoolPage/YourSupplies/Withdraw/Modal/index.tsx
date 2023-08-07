@@ -426,7 +426,7 @@ export const WithdrawModal = ({
           </Flex>
         </Flex>
       }
-      header={<Text size={'inherit'}>Supply {asset.underlyingSymbol}</Text>}
+      header={<Text size={'inherit'}>Withdraw {asset.underlyingSymbol}</Text>}
       isOpen={isOpen}
       modalCloseButtonProps={{ hidden: isLoading }}
       onClose={() => {
