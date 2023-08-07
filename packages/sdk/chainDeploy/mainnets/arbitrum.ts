@@ -130,6 +130,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   },
   {
+    symbol: assetSymbols.rETH,
+    aggregator: "0xF3272CAfe65b190e76caAF483db13424a3e23dD2",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+  },
+  {
     symbol: assetSymbols.OHM,
     aggregator: "0x761aaeBf021F19F198D325D7979965D0c7C9e53b",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD

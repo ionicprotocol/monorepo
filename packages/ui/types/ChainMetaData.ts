@@ -6,7 +6,8 @@ import {
   ganache,
   linea,
   neon,
-  polygon
+  polygon,
+  zkevm
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
@@ -31,7 +32,8 @@ export const supportedChainIdToConfig: {
   },
   [chapel.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
-  [ethereum.chainId]: { enabled: true, supported: config.isEthereumEnabled }
+  [ethereum.chainId]: { enabled: true, supported: config.isEthereumEnabled },
+  [zkevm.chainId]: { enabled: true, supported: config.isZkevmEnabled }
 };
 
 export interface PoolsPerChain {

@@ -66,17 +66,17 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.arrakis_WMATIC_AAVE_03),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_WMATIC_USDC_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
     inputToken: underlying(assets, assetSymbols.arrakis_WMATIC_WETH_005),
     strategy: RedemptionStrategyContract.GelatoGUniLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
     inputToken: underlying(assets, assetSymbols["JEUR-PAR"]),
@@ -131,20 +131,20 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.MATICx),
     strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
-    inputToken: underlying(assets, assetSymbols.WMATIC),
+    inputToken: WMATIC,
     strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.MATICx)
   },
   {
     inputToken: underlying(assets, assetSymbols.stMATIC),
     strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
-    inputToken: underlying(assets, assetSymbols.WMATIC),
+    inputToken: WMATIC,
     strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.stMATIC)
   },
@@ -166,12 +166,12 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.WMATIC_MATICX_STABLE_BLP),
     strategy: RedemptionStrategyContract.BalancerLpTokenLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
     inputToken: underlying(assets, assetSymbols.WMATIC_CSMATIC_STABLE_BLP),
     strategy: RedemptionStrategyContract.BalancerLpTokenLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
     inputToken: underlying(assets, assetSymbols.TETU_BOOSTED_STABLE_BLP),
@@ -196,17 +196,17 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.AAVE_LINEAR_WMATIC),
     strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WMATIC)
+    outputToken: WMATIC
   },
   {
     inputToken: underlying(assets, assetSymbols.USDR),
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDC)
+    outputToken: USDC
   },
   {
     inputToken: underlying(assets, assetSymbols["vAMM-wUSDR/USDR"]),
@@ -252,6 +252,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.stMATIC),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
     outputToken: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"])
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.DUSD),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: USDC
   }
 ];
 export default redemptionStrategies;

@@ -6,7 +6,8 @@ export enum SupportedChains {
   neon = 245022934,
   polygon = 137,
   arbitrum = 42161,
-  linea = 59144
+  linea = 59144,
+  zkevm = 1101
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -321,6 +322,7 @@ export enum assetSymbols {
   WUSDR = "WUSDR",
   USDR3CRV = "USDR3CRV",
   TNGBL = "TNGBL",
+  DUSD = "DUSD",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
@@ -387,6 +389,7 @@ export enum assetSymbols {
   cbETH = "cbETH",
   ankrETH = "ankrETH",
   frxETH = "frxETH",
+  sfrxETH = "sfrxETH",
   SWETH_BBA_WETH_BPT = "swETH-bba-WETH-BPT",
   WSTETH_WETH_STABLE_BPT = "wstETH-WETH-Stable-BPT",
   WSTETH_RETH_FRXETH_STABLE_BPT = "wstETH-rETH-frxETH-Stable-BPT",
