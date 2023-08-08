@@ -302,16 +302,6 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.USDC),
       underlying(assets, assetSymbols.USDT)
     ]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols.USDR3CRV),
-    pool: "0xa138341185a9D0429B0021A11FB717B225e13e1F",
-    underlyings: [
-      underlying(assets, assetSymbols.USDR),
-      underlying(assets, assetSymbols.DAI),
-      underlying(assets, assetSymbols.USDC),
-      underlying(assets, assetSymbols.USDT)
-    ]
   }
 ];
 
@@ -446,7 +436,7 @@ const balancerRateProviderAssets: BalancerRateProviderAsset[] = [
 const solidlyLps: SolidlyLpAsset[] = [
   { lpTokenAddress: underlying(assets, assetSymbols["sAMM-USDC/USDR"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-wUSDR/USDR"]) },
-  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-MATIC/USDR"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["sAMM-DAI/USDR"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-TNGBL/USDR"]) },
   { lpTokenAddress: underlying(assets, assetSymbols["vAMM-WBTC/USDR"]) },
@@ -462,7 +452,7 @@ const solidlyOracleSupportedStables: string[] = [
 const solidlyOracles: SolidlyOracleAssetConfig[] = [
   {
     underlying: underlying(assets, assetSymbols.WUSDR),
-    poolAddress: "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2", // vAMM-wUSDR-USDR
+    poolAddress: underlying(assets, assetSymbols["vAMM-wUSDR/USDR"]), // vAMM-wUSDR-USDR
     baseToken: underlying(assets, assetSymbols.USDR)
   }
 ];

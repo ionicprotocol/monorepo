@@ -50,8 +50,8 @@ const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
-const USDR = "0xb5DFABd7fF7F83BAB83995E72A52B97ABb7bcf63";
-const WUSDR = "0xAF0D9D65fC54de245cdA37af3d18cbEc860A4D4b";
+const USDR = "0x40379a439D4F6795B6fc9aa5687dB461677A2dBa";
+const WUSDR = "0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265";
 const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 const DUSD = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 
@@ -120,13 +120,13 @@ const arrakis_USDC_DAI_005 = "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA";
 const arrakis_WETH_DAI_03 = "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c";
 
 // pearl (solidly)
-const solidlyStableAMM_USDR_USDC = "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797";
-const solidlyStableAMM_DAI_USDR = "0x6ab291A9BB3C20F0017f2E93A6d1196842D09bF4";
-const solidlyVolatileAMM_stMATIC_USDR = "0x733eEEf37De013283da29cE9EB4758dC59CaFc87";
-const solidlyVolatileAMM_wUSDR_USDR = "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2";
-const solidlyVolatileAMM_TNGBL_USDR = "0x16e9D19221DF563CfB15628953B5c51E4a2Be30c";
-const solidlyVolatileAMM_WETH_USDR = "0x6B3aA71C74042e113Bd0b055224d70a131334761";
-const solidlyVolatileAMM_WBTC_USDR = "0x413dEd0698B0947105bEb3c81786Dcf718AA24D1";
+const solidlyStableAMM_USDR_USDC = "0xD17cb0f162f133e339C0BbFc18c36c357E681D6b";
+const solidlyStableAMM_DAI_USDR = "0xBD02973b441Aa83c8EecEA158b98B5984bb1036E";
+const solidlyVolatileAMM_MATIC_USDR = "0xB4d852b92148eAA16467295975167e640E1FE57A";
+const solidlyVolatileAMM_wUSDR_USDR = "0x8711a1a52c34EDe8E61eF40496ab2618a8F6EA4B";
+const solidlyVolatileAMM_TNGBL_USDR = "0x0Edc235693C20943780b76D79DD763236E94C751";
+const solidlyVolatileAMM_WETH_USDR = "0x74c64d1976157E7Aaeeed46EF04705F4424b27eC";
+const solidlyVolatileAMM_WBTC_USDR = "0xb95E1C22dd965FafE926b2A793e9D6757b6613F4";
 
 export const assets: SupportedAsset[] = [
   {
@@ -888,13 +888,13 @@ export const assets: SupportedAsset[] = [
     originalSymbol: assetOriginalSymbols["vAMM-wUSDR/USDR"]
   },
   {
-    symbol: assetSymbols["vAMM-stMATIC/USDR"],
-    underlying: solidlyVolatileAMM_stMATIC_USDR,
-    name: "Stable V1 AMM - stMATIC/USDR",
+    symbol: assetSymbols["vAMM-MATIC/USDR"],
+    underlying: solidlyVolatileAMM_MATIC_USDR,
+    name: "Stable V1 AMM - MATIC/USDR",
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
-    extraDocs: pearlDocs(solidlyVolatileAMM_stMATIC_USDR),
-    originalSymbol: assetOriginalSymbols["vAMM-stMATIC/USDR"]
+    extraDocs: pearlDocs(solidlyVolatileAMM_MATIC_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-MATIC/USDR"]
   },
   {
     symbol: assetSymbols["vAMM-TNGBL/USDR"],

@@ -214,7 +214,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.USDR)
   },
   {
-    inputToken: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"]),
+    inputToken: underlying(assets, assetSymbols["vAMM-MATIC/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.USDR)
   },
@@ -241,17 +241,17 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: underlying(assets, assetSymbols.USDR),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
-    outputToken: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"])
+    outputToken: underlying(assets, assetSymbols["vAMM-MATIC/USDR"])
   },
   {
     inputToken: underlying(assets, assetSymbols.USDR),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
-    outputToken: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"])
+    outputToken: underlying(assets, assetSymbols["vAMM-MATIC/USDR"])
   },
   {
-    inputToken: underlying(assets, assetSymbols.stMATIC),
+    inputToken: underlying(assets, assetSymbols.WMATIC),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
-    outputToken: underlying(assets, assetSymbols["vAMM-stMATIC/USDR"])
+    outputToken: underlying(assets, assetSymbols["vAMM-MATIC/USDR"])
   },
   {
     inputToken: underlying(assets, assetSymbols.DUSD),
