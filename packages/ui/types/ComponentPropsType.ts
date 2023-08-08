@@ -4,12 +4,19 @@ import type {
   NativePricedIonicAsset,
   NewPosition,
   OpenPosition,
+  SupportedChains,
   VaultData
 } from '@ionicprotocol/types';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import type { ReactNode } from 'react';
 
+import type {
+  ALL_NETWORKS,
+  LENDING_MODE_FILTERS,
+  LENDING_POOL_FILTERS,
+  SEARCH
+} from '@ui/constants/index';
 import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 
 export type PageLayoutProps = {
@@ -302,3 +309,12 @@ export type TxStep = {
   title: string;
   txHash?: string;
 };
+
+export type LendingPoolFilter = (typeof LENDING_POOL_FILTERS)[number];
+export type LendingModeFilter = (typeof LENDING_MODE_FILTERS)[number];
+export type LendingNetworkFilter = SupportedChains | typeof ALL_NETWORKS;
+export type LendingFilter =
+  | LendingModeFilter
+  | LendingNetworkFilter
+  | LendingPoolFilter
+  | typeof SEARCH;

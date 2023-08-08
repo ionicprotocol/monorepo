@@ -129,6 +129,15 @@ export const PAUSED = 'Paused';
 export const SEARCH = 'Search';
 export const HIDDEN = 'Hiden';
 export const ALL = 'All';
+export const ALL_POOLS = 'All Pools';
+export const ALL_NETWORKS = 'All Networks';
+export const LST = 'LST';
+export const RWA = 'RWA';
+export const STABLECOINS = 'Stablecoins';
+export const SIMPLE_MODE = 'Simple Mode';
+export const ADVANCED_MODE = 'Advanced Mode';
+export const LENDING_POOL_FILTERS = [ALL_POOLS, LST, RWA, STABLECOINS] as const;
+export const LENDING_MODE_FILTERS = [SIMPLE_MODE, ADVANCED_MODE] as const;
 
 export const RESERVE_FACTOR_TOOLTIP =
   'The reserve factor defines the portion of borrower interest that is converted into reserves.';
