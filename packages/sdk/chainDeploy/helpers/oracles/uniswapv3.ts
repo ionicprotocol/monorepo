@@ -76,10 +76,10 @@ export const deployUniswapV3Oracle = async ({
   console.log("UniswapV3PriceOracle: ", utpo.address);
 
   const uniswapV3Oracle = (await ethers.getContract("UniswapV3PriceOracle", deployer)) as UniswapV3PriceOracle;
-  const assetsToAdd = await configureOracle(uniswapV3Oracle, concentratedLiquidityOracleTokens, deployConfig);
+  await configureOracle(uniswapV3Oracle, concentratedLiquidityOracleTokens, deployConfig);
 
   // set mpo addresses
-  const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
+  const underlyings = concentratedLiquidityOracleTokens.map((assetConfig) => assetConfig.assetAddress);
   await addUnderlyingsToMpo(mpo, underlyings, uniswapV3Oracle.address);
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
