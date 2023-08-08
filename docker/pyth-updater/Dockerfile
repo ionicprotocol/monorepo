@@ -1,7 +1,6 @@
 FROM public.ecr.aws/lambda/nodejs:16 as node
 
-FROM ghcr.io/foundry-rs/foundry:nightly-6ad60c82a93cd81d63e0a69dc97f2267157b6631 as foundry
-
+FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
 
 FROM node as build
 
