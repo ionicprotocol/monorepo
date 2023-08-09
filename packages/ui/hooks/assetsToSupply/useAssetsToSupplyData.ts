@@ -11,7 +11,9 @@ export const useAssetsToSupplyData = (assets?: MarketData[]) => {
       const res: AssetToSupplyRowData[] = [];
 
       if (assets && assets.length > 0) {
-        const assetsToSupply = assets.filter((asset) => asset.supplyBalance.eq(constants.Zero));
+        const assetsToSupply = assets.filter(
+          (asset) => !asset.isSupplyPaused && asset.supplyBalance.eq(constants.Zero)
+        );
 
         assetsToSupply.map((asset) => {
           res.push({
