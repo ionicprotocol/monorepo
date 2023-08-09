@@ -11,7 +11,9 @@ export const useAssetsToBorrowData = (assets?: MarketData[]) => {
       const res: AssetToBorrowRowData[] = [];
 
       if (assets && assets.length > 0) {
-        const assetsToBorrow = assets.filter((asset) => asset.borrowBalance.eq(constants.Zero));
+        const assetsToBorrow = assets.filter(
+          (asset) => !asset.isBorrowPaused && asset.borrowBalance.eq(constants.Zero)
+        );
 
         assetsToBorrow.map((asset) => {
           res.push({
