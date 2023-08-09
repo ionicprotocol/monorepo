@@ -1,6 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Divider,
   Flex,
@@ -13,7 +12,8 @@ import {
   StepIndicator,
   Stepper,
   StepSeparator,
-  Text
+  Text,
+  VStack
 } from '@chakra-ui/react';
 import { WETHAbi } from '@ionicprotocol/sdk';
 import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
@@ -24,9 +24,11 @@ import { constants, utils } from 'ethers';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
+import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { SupplyError } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/Modal/SupplyError';
 import { Banner } from '@ui/components/shared/Banner';
+import { CButton } from '@ui/components/shared/Button';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Center } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -61,7 +63,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
   const { chainId, comptroller, assets: _assets, id: poolId } = poolData;
   const assets = _assets.filter((asset) => !asset.isSupplyPaused);
 
-  const [asset, setAsset] = useState<MarketData>(assets[0] || null);
+  const [selectedAsset, setSelectedAsset] = useState<MarketData>(assets[0] || null);
   const router = useRouter();
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();
@@ -72,9 +74,9 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
   const { cIPage, cGreen } = useColors();
   const { setGlobalLoading, currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptroller, chainId);
+  const { data: maxSupplyAmount } = useMaxSupplyAmount(selectedAsset, comptroller, chainId);
   const { data: myBalance, isLoading: isBalanceLoading } = useTokenBalance(
-    asset.underlyingToken,
+    selectedAsset.underlyingToken,
     chainId
   );
 
@@ -85,7 +87,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
   const { data: supplyCap } = useSupplyCap({
     chainId,
     comptroller,
-    market: asset
+    market: selectedAsset
   });
   const { data: allRewards } = useRewards({ chainId, poolId: poolId.toString() });
   const { data: assetInfos } = useAssets(chainId ? [chainId] : []);
@@ -97,28 +99,30 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
   );
 
   const nativeSymbol = sdk?.chainSpecificParams.metadata.nativeCurrency.symbol;
-  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
+  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(selectedAsset.underlyingSymbol)]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const [usdAmount, setUsdAmount] = useState<number>(0);
-  const [activeStep, setActiveStep] = useState<TxStep>(SUPPLY_STEPS(asset.underlyingSymbol)[0]);
+  const [activeStep, setActiveStep] = useState<TxStep>(
+    SUPPLY_STEPS(selectedAsset.underlyingSymbol)[0]
+  );
   const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
 
   const optionToWrap =
-    asset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
+    selectedAsset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
 
   useEffect(() => {
     if (optionToWrap) {
-      setSteps([...SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)]);
-      setActiveStep(SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)[0]);
+      setSteps([...SUPPLY_STEPS_WITH_WRAP(selectedAsset.underlyingSymbol)]);
+      setActiveStep(SUPPLY_STEPS_WITH_WRAP(selectedAsset.underlyingSymbol)[0]);
     } else {
-      setSteps([...SUPPLY_STEPS(asset.underlyingSymbol)]);
-      setActiveStep(SUPPLY_STEPS(asset.underlyingSymbol)[0]);
+      setSteps([...SUPPLY_STEPS(selectedAsset.underlyingSymbol)]);
+      setActiveStep(SUPPLY_STEPS(selectedAsset.underlyingSymbol)[0]);
     }
-  }, [asset.underlyingSymbol, optionToWrap]);
+  }, [selectedAsset.underlyingSymbol, optionToWrap]);
 
   useEffect(() => {
     if (amount.isZero() || !maxSupplyAmount) {
@@ -130,16 +134,16 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
   }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
 
   useEffect(() => {
-    if (asset && price && !amount.isZero()) {
+    if (selectedAsset && price && !amount.isZero()) {
       setUsdAmount(
-        Number(utils.formatUnits(amount, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18)) *
+        Number(utils.formatUnits(amount, selectedAsset.underlyingDecimals)) *
+          Number(utils.formatUnits(selectedAsset.underlyingPrice, 18)) *
           price
       );
     } else {
       setUsdAmount(0);
     }
-  }, [asset, amount, price]);
+  }, [selectedAsset, amount, price]);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -151,8 +155,8 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
     try {
       setUserEnteredAmount(newAmount);
       const bigAmount = utils.parseUnits(
-        toFixedNoRound(newAmount, Number(asset.underlyingDecimals)),
-        Number(asset.underlyingDecimals)
+        toFixedNoRound(newAmount, Number(selectedAsset.underlyingDecimals)),
+        Number(selectedAsset.underlyingDecimals)
       );
       setAmount(bigAmount);
     } catch (e) {
@@ -177,7 +181,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
       } else {
-        const str = utils.formatUnits(maxBN, asset.underlyingDecimals);
+        const str = utils.formatUnits(maxBN, selectedAsset.underlyingDecimals);
         updateAmount(str);
       }
 
@@ -186,7 +190,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptroller,
-        token: asset.cToken
+        token: selectedAsset.cToken
       };
       const sentryInfo = {
         contextName: 'Fetching max supply amount',
@@ -254,7 +258,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptroller,
-        token: asset.cToken
+        token: selectedAsset.cToken
       };
       const sentryInfo = {
         contextName: 'Supply - Wrapping Native Token',
@@ -279,16 +283,19 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
     setSteps(_steps);
 
     try {
-      const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
-      const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
-        amount
+      const token = currentSdk.getEIP20TokenInstance(
+        selectedAsset.underlyingToken,
+        currentSdk.signer
       );
+      const hasApprovedEnough = (
+        await token.callStatic.allowance(address, selectedAsset.cToken)
+      ).gte(amount);
 
       if (!hasApprovedEnough) {
-        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
+        const tx = await currentSdk.approve(selectedAsset.cToken, selectedAsset.underlyingToken);
 
         addRecentTransaction({
-          description: `Approve ${asset.underlyingSymbol}`,
+          description: `Approve ${selectedAsset.underlyingSymbol}`,
           hash: tx.hash
         });
 
@@ -338,7 +345,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptroller,
-        token: asset.cToken
+        token: selectedAsset.cToken
       };
 
       const sentryInfo = {
@@ -365,12 +372,12 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
     setSteps(_steps);
 
     try {
-      const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
+      const { tx, errorCode } = await currentSdk.mint(selectedAsset.cToken, amount);
       if (errorCode !== null) {
         SupplyError(errorCode);
       } else {
         addRecentTransaction({
-          description: `${asset.underlyingSymbol} Token Supply`,
+          description: `${selectedAsset.underlyingSymbol} Token Supply`,
           hash: tx.hash
         });
 
@@ -413,7 +420,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
       const sentryProperties = {
         chainId: currentSdk.chainId,
         comptroller: comptroller,
-        token: asset.cToken
+        token: selectedAsset.cToken
       };
 
       const sentryInfo = {
@@ -427,14 +434,14 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
   };
 
   useEffect(() => {
-    let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
+    let _steps = [...SUPPLY_STEPS(selectedAsset.underlyingSymbol)];
 
     if (optionToWrap) {
-      _steps = [...SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)];
+      _steps = [...SUPPLY_STEPS_WITH_WRAP(selectedAsset.underlyingSymbol)];
     }
 
     setSteps(_steps);
-  }, [optionToWrap, asset.underlyingSymbol]);
+  }, [optionToWrap, selectedAsset.underlyingSymbol]);
 
   return (
     <Flex direction="column" gap={{ base: '10px' }}>
@@ -449,7 +456,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
           }}
         />
         <Text size="xl" textAlign="left">
-          Supply {asset ? asset.underlyingName : ''}
+          Supply {selectedAsset ? selectedAsset.underlyingName : ''}
         </Text>
       </HStack>
       <Flex direction="column" gap={{ base: '4px' }}>
@@ -460,11 +467,11 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
             <Text size={'sm'}>
               {optionToWrap
                 ? myNativeBalance
-                  ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
+                  ? utils.formatUnits(myNativeBalance, selectedAsset.underlyingDecimals)
                   : 0
                 : myBalance
                 ? smallFormatter(
-                    Number(utils.formatUnits(myBalance, asset.underlyingDecimals)),
+                    Number(utils.formatUnits(myBalance, selectedAsset.underlyingDecimals)),
                     true
                   )
                 : 0}
@@ -491,25 +498,71 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
             value={userEnteredAmount}
             variant="ghost"
           />
-          <Box height={8} mr={1} width={8}>
-            <TokenIcon
-              address={asset.underlyingToken}
-              chainId={chainId}
-              size="sm"
-              withMotion={false}
-            />
-          </Box>
-          <Flex alignSelf={'center'}>
-            <EllipsisText
-              fontWeight="bold"
-              maxWidth="80px"
-              mr={2}
-              size="md"
-              tooltip={asset.underlyingSymbol}
-            >
-              {asset.underlyingSymbol}
-            </EllipsisText>
-          </Flex>
+          <PopoverTooltip
+            body={
+              <VStack alignItems="flex-start" p={0}>
+                {assets.map((asset, i) => {
+                  return (
+                    <CButton
+                      height={'inherit'}
+                      isSelected={asset.cToken === selectedAsset.cToken}
+                      key={i}
+                      onClick={() => {
+                        setSelectedAsset(asset);
+                      }}
+                      p={0}
+                      variant="_filter"
+                    >
+                      <HStack>
+                        <TokenIcon
+                          address={asset.underlyingToken}
+                          chainId={chainId}
+                          size="sm"
+                          withMotion={false}
+                        />
+                        <Flex alignSelf={'center'}>
+                          <EllipsisText
+                            fontWeight="bold"
+                            maxWidth="80px"
+                            mr={2}
+                            size="md"
+                            tooltip={asset.underlyingSymbol}
+                            variant={'inherit'}
+                          >
+                            {asset.underlyingSymbol}
+                          </EllipsisText>
+                        </Flex>
+                      </HStack>
+                    </CButton>
+                  );
+                })}
+              </VStack>
+            }
+            bodyProps={{ p: 0 }}
+            popoverProps={{ placement: 'bottom-end', trigger: 'click' }}
+          >
+            <Button aria-label="Column Settings" p={0}>
+              <HStack>
+                <TokenIcon
+                  address={selectedAsset.underlyingToken}
+                  chainId={chainId}
+                  size="sm"
+                  withMotion={false}
+                />
+                <Flex alignSelf={'center'}>
+                  <EllipsisText
+                    fontWeight="bold"
+                    maxWidth="80px"
+                    size="md"
+                    tooltip={selectedAsset.underlyingSymbol}
+                  >
+                    {selectedAsset.underlyingSymbol}
+                  </EllipsisText>
+                </Flex>
+                <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
+              </HStack>
+            </Button>
+          </PopoverTooltip>
         </Flex>
         <Flex justifyContent={'space-between'}>
           <Text color={'iGray'}>{smallUsdFormatter(usdAmount)}</Text>
@@ -526,7 +579,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
               {isTotalSupplyApyLoading
                 ? 'Supply Apr'
                 : totalSupplyApyPerAsset
-                ? totalSupplyApyPerAsset[asset.cToken].totalApy
+                ? totalSupplyApyPerAsset[selectedAsset.cToken].totalApy
                 : '--'}{' '}
               %
             </Text>
@@ -534,7 +587,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
         </Flex>
         <Flex alignItems={'flex-end'} justifyContent={'space-between'}>
           <Text variant={'itemTitle'}>Total Supply</Text>
-          <Text variant={'itemDesc'}>{smallUsdFormatter(asset.totalSupplyFiat)}</Text>
+          <Text variant={'itemDesc'}>{smallUsdFormatter(selectedAsset.totalSupplyFiat)}</Text>
         </Flex>
       </Flex>
       <Center height={'1px'} my={'10px'}>
@@ -544,15 +597,15 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
         <Text variant={'itemTitle'}>Gas Fee</Text>
         <Text variant={'itemDesc'}>-</Text>
       </Flex>
-      {supplyCap && asset.totalSupplyFiat >= supplyCap.usdCap ? (
+      {supplyCap && selectedAsset.totalSupplyFiat >= supplyCap.usdCap ? (
         <Banner
           alertDescriptionProps={{ fontSize: 'lg' }}
           alertProps={{ status: 'info' }}
           descriptions={[
             {
               text: `${smallFormatter(supplyCap.tokenCap)} ${
-                asset.underlyingSymbol
-              } / ${smallFormatter(supplyCap.tokenCap)} ${asset.underlyingSymbol}`,
+                selectedAsset.underlyingSymbol
+              } / ${smallFormatter(supplyCap.tokenCap)} ${selectedAsset.underlyingSymbol}`,
               textProps: { display: 'block', fontWeight: 'bold' }
             },
             {
@@ -581,7 +634,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
           variant={getVariant(steps[optionToWrap ? 1 : 0]?.status)}
         >
           {steps[optionToWrap ? 1 : 0].status !== COMPLETE ? `Approve ` : 'Approved'}{' '}
-          {asset.underlyingSymbol}
+          {selectedAsset.underlyingSymbol}
         </Button>
         <Flex flex={1}>
           <PopoverTooltip
@@ -603,7 +656,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
               variant={getVariant(steps[optionToWrap ? 2 : 1]?.status)}
               width={'100%'}
             >
-              Supply {asset.underlyingSymbol}
+              Supply {selectedAsset.underlyingSymbol}
             </Button>
           </PopoverTooltip>
         </Flex>

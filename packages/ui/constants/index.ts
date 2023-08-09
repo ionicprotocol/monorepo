@@ -509,3 +509,7 @@ export const HEALTH_FACTOR = {
   MAX: 100,
   MIN: 0
 };
+
+export const SUPPLY_ASSET = 'Supply Asset';
+export const UTILIZATION_RATE = 'Utilization Rate';
+export const PERCENT_IN_PORTFOLIO = 'Percent In Portfolio';

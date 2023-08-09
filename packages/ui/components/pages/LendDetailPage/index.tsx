@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import PageLayout from '../Layout/PageLayout';
 
+import { AssetsList } from './AssetsList';
 import { LendSupply } from './Supply';
 
 import { Center } from '@ui/components/shared/Flex';
@@ -53,7 +54,7 @@ export const LendDetailPage = () => {
                   <Skeleton minW={'80px'} />
                 </VStack>
               ) : poolData ? (
-                <LendSupply poolData={poolData} />
+                <AssetsList poolData={poolData} />
               ) : (
                 <Center>
                   <Text>Something went wrong, Try again later</Text>

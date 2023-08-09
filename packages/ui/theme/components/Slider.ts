@@ -70,6 +70,26 @@ const green = definePartsStyle((props) => {
   };
 });
 
+const custom = definePartsStyle((props) => {
+  return {
+    container: defineStyle({
+      rounded: '100px'
+    }),
+    filledTrack: defineStyle({ bg: props.color, height: '4px' }),
+    mark: defineStyle({}),
+    thumb: defineStyle({
+      _focus: {
+        boxShadow: '0px 0px 0px 3px #39FF8855'
+      },
+      bg: mode(props.color, props.color)(props),
+      boxShadow: '0px 0px 0px 3px #39FF8855',
+      height: '9px',
+      width: '9px'
+    }),
+    track: defineStyle({ bg: 'iGray', height: '4px' })
+  };
+});
+
 const yellow = definePartsStyle((props) => {
   return {
     container: defineStyle({
@@ -156,5 +176,5 @@ export const SliderConfigStyle = defineMultiStyleConfig({
   baseStyle,
   defaultProps: {},
   sizes,
-  variants: { green, health, limitedRed, limitedYellow, red, yellow }
+  variants: { custom, green, health, limitedRed, limitedYellow, red, yellow }
 });

@@ -99,6 +99,28 @@ const solidGreen = defineStyle((props) => ({
   color: mode('iCardBg', 'iCardBg')(props)
 }));
 
+const solidCustom = defineStyle((props) => ({
+  _disabled: {
+    bg: mode('iGray', 'iGray')(props)
+  },
+  _focus: {
+    bg: mode(props.bgColor, props.bgColor)(props),
+    color: mode('iCardBg', 'iCardBg')(props)
+  },
+  _hover: {
+    _disabled: {
+      bg: mode('iGray', 'iGray')(props),
+      color: mode('iCardBg', 'iCardBg')(props)
+    },
+    bg: mode(props.bgColor, props.bgColor)(props),
+    color: mode('iCardBg', 'iCardBg')(props),
+    textDecoration: 'unset'
+  },
+  bg: mode(props.bgColor, props.bgColor)(props),
+  borderColor: mode(props.bgColor, props.bgColor)(props),
+  color: mode('iCardBg', 'iCardBg')(props)
+}));
+
 const solidGray = defineStyle((props) => ({
   _disabled: {
     bg: mode('iGray', 'iGray')(props)
@@ -179,5 +201,5 @@ export const ButtonStyleConfig = defineStyleConfig({
     variant: 'ghost'
   },
   sizes,
-  variants: { _filter, ghost, outlineLightGray, outlineRed, solidGray, solidGreen }
+  variants: { _filter, ghost, outlineLightGray, outlineRed, solidCustom, solidGray, solidGreen }
 });
