@@ -37,7 +37,6 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { useRouter } from 'next/router';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
@@ -102,7 +101,7 @@ export type PoolRowData = {
 export const AvailableLendingVaults = () => {
   const enabledChains = useEnabledChains();
   const { isAllLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
-  const { address, setGlobalLoading } = useMultiIonic();
+  const { address } = useMultiIonic();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
@@ -122,7 +121,6 @@ export const AvailableLendingVaults = () => {
   ]);
   const [searchText, setSearchText] = useState('');
   const mounted = useRef(false);
-  const router = useRouter();
 
   const loadingStatusPerChain = useLoadingStatusPerChain(poolsPerChain);
 
@@ -597,12 +595,6 @@ export const AvailableLendingVaults = () => {
                           borderRadius={{ base: '20px' }}
                           cursor="pointer"
                           key={row.id}
-                          onClick={() => {
-                            setGlobalLoading(true);
-                            router.push(
-                              `/${row.original.network.chainId}/pool/${row.original.network.id}`
-                            );
-                          }}
                         >
                           {row.getVisibleCells().map((cell, index) => {
                             return (
