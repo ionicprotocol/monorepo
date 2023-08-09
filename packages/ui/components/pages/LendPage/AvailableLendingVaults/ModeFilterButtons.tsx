@@ -1,5 +1,5 @@
 import type { ButtonGroupProps } from '@chakra-ui/react';
-import { ButtonGroup, Flex } from '@chakra-ui/react';
+import { ButtonGroup, Flex, Text } from '@chakra-ui/react';
 
 import { CButton } from '@ui/components/shared/Button';
 import { RowBox } from '@ui/components/shared/IonicBox';
@@ -19,15 +19,8 @@ export const ModeFilterButtons = ({
   props?: ButtonGroupProps;
 }) => {
   return (
-    <RowBox borderRadius={{ base: '12px' }} padding={{ base: '4px' }}>
-      <ButtonGroup
-        flexFlow={'row wrap'}
-        gap={0}
-        // isAttached
-        justifyContent="flex-start"
-        spacing={1}
-        {...props}
-      >
+    <RowBox borderRadius={{ base: '12px' }} px={{ base: '4px' }} py={{ base: '2px' }}>
+      <ButtonGroup flexFlow={'row wrap'} gap={0} justifyContent="flex-start" spacing={1} {...props}>
         <CButton
           borderRadius={{ base: '10px' }}
           disabled={isLoading}
@@ -39,7 +32,7 @@ export const ModeFilterButtons = ({
         >
           <SimpleTooltip height="100%" label={'Simple Mode'}>
             <Flex alignItems="center" height="100%" justifyContent="center" width="100%">
-              Simple Mode
+              <Text>Simple Mode</Text>
             </Flex>
           </SimpleTooltip>
         </CButton>
@@ -54,7 +47,7 @@ export const ModeFilterButtons = ({
         >
           <SimpleTooltip height="100%" label={'Advanced Mode'}>
             <Flex alignItems="center" height="100%" justifyContent="center" width="100%">
-              Advanced Mode
+              <Text>Advanced Mode</Text>
             </Flex>
           </SimpleTooltip>
         </CButton>

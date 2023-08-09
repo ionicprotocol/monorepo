@@ -52,8 +52,6 @@ import { PoolName } from '@ui/components/pages/PoolsPage/PoolsList/PoolName';
 import { SupplyBalance } from '@ui/components/pages/PoolsPage/PoolsList/SupplyBalance';
 import { TotalBorrow } from '@ui/components/pages/PoolsPage/PoolsList/TotalBorrow';
 import { TotalSupply } from '@ui/components/pages/PoolsPage/PoolsList/TotalSupply';
-import { useAllPoolsData } from '@ui/components/pages/PoolsPage/PoolsList/useAllPoolsData';
-import { useLoadingStatusPerChain } from '@ui/components/pages/PoolsPage/PoolsList/useLoadingStatusPerChain';
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
 import { CardBox } from '@ui/components/shared/IonicBox';
@@ -75,6 +73,8 @@ import {
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
+import { useAllPoolsData } from '@ui/hooks/pools/useAllPoolsData';
+import { useLoadingStatusPerChain } from '@ui/hooks/pools/useLoadingStatusPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import type { PoolData } from '@ui/types/TokensDataMap';

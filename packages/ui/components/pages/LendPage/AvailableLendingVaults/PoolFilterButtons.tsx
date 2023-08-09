@@ -1,5 +1,5 @@
 import type { ButtonGroupProps } from '@chakra-ui/react';
-import { ButtonGroup, Flex } from '@chakra-ui/react';
+import { ButtonGroup, Flex, Text } from '@chakra-ui/react';
 
 import { CButton } from '@ui/components/shared/Button';
 import { RowBox } from '@ui/components/shared/IonicBox';
@@ -20,7 +20,7 @@ export const PoolFilterButtons = ({
 }) => {
   return (
     <RowBox borderRadius={{ base: '12px' }} px={{ base: '4px' }} py={{ base: '2px' }}>
-      <ButtonGroup flexFlow={'row wrap'} gap={0} justifyContent="flex-start" spacing={2} {...props}>
+      <ButtonGroup flexFlow={'row wrap'} gap={0} justifyContent="flex-start" spacing={1} {...props}>
         <CButton
           borderRadius={{ base: '10px' }}
           disabled={isLoading}
@@ -32,7 +32,7 @@ export const PoolFilterButtons = ({
         >
           <SimpleTooltip height="100%" label={'All Pools'}>
             <Flex alignItems="center" height="100%" justifyContent="center" width="100%">
-              All Pools
+              <Text>All Pools</Text>
             </Flex>
           </SimpleTooltip>
         </CButton>
@@ -47,7 +47,7 @@ export const PoolFilterButtons = ({
         >
           <SimpleTooltip height="100%" label={'LST'}>
             <Flex alignItems="center" height="100%" justifyContent="center" width="100%">
-              LST
+              <Text>LST</Text>
             </Flex>
           </SimpleTooltip>
         </CButton>
@@ -62,7 +62,7 @@ export const PoolFilterButtons = ({
         >
           <SimpleTooltip height="100%" label={'RWA'}>
             <Flex alignItems="center" height="100%" justifyContent="center" width="100%">
-              RWA
+              <Text>RWA</Text>
             </Flex>
           </SimpleTooltip>
         </CButton>
@@ -77,7 +77,7 @@ export const PoolFilterButtons = ({
         >
           <SimpleTooltip height="100%" label={'Stablecoins'}>
             <Flex alignItems="center" height="100%" justifyContent="center" width="100%">
-              Stablecoins
+              <Text>Stablecoins</Text>
             </Flex>
           </SimpleTooltip>
         </CButton>

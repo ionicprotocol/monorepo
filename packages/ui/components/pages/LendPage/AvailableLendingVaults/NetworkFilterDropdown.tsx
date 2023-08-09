@@ -7,12 +7,14 @@ import {
   Checkbox,
   Flex,
   HStack,
+  Icon,
   Img,
   Spinner,
   Text,
   VStack
 } from '@chakra-ui/react';
 import type { SupportedChains } from '@ionicprotocol/types';
+import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -22,13 +24,11 @@ import { useColors } from '@ui/hooks/useColors';
 import type { LendingNetworkFilter } from '@ui/types/ComponentPropsType';
 
 export const NetworkFilterDropdown = ({
-  isLoading,
   loadingStatusPerChain,
   networkFilter,
   onNetworkFilter,
   props
 }: {
-  isLoading: boolean;
   loadingStatusPerChain: { [chainId: string]: boolean };
   networkFilter: LendingNetworkFilter[];
   onNetworkFilter: (filter: LendingNetworkFilter) => void;
@@ -46,7 +46,6 @@ export const NetworkFilterDropdown = ({
             <Text>Select Networks</Text>
             <Checkbox
               isChecked={networkFilter.includes(ALL_NETWORKS)}
-              isDisabled={isLoading}
               onChange={() => onNetworkFilter(ALL_NETWORKS)}
             >
               All Networks
@@ -67,29 +66,32 @@ export const NetworkFilterDropdown = ({
         popoverProps={{ placement: 'bottom-start', trigger: 'click' }}
       >
         <Button aria-label="Column Settings" px={4} py={2} {...props}>
-          {chainFilter.length === 0 ? (
-            'All Networks'
-          ) : chainFilter.length === 1 ? (
-            <IconChainName
-              chainId={chainFilter[0]}
-              isLoading={loadingStatusPerChain[chainFilter[0].toString()]}
-            />
-          ) : (
-            <>
-              <AvatarGroup>
-                {chainFilter.map((chainId) => (
-                  <ButtonContent
-                    chainId={chainId}
-                    key={chainId}
-                    loadingStatusPerChain={loadingStatusPerChain}
-                  />
-                ))}
-              </AvatarGroup>
-              <Text flexShrink={0} ml={2}>
-                {chainFilter.length} Networks
-              </Text>
-            </>
-          )}
+          <HStack>
+            {chainFilter.length === 0 ? (
+              <Text>All Networks</Text>
+            ) : chainFilter.length === 1 ? (
+              <IconChainName
+                chainId={chainFilter[0]}
+                isLoading={loadingStatusPerChain[chainFilter[0].toString()]}
+              />
+            ) : (
+              <>
+                <AvatarGroup>
+                  {chainFilter.map((chainId) => (
+                    <ButtonContent
+                      chainId={chainId}
+                      key={chainId}
+                      loadingStatusPerChain={loadingStatusPerChain}
+                    />
+                  ))}
+                </AvatarGroup>
+                <Text flexShrink={0} ml={'2px'}>
+                  {chainFilter.length} Networks
+                </Text>
+              </>
+            )}
+            <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
+          </HStack>
         </Button>
       </PopoverTooltip>
     </Flex>
