@@ -302,7 +302,7 @@ export const AvailableLendingVaults = () => {
     }
   });
 
-  const { data: tableData } = useQuery(['PoolsTableData', table], () => {
+  const { data: tableData } = useQuery(['LendingPoolsTableData', table], () => {
     return {
       canNextPage: table.getCanNextPage(),
       canPreviousPage: table.getCanPreviousPage(),
