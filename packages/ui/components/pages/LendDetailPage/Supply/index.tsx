@@ -1,4 +1,3 @@
-import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
   Button,
   Divider,
@@ -21,7 +20,6 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
@@ -59,12 +57,17 @@ import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
-export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
+export const LendSupply = ({
+  poolData,
+  selectedAsset,
+  setSelectedAsset
+}: {
+  poolData: PoolData;
+  selectedAsset: MarketData;
+  setSelectedAsset: (asset: MarketData) => void;
+}) => {
   const { chainId, comptroller, assets: _assets, id: poolId } = poolData;
   const assets = _assets.filter((asset) => !asset.isSupplyPaused);
-
-  const [selectedAsset, setSelectedAsset] = useState<MarketData>(assets[0] || null);
-  const router = useRouter();
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();
   const queryClient = useQueryClient();
@@ -72,7 +75,7 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
   const sdk = useSdk(chainId);
 
   const { cIPage, cGreen } = useColors();
-  const { setGlobalLoading, currentSdk, address } = useMultiIonic();
+  const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
   const { data: maxSupplyAmount } = useMaxSupplyAmount(selectedAsset, comptroller, chainId);
   const { data: myBalance, isLoading: isBalanceLoading } = useTokenBalance(
@@ -445,20 +448,6 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
 
   return (
     <Flex direction="column" gap={{ base: '10px' }}>
-      <HStack mb={{ base: '10px' }} spacing={4}>
-        <ArrowBackIcon
-          cursor="pointer"
-          fontSize="2xl"
-          fontWeight="extrabold"
-          onClick={() => {
-            setGlobalLoading(true);
-            router.back();
-          }}
-        />
-        <Text size="xl" textAlign="left">
-          Supply {selectedAsset ? selectedAsset.underlyingName : ''}
-        </Text>
-      </HStack>
       <Flex direction="column" gap={{ base: '4px' }}>
         <Flex justifyContent={'space-between'}>
           <Text variant={'itemTitle'}>Amount</Text>
@@ -587,7 +576,17 @@ export const LendSupply = ({ poolData }: { poolData: PoolData }) => {
         </Flex>
         <Flex alignItems={'flex-end'} justifyContent={'space-between'}>
           <Text variant={'itemTitle'}>Total Supply</Text>
-          <Text variant={'itemDesc'}>{smallUsdFormatter(selectedAsset.totalSupplyFiat)}</Text>
+          <HStack>
+            <Text variant={'itemDesc'}>{smallUsdFormatter(selectedAsset.totalSupplyFiat)} </Text>
+            {usdAmount ? (
+              <HStack>
+                <Text variant={'itemDesc'}>➡</Text>
+                <Text color={'itemDesc'}>
+                  {smallUsdFormatter(selectedAsset.totalSupplyFiat + usdAmount)}
+                </Text>
+              </HStack>
+            ) : null}
+          </HStack>
         </Flex>
       </Flex>
       <Center height={'1px'} my={'10px'}>
