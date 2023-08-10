@@ -261,7 +261,7 @@ export const LendWithdraw = ({
         <Flex justifyContent={'space-between'}>
           <Text variant={'itemTitle'}>Amount</Text>
           <HStack>
-            <Text size={'sm'}>Withdrawable amount: </Text>
+            <Text size={'sm'}>My Supply: </Text>
             <Text size={'sm'}>{smallFormatter(Number(withdrawableAmount), true)}</Text>
             <Button color={'iGreen'} isLoading={isMaxLoading} onClick={setToMax} variant={'ghost'}>
               MAX
