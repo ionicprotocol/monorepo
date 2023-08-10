@@ -166,7 +166,7 @@ export const LendWithdraw = ({
 
     setIsLoading(true);
 
-    const _steps = [...steps];
+    let _steps = [...steps];
 
     _steps[0] = {
       ..._steps[0],
@@ -224,6 +224,12 @@ export const LendWithdraw = ({
           description: 'Successfully withdrew!',
           id: 'Withdraw - ' + Math.random().toString()
         });
+
+        setUserEnteredAmount('');
+        setAmount(constants.Zero);
+
+        _steps = [...WITHDRAW_STEPS(selectedAsset.underlyingSymbol)];
+        setSteps(_steps);
       }
     } catch (error) {
       _steps[0] = {

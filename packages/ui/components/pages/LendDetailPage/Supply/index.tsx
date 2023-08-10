@@ -366,7 +366,7 @@ export const LendSupply = ({
 
     setIsLoading(true);
 
-    const _steps = [...steps];
+    let _steps = [...steps];
 
     _steps[optionToWrap ? 2 : 1] = {
       ..._steps[optionToWrap ? 2 : 1],
@@ -411,6 +411,15 @@ export const LendSupply = ({
           description: 'Successfully supplied!',
           id: 'Supply - ' + Math.random().toString()
         });
+
+        setUserEnteredAmount('');
+        setAmount(constants.Zero);
+
+        _steps = [...SUPPLY_STEPS(selectedAsset.underlyingSymbol)];
+        if (optionToWrap) {
+          _steps = [...SUPPLY_STEPS_WITH_WRAP(selectedAsset.underlyingSymbol)];
+        }
+        setSteps(_steps);
       }
     } catch (error) {
       _steps[optionToWrap ? 2 : 1] = {
