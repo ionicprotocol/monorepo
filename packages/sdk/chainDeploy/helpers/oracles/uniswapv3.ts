@@ -1,11 +1,50 @@
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { AlgebraPriceOracle } from "../../../typechain/AlgebraPriceOracle";
 import { ConcentratedLiquidityBasePriceOracle } from "../../../typechain/ConcentratedLiquidityBasePriceOracle";
+import { KyberSwapPriceOracle } from "../../../typechain/KyberSwapPriceOracle";
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { UniswapV3PriceOracle } from "../../../typechain/UniswapV3PriceOracle";
 import { ChainDeployConfig, ConcentratedLiquidityDeployFnParams, ConcentratedLiquidityOracleConfig } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
+
+export const deployKyberSwapPriceOracle = async ({
+  ethers,
+  getNamedAccounts,
+  deployments,
+  deployConfig,
+  concentratedLiquidityOracleTokens
+}: ConcentratedLiquidityDeployFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
+  const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
+
+  //// Uniswap Oracle
+  const kpo = await deployments.deploy("KyberSwapPriceOracle", {
+    from: deployer,
+    args: [],
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [deployConfig.wtoken, [deployConfig.stableToken]]
+        }
+      },
+      owner: deployer,
+      proxyContract: "OpenZeppelinTransparentProxy"
+    }
+  });
+
+  if (kpo.transactionHash) await ethers.provider.waitForTransaction(kpo.transactionHash);
+  console.log("KyberSwapPriceOracle: ", kpo.address);
+
+  const kyberOracle = (await ethers.getContract("KyberSwapPriceOracle", deployer)) as KyberSwapPriceOracle;
+  const assetsToAdd = await configureOracle(kyberOracle, concentratedLiquidityOracleTokens, deployConfig);
+
+  // set mpo addresses
+  const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
+  await addUnderlyingsToMpo(mpo, underlyings, kyberOracle.address);
+};
 
 export const deployAlgebraPriceOracle = async ({
   ethers,

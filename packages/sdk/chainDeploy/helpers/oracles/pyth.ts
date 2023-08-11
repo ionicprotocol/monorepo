@@ -28,6 +28,10 @@ export const deployPythPriceOracle = async ({
         init: {
           methodName: "initialize",
           args: [pythAddress, nativeTokenUsdFeed, usdToken]
+        },
+        onUpgrade: {
+          methodName: "reinitialize",
+          args: [pythAddress, nativeTokenUsdFeed, usdToken]
         }
       },
       owner: deployer,
