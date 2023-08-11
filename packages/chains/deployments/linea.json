@@ -95,6 +95,12 @@
     "LeveredPositionFactoryExtension": {
       "address": "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5"
     },
+    "LeveredPositionFactoryFirstExtension": {
+      "address": "0x75deccE36aC66AfF9a8992e8aC61421F7986277F"
+    },
+    "LeveredPositionFactorySecondExtension": {
+      "address": "0x8b15c99E10b3979A648C63dFa2f70Bc390651EBC"
+    },
     "LeveredPositionsLens": {
       "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
     },
