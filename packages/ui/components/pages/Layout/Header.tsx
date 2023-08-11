@@ -65,12 +65,30 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
             cursor="pointer"
             onClick={() => {
               setGlobalLoading(true);
+              router.push('/lend');
+            }}
+          >
+            <Text
+              color={router.pathname.includes('/lend') ? cIPage.txtSelectedColor : cIPage.txtColor}
+              fontSize="14px"
+              fontWeight={600}
+              lineHeight="20px"
+            >
+              Lend
+            </Text>
+          </Flex>
+          <Flex
+            align="center"
+            cursor="pointer"
+            onClick={() => {
+              setGlobalLoading(true);
               router.push('/');
             }}
           >
             <Text
               color={
-                router.pathname === '/' || router.pathname.includes('/pool/')
+                router.pathname === '/' ||
+                (!router.pathname.includes('/lend') && router.pathname.includes('/pool/'))
                   ? cIPage.txtSelectedColor
                   : cIPage.txtColor
               }

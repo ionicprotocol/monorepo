@@ -129,6 +129,15 @@ export const PAUSED = 'Paused';
 export const SEARCH = 'Search';
 export const HIDDEN = 'Hiden';
 export const ALL = 'All';
+export const ALL_POOLS = 'All Pools';
+export const ALL_NETWORKS = 'All Networks';
+export const LST = 'LST';
+export const RWA = 'RWA';
+export const STABLECOINS = 'Stablecoins';
+export const SIMPLE_MODE = 'Simple Mode';
+export const ADVANCED_MODE = 'Advanced Mode';
+export const LENDING_POOL_FILTERS = [ALL_POOLS, LST, RWA, STABLECOINS] as const;
+export const LENDING_MODE_FILTERS = [SIMPLE_MODE, ADVANCED_MODE] as const;
 
 export const RESERVE_FACTOR_TOOLTIP =
   'The reserve factor defines the portion of borrower interest that is converted into reserves.';
@@ -400,7 +409,9 @@ export const BORROWABLE_ASSET = 'Borrowable';
 export const NET_APY = 'Net APY';
 export const POSITION_CREATION_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];
 export const CREATED_POSITIONS_COLUMNS = [COLLATERAL_ASSET, SUPPLY_APY, NET_APY, BORROWABLE_ASSET];
-export const POOL_NAME = 'NETWORK / POOL';
+export const POOL_NAME = 'Pool Name';
+export const NETWORK_POOL = 'Network / Pool';
+export const NETWORK = 'Network';
 export const ASSETS = 'ASSETS';
 export const CHAIN = 'Chain';
 export const EXPANDER = 'Expander';
@@ -498,3 +509,7 @@ export const HEALTH_FACTOR = {
   MAX: 100,
   MIN: 0
 };
+
+export const SUPPLY_ASSET = 'Supply Asset';
+export const UTILIZATION_RATE = 'Utilization Rate';
+export const PERCENT_IN_PORTFOLIO = 'Percent In Portfolio';

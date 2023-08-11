@@ -11,7 +11,6 @@ import {
   Select,
   Skeleton,
   Stack,
-  Switch,
   Table,
   Tbody,
   Td,
@@ -21,7 +20,6 @@ import {
   Tr,
   VStack
 } from '@chakra-ui/react';
-import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type {
   ColumnDef,
@@ -39,19 +37,21 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { useRouter } from 'next/router';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
-import { Assets } from '@ui/components/pages/PoolsPage/PoolsList/Assets';
-import { BorrowBalance } from '@ui/components/pages/PoolsPage/PoolsList/BorrowBalance';
-import { ChainFilterButtons } from '@ui/components/pages/PoolsPage/PoolsList/ChainFilterButtons';
-import { ChainFilterDropdown } from '@ui/components/pages/PoolsPage/PoolsList/ChainFilterDropdown';
-import { PoolName } from '@ui/components/pages/PoolsPage/PoolsList/PoolName';
-import { SupplyBalance } from '@ui/components/pages/PoolsPage/PoolsList/SupplyBalance';
-import { TotalBorrow } from '@ui/components/pages/PoolsPage/PoolsList/TotalBorrow';
-import { TotalSupply } from '@ui/components/pages/PoolsPage/PoolsList/TotalSupply';
+import { Assets } from './Assets';
+import { Liquidity } from './Liquidity';
+import { ModeFilterButtons } from './ModeFilterButtons';
+import { Network } from './Network';
+import { NetworkFilterDropdown } from './NetworkFilterDropdown';
+import { PoolFilterButtons } from './PoolFilterButtons';
+import { PoolName } from './PoolName';
+import { Supply } from './Supply';
+import { SupplyBalance } from './SupplyBalance';
+import { TotalSupply } from './TotalSupply';
+
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
 import { CardBox } from '@ui/components/shared/IonicBox';
@@ -59,39 +59,49 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
-  ALL,
+  ALL_NETWORKS,
+  ALL_POOLS,
   ASSETS,
-  BORROW_BALANCE,
   IONIC_LOCALSTORAGE_KEYS,
+  LIQUIDITY,
+  NETWORK,
   POOL_NAME,
   POOLS_COLUMNS,
   POOLS_COUNT_PER_PAGE,
   SEARCH,
+  SIMPLE_MODE,
+  SUPPLY,
   SUPPLY_BALANCE,
-  TOTAL_BORROW,
-  TOTAL_SUPPLY
+  TOTAL_SUPPLY,
+  YOUR_BALANCE
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
-import { useAllPoolsData } from '@ui/hooks/pools/useAllPoolsData';
+import { useLendingPools } from '@ui/hooks/lend/useLendingPools';
 import { useLoadingStatusPerChain } from '@ui/hooks/pools/useLoadingStatusPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
+import type {
+  LendingFilter,
+  LendingModeFilter,
+  LendingNetworkFilter,
+  LendingPoolFilter
+} from '@ui/types/ComponentPropsType';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
 export type PoolRowData = {
   assets: PoolData;
-  borrowBalance: PoolData;
+  liquidity: PoolData;
+  network: PoolData;
   poolName: PoolData;
   supplyBalance: PoolData;
-  totalBorrow: PoolData;
   totalSupply: PoolData;
 };
 
-const PoolsList = () => {
+export const AvailableLendingVaults = () => {
   const enabledChains = useEnabledChains();
   const { isAllLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
-  const { address, setGlobalLoading } = useMultiIonic();
+  const { address } = useMultiIonic();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
@@ -101,10 +111,16 @@ const PoolsList = () => {
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0]
   });
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
+  const [poolFilter, setPoolFilter] = useState<LendingPoolFilter>(ALL_POOLS);
+  const [modeFilter, setModeFilter] = useState<LendingModeFilter>(SIMPLE_MODE);
+  const [networkFilter, setNetworkFilter] = useState<LendingNetworkFilter[]>([ALL_NETWORKS]);
+  const [globalFilter, setGlobalFilter] = useState<LendingFilter[]>([
+    poolFilter,
+    modeFilter,
+    ...networkFilter
+  ]);
   const [searchText, setSearchText] = useState('');
   const mounted = useRef(false);
-  const router = useRouter();
 
   const loadingStatusPerChain = useLoadingStatusPerChain(poolsPerChain);
 
@@ -118,7 +134,7 @@ const PoolsList = () => {
     () => {
       const pools: PoolData[] = [];
 
-      if (globalFilter.includes(ALL)) {
+      if (globalFilter.includes(ALL_NETWORKS)) {
         setSelectedFilteredPools([...allPools]);
       } else {
         globalFilter.map((filter) => {
@@ -138,9 +154,9 @@ const PoolsList = () => {
     }
   );
 
-  const poolFilter: FilterFn<PoolRowData> = useCallback(
+  const globalFilterFn: FilterFn<PoolRowData> = useCallback(
     (row, columnId, value) => {
-      const pool = row.original.poolName;
+      const pool = row.original.network;
       const namesAndSymbols: string[] = [];
       pool.assets.map((asset) => {
         namesAndSymbols.push(
@@ -155,7 +171,7 @@ const PoolsList = () => {
             pool.name.toLowerCase().includes(searchText.toLowerCase()) ||
             namesAndSymbols.some((ns) => ns.includes(searchText.toLowerCase()))))
       ) {
-        if (value.includes(ALL) || value.includes(pool.chainId)) {
+        if (value.includes(ALL_NETWORKS) || value.includes(pool.chainId)) {
           return true;
         } else {
           return false;
@@ -168,24 +184,21 @@ const PoolsList = () => {
   );
 
   const poolSort: SortingFn<PoolRowData> = (rowA, rowB, columnId) => {
-    if (columnId === POOL_NAME) {
-      return rowB.original.poolName.name.localeCompare(rowA.original.poolName.name);
+    if (columnId === NETWORK) {
+      return rowB.original.network.chainId > rowA.original.network.chainId ? 1 : -1;
+    } else if (columnId === POOL_NAME) {
+      return rowB.original.network.name.localeCompare(rowA.original.network.name);
     } else if (columnId === SUPPLY_BALANCE) {
-      return rowA.original.poolName.totalSupplyBalanceFiat >
-        rowB.original.poolName.totalSupplyBalanceFiat
+      return rowA.original.network.totalSupplyBalanceFiat >
+        rowB.original.network.totalSupplyBalanceFiat
         ? 1
         : -1;
-    } else if (columnId === BORROW_BALANCE) {
-      return rowA.original.poolName.totalBorrowBalanceFiat >
-        rowB.original.poolName.totalBorrowBalanceFiat
+    } else if (columnId === LIQUIDITY) {
+      return rowA.original.network.totalLiquidityFiat > rowB.original.network.totalLiquidityFiat
         ? 1
         : -1;
     } else if (columnId === TOTAL_SUPPLY) {
-      return rowA.original.poolName.totalSuppliedFiat > rowB.original.poolName.totalSuppliedFiat
-        ? 1
-        : -1;
-    } else if (columnId === TOTAL_BORROW) {
-      return rowA.original.poolName.totalBorrowedFiat > rowB.original.poolName.totalBorrowedFiat
+      return rowA.original.network.totalSuppliedFiat > rowB.original.network.totalSuppliedFiat
         ? 1
         : -1;
     } else {
@@ -193,10 +206,20 @@ const PoolsList = () => {
     }
   };
 
-  const data: PoolRowData[] = useAllPoolsData(allPools);
+  const data: PoolRowData[] = useLendingPools(allPools);
 
   const columns: ColumnDef<PoolRowData>[] = useMemo(() => {
     return [
+      {
+        accessorFn: (row) => row.network,
+        cell: ({ getValue }) => <Network chainId={getValue<PoolData>().chainId} />,
+        enableHiding: false,
+        filterFn: globalFilterFn,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{NETWORK}</TableHeaderCell>,
+        id: NETWORK,
+        sortingFn: poolSort
+      },
       {
         accessorFn: (row) => row.poolName,
         cell: ({ getValue }) => (
@@ -208,7 +231,6 @@ const PoolsList = () => {
           />
         ),
         enableHiding: false,
-        filterFn: poolFilter,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{POOL_NAME}</TableHeaderCell>,
         id: POOL_NAME,
@@ -223,22 +245,6 @@ const PoolsList = () => {
         id: ASSETS
       },
       {
-        accessorFn: (row) => row.supplyBalance,
-        cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{SUPPLY_BALANCE}</TableHeaderCell>,
-        id: SUPPLY_BALANCE,
-        sortingFn: poolSort
-      },
-      {
-        accessorFn: (row) => row.borrowBalance,
-        cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{BORROW_BALANCE}</TableHeaderCell>,
-        id: BORROW_BALANCE,
-        sortingFn: poolSort
-      },
-      {
         accessorFn: (row) => row.totalSupply,
         cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
@@ -247,15 +253,30 @@ const PoolsList = () => {
         sortingFn: poolSort
       },
       {
-        accessorFn: (row) => row.totalBorrow,
-        cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
+        accessorFn: (row) => row.liquidity,
+        cell: ({ getValue }) => <Liquidity pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{TOTAL_BORROW}</TableHeaderCell>,
-        id: TOTAL_BORROW,
+        header: (context) => <TableHeaderCell context={context}>{LIQUIDITY}</TableHeaderCell>,
+        id: LIQUIDITY,
         sortingFn: poolSort
+      },
+      {
+        accessorFn: (row) => row.supplyBalance,
+        cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{YOUR_BALANCE}</TableHeaderCell>,
+        id: YOUR_BALANCE,
+        sortingFn: poolSort
+      },
+      {
+        cell: ({ row }) => {
+          return <Supply pool={row.getValue(NETWORK)} />;
+        },
+        header: () => null,
+        id: SUPPLY
       }
     ];
-  }, [poolFilter]);
+  }, [globalFilterFn]);
 
   const table = useReactTable({
     columns,
@@ -268,7 +289,7 @@ const PoolsList = () => {
     getPaginationRowModel: getPaginationRowModel(),
     getRowCanExpand: () => true,
     getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: poolFilter,
+    globalFilterFn: globalFilterFn,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: onPagination,
     onSortingChange: setSorting,
@@ -279,7 +300,7 @@ const PoolsList = () => {
     }
   });
 
-  const { data: tableData } = useQuery(['PoolsTableData', table], () => {
+  const { data: tableData } = useQuery(['LendingPoolsTableData', table], () => {
     return {
       canNextPage: table.getCanNextPage(),
       canPreviousPage: table.getCanPreviousPage(),
@@ -291,37 +312,50 @@ const PoolsList = () => {
 
   const { cCard, cIPage, cIRow } = useColors();
 
-  const onFilter = (filter: SupportedChains | string) => {
-    let _globalFilter: (SupportedChains | string)[] = [];
+  useEffect(() => {
+    if (globalFilter.includes(SEARCH)) {
+      setGlobalFilter([poolFilter, modeFilter, ...networkFilter, SEARCH]);
+    } else {
+      setGlobalFilter([poolFilter, modeFilter, ...networkFilter]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [networkFilter, poolFilter, modeFilter]);
 
-    if (globalFilter.includes(filter)) {
-      if (filter === ALL) {
-        _globalFilter = [enabledChains[0]];
+  const onNetworkFilter = (filter: LendingNetworkFilter) => {
+    let _networkFilter: LendingNetworkFilter[] = [];
+
+    if (networkFilter.includes(filter)) {
+      if (filter === ALL_NETWORKS) {
+        _networkFilter = [enabledChains[0]];
       } else {
-        _globalFilter = globalFilter.filter((f) => f !== filter);
+        _networkFilter = networkFilter.filter((f) => f !== filter);
 
-        if (_globalFilter.length === 0) {
-          _globalFilter = [ALL];
+        if (_networkFilter.length === 0) {
+          _networkFilter = [ALL_NETWORKS];
         }
       }
     } else {
-      if (globalFilter.includes(ALL)) {
-        _globalFilter = [filter];
+      if (networkFilter.includes(ALL_NETWORKS)) {
+        _networkFilter = [filter];
       } else if (
-        filter === ALL ||
-        enabledChains.length === globalFilter.filter((f) => f !== ALL && f != SEARCH).length + 1
+        filter === ALL_NETWORKS ||
+        enabledChains.length === networkFilter.filter((f) => f !== ALL_NETWORKS).length + 1
       ) {
-        _globalFilter = [ALL];
+        _networkFilter = [ALL_NETWORKS];
       } else {
-        _globalFilter = [...globalFilter, filter];
+        _networkFilter = [...networkFilter, filter];
       }
     }
 
-    if (globalFilter.includes(SEARCH)) {
-      setGlobalFilter([..._globalFilter, SEARCH]);
-    } else {
-      setGlobalFilter([..._globalFilter]);
-    }
+    setNetworkFilter(_networkFilter);
+  };
+
+  const onPoolFilter = (filter: LendingPoolFilter) => {
+    setPoolFilter(filter);
+  };
+
+  const onModeFilter = (filter: LendingModeFilter) => {
+    setModeFilter(filter);
   };
 
   useEffect(() => {
@@ -381,7 +415,11 @@ const PoolsList = () => {
     const data = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     if (data && mounted.current) {
       const obj = JSON.parse(data);
-      const _globalFilter = (obj.globalFilter as (SupportedChains | string)[]) || [ALL];
+      const _globalFilter = (obj.globalFilter as LendingFilter[]) || [
+        ALL_NETWORKS,
+        ALL_POOLS,
+        SIMPLE_MODE
+      ];
       setGlobalFilter(_globalFilter);
 
       if (obj && obj.sorting && POOLS_COLUMNS.includes(obj.sorting[0].id)) {
@@ -430,7 +468,7 @@ const PoolsList = () => {
           justifyContent={['center', 'center', 'space-between']}
           width="100%"
         >
-          <Text size="xl">Pools</Text>
+          <Text size="xl">Available Lending Pools</Text>
           <Flex
             alignItems="center"
             className="searchAsset"
@@ -443,21 +481,6 @@ const PoolsList = () => {
               onSearch={(searchText) => setSearchText(searchText)}
               placeholder="Search by asset or pool name"
             />
-            <Center height={5}>
-              <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
-            </Center>
-            <HStack>
-              <Text size="md" width="max-content">
-                Best APR
-              </Text>
-              <Switch
-                h="20px"
-                // isChecked={true}
-                // isDisabled={isUpdating || !isEditableAdmin}
-                ml="auto"
-                // onChange={toggleBorrowState}
-              />
-            </HStack>
             <Center height={5}>
               <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
             </Center>
@@ -476,20 +499,24 @@ const PoolsList = () => {
           justifyContent={['center', 'center', 'space-between']}
           width="100%"
         >
-          <ChainFilterButtons
-            globalFilter={globalFilter}
-            isLoading={isLoading}
-            loadingStatusPerChain={loadingStatusPerChain}
-            onFilter={onFilter}
-            props={{ display: { base: 'none', lg: 'inline-flex' } }}
-          />
-          <ChainFilterDropdown
-            globalFilter={globalFilter}
-            isLoading={isLoading}
-            loadingStatusPerChain={loadingStatusPerChain}
-            onFilter={onFilter}
-            props={{ display: { base: 'inline-flex', lg: 'none' } }}
-          />
+          <Flex gap={{ base: '20px' }}>
+            <PoolFilterButtons
+              isLoading={isLoading}
+              onPoolFilter={onPoolFilter}
+              poolFilter={poolFilter}
+            />
+            <ModeFilterButtons
+              isLoading={isLoading}
+              modeFilter={modeFilter}
+              onModeFilter={onModeFilter}
+            />
+            <NetworkFilterDropdown
+              loadingStatusPerChain={loadingStatusPerChain}
+              networkFilter={networkFilter}
+              onNetworkFilter={onNetworkFilter}
+            />
+          </Flex>
+
           <Flex
             alignItems="center"
             bg={cIRow.bgColor}
@@ -512,40 +539,6 @@ const PoolsList = () => {
                 body={
                   <VStack alignItems="flex-start">
                     <Text>Supply Assets</Text>
-                    <Checkbox
-                    // isChecked={false}
-                    // onChange={}
-                    >
-                      ETH
-                    </Checkbox>
-                  </VStack>
-                }
-                contentProps={{ width: '200px' }}
-                popoverProps={{ trigger: 'click' }}
-              >
-                <Button p={0} variant="ghost">
-                  <Text display={{ base: 'none', md: 'flex' }} minW="100px" px={2} size="md">
-                    --
-                  </Text>
-                  <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
-                </Button>
-              </PopoverTooltip>
-            </Flex>
-            <Center height={5}>
-              <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
-            </Center>
-            <Flex
-              alignItems="center"
-              className="searchAsset"
-              direction="row"
-              gap={2}
-              justifyContent="center"
-            >
-              <Text>1 Borrow</Text>
-              <PopoverTooltip
-                body={
-                  <VStack alignItems="flex-start">
-                    <Text>Borrow Assets</Text>
                     <Checkbox
                     // isChecked={false}
                     // onChange={}
@@ -602,12 +595,6 @@ const PoolsList = () => {
                           borderRadius={{ base: '20px' }}
                           cursor="pointer"
                           key={row.id}
-                          onClick={() => {
-                            setGlobalLoading(true);
-                            router.push(
-                              `/${row.original.poolName.chainId}/pool/${row.original.poolName.id}`
-                            );
-                          }}
                         >
                           {row.getVisibleCells().map((cell, index) => {
                             return (
@@ -716,5 +703,3 @@ const PoolsList = () => {
     </CardBox>
   );
 };
-
-export default PoolsList;
