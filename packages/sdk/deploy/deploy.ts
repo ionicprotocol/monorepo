@@ -177,38 +177,38 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   /// LATEST IMPLEMENTATIONS
   // Comptroller
-  if (oldComptroller) {
-    const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
-      oldComptroller.address
-    );
-    if (
-      latestComptrollerImplementation === constants.AddressZero ||
-      latestComptrollerImplementation !== comptroller.address
-    ) {
-      tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldComptroller.address, comptroller.address);
-      await tx.wait();
-      console.log(`Set the latest Comptroller implementation for ${oldComptroller.address} to ${comptroller.address}`);
-    } else {
-      console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
-    }
-  } else {
-    // on the first deploy to a chain
-    tx = await fuseFeeDistributor._setLatestComptrollerImplementation(constants.AddressZero, comptroller.address);
-    await tx.wait();
-    console.log(`Set the latest Comptroller implementation for ${constants.AddressZero} to ${comptroller.address}`);
-  }
+  // if (oldComptroller) {
+  //   const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
+  //     oldComptroller.address
+  //   );
+  //   if (
+  //     latestComptrollerImplementation === constants.AddressZero ||
+  //     latestComptrollerImplementation !== comptroller.address
+  //   ) {
+  //     tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldComptroller.address, comptroller.address);
+  //     await tx.wait();
+  //     console.log(`Set the latest Comptroller implementation for ${oldComptroller.address} to ${comptroller.address}`);
+  //   } else {
+  //     console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
+  //   }
+  // } else {
+  //   // on the first deploy to a chain
+  //   tx = await fuseFeeDistributor._setLatestComptrollerImplementation(constants.AddressZero, comptroller.address);
+  //   await tx.wait();
+  //   console.log(`Set the latest Comptroller implementation for ${constants.AddressZero} to ${comptroller.address}`);
+  // }
 
-  const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
-  if (comptrollerExtensions.length == 0 || comptrollerExtensions[0] != compFirstExtension.address) {
-    tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [
-      comptroller.address,
-      compFirstExtension.address
-    ]);
-    await tx.wait();
-    console.log(`configured the extensions for comptroller ${comptroller.address}`);
-  } else {
-    console.log(`comptroller extensions already configured`);
-  }
+  // const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
+  // if (comptrollerExtensions.length == 0 || comptrollerExtensions[0] != compFirstExtension.address) {
+  //   tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [
+  //     comptroller.address,
+  //     compFirstExtension.address
+  //   ]);
+  //   await tx.wait();
+  //   console.log(`configured the extensions for comptroller ${comptroller.address}`);
+  // } else {
+  //   console.log(`comptroller extensions already configured`);
+  // }
 
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
 
@@ -487,10 +487,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   ////
   //// CHAIN SPECIFIC DEPLOYMENT
-  console.log("Running deployment for chain: ", chainId);
-  if (deployFunc) {
-    await deployFunc({ run, ethers, getNamedAccounts, deployments });
-  }
+  // console.log("Running deployment for chain: ", chainId);
+  // if (deployFunc) {
+  //   await deployFunc({ run, ethers, getNamedAccounts, deployments });
+  // }
   ////
 
   //// Configure Liquidator
