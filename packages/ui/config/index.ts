@@ -6,6 +6,8 @@ type CONFIG = {
   isDevelopment: boolean;
   isEthereumEnabled: boolean;
   isFWDeployEnabled: boolean;
+  isLineaEnabled: boolean;
+  isNeonEnabled: boolean;
   isPolygonEnabled: boolean;
   isTestnetEnabled: boolean;
   isZkevmEnabled: boolean;
@@ -33,6 +35,8 @@ const config: CONFIG = {
   isDevelopment: process.env.NODE_ENV === 'development',
   isEthereumEnabled: process.env.ETHEREUM === 'true',
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
+  isLineaEnabled: process.env.LINEA === 'true',
+  isNeonEnabled: process.env.NEON === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   isZkevmEnabled: process.env.ZKEVM === 'true',

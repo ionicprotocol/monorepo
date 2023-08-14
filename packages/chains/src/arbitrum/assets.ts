@@ -1,6 +1,6 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
 
-import { curveFinanceArbitrumDocs, defaultDocs, saddleFinanceDocs, wrappedAssetDocs } from "../common";
+import { defaultDocs, wrappedAssetDocs } from "../common";
 
 export const WBTC = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f";
 export const USDC = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";

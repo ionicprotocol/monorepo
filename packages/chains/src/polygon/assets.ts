@@ -83,7 +83,6 @@ const amUSDC = "0x1a13F4Ca1d028320A707D99520AbFefca3998b7F";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
-const USDR3CRV = "0xa138341185a9D0429B0021A11FB717B225e13e1F";
 
 // QuickSwap
 const WMATIC_USDC = "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827";
@@ -525,14 +524,6 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs("aave", "am3CRV", am3CRV, false)
-  },
-  {
-    symbol: assetSymbols.USDR3CRV,
-    underlying: USDR3CRV,
-    name: "Curve.fi USDR/DAI/USDC/USDT",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(339, "USDR3CRV", USDR3CRV, true)
   },
   // Balancer
   {
