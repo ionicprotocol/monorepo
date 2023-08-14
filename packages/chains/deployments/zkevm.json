@@ -15,7 +15,7 @@
       "address": "0xA433B7d3a8A87D8fd40dA68A424007Dd8a21Ce41"
     },
     "AlgebraPriceOracle_Implementation": {
-      "address": "0x7203e2691c54373c86DAd83Ec8C6B87B606a8a9B"
+      "address": "0xbF144e01262bC50Ed19079E3DF3853b6EDF2DF50"
     },
     "AlgebraPriceOracle_Proxy": {
       "address": "0xA433B7d3a8A87D8fd40dA68A424007Dd8a21Ce41"
@@ -27,7 +27,7 @@
       "address": "0x50b6A0c226bF5C4a83c9e865ce44d7c88cfB4d04"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0x41117739a1c7CadD97BeB1987A25F6aaB2438845"
+      "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0x50b6A0c226bF5C4a83c9e865ce44d7c88cfB4d04"
@@ -60,7 +60,7 @@
       "address": "0x072582396E240BFc58E64680A1148f6BaD923fDD"
     },
     "Comptroller": {
-      "address": "0x3038d5a244BC01E9Ed2A6732dB54016Fc8393967"
+      "address": "0x460d8968f0c4780939786DCB5eD2eD8BC95ef2FF"
     },
     "ComptrollerFirstExtension": {
       "address": "0x0C31088Db6F3CA56dfEE961E426f4f9A79489185"
@@ -101,6 +101,12 @@
     "LeveredPositionFactoryExtension": {
       "address": "0x5d89E6cCaC1fa86Ac21059845917aeEb797c8F2F"
     },
+    "LeveredPositionFactoryFirstExtension": {
+      "address": "0xDF3e44a2614fe4F88d696498aF43C35989cc8bD8"
+    },
+    "LeveredPositionFactorySecondExtension": {
+      "address": "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5"
+    },
     "LeveredPositionsLens": {
       "address": "0x6F29c763EcAEb98C14a1275AD34775bF48B01294"
     },
@@ -114,7 +120,7 @@
       "address": "0xf30EaEEA6DDEA29Dc3102EEEa8d5eb33d3F3d562"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xe87988B87C50F6C82825307feD8C64B478Ce2D95"
+      "address": "0x1ec707D52A9a14C6EBc7098907C46A6Ea36164c9"
     },
     "LooplessFlywheelBooster": {
       "address": "0xc84023bC4bb1A72E0102fa03e1fb1b0FE4c0F589"
@@ -156,7 +162,7 @@
       "address": "0x7aAf7B40744c8b3A0eb008b744d14c97023f2941"
     },
     "PythPriceOracle_Implementation": {
-      "address": "0x462A7a0266e6e9d38010225D5Fec3B6489d577C3"
+      "address": "0xB758A3BFec4451f21c79b4A281CBa8cD83e70d00"
     },
     "PythPriceOracle_Proxy": {
       "address": "0x7aAf7B40744c8b3A0eb008b744d14c97023f2941"
