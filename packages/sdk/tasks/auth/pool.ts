@@ -60,7 +60,7 @@ task("auth:pool:supply", "Set ability to supply for a pool")
     console.log(`Set ability to supply for pool ${pool} to ${open}: ${tx.hash}`);
   });
 
-task("auth:pool:borrow", "Set ability to supply for a pool")
+task("auth:pool:borrow", "Set ability to borrow for a pool")
   .addParam("signer", "The address of the current deployer", "deployer", types.string)
   .addParam("pool", "Address of pool", undefined, types.string)
   .addParam("open", "If borrowing is open or not", true, types.boolean)
@@ -75,10 +75,10 @@ task("auth:pool:borrow", "Set ability to supply for a pool")
 
     let tx;
     if (open === true) {
-      tx = await poolAuth.openPoolSupplierCapabilities(pool);
+      tx = await poolAuth.openPoolBorrowerCapabilities(pool);
       await tx.wait();
     } else {
-      tx = await poolAuth.closePoolSupplierCapabilities(pool);
+      tx = await poolAuth.closePoolBorrowerCapabilities(pool);
       await tx.wait();
     }
     console.log(`Set ability to supply for pool ${pool} to ${open}: ${tx.hash}`);
