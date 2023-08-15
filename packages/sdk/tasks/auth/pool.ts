@@ -4,6 +4,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { AuthoritiesRegistry } from "../../typechain/AuthoritiesRegistry";
 import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
+import { ProxyAdmin } from "../../typechain/ProxyAdmin";
 
 task("auth:pool:create-authority", "Deploys a pool authority for a pool")
   .addParam("signer", "The address of the current deployer", "deployer", types.string)
@@ -33,7 +34,15 @@ task("auth:pool:reconfigure-authority", "Deploys a pool authority for a pool")
     console.log("current deployer", deployer.address);
     console.log({ pool });
     const authRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
-    const tx = await authRegistry.reconfigureAuthority(pool);
+    const poolAuth = await authRegistry.callStatic.poolsAuthorities(pool);
+    const latestImpl = await authRegistry.callStatic.poolAuthLogic();
+
+    const dpa = await ethers.getContract("DefaultProxyAdmin") as ProxyAdmin;
+    let tx = await dpa.upgrade(poolAuth, latestImpl);
+    await tx.wait();
+    console.log(`upgraded the auth ${poolAuth} for ${pool}: ${tx.hash}`);
+
+    tx = await authRegistry.reconfigureAuthority(pool);
     await tx.wait();
     console.log(`Reconfigured pool authority for pool ${pool}: ${tx.hash}`);
   });
