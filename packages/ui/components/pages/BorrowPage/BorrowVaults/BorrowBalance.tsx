@@ -5,8 +5,9 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
-export const SupplyBalance = ({ pool }: { pool: PoolData }) => {
+export const BorrowBalance = ({ pool }: { pool: PoolData }) => {
   const { address } = useMultiIonic();
+
   return (
     <>
       {!address ? (
@@ -18,7 +19,7 @@ export const SupplyBalance = ({ pool }: { pool: PoolData }) => {
       ) : (
         <BalanceCell
           primary={{
-            value: pool.totalSupplyBalanceFiat
+            value: pool.totalBorrowBalanceFiat
           }}
         />
       )}

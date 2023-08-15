@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
 
-import { AvailableLendingVaults } from './AvailableLendingVaults';
+import { BorrowVaults } from './BorrowVaults';
 import { YourPosition } from './YourPosition';
 
 import PageLayout from '@ui/components/pages/Layout/PageLayout';
@@ -13,7 +13,7 @@ export const BorrowPage = () => {
         <Flex>
           <YourPosition />
         </Flex>
-        <AvailableLendingVaults />
+        <BorrowVaults />
       </PageLayout>
     </PageTransitionLayout>
   );

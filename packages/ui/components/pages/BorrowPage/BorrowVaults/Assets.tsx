@@ -7,7 +7,7 @@ import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const Assets = ({ pool }: { pool: PoolData }) => {
   const tokens = useMemo(() => {
-    return pool.assets.filter((asset) => !asset.isSupplyPaused);
+    return pool.assets.filter((asset) => !asset.isBorrowPaused);
   }, [pool.assets]);
 
   if (tokens.length === 0) return null;

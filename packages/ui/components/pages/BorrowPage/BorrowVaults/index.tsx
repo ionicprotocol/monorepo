@@ -42,15 +42,15 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { Assets } from './Assets';
+import { Borrow } from './Borrow';
+import { BorrowBalance } from './BorrowBalance';
 import { Liquidity } from './Liquidity';
 import { ModeFilterButtons } from './ModeFilterButtons';
 import { Network } from './Network';
 import { NetworkFilterDropdown } from './NetworkFilterDropdown';
 import { PoolFilterButtons } from './PoolFilterButtons';
 import { PoolName } from './PoolName';
-import { Supply } from './Supply';
-import { SupplyBalance } from './SupplyBalance';
-import { TotalSupply } from './TotalSupply';
+import { TotalBorrow } from './TotalBorrow';
 
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
@@ -62,6 +62,8 @@ import {
   ALL_NETWORKS,
   ALL_POOLS,
   ASSETS,
+  BORROW,
+  BORROW_BALANCE,
   IONIC_LOCALSTORAGE_KEYS,
   LIQUIDITY,
   NETWORK,
@@ -70,42 +72,41 @@ import {
   POOLS_COUNT_PER_PAGE,
   SEARCH,
   SIMPLE_MODE,
-  SUPPLY,
-  SUPPLY_BALANCE,
+  TOTAL_BORROW,
   TOTAL_SUPPLY,
   YOUR_BALANCE
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBorrowPools } from '@ui/hooks/borrow/useBorrowPools';
 import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
-import { useLendingPools } from '@ui/hooks/lend/useLendingPools';
 import { useLoadingStatusPerChain } from '@ui/hooks/pools/useLoadingStatusPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import type {
   LendingFilter,
   LendingModeFilter,
-  LendingNetworkFilter,
-  LendingPoolFilter
+  LendingPoolFilter,
+  NetworkFilter
 } from '@ui/types/ComponentPropsType';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
 export type PoolRowData = {
   assets: PoolData;
+  borrowBalance: PoolData;
   liquidity: PoolData;
   network: PoolData;
   poolName: PoolData;
-  supplyBalance: PoolData;
-  totalSupply: PoolData;
+  totalBorrow: PoolData;
 };
 
-export const AvailableLendingVaults = () => {
+export const BorrowVaults = () => {
   const enabledChains = useEnabledChains();
   const { isAllLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
   const { address } = useMultiIonic();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
-    { desc: true, id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY }
+    { desc: true, id: address ? BORROW_BALANCE : TOTAL_BORROW }
   ]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -113,7 +114,7 @@ export const AvailableLendingVaults = () => {
   });
   const [poolFilter, setPoolFilter] = useState<LendingPoolFilter>(ALL_POOLS);
   const [modeFilter, setModeFilter] = useState<LendingModeFilter>(SIMPLE_MODE);
-  const [networkFilter, setNetworkFilter] = useState<LendingNetworkFilter[]>([ALL_NETWORKS]);
+  const [networkFilter, setNetworkFilter] = useState<NetworkFilter[]>([ALL_NETWORKS]);
   const [globalFilter, setGlobalFilter] = useState<LendingFilter[]>([
     poolFilter,
     modeFilter,
@@ -188,17 +189,17 @@ export const AvailableLendingVaults = () => {
       return rowB.original.network.chainId > rowA.original.network.chainId ? 1 : -1;
     } else if (columnId === POOL_NAME) {
       return rowB.original.network.name.localeCompare(rowA.original.network.name);
-    } else if (columnId === SUPPLY_BALANCE) {
-      return rowA.original.network.totalSupplyBalanceFiat >
-        rowB.original.network.totalSupplyBalanceFiat
+    } else if (columnId === BORROW_BALANCE) {
+      return rowA.original.network.totalBorrowBalanceFiat >
+        rowB.original.network.totalBorrowBalanceFiat
         ? 1
         : -1;
     } else if (columnId === LIQUIDITY) {
       return rowA.original.network.totalLiquidityFiat > rowB.original.network.totalLiquidityFiat
         ? 1
         : -1;
-    } else if (columnId === TOTAL_SUPPLY) {
-      return rowA.original.network.totalSuppliedFiat > rowB.original.network.totalSuppliedFiat
+    } else if (columnId === TOTAL_BORROW) {
+      return rowA.original.network.totalBorrowedFiat > rowB.original.network.totalBorrowedFiat
         ? 1
         : -1;
     } else {
@@ -206,7 +207,7 @@ export const AvailableLendingVaults = () => {
     }
   };
 
-  const data: PoolRowData[] = useLendingPools(allPools);
+  const data: PoolRowData[] = useBorrowPools(allPools);
 
   const columns: ColumnDef<PoolRowData>[] = useMemo(() => {
     return [
@@ -245,11 +246,11 @@ export const AvailableLendingVaults = () => {
         id: ASSETS
       },
       {
-        accessorFn: (row) => row.totalSupply,
-        cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
+        accessorFn: (row) => row.totalBorrow,
+        cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
-        id: TOTAL_SUPPLY,
+        header: (context) => <TableHeaderCell context={context}>{TOTAL_BORROW}</TableHeaderCell>,
+        id: TOTAL_BORROW,
         sortingFn: poolSort
       },
       {
@@ -261,8 +262,8 @@ export const AvailableLendingVaults = () => {
         sortingFn: poolSort
       },
       {
-        accessorFn: (row) => row.supplyBalance,
-        cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
+        accessorFn: (row) => row.borrowBalance,
+        cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{YOUR_BALANCE}</TableHeaderCell>,
         id: YOUR_BALANCE,
@@ -270,10 +271,10 @@ export const AvailableLendingVaults = () => {
       },
       {
         cell: ({ row }) => {
-          return <Supply pool={row.getValue(NETWORK)} />;
+          return <Borrow pool={row.getValue(NETWORK)} />;
         },
         header: () => null,
-        id: SUPPLY
+        id: BORROW
       }
     ];
   }, [globalFilterFn]);
@@ -300,7 +301,7 @@ export const AvailableLendingVaults = () => {
     }
   });
 
-  const { data: tableData } = useQuery(['LendingPoolsTableData', table], () => {
+  const { data: tableData } = useQuery(['BorrowPoolsTableData', table], () => {
     return {
       canNextPage: table.getCanNextPage(),
       canPreviousPage: table.getCanPreviousPage(),
@@ -321,8 +322,8 @@ export const AvailableLendingVaults = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkFilter, poolFilter, modeFilter]);
 
-  const onNetworkFilter = (filter: LendingNetworkFilter) => {
-    let _networkFilter: LendingNetworkFilter[] = [];
+  const onNetworkFilter = (filter: NetworkFilter) => {
+    let _networkFilter: NetworkFilter[] = [];
 
     if (networkFilter.includes(filter)) {
       if (filter === ALL_NETWORKS) {
@@ -468,7 +469,7 @@ export const AvailableLendingVaults = () => {
           justifyContent={['center', 'center', 'space-between']}
           width="100%"
         >
-          <Text size="xl">Available Lending Pools</Text>
+          <Text size="xl">Borrowing Pools</Text>
           <Flex
             alignItems="center"
             className="searchAsset"
@@ -534,11 +535,11 @@ export const AvailableLendingVaults = () => {
               gap={2}
               justifyContent="center"
             >
-              <Text size="md">1 Supply</Text>
+              <Text size="md">1 Borrow</Text>
               <PopoverTooltip
                 body={
                   <VStack alignItems="flex-start">
-                    <Text>Supply Assets</Text>
+                    <Text>Borrow Assets</Text>
                     <Checkbox
                     // isChecked={false}
                     // onChange={}

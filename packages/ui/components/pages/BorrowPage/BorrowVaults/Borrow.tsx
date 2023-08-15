@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
-export const Supply = ({ pool }: { pool: PoolData }) => {
+export const Borrow = ({ pool }: { pool: PoolData }) => {
   const router = useRouter();
   const { setGlobalLoading } = useMultiIonic();
 
@@ -13,11 +13,11 @@ export const Supply = ({ pool }: { pool: PoolData }) => {
       <Button
         onClick={() => {
           setGlobalLoading(true);
-          router.push(`/lend/${pool.chainId}/pool/${pool.id}`);
+          router.push(`/borrow/${pool.chainId}/pool/${pool.id}`);
         }}
         variant={'solidGreen'}
       >
-        Supply
+        Borrow
       </Button>
     </Flex>
   );

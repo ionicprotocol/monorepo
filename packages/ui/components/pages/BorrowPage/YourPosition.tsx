@@ -18,13 +18,13 @@ export const YourPosition = () => {
         </Text>
         <Flex direction={{ base: 'row' }} gap="32px">
           <VStack alignItems="flex-start">
-            <Text variant={'itemTitle'}>Supply</Text>
+            <Text variant={'itemTitle'}>Borrow</Text>
             <Skeleton isLoaded={!isLoading}>
               {isLoading ? (
                 <LoadingText />
               ) : (
                 <Text size="lg">
-                  {data ? smallUsdFormatter(data.totalSupplyBalance, true) : '-'}
+                  {data ? smallUsdFormatter(data.totalBorrowBalance, true) : '-'}
                 </Text>
               )}
             </Skeleton>
@@ -43,7 +43,7 @@ export const YourPosition = () => {
                 />
               </SimpleTooltip>
             </Flex>
-            <Text size={'lg'}>19.97%</Text>
+            <Text size={'lg'}>9.97%</Text>
           </VStack>
         </Flex>
       </Flex>
