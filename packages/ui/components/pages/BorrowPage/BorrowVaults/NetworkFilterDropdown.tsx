@@ -21,7 +21,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { ALL_NETWORKS } from '@ui/constants/index';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
-import type { LendingNetworkFilter } from '@ui/types/ComponentPropsType';
+import type { NetworkFilter } from '@ui/types/ComponentPropsType';
 
 export const NetworkFilterDropdown = ({
   loadingStatusPerChain,
@@ -30,8 +30,8 @@ export const NetworkFilterDropdown = ({
   props
 }: {
   loadingStatusPerChain: { [chainId: string]: boolean };
-  networkFilter: LendingNetworkFilter[];
-  onNetworkFilter: (filter: LendingNetworkFilter) => void;
+  networkFilter: NetworkFilter[];
+  onNetworkFilter: (filter: NetworkFilter) => void;
   props?: ButtonProps;
 }) => {
   const { cIRow } = useColors();
