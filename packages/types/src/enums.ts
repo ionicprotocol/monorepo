@@ -64,6 +64,7 @@ export enum OracleTypes {
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
   UniswapV3PriceOracle = "UniswapV3PriceOracle",
+  KyberSwapPriceOracle = "KyberSwapPriceOracle",
   AlgebraPriceOracle = "AlgebraPriceOracle",
   AnkrCertificateTokenPriceOracle = "AnkrCertificateTokenPriceOracle",
   GammaPoolPriceOracle = "GammaPoolPriceOracle",
@@ -167,8 +168,8 @@ export enum assetOriginalSymbols {
   // Pearl
   "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
   "sAMM-DAI/USDR" = "DAI/USDR Pearl Stable LP",
-  "vAMM-wUSDR/USDR" = "vUSDR/USDR Pearl Variable LP",
-  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP",
+  "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
+  "vAMM-MATIC/USDR" = "MATIC/USDR Pearl Variable LP",
   "vAMM-WBTC/USDR" = "WBTC/USDR Pearl Variable LP",
   "vAMM-WETH/USDR" = "WETH/USDR Pearl Variable LP",
   "vAMM-TNGBL/USDR" = "TNGBL/USDR Pearl Variable LP"
@@ -320,7 +321,6 @@ export enum assetSymbols {
   "IXT-USDT" = "IXT-USDT",
   USDR = "USDR",
   WUSDR = "WUSDR",
-  USDR3CRV = "USDR3CRV",
   TNGBL = "TNGBL",
   DUSD = "DUSD",
 
@@ -358,7 +358,7 @@ export enum assetSymbols {
   "sAMM-USDC/USDR" = "sAMM-USDC-USDR",
   "sAMM-DAI/USDR" = "sAMM-DAI-USDR",
   "vAMM-wUSDR/USDR" = "vAMM-wUSDR-USDR",
-  "vAMM-stMATIC/USDR" = "vAMM-stMATIC-USDR",
+  "vAMM-MATIC/USDR" = "vAMM-MATIC-USDR",
   "vAMM-TNGBL/USDR" = "vAMM-TNGBL-USDR",
   "vAMM-WBTC/USDR" = "vAMM-WBTC-USDR",
   "vAMM-WETH/USDR" = "vAMM-WETH-USDR",

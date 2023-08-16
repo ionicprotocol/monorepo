@@ -73,12 +73,17 @@ export function getEnabledChains() {
   if (config.isEthereumEnabled) {
     enabledChains.push(SupportedChains.ethereum);
   }
-
-  if (config.isTestnetEnabled) {
-    enabledChains.push(SupportedChains.neon);
-    enabledChains.push(SupportedChains.chapel);
-    enabledChains.push(SupportedChains.linea);
+  if (config.isZkevmEnabled) {
     enabledChains.push(SupportedChains.zkevm);
+  }
+  if (config.isLineaEnabled) {
+    enabledChains.push(SupportedChains.linea);
+  }
+  if (config.isNeonEnabled) {
+    enabledChains.push(SupportedChains.neon);
+  }
+  if (config.isTestnetEnabled) {
+    enabledChains.push(SupportedChains.chapel);
   }
 
   return enabledChains;

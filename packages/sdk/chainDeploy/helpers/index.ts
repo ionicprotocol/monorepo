@@ -3,6 +3,7 @@ export { deployIRMs } from "./irms";
 export { deployUniswapOracle } from "./oracles/uniswap";
 export { deployUniswapV3Oracle } from "./oracles/uniswapv3";
 export { deployAlgebraPriceOracle } from "./oracles/uniswapv3";
+export { deployKyberSwapPriceOracle } from "./oracles/uniswapv3";
 export { deployUniswapLpOracle } from "./oracles/uniswapLp";
 export { deployCurveLpOracle } from "./oracles/curveLp";
 export { deployAnkrCertificateTokenPriceOracle } from "./oracles/aXXXc";
