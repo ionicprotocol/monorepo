@@ -84,8 +84,8 @@ import { useColors } from '@ui/hooks/useColors';
 import type {
   LendingFilter,
   LendingModeFilter,
-  LendingNetworkFilter,
-  LendingPoolFilter
+  LendingPoolFilter,
+  NetworkFilter
 } from '@ui/types/ComponentPropsType';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
@@ -113,7 +113,7 @@ export const AvailableLendingVaults = () => {
   });
   const [poolFilter, setPoolFilter] = useState<LendingPoolFilter>(ALL_POOLS);
   const [modeFilter, setModeFilter] = useState<LendingModeFilter>(SIMPLE_MODE);
-  const [networkFilter, setNetworkFilter] = useState<LendingNetworkFilter[]>([ALL_NETWORKS]);
+  const [networkFilter, setNetworkFilter] = useState<NetworkFilter[]>([ALL_NETWORKS]);
   const [globalFilter, setGlobalFilter] = useState<LendingFilter[]>([
     poolFilter,
     modeFilter,
@@ -321,8 +321,8 @@ export const AvailableLendingVaults = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkFilter, poolFilter, modeFilter]);
 
-  const onNetworkFilter = (filter: LendingNetworkFilter) => {
-    let _networkFilter: LendingNetworkFilter[] = [];
+  const onNetworkFilter = (filter: NetworkFilter) => {
+    let _networkFilter: NetworkFilter[] = [];
 
     if (networkFilter.includes(filter)) {
       if (filter === ALL_NETWORKS) {

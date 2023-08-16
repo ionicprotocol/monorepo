@@ -10,8 +10,6 @@ export const useBorrowAssets = (assets: MarketData[]) => {
         return {
           apy: asset,
           borrowAsset: asset,
-          borrowAvailable: asset,
-          collateral: asset,
           percentInPortfolio: asset,
           totalBorrow: asset,
           utilizationRate: asset

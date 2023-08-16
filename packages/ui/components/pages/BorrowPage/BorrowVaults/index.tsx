@@ -42,9 +42,9 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { Assets } from './Assets';
+import { Available } from './Available';
 import { Borrow } from './Borrow';
 import { BorrowBalance } from './BorrowBalance';
-import { Liquidity } from './Liquidity';
 import { ModeFilterButtons } from './ModeFilterButtons';
 import { Network } from './Network';
 import { NetworkFilterDropdown } from './NetworkFilterDropdown';
@@ -62,10 +62,10 @@ import {
   ALL_NETWORKS,
   ALL_POOLS,
   ASSETS,
+  AVAILABLE,
   BORROW,
   BORROW_BALANCE,
   IONIC_LOCALSTORAGE_KEYS,
-  LIQUIDITY,
   NETWORK,
   POOL_NAME,
   POOLS_COLUMNS,
@@ -92,8 +92,8 @@ import type { PoolData } from '@ui/types/TokensDataMap';
 
 export type PoolRowData = {
   assets: PoolData;
+  available: PoolData;
   borrowBalance: PoolData;
-  liquidity: PoolData;
   network: PoolData;
   poolName: PoolData;
   totalBorrow: PoolData;
@@ -194,10 +194,10 @@ export const BorrowVaults = () => {
         rowB.original.network.totalBorrowBalanceFiat
         ? 1
         : -1;
-    } else if (columnId === LIQUIDITY) {
-      return rowA.original.network.totalLiquidityFiat > rowB.original.network.totalLiquidityFiat
-        ? 1
-        : -1;
+      // } else if (columnId === AVAILABLE) {
+      //   return rowA.original.network.totalLiquidityFiat > rowB.original.network.totalLiquidityFiat
+      //     ? 1
+      //     : -1;
     } else if (columnId === TOTAL_BORROW) {
       return rowA.original.network.totalBorrowedFiat > rowB.original.network.totalBorrowedFiat
         ? 1
@@ -254,11 +254,11 @@ export const BorrowVaults = () => {
         sortingFn: poolSort
       },
       {
-        accessorFn: (row) => row.liquidity,
-        cell: ({ getValue }) => <Liquidity pool={getValue<PoolData>()} />,
+        accessorFn: (row) => row.available,
+        cell: ({ getValue }) => <Available pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{LIQUIDITY}</TableHeaderCell>,
-        id: LIQUIDITY,
+        header: (context) => <TableHeaderCell context={context}>{AVAILABLE}</TableHeaderCell>,
+        id: AVAILABLE,
         sortingFn: poolSort
       },
       {

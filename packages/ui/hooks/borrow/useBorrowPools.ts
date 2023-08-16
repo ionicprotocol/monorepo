@@ -9,8 +9,8 @@ export const useBorrowPools = (allPools: PoolData[]) => {
       return allPools.map((pool) => {
         return {
           assets: pool,
+          available: pool,
           borrowBalance: pool,
-          liquidity: pool,
           network: pool,
           poolName: pool,
           totalBorrow: pool

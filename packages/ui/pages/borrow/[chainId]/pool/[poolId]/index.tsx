@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import { LendDetailPage } from '@ui/components/pages/LendDetailPage';
+import { BorrowDetailPage } from '@ui/components/pages/BorrowDetailPage';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 const IonicPage: NextPage = () => {
@@ -16,7 +16,7 @@ const IonicPage: NextPage = () => {
       <Head>
         <title key="title">Pool Details</title>
       </Head>
-      <LendDetailPage />
+      <BorrowDetailPage />
     </>
   );
 };

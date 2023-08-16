@@ -5,7 +5,7 @@ export const TotalBorrow = ({ pool }: { pool: PoolData }) => {
   return (
     <BalanceCell
       primary={{
-        value: pool.totalSuppliedFiat
+        value: pool.totalBorrowedFiat
       }}
     />
   );

@@ -511,5 +511,6 @@ export const HEALTH_FACTOR = {
 };
 
 export const SUPPLY_ASSET = 'Supply Asset';
+export const BORROW_ASSET = 'Borrow Asset';
 export const UTILIZATION_RATE = 'Utilization Rate';
 export const PERCENT_IN_PORTFOLIO = 'Percent In Portfolio';
