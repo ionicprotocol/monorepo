@@ -675,10 +675,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
     const authoritiesRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
 
-    // set the address in the FFD
-    tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
-    await tx.wait();
-    console.log(`configured the auth registry in the FFD`);
+    const ffdAuthRegistry = await fuseFeeDistributor.callStatic.authoritiesRegistry();
+    if (ffdAuthRegistry.toLowerCase() != authoritiesRegistry.address.toLowerCase()) {
+      // set the address in the FFD
+      tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
+      await tx.wait();
+      console.log(`configured the auth registry in the FFD`);
+    }
     ////
   }
 
