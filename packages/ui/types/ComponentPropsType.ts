@@ -312,9 +312,5 @@ export type TxStep = {
 
 export type LendingPoolFilter = (typeof LENDING_POOL_FILTERS)[number];
 export type LendingModeFilter = (typeof LENDING_MODE_FILTERS)[number];
-export type LendingNetworkFilter = SupportedChains | typeof ALL_NETWORKS;
-export type LendingFilter =
-  | LendingModeFilter
-  | LendingNetworkFilter
-  | LendingPoolFilter
-  | typeof SEARCH;
+export type NetworkFilter = SupportedChains | typeof ALL_NETWORKS;
+export type LendingFilter = LendingModeFilter | LendingPoolFilter | NetworkFilter | typeof SEARCH;
