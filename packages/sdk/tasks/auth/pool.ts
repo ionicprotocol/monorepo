@@ -33,19 +33,24 @@ task("auth:pool:reconfigure-authority", "Deploys a pool authority for a pool")
 
     console.log("current deployer", deployer.address);
     console.log({ pool });
+
     const authRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
     const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
-    const latestImpl = await authRegistry.callStatic.poolAuthLogic();
     console.log(`pool auth ${poolAuthAddress} `);
+    const latestImpl = await authRegistry.callStatic.poolAuthLogic();
+    console.log(`latest impl ${latestImpl} `);
 
     const dpa = (await ethers.getContract("DefaultProxyAdmin")) as ProxyAdmin;
     const poolAuthImplementation = await dpa.callStatic.getProxyImplementation(poolAuthAddress);
     console.log(`Current implementation of pool auth ${poolAuthAddress} is ${poolAuthImplementation}`);
 
-    // upgrade
-    let tx = await dpa.upgrade(poolAuthAddress, latestImpl);
-    await tx.wait();
-    console.log(`upgraded the auth ${poolAuthAddress} for ${pool}: ${tx.hash}`);
+    let tx;
+    if (poolAuthImplementation.toLowerCase() != latestImpl.toLowerCase()) {
+      // upgrade
+      tx = await dpa.upgrade(poolAuthAddress, latestImpl);
+      await tx.wait();
+      console.log(`upgraded the auth ${poolAuthAddress} for ${pool}: ${tx.hash}`);
+    }
 
     // reconfigure
     tx = await authRegistry.reconfigureAuthority(pool);
