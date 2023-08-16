@@ -2,9 +2,9 @@ import { neon } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
+import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle } from "../helpers";
 import { getCgPrice } from "../helpers/getCgPrice";
-import { ChainlinkAsset, PythAsset } from "../helpers/types";
+import { ChainlinkAsset } from "../helpers/types";
 
 const assets = neon.assets;
 const BN = ethers.utils.parseEther("1");
