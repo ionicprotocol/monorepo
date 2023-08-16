@@ -82,13 +82,34 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
             cursor="pointer"
             onClick={() => {
               setGlobalLoading(true);
+              router.push('/borrow');
+            }}
+          >
+            <Text
+              color={
+                router.pathname.includes('/borrow') ? cIPage.txtSelectedColor : cIPage.txtColor
+              }
+              fontSize="14px"
+              fontWeight={600}
+              lineHeight="20px"
+            >
+              Borrow
+            </Text>
+          </Flex>
+          <Flex
+            align="center"
+            cursor="pointer"
+            onClick={() => {
+              setGlobalLoading(true);
               router.push('/');
             }}
           >
             <Text
               color={
                 router.pathname === '/' ||
-                (!router.pathname.includes('/lend') && router.pathname.includes('/pool/'))
+                (!router.pathname.includes('/lend') &&
+                  !router.pathname.includes('/borrow') &&
+                  router.pathname.includes('/pool/'))
                   ? cIPage.txtSelectedColor
                   : cIPage.txtColor
               }
