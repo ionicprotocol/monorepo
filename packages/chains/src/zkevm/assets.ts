@@ -20,7 +20,7 @@ export const assets: SupportedAsset[] = [
     underlying: USDC,
     name: "USD Coin",
     decimals: 6,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.API3PriceOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", USDC)
   },
   {
@@ -28,7 +28,7 @@ export const assets: SupportedAsset[] = [
     underlying: WBTC,
     name: "Wrapped BTC",
     decimals: 8,
-    oracle: OracleTypes.AlgebraPriceOracle,
+    oracle: OracleTypes.API3PriceOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", WBTC)
   },
   {
@@ -44,7 +44,7 @@ export const assets: SupportedAsset[] = [
     underlying: USDT,
     name: "Tether USD",
     decimals: 6,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.API3PriceOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", USDT)
   },
   {
@@ -52,7 +52,7 @@ export const assets: SupportedAsset[] = [
     underlying: FRAX,
     name: "Frax Stablecoin",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.AlgebraPriceOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", FRAX)
   },
   {
@@ -60,7 +60,7 @@ export const assets: SupportedAsset[] = [
     underlying: DAI,
     name: "DAI Stablecoin",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.AlgebraPriceOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", DAI)
   },
   {
@@ -68,7 +68,7 @@ export const assets: SupportedAsset[] = [
     underlying: WMATIC,
     name: "Wrapped Matic",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.API3PriceOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", WMATIC)
   },
   {
@@ -84,7 +84,7 @@ export const assets: SupportedAsset[] = [
     underlying: rETH,
     name: "Rocket Pool ETH",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.BalancerRateProviderOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", rETH)
   },
   {
@@ -92,7 +92,7 @@ export const assets: SupportedAsset[] = [
     underlying: wstETH,
     name: "Wrapped liquid staked Ether",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.BalancerRateProviderOracle,
     extraDocs: defaultDocs("https://zkevm.polygonscan.com", wstETH)
   }
 ];
