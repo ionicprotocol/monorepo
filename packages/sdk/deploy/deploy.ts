@@ -654,6 +654,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           init: {
             methodName: "initialize",
             args: [leveredPositionFactory.address]
+          },
+          onUpgrade: {
+            methodName: "reinitialize",
+            args: [leveredPositionFactory.address]
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
