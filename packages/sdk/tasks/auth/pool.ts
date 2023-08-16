@@ -38,7 +38,7 @@ task("auth:pool:reconfigure-authority", "Deploys a pool authority for a pool")
     const latestImpl = await authRegistry.callStatic.poolAuthLogic();
     console.log(`pool auth ${poolAuthAddress} `);
 
-    const dpa = await ethers.getContract("DefaultProxyAdmin") as ProxyAdmin;
+    const dpa = (await ethers.getContract("DefaultProxyAdmin")) as ProxyAdmin;
     const poolAuthImplementation = await dpa.callStatic.getProxyImplementation(poolAuthAddress);
     console.log(`Current implementation of pool auth ${poolAuthAddress} is ${poolAuthImplementation}`);
 
