@@ -578,7 +578,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       from: deployer,
       log: true,
       args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
-      waitConfirmations: 1
+      waitConfirmations: 1,
+      skipIfAlreadyDeployed: true
     });
     if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
     console.log("LeveredPositionFactory: ", lpfDep.address);
@@ -615,12 +616,18 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       await tx.wait();
       console.log("registered the LeveredPositionFactory second extension: ", tx.hash);
     } else if (currentLPFExtensions.length == 2) {
-      tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[0]);
-      await tx.wait();
-      console.log("replaced the LeveredPositionFactory first extension: ", tx.hash);
-      tx = await leveredPositionFactory._registerExtension(lpfExt2Dep.address, currentLPFExtensions[1]);
-      await tx.wait();
-      console.log("replaced the LeveredPositionFactory second extension: ", tx.hash);
+      if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[1].toLowerCase()) {
+        console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt1Dep.address}`);
+        tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[1]);
+        await tx.wait();
+        console.log("replaced the LeveredPositionFactory first extension: ", tx.hash);
+      }
+      if (lpfExt2Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
+        console.log(`replacing ${currentLPFExtensions[0]} with ${lpfExt2Dep.address}`);
+        tx = await leveredPositionFactory._registerExtension(lpfExt2Dep.address, currentLPFExtensions[0]);
+        await tx.wait();
+        console.log("replaced the LeveredPositionFactory second extension: ", tx.hash);
+      }
     } else {
       console.log(`no LeveredPositionFactory extensions to update`);
     }
