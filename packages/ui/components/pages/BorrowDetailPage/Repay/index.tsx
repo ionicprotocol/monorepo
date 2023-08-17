@@ -64,7 +64,7 @@ export const Repay = ({
   setSelectedAsset: (asset: MarketData) => void;
 }) => {
   const { chainId, comptroller, assets: _assets } = poolData;
-  const assets = _assets.filter((asset) => !asset.isSupplyPaused);
+  const assets = _assets.filter((asset) => asset.borrowBalanceFiat > 0);
 
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();
