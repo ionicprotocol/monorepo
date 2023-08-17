@@ -2,9 +2,9 @@ import { neon } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
+import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle } from "../helpers";
 import { getCgPrice } from "../helpers/getCgPrice";
-import { ChainlinkAsset, PythAsset } from "../helpers/types";
+import { ChainlinkAsset } from "../helpers/types";
 
 const assets = neon.assets;
 const BN = ethers.utils.parseEther("1");
@@ -12,7 +12,7 @@ const BN = ethers.utils.parseEther("1");
 export const deployConfig: ChainDeployConfig = {
   wtoken: neon.chainAddresses.W_TOKEN,
   nativeTokenUsdChainlinkFeed: ethers.constants.AddressZero,
-  nativeTokenName: "Neon (Testnet)",
+  nativeTokenName: "Neon",
   nativeTokenSymbol: "NEON",
   stableToken: neon.chainAddresses.STABLE_TOKEN,
   wBTCToken: neon.chainAddresses.W_BTC_TOKEN,
@@ -54,20 +54,20 @@ const chainlinkAssets: ChainlinkAsset[] = [
   }
 ];
 
-const pythAssets: PythAsset[] = [
-  {
-    underlying: underlying(assets, assetSymbols.USDC),
-    feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
-  },
-  {
-    underlying: underlying(assets, assetSymbols.WETH),
-    feed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
-  },
-  {
-    underlying: underlying(assets, assetSymbols.WBTC),
-    feed: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43"
-  }
-];
+// const pythAssets: PythAsset[] = [
+//   {
+//     underlying: underlying(assets, assetSymbols.USDC),
+//     feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
+//   },
+//   {
+//     underlying: underlying(assets, assetSymbols.WETH),
+//     feed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
+//   },
+//   {
+//     underlying: underlying(assets, assetSymbols.WBTC),
+//     feed: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43"
+//   }
+// ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
@@ -89,18 +89,21 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
   console.log(`setDirectPrice ${assetSymbols.USDC} mined`, tx.hash);
 
   tx = await masterPriceOracle.add([underlying(assets, assetSymbols.USDC)], [simplePriceOracle.address]);
+  await tx.wait();
 
-  await deployPythPriceOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    pythAssets,
-    pythAddress: "0x7f2dB085eFC3560AFF33865dD727225d91B4f9A5",
-    nativeTokenUsdFeed: "0xd82183dd487bef3208a227bb25d748930db58862c5121198e723ed0976eb92b7",
-    usdToken: underlying(assets, assetSymbols.USDC)
-  });
+  console.log(`add ${assetSymbols.USDC} mined`, tx.hash);
+
+  // await deployPythPriceOracle({
+  //   run,
+  //   ethers,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   pythAssets,
+  //   pythAddress: "0x7f2dB085eFC3560AFF33865dD727225d91B4f9A5",
+  //   nativeTokenUsdFeed: "0x",
+  //   usdToken: underlying(assets, assetSymbols.USDC)
+  // });
 
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({

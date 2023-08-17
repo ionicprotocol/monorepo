@@ -2,6 +2,15 @@
   "name": "zkevm",
   "chainId": "1101",
   "contracts": {
+    "API3PriceOracle": {
+      "address": "0xBfa79d397682DDdfBb1eC671D2a5CF4f213C8d2A"
+    },
+    "API3PriceOracle_Implementation": {
+      "address": "0x4C1269bDfad9725f1E4a010f83762069DB3292cB"
+    },
+    "API3PriceOracle_Proxy": {
+      "address": "0xBfa79d397682DDdfBb1eC671D2a5CF4f213C8d2A"
+    },
     "AddressesProvider": {
       "address": "0x27aA55A3D55959261e119d75256aadAB79aE897C"
     },
@@ -27,7 +36,7 @@
       "address": "0x50b6A0c226bF5C4a83c9e865ce44d7c88cfB4d04"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
+      "address": "0x23EB98ec8341d460e7AC692261bb8cC784AdE977"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0x50b6A0c226bF5C4a83c9e865ce44d7c88cfB4d04"

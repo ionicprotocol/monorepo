@@ -608,6 +608,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     )) as LeveredPositionFactory;
 
     const currentLPFExtensions = await leveredPositionFactory._listExtensions();
+
     if (currentLPFExtensions.length == 1) {
       tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[0]);
       await tx.wait();
@@ -616,15 +617,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       await tx.wait();
       console.log("registered the LeveredPositionFactory second extension: ", tx.hash);
     } else if (currentLPFExtensions.length == 2) {
-      if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[1].toLowerCase()) {
+      if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
         console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt1Dep.address}`);
         tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[1]);
         await tx.wait();
         console.log("replaced the LeveredPositionFactory first extension: ", tx.hash);
       }
-      if (lpfExt2Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
-        console.log(`replacing ${currentLPFExtensions[0]} with ${lpfExt2Dep.address}`);
-        tx = await leveredPositionFactory._registerExtension(lpfExt2Dep.address, currentLPFExtensions[0]);
+      if (lpfExt2Dep.address.toLowerCase() != currentLPFExtensions[1].toLowerCase()) {
+        console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt2Dep.address}`);
+        tx = await leveredPositionFactory._registerExtension(lpfExt2Dep.address, currentLPFExtensions[1]);
         await tx.wait();
         console.log("replaced the LeveredPositionFactory second extension: ", tx.hash);
       }
