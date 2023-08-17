@@ -6,17 +6,19 @@ export const useLendingAssets = (assets: MarketData[]) => {
   const response = useQuery(
     ['useLendingAssets', assets.map((asset) => asset.cToken)],
     () => {
-      return assets.map((asset) => {
-        return {
-          apy: asset,
-          collateral: asset,
-          percentInPortfolio: asset,
-          supplyAsset: asset,
-          totalSupply: asset,
-          utilizationRate: asset,
-          walletBalance: asset
-        };
-      });
+      return assets
+        .filter((asset) => !asset.isSupplyPaused)
+        .map((asset) => {
+          return {
+            apy: asset,
+            collateral: asset,
+            percentInPortfolio: asset,
+            supplyAsset: asset,
+            totalSupply: asset,
+            utilizationRate: asset,
+            walletBalance: asset
+          };
+        });
     },
     {
       enabled: assets.length > 0

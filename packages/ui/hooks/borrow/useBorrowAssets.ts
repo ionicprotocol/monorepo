@@ -6,15 +6,17 @@ export const useBorrowAssets = (assets: MarketData[]) => {
   const response = useQuery(
     ['useBorrowAssets', assets.map((asset) => asset.cToken)],
     () => {
-      return assets.map((asset) => {
-        return {
-          apy: asset,
-          borrowAsset: asset,
-          percentInPortfolio: asset,
-          totalBorrow: asset,
-          utilizationRate: asset
-        };
-      });
+      return assets
+        .filter((asset) => !asset.isBorrowPaused)
+        .map((asset) => {
+          return {
+            apy: asset,
+            borrowAsset: asset,
+            percentInPortfolio: asset,
+            totalBorrow: asset,
+            utilizationRate: asset
+          };
+        });
     },
     {
       enabled: assets.length > 0
