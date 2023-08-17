@@ -12,7 +12,7 @@ const specificParams: ChainParams = {
     name: "Polygon zkEVM",
     shortName: "zkEVM",
     uniswapV3Fees: {},
-    img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/polygon_zkevm.png",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://zkevm.polygonscan.com" } },
     rpcUrls: {
       default: { http: ["https://zkevm-rpc.com"] },
@@ -29,7 +29,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#7A88A1",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/ethereum.png"
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/polygon_zkevm.png"
     }
   }
 };
