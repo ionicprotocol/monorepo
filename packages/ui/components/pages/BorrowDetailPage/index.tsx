@@ -44,7 +44,7 @@ export const BorrowDetailPage = () => {
 
   useEffect(() => {
     if (poolData && poolData.assets.length > 0) {
-      setSelectedAsset(poolData.assets[0]);
+      setSelectedAsset(poolData.assets.filter((asset) => !asset.isBorrowPaused)[0]);
     } else {
       setSelectedAsset(undefined);
     }
