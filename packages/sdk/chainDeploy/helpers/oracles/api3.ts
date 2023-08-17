@@ -26,6 +26,10 @@ export const deployAPI3PriceOracle = async ({
         init: {
           methodName: "initialize",
           args: [nativeTokenUsdFeed, usdToken]
+        },
+        onUpgrade: {
+          methodName: "reinitialize",
+          args: [usdToken, nativeTokenUsdFeed]
         }
       },
       owner: deployer,

@@ -12,7 +12,7 @@ const BN = ethers.utils.parseEther("1");
 export const deployConfig: ChainDeployConfig = {
   wtoken: neon.chainAddresses.W_TOKEN,
   nativeTokenUsdChainlinkFeed: ethers.constants.AddressZero,
-  nativeTokenName: "Neon (Testnet)",
+  nativeTokenName: "Neon",
   nativeTokenSymbol: "NEON",
   stableToken: neon.chainAddresses.STABLE_TOKEN,
   wBTCToken: neon.chainAddresses.W_BTC_TOKEN,
