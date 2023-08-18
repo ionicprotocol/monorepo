@@ -7,11 +7,12 @@ import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const BorrowBalance = ({ pool }: { pool: PoolData }) => {
   const { address } = useMultiIonic();
+
   return (
     <>
       {!address ? (
         <SimpleTooltip label="Connect your wallet">
-          <Text fontWeight="medium" size="sm" textAlign="center">
+          <Text size="md" textAlign="center">
             -
           </Text>
         </SimpleTooltip>

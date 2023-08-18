@@ -1,4 +1,4 @@
-import { AvatarGroup, Box, Button, HStack, Img, Link, Stack, Text, VStack } from '@chakra-ui/react';
+import { AvatarGroup, Box, Button, HStack, Link, Stack, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -8,7 +8,6 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
-import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 
 export const PoolName = ({
@@ -30,23 +29,9 @@ export const PoolName = ({
   const { cGreen, cIRow } = useColors();
   const router = useRouter();
   const [isHovering, setIsHovering] = useState<boolean>(false);
-  const chainConfig = useChainConfig(chainId);
 
   return (
     <HStack height="100%" justifyContent="flex-start">
-      {chainConfig && (
-        <SimpleTooltip label={chainConfig.specificParams.metadata.name}>
-          <Img
-            alt={chainConfig.specificParams.metadata.name}
-            borderRadius="50%"
-            height="25px"
-            minHeight="25px"
-            minWidth="25px"
-            src={chainConfig.specificParams.metadata.img}
-            width="25px"
-          />
-        </SimpleTooltip>
-      )}
       <VStack alignItems={'flex-start'} height="100%" justifyContent="center" spacing={0}>
         <Stack maxWidth={'300px'} minWidth={'240px'}>
           <SimpleTooltip label={!isDisabledTooltip ? poolName : ''}>

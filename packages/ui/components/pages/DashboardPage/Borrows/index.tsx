@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Center,
   Divider,
@@ -16,7 +16,6 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react';
-import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type {
   ColumnDef,
@@ -34,70 +33,78 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { useRouter } from 'next/router';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Assets } from '@ui/components/pages/PoolsPage/PoolsList/Assets';
-import { BorrowBalance } from '@ui/components/pages/PoolsPage/PoolsList/BorrowBalance';
-import { PoolName } from '@ui/components/pages/PoolsPage/PoolsList/PoolName';
-import { SupplyBalance } from '@ui/components/pages/PoolsPage/PoolsList/SupplyBalance';
-import { TotalBorrow } from '@ui/components/pages/PoolsPage/PoolsList/TotalBorrow';
-import { TotalSupply } from '@ui/components/pages/PoolsPage/PoolsList/TotalSupply';
+import { Assets } from './Assets';
+import { Available } from './Available';
+import { BorrowBalance } from './BorrowBalance';
+import { Manage } from './Manage';
+import { Network } from './Network';
+import { NetworkFilterDropdown } from './NetworkFilterDropdown';
+import { PoolName } from './PoolName';
+import { TotalBorrow } from './TotalBorrow';
+
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
-  ALL,
+  ALL_NETWORKS,
+  ALL_POOLS,
   ASSETS,
+  AVAILABLE,
+  BORROW,
   BORROW_BALANCE,
   IONIC_LOCALSTORAGE_KEYS,
+  NETWORK,
   POOL_NAME,
   POOLS_COLUMNS,
   POOLS_COUNT_PER_PAGE,
   SEARCH,
-  SUPPLY_BALANCE,
+  SIMPLE_MODE,
   TOTAL_BORROW,
-  TOTAL_SUPPLY
+  TOTAL_SUPPLY,
+  YOUR_BALANCE
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBorrowPools } from '@ui/hooks/borrow/useBorrowPools';
 import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
-import { useAllPoolsData } from '@ui/hooks/poolsList/useAllPoolsData';
+import { useLoadingStatusPerChain } from '@ui/hooks/pools/useLoadingStatusPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
+import type { LendingFilter, NetworkFilter } from '@ui/types/ComponentPropsType';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
-export type BorrowsRowData = {
-  borrowApr: PoolData;
-  borrowingAssets: PoolData;
-  collateralApr: PoolData;
-  collateralAssets: PoolData;
-  myBorrow: PoolData;
-  myCollateral: PoolData;
+export type PoolRowData = {
+  assets: PoolData;
+  available: PoolData;
+  borrowBalance: PoolData;
   network: PoolData;
-  rewardsApr: PoolData;
-  utilization: PoolData;
+  poolName: PoolData;
+  totalBorrow: PoolData;
 };
 
 export const Borrows = () => {
   const enabledChains = useEnabledChains();
   const { isAllLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
-  const { address, setGlobalLoading } = useMultiIonic();
+  const { address } = useMultiIonic();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
-    { desc: true, id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY }
+    { desc: true, id: address ? BORROW_BALANCE : TOTAL_BORROW }
   ]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0]
   });
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
+  const [networkFilter, setNetworkFilter] = useState<NetworkFilter[]>([ALL_NETWORKS]);
+  const [globalFilter, setGlobalFilter] = useState<LendingFilter[]>([...networkFilter]);
   const [searchText, setSearchText] = useState('');
   const mounted = useRef(false);
-  const router = useRouter();
+
+  const loadingStatusPerChain = useLoadingStatusPerChain(poolsPerChain);
 
   useQuery(
     [
@@ -109,7 +116,7 @@ export const Borrows = () => {
     () => {
       const pools: PoolData[] = [];
 
-      if (globalFilter.includes(ALL)) {
+      if (globalFilter.includes(ALL_NETWORKS)) {
         setSelectedFilteredPools([...allPools]);
       } else {
         globalFilter.map((filter) => {
@@ -129,9 +136,9 @@ export const Borrows = () => {
     }
   );
 
-  const poolFilter: FilterFn<BorrowsRowData> = useCallback(
+  const globalFilterFn: FilterFn<PoolRowData> = useCallback(
     (row, columnId, value) => {
-      const pool = row.original.poolName;
+      const pool = row.original.network;
       const namesAndSymbols: string[] = [];
       pool.assets.map((asset) => {
         namesAndSymbols.push(
@@ -146,7 +153,7 @@ export const Borrows = () => {
             pool.name.toLowerCase().includes(searchText.toLowerCase()) ||
             namesAndSymbols.some((ns) => ns.includes(searchText.toLowerCase()))))
       ) {
-        if (value.includes(ALL) || value.includes(pool.chainId)) {
+        if (value.includes(ALL_NETWORKS) || value.includes(pool.chainId)) {
           return true;
         } else {
           return false;
@@ -158,25 +165,22 @@ export const Borrows = () => {
     [searchText]
   );
 
-  const poolSort: SortingFn<BorrowsRowData> = (rowA, rowB, columnId) => {
-    if (columnId === POOL_NAME) {
-      return rowB.original.poolName.name.localeCompare(rowA.original.poolName.name);
-    } else if (columnId === SUPPLY_BALANCE) {
-      return rowA.original.poolName.totalSupplyBalanceFiat >
-        rowB.original.poolName.totalSupplyBalanceFiat
-        ? 1
-        : -1;
+  const poolSort: SortingFn<PoolRowData> = (rowA, rowB, columnId) => {
+    if (columnId === NETWORK) {
+      return rowB.original.network.chainId > rowA.original.network.chainId ? 1 : -1;
+    } else if (columnId === POOL_NAME) {
+      return rowB.original.network.name.localeCompare(rowA.original.network.name);
     } else if (columnId === BORROW_BALANCE) {
-      return rowA.original.poolName.totalBorrowBalanceFiat >
-        rowB.original.poolName.totalBorrowBalanceFiat
+      return rowA.original.network.totalBorrowBalanceFiat >
+        rowB.original.network.totalBorrowBalanceFiat
         ? 1
         : -1;
-    } else if (columnId === TOTAL_SUPPLY) {
-      return rowA.original.poolName.totalSuppliedFiat > rowB.original.poolName.totalSuppliedFiat
-        ? 1
-        : -1;
+      // } else if (columnId === AVAILABLE) {
+      //   return rowA.original.network.totalLiquidityFiat > rowB.original.network.totalLiquidityFiat
+      //     ? 1
+      //     : -1;
     } else if (columnId === TOTAL_BORROW) {
-      return rowA.original.poolName.totalBorrowedFiat > rowB.original.poolName.totalBorrowedFiat
+      return rowA.original.network.totalBorrowedFiat > rowB.original.network.totalBorrowedFiat
         ? 1
         : -1;
     } else {
@@ -184,10 +188,20 @@ export const Borrows = () => {
     }
   };
 
-  const data: BorrowsRowData[] = useAllPoolsData(allPools);
+  const data: PoolRowData[] = useBorrowPools(allPools);
 
-  const columns: ColumnDef<BorrowsRowData>[] = useMemo(() => {
+  const columns: ColumnDef<PoolRowData>[] = useMemo(() => {
     return [
+      {
+        accessorFn: (row) => row.network,
+        cell: ({ getValue }) => <Network chainId={getValue<PoolData>().chainId} />,
+        enableHiding: false,
+        filterFn: globalFilterFn,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{NETWORK}</TableHeaderCell>,
+        id: NETWORK,
+        sortingFn: poolSort
+      },
       {
         accessorFn: (row) => row.poolName,
         cell: ({ getValue }) => (
@@ -199,7 +213,6 @@ export const Borrows = () => {
           />
         ),
         enableHiding: false,
-        filterFn: poolFilter,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{POOL_NAME}</TableHeaderCell>,
         id: POOL_NAME,
@@ -214,39 +227,38 @@ export const Borrows = () => {
         id: ASSETS
       },
       {
-        accessorFn: (row) => row.supplyBalance,
-        cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{SUPPLY_BALANCE}</TableHeaderCell>,
-        id: SUPPLY_BALANCE,
-        sortingFn: poolSort
-      },
-      {
-        accessorFn: (row) => row.borrowBalance,
-        cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{BORROW_BALANCE}</TableHeaderCell>,
-        id: BORROW_BALANCE,
-        sortingFn: poolSort
-      },
-      {
-        accessorFn: (row) => row.totalSupply,
-        cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
-        footer: (props) => props.column.id,
-        header: (context) => <TableHeaderCell context={context}>{TOTAL_SUPPLY}</TableHeaderCell>,
-        id: TOTAL_SUPPLY,
-        sortingFn: poolSort
-      },
-      {
         accessorFn: (row) => row.totalBorrow,
         cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{TOTAL_BORROW}</TableHeaderCell>,
         id: TOTAL_BORROW,
         sortingFn: poolSort
+      },
+      {
+        accessorFn: (row) => row.available,
+        cell: ({ getValue }) => <Available pool={getValue<PoolData>()} />,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{AVAILABLE}</TableHeaderCell>,
+        id: AVAILABLE,
+        sortingFn: poolSort
+      },
+      {
+        accessorFn: (row) => row.borrowBalance,
+        cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
+        footer: (props) => props.column.id,
+        header: (context) => <TableHeaderCell context={context}>{YOUR_BALANCE}</TableHeaderCell>,
+        id: YOUR_BALANCE,
+        sortingFn: poolSort
+      },
+      {
+        cell: ({ row }) => {
+          return <Manage pool={row.getValue(NETWORK)} />;
+        },
+        header: () => null,
+        id: BORROW
       }
     ];
-  }, [poolFilter]);
+  }, [globalFilterFn]);
 
   const table = useReactTable({
     columns,
@@ -259,7 +271,7 @@ export const Borrows = () => {
     getPaginationRowModel: getPaginationRowModel(),
     getRowCanExpand: () => true,
     getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: poolFilter,
+    globalFilterFn: globalFilterFn,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: onPagination,
     onSortingChange: setSorting,
@@ -270,7 +282,7 @@ export const Borrows = () => {
     }
   });
 
-  const { data: tableData } = useQuery(['PoolsTableData', table], () => {
+  const { data: tableData } = useQuery(['BorrowPoolsTableData', table], () => {
     return {
       canNextPage: table.getCanNextPage(),
       canPreviousPage: table.getCanPreviousPage(),
@@ -282,37 +294,42 @@ export const Borrows = () => {
 
   const { cCard, cIPage, cIRow } = useColors();
 
-  const onFilter = (filter: SupportedChains | string) => {
-    let _globalFilter: (SupportedChains | string)[] = [];
+  useEffect(() => {
+    if (globalFilter.includes(SEARCH)) {
+      setGlobalFilter([...networkFilter, SEARCH]);
+    } else {
+      setGlobalFilter([...networkFilter]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [networkFilter]);
 
-    if (globalFilter.includes(filter)) {
-      if (filter === ALL) {
-        _globalFilter = [enabledChains[0]];
+  const onNetworkFilter = (filter: NetworkFilter) => {
+    let _networkFilter: NetworkFilter[] = [];
+
+    if (networkFilter.includes(filter)) {
+      if (filter === ALL_NETWORKS) {
+        _networkFilter = [enabledChains[0]];
       } else {
-        _globalFilter = globalFilter.filter((f) => f !== filter);
+        _networkFilter = networkFilter.filter((f) => f !== filter);
 
-        if (_globalFilter.length === 0) {
-          _globalFilter = [ALL];
+        if (_networkFilter.length === 0) {
+          _networkFilter = [ALL_NETWORKS];
         }
       }
     } else {
-      if (globalFilter.includes(ALL)) {
-        _globalFilter = [filter];
+      if (networkFilter.includes(ALL_NETWORKS)) {
+        _networkFilter = [filter];
       } else if (
-        filter === ALL ||
-        enabledChains.length === globalFilter.filter((f) => f !== ALL && f != SEARCH).length + 1
+        filter === ALL_NETWORKS ||
+        enabledChains.length === networkFilter.filter((f) => f !== ALL_NETWORKS).length + 1
       ) {
-        _globalFilter = [ALL];
+        _networkFilter = [ALL_NETWORKS];
       } else {
-        _globalFilter = [...globalFilter, filter];
+        _networkFilter = [...networkFilter, filter];
       }
     }
 
-    if (globalFilter.includes(SEARCH)) {
-      setGlobalFilter([..._globalFilter, SEARCH]);
-    } else {
-      setGlobalFilter([..._globalFilter]);
-    }
+    setNetworkFilter(_networkFilter);
   };
 
   useEffect(() => {
@@ -372,7 +389,11 @@ export const Borrows = () => {
     const data = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     if (data && mounted.current) {
       const obj = JSON.parse(data);
-      const _globalFilter = (obj.globalFilter as (SupportedChains | string)[]) || [ALL];
+      const _globalFilter = (obj.globalFilter as LendingFilter[]) || [
+        ALL_NETWORKS,
+        ALL_POOLS,
+        SIMPLE_MODE
+      ];
       setGlobalFilter(_globalFilter);
 
       if (obj && obj.sorting && POOLS_COLUMNS.includes(obj.sorting[0].id)) {
@@ -387,8 +408,32 @@ export const Borrows = () => {
     };
   }, []);
 
+  if (error && error.code !== 'NETWORK_ERROR') {
+    return (
+      <Banner
+        alertDescriptionProps={{ fontSize: 'lg' }}
+        alertIconProps={{ boxSize: 12 }}
+        alertProps={{
+          alignItems: 'center',
+          flexDirection: 'column',
+          gap: 4,
+          height: '2xs',
+          justifyContent: 'center',
+          status: 'warning',
+          textAlign: 'center'
+        }}
+        descriptions={[
+          {
+            text: `Unable to retrieve Pools. Please try again later.`
+          }
+        ]}
+        title={error.reason ? error.reason : 'Unexpected Error'}
+      />
+    );
+  }
+
   return (
-    <CardBox overflowX="auto" width="100%">
+    <CardBox mt={{ base: '24px' }} overflowX="auto" width="100%">
       <Flex direction="column" gap="24px">
         <Flex
           alignItems="center"
@@ -408,40 +453,18 @@ export const Borrows = () => {
             <SearchInput
               inputProps={{ width: '220px' }}
               onSearch={(searchText) => setSearchText(searchText)}
-              placeholder="Search by asset name, symbol or address"
+              placeholder="Search by asset or pool name"
             />
             <Center height={5}>
               <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
             </Center>
-            <HStack>
-              <Text size="md" width="max-content">
-                All Networks
-              </Text>
-              <ChevronDownIcon />
-            </HStack>
+            <NetworkFilterDropdown
+              loadingStatusPerChain={loadingStatusPerChain}
+              networkFilter={networkFilter}
+              onNetworkFilter={onNetworkFilter}
+            />
           </Flex>
         </Flex>
-        {error && error.code !== 'NETWORK_ERROR' ? (
-          <Banner
-            alertDescriptionProps={{ fontSize: 'lg' }}
-            alertIconProps={{ boxSize: 12 }}
-            alertProps={{
-              alignItems: 'center',
-              flexDirection: 'column',
-              gap: 4,
-              height: '2xs',
-              justifyContent: 'center',
-              status: 'warning',
-              textAlign: 'center'
-            }}
-            descriptions={[
-              {
-                text: `Fetching borrows error. Please try again later.`
-              }
-            ]}
-            title={error.reason ? error.reason : 'Unexpected Error'}
-          />
-        ) : null}
         {tableData ? (
           <>
             {!isLoading ? (
@@ -477,12 +500,6 @@ export const Borrows = () => {
                           borderRadius={{ base: '20px' }}
                           cursor="pointer"
                           key={row.id}
-                          onClick={() => {
-                            setGlobalLoading(true);
-                            router.push(
-                              `/${row.original.poolName.chainId}/pool/${row.original.poolName.id}`
-                            );
-                          }}
                         >
                           {row.getVisibleCells().map((cell, index) => {
                             return (
@@ -538,7 +555,7 @@ export const Borrows = () => {
             >
               <HStack>
                 <Hide below="lg">
-                  <Text size="md">Borrows Per Page</Text>
+                  <Text size="md">Pools Per Page</Text>
                 </Hide>
                 <Select
                   maxW="max-content"

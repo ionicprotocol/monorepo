@@ -7,18 +7,16 @@ import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const Assets = ({ pool }: { pool: PoolData }) => {
   const tokens = useMemo(() => {
-    return pool.underlyingTokens.map((address, index) => ({
-      address,
-      symbol: pool.underlyingSymbols[index]
-    }));
-  }, [pool.underlyingSymbols, pool.underlyingTokens]);
-  if (pool.underlyingTokens.length === 0) return null;
+    return pool.assets.filter((asset) => !asset.isSupplyPaused);
+  }, [pool.assets]);
+
+  if (tokens.length === 0) return null;
 
   return (
     <HStack spacing={0} width="240px">
       <AvatarGroup max={30} size="sm">
         {tokens.slice(0, SHRINK_ASSETS).map((token, i) => (
-          <TokenIcon address={token.address} chainId={pool.chainId} key={i} />
+          <TokenIcon address={token.underlyingToken} chainId={pool.chainId} key={i} />
         ))}
       </AvatarGroup>
       {/* TODO list hidden assets in tooltip */}
