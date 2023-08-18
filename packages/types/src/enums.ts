@@ -53,6 +53,7 @@ export enum DelegateContractName {
 
 export enum OracleTypes {
   ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
+  API3PriceOracle = "API3PriceOracle",
   CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
   CurveV2PriceOracle = "CurveV2PriceOracle",
   CurveV2LpTokenPriceOracleNoRegistry = "CurveV2LpTokenPriceOracleNoRegistry",

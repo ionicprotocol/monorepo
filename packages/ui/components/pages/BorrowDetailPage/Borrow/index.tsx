@@ -49,7 +49,7 @@ export const Borrow = ({
   setSelectedAsset: (asset: MarketData) => void;
 }) => {
   const { chainId, comptroller, assets: _assets } = poolData;
-  const assets = _assets.filter((asset) => !asset.isSupplyPaused);
+  const assets = _assets.filter((asset) => !asset.isBorrowPaused);
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();
   const queryClient = useQueryClient();

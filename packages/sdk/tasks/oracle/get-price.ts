@@ -13,11 +13,11 @@ task("oracle:get-price", "Get price of token")
     console.log("oracle: ", mpo.address);
     if (_address) {
       console.log("underlying oracle address: ", await mpo.callStatic.oracles(_address));
-      const tokenPriceMPO = await mpo.price(_address);
+      const tokenPriceMPO = await mpo.callStatic.price(_address);
       console.log(`mpo.price(address): ${tokenPriceMPO.toString()}, i.e.: ${ethers.utils.formatEther(tokenPriceMPO)}`);
     }
     if (_ctoken) {
-      const tokenPriceMPO = await mpo.getUnderlyingPrice(_ctoken);
+      const tokenPriceMPO = await mpo.callStatic.getUnderlyingPrice(_ctoken);
       console.log(
         `mpo.getUnderlyingPrice(cToken): ${tokenPriceMPO.toString()}, i.e.: ${ethers.utils.formatEther(tokenPriceMPO)}`
       );

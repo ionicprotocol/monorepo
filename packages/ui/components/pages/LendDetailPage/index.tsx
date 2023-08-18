@@ -44,7 +44,7 @@ export const LendDetailPage = () => {
 
   useEffect(() => {
     if (poolData && poolData.assets.length > 0) {
-      setSelectedAsset(poolData.assets[0]);
+      setSelectedAsset(poolData.assets.filter((asset) => !asset.isSupplyPaused)[0]);
     } else {
       setSelectedAsset(undefined);
     }

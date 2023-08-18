@@ -48,7 +48,7 @@ export const LendWithdraw = ({
   setSelectedAsset: (asset: MarketData) => void;
 }) => {
   const { chainId, comptroller, assets: _assets, id: poolId } = poolData;
-  const assets = _assets.filter((asset) => !asset.isSupplyPaused);
+  const assets = _assets.filter((asset) => asset.supplyBalanceFiat > 0);
 
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();

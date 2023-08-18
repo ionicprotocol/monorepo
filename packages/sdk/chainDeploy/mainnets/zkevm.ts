@@ -7,8 +7,8 @@ import {
   ChainDeployConfig,
   configureBalancerSwap,
   deployAlgebraPriceOracle,
-  deployBalancerRateProviderPriceOracle,
-  deployPythPriceOracle
+  deployAPI3PriceOracle,
+  deployBalancerRateProviderPriceOracle
 } from "../helpers";
 import {
   BalancerRateProviderAsset,
@@ -41,38 +41,30 @@ export const deployConfig: ChainDeployConfig = {
   cgId: zkevm.specificParams.cgId
 };
 
-const pythAssets: PythAsset[] = [
+const api3Assets: PythAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.USDC),
-    feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
+    feed: "0x8DF7d919Fe9e866259BB4D135922c5Bd96AF6A27"
+  },
+  {
+    underlying: underlying(assets, assetSymbols.USDT),
+    feed: "0xF63Fa6EA00678F435Ae3e845541EBb2Db0a1e8fF"
+  },
+  {
+    underlying: underlying(assets, assetSymbols.WBTC),
+    feed: "0xe5Cf15fED24942E656dBF75165aF1851C89F21B5"
+  },
+  {
+    underlying: underlying(assets, assetSymbols.DAI),
+    feed: "0x6538D9c4b12b5E5E209917D29C097465Ba8EFA02"
+  },
+  {
+    underlying: underlying(assets, assetSymbols.WMATIC),
+    feed: "0x3ACccB328Db79Af1B81a4801DAf9ac8370b9FBF8"
   }
 ];
 
 const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
-  {
-    assetAddress: underlying(assets, assetSymbols.WBTC),
-    poolAddress: "0xFC4A3A7dc6b62bd2EA595b106392f5E006083b83",
-    twapWindow: ethers.BigNumber.from(30 * 60),
-    baseToken: underlying(assets, assetSymbols.WETH)
-  },
-  {
-    assetAddress: underlying(assets, assetSymbols.DAI),
-    poolAddress: "0x68cc0516162b423930cD8448A2a00310E841E7f5",
-    twapWindow: ethers.BigNumber.from(30 * 60),
-    baseToken: underlying(assets, assetSymbols.USDC)
-  },
-  {
-    assetAddress: underlying(assets, assetSymbols.WMATIC),
-    poolAddress: "0xB73AbFb5a2C89f4038baA476Ff3A7942A021c196",
-    twapWindow: ethers.BigNumber.from(30 * 60),
-    baseToken: underlying(assets, assetSymbols.WETH)
-  },
-  {
-    assetAddress: underlying(assets, assetSymbols.USDT),
-    poolAddress: "0x9591b8A30c3a52256ea93E98dA49EE43Afa136A8",
-    twapWindow: ethers.BigNumber.from(30 * 60),
-    baseToken: underlying(assets, assetSymbols.USDC)
-  },
   {
     assetAddress: underlying(assets, assetSymbols.FRAX),
     poolAddress: "0xC4aD89d0A07081871f3007079f816B0757D2638E",
@@ -115,15 +107,14 @@ const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  await deployPythPriceOracle({
+  await deployAPI3PriceOracle({
     run,
     ethers,
     getNamedAccounts,
     deployments,
     deployConfig,
-    pythAssets,
-    pythAddress: "0xC5E56d6b40F3e3B5fbfa266bCd35C37426537c65",
-    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+    api3Assets,
+    nativeTokenUsdFeed: "0x26690F9f17FdC26D419371315bc17950a0FC90eD",
     usdToken: underlying(assets, assetSymbols.USDC)
   });
   //// deploy algebra price oracle
