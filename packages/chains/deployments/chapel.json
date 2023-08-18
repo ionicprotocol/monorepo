@@ -15,7 +15,7 @@
       "address": "0xa5E190Fa38F325617381e835da8b2DB2D12cE5eb"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0x7E9bC1D871d6B079235d3673cEd6e3D00C3369eD"
+      "address": "0x30D09430e838A1f6262CD8e3B395BFacC47f392d"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0xa5E190Fa38F325617381e835da8b2DB2D12cE5eb"
@@ -105,7 +105,7 @@
       "address": "0x29761aF6d5779e6E184d4e84415Ef50551934A17"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0xb32831330DF298261598D863cF45f70b93B5c680"
+      "address": "0xC0F0e79e2226300A2ae93174b6778CCE8aD38Ee9"
     },
     "LeveredPositionsLens": {
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
