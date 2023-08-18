@@ -1,6 +1,6 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
 
-import { curveFinanceArbitrumDocs, defaultDocs, saddleFinanceDocs, wrappedAssetDocs } from "../common";
+import { defaultDocs, wrappedAssetDocs } from "../common";
 
 export const WBTC = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f";
 export const USDC = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
@@ -17,6 +17,7 @@ const DPX = "0x6C2C06790b3E3E3c38e12Ee22F8183b37a13EE55";
 const GOHM = "0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1";
 const OHM = "0xf0cb2dc0db5e6c66B9a70Ac27B06b878da017028";
 const wstETH = "0x5979D7b546E38E414F7E9822514be443A4800529";
+const rETH = "0xEC70Dcb4A1EFa46b8F2D97C310C9c4790ba5ffA8";
 const MAGIC = "0x539bdE0d7Dbd336b79148AA742883198BBF60342";
 const GMX = "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a";
 const USDs = "0xD74f5255D557944cf7Dd0E45FF521520002D5748";
@@ -28,14 +29,6 @@ const USDs = "0xD74f5255D557944cf7Dd0E45FF521520002D5748";
 
 const SUSHI = "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A";
 const USDT = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9";
-
-// Curve
-const TWOPOOL = "0x7f90122BF0700F9E7e1F688fe926940E8839F353";
-
-// Saddle
-const saddleFraxBP = "0x896935B02D3cBEb152192774e4F1991bb1D2ED3f";
-const saddleFraxUsdsBP = "0x1e491122f3C096392b40a4EA27aa1a29360d38a1";
-const saddleFraxUsdtBP = "0x166680852ae9Dec3d63374c5eBf89E974448BFE9";
 
 export const assets: SupportedAsset[] = [
   {
@@ -210,40 +203,13 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://arbiscan.io", wstETH)
   },
-  // Curve LP tokens
   {
-    symbol: assetSymbols["2pool"],
-    underlying: TWOPOOL,
-    name: "Curve.fi USDC/USDT",
+    symbol: assetSymbols.rETH,
+    underlying: rETH,
+    name: "Rocket Pool ETH",
     decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinanceArbitrumDocs("2pool", TWOPOOL)
-  },
-  // Saddle LP tokens
-  {
-    symbol: assetSymbols["saddleFraxBP"],
-    underlying: saddleFraxBP,
-    name: "Saddle Frax/USDC",
-    decimals: 18,
-    oracle: OracleTypes.SaddleLpPriceOracle,
-    extraDocs: saddleFinanceDocs("FRAX-USDC-BP", saddleFraxBP)
-  },
-  {
-    symbol: assetSymbols["saddleFraxUsdsBP"],
-    underlying: saddleFraxUsdsBP,
-    name: "Saddle Frax/USDS",
-    decimals: 18,
-    oracle: OracleTypes.SaddleLpPriceOracle,
-    extraDocs: saddleFinanceDocs("FRAXBP-USDs", saddleFraxUsdsBP),
-    disabled: true
-  },
-  {
-    symbol: assetSymbols["saddleFraxUsdtBP"],
-    underlying: saddleFraxUsdtBP,
-    name: "Saddle Frax/USDT",
-    decimals: 18,
-    oracle: OracleTypes.SaddleLpPriceOracle,
-    extraDocs: saddleFinanceDocs("FRAXBP-USDT", saddleFraxUsdtBP)
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://arbiscan.io", rETH)
   }
 ];
 

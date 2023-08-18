@@ -15,7 +15,7 @@
       "address": "0xa5E190Fa38F325617381e835da8b2DB2D12cE5eb"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0x2F486118E21aB37ECe99d60F579D470aD4E130b8"
+      "address": "0x30D09430e838A1f6262CD8e3B395BFacC47f392d"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0xa5E190Fa38F325617381e835da8b2DB2D12cE5eb"
@@ -36,7 +36,13 @@
       "address": "0x56F15D070cf5C01dDD78BbCbC362d67a323D57Eb"
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x7FaDd4D6305c404999F321cb2A0125bcaB6E2191"
+      "address": "0xe23f2F68949Da194D96a46Befa60e65ce7E8e707"
+    },
+    "ChainlinkPriceOracleV2_Implementation": {
+      "address": "0x2D5F52eFd248aF9A05e2ef2509edE6C6Cb7D77d9"
+    },
+    "ChainlinkPriceOracleV2_Proxy": {
+      "address": "0xe23f2F68949Da194D96a46Befa60e65ce7E8e707"
     },
     "ChapelBombERC20": {
       "address": "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768"
@@ -54,7 +60,7 @@
       "address": "0xE024e3fF90fE820002c2Ff6CA7c2Fb7fA97BE289"
     },
     "Comptroller": {
-      "address": "0xACfEB3fFa839EF75C4897089e4C9D8c74a279af6"
+      "address": "0x4Bd2e2a4b6993626C3102deBFE0be6B2C07125E1"
     },
     "ComptrollerFirstExtension": {
       "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
@@ -66,7 +72,7 @@
       "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141"
     },
     "FeeDistributor_Implementation": {
-      "address": "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5"
+      "address": "0xFb6da5b2d98A32387d4856f63FD4738C028Bac05"
     },
     "FeeDistributor_Proxy": {
       "address": "0xC8e4Bcf738BECE5Dd0f6685181fa429a510fE141"
@@ -90,10 +96,16 @@
       "address": "0x327D7217205Fdd06bF72E8e80adba1c9f6C635CC"
     },
     "LeveredPositionFactory": {
-      "address": "0x642d9cB1ECCb296BfDe1b34045e4450DD36a935e"
+      "address": "0xd1Ad5412930724B6117a4eA463961330E04613AD"
     },
     "LeveredPositionFactoryExtension": {
-      "address": "0xc8D8F8a8bB89A7ADD3c9f4FF3b72Ff22D03ad8C6"
+      "address": "0xfe1DCDA6F77A47Af1599f4d1bEe3632762b3baa2"
+    },
+    "LeveredPositionFactoryFirstExtension": {
+      "address": "0x29761aF6d5779e6E184d4e84415Ef50551934A17"
+    },
+    "LeveredPositionFactorySecondExtension": {
+      "address": "0xC0F0e79e2226300A2ae93174b6778CCE8aD38Ee9"
     },
     "LeveredPositionsLens": {
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
@@ -105,10 +117,10 @@
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
     },
     "LiquidatorsRegistry": {
-      "address": "0x135fF045efaF131B8ea00D2a30e53cC7cB551F34"
+      "address": "0x0c2C97c8FE70326a25f2913F8905a38a9d7c9C2E"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xC9c5303ae73e6390AA4f0D8Ad1cd7cc460E95F3d"
+      "address": "0xE114e3A6c9a985c37c1b4f5442E7eA2509476Fcf"
     },
     "LooplessFlywheelBooster": {
       "address": "0xBfa79d397682DDdfBb1eC671D2a5CF4f213C8d2A"
@@ -135,7 +147,7 @@
       "address": "0xf0609635Fa55971360E0430771D8Cb2d2bF7d726"
     },
     "PoolDirectory_Implementation": {
-      "address": "0x57864D21333672eAd2611934eE782ece96f598EF"
+      "address": "0x45b0DCACAdaEB523094069F578B29d1CEEb0c0F6"
     },
     "PoolDirectory_Proxy": {
       "address": "0xf0609635Fa55971360E0430771D8Cb2d2bF7d726"

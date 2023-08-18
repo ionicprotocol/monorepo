@@ -79,14 +79,12 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: T
         config.interestRateModel,
         config.name,
         config.symbol,
-        implementationAddress,
-        implementationData,
         reserveFactorBN,
         adminFeeBN
       ];
 
       const constructorData = abiCoder.encode(
-        ["address", "address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
+        ["address", "address", "address", "address", "string", "string", "uint256", "uint256"],
         deployArgs
       );
 

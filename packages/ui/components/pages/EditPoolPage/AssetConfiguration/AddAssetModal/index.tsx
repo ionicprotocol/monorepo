@@ -60,7 +60,7 @@ const AddAsset = ({
 
   const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress, poolData?.chainId);
 
-  const { cPage } = useColors();
+  const { cIPage } = useColors();
 
   useEffect(() => {
     const availableAssets = supportedAssets.filter(
@@ -79,7 +79,7 @@ const AddAsset = ({
   }, [poolData]);
 
   return (
-    <VStack py={4}>
+    <VStack>
       <VStack px={4} width="100%">
         <VStack>
           {tokenData && poolData && (
@@ -95,7 +95,6 @@ const AddAsset = ({
             </Heading>
           )}
         </VStack>
-
         <VStack width="100%">
           <InputGroup>
             <Input
@@ -151,7 +150,7 @@ const AddAsset = ({
                   display: 'none'
                 },
                 '&::-webkit-scrollbar-thumb': {
-                  background: cPage.primary.borderColor
+                  background: cIPage.dividerColor
                 },
                 '&::-webkit-scrollbar-track': {
                   height: '4px',
@@ -206,7 +205,7 @@ const AddAsset = ({
                       display: 'none'
                     },
                     '&::-webkit-scrollbar-thumb': {
-                      background: cPage.primary.borderColor
+                      background: cIPage.dividerColor
                     },
                     '&::-webkit-scrollbar-track': {
                       height: '4px',
@@ -228,7 +227,7 @@ const AddAsset = ({
                         justifyContent="flex-start"
                         key={index}
                         onClick={() => setNameOrAddress(asset.underlying)}
-                        variant="listed"
+                        variant="ghost"
                         width="100%"
                       >
                         <Flex alignContent="center" direction="row" py={2}>

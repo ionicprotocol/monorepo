@@ -7,7 +7,8 @@ import {
   ganache,
   linea,
   neon,
-  polygon
+  polygon,
+  zkevm
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
@@ -72,11 +73,17 @@ export function getEnabledChains() {
   if (config.isEthereumEnabled) {
     enabledChains.push(SupportedChains.ethereum);
   }
-
-  if (config.isTestnetEnabled) {
-    enabledChains.push(SupportedChains.neon);
-    enabledChains.push(SupportedChains.chapel);
+  if (config.isZkevmEnabled) {
+    enabledChains.push(SupportedChains.zkevm);
+  }
+  if (config.isLineaEnabled) {
     enabledChains.push(SupportedChains.linea);
+  }
+  if (config.isNeonEnabled) {
+    enabledChains.push(SupportedChains.neon);
+  }
+  if (config.isTestnetEnabled) {
+    enabledChains.push(SupportedChains.chapel);
   }
 
   return enabledChains;
@@ -90,7 +97,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.neon]: neon.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.linea]: linea.assets,
-  [SupportedChains.ethereum]: ethereum.assets
+  [SupportedChains.ethereum]: ethereum.assets,
+  [SupportedChains.zkevm]: zkevm.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -101,5 +109,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.neon]: neon.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.linea]: linea.deployedPlugins,
-  [SupportedChains.ethereum]: ethereum.deployedPlugins
+  [SupportedChains.ethereum]: ethereum.deployedPlugins,
+  [SupportedChains.zkevm]: zkevm.deployedPlugins
 };

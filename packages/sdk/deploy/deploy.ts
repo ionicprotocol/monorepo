@@ -20,7 +20,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
-  const MIN_BORROW_USD = chainId === 97 ? 0 : 100;
+  const MIN_BORROW_USD = chainId === 97 || chainId == 245022934 ? 0.1 : 100;
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
   const balance = await ethers.provider.getBalance(deployer);
@@ -573,24 +573,34 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// LEVERED POSITIONS FACTORY
-  if (chainId !== 1 && chainId !== 59144) {
+  if (chainId !== 1) {
     const lpfDep = await deployments.deploy("LeveredPositionFactory", {
       from: deployer,
       log: true,
       args: [ffd.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
-      waitConfirmations: 1
+      waitConfirmations: 1,
+      skipIfAlreadyDeployed: true
     });
     if (lpfDep.transactionHash) await ethers.provider.waitForTransaction(lpfDep.transactionHash);
     console.log("LeveredPositionFactory: ", lpfDep.address);
 
-    const lpfExtDep = await deployments.deploy("LeveredPositionFactoryExtension", {
+    const lpfExt1Dep = await deployments.deploy("LeveredPositionFactoryFirstExtension", {
       from: deployer,
       log: true,
       args: [],
       waitConfirmations: 1
     });
-    if (lpfExtDep.transactionHash) await ethers.provider.waitForTransaction(lpfExtDep.transactionHash);
-    console.log("LeveredPositionFactoryExtension: ", lpfExtDep.address);
+    if (lpfExt1Dep.transactionHash) await ethers.provider.waitForTransaction(lpfExt1Dep.transactionHash);
+    console.log("LeveredPositionFactoryFirstExtension: ", lpfExt1Dep.address);
+
+    const lpfExt2Dep = await deployments.deploy("LeveredPositionFactorySecondExtension", {
+      from: deployer,
+      log: true,
+      args: [],
+      waitConfirmations: 1
+    });
+    if (lpfExt2Dep.transactionHash) await ethers.provider.waitForTransaction(lpfExt2Dep.transactionHash);
+    console.log("LeveredPositionFactorySecondExtension: ", lpfExt2Dep.address);
 
     const leveredPositionFactory = (await ethers.getContract(
       "LeveredPositionFactory",
@@ -598,17 +608,27 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     )) as LeveredPositionFactory;
 
     const currentLPFExtensions = await leveredPositionFactory._listExtensions();
-    if (!currentLPFExtensions.length || currentLPFExtensions[0] != lpfExtDep.address) {
-      let extToReplace;
-      if (currentLPFExtensions.length == 0) {
-        extToReplace = constants.AddressZero;
-      } else {
-        extToReplace = currentLPFExtensions[0];
-      }
 
-      tx = await leveredPositionFactory._registerExtension(lpfExtDep.address, extToReplace);
+    if (currentLPFExtensions.length == 1) {
+      tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[0]);
       await tx.wait();
-      console.log("replaced the LeveredPositionFactory extension: ", tx.hash);
+      console.log("replaced the LeveredPositionFactory first extension: ", tx.hash);
+      tx = await leveredPositionFactory._registerExtension(lpfExt2Dep.address, constants.AddressZero);
+      await tx.wait();
+      console.log("registered the LeveredPositionFactory second extension: ", tx.hash);
+    } else if (currentLPFExtensions.length == 2) {
+      if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
+        console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt1Dep.address}`);
+        tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[1]);
+        await tx.wait();
+        console.log("replaced the LeveredPositionFactory first extension: ", tx.hash);
+      }
+      if (lpfExt2Dep.address.toLowerCase() != currentLPFExtensions[1].toLowerCase()) {
+        console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt2Dep.address}`);
+        tx = await leveredPositionFactory._registerExtension(lpfExt2Dep.address, currentLPFExtensions[1]);
+        await tx.wait();
+        console.log("replaced the LeveredPositionFactory second extension: ", tx.hash);
+      }
     } else {
       console.log(`no LeveredPositionFactory extensions to update`);
     }
@@ -642,6 +662,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           init: {
             methodName: "initialize",
             args: [leveredPositionFactory.address]
+          },
+          onUpgrade: {
+            methodName: "reinitialize",
+            args: [leveredPositionFactory.address]
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
@@ -652,10 +676,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
     const authoritiesRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
 
-    // set the address in the FFD
-    tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
-    await tx.wait();
-    console.log(`configured the auth registry in the FFD`);
+    const ffdAuthRegistry = await fuseFeeDistributor.callStatic.authoritiesRegistry();
+    if (ffdAuthRegistry.toLowerCase() != authoritiesRegistry.address.toLowerCase()) {
+      // set the address in the FFD
+      tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
+      await tx.wait();
+      console.log(`configured the auth registry in the FFD`);
+    }
     ////
   }
 

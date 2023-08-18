@@ -23,7 +23,7 @@ export const Details = ({
           setGlobalLoading(true);
           router.push(`/${chainId}/pool/${poolId}/${asset.cToken}`);
         }}
-        variant={'outline'}
+        variant={'outlineLightGray'}
       >
         Details
       </Button>

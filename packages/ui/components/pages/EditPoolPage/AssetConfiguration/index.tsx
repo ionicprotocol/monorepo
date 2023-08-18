@@ -33,15 +33,16 @@ const AssetButton = ({
   return (
     <Box mb={2} mr={2} {...boxProps}>
       <CButton
+        height={'inherit'}
         isDisabled={!isEditableAdmin}
         isSelected={asset.cToken === selectedAsset.cToken}
         onClick={() => {
           setSelectedAsset(asset);
         }}
         px={2}
-        variant="filter"
+        variant="_filter"
       >
-        <TokenIcon address={asset.underlyingToken} chainId={poolChainId} size="sm" />
+        <TokenIcon address={asset.underlyingToken} chainId={poolChainId} mb={'8px'} size="sm" />
         <Center fontWeight="bold" px={1}>
           {tokenData?.symbol ?? asset.underlyingSymbol}
         </Center>

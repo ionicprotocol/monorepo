@@ -8,8 +8,9 @@ import { default as ganache } from "./ganache";
 import { default as linea } from "./linea";
 import { default as neon } from "./neon";
 import { default as polygon } from "./polygon";
+import { default as zkevm } from "./zkevm";
 
-export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea };
+export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -19,5 +20,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ganache.chainId]: ganache,
   [neon.chainId]: neon,
   [linea.chainId]: linea,
-  [ethereum.chainId]: ethereum
+  [ethereum.chainId]: ethereum,
+  [zkevm.chainId]: zkevm
 };

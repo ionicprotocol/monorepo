@@ -167,6 +167,9 @@ export const configureAddressesProviderAddresses = async ({
 
     const mflr = await ethers.getContractOrNull("IonicFlywheelLensRouter");
     await configureAddress(ap, "IonicFlywheelLensRouter", mflr?.address);
+
+    const ar = await ethers.getContractOrNull("AuthoritiesRegistry");
+    await configureAddress(ap, "AuthoritiesRegistry", ar?.address);
   }
 };
 

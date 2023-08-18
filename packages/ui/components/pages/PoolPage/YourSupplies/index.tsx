@@ -35,10 +35,11 @@ import { utils } from 'ethers';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
 
-import { Asset } from '@ui/components/pages/PoolPage/YourSupplies/Asset';
-import { Collateral } from '@ui/components/pages/PoolPage/YourSupplies/Collateral';
-import { SupplyApy } from '@ui/components/pages/PoolPage/YourSupplies/SupplyApy';
-import { Switch } from '@ui/components/pages/PoolPage/YourSupplies/Switch';
+import { Asset } from '@ui/components/pages/PoolPage/AssetsToSupply/Asset';
+import { Collateral } from '@ui/components/pages/PoolPage/AssetsToSupply/Collateral';
+import { Supply } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/index';
+import { SupplyApy } from '@ui/components/pages/PoolPage/AssetsToSupply/SupplyApy/index';
+import { Details } from '@ui/components/pages/PoolPage/YourSupplies/Details';
 import { Withdraw } from '@ui/components/pages/PoolPage/YourSupplies/Withdraw';
 import { YourBalance } from '@ui/components/pages/PoolPage/YourSupplies/YourBalance';
 import { CIconButton } from '@ui/components/shared/Button';
@@ -53,7 +54,6 @@ import {
   COLLATERAL,
   MARKETS_COUNT_PER_PAGE,
   SEARCH,
-  SWITCH,
   WITHDRAW,
   YOUR_BALANCE
 } from '@ui/constants/index';
@@ -79,7 +79,8 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
     assets,
     totalSupplyBalanceFiat,
     totalSupplyBalanceNative,
-    totalCollateralSupplyBalanceFiat
+    totalCollateralSupplyBalanceFiat,
+    comptroller
   } = poolData;
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
@@ -248,7 +249,14 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         accessorFn: (row) => row.collateral,
-        cell: ({ getValue }) => <Collateral asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <Collateral
+            asset={getValue<MarketData>()}
+            assets={assets}
+            chainId={chainId}
+            comptroller={comptroller}
+          />
+        ),
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{COLLATERAL}</TableHeaderCell>,
@@ -257,20 +265,39 @@ export const YourSupplies = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Withdraw asset={row.getValue(ASSET)} />;
+          return (
+            <HStack justifyContent={'flex-end'}>
+              <Supply
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+                poolId={poolId}
+              />
+              <Withdraw
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+              />
+              <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />
+            </HStack>
+          );
         },
         header: () => null,
         id: WITHDRAW
-      },
-      {
-        cell: ({ row }) => {
-          return <Switch asset={row.getValue(ASSET)} />;
-        },
-        header: () => null,
-        id: SWITCH
       }
     ];
-  }, [allRewards, assetFilter, assetSort, chainId, totalSupplyApyPerAsset]);
+  }, [
+    allRewards,
+    assetFilter,
+    assetSort,
+    assets,
+    chainId,
+    comptroller,
+    poolId,
+    totalSupplyApyPerAsset
+  ]);
 
   const table = useReactTable({
     columns,

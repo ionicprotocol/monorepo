@@ -2,6 +2,7 @@ import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
+import { LoadingText } from '@ui/components/shared/LoadingText';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTotalSupplyAndBorrow } from '@ui/hooks/ionic/useTotalSupplyAndBorrow';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -22,7 +23,7 @@ export const YourPerformance = () => {
             </Text>
             <Skeleton isLoaded={!isLoading}>
               {isLoading ? (
-                <Text>Total Supply</Text>
+                <LoadingText />
               ) : (
                 <Text size="lg">{data ? smallUsdFormatter(data.totalSupply, true) : '-'}</Text>
               )}
@@ -34,7 +35,7 @@ export const YourPerformance = () => {
             </Text>
             <Skeleton isLoaded={!isLoading}>
               {isLoading ? (
-                <Text>Total Borrowed</Text>
+                <LoadingText />
               ) : (
                 <Text size="lg">{data ? smallUsdFormatter(data.totalBorrow, true) : '-'}</Text>
               )}

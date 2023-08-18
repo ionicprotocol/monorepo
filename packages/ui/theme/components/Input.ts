@@ -6,21 +6,24 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
   inputAnatomy.keys
 );
 
-const baseStyle = definePartsStyle({
+const baseStyle = definePartsStyle((props) => ({
+  addon: {},
+  element: {},
   field: {
     _disabled: {
       cursor: 'not-allowed',
       opacity: 0.4
     },
     _focusVisible: {
-      boxShadow: 'none',
-      outline: 'none'
+      boxShadow: 'none !important',
+      outline: 'none !important'
     },
     appearance: 'none',
+    color: mode('iWhite', 'iWhite')(props),
     minWidth: 0,
     outline: 0
   }
-});
+}));
 
 const sizes = {
   lg: definePartsStyle({
@@ -30,6 +33,7 @@ const sizes = {
     },
     element: { height: { base: '30px' }, width: { base: '30px' } },
     field: {
+      borderRadius: { base: '10px' },
       fontSize: {
         base: '20px'
       },
@@ -43,6 +47,7 @@ const sizes = {
     addon: { height: { base: '20px' }, width: { base: '20px' } },
     element: { height: { base: '20px' }, width: { base: '20px' } },
     field: {
+      borderRadius: { base: '8px' },
       fontSize: {
         base: '14px'
       },
@@ -62,6 +67,7 @@ const sizes = {
       width: { base: '18px' }
     },
     field: {
+      borderRadius: { base: '6px' },
       fontSize: {
         base: '12px'
       },
@@ -81,6 +87,7 @@ const sizes = {
       width: { base: '34px' }
     },
     field: {
+      borderRadius: { base: '4px' },
       fontSize: {
         base: '24px'
       },
@@ -100,6 +107,7 @@ const sizes = {
       width: { base: '14px' }
     },
     field: {
+      borderRadius: { base: '2px' },
       fontSize: {
         base: '10px'
       },
@@ -116,14 +124,14 @@ const ghost = definePartsStyle((props) => {
     addon: {
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       justifyContent: 'center',
       pl: { base: 0 },
       pointerEvents: 'none',
       pr: { base: '10px' }
     },
     element: {
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
       pointerEvents: 'none'
     },
     field: {
@@ -146,7 +154,50 @@ const ghost = definePartsStyle((props) => {
       },
       backgroundColor: mode('iCardBg', 'iCardBg')(props),
       border: 'none',
-      color: mode('iBlack', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props),
+      paddingInlineEnd: 0,
+      paddingInlineStart: 0
+    }
+  };
+});
+
+const outlineLightGray = definePartsStyle((props) => {
+  return {
+    addon: {
+      backgroundColor: mode('iCardBg', 'iCardBg')(props),
+      borderColor: mode('iGray', 'iGray')(props),
+      color: mode('iWhite', 'iWhite')(props),
+      justifyContent: 'center',
+      pl: { base: 0 },
+      pointerEvents: 'none',
+      pr: { base: '10px' }
+    },
+    element: {
+      color: mode('iWhite', 'iWhite')(props),
+      pointerEvents: 'none'
+    },
+    field: {
+      _focus: {
+        borderColor: mode('iGray', 'iGray')(props)
+      },
+      _focusVisible: {
+        boxShadow: 'none !important',
+        outline: 'none !important'
+      },
+      _hover: {
+        borderColor: mode('iGray', 'iGray')(props)
+      },
+      _placeholder: { color: mode('iGray', 'iGray')(props) },
+      _readOnly: {
+        _focus: { border: 'none' },
+        border: mode('iGray', 'iGray')(props),
+        cursor: 'auto',
+        outline: 'none !important'
+      },
+      backgroundColor: mode('iCardBg', 'iCardBg')(props),
+      borderColor: mode('iGray', 'iGray')(props),
+      borderWidth: '1px',
+      color: mode('iWhite', 'iWhite')(props),
       paddingInlineEnd: 0,
       paddingInlineStart: 0
     }
@@ -160,5 +211,5 @@ export const InputConfigStyle = defineMultiStyleConfig({
     variant: 'ghost'
   },
   sizes,
-  variants: { ghost }
+  variants: { ghost, outlineLightGray }
 });

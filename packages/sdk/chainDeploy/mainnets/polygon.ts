@@ -17,6 +17,7 @@ import {
   deployCurveLpOracle,
   deployDiaOracle,
   deployGelatoGUniPriceOracle,
+  deploySolidlyLpOracle,
   deploySolidlyPriceOracle,
   deployUniswapLpOracle,
   deployUniswapV3Oracle
@@ -34,19 +35,19 @@ import {
   CurvePoolConfig,
   DiaAsset,
   GelatoGUniAsset,
+  SolidlyLpAsset,
   SolidlyOracleAssetConfig
 } from "../helpers/types";
 
 const assets = polygon.assets;
-const wmatic = underlying(assets, assetSymbols.WMATIC);
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: wmatic,
+  wtoken: polygon.chainAddresses.W_TOKEN,
   nativeTokenUsdChainlinkFeed: "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0",
   nativeTokenName: "Matic Token",
   nativeTokenSymbol: "MATIC",
-  stableToken: underlying(assets, assetSymbols.USDC),
-  wBTCToken: underlying(assets, assetSymbols.WBTC),
+  stableToken: polygon.chainAddresses.STABLE_TOKEN,
+  wBTCToken: polygon.chainAddresses.W_BTC_TOKEN,
   blocksPerYear: polygon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
@@ -121,6 +122,12 @@ const algebraOracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
   {
     assetAddress: underlying(assets, assetSymbols.SD),
     poolAddress: "0x5D0aCfa39A0FCA603147f1c14e53f46BE76984BC",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.USDC)
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.DUSD),
+    poolAddress: "0xfb0bc232CD11dBe804B489860c470B7f9cc80D9F",
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: underlying(assets, assetSymbols.USDC)
   }
@@ -295,16 +302,6 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.USDC),
       underlying(assets, assetSymbols.USDT)
     ]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols.USDR3CRV),
-    pool: "0xa138341185a9D0429B0021A11FB717B225e13e1F",
-    underlyings: [
-      underlying(assets, assetSymbols.USDR),
-      underlying(assets, assetSymbols.DAI),
-      underlying(assets, assetSymbols.USDC),
-      underlying(assets, assetSymbols.USDT)
-    ]
   }
 ];
 
@@ -436,6 +433,16 @@ const balancerRateProviderAssets: BalancerRateProviderAsset[] = [
   }
 ];
 
+const solidlyLps: SolidlyLpAsset[] = [
+  { lpTokenAddress: underlying(assets, assetSymbols["sAMM-USDC/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-wUSDR/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-MATIC/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["sAMM-DAI/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-TNGBL/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-WBTC/USDR"]) },
+  { lpTokenAddress: underlying(assets, assetSymbols["vAMM-WETH/USDR"]) }
+];
+
 const solidlyOracleSupportedStables: string[] = [
   deployConfig.stableToken!,
   underlying(assets, assetSymbols.USDC),
@@ -445,7 +452,7 @@ const solidlyOracleSupportedStables: string[] = [
 const solidlyOracles: SolidlyOracleAssetConfig[] = [
   {
     underlying: underlying(assets, assetSymbols.WUSDR),
-    poolAddress: "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2", // vAMM-wUSDR-USDR
+    poolAddress: underlying(assets, assetSymbols["vAMM-wUSDR/USDR"]), // vAMM-wUSDR-USDR
     baseToken: underlying(assets, assetSymbols.USDR)
   }
 ];
@@ -647,6 +654,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     assets,
     certificateAssetSymbol: assetSymbols.aMATICc
+  });
+
+  //// Solidly LP Oracle
+  await deploySolidlyLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    solidlyLps
   });
 
   // Plugins & Rewards

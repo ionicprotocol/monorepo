@@ -1,3 +1,4 @@
+import type { FlexProps } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
@@ -5,8 +6,7 @@ import { Row } from '@ui/components/shared/Flex';
 export const OptionRow = ({
   children,
   ...others
-}: {
-  [key: string]: ReactNode;
+}: FlexProps & {
   children: ReactNode;
 }) => {
   return (

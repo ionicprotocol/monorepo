@@ -11,6 +11,24 @@
     "AddressesProvider_Proxy": {
       "address": "0x914694DA0bED80e74ef1a28029f016119782C0f1"
     },
+    "AlgebraPriceOracle": {
+      "address": "0xeeD6762D42d7b10e9D7FA5D79575c790E5806b9F"
+    },
+    "AlgebraPriceOracle_Implementation": {
+      "address": "0x9a6006590eb9c7DeB5909260aEd87752041E0C47"
+    },
+    "AlgebraPriceOracle_Proxy": {
+      "address": "0xeeD6762D42d7b10e9D7FA5D79575c790E5806b9F"
+    },
+    "AuthoritiesRegistry": {
+      "address": "0xCad55B06F6C9d4C027FE122105Ef29e77ABdeBEa"
+    },
+    "AuthoritiesRegistry_Implementation": {
+      "address": "0xD066453E85E5547c41585d46Bc135D008D813171"
+    },
+    "AuthoritiesRegistry_Proxy": {
+      "address": "0xCad55B06F6C9d4C027FE122105Ef29e77ABdeBEa"
+    },
     "CErc20Delegate": {
       "address": "0x4fB258d146398B7E778f01A3C45B3DE39cEDF409"
     },
@@ -27,7 +45,7 @@
       "address": "0x072582396E240BFc58E64680A1148f6BaD923fDD"
     },
     "Comptroller": {
-      "address": "0x3038d5a244BC01E9Ed2A6732dB54016Fc8393967"
+      "address": "0x024FB68e7Fb65Dfe91bD04B31A10808211927e06"
     },
     "ComptrollerFirstExtension": {
       "address": "0x0C31088Db6F3CA56dfEE961E426f4f9A79489185"
@@ -39,7 +57,7 @@
       "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c"
     },
     "FeeDistributor_Implementation": {
-      "address": "0x291d0bd5CCc3C560FDcEb54f12aDcdfC22484707"
+      "address": "0x50b6A0c226bF5C4a83c9e865ce44d7c88cfB4d04"
     },
     "FeeDistributor_Proxy": {
       "address": "0x62E27eA8d0389390039277CFfD83Ca18ce9B2D9c"
@@ -62,11 +80,41 @@
     "JumpRateModel": {
       "address": "0x6f310Cb96eFbC9da0b3d517428336E60dB7ffa93"
     },
+    "KyberSwapPriceOracle": {
+      "address": "0xfFf2f1F76524f434A01bD6DD8B95C6dd6d7d6576"
+    },
+    "KyberSwapPriceOracle_Implementation": {
+      "address": "0xC0d653C60CD5B4280a3D94dc39e162601A77A838"
+    },
+    "KyberSwapPriceOracle_Proxy": {
+      "address": "0xfFf2f1F76524f434A01bD6DD8B95C6dd6d7d6576"
+    },
+    "LeveredPositionFactory": {
+      "address": "0xDF3e44a2614fe4F88d696498aF43C35989cc8bD8"
+    },
+    "LeveredPositionFactoryExtension": {
+      "address": "0x15F3b250F4FDdA6c1D10ED0F1c093f61bCB29dF5"
+    },
+    "LeveredPositionFactoryFirstExtension": {
+      "address": "0x75deccE36aC66AfF9a8992e8aC61421F7986277F"
+    },
+    "LeveredPositionFactorySecondExtension": {
+      "address": "0x8b15c99E10b3979A648C63dFa2f70Bc390651EBC"
+    },
+    "LeveredPositionsLens": {
+      "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
+    },
+    "LeveredPositionsLens_Implementation": {
+      "address": "0xACfEB3fFa839EF75C4897089e4C9D8c74a279af6"
+    },
+    "LeveredPositionsLens_Proxy": {
+      "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
+    },
     "LiquidatorsRegistry": {
-      "address": "0x663DF67aCAE4909AAfbB997f48af14ca534b9d21"
+      "address": "0xDf64C5cf6014A6b037255505ad8e8d55284caa78"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xf984A8034e7b0A247915a9F785461ff433866037"
+      "address": "0x67a4b3Cd7bEac00cD401593615f4412e1e639c24"
     },
     "LooplessFlywheelBooster": {
       "address": "0x7bbf31Ce9C3eb34e72a8Ec1f2b6E82946f7A5DA0"
@@ -84,7 +132,7 @@
       "address": "0x1AdF21132Dd7d0B3002f02630c8cAe516134B07d"
     },
     "PoolDirectory_Implementation": {
-      "address": "0x297a15F615aCdf87580af1Fc497EE57424975Dae"
+      "address": "0x4B5a108466ea2783f72205cD55c6F7c0655e0a61"
     },
     "PoolDirectory_Proxy": {
       "address": "0x1AdF21132Dd7d0B3002f02630c8cAe516134B07d"
@@ -95,6 +143,15 @@
     "PoolLensSecondary": {
       "address": "0xBAAb9986A7002ad67cb5a9C1761210C2Cdd98BFa"
     },
+    "PythPriceOracle": {
+      "address": "0x8BF65F14B01377ef889AB38de45D4E43D48DD47c"
+    },
+    "PythPriceOracle_Implementation": {
+      "address": "0x11FCBBA306b225599F902B5F2D0E6Ae6BDcE8162"
+    },
+    "PythPriceOracle_Proxy": {
+      "address": "0x8BF65F14B01377ef889AB38de45D4E43D48DD47c"
+    },
     "SimplePriceOracle": {
       "address": "0xB201b8EC2f2A2cC4c122b2A1689dF9000f35e892"
     },
@@ -104,8 +161,14 @@
     "SimplePriceOracle_Proxy": {
       "address": "0xB201b8EC2f2A2cC4c122b2A1689dF9000f35e892"
     },
+    "UmbrellaPriceOracle": {
+      "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
+    },
     "UmbrellaPriceOracle_Implementation": {
-      "address": "0x72de0b6540337fD74647eAed67df2Df187D4EaD0"
+      "address": "0x63ddEdB4975c8dFC596C59c083c79c467B446965"
+    },
+    "UmbrellaPriceOracle_Proxy": {
+      "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
     }
   }
 }

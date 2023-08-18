@@ -1,4 +1,4 @@
-import { QuestionIcon } from '@chakra-ui/icons';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -54,7 +54,7 @@ export const CreatePoolConfiguration = () => {
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
 
-  const { cCard, cSolidBtn } = useColors();
+  const { cIPage } = useColors();
   const isMobile = useIsSmallScreen();
   const sdk = useSdk(currentChain?.id);
   const isAllowedAddress = useMemo(() => {
@@ -144,13 +144,13 @@ export const CreatePoolConfiguration = () => {
   return (
     <Box alignSelf={'center'} as="form" mx="auto" onSubmit={handleSubmit(onDeploy)}>
       <CardBox maxWidth="550px" mx={'auto'}>
-        <Text fontWeight="bold" px={4} py={4} variant="title">
+        <Text mb={{ base: '20px' }} size={'xl'}>
           Create Pool
         </Text>
         {address && !isAllowedAddress && (
           <Banner
             alertDescriptionProps={{ fontSize: 'lg' }}
-            alertProps={{ status: 'warning' }}
+            alertProps={{ variant: 'warning' }}
             descriptions={[
               {
                 text: 'We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, '
@@ -159,22 +159,24 @@ export const CreatePoolConfiguration = () => {
             ]}
           />
         )}
-
-        <Divider bg={cCard.dividerColor} />
+        <Divider bg={cIPage.dividerColor} />
         <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
           <FormControl isInvalid={!!errors.name}>
-            <OptionRow>
-              <FormLabel htmlFor="name">
-                <Text size="md">Name</Text>
+            <OptionRow alignItems={'center'} px={0}>
+              <FormLabel htmlFor="name" margin={0}>
+                <Text variant={'itemTitle'}>Name</Text>
               </FormLabel>
               <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" width="60%">
                 <Input
                   id="name"
                   placeholder="Type Pool name"
+                  variant={'outlineLightGray'}
                   {...register('name', {
                     required: 'Pool name is required'
                   })}
                   isDisabled={!address || !currentChain || !isAllowedAddress}
+                  px={{ base: '10px' }}
+                  py={{ base: '16px' }}
                 />
                 <FormErrorMessage marginBottom="-10px">
                   {errors.name && errors.name.message}
@@ -182,11 +184,10 @@ export const CreatePoolConfiguration = () => {
               </Column>
             </OptionRow>
           </FormControl>
-          <Divider bg={cCard.dividerColor} />
           <FormControl isInvalid={!!errors.oracle}>
-            <OptionRow>
+            <OptionRow alignItems={'center'} px={0}>
               <FormLabel htmlFor="oracle">
-                <Text size="md">Oracle</Text>
+                <Text variant={'itemTitle'}>Oracle</Text>
               </FormLabel>
               <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" width="60%">
                 <Select
@@ -212,18 +213,17 @@ export const CreatePoolConfiguration = () => {
               </Column>
             </OptionRow>
           </FormControl>
-          <Divider bg={cCard.dividerColor} />
           <FormControl>
-            <OptionRow>
+            <OptionRow alignItems={'center'} px={0}>
               <FormLabel htmlFor="isWhitelisted">
                 <HStack>
-                  <Text size="md">Whitelisted</Text>
+                  <Text variant={'itemTitle'}>Whitelisted</Text>
                   <SimpleTooltip
                     label={
                       "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
                     }
                   >
-                    <QuestionIcon mb="4px" ml={1} />
+                    <InfoOutlineIcon color={'iLightGray'} mb="4px" ml={1} />
                   </SimpleTooltip>
                 </HStack>
               </FormLabel>
@@ -266,18 +266,17 @@ export const CreatePoolConfiguration = () => {
               />
             </Column>
           </FormControl>
-          <Divider bg={cCard.dividerColor} />
           <FormControl isInvalid={!!errors.closeFactor}>
-            <OptionRow>
+            <OptionRow alignItems={'center'} px={0}>
               <FormLabel htmlFor="closeFactor">
                 <HStack>
-                  <Text size="md">Close Factor</Text>
+                  <Text variant={'itemTitle'}>Close Factor</Text>
                   <SimpleTooltip
                     label={
                       "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
                     }
                   >
-                    <QuestionIcon mb="4px" ml={1} />
+                    <InfoOutlineIcon color={'iLightGray'} mb="4px" ml={1} />
                   </SimpleTooltip>
                 </HStack>
               </FormLabel>
@@ -315,18 +314,17 @@ export const CreatePoolConfiguration = () => {
               </Column>
             </OptionRow>
           </FormControl>
-          <Divider bg={cCard.dividerColor} />
           <FormControl isInvalid={!!errors.liquidationIncentive}>
-            <OptionRow>
+            <OptionRow alignItems={'center'} px={0}>
               <FormLabel htmlFor="liquidationIncentive">
                 <HStack>
-                  <Text size="md">Liquidation Incentive</Text>
+                  <Text variant={'itemTitle'}>Liquidation Incentive</Text>
                   <SimpleTooltip
                     label={
                       "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
                     }
                   >
-                    <QuestionIcon mb="4px" ml={1} />
+                    <InfoOutlineIcon color={'iLightGray'} mb="4px" ml={1} />
                   </SimpleTooltip>
                 </HStack>
               </FormLabel>
@@ -369,7 +367,8 @@ export const CreatePoolConfiguration = () => {
       <Center>
         {currentChain?.id && address ? (
           <Button
-            disabled={
+            id="createPool"
+            isDisabled={
               !address ||
               isCreating ||
               !!errors.name ||
@@ -378,24 +377,20 @@ export const CreatePoolConfiguration = () => {
               !!errors.liquidationIncentive ||
               !isAllowedAddress
             }
-            fontSize="xl"
-            height={12}
-            id="createPool"
             isLoading={isCreating}
             maxWidth={'550px'}
             mt={4}
             type="submit"
+            variant={'solidGreen'}
             width="100%"
           >
-            <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
-              {!address || !isAllowedAddress ? (
-                'Creation limited!'
-              ) : isCreating ? (
-                <Spinner />
-              ) : (
-                'Create'
-              )}
-            </Center>
+            {!address || !isAllowedAddress ? (
+              'Creation limited!'
+            ) : isCreating ? (
+              <Spinner />
+            ) : (
+              'Create'
+            )}
           </Button>
         ) : (
           openConnectModal && (

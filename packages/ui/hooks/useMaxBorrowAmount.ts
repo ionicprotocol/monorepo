@@ -67,26 +67,32 @@ export const fetchMaxBorrowAmount = async (
 };
 
 export function useMaxBorrowAmount(
-  asset: Pick<NativePricedIonicAsset, 'cToken' | 'underlyingDecimals'>,
-  comptrollerAddress: string,
-  chainId: number
+  asset?: Pick<NativePricedIonicAsset, 'cToken' | 'underlyingDecimals'>,
+  comptrollerAddress?: string,
+  chainId?: number
 ) {
   const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
-  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(asset.cToken, chainId);
+  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(asset?.cToken, chainId);
 
   return useQuery(
     [
       'useMaxBorrowAmount',
-      asset.cToken,
+      asset?.cToken,
       comptrollerAddress,
-      asset.underlyingDecimals,
+      asset?.underlyingDecimals,
       sdk?.chainId,
       address,
       borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
     ],
     async () => {
-      if (sdk && address && borrowCapsDataForAsset?.nonWhitelistedTotalBorrows) {
+      if (
+        asset &&
+        comptrollerAddress &&
+        sdk &&
+        address &&
+        borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
+      ) {
         try {
           const res = await fetchMaxBorrowAmount(
             [asset.cToken],

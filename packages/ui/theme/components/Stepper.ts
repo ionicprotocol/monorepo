@@ -45,7 +45,7 @@ const green = definePartsStyle((props) => {
   return {
     description: {},
     icon: {
-      color: mode('iWhite', 'iBlack')(props)
+      color: mode('iBlack', 'iBlack')(props)
     },
     indicator: {
       '&[data-value=active]': {
@@ -54,19 +54,24 @@ const green = definePartsStyle((props) => {
         color: mode('iGreen', 'iGreen')(props)
       },
       '&[data-value=complete]': {
-        bg: mode('iGreen', 'iGreen')(props),
-        borderColor: mode('iGreen', 'iGreen')(props),
-        color: mode('iWhite', 'iBlack')(props)
+        bg: mode('iLightGray', 'iLightGray')(props),
+        borderColor: mode('iLightGray', 'iLightGray')(props),
+        color: mode('iBlack', 'iBlack')(props)
       },
       '&[data-value=failed]': {
         bg: mode('iRed', 'iRed')(props),
         borderColor: mode('iRed', 'iRed')(props),
-        color: mode('iWhite', 'iBlack')(props)
+        color: mode('iBlack', 'iBlack')(props)
       },
       '&[data-value=incomplete]': {
         bg: 'none',
         borderColor: mode('iLightGray', 'iLightGray')(props),
         color: mode('iLightGray', 'iLightGray')(props)
+      },
+      '&[data-value=ready]': {
+        bg: mode('iGreen', 'iGreen')(props),
+        borderColor: mode('iGreen', 'iGreen')(props),
+        color: mode('iBlack', 'iBlack')(props)
       }
     },
     number: {},
@@ -75,12 +80,15 @@ const green = definePartsStyle((props) => {
         bgGradient: 'linear(to-r, iGreen, iLightGray)'
       },
       '&[data-value=complete]': {
-        bg: mode('iGreen', 'iGreen')(props)
+        bg: mode('iLightGray', 'iLightGray')(props)
       },
       '&[data-value=failed]': {
         bgGradient: 'linear(to-r, iRed, iLightGray)'
       },
       '&[data-value=incomplete]': {
+        bg: mode('iLightGray', 'iLightGray')(props)
+      },
+      '&[data-value=ready]': {
         bg: mode('iLightGray', 'iLightGray')(props)
       }
     },

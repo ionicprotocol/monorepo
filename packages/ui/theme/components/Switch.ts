@@ -28,7 +28,7 @@ const ghost = definePartsStyle((props) => {
       _checked: {
         bg: mode('iBlack', 'iBlack')(props)
       },
-      bg: mode('iBlack', 'iWhite')(props)
+      bg: mode('iWhite', 'iWhite')(props)
     },
     track: {
       _checked: {

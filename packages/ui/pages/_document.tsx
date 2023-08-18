@@ -23,7 +23,7 @@ class MyDocument extends Document {
 
           <meta content="summary_large_image" key="twcard" name="twitter:card" />
           <meta
-            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
+            content="Ionic - Money markets for all. Lending and borrowing pools for any asset."
             key="twtitle"
             name="twitter:title"
           />
@@ -34,7 +34,7 @@ class MyDocument extends Document {
           />
           <meta content="https://ionic.money/" key="twurl" name="twitter:url" />
           <meta
-            content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
+            content="https://d1912tcoux65lj.cloudfront.net/social/ionic_social_preview.png"
             key="twimage"
             name="twitter:image"
           />
@@ -42,12 +42,12 @@ class MyDocument extends Document {
           <meta content="website" key="ogtype" property="og:type" />
           <meta content="Ionic Protocol" key="ogsitename" property="og:site_name" />
           <meta
-            content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
+            content="https://d1912tcoux65lj.cloudfront.net/social/ionic_social_preview.png"
             key="ogimage"
             property="og:image"
           />
           <meta
-            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
+            content="Ionic - Money markets for all. Lending and borrowing pools for any asset."
             key="ogtitle"
             property="og:title"
           />

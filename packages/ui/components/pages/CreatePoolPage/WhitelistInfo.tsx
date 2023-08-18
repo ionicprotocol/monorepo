@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import { OptionRow } from '@ui/components/pages/CreatePoolPage/OptionRow';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -23,7 +22,6 @@ export const WhitelistInfo = ({
   const [_whitelistInput, _setWhitelistInput] = useState('');
 
   const errorToast = useErrorToast();
-  const { cSolidBtn } = useColors();
 
   const add = () => {
     if (isAddress(_whitelistInput) && !value.includes(_whitelistInput)) {
@@ -56,16 +54,13 @@ export const WhitelistInfo = ({
           value={_whitelistInput}
         />
         <IconButton
-          _active={{}}
-          _hover={{ bg: cSolidBtn.primary.hoverBgColor, color: cSolidBtn.primary.hoverTxtColor }}
           aria-label="add"
-          bg={cSolidBtn.primary.bgColor}
-          color={cSolidBtn.primary.txtColor}
           flexShrink={0}
           icon={<AddIcon />}
           ml={2}
           onClick={add}
-          width={35}
+          size={'xs'}
+          variant={'solidGreen'}
         />
       </OptionRow>
       {value && value.length > 0 && (

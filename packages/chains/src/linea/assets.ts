@@ -2,11 +2,11 @@ import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ion
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
-export const WBTC = "0xDbcd5BafBAA8c1B326f14EC0c8B125DB57A5cC4c";
-export const USDC = "0xf56dc6695cF1f5c364eDEbC7Dc7077ac9B586068";
+export const WBTC = "0x3aAB2285ddcDdaD8edf438C1bAB47e1a9D05a9b4";
+export const USDC = "0x176211869cA2b568f2A7D4EE941E073a821EE1ff";
 export const WETH = "0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f";
-export const DAI = "0x8741Ba6225A6BF91f9D73531A98A89807857a2B3";
-export const USDT = "0x1990BC6dfe2ef605Bfc08f5A23564dB75642Ad73";
+export const DAI = "0x4AF15ec2A0BD43Db75dd04E62FAA3B8EF36b00d5";
+export const USDT = "0xA219439258ca9da29E9Cc4cE5596924745e12B93";
 
 export const assets: SupportedAsset[] = [
   {
@@ -15,15 +15,23 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin",
     decimals: 6,
     oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("hhttps://explorer.linea.build/", USDC)
+    extraDocs: defaultDocs("https://lineascan.build/", USDC)
+  },
+  {
+    symbol: assetSymbols.USDT,
+    underlying: USDT,
+    name: "Tether USD",
+    decimals: 6,
+    oracle: OracleTypes.UmbrellaPriceOracle,
+    extraDocs: defaultDocs("https://lineascan.build/", USDT)
   },
   {
     symbol: assetSymbols.WBTC,
     underlying: WBTC,
     name: "Wrapped BTC",
-    decimals: 18,
+    decimals: 8,
     oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("hhttps://explorer.linea.build/", WBTC)
+    extraDocs: defaultDocs("https://lineascan.build/", WBTC)
   },
   {
     symbol: assetSymbols.WETH,
@@ -38,16 +46,9 @@ export const assets: SupportedAsset[] = [
     underlying: DAI,
     name: "DAI Token",
     decimals: 18,
-    oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("hhttps://explorer.linea.build/", DAI)
-  },
-  {
-    symbol: assetSymbols.USDT,
-    underlying: USDT,
-    name: "USD Tether",
-    decimals: 6,
-    oracle: OracleTypes.UmbrellaPriceOracle,
-    extraDocs: defaultDocs("hhttps://explorer.linea.build/", USDT)
+    oracle: OracleTypes.AlgebraPriceOracle,
+    extraDocs: defaultDocs("https://lineascan.build/", DAI),
+    disabled: true
   }
 ];
 

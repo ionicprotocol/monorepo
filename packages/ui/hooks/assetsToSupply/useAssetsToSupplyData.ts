@@ -6,12 +6,14 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const useAssetsToSupplyData = (assets?: MarketData[]) => {
   const response = useQuery(
-    ['useAssetsToSupplyData', assets?.map((asset) => asset.cToken).sort()],
+    ['useAssetsToSupplyData', assets?.map((asset) => asset.cToken + asset.supplyBalance).sort()],
     () => {
       const res: AssetToSupplyRowData[] = [];
 
       if (assets && assets.length > 0) {
-        const assetsToSupply = assets.filter((asset) => asset.supplyBalance.eq(constants.Zero));
+        const assetsToSupply = assets.filter(
+          (asset) => !asset.isSupplyPaused && asset.supplyBalance.eq(constants.Zero)
+        );
 
         assetsToSupply.map((asset) => {
           res.push({

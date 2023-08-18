@@ -6,7 +6,8 @@ export enum SupportedChains {
   neon = 245022934,
   polygon = 137,
   arbitrum = 42161,
-  linea = 59144
+  linea = 59144,
+  zkevm = 1101
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -52,6 +53,7 @@ export enum DelegateContractName {
 
 export enum OracleTypes {
   ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
+  API3PriceOracle = "API3PriceOracle",
   CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
   CurveV2PriceOracle = "CurveV2PriceOracle",
   CurveV2LpTokenPriceOracleNoRegistry = "CurveV2LpTokenPriceOracleNoRegistry",
@@ -63,6 +65,7 @@ export enum OracleTypes {
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
   UniswapV3PriceOracle = "UniswapV3PriceOracle",
+  KyberSwapPriceOracle = "KyberSwapPriceOracle",
   AlgebraPriceOracle = "AlgebraPriceOracle",
   AnkrCertificateTokenPriceOracle = "AnkrCertificateTokenPriceOracle",
   GammaPoolPriceOracle = "GammaPoolPriceOracle",
@@ -77,7 +80,8 @@ export enum OracleTypes {
   SaddleLpPriceOracle = "SaddleLpPriceOracle",
   SolidlyLpTokenPriceOracle = "SolidlyLpTokenPriceOracle",
   WSTEthPriceOracle = "WSTEthPriceOracle",
-  ERC4626Oracle = "ERC4626Oracle"
+  ERC4626Oracle = "ERC4626Oracle",
+  PythPriceOracle = "PythPriceOracle"
 }
 
 export enum IrmTypes {
@@ -160,10 +164,16 @@ export enum assetOriginalSymbols {
   "vAMM-ANKR/HAY" = "HAY/ANKR Thena LP",
   "vAMM-HAY/ankrBNB" = "HAY/ankrBNB Thena LP",
   "sAMM-stkBNB/WBNB" = "stkBNB/WBNB Thena LP",
+  // Balancer
   "WMATIC_MATICX_STABLE_BLP" = "WMATIC-MATICX Balancer Stable LP",
+  // Pearl
   "sAMM-USDC/USDR" = "USDC/USDR Pearl Stable LP",
+  "sAMM-DAI/USDR" = "DAI/USDR Pearl Stable LP",
   "vAMM-wUSDR/USDR" = "wUSDR/USDR Pearl Variable LP",
-  "vAMM-stMATIC/USDR" = "stMATIC/USDR Pearl Variable LP"
+  "vAMM-MATIC/USDR" = "MATIC/USDR Pearl Variable LP",
+  "vAMM-WBTC/USDR" = "WBTC/USDR Pearl Variable LP",
+  "vAMM-WETH/USDR" = "WETH/USDR Pearl Variable LP",
+  "vAMM-TNGBL/USDR" = "TNGBL/USDR Pearl Variable LP"
 }
 
 export enum assetSymbols {
@@ -312,8 +322,8 @@ export enum assetSymbols {
   "IXT-USDT" = "IXT-USDT",
   USDR = "USDR",
   WUSDR = "WUSDR",
-  USDR3CRV = "USDR3CRV",
   TNGBL = "TNGBL",
+  DUSD = "DUSD",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
@@ -347,8 +357,12 @@ export enum assetSymbols {
 
   // Pearl
   "sAMM-USDC/USDR" = "sAMM-USDC-USDR",
-  "vAMM-wUSDR/USDR" = "sAMM-wUSDR-USDR",
-  "vAMM-stMATIC/USDR" = "vAMM-stMATIC-USDR",
+  "sAMM-DAI/USDR" = "sAMM-DAI-USDR",
+  "vAMM-wUSDR/USDR" = "vAMM-wUSDR-USDR",
+  "vAMM-MATIC/USDR" = "vAMM-MATIC-USDR",
+  "vAMM-TNGBL/USDR" = "vAMM-TNGBL-USDR",
+  "vAMM-WBTC/USDR" = "vAMM-WBTC-USDR",
+  "vAMM-WETH/USDR" = "vAMM-WETH-USDR",
 
   // Arbitrum
   "2pool" = "2pool",
@@ -358,9 +372,6 @@ export enum assetSymbols {
   DPX = "DPX",
   MAGIC = "MAGIC",
   GMX = "GMX",
-  saddleFraxBP = "saddleFraxBP",
-  saddleFraxUsdsBP = "saddleFraxUsdsBP",
-  saddleFraxUsdtBP = "saddleFraxUsdtBP",
   USDs = "USDs",
 
   PAR_USDC_CURVE = "PAR_USDC CURVE",
@@ -379,6 +390,7 @@ export enum assetSymbols {
   cbETH = "cbETH",
   ankrETH = "ankrETH",
   frxETH = "frxETH",
+  sfrxETH = "sfrxETH",
   SWETH_BBA_WETH_BPT = "swETH-bba-WETH-BPT",
   WSTETH_WETH_STABLE_BPT = "wstETH-WETH-Stable-BPT",
   WSTETH_RETH_FRXETH_STABLE_BPT = "wstETH-rETH-frxETH-Stable-BPT",

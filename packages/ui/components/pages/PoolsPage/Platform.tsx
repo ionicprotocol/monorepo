@@ -1,6 +1,7 @@
 import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
+import { LoadingText } from '@ui/components/shared/LoadingText';
 import { useTotalSupplyAndBorrow } from '@ui/hooks/ionic/useTotalSupplyAndBorrow';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
@@ -18,10 +19,14 @@ export const Platform = () => {
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               TVL
             </Text>
-            <Skeleton isLoaded={!isLoading} minW="80px">
-              <Text color={'iWhite'} size={'lg'}>
-                {data ? smallUsdFormatter(data.totalSupply, true) : '-'}
-              </Text>
+            <Skeleton isLoaded={!isLoading}>
+              {isLoading ? (
+                <LoadingText />
+              ) : (
+                <Text color={'iWhite'} size={'lg'}>
+                  {data ? smallUsdFormatter(data.totalSupply, true) : '-'}
+                </Text>
+              )}
             </Skeleton>
           </VStack>
           <VStack alignItems="flex-start">

@@ -1,7 +1,8 @@
-import { QuestionIcon } from '@chakra-ui/icons';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Button,
   Divider,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -28,7 +29,8 @@ import {
   ADMIN_FEE_TOOLTIP,
   LOAN_TO_VALUE,
   LOAN_TO_VALUE_TOOLTIP,
-  RESERVE_FACTOR
+  RESERVE_FACTOR,
+  RESERVE_FACTOR_TOOLTIP
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
@@ -71,7 +73,7 @@ export const AddAssetSettings = ({
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
-  const { cCard, cSelect, cPage } = useColors();
+  const { cSelect, cIPage } = useColors();
   const { data } = useExtraPoolInfo(comptrollerAddress, poolChainId);
 
   const [isDeploying, setIsDeploying] = useState(false);
@@ -192,7 +194,7 @@ export const AddAssetSettings = ({
             display: 'none'
           },
           '&::-webkit-scrollbar-thumb': {
-            background: cPage.primary.borderColor
+            background: cIPage.dividerColor
           },
           '&::-webkit-scrollbar-track': {
             height: '4px',
@@ -200,23 +202,19 @@ export const AddAssetSettings = ({
           }
         }}
         maxH={'40vh'}
+        overflowX={'hidden'}
         overflowY="scroll"
+        width={'100%'}
       >
         <FormControl isInvalid={!!errors.collateralFactor}>
-          <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
-            <FormLabel htmlFor="collateralFactor">
-              <SimpleTooltip label={LOAN_TO_VALUE_TOOLTIP}>
-                <Text fontWeight="bold">
-                  Loan-to-Value{' '}
-                  <QuestionIcon
-                    bg={cCard.bgColor}
-                    borderRadius={'50%'}
-                    color={cCard.txtColor}
-                    mb="4px"
-                    ml={1}
-                  />
-                </Text>
-              </SimpleTooltip>
+          <HStack justifyContent={'space-between'} px={2} py={2} w="100%">
+            <FormLabel htmlFor="collateralFactor" m={0}>
+              <Flex alignItems={'baseline'} direction="row" gap={'8px'}>
+                <Text variant={'itemTitle'}>Loan-to-Value</Text>
+                <SimpleTooltip label={LOAN_TO_VALUE_TOOLTIP}>
+                  <InfoOutlineIcon verticalAlign={'middle'} />
+                </SimpleTooltip>
+              </Flex>
             </FormLabel>
             <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
               <Controller
@@ -255,24 +253,14 @@ export const AddAssetSettings = ({
         </FormControl>
         <Divider />
         <FormControl isInvalid={!!errors.reserveFactor}>
-          <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
-            <FormLabel htmlFor="reserveFactor">
-              <SimpleTooltip
-                label={
-                  "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
-                }
-              >
-                <Text fontWeight="bold">
-                  Reserve Factor{' '}
-                  <QuestionIcon
-                    bg={cCard.bgColor}
-                    borderRadius={'50%'}
-                    color={cCard.txtColor}
-                    mb="4px"
-                    ml={1}
-                  />
-                </Text>
-              </SimpleTooltip>
+          <HStack justifyContent={'space-between'} px={2} py={2} w="100%">
+            <FormLabel htmlFor="reserveFactor" m={0}>
+              <Flex alignItems={'baseline'} direction="row" gap={'8px'}>
+                <Text variant={'itemTitle'}>Reserve Factor</Text>
+                <SimpleTooltip label={RESERVE_FACTOR_TOOLTIP}>
+                  <InfoOutlineIcon verticalAlign={'middle'} />
+                </SimpleTooltip>
+              </Flex>
             </FormLabel>
             <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
               <Controller
@@ -311,20 +299,14 @@ export const AddAssetSettings = ({
         </FormControl>
         <Divider />
         <FormControl isInvalid={!!errors.adminFee}>
-          <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
-            <FormLabel htmlFor="adminFee">
-              <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
-                <Text fontWeight="bold">
-                  Admin Fee{' '}
-                  <QuestionIcon
-                    bg={cCard.bgColor}
-                    borderRadius={'50%'}
-                    color={cCard.txtColor}
-                    mb="4px"
-                    ml={1}
-                  />
-                </Text>
-              </SimpleTooltip>
+          <HStack justifyContent={'space-between'} px={2} py={2} w="100%">
+            <FormLabel htmlFor="adminFee" m={0}>
+              <Flex alignItems={'baseline'} direction="row" gap={'8px'}>
+                <Text variant={'itemTitle'}>Admin Fee</Text>
+                <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
+                  <InfoOutlineIcon verticalAlign={'middle'} />
+                </SimpleTooltip>
+              </Flex>
             </FormLabel>
             <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start">
               <Controller
@@ -363,39 +345,33 @@ export const AddAssetSettings = ({
         </FormControl>
         <Divider />
         <FormControl isInvalid={!!errors.pluginIndex}>
-          <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
-            <FormLabel htmlFor="oracle">
-              <PopoverTooltip
-                body={
-                  <>
-                    This token has{' '}
-                    <Link
-                      href="https://eips.ethereum.org/EIPS/eip-4626"
-                      isExternal
-                      variant={'color'}
-                    >
-                      ERC4626 strategies
-                    </Link>{' '}
-                    implemented, allowing users to utilize their deposits (e.g. to stake them for
-                    rewards) while using them as collateral. To learn mode about it, check out our{' '}
-                    <Link href="https://docs.midascapital.xyz/" isExternal variant={'color'}>
-                      docs
-                    </Link>
-                    .
-                  </>
-                }
-              >
-                <HStack>
-                  <Text fontWeight="bold">Rewards Plugin </Text>
-                  <QuestionIcon
-                    bg={cCard.bgColor}
-                    borderRadius={'50%'}
-                    color={cCard.txtColor}
-                    mb="4px"
-                    ml={1}
-                  />
-                </HStack>
-              </PopoverTooltip>
+          <HStack justifyContent={'space-between'} px={2} py={2} w="100%">
+            <FormLabel htmlFor="rewardsPlugin" m={0}>
+              <Flex alignItems={'baseline'} direction="row" gap={'8px'}>
+                <Text variant={'itemTitle'}>Rewards Plugin</Text>
+                <PopoverTooltip
+                  body={
+                    <>
+                      This token has{' '}
+                      <Link
+                        href="https://eips.ethereum.org/EIPS/eip-4626"
+                        isExternal
+                        variant={'color'}
+                      >
+                        ERC4626 strategies
+                      </Link>{' '}
+                      implemented, allowing users to utilize their deposits (e.g. to stake them for
+                      rewards) while using them as collateral. To learn mode about it, check out our{' '}
+                      <Link href="https://docs.midascapital.xyz/" isExternal variant={'color'}>
+                        docs
+                      </Link>
+                      .
+                    </>
+                  }
+                >
+                  <InfoOutlineIcon verticalAlign={'middle'} />
+                </PopoverTooltip>
+              </Flex>
             </FormLabel>
             <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" maxW="270px">
               <Select
@@ -421,24 +397,18 @@ export const AddAssetSettings = ({
         </FormControl>
         <Divider />
         <FormControl isInvalid={!!errors.interestRateModel}>
-          <HStack justifyContent={'space-between'} px={4} py={2} w="100%">
-            <FormLabel htmlFor="interestRateModel">
-              <SimpleTooltip
-                label={
-                  'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
-                }
-              >
-                <Text fontWeight="bold">
-                  Interest Model{' '}
-                  <QuestionIcon
-                    bg={cCard.bgColor}
-                    borderRadius={'50%'}
-                    color={cCard.txtColor}
-                    mb="4px"
-                    ml={1}
-                  />
-                </Text>
-              </SimpleTooltip>
+          <HStack justifyContent={'space-between'} px={2} py={2} w="100%">
+            <FormLabel htmlFor="interestRateModel" m={0}>
+              <Flex alignItems={'baseline'} direction="row" gap={'8px'}>
+                <Text variant={'itemTitle'}>Interest Model</Text>
+                <SimpleTooltip
+                  label={
+                    'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
+                  }
+                >
+                  <InfoOutlineIcon verticalAlign={'middle'} />
+                </SimpleTooltip>
+              </Flex>
             </FormLabel>
             <Column crossAxisAlignment="flex-start" mainAxisAlignment="flex-start" maxW="270px">
               <Select
@@ -475,6 +445,7 @@ export const AddAssetSettings = ({
           disabled={isDeploying || !isPossible}
           isLoading={isDeploying}
           type="submit"
+          variant={'solidGreen'}
           width={'100%'}
         >
           Add Asset

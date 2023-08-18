@@ -13,55 +13,59 @@ export const useAddTokenToWallet = ({
   errorToast: (options?: UseToastOptions | undefined) => ToastId;
   logoUrl?: string;
   successToast: (options?: UseToastOptions | undefined) => ToastId;
-  underlyingAddress: string;
-  underlyingDecimals: number;
-  underlyingSymbol: string;
+  underlyingAddress?: string;
+  underlyingDecimals?: number;
+  underlyingSymbol?: string;
 }) =>
   useCallback(async () => {
-    const ethereum = window.ethereum;
+    if (underlyingAddress && underlyingDecimals && underlyingSymbol) {
+      const ethereum = window.ethereum;
 
-    if (!ethereum) {
-      errorToast({
-        description: 'Wallet could not be found!',
-        id: 'Wallet not found - ' + Math.random().toString(),
-        title: 'Error'
-      });
-
-      return false;
-    }
-
-    try {
-      const added = await ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          options: {
-            address: underlyingAddress,
-            decimals: underlyingDecimals,
-            image: logoUrl,
-            symbol: underlyingSymbol
-          },
-          type: 'ERC20'
-        } as {
-          options: {
-            address: Address;
-            decimals: number;
-            image?: string;
-            symbol: string;
-          };
-          type: 'ERC20';
-        }
-      });
-
-      if (added) {
-        successToast({
-          description: 'Token is successfully added to wallet',
-          id: 'Added token - ' + Math.random().toString(),
-          title: 'Added'
+      if (!ethereum) {
+        errorToast({
+          description: 'Wallet could not be found!',
+          id: 'Wallet not found - ' + Math.random().toString(),
+          title: 'Error'
         });
+
+        return false;
       }
 
-      return added;
-    } catch (error) {
-      return false;
+      try {
+        const added = await ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            options: {
+              address: underlyingAddress,
+              decimals: underlyingDecimals,
+              image: logoUrl,
+              symbol: underlyingSymbol
+            },
+            type: 'ERC20'
+          } as {
+            options: {
+              address: Address;
+              decimals: number;
+              image?: string;
+              symbol: string;
+            };
+            type: 'ERC20';
+          }
+        });
+
+        if (added) {
+          successToast({
+            description: 'Token is successfully added to wallet',
+            id: 'Added token - ' + Math.random().toString(),
+            title: 'Added'
+          });
+        }
+
+        return added;
+      } catch (error) {
+        return false;
+      }
     }
+
+    return false;
   }, [underlyingAddress, underlyingSymbol, underlyingDecimals, logoUrl, errorToast, successToast]);

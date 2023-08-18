@@ -21,5 +21,5 @@ data "aws_caller_identity" "current" {}
 
 module "ecr" {
   source           = "../modules/ecr"
-  repository_names = ["ionic-oracles-monitor", "ionic-liquidator"]
+  repository_names = ["ionic-oracles-monitor", "ionic-liquidator", "ionic-pyth-updater"]
 }

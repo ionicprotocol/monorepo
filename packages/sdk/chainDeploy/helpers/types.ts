@@ -90,6 +90,8 @@ export type UmbrellaAsset = {
   underlying: string;
   feed: string;
 };
+export type PythAsset = UmbrellaAsset;
+export type Api3Asset = UmbrellaAsset;
 
 export type WombatAsset = {
   symbol: string;
@@ -190,6 +192,21 @@ export type UmbrellaDeployFnParams = ChainDeployFnParams & {
   umbrellaAssets: UmbrellaAsset[];
   deployConfig: ChainDeployConfig;
   nativeUsdFeed: string;
+};
+
+export type Api3DeployFnParams = ChainDeployFnParams & {
+  usdToken: string;
+  nativeTokenUsdFeed: string;
+  api3Assets: Api3Asset[];
+  deployConfig: ChainDeployConfig;
+};
+
+export type PythDeployFnParams = ChainDeployFnParams & {
+  pythAddress: string;
+  usdToken: string;
+  pythAssets: PythAsset[];
+  deployConfig: ChainDeployConfig;
+  nativeTokenUsdFeed: string;
 };
 
 export type WombatDeployFnParams = ChainDeployFnParams & {

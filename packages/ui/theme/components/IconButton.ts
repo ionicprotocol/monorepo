@@ -43,22 +43,7 @@ export const IconButtonStyleConfig: ComponentStyleConfig = {
     }
   },
   variants: {
-    _outline: (props) => ({
-      _hover: {
-        _disabled: {
-          bg: 'none',
-          borderColor: mode('iSeparator', 'iSeparator')(props),
-          color: mode('iSeparator', 'iSeparator')(props)
-        },
-        bg: 'none',
-        borderColor: mode('iWhite', 'iWhite')(props),
-        color: mode('iWhite', 'iWhite')(props)
-      },
-      bg: 'none',
-      borderColor: mode('iWhite', 'iWhite')(props),
-      color: mode('iWhite', 'iWhite')(props)
-    }),
-    filter: (props) => ({
+    _filter: (props) => ({
       _hover: {
         _disabled: {
           bg: mode('whiteBg', 'raisinBlack')(props),
@@ -74,6 +59,21 @@ export const IconButtonStyleConfig: ComponentStyleConfig = {
       color: props.isSelected
         ? mode('raisinBlack', 'raisinBlack')(props)
         : mode('raisinBlack', 'ecru')(props)
+    }),
+    _outline: (props) => ({
+      _hover: {
+        _disabled: {
+          bg: 'none',
+          borderColor: mode('iSeparator', 'iSeparator')(props),
+          color: mode('iSeparator', 'iSeparator')(props)
+        },
+        bg: 'none',
+        borderColor: mode('iWhite', 'iWhite')(props),
+        color: mode('iWhite', 'iWhite')(props)
+      },
+      bg: 'none',
+      borderColor: mode('iWhite', 'iWhite')(props),
+      color: mode('iWhite', 'iWhite')(props)
     })
   }
 };

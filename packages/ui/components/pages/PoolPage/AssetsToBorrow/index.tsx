@@ -48,7 +48,6 @@ import {
   ASSET,
   AVAILABLE,
   BORROW,
-  DETAILS,
   MARKETS_COUNT_PER_PAGE,
   POOLS_COUNT_PER_PAGE,
   SEARCH
@@ -175,20 +174,33 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
       },
       {
         cell: ({ row }) => {
-          return <Borrow asset={row.getValue(ASSET)} maxBorrowAmounts={maxBorrowAmounts} />;
+          return (
+            <HStack justifyContent={'flex-end'}>
+              <Borrow
+                asset={row.getValue(ASSET)}
+                assets={assets}
+                chainId={chainId}
+                comptroller={comptroller}
+                maxBorrowAmounts={maxBorrowAmounts}
+              />
+              <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />
+            </HStack>
+          );
         },
         header: () => null,
         id: BORROW
-      },
-      {
-        cell: ({ row }) => {
-          return <Details asset={row.getValue(ASSET)} chainId={chainId} poolId={poolId} />;
-        },
-        header: () => null,
-        id: DETAILS
       }
     ];
-  }, [assetFilter, assetSort, borrowApyPerAsset, chainId, maxBorrowAmounts, poolId]);
+  }, [
+    assetFilter,
+    assetSort,
+    assets,
+    borrowApyPerAsset,
+    chainId,
+    comptroller,
+    maxBorrowAmounts,
+    poolId
+  ]);
 
   const table = useReactTable({
     columns,
@@ -328,7 +340,7 @@ export const AssetsToBorrow = ({ poolData }: { poolData: PoolData }) => {
               ) : assets.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
-                    <Center py={8}>There are no assets to supply.</Center>
+                    <Center py={8}>There are no assets to borrow.</Center>
                   </Td>
                 </Tr>
               ) : (

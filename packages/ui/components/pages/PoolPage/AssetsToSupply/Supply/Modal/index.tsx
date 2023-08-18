@@ -7,6 +7,7 @@ import {
   HStack,
   Icon,
   Input,
+  Skeleton,
   Slider,
   SliderFilledTrack,
   SliderMark,
@@ -21,6 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { WETHAbi } from '@ionicprotocol/sdk';
 import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
@@ -39,19 +41,27 @@ import {
   ACTIVE,
   COMPLETE,
   FAILED,
+  INCOMPLETE,
+  READY,
   SUPPLY_STEPS,
   SUPPLY_STEPS_WITH_WRAP
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
+import { useAssets } from '@ui/hooks/useAssets';
+import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useColors } from '@ui/hooks/useColors';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
+import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { TxStep } from '@ui/types/ComponentPropsType';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { smallFormatter } from '@ui/utils/bigUtils';
+import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
@@ -62,6 +72,7 @@ interface SupplyModalProps {
   comptrollerAddress: string;
   isOpen: boolean;
   onClose: () => void;
+  poolId: number;
 }
 
 export const SupplyModal = ({
@@ -70,10 +81,10 @@ export const SupplyModal = ({
   assets,
   comptrollerAddress,
   onClose,
-  chainId
+  chainId,
+  poolId
 }: SupplyModalProps) => {
-  console.warn(assets);
-  const { totalSupplyFiat } = asset;
+  const { totalSupplyFiat, underlyingDecimals, underlyingPrice, collateralFactor } = asset;
 
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();
@@ -83,9 +94,14 @@ export const SupplyModal = ({
 
   const { cIPage, cGreen } = useColors();
   const { currentSdk, address } = useMultiIonic();
+  const { data: price } = useUsdPrice(chainId.toString());
   const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, chainId);
-  const { data: myBalance } = useTokenBalance(asset.underlyingToken, chainId);
-  const { data: myNativeBalance } = useTokenBalance(
+  const { data: myBalance, isLoading: isBalanceLoading } = useTokenBalance(
+    asset.underlyingToken,
+    chainId
+  );
+
+  const { data: myNativeBalance, isLoading: isNativeBalanceLoading } = useTokenBalance(
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
     chainId
   );
@@ -94,28 +110,49 @@ export const SupplyModal = ({
     comptroller: comptrollerAddress,
     market: asset
   });
+  const { data: allRewards } = useRewards({ chainId, poolId: poolId.toString() });
+  const { data: assetInfos } = useAssets(chainId ? [chainId] : []);
+  const { data: totalSupplyApyPerAsset, isLoading: isTotalSupplyApyLoading } = useTotalSupplyAPYs(
+    assets,
+    chainId,
+    allRewards,
+    assetInfos
+  );
 
   const nativeSymbol = sdk?.chainSpecificParams.metadata.nativeCurrency.symbol;
 
+  const ltv = useMemo(
+    () => parseFloat(utils.formatUnits(collateralFactor, 16)),
+    [collateralFactor]
+  );
   const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
+  const [usdAmount, setUsdAmount] = useState<number>(0);
   const [activeStep, setActiveStep] = useState<TxStep>(SUPPLY_STEPS(asset.underlyingSymbol)[0]);
   const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
 
-  const optionToWrap = useMemo(() => {
-    return (
-      asset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
-      myBalance?.isZero() &&
-      !myNativeBalance?.isZero()
-    );
-  }, [
-    asset.underlyingToken,
-    currentSdk?.chainSpecificAddresses.W_TOKEN,
-    myBalance,
-    myNativeBalance
-  ]);
+  const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, chainId);
+  const totalBorrows = useMemo(
+    () => assets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [assets.map((asset) => asset.borrowBalanceFiat)]
+  );
+  const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
+  const { data: updatedAssets } = useUpdatedUserAssets({
+    amount,
+    assets,
+    index,
+    mode: FundOperationMode.SUPPLY,
+    poolChainId: chainId
+  });
+  const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets ?? [], chainId);
+
+  const optionToWrap =
+    asset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
+    myBalance?.isZero() &&
+    !myNativeBalance?.isZero();
 
   useEffect(() => {
     if (optionToWrap) {
@@ -135,6 +172,18 @@ export const SupplyModal = ({
       setIsAmountValid(amount.lte(max));
     }
   }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
+
+  useEffect(() => {
+    if (price && !amount.isZero()) {
+      setUsdAmount(
+        Number(utils.formatUnits(amount, underlyingDecimals)) *
+          Number(utils.formatUnits(underlyingPrice, 18)) *
+          price
+      );
+    } else {
+      setUsdAmount(0);
+    }
+  }, [amount, price, underlyingDecimals, underlyingPrice]);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -161,10 +210,18 @@ export const SupplyModal = ({
     setIsLoading(true);
 
     try {
-      if (maxSupplyAmount.bigNumber.lt(constants.Zero) || maxSupplyAmount.bigNumber.isZero()) {
+      let maxBN;
+
+      if (optionToWrap) {
+        maxBN = await currentSdk.signer.getBalance();
+      } else {
+        maxBN = maxSupplyAmount.bigNumber;
+      }
+
+      if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
       } else {
-        const str = utils.formatUnits(maxSupplyAmount.bigNumber, asset.underlyingDecimals);
+        const str = utils.formatUnits(maxBN, asset.underlyingDecimals);
         updateAmount(str);
       }
 
@@ -187,7 +244,6 @@ export const SupplyModal = ({
     if (!currentSdk || !address) return;
 
     setIsLoading(true);
-    setActiveStep(steps[0]);
 
     const _steps = [...steps];
     _steps[0] = {
@@ -221,8 +277,12 @@ export const SupplyModal = ({
         ..._steps[0],
         status: COMPLETE
       };
+      _steps[1] = {
+        ..._steps[1],
+        status: READY
+      };
       setSteps(_steps);
-
+      setActiveStep(_steps[1]);
       successToast({
         description: 'Successfully Wrapped!',
         id: 'Wrapped - ' + Math.random().toString()
@@ -233,6 +293,7 @@ export const SupplyModal = ({
         status: FAILED
       };
       setSteps(_steps);
+      setActiveStep(_steps[0]);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -253,7 +314,6 @@ export const SupplyModal = ({
     if (!currentSdk || !address) return;
 
     setIsLoading(true);
-    setActiveStep(steps[optionToWrap ? 1 : 0]);
 
     const _steps = [...steps];
     _steps[optionToWrap ? 1 : 0] = {
@@ -288,6 +348,10 @@ export const SupplyModal = ({
           ..._steps[optionToWrap ? 1 : 0],
           status: COMPLETE
         };
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          status: READY
+        };
         setSteps(_steps);
 
         successToast({
@@ -299,14 +363,21 @@ export const SupplyModal = ({
           ..._steps[optionToWrap ? 1 : 0],
           status: COMPLETE
         };
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          status: READY
+        };
         setSteps(_steps);
       }
+
+      setActiveStep(_steps[optionToWrap ? 2 : 1]);
     } catch (error) {
       _steps[optionToWrap ? 1 : 0] = {
         ..._steps[optionToWrap ? 1 : 0],
         status: FAILED
       };
       setSteps(_steps);
+      setActiveStep(_steps[optionToWrap ? 1 : 0]);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -328,7 +399,6 @@ export const SupplyModal = ({
     if (!currentSdk || !address) return;
 
     setIsLoading(true);
-    setActiveStep(steps[optionToWrap ? 2 : 1]);
 
     const _steps = [...steps];
 
@@ -355,6 +425,7 @@ export const SupplyModal = ({
         setSteps(_steps);
 
         await tx.wait();
+
         await queryClient.refetchQueries({ queryKey: ['usePoolData'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] });
@@ -362,13 +433,14 @@ export const SupplyModal = ({
         await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
         await queryClient.refetchQueries({ queryKey: ['useSupplyCapsDataForPool'] });
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
+        await queryClient.refetchQueries({ queryKey: ['useYourSuppliesRowData'] });
+        await queryClient.refetchQueries({ queryKey: ['useAssetsToSupplyData'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
           status: COMPLETE
         };
         setSteps(_steps);
-
         successToast({
           description: 'Successfully supplied!',
           id: 'Supply - ' + Math.random().toString()
@@ -380,6 +452,7 @@ export const SupplyModal = ({
         status: FAILED
       };
       setSteps(_steps);
+      setActiveStep(_steps[optionToWrap ? 2 : 1]);
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
@@ -417,16 +490,27 @@ export const SupplyModal = ({
                 Amount
               </Text>
               <HStack>
-                <Text size={'sm'}>Wallet Balance: </Text>
                 <Text size={'sm'}>
-                  {myBalance
+                  {optionToWrap ? 'Wallet Native Balance: ' : 'Wallet Balance: '}
+                </Text>
+                <Text size={'sm'}>
+                  {optionToWrap
+                    ? myNativeBalance
+                      ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
+                      : 0
+                    : myBalance
                     ? smallFormatter(
                         Number(utils.formatUnits(myBalance, asset.underlyingDecimals)),
                         true
                       )
                     : 0}
                 </Text>
-                <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
+                <Button
+                  color={'iGreen'}
+                  isLoading={optionToWrap ? isNativeBalanceLoading : isBalanceLoading}
+                  onClick={setToMax}
+                  variant={'ghost'}
+                >
                   MAX
                 </Button>
               </HStack>
@@ -463,7 +547,7 @@ export const SupplyModal = ({
               </Flex>
             </Flex>
             <Flex justifyContent={'space-between'}>
-              <Text color={'iGray'}>$0.0</Text>
+              <Text color={'iGray'}>{smallUsdFormatter(usdAmount)}</Text>
             </Flex>
           </Flex>
           <Center height={'1px'} my={'10px'}>
@@ -472,16 +556,29 @@ export const SupplyModal = ({
           <Flex direction="column" gap={{ base: '8px' }}>
             <Flex justifyContent={'space-between'}>
               <Text variant={'itemTitle'}>Supply Apr</Text>
-              <Text variant={'itemDesc'}>45.4%</Text>
+              <Skeleton isLoaded={!isTotalSupplyApyLoading}>
+                <Text variant={'itemDesc'}>
+                  {isTotalSupplyApyLoading
+                    ? 'Supply Apr'
+                    : totalSupplyApyPerAsset
+                    ? totalSupplyApyPerAsset[asset.cToken].totalApy
+                    : '--'}{' '}
+                  %
+                </Text>
+              </Skeleton>
             </Flex>
             <Flex alignItems={'flex-end'} justifyContent={'space-between'}>
               <Text variant={'itemTitle'}>Collateralization</Text>
-              <HStack alignItems={'flex-end'}>
-                <Icon as={BsCheck} color={'iGreen'} height={'24px'} width={'24px'} />
-                <Text color={cGreen} variant={'itemDesc'}>
-                  Enabled
-                </Text>
-              </HStack>
+              {asset.membership ? (
+                <HStack alignItems={'flex-end'}>
+                  <Icon as={BsCheck} color={'iGreen'} height={'24px'} width={'24px'} />
+                  <Text color={cGreen} variant={'itemDesc'}>
+                    Enabled
+                  </Text>
+                </HStack>
+              ) : (
+                <Text variant={'itemDesc'}>Not Enabled</Text>
+              )}
             </Flex>
           </Flex>
           <Center height={'1px'} my={'10px'}>
@@ -495,10 +592,17 @@ export const SupplyModal = ({
             <Flex justifyContent={'space-between'}>
               <Text variant={'itemTitle'}>My Total Borrow</Text>
               <HStack>
-                <Text variant={'itemDesc'}>$3.77 </Text>
-                <Text color={'iLightGray'}>(max $3.87</Text>
+                <Text variant={'itemDesc'}>{smallUsdFormatter(totalBorrows)} </Text>
+                <Text color={'iLightGray'}>
+                  (max {borrowLimitTotal !== undefined ? smallUsdFormatter(borrowLimitTotal) : '--'}
+                </Text>
                 <Text variant={'itemDesc'}>➡</Text>
-                <Text color={'iLightGray'}>$7.89)</Text>
+                <Text color={'iLightGray'}>
+                  {updatedBorrowLimitTotal !== undefined
+                    ? smallUsdFormatter(updatedBorrowLimitTotal)
+                    : '--'}
+                  )
+                </Text>
               </HStack>
             </Flex>
           </Flex>
@@ -508,7 +612,9 @@ export const SupplyModal = ({
           <Flex direction="column" gap={{ base: '10px' }}>
             <Flex flexDir={'column'} gap={'40px'}>
               <HStack>
-                <Text variant={'itemTitle'}>LTV</Text>
+                <Text variant={'itemTitle'}>
+                  LTV {parseFloat(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0)}%
+                </Text>
                 <InfoOutlineIcon
                   color={'iLightGray'}
                   height="fit-content"
@@ -516,7 +622,7 @@ export const SupplyModal = ({
                   verticalAlign="baseLine"
                 />
               </HStack>
-              <Slider value={10} variant={'green'}>
+              <Slider value={ltv} variant={'green'}>
                 <SliderMark ml={'0px'} value={0}>
                   0%
                 </SliderMark>
@@ -559,22 +665,23 @@ export const SupplyModal = ({
             {optionToWrap ? (
               <Button
                 flex={1}
-                isDisabled={isLoading || activeStep.index < 1}
+                isDisabled={isLoading || !isAmountValid}
                 isLoading={activeStep.index === 1 && isLoading}
                 onClick={onWrapNativeToken}
-                variant={'green'}
+                variant={getVariant(steps[0].status)}
               >
-                Wrap Native Token
+                {steps[0].status === COMPLETE ? 'Wrapped' : 'Wrap Native Token'}
               </Button>
             ) : null}
             <Button
               flex={1}
-              isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1)}
-              isLoading={activeStep.index === 2 && isLoading}
+              isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1) || !isAmountValid}
+              isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
               onClick={onApprove}
-              variant={'green'}
+              variant={getVariant(steps[optionToWrap ? 1 : 0]?.status)}
             >
-              Approve {asset.underlyingSymbol}
+              {steps[optionToWrap ? 1 : 0].status !== COMPLETE ? `Approve ` : 'Approved'}{' '}
+              {asset.underlyingSymbol}
             </Button>
             <Flex flex={1}>
               <PopoverTooltip
@@ -590,10 +697,12 @@ export const SupplyModal = ({
                 visible={!isAmountValid}
               >
                 <Button
-                  isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2)}
+                  isDisabled={
+                    isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid
+                  }
                   isLoading={activeStep.index === 3 && isLoading}
                   onClick={isAmountValid ? onSupply : undefined}
-                  variant={isAmountValid ? 'green' : 'disabled'}
+                  variant={getVariant(steps[optionToWrap ? 2 : 1]?.status)}
                   width={'100%'}
                 >
                   Supply {asset.underlyingSymbol}
@@ -643,9 +752,22 @@ export const SupplyModal = ({
         if (!isLoading) {
           setUserEnteredAmount('');
           setAmount(constants.Zero);
-          setSteps([...SUPPLY_STEPS(asset.underlyingSymbol)]);
+          setSteps(
+            optionToWrap
+              ? [...SUPPLY_STEPS_WITH_WRAP(asset.underlyingSymbol)]
+              : [...SUPPLY_STEPS(asset.underlyingSymbol)]
+          );
         }
       }}
     />
   );
+};
+
+export const getVariant = (status: string) => {
+  if (status === COMPLETE) return 'outlineLightGray';
+  if (status === FAILED) return 'outlineRed';
+  if (status === ACTIVE || status === READY) return 'solidGreen';
+  if (status === INCOMPLETE) return 'solidGray';
+
+  return 'solidGreen';
 };

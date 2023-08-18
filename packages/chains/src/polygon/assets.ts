@@ -50,9 +50,10 @@ const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 const IXT = "0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE";
 const GNS = "0xE5417Af564e4bFDA1c483642db72007871397896";
 const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
-const USDR = "0xb5DFABd7fF7F83BAB83995E72A52B97ABb7bcf63";
-const WUSDR = "0xAF0D9D65fC54de245cdA37af3d18cbEc860A4D4b";
+const USDR = "0x40379a439D4F6795B6fc9aa5687dB461677A2dBa";
+const WUSDR = "0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265";
 const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
+const DUSD = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -82,7 +83,6 @@ const amUSDC = "0x1a13F4Ca1d028320A707D99520AbFefca3998b7F";
 
 // Curve
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
-const USDR3CRV = "0xa138341185a9D0429B0021A11FB717B225e13e1F";
 
 // QuickSwap
 const WMATIC_USDC = "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827";
@@ -101,7 +101,7 @@ const JEUR = "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c";
 const EURE = "0x18ec0A6E18E5bc3784fDd3a3634b31245ab704F6";
 const EURT = "0x7BDF330f423Ea880FF95fC41A280fD5eCFD3D09f";
 const PAR = "0xE2Aa7db6dA1dAE97C5f5C6914d285fBfCC32A128";
-const BRZ = "0x491a4eB4f1FC3BfF8E1d2FC856a6A46663aD556f";
+const BRZ = "0x4eD141110F6EeeAbA9A1df36d8c26f684d2475Dc";
 const jBRL = "0xf2f77FE7b8e66571E0fca7104c4d670BF1C8d722";
 
 // arrakis vault
@@ -119,9 +119,13 @@ const arrakis_USDC_DAI_005 = "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA";
 const arrakis_WETH_DAI_03 = "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c";
 
 // pearl (solidly)
-const solidlyStableAMM_USDR_USDC = "0xf6A72Bd46F53Cd5103812ea1f4B5CF38099aB797";
-const solidlyVolatileAMM_stMATIC_USDR = "0x733eEEf37De013283da29cE9EB4758dC59CaFc87";
-const solidlyVolatileAMM_wUSDR_USDR = "0x10E1b58B3C93890D04D539b5f39Aa4Df27A362b2";
+const solidlyStableAMM_USDR_USDC = "0xD17cb0f162f133e339C0BbFc18c36c357E681D6b";
+const solidlyStableAMM_DAI_USDR = "0xBD02973b441Aa83c8EecEA158b98B5984bb1036E";
+const solidlyVolatileAMM_MATIC_USDR = "0xB4d852b92148eAA16467295975167e640E1FE57A";
+const solidlyVolatileAMM_wUSDR_USDR = "0x8711a1a52c34EDe8E61eF40496ab2618a8F6EA4B";
+const solidlyVolatileAMM_TNGBL_USDR = "0x0Edc235693C20943780b76D79DD763236E94C751";
+const solidlyVolatileAMM_WETH_USDR = "0x74c64d1976157E7Aaeeed46EF04705F4424b27eC";
+const solidlyVolatileAMM_WBTC_USDR = "0xb95E1C22dd965FafE926b2A793e9D6757b6613F4";
 
 export const assets: SupportedAsset[] = [
   {
@@ -361,6 +365,14 @@ export const assets: SupportedAsset[] = [
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDT")
   },
   {
+    symbol: assetSymbols.DUSD,
+    underlying: DUSD,
+    name: "Davos",
+    decimals: 18,
+    oracle: OracleTypes.AlgebraPriceOracle,
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/simple/swap/USDC/DAVOS")
+  },
+  {
     symbol: assetSymbols.WBTC,
     underlying: WBTC,
     name: "Wrapped BTC (PoS)",
@@ -512,14 +524,6 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs("aave", "am3CRV", am3CRV, false)
-  },
-  {
-    symbol: assetSymbols.USDR3CRV,
-    underlying: USDR3CRV,
-    name: "Curve.fi USDR/DAI/USDC/USDT",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(339, "USDR3CRV", USDR3CRV, true)
   },
   // Balancer
   {
@@ -875,13 +879,49 @@ export const assets: SupportedAsset[] = [
     originalSymbol: assetOriginalSymbols["vAMM-wUSDR/USDR"]
   },
   {
-    symbol: assetSymbols["vAMM-stMATIC/USDR"],
-    underlying: solidlyVolatileAMM_stMATIC_USDR,
-    name: "Stable V1 AMM - stMATIC/USDR",
+    symbol: assetSymbols["vAMM-MATIC/USDR"],
+    underlying: solidlyVolatileAMM_MATIC_USDR,
+    name: "Stable V1 AMM - MATIC/USDR",
     decimals: 18,
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
-    extraDocs: pearlDocs(solidlyVolatileAMM_stMATIC_USDR),
-    originalSymbol: assetOriginalSymbols["vAMM-stMATIC/USDR"]
+    extraDocs: pearlDocs(solidlyVolatileAMM_MATIC_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-MATIC/USDR"]
+  },
+  {
+    symbol: assetSymbols["vAMM-TNGBL/USDR"],
+    underlying: solidlyVolatileAMM_TNGBL_USDR,
+    name: "Stable V1 AMM - TNGBL/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_TNGBL_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-TNGBL/USDR"]
+  },
+  {
+    symbol: assetSymbols["sAMM-DAI/USDR"],
+    underlying: solidlyStableAMM_DAI_USDR,
+    name: "Stable V1 AMM - DAI/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyStableAMM_DAI_USDR),
+    originalSymbol: assetOriginalSymbols["sAMM-DAI/USDR"]
+  },
+  {
+    symbol: assetSymbols["vAMM-WBTC/USDR"],
+    underlying: solidlyVolatileAMM_WBTC_USDR,
+    name: "Volatile V1 AMM - WBTC/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_WBTC_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-WBTC/USDR"]
+  },
+  {
+    symbol: assetSymbols["vAMM-WETH/USDR"],
+    underlying: solidlyVolatileAMM_WETH_USDR,
+    name: "Volatile V1 AMM - WETH/USDR",
+    decimals: 18,
+    oracle: OracleTypes.SolidlyLpTokenPriceOracle,
+    extraDocs: pearlDocs(solidlyVolatileAMM_WETH_USDR),
+    originalSymbol: assetOriginalSymbols["vAMM-WETH/USDR"]
   }
 ];
 

@@ -1,7 +1,6 @@
-import { Button, Center, Divider, Flex, HStack, Icon, Img, Spinner, Text } from '@chakra-ui/react';
+import { Button, Center, Divider, Flex, HStack, Img, Spinner, Text } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { memo } from 'react';
-import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import ClaimAllRewardsButton from '@ui/components/shared/ClaimAllRewardsButton';
@@ -15,9 +14,6 @@ export const WalletButtons = memo(() => {
   return (
     <Row crossAxisAlignment="center" gap={4} mainAxisAlignment="center">
       <ClaimAllRewardsButton />
-      <Center height={6}>
-        <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
-      </Center>
       <ConnectButton.Custom>
         {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
           const ready = mounted;
@@ -37,7 +33,12 @@ export const WalletButtons = memo(() => {
               {(() => {
                 if (!connected) {
                   return (
-                    <Button fontSize="14px" onClick={openConnectModal} variant="ghost">
+                    <Button
+                      color={'iWhite'}
+                      fontSize="14px"
+                      onClick={openConnectModal}
+                      variant="ghost"
+                    >
                       Connect Wallet
                     </Button>
                   );
@@ -53,7 +54,7 @@ export const WalletButtons = memo(() => {
 
                 return (
                   <Flex alignItems="center" gap={4}>
-                    <Button onClick={openChainModal} px={2} variant="ghost">
+                    <Button color={'iWhite'} onClick={openChainModal} px={2}>
                       {chain.iconUrl && (
                         <Img
                           alt={chain.name ?? 'Chain icon'}
@@ -66,12 +67,11 @@ export const WalletButtons = memo(() => {
                       <Text display={{ base: 'none', md: 'flex' }} ml={2} size="md">
                         {chain.name}
                       </Text>
-                      <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
                     </Button>
                     <Center height={6}>
                       <Divider bg={cIPage.dividerColor} orientation="vertical" width="2px" />
                     </Center>
-                    <Button onClick={openAccountModal} px={2} variant="ghost">
+                    <Button color={'iWhite'} onClick={openAccountModal} px={2}>
                       {account.hasPendingTransactions ? (
                         <HStack>
                           <Center height="100%">

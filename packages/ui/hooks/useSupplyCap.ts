@@ -11,9 +11,9 @@ import type { Cap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseSupplyCapParams {
-  chainId: number;
-  comptroller: string;
-  market: Pick<MarketData, 'cToken' | 'totalSupply' | 'underlyingDecimals' | 'underlyingPrice'>;
+  chainId?: number;
+  comptroller?: string;
+  market?: Pick<MarketData, 'cToken' | 'totalSupply' | 'underlyingDecimals' | 'underlyingPrice'>;
 }
 export const useSupplyCap = ({
   comptroller: comptrollerAddress,
@@ -23,7 +23,7 @@ export const useSupplyCap = ({
   const { data: usdPrices } = useAllUsdPrices();
   const { address } = useMultiIonic();
   const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[chainId.toString()]) {
+    if (chainId && usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
     } else {
       return undefined;
@@ -32,7 +32,7 @@ export const useSupplyCap = ({
   const sdk = useSdk(chainId);
   const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
     comptrollerAddress,
-    market.cToken,
+    market?.cToken,
     chainId
   );
 
@@ -41,16 +41,16 @@ export const useSupplyCap = ({
       'useSupplyCap',
       comptrollerAddress,
       sdk?.chainId,
-      market.cToken,
-      market.totalSupply,
-      market.underlyingPrice,
-      market.underlyingDecimals,
+      market?.cToken,
+      market?.totalSupply,
+      market?.underlyingPrice,
+      market?.underlyingDecimals,
       usdPrice,
       address,
       supplyCapsDataForAsset
     ],
     async () => {
-      if (sdk && usdPrice && market && address && supplyCapsDataForAsset) {
+      if (comptrollerAddress && sdk && usdPrice && market && address && supplyCapsDataForAsset) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
@@ -86,7 +86,13 @@ export const useSupplyCap = ({
       }
     },
     {
-      enabled: !!sdk && !!usdPrice && !!market && !!address && !!supplyCapsDataForAsset
+      enabled:
+        !!sdk &&
+        !!usdPrice &&
+        !!market &&
+        !!address &&
+        !!supplyCapsDataForAsset &&
+        !!comptrollerAddress
     }
   );
 };

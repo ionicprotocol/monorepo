@@ -4,6 +4,13 @@ import { COLOR_PALETTE } from '@ui/theme/index';
 
 export function useColors() {
   const cGreen = useColorModeValue(COLOR_PALETTE.iGreen, COLOR_PALETTE.iGreen);
+  const cCardBg = useColorModeValue(COLOR_PALETTE.iCardBg, COLOR_PALETTE.iCardBg);
+  const cRowBg = useColorModeValue(COLOR_PALETTE.iRowBg, COLOR_PALETTE.iRowBg);
+  const cWhite = useColorModeValue(COLOR_PALETTE.iWhite, COLOR_PALETTE.iWhite);
+  const cRed = useColorModeValue(COLOR_PALETTE.iRed, COLOR_PALETTE.iRed);
+  const cLightGray = useColorModeValue(COLOR_PALETTE.iLightGray, COLOR_PALETTE.iLightGray);
+  const cGray = useColorModeValue(COLOR_PALETTE.iGray, COLOR_PALETTE.iGray);
+  const cISeparator = useColorModeValue(COLOR_PALETTE.iSeparator, COLOR_PALETTE.iSeparator);
 
   const cIPage = {
     bgColor: useColorModeValue(COLOR_PALETTE.iBlack, COLOR_PALETTE.iBlack),
@@ -118,18 +125,25 @@ export function useColors() {
   return {
     cAlert,
     cCard,
+    cCardBg,
     cChart,
+    cGray,
     cGreen,
     cICard,
     cIPage,
     cIRow,
+    cISeparator,
     cInput,
+    cLightGray,
     cOutlineBtn,
     cPage,
     cRadio,
+    cRed,
+    cRowBg,
     cSelect,
     cSlider,
     cSolidBtn,
-    cSwitch
+    cSwitch,
+    cWhite
   };
 }

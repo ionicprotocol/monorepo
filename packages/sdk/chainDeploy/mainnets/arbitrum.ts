@@ -6,7 +6,6 @@ import {
   ChainDeployConfig,
   deployChainlinkOracle,
   deployCurveLpOracle,
-  deploySaddleLpOracle,
   deployUniswapLpOracle,
   deployUniswapV3Oracle
 } from "../helpers";
@@ -131,6 +130,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   },
   {
+    symbol: assetSymbols.rETH,
+    aggregator: "0xF3272CAfe65b190e76caAF483db13424a3e23dD2",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+  },
+  {
     symbol: assetSymbols.OHM,
     aggregator: "0x761aaeBf021F19F198D325D7979965D0c7C9e53b",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
@@ -138,32 +142,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
 ];
 
 // https://arbitrum.curve.fi/
-const curvePools: CurvePoolConfig[] = [
-  {
-    lpToken: underlying(assets, assetSymbols["2pool"]),
-    pool: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
-    underlyings: [USDC, underlying(assets, assetSymbols.USDT)]
-  }
-];
-
-// https://saddle.exchange/
-const saddlePools: CurvePoolConfig[] = [
-  {
-    lpToken: underlying(assets, assetSymbols.saddleFraxBP),
-    pool: "0x401AFbc31ad2A3Bc0eD8960d63eFcDEA749b4849",
-    underlyings: [USDC, underlying(assets, assetSymbols.FRAX)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols.saddleFraxUsdsBP),
-    pool: "0xa5bD85ed9fA27ba23BfB702989e7218E44fd4706",
-    underlyings: [underlying(assets, assetSymbols.USDs), underlying(assets, assetSymbols.saddleFraxBP)]
-  },
-  {
-    lpToken: underlying(assets, assetSymbols.saddleFraxUsdtBP),
-    pool: "0xf8504e92428d65E56e495684A38f679C1B1DC30b",
-    underlyings: [underlying(assets, assetSymbols.USDT), underlying(assets, assetSymbols.saddleFraxBP)]
-  }
-];
+const curvePools: CurvePoolConfig[] = [];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
@@ -206,16 +185,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     curvePools
   });
 
-  //// Saddle LP Oracle
-  await deploySaddleLpOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    saddlePools
-  });
-
   // Quoter
   const quoter = await deployments.deploy("Quoter", {
     from: deployer,
@@ -237,37 +206,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
-
-  //// Saddle Lp token liquidator
-  const saddleLpTokenLiquidator = await deployments.deploy("SaddleLpTokenLiquidator", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  if (saddleLpTokenLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(saddleLpTokenLiquidator.transactionHash);
-  console.log("SaddleLpTokenLiquidator: ", saddleLpTokenLiquidator.address);
-
-  // CurveSwapLiquidator
-  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  if (curveSwapLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
-  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
-
-  //// Uniswap Lp token liquidator
-  const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
   //// Uniswap V3 Liquidator Funder
   const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
@@ -299,17 +237,4 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (balancerSwapTokenLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(balancerSwapTokenLiquidator.transactionHash);
   console.log("BalancerSwapLiquidator: ", balancerSwapTokenLiquidator.address);
-
-  ////
-
-  // Plugins & Rewards
-  //   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
-  //     ethers,
-  //     getNamedAccounts,
-  //     deployments,
-  //     run,
-  //     deployConfig,
-  //   });
-
-  //   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 };
