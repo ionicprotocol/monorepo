@@ -233,7 +233,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as IonicPoolData[];
     }
 
-    async isAuth(pool: string, role: Roles) {
+    async isAuth(pool: string, role: Roles, user: string) {
       const authRegistry = this.createAuthoritiesRegistry();
       const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
 
@@ -244,9 +244,8 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       }
 
       const poolAuth = this.createPoolRolesAuthority(poolAuthAddress);
-      const signerAddress = await this.signer.getAddress();
 
-      return await poolAuth.callStatic.doesUserHaveRole(signerAddress, role);
+      return await poolAuth.callStatic.doesUserHaveRole(user, role);
     }
   };
 }
