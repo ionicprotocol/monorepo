@@ -16,11 +16,12 @@ import {
 } from '@chakra-ui/react';
 import { WETHAbi } from '@ionicprotocol/sdk';
 import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
+import { Roles } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
@@ -42,6 +43,7 @@ import {
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useIsAuth } from '@ui/hooks/pools/useIsAuth';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
@@ -87,6 +89,7 @@ export const LendSupply = ({
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
     chainId
   );
+  const { data: isAuth } = useIsAuth(comptroller, Roles.SUPPLIER_ROLE, chainId);
   const { data: supplyCap } = useSupplyCap({
     chainId,
     comptroller,
@@ -116,6 +119,10 @@ export const LendSupply = ({
     selectedAsset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
+
+  const isDisabled = useMemo(() => {
+    return isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid || !isAuth;
+  }, [isLoading, activeStep.index, optionToWrap, isAmountValid, isAuth]);
 
   useEffect(() => {
     if (optionToWrap) {
@@ -649,19 +656,24 @@ export const LendSupply = ({
             body={
               <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
                 <BsExclamationCircle fontWeight={'bold'} size={'16px'} strokeWidth={'0.4px'} />
-                <Text variant={'inherit'}>Amount is invalid</Text>
+                <Text variant={'inherit'}>
+                  {!isAuth
+                    ? 'You are not authorized. Please contact admin to supply'
+                    : !isAmountValid
+                    ? 'Amount is invalid'
+                    : ''}
+                </Text>
               </Flex>
             }
             bodyProps={{ p: 0 }}
             boxProps={{ width: '100%' }}
             popoverProps={{ placement: 'top', variant: 'warning' }}
-            visible={!isAmountValid}
+            visible={!isAmountValid || !isAuth}
           >
             <Button
-              isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid}
               isLoading={activeStep.index === 3 && isLoading}
-              onClick={isAmountValid ? onSupply : undefined}
-              variant={getVariant(steps[optionToWrap ? 2 : 1]?.status)}
+              onClick={!isDisabled ? onSupply : undefined}
+              variant={!isDisabled ? getVariant(steps[optionToWrap ? 2 : 1]?.status) : 'solidGray'}
               width={'100%'}
             >
               Supply {selectedAsset.underlyingSymbol}
