@@ -237,7 +237,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       const authRegistry = this.createAuthoritiesRegistry();
       const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
 
-      if (poolAuthAddress === constants.AddressZero) {
+      if (poolAuthAddress === constants.AddressZero && this.chainId !== SupportedChains.neon) {
         console.log(`Pool authority for pool ${pool} does not exist`);
 
         return false;
