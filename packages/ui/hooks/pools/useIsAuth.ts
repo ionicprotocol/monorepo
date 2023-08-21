@@ -12,7 +12,7 @@ export const useIsAuth = (pool?: string, role?: Roles, chainId?: number) => {
   return useQuery(
     ['useIsAuth', sdk?.chainId, pool, role, address],
     async () => {
-      if (sdk && pool && role) {
+      if (sdk && pool && role && address) {
         return await sdk.isAuth(pool, role, address);
       }
 
