@@ -21,7 +21,7 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
@@ -119,10 +119,6 @@ export const LendSupply = ({
     selectedAsset.underlyingToken === currentSdk?.chainSpecificAddresses.W_TOKEN &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
-
-  const isDisabled = useMemo(() => {
-    return isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid || !isAuth;
-  }, [isLoading, activeStep.index, optionToWrap, isAmountValid, isAuth]);
 
   useEffect(() => {
     if (optionToWrap) {
@@ -631,26 +627,71 @@ export const LendSupply = ({
       ) : null}
       <Flex gap={'12px'} justifyContent={'column'} mt={{ base: '10px' }}>
         {optionToWrap ? (
-          <Button
-            flex={1}
-            isDisabled={isLoading || !isAmountValid}
-            isLoading={activeStep.index === 1 && isLoading}
-            onClick={onWrapNativeToken}
-            variant={getVariant(steps[0].status)}
-          >
-            {steps[0].status === COMPLETE ? 'Wrapped' : 'Wrap Native Token'}
-          </Button>
+          <Flex flex={1}>
+            <PopoverTooltip
+              body={
+                <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
+                  <BsExclamationCircle fontWeight={'bold'} size={'20px'} strokeWidth={'0.4px'} />
+                  <Text variant={'inherit'}>
+                    {'You are not authorized. Please contact admin to supply'}
+                  </Text>
+                </Flex>
+              }
+              bodyProps={{ p: 0 }}
+              boxProps={{ width: '100%' }}
+              popoverProps={{ placement: 'top', variant: 'warning' }}
+              visible={!isAuth}
+            >
+              <Button
+                flex={1}
+                isLoading={activeStep.index === 1 && isLoading}
+                onClick={isAuth && !isLoading && isAmountValid ? onWrapNativeToken : undefined}
+                variant={
+                  isAuth && !isLoading && isAmountValid ? getVariant(steps[0].status) : 'solidGray'
+                }
+                width={'100%'}
+              >
+                {steps[0].status === COMPLETE ? 'Wrapped' : 'Wrap Native Token'}
+              </Button>
+            </PopoverTooltip>
+          </Flex>
         ) : null}
-        <Button
-          flex={1}
-          isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1) || !isAmountValid}
-          isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
-          onClick={onApprove}
-          variant={getVariant(steps[optionToWrap ? 1 : 0]?.status)}
-        >
-          {steps[optionToWrap ? 1 : 0].status !== COMPLETE ? `Approve ` : 'Approved'}{' '}
-          {selectedAsset.underlyingSymbol}
-        </Button>
+        <Flex flex={1}>
+          <PopoverTooltip
+            body={
+              <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
+                <BsExclamationCircle fontWeight={'bold'} size={'20px'} strokeWidth={'0.4px'} />
+                <Text variant={'inherit'}>
+                  {'You are not authorized. Please contact admin to supply'}
+                </Text>
+              </Flex>
+            }
+            bodyProps={{ p: 0 }}
+            boxProps={{ width: '100%' }}
+            popoverProps={{ placement: 'top', variant: 'warning' }}
+            visible={!isAuth}
+          >
+            <Button
+              flex={1}
+              isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
+              onClick={
+                isAuth && !isLoading && activeStep.index >= (optionToWrap ? 2 : 1) && isAmountValid
+                  ? onApprove
+                  : undefined
+              }
+              variant={
+                isAuth && !isLoading && activeStep.index >= (optionToWrap ? 2 : 1) && isAmountValid
+                  ? getVariant(steps[optionToWrap ? 1 : 0]?.status)
+                  : 'solidGray'
+              }
+              width={'100%'}
+            >
+              {steps[optionToWrap ? 1 : 0].status !== COMPLETE ? `Approve ` : 'Approved'}{' '}
+              {selectedAsset.underlyingSymbol}
+            </Button>
+          </PopoverTooltip>
+        </Flex>
+
         <Flex flex={1}>
           <PopoverTooltip
             body={
@@ -672,8 +713,16 @@ export const LendSupply = ({
           >
             <Button
               isLoading={activeStep.index === 3 && isLoading}
-              onClick={!isDisabled ? onSupply : undefined}
-              variant={!isDisabled ? getVariant(steps[optionToWrap ? 2 : 1]?.status) : 'solidGray'}
+              onClick={
+                !isLoading && activeStep.index === (optionToWrap ? 3 : 2) && isAmountValid && isAuth
+                  ? onSupply
+                  : undefined
+              }
+              variant={
+                !isLoading && activeStep.index === (optionToWrap ? 3 : 2) && isAmountValid && isAuth
+                  ? getVariant(steps[optionToWrap ? 2 : 1]?.status)
+                  : 'solidGray'
+              }
               width={'100%'}
             >
               Supply {selectedAsset.underlyingSymbol}
