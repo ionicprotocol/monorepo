@@ -3,6 +3,7 @@ import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
   NativePricedIonicAsset,
+  Roles,
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
@@ -12,6 +13,8 @@ import { IonicBaseConstructor } from "..";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 import { PoolLens } from "../../typechain/PoolLens";
 import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
+
+import { CreateContractsModule } from "./CreateContracts";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
@@ -32,7 +35,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.zkevm]: zkevm.assets
 };
 
-export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
+export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class IonicPools extends Base {
     async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<IonicPoolData | null> {
       const {
@@ -228,6 +231,22 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
       const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));
 
       return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as IonicPoolData[];
+    }
+
+    async isAuth(pool: string, role: Roles) {
+      const authRegistry = this.createAuthoritiesRegistry();
+      const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
+
+      if (poolAuthAddress === constants.AddressZero) {
+        console.log(`Pool authority for pool ${pool} does not exist`);
+
+        return false;
+      }
+
+      const poolAuth = this.createPoolRolesAuthority(poolAuthAddress);
+      const signerAddress = await this.signer.getAddress();
+
+      return await poolAuth.callStatic.doesUserHaveRole(signerAddress, role);
     }
   };
 }

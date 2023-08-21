@@ -406,3 +406,11 @@ export enum assetSymbols {
 
   TDAI = "TDAI"
 }
+
+export enum Roles {
+  REGISTRY_ROLE,
+  SUPPLIER_ROLE,
+  BORROWER_ROLE,
+  LIQUIDATOR_ROLE,
+  LEVERED_POSITION_ROLE
+}
