@@ -395,15 +395,19 @@ export const Borrow = ({
         <PopoverTooltip
           body={
             <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
-              <BsExclamationCircle fontWeight={'bold'} size={'36px'} strokeWidth={'0.4px'} />
+              <BsExclamationCircle fontWeight={'bold'} size={'20px'} strokeWidth={'0.4px'} />
               <Text variant={'inherit'}>
-                You are not authorized. Please contact admin to borrow
+                {!isAuth
+                  ? 'You are not authorized. Please contact admin to borrow'
+                  : !isAmountValid
+                  ? 'Amount is invalid'
+                  : ''}
               </Text>
             </Flex>
           }
           bodyProps={{ p: 0 }}
           popoverProps={{ placement: 'top', variant: 'warning' }}
-          visible={!isAuth}
+          visible={!isAuth || !isAmountValid}
           width={'100%'}
         >
           <Button

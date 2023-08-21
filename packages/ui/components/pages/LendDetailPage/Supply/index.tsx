@@ -655,7 +655,7 @@ export const LendSupply = ({
           <PopoverTooltip
             body={
               <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
-                <BsExclamationCircle fontWeight={'bold'} size={'16px'} strokeWidth={'0.4px'} />
+                <BsExclamationCircle fontWeight={'bold'} size={'20px'} strokeWidth={'0.4px'} />
                 <Text variant={'inherit'}>
                   {!isAuth
                     ? 'You are not authorized. Please contact admin to supply'
