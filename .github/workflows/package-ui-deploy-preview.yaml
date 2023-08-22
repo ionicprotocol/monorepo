@@ -3,7 +3,7 @@ name: UI - deploy UI
 on:
   pull_request:
     branches: [main, development]
-    types: [labeled, opened,synchronize,reopened]
+    types: [labeled, opened, synchronize, reopened]
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
@@ -43,6 +43,6 @@ jobs:
 
       - name: Deploy `Preview`
         run: |
-          netlify link --id ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
+          netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
           netlify deploy --prod --build --context preview
 
