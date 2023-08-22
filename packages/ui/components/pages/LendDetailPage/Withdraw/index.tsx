@@ -366,7 +366,7 @@ export const LendWithdraw = ({
             <Text variant={'itemDesc'}>
               {isTotalSupplyApyLoading
                 ? 'Supply Apr'
-                : totalSupplyApyPerAsset
+                : totalSupplyApyPerAsset && totalSupplyApyPerAsset[selectedAsset.cToken]
                 ? totalSupplyApyPerAsset[selectedAsset.cToken].totalApy
                 : '--'}{' '}
               %
