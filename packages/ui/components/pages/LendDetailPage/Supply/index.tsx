@@ -89,7 +89,12 @@ export const LendSupply = ({
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
     chainId
   );
-  const { data: isAuth } = useIsAuth(comptroller, Roles.SUPPLIER_ROLE, chainId);
+  const { data: isAuth } = useIsAuth(
+    comptroller,
+    selectedAsset.cToken,
+    Roles.SUPPLIER_ROLE,
+    chainId
+  );
   const { data: supplyCap } = useSupplyCap({
     chainId,
     comptroller,

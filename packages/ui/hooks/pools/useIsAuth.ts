@@ -5,21 +5,21 @@ import { useSdk } from '../ionic/useSdk';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export const useIsAuth = (pool?: string, role?: Roles, chainId?: number) => {
+export const useIsAuth = (pool?: string, market?: string, role?: Roles, chainId?: number) => {
   const sdk = useSdk(chainId);
   const { address } = useMultiIonic();
 
   return useQuery(
     ['useIsAuth', sdk?.chainId, pool, role, address],
     async () => {
-      if (sdk && pool && role && address) {
-        return await sdk.isAuth(pool, role, address);
+      if (sdk && pool && role && address && market) {
+        return await sdk.isAuth(pool, market, role, address);
       }
 
       return null;
     },
     {
-      enabled: !!pool && !!role && !!chainId && !!address
+      enabled: !!pool && !!role && !!chainId && !!address && !!market
     }
   );
 };

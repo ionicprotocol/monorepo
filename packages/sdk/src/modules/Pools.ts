@@ -233,7 +233,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as IonicPoolData[];
     }
 
-    async isAuth(pool: string, role: Roles, user: string) {
+    async isAuth(pool: string, market: string, role: Roles, user: string) {
       const authRegistry = this.createAuthoritiesRegistry();
       const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
 
@@ -245,6 +245,17 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 
       const poolAuth = this.createPoolRolesAuthority(poolAuthAddress);
 
+      // let's check if it's public
+      const cToken = this.createICErc20(market);
+      const func = cToken.interface.getFunction("mint");
+      const selectorHash = cToken.interface.getSighash(func);
+      const isPublic = await poolAuth.callStatic.isCapabilityPublic(market, selectorHash);
+
+      if (isPublic) {
+        return true;
+      }
+
+      // if not public, check role
       return await poolAuth.callStatic.doesUserHaveRole(user, role);
     }
   };

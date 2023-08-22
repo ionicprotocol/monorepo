@@ -66,7 +66,12 @@ export const Borrow = ({
     comptroller,
     chainId
   );
-  const { data: isAuth } = useIsAuth(comptroller, Roles.BORROWER_ROLE, chainId);
+  const { data: isAuth } = useIsAuth(
+    comptroller,
+    selectedAsset.cToken,
+    Roles.BORROWER_ROLE,
+    chainId
+  );
   const { data: borrowApyPerAsset, isLoading: isBorrowApyLoading } = useBorrowAPYs(assets, chainId);
   const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS(selectedAsset.underlyingSymbol)]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
