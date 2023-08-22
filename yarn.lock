@@ -12894,7 +12894,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"destr@npm:^2.0.0, destr@npm:^2.0.1":
+"destr@npm:^2.0.1":
   version: 2.0.1
   resolution: "destr@npm:2.0.1"
   checksum: 2016d9e83e0a714d587ee2f85b9792a5ebf8dcb20cec133fd16adb898467a16ce8090ff7450bf55aee7b83e6ab53a69008f3b6ee8cc1bc8b04f6f3b99945c36d
@@ -21187,10 +21187,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch-native@npm:^1.1.1, node-fetch-native@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "node-fetch-native@npm:1.2.0"
-  checksum: f18d775523fc25b9fbec05a1da99cbf40214045bcaca82c8fd949b99148890c3cead4ab1764e26a92af600d14884d846481bcebf82d56815210624f836051a10
+"node-fetch-native@npm:^1.1.1, node-fetch-native@npm:^1.2.0, node-fetch-native@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "node-fetch-native@npm:1.3.0"
+  checksum: 5d033dafb8cc92b33c6be587c2b703e5242f426daf37b276a35d8af583d71db47d383c16cac6910d88495c9a94c51c14643a8bb9245632d920dc72f33b7f483c
   languageName: node
   linkType: hard
 
@@ -21657,13 +21657,13 @@ __metadata:
   linkType: hard
 
 "ofetch@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "ofetch@npm:1.1.1"
+  version: 1.2.0
+  resolution: "ofetch@npm:1.2.0"
   dependencies:
-    destr: ^2.0.0
-    node-fetch-native: ^1.2.0
-    ufo: ^1.1.2
-  checksum: 93d3e10f1ebcc0f1da69ee9cfd38b2f8818ce849ec3b6bf803351a6175adf6a5565cb130b7dcabd3a639bfe27589f5f84ac0ee4fd294855567d879a0e1f38484
+    destr: ^2.0.1
+    node-fetch-native: ^1.3.0
+    ufo: ^1.2.0
+  checksum: 772f820ce27864574f6101d6da9a5c96ad3834d52b89cd3512263f0bf5d53fbd1e63d1a13fe6af98eea301d811bfbcd279af9a3843d4b489942a2423ee9c4e62
   languageName: node
   linkType: hard
 
@@ -26805,15 +26805,15 @@ __metadata:
   linkType: hard
 
 "unenv@npm:^1.7.1":
-  version: 1.7.1
-  resolution: "unenv@npm:1.7.1"
+  version: 1.7.2
+  resolution: "unenv@npm:1.7.2"
   dependencies:
     consola: ^3.2.3
     defu: ^6.1.2
     mime: ^3.0.0
     node-fetch-native: ^1.2.0
     pathe: ^1.1.1
-  checksum: 84f7b4cd932cbd6e9b81dd7848cfc986afddb75d93126eb15dbe9bd8696138a3fe935c7470781157a76fd290bbd0d3188ada4c1182421582d050b8f5e0be242b
+  checksum: 13a23fb36780d806da3a63fd2149babd437a56d839c3c8b6f2e9cfd77a45a9cc10d9e6e6b545c775c455a03a97638766d8decd688f8b720bc7a8523d42b53c2b
   languageName: node
   linkType: hard
 
