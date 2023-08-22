@@ -93,8 +93,10 @@ export const InterestRateModel = ({
 
     try {
       const tx: ContractTransaction = await testForCTokenErrorAndSend(
+        // @ts-ignore
         cToken.callStatic._setInterestRateModel,
         interestRateModel,
+        // @ts-ignore
         cToken._setInterestRateModel,
         ''
       );
