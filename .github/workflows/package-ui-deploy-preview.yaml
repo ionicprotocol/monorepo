@@ -44,4 +44,4 @@ jobs:
       - name: Deploy `Preview`
         run: |
           netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
-          netlify deploy --prod --build --context preview
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context preview
