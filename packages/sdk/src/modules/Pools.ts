@@ -9,7 +9,6 @@ import {
 } from "@ionicprotocol/types";
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
-import { IonicBaseConstructor } from "..";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 import { PoolLens } from "../../typechain/PoolLens";
 import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
