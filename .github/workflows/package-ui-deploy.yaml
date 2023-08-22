@@ -42,11 +42,11 @@ jobs:
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development'
         run: |
-          netlify link --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
-          netlify deploy --prod --build --context development
+          netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context development
 
       - name: Deploy `Production`
         if: github.ref == 'refs/heads/main'
         run: |
-          netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
-          netlify deploy --prod --build --context production
+          netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID }}
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context production
