@@ -12,6 +12,7 @@ export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
         try {
           const cToken = sdk.createICErc20(cTokenAddress);
 
+          // @ts-ignore
           const irm = await cToken.callStatic.interestRateModel();
 
           return irm;
