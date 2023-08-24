@@ -1,6 +1,5 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Divider,
   Flex,
@@ -18,7 +17,8 @@ import {
   StepIndicator,
   Stepper,
   StepSeparator,
-  Text
+  Text,
+  VStack
 } from '@chakra-ui/react';
 import { WETHAbi } from '@ionicprotocol/sdk';
 import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
@@ -29,12 +29,13 @@ import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { BsCheck, BsExclamationCircle, BsX } from 'react-icons/bs';
+import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { getVariant } from '@ui/components/pages/PoolPage/AssetsToSupply/Supply/Modal/index';
 import { RepayError } from '@ui/components/pages/PoolPage/YourBorrows/Repay/Modal/RepayError';
+import { CButton } from '@ui/components/shared/Button';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Center } from '@ui/components/shared/Flex';
-import { IonicModal } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import {
@@ -55,28 +56,20 @@ import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import type { TxStep } from '@ui/types/ComponentPropsType';
-import type { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { smallFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
-interface RepayModalProps {
-  asset: MarketData;
-  assets: MarketData[];
-  chainId: number;
-  comptrollerAddress: string;
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const RepayModal = ({
-  isOpen,
-  asset,
-  assets,
-  comptrollerAddress,
-  onClose,
-  chainId
-}: RepayModalProps) => {
+export const RepayTab = ({
+  poolData,
+  selectedAsset,
+  setSelectedAsset
+}: {
+  poolData: PoolData;
+  selectedAsset: MarketData;
+  setSelectedAsset: (asset: MarketData) => void;
+}) => {
   const {
     underlyingDecimals,
     underlyingPrice,
@@ -84,7 +77,9 @@ export const RepayModal = ({
     underlyingSymbol,
     cToken,
     borrowBalance
-  } = asset;
+  } = selectedAsset;
+  const { comptroller, chainId, assets: _assets } = poolData;
+  const assets = _assets.filter((asset) => asset.borrowBalance.gt(constants.Zero));
 
   const errorToast = useErrorToast();
   const addRecentTransaction = useAddRecentTransaction();
@@ -95,7 +90,7 @@ export const RepayModal = ({
   const { cIPage, cGreen } = useColors();
   const { currentSdk, address } = useMultiIonic();
   const { data: price } = useUsdPrice(chainId.toString());
-  const { data: maxRepayAmount } = useMaxRepayAmount(asset, chainId);
+  const { data: maxRepayAmount } = useMaxRepayAmount(selectedAsset, chainId);
   const { data: myBalance } = useTokenBalance(underlyingToken, chainId);
   const { data: myNativeBalance } = useTokenBalance(
     'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS',
@@ -213,7 +208,7 @@ export const RepayModal = ({
     } catch (error) {
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
+        comptroller,
         token: cToken
       };
       const sentryInfo = {
@@ -281,7 +276,7 @@ export const RepayModal = ({
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
+        comptroller,
         token: cToken
       };
       const sentryInfo = {
@@ -365,7 +360,7 @@ export const RepayModal = ({
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
+        comptroller,
         token: cToken
       };
 
@@ -443,7 +438,7 @@ export const RepayModal = ({
 
       const sentryProperties = {
         chainId: currentSdk.chainId,
-        comptroller: comptrollerAddress,
+        comptroller,
         token: cToken
       };
 
@@ -468,256 +463,278 @@ export const RepayModal = ({
   }, [optionToWrap, underlyingSymbol]);
 
   return (
-    <IonicModal
-      body={
-        <Flex direction="column" gap={{ base: '10px' }}>
-          <Flex direction="column" gap={{ base: '4px' }}>
-            <Flex justifyContent={'space-between'}>
-              <Text size={'md'} textTransform="uppercase">
-                Amount
-              </Text>
+    <Flex direction="column" gap={{ base: '10px' }}>
+      <Flex direction="column" gap={{ base: '4px' }}>
+        <Flex justifyContent={'space-between'}>
+          <Text size={'md'} textTransform="uppercase">
+            Amount
+          </Text>
+          <HStack>
+            <Text size={'sm'}>{optionToWrap ? 'Wallet Native Balance: ' : 'Wallet Balance: '}</Text>
+            <Text size={'sm'}>
+              {optionToWrap
+                ? myNativeBalance
+                  ? utils.formatUnits(myNativeBalance, underlyingDecimals)
+                  : 0
+                : myBalance
+                ? smallFormatter(Number(utils.formatUnits(myBalance, underlyingDecimals)), true)
+                : 0}
+            </Text>
+            <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
+              MAX
+            </Button>
+          </HStack>
+        </Flex>
+        <Flex>
+          <Input
+            autoFocus
+            inputMode="decimal"
+            onChange={(event) => updateAmount(event.target.value)}
+            placeholder="0.0"
+            size={'xl'}
+            type="number"
+            value={userEnteredAmount}
+            variant="ghost"
+          />
+          <PopoverTooltip
+            body={
+              <VStack alignItems="flex-start" p={0}>
+                {assets.map((asset, i) => {
+                  return (
+                    <CButton
+                      height={'inherit'}
+                      isSelected={asset.cToken === cToken}
+                      key={i}
+                      onClick={() => {
+                        setSelectedAsset(asset);
+                      }}
+                      p={0}
+                      variant="_filter"
+                    >
+                      <HStack>
+                        <TokenIcon
+                          address={asset.underlyingToken}
+                          chainId={chainId}
+                          size="sm"
+                          withMotion={false}
+                        />
+                        <Flex alignSelf={'center'}>
+                          <EllipsisText
+                            fontWeight="bold"
+                            maxWidth="80px"
+                            mr={2}
+                            size="md"
+                            tooltip={asset.underlyingSymbol}
+                            variant={'inherit'}
+                          >
+                            {asset.underlyingSymbol}
+                          </EllipsisText>
+                        </Flex>
+                      </HStack>
+                    </CButton>
+                  );
+                })}
+              </VStack>
+            }
+            bodyProps={{ p: 0 }}
+            popoverProps={{ placement: 'bottom-end', trigger: 'click' }}
+          >
+            <Button aria-label="Column Settings" p={0}>
               <HStack>
-                <Text size={'sm'}>
-                  {optionToWrap ? 'Wallet Native Balance: ' : 'Wallet Balance: '}
-                </Text>
-                <Text size={'sm'}>
-                  {optionToWrap
-                    ? myNativeBalance
-                      ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
-                      : 0
-                    : myBalance
-                    ? smallFormatter(
-                        Number(utils.formatUnits(myBalance, asset.underlyingDecimals)),
-                        true
-                      )
-                    : 0}
-                </Text>
-                <Button color={'iGreen'} isLoading={isLoading} onClick={setToMax} variant={'ghost'}>
-                  MAX
-                </Button>
-              </HStack>
-            </Flex>
-            <Flex>
-              <Input
-                autoFocus
-                inputMode="decimal"
-                onChange={(event) => updateAmount(event.target.value)}
-                placeholder="0.0"
-                size={'xl'}
-                type="number"
-                value={userEnteredAmount}
-                variant="ghost"
-              />
-              <Box height={8} mr={1} width={8}>
                 <TokenIcon
                   address={underlyingToken}
                   chainId={chainId}
                   size="sm"
                   withMotion={false}
                 />
-              </Box>
-              <Flex alignSelf={'center'}>
-                <EllipsisText
-                  fontWeight="bold"
-                  maxWidth="80px"
-                  mr={2}
-                  size="md"
-                  tooltip={underlyingSymbol}
-                >
-                  {underlyingSymbol}
-                </EllipsisText>
-              </Flex>
-            </Flex>
-            <Flex justifyContent={'space-between'}>
-              <Text color={'iGray'}>{smallUsdFormatter(usdAmount)}</Text>
-            </Flex>
-            <Slider value={0} variant={'green'}>
-              <SliderMark ml={'0px'} value={0}>
-                0%
-              </SliderMark>
-              <SliderMark ml={'0px'} value={25}>
-                25%
-              </SliderMark>
-              <SliderMark value={50}>50%</SliderMark>
-              <SliderMark value={75}>75%</SliderMark>
-              <SliderMark ml={'-35px'} value={100}>
-                100%
-              </SliderMark>
-              <SliderTrack>
-                <SliderFilledTrack />
-              </SliderTrack>
-              <SliderThumb zIndex={2} />
-            </Slider>
-          </Flex>
-          <Center height={'1px'} my={'10px'}>
-            <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
-          </Center>
-          <Flex direction="column" gap={{ base: '8px' }}>
-            <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Currently Borrowing</Text>
-              <Skeleton isLoaded={true}>
-                <Text variant={'itemDesc'}>0.50</Text>
-              </Skeleton>
-            </Flex>
-            <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Borrow Apr</Text>
-              <Skeleton isLoaded={true}>
-                <Text variant={'itemDesc'}>4.10%</Text>
-              </Skeleton>
-            </Flex>
-          </Flex>
-          <Center height={'1px'} my={'10px'}>
-            <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
-          </Center>
-          <Flex direction="column" gap={{ base: '10px' }}>
-            <Flex flexDir={'column'} gap={'40px'}>
-              <HStack>
-                <Text variant={'itemTitle'}>Borrowing Utilization</Text>
-                <InfoOutlineIcon
-                  color={'iLightGray'}
-                  height="fit-content"
-                  ml={1}
-                  verticalAlign="baseLine"
-                />
+                <Flex alignSelf={'center'}>
+                  <EllipsisText
+                    fontWeight="bold"
+                    maxWidth="80px"
+                    size="md"
+                    tooltip={underlyingSymbol}
+                  >
+                    {underlyingSymbol}
+                  </EllipsisText>
+                </Flex>
+                <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
               </HStack>
-              <Slider max={100} min={60} value={75} variant={'yellow'}>
-                <SliderMark ml={'0px'} value={60}>
-                  60%
-                </SliderMark>
-                <SliderMark value={80}>80%</SliderMark>
-                <SliderMark ml={'-35px'} value={100}>
-                  100%
-                </SliderMark>
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb zIndex={2} />
-              </Slider>
-            </Flex>
-          </Flex>
-          <Center height={'1px'} my={'10px'}>
-            <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
-          </Center>
-          <Flex direction="column" gap={{ base: '8px' }}>
-            <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Collateral Balance ({underlyingSymbol})</Text>
-              <Text variant={'itemDesc'}>1.0000031</Text>
-            </Flex>
-            <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Borrow Limit</Text>
-              <HStack>
-                <Text variant={'itemDesc'}>{smallUsdFormatter(totalBorrows)} </Text>
-                <Text color={'iLightGray'}>
-                  (max {borrowLimitTotal !== undefined ? smallUsdFormatter(borrowLimitTotal) : '--'}
-                </Text>
-                <Text variant={'itemDesc'}>➡</Text>
-                <Text color={'iLightGray'}>
-                  {updatedBorrowLimitTotal !== undefined
-                    ? smallUsdFormatter(updatedBorrowLimitTotal)
-                    : '--'}
-                  )
-                </Text>
-              </HStack>
-            </Flex>
-            <Flex justifyContent={'space-between'}>
-              <Text variant={'itemTitle'}>Daily Earnings</Text>
-              <Text variant={'itemDesc'}>{`<$0.01`}</Text>
-            </Flex>
-          </Flex>
-          <Flex gap={'12px'} justifyContent={'column'} mt={{ base: '10px' }}>
-            {optionToWrap ? (
-              <Button
-                flex={1}
-                isDisabled={isLoading || !isAmountValid}
-                isLoading={activeStep.index === 1 && isLoading}
-                onClick={onWrapNativeToken}
-                variant={getVariant(steps[0].status)}
-              >
-                Wrap Native Token
-              </Button>
-            ) : null}
-            <Button
-              flex={1}
-              isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1) || !isAmountValid}
-              isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
-              onClick={onApprove}
-              variant={getVariant(steps[optionToWrap ? 1 : 0].status)}
-            >
-              {activeStep.index === (optionToWrap ? 2 : 1) ? `Approve ` : 'Approved'}{' '}
-              {underlyingSymbol}
             </Button>
-            <Flex flex={1}>
-              <PopoverTooltip
-                body={
-                  <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
-                    <BsExclamationCircle fontWeight={'bold'} size={'16px'} strokeWidth={'0.4px'} />
-                    <Text variant={'inherit'}>Amount is invalid</Text>
-                  </Flex>
-                }
-                bodyProps={{ p: 0 }}
-                boxProps={{ width: '100%' }}
-                popoverProps={{ placement: 'top', variant: 'warning' }}
-                visible={!isAmountValid}
-              >
-                <Button
-                  isDisabled={
-                    isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid
-                  }
-                  isLoading={activeStep.index === 3 && isLoading}
-                  onClick={isAmountValid ? onRepay : undefined}
-                  variant={getVariant(steps[optionToWrap ? 2 : 1].status)}
-                  width={'100%'}
-                >
-                  Repay {underlyingSymbol}
-                </Button>
-              </PopoverTooltip>
-            </Flex>
-          </Flex>
-          <Flex justifyContent={'center'} mt={'20px'}>
-            <Stepper index={activeStep.index} variant={'green'} width={'400px'}>
-              {steps.map((step, index) => (
-                <Step key={index}>
-                  <StepIndicator data-value={step.status}>
-                    {step.status === 'active' ? (
-                      <Flex>
-                        <Spinner
-                          borderWidth={2}
-                          color={cGreen}
-                          height={{ base: '32px' }}
-                          left={0}
-                          position={'absolute'}
-                          top={0}
-                          width={{ base: '32px' }}
-                        />
-                        <Text>{index + 1}</Text>
-                      </Flex>
-                    ) : step.status === 'complete' ? (
-                      <Icon as={BsCheck} height={'24px'} width={'24px'} />
-                    ) : step.status === 'failed' ? (
-                      <Icon as={BsX} height={'24px'} width={'24px'} />
-                    ) : (
-                      <Text>{index + 1}</Text>
-                    )}
-                  </StepIndicator>
-                  <StepSeparator data-value={step.status} />
-                </Step>
-              ))}
-            </Stepper>
-          </Flex>
+          </PopoverTooltip>
         </Flex>
-      }
-      header={<Text size={'inherit'}>Repay {underlyingSymbol}</Text>}
-      isOpen={isOpen}
-      modalCloseButtonProps={{ hidden: isLoading }}
-      onClose={() => {
-        onClose();
-
-        if (!isLoading) {
-          setUserEnteredAmount('');
-          setAmount(constants.Zero);
-          setSteps([...REPAY_STEPS(underlyingSymbol)]);
-        }
-      }}
-    />
+        <Flex justifyContent={'space-between'}>
+          <Text color={'iGray'}>{smallUsdFormatter(usdAmount)}</Text>
+        </Flex>
+        <Slider value={0} variant={'green'}>
+          <SliderMark ml={'0px'} value={0}>
+            0%
+          </SliderMark>
+          <SliderMark ml={'0px'} value={25}>
+            25%
+          </SliderMark>
+          <SliderMark value={50}>50%</SliderMark>
+          <SliderMark value={75}>75%</SliderMark>
+          <SliderMark ml={'-35px'} value={100}>
+            100%
+          </SliderMark>
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb zIndex={2} />
+        </Slider>
+      </Flex>
+      <Center height={'1px'} my={'10px'}>
+        <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
+      </Center>
+      <Flex direction="column" gap={{ base: '8px' }}>
+        <Flex justifyContent={'space-between'}>
+          <Text variant={'itemTitle'}>Currently Borrowing</Text>
+          <Skeleton isLoaded={true}>
+            <Text variant={'itemDesc'}>0.50</Text>
+          </Skeleton>
+        </Flex>
+        <Flex justifyContent={'space-between'}>
+          <Text variant={'itemTitle'}>Borrow Apr</Text>
+          <Skeleton isLoaded={true}>
+            <Text variant={'itemDesc'}>4.10%</Text>
+          </Skeleton>
+        </Flex>
+      </Flex>
+      <Center height={'1px'} my={'10px'}>
+        <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
+      </Center>
+      <Flex direction="column" gap={{ base: '10px' }}>
+        <Flex flexDir={'column'} gap={'40px'}>
+          <HStack>
+            <Text variant={'itemTitle'}>Borrowing Utilization</Text>
+            <InfoOutlineIcon
+              color={'iLightGray'}
+              height="fit-content"
+              ml={1}
+              verticalAlign="baseLine"
+            />
+          </HStack>
+          <Slider max={100} min={60} value={75} variant={'yellow'}>
+            <SliderMark ml={'0px'} value={60}>
+              60%
+            </SliderMark>
+            <SliderMark value={80}>80%</SliderMark>
+            <SliderMark ml={'-35px'} value={100}>
+              100%
+            </SliderMark>
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb zIndex={2} />
+          </Slider>
+        </Flex>
+      </Flex>
+      <Center height={'1px'} my={'10px'}>
+        <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
+      </Center>
+      <Flex direction="column" gap={{ base: '8px' }}>
+        <Flex justifyContent={'space-between'}>
+          <Text variant={'itemTitle'}>Collateral Balance ({underlyingSymbol})</Text>
+          <Text variant={'itemDesc'}>1.0000031</Text>
+        </Flex>
+        <Flex justifyContent={'space-between'}>
+          <Text variant={'itemTitle'}>Borrow Limit</Text>
+          <HStack>
+            <Text variant={'itemDesc'}>{smallUsdFormatter(totalBorrows)} </Text>
+            <Text color={'iLightGray'}>
+              (max {borrowLimitTotal !== undefined ? smallUsdFormatter(borrowLimitTotal) : '--'}
+            </Text>
+            <Text variant={'itemDesc'}>➡</Text>
+            <Text color={'iLightGray'}>
+              {updatedBorrowLimitTotal !== undefined
+                ? smallUsdFormatter(updatedBorrowLimitTotal)
+                : '--'}
+              )
+            </Text>
+          </HStack>
+        </Flex>
+        <Flex justifyContent={'space-between'}>
+          <Text variant={'itemTitle'}>Daily Earnings</Text>
+          <Text variant={'itemDesc'}>{`<$0.01`}</Text>
+        </Flex>
+      </Flex>
+      <Flex gap={'12px'} justifyContent={'column'} mt={{ base: '10px' }}>
+        {optionToWrap ? (
+          <Button
+            flex={1}
+            isDisabled={isLoading || !isAmountValid}
+            isLoading={activeStep.index === 1 && isLoading}
+            onClick={onWrapNativeToken}
+            variant={getVariant(steps[0].status)}
+          >
+            Wrap Native Token
+          </Button>
+        ) : null}
+        <Button
+          flex={1}
+          isDisabled={isLoading || activeStep.index < (optionToWrap ? 2 : 1) || !isAmountValid}
+          isLoading={activeStep.index === (optionToWrap ? 2 : 1) && isLoading}
+          onClick={onApprove}
+          variant={getVariant(steps[optionToWrap ? 1 : 0].status)}
+        >
+          {activeStep.index === (optionToWrap ? 2 : 1) ? `Approve ` : 'Approved'} {underlyingSymbol}
+        </Button>
+        <Flex flex={1}>
+          <PopoverTooltip
+            body={
+              <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
+                <BsExclamationCircle fontWeight={'bold'} size={'16px'} strokeWidth={'0.4px'} />
+                <Text variant={'inherit'}>Amount is invalid</Text>
+              </Flex>
+            }
+            bodyProps={{ p: 0 }}
+            boxProps={{ width: '100%' }}
+            popoverProps={{ placement: 'top', variant: 'warning' }}
+            visible={!isAmountValid}
+          >
+            <Button
+              isDisabled={isLoading || activeStep.index < (optionToWrap ? 3 : 2) || !isAmountValid}
+              isLoading={activeStep.index === 3 && isLoading}
+              onClick={isAmountValid ? onRepay : undefined}
+              variant={getVariant(steps[optionToWrap ? 2 : 1].status)}
+              width={'100%'}
+            >
+              Repay {underlyingSymbol}
+            </Button>
+          </PopoverTooltip>
+        </Flex>
+      </Flex>
+      <Flex justifyContent={'center'} mt={'20px'}>
+        <Stepper index={activeStep.index} variant={'green'} width={'400px'}>
+          {steps.map((step, index) => (
+            <Step key={index}>
+              <StepIndicator data-value={step.status}>
+                {step.status === 'active' ? (
+                  <Flex>
+                    <Spinner
+                      borderWidth={2}
+                      color={cGreen}
+                      height={{ base: '32px' }}
+                      left={0}
+                      position={'absolute'}
+                      top={0}
+                      width={{ base: '32px' }}
+                    />
+                    <Text>{index + 1}</Text>
+                  </Flex>
+                ) : step.status === 'complete' ? (
+                  <Icon as={BsCheck} height={'24px'} width={'24px'} />
+                ) : step.status === 'failed' ? (
+                  <Icon as={BsX} height={'24px'} width={'24px'} />
+                ) : (
+                  <Text>{index + 1}</Text>
+                )}
+              </StepIndicator>
+              <StepSeparator data-value={step.status} />
+            </Step>
+          ))}
+        </Stepper>
+      </Flex>
+    </Flex>
   );
 };

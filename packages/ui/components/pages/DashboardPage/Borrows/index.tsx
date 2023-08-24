@@ -39,7 +39,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { Assets } from './Assets';
 import { Available } from './Available';
 import { BorrowBalance } from './BorrowBalance';
-import { Manage } from './Manage';
+import { BorrowManage } from './Manage';
 import { Network } from './Network';
 import { NetworkFilterDropdown } from './NetworkFilterDropdown';
 import { PoolName } from './PoolName';
@@ -252,7 +252,7 @@ export const Borrows = () => {
       },
       {
         cell: ({ row }) => {
-          return <Manage pool={row.getValue(NETWORK)} />;
+          return <BorrowManage poolData={row.getValue(NETWORK)} />;
         },
         header: () => null,
         id: BORROW
