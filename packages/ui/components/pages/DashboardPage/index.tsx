@@ -1,7 +1,5 @@
 import { Flex } from '@chakra-ui/react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useMemo } from 'react';
 
 import { Borrows } from './Borrows';
 import { Claimable } from './Claimable';
@@ -12,20 +10,8 @@ import { NetAssetValue } from './NetAssetValue';
 
 import PageLayout from '@ui/components/pages/Layout/PageLayout';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { usePoolData } from '@ui/hooks/usePoolData';
 
 export const Dashboard = () => {
-  const router = useRouter();
-  const poolId = useMemo(
-    () => (router.isReady ? (router.query.poolId as string) : ''),
-    [router.isReady, router.query.poolId]
-  );
-  const chainId = useMemo(
-    () => (router.isReady ? (router.query.chainId as string) : ''),
-    [router.isReady, router.query.chainId]
-  );
-  const { data: poolData, isLoading: isPoolDataLoading } = usePoolData(poolId, Number(chainId));
-
   return (
     <>
       <Head>
