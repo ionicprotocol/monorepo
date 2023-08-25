@@ -19,7 +19,7 @@ export const Dashboard = () => {
       </Head>
       <PageTransitionLayout>
         <PageLayout>
-          <Flex direction={{ base: 'column', lg: 'row' }} gap={'20px'} mb={'20px'}>
+          <Flex direction={{ base: 'column', lg: 'row' }} gap={'20px'}>
             <Flex flex={2}>
               <NetAssetValue />
             </Flex>
@@ -30,13 +30,13 @@ export const Dashboard = () => {
               <Claimable />
             </Flex>
           </Flex>
-          <Flex mb={'20px'}>
+          <Flex>
             <Borrows />
           </Flex>
-          <Flex mb={'20px'}>
+          <Flex>
             <LendingVaults />
           </Flex>
-          <Flex mb={'20px'}>
+          <Flex>
             <LendingStrategy />
           </Flex>
         </PageLayout>
