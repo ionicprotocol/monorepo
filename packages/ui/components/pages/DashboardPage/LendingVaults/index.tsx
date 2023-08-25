@@ -39,7 +39,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { Assets } from './Assets';
 import { Claim } from './Claim';
 import { Liquidity } from './Liquidity';
-import { Manage } from './Manage';
+import { LendingManage } from './Manage';
 import { Network } from './Network';
 import { NetworkFilterDropdown } from './NetworkFilterDropdown';
 import { PoolName } from './PoolName';
@@ -255,7 +255,7 @@ export const LendingVaults = () => {
           return (
             <HStack>
               <Claim pool={row.getValue(NETWORK)} />
-              <Manage pool={row.getValue(NETWORK)} />
+              <LendingManage poolData={row.getValue(NETWORK)} />
             </HStack>
           );
         },
