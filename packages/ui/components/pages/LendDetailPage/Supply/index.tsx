@@ -409,6 +409,7 @@ export const LendSupply = ({
         await queryClient.refetchQueries({ queryKey: ['useBorrowCapsDataForAsset'] });
         await queryClient.refetchQueries({ queryKey: ['useYourSuppliesRowData'] });
         await queryClient.refetchQueries({ queryKey: ['useAssetsToSupplyData'] });
+        await queryClient.refetchQueries({ queryKey: ['useLendingAssets'] });
 
         _steps[optionToWrap ? 2 : 1] = {
           ..._steps[optionToWrap ? 2 : 1],
