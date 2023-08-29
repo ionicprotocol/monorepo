@@ -1,11 +1,11 @@
-import { Box, Flex, HStack, IconButton, Image, Link, Text, useColorMode } from '@chakra-ui/react';
+import { Box, Flex, HStack, IconButton, Image, Text, useColorMode } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+// import React, { useEffect, useState } from 'react';
 import { FiMenu } from 'react-icons/fi';
 
 import { WalletButtons } from '@ui/components/shared/WalletButtons';
-import { config } from '@ui/config/index';
-import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
+// import { config } from '@ui/config/index';
+// import { FEATURE_REQUESTS_URL } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useColors } from '@ui/hooks/useColors';
 
@@ -13,15 +13,15 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const router = useRouter();
   const { colorMode } = useColorMode();
   const { cIPage } = useColors();
-  const { setGlobalLoading, address } = useMultiIonic();
+  const { setGlobalLoading } = useMultiIonic();
 
-  const [isEnabledLeverageMenu, setIsEnabledLeverageMenu] = useState<boolean>(false);
+  // const [isEnabledLeverageMenu, setIsEnabledLeverageMenu] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsEnabledLeverageMenu(
-      !config.productDomain || !window.location.hostname.includes(config.productDomain)
-    );
-  }, []);
+  // useEffect(() => {
+  //   setIsEnabledLeverageMenu(
+  //     !config.productDomain || !window.location.hostname.includes(config.productDomain)
+  //   );
+  // }, []);
 
   return (
     <HStack
@@ -60,7 +60,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
           />
         </Box>
         <HStack spacing={4}>
-          <Flex
+          {/* <Flex
             align="center"
             cursor="pointer"
             onClick={() => {
@@ -95,7 +95,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
             >
               Borrow
             </Text>
-          </Flex>
+          </Flex> */}
           <Flex
             align="center"
             cursor="pointer"
@@ -120,7 +120,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
               Pools
             </Text>
           </Flex>
-          <Flex
+          {/* <Flex
             align="center"
             cursor="pointer"
             onClick={() => {
@@ -178,8 +178,8 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
                 Account
               </Text>
             </Flex>
-          ) : null}
-          <Flex
+          ) : null} */}
+          {/* <Flex
             align="center"
             cursor="pointer"
             onClick={() => {
@@ -195,8 +195,8 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
             >
               Create Pool
             </Text>
-          </Flex>
-          <Link
+          </Flex> */}
+          {/* <Link
             _focus={{ boxShadow: 'none' }}
             href={FEATURE_REQUESTS_URL}
             isExternal
@@ -207,7 +207,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
                 Request Feature
               </Text>
             </Flex>
-          </Link>
+          </Link> */}
         </HStack>
       </HStack>
 
