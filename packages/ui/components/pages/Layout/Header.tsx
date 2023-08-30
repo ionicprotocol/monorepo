@@ -100,8 +100,10 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
             align="center"
             cursor="pointer"
             onClick={() => {
-              setGlobalLoading(true);
-              router.push('/');
+              if (router.pathname !== '/') {
+                setGlobalLoading(true);
+                router.push('/', undefined, { shallow: true });
+              }
             }}
           >
             <Text
