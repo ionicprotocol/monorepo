@@ -60,48 +60,56 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
           />
         </Box>
         <HStack spacing={4}>
+          {config.isDevelopment ? (
+            <>
+              <Flex
+                align="center"
+                cursor="pointer"
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/lend');
+                }}
+              >
+                <Text
+                  color={
+                    router.pathname.includes('/lend') ? cIPage.txtSelectedColor : cIPage.txtColor
+                  }
+                  fontSize="14px"
+                  fontWeight={600}
+                  lineHeight="20px"
+                >
+                  Lend
+                </Text>
+              </Flex>
+              <Flex
+                align="center"
+                cursor="pointer"
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/borrow');
+                }}
+              >
+                <Text
+                  color={
+                    router.pathname.includes('/borrow') ? cIPage.txtSelectedColor : cIPage.txtColor
+                  }
+                  fontSize="14px"
+                  fontWeight={600}
+                  lineHeight="20px"
+                >
+                  Borrow
+                </Text>
+              </Flex>
+            </>
+          ) : null}
           <Flex
             align="center"
             cursor="pointer"
             onClick={() => {
-              setGlobalLoading(true);
-              router.push('/lend');
-            }}
-          >
-            <Text
-              color={router.pathname.includes('/lend') ? cIPage.txtSelectedColor : cIPage.txtColor}
-              fontSize="14px"
-              fontWeight={600}
-              lineHeight="20px"
-            >
-              Lend
-            </Text>
-          </Flex>
-          <Flex
-            align="center"
-            cursor="pointer"
-            onClick={() => {
-              setGlobalLoading(true);
-              router.push('/borrow');
-            }}
-          >
-            <Text
-              color={
-                router.pathname.includes('/borrow') ? cIPage.txtSelectedColor : cIPage.txtColor
+              if (router.pathname !== '/') {
+                setGlobalLoading(true);
+                router.push('/', undefined, { shallow: true });
               }
-              fontSize="14px"
-              fontWeight={600}
-              lineHeight="20px"
-            >
-              Borrow
-            </Text>
-          </Flex>
-          <Flex
-            align="center"
-            cursor="pointer"
-            onClick={() => {
-              setGlobalLoading(true);
-              router.push('/');
             }}
           >
             <Text
@@ -120,94 +128,104 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
               Pools
             </Text>
           </Flex>
-          <Flex
-            align="center"
-            cursor="pointer"
-            onClick={() => {
-              setGlobalLoading(true);
-              router.push('/vaults');
-            }}
-          >
-            <Text
-              color={router.pathname === '/vaults' ? cIPage.txtSelectedColor : cIPage.txtColor}
-              fontSize="14px"
-              fontWeight={600}
-              lineHeight="20px"
-            >
-              Supply Vaults
-            </Text>
-          </Flex>
-          {isEnabledLeverageMenu ? (
-            <Flex
-              align="center"
-              cursor="pointer"
-              onClick={() => {
-                setGlobalLoading(true);
-                router.push('/leverage');
-              }}
-            >
-              <Text
-                color={
-                  router.pathname.includes('/leverage') ? cIPage.txtSelectedColor : cIPage.txtColor
-                }
-                fontSize="14px"
-                fontWeight={600}
-                lineHeight="20px"
+          {config.isDevelopment ? (
+            <>
+              <Flex
+                align="center"
+                cursor="pointer"
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/vaults');
+                }}
               >
-                Leverage
-              </Text>
-            </Flex>
-          ) : null}
-          {address ? (
-            <Flex
-              align="center"
-              cursor="pointer"
-              onClick={() => {
-                setGlobalLoading(true);
-                router.push('/account');
-              }}
-            >
-              <Text
-                color={
-                  router.pathname.includes('/account') ? cIPage.txtSelectedColor : cIPage.txtColor
-                }
-                fontSize="14px"
-                fontWeight={600}
-                lineHeight="20px"
+                <Text
+                  color={router.pathname === '/vaults' ? cIPage.txtSelectedColor : cIPage.txtColor}
+                  fontSize="14px"
+                  fontWeight={600}
+                  lineHeight="20px"
+                >
+                  Supply Vaults
+                </Text>
+              </Flex>
+              {isEnabledLeverageMenu ? (
+                <Flex
+                  align="center"
+                  cursor="pointer"
+                  onClick={() => {
+                    setGlobalLoading(true);
+                    router.push('/leverage');
+                  }}
+                >
+                  <Text
+                    color={
+                      router.pathname.includes('/leverage')
+                        ? cIPage.txtSelectedColor
+                        : cIPage.txtColor
+                    }
+                    fontSize="14px"
+                    fontWeight={600}
+                    lineHeight="20px"
+                  >
+                    Leverage
+                  </Text>
+                </Flex>
+              ) : null}
+              {address ? (
+                <Flex
+                  align="center"
+                  cursor="pointer"
+                  onClick={() => {
+                    setGlobalLoading(true);
+                    router.push('/account');
+                  }}
+                >
+                  <Text
+                    color={
+                      router.pathname.includes('/account')
+                        ? cIPage.txtSelectedColor
+                        : cIPage.txtColor
+                    }
+                    fontSize="14px"
+                    fontWeight={600}
+                    lineHeight="20px"
+                  >
+                    Account
+                  </Text>
+                </Flex>
+              ) : null}
+              <Flex
+                align="center"
+                cursor="pointer"
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/create-pool');
+                }}
               >
-                Account
-              </Text>
-            </Flex>
+                <Text
+                  color={
+                    router.pathname === '/create-pool' ? cIPage.txtSelectedColor : cIPage.txtColor
+                  }
+                  fontSize="14px"
+                  fontWeight={600}
+                  lineHeight="20px"
+                >
+                  Create Pool
+                </Text>
+              </Flex>
+              <Link
+                _focus={{ boxShadow: 'none' }}
+                href={FEATURE_REQUESTS_URL}
+                isExternal
+                style={{ textDecoration: 'none' }}
+              >
+                <Flex align="center" cursor="pointer">
+                  <Text color={cIPage.txtColor} fontSize="14px" fontWeight={600} lineHeight="20px">
+                    Request Feature
+                  </Text>
+                </Flex>
+              </Link>
+            </>
           ) : null}
-          <Flex
-            align="center"
-            cursor="pointer"
-            onClick={() => {
-              setGlobalLoading(true);
-              router.push('/create-pool');
-            }}
-          >
-            <Text
-              color={router.pathname === '/create-pool' ? cIPage.txtSelectedColor : cIPage.txtColor}
-              fontSize="14px"
-              fontWeight={600}
-              lineHeight="20px"
-            >
-              Create Pool
-            </Text>
-          </Flex>
-          <Link
-            _focus={{ boxShadow: 'none' }}
-            href={FEATURE_REQUESTS_URL}
-            isExternal
-            style={{ textDecoration: 'none' }}
-          >
-            <Flex align="center" cursor="pointer">
-              <Text color={cIPage.txtColor} fontSize="14px" fontWeight={600} lineHeight="20px">
-                Request Feature
-              </Text>
-            </Flex>
-          </Link>
         </HStack>
       </HStack>
 

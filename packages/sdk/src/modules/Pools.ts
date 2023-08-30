@@ -3,15 +3,17 @@ import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
   NativePricedIonicAsset,
+  Roles,
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
-import { IonicBaseConstructor } from "..";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 import { PoolLens } from "../../typechain/PoolLens";
 import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
+
+import { CreateContractsModule } from "./CreateContracts";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
@@ -32,7 +34,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.zkevm]: zkevm.assets
 };
 
-export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
+export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class IonicPools extends Base {
     async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<IonicPoolData | null> {
       const {
@@ -228,6 +230,37 @@ export function withPools<TBase extends IonicBaseConstructor>(Base: TBase) {
       const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));
 
       return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as IonicPoolData[];
+    }
+
+    async isAuth(pool: string, market: string, role: Roles, user: string) {
+      if (this.chainId === SupportedChains.neon) {
+        return true;
+      }
+
+      const authRegistry = this.createAuthoritiesRegistry();
+      const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
+
+      if (poolAuthAddress === constants.AddressZero) {
+        console.log(`Pool authority for pool ${pool} does not exist`);
+
+        return false;
+      }
+
+      const poolAuth = this.createPoolRolesAuthority(poolAuthAddress);
+
+      if (role === Roles.SUPPLIER_ROLE) {
+        // let's check if it's public
+        const cToken = this.createICErc20(market);
+        const func = cToken.interface.getFunction("mint");
+        const selectorHash = cToken.interface.getSighash(func);
+        const isPublic = await poolAuth.callStatic.isCapabilityPublic(market, selectorHash);
+
+        if (isPublic) {
+          return true;
+        }
+      }
+
+      return await poolAuth.callStatic.doesUserHaveRole(user, role);
     }
   };
 }

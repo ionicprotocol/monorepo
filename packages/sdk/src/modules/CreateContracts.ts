@@ -1,6 +1,7 @@
 import { Contract, ContractInterface } from "ethers";
 
 import { IonicBaseConstructor } from "..";
+import AuthoritiesRegistryABI from "../../abis/AuthoritiesRegistry";
 import CompoundMarketERC4626ABI from "../../abis/CompoundMarketERC4626";
 import ComptrollerABI from "../../abis/Comptroller";
 import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
@@ -19,7 +20,9 @@ import OptimizedAPRVaultFirstExtensionABI from "../../abis/OptimizedAPRVaultFirs
 import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSecondExtension";
 import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
 import PoolLensSecondaryABI from "../../abis/PoolLensSecondary";
+import PoolRolesAuthorityABI from "../../abis/PoolRolesAuthority";
 import UnitrollerABI from "../../abis/Unitroller";
+import { AuthoritiesRegistry } from "../../typechain/AuthoritiesRegistry";
 import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
@@ -38,6 +41,7 @@ import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVau
 import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
 import { PoolLensSecondary } from "../../typechain/PoolLensSecondary";
+import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
 import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../IonicSdk";
 
@@ -146,6 +150,18 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
         ILiquidatorsRegistryABI,
         signerOrProvider
       ) as ILiquidatorsRegistry;
+    }
+
+    createAuthoritiesRegistry(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(
+        this.chainDeployment.AuthoritiesRegistry.address,
+        AuthoritiesRegistryABI,
+        signerOrProvider
+      ) as AuthoritiesRegistry;
+    }
+
+    createPoolRolesAuthority(poolAuthAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(poolAuthAddress, PoolRolesAuthorityABI, signerOrProvider) as PoolRolesAuthority;
     }
   };
 }
