@@ -45,4 +45,3 @@ jobs:
         run: |
           netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
           netlify deploy --filter @ionicprotocol/ui --prod --build --context preview
-

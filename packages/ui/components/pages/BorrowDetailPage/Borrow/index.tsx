@@ -9,11 +9,13 @@ import {
   Text,
   VStack
 } from '@chakra-ui/react';
+import { Roles } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { BsExclamationCircle } from 'react-icons/bs';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 
 import { BorrowError } from '../../PoolPage/AssetsToBorrow/Borrow/Modal/BorrowError';
@@ -26,6 +28,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { ACTIVE, BORROW_STEPS, COMPLETE, FAILED, INCOMPLETE, READY } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useIsAuth } from '@ui/hooks/pools/useIsAuth';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
@@ -63,6 +66,12 @@ export const Borrow = ({
     comptroller,
     chainId
   );
+  const { data: isAuth } = useIsAuth(
+    comptroller,
+    selectedAsset.cToken,
+    Roles.BORROWER_ROLE,
+    chainId
+  );
   const { data: borrowApyPerAsset, isLoading: isBorrowApyLoading } = useBorrowAPYs(assets, chainId);
   const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS(selectedAsset.underlyingSymbol)]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -83,7 +92,11 @@ export const Borrow = ({
     data: { minBorrowAsset, minBorrowUSD }
   } = useBorrowMinimum(selectedAsset, chainId);
 
-  useQuery([amount, maxBorrowAmount, minBorrowAsset], () => {
+  const isDisabled = useMemo(() => {
+    return isLoading || activeStep.index < 1 || !isAmountValid || !isAuth;
+  }, [isLoading, activeStep.index, isAmountValid, isAuth]);
+
+  useQuery(['borrow', amount, maxBorrowAmount, minBorrowAsset], () => {
     if (amount.isZero() || !maxBorrowAmount || !minBorrowAsset) {
       setIsAmountValid(false);
     } else {
@@ -337,8 +350,8 @@ export const Borrow = ({
             <Text variant={'itemDesc'}>
               {isBorrowApyLoading
                 ? 'Borrow Apr'
-                : borrowApyPerAsset
-                ? borrowApyPerAsset[selectedAsset.cToken]
+                : borrowApyPerAsset && borrowApyPerAsset[selectedAsset.cToken]
+                ? borrowApyPerAsset[selectedAsset.cToken].toFixed(2)
                 : '--'}{' '}
               %
             </Text>
@@ -384,15 +397,34 @@ export const Borrow = ({
         />
       ) : null}
       <Flex gap={'12px'} justifyContent={'column'} mt={{ base: '10px' }}>
-        <Button
-          flex={1}
-          isDisabled={isLoading || activeStep.index < 1 || !isAmountValid}
-          isLoading={activeStep.index === 1 && isLoading}
-          onClick={onBorrow}
-          variant={getVariant(steps[0]?.status)}
+        <PopoverTooltip
+          body={
+            <Flex alignItems={'center'} direction={{ base: 'row' }} gap={'8px'}>
+              <BsExclamationCircle fontWeight={'bold'} size={'20px'} strokeWidth={'0.4px'} />
+              <Text variant={'inherit'}>
+                {!isAuth
+                  ? 'You are not authorized. Please contact admin to borrow'
+                  : !isAmountValid
+                  ? 'Amount is invalid'
+                  : ''}
+              </Text>
+            </Flex>
+          }
+          bodyProps={{ p: 0 }}
+          popoverProps={{ placement: 'top', variant: 'warning' }}
+          visible={!isAuth || !isAmountValid}
+          width={'100%'}
         >
-          {steps[0].status !== COMPLETE ? `Borrow` : 'Borrowed'} {selectedAsset.underlyingSymbol}
-        </Button>
+          <Button
+            flex={1}
+            isLoading={activeStep.index === 1 && isLoading}
+            onClick={!isDisabled ? onBorrow : undefined}
+            variant={!isDisabled ? getVariant(steps[0]?.status) : 'solidGray'}
+            width={'100%'}
+          >
+            {steps[0].status !== COMPLETE ? `Borrow` : 'Borrowed'} {selectedAsset.underlyingSymbol}
+          </Button>
+        </PopoverTooltip>
       </Flex>
     </Flex>
   );

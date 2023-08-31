@@ -40,7 +40,6 @@ import { CIconButton } from '@ui/components/shared/Button';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   APY,
-  ASSET,
   COLLATERAL,
   MARKETS_COUNT_PER_PAGE,
   PERCENT_IN_PORTFOLIO,
@@ -70,7 +69,7 @@ export type LendingAssetRowData = {
 
 export const AssetsList = ({ poolData }: { poolData: PoolData }) => {
   const { id: poolId, chainId, comptroller, assets, totalSuppliedFiat } = poolData;
-  const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
+  const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: SUPPLY_ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0]

@@ -39,14 +39,11 @@ import { CIconButton } from '@ui/components/shared/Button';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   APY,
-  ASSET,
   BORROW_ASSET,
   MARKETS_COUNT_PER_PAGE,
   PERCENT_IN_PORTFOLIO,
   POOLS_COUNT_PER_PAGE,
-  SUPPLY_ASSET,
   TOTAL_BORROW,
-  TOTAL_SUPPLY,
   UTILIZATION_RATE
 } from '@ui/constants/index';
 import { useBorrowAssets } from '@ui/hooks/borrow/useBorrowAssets';
@@ -66,7 +63,7 @@ export type BorrowAssetRowData = {
 
 export const AssetsList = ({ poolData }: { poolData: PoolData }) => {
   const { chainId, comptroller, assets, totalBorrowedFiat } = poolData;
-  const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: ASSET }]);
+  const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: BORROW_ASSET }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0]
@@ -92,12 +89,12 @@ export const AssetsList = ({ poolData }: { poolData: PoolData }) => {
 
   const assetSort: SortingFn<BorrowAssetRowData> = useCallback(
     (rowA, rowB, columnId) => {
-      if (columnId === SUPPLY_ASSET) {
+      if (columnId === BORROW_ASSET) {
         return rowB.original.borrowAsset.underlyingSymbol.localeCompare(
           rowA.original.borrowAsset.underlyingSymbol
         );
-      } else if (columnId === TOTAL_SUPPLY || columnId === PERCENT_IN_PORTFOLIO) {
-        return rowB.original.borrowAsset.totalSupplyFiat > rowA.original.borrowAsset.totalSupplyFiat
+      } else if (columnId === TOTAL_BORROW || columnId === PERCENT_IN_PORTFOLIO) {
+        return rowB.original.borrowAsset.totalBorrowFiat > rowA.original.borrowAsset.totalBorrowFiat
           ? 1
           : -1;
       } else if (columnId === APY) {
@@ -105,11 +102,11 @@ export const AssetsList = ({ poolData }: { poolData: PoolData }) => {
           borrowApys && borrowApys[rowA.original.borrowAsset.cToken]
             ? borrowApys[rowA.original.borrowAsset.cToken]
             : 0;
-        const rowBSupplyAPY =
+        const rowBAPY =
           borrowApys && borrowApys[rowA.original.borrowAsset.cToken]
             ? borrowApys[rowB.original.borrowAsset.cToken]
             : 0;
-        return rowAAPY > rowBSupplyAPY ? 1 : -1;
+        return rowAAPY > rowBAPY ? 1 : -1;
       } else if (columnId === UTILIZATION_RATE) {
         return rowB.original.borrowAsset.utilization > rowA.original.borrowAsset.utilization
           ? 1
@@ -231,7 +228,7 @@ export const AssetsList = ({ poolData }: { poolData: PoolData }) => {
       </Flex>
       {data.length === 0 ? (
         <Flex>
-          <Text color={'iGray'}>No assets to supply</Text>
+          <Text color={'iGray'}>No assets to borrow</Text>
         </Flex>
       ) : tableData ? (
         <>
@@ -294,7 +291,7 @@ export const AssetsList = ({ poolData }: { poolData: PoolData }) => {
               ) : assets.length === 0 ? (
                 <Tr>
                   <Td border="none" colSpan={tableData.headerGroups[0].headers.length}>
-                    <Center py={8}>There are no assets to supply.</Center>
+                    <Center py={8}>There are no assets to borrow.</Center>
                   </Td>
                 </Tr>
               ) : (
