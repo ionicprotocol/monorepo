@@ -199,7 +199,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
-  if (comptrollerExtensions.length == 0 || comptrollerExtensions[0] != compFirstExtension.address) {
+  if (comptrollerExtensions.length == 0 || comptrollerExtensions[1] != compFirstExtension.address) {
     tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [
       comptroller.address,
       compFirstExtension.address
