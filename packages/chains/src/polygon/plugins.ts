@@ -4,7 +4,7 @@ import assets from "./assets";
 
 const deployedPlugins: DeployedPlugins = {
   // BeefyERC4626_sAMM-DAI-USDR_0xBcE30B4D78cEb9a75A1Aa62156529c3592b3F08b.json
-  "0xAe8a8253cd70A8Ad4749aAd850A99e2f30552f10": {
+  "0x72c528B63Ced4a3DF5Ae6e983568566f1Ee7Ad77": {
     market: "0xBcE30B4D78cEb9a75A1Aa62156529c3592b3F08b",
     name: "Beefy USDR-DAI sLP vault Vault",
     strategy: Strategy.Beefy,
