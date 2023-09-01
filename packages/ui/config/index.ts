@@ -9,6 +9,7 @@ type CONFIG = {
   isLineaEnabled: boolean;
   isNeonEnabled: boolean;
   isPolygonEnabled: boolean;
+  isProduction: boolean;
   isTestnetEnabled: boolean;
   isZkevmEnabled: boolean;
   productDomain: string | undefined;
@@ -38,6 +39,7 @@ const config: CONFIG = {
   isLineaEnabled: process.env.LINEA === 'true',
   isNeonEnabled: process.env.NEON === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
+  isProduction: process.env.IS_PRODUCTION === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   isZkevmEnabled: process.env.ZKEVM === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
