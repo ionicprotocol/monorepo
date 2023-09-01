@@ -60,7 +60,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
           />
         </Box>
         <HStack spacing={4}>
-          {config.isDevelopment ? (
+          {!config.isProduction ? (
             <>
               <Flex
                 align="center"
@@ -128,7 +128,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
               Pools
             </Text>
           </Flex>
-          {config.isDevelopment ? (
+          {!config.isProduction ? (
             <>
               <Flex
                 align="center"
