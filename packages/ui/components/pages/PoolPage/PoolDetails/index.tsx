@@ -22,7 +22,7 @@ import { colord, extend } from 'colord';
 import mixPlugin from 'colord/plugins/mix';
 import { utils } from 'ethers';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner/index';
 import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
@@ -34,6 +34,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { HEALTH_FACTOR } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
+import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { usePoolData } from '@ui/hooks/usePoolData';
@@ -61,11 +62,8 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
   const [isMoreInfo, setIsMoreInfo] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const chainConfig = useChainConfig(poolData?.chainId);
-  const [healthFactor, setHealthFactor] = useState(30);
 
-  useEffect(() => {
-    setHealthFactor(30);
-  }, []);
+  const { data: healthFactor } = useHealthFactor(poolData?.comptroller, poolData?.chainId);
 
   const mixedColor = useCallback((ratio: number) => {
     let color1 = '';
@@ -185,6 +183,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               )}
             </Skeleton>
           </VStack>
+
           <VStack alignItems="flex-start">
             <Flex direction="row" gap={1} height="18px">
               <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
@@ -192,62 +191,67 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               </Text>
               <PopoverTooltip
                 body={
-                  <Flex alignItems={'flex-start'} direction={{ base: 'column' }} gap={'8px'}>
-                    <Flex justifyContent={'space-between'} width={'100%'}>
-                      <Text color={'iLightGray'} textTransform="uppercase">
-                        Health Factor
-                      </Text>
-                      <Text color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)}>1.55</Text>
-                    </Flex>
-                    <Slider
-                      aria-label="slider-ex-1"
-                      max={HEALTH_FACTOR.MAX}
-                      min={HEALTH_FACTOR.MIN}
-                      mt={'20px'}
-                      value={healthFactor}
-                      variant="health"
-                    >
-                      <SliderMark
-                        color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)}
-                        value={healthFactor}
+                  healthFactor ? (
+                    <Flex alignItems={'flex-start'} direction={{ base: 'column' }} gap={'8px'}>
+                      <Flex justifyContent={'space-between'} width={'100%'}>
+                        <Text color={'iLightGray'} textTransform="uppercase">
+                          Health Factor
+                        </Text>
+                        <Text color={mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX)}>
+                          {healthFactor}
+                        </Text>
+                      </Flex>
+                      <Slider
+                        aria-label="slider-ex-1"
+                        max={HEALTH_FACTOR.MAX}
+                        min={HEALTH_FACTOR.MIN}
+                        mt={'20px'}
+                        value={Number(healthFactor)}
+                        variant="health"
                       >
-                        1.55
-                      </SliderMark>
-                      <SliderTrack>
-                        <SliderFilledTrack />
-                      </SliderTrack>
-                      <PopoverTooltip
-                        body={
-                          <VStack spacing={1}>
-                            <Text color={'iRed'}>1.00</Text>
-                            <Text color={'iRed'}>Liquidation value</Text>
-                          </VStack>
-                        }
-                        popoverProps={{ isOpen: true, placement: 'bottom', variant: 'ghost' }}
-                      >
-                        <Box
-                          borderColor={'iRed'}
-                          borderWidth={'1px'}
-                          height={'14px'}
-                          ml={'55px'}
-                          width={'2px'}
-                        />
-                      </PopoverTooltip>
+                        <SliderMark
+                          color={mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX)}
+                          value={Number(healthFactor)}
+                        >
+                          {healthFactor}
+                        </SliderMark>
+                        <SliderTrack>
+                          <SliderFilledTrack />
+                        </SliderTrack>
+                        <PopoverTooltip
+                          body={
+                            <VStack spacing={1}>
+                              <Text color={'iRed'}>1.00</Text>
+                              <Text color={'iRed'}>Liquidation value</Text>
+                            </VStack>
+                          }
+                          popoverProps={{ isOpen: true, placement: 'bottom', variant: 'ghost' }}
+                        >
+                          <Box
+                            borderColor={'iRed'}
+                            borderWidth={'1px'}
+                            height={'14px'}
+                            ml={'55px'}
+                            width={'2px'}
+                          />
+                        </PopoverTooltip>
 
-                      <SliderThumb />
-                    </Slider>
-                    <Center mb={'5px'} mt={'50px'} width={'100%'}>
-                      <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
-                    </Center>
-                    <Text color={'iWhite'}>
-                      If the health factor goes below 1, the liquidation of your collateral might be
-                      triggered
-                    </Text>
-                  </Flex>
+                        <SliderThumb />
+                      </Slider>
+                      <Center mb={'5px'} mt={'50px'} width={'100%'}>
+                        <Divider bg={cIPage.dividerColor} orientation="horizontal" width="100%" />
+                      </Center>
+                      <Text color={'iWhite'}>
+                        If the health factor goes below 1, the liquidation of your collateral might
+                        be triggered
+                      </Text>
+                    </Flex>
+                  ) : null
                 }
                 bodyProps={{ p: 0 }}
                 contentProps={{ width: '340px' }}
                 popoverProps={{ placement: 'top' }}
+                visible={!!healthFactor}
               >
                 <InfoOutlineIcon
                   color={'iLightGray'}
@@ -261,8 +265,13 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               {isPoolDataLoading ? (
                 <LoadingText />
               ) : (
-                <Text color={mixedColor(healthFactor / HEALTH_FACTOR.MAX)} size="lg">
-                  1.55
+                <Text
+                  color={
+                    healthFactor ? mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX) : 'iWhite'
+                  }
+                  size="lg"
+                >
+                  {healthFactor ? healthFactor : '-'}
                 </Text>
               )}
             </Skeleton>

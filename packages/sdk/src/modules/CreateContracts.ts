@@ -18,6 +18,7 @@ import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
 import OptimizedAPRVaultFirstExtensionABI from "../../abis/OptimizedAPRVaultFirstExtension";
 import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSecondExtension";
 import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
+import PoolLensABI from "../../abis/PoolLens";
 import PoolLensSecondaryABI from "../../abis/PoolLensSecondary";
 import PoolRolesAuthorityABI from "../../abis/PoolRolesAuthority";
 import UnitrollerABI from "../../abis/Unitroller";
@@ -38,6 +39,7 @@ import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
 import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
+import { PoolLens } from "../../typechain/PoolLens";
 import { PoolLensSecondary } from "../../typechain/PoolLensSecondary";
 import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
 import { Unitroller } from "../../typechain/Unitroller";
@@ -127,6 +129,10 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
         LeveredPositionsLensABI,
         signerOrProvider
       ) as LeveredPositionsLens;
+    }
+
+    createPoolLens(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(this.chainDeployment.PoolLens.address, PoolLensABI, signerOrProvider) as PoolLens;
     }
 
     createPoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
