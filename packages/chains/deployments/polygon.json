@@ -158,6 +158,18 @@
     "GammaLpTokenLiquidator": {
       "address": "0xED6Bdf0F75a791744b7451308A6Baba5F7465F05"
     },
+    "GammaLpTokenWrapper": {
+      "address": "0x5e95F1753E67c41cb7514C2303722949E8d35901"
+    },
+    "GammaPoolPriceOracle": {
+      "address": "0xC73Ff8671d7B686Ff11b2E20DAFB89D4D8077231"
+    },
+    "GammaPoolPriceOracle_Implementation": {
+      "address": "0xb2862f1e2aB045475F122b08094127d64240BC1f"
+    },
+    "GammaPoolPriceOracle_Proxy": {
+      "address": "0xC73Ff8671d7B686Ff11b2E20DAFB89D4D8077231"
+    },
     "GelatoGUniLiquidator": {
       "address": "0x7fDB42B4AC16C74b52B771aaA0B1Da8Ef9640De4"
     },
