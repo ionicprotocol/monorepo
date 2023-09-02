@@ -266,11 +266,6 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.USDR)
   },
   {
-    inputToken: underlying(assets, assetSymbols["vAMM-TNGBL/USDR"]),
-    strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
-    outputToken: underlying(assets, assetSymbols.USDR)
-  },
-  {
     inputToken: underlying(assets, assetSymbols["sAMM-DAI/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.USDR)
