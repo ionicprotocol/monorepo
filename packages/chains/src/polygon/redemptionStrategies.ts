@@ -200,7 +200,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: USDC
   },
   {
-    inputToken: underlying(assets, USDC),
+    inputToken: USDC,
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
     outputToken: assetSymbols.USDR
   },
