@@ -108,6 +108,7 @@ export const configureAddressesProviderAddresses = async ({
     await configureAddress(ap, "stableToken", deployConfig.stableToken);
     await configureAddress(ap, "UNISWAP_V3_ROUTER", chainConfig.chainAddresses.UNISWAP_V3_ROUTER);
     await configureAddress(ap, "ALGEBRA_SWAP_ROUTER", chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER);
+    await configureAddress(ap, "ALGEBRA_UNI_PROXY", chainConfig.chainAddresses.ALGEBRA_UNI_PROXY);
     await configureAddress(ap, "SOLIDLY_SWAP_ROUTER", chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER);
 
     // CURVE ORACLES
