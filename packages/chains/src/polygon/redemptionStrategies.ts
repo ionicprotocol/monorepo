@@ -251,6 +251,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: USDC
   },
   {
+    inputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
+    strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDR)
+  },
+  {
     inputToken: underlying(assets, assetSymbols["vAMM-wUSDR/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.USDR)
