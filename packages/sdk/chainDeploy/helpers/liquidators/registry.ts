@@ -48,7 +48,7 @@ export const configureLiquidatorsRegistry = async ({
     const outputTokens: string[] = [];
 
     const uniswapV3Fees = chainIdToConfig[chainId].specificParams.metadata.uniswapV3Fees;
-    for(const inputToken in uniswapV3Fees) {
+    for (const inputToken in uniswapV3Fees) {
       for (const outputToken in uniswapV3Fees[inputToken]) {
         inputTokens.push(inputToken);
         outputTokens.push(outputToken);
