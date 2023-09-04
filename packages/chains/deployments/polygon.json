@@ -39,7 +39,7 @@
       "address": "0xc8D8F8a8bB89A7ADD3c9f4FF3b72Ff22D03ad8C6"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0x73863c7D50B86aE16EEa55542e8DFa68172AA4aB"
+      "address": "0xdaC68DB9152a50eBBEE14d60d512476dF471fE80"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0xc8D8F8a8bB89A7ADD3c9f4FF3b72Ff22D03ad8C6"
@@ -111,7 +111,7 @@
       "address": "0x0cC1FD37371E1Be6432eCDF085cD5FbA12E8284B"
     },
     "Comptroller": {
-      "address": "0xe0c9a394107fF769F2a36edd76B4247a68aB4628"
+      "address": "0x4617F787859199cd7910B28c2C3675aC215441b6"
     },
     "ComptrollerFirstExtension": {
       "address": "0x0C31088Db6F3CA56dfEE961E426f4f9A79489185"
@@ -158,6 +158,18 @@
     "GammaLpTokenLiquidator": {
       "address": "0xED6Bdf0F75a791744b7451308A6Baba5F7465F05"
     },
+    "GammaLpTokenWrapper": {
+      "address": "0x5e95F1753E67c41cb7514C2303722949E8d35901"
+    },
+    "GammaPoolPriceOracle": {
+      "address": "0xC73Ff8671d7B686Ff11b2E20DAFB89D4D8077231"
+    },
+    "GammaPoolPriceOracle_Implementation": {
+      "address": "0xb2862f1e2aB045475F122b08094127d64240BC1f"
+    },
+    "GammaPoolPriceOracle_Proxy": {
+      "address": "0xC73Ff8671d7B686Ff11b2E20DAFB89D4D8077231"
+    },
     "GelatoGUniLiquidator": {
       "address": "0x7fDB42B4AC16C74b52B771aaA0B1Da8Ef9640De4"
     },
@@ -192,16 +204,13 @@
       "address": "0xA433B7d3a8A87D8fd40dA68A424007Dd8a21Ce41"
     },
     "LeveredPositionFactory": {
-      "address": "0xa9279E9E1bE0a8D5C075A0a8CB26c9CaFB74a0C0"
-    },
-    "LeveredPositionFactoryExtension": {
-      "address": "0x135fF045efaF131B8ea00D2a30e53cC7cB551F34"
+      "address": "0x3bF976D5c27D45E835288431f7F98F9AE5406664"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x1B87f43e6e5c6c6Fa802dCC10Aa0306A4BFBcc88"
+      "address": "0x84839C3CF0A05990512e0b4cE0E0B13E7f4C579b"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x3264cB4a2c0226a5fE6A497f7EC8130262Cd12db"
+      "address": "0x23EcE087392430d0B192fE7079ddF68b26F8bAdc"
     },
     "LeveredPositionsLens": {
       "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
@@ -249,7 +258,7 @@
       "address": "0x1AdF21132Dd7d0B3002f02630c8cAe516134B07d"
     },
     "PoolLens": {
-      "address": "0x7EC29ec9CF58B182E052FBAE95E4c678fA7ED7D8"
+      "address": "0xD8568CDF0C09A29F66d856b5A4Fa035a7F1BcFb5"
     },
     "PoolLensSecondary": {
       "address": "0xa3b75ad2aB35d1f4a0a1DA222Fc08763fb4d9d39"

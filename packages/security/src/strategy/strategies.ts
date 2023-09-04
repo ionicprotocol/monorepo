@@ -1,4 +1,17 @@
-import { ERC4626Strategy } from "@ionicprotocol/types";
+import {
+  AssetRiskIL,
+  AssetRiskLiquidity,
+  AssetRiskMktCap,
+  AssetRiskSupply,
+  ERC4626Strategy,
+  PlatformRiskAdminWithTimelock,
+  PlatformRiskAudit,
+  PlatformRiskContractsVerified,
+  PlatformRiskReputation,
+  Strategy,
+  StrategyComplexity,
+  StrategyTimeInMarket,
+} from "@ionicprotocol/types";
 
 export const strategies: ERC4626Strategy[] = [
   // {
@@ -302,21 +315,21 @@ export const strategies: ERC4626Strategy[] = [
   //   adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   // },
   // // POLYGON
-  // {
-  //   address: "0x9F82D802FB4940743C543041b86220A9096A7522",
-  //   strategy: Strategy.Beefy,
-  //   name: "Beefy jEUR-PAR Vault",
-  //   complexity: StrategyComplexity.LOW,
-  //   timeInMarket: StrategyTimeInMarket.BATTLE_TESTED,
-  //   riskIL: AssetRiskIL.NONE,
-  //   liquidity: AssetRiskLiquidity.LOW,
-  //   mktCap: AssetRiskMktCap.MEDIUM,
-  //   supplyCentralised: AssetRiskSupply.DECENTRALIZED,
-  //   reputation: PlatformRiskReputation.ESTABLISHED,
-  //   audit: PlatformRiskAudit.AUDIT,
-  //   contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
-  //   adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
-  // },
+  {
+    address: "0x72c528B63Ced4a3DF5Ae6e983568566f1Ee7Ad77",
+    strategy: Strategy.Beefy,
+    name: "Beefy USDR-DAI sLP vault Vault",
+    complexity: StrategyComplexity.LOW,
+    timeInMarket: StrategyTimeInMarket.BATTLE_TESTED,
+    riskIL: AssetRiskIL.NONE,
+    liquidity: AssetRiskLiquidity.LOW,
+    mktCap: AssetRiskMktCap.MEDIUM,
+    supplyCentralised: AssetRiskSupply.DECENTRALIZED,
+    reputation: PlatformRiskReputation.ESTABLISHED,
+    audit: PlatformRiskAudit.AUDIT,
+    contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
+    adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
+  },
   // {
   //   address: "0xc8E8B4A7E0F854Cf516A75fE742FC791dBec9F86",
   //   strategy: Strategy.Beefy,

@@ -1,6 +1,5 @@
 import { IonicSdk } from "@ionicprotocol/sdk";
-import { Comptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/Comptroller";
-import { ComptrollerFirstExtension } from "@ionicprotocol/sdk/dist/cjs/typechain/ComptrollerFirstExtension";
+import { IonicComptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/IonicComptroller";
 import { SupportedAsset } from "@ionicprotocol/types";
 import { constants, Contract, logger, Signer } from "ethers";
 
@@ -20,49 +19,48 @@ export class AdminService {
     return this;
   }
 
-  async pauseAllPools(pools: Array<Comptroller>) {
+  async pauseAllPools(pools: Array<IonicComptroller>) {
     for (const pool of pools) {
       const cTokenAddress = await pool.callStatic.cTokensByUnderlying(this.asset.underlying);
-      const poolExtension = this.sdk.createComptroller(pool.address, this.sdk.signer);
       const cToken = this.sdk.createICErc20(cTokenAddress, this.admin);
-      await this.pauseMarketActivity(pool, poolExtension, cToken);
+      await this.pauseMarketActivity(pool, cToken);
     }
   }
 
-  private async getPauseGuardian(pool: ComptrollerFirstExtension) {
+  private async getPauseGuardian(pool: IonicComptroller) {
     return await pool.callStatic.pauseGuardian();
   }
-  private async setPauseGuardian(pool: ComptrollerFirstExtension) {
+  private async setPauseGuardian(pool: IonicComptroller) {
     const tx = await pool._setPauseGuardian(this.adminAddress);
     await tx.wait();
     logger.info(`Set the pause guardian to ${this.adminAddress}`);
   }
 
-  async pauseMarketActivity(pool: Comptroller, extension: ComptrollerFirstExtension, cToken: Contract) {
-    const pauseGuardian = await this.getPauseGuardian(extension);
+  async pauseMarketActivity(pool: IonicComptroller, cToken: Contract) {
+    const pauseGuardian = await this.getPauseGuardian(pool);
     if (pauseGuardian === constants.AddressZero) {
-      await this.setPauseGuardian(extension);
+      await this.setPauseGuardian(pool);
     }
-    await this.pauseMintActivity(pool, extension, cToken);
-    await this.pauseBorrowActivity(pool, extension);
+    await this.pauseMintActivity(pool, cToken);
+    await this.pauseBorrowActivity(pool);
   }
 
-  async pauseMintActivity(pool: Comptroller, extension: ComptrollerFirstExtension, cToken: Contract) {
+  async pauseMintActivity(pool: IonicComptroller, cToken: Contract) {
     const isPaused: boolean = await pool.callStatic.mintGuardianPaused(cToken.address);
     if (!isPaused) {
-      const tx = await extension._setMintPaused(cToken.address, true);
+      const tx = await pool._setMintPaused(cToken.address, true);
       await tx.wait();
       logger.warn(`Market mint pause tx ${tx.hash}`);
     } else {
       logger.info(`Minting already paused`);
     }
   }
-  async pauseBorrowActivity(pool: Comptroller, extension: ComptrollerFirstExtension) {
+  async pauseBorrowActivity(pool: IonicComptroller) {
     const markets = await this.sdk.createComptroller(pool.address).callStatic.getAllMarkets();
     for (const market of markets) {
       const isPaused: boolean = await pool.callStatic.borrowGuardianPaused(market);
       if (!isPaused) {
-        const tx = await extension._setBorrowPaused(market, true);
+        const tx = await pool._setBorrowPaused(market, true);
         await tx.wait();
         logger.warn(`Market borrow pause tx ${tx.hash}`);
       } else {

@@ -233,6 +233,7 @@ export const pearlDocs = (poolAddress: string) => {
 };
 
 type ThenaStrategy = "GAMMA_NARROW" | "GAMMA_STABLE" | "GAMMA_WIDE";
+type RetroStrategy = ThenaStrategy;
 
 export const thenaDocsV2 = (token0: string, token1: string, poolAddress: string, strategy: ThenaStrategy) => {
   return `
@@ -243,6 +244,19 @@ export const thenaDocsV2 = (token0: string, token1: string, poolAddress: string,
   <p>This will credit your wallet with the Thena LP Tokens (${poolAddress}).</p><br />
   <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p><br />
   <p> <b>NOTE</b>: <p> - Do not stake the LPs on Thena, Midas will do that for you! </p>  <p> - Make sure to use "AUTOMATIC" range for stable LPs </p> </p>
+  `;
+};
+
+export const retroAlmGamma = (token0: string, token1: string, poolAddress: string, strategy: RetroStrategy) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br /><p> 1. Make sure you are connected to Polygon Network on your browser wallet.</p><br />
+  <p> 2. Head to the <a href="https://retro.finance/liquidity/managev3?currency0=${token0}&currency1=${token1}&strategy=${strategy}" target="_blank" style="color: #BCAC83;"> retro.finance Exchange </a> and deposit the desired amount of token pairs.</p>
+  <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Retro to spend them. </p><br />
+  <p><b>NOTE:</b> Make sure to select GAMMA as a strategy. </p><br />
+  <p> 3. Click on "Add Liquidty".</p>
+  <p>This will credit your wallet with the Retro LP Tokens (${poolAddress}).</p><br />
+  <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p><br />
+  <p> <b>NOTE</b>: <p> - Do not stake the LPs on Retro, Ionic will do that for you! </p>  <p> - Make sure to use "AUTOMATIC" range for stable LPs </p> </p>
   `;
 };
 
