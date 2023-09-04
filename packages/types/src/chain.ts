@@ -78,6 +78,7 @@ export type ChainAddresses = {
   };
   ALGEBRA_SWAP_ROUTER?: string;
   SOLIDLY_SWAP_ROUTER?: string;
+  ALGEBRA_UNI_PROXY?: string;
 };
 
 export type ChainSupportedAssets = {

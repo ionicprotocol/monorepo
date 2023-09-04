@@ -200,6 +200,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: USDC
   },
   {
+    inputToken: USDC,
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WUSDR)
+  },
+  {
     inputToken: underlying(assets, assetSymbols.USDR),
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WUSDR)
@@ -252,7 +257,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.USDR)
   },
   {
-    inputToken: underlying(assets, assetSymbols["vAMM-TNGBL/USDR"]),
+    inputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.USDR)
   },
@@ -270,6 +275,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols["vAMM-WETH/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols["vAMM-WETH/USDR"]),
+    strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDR)
   },
   // Reverse: USDC / USDR / WUSDR / CASH -> LPs
   {
