@@ -13,6 +13,7 @@ nextConfig = {
     FEATURE_CREATE_POOL: process.env.FEATURE_CREATE_POOL,
     FEATURE_DEPLOY_FLYWHEEL: process.env.FEATURE_DEPLOY_FLYWHEEL,
     ICON_SERVER: process.env.ICON_SERVER,
+    IS_PRODUCTION: process.env.IS_PRODUCTION,
     IS_SENTRY_ENABLED: process.env.IS_SENTRY_ENABLED,
     LINEA: process.env.LINEA,
     NEON: process.env.NEON,

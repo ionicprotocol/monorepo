@@ -16,6 +16,7 @@ import {
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
+  deployGammaPoolOracle,
   deployGelatoGUniPriceOracle,
   deploySolidlyLpOracle,
   deploySolidlyPriceOracle,
@@ -34,6 +35,7 @@ import {
   ConcentratedLiquidityOracleConfig,
   CurvePoolConfig,
   DiaAsset,
+  GammaLpAsset,
   GelatoGUniAsset,
   SolidlyLpAsset,
   SolidlyOracleAssetConfig
@@ -109,6 +111,12 @@ const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     poolAddress: "0xDC8a5c5975726235402cFac9B28268EEccd42813",
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: underlying(assets, assetSymbols.DAI)
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.CASH),
+    poolAddress: "0x619259F699839dD1498FFC22297044462483bD27",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.USDC)
   }
 ];
 
@@ -510,10 +518,36 @@ const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
   }
 ];
 
+// retro ALM
+const gammaLps: GammaLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aUSDC_CASH_N)
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aUSDC_WETH_N)
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aWMATIC_MATICX_N)
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aWBTC_WETH_N)
+  }
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  //// Gamma LP Oracle
+  await deployGammaPoolOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    gammaLps
+  });
 
   //// Solidly Price Oracle
   await deploySolidlyPriceOracle({
@@ -872,6 +906,18 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (solidlySwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(solidlySwapLiquidator.transactionHash);
   console.log("SolidlySwapLiquidator: ", solidlySwapLiquidator.address);
+
+  // Gamma LP token wrapper
+  const gammaLpTokenWrapper = await deployments.deploy("GammaLpTokenWrapper", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (gammaLpTokenWrapper.transactionHash) {
+    await ethers.provider.waitForTransaction(gammaLpTokenWrapper.transactionHash);
+  }
+  console.log("gammaLpTokenWrapper: ", gammaLpTokenWrapper.address);
 
   /// Addresses Provider
   /// set bUSD

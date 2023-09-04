@@ -3,13 +3,12 @@ import { Contract, ContractInterface } from "ethers";
 import { IonicBaseConstructor } from "..";
 import AuthoritiesRegistryABI from "../../abis/AuthoritiesRegistry";
 import CompoundMarketERC4626ABI from "../../abis/CompoundMarketERC4626";
-import ComptrollerABI from "../../abis/Comptroller";
-import ComptrollerFirstExtensionABI from "../../abis/ComptrollerFirstExtension";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import ICErc20ABI from "../../abis/ICErc20";
 import ICErc20PluginRewardsABI from "../../abis/ICErc20PluginRewards";
 import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
 import ILiquidatorsRegistryABI from "../../abis/ILiquidatorsRegistry";
+import IonicComptrollerABI from "../../abis/IonicComptroller";
 import IonicFlywheelABI from "../../abis/IonicFlywheel";
 import IonicFlywheelLensRouterABI from "../../abis/IonicFlywheelLensRouter";
 import JumpRateModelABI from "../../abis/JumpRateModel";
@@ -24,13 +23,12 @@ import PoolRolesAuthorityABI from "../../abis/PoolRolesAuthority";
 import UnitrollerABI from "../../abis/Unitroller";
 import { AuthoritiesRegistry } from "../../typechain/AuthoritiesRegistry";
 import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
-import { Comptroller } from "../../typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { ICErc20 } from "../../typechain/ICErc20";
 import { ICErc20PluginRewards } from "../../typechain/ICErc20PluginRewards";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
 import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
+import { IonicComptroller } from "../../typechain/IonicComptroller";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
@@ -45,7 +43,6 @@ import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
 import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../IonicSdk";
 
-type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
 type OptimizedAPRVaultWithExtensions = OptimizedAPRVaultFirstExtension & OptimizedAPRVaultSecondExtension;
 
 export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TBase) {
@@ -62,14 +59,10 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
       if (this.chainDeployment.ComptrollerFirstExtension) {
-        return new Contract(
-          comptrollerAddress,
-          [...ComptrollerABI, ...ComptrollerFirstExtensionABI],
-          signerOrProvider
-        ) as ComptrollerWithExtensions;
+        return new Contract(comptrollerAddress, [...IonicComptrollerABI], signerOrProvider) as IonicComptroller;
       }
 
-      return new Contract(comptrollerAddress, ComptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
+      return new Contract(comptrollerAddress, IonicComptrollerABI, signerOrProvider) as IonicComptroller;
     }
 
     createICErc20(address: string, signerOrProvider: SignerOrProvider = this.provider) {

@@ -324,6 +324,7 @@ export enum assetSymbols {
   WUSDR = "WUSDR",
   TNGBL = "TNGBL",
   DUSD = "DUSD",
+  CASH = "CASH",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
@@ -363,6 +364,12 @@ export enum assetSymbols {
   "vAMM-TNGBL/USDR" = "vAMM-TNGBL-USDR",
   "vAMM-WBTC/USDR" = "vAMM-WBTC-USDR",
   "vAMM-WETH/USDR" = "vAMM-WETH-USDR",
+
+  // Retro
+  aUSDC_CASH_N = "aUSDC-CASH-N",
+  aUSDC_WETH_N = "aUSDC-WETH-N",
+  aWMATIC_MATICX_N = "aWMATIC-MATICX-N",
+  aWBTC_WETH_N = "aWBTC-WETH-N",
 
   // Arbitrum
   "2pool" = "2pool",
