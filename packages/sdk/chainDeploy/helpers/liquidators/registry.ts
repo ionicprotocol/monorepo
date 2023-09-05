@@ -30,8 +30,12 @@ export const configureLiquidatorsRegistry = async ({
       inputTokens.push(inputToken);
       outputTokens.push(outputToken);
     }
-    const matching = await liquidatorsRegistry.callStatic.pairsStrategiesMatch(strategies, inputTokens, outputTokens);
-    if (!matching) {
+    const matchingStrategies = await liquidatorsRegistry.callStatic.pairsStrategiesMatch(
+      strategies,
+      inputTokens,
+      outputTokens
+    );
+    if (!matchingStrategies) {
       const tx = await liquidatorsRegistry._resetRedemptionStrategies(strategies, inputTokens, outputTokens);
       console.log("waiting for tx ", tx.hash);
       await tx.wait();
@@ -79,7 +83,7 @@ export const configureLiquidatorsRegistry = async ({
       }
     }
 
-    const matchingRouters = await liquidatorsRegistry.callStatic.uniswapV3RoutersMatch(
+    const matchingRouters = await liquidatorsRegistry.callStatic.uniswapPairsRoutersMatch(
       inputTokens,
       outputTokens,
       routers
