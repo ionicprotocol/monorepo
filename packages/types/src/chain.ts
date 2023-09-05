@@ -30,6 +30,11 @@ export interface ChainMetadata {
   shortName: string;
   name: string;
   img: string;
+  uniswapV3Routers?: {
+    [key: string]: {
+      [key: string]: string;
+    };
+  };
   uniswapV3Fees?: {
     [key: string]: {
       [key: string]: number;
