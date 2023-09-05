@@ -170,6 +170,21 @@
     "GammaPoolPriceOracle_Proxy": {
       "address": "0xC73Ff8671d7B686Ff11b2E20DAFB89D4D8077231"
     },
+    "GammaPoolUniswapV3PriceOracle": {
+      "address": "0xA5761Fe88A82f31159CF1fe75E1e166099bc91Bd"
+    },
+    "GammaPoolUniswapV3PriceOracle_Implementation": {
+      "address": "0x7a69F3E17Aeb172964b52b907E2751eCf907D0eD"
+    },
+    "GammaPoolUniswapV3PriceOracle_Proxy": {
+      "address": "0xA5761Fe88A82f31159CF1fe75E1e166099bc91Bd"
+    },
+    "GammaUniswapV3LpTokenLiquidator": {
+      "address": "0xBd28881CDA7D1f1340847ae9a4d3F01019B2d3B4"
+    },
+    "GammaUniswapV3LpTokenWrapper": {
+      "address": "0xEd3e7ede6dB549EB4E6E45e65f538B88C970AE35"
+    },
     "GelatoGUniLiquidator": {
       "address": "0x7fDB42B4AC16C74b52B771aaA0B1Da8Ef9640De4"
     },
@@ -210,7 +225,7 @@
       "address": "0x84839C3CF0A05990512e0b4cE0E0B13E7f4C579b"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x23EcE087392430d0B192fE7079ddF68b26F8bAdc"
+      "address": "0x060b9568dF0950D49214db30e3FF239d69c6d67A"
     },
     "LeveredPositionsLens": {
       "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
@@ -222,10 +237,13 @@
       "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
     },
     "LiquidatorsRegistry": {
-      "address": "0xA912BD226c01D7C1a48DFB3eA9d11317E81975D3"
+      "address": "0xf7D9E81d310F5291De637f3ae8faa521b225954b"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x6EC455e03c98b38d59d19c5913433F96f36e8243"
+      "address": "0xd571fFE32F4C0999295D78c7e410d35B1A765E4E"
+    },
+    "LiquidatorsRegistrySecondExtension": {
+      "address": "0x88B876d353814F9a6a21e699b46B8c582b52630A"
     },
     "LooplessFlywheelBooster": {
       "address": "0x7cbD6a8380dEe52B17B217214910Fb853E1587EA"
