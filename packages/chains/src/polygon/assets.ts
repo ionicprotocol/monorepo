@@ -946,7 +946,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_USDC_CASH,
     name: "Fusion V2 AMM - Narrow USDC/CASH 0.01%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(USDC, CASH, gammaNarrowAMM_USDC_CASH, "GAMMA_NARROW")
   },
   {
@@ -954,7 +954,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_USDC_WETH,
     name: "Fusion V2 AMM - Narrow USDC/WETH 0.05%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(USDC, WETH, gammaNarrowAMM_USDC_WETH, "GAMMA_NARROW")
   },
   {
@@ -962,7 +962,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_WMATIC_MATICX,
     name: "Fusion V2 AMM - Narrow WMATIC/MATICx 0.01%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(WMATIC, MATICx, gammaNarrowAMM_WMATIC_MATICX, "GAMMA_NARROW")
   },
   {
@@ -970,7 +970,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_WBTC_WETH,
     name: "Fusion V2 AMM - Narrow WBTC/WETH 0.05%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(WBTC, WETH, gammaNarrowAMM_WBTC_WETH, "GAMMA_NARROW")
   }
 ];
