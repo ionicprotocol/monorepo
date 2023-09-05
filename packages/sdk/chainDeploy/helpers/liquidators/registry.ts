@@ -56,9 +56,15 @@ export const configureLiquidatorsRegistry = async ({
       }
     }
 
-    const tx = await liquidatorsRegistry._setUniswapV3Fees(inputTokens, outputTokens, fees);
-    console.log("waiting for tx ", tx.hash);
-    await tx.wait();
-    console.log("_setUniswapV3Fees: ", tx.hash);
+    const matching = await liquidatorsRegistry.callStatic.uniswapPairsFeesMatch(inputTokens, outputTokens, fees);
+
+    if (!matching) {
+      const tx = await liquidatorsRegistry._setUniswapV3Fees(inputTokens, outputTokens, fees);
+      console.log("waiting for tx ", tx.hash);
+      await tx.wait();
+      console.log("_setUniswapV3Fees: ", tx.hash);
+    } else {
+      console.log(`UniV3 fees don't need to be updated`);
+    }
   }
 };
