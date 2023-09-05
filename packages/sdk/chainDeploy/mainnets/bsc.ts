@@ -27,6 +27,7 @@ import {
   CurvePoolConfig,
   CurveV2PoolConfig,
   GammaLpAsset,
+  GammaUnderlyingSwap,
   SolidlyLpAsset,
   SolidlyOracleAssetConfig,
   WombatAsset
@@ -420,7 +421,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     deployConfig,
-    gammaLps
+    gammaLps,
+    swap: GammaUnderlyingSwap.ALGEBRA
   });
 
   //// Curve LP Oracle
@@ -550,17 +552,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(wombatLpTokenLiquidator.transactionHash);
   console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
 
-  // Gamma LP token liquidator
-  const gammaLpTokenLiquidator = await deployments.deploy("GammaLpTokenLiquidator", {
+  // Gamma Algebra LP token liquidator
+  const gammaAlgebraLpTokenLiquidator = await deployments.deploy("GammaAlgebraLpTokenLiquidator", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1
   });
-  if (gammaLpTokenLiquidator.transactionHash) {
-    await ethers.provider.waitForTransaction(gammaLpTokenLiquidator.transactionHash);
+  if (gammaAlgebraLpTokenLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(gammaAlgebraLpTokenLiquidator.transactionHash);
   }
-  console.log("GammaLpTokenLiquidator: ", gammaLpTokenLiquidator.address);
+  console.log("GammaAlgebraLpTokenLiquidator: ", gammaAlgebraLpTokenLiquidator.address);
 
   //// Liquidator Funding Strategies
 
