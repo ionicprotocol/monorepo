@@ -24,11 +24,11 @@ export const supportedChainIdToConfig: {
   },
   [neon.chainId]: {
     enabled: true,
-    supported: config.isDevelopment || config.isTestnetEnabled
+    supported: config.isDevelopment || config.isTestnetEnabled || config.isNeonEnabled
   },
   [linea.chainId]: {
     enabled: true,
-    supported: config.isDevelopment || config.isTestnetEnabled
+    supported: config.isDevelopment || config.isTestnetEnabled || config.isLineaEnabled
   },
   [chapel.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
