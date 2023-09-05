@@ -78,7 +78,10 @@ export type ChainAddresses = {
   };
   ALGEBRA_SWAP_ROUTER?: string;
   SOLIDLY_SWAP_ROUTER?: string;
-  ALGEBRA_UNI_PROXY?: string;
+  GAMMA_ALGEBRA_SWAP_ROUTER?: string;
+  GAMMA_ALGEBRA_UNI_PROXY?: string;
+  GAMMA_UNISWAP_V3_SWAP_ROUTER?: string;
+  GAMMA_UNISWAP_V3_UNI_PROXY?: string;
 };
 
 export type ChainSupportedAssets = {
