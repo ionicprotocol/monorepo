@@ -558,34 +558,50 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (currentLRExtensions.length == 0) {
     tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, constants.AddressZero);
     await tx.wait();
-    console.log(
-      `registered the first liquidators registry extension ${liquidatorsRegistryExtensionDep.address}`
+    console.log(`registered the first liquidators registry extension ${liquidatorsRegistryExtensionDep.address}`);
+    tx = await liquidatorsRegistry._registerExtension(
+      liquidatorsRegistrySecondExtensionDep.address,
+      constants.AddressZero
     );
-    tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistrySecondExtensionDep.address, constants.AddressZero);
     await tx.wait();
     console.log(
       `registered the second liquidators registry extension ${liquidatorsRegistrySecondExtensionDep.address}`
     );
   } else {
     if (currentLRExtensions.length == 1) {
-      tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, currentLRExtensions[0]);
+      tx = await liquidatorsRegistry._registerExtension(
+        liquidatorsRegistryExtensionDep.address,
+        currentLRExtensions[0]
+      );
       await tx.wait();
       console.log(
         `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
       );
-      tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistrySecondExtensionDep.address, constants.AddressZero);
+      tx = await liquidatorsRegistry._registerExtension(
+        liquidatorsRegistrySecondExtensionDep.address,
+        constants.AddressZero
+      );
       await tx.wait();
       console.log(
         `registered the second liquidators registry extension ${liquidatorsRegistrySecondExtensionDep.address}`
       );
     } else if (currentLRExtensions.length == 2) {
-      if (currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address || currentLRExtensions[1] != liquidatorsRegistrySecondExtensionDep.address) {
-        tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, currentLRExtensions[0]);
+      if (
+        currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address ||
+        currentLRExtensions[1] != liquidatorsRegistrySecondExtensionDep.address
+      ) {
+        tx = await liquidatorsRegistry._registerExtension(
+          liquidatorsRegistryExtensionDep.address,
+          currentLRExtensions[0]
+        );
         await tx.wait();
         console.log(
           `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
         );
-        tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistrySecondExtensionDep.address, currentLRExtensions[1]);
+        tx = await liquidatorsRegistry._registerExtension(
+          liquidatorsRegistrySecondExtensionDep.address,
+          currentLRExtensions[1]
+        );
         await tx.wait();
         console.log(
           `replaced the liquidators registry second extension ${currentLRExtensions[1]} with the new ${liquidatorsRegistrySecondExtensionDep.address}`
