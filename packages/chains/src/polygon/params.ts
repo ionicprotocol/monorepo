@@ -13,12 +13,8 @@ const specificParams: ChainParams = {
     shortName: "Polygon",
     uniswapV3Fees: {
       [underlying(assets, assetSymbols.USDC)]: {
-        [underlying(assets, assetSymbols.PAR)]: 500
-      },
-      [underlying(assets, assetSymbols.USDC)]: {
-        [underlying(assets, assetSymbols.CASH)]: 100 // 0.01%
-      },
-      [underlying(assets, assetSymbols.USDC)]: {
+        [underlying(assets, assetSymbols.PAR)]: 500,
+        [underlying(assets, assetSymbols.CASH)]: 100, // 0.01%
         [underlying(assets, assetSymbols.WETH)]: 500 // 0.05%
       },
       [underlying(assets, assetSymbols.WMATIC)]: {

@@ -30,8 +30,12 @@ export const configureLiquidatorsRegistry = async ({
       inputTokens.push(inputToken);
       outputTokens.push(outputToken);
     }
-    const matching = await liquidatorsRegistry.callStatic.pairsStrategiesMatch(strategies, inputTokens, outputTokens);
-    if (!matching) {
+    const matchingStrategies = await liquidatorsRegistry.callStatic.pairsStrategiesMatch(
+      strategies,
+      inputTokens,
+      outputTokens
+    );
+    if (!matchingStrategies) {
       const tx = await liquidatorsRegistry._resetRedemptionStrategies(strategies, inputTokens, outputTokens);
       console.log("waiting for tx ", tx.hash);
       await tx.wait();
@@ -42,11 +46,10 @@ export const configureLiquidatorsRegistry = async ({
   }
 
   {
-    // TODO check if same instead of updating every time
+    // UniswapV3 Fees
     const fees: number[] = [];
-    const inputTokens: string[] = [];
-    const outputTokens: string[] = [];
-
+    let inputTokens: string[] = [];
+    let outputTokens: string[] = [];
     const uniswapV3Fees = chainIdToConfig[chainId].specificParams.metadata.uniswapV3Fees;
     for (const inputToken in uniswapV3Fees) {
       for (const outputToken in uniswapV3Fees[inputToken]) {
@@ -56,15 +59,43 @@ export const configureLiquidatorsRegistry = async ({
       }
     }
 
-    const matching = await liquidatorsRegistry.callStatic.uniswapPairsFeesMatch(inputTokens, outputTokens, fees);
+    const matchingFees = await liquidatorsRegistry.callStatic.uniswapPairsFeesMatch(inputTokens, outputTokens, fees);
 
-    if (!matching) {
+    if (!matchingFees) {
       const tx = await liquidatorsRegistry._setUniswapV3Fees(inputTokens, outputTokens, fees);
       console.log("waiting for tx ", tx.hash);
       await tx.wait();
       console.log("_setUniswapV3Fees: ", tx.hash);
     } else {
       console.log(`UniV3 fees don't need to be updated`);
+    }
+    // Custom UniV3 Routers
+    const routers: string[] = [];
+    inputTokens = [];
+    outputTokens = [];
+
+    const assetSpecificRouters = chainIdToConfig[chainId].specificParams.metadata.uniswapV3Routers;
+    for (const inputToken in assetSpecificRouters) {
+      for (const outputToken in assetSpecificRouters[inputToken]) {
+        inputTokens.push(inputToken);
+        outputTokens.push(outputToken);
+        routers.push(assetSpecificRouters[inputToken][outputToken]);
+      }
+    }
+
+    const matchingRouters = await liquidatorsRegistry.callStatic.uniswapV3RoutersMatch(
+      inputTokens,
+      outputTokens,
+      routers
+    );
+
+    if (!matchingRouters) {
+      const tx = await liquidatorsRegistry._setUniswapV3Routers(inputTokens, outputTokens, routers);
+      console.log("waiting for tx ", tx.hash);
+      await tx.wait();
+      console.log("_setUniswapV3Router: ", tx.hash);
+    } else {
+      console.log(`UniV3 routers don't need to be updated`);
     }
   }
 };
