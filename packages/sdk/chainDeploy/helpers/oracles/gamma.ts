@@ -1,5 +1,5 @@
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
-import { GammaDeployFnParams } from "../types";
+import { GammaDeployFnParams, GammaUnderlyingSwap } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
@@ -8,10 +8,14 @@ export const deployGammaPoolOracle = async ({
   getNamedAccounts,
   deployments,
   deployConfig,
-  gammaLps
+  gammaLps,
+  swap
 }: GammaDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const lpTokenPriceOracle = await deployments.deploy("GammaPoolPriceOracle", {
+  const contractName =
+    swap == GammaUnderlyingSwap.ALGEBRA ? "GammaPoolAlgebraPriceOracle" : "GammaPoolUniswapV3PriceOracle";
+
+  const lpTokenPriceOracle = await deployments.deploy(contractName, {
     from: deployer,
     args: [],
     log: true,
@@ -26,7 +30,7 @@ export const deployGammaPoolOracle = async ({
       proxyContract: "OpenZeppelinTransparentProxy"
     }
   });
-  console.log("GammaPoolPriceOracle: ", lpTokenPriceOracle.address);
+  console.log(`${contractName}: `, lpTokenPriceOracle.address);
 
   const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
   const underlyings = gammaLps.map((d) => d.lpTokenAddress);
