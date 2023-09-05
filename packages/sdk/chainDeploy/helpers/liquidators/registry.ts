@@ -83,7 +83,7 @@ export const configureLiquidatorsRegistry = async ({
       }
     }
 
-    const matchingRouters = await liquidatorsRegistry.callStatic.uniswapV3RoutersMatch(
+    const matchingRouters = await liquidatorsRegistry.callStatic.uniswapPairsRoutersMatch(
       inputTokens,
       outputTokens,
       routers
