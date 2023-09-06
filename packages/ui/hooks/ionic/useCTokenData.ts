@@ -21,7 +21,7 @@ export const useCTokenData = (
             reserveFactorMantissa,
             interestRateModelAddress,
             decimals,
-            { collateralFactorMantissa },
+            [, collateralFactorMantissa],
             supplyCap,
             borrowCap
           ] = await Promise.all([
