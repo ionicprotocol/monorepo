@@ -6493,9 +6493,9 @@ __metadata:
   linkType: hard
 
 "@safe-global/safe-gateway-typescript-sdk@npm:^3.5.3":
-  version: 3.11.0
-  resolution: "@safe-global/safe-gateway-typescript-sdk@npm:3.11.0"
-  checksum: 550222c48f8d71333f7291c271ee156c12e6689ab996c8b87b337371fd3052684e375ff29eb0bac28214cab903830e30dc83faf4eee511836ae3e5e898c223f4
+  version: 3.12.0
+  resolution: "@safe-global/safe-gateway-typescript-sdk@npm:3.12.0"
+  checksum: 4f563449d0af5a032037039e34d87f1c4a6a83d105871958df5aaf97d12b25bd7bce4c59108f1997e1e9cd087108c31e7f80bd2ba204690e9a766b6e475c21be
   languageName: node
   linkType: hard
 
@@ -16959,11 +16959,11 @@ __metadata:
   linkType: hard
 
 "i18next@npm:^23.4.9":
-  version: 23.4.9
-  resolution: "i18next@npm:23.4.9"
+  version: 23.5.0
+  resolution: "i18next@npm:23.5.0"
   dependencies:
     "@babel/runtime": ^7.22.5
-  checksum: 46ac2415dc817c0e25e1c5e64332249825cd63b5fb9a5d42e3a2329d4ecd098c0f15a243f56b53e03db02e2e9931ca9bb4447370b2436f9ad6556de40ce981cf
+  checksum: 026ff157d551e9adda132f2dfeb7da16b0f1f53af424e3374536a118ea5445aca4a6b5e86fd8fe483054e4cf55043b8ecc524806d816f1a8cc7ab201693378e1
   languageName: node
   linkType: hard
 
