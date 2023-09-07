@@ -65,6 +65,10 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
 
   const { data: healthFactor } = useHealthFactor(poolData?.comptroller, poolData?.chainId);
 
+  const isHealthFactorValid = useMemo(() => {
+    return !!healthFactor && Number(healthFactor) >= 0 && Number(healthFactor) <= 1;
+  }, [healthFactor]);
+
   const mixedColor = useCallback((ratio: number) => {
     let color1 = '';
     let color2 = '';
@@ -251,7 +255,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                 bodyProps={{ p: 0 }}
                 contentProps={{ width: '340px' }}
                 popoverProps={{ placement: 'top' }}
-                visible={!!healthFactor}
+                visible={isHealthFactorValid}
               >
                 <InfoOutlineIcon
                   color={'iLightGray'}
@@ -267,11 +271,14 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               ) : (
                 <Text
                   color={
-                    healthFactor ? mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX) : 'iWhite'
+                    isHealthFactorValid
+                      ? mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX)
+                      : 'iWhite'
                   }
+                  fontSize={healthFactor === '-1' ? '40px' : '12px'}
                   size="lg"
                 >
-                  {healthFactor ? healthFactor : '-'}
+                  {isHealthFactorValid ? healthFactor : healthFactor === '-1' ? '∞' : '-'}
                 </Text>
               )}
             </Skeleton>

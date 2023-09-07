@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
+import { constants, utils } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
@@ -13,6 +13,10 @@ export const useHealthFactor = (pool?: string, chainId?: number) => {
     async () => {
       if (sdk && pool && address) {
         const healthFactor = await sdk.getHealthFactor(address, pool);
+
+        if (healthFactor.gt(constants.WeiPerEther)) {
+          return '-1';
+        }
 
         return Number(utils.formatUnits(healthFactor)).toFixed(2);
       }
