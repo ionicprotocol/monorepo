@@ -506,7 +506,7 @@ export const APR = 'Apr';
 export const APR_TYPE = 'Apr Type';
 export const REPAY = 'Repay';
 export const HEALTH_FACTOR = {
-  MAX: 10,
+  MAX: 1,
   MIN: 0
 };
 

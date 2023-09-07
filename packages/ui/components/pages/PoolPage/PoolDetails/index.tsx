@@ -66,7 +66,11 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
   const { data: healthFactor } = useHealthFactor(poolData?.comptroller, poolData?.chainId);
 
   const isHealthFactorValid = useMemo(() => {
-    return !!healthFactor && Number(healthFactor) >= 0 && Number(healthFactor) <= 1;
+    return (
+      !!healthFactor &&
+      Number(healthFactor) >= HEALTH_FACTOR.MIN &&
+      Number(healthFactor) <= HEALTH_FACTOR.MAX
+    );
   }, [healthFactor]);
 
   const mixedColor = useCallback((ratio: number) => {
