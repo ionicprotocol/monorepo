@@ -90,7 +90,7 @@ export type PoolRowData = {
 
 const PoolsList = () => {
   const enabledChains = useEnabledChains();
-  const { isAllLoading, poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
+  const { poolsPerChain, allPools, error } = useCrossPools([...enabledChains]);
   const { address, setGlobalLoading } = useMultiIonic();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
@@ -345,13 +345,18 @@ const PoolsList = () => {
     }
   }, [searchText, globalFilter, sorting]);
 
+  useEffect(() => {
+    if (globalFilter.includes(ALL)) {
+      setIsLoading(false);
+    }
+  }, [globalFilter]);
+
   useQuery(
     [
       'statusPerChain',
       globalFilter,
-      isAllLoading,
-      Object.values(poolsPerChain).map((query) => {
-        return [query.data?.map((pool) => pool.comptroller), query.isLoading];
+      Object.entries(poolsPerChain).map(([chainId, query]) => {
+        return [chainId, query.data?.map((pool) => pool.comptroller), query.isLoading];
       })
     ],
     () => {
@@ -365,7 +370,7 @@ const PoolsList = () => {
         });
         setIsLoading(_isLoading);
       } else {
-        setIsLoading(isAllLoading);
+        setIsLoading(false);
       }
 
       return null;

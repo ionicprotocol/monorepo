@@ -19,9 +19,8 @@ export default task("comptroller:implementation:set-latest", "Configures a lates
     }
     const feeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
-    const latestComptrollerImplementation = await feeDistributor.callStatic.latestComptrollerImplementation(
-      oldImplementation
-    );
+    const latestComptrollerImplementation =
+      await feeDistributor.callStatic.latestComptrollerImplementation(oldImplementation);
 
     if (
       latestComptrollerImplementation === constants.AddressZero ||
@@ -39,8 +38,11 @@ export default task("comptroller:implementation:set-latest", "Configures a lates
 
 task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on")
   .addFlag("forceUpgrade", "If the pool upgrade should be forced")
-  .setAction(async ({ forceUpgrade }, { ethers }) => {
+  .setAction(async ({ forceUpgrade }, { ethers, getChainId }) => {
+    const chainId = parseInt(await getChainId());
     const deployer = await ethers.getNamedSigner("deployer");
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(deployer);
 
     const poolDirectory = (await ethers.getContract("PoolDirectory", deployer)) as PoolDirectory;
     const feeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
@@ -60,11 +62,12 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
 
         let shouldUpgrade = forceUpgrade || implBefore != latestImpl;
         if (!shouldUpgrade) {
-          const comptrollerAsExtension = (await ethers.getContractAt(
-            "ComptrollerFirstExtension",
-            pool.comptroller,
-            deployer
-          )) as ComptrollerFirstExtension;
+          const comptrollerAsExtension = sdk.createComptroller(pool.comptroller, deployer);
+          if (chainId == 245022934) {
+            const tx = await comptrollerAsExtension._upgrade();
+            await tx.wait();
+            console.log(`upgraded pool ${pool.comptroller} with tx ${tx.hash}`);
+          }
           const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
           for (let j = 0; j < markets.length; j++) {
             const market = markets[j];
@@ -79,13 +82,18 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
               console.log(`No auto upgrade with latest implementation ${latestImpl}`);
             } else {
               console.log(`will upgrade ${market} to ${latestImpl}`);
+              if (chainId == 245022934) {
+                const tx = await cTokenInstance._upgrade();
+                await tx.wait();
+                console.log(`upgraded ${market} with tx ${tx.hash}`);
+              }
               shouldUpgrade = true;
               break;
             }
           }
         }
 
-        if (shouldUpgrade) {
+        if (shouldUpgrade && chainId != 245022934) {
           const tx = await feeDistributor.autoUpgradePool(pool.comptroller);
           console.log(`bulk upgrading pool with tx ${tx.hash}`);
           await tx.wait();

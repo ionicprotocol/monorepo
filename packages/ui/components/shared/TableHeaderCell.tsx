@@ -34,9 +34,13 @@ export const TableHeaderCell = ({
         <Box width={1}>
           <Box hidden={!context.column.getIsSorted()}>
             {context.column.getIsSorted() === 'desc' ? (
-              <Text size="sm">↓</Text>
+              <Text size="sm" variant={'tableHeader'}>
+                ↓
+              </Text>
             ) : (
-              <Text size="sm">↑</Text>
+              <Text size="sm" variant={'tableHeader'}>
+                ↑
+              </Text>
             )}
           </Box>
         </Box>

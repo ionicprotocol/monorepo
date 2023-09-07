@@ -20,10 +20,12 @@ export enum RedemptionStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
   UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
-  UniswapV3Liquidator = "UniswapV3Liquidator",
+  UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
-  GammaLpTokenLiquidator = "GammaLpTokenLiquidator",
-  GammaLpTokenWrapper = "GammaLpTokenWrapper",
+  GammaAlgebraLpTokenLiquidator = "GammaAlgebraLpTokenLiquidator",
+  GammaUniswapV3LpTokenLiquidator = "GammaUniswapV3LpTokenLiquidator",
+  GammaAlgebraLpTokenWrapper = "GammaAlgebraLpTokenWrapper",
+  GammaUniswapV3LpTokenWrapper = "GammaUniswapV3LpTokenWrapper",
   CurveSwapLiquidator = "CurveSwapLiquidator",
   CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
   CurveLpTokenWrapper = "CurveLpTokenWrapper",
@@ -68,7 +70,8 @@ export enum OracleTypes {
   KyberSwapPriceOracle = "KyberSwapPriceOracle",
   AlgebraPriceOracle = "AlgebraPriceOracle",
   AnkrCertificateTokenPriceOracle = "AnkrCertificateTokenPriceOracle",
-  GammaPoolPriceOracle = "GammaPoolPriceOracle",
+  GammaPoolAlgebraPriceOracle = "GammaPoolAlgebraPriceOracle",
+  GammaPoolUniswapV3PriceOracle = "GammaPoolUniswapV3PriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   BalancerLpStablePoolPriceOracle = "BalancerLpStablePoolPriceOracle",
@@ -324,6 +327,7 @@ export enum assetSymbols {
   WUSDR = "WUSDR",
   TNGBL = "TNGBL",
   DUSD = "DUSD",
+  CASH = "CASH",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
@@ -363,6 +367,12 @@ export enum assetSymbols {
   "vAMM-TNGBL/USDR" = "vAMM-TNGBL-USDR",
   "vAMM-WBTC/USDR" = "vAMM-WBTC-USDR",
   "vAMM-WETH/USDR" = "vAMM-WETH-USDR",
+
+  // Retro
+  aUSDC_CASH_N = "aUSDC-CASH-N",
+  aUSDC_WETH_N = "aUSDC-WETH-N",
+  aWMATIC_MATICX_N = "aWMATIC-MATICX-N",
+  aWBTC_WETH_N = "aWBTC-WETH-N",
 
   // Arbitrum
   "2pool" = "2pool",

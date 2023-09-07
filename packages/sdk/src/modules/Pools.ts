@@ -248,17 +248,18 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 
       const poolAuth = this.createPoolRolesAuthority(poolAuthAddress);
 
-      // let's check if it's public
-      const cToken = this.createICErc20(market);
-      const func = cToken.interface.getFunction("mint");
-      const selectorHash = cToken.interface.getSighash(func);
-      const isPublic = await poolAuth.callStatic.isCapabilityPublic(market, selectorHash);
+      if (role === Roles.SUPPLIER_ROLE) {
+        // let's check if it's public
+        const cToken = this.createICErc20(market);
+        const func = cToken.interface.getFunction("mint");
+        const selectorHash = cToken.interface.getSighash(func);
+        const isPublic = await poolAuth.callStatic.isCapabilityPublic(market, selectorHash);
 
-      if (isPublic) {
-        return true;
+        if (isPublic) {
+          return true;
+        }
       }
 
-      // if not public, check role
       return await poolAuth.callStatic.doesUserHaveRole(user, role);
     }
   };

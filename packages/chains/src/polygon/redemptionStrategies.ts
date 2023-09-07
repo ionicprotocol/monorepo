@@ -193,33 +193,49 @@ const redemptionStrategies: RedemptionStrategy[] = [
     strategy: RedemptionStrategyContract.BalancerSwapLiquidator,
     outputToken: WMATIC
   },
-  // USDR -> USDC, WUSDR, LPs
+  // USDR -> USDC, WUSDR
   {
     inputToken: underlying(assets, assetSymbols.USDR),
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
     outputToken: USDC
   },
   {
-    inputToken: underlying(assets, assetSymbols.USDR),
+    inputToken: USDC,
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WUSDR)
   },
   {
     inputToken: underlying(assets, assetSymbols.USDR),
-    strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
-    outputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"])
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WUSDR)
+  },
+  // CASH -> USDC
+  {
+    inputToken: underlying(assets, assetSymbols.CASH),
+    strategy: RedemptionStrategyContract.UniswapV3LiquidatorFunder,
+    outputToken: USDC
+  },
+  // LPs -> USDR || USDC || WETH || CASH
+  {
+    inputToken: underlying(assets, assetSymbols.aUSDC_CASH_N),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
+    outputToken: USDC
   },
   {
-    inputToken: underlying(assets, assetSymbols.USDR),
-    strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
-    outputToken: underlying(assets, assetSymbols["vAMM-MATIC/USDR"])
+    inputToken: underlying(assets, assetSymbols.aUSDC_WETH_N),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
+    outputToken: USDC
   },
   {
-    inputToken: underlying(assets, assetSymbols.USDR),
-    strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
-    outputToken: underlying(assets, assetSymbols["vAMM-MATIC/USDR"])
+    inputToken: underlying(assets, assetSymbols.aWMATIC_MATICX_N),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
+    outputToken: WMATIC
   },
-  // LPs -> USDR || USDC || WETH
+  {
+    inputToken: underlying(assets, assetSymbols.aWBTC_WETH_N),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.WBTC)
+  },
   {
     inputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
@@ -241,7 +257,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.USDR)
   },
   {
-    inputToken: underlying(assets, assetSymbols["vAMM-TNGBL/USDR"]),
+    inputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.USDR)
   },
@@ -260,7 +276,42 @@ const redemptionStrategies: RedemptionStrategy[] = [
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
   },
-  // Reverse: USDC / USDR / WUSDR -> LPs
+  {
+    inputToken: underlying(assets, assetSymbols["vAMM-WETH/USDR"]),
+    strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDR)
+  },
+  // Reverse: USDC / USDR / WUSDR / CASH -> LPs
+  {
+    inputToken: underlying(assets, assetSymbols.USDC),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aUSDC_CASH_N)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.USDC),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aUSDC_WETH_N)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.CASH),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aUSDC_CASH_N)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WBTC),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aWBTC_WETH_N)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.MATICx),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aWMATIC_MATICX_N)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WMATIC),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aWMATIC_MATICX_N)
+  },
   {
     inputToken: underlying(assets, assetSymbols.USDC),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
@@ -324,4 +375,5 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.DUSD)
   }
 ];
+
 export default redemptionStrategies;

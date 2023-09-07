@@ -1,7 +1,7 @@
 {
   "name": "@ionicprotocol/types",
   "repository": "git://github.com:ionicprotocol/monorepo.git",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

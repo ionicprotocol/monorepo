@@ -8,12 +8,13 @@ const oracles: OracleTypes[] = [
   OracleTypes.DiaPriceOracle,
   OracleTypes.CurveLpTokenPriceOracleNoRegistry,
   OracleTypes.UniswapLpTokenPriceOracle,
-  OracleTypes.UniswapTwapPriceOracleV2,
   OracleTypes.GelatoGUniPriceOracle,
   OracleTypes.BalancerLpTokenPriceOracle,
   OracleTypes.BalancerLpStablePoolPriceOracle,
   OracleTypes.BalancerRateProviderOracle,
-  OracleTypes.AlgebraPriceOracle
+  OracleTypes.AlgebraPriceOracle,
+  OracleTypes.GammaPoolUniswapV3PriceOracle,
+  OracleTypes.UniswapV3PriceOracle
 ];
 
 export default oracles;
