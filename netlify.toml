@@ -18,7 +18,7 @@ command = "yarn build:deploy:ui"
 
 [build.environment]
 YARN_CHECKSUM_BEHAVIOR = "update"
-SUPABASE_URL = "https://xdjnvsfkwtkwfuayzmtm.supabase.co"
+SUPABASE_URL = "https://bdysvcltrzmhnvzfciue.supabase.co"
 ICON_SERVER = "https://d1912tcoux65lj.cloudfront.net"
 PRODUCT_URL = 'https://app.midascapital.xyz'
 FEATURE_CREATE_POOL = "0x2680D8f1ED3BEe1c731cFeedcDa2A74bB7317828,0x7dB8d33114462e032E5bf636D271f8680619Ba25,0xb6c11605e971ab46B9BE4fDC48C9650A257075db,0x9308dddeC9B5cCd8a2685A46E913C892FE31C826"
@@ -35,6 +35,7 @@ ZKEVM = "true"
 LINEA = "true"
 NEON = "true"
 IS_SENTRY_ENABLED = "false"
+IS_PRODUCTION = "false"
 
 [context.development.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -46,6 +47,7 @@ ZKEVM = "true"
 LINEA = "true"
 NEON = "true"
 IS_SENTRY_ENABLED = "false"
+IS_PRODUCTION = "false"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -57,6 +59,7 @@ ZKEVM = "true"
 LINEA = "true"
 NEON = "true"
 IS_SENTRY_ENABLED = "true"
+IS_PRODUCTION = "true"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"

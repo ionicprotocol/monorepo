@@ -30,6 +30,11 @@ export interface ChainMetadata {
   shortName: string;
   name: string;
   img: string;
+  uniswapV3Routers?: {
+    [key: string]: {
+      [key: string]: string;
+    };
+  };
   uniswapV3Fees?: {
     [key: string]: {
       [key: string]: number;
@@ -78,6 +83,10 @@ export type ChainAddresses = {
   };
   ALGEBRA_SWAP_ROUTER?: string;
   SOLIDLY_SWAP_ROUTER?: string;
+  GAMMA_ALGEBRA_SWAP_ROUTER?: string;
+  GAMMA_ALGEBRA_UNI_PROXY?: string;
+  GAMMA_UNISWAP_V3_SWAP_ROUTER?: string;
+  GAMMA_UNISWAP_V3_UNI_PROXY?: string;
 };
 
 export type ChainSupportedAssets = {

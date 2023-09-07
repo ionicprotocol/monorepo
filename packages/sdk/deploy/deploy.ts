@@ -199,7 +199,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
-  if (comptrollerExtensions.length == 0 || comptrollerExtensions[0] != compFirstExtension.address) {
+  if (comptrollerExtensions.length == 0 || comptrollerExtensions[1] != compFirstExtension.address) {
     tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [
       comptroller.address,
       compFirstExtension.address
@@ -544,23 +544,72 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (liquidatorsRegistryExtensionDep.transactionHash)
     await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
   console.log("LiquidatorsRegistryExtension: ", liquidatorsRegistryExtensionDep.address);
+  const liquidatorsRegistrySecondExtensionDep = await deployments.deploy("LiquidatorsRegistrySecondExtension", {
+    from: deployer,
+    log: true,
+    args: []
+  });
+  if (liquidatorsRegistrySecondExtensionDep.transactionHash)
+    await ethers.provider.waitForTransaction(liquidatorsRegistrySecondExtensionDep.transactionHash);
+  console.log("LiquidatorsRegistrySecondExtension: ", liquidatorsRegistryExtensionDep.address);
 
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
   const currentLRExtensions = await liquidatorsRegistry._listExtensions();
-  if (!currentLRExtensions.length || currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address) {
-    let extToReplace;
-    if (currentLRExtensions.length == 0) {
-      extToReplace = constants.AddressZero;
-    } else {
-      extToReplace = currentLRExtensions[0];
-    }
-    tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, extToReplace);
+  if (currentLRExtensions.length == 0) {
+    tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, constants.AddressZero);
+    await tx.wait();
+    console.log(`registered the first liquidators registry extension ${liquidatorsRegistryExtensionDep.address}`);
+    tx = await liquidatorsRegistry._registerExtension(
+      liquidatorsRegistrySecondExtensionDep.address,
+      constants.AddressZero
+    );
     await tx.wait();
     console.log(
-      `replaced the liquidators registry old extension ${extToReplace} with the new ${liquidatorsRegistryExtensionDep.address}`
+      `registered the second liquidators registry extension ${liquidatorsRegistrySecondExtensionDep.address}`
     );
   } else {
-    console.log(`no liquidators registry extensions to update`);
+    if (currentLRExtensions.length == 1) {
+      tx = await liquidatorsRegistry._registerExtension(
+        liquidatorsRegistryExtensionDep.address,
+        currentLRExtensions[0]
+      );
+      await tx.wait();
+      console.log(
+        `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
+      );
+      tx = await liquidatorsRegistry._registerExtension(
+        liquidatorsRegistrySecondExtensionDep.address,
+        constants.AddressZero
+      );
+      await tx.wait();
+      console.log(
+        `registered the second liquidators registry extension ${liquidatorsRegistrySecondExtensionDep.address}`
+      );
+    } else if (currentLRExtensions.length == 2) {
+      if (
+        currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address ||
+        currentLRExtensions[1] != liquidatorsRegistrySecondExtensionDep.address
+      ) {
+        tx = await liquidatorsRegistry._registerExtension(
+          liquidatorsRegistryExtensionDep.address,
+          currentLRExtensions[0]
+        );
+        await tx.wait();
+        console.log(
+          `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
+        );
+        tx = await liquidatorsRegistry._registerExtension(
+          liquidatorsRegistrySecondExtensionDep.address,
+          currentLRExtensions[1]
+        );
+        await tx.wait();
+        console.log(
+          `replaced the liquidators registry second extension ${currentLRExtensions[1]} with the new ${liquidatorsRegistrySecondExtensionDep.address}`
+        );
+      } else {
+        console.log(`no liquidators registry extensions to update`);
+      }
+    }
   }
 
   //// Configure Liquidators Registry
@@ -609,6 +658,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
     const currentLPFExtensions = await leveredPositionFactory._listExtensions();
 
+    console.log("currentLPFExtensions: ", currentLPFExtensions.join(", "));
+
     if (currentLPFExtensions.length == 1) {
       tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[0]);
       await tx.wait();
@@ -618,8 +669,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       console.log("registered the LeveredPositionFactory second extension: ", tx.hash);
     } else if (currentLPFExtensions.length == 2) {
       if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
-        console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt1Dep.address}`);
-        tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[1]);
+        console.log(`replacing ${currentLPFExtensions[0]} with ${lpfExt1Dep.address}`);
+        tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, currentLPFExtensions[0]);
         await tx.wait();
         console.log("replaced the LeveredPositionFactory first extension: ", tx.hash);
       }
@@ -629,6 +680,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         await tx.wait();
         console.log("replaced the LeveredPositionFactory second extension: ", tx.hash);
       }
+    } else if (currentLPFExtensions.length == 0) {
+      console.log(`no LeveredPositionFactory extensions configured, adding them`);
+      tx = await leveredPositionFactory._registerExtension(lpfExt1Dep.address, constants.AddressZero);
+      await tx.wait();
+      console.log("registered the LeveredPositionFactory first extension: ", tx.hash);
+      tx = await leveredPositionFactory._registerExtension(lpfExt2Dep.address, constants.AddressZero);
+      await tx.wait();
+      console.log("registered the LeveredPositionFactory second extension: ", tx.hash);
     } else {
       console.log(`no LeveredPositionFactory extensions to update`);
     }

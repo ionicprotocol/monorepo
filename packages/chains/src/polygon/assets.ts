@@ -16,6 +16,7 @@ import {
   lidoFinanceDocs,
   oneInchDocs,
   pearlDocs,
+  retroAlmGamma,
   StaderXDocs
 } from "../common/docs";
 
@@ -54,6 +55,7 @@ const USDR = "0x40379a439D4F6795B6fc9aa5687dB461677A2dBa";
 const WUSDR = "0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265";
 const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
 const DUSD = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
+const CASH = "0x5D066D022EDE10eFa2717eD3D79f22F949F8C175";
 
 // liquid staked assets
 const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
@@ -126,6 +128,12 @@ const solidlyVolatileAMM_wUSDR_USDR = "0x8711a1a52c34EDe8E61eF40496ab2618a8F6EA4
 const solidlyVolatileAMM_TNGBL_USDR = "0x0Edc235693C20943780b76D79DD763236E94C751";
 const solidlyVolatileAMM_WETH_USDR = "0x74c64d1976157E7Aaeeed46EF04705F4424b27eC";
 const solidlyVolatileAMM_WBTC_USDR = "0xb95E1C22dd965FafE926b2A793e9D6757b6613F4";
+
+// retro (solidly gamma)
+const gammaNarrowAMM_USDC_CASH = "0x64e14623CA543b540d0bA80477977f7c2c00a7Ea";
+const gammaNarrowAMM_USDC_WETH = "0xe058e1FfFF9B13d3FCd4803FDb55d1Cc2fe07DDC";
+const gammaNarrowAMM_WMATIC_MATICX = "0x2589469b7A72802CE02484f053CB6df869eB2689";
+const gammaNarrowAMM_WBTC_WETH = "0x336536F5bB478D8624dDcE0942fdeF5C92bC4662";
 
 export const assets: SupportedAsset[] = [
   {
@@ -371,6 +379,16 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.AlgebraPriceOracle,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/simple/swap/USDC/DAVOS")
+  },
+  {
+    symbol: assetSymbols.CASH,
+    underlying: CASH,
+    name: "CASH",
+    decimals: 18,
+    oracle: OracleTypes.UniswapV3PriceOracle,
+    extraDocs: `
+    <p><b>How to acquire this token</b><p/><br />
+    <p>You can acquire this asset on <a href="https://stabl.fi/swap" target="_blank" style="color: #BCAC83;">stabl.fi</a>.</p>`
   },
   {
     symbol: assetSymbols.WBTC,
@@ -922,6 +940,38 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.SolidlyLpTokenPriceOracle,
     extraDocs: pearlDocs(solidlyVolatileAMM_WETH_USDR),
     originalSymbol: assetOriginalSymbols["vAMM-WETH/USDR"]
+  },
+  {
+    symbol: assetSymbols.aUSDC_CASH_N,
+    underlying: gammaNarrowAMM_USDC_CASH,
+    name: "Fusion V2 AMM - Narrow USDC/CASH 0.01%",
+    decimals: 18,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
+    extraDocs: retroAlmGamma(USDC, CASH, gammaNarrowAMM_USDC_CASH, "GAMMA_NARROW")
+  },
+  {
+    symbol: assetSymbols.aUSDC_WETH_N,
+    underlying: gammaNarrowAMM_USDC_WETH,
+    name: "Fusion V2 AMM - Narrow USDC/WETH 0.05%",
+    decimals: 18,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
+    extraDocs: retroAlmGamma(USDC, WETH, gammaNarrowAMM_USDC_WETH, "GAMMA_NARROW")
+  },
+  {
+    symbol: assetSymbols.aWMATIC_MATICX_N,
+    underlying: gammaNarrowAMM_WMATIC_MATICX,
+    name: "Fusion V2 AMM - Narrow WMATIC/MATICx 0.01%",
+    decimals: 18,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
+    extraDocs: retroAlmGamma(WMATIC, MATICx, gammaNarrowAMM_WMATIC_MATICX, "GAMMA_NARROW")
+  },
+  {
+    symbol: assetSymbols.aWBTC_WETH_N,
+    underlying: gammaNarrowAMM_WBTC_WETH,
+    name: "Fusion V2 AMM - Narrow WBTC/WETH 0.05%",
+    decimals: 18,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
+    extraDocs: retroAlmGamma(WBTC, WETH, gammaNarrowAMM_WBTC_WETH, "GAMMA_NARROW")
   }
 ];
 

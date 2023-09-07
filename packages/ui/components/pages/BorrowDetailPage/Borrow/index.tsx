@@ -350,8 +350,8 @@ export const Borrow = ({
             <Text variant={'itemDesc'}>
               {isBorrowApyLoading
                 ? 'Borrow Apr'
-                : borrowApyPerAsset
-                ? borrowApyPerAsset[selectedAsset.cToken]
+                : borrowApyPerAsset && borrowApyPerAsset[selectedAsset.cToken]
+                ? borrowApyPerAsset[selectedAsset.cToken].toFixed(2)
                 : '--'}{' '}
               %
             </Text>

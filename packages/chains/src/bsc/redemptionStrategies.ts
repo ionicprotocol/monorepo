@@ -147,37 +147,37 @@ const redemptionStrategies: RedemptionStrategy[] = [
 
   {
     inputToken: underlying(assets, assetSymbols.aWBNB_STKBNB),
-    strategy: RedemptionStrategyContract.GammaLpTokenLiquidator,
+    strategy: RedemptionStrategyContract.GammaAlgebraLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.WBNB)
   },
   {
     inputToken: underlying(assets, assetSymbols.aANKRBNB_ANKR_N),
-    strategy: RedemptionStrategyContract.GammaLpTokenLiquidator,
+    strategy: RedemptionStrategyContract.GammaAlgebraLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.ankrBNB)
   },
   {
     inputToken: underlying(assets, assetSymbols.aANKRBNB_ANKR_W),
-    strategy: RedemptionStrategyContract.GammaLpTokenLiquidator,
+    strategy: RedemptionStrategyContract.GammaAlgebraLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.ankrBNB)
   },
   {
     inputToken: underlying(assets, assetSymbols.aANKRBNB_RDNT_N),
-    strategy: RedemptionStrategyContract.GammaLpTokenLiquidator,
+    strategy: RedemptionStrategyContract.GammaAlgebraLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.ankrBNB)
   },
   {
     inputToken: underlying(assets, assetSymbols.aANKRBNB_RDNT_W),
-    strategy: RedemptionStrategyContract.GammaLpTokenLiquidator,
+    strategy: RedemptionStrategyContract.GammaAlgebraLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.ankrBNB)
   },
   {
     inputToken: underlying(assets, assetSymbols.aANKRBNB_THE_N),
-    strategy: RedemptionStrategyContract.GammaLpTokenLiquidator,
+    strategy: RedemptionStrategyContract.GammaAlgebraLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.ankrBNB)
   },
   {
     inputToken: underlying(assets, assetSymbols.aANKRBNB_THE_W),
-    strategy: RedemptionStrategyContract.GammaLpTokenLiquidator,
+    strategy: RedemptionStrategyContract.GammaAlgebraLpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.ankrBNB)
   },
   {
