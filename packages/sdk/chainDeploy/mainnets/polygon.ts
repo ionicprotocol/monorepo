@@ -16,6 +16,7 @@ import {
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
+  deployGammaPoolOracle,
   deployGelatoGUniPriceOracle,
   deploySolidlyLpOracle,
   deploySolidlyPriceOracle,
@@ -34,6 +35,8 @@ import {
   ConcentratedLiquidityOracleConfig,
   CurvePoolConfig,
   DiaAsset,
+  GammaLpAsset,
+  GammaUnderlyingSwap,
   GelatoGUniAsset,
   SolidlyLpAsset,
   SolidlyOracleAssetConfig
@@ -109,6 +112,12 @@ const uniswapV3OracleTokens: Array<ConcentratedLiquidityOracleConfig> = [
     poolAddress: "0xDC8a5c5975726235402cFac9B28268EEccd42813",
     twapWindow: ethers.BigNumber.from(30 * 60),
     baseToken: underlying(assets, assetSymbols.DAI)
+  },
+  {
+    assetAddress: underlying(assets, assetSymbols.CASH),
+    poolAddress: "0x619259F699839dD1498FFC22297044462483bD27",
+    twapWindow: ethers.BigNumber.from(30 * 60),
+    baseToken: underlying(assets, assetSymbols.USDC)
   }
 ];
 
@@ -510,10 +519,37 @@ const balancerSwapLiquidatorData: BalancerSwapTokenLiquidatorData[] = [
   }
 ];
 
+// retro ALM
+const gammaLps: GammaLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aUSDC_CASH_N)
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aUSDC_WETH_N)
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aWMATIC_MATICX_N)
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.aWBTC_WETH_N)
+  }
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  //// Gamma Uniswap LP Oracle
+  await deployGammaPoolOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    gammaLps,
+    swap: GammaUnderlyingSwap.UNISWAP
+  });
 
   //// Solidly Price Oracle
   await deploySolidlyPriceOracle({
@@ -557,15 +593,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     chainlinkAssets
   });
   ////
-
-  //// Uniswap Oracle
-  // await deployUniswapOracle({
-  //   run,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   deployConfig,
-  // });
 
   //// Uniswap LP Oracle
   await deployUniswapLpOracle({
@@ -765,16 +792,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenWrapper.transactionHash);
   console.log("CurveLpTokenWrapper: ", curveLpTokenWrapper.address);
 
-  // Gamma LP token liquidator
-  const gammaLpTokenLiquidator = await deployments.deploy("GammaLpTokenLiquidator", {
-    from: deployer,
-    args: [],
-    log: true
-  });
-  if (gammaLpTokenLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(gammaLpTokenLiquidator.transactionHash);
-  console.log("GammaLpTokenLiquidator: ", gammaLpTokenLiquidator.address);
-
   //// Gelato GUNI Liquidator
   const gelatoGUniLiquidator = await deployments.deploy("GelatoGUniLiquidator", {
     from: deployer,
@@ -872,6 +889,28 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (solidlySwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(solidlySwapLiquidator.transactionHash);
   console.log("SolidlySwapLiquidator: ", solidlySwapLiquidator.address);
+
+  // Gamma Uniswap LP token liquidator
+  const gammaUniswapLpTokenLiquidator = await deployments.deploy("GammaUniswapV3LpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true
+  });
+  if (gammaUniswapLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(gammaUniswapLpTokenLiquidator.transactionHash);
+  console.log("GammaUniswapV3LpTokenLiquidator: ", gammaUniswapLpTokenLiquidator.address);
+
+  // Gamma Uniswap LP token wrapper
+  const gammaUniswapLpTokenWrapper = await deployments.deploy("GammaUniswapV3LpTokenWrapper", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (gammaUniswapLpTokenWrapper.transactionHash) {
+    await ethers.provider.waitForTransaction(gammaUniswapLpTokenWrapper.transactionHash);
+  }
+  console.log("gammaUniswapV3LpTokenWrapper: ", gammaUniswapLpTokenWrapper.address);
 
   /// Addresses Provider
   /// set bUSD

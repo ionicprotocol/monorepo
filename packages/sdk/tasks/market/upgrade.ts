@@ -51,11 +51,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const implementationData = abiCoder.encode(["address"], [pluginAddress]);
 
     console.log(`Setting implementation to ${implementationAddress} with plugin ${pluginAddress}`);
-    const setImplementationTx = await cTokenInstance._setImplementationSafe(
-      implementationAddress,
-      false,
-      implementationData
-    );
+    const setImplementationTx = await cTokenInstance._setImplementationSafe(implementationAddress, implementationData);
 
     const receipt: TransactionReceipt = await setImplementationTx.wait();
     if (receipt.status != ethers.constants.One.toNumber()) {

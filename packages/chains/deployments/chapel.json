@@ -15,7 +15,7 @@
       "address": "0xa5E190Fa38F325617381e835da8b2DB2D12cE5eb"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0x30D09430e838A1f6262CD8e3B395BFacC47f392d"
+      "address": "0xF6199576A640dc03aFCC316A253fAc93dad6D802"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0xa5E190Fa38F325617381e835da8b2DB2D12cE5eb"
@@ -60,7 +60,7 @@
       "address": "0xE024e3fF90fE820002c2Ff6CA7c2Fb7fA97BE289"
     },
     "Comptroller": {
-      "address": "0x4Bd2e2a4b6993626C3102deBFE0be6B2C07125E1"
+      "address": "0x0E06465184fbAfe0Ba0aE504DFEC5A1787c5D551"
     },
     "ComptrollerFirstExtension": {
       "address": "0xe8B2Dcc64b5529df693f5feC34F68642E23a9933"
@@ -105,7 +105,7 @@
       "address": "0x29761aF6d5779e6E184d4e84415Ef50551934A17"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0xC0F0e79e2226300A2ae93174b6778CCE8aD38Ee9"
+      "address": "0x8B72922d23bc80Fb9046e7F9594fd753633eBE7B"
     },
     "LeveredPositionsLens": {
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
@@ -117,10 +117,13 @@
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
     },
     "LiquidatorsRegistry": {
-      "address": "0x0c2C97c8FE70326a25f2913F8905a38a9d7c9C2E"
+      "address": "0x9186E913e95a11bbE08b2D0b804FA70061C9978F"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xE114e3A6c9a985c37c1b4f5442E7eA2509476Fcf"
+      "address": "0x47788c35B123f5A2e0e69C35e911CE7c354744c3"
+    },
+    "LiquidatorsRegistrySecondExtension": {
+      "address": "0x6EE9ad9adD22Bc72B8296F9aC50FFe47745Dd650"
     },
     "LooplessFlywheelBooster": {
       "address": "0xBfa79d397682DDdfBb1eC671D2a5CF4f213C8d2A"
@@ -153,7 +156,7 @@
       "address": "0xf0609635Fa55971360E0430771D8Cb2d2bF7d726"
     },
     "PoolLens": {
-      "address": "0xED6Bdf0F75a791744b7451308A6Baba5F7465F05"
+      "address": "0x7f42064c92fc875a4319AF980f3f6EE688c97CA6"
     },
     "PoolLensSecondary": {
       "address": "0x0e09c3d8e66d1d3ECD06904aB4578989cE44A18E"
