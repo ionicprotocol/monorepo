@@ -19,9 +19,8 @@ export default task("comptroller:implementation:set-latest", "Configures a lates
     }
     const feeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
-    const latestComptrollerImplementation = await feeDistributor.callStatic.latestComptrollerImplementation(
-      oldImplementation
-    );
+    const latestComptrollerImplementation =
+      await feeDistributor.callStatic.latestComptrollerImplementation(oldImplementation);
 
     if (
       latestComptrollerImplementation === constants.AddressZero ||
