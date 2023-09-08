@@ -1,6 +1,6 @@
 import { constants, providers } from "ethers";
 
-import { DiaPriceOracle } from "../../../typechain/DiaPriceOracle";
+import { DiaPriceOracle } from "../../../typechain/DiaPriceOracle.sol/DiaPriceOracle";
 import { DiaDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";

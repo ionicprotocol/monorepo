@@ -2,11 +2,11 @@ import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
-import ComptrollerABI from "../../abis/Comptroller";
-import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import ICErc20ABI from "../../abis/ICErc20";
+import { abi as ComptrollerABI } from "../../artifacts/Comptroller.sol/Comptroller.json";
+import { abi as ICErc20ABI } from "../../artifacts/CTokenInterfaces.sol/ICErc20.json";
+import { abi as EIP20InterfaceABI } from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import { Comptroller } from "../../typechain/Comptroller";
-import { ICErc20 } from "../../typechain/ICErc20";
+import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
 import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";

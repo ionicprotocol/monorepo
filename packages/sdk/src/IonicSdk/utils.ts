@@ -2,8 +2,8 @@ import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import Filter from "bad-words";
 import { Contract, Signer, utils } from "ethers";
 
-import ComptrollerABI from "../../abis/Comptroller";
-import UnitrollerArtifact from "../../artifacts/Unitroller.json";
+import { abi as ComptrollerABI } from "../../artifacts/Comptroller.sol/Comptroller.json";
+import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
 import { Comptroller } from "../../typechain/Comptroller";
 import { Unitroller } from "../../typechain/Unitroller";
 
