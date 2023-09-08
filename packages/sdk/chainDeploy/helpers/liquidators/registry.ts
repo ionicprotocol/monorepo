@@ -79,7 +79,12 @@ export const configureLiquidatorsRegistry = async ({
       for (const outputToken in assetSpecificRouters[inputToken]) {
         inputTokens.push(inputToken);
         outputTokens.push(outputToken);
-        routers.push(assetSpecificRouters[inputToken][outputToken]);
+        const router = assetSpecificRouters[inputToken][outputToken];
+        if (!router)
+          throw new Error(
+            `missing router address in the chain specific params for in/out tokens ${inputToken} ${outputTokens}`
+          );
+        routers.push(router);
       }
     }
 

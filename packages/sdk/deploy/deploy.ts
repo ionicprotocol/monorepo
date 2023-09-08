@@ -692,6 +692,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       console.log(`no LeveredPositionFactory extensions to update`);
     }
 
+    const lr = await leveredPositionFactory.callStatic.liquidatorsRegistry();
+    if (lr.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
+      tx = await leveredPositionFactory._setLiquidatorsRegistry(liquidatorsRegistry.address);
+      await tx.wait();
+      console.log("updated the LiquidatorsRegistry address in the LeveredPositionFactory", tx.hash);
+    }
+
     //// LEVERED POSITIONS LENS
     const lpLens = await deployments.deploy("LeveredPositionsLens", {
       from: deployer,

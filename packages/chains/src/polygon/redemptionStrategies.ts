@@ -215,11 +215,22 @@ const redemptionStrategies: RedemptionStrategy[] = [
     strategy: RedemptionStrategyContract.UniswapV3LiquidatorFunder,
     outputToken: USDC
   },
+  // USDC -> CASH
+  {
+    inputToken: USDC,
+    strategy: RedemptionStrategyContract.UniswapV3LiquidatorFunder,
+    outputToken: underlying(assets, assetSymbols.CASH)
+  },
   // LPs -> USDR || USDC || WETH || CASH
   {
     inputToken: underlying(assets, assetSymbols.aUSDC_CASH_N),
     strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
     outputToken: USDC
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.aUSDC_CASH_N),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.CASH)
   },
   {
     inputToken: underlying(assets, assetSymbols.aUSDC_WETH_N),

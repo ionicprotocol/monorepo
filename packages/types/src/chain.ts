@@ -32,7 +32,7 @@ export interface ChainMetadata {
   img: string;
   uniswapV3Routers?: {
     [key: string]: {
-      [key: string]: string;
+      [key: string]: string | null;
     };
   };
   uniswapV3Fees?: {
