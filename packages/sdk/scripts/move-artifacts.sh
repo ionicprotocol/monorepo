@@ -2,12 +2,18 @@
 rm -rf ./artifacts
 mkdir ./artifacts
 
-# define the array of files ( should be excluded)
-EXCLUDED_FILES=(
-  "./lib/contracts/out/ICErc20.sol/ICErc20.json"
-)
 
-for file in $(find ./lib/contracts/out -name '*.json' | grep -iv "${EXCLUDED_FILES[@]}" | grep -iv test); do
+for file in $(find ./lib/contracts/out -name '*.json' | grep -iv test); do
+    # exclude duplicates with incomplete interfaces
+    if [[ $file == *"ReplacingFlywheelDynamicRewards"* ]]; then
+        echo "Skipping $file"
+    fi
+    if [[ $file == *"FuseFlywheelDynamicRewardsPlugin"* ]]; then
+        echo "Skipping $file"
+    fi
+    if [[ $file == *"IPlugin"* ]]; then
+       echo "Skipping $file"
+    fi
     cp $file ./artifacts;
 done
 
