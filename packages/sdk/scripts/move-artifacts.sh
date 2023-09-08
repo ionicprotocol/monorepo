@@ -3,7 +3,7 @@ rm -rf ./artifacts
 mkdir ./artifacts
 
 
-cp -R './lib/contracts/out/' ./artifacts
+cp -R ./lib/contracts/out/. ./artifacts
 rm -rf -v ./artifacts/*Test*.sol
 rm -rf -v ./artifacts/*.t.sol
 
