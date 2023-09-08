@@ -742,6 +742,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       await tx.wait();
       console.log(`configured the auth registry in the FFD`);
     }
+    const leveredPosFactoryAr = await authoritiesRegistry.callStatic.leveredPositionsFactory();
+    if (leveredPosFactoryAr.toLowerCase() != leveredPositionFactory.address.toLowerCase()) {
+      // set the address in the AR
+      tx = await authoritiesRegistry.reinitialize(authoritiesRegistry.address);
+      await tx.wait();
+      console.log(`configured the auth registry in the FFD`);
+    }
     ////
   }
 
