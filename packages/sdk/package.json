@@ -11,17 +11,15 @@
   "module": "./dist/esm/src/index.js",
   "types": "./dist/cjs/src/index.d.ts",
   "files": [
-    "/dist/",
-    "/artifacts"
+    "/dist/"
   ],
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "yarn run build:forge; yarn run artifacts; yarn run typechain; yarn run abimate; yarn run build:sdk",
+    "build": "yarn run build:forge; yarn run artifacts; yarn run typechain; yarn run build:sdk",
     "postbuild": "du -sk dist/cjs; du -sk dist/esm",
     "clean": "rm -rf dist; rm -rf ./typechain; rm -rf ./artifacts; rm -rf ./abis",
     "artifacts": "echo '> Gathering artifacts...'; ./scripts/move-artifacts.sh",
-    "typechain": "echo '> Creating typechain types...'; [ ! -d ./typechain ] && typechain --target ethers-v5 --out-dir './typechain' './artifacts/*.json' --show-stack-traces",
-    "abimate": "echo '> Extracting ABIs from artifacts...'; abimate ./abis ./artifacts/*.json",
+    "typechain": "echo '> Creating typechain types...'; [ ! -d ./typechain ] && typechain --target ethers-v5 --out-dir './typechain' './artifacts/**/*.json' --show-stack-traces",
     "build:forge": "echo '> Building contracts...'; cd lib/contracts && forge install && forge build --sizes",
     "build:sdk": "echo '> Compiling SDK...'; yarn run build:esm && yarn run build:cjs",
     "build:esm": "echo '> Compiling ESM SDK Module...'; tsc -p tsconfig-sdk.json",
@@ -62,7 +60,6 @@
   "author": "Ionic Protocol",
   "license": "ISC",
   "devDependencies": {
-    "@abimate/core": "^0.2.1",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
     "@tenderly/hardhat-tenderly": "^1.7.7",
     "@typechain/ethers-v5": "^11.1.1",

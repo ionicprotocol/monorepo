@@ -1,6 +1,6 @@
 import { chainIdToConfig } from "@ionicprotocol/chains";
 
-import { ILiquidatorsRegistry } from "../../../typechain/ILiquidatorsRegistry";
+import { ILiquidatorsRegistry } from "../../../typechain/ILiquidatorsRegistry.sol/ILiquidatorsRegistry";
 import { LiquidatorsRegistryConfigFnParams } from "../types";
 
 export const configureLiquidatorsRegistry = async ({

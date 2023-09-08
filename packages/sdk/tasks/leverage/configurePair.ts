@@ -5,12 +5,10 @@ import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { ERC20 } from "../../typechain/ERC20";
-import { IERC20Mintable } from "../../typechain/IERC20Mintable";
-import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
-import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
+import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory.sol/ILeveredPositionFactory";
+import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry.sol/ILiquidatorsRegistry";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
-import { LiquidatorsRegistryExtension } from "../../typechain/LiquidatorsRegistryExtension";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
