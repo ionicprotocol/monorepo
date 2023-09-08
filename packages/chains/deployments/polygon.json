@@ -207,13 +207,13 @@
       "address": "0xA433B7d3a8A87D8fd40dA68A424007Dd8a21Ce41"
     },
     "LeveredPositionFactory": {
-      "address": "0x3bF976D5c27D45E835288431f7F98F9AE5406664"
+      "address": "0xEA032868840fFA28a98D6A4919A446FA2bc4dd2A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0xEA45C07030Eed4d21c54529EdA0995FeD142110F"
+      "address": "0xD68aF3ed4CBBbE85c0fdcE5A506A6D12E7d2d7A7"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x060b9568dF0950D49214db30e3FF239d69c6d67A"
+      "address": "0xcE50d762b4113704cA31bB3b8abe853483761049"
     },
     "LeveredPositionsLens": {
       "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
