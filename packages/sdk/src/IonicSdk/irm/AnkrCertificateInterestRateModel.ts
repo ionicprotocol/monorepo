@@ -2,8 +2,8 @@ import { Web3Provider } from "@ethersproject/providers";
 import { InterestRateModel } from "@ionicprotocol/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import CTokenFirstExtensionABI from "../../../abis/CTokenFirstExtension";
-import AnkrCertificateInterestRateModelArtifact from "../../../artifacts/AnkrCertificateInterestRateModel.json";
+import AnkrCertificateInterestRateModelArtifact from "../../../artifacts/AnkrCertificateInterestRateModel.sol/AnkrCertificateInterestRateModel.json";
+import { abi as CTokenFirstExtensionABI } from "../../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
 import { CTokenFirstExtension } from "../../../typechain/CTokenFirstExtension";
 import { getContract } from "../utils";
 

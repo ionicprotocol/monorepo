@@ -1,7 +1,7 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { ICErc20Plugin } from "../../typechain/ICErc20Plugin";
+import { ICErc20Plugin } from "../../typechain/CTokenInterfaces.sol/ICErc20Plugin";
 import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
 
 export default task("plugin:retire", "Retires a plugin from its market")

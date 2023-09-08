@@ -2,8 +2,8 @@ import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
-import { FeeDistributor } from "../../../typechain/FeeDistributor";
-import { ICErc20 } from "../../../typechain/ICErc20";
+import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
+import { FeeDistributor } from "../../../typechain/FeeDistributor.sol/FeeDistributor";
 import { PoolDirectory } from "../../../typechain/PoolDirectory";
 import { Unitroller } from "../../../typechain/Unitroller";
 

@@ -5,19 +5,17 @@ import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { ERC20 } from "../../typechain/ERC20";
-import { IERC20Mintable } from "../../typechain/IERC20Mintable";
-import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
-import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
+import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory.sol/ILeveredPositionFactory";
+import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry.sol/ILiquidatorsRegistry";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
-import { LiquidatorsRegistryExtension } from "../../typechain/LiquidatorsRegistryExtension";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
 export default task("levered-positions:configure-pair")
   .addParam("collateralMarketAddress", "Address of the market that will be used as collateral", undefined, types.string)
   .addParam("borrowMarketAddress", "Address of the market that will be used to borrow against", undefined, types.string)
-  .addParam(
+  .addOptionalParam(
     "liquidatorName",
     "Name of the redemption strategy used to convert between the two underlying assets",
     undefined,
@@ -26,13 +24,7 @@ export default task("levered-positions:configure-pair")
   .setAction(async ({ collateralMarketAddress, borrowMarketAddress, liquidatorName }, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
 
-    const liquidator = await ethers.getContract(liquidatorName);
     const registry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as ILiquidatorsRegistry;
-    const registryAsExt = (await ethers.getContractAt(
-      "LiquidatorsRegistryExtension",
-      registry.address,
-      deployer
-    )) as LiquidatorsRegistryExtension;
 
     const collateralMarket = (await ethers.getContractAt("CErc20Delegate", collateralMarketAddress)) as CErc20Delegate;
     const borrowMarket = (await ethers.getContractAt("CErc20Delegate", borrowMarketAddress)) as CErc20Delegate;
@@ -42,15 +34,20 @@ export default task("levered-positions:configure-pair")
 
     const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
 
-    let tx = await registryAsExt._setRedemptionStrategies(
-      [liquidator.address, liquidator.address],
-      [collateralToken, borrowToken],
-      [borrowToken, collateralToken]
-    );
-    await tx.wait();
-    console.log(
-      `configured the redemption strategy for the collateral/borrow pair ${collateralToken} / ${borrowToken}`
-    );
+    let tx;
+
+    if (liquidatorName) {
+      const liquidator = await ethers.getContract(liquidatorName);
+      tx = await registry._setRedemptionStrategies(
+        [liquidator.address, liquidator.address],
+        [collateralToken, borrowToken],
+        [borrowToken, collateralToken]
+      );
+      await tx.wait();
+      console.log(
+        `configured the redemption strategy for the collateral/borrow pair ${collateralToken} / ${borrowToken}`
+      );
+    }
 
     tx = await factory._setPairWhitelisted(collateralMarketAddress, borrowMarketAddress, true);
     await tx.wait();

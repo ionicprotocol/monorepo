@@ -3,8 +3,8 @@ import { task, types } from "hardhat/config";
 
 import { AddressesProvider } from "../../typechain/AddressesProvider";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
-import { DiaPriceOracle } from "../../typechain/DiaPriceOracle";
-import { ICErc20Plugin } from "../../typechain/ICErc20Plugin";
+import { ICErc20Plugin } from "../../typechain/CTokenInterfaces.sol/ICErc20Plugin";
+import { DiaPriceOracle } from "../../typechain/DiaPriceOracle.sol/DiaPriceOracle";
 import { IonicERC4626 } from "../../typechain/IonicERC4626";
 import { IonicFlywheelCore } from "../../typechain/IonicFlywheelCore";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";

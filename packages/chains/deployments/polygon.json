@@ -207,13 +207,13 @@
       "address": "0xA433B7d3a8A87D8fd40dA68A424007Dd8a21Ce41"
     },
     "LeveredPositionFactory": {
-      "address": "0x3bF976D5c27D45E835288431f7F98F9AE5406664"
+      "address": "0xEA032868840fFA28a98D6A4919A446FA2bc4dd2A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x84839C3CF0A05990512e0b4cE0E0B13E7f4C579b"
+      "address": "0xD68aF3ed4CBBbE85c0fdcE5A506A6D12E7d2d7A7"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x060b9568dF0950D49214db30e3FF239d69c6d67A"
+      "address": "0xcE50d762b4113704cA31bB3b8abe853483761049"
     },
     "LeveredPositionsLens": {
       "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
@@ -228,7 +228,7 @@
       "address": "0xf7D9E81d310F5291De637f3ae8faa521b225954b"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xd571fFE32F4C0999295D78c7e410d35B1A765E4E"
+      "address": "0xdb6370B44Fe2b0970ADcD6B5ad772977dbC7b0D3"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x88B876d353814F9a6a21e699b46B8c582b52630A"

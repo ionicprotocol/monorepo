@@ -12,7 +12,7 @@ import {
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
-import { FeeDistributor } from "../typechain/FeeDistributor";
+import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
@@ -690,6 +690,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       console.log("registered the LeveredPositionFactory second extension: ", tx.hash);
     } else {
       console.log(`no LeveredPositionFactory extensions to update`);
+    }
+
+    const lr = await leveredPositionFactory.callStatic.liquidatorsRegistry();
+    if (lr.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
+      tx = await leveredPositionFactory._setLiquidatorsRegistry(liquidatorsRegistry.address);
+      await tx.wait();
+      console.log("updated the LiquidatorsRegistry address in the LeveredPositionFactory", tx.hash);
     }
 
     //// LEVERED POSITIONS LENS
