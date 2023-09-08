@@ -59,6 +59,45 @@ export default task("levered-positions:configure-pair")
     );
   });
 
+task("pairs-whitelist:polygon").setAction(
+  async ({}, { run }) => {
+    const USDC = "0x71A7037a42D0fB9F905a76B7D16846b2EACC59Aa";
+    const USDR = "0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed";
+    const WUSDR = "0x26EA46e975778662f98dAa0E7a12858dA9139262";
+
+    const USDR_DAI = "0xBcE30B4D78cEb9a75A1Aa62156529c3592b3F08b";
+    const USDC_USDR = "0x83DF24fE1B1eBF38048B91ffc4a8De0bAa88b891";
+    const WMATIC_USDR = "0xfacEdA4f9731797102f040380aD5e234c92d1942";
+    const USDR_TNGBL = "0x2E870Aeee3D9d1eA29Ec93d2c0A99A4e0D5EB697";
+    const WBTC_USDR = "0xffc8c8d747E52fAfbf973c64Bab10d38A6902c46";
+    const USDR_WETH = "0x343D9a8D2Bc6A62390aEc764bb5b900C4B039127";
+    const wUSDR_USDR = "0x06F61E22ef144f1cC4550D40ffbF681CB1C3aCAF";
+
+    // USDC
+    await whitelistPair(run, USDC, USDC_USDR);
+
+    // USDR
+    await whitelistPair(run, USDR, USDR_DAI);
+    await whitelistPair(run, USDR, USDC_USDR);
+    await whitelistPair(run, USDR, WMATIC_USDR);
+    await whitelistPair(run, USDR, USDR_TNGBL);
+    await whitelistPair(run, USDR, WBTC_USDR);
+    await whitelistPair(run, USDR, USDR_WETH);
+    await whitelistPair(run, USDR, wUSDR_USDR);
+    await whitelistPair(run, USDR, WUSDR);
+
+    // wUSDR
+    await whitelistPair(run, WUSDR, USDR);
+    await whitelistPair(run, WUSDR, wUSDR_USDR);
+  });
+
+async function whitelistPair(run, borrowed, collateral) {
+  await run("levered-positions:configure-pair", {
+    collateralMarketAddress: collateral,
+    borrowMarketAddress: borrowed
+  });
+}
+
 task("chapel-borrow-tusd", "creates and funds a levered position on chapel").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
