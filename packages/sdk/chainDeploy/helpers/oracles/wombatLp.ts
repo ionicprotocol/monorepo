@@ -1,4 +1,4 @@
-import { WombatLpTokenPriceOracle } from "../../../typechain/WombatLpTokenPriceOracle";
+import { WombatLpTokenPriceOracle } from "../../../typechain/WombatLpTokenPriceOracle.sol/WombatLpTokenPriceOracle";
 import { WombatDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";

@@ -1,8 +1,8 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import CTokenFirstExtensionABI from "../../../abis/CTokenFirstExtension";
-import AdjustableAnkrBNBIrmArtifact from "../../../artifacts/AdjustableAnkrBNBIrm.json";
+import AdjustableAnkrBNBIrmArtifact from "../../../artifacts/AdjustableAnkrBNBIrm.sol/AdjustableAnkrBNBIrm.json";
+import { abi as CTokenFirstExtensionABI } from "../../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
 import { CTokenFirstExtension } from "../../../typechain/CTokenFirstExtension";
 import { getContract } from "../utils";
 

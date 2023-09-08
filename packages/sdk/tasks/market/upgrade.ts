@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 
 import { CErc20Delegator } from "../../typechain/CErc20Delegator";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
-import { ICErc20Plugin } from "../../typechain/ICErc20Plugin";
+import { ICErc20Plugin } from "../../typechain/CTokenInterfaces.sol/ICErc20Plugin";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("comptroller", "address of comptroller", undefined, types.string) // TODO I would rather use id or comptroller address directly.

@@ -1,5 +1,5 @@
 import { IonicSdk } from "@ionicprotocol/sdk";
-import { IonicComptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/IonicComptroller";
+import { IonicComptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/ComptrollerInterface.sol/IonicComptroller";
 import { SupportedAsset } from "@ionicprotocol/types";
 import { constants } from "ethers";
 

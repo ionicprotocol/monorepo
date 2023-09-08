@@ -1,11 +1,10 @@
 import { BigNumber, Contract } from "ethers";
 
-import IonicFlywheelABI from "../../abis/IonicFlywheel";
-import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.json";
-import IonicFlywheelArtifact from "../../artifacts/IonicFlywheel.json";
+import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
+import { abi as IonicFlywheelABI } from "../../artifacts/IonicFlywheel.sol/IonicFlywheel.json";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
-import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter";
+import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
 
 import { CreateContractsModule } from "./CreateContracts";
 
@@ -89,11 +88,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getFlywheelRewardsInfos(flywheelAddress: string) {
-      const flywheelCoreInstance = new Contract(
-        flywheelAddress,
-        IonicFlywheelArtifact.abi,
-        this.provider
-      ) as IonicFlywheel;
+      const flywheelCoreInstance = new Contract(flywheelAddress, IonicFlywheelABI, this.provider) as IonicFlywheel;
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
         flywheelCoreInstance.callStatic.flywheelRewards(),
         flywheelCoreInstance.callStatic.getAllStrategies()
