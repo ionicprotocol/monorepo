@@ -14,7 +14,7 @@ export const useHealthFactor = (pool?: string, chainId?: number) => {
       if (sdk && pool && address) {
         const healthFactor = await sdk.getHealthFactor(address, pool);
 
-        if (healthFactor.gt(constants.WeiPerEther)) {
+        if (healthFactor.eq(constants.MaxUint256)) {
           return '-1';
         }
 

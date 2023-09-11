@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import { colord, extend } from 'colord';
+import { extend } from 'colord';
 import mixPlugin from 'colord/plugins/mix';
 import { utils } from 'ethers';
 import { useRouter } from 'next/router';
@@ -31,7 +31,6 @@ import { CardBox } from '@ui/components/shared/IonicBox';
 import { LoadingText } from '@ui/components/shared/LoadingText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { HEALTH_FACTOR } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
@@ -64,31 +63,6 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
   const chainConfig = useChainConfig(poolData?.chainId);
 
   const { data: healthFactor } = useHealthFactor(poolData?.comptroller, poolData?.chainId);
-
-  const isHealthFactorValid = useMemo(() => {
-    return (
-      !!healthFactor &&
-      Number(healthFactor) >= HEALTH_FACTOR.MIN &&
-      Number(healthFactor) <= HEALTH_FACTOR.MAX
-    );
-  }, [healthFactor]);
-
-  const mixedColor = useCallback((ratio: number) => {
-    let color1 = '';
-    let color2 = '';
-    let _ratio = 0;
-    if (ratio < 0.5) {
-      color1 = '#FF3864'; // iRed
-      color2 = '#F1F996'; // iYello
-      _ratio = ratio * 2;
-    } else {
-      _ratio = (ratio - 0.5) * 2;
-      color1 = '#F1F996'; // iYello
-      color2 = '#39FF88'; // iGreen
-    }
-
-    return colord(color1).mix(color2, _ratio).toHex();
-  }, []);
 
   const acceptOwnership = useCallback(async () => {
     if (!poolData?.comptroller || !currentSdk) return;
@@ -205,23 +179,28 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                         <Text color={'iLightGray'} textTransform="uppercase">
                           Health Factor
                         </Text>
-                        <Text color={mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX)}>
-                          {healthFactor}
+                        <Text
+                          color={'iWhite'}
+                          fontSize={healthFactor === '-1' ? '30px' : '12px'}
+                          size={'lg'}
+                        >
+                          {healthFactor === '-1' ? '∞' : healthFactor}
                         </Text>
                       </Flex>
                       <Slider
                         aria-label="slider-ex-1"
-                        max={HEALTH_FACTOR.MAX}
-                        min={HEALTH_FACTOR.MIN}
+                        max={Number(healthFactor)}
+                        min={0}
                         mt={'20px'}
                         value={Number(healthFactor)}
                         variant="health"
                       >
                         <SliderMark
-                          color={mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX)}
+                          color={'iWhite'}
+                          fontSize={healthFactor === '-1' ? '30px' : '12px'}
                           value={Number(healthFactor)}
                         >
-                          {healthFactor}
+                          {healthFactor === '-1' ? '∞' : healthFactor}
                         </SliderMark>
                         <SliderTrack>
                           <SliderFilledTrack />
@@ -259,7 +238,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                 bodyProps={{ p: 0 }}
                 contentProps={{ width: '340px' }}
                 popoverProps={{ placement: 'top' }}
-                visible={isHealthFactorValid}
+                visible={!!healthFactor}
               >
                 <InfoOutlineIcon
                   color={'iLightGray'}
@@ -273,16 +252,8 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               {isPoolDataLoading ? (
                 <LoadingText />
               ) : (
-                <Text
-                  color={
-                    isHealthFactorValid
-                      ? mixedColor(Number(healthFactor) / HEALTH_FACTOR.MAX)
-                      : 'iWhite'
-                  }
-                  fontSize={healthFactor === '-1' ? '40px' : '12px'}
-                  size="lg"
-                >
-                  {isHealthFactorValid ? healthFactor : healthFactor === '-1' ? '∞' : '-'}
+                <Text color={'iWhite'} fontSize={healthFactor === '-1' ? '40px' : '12px'} size="lg">
+                  {!!healthFactor ? (healthFactor === '-1' ? '∞' : healthFactor) : '-'}
                 </Text>
               )}
             </Skeleton>
