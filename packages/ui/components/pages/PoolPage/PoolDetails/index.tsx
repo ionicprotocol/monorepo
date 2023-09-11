@@ -181,7 +181,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                         </Text>
                         <Text
                           color={'iWhite'}
-                          fontSize={healthFactor === '-1' ? '30px' : '12px'}
+                          fontSize={healthFactor === '-1' ? '30px' : '20px'}
                           size={'lg'}
                         >
                           {healthFactor === '-1' ? '∞' : healthFactor}
@@ -197,7 +197,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                       >
                         <SliderMark
                           color={'iWhite'}
-                          fontSize={healthFactor === '-1' ? '30px' : '12px'}
+                          fontSize={healthFactor === '-1' ? '30px' : '16px'}
                           value={Number(healthFactor)}
                         >
                           {healthFactor === '-1' ? '∞' : healthFactor}
@@ -216,10 +216,10 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                         >
                           <Box
                             borderColor={'iRed'}
-                            borderWidth={'1px'}
+                            borderWidth={'0px'}
                             height={'14px'}
                             ml={'55px'}
-                            width={'2px'}
+                            width={'0px'}
                           />
                         </PopoverTooltip>
 
@@ -252,7 +252,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               {isPoolDataLoading ? (
                 <LoadingText />
               ) : (
-                <Text color={'iWhite'} fontSize={healthFactor === '-1' ? '40px' : '12px'} size="lg">
+                <Text color={'iWhite'} fontSize={healthFactor === '-1' ? '40px' : '20px'} size="lg">
                   {!!healthFactor ? (healthFactor === '-1' ? '∞' : healthFactor) : '-'}
                 </Text>
               )}
