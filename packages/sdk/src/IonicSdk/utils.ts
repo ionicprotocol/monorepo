@@ -2,7 +2,7 @@ import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import Filter from "bad-words";
 import { Contract, Signer, utils } from "ethers";
 
-import { abi as ComptrollerABI } from "../../artifacts/Comptroller.sol/Comptroller.json";
+import ComptrollerArtifact from "../../artifacts/Comptroller.sol/Comptroller.json";
 import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
 import { Comptroller } from "../../typechain/Comptroller";
 import { Unitroller } from "../../typechain/Unitroller";
@@ -47,7 +47,7 @@ export const getPoolUnitroller = (poolAddress: string, signer?: Signer): Unitrol
 };
 
 export const getPoolComptroller = (poolAddress: string, signer?: Signer): Comptroller => {
-  return new Contract(poolAddress, ComptrollerABI, signer) as Comptroller;
+  return new Contract(poolAddress, ComptrollerArtifact.abi, signer) as Comptroller;
 };
 
 export const getContract = (address: string, abi: any, providerOrSigner: Web3Provider | JsonRpcProvider | Signer) => {

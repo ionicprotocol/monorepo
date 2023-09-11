@@ -1,6 +1,6 @@
 export { default as IonicSdk } from "./IonicSdk";
-export { abi as ERC20Abi } from "../artifacts/EIP20Interface.sol/EIP20Interface.json";
-export { abi as WETHAbi } from "../artifacts/WETH.sol/WETH.json";
+export { default as ERC20Abi } from "../artifacts/EIP20Interface.sol/EIP20Interface.json";
+export { default as WETHAbi } from "../artifacts/WETH.sol/WETH.json";
 
 import { IonicBase } from "./IonicSdk";
 import AnkrBNBInterestRateModel from "./IonicSdk/irm/AnkrBNBInterestRateModel";

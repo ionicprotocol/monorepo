@@ -2,9 +2,9 @@ import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
-import { abi as ComptrollerABI } from "../../artifacts/Comptroller.sol/Comptroller.json";
-import { abi as ICErc20ABI } from "../../artifacts/CTokenInterfaces.sol/ICErc20.json";
-import { abi as EIP20InterfaceABI } from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
+import ComptrollerArtifact from "../../artifacts/Comptroller.sol/Comptroller.json";
+import ICErc20Artifact from "../../artifacts/CTokenInterfaces.sol/ICErc20.json";
+import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
 import { getContract } from "../IonicSdk/utils";
@@ -35,20 +35,20 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
     }
 
     async approve(cTokenAddress: string, underlyingTokenAddress: string) {
-      const token = getContract(underlyingTokenAddress, EIP20InterfaceABI, this.signer);
+      const token = getContract(underlyingTokenAddress, EIP20InterfaceArtifact.abi, this.signer);
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
       const tx = await token.approve(cTokenAddress, max);
       return tx;
     }
 
     async enterMarkets(cTokenAddress: string, comptrollerAddress: string) {
-      const comptrollerInstance = getContract(comptrollerAddress, ComptrollerABI, this.signer) as Comptroller;
+      const comptrollerInstance = getContract(comptrollerAddress, ComptrollerArtifact.abi, this.signer) as Comptroller;
       const tx = await comptrollerInstance.enterMarkets([cTokenAddress]);
       return tx;
     }
 
     async mint(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, ICErc20ABI, this.signer) as ICErc20;
+      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
       const address = await this.signer.getAddress();
       // add 10% to default estimated gas
       const gasLimit = (await cToken.estimateGas.mint(amount, { from: address })).mul(11).div(10);
@@ -65,7 +65,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
 
     async repay(cTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
-      const cToken = getContract(cTokenAddress, ICErc20ABI, this.signer) as ICErc20;
+      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
 
       const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
 
@@ -80,7 +80,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
     }
 
     async borrow(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, ICErc20ABI, this.signer) as ICErc20;
+      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
 
       const address = await this.signer.getAddress();
       // add 20% to default estimated gas
@@ -97,7 +97,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
     }
 
     async withdraw(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, ICErc20ABI, this.signer) as ICErc20;
+      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
 
       const response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;
 
@@ -117,7 +117,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
     }
 
     async approveLiquidatorsRegistry(underlying: string) {
-      const token = getContract(underlying, EIP20InterfaceABI, this.signer);
+      const token = getContract(underlying, EIP20InterfaceArtifact.abi, this.signer);
       const tx = await token.approve(this.chainDeployment.LiquidatorsRegistry.address, constants.MaxUint256);
 
       return tx;

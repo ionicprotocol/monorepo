@@ -2,7 +2,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { InterestRateModel } from "@ionicprotocol/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import { abi as CTokenFirstExtensionABI } from "../../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
+import CTokenFirstExtensionArtifact from "../../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
 import JumpRateModelArtifact from "../../../artifacts/JumpRateModel.sol/JumpRateModel.json";
 import { CTokenFirstExtension } from "../../../typechain/CTokenFirstExtension";
 import { getContract } from "../utils";
@@ -23,7 +23,11 @@ export default class JumpRateModel implements InterestRateModel {
     this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.multiplierPerBlock());
     this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.jumpMultiplierPerBlock());
     this.kink = BigNumber.from(await jumpRateModelContract.callStatic.kink());
-    const cTokenContract = getContract(assetAddress, CTokenFirstExtensionABI, provider) as CTokenFirstExtension;
+    const cTokenContract = getContract(
+      assetAddress,
+      CTokenFirstExtensionArtifact.abi,
+      provider
+    ) as CTokenFirstExtension;
     this.reserveFactorMantissa = BigNumber.from(await cTokenContract.callStatic.reserveFactorMantissa());
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(
       BigNumber.from(await cTokenContract.callStatic.adminFeeMantissa())

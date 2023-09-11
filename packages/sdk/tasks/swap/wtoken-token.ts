@@ -2,7 +2,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { abi as ERC20Abi } from "../../artifacts/ERC20.sol/ERC20.json";
+import ERC20Abi from "../../artifacts/ERC20.sol/ERC20.json";
 
 export default task("swap:wtoken-token", "Swap WNATIVE for token")
   .addParam("token", "token address", undefined, types.string)

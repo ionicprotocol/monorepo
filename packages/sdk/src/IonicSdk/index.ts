@@ -15,16 +15,16 @@ import {
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
 
-import { abi as CTokenFirstExtensionABI } from "../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
-import { abi as EIP20InterfaceABI } from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
-import { abi as FeeDistributorABI } from "../../artifacts/FeeDistributor.sol/FeeDistributor.json";
-import { abi as IonicERC4626ABI } from "../../artifacts/IonicERC4626.sol/IonicERC4626.json";
-import { abi as IonicFlywheelLensRouterABI } from "../../artifacts/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter.json";
-import { abi as IonicLiquidatorABI } from "../../artifacts/IonicLiquidator.sol/IonicLiquidator.json";
-import { abi as PoolDirectoryABI } from "../../artifacts/PoolDirectory.sol/PoolDirectory.json";
-import { abi as PoolLensABI } from "../../artifacts/PoolLens.sol/PoolLens.json";
-import { abi as PoolLensSecondaryABI } from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
-import { abi as UnitrollerABI } from "../../artifacts/Unitroller.sol/Unitroller.json";
+import CTokenFirstExtensionArtifact from "../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
+import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
+import FeeDistributorArtifact from "../../artifacts/FeeDistributor.sol/FeeDistributor.json";
+import IonicERC4626Artifact from "../../artifacts/IonicERC4626.sol/IonicERC4626.json";
+import IonicFlywheelLensRouterArtifact from "../../artifacts/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter.json";
+import IonicLiquidatorArtifact from "../../artifacts/IonicLiquidator.sol/IonicLiquidator.json";
+import PoolDirectoryArtifact from "../../artifacts/PoolDirectory.sol/PoolDirectory.json";
+import PoolLensArtifact from "../../artifacts/PoolLens.sol/PoolLens.json";
+import PoolLensSecondaryArtifact from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
+import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
@@ -128,28 +128,28 @@ export class IonicBase {
     return {
       PoolDirectory: new Contract(
         this.chainDeployment.PoolDirectory.address,
-        PoolDirectoryABI,
+        PoolDirectoryArtifact.abi,
         this.provider
       ) as PoolDirectory,
-      PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensABI, this.provider) as PoolLens,
+      PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensArtifact.abi, this.provider) as PoolLens,
       PoolLensSecondary: new Contract(
         this.chainDeployment.PoolLensSecondary.address,
-        PoolLensSecondaryABI,
+        PoolLensSecondaryArtifact.abi,
         this.provider
       ) as PoolLensSecondary,
       IonicLiquidator: new Contract(
         this.chainDeployment.IonicLiquidator.address,
-        IonicLiquidatorABI,
+        IonicLiquidatorArtifact.abi,
         this.provider
       ) as IonicLiquidator,
       FeeDistributor: new Contract(
         this.chainDeployment.FeeDistributor.address,
-        FeeDistributorABI,
+        FeeDistributorArtifact.abi,
         this.provider
       ) as FeeDistributor,
       IonicFlywheelLensRouter: new Contract(
         this.chainDeployment.IonicFlywheelLensRouter.address,
-        IonicFlywheelLensRouterABI,
+        IonicFlywheelLensRouterArtifact.abi,
         this.provider
       ) as IonicFlywheelLensRouter,
       ...this._contracts
@@ -306,7 +306,11 @@ export class IonicBase {
 
   async getInterestRateModel(assetAddress: string): Promise<InterestRateModel> {
     // Get interest rate model address from asset address
-    const assetContract = getContract(assetAddress, CTokenFirstExtensionABI, this.provider) as CTokenFirstExtension;
+    const assetContract = getContract(
+      assetAddress,
+      CTokenFirstExtensionArtifact.abi,
+      this.provider
+    ) as CTokenFirstExtension;
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
@@ -328,19 +332,19 @@ export class IonicBase {
   }
 
   getEIP20TokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, EIP20InterfaceABI, signerOrProvider) as EIP20Interface;
+    return new Contract(address, EIP20InterfaceArtifact.abi, signerOrProvider) as EIP20Interface;
   }
 
   getUnitrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, UnitrollerABI, signerOrProvider) as Unitroller;
+    return new Contract(address, UnitrollerArtifact.abi, signerOrProvider) as Unitroller;
   }
 
   getPoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(this.chainDeployment.PoolDirectory.address, PoolDirectoryABI, signerOrProvider);
+    return new Contract(this.chainDeployment.PoolDirectory.address, PoolDirectoryArtifact.abi, signerOrProvider);
   }
 
   getErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, IonicERC4626ABI, signerOrProvider) as IonicERC4626;
+    return new Contract(address, IonicERC4626Artifact.abi, signerOrProvider) as IonicERC4626;
   }
 }
 
