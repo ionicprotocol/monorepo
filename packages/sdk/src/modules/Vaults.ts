@@ -1,7 +1,7 @@
 import { FlywheelRewardsInfoForVault, FundOperationMode, SupportedChains, VaultData } from "@ionicprotocol/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
-import { abi as EIP20InterfaceABI } from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
+import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
@@ -120,7 +120,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
     }
 
     async vaultApprove(vault: string, asset: string) {
-      const token = getContract(asset, EIP20InterfaceABI, this.signer);
+      const token = getContract(asset, EIP20InterfaceArtifact.abi, this.signer);
       const tx = await token.approve(vault, constants.MaxUint256);
 
       return tx;

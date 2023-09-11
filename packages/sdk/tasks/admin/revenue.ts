@@ -5,7 +5,7 @@ import { BigNumber, Contract, providers } from "ethers";
 import { task, types } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { abi as ERC20Abi } from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
+import ERC20Abi from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import { IonicERC4626 } from "../../typechain/IonicERC4626";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 

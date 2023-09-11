@@ -2,7 +2,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import AdjustableAnkrBNBIrmArtifact from "../../../artifacts/AdjustableAnkrBNBIrm.sol/AdjustableAnkrBNBIrm.json";
-import { abi as CTokenFirstExtensionABI } from "../../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
+import CTokenFirstExtensionArtifact from "../../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
 import { CTokenFirstExtension } from "../../../typechain/CTokenFirstExtension";
 import { getContract } from "../utils";
 
@@ -17,7 +17,11 @@ export default class AdjustableAnkrBNBIrm extends JumpRateModel {
     this.multiplierPerBlock = BigNumber.from(await interestRateModelContract.callStatic.getMultiplierPerBlock());
     this.jumpMultiplierPerBlock = BigNumber.from(await interestRateModelContract.callStatic.jumpMultiplierPerBlock());
     this.kink = BigNumber.from(await interestRateModelContract.callStatic.kink());
-    const cTokenContract = getContract(assetAddress, CTokenFirstExtensionABI, provider) as CTokenFirstExtension;
+    const cTokenContract = getContract(
+      assetAddress,
+      CTokenFirstExtensionArtifact.abi,
+      provider
+    ) as CTokenFirstExtension;
     this.reserveFactorMantissa = BigNumber.from(await cTokenContract.callStatic.reserveFactorMantissa());
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(
       BigNumber.from(await cTokenContract.callStatic.adminFeeMantissa())
