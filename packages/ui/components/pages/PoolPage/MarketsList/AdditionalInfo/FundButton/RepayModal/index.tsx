@@ -126,7 +126,7 @@ export const RepayModal = ({
           setActiveStep(1);
           const WToken = getContract(
             currentSdk.chainSpecificAddresses.W_TOKEN,
-            WETHAbi,
+            WETHAbi.abi,
             currentSdk.signer
           );
           const tx = await WToken.deposit({ from: address, value: amount });

@@ -24,7 +24,7 @@ export default async function approveTokensToSafeLiquidator(liquidator: Liquidat
 async function approveTokenToSafeLiquidator(ionicSdk: IonicSdk, erc20Address: string) {
   // Build data
   const signer = new Wallet(config.adminPrivateKey, ionicSdk.provider);
-  let token = new Contract(erc20Address, ERC20Abi, signer);
+  let token = new Contract(erc20Address, ERC20Abi.abi, signer);
 
   token = await token.connect(signer);
   const txCount = await ionicSdk.provider.getTransactionCount(config.adminAccount);

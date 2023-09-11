@@ -30,7 +30,7 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
       account = await ethers.getNamedSigner(_account);
     }
 
-    const tokenContract = new ethers.Contract(_token, ERC20Abi, account);
+    const tokenContract = new ethers.Contract(_token, ERC20Abi.abi, account);
     const tokenSymbol = await tokenContract.callStatic.symbol();
     await tokenContract.approve(
       sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,

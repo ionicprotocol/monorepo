@@ -36,8 +36,8 @@ export class V3Fetcher {
     );
   };
   getPairReserves = async (asset: UniswapV3AssetConfig): Promise<[Reserve, Reserve]> => {
-    const token0Erc20 = new Contract(asset.token0, ERC20Abi, this.provider);
-    const token1Erc20 = new Contract(asset.token1, ERC20Abi, this.provider);
+    const token0Erc20 = new Contract(asset.token0, ERC20Abi.abi, this.provider);
+    const token1Erc20 = new Contract(asset.token1, ERC20Abi.abi, this.provider);
 
     const pool = this.computeUniV3PoolAddress(asset.token0, asset.token1, asset.fee);
 
