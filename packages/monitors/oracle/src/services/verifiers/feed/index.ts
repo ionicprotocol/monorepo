@@ -1,9 +1,9 @@
 import { OracleTypes } from "@ionicprotocol/types";
 import { Contract } from "ethers";
 
-import ChainlinkPriceOracleV2ABI from "../../../../../../sdk/abis/ChainlinkPriceOracleV2";
-import DiaPriceOracleABI from "../../../../../../sdk/abis/DiaPriceOracle";
-import UniswapTwapPriceOracleV2ABI from "../../../../../../sdk/abis/UniswapTwapPriceOracleV2";
+import { abi as ChainlinkPriceOracleV2ABI } from "../../../../../../sdk/artifacts/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
+import { abi as DiaPriceOracleABI } from "../../../../../../sdk/artifacts/DiaPriceOracle.sol/DiaPriceOracle.json";
+import { abi as UniswapTwapPriceOracleV2ABI } from "../../../../../../sdk/artifacts/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
 import { logger } from "../../../logger";
 import {
   FeedVerifierAsset,

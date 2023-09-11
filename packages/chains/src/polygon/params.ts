@@ -24,6 +24,11 @@ const specificParams: ChainParams = {
         [underlying(assets, assetSymbols.WETH)]: 500 // 0.05%
       }
     },
+    uniswapV3Routers: {
+      [underlying(assets, assetSymbols.CASH)]: {
+        [underlying(assets, assetSymbols.USDC)]: chainAddresses.GAMMA_UNISWAP_V3_SWAP_ROUTER
+      }
+    },
     img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://polygonscan.com" } },
     rpcUrls: {

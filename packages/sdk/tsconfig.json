@@ -10,5 +10,6 @@
     "outDir": "./dist/cjs",
     "composite": true
   },
-  "exclude": []
+  "exclude": [],
+  "include": ["./artifacts/ILiquidatorsRegistry.sol/ILiquidatorsRegistry.json"]
 }

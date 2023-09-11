@@ -12,7 +12,7 @@ import {
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
-import { FeeDistributor } from "../typechain/FeeDistributor";
+import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
@@ -692,6 +692,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       console.log(`no LeveredPositionFactory extensions to update`);
     }
 
+    const lr = await leveredPositionFactory.callStatic.liquidatorsRegistry();
+    if (lr.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
+      tx = await leveredPositionFactory._setLiquidatorsRegistry(liquidatorsRegistry.address);
+      await tx.wait();
+      console.log("updated the LiquidatorsRegistry address in the LeveredPositionFactory", tx.hash);
+    }
+
     //// LEVERED POSITIONS LENS
     const lpLens = await deployments.deploy("LeveredPositionsLens", {
       from: deployer,
@@ -739,6 +746,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     if (ffdAuthRegistry.toLowerCase() != authoritiesRegistry.address.toLowerCase()) {
       // set the address in the FFD
       tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
+      await tx.wait();
+      console.log(`configured the auth registry in the FFD`);
+    }
+    const leveredPosFactoryAr = await authoritiesRegistry.callStatic.leveredPositionsFactory();
+    if (leveredPosFactoryAr.toLowerCase() != leveredPositionFactory.address.toLowerCase()) {
+      // set the address in the AR
+      tx = await authoritiesRegistry.reinitialize(authoritiesRegistry.address);
       await tx.wait();
       console.log(`configured the auth registry in the FFD`);
     }
