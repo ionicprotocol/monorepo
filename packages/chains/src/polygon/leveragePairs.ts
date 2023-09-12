@@ -27,9 +27,8 @@ const STADER_MATICX = "0x6ebdbEe1a509247B4A3ac3b73a43bd434C52C7c2";
 
 const leveragePairs: LeveragePoolConfig[] = [
   // StarSeed
-  // USDC
   {
-    pool: "0x",
+    pool: "0xbc2889CC2bC2c31943f0A35465527F2c3C3f5984",
     pairs: [
       // USDC borrow
       { borrow: STARSEED_USDC, collateral: STARSEED_USDC_USDR },
@@ -50,20 +49,22 @@ const leveragePairs: LeveragePoolConfig[] = [
 
   // Retro pool
   {
-    pool: "0x",
+    pool: "0x22A705DEC988410A959B8b17C8c23E33c121580b",
     pairs: [
-      { borrow: RETRO_CASH, collateral: RETRO_USDC_CASH },
+      // USDC
       { borrow: RETRO_USDC, collateral: RETRO_USDC_CASH },
+      // CASH
       { borrow: RETRO_CASH, collateral: RETRO_USDC },
+      { borrow: RETRO_CASH, collateral: RETRO_USDC_CASH },
       { borrow: RETRO_CASH, collateral: RETRO_USDC_WETH },
-      { borrow: RETRO_CASH, collateral: RETRO_WBTC_WETH },
+      // WETH
       { borrow: RETRO_WETH, collateral: RETRO_WBTC_WETH }
     ]
   },
   // Davos
-  { pool: "0x", pairs: [{ borrow: DAVOS_USDC, collateral: DAVOS_DUSD }] },
+  { pool: "0x4B1FA03aBBF49044A08C42D1Df4ff59F7522a4D5", pairs: [{ borrow: DAVOS_USDC, collateral: DAVOS_DUSD }] },
   // Stader MaticX
-  { pool: "0x", pairs: [{ borrow: STADER_WMATIC, collateral: STADER_MATICX }] }
+  { pool: "0x5365b2e4d167fb3Be700110b009B96b00d8a4bb9", pairs: [{ borrow: STADER_WMATIC, collateral: STADER_MATICX }] }
 ];
 
 export default leveragePairs;
