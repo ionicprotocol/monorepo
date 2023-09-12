@@ -18,9 +18,11 @@ export default task("levered-positions:configure-pairs").setAction(
     const leveredPairsConfig = chainIdToConfig[chainId].leveragePairs;
 
     const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as ILeveredPositionFactory;
+    const configuredCollateralMarkets = await factory.callStatic.getWhitelistedCollateralMarkets();
 
     for (const pool of leveredPairsConfig) {
       console.log(`Configuring pairs for pool: ${pool.pool}`);
+
       for (const pair of pool.pairs) {
         const { collateral, borrow } = pair;
 
@@ -31,7 +33,6 @@ export default task("levered-positions:configure-pairs").setAction(
         const borrowToken = await borrowMarket.callStatic.underlying();
 
         const configuredBorrowableMarkets = await factory.callStatic.getBorrowableMarketsByCollateral(collateral);
-        const configuredCollateralMarkets = await factory.callStatic.getWhitelistedCollateralMarkets();
 
         // check if borrow market is already configured
         if (configuredBorrowableMarkets.includes(borrow) && configuredCollateralMarkets.includes(collateral)) {
@@ -115,7 +116,7 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
     const borrowMarketAddress = ""; // TUSD market
     const collateralMarketAddress = ""; // BOMB market
 
-    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
     const factory = (await ethers.getContractAt(
       "ILeveredPositionFactory",
       factoryDep.address,
@@ -151,7 +152,7 @@ task("chapel-close-levered-position").setAction(async ({}, { ethers, getNamedAcc
   await tx.wait();
   console.log(`closed`);
 
-  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
   const factory = (await ethers.getContractAt(
     "ILeveredPositionFactory",
     factoryDep.address,
@@ -171,7 +172,7 @@ task("chapel-close-remove-levered-position").setAction(async ({}, { ethers, getN
   const { deployer } = await getNamedAccounts();
   const positionAddress = "0x263718679A41AafDAa8f3d94425BC80bf72439e5";
 
-  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
   const factory = (await ethers.getContractAt(
     "ILeveredPositionFactory",
     factoryDep.address,
@@ -271,7 +272,7 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
     const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
-    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
     const factory = (await ethers.getContractAt(
       "ILeveredPositionFactory",
       factoryDep.address,
