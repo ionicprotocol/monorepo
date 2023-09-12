@@ -5,8 +5,8 @@ import AuthoritiesRegistryArtifact from "../../artifacts/AuthoritiesRegistry.sol
 import CompoundMarketERC4626Artifact from "../../artifacts/CompoundMarketERC4626.sol/CompoundMarketERC4626.json";
 import IonicComptrollerArtifact from "../../artifacts/ComptrollerInterface.sol/IonicComptroller.json";
 import ICErc20PluginRewardsArtifact from "../../artifacts/CTokenInterfaces.sol/CErc20PluginRewardsInterface.json";
+import ICErc20Artifact from "../../artifacts/CTokenInterfaces.sol/ICErc20.json";
 import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
-import ICErc20Artifact from "../../artifacts/ICErc20.sol/ICErc20.json";
 import ILeveredPositionFactoryArtifact from "../../artifacts/ILeveredPositionFactory.sol/ILeveredPositionFactory.json";
 import ILiquidatorsRegistryArtifact from "../../artifacts/ILiquidatorsRegistry.sol/ILiquidatorsRegistry.json";
 import IonicFlywheelArtifact from "../../artifacts/IonicFlywheel.sol/IonicFlywheel.json";
