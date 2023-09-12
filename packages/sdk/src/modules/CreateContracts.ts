@@ -18,6 +18,7 @@ import MasterPriceOracleArtifact from "../../artifacts/MasterPriceOracle.sol/Mas
 import OptimizedAPRVaultFirstExtensionArtifact from "../../artifacts/OptimizedAPRVaultFirstExtension.sol/OptimizedAPRVaultFirstExtension.json";
 import OptimizedAPRVaultSecondExtensionArtifact from "../../artifacts/OptimizedAPRVaultSecondExtension.sol/OptimizedAPRVaultSecondExtension.json";
 import OptimizedVaultsRegistryArtifact from "../../artifacts/OptimizedVaultsRegistry.sol/OptimizedVaultsRegistry.json";
+import PoolLensArtifact from "../../artifacts/PoolLens.sol/PoolLens.json";
 import PoolLensSecondaryArtifact from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
 import PoolRolesAuthorityArtifact from "../../artifacts/PoolRolesAuthority.sol/PoolRolesAuthority.json";
 import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
@@ -38,6 +39,7 @@ import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
 import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
+import { PoolLens } from "../../typechain/PoolLens";
 import { PoolLensSecondary } from "../../typechain/PoolLensSecondary.sol/PoolLensSecondary";
 import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
 import { Unitroller } from "../../typechain/Unitroller";
@@ -131,6 +133,10 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
         LeveredPositionsLensArtifact.abi,
         signerOrProvider
       ) as LeveredPositionsLens;
+    }
+
+    createPoolLens(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(this.chainDeployment.PoolLens.address, PoolLensArtifact.abi, signerOrProvider) as PoolLens;
     }
 
     createPoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
