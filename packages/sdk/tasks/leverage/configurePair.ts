@@ -1,4 +1,5 @@
-import { task, types } from "hardhat/config";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { task } from "hardhat/config";
 
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20RewardsDelegate } from "../../typechain/CErc20RewardsDelegate";
@@ -6,55 +7,61 @@ import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { ERC20 } from "../../typechain/ERC20";
 import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory.sol/ILeveredPositionFactory";
-import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry.sol/ILiquidatorsRegistry";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
-import { LeveredPositionFactory } from "../../typechain/LeveredPositionFactory";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
-export default task("levered-positions:configure-pair")
-  .addParam("collateralMarketAddress", "Address of the market that will be used as collateral", undefined, types.string)
-  .addParam("borrowMarketAddress", "Address of the market that will be used to borrow against", undefined, types.string)
-  .addOptionalParam(
-    "liquidatorName",
-    "Name of the redemption strategy used to convert between the two underlying assets",
-    undefined,
-    types.string
-  )
-  .setAction(async ({ collateralMarketAddress, borrowMarketAddress, liquidatorName }, { ethers, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
+export default task("levered-positions:configure-pairs").setAction(async ({}, { ethers, getChainId }) => {
+  const { deployer } = await ethers.getNamedSigners();
+  const chainId = parseInt(await getChainId());
+  const leveredPairsConfig = chainIdToConfig[chainId].leveragePairs;
 
-    const registry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as ILiquidatorsRegistry;
+  const ionicSdkModule = await import("../ionicSdk");
+  const sdk = await ionicSdkModule.getOrCreateIonic(deployer);
 
-    const collateralMarket = (await ethers.getContractAt("CErc20Delegate", collateralMarketAddress)) as CErc20Delegate;
-    const borrowMarket = (await ethers.getContractAt("CErc20Delegate", borrowMarketAddress)) as CErc20Delegate;
+  const factory = sdk.createLeveredPositionFactory(deployer);
+  const configuredCollateralMarkets = await factory.callStatic.getWhitelistedCollateralMarkets();
 
-    const collateralToken = await collateralMarket.callStatic.underlying();
-    const borrowToken = await borrowMarket.callStatic.underlying();
+  console.log(`Collateral markets already configured: ${configuredCollateralMarkets.join(", ")}`);
 
-    const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as LeveredPositionFactory;
+  for (const pool of leveredPairsConfig) {
+    console.log(`Configuring pairs for pool: ${pool.pool}`);
 
-    let tx;
+    for (const pair of pool.pairs) {
+      const { collateral, borrow } = pair;
 
-    if (liquidatorName) {
-      const liquidator = await ethers.getContract(liquidatorName);
-      tx = await registry._setRedemptionStrategies(
-        [liquidator.address, liquidator.address],
-        [collateralToken, borrowToken],
-        [borrowToken, collateralToken]
-      );
-      await tx.wait();
+      const collateralMarket = (await ethers.getContractAt("CErc20Delegate", collateral)) as CErc20Delegate;
+      const borrowMarket = (await ethers.getContractAt("CErc20Delegate", borrow)) as CErc20Delegate;
+
+      const collateralToken = await collateralMarket.callStatic.underlying();
+      const borrowToken = await borrowMarket.callStatic.underlying();
+
+      const configuredBorrowableMarkets = await factory.callStatic.getBorrowableMarketsByCollateral(collateral);
       console.log(
-        `configured the redemption strategy for the collateral/borrow pair ${collateralToken} / ${borrowToken}`
+        `Borrow markets already configured for collateral ${collateral}: ${configuredBorrowableMarkets.join(", ")}`
       );
-    }
 
-    tx = await factory._setPairWhitelisted(collateralMarketAddress, borrowMarketAddress, true);
-    await tx.wait();
-    console.log(
-      `configured the markets pair ${collateralMarketAddress} / ${borrowMarketAddress} as whitelisted for levered positions`
-    );
-  });
+      // check if borrow market is already configured
+      if (configuredBorrowableMarkets.includes(borrow) && configuredCollateralMarkets.includes(collateral)) {
+        console.log(
+          `Borrow (market: ${borrow}, underlying: ${borrowToken}) is already configured for collateral (market: ${collateral}, underlying: ${collateralToken})`
+        );
+        continue;
+      } else {
+        console.log(
+          `Configuring pair:\n - BORROW (market: ${borrow}, underlying: ${borrowToken})\n - COLLATERAL: (market: ${collateral}, underlying: ${collateralToken})`
+        );
+
+        const tx = await factory._setPairWhitelisted(collateral, borrow, true);
+
+        await tx.wait();
+        console.log(
+          `configured the markets pair:\n - BORROW (market: ${borrow}, underlying: ${borrowToken})\n - COLLATERAL: (market: ${collateral}, underlying: ${collateralToken}) as whitelisted for levered positions`
+        );
+      }
+    }
+  }
+});
 
 task("chapel-borrow-tusd", "creates and funds a levered position on chapel").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
@@ -115,7 +122,7 @@ task("chapel-create-levered-position", "creates and funds a levered position on 
     const borrowMarketAddress = ""; // TUSD market
     const collateralMarketAddress = ""; // BOMB market
 
-    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
     const factory = (await ethers.getContractAt(
       "ILeveredPositionFactory",
       factoryDep.address,
@@ -151,7 +158,7 @@ task("chapel-close-levered-position").setAction(async ({}, { ethers, getNamedAcc
   await tx.wait();
   console.log(`closed`);
 
-  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
   const factory = (await ethers.getContractAt(
     "ILeveredPositionFactory",
     factoryDep.address,
@@ -171,7 +178,7 @@ task("chapel-close-remove-levered-position").setAction(async ({}, { ethers, getN
   const { deployer } = await getNamedAccounts();
   const positionAddress = "0x263718679A41AafDAa8f3d94425BC80bf72439e5";
 
-  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+  const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
   const factory = (await ethers.getContractAt(
     "ILeveredPositionFactory",
     factoryDep.address,
@@ -271,7 +278,7 @@ task("chapel-fund-levered-position", "funds a levered position on chapel").setAc
     const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
     const testingBomb = (await ethers.getContractAt("ERC20", testingBombAddress, deployer)) as ERC20;
 
-    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as LeveredPositionFactory;
+    const factoryDep = (await ethers.getContract("LeveredPositionFactory")) as ILeveredPositionFactory;
     const factory = (await ethers.getContractAt(
       "ILeveredPositionFactory",
       factoryDep.address,

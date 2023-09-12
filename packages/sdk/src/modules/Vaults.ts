@@ -10,7 +10,7 @@ import { ChainSupportedAssets } from "./Pools";
 export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
-      if (this.chainId === SupportedChains.chapel) {
+      if (this.chainId === SupportedChains.chapel || this.chainId === SupportedChains.polygon) {
         try {
           const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
           const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
@@ -69,7 +69,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
     }
 
     async getClaimableRewardsForVaults(account: string): Promise<FlywheelRewardsInfoForVault[]> {
-      if (this.chainId === SupportedChains.chapel) {
+      if (this.chainId === SupportedChains.chapel || this.chainId === SupportedChains.polygon) {
         try {
           const rewardsInfoForVaults: FlywheelRewardsInfoForVault[] = [];
           const optimizedVaultsRegistry = this.createOptimizedVaultsRegistry();
