@@ -6,10 +6,9 @@
     "moduleResolution": "node",
     "allowJs": true,
     "target": "ES2015",
-    "rootDirs": ["./src", "./tests"],
-    "outDir": "./dist/cjs",
+    "rootDirs": ["./src", "./tests", "./tasks"],
     "composite": true
   },
-  "exclude": [],
-  "include": ["./artifacts/ILiquidatorsRegistry.sol/ILiquidatorsRegistry.json"]
+  "exclude": ["./typechain/**/*", "./dist/cjs/**/*", "./dist/esm/**/*"],
+  "include": ["./artifacts/**/*.json"]
 }

@@ -202,6 +202,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: USDC,
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDR)
+  },
+  {
+    inputToken: USDC,
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WUSDR)
   },
   {
@@ -246,6 +251,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.aWBTC_WETH_N),
     strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
     outputToken: underlying(assets, assetSymbols.WBTC)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.aWBTC_WETH_N),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
   },
   {
     inputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
@@ -314,6 +324,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.aWBTC_WETH_N)
   },
   {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aWBTC_WETH_N)
+  },
+  {
     inputToken: underlying(assets, assetSymbols.MATICx),
     strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
     outputToken: underlying(assets, assetSymbols.aWMATIC_MATICX_N)
@@ -367,6 +382,17 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.USDR),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
     outputToken: underlying(assets, assetSymbols["sAMM-DAI/USDR"])
+  },
+  // WBTC -> USDR
+  {
+    inputToken: underlying(assets, assetSymbols.WBTC),
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDR)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.USDR),
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WBTC)
   },
   // WUSDR -> USDR
   {
