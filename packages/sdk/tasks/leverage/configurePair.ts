@@ -11,51 +11,57 @@ import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
-export default task("levered-positions:configure-pairs").setAction(
-  async ({}, { ethers, getNamedAccounts, getChainId }) => {
-    const { deployer } = await getNamedAccounts();
-    const chainId = parseInt(await getChainId());
-    const leveredPairsConfig = chainIdToConfig[chainId].leveragePairs;
+export default task("levered-positions:configure-pairs").setAction(async ({}, { ethers, getChainId }) => {
+  const { deployer } = await ethers.getNamedSigners();
+  const chainId = parseInt(await getChainId());
+  const leveredPairsConfig = chainIdToConfig[chainId].leveragePairs;
 
-    const factory = (await ethers.getContract("LeveredPositionFactory", deployer)) as ILeveredPositionFactory;
-    const configuredCollateralMarkets = await factory.callStatic.getWhitelistedCollateralMarkets();
+  const ionicSdkModule = await import("../ionicSdk");
+  const sdk = await ionicSdkModule.getOrCreateIonic(deployer);
 
-    for (const pool of leveredPairsConfig) {
-      console.log(`Configuring pairs for pool: ${pool.pool}`);
+  const factory = sdk.createLeveredPositionFactory(deployer);
+  const configuredCollateralMarkets = await factory.callStatic.getWhitelistedCollateralMarkets();
 
-      for (const pair of pool.pairs) {
-        const { collateral, borrow } = pair;
+  console.log(`Collateral markets already configured: ${configuredCollateralMarkets.join(", ")}`);
 
-        const collateralMarket = (await ethers.getContractAt("CErc20Delegate", collateral)) as CErc20Delegate;
-        const borrowMarket = (await ethers.getContractAt("CErc20Delegate", borrow)) as CErc20Delegate;
+  for (const pool of leveredPairsConfig) {
+    console.log(`Configuring pairs for pool: ${pool.pool}`);
 
-        const collateralToken = await collateralMarket.callStatic.underlying();
-        const borrowToken = await borrowMarket.callStatic.underlying();
+    for (const pair of pool.pairs) {
+      const { collateral, borrow } = pair;
 
-        const configuredBorrowableMarkets = await factory.callStatic.getBorrowableMarketsByCollateral(collateral);
+      const collateralMarket = (await ethers.getContractAt("CErc20Delegate", collateral)) as CErc20Delegate;
+      const borrowMarket = (await ethers.getContractAt("CErc20Delegate", borrow)) as CErc20Delegate;
 
-        // check if borrow market is already configured
-        if (configuredBorrowableMarkets.includes(borrow) && configuredCollateralMarkets.includes(collateral)) {
-          console.log(
-            `Borrow (market: ${borrow}, underlying: ${borrowToken}) is already configured for collateral (market: ${collateral}, underlying: ${collateralToken})`
-          );
-          continue;
-        } else {
-          console.log(
-            `Configuring pair: BORROW (market: ${borrow}, underlying: ${borrowToken}) / COLLATERAL: (market: ${collateral}, underlying: ${collateralToken})`
-          );
+      const collateralToken = await collateralMarket.callStatic.underlying();
+      const borrowToken = await borrowMarket.callStatic.underlying();
 
-          const tx = await factory._setPairWhitelisted(collateral, borrow, true);
+      const configuredBorrowableMarkets = await factory.callStatic.getBorrowableMarketsByCollateral(collateral);
+      console.log(
+        `Borrow markets already configured for collateral ${collateral}: ${configuredBorrowableMarkets.join(", ")}`
+      );
 
-          await tx.wait();
-          console.log(
-            `configured the markets pair:BORROW (market: ${borrow}, underlying: ${borrowToken}) / COLLATERAL: (market: ${collateral}, underlying: ${collateralToken}) as whitelisted for levered positions`
-          );
-        }
+      // check if borrow market is already configured
+      if (configuredBorrowableMarkets.includes(borrow) && configuredCollateralMarkets.includes(collateral)) {
+        console.log(
+          `Borrow (market: ${borrow}, underlying: ${borrowToken}) is already configured for collateral (market: ${collateral}, underlying: ${collateralToken})`
+        );
+        continue;
+      } else {
+        console.log(
+          `Configuring pair:\n - BORROW (market: ${borrow}, underlying: ${borrowToken})\n - COLLATERAL: (market: ${collateral}, underlying: ${collateralToken})`
+        );
+
+        const tx = await factory._setPairWhitelisted(collateral, borrow, true);
+
+        await tx.wait();
+        console.log(
+          `configured the markets pair:\n - BORROW (market: ${borrow}, underlying: ${borrowToken})\n - COLLATERAL: (market: ${collateral}, underlying: ${collateralToken}) as whitelisted for levered positions`
+        );
       }
     }
   }
-);
+});
 
 task("chapel-borrow-tusd", "creates and funds a levered position on chapel").setAction(
   async ({}, { ethers, getNamedAccounts }) => {
