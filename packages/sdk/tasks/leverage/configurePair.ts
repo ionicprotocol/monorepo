@@ -13,8 +13,8 @@ import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
 export default task("levered-positions:configure-pair")
-  .addParam("collateralMarketAddress", "Address of the market that will be used as collateral", undefined, types.string)
-  .addParam("borrowMarketAddress", "Address of the market that will be used to borrow against", undefined, types.string)
+  .addParam("collateral", "Address of the market that will be used as collateral", undefined, types.string)
+  .addParam("borrow", "Address of the market that will be used to borrow against", undefined, types.string)
   .addOptionalParam(
     "liquidatorName",
     "Name of the redemption strategy used to convert between the two underlying assets",
