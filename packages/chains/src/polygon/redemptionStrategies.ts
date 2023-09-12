@@ -202,6 +202,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
   {
     inputToken: USDC,
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDR)
+  },
+  {
+    inputToken: USDC,
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WUSDR)
   },
   {
@@ -367,6 +372,17 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.USDR),
     strategy: RedemptionStrategyContract.SolidlyLpTokenWrapper,
     outputToken: underlying(assets, assetSymbols["sAMM-DAI/USDR"])
+  },
+  // WBTC -> USDR
+  {
+    inputToken: underlying(assets, assetSymbols.WBTC),
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDR)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.USDR),
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WBTC)
   },
   // WUSDR -> USDR
   {
