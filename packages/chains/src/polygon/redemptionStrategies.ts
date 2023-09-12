@@ -253,6 +253,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.WBTC)
   },
   {
+    inputToken: underlying(assets, assetSymbols.aWBTC_WETH_N),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
     inputToken: underlying(assets, assetSymbols["sAMM-USDC/USDR"]),
     strategy: RedemptionStrategyContract.SolidlyLpTokenLiquidator,
     outputToken: USDC
@@ -315,6 +320,11 @@ const redemptionStrategies: RedemptionStrategy[] = [
   },
   {
     inputToken: underlying(assets, assetSymbols.WBTC),
+    strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
+    outputToken: underlying(assets, assetSymbols.aWBTC_WETH_N)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
     strategy: RedemptionStrategyContract.GammaUniswapV3LpTokenWrapper,
     outputToken: underlying(assets, assetSymbols.aWBTC_WETH_N)
   },
