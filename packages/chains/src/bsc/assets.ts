@@ -563,7 +563,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaStable_stkBNB_WBNB,
     name: "Fusion V2 AMM - Stable stkBNB/WBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(WBNB, stkBNB, solidlyGammaStable_stkBNB_WBNB, "GAMMA_STABLE")
   },
   {
@@ -571,7 +571,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaNarrow_BTCB_WBNB,
     name: "Fusion V2 AMM - Stable BTCB/WBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(BTCB, WBNB, solidlyGammaNarrow_BTCB_WBNB, "GAMMA_NARROW")
   },
   {
@@ -579,7 +579,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaNarrow_ETH_WBNB,
     name: "Fusion V2 AMM - Stable ETH/WBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(ETH, WBNB, solidlyGammaNarrow_ETH_WBNB, "GAMMA_NARROW")
   },
   {
@@ -587,7 +587,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaNarrow_ANKR_ankrBNB,
     name: "Fusion V2 AMM - Narrow ANKR/ankrBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaNarrow_ANKR_ankrBNB, "GAMMA_NARROW")
   },
   {
@@ -595,7 +595,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaWide_ANKR_ankrBNB,
     name: "Fusion V2 AMM - Wide ANKR/ankrBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(ANKR, ankrBNB, solidlyGammaWide_ANKR_ankrBNB, "GAMMA_WIDE")
   },
   {
@@ -603,7 +603,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaWide_RDNT_ankrBNB,
     name: "Fusion V2 AMM - Wide RDNT/ankrBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(RDNT, ankrBNB, solidlyGammaWide_RDNT_ankrBNB, "GAMMA_WIDE")
   },
   {
@@ -611,7 +611,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaNarrow_RDNT_ankrBNB,
     name: "Fusion V2 AMM - Narrow RDNT/ankrBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(RDNT, ankrBNB, solidlyGammaNarrow_RDNT_ankrBNB, "GAMMA_NARROW")
   },
   {
@@ -619,7 +619,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaWide_THE_ankrBNB,
     name: "Fusion V2 AMM - Wide THE/ankrBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(THE, ankrBNB, solidlyGammaWide_THE_ankrBNB, "GAMMA_WIDE")
   },
   {
@@ -627,7 +627,7 @@ const assets: SupportedAsset[] = [
     underlying: solidlyGammaNarrow_THE_ankrBNB,
     name: "Fusion V2 AMM - Narrow THE/ankrBNB",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolAlgebraPriceOracle,
     extraDocs: thenaDocsV2(THE, ankrBNB, solidlyGammaNarrow_THE_ankrBNB, "GAMMA_NARROW")
   }
 ];

@@ -222,9 +222,15 @@ export type SolidlyDeployFnParams = ChainDeployFnParams & {
   solidlyLps: SolidlyLpAsset[];
 };
 
+export enum GammaUnderlyingSwap {
+  UNISWAP,
+  ALGEBRA
+}
+
 export type GammaDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   gammaLps: GammaLpAsset[];
+  swap: GammaUnderlyingSwap;
 };
 
 export type SolidlyOracleAssetConfig = {

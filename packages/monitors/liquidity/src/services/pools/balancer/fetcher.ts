@@ -35,7 +35,7 @@ export class BalancerFetcher {
     const [underlyings, amounts] = await vault.callStatic.getPoolTokens(poolId);
     for (let i = 0; i < underlyings.length; i++) {
       reserves.push({
-        underlying: new Contract(underlyings[i], ERC20Abi, this.provider),
+        underlying: new Contract(underlyings[i], ERC20Abi.abi, this.provider),
         reserves: amounts[i],
       });
     }

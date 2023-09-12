@@ -1,6 +1,6 @@
 import { task, types } from "hardhat/config";
 
-import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
+import { CErc20PluginRewardsInterface } from "../../typechain/CTokenInterfaces.sol/CErc20PluginRewardsInterface";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 
 task("approve-market-flywheel")
@@ -19,7 +19,7 @@ task("approve-market-flywheel")
         "CErc20PluginRewardsDelegate",
         marketAddress,
         deployer
-      )) as CErc20PluginRewardsDelegate;
+      )) as CErc20PluginRewardsInterface;
       const fwRewards = await flywheel.callStatic.flywheelRewards();
       const rewardToken = await flywheel.callStatic.rewardToken();
       const tx = await market["approve(address,address)"](rewardToken, fwRewards);

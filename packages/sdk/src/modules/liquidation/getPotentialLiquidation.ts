@@ -1,8 +1,8 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
+import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
-import { ICErc20 } from "../../../typechain/ICErc20";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";

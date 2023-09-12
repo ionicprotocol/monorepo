@@ -2,9 +2,8 @@
 rm -rf ./artifacts
 mkdir ./artifacts
 
-for file in $(find ./lib/contracts/out -name '*.json' | grep -iv test); do
-    cp $file ./artifacts;
-done
-
+cp -R ./lib/contracts/out/. ./artifacts
+rm -rf ./artifacts/*Test*.sol
+rm -rf ./artifacts/*.t.sol
 
 cp ./lib/contracts/out/test.sol/*.json ./artifacts;

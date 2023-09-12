@@ -21,15 +21,13 @@ export const useCTokenData = (
             reserveFactorMantissa,
             interestRateModelAddress,
             decimals,
-            { collateralFactorMantissa },
+            [, collateralFactorMantissa],
             supplyCap,
             borrowCap
           ] = await Promise.all([
             cToken.callStatic.adminFeeMantissa(),
             cToken.callStatic.reserveFactorMantissa(),
-            // @ts-ignore
             cToken.callStatic.interestRateModel(),
-            // @ts-ignore
             cToken.callStatic.decimals(),
             comptroller.callStatic.markets(cTokenAddress),
             comptroller.callStatic.supplyCaps(cTokenAddress),

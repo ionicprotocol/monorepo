@@ -262,5 +262,12 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 
       return await poolAuth.callStatic.doesUserHaveRole(user, role);
     }
+
+    async getHealthFactor(account: string, pool: string) {
+      const poolLens = this.createPoolLens();
+      const healthFactor = await poolLens.getHealthFactor(account, pool, { from: account });
+
+      return healthFactor;
+    }
   };
 }

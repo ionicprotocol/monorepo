@@ -39,11 +39,11 @@ export class V2Fetcher {
     return [
       {
         reserves: r0,
-        underlying: new Contract(await pairContract.callStatic.token0(), ERC20Abi, this.provider),
+        underlying: new Contract(await pairContract.callStatic.token0(), ERC20Abi.abi, this.provider),
       },
       {
         reserves: r1,
-        underlying: new Contract(await pairContract.callStatic.token1(), ERC20Abi, this.provider),
+        underlying: new Contract(await pairContract.callStatic.token1(), ERC20Abi.abi, this.provider),
       },
     ];
   };

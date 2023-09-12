@@ -2,7 +2,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { task, types } from "hardhat/config";
 
-import ERC20Abi from "../../abis/ERC20";
+import ERC20Abi from "../../artifacts/ERC20.sol/ERC20.json";
 
 export default task("swap:wtoken-token", "Swap WNATIVE for token")
   .addParam("token", "token address", undefined, types.string)
@@ -30,7 +30,7 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
       account = await ethers.getNamedSigner(_account);
     }
 
-    const tokenContract = new ethers.Contract(_token, ERC20Abi, account);
+    const tokenContract = new ethers.Contract(_token, ERC20Abi.abi, account);
     const tokenSymbol = await tokenContract.callStatic.symbol();
     await tokenContract.approve(
       sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,

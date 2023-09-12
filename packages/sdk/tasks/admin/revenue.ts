@@ -5,7 +5,7 @@ import { BigNumber, Contract, providers } from "ethers";
 import { task, types } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { default as ERC20Abi } from "../../abis/EIP20Interface";
+import ERC20Abi from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import { IonicERC4626 } from "../../typechain/IonicERC4626";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 
@@ -25,7 +25,7 @@ async function cgPrice(cgId: string) {
 }
 
 async function createComptroller(
-  pool: PoolDirectory.IonicPoolStructOutput,
+  pool: PoolDirectory.PoolStructOutput,
   deployer: SignerWithAddress
 ): Promise<ComptrollerWithExtension | null> {
   const ionicSdkModule = await import("../ionicSdk");
@@ -197,7 +197,7 @@ task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Perfor
           const performanceFeeRewardTokens = await flywheelContract.callStatic.rewardsAccrued(
             await flywheelContract.callStatic.feeRecipient()
           );
-          const rewardToken = new Contract(await flywheelContract.callStatic.rewardToken(), ERC20Abi, deployer);
+          const rewardToken = new Contract(await flywheelContract.callStatic.rewardToken(), ERC20Abi.abi, deployer);
           const rewardTokenPrice = await mpo.callStatic.price(rewardToken.address);
 
           const nativeFee = performanceFeeRewardTokens

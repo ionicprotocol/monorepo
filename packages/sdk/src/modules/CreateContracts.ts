@@ -1,36 +1,37 @@
 import { Contract, ContractInterface } from "ethers";
 
 import { IonicBaseConstructor } from "..";
-import AuthoritiesRegistryABI from "../../abis/AuthoritiesRegistry";
-import CompoundMarketERC4626ABI from "../../abis/CompoundMarketERC4626";
-import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
-import ICErc20ABI from "../../abis/ICErc20";
-import ICErc20PluginRewardsABI from "../../abis/ICErc20PluginRewards";
-import ILeveredPositionFactoryABI from "../../abis/ILeveredPositionFactory";
-import ILiquidatorsRegistryABI from "../../abis/ILiquidatorsRegistry";
-import IonicComptrollerABI from "../../abis/IonicComptroller";
-import IonicFlywheelABI from "../../abis/IonicFlywheel";
-import IonicFlywheelLensRouterABI from "../../abis/IonicFlywheelLensRouter";
-import JumpRateModelABI from "../../abis/JumpRateModel";
-import LeveredPositionABI from "../../abis/LeveredPosition";
-import LeveredPositionsLensABI from "../../abis/LeveredPositionsLens";
-import MasterPriceOracleABI from "../../abis/MasterPriceOracle";
-import OptimizedAPRVaultFirstExtensionABI from "../../abis/OptimizedAPRVaultFirstExtension";
-import OptimizedAPRVaultSecondExtensionABI from "../../abis/OptimizedAPRVaultSecondExtension";
-import OptimizedVaultsRegistryABI from "../../abis/OptimizedVaultsRegistry";
-import PoolLensSecondaryABI from "../../abis/PoolLensSecondary";
-import PoolRolesAuthorityABI from "../../abis/PoolRolesAuthority";
-import UnitrollerABI from "../../abis/Unitroller";
+import AuthoritiesRegistryArtifact from "../../artifacts/AuthoritiesRegistry.sol/AuthoritiesRegistry.json";
+import CompoundMarketERC4626Artifact from "../../artifacts/CompoundMarketERC4626.sol/CompoundMarketERC4626.json";
+import IonicComptrollerArtifact from "../../artifacts/ComptrollerInterface.sol/IonicComptroller.json";
+import ICErc20PluginRewardsArtifact from "../../artifacts/CTokenInterfaces.sol/CErc20PluginRewardsInterface.json";
+import ICErc20Artifact from "../../artifacts/CTokenInterfaces.sol/ICErc20.json";
+import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
+import ILeveredPositionFactoryArtifact from "../../artifacts/ILeveredPositionFactory.sol/ILeveredPositionFactory.json";
+import ILiquidatorsRegistryArtifact from "../../artifacts/ILiquidatorsRegistry.sol/ILiquidatorsRegistry.json";
+import IonicFlywheelArtifact from "../../artifacts/IonicFlywheel.sol/IonicFlywheel.json";
+import IonicFlywheelLensRouterArtifact from "../../artifacts/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter.json";
+import JumpRateModelArtifact from "../../artifacts/JumpRateModel.sol/JumpRateModel.json";
+import LeveredPositionArtifact from "../../artifacts/LeveredPosition.sol/LeveredPosition.json";
+import LeveredPositionsLensArtifact from "../../artifacts/LeveredPositionsLens.sol/LeveredPositionsLens.json";
+import MasterPriceOracleArtifact from "../../artifacts/MasterPriceOracle.sol/MasterPriceOracle.json";
+import OptimizedAPRVaultFirstExtensionArtifact from "../../artifacts/OptimizedAPRVaultFirstExtension.sol/OptimizedAPRVaultFirstExtension.json";
+import OptimizedAPRVaultSecondExtensionArtifact from "../../artifacts/OptimizedAPRVaultSecondExtension.sol/OptimizedAPRVaultSecondExtension.json";
+import OptimizedVaultsRegistryArtifact from "../../artifacts/OptimizedVaultsRegistry.sol/OptimizedVaultsRegistry.json";
+import PoolLensArtifact from "../../artifacts/PoolLens.sol/PoolLens.json";
+import PoolLensSecondaryArtifact from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
+import PoolRolesAuthorityArtifact from "../../artifacts/PoolRolesAuthority.sol/PoolRolesAuthority.json";
+import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
 import { AuthoritiesRegistry } from "../../typechain/AuthoritiesRegistry";
 import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
+import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
+import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
+import { ICErc20PluginRewards } from "../../typechain/CTokenInterfaces.sol/ICErc20PluginRewards";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
-import { ICErc20 } from "../../typechain/ICErc20";
-import { ICErc20PluginRewards } from "../../typechain/ICErc20PluginRewards";
-import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory";
-import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry";
-import { IonicComptroller } from "../../typechain/IonicComptroller";
+import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory.sol/ILeveredPositionFactory";
+import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry.sol/ILiquidatorsRegistry";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
-import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter";
+import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
 import { JumpRateModel } from "../../typechain/JumpRateModel";
 import { LeveredPosition } from "../../typechain/LeveredPosition";
 import { LeveredPositionsLens } from "../../typechain/LeveredPositionsLens";
@@ -38,7 +39,8 @@ import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
 import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
 import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
-import { PoolLensSecondary } from "../../typechain/PoolLensSecondary";
+import { PoolLens } from "../../typechain/PoolLens";
+import { PoolLensSecondary } from "../../typechain/PoolLensSecondary.sol/PoolLensSecondary";
 import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
 import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider } from "../IonicSdk";
@@ -52,43 +54,47 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
         new Contract(address, abi, signerOrProvider) as T;
     }
 
-    createUnitroller = this.createContractInstance<Unitroller>(UnitrollerABI);
-    createIonicFlywheel = this.createContractInstance<IonicFlywheel>(IonicFlywheelABI);
-    createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsABI);
-    createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelABI);
+    createUnitroller = this.createContractInstance<Unitroller>(UnitrollerArtifact.abi);
+    createIonicFlywheel = this.createContractInstance<IonicFlywheel>(IonicFlywheelArtifact.abi);
+    createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsArtifact.abi);
+    createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelArtifact.abi);
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
       if (this.chainDeployment.ComptrollerFirstExtension) {
-        return new Contract(comptrollerAddress, [...IonicComptrollerABI], signerOrProvider) as IonicComptroller;
+        return new Contract(
+          comptrollerAddress,
+          [...IonicComptrollerArtifact.abi],
+          signerOrProvider
+        ) as IonicComptroller;
       }
 
-      return new Contract(comptrollerAddress, IonicComptrollerABI, signerOrProvider) as IonicComptroller;
+      return new Contract(comptrollerAddress, IonicComptrollerArtifact.abi, signerOrProvider) as IonicComptroller;
     }
 
     createICErc20(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(address, ICErc20ABI, signerOrProvider) as ICErc20;
+      return new Contract(address, ICErc20Artifact.abi, signerOrProvider) as ICErc20;
     }
 
     createICErc20PluginRewards(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(cTokenAddress, ICErc20PluginRewardsABI, signerOrProvider) as ICErc20PluginRewards;
+      return new Contract(cTokenAddress, ICErc20PluginRewardsArtifact.abi, signerOrProvider) as ICErc20PluginRewards;
     }
 
     createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.MasterPriceOracle.address,
-        MasterPriceOracleABI,
+        MasterPriceOracleArtifact.abi,
         signerOrProvider
       ) as MasterPriceOracle;
     }
 
     createCompoundMarketERC4626(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(address, CompoundMarketERC4626ABI, signerOrProvider) as CompoundMarketERC4626;
+      return new Contract(address, CompoundMarketERC4626Artifact.abi, signerOrProvider) as CompoundMarketERC4626;
     }
 
     createOptimizedAPRVault(address: string, signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         address,
-        [...OptimizedAPRVaultFirstExtensionABI, ...OptimizedAPRVaultSecondExtensionABI],
+        [...OptimizedAPRVaultFirstExtensionArtifact.abi, ...OptimizedAPRVaultSecondExtensionArtifact.abi],
         signerOrProvider
       ) as OptimizedAPRVaultWithExtensions;
     }
@@ -96,7 +102,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
     createOptimizedVaultsRegistry(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.OptimizedVaultsRegistry.address,
-        OptimizedVaultsRegistryABI,
+        OptimizedVaultsRegistryArtifact.abi,
         signerOrProvider
       ) as OptimizedVaultsRegistry;
     }
@@ -104,7 +110,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
     createIonicFlywheelLensRouter(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.IonicFlywheelLensRouter.address,
-        IonicFlywheelLensRouterABI,
+        IonicFlywheelLensRouterArtifact.abi,
         signerOrProvider
       ) as IonicFlywheelLensRouter;
     }
@@ -112,27 +118,31 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
     createLeveredPositionFactory(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.LeveredPositionFactory.address,
-        ILeveredPositionFactoryABI,
+        ILeveredPositionFactoryArtifact.abi,
         signerOrProvider
       ) as ILeveredPositionFactory;
     }
 
     createLeveredPosition(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(address, LeveredPositionABI, signerOrProvider) as LeveredPosition;
+      return new Contract(address, LeveredPositionArtifact.abi, signerOrProvider) as LeveredPosition;
     }
 
     createLeveredPositionLens(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.LeveredPositionsLens.address,
-        LeveredPositionsLensABI,
+        LeveredPositionsLensArtifact.abi,
         signerOrProvider
       ) as LeveredPositionsLens;
+    }
+
+    createPoolLens(signerOrProvider: SignerOrProvider = this.provider) {
+      return new Contract(this.chainDeployment.PoolLens.address, PoolLensArtifact.abi, signerOrProvider) as PoolLens;
     }
 
     createPoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.PoolLensSecondary.address,
-        PoolLensSecondaryABI,
+        PoolLensSecondaryArtifact.abi,
         signerOrProvider
       ) as PoolLensSecondary;
     }
@@ -140,7 +150,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
     createILiquidatorsRegistry(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.LiquidatorsRegistry.address,
-        ILiquidatorsRegistryABI,
+        ILiquidatorsRegistryArtifact.abi,
         signerOrProvider
       ) as ILiquidatorsRegistry;
     }
@@ -148,13 +158,13 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
     createAuthoritiesRegistry(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.AuthoritiesRegistry.address,
-        AuthoritiesRegistryABI,
+        AuthoritiesRegistryArtifact.abi,
         signerOrProvider
       ) as AuthoritiesRegistry;
     }
 
     createPoolRolesAuthority(poolAuthAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(poolAuthAddress, PoolRolesAuthorityABI, signerOrProvider) as PoolRolesAuthority;
+      return new Contract(poolAuthAddress, PoolRolesAuthorityArtifact.abi, signerOrProvider) as PoolRolesAuthority;
     }
   };
 }

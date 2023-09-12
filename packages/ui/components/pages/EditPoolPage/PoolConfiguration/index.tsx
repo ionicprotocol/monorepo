@@ -335,9 +335,8 @@ const PoolConfiguration = ({
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
     try {
-      const response = await comptroller.callStatic._setLiquidationIncentive(
-        bigLiquidationIncentive
-      );
+      const response =
+        await comptroller.callStatic._setLiquidationIncentive(bigLiquidationIncentive);
 
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);

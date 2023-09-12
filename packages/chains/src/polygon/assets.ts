@@ -54,7 +54,7 @@ const SD = "0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94";
 const USDR = "0x40379a439D4F6795B6fc9aa5687dB461677A2dBa";
 const WUSDR = "0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265";
 const TNGBL = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
-const DUSD = "0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007";
+const DUSD = "0xEC38621e72D86775a89C7422746de1f52bbA5320";
 const CASH = "0x5D066D022EDE10eFa2717eD3D79f22F949F8C175";
 
 // liquid staked assets
@@ -946,7 +946,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_USDC_CASH,
     name: "Fusion V2 AMM - Narrow USDC/CASH 0.01%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(USDC, CASH, gammaNarrowAMM_USDC_CASH, "GAMMA_NARROW")
   },
   {
@@ -954,7 +954,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_USDC_WETH,
     name: "Fusion V2 AMM - Narrow USDC/WETH 0.05%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(USDC, WETH, gammaNarrowAMM_USDC_WETH, "GAMMA_NARROW")
   },
   {
@@ -962,7 +962,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_WMATIC_MATICX,
     name: "Fusion V2 AMM - Narrow WMATIC/MATICx 0.01%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(WMATIC, MATICx, gammaNarrowAMM_WMATIC_MATICX, "GAMMA_NARROW")
   },
   {
@@ -970,7 +970,7 @@ export const assets: SupportedAsset[] = [
     underlying: gammaNarrowAMM_WBTC_WETH,
     name: "Fusion V2 AMM - Narrow WBTC/WETH 0.05%",
     decimals: 18,
-    oracle: OracleTypes.GammaPoolPriceOracle,
+    oracle: OracleTypes.GammaPoolUniswapV3PriceOracle,
     extraDocs: retroAlmGamma(WBTC, WETH, gammaNarrowAMM_WBTC_WETH, "GAMMA_NARROW")
   }
 ];

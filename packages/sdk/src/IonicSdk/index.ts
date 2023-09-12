@@ -15,25 +15,25 @@ import {
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
 
-import CTokenFirstExtensionABI from "../../abis/CTokenFirstExtension";
-import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import FeeDistributorABI from "../../abis/FeeDistributor";
-import IonicERC4626ABI from "../../abis/IonicERC4626";
-import IonicFlywheelLensRouterABI from "../../abis/IonicFlywheelLensRouter";
-import IonicLiquidatorABI from "../../abis/IonicLiquidator";
-import PoolDirectoryABI from "../../abis/PoolDirectory";
-import PoolLensABI from "../../abis/PoolLens";
-import PoolLensSecondaryABI from "../../abis/PoolLensSecondary";
-import UnitrollerABI from "../../abis/Unitroller";
+import CTokenFirstExtensionArtifact from "../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
+import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
+import FeeDistributorArtifact from "../../artifacts/FeeDistributor.sol/FeeDistributor.json";
+import IonicERC4626Artifact from "../../artifacts/IonicERC4626.sol/IonicERC4626.json";
+import IonicFlywheelLensRouterArtifact from "../../artifacts/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter.json";
+import IonicLiquidatorArtifact from "../../artifacts/IonicLiquidator.sol/IonicLiquidator.json";
+import PoolDirectoryArtifact from "../../artifacts/PoolDirectory.sol/PoolDirectory.json";
+import PoolLensArtifact from "../../artifacts/PoolLens.sol/PoolLens.json";
+import PoolLensSecondaryArtifact from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
+import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
-import { FeeDistributor } from "../../typechain/FeeDistributor";
+import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
 import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
-import { IonicFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter";
+import { IonicFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
 import { IonicLiquidator } from "../../typechain/IonicLiquidator";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 import { PoolLens } from "../../typechain/PoolLens";
-import { PoolLensSecondary } from "../../typechain/PoolLensSecondary";
+import { PoolLensSecondary } from "../../typechain/PoolLensSecondary.sol/PoolLensSecondary";
 import { Unitroller } from "../../typechain/Unitroller";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -128,28 +128,28 @@ export class IonicBase {
     return {
       PoolDirectory: new Contract(
         this.chainDeployment.PoolDirectory.address,
-        PoolDirectoryABI,
+        PoolDirectoryArtifact.abi,
         this.provider
       ) as PoolDirectory,
-      PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensABI, this.provider) as PoolLens,
+      PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensArtifact.abi, this.provider) as PoolLens,
       PoolLensSecondary: new Contract(
         this.chainDeployment.PoolLensSecondary.address,
-        PoolLensSecondaryABI,
+        PoolLensSecondaryArtifact.abi,
         this.provider
       ) as PoolLensSecondary,
       IonicLiquidator: new Contract(
         this.chainDeployment.IonicLiquidator.address,
-        IonicLiquidatorABI,
+        IonicLiquidatorArtifact.abi,
         this.provider
       ) as IonicLiquidator,
       FeeDistributor: new Contract(
         this.chainDeployment.FeeDistributor.address,
-        FeeDistributorABI,
+        FeeDistributorArtifact.abi,
         this.provider
       ) as FeeDistributor,
       IonicFlywheelLensRouter: new Contract(
         this.chainDeployment.IonicFlywheelLensRouter.address,
-        IonicFlywheelLensRouterABI,
+        IonicFlywheelLensRouterArtifact.abi,
         this.provider
       ) as IonicFlywheelLensRouter,
       ...this._contracts
@@ -306,7 +306,11 @@ export class IonicBase {
 
   async getInterestRateModel(assetAddress: string): Promise<InterestRateModel> {
     // Get interest rate model address from asset address
-    const assetContract = getContract(assetAddress, CTokenFirstExtensionABI, this.provider) as CTokenFirstExtension;
+    const assetContract = getContract(
+      assetAddress,
+      CTokenFirstExtensionArtifact.abi,
+      this.provider
+    ) as CTokenFirstExtension;
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
@@ -328,19 +332,19 @@ export class IonicBase {
   }
 
   getEIP20TokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, EIP20InterfaceABI, signerOrProvider) as EIP20Interface;
+    return new Contract(address, EIP20InterfaceArtifact.abi, signerOrProvider) as EIP20Interface;
   }
 
   getUnitrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, UnitrollerABI, signerOrProvider) as Unitroller;
+    return new Contract(address, UnitrollerArtifact.abi, signerOrProvider) as Unitroller;
   }
 
   getPoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(this.chainDeployment.PoolDirectory.address, PoolDirectoryABI, signerOrProvider);
+    return new Contract(this.chainDeployment.PoolDirectory.address, PoolDirectoryArtifact.abi, signerOrProvider);
   }
 
   getErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, IonicERC4626ABI, signerOrProvider) as IonicERC4626;
+    return new Contract(address, IonicERC4626Artifact.abi, signerOrProvider) as IonicERC4626;
   }
 }
 

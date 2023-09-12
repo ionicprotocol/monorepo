@@ -2,7 +2,7 @@ import { constants } from "ethers";
 import { task } from "hardhat/config";
 
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
-import { FeeDistributor } from "../../typechain/FeeDistributor";
+import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
 
 task("market:set-latest", "Updates the markets' implementations whitelist").setAction(async (taskArgs, { ethers }) => {
   const signer = await ethers.getNamedSigner("deployer");

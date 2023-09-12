@@ -12,7 +12,7 @@ import {
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
-import { FeeDistributor } from "../typechain/FeeDistributor";
+import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
 import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
@@ -544,23 +544,72 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (liquidatorsRegistryExtensionDep.transactionHash)
     await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
   console.log("LiquidatorsRegistryExtension: ", liquidatorsRegistryExtensionDep.address);
+  const liquidatorsRegistrySecondExtensionDep = await deployments.deploy("LiquidatorsRegistrySecondExtension", {
+    from: deployer,
+    log: true,
+    args: []
+  });
+  if (liquidatorsRegistrySecondExtensionDep.transactionHash)
+    await ethers.provider.waitForTransaction(liquidatorsRegistrySecondExtensionDep.transactionHash);
+  console.log("LiquidatorsRegistrySecondExtension: ", liquidatorsRegistryExtensionDep.address);
 
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
   const currentLRExtensions = await liquidatorsRegistry._listExtensions();
-  if (!currentLRExtensions.length || currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address) {
-    let extToReplace;
-    if (currentLRExtensions.length == 0) {
-      extToReplace = constants.AddressZero;
-    } else {
-      extToReplace = currentLRExtensions[0];
-    }
-    tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, extToReplace);
+  if (currentLRExtensions.length == 0) {
+    tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, constants.AddressZero);
+    await tx.wait();
+    console.log(`registered the first liquidators registry extension ${liquidatorsRegistryExtensionDep.address}`);
+    tx = await liquidatorsRegistry._registerExtension(
+      liquidatorsRegistrySecondExtensionDep.address,
+      constants.AddressZero
+    );
     await tx.wait();
     console.log(
-      `replaced the liquidators registry old extension ${extToReplace} with the new ${liquidatorsRegistryExtensionDep.address}`
+      `registered the second liquidators registry extension ${liquidatorsRegistrySecondExtensionDep.address}`
     );
   } else {
-    console.log(`no liquidators registry extensions to update`);
+    if (currentLRExtensions.length == 1) {
+      tx = await liquidatorsRegistry._registerExtension(
+        liquidatorsRegistryExtensionDep.address,
+        currentLRExtensions[0]
+      );
+      await tx.wait();
+      console.log(
+        `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
+      );
+      tx = await liquidatorsRegistry._registerExtension(
+        liquidatorsRegistrySecondExtensionDep.address,
+        constants.AddressZero
+      );
+      await tx.wait();
+      console.log(
+        `registered the second liquidators registry extension ${liquidatorsRegistrySecondExtensionDep.address}`
+      );
+    } else if (currentLRExtensions.length == 2) {
+      if (
+        currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address ||
+        currentLRExtensions[1] != liquidatorsRegistrySecondExtensionDep.address
+      ) {
+        tx = await liquidatorsRegistry._registerExtension(
+          liquidatorsRegistryExtensionDep.address,
+          currentLRExtensions[0]
+        );
+        await tx.wait();
+        console.log(
+          `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
+        );
+        tx = await liquidatorsRegistry._registerExtension(
+          liquidatorsRegistrySecondExtensionDep.address,
+          currentLRExtensions[1]
+        );
+        await tx.wait();
+        console.log(
+          `replaced the liquidators registry second extension ${currentLRExtensions[1]} with the new ${liquidatorsRegistrySecondExtensionDep.address}`
+        );
+      } else {
+        console.log(`no liquidators registry extensions to update`);
+      }
+    }
   }
 
   //// Configure Liquidators Registry
@@ -643,6 +692,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       console.log(`no LeveredPositionFactory extensions to update`);
     }
 
+    const lr = await leveredPositionFactory.callStatic.liquidatorsRegistry();
+    if (lr.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
+      tx = await leveredPositionFactory._setLiquidatorsRegistry(liquidatorsRegistry.address);
+      await tx.wait();
+      console.log("updated the LiquidatorsRegistry address in the LeveredPositionFactory", tx.hash);
+    }
+
     //// LEVERED POSITIONS LENS
     const lpLens = await deployments.deploy("LeveredPositionsLens", {
       from: deployer,
@@ -690,6 +746,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     if (ffdAuthRegistry.toLowerCase() != authoritiesRegistry.address.toLowerCase()) {
       // set the address in the FFD
       tx = await fuseFeeDistributor.reinitialize(authoritiesRegistry.address);
+      await tx.wait();
+      console.log(`configured the auth registry in the FFD`);
+    }
+    const leveredPosFactoryAr = await authoritiesRegistry.callStatic.leveredPositionsFactory();
+    if (leveredPosFactoryAr.toLowerCase() != leveredPositionFactory.address.toLowerCase()) {
+      // set the address in the AR
+      tx = await authoritiesRegistry.reinitialize(authoritiesRegistry.address);
       await tx.wait();
       console.log(`configured the auth registry in the FFD`);
     }

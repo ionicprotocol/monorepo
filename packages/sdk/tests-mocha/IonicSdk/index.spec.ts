@@ -2,7 +2,7 @@ import { ganache } from "@ionicprotocol/chains";
 import { BigNumber, constants, Contract, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import JumpRateModelArtifact from "../../artifacts/JumpRateModel.json";
+import JumpRateModelArtifact from "../../artifacts/JumpRateModel.sol/JumpRateModel.json";
 import { IonicBase } from "../../src/IonicSdk/index";
 import JumpRateModel from "../../src/IonicSdk/irm/JumpRateModel";
 import * as utilsFns from "../../src/IonicSdk/utils";

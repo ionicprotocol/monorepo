@@ -4,7 +4,7 @@ import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
-import { ICErc20 } from "../../typechain/ICErc20";
+import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 
 export default task("market:unsupport", "Unsupport a market")

@@ -1,6 +1,6 @@
 import { task, types } from "hardhat/config";
 
-import { FeeDistributor } from "../../typechain/FeeDistributor";
+import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
 
 export default task("irm:set", "Set new IRM to ctoken")
   .addParam("ctokens", "cToken for which to set the IRM", undefined, types.string)

@@ -5,7 +5,7 @@ import { environment, supabase } from '../config';
 import { chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk } from '@ionicprotocol/sdk';
 import { OptimizedVaultsRegistry } from '@ionicprotocol/sdk/typechain/OptimizedVaultsRegistry';
-import OptimizedVaultsRegistryABI from '@ionicprotocol/sdk/abis/OptimizedVaultsRegistry';
+import { abi as OptimizedVaultsRegistryABI } from '@ionicprotocol/sdk/artifacts/OptimizedVaultsRegistry.sol/OptimizedVaultsRegistry.json';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
 
@@ -14,12 +14,12 @@ export const updateVaultData = async (chainId: SupportedChains) => {
     const config = chainIdToConfig[chainId];
     const sdk = new IonicSdk(
       new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
-      config
+      config,
     );
     const optimizedVaultsRegistry = new ethers.Contract(
       sdk.chainDeployment.OptimizedVaultsRegistry.address,
       OptimizedVaultsRegistryABI,
-      sdk.provider
+      sdk.provider,
     ) as OptimizedVaultsRegistry;
 
     const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();

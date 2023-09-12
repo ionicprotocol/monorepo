@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
-import { FuseFlywheelDynamicRewardsPlugin } from "../../typechain/FuseFlywheelDynamicRewardsPlugin";
+import { FuseFlywheelDynamicRewardsPlugin } from "../../typechain/FuseFlywheelDynamicRewardsPlugin.sol/FuseFlywheelDynamicRewardsPlugin";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 import { IonicReplacingFlywheel } from "../../typechain/IonicReplacingFlywheel";
 import { PoolDirectory } from "../../typechain/PoolDirectory";

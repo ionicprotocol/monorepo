@@ -1,7 +1,7 @@
 //
 import { utils } from "ethers";
 
-import AnkrFTMInterestRateModelArtifact from "../../../artifacts/AnkrFTMInterestRateModel.json";
+import AnkrFTMInterestRateModelArtifact from "../../../artifacts/AnkrFTMInterestRateModel.sol/AnkrFTMInterestRateModel.json";
 
 import AnkrCertificateInterestRateModel from "./AnkrCertificateInterestRateModel";
 

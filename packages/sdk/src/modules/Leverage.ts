@@ -1,7 +1,7 @@
 import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo, SupportedChains } from "@ionicprotocol/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
-import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import EIP20InterfaceABI from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
@@ -170,7 +170,6 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     async getPositionSupplyApy(cTokenAddress: string, amount: BigNumber) {
       const cToken = this.createICErc20(cTokenAddress);
 
-      // @ts-ignore
       return await cToken.callStatic.supplyRatePerBlockAfterDeposit(amount);
     }
 
