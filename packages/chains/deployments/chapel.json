@@ -81,7 +81,7 @@
       "address": "0xE46DD857b1154566228f97b8ade25755F8B349f5"
     },
     "IonicFlywheelLensRouter": {
-      "address": "0x047c79f95c6380F523a72Ffa19F2F337ded1F27f"
+      "address": "0x6c48c820b1fefe470AFcbAF106eF468560d0537E"
     },
     "IonicLiquidator": {
       "address": "0x5B1040C0Fa59451Ef6cf9f997f9E3458675b3876"
@@ -102,7 +102,7 @@
       "address": "0xfe1DCDA6F77A47Af1599f4d1bEe3632762b3baa2"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x29761aF6d5779e6E184d4e84415Ef50551934A17"
+      "address": "0x161145C341FF36Ebbc214e0FDaD9E19C9f143057"
     },
     "LeveredPositionFactorySecondExtension": {
       "address": "0x8B72922d23bc80Fb9046e7F9594fd753633eBE7B"
@@ -120,7 +120,7 @@
       "address": "0x9186E913e95a11bbE08b2D0b804FA70061C9978F"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x47788c35B123f5A2e0e69C35e911CE7c354744c3"
+      "address": "0x14184251f66004E75C4708d8E8735dd546De20da"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x6EE9ad9adD22Bc72B8296F9aC50FFe47745Dd650"
