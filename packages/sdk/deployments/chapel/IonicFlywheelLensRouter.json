@@ -409,7 +409,9 @@
     "status": 1,
     "byzantium": true
   },
-  "args": ["0xf0609635Fa55971360E0430771D8Cb2d2bF7d726"],
+  "args": [
+    "0xf0609635Fa55971360E0430771D8Cb2d2bF7d726"
+  ],
   "numDeployments": 2,
   "metadata": {
     "compiler": {
