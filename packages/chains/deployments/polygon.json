@@ -180,7 +180,7 @@
       "address": "0x5220AA88bb3E04626a6C796F1A26467C5F509152"
     },
     "IonicFlywheelLensRouter": {
-      "address": "0x6C54c0dBD4B3C00C537138013A9e6fD93304A76A"
+      "address": "0x7C78Ea3Dea4FdcAa73Ae5912f391Aa321001914E"
     },
     "IonicFlywheel_MIMO": {
       "address": "0x56F15D070cf5C01dDD78BbCbC362d67a323D57Eb"
@@ -219,7 +219,7 @@
       "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0x7724096275a57Bd17d31761EC6213a6F5f62287F"
+      "address": "0x4726ba8AAf6355Df9b94bF24921159cae5df74b2"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x139ea043005D3c648d81c504c8e0E9ED8994F76E"

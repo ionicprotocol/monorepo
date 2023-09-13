@@ -81,7 +81,7 @@
       "address": "0xE46DD857b1154566228f97b8ade25755F8B349f5"
     },
     "IonicFlywheelLensRouter": {
-      "address": "0x6c48c820b1fefe470AFcbAF106eF468560d0537E"
+      "address": "0xB6eb7F786ce3B86292586aD8ff28eb4b4f733A95"
     },
     "IonicLiquidator": {
       "address": "0x5B1040C0Fa59451Ef6cf9f997f9E3458675b3876"
@@ -96,13 +96,10 @@
       "address": "0x327D7217205Fdd06bF72E8e80adba1c9f6C635CC"
     },
     "LeveredPositionFactory": {
-      "address": "0xd1Ad5412930724B6117a4eA463961330E04613AD"
-    },
-    "LeveredPositionFactoryExtension": {
-      "address": "0xfe1DCDA6F77A47Af1599f4d1bEe3632762b3baa2"
+      "address": "0x98051971C7C3CdeCe1633722ABAb500521D21Ba1"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x161145C341FF36Ebbc214e0FDaD9E19C9f143057"
+      "address": "0x36F2eec92b7476CAec2976167610Cb5A1e245c29"
     },
     "LeveredPositionFactorySecondExtension": {
       "address": "0x8B72922d23bc80Fb9046e7F9594fd753633eBE7B"
@@ -111,7 +108,7 @@
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0x54215847328B169051DEf9edc43BBD3146525946"
+      "address": "0x6cb85897Bc4625d79688ffdb63183fd1cf27518f"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x41aadd1De782B778E4587b8fD7816516B86fa6BA"
@@ -120,7 +117,7 @@
       "address": "0x9186E913e95a11bbE08b2D0b804FA70061C9978F"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x14184251f66004E75C4708d8E8735dd546De20da"
+      "address": "0xa9800BEF05b5571EAced4d7f540231b285cB2Eb2"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x6EE9ad9adD22Bc72B8296F9aC50FFe47745Dd650"
