@@ -771,6 +771,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       deployConfig: chainDeployParams
     });
   }
+
+  // configure levered position pairs
+  if (chainId === 137 || chainId === 97) {
+    await run("levered-positions:configure-pairs");
+  }
+
   // upgrade any of the pools if necessary
   // the markets are also autoupgraded with this task
   await run("pools:all:upgrade");
