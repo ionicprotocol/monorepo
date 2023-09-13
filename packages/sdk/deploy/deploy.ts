@@ -656,7 +656,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       deployer
     )) as LeveredPositionFactory;
 
-    const currentLPFExtensions = await leveredPositionFactory._listExtensions();
+    const currentLPFExtensions = await leveredPositionFactory.callStatic._listExtensions();
 
     console.log("currentLPFExtensions: ", currentLPFExtensions.join(", "));
 
@@ -708,6 +708,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         execute: {
           init: {
             methodName: "initialize",
+            args: [leveredPositionFactory.address]
+          },
+          onUpgrade: {
+            methodName: "reinitialize",
             args: [leveredPositionFactory.address]
           }
         },
