@@ -14,7 +14,7 @@ export default task("deploy-optimized:all")
     let asset;
     const markets = marketsAddresses.split(",");
     for (let i = 0; i < markets.length; i++) {
-      const cErc20 = (await ethers.getContractAt("CErc20", markets[i])) as CErc20Delegate;
+      const cErc20 = (await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", markets[i])) as CErc20Delegate;
       const marketUnderlying = await cErc20.callStatic.underlying();
       if (!asset) asset = marketUnderlying;
       if (asset != marketUnderlying) throw new Error(`The vault adapters should be for the same underlying`);
