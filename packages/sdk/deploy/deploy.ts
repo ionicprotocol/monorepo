@@ -656,7 +656,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       deployer
     )) as LeveredPositionFactory;
 
-    const currentLPFExtensions = await leveredPositionFactory._listExtensions();
+    const currentLPFExtensions = await leveredPositionFactory.callStatic._listExtensions();
 
     console.log("currentLPFExtensions: ", currentLPFExtensions.join(", "));
 
@@ -709,6 +709,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           init: {
             methodName: "initialize",
             args: [leveredPositionFactory.address]
+          },
+          onUpgrade: {
+            methodName: "reinitialize",
+            args: [leveredPositionFactory.address]
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
@@ -752,9 +756,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     const leveredPosFactoryAr = await authoritiesRegistry.callStatic.leveredPositionsFactory();
     if (leveredPosFactoryAr.toLowerCase() != leveredPositionFactory.address.toLowerCase()) {
       // set the address in the AR
-      tx = await authoritiesRegistry.reinitialize(authoritiesRegistry.address);
+      tx = await authoritiesRegistry.reinitialize(leveredPositionFactory.address);
       await tx.wait();
-      console.log(`configured the auth registry in the FFD`);
+      console.log(`configured the levered positions factory in the auth registry`);
     }
     ////
   }
@@ -767,6 +771,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       deployConfig: chainDeployParams
     });
   }
+
+  // configure levered position pairs
+  if (chainId === 137 || chainId === 97) {
+    await run("levered-positions:configure-pairs");
+  }
+
   // upgrade any of the pools if necessary
   // the markets are also autoupgraded with this task
   await run("pools:all:upgrade");
