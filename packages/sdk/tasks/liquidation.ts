@@ -76,7 +76,7 @@ task("liquidate", "Liquidate a position without a flash loan")
     const repayAmount = BigNumber.from(taskArgs.repayAmount);
     const safeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
-    const debtToken = (await hre.ethers.getContractAt("CErc20", taskArgs.debtCerc20, signer)) as CErc20Delegate;
+    const debtToken = (await hre.ethers.getContractAt("CTokenInterfaces.sol:ICErc20", taskArgs.debtCerc20, signer)) as CErc20Delegate;
 
     const underlyingAddress = await debtToken.callStatic.underlying();
     const underlying = (await hre.ethers.getContractAt("ERC20", underlyingAddress, signer)) as ERC20;

@@ -14,29 +14,35 @@ export default task("optimized-adapters:deploy")
     const registry = await ethers.getContract("OptimizedVaultsRegistry");
 
     console.log(`Deploying an ERC4626 for market ${marketAddress}`);
-    const marketERC4626Deployment = await deployments.deploy(`CompoundMarketERC4626_${marketAddress}`, {
-      contract: "CompoundMarketERC4626",
-      from: deployer,
-      log: true,
-      proxy: {
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [marketAddress, deployConfig.blocksPerYear, registry.address]
+
+    const marketErc4626 = await ethers.getContractOrNull(`CompoundMarketERC4626_${marketAddress}`);
+    if (!marketErc4626) {
+      const marketERC4626Deployment = await deployments.deploy(`CompoundMarketERC4626_${marketAddress}`, {
+        contract: "CompoundMarketERC4626",
+        from: deployer,
+        log: true,
+        proxy: {
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [marketAddress, deployConfig.blocksPerYear, registry.address]
+            },
+            onUpgrade: {
+              methodName: "reinitialize",
+              args: [registry.address]
+            }
           },
-          onUpgrade: {
-            methodName: "reinitialize",
-            args: [registry.address]
-          }
+          proxyContract: "OpenZeppelinTransparentProxy",
+          owner: deployer
         },
-        proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer
-      },
-      waitConfirmations: 1
-    });
-    if (marketERC4626Deployment.transactionHash)
-      await ethers.provider.waitForTransaction(marketERC4626Deployment.transactionHash);
-    console.log("CompoundMarketERC4626: ", marketERC4626Deployment.address);
+        waitConfirmations: 1
+      });
+      if (marketERC4626Deployment.transactionHash)
+        await ethers.provider.waitForTransaction(marketERC4626Deployment.transactionHash);
+      console.log("CompoundMarketERC4626: ", marketERC4626Deployment.address);
+    } else {
+      console.log(`there is already an adapter for market ${marketAddress} at ${marketErc4626.address}`);
+    }
   });
 
 task("optimized-adapters:propose")

@@ -66,12 +66,23 @@ task("optimized-vault:deploy")
 
     // start with an even allocations distribution
     const adaptersAddressesArray = adaptersAddresses.split(",");
-    const adapters = adaptersAddressesArray.map((adapterAddress: string) => {
-      return {
+
+    let remainder = ethers.constants.WeiPerEther;
+    const adapters = adaptersAddressesArray.map((adapterAddress: string, index: number) => {
+      const config =
+       {
         adapter: adapterAddress,
         allocation: constants.WeiPerEther.div(adaptersAddressesArray.length)
       };
+
+      remainder = remainder.sub(config.allocation);
+
+      return config;
     });
+
+    if (remainder.gt(ethers.constants.Zero)) {
+      adapters[adapters.length - 1].allocation = adapters[adapters.length - 1].allocation.add(remainder);
+    }
 
     const tenAdapters = adapters.concat(
       new Array(10 - adapters.length).fill({
@@ -100,6 +111,16 @@ task("optimized-vault:deploy")
       waitConfirmations: 1,
       args: []
     });
+    const values = [
+      assetAddress,
+      tenAdapters, // initial adapters
+      adapters.length, // adapters count
+      fees,
+      deployer, // fee recipient
+      constants.MaxUint256, // deposit limit
+      registry.address,
+      flywheelLogic.address
+    ];
     const initData = new ethers.utils.AbiCoder().encode(
       [
         "address",
@@ -111,17 +132,10 @@ task("optimized-vault:deploy")
         "address",
         "address"
       ],
-      [
-        assetAddress,
-        tenAdapters, // initial adapters
-        adapters.length, // adapters count
-        fees,
-        deployer, // fee recipient
-        constants.MaxUint256, // deposit limit
-        registry.address,
-        flywheelLogic.address
-      ]
+      values
     );
+
+    console.log(`initializing with values ${JSON.stringify(values)}`);
 
     const optimizedVault = (await ethers.getContractAt(
       "OptimizedAPRVaultBase",
