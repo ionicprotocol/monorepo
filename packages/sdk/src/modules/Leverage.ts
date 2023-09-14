@@ -12,7 +12,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     async getAllLeveredPositions(
       account: string
     ): Promise<{ openPositions: OpenPosition[]; newPositions: NewPosition[] }> {
-      if (this.chainId === SupportedChains.chapel || SupportedChains.polygon) {
+      if (this.chainId === SupportedChains.chapel || this.chainId === SupportedChains.polygon) {
         try {
           const openPositions: OpenPosition[] = [];
           const newPositions: NewPosition[] = [];
