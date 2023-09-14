@@ -55,7 +55,7 @@ task("deploy-optimized:bomb:chapel").setAction(async ({}, { run }) => {
 const polygonUsdcMarkets = [
   "0x14787e50578d8c606C3d57bDbA53dD65Fd665449", // Davos
   "0x38EbA94210bCEf3F9231E1764EE230abC14D1cbc", // Retro
-  "0x71A7037a42D0fB9F905a76B7D16846b2EACC59Aa", // StarSeed
+  "0x71A7037a42D0fB9F905a76B7D16846b2EACC59Aa" // StarSeed
 ];
 task("deploy-optimized:usdc:polygon").setAction(async ({}, { run }) => {
   await run("deploy-optimized:all", {
