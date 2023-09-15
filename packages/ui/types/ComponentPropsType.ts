@@ -279,6 +279,8 @@ export type PositionsPerChainStatus = {
   };
 };
 
+export type PositionData = { newPositions: NewPosition[]; openPositions: OpenPosition[] };
+
 export type AllRewardsPerChainStatus = {
   [chainId: string]: Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[] | null | undefined;
 };
@@ -314,3 +316,4 @@ export type LendingPoolFilter = (typeof LENDING_POOL_FILTERS)[number];
 export type LendingModeFilter = (typeof LENDING_MODE_FILTERS)[number];
 export type NetworkFilter = SupportedChains | typeof ALL_NETWORKS;
 export type LendingFilter = LendingModeFilter | LendingPoolFilter | NetworkFilter | typeof SEARCH;
+export type PositionFilter = NetworkFilter | typeof SEARCH;

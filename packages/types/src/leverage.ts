@@ -36,18 +36,15 @@ export interface LeveredCollateral {
   underlyingPrice: BigNumber;
 }
 
-export interface OpenPosition {
-  chainId: SupportedChains;
-  collateral: LeveredCollateral;
-  borrowable: LeveredBorrowable;
-  address: string;
-  isClosed: boolean;
-}
-
 export interface NewPosition {
   chainId: SupportedChains;
   collateral: LeveredCollateral;
-  borrowable: LeveredBorrowable[];
+  borrowable: LeveredBorrowable;
+}
+
+export interface OpenPosition extends NewPosition {
+  address: string;
+  isClosed: boolean;
 }
 
 export interface PositionInfo {

@@ -3,7 +3,7 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import LeveragePageComp from '@ui/components/pages/LeveragePageOld/index';
+import LeveragePageComp from '@ui/components/pages/LeveragePage/index';
 import { config } from '@ui/config/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
