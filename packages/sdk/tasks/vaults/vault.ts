@@ -69,8 +69,7 @@ task("optimized-vault:deploy")
 
     let remainder = ethers.constants.WeiPerEther;
     const adapters = adaptersAddressesArray.map((adapterAddress: string, index: number) => {
-      const config =
-       {
+      const config = {
         adapter: adapterAddress,
         allocation: constants.WeiPerEther.div(adaptersAddressesArray.length)
       };
