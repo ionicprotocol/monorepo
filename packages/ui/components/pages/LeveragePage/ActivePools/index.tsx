@@ -1,13 +1,10 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
-  Button,
   Center,
-  Checkbox,
   Divider,
   Flex,
   Hide,
   HStack,
-  Icon,
   Select,
   Skeleton,
   Stack,
@@ -17,8 +14,7 @@ import {
   Text,
   Th,
   Thead,
-  Tr,
-  VStack
+  Tr
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import type {
@@ -39,7 +35,6 @@ import {
 } from '@tanstack/react-table';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import type { NewPosition } from 'types/dist';
 
 import { Apr } from './Apr';
@@ -54,7 +49,6 @@ import { TotalSupply } from './TotalSupply';
 import { Banner } from '@ui/components/shared/Banner';
 import { CIconButton } from '@ui/components/shared/Button';
 import { CardBox } from '@ui/components/shared/IonicBox';
-import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SearchInput } from '@ui/components/shared/SearchInput';
 import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
@@ -478,48 +472,6 @@ export const ActivePools = () => {
               networkFilter={networkFilter}
               onNetworkFilter={onNetworkFilter}
             />
-          </Flex>
-          <Flex
-            alignItems="center"
-            bg={cIRow.bgColor}
-            borderRadius="12px"
-            direction="row"
-            gap={4}
-            justifyContent="center"
-            px="16px"
-            py="8px"
-          >
-            <Flex
-              alignItems="center"
-              className="searchAsset"
-              direction="row"
-              gap={2}
-              justifyContent="center"
-            >
-              <Text size="md">1 Supply</Text>
-              <PopoverTooltip
-                body={
-                  <VStack alignItems="flex-start">
-                    <Text>Supply Assets</Text>
-                    <Checkbox
-                    // isChecked={false}
-                    // onChange={}
-                    >
-                      ETH
-                    </Checkbox>
-                  </VStack>
-                }
-                contentProps={{ width: '200px' }}
-                popoverProps={{ trigger: 'click' }}
-              >
-                <Button p={0} variant="ghost">
-                  <Text display={{ base: 'none', md: 'flex' }} minW="100px" px={2} size="md">
-                    --
-                  </Text>
-                  <Icon as={MdOutlineKeyboardArrowDown} color={'iWhite'} height={6} width={6} />
-                </Button>
-              </PopoverTooltip>
-            </Flex>
           </Flex>
         </Flex>
         {tableData ? (
