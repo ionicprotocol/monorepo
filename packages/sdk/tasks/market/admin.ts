@@ -28,7 +28,7 @@ task("market:set:ltv", "Set the LTV (loan to value / collateral factor) of a mar
   .setAction(async ({ marketAddress, ltv }, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 
-    const market = (await ethers.getContractAt("ICErc20", marketAddress)) as ICErc20;
+    const market = (await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", marketAddress)) as ICErc20;
     const poolAddress = await market.callStatic.comptroller();
     const pool = (await ethers.getContractAt("Comptroller.sol:Comptroller", poolAddress, signer)) as Comptroller;
 
@@ -53,7 +53,7 @@ task("market:mint-pause", "Pauses minting on a market")
 
     for (const marketAddress of markets) {
       console.log(`Operating on market: ${marketAddress}`);
-      const market = (await hre.ethers.getContractAt("ICErc20", marketAddress, admin)) as ICErc20;
+      const market = (await hre.ethers.getContractAt("CTokenInterfaces.sol:ICErc20", marketAddress, admin)) as ICErc20;
       const comptroller = await market.callStatic.comptroller();
       const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
       const poolExtension = (await hre.ethers.getContractAt(
@@ -99,7 +99,7 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
 
     for (const marketAddress of markets) {
       console.log(`Operating on market: ${marketAddress}`);
-      const market = (await hre.ethers.getContractAt("ICErc20", marketAddress, admin)) as ICErc20;
+      const market = (await hre.ethers.getContractAt("CTokenInterfaces.sol:ICErc20", marketAddress, admin)) as ICErc20;
       const comptroller = await market.callStatic.comptroller();
       const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
       const poolExtension = (await hre.ethers.getContractAt(

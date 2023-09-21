@@ -26,7 +26,7 @@ const specificParams: ChainParams = {
     },
     uniswapV3Routers: {
       [underlying(assets, assetSymbols.CASH)]: {
-        [underlying(assets, assetSymbols.USDC)]: chainAddresses.GAMMA_UNISWAP_V3_SWAP_ROUTER
+        [underlying(assets, assetSymbols.USDC)]: chainAddresses.GAMMA_UNISWAP_V3_SWAP_ROUTER!
       }
     },
     img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",

@@ -18,6 +18,7 @@ export default task("get-liquidations", "Get potential liquidations")
     const sdk = await ionicSdkModule.getOrCreateIonic();
 
     let excludedComptrollers: Array<string> = [];
+
     if (taskArgs.excludedComptrollers) excludedComptrollers = taskArgs.excludedComptrollers.split(",");
 
     const [liquidations, _] = await sdk.getPotentialLiquidations(
@@ -76,7 +77,11 @@ task("liquidate", "Liquidate a position without a flash loan")
     const repayAmount = BigNumber.from(taskArgs.repayAmount);
     const safeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
-    const debtToken = (await hre.ethers.getContractAt("CErc20", taskArgs.debtCerc20, signer)) as CErc20Delegate;
+    const debtToken = (await hre.ethers.getContractAt(
+      "CTokenInterfaces.sol:ICErc20",
+      taskArgs.debtCerc20,
+      signer
+    )) as CErc20Delegate;
 
     const underlyingAddress = await debtToken.callStatic.underlying();
     const underlying = (await hre.ethers.getContractAt("ERC20", underlyingAddress, signer)) as ERC20;
@@ -98,18 +103,12 @@ task("liquidate", "Liquidate a position without a flash loan")
     console.log(`FSL has allowance for the underlying ${fslUnderlyingAllowance} to pull from ${signer.address}`);
 
     console.log(`Liquidating...`);
-    tx = await safeLiquidator[
-      "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])"
-    ](
+    tx = await safeLiquidator.safeLiquidate(
       taskArgs.borrower,
       taskArgs.repayAmount,
       taskArgs.debtCerc20,
       taskArgs.collateralCerc20,
-      taskArgs.minOutputAmount,
-      taskArgs.exchangeSeizedTo,
-      taskArgs.uniswapV2Router,
-      taskArgs.redemptionStrategies,
-      taskArgs.strategyData
+      taskArgs.minOutputAmount
     );
     receipt = await tx.wait();
     console.log(`Liquidated ${receipt.transactionHash}`);

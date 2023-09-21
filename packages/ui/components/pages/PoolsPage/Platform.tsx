@@ -34,7 +34,7 @@ export const Platform = () => {
               Vaults
             </Text>
             <Text color={'iWhite'} size={'lg'}>
-              666
+              1
             </Text>
           </VStack>
           <VStack alignItems="flex-start">
@@ -44,7 +44,7 @@ export const Platform = () => {
               </Text>
             </Flex>
             <Text color={'iWhite'} size={'lg'}>
-              $1,212
+              -
             </Text>
           </VStack>
         </Flex>

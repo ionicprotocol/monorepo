@@ -6,6 +6,7 @@ import chainAddresses from "./addresses";
 import { assets } from "./assets";
 import fundingStrategies from "./fundingStrategies";
 import irms from "./irms";
+import leveragePairs from "./leveragePairs";
 import liquidationDefaults from "./liquidation";
 import oracles from "./oracles";
 import specificParams from "./params";
@@ -23,7 +24,8 @@ const chainConfig: ChainConfig = {
   deployedPlugins,
   redemptionStrategies,
   fundingStrategies,
-  chainDeployments: deployments.contracts
+  chainDeployments: deployments.contracts,
+  leveragePairs
 };
 
 export default chainConfig;

@@ -36,7 +36,6 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
       .callStatic.cTokensByUnderlying(underlyingAddress);
     const cToken = await sdk.createICErc20PluginRewards(marketAddress, signer);
 
-    const cTokenImplementation = await cToken.callStatic.implementation();
     console.log({ marketAddress });
     const deployArgs = [underlyingAddress, ...pluginExtraParams, marketAddress, fwAddresses[0]];
 

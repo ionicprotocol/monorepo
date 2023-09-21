@@ -100,27 +100,30 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
                   Borrow
                 </Text>
               </Flex>
+
+              <Flex
+                align="center"
+                cursor="pointer"
+                onClick={() => {
+                  setGlobalLoading(true);
+                  router.push('/dashboard');
+                }}
+              >
+                <Text
+                  color={
+                    router.pathname.includes('/dashboard')
+                      ? cIPage.txtSelectedColor
+                      : cIPage.txtColor
+                  }
+                  fontSize="14px"
+                  fontWeight={600}
+                  lineHeight="20px"
+                >
+                  Dashboard
+                </Text>
+              </Flex>
             </>
           ) : null}
-          <Flex
-            align="center"
-            cursor="pointer"
-            onClick={() => {
-              setGlobalLoading(true);
-              router.push('/dashboard');
-            }}
-          >
-            <Text
-              color={
-                router.pathname.includes('/dashboard') ? cIPage.txtSelectedColor : cIPage.txtColor
-              }
-              fontSize="14px"
-              fontWeight={600}
-              lineHeight="20px"
-            >
-              Dashboard
-            </Text>
-          </Flex>
           <Flex
             align="center"
             cursor="pointer"

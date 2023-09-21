@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers";
 
 import { IrmTypes, OracleTypes, SupportedChains } from "./enums";
+import { LeveragePoolConfig } from "./leverage";
 import { FundingStrategy, LiquidationDefaults, RedemptionStrategy } from "./liquidation";
 import { DeployedPlugins } from "./plugin";
 
@@ -105,6 +106,7 @@ export type ChainConfig = {
   redemptionStrategies: RedemptionStrategy[];
   fundingStrategies: FundingStrategy[];
   chainDeployments: ChainDeployment;
+  leveragePairs: LeveragePoolConfig[];
 };
 
 export type ChainDeployment = {
