@@ -13,7 +13,8 @@ export default task("optimized-adapters:deploy")
 
     const registry = await ethers.getContract("OptimizedVaultsRegistry");
 
-    console.log(`Deploying an ERC4626 for market ${marketAddress}`);
+    console.log(`Deploying or upgrading the ERC4626 for market ${marketAddress}`);
+
     const marketERC4626Deployment = await deployments.deploy(`CompoundMarketERC4626_${marketAddress}`, {
       contract: "CompoundMarketERC4626",
       from: deployer,

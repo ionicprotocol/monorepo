@@ -21,6 +21,8 @@ import "./tasks/auth";
 import "./tasks/liquidation";
 import "./tasks/leverage/configurePair";
 
+import "./tasks/one-time";
+
 dotEnvConfig();
 
 const OVERRIDE_RPC_URL = process.env.OVERRIDE_RPC_URL || process.env.ETH_PROVIDER_URL; // Deprecated: ETH_PROVIDER_URL
