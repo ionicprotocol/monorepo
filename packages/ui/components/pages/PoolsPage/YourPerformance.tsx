@@ -1,9 +1,9 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
+// import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 
 import { CardBox } from '@ui/components/shared/IonicBox';
 import { LoadingText } from '@ui/components/shared/LoadingText';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+// import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTotalSupplyAndBorrow } from '@ui/hooks/ionic/useTotalSupplyAndBorrow';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
@@ -41,7 +41,7 @@ export const YourPerformance = () => {
               )}
             </Skeleton>
           </VStack>
-          <VStack alignItems="flex-start">
+          {/* <VStack alignItems="flex-start">
             <Flex direction="row" gap={1} height="18px">
               <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
                 Net APR
@@ -56,7 +56,7 @@ export const YourPerformance = () => {
               </SimpleTooltip>
             </Flex>
             <Text size={'lg'}>19.97%</Text>
-          </VStack>
+          </VStack> */}
         </Flex>
       </Flex>
     </CardBox>
