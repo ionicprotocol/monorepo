@@ -151,7 +151,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
               )}
             </Skeleton>
           </VStack>
-          <VStack alignItems="flex-start">
+          {/* <VStack alignItems="flex-start">
             <Text color={'iLightGray'} size={'sm'} textTransform="uppercase">
               Net Apr
             </Text>
@@ -164,7 +164,7 @@ const PoolDetails = ({ chainId, poolId }: { chainId: string; poolId: string }) =
                 </Text>
               )}
             </Skeleton>
-          </VStack>
+          </VStack> */}
 
           <VStack alignItems="flex-start">
             <Flex direction="row" gap={1} height="18px">

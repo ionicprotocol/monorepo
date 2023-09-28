@@ -176,7 +176,12 @@ export const AssetInfo = ({
                       <LoadingText />
                     ) : (
                       <Text color={'iWhite'} size="lg">
-                        {usdPrice ? smallUsdFormatter(usdPrice, true) : '--'}
+                        {usdPrice && asset?.underlyingPrice
+                          ? smallUsdFormatter(
+                              Number(utils.formatUnits(asset?.underlyingPrice, 18)) * usdPrice,
+                              true
+                            )
+                          : '--'}
                       </Text>
                     )}
                   </Skeleton>

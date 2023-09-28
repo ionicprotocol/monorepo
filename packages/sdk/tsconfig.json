@@ -9,6 +9,12 @@
     "rootDirs": ["./src", "./tests", "./tasks"],
     "composite": true
   },
-  "exclude": ["./typechain/**/*", "./dist/cjs/**/*", "./dist/esm/**/*"],
+  "exclude": [
+    "./typechain/**/*",
+    "./dist/cjs/**/*",
+    "./dist/esm/**/*",
+    "./node_modules/**/*",
+    "./artifacts/**/*"
+  ],
   "include": ["./artifacts/**/*.json"]
 }
