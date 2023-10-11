@@ -1,6 +1,8 @@
 import { Text } from '@chakra-ui/react';
-import type { NewPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 
-export const Leverage = ({ position }: { position: NewPosition }) => {
+export const Leverage = ({ position }: { position: LeveredPosition }) => {
+  console.warn(position.collateral);
+
   return <Text variant="tnumber">3 x</Text>;
 };

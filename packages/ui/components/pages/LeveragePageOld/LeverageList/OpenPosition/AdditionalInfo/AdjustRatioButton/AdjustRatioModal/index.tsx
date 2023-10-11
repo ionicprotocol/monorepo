@@ -1,5 +1,5 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import type { OpenPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -28,7 +28,7 @@ export const AdjustRatioModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  position: OpenPosition;
+  position: LeveredPosition;
 }) => {
   const {
     collateral: collateralAsset,
@@ -67,7 +67,7 @@ export const AdjustRatioModal = ({
   const queryClient = useQueryClient();
 
   const onConfirm = async () => {
-    if (!currentSdk || !address || !currentChain) return;
+    if (!currentSdk || !address || !currentChain || !positionAddress) return;
 
     const sentryProperties = {
       borrowCToken: borrowAsset.cToken,

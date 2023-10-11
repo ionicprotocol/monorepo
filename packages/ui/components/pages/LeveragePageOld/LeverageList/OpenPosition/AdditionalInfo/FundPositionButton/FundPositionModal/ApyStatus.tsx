@@ -1,5 +1,5 @@
 import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
-import type { OpenPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -7,7 +7,13 @@ import { CardBox } from '@ui/components/shared/IonicBox';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useUpdatedLeverageRatioAfterFunding } from '@ui/hooks/leverage/useUpdatedLeverageRatioAfterFunding';
 
-export const ApyStatus = ({ amount, position }: { amount: BigNumber; position: OpenPosition }) => {
+export const ApyStatus = ({
+  amount,
+  position
+}: {
+  amount: BigNumber;
+  position: LeveredPosition;
+}) => {
   const { chainId, address: positionAddress } = position;
   const { data: currentLeverageRatio, isLoading: isGetting } = useCurrentLeverageRatio(
     positionAddress,

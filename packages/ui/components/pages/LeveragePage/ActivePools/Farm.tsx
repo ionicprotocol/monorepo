@@ -1,10 +1,10 @@
 import { Button, Flex } from '@chakra-ui/react';
-import type { NewPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { useRouter } from 'next/router';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export const Farm = ({ position }: { position: NewPosition }) => {
+export const Farm = ({ position }: { position: LeveredPosition }) => {
   const router = useRouter();
   const { setGlobalLoading } = useMultiIonic();
 

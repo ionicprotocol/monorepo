@@ -1,7 +1,7 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
 import { WETHAbi } from '@ionicprotocol/sdk';
 import { getContract } from '@ionicprotocol/sdk/dist/cjs/src/IonicSdk/utils';
-import type { OpenPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
@@ -37,7 +37,7 @@ export const FundPositionModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  position: OpenPosition;
+  position: LeveredPosition;
 }) => {
   const {
     collateral: collateralAsset,
@@ -133,7 +133,7 @@ export const FundPositionModal = ({
   }, [debouncedAmount, isLoading, isAmountValid, symbol]);
 
   const onConfirm = async () => {
-    if (!currentSdk || !address || !currentChain) return;
+    if (!currentSdk || !address || !currentChain || !positionAddress) return;
 
     const sentryProperties = {
       amount: debouncedAmount,
@@ -190,12 +190,12 @@ export const FundPositionModal = ({
       try {
         setActiveStep(optionToWrap ? 2 : 1);
         const token = currentSdk.getEIP20TokenInstance(underlyingToken, currentSdk.signer);
-        const hasApprovedEnough = (await token.callStatic.allowance(address, position.address)).gte(
+        const hasApprovedEnough = (await token.callStatic.allowance(address, positionAddress)).gte(
           debouncedAmount
         );
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.leveredPositionApprove(position.address, underlyingToken);
+          const tx = await currentSdk.leveredPositionApprove(positionAddress, underlyingToken);
 
           addRecentTransaction({
             description: `Approve ${symbol}`,

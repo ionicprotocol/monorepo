@@ -1,9 +1,9 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import type { OpenPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 
 import { FundPositionModal } from '@ui/components/pages/LeveragePageOld/LeverageList/OpenPosition/AdditionalInfo/FundPositionButton/FundPositionModal/index';
 
-export const ReopenPositionButton = ({ position }: { position: OpenPosition }) => {
+export const ReopenPositionButton = ({ position }: { position: LeveredPosition }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   return (

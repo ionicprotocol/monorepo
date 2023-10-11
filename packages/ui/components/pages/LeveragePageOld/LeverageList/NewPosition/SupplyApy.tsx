@@ -1,11 +1,11 @@
-import type { NewPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 
 import { SupplyApy as MarketSupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
 import { useAssets } from '@ui/hooks/useAssets';
 import { useRewardsForMarket } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 
-export const SupplyApy = ({ position }: { position: NewPosition }) => {
+export const SupplyApy = ({ position }: { position: LeveredPosition }) => {
   const { data: allRewards } = useRewardsForMarket({
     asset: {
       cToken: position.collateral.cToken,

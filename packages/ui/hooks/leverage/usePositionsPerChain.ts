@@ -1,8 +1,8 @@
-import type { SupportedChains } from '@ionicprotocol/types';
+import type { LeveredPosition, SupportedChains } from '@ionicprotocol/types';
 import { useQueries } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import type { Err, PositionData, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
+import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
 
 export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiIonic();
@@ -30,14 +30,15 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
   });
 
   const positionsPerChain: PositionsPerChainStatus = {};
-  const allPositions: PositionData = { newPositions: [], openPositions: [] };
-  let isLoading = false;
-  let isError = false;
+  const allPositions: LeveredPosition[] = [];
+
+  let isLoading = true;
+  let isError = true;
   let error: Err | undefined;
 
   positionQueries.map((leverage, index) => {
-    isLoading = isLoading || leverage.isLoading;
-    isError = isError || leverage.isError;
+    isLoading = (allPositions.length === 0 || isLoading) && leverage.isLoading;
+    isError = isError && leverage.isError;
     error = isError ? (leverage.error as Err) : undefined;
     const _chainId = chainIds[index];
     positionsPerChain[_chainId.toString()] = {
@@ -47,8 +48,7 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
     };
 
     if (leverage.data) {
-      allPositions.newPositions.push(...leverage.data.newPositions);
-      allPositions.openPositions.push(...leverage.data.openPositions);
+      allPositions.push(...leverage.data);
     }
   });
 

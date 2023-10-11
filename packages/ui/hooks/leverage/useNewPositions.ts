@@ -1,7 +1,7 @@
-import type { NewPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
-export const useNewPositions = (allNewPositions: NewPosition[]) => {
+export const useNewPositions = (allNewPositions: LeveredPosition[]) => {
   const response = useQuery(
     [
       'useNewPositions',

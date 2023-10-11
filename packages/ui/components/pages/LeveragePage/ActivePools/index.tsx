@@ -16,6 +16,7 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type {
   ColumnDef,
@@ -35,7 +36,6 @@ import {
 } from '@tanstack/react-table';
 import * as React from 'react';
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { NewPosition } from 'types/dist';
 
 import { Apr } from './Apr';
 import { BorrowAsset } from './BorrowAsset';
@@ -73,16 +73,15 @@ import { usePositionsPerChain } from '@ui/hooks/leverage/usePositionsPerChain';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import type { NetworkFilter, PositionFilter } from '@ui/types/ComponentPropsType';
-import type { NewPosition } from '@ui/types/TokensDataMap';
 
 export type NewPositionRowData = {
-  apr: NewPosition;
-  borrowAsset: NewPosition;
-  collateralAsset: NewPosition;
-  leverage: NewPosition;
-  network: NewPosition;
-  tvl: NewPosition;
-  yourPosition: NewPosition;
+  apr: LeveredPosition;
+  borrowAsset: LeveredPosition;
+  collateralAsset: LeveredPosition;
+  leverage: LeveredPosition;
+  network: LeveredPosition;
+  tvl: LeveredPosition;
+  yourPosition: LeveredPosition;
 };
 
 export const ActivePools = () => {
@@ -94,7 +93,7 @@ export const ActivePools = () => {
     allPositions
   } = usePositionsPerChain([...enabledChains]);
   const [isLoading, setIsLoading] = useState(false);
-  const [filteredNewPositions, setFilteredNewPositions] = useState<NewPosition[]>([]);
+  const [filteredNewPositions, setFilteredNewPositions] = useState<LeveredPosition[]>([]);
   const [sorting, setSorting] = useState<SortingState>([{ desc: true, id: TVL }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -111,19 +110,20 @@ export const ActivePools = () => {
     [
       'filteredNewPositions',
       globalFilter,
-      allPositions.newPositions.map((position) => position.borrowable.cToken),
+      allPositions.map((position) => position.borrowable.cToken),
       Object.values(positionsPerChain).map(
-        (query) => query.data?.newPositions?.map((position) => position.borrowable.cToken)
+        (query) => query.data?.map((position) => position.borrowable.cToken)
       )
     ],
     () => {
-      const newPositions: NewPosition[] = [];
+      const newPositions: LeveredPosition[] = [];
 
       if (globalFilter.includes(ALL_NETWORKS)) {
-        setFilteredNewPositions([...allPositions.newPositions]);
+        setFilteredNewPositions([...allPositions]);
       } else {
         globalFilter.map((filter) => {
-          const data = positionsPerChain[filter.toString()]?.data?.newPositions;
+          const data = positionsPerChain[filter.toString()]?.data;
+
           if (data) {
             newPositions.push(...data);
           }
@@ -135,7 +135,7 @@ export const ActivePools = () => {
       return null;
     },
     {
-      enabled: Object.values(positionsPerChain).length > 0 && allPositions.newPositions.length > 0
+      enabled: Object.values(positionsPerChain).length > 0 && allPositions.length > 0
     }
   );
 
@@ -177,13 +177,13 @@ export const ActivePools = () => {
     }
   };
 
-  const data: NewPositionRowData[] = useNewPositions(allPositions.newPositions);
+  const data: NewPositionRowData[] = useNewPositions(allPositions);
 
   const columns: ColumnDef<NewPositionRowData>[] = useMemo(() => {
     return [
       {
         accessorFn: (row) => row.network,
-        cell: ({ getValue }) => <Network chainId={getValue<NewPosition>().chainId} />,
+        cell: ({ getValue }) => <Network chainId={getValue<LeveredPosition>().chainId} />,
         enableHiding: false,
         filterFn: globalFilterFn,
         footer: (props) => props.column.id,
@@ -193,7 +193,7 @@ export const ActivePools = () => {
       },
       {
         accessorFn: (row) => row.collateralAsset,
-        cell: ({ getValue }) => <CollateralAsset position={getValue<NewPosition>()} />,
+        cell: ({ getValue }) => <CollateralAsset position={getValue<LeveredPosition>()} />,
         enableHiding: false,
         footer: (props) => props.column.id,
         header: (context) => (
@@ -204,7 +204,7 @@ export const ActivePools = () => {
       },
       {
         accessorFn: (row) => row.borrowAsset,
-        cell: ({ getValue }) => <BorrowAsset position={getValue<NewPosition>()} />,
+        cell: ({ getValue }) => <BorrowAsset position={getValue<LeveredPosition>()} />,
         enableSorting: false,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{BORROW_ASSET}</TableHeaderCell>,
@@ -213,7 +213,7 @@ export const ActivePools = () => {
       },
       {
         accessorFn: (row) => row.leverage,
-        cell: ({ getValue }) => <Leverage position={getValue<NewPosition>()} />,
+        cell: ({ getValue }) => <Leverage position={getValue<LeveredPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{LEVERAGE}</TableHeaderCell>,
         id: LEVERAGE,
@@ -221,7 +221,7 @@ export const ActivePools = () => {
       },
       {
         accessorFn: (row) => row.apr,
-        cell: ({ getValue }) => <Apr position={getValue<NewPosition>()} />,
+        cell: ({ getValue }) => <Apr position={getValue<LeveredPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{APR}</TableHeaderCell>,
         id: APR,
@@ -229,7 +229,7 @@ export const ActivePools = () => {
       },
       {
         accessorFn: (row) => row.tvl,
-        cell: ({ getValue }) => <TotalSupply position={getValue<NewPosition>()} />,
+        cell: ({ getValue }) => <TotalSupply position={getValue<LeveredPosition>()} />,
         footer: (props) => props.column.id,
         header: (context) => <TableHeaderCell context={context}>{TVL}</TableHeaderCell>,
         id: TVL,
@@ -349,10 +349,7 @@ export const ActivePools = () => {
       globalFilter,
       isAllLoading,
       Object.values(positionsPerChain).map((query) => {
-        return [
-          query.data?.newPositions?.map((position) => position.collateral.cToken),
-          query.isLoading
-        ];
+        return [query.data?.map((position) => position.collateral.cToken), query.isLoading];
       })
     ],
     () => {

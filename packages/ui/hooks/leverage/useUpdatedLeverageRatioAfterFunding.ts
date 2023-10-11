@@ -5,8 +5,8 @@ import { utils } from 'ethers';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export function useUpdatedLeverageRatioAfterFunding(
-  positionAddress: string,
-  amount: BigNumber | null | undefined,
+  positionAddress?: string,
+  amount?: BigNumber | null | undefined,
   chainId?: number
 ) {
   const sdk = useSdk(chainId);

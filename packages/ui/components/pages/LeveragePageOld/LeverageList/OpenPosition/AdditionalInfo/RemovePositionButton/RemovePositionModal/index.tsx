@@ -1,5 +1,5 @@
 import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import type { OpenPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -24,7 +24,7 @@ export const RemovePositionModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  position: OpenPosition;
+  position: LeveredPosition;
 }) => {
   const { collateral: collateralAsset, chainId, address: positionAddress } = position;
   const { underlyingToken, symbol } = collateralAsset;
@@ -47,7 +47,7 @@ export const RemovePositionModal = ({
   const queryClient = useQueryClient();
 
   const onConfirm = async () => {
-    if (!currentSdk || !address) return;
+    if (!currentSdk || !address || !positionAddress) return;
 
     const sentryProperties = {
       chainId: currentSdk.chainId,

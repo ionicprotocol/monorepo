@@ -1,5 +1,5 @@
 import { Flex, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
-import type { OpenPosition } from '@ionicprotocol/types';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -17,7 +17,7 @@ export const ApyStatus = ({
   leverageValue
 }: {
   leverageValue: number;
-  position: OpenPosition;
+  position: LeveredPosition;
 }) => {
   const {
     collateral: collateralAsset,
