@@ -1,12 +1,12 @@
 import { Text } from '@chakra-ui/react';
+import type { LeveredPosition } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
-import type { NewPosition } from 'types/dist';
 
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
-export const TotalSupply = ({ position }: { position: NewPosition }) => {
+export const TotalSupply = ({ position }: { position: LeveredPosition }) => {
   const { data: price } = useUsdPrice(position.chainId.toString());
   const totalSupplyNative =
     Number(
