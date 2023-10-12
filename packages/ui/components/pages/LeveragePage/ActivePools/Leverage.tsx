@@ -4,5 +4,5 @@ import type { LeveredPosition } from '@ionicprotocol/types';
 export const Leverage = ({ position }: { position: LeveredPosition }) => {
   console.warn(position.collateral);
 
-  return <Text variant="tnumber">3 x</Text>;
+  return <Text variant="tnumber">10x</Text>;
 };

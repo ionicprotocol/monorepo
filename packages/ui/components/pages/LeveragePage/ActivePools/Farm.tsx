@@ -13,7 +13,9 @@ export const Farm = ({ position }: { position: LeveredPosition }) => {
       <Button
         onClick={() => {
           setGlobalLoading(true);
-          router.push(`/leverage/${position.chainId}/newPosition/${position.collateral.cToken}`);
+          router.push(
+            `/leverage/${position.chainId}/new/${position.collateral.cToken}/${position.borrowable.cToken}`
+          );
         }}
         variant={'solidGreen'}
       >

@@ -1,5 +1,5 @@
 import { Button, HStack, Text, VStack } from '@chakra-ui/react';
-import type { LeveredBorrowable, NewPosition } from '@ionicprotocol/types';
+import type { LeveredBorrowable, LeveredPosition } from '@ionicprotocol/types';
 import { FaAngleDown } from 'react-icons/fa';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -13,7 +13,7 @@ export const BorrowableAssets = ({
   selectedBorrowableAssets,
   setSelectedBorrowableAssets
 }: {
-  position: NewPosition;
+  position: LeveredPosition;
   selectedBorrowableAssets?: {
     [collateral: string]: LeveredBorrowable;
   };
