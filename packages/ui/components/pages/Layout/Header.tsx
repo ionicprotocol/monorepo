@@ -18,9 +18,7 @@ export const Header = ({ onOpen }: { onOpen: () => void }) => {
   const [isEnabledLeverageMenu, setIsEnabledLeverageMenu] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsEnabledLeverageMenu(
-      !config.productDomain || !window.location.hostname.includes(config.productDomain)
-    );
+    setIsEnabledLeverageMenu(!config.isProduction);
   }, []);
 
   return (

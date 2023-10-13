@@ -1,9 +1,8 @@
 import type { BoxProps, FlexProps } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import type {
+  LeveredPosition,
   NativePricedIonicAsset,
-  NewPosition,
-  OpenPosition,
   SupportedChains,
   VaultData
 } from '@ionicprotocol/types';
@@ -273,7 +272,7 @@ export type VaultsPerChainStatus = {
 
 export type PositionsPerChainStatus = {
   [chainId: string]: {
-    data?: { newPositions: NewPosition[]; openPositions: OpenPosition[] } | null | undefined;
+    data?: LeveredPosition[] | null | undefined;
     error: Error | undefined;
     isLoading: boolean;
   };
@@ -314,3 +313,4 @@ export type LendingPoolFilter = (typeof LENDING_POOL_FILTERS)[number];
 export type LendingModeFilter = (typeof LENDING_MODE_FILTERS)[number];
 export type NetworkFilter = SupportedChains | typeof ALL_NETWORKS;
 export type LendingFilter = LendingModeFilter | LendingPoolFilter | NetworkFilter | typeof SEARCH;
+export type PositionFilter = NetworkFilter | typeof SEARCH;

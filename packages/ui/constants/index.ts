@@ -116,8 +116,8 @@ export const ankrBNBContractABI = [
 
 export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
 export const VAULTS_COUNT_PER_PAGE = [25, 50, 75];
-export const POSITION_CREATION_PER_PAGE = [25, 50, 75];
-export const CREATED_POSITION_PER_PAGE = [25, 50, 75];
+export const NEW_POSITIONS_PER_PAGE = [25, 50, 75];
+export const OPEN_POSITION_PER_PAGE = [25, 50, 75];
 export const POOLS_COUNT_PER_PAGE = [25, 50, 75];
 
 export const REWARDS = 'Rewards';
@@ -389,7 +389,7 @@ export const MARKET_COLUMNS = [
 export const VAULT = 'Vault';
 export const VAULT_COLUMNS = [VAULT, SUPPLY_APY, TOTAL_SUPPLY];
 
-export const COLLATERAL_ASSET = 'Collateral';
+export const COLLATERAL_ASSET = 'Collateral Asset';
 export const POSITION_VALUE = 'Position Value';
 export const POSITION_VALUE_TOOLTIP = 'Total value of your farming position';
 export const DEBT_VALUE = 'Debt Value';
@@ -424,6 +424,7 @@ export const POOLS_COLUMNS = [
   TOTAL_SUPPLY,
   TOTAL_BORROW
 ];
+
 export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-requests';
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
@@ -474,6 +475,7 @@ export const VAULT_WITHDRAW_STEPS = (symbol: string) =>
 
 export const PRICE = 'Price';
 export const TVL = 'TVL';
+export const FARM = 'FARM';
 export const APY = 'APY';
 export const MILLI_SECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 export const MILLI_SECONDS_PER_WEEK = MILLI_SECONDS_PER_DAY * 7;
@@ -510,3 +512,15 @@ export const SUPPLY_ASSET = 'Supply Asset';
 export const BORROW_ASSET = 'Borrow Asset';
 export const UTILIZATION_RATE = 'Utilization Rate';
 export const PERCENT_IN_PORTFOLIO = 'Percent In Portfolio';
+export const LEVERAGE = 'Leverage';
+export const YOUR_POSITION = 'Your Position';
+
+export const NEW_POSITION_COLUMNS = [
+  NETWORK,
+  COLLATERAL_ASSET,
+  BORROW_ASSET,
+  LEVERAGE,
+  APR,
+  TVL,
+  YOUR_POSITION
+];
