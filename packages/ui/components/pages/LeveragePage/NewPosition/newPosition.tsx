@@ -15,6 +15,7 @@ import {
 import type { LeveredPosition } from '@ionicprotocol/types';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
+import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -46,6 +47,7 @@ export const NewPosition = ({ position }: { position: LeveredPosition }) => {
   const errorToast = useErrorToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
+  const [depositSliderValue, setDepositSliderValue] = useState(48);
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const { cIPage } = useColors();
   const [usdAmount, setUsdAmount] = useState<number>(0);
@@ -70,6 +72,7 @@ export const NewPosition = ({ position }: { position: LeveredPosition }) => {
     if (newAmount.startsWith('-') || !newAmount) {
       setUserEnteredAmount('');
       setAmount(constants.Zero);
+      setDepositSliderValue(0);
 
       return;
     }
@@ -115,6 +118,47 @@ export const NewPosition = ({ position }: { position: LeveredPosition }) => {
     }
   };
 
+  const onChangeDepositSlider = (value: number) => {
+    setDepositSliderValue(value);
+
+    if (!!myNativeBalance && !!myBalance) {
+      const maxBN = optionToWrap ? myNativeBalance : myBalance;
+
+      if (maxBN.gt(constants.Zero)) {
+        const percent =
+          (Number(utils.formatUnits(maxBN, collateral.underlyingDecimals)) * value) / 100;
+        updateAmount(percent.toString());
+      } else {
+        updateAmount('');
+      }
+    }
+  };
+
+  const onChangeDepositInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const newAmount = event.target.value;
+
+    updateAmount(newAmount);
+
+    if (newAmount) {
+      const bigAmount = utils.parseUnits(
+        toFixedNoRound(newAmount, Number(collateral.underlyingDecimals)),
+        Number(collateral.underlyingDecimals)
+      );
+
+      if (!!myNativeBalance && !!myBalance) {
+        const maxBN = optionToWrap ? myNativeBalance : myBalance;
+
+        if (maxBN.gt(constants.Zero)) {
+          setDepositSliderValue(
+            Number(utils.formatUnits(bigAmount.mul(constants.WeiPerEther).div(maxBN), 16))
+          );
+        } else {
+          setDepositSliderValue(0);
+        }
+      }
+    }
+  };
+
   return (
     <CardBox>
       <Flex direction="column">
@@ -152,7 +196,7 @@ export const NewPosition = ({ position }: { position: LeveredPosition }) => {
             <Input
               autoFocus
               inputMode="decimal"
-              onChange={(event) => updateAmount(event.target.value)}
+              onChange={onChangeDepositInput}
               placeholder="0.0"
               size={'xl'}
               type="number"
@@ -187,12 +231,33 @@ export const NewPosition = ({ position }: { position: LeveredPosition }) => {
         </Flex>
         <Flex direction="column" gap={{ base: '10px' }}>
           <Flex flexDir={'column'} gap={'40px'}>
-            <Slider value={20} variant={'green'}>
-              <SliderMark ml={'0px'} value={0}>
+            <Slider
+              focusThumbOnChange={false}
+              onChange={onChangeDepositSlider}
+              value={depositSliderValue}
+              variant={'green'}
+            >
+              <SliderMark color={depositSliderValue >= 0 ? 'iGreen' : 'iGray'} ml={'0px'} value={0}>
                 0%
               </SliderMark>
-              <SliderMark value={80}>80%</SliderMark>
-              <SliderMark ml={'-35px'} value={100}>
+              <SliderMark
+                color={depositSliderValue >= 25 ? 'iGreen' : 'iGray'}
+                ml={'0px'}
+                value={25}
+              >
+                25%
+              </SliderMark>
+              <SliderMark color={depositSliderValue >= 50 ? 'iGreen' : 'iGray'} value={50}>
+                50%
+              </SliderMark>
+              <SliderMark color={depositSliderValue >= 75 ? 'iGreen' : 'iGray'} value={75}>
+                75%
+              </SliderMark>
+              <SliderMark
+                color={depositSliderValue >= 100 ? 'iGreen' : 'iGray'}
+                ml={'-35px'}
+                value={100}
+              >
                 100%
               </SliderMark>
               <SliderTrack>
