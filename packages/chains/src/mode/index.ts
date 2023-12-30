@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@ionicprotocol/types";
 
-import deployments from "../../deployments/linea.json";
+import deployments from "../../deployments/mode.json";
 
 import chainAddresses from "./addresses";
 import { assets } from "./assets";
@@ -14,7 +14,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.linea,
+  chainId: SupportedChains.mode,
   chainAddresses,
   assets,
   irms,
