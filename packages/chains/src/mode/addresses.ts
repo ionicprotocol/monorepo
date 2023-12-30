@@ -10,7 +10,7 @@ const chainAddresses: ChainAddresses = {
   UNISWAP_V3: {FACTORY: "", PAIR_INIT_HASH: "", QUOTER_V2: ""},
   UNISWAP_V3_ROUTER: "",
   W_BTC_TOKEN: "",
-  W_TOKEN: "",
+  W_TOKEN: underlying(assets, assetSymbols.WETH),
   W_TOKEN_USD_CHAINLINK_PRICE_FEED: ""
 
 };
