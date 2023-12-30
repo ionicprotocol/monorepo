@@ -49,3 +49,9 @@ export default task("one-time:deploy-ion-fws", "Deploy static rewards flywheel f
       });
     }
   });
+
+task("accounts:print")
+  .setAction(async ({ }, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    console.log(`the deployer address is ${deployer}`);
+  });
