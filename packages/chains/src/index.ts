@@ -6,10 +6,10 @@ import { default as chapel } from "./chapel";
 import { default as ethereum } from "./ethereum";
 import { default as ganache } from "./ganache";
 import { default as linea } from "./linea";
+import { default as mode } from "./mode";
 import { default as neon } from "./neon";
 import { default as polygon } from "./polygon";
 import { default as zkevm } from "./zkevm";
-import { default as mode } from "./mode";
 
 export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode };
 

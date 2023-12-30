@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, ethereum, ganache, linea, neon, polygon, zkevm, mode } from "@ionicprotocol/chains";
+import { arbitrum, bsc, chapel, ethereum, ganache, linea, mode, neon, polygon, zkevm } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,

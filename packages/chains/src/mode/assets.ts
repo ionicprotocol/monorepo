@@ -1,4 +1,5 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
+
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
 export const WETH = "0x4200000000000000000000000000000000000006";

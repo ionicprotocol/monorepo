@@ -1,5 +1,6 @@
 import { mode } from "@ionicprotocol/chains";
-import {ChainDeployConfig, deployPythPriceOracle} from "../helpers";
+
+import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
