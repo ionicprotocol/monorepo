@@ -7,12 +7,12 @@ type CONFIG = {
   isEthereumEnabled: boolean;
   isFWDeployEnabled: boolean;
   isLineaEnabled: boolean;
+  isModeEnabled: boolean;
   isNeonEnabled: boolean;
   isPolygonEnabled: boolean;
   isProduction: boolean;
   isTestnetEnabled: boolean;
   isZkevmEnabled: boolean;
-  isModeEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabaseAssetApyTableName: string;
@@ -38,12 +38,12 @@ const config: CONFIG = {
   isEthereumEnabled: process.env.ETHEREUM === 'true',
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
   isLineaEnabled: process.env.LINEA === 'true',
+  isModeEnabled: process.env.MODE_NETWORK === 'true',
   isNeonEnabled: process.env.NEON === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
   isProduction: process.env.IS_PRODUCTION === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   isZkevmEnabled: process.env.ZKEVM === 'true',
-  isModeEnabled: process.env.MODE_NETWORK === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
   supabaseAssetApyTableName: process.env.SUPABASE_ASSET_APY_TABLE_NAME ?? '',

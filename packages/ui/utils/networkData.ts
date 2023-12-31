@@ -6,10 +6,10 @@ import {
   ethereum,
   ganache,
   linea,
+  mode,
   neon,
   polygon,
-  zkevm,
-  mode
+  zkevm
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,

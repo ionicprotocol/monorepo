@@ -19,9 +19,8 @@ export const useSupplyCapsDataForPool = (comptrollerAddress?: string, poolChainI
         try {
           const res: SupplyCapsDataForPoolType[] = [];
 
-          const supplyCapsData = await sdk.contracts.PoolLens.callStatic.getSupplyCapsDataForPool(
-            comptrollerAddress
-          );
+          const supplyCapsData =
+            await sdk.contracts.PoolLens.callStatic.getSupplyCapsDataForPool(comptrollerAddress);
 
           if (supplyCapsData) {
             supplyCapsData[0].map((data, i) => {
