@@ -2,7 +2,7 @@ import { LiquidationDefaults, LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, constants } from "ethers";
 
 import chainAddresses from "./addresses";
-import { WETH, USDC } from "./assets";
+import { USDC, WETH } from "./assets";
 
 const liquidationDefaults: LiquidationDefaults = {
   DEFAULT_ROUTER: chainAddresses.UNISWAP_V2_ROUTER,

@@ -12,7 +12,7 @@ const specificParams: ChainParams = {
     shortName: "Mode",
     uniswapV3Fees: {},
     img: "https://1430441113-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FmOUA87dDndFyiETJjxpf%2Ficon%2FzSRXk7tkG8rWFi6tG9wV%2FIYXD4bdy_400x400.jpg?alt=media",
-    blockExplorerUrls: { default: { name: "modeexplorer", url: "https://explorer.mode.network/" } },
+    blockExplorerUrls: { default: { name: "modeexplorer", url: "https://explorer.mode.network" } },
     rpcUrls: {
       default: { http: ["https://mainnet.mode.network/"] },
       public: { http: ["https://mainnet.mode.network/"] }

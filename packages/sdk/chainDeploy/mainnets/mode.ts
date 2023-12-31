@@ -25,7 +25,6 @@ const pythAssets: PythAsset[] = [
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
-  // TODO deploy pyth oracle
   await deployPythPriceOracle({
     run,
     deployConfig,

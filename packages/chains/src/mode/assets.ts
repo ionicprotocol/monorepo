@@ -20,7 +20,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin",
     decimals: 6,
     oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network/", USDC)
+    extraDocs: defaultDocs("https://explorer.mode.network", USDC)
   }
 ];
 
