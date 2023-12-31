@@ -5,6 +5,7 @@ import {
   ethereum,
   ganache,
   linea,
+  mode,
   neon,
   polygon,
   zkevm
@@ -33,7 +34,8 @@ export const supportedChainIdToConfig: {
   [chapel.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
   [ethereum.chainId]: { enabled: true, supported: config.isEthereumEnabled },
-  [zkevm.chainId]: { enabled: true, supported: config.isZkevmEnabled }
+  [zkevm.chainId]: { enabled: true, supported: config.isZkevmEnabled },
+  [mode.chainId]: { enabled: true, supported: config.isModeEnabled }
 };
 
 export interface PoolsPerChain {
