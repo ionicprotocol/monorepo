@@ -21,8 +21,7 @@ export const deployConfig: ChainDeployConfig = {
 };
 
 // TODO add more assets https://pyth.network/developers/price-feed-ids
-const pythAssets: PythAsset[] = [
-];
+const pythAssets: PythAsset[] = [];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   await deployPythPriceOracle({
