@@ -12,6 +12,7 @@ type CONFIG = {
   isProduction: boolean;
   isTestnetEnabled: boolean;
   isZkevmEnabled: boolean;
+  isModeEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabaseAssetApyTableName: string;
@@ -42,6 +43,7 @@ const config: CONFIG = {
   isProduction: process.env.IS_PRODUCTION === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   isZkevmEnabled: process.env.ZKEVM === 'true',
+  isModeEnabled: process.env.MODE_NETWORK === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
   supabaseAssetApyTableName: process.env.SUPABASE_ASSET_APY_TABLE_NAME ?? '',

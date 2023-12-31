@@ -13,12 +13,13 @@ export const deployConfig: ChainDeployConfig = {
     hardcoded: [],
     uniswapData: [],
     uniswapOracleInitialDeployTokens: [],
-    uniswapV2FactoryAddress: "", // TODO
-    uniswapV2RouterAddress: "" // TODO
+    uniswapV2FactoryAddress: "", // TODO refactor the liquidations for univ3
+    uniswapV2RouterAddress: "" // TODO refactor the liquidations for univ3
   },
   wtoken: mode.chainAddresses.W_TOKEN
 };
 
+// TODO add assets https://pyth.network/developers/price-feed-ids
 // const pythAssets: PythAsset[] = [
 // ];
 
@@ -34,7 +35,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
       deployments,
       deployConfig,
       //   pythAssets,
-      //   pythAddress: "",
+      //   pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
       //   nativeTokenUsdFeed: "0x",
       //   usdToken: ""
     });

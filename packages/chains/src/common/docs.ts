@@ -39,6 +39,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
     [SupportedChains.zkevm]: {
       swapName: "Quickswap",
       swapAddress: "https://quickswap.exchange/#/swap?swapIndex=2&currency1=0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9"
+    },
+    [SupportedChains.mode]: {
+      swapName: "// TODO",
+      swapAddress: "// TODO"
     }
   }[chainId];
 
