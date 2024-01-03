@@ -171,6 +171,11 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || `https://zkevm-rpc.com`,
       accounts: { mnemonic },
       chainId: 1101
+    },
+    mode: {
+      url: OVERRIDE_RPC_URL || `https://mainnet.mode.network/`,
+      accounts: { mnemonic },
+      chainId: 34443
     }
   }
 };

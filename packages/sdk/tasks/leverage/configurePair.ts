@@ -351,10 +351,10 @@ task("chapel-stables-mint", "mints testing stables in the levered pair borrowing
   }
 );
 
-task("trasnfer-test-tokens").setAction(async ({}, { ethers, getNamedAccounts }) => {
+task("transfer-test-tokens").setAction(async ({}, { ethers, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
-  const newDeployer = "0x9308dddeC9B5cCd8a2685A46E913C892FE31C826";
+  const newDeployer = "";
 
   const testingBombAddress = "0xe45589fBad3A1FB90F5b2A8A3E8958a8BAB5f768";
   const stableAddress = "0x4f1885D25eF219D3D4Fa064809D6D4985FAb9A0b"; // TUSD

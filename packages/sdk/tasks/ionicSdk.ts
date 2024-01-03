@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { arbitrum, bsc, chapel, ethereum, ganache, linea, neon, polygon, zkevm } from "@ionicprotocol/chains";
+import { arbitrum, bsc, chapel, ethereum, ganache, linea, mode, neon, polygon, zkevm } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -206,6 +206,9 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.zkevm:
         chainConfig = zkevm;
+        break;
+      case SupportedChains.mode:
+        chainConfig = mode;
         break;
     }
 
