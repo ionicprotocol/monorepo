@@ -1,4 +1,5 @@
 import { mode } from "@ionicprotocol/chains";
+import { assetSymbols, underlying } from "@ionicprotocol/types";
 
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
 import { PythAsset } from "../helpers/types";
@@ -21,7 +22,16 @@ export const deployConfig: ChainDeployConfig = {
 };
 
 // TODO add more assets https://pyth.network/developers/price-feed-ids
-const pythAssets: PythAsset[] = [];
+const pythAssets: PythAsset[] = [
+  {
+    underlying: underlying(mode.assets, assetSymbols.WETH),
+    feed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
+  },
+  {
+    underlying: underlying(mode.assets, assetSymbols.USDC),
+    feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
+  }
+];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   await deployPythPriceOracle({
