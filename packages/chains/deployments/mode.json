@@ -1,5 +1,48 @@
 {
   "name": "mode",
   "chainId": "34443",
-  "contracts": {}
+  "contracts": {
+    "CErc20Delegate": {
+      "address": "0xb3788b3C421348E43beEa88551acC16d2f6a6332"
+    },
+    "CErc20PluginDelegate": {
+      "address": "0x726C7BC0c532aE239fb0ea8522E1F982C0AFF1D5"
+    },
+    "CErc20PluginRewardsDelegate": {
+      "address": "0x798Ee06Eb08151fadf5fFD07B7931B79985884D1"
+    },
+    "CErc20RewardsDelegate": {
+      "address": "0x6352b5231de62be60c7ADB8250b08CA9CCF7a9A5"
+    },
+    "CTokenFirstExtension": {
+      "address": "0x8C58ECb9C0050824177f4e1Cd71C335421d4aeA2"
+    },
+    "Comptroller": {
+      "address": "0x8b2B6a9dC8Cd73309Cef8d64920831d4C73F43a7"
+    },
+    "ComptrollerFirstExtension": {
+      "address": "0xE1A3006be645a80F206311d9f18C866c204bA02f"
+    },
+    "DefaultProxyAdmin": {
+      "address": "0x985a323A1CccA8Cd5fb8935590EE33FbcFE849d0"
+    },
+    "FeeDistributor": {
+      "address": "0x8ea3fc79D9E463464C5159578d38870b770f6E57"
+    },
+    "FeeDistributor_Implementation": {
+      "address": "0x9a0aF901CAE82f309F1047e1026F66A08C6FCEEC"
+    },
+    "FeeDistributor_Proxy": {
+      "address": "0x8ea3fc79D9E463464C5159578d38870b770f6E57"
+    },
+    "PoolDirectory": {
+      "address": "0x39C353Cf9041CcF467A04d0e78B63d961E81458a"
+    },
+    "PoolDirectory_Implementation": {
+      "address": "0x20808c1A73737016bBBF8Acc6959A30446eA1D2d"
+    },
+    "PoolDirectory_Proxy": {
+      "address": "0x39C353Cf9041CcF467A04d0e78B63d961E81458a"
+    }
+  }
 }
