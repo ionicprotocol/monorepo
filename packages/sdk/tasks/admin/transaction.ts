@@ -52,7 +52,7 @@ task("cancel:tx", "cancel a tx with the same nonce")
       value: 0,
       nonce,
       maxFeePerGas,
-      maxPriorityFeePerGas,
+      maxPriorityFeePerGas
     });
     console.log(`cancelling tx hash ${tx.hash}`);
     await tx.wait();
