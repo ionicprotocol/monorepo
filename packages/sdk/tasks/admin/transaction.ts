@@ -39,8 +39,8 @@ task("cancel:tx", "cancel a tx with the same nonce")
       maxFeePerGas = ethers.utils.parseUnits("300", "gwei");
       maxPriorityFeePerGas = ethers.utils.parseUnits("120", "gwei");
     } else if (chainid == 34443) {
-      maxFeePerGas = 52;
-      maxPriorityFeePerGas = 1;
+      maxFeePerGas = 166;
+      maxPriorityFeePerGas = 13;
     } else {
       throw new Error(`configure the max gas fees for the chain`);
     }

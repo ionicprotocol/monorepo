@@ -175,7 +175,8 @@ const config: HardhatUserConfig = {
     mode: {
       url: OVERRIDE_RPC_URL || `https://mainnet.mode.network/`,
       accounts: { mnemonic },
-      chainId: 34443
+      chainId: 34443,
+      gasPrice: 101
     }
   }
 };
