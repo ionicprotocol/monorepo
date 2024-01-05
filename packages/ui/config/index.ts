@@ -38,7 +38,7 @@ const config: CONFIG = {
   isEthereumEnabled: process.env.ETHEREUM === 'true',
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
   isLineaEnabled: process.env.LINEA === 'true',
-  isModeEnabled: process.env.MODE_NETWORK === 'true',
+  isModeEnabled: process.env.MODE_MAINNET === 'true',
   isNeonEnabled: process.env.NEON === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
   isProduction: process.env.IS_PRODUCTION === 'true',

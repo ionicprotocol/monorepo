@@ -32,7 +32,8 @@ nextConfig = {
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_VAULT_APY_TABLE_NAME: process.env.SUPABASE_VAULT_APY_TABLE_NAME,
     WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
-    ZKEVM: process.env.ZKEVM
+    ZKEVM: process.env.ZKEVM,
+    MODE: process.env.MODE_MAINNET
   },
   productionBrowserSourceMaps: true,
   reactStrictMode: true,
