@@ -1,4 +1,4 @@
-import {PythAssetConfig} from "../types";
+import { PythAssetConfig } from "../types";
 
 // TODO
-export const pythConfig: PythAssetConfig[] = []
+export const pythConfig: PythAssetConfig[] = [];
