@@ -32,7 +32,18 @@ task("cancel:tx", "cancel a tx with the same nonce")
   .addParam("sender", "sender address", "deployer", types.string)
   .setAction(async ({ nonce, sender }, { ethers, getChainId }) => {
     const chainid = parseInt(await getChainId());
-    if (chainid != 137) throw new Error(`configure the max gas fees for the chain`);
+    let maxFeePerGas;
+    let maxPriorityFeePerGas;
+    let gasPrice;
+    if (chainid == 137) {
+      maxFeePerGas = ethers.utils.parseUnits("300", "gwei");
+      maxPriorityFeePerGas = ethers.utils.parseUnits("120", "gwei");
+    } else if (chainid == 34443) {
+      maxFeePerGas = 166;
+      maxPriorityFeePerGas = 13;
+    } else {
+      throw new Error(`configure the max gas fees for the chain`);
+    }
 
     const signer = await ethers.getNamedSigner(sender);
     const tx = await signer.sendTransaction({
@@ -40,8 +51,8 @@ task("cancel:tx", "cancel a tx with the same nonce")
       to: signer.address,
       value: 0,
       nonce,
-      maxFeePerGas: ethers.utils.parseUnits("300", "gwei"),
-      maxPriorityFeePerGas: ethers.utils.parseUnits("120", "gwei")
+      maxFeePerGas,
+      maxPriorityFeePerGas
     });
     console.log(`cancelling tx hash ${tx.hash}`);
     await tx.wait();
