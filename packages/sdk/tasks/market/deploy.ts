@@ -1,17 +1,16 @@
 import { MarketConfig } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
-task("market:deploy:mode:weth", "deploy mode weth market")
-  .setAction(async (taskArgs, { run }) => {
-    await run("market:deploy", {
-      signer: "deployer",
-      cf: "70",
-      underlying: "0x4200000000000000000000000000000000000006",
-      comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
-      symbol: "iWETH",
-      name: "Wrapped Ethereum"
-    });
+task("market:deploy:mode:weth", "deploy mode weth market").setAction(async (taskArgs, { run }) => {
+  await run("market:deploy", {
+    signer: "deployer",
+    cf: "70",
+    underlying: "0x4200000000000000000000000000000000000006",
+    comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
+    symbol: "iWETH",
+    name: "Wrapped Ethereum"
   });
+});
 
 task("market:deploy", "deploy market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
