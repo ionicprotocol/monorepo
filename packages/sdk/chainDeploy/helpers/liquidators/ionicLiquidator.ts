@@ -2,7 +2,9 @@ import { chainIdToConfig } from "@ionicprotocol/chains";
 import { constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
+import { ILiquidator } from "../../../typechain/ILiquidator";
 import { IonicLiquidator } from "../../../typechain/IonicLiquidator";
+import { IonicUniV3Liquidator } from "../../../typechain/IonicUniV3Liquidator";
 import {
   AddressesProviderConfigFnParams,
   BalancerSwapTokenLiquidatorData,
@@ -15,7 +17,7 @@ export const deployIonicLiquidator = async ({
   getNamedAccounts,
   deployments,
   deployConfig
-}: LiquidatorDeployFnParams): Promise<void> => {
+}: LiquidatorDeployFnParams): Promise<string> => {
   const { deployer } = await getNamedAccounts();
   const fsl = await deployments.deploy("IonicLiquidator", {
     from: deployer,
@@ -24,11 +26,7 @@ export const deployIonicLiquidator = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV2RouterAddress, deployConfig.uniswap.flashSwapFee]
-        },
-        onUpgrade: {
-          methodName: "_becomeImplementation",
-          args: [new ethers.utils.AbiCoder().encode(["uint8"], [deployConfig.uniswap.flashSwapFee])]
+          args: [deployConfig.wtoken, deployConfig.uniswap, deployConfig.uniswap.flashSwapFee]
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
@@ -41,9 +39,43 @@ export const deployIonicLiquidator = async ({
   const fuseSafeLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
   const fslOwner = await fuseSafeLiquidator.callStatic.owner();
   console.log(`IonicLiquidator owner is ${fslOwner}`);
+
+  return "IonicLiquidator";
+};
+
+export const deployIonicUniV3Liquidator = async ({
+  ethers,
+  getNamedAccounts,
+  deployments,
+  deployConfig
+}: LiquidatorDeployFnParams): Promise<string> => {
+  const { deployer } = await getNamedAccounts();
+  const uniV3Liquidator = await deployments.deploy("IonicUniV3Liquidator", {
+    from: deployer,
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV3SwapRouter, deployConfig.uniswap.uniswapV3Quoter]
+        }
+      },
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: deployer
+    }
+  });
+  if (uniV3Liquidator.transactionHash) await ethers.provider.waitForTransaction(uniV3Liquidator.transactionHash);
+  console.log("IonicUniV3Liquidator: ", uniV3Liquidator.address);
+
+  const fuseSafeLiquidator = (await ethers.getContract("IonicUniV3Liquidator", deployer)) as IonicUniV3Liquidator;
+  const uniV3LiquidatorOwner = await fuseSafeLiquidator.callStatic.owner();
+  console.log(`IonicUniV3Liquidator owner is ${uniV3LiquidatorOwner}`);
+
+  return "IonicUniV3Liquidator";
 };
 
 export const configureIonicLiquidator = async ({
+  contractName,
   ethers,
   getNamedAccounts,
   chainId
@@ -52,7 +84,7 @@ export const configureIonicLiquidator = async ({
 
   const strategies: string[] = [];
   const arrayOfTrue: boolean[] = [];
-  const fuseSafeLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
+  const fuseSafeLiquidator = (await ethers.getContract(contractName, deployer)) as ILiquidator;
 
   for (const redemptionStrategyConfig of chainIdToConfig[chainId].redemptionStrategies) {
     const { strategy } = redemptionStrategyConfig;
@@ -148,6 +180,9 @@ export const configureAddressesProviderAddresses = async ({
 
     const fsl = await ethers.getContractOrNull("IonicLiquidator");
     await configureAddress(ap, "IonicLiquidator", fsl?.address);
+
+    const uniV3Liquidator = await ethers.getContractOrNull("IonicUniV3Liquidator");
+    await configureAddress(ap, "IonicUniV3Liquidator", uniV3Liquidator?.address);
 
     const dpa = await ethers.getContractOrNull("DefaultProxyAdmin");
     await configureAddress(ap, "DefaultProxyAdmin", dpa?.address);

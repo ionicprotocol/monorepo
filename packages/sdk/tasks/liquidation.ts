@@ -3,6 +3,7 @@ import { task, types } from "hardhat/config";
 
 import { CErc20Delegate } from "../typechain/CErc20Delegate";
 import { ERC20 } from "../typechain/ERC20";
+import { ILiquidator } from "../typechain/ILiquidator";
 import { IonicLiquidator } from "../typechain/IonicLiquidator";
 
 export default task("get-liquidations", "Get potential liquidations")
@@ -134,15 +135,13 @@ task("liquidate:hardcoded", "Liquidate a position without a flash loan").setActi
   const safeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
   console.log(`Liquidating...`);
-  const vars: IonicLiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
+  const vars: ILiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
     borrower: "0xF93A5F0A4925EeC32cD585641c88a498523f383C",
     repayAmount: "1372091245495",
     cErc20: "0xa9736bA05de1213145F688e4619E5A7e0dcf4C72",
     cTokenCollateral: "0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563",
-    flashSwapPair: "0xa927E1e1E044CA1D9fe1854585003477331fE2Af",
+    flashSwapContract: "0xa927E1e1E044CA1D9fe1854585003477331fE2Af",
     minProfitAmount: BigNumber.from("0"),
-    uniswapV2RouterForBorrow: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
-    uniswapV2RouterForCollateral: "0x70085a09D30D6f8C4ecF6eE10120d1847383BB57",
     redemptionStrategies: [],
     strategyData: [],
     debtFundingStrategies: ["0xB8423EE8aa0476a909786D079dF5C0766cB09142"],

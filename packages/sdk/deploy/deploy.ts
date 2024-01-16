@@ -7,7 +7,8 @@ import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
   configureAddressesProviderAddresses,
   configureIonicLiquidator,
-  deployIonicLiquidator
+  deployIonicLiquidator,
+  deployIonicUniV3Liquidator
 } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
@@ -189,7 +190,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       await tx.wait();
       console.log(`Set the latest Comptroller implementation for ${oldComptroller.address} to ${comptroller.address}`);
     } else {
-      console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
+      console.log(
+        `No change in the latest Comptroller implementation ${latestComptrollerImplementation} for ${comptroller.address}`
+      );
     }
   } else {
     // on the first deploy to a chain
@@ -476,13 +479,26 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// Liquidator
-  await deployIonicLiquidator({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig: chainDeployParams
-  });
+  let liquidatorContractName;
+
+  if (chainId !== 34443) {
+    liquidatorContractName = await deployIonicLiquidator({
+      run,
+      ethers,
+      getNamedAccounts,
+      deployments,
+      deployConfig: chainDeployParams
+    });
+  } else {
+    liquidatorContractName = await deployIonicUniV3Liquidator({
+      run,
+      ethers,
+      getNamedAccounts,
+      deployments,
+      deployConfig: chainDeployParams
+    });
+  }
+
   ///
 
   ////
@@ -492,9 +508,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await deployFunc({ run, ethers, getNamedAccounts, deployments });
   }
   ////
-
   //// Configure Liquidator
   await configureIonicLiquidator({
+    contractName: liquidatorContractName,
     ethers,
     getNamedAccounts,
     chainId

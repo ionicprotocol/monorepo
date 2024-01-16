@@ -14,6 +14,17 @@ task("pool:create:chapel").setAction(async ({}, { run, ethers }) => {
   });
 });
 
+task("pool:create:mode").setAction(async ({}, { run, ethers }) => {
+  await run("pool:create", {
+    name: "Mode Market",
+    creator: "deployer",
+    priceOracle: "0x2BAF3A2B667A5027a83101d218A9e8B73577F117", // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 // update the MPO=0x429041250873643235cb3788871447c6fF3205aA
 // npx hardhat pool:create --name Test --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
 

@@ -1,11 +1,24 @@
 import { MarketConfig } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
+task("market:deploy:mode:weth", "deploy mode weth market").setAction(async (taskArgs, { run }) => {
+  await run("market:deploy", {
+    signer: "deployer",
+    cf: "70",
+    underlying: "0x4200000000000000000000000000000000000006",
+    comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
+    symbol: "iWETH",
+    name: "Wrapped Ethereum"
+  });
+});
+
 task("market:deploy", "deploy market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
   .addParam("cf", "Collateral factor", "80", types.string)
-  .addParam("underlying", "Collateral factor", "80", types.string)
+  .addParam("underlying", "Asset token address", undefined, types.string)
   .addParam("comptroller", "Comptroller address", undefined, types.string)
+  .addParam("symbol", "CToken symbol", undefined, types.string)
+  .addParam("name", "CToken name", undefined, types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.signer);
     const ionicSdkModule = await import("../ionicSdk");
@@ -26,8 +39,8 @@ task("market:deploy", "deploy market")
       reserveFactor: 0,
       bypassPriceFeedCheck: true,
       feeDistributor: sdk.chainDeployment.FeeDistributor.address,
-      symbol: "fUSDR-1",
-      name: "Pearl Farm USDR"
+      symbol: taskArgs.symbol,
+      name: taskArgs.name
     };
 
     const reserveFactorBN = ethers.utils.parseUnits((config.reserveFactor / 100).toString());

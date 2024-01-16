@@ -211,6 +211,7 @@ export enum assetSymbols {
   MKR = "MKR",
   RAI = "RAI",
   SNX = "SNX",
+  UNI = "UNI",
   SOL = "SOL",
   SUSHI = "SUSHI",
   YFI = "YFI",
