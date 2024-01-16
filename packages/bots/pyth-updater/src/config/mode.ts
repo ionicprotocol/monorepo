@@ -1,4 +1,4 @@
-import { PythAssetConfig } from "../types";
+import { PythAssetConfig } from '../types';
 
 import { pythConfig as commonPythConfig } from './common';
 
