@@ -4,6 +4,7 @@ import { task, types } from "hardhat/config";
 import { CErc20Delegate } from "../typechain/CErc20Delegate";
 import { ERC20 } from "../typechain/ERC20";
 import { IonicLiquidator } from "../typechain/IonicLiquidator";
+import { ILiquidator } from "../typechain/ILiquidator";
 
 export default task("get-liquidations", "Get potential liquidations")
   .addOptionalParam(
@@ -134,7 +135,7 @@ task("liquidate:hardcoded", "Liquidate a position without a flash loan").setActi
   const safeLiquidator = (await hre.ethers.getContract("IonicLiquidator", signer)) as IonicLiquidator;
 
   console.log(`Liquidating...`);
-  const vars: IonicLiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
+  const vars: ILiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
     borrower: "0xF93A5F0A4925EeC32cD585641c88a498523f383C",
     repayAmount: "1372091245495",
     cErc20: "0xa9736bA05de1213145F688e4619E5A7e0dcf4C72",

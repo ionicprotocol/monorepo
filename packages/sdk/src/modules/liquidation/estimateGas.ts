@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 
 import { IonicSdk } from "../../IonicSdk";
 
-import { getUniswapV2Router, StrategiesAndDatas } from "./redemptionStrategy";
+import { StrategiesAndDatas } from "./redemptionStrategy";
 import { PoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
