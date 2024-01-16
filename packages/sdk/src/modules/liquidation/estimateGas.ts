@@ -37,11 +37,9 @@ const estimateGas = async (
           cErc20: borrower.debt[0].cToken,
           cTokenCollateral: borrower.collateral[0].cToken,
           minProfitAmount: 0,
-          uniswapV2RouterForBorrow: sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER, // TODO ASSET_SPECIFIC_ROUTER
-          uniswapV2RouterForCollateral: getUniswapV2Router(sdk, borrower.collateral[0].cToken),
           redemptionStrategies: strategiesAndDatas.strategies,
           strategyData: strategiesAndDatas.datas,
-          flashSwapPair,
+          flashSwapContract: flashSwapPair,
           debtFundingStrategies,
           debtFundingStrategiesData
         },
