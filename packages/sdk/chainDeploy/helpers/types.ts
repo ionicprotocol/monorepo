@@ -153,6 +153,7 @@ export type LiquidatorDeployFnParams = ChainDeployFnParams & {
 };
 
 export type LiquidatorConfigFnParams = {
+  contractName: string;
   ethers: HardhatRuntimeEnvironment["ethers"];
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
   chainId: number;

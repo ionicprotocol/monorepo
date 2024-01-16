@@ -3,6 +3,7 @@ import { assetSymbols, underlying } from "@ionicprotocol/types";
 
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
 import { PythAsset } from "../helpers/types";
+import { ethers } from "ethers";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
@@ -15,8 +16,8 @@ export const deployConfig: ChainDeployConfig = {
     hardcoded: [],
     uniswapData: [],
     uniswapOracleInitialDeployTokens: [],
-    uniswapV2FactoryAddress: "", // TODO refactor the liquidations for univ3
-    uniswapV2RouterAddress: "" // TODO refactor the liquidations for univ3
+    uniswapV2FactoryAddress: ethers.constants.AddressZero,
+    uniswapV2RouterAddress: ethers.constants.AddressZero
   },
   wtoken: mode.chainAddresses.W_TOKEN
 };
