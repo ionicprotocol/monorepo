@@ -27,7 +27,7 @@ export const deployIonicLiquidator = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV2RouterAddress, deployConfig.uniswap.flashSwapFee]
+          args: [deployConfig.wtoken, deployConfig.uniswap, deployConfig.uniswap.flashSwapFee]
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
@@ -58,7 +58,7 @@ export const deployIonicUniV3Liquidator = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, deployConfig.uniswap, deployConfig.uniswap.flashSwapFee]
+          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV3SwapRouter, deployConfig.uniswap.uniswapV3Quoter]
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",

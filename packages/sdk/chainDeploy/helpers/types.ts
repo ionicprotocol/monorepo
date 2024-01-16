@@ -44,6 +44,8 @@ export type ChainDeployConfig = {
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
     uniswapOracleLpTokens?: Array<string>;
     flashSwapFee: number;
+    uniswapV3SwapRouter?: string;
+    uniswapV3Quoter?: string;
   };
   wtoken: string;
   nativeTokenUsdChainlinkFeed?: string;
