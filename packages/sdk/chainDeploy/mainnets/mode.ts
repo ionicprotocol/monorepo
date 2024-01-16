@@ -1,9 +1,9 @@
 import { mode } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
+import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
 import { PythAsset } from "../helpers/types";
-import { ethers } from "ethers";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
@@ -21,7 +21,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3SwapRouter: "", // 0xC9Adff795f46105E53be9bbf14221b1C9919EE25
     uniswapV3Quoter: "" //0x7Fd569b2021850fbA53887dd07736010aCBFc787
   },
-  wtoken: mode.chainAddresses.W_TOKEN,
+  wtoken: mode.chainAddresses.W_TOKEN
 };
 
 // TODO add more assets https://pyth.network/developers/price-feed-ids

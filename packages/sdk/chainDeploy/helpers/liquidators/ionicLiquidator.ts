@@ -2,10 +2,9 @@ import { chainIdToConfig } from "@ionicprotocol/chains";
 import { constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
+import { ILiquidator } from "../../../typechain/ILiquidator";
 import { IonicLiquidator } from "../../../typechain/IonicLiquidator";
 import { IonicUniV3Liquidator } from "../../../typechain/IonicUniV3Liquidator";
-import { ILiquidator } from "../../../typechain/ILiquidator";
-
 import {
   AddressesProviderConfigFnParams,
   BalancerSwapTokenLiquidatorData,

@@ -3,8 +3,8 @@ import { task, types } from "hardhat/config";
 
 import { CErc20Delegate } from "../typechain/CErc20Delegate";
 import { ERC20 } from "../typechain/ERC20";
-import { IonicLiquidator } from "../typechain/IonicLiquidator";
 import { ILiquidator } from "../typechain/ILiquidator";
+import { IonicLiquidator } from "../typechain/IonicLiquidator";
 
 export default task("get-liquidations", "Get potential liquidations")
   .addOptionalParam(
