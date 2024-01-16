@@ -42,7 +42,7 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.WBTC,
     underlying: WBTC,
     name: "Wrapped Bitcoin",
-    decimals: 18, // TODO verify
+    decimals: 8, // TODO verify
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", WBTC)
   },
