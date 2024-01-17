@@ -62,6 +62,15 @@
     "IonicLiquidator_Implementation": {
       "address": "0x48bf6bd4B3d8b4E75863B5340b977E888BacE19a"
     },
+    "IonicUniV3Liquidator": {
+      "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
+    },
+    "IonicUniV3Liquidator_Implementation": {
+      "address": "0xB48221b8a1137895e384aBcaFF8120d053Be43F5"
+    },
+    "IonicUniV3Liquidator_Proxy": {
+      "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
+    },
     "JumpRateModel": {
       "address": "0x21a455cEd9C79BC523D4E340c2B97521F4217817"
     },
