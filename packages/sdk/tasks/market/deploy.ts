@@ -1,5 +1,6 @@
 import { assetFilter, assetSymbols, MarketConfig, underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
+
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
 
 task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {

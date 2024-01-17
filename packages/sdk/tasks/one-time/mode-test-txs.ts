@@ -1,8 +1,9 @@
 import { task } from "hardhat/config";
+
 import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
 import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
-import { WETH } from "../../typechain/WETH";
 import { ERC20 } from "../../typechain/ERC20";
+import { WETH } from "../../typechain/WETH";
 
 task("test:txs").setAction(async ({}, { ethers, getNamedAccounts }) => {
   let tx;
