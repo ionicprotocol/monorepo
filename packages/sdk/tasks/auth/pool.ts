@@ -101,7 +101,31 @@ task("auth:pool:borrow", "Set ability to borrow for a pool")
       tx = await poolAuth.closePoolBorrowerCapabilities(pool);
       await tx.wait();
     }
-    console.log(`Set ability to supply for pool ${pool} to ${open}: ${tx.hash}`);
+    console.log(`Set ability to borrow for pool ${pool} to ${open}: ${tx.hash}`);
+  });
+
+task("auth:pool:liquidate", "Set ability to liqiuidate for a pool")
+  .addParam("signer", "The address of the current deployer", "deployer", types.string)
+  .addParam("pool", "Address of pool", undefined, types.string)
+  .addParam("open", "If liquidations are open or not", true, types.boolean)
+  .setAction(async ({ signer, pool, open }, hre) => {
+    const deployer = await hre.ethers.getNamedSigner(signer);
+    console.log("current deployer", deployer.address);
+
+    const poolAuth = await setUpAuth(hre, deployer, pool);
+    if (poolAuth === null) {
+      return;
+    }
+
+    let tx;
+    if (open === true) {
+      tx = await poolAuth.configureOpenPoolLiquidatorCapabilities(pool);
+      await tx.wait();
+    } else {
+      tx = await poolAuth.configureClosedPoolLiquidatorCapabilities(pool);
+      await tx.wait();
+    }
+    console.log(`Set ability to liquidate for pool ${pool} to ${open}: ${tx.hash}`);
   });
 
 async function setUpAuth(

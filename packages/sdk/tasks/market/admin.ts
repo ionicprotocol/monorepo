@@ -8,16 +8,16 @@ import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 
 export default task("market:unsupport", "Unsupport a market")
-  .addParam("comptroller", "Comptroller Address", undefined, types.string)
-  .addParam("ctoken", "The address of the ctoken to unsupport", undefined, types.string)
-  .setAction(async (taskArgs, { ethers }) => {
+  .addParam("pool", "Comptroller Address", undefined, types.string)
+  .addParam("market", "The address of the ctoken to unsupport", undefined, types.string)
+  .setAction(async ({ pool, market }, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 
     const ionicSdkModule = await import("../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic();
 
-    const comptroller = await sdk.createComptroller(taskArgs.comptroller, signer);
-    const tx = await comptroller._unsupportMarket(taskArgs.ctoken);
+    const comptroller = await sdk.createComptroller(pool, signer);
+    const tx = await comptroller._unsupportMarket(market);
     const receipt: TransactionReceipt = await tx.wait();
     console.log("Unsupported market with status:", receipt.status);
   });
