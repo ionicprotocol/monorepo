@@ -1,4 +1,4 @@
-import {assetFilter, assetSymbols, MarketConfig, underlying} from "@ionicprotocol/types";
+import { assetFilter, assetSymbols, MarketConfig, underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
 
@@ -16,15 +16,15 @@ task("market:deploy:mode:weth", "deploy mode weth market").setAction(async (task
 
 task("markets:deploy:mode:others", "deploy mode markets").setAction(async (taskArgs, { run }) => {
   const symbols = [
-    assetSymbols.USDC,
-    assetSymbols.USDT,
-    assetSymbols.WBTC,
-    assetSymbols.UNI,
+    // assetSymbols.USDC,
+    // assetSymbols.USDT,
+    // assetSymbols.UNI,
     assetSymbols.SNX,
     assetSymbols.LINK,
     assetSymbols.DAI,
     assetSymbols.BAL,
-    assetSymbols.AAVE
+    assetSymbols.AAVE,
+    assetSymbols.WBTC,
   ];
 
   for (let i = 0; i < symbols.length; i++) {
@@ -110,6 +110,6 @@ task("market:deploy", "deploy market")
     // Recreate Address of Deployed Market
     const receipt = await tx.wait();
     if (receipt.status != ethers.constants.One.toNumber()) {
-      throw "Failed to deploy market ";
+      throw `Failed to deploy market for ${config.underlying}`;
     }
   });
