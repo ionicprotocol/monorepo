@@ -30,7 +30,7 @@ import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
 import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
 import { IonicFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
-import { IonicLiquidator } from "../../typechain/IonicLiquidator";
+import { ILiquidator } from "../../typechain/ILiquidator";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 import { PoolLens } from "../../typechain/PoolLens";
 import { PoolLensSecondary } from "../../typechain/PoolLensSecondary.sol/PoolLensSecondary";
@@ -66,7 +66,7 @@ export type StaticContracts = {
   PoolDirectory: PoolDirectory;
   PoolLens: PoolLens;
   PoolLensSecondary: PoolLensSecondary;
-  IonicLiquidator: IonicLiquidator;
+  IonicLiquidator: ILiquidator;
   [contractName: string]: Contract;
 };
 
@@ -138,10 +138,12 @@ export class IonicBase {
         this.provider
       ) as PoolLensSecondary,
       IonicLiquidator: new Contract(
-        this.chainDeployment.IonicLiquidator.address,
+        this.chainId == 34443
+          ? this.chainDeployment.IonicUniV3Liquidator.address
+          : this.chainDeployment.IonicLiquidator.address,
         IonicLiquidatorArtifact.abi,
         this.provider
-      ) as IonicLiquidator,
+      ) as ILiquidator,
       FeeDistributor: new Contract(
         this.chainDeployment.FeeDistributor.address,
         FeeDistributorArtifact.abi,
