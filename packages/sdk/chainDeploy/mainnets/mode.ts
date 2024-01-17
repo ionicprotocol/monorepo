@@ -18,8 +18,8 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleInitialDeployTokens: [],
     uniswapV2FactoryAddress: ethers.constants.AddressZero,
     uniswapV2RouterAddress: ethers.constants.AddressZero,
-    uniswapV3SwapRouter: "", // 0xC9Adff795f46105E53be9bbf14221b1C9919EE25
-    uniswapV3Quoter: "" //0x7Fd569b2021850fbA53887dd07736010aCBFc787
+    uniswapV3SwapRouter: "0xC9Adff795f46105E53be9bbf14221b1C9919EE25",
+    uniswapV3Quoter: "0x7Fd569b2021850fbA53887dd07736010aCBFc787"
   },
   wtoken: mode.chainAddresses.W_TOKEN
 };
