@@ -1,6 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-// import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { Wallet } from 'ethers';
 
 import { chainIdToConfig } from './config';
@@ -10,11 +9,11 @@ import { Updater } from './services';
 import { setUpSdk } from './utils';
 
 export const handler = async (
-  // event: APIGatewayEvent,
-  // context: Context
+  event: APIGatewayEvent,
+  context: Context
 ): Promise<APIGatewayProxyResult> => {
-  // logger.info(`Event: ${JSON.stringify(event)}`);
-  // logger.info(`Context: ${JSON.stringify(context)}`);
+  logger.info(`Event: ${JSON.stringify(event)}`);
+  logger.info(`Context: ${JSON.stringify(context)}`);
   logger.info(`Started`);
 
   const provider = new JsonRpcProvider(config.rpcUrl);
@@ -35,5 +34,3 @@ export const handler = async (
     }),
   };
 };
-
-handler()

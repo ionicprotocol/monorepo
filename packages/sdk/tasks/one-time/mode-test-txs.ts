@@ -4,24 +4,23 @@ import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
 import { WETH } from "../../typechain/WETH";
 import { ERC20 } from "../../typechain/ERC20";
 
-task("test:txs")
-.setAction(async ({}, { ethers, getNamedAccounts }) => {
+task("test:txs").setAction(async ({}, { ethers, getNamedAccounts }) => {
   let tx;
   const modePoolAddr = "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556";
   const usdcMarketAddr = "0xd3af2e473317e002a3c8daf2aeaf2f7de8008e91";
   const wethMarketAddr = "0xb7dd0b1e3b5f2a4343ab4d84be865b1635c5ecaa";
   const { deployer } = await getNamedAccounts();
 
-  const modePool = await ethers.getContractAt("IonicComptroller", modePoolAddr) as IonicComptroller;
+  const modePool = (await ethers.getContractAt("IonicComptroller", modePoolAddr)) as IonicComptroller;
 
-  const wethMarket = await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", wethMarketAddr) as ICErc20;
-  const usdcMarket = await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", usdcMarketAddr) as ICErc20;
+  const wethMarket = (await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", wethMarketAddr)) as ICErc20;
+  const usdcMarket = (await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", usdcMarketAddr)) as ICErc20;
 
   const wethUnderlying = await wethMarket.callStatic.underlying();
   const usdcUnderlying = await usdcMarket.callStatic.underlying();
 
-  const wethToken = await ethers.getContractAt("WETH", wethUnderlying) as WETH;
-  const usdcToken = await ethers.getContractAt("ERC20", usdcUnderlying) as ERC20;
+  const wethToken = (await ethers.getContractAt("WETH", wethUnderlying)) as WETH;
+  const usdcToken = (await ethers.getContractAt("ERC20", usdcUnderlying)) as ERC20;
 
   const wethAllowance = await wethToken.callStatic.allowance(deployer, wethMarketAddr);
   const usdcAllowance = await usdcToken.callStatic.allowance(deployer, usdcMarketAddr);
@@ -65,8 +64,8 @@ task("test:txs")
   const wethDeployerBalance = await wethMarket.callStatic.balanceOf(deployer);
   if (wethDeployerBalance.isZero()) {
     const mintAmount = ethers.utils.parseEther("0.01");
-    console.log(`deployer ${deployer} has ${wethBalance} of ${wethToken.address}`)
-    console.log(`weth allowance ${wethAllowance} deployer will mint ${mintAmount}`)
+    console.log(`deployer ${deployer} has ${wethBalance} of ${wethToken.address}`);
+    console.log(`weth allowance ${wethAllowance} deployer will mint ${mintAmount}`);
     tx = await wethMarket.mint(mintAmount);
     console.log(`waiting to supply WETH with ${tx.hash}`);
     await tx.wait();
