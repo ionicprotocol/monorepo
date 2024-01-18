@@ -47,7 +47,8 @@ describe("Ionic Index", () => {
       PoolLens: { abi: [], address: mkAddress("0xbcc") },
       PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
       IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
-      JumpRateModel: { abi: [], address: mkAddress("0xaac") }
+      JumpRateModel: { abi: [], address: mkAddress("0xaac") },
+      AddressesProvider: { abi: [], address: mkAddress("0xaad") }
     };
     ionicBase = new IonicBase(mockProvider, ganache);
     ionicBase.contracts = { PoolDirectory: mockContract as unknown as PoolDirectory };
