@@ -2,7 +2,10 @@ import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
+import { LiquidatorsRegistry } from "../../../typechain/LiquidatorsRegistry";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
+import { IUniswapV3Factory__factory } from "../../../typechain/factories/IUniswapV3Factory__factory";
+import { LiquidatorsRegistry__factory } from "../../../typechain/factories/LiquidatorsRegistry__factory";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
@@ -142,32 +145,65 @@ export default async function getPotentialLiquidation(
   );
 
   let flashSwapPair;
-  const uniswapV2Factory = IUniswapV2Factory__factory.connect(
-    sdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-    sdk.provider
-  );
+  let tokenA, tokenB;
+  if (sdk.chainId == 34443) {
+    const uniV3Factory = IUniswapV3Factory__factory.connect(
+      sdk.chainSpecificAddresses.UNISWAP_V3?.FACTORY || "0xC33Ce0058004d44E7e1F366E5797A578fDF38584",
+      sdk.provider
+    );
 
-  if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
-    flashSwapPair = await uniswapV2Factory.callStatic.getPair(
-      flashSwapFundingToken,
-      sdk.chainConfig.chainAddresses.W_TOKEN
-    );
-  } else {
-    // flashSwapFundingToken is the W_TOKEN
-    flashSwapPair = await uniswapV2Factory.callStatic.getPair(
-      flashSwapFundingToken,
-      sdk.chainConfig.chainAddresses.STABLE_TOKEN
-    );
+    if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
+      tokenA = flashSwapFundingToken;
+      tokenB = sdk.chainConfig.chainAddresses.W_TOKEN;
+    } else {
+      // flashSwapFundingToken is the W_TOKEN
+      tokenA = flashSwapFundingToken;
+      tokenB = sdk.chainConfig.chainAddresses.STABLE_TOKEN;
+    }
+    // query the configured univ3 pool fee from the liquidators registry
+    const lrAddress = await sdk.contracts.AddressesProvider.getAddress("LiquidatorsRegistry");
+    const liquidatorsRegistry = LiquidatorsRegistry__factory.connect(lrAddress, sdk.provider) as LiquidatorsRegistry;
+    const fee = await liquidatorsRegistry.callStatic.uniswapV3Fees(tokenA, tokenB)
+
+    flashSwapPair = await uniV3Factory.callStatic.getPool(tokenA, tokenB, fee);
     if (tokenPath.indexOf(flashSwapPair) > 0) {
       // in case the Uniswap pair LP token is on the path of redemptions, we should use
       // another pair because reentrancy checks prevent us from using the pair
       // when inside the execution of a flash swap from the same pair
-      flashSwapPair = await uniswapV2Factory.callStatic.getPair(
-        flashSwapFundingToken,
-        sdk.chainConfig.chainAddresses.W_BTC_TOKEN
-      );
+      tokenA = flashSwapFundingToken;
+      tokenB = sdk.chainConfig.chainAddresses.W_BTC_TOKEN;
+      flashSwapPair = await uniV3Factory.callStatic.getPool(tokenA, tokenB, fee);
     } else {
       sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
+    }
+  } else {
+    const uniswapV2Factory = IUniswapV2Factory__factory.connect(
+      sdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
+      sdk.provider
+    );
+
+    if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
+      flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+        flashSwapFundingToken,
+        sdk.chainConfig.chainAddresses.W_TOKEN
+      );
+    } else {
+      // flashSwapFundingToken is the W_TOKEN
+      flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+        flashSwapFundingToken,
+        sdk.chainConfig.chainAddresses.STABLE_TOKEN
+      );
+      if (tokenPath.indexOf(flashSwapPair) > 0) {
+        // in case the Uniswap pair LP token is on the path of redemptions, we should use
+        // another pair because reentrancy checks prevent us from using the pair
+        // when inside the execution of a flash swap from the same pair
+        flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+          flashSwapFundingToken,
+          sdk.chainConfig.chainAddresses.W_BTC_TOKEN
+        );
+      } else {
+        sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
+      }
     }
   }
 

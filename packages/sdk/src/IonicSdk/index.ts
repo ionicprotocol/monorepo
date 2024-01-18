@@ -15,6 +15,7 @@ import {
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
 
+import AddressesProviderArtifact from "../../artifacts/AddressesProvider.sol/AddressesProvider.json";
 import CTokenFirstExtensionArtifact from "../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
 import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import FeeDistributorArtifact from "../../artifacts/FeeDistributor.sol/FeeDistributor.json";
@@ -29,6 +30,7 @@ import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
 import { ILiquidator } from "../../typechain/ILiquidator";
+import { AddressesProvider } from "../../typechain/AddressesProvider";
 import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
 import { IonicFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
 import { PoolDirectory } from "../../typechain/PoolDirectory";
@@ -67,6 +69,7 @@ export type StaticContracts = {
   PoolLens: PoolLens;
   PoolLensSecondary: PoolLensSecondary;
   IonicLiquidator: ILiquidator;
+  AddressesProvider: AddressesProvider;
   [contractName: string]: Contract;
 };
 
@@ -154,6 +157,11 @@ export class IonicBase {
         IonicFlywheelLensRouterArtifact.abi,
         this.provider
       ) as IonicFlywheelLensRouter,
+      AddressesProvider: new Contract(
+        this.chainDeployment.AddressesProvider.address,
+        AddressesProviderArtifact.abi,
+        this.provider
+      ) as AddressesProvider,
       ...this._contracts
     };
   }
