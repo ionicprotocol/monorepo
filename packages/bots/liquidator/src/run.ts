@@ -1,9 +1,9 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { Wallet } from 'ethers';
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { Wallet } from "ethers";
 
-import config from './config';
-import { Liquidator } from './services';
-import { setUpSdk } from './utils';
+import config from "./config";
+import { Liquidator } from "./services";
+import { setUpSdk } from "./utils";
 
 export const run = async (): Promise<void> => {
   const provider = new JsonRpcProvider(config.rpcUrl);
@@ -21,6 +21,6 @@ export const run = async (): Promise<void> => {
   for (const liquidation of liquidations) {
     await liquidator.liquidate(liquidation);
   }
-}
+};
 
 run();

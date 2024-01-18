@@ -26,11 +26,11 @@ import PoolDirectoryArtifact from "../../artifacts/PoolDirectory.sol/PoolDirecto
 import PoolLensArtifact from "../../artifacts/PoolLens.sol/PoolLens.json";
 import PoolLensSecondaryArtifact from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
 import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
+import { AddressesProvider } from "../../typechain/AddressesProvider";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
 import { ILiquidator } from "../../typechain/ILiquidator";
-import { AddressesProvider } from "../../typechain/AddressesProvider";
 import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
 import { IonicFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
 import { PoolDirectory } from "../../typechain/PoolDirectory";

@@ -2,10 +2,10 @@ import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
-import { LiquidatorsRegistry } from "../../../typechain/LiquidatorsRegistry";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
 import { IUniswapV3Factory__factory } from "../../../typechain/factories/IUniswapV3Factory__factory";
 import { LiquidatorsRegistry__factory } from "../../../typechain/factories/LiquidatorsRegistry__factory";
+import { LiquidatorsRegistry } from "../../../typechain/LiquidatorsRegistry";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
@@ -163,7 +163,7 @@ export default async function getPotentialLiquidation(
     // query the configured univ3 pool fee from the liquidators registry
     const lrAddress = await sdk.contracts.AddressesProvider.getAddress("LiquidatorsRegistry");
     const liquidatorsRegistry = LiquidatorsRegistry__factory.connect(lrAddress, sdk.provider) as LiquidatorsRegistry;
-    const fee = await liquidatorsRegistry.callStatic.uniswapV3Fees(tokenA, tokenB)
+    const fee = await liquidatorsRegistry.callStatic.uniswapV3Fees(tokenA, tokenB);
 
     flashSwapPair = await uniV3Factory.callStatic.getPool(tokenA, tokenB, fee);
     if (tokenPath.indexOf(flashSwapPair) > 0) {
