@@ -66,7 +66,7 @@
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
     },
     "IonicUniV3Liquidator_Implementation": {
-      "address": "0xB48221b8a1137895e384aBcaFF8120d053Be43F5"
+      "address": "0x917E178E24600e72Da012F4530f80362d0d8d4DB"
     },
     "IonicUniV3Liquidator_Proxy": {
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
@@ -96,7 +96,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xdd7F712Af76074993F05C0d544331792997Bd39b"
+      "address": "0x14699157D5B22d8ba05DB18F027f735256198736"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x45A4a3eBb986083597Ac3B34ee2d7dcC3Be8c5C1"
