@@ -1,15 +1,34 @@
-import { MarketConfig } from "@ionicprotocol/types";
+import { assetFilter, assetSymbols, MarketConfig, underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
-task("market:deploy:mode:weth", "deploy mode weth market").setAction(async (taskArgs, { run }) => {
-  await run("market:deploy", {
-    signer: "deployer",
-    cf: "70",
-    underlying: "0x4200000000000000000000000000000000000006",
-    comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
-    symbol: "iWETH",
-    name: "Wrapped Ethereum"
-  });
+import { assets as modeAssets } from "../../../chains/src/mode/assets";
+
+task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {
+  const symbols = [
+    // assetSymbols.WETH,
+    // assetSymbols.USDC,
+    // assetSymbols.USDT,
+    assetSymbols.DAI,
+    assetSymbols.LINK,
+    assetSymbols.BAL,
+    assetSymbols.SNX,
+    assetSymbols.UNI,
+    assetSymbols.WBTC,
+    assetSymbols.AAVE
+  ];
+
+  for (let i = 0; i < symbols.length; i++) {
+    const symbol = symbols[i];
+    const asset = assetFilter(modeAssets, symbol);
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: "70",
+      underlying: asset.underlying,
+      comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
+      symbol: "ion" + asset.symbol,
+      name: `Ionic ${asset.name}`
+    });
+  }
 });
 
 task("market:deploy", "deploy market")
@@ -33,10 +52,10 @@ task("market:deploy", "deploy market")
     const config: MarketConfig = {
       underlying: taskArgs.underlying,
       comptroller: comptroller.address,
-      adminFee: 0,
+      adminFee: 10,
       collateralFactor: parseInt(taskArgs.cf),
       interestRateModel: sdk.chainDeployment.JumpRateModel.address,
-      reserveFactor: 0,
+      reserveFactor: 10,
       bypassPriceFeedCheck: true,
       feeDistributor: sdk.chainDeployment.FeeDistributor.address,
       symbol: taskArgs.symbol,
@@ -81,6 +100,6 @@ task("market:deploy", "deploy market")
     // Recreate Address of Deployed Market
     const receipt = await tx.wait();
     if (receipt.status != ethers.constants.One.toNumber()) {
-      throw "Failed to deploy market ";
+      throw `Failed to deploy market for ${config.underlying}`;
     }
   });

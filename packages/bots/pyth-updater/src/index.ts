@@ -14,6 +14,7 @@ export const handler = async (
 ): Promise<APIGatewayProxyResult> => {
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
+  logger.info(`Started`);
 
   const provider = new JsonRpcProvider(config.rpcUrl);
   const signer = new Wallet(config.adminPrivateKey, provider);

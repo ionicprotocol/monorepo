@@ -57,7 +57,7 @@ export const deployIonicUniV3Liquidator = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV3SwapRouter, deployConfig.uniswap.uniswapV3Quoter]
+          args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV3Quoter]
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
