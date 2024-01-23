@@ -103,9 +103,8 @@ const Popup = ({
     () => (maxWithdrawAmount ? parseFloat(maxWithdrawAmount.toString()) : 0),
     [maxWithdrawAmount]
   );
-  const { data: maxBorrowAmount } = useMaxBorrowAmount(
-    selectedMarketData,
-    selectedMarketData.cToken,
+  const { data: maxBorrowAmount } = useBorrowLimitTotal(
+    [selectedMarketData],
     chainId
   );
   const currentBorrowAmountAsFloat = useMemo<number>(
@@ -267,7 +266,7 @@ const Popup = ({
       amount &&
       amount > 0 &&
       maxBorrowAmount &&
-      amount <= maxBorrowAmount.number
+      amount <= maxBorrowAmount
     ) {
       setIsExecutingAction(true);
 
@@ -543,7 +542,7 @@ const Popup = ({
                 <Amount
                   handleInput={setAmount}
                   amount={amount}
-                  max={parseFloat(maxBorrowAmount?.number.toString() ?? '0')}
+                  max={maxBorrowAmount ?? 0}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Borrow Amount"
                 />
@@ -570,7 +569,7 @@ const Popup = ({
                       amount &&
                       amount > 0 &&
                       maxBorrowAmount &&
-                      amount <= maxBorrowAmount.number
+                      amount <= maxBorrowAmount
                         ? 'bg-accent'
                         : 'bg-stone-500'
                     } `}
