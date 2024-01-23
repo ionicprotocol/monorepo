@@ -235,13 +235,12 @@ const Popup = ({
       address &&
       amount &&
       amount > 0 &&
-      maxWithdrawAmount &&
-      amount <= maxWidthdrawAmountAsFloat
+      amount <= selectedMarketData.totalSupplyFiat
     ) {
       setIsExecutingAction(true);
 
       try {
-        if (maxWithdrawAmount.eq(amount)) {
+        if (selectedMarketData.totalSupplyFiat === amount) {
           await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
@@ -439,9 +438,9 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
+                    {selectedMarketData.totalSupplyFiat.toFixed(4)} -{'>'}{' '}
                     {(
-                      selectedMarketData.totalSupplyNative + (amount ?? 0)
+                      selectedMarketData.totalSupplyFiat + (amount ?? 0)
                     ).toFixed(4)}
                     {/* this will be dynamic */}
                   </span>
@@ -492,7 +491,7 @@ const Popup = ({
                 <Amount
                   handleInput={setAmount}
                   amount={amount}
-                  max={maxWidthdrawAmountAsFloat}
+                  max={selectedMarketData.supplyBalanceFiat}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Withdraw"
                 />
@@ -505,9 +504,9 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
+                    {selectedMarketData.totalSupplyFiat.toFixed(4)} -{'>'}{' '}
                     {(
-                      selectedMarketData.totalSupplyNative - (amount ?? 0)
+                      selectedMarketData.totalSupplyFiat - (amount ?? 0)
                     ).toFixed(4)}
                     {/* this will be dynamic */}
                   </span>
