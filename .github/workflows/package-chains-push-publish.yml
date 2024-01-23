@@ -1,0 +1,52 @@
+name: Chains/Push - Publish
+
+on:
+  push:
+    branches:
+      - main
+      - development
+    paths:
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-chains-push-publish.yml'
+      - 'yarn.lock'
+  pull_request:
+    branches:
+      - main
+      - development
+    paths:
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-chains-push-publish.yml'
+      - 'yarn.lock'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build `chains`
+        run: yarn build:chains
+
+      - name: Lint `chains`
+        run: yarn workspace @ionicprotocol/chains lint
+
+      - uses: JS-DevTools/npm-publish@v1
+        if: github.ref == 'refs/heads/main'
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
+          access: 'public'
+          package: './packages/chains/package.json'

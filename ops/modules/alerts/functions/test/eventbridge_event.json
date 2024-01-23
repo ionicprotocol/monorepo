@@ -1,0 +1,142 @@
+{
+    "version": "0",
+    "id": "821822b9-420a-4e36-080c-53ec5cc22df1",
+    "detail-type": "ECS Task State Change",
+    "source": "aws.ecs",
+    "account": "111111111111",
+    "time": "2020-03-16T15:37:04Z",
+    "region": "eu-central-1",
+    "resources": [
+      "arn:aws:ecs:eu-central-1:111111111111:task/test/a6eaf0150a4248dAA1bcbd688121014e"
+    ],
+    "detail": {
+      "attachments": [
+        {
+          "id": "33a9c5e1-704c-4f22-889a-7d990a843205",
+          "type": "eni",
+          "status": "DELETED",
+          "details": [
+            {
+              "name": "subnetId",
+              "value": "subnet-04b38930339729011"
+            },
+            {
+              "name": "networkInterfaceId",
+              "value": "eni-0002af9b60bdcc961"
+            },
+            {
+              "name": "macAddress",
+              "value": "0a:b7:d4:fb:95:9c"
+            },
+            {
+              "name": "privateDnsName",
+              "value": "ip-10-0-199-187.eu-central-1.compute.internal"
+            },
+            {
+              "name": "privateIPv4Address",
+              "value": "10.0.199.187"
+            }
+          ]
+        },
+        {
+          "id": "3ca67f1b-7deb-4074-ad12-1a37fb0f46a8",
+          "type": "sdi",
+          "status": "DELETED",
+          "details": []
+        }
+      ],
+      "attributes": [
+        {
+          "name": "ecs.cpu-architecture",
+          "value": "x86_64"
+        }
+      ],
+      "availabilityZone": "eu-central-1c",
+      "capacityProviderName": "FARGATE",
+      "clusterArn": "arn:aws:ecs:eu-central-1:111111111111:cluster/test",
+      "connectivity": "CONNECTED",
+      "connectivityAt": "2020-03-16T15:33:52.912Z",
+      "containers": [
+        {
+          "containerArn": "arn:aws:ecs:eu-central-1:111111111111:container/test/a6eaf0150a4248dAA1bcbd688121014e/389d23b7-a60e-4709-948b-76f80ebaede2",
+          "exitCode": 0,
+          "lastStatus": "STOPPED",
+          "name": "envoy",
+          "image": "public.ecr.aws/appmesh/aws-appmesh-envoy:v1.21.0.0-prod",
+          "runtimeId": "a6eaf0150a4248dAA1bcbd688121014e-4057181352",
+          "taskArn": "arn:aws:ecs:eu-central-1:111111111111:task/test/a6eaf0150a4248dAA1bcbd688121014e",
+          "networkInterfaces": [
+            {
+              "attachmentId": "33a9c5e1-704c-4f22-889a-7d990a843205",
+              "privateIpv4Address": "10.0.199.187"
+            }
+          ],
+          "cpu": "0",
+          "managedAgents": [
+            {
+              "name": "ExecuteCommandAgent",
+              "status": "STOPPED"
+            }
+          ]
+        },
+        {
+          "containerArn": "arn:aws:ecs:eu-central-1:111111111111:container/test/a6eaf0150a4248dAA1bcbd688121014e/c1bc2b5b-a67e-4de9-a5d2-1ac918042339",
+          "exitCode": 2,
+          "lastStatus": "STOPPED",
+          "name": "app",
+          "image": "111111111111.dkr.ecr.eu-central-1.amazonaws.com/example-api:189b5e975102ed9b0795a243904dde2d8b63ae78",
+          "imageDigest": "sha256:b7ea69f833204d4f63192b4abfbdc6208878098a6b98b5e876e160b26560d31d",
+          "runtimeId": "a6eaf0150a4248dAA1bcbd688121014e-527074092",
+          "taskArn": "arn:aws:ecs:eu-central-1:111111111111:task/test/a6eaf0150a4248dAA1bcbd688121014e",
+          "networkInterfaces": [
+            {
+              "attachmentId": "33a9c5e1-704c-4f22-889a-7d990a843205",
+              "privateIpv4Address": "10.58.199.187"
+            }
+          ],
+          "cpu": "0",
+          "managedAgents": [
+            {
+              "name": "ExecuteCommandAgent",
+              "status": "STOPPED"
+            }
+          ]
+        }
+      ],
+      "cpu": "512",
+      "createdAt": "2020-03-16T15:33:48.701Z",
+      "desiredStatus": "STOPPED",
+      "enableExecuteCommand": true,
+      "ephemeralStorage": {
+        "sizeInGiB": 20
+      },
+      "executionStoppedAt": "2020-03-16T15:34:18.539Z",
+      "group": "service:example-api-v1",
+      "launchType": "FARGATE",
+      "lastStatus": "STOPPED",
+      "memory": "1024",
+      "overrides": {
+        "containerOverrides": [
+          {
+            "name": "envoy"
+          },
+          {
+            "name": "app"
+          }
+        ]
+      },
+      "platformVersion": "1.4.0",
+      "pullStartedAt": "2020-03-16T15:34:02.971Z",
+      "pullStoppedAt": "2020-03-16T15:34:12.187Z",
+      "startedAt": "2020-03-16T15:34:27.118Z",
+      "startedBy": "ecs-svc/9300480928766973637",
+      "stoppingAt": "2020-03-16T15:34:59.778Z",
+      "stoppedAt": "2020-03-16T15:37:04.979Z",
+      "stoppedReason": "Essential container in task exited",
+      "stopCode": "EssentialContainerExited",
+      "taskArn": "arn:aws:ecs:eu-central-1:111111111111:task/test/a6eaf0150a4248dAA1bcbd688121014e",
+      "taskDefinitionArn": "arn:aws:ecs:eu-central-1:111111111111:task-definition/example-api-v1:20",
+      "updatedAt": "2020-03-16T15:37:04.979Z",
+      "version": 7
+    }
+  }

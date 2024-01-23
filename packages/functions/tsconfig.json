@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "es6",
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule":true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

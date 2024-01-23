@@ -1,0 +1,7 @@
+[submodule "packages/sdk/lib/ds-test"]
+	path = packages/sdk/lib/ds-test
+	url = git@github.com:dapphub/ds-test
+[submodule "packages/sdk/lib/contracts"]
+	path = packages/sdk/lib/contracts
+	url = https://github.com/ionicprotocol/contracts
+	branch = development

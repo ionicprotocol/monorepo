@@ -1,0 +1,51 @@
+name: SDK/Push - Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-push-publish.yml'
+      - 'yarn.lock'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      MNEMONIC: '${{ secrets.MNEMONIC }}'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build `sdk`
+        run: yarn build:sdk
+
+      - name: Lint `sdk`
+        run: yarn workspace @ionicprotocol/sdk lint
+
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
+          access: 'public'
+          package: './packages/sdk/package.json'

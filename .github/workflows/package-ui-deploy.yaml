@@ -1,0 +1,52 @@
+name: UI - deploy UI
+
+on:
+  push:
+    branches: [main, development]
+    paths:
+      - 'packages/ui/**'
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - 'packages/functions/**'
+      - '.github/workflows/package-ui-deploy.yaml'
+      - 'yarn.lock'
+      - 'netlify.toml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install `foundry`
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Deploy `Development`
+        if: github.ref == 'refs/heads/development'
+        run: |
+          netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context development
+
+      - name: Deploy `Production`
+        if: github.ref == 'refs/heads/main'
+        run: |
+          netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID }}
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context production

@@ -1,0 +1,58 @@
+name: SDK/Push/PR - build and run tests
+
+on:
+  push:
+    branches:
+      - main
+      - development
+    paths:
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-pull-request-build-and-test.yml'
+      - 'yarn.lock'
+  pull_request:
+    branches:
+      - main
+      - development
+    paths:
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-pull-request-build-and-test.yml'
+      - 'yarn.lock'
+
+jobs:
+  build-lint-and-test-local:
+    env:
+      MNEMONIC: '${{ secrets.MNEMONIC }}'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - name: Install NPM packages
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build SDK
+        run: yarn build:sdk
+
+      - name: Run lint
+        run: yarn workspace @ionicprotocol/sdk lint
+
+      - name: Run mocha tests
+        run: yarn workspace @ionicprotocol/sdk test:mocha

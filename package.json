@@ -1,0 +1,62 @@
+{
+  "name": "monorepo",
+  "packageManager": "yarn@3.2.0",
+  "private": true,
+  "workspaces": [
+    "packages/bots/liquidator",
+    "packages/bots/pyth-updater",
+    "packages/functions",
+    "packages/monitors/oracle",
+    "packages/monitors/liquidity",
+    "packages/chains",
+    "packages/sdk",
+    "packages/security",
+    "packages/types",
+    "packages/ui"
+  ],
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@tsconfig/recommended": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "netlify-cli": "^16.3.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@resolver-engine/core": "^0.3.3",
+    "@wagmi/core": "^2.2.1",
+    "ts-node": "^10.9.1",
+    "viem": "^2.1.1"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.15"
+  },
+  "scripts": {
+    "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/sdk build",
+    "build:types": "yarn workspace @ionicprotocol/types build",
+    "build:chains": "yarn build:types && yarn workspace @ionicprotocol/chains build",
+    "build:security": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/security build",
+    "build:ui": "yarn workspace @ionicprotocol/ui build",
+    "build:functions": "yarn workspace @ionicprotocol/functions build",
+    "build:liquidator": "yarn workspace @ionicprotocol/liquidator build",
+    "build:oracles-monitor": "yarn workspace @ionicprotocol/oracles-monitor build",
+    "build:liquidity-monitor": "yarn workspace @ionicprotocol/liquidity-monitor build",
+    "build:pyth-updater": "yarn workspace @ionicprotocol/pyth-updater build",
+    "build:deploy:liquidator": "yarn build:sdk && yarn build:liquidator",
+    "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
+    "build:deploy:pyth-updater": "yarn build:sdk && yarn build:pyth-updater",
+    "build:deploy:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && yarn build:functions",
+    "dev:ui": "yarn workspace @ionicprotocol/sdk export:ganache; yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn workspace @ionicprotocol/ui dev",
+    "dev:functions": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && netlify dev",
+    "dev:node": "yarn workspace @ionicprotocol/sdk hardhat node --no-deploy",
+    "dev:node:deploy": "yarn workspace @ionicprotocol/sdk deploy:localhost",
+    "dev:node:fork": "yarn workspace @ionicprotocol/sdk hardhat node --port 8545 --no-deploy",
+    "dev:node:bsc": "FORK_CHAIN_ID=56 FORK_RPC_URL=$BSC_RPC_URL yarn workspace @ionicprotocol/sdk hardhat node --port 8545 --no-deploy",
+    "dev:node:polygon": "FORK_CHAIN_ID=137 FORK_RPC_URL=$POLYGON_RPC_URL yarn workspace @ionicprotocol/sdk hardhat node --port 8546 --no-deploy",
+    "dev:node:chapel": "FORK_CHAIN_ID=97 FORK_RPC_URL=$CHAPEL_RPC_URL yarn workspace @ionicprotocol/sdk hardhat node --port 8547 --no-deploy",
+    "dev:node:arbitrum": "FORK_CHAIN_ID=42161 FORK_RPC_URL=$ARBITRUM_RPC_URL yarn workspace @ionicprotocol/sdk hardhat node --port 8548 --no-deploy",
+    "dev:simulate:deploy:bsc": "FORK_RPC_URL=${FORK_RPC_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=56 yarn workspace @ionicprotocol/sdk hardhat node --tags prod",
+    "test:ui": "yarn workspace @ionicprotocol/ui test",
+    "analyze:ui": "yarn workspace @ionicprotocol/ui analyze"
+  }
+}

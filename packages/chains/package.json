@@ -1,0 +1,41 @@
+{
+  "name": "@ionicprotocol/chains",
+  "repository": "git://github.com:ionicprotocol/monorepo.git",
+  "version": "0.4.3",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "/dist/"
+  ],
+  "scripts": {
+    "prune": "node ./scripts/prune.js ./deployments/*.json",
+    "build": "echo '> Bundling `@ionicprotocol/chains`...' && yarn run prune && tsup ./src/index.ts --format esm,cjs --dts",
+    "clean": "rm -rf dist",
+    "prettier:ts": "prettier --write 'src/**/*.ts'",
+    "lint": "eslint . -c .eslintrc.json --ext ts,json",
+    "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json"
+  },
+  "keywords": [],
+  "author": "Ionic Protocol",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.45.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "3.0.0",
+    "ts-node": "^10.9.1",
+    "tsup": "^7.1.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@ionicprotocol/types": "workspace:*",
+    "ethers": "^5.7.2",
+    "utf-8-validate": "^6.0.3"
+  }
+}

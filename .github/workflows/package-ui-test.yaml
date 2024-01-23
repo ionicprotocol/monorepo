@@ -1,0 +1,40 @@
+name: UI - build, lint & test
+
+on:
+  pull_request:
+    branches: [main, staging, development]
+    paths:
+      - 'packages/ui/**'
+      - 'packages/sdk/**'
+      - 'packages/functions/**'
+      - 'yarn.lock'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install `foundry`
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install NPM packages
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build `ui`
+        run: yarn build:deploy:ui
+
+      - name: Lint `ui`
+        run: yarn workspace @ionicprotocol/ui lint
