@@ -271,10 +271,14 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
-        const { tx } = await currentSdk.borrow(
+        const { tx, errorCode } = await currentSdk.borrow(
           selectedMarketData.cToken,
           amountAsBInt as any
         );
+
+        if (errorCode) {
+          console.error(`Borrowing error: ${errorCode}`);
+        }
 
         await tx?.wait();
         await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
