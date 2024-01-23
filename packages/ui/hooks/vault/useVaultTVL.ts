@@ -1,11 +1,11 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const fetchVaultNumberTVL = async (midasSdk: MidasSdk) => {
+export const fetchVaultNumberTVL = async (midasSdk: IonicSdk) => {
   const optimizedVaultsRegistry = midasSdk.createOptimizedVaultsRegistry();
   const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
   const tvlNative = vaultsData.reduce(
@@ -58,8 +58,8 @@ export const useVaultTVL = () => {
           })
         );
 
-        const sortedChainVaultTVLs = new Map(
-          [...chainVaultTVLs].sort((a, b) => b[1].value - a[1].value)
+        const sortedChainVaultTVLs: CrossChainVaultTVL = new Map(
+          [...(chainVaultTVLs as any)].sort((a, b) => b[1].value - a[1].value)
         );
 
         return sortedChainVaultTVLs;

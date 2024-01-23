@@ -1,4 +1,4 @@
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
@@ -10,7 +10,7 @@ import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export function useMaxSupplyAmount(
   asset: Pick<
-    NativePricedFuseAsset,
+    NativePricedIonicAsset,
     'cToken' | 'underlyingDecimals' | 'underlyingToken'
   >,
   comptrollerAddress: string,

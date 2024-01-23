@@ -1,4 +1,4 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 
@@ -7,7 +7,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   address?: string
 ): Promise<BigNumber> => {
   let balance = constants.Zero;
@@ -18,8 +18,8 @@ export const fetchTokenBalance = async (
     } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
       balance = await sdk.provider.getBalance(address);
     } else {
-      const contract = sdk.createCTokenWithExtensions(tokenAddress);
-      balance = (await contract.callStatic.balanceOf(address)) as BigNumber;
+      // const contract = sdk.createCTokenWithExtensions(tokenAddress);
+      // balance = (await contract.callStatic.balanceOf(address)) as BigNumber;
     }
   } catch (e) {
     console.warn(

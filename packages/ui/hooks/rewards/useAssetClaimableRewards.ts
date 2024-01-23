@@ -1,5 +1,5 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 import { constants } from 'ethers';
 
@@ -57,7 +57,7 @@ export const useAssetClaimableRewards = (
 export const getAssetsClaimableRewards = async (
   poolAddress: string,
   assetsAddress: string[],
-  sdk: MidasSdk,
+  sdk: IonicSdk,
   address: string
 ) => {
   const allRewards = await Promise.all(

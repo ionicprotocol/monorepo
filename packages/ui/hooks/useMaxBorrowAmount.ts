@@ -1,4 +1,4 @@
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
@@ -8,7 +8,7 @@ import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAs
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useMaxBorrowAmount(
-  asset: NativePricedFuseAsset,
+  asset: NativePricedIonicAsset,
   comptrollerAddress: string,
   chainId: number
 ) {

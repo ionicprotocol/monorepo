@@ -1,5 +1,5 @@
 import type {
-  FusePoolData,
+  IonicPoolData,
   NewPosition,
   OpenPosition,
   SupportedAsset,
@@ -46,7 +46,7 @@ export const sortSupportedAssets = (assets: SupportedAsset[]) => {
   });
 };
 
-export const poolSort = (pools: FusePoolData[]) => {
+export const poolSort = (pools: IonicPoolData[]) => {
   return pools.sort((a, b) => {
     if (b.totalSuppliedNative > a.totalSuppliedNative) {
       return 1;
