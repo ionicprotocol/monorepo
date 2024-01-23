@@ -1,7 +1,6 @@
-import type { BoxProps, FlexProps } from '@chakra-ui/react';
-import type { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import type {
-  NativePricedFuseAsset,
+  NativePricedIonicAsset,
   NewPosition,
   OpenPosition,
   VaultData
@@ -15,8 +14,6 @@ import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 export type FusePageLayoutProps = {
   children?: ReactNode;
 };
-
-export type ExtendedBoxProps = BoxProps & { glow?: boolean };
 
 export type RefetchMovingStatProps = Omit<CaptionedStatProps, 'stat'> & {
   fetch: () => Promise<string>;
@@ -51,32 +48,13 @@ export type CrossAxisAlignment =
       md: CrossAxisAlignmentStrings;
     };
 
-export type CenterProps = FlexProps & {
-  children: React.ReactNode;
-  expand?: boolean;
-};
-
-export type ColumnProps = FlexProps & {
-  children?: React.ReactNode;
-  crossAxisAlignment?: CrossAxisAlignment;
-  expand?: boolean;
-  mainAxisAlignment?: MainAxisAlignment;
-};
-
-export type RowProps = FlexProps & {
-  children?: React.ReactNode;
-  crossAxisAlignment?: CrossAxisAlignment;
-  expand?: boolean;
-  mainAxisAlignment?: MainAxisAlignment;
-};
-
 export type AssetsMapWithTokenDataReturn = {
-  assetsArrayWithTokenData: NativePricedFuseAssetWithTokenData[][] | null; // Fuse Asset with additional info about the token appended on
+  assetsArrayWithTokenData: NativePricedIonicAssetWithTokenData[][] | null; // Fuse Asset with additional info about the token appended on
   tokensDataMap: TokensDataHash; // hashmap of unique assets and their token data
 };
 
 export type CTokenDataForRewards = Pick<
-  NativePricedFuseAsset,
+  NativePricedIonicAsset,
   'cToken' | 'totalSupply' | 'underlyingPrice' | 'underlyingToken'
 >;
 
@@ -84,8 +62,8 @@ export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
 // interfaces
 
-export interface NativePricedFuseAssetWithTokenData
-  extends NativePricedFuseAsset {
+export interface NativePricedIonicAssetWithTokenData
+  extends NativePricedIonicAsset {
   tokenData: TokenData;
 }
 
@@ -109,7 +87,7 @@ export interface ExtraData {
 }
 
 export interface AssetHash {
-  [address: string]: NativePricedFuseAsset;
+  [address: string]: NativePricedIonicAsset;
 }
 export interface TokensDataHash {
   [address: string]: TokenData;

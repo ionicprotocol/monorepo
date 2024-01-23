@@ -14,8 +14,7 @@ export const usePerformanceFee = (
     async () => {
       if (sdk && pluginAddress) {
         try {
-          const pluginContract =
-            sdk.getMidasErc4626PluginInstance(pluginAddress);
+          const pluginContract = sdk.getErc4626PluginInstance(pluginAddress);
           const performanceFee =
             await pluginContract.callStatic.performanceFee();
 

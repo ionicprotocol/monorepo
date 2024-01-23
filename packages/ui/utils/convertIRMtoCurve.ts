@@ -1,4 +1,4 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
+import type { IonicSdk } from '@ionicprotocol/sdk';
 import type { InterestRateModel } from '@ionicprotocol/types';
 import { utils } from 'ethers';
 
@@ -6,7 +6,7 @@ import type { UtilizationChartData } from '@ui/types/ComponentPropsType';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const convertIRMtoCurve = (
-  midasSdk: MidasSdk,
+  midasSdk: IonicSdk,
   interestRateModel: InterestRateModel,
   chainId: number
 ) => {

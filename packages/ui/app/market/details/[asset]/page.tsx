@@ -26,7 +26,7 @@ import {
   chartdata2,
   donutdata,
   donutoptions
-} from '@/app/_constants/mock';
+} from '../../../_constants/mock';
 
 //-------------------Interfaces------------
 interface IProp {
@@ -49,7 +49,7 @@ ChartJS.register(
 //-------------------------components-----------
 
 import { PieChart, Pie, Sector, Cell } from 'recharts';
-import Popup from '@/app/_components/popup/page';
+import Popup from '../../../_components/popup/page';
 
 const data = [
   { name: 'Group A', value: 400 },
@@ -330,7 +330,7 @@ const Asset = ({ params }: IProp) => {
           </div>
         </div>
       </div>
-      {popmode && <Popup mode={popmode} />}
+      {/* {popmode && <Popup mode={popmode} />} */}
     </div>
   );
 };

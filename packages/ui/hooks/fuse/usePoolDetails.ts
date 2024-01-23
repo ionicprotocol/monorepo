@@ -1,4 +1,4 @@
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -6,7 +6,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const usePoolDetails = (
-  assets?: NativePricedFuseAsset[],
+  assets?: NativePricedIonicAsset[],
   poolChainId?: number
 ) => {
   const sdk = useSdk(poolChainId);

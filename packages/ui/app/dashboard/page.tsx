@@ -231,12 +231,12 @@ export default function Dashboard() {
             ))}
         </div>
       </div>
-      {popmode && (
+      {/* {popmode && (
         <Popup
           mode={popmode}
           specific={specific}
         />
-      )}
+      )} */}
     </main>
   );
 }

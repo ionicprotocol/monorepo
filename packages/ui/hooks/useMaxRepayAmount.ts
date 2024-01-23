@@ -1,4 +1,4 @@
-import type { NativePricedFuseAsset } from '@ionicprotocol/types';
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
@@ -6,7 +6,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export function useMaxRepayAmount(
-  asset: NativePricedFuseAsset,
+  asset: NativePricedIonicAsset,
   chainId: number
 ) {
   const { address } = useMultiMidas();

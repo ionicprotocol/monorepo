@@ -1,11 +1,12 @@
-import type { MidasSdk } from '@ionicprotocol/sdk';
-import type { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/src/modules/Flywheel';
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
 import type { FlywheelReward, Reward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { utils } from 'ethers';
 
-import type { RewardsResponse } from '../pages/api/rewards';
+// import type { RewardsResponse } from '../pages/api/rewards';
+type RewardsResponse = any;
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -22,7 +23,7 @@ export interface UseRewardsData {
 
 export const fetchFlywheelRewards = async (
   comptroller: string,
-  sdk: MidasSdk
+  sdk: IonicSdk
 ) => {
   let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
   let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
@@ -110,12 +111,12 @@ export const fetchRewards = async (
         const allRewards = [...pluginRewards];
         if (flywheelRewards) {
           const flywheelsInPluginResponse = pluginRewards
-            .map((pluginReward) =>
+            .map((pluginReward: any) =>
               'flywheel' in pluginReward
                 ? pluginReward.flywheel.toLowerCase()
                 : null
             )
-            .filter((f) => !!f) as string[];
+            .filter((f: any) => !!f) as string[];
           for (const info of flywheelRewards.rewardsInfo) {
             if (
               !flywheelsInPluginResponse.includes(info.flywheel.toLowerCase())
