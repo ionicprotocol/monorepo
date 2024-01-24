@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const usePoolData = (poolId?: string, poolChainId?: number) => {
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
@@ -22,11 +22,17 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
     ['usePoolData', poolId, address, sdk?.chainId, usdPrice],
     async () => {
       if (usdPrice && sdk?.chainId && poolId) {
-        const response = await sdk.fetchPoolData(poolId, { from: address }).catch((e) => {
-          console.warn(`Getting ionic pool data error: `, { address, poolChainId, poolId }, e);
+        const response = await sdk
+          .fetchPoolData(poolId, { from: address })
+          .catch((e) => {
+            console.warn(
+              `Getting ionic pool data error: `,
+              { address, poolChainId, poolId },
+              e
+            );
 
-          return null;
-        });
+            return null;
+          });
         if (response === null) {
           return null;
         }
@@ -51,10 +57,12 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
           assets: assetsWithPrice.sort((a, b) =>
             a.underlyingSymbol.localeCompare(b.underlyingSymbol)
           ),
-          totalAvailableLiquidityFiat: response.totalAvailableLiquidityNative * usdPrice,
+          totalAvailableLiquidityFiat:
+            response.totalAvailableLiquidityNative * usdPrice,
           totalBorrowBalanceFiat: response.totalBorrowBalanceNative * usdPrice,
           totalBorrowedFiat: response.totalBorrowedNative * usdPrice,
-          totalCollateralSupplyBalanceFiat: response.totalCollateralSupplyBalanceNative * usdPrice,
+          // totalCollateralSupplyBalanceFiat:
+          //   response.totalCollateralSupplyBalanceNative * usdPrice,
           totalLiquidityFiat: response.totalLiquidityNative * usdPrice,
           totalSuppliedFiat: response.totalSuppliedNative * usdPrice,
           totalSupplyBalanceFiat: response.totalSupplyBalanceNative * usdPrice

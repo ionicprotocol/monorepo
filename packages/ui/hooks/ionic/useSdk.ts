@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
 export const useSdk = (chainId?: number) => {
-  const { getSdk } = useMultiIonic();
+  const { getSdk } = useMultiMidas();
 
   return useMemo(() => {
     if (chainId) {
