@@ -22,6 +22,7 @@ import { BigNumber, constants } from 'ethers';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
+import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 
 interface IPopup {
   mode?: string;
@@ -38,6 +39,10 @@ const Popup = ({
   // console.log(mode);
   const { currentSdk, address, currentChain } = useMultiMidas();
   const chainId = useChainId();
+  const { data: minBorrowAmount } = useBorrowMinimum(
+    selectedMarketData,
+    chainId
+  );
   const { data: balanceData } = useBalance({
     address: (address as any) ?? `0x0`,
     token: selectedMarketData.underlyingToken as any
@@ -46,6 +51,14 @@ const Popup = ({
     [selectedMarketData],
     chainId
   );
+  console.log(`Borrow limit total`, borrowLimitTotal);
+  const { data: borrowLimit2 } = useBorrowLimitMarket(
+    selectedMarketData,
+    [selectedMarketData],
+    chainId,
+    comptrollerAddress
+  );
+  console.log(`Borrow limit 2`, borrowLimit2);
   const { data: fundedInfo } = useAllFundedInfo();
   const { data: marketRewards } = useRewardsForMarket({
     asset: selectedMarketData,

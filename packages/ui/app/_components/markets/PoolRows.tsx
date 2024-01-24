@@ -7,6 +7,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 interface IRows {
   asset: string;
   colleteralT: string;
+  borrowing: string;
   borrowingT: string;
   lendingT: string;
   lAPR: string;
@@ -17,6 +18,7 @@ interface IRows {
 const PoolRows = ({
   asset,
   colleteralT,
+  borrowing,
   borrowingT,
   lendingT,
   lAPR,
@@ -26,7 +28,7 @@ const PoolRows = ({
 }: IRows) => {
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-16  py-4 text-xs text-white/80 font-semibold text-center items-center `}
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold text-center items-center `}
     >
       <div className={`col-span-2  flex gap-2 items-center justify-center  `}>
         <img
@@ -38,6 +40,7 @@ const PoolRows = ({
       </div>
       <h3 className={` col-span-2`}>{colleteralT}</h3>
       <h3 className={` col-span-2`}>{lendingT}</h3>
+      <h3 className={` col-span-2`}>{borrowing}</h3>
       <h3 className={` col-span-2`}>{borrowingT}</h3>
       <h3 className={` col-span-2`}>{lAPR}</h3>
       <h3 className={` col-span-2`}>{bAPR}</h3>

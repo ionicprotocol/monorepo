@@ -22,6 +22,7 @@ export default function Market() {
     '0',
     chainId
   );
+  console.log(poolData);
   const { data: assetsBorrowAprData, isLoading: isLoadingAssetsBorrowAprData } =
     useBorrowAPYs(poolData?.assets ?? [], chainId);
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
@@ -143,11 +144,12 @@ export default function Market() {
           </div>
           <PoolToggle />
           <div
-            className={`w-full gap-x-1 grid  grid-cols-16 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
+            className={`w-full gap-x-1 grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
             <h3 className={` col-span-2  `}>ASSETS</h3>
-            <h3 className={` col-span-2`}>TOTAL COLLATERAL</h3>
+            <h3 className={` col-span-2`}>SUPPLY BALANCE</h3>
             <h3 className={` col-span-2`}>TOTAL SUPPLIED</h3>
+            <h3 className={` col-span-2`}>BORROW BALANCE</h3>
             <h3 className={` col-span-2`}>TOTAL BORROWING</h3>
             <h3 className={` col-span-2`}>SUPPLY APR</h3>
             <h3 className={` col-span-2`}>BORROW APR</h3>
@@ -158,7 +160,7 @@ export default function Market() {
               {assets &&
                 assetsBorrowAprData &&
                 assetsSupplyAprData &&
-                assets.map((val: any, idx: number) => (
+                assets.map((val: MarketData, idx: number) => (
                   <PoolRows
                     key={idx}
                     asset={val.underlyingSymbol}
@@ -167,6 +169,11 @@ export default function Market() {
                         ? val.supplyBalanceNative.toFixed(6)
                         : '0'
                     } / $${val.supplyBalanceFiat.toFixed(2)}`}
+                    borrowing={`${
+                      val.borrowBalanceNative
+                        ? val.borrowBalanceNative.toFixed(6)
+                        : '0'
+                    } / $${val.borrowBalanceFiat.toFixed(2)}`}
                     borrowingT={`${
                       val.totalBorrowNative
                         ? val.totalBorrowNative.toFixed(6)
