@@ -267,15 +267,19 @@ const Popup = ({
 
       try {
         if (selectedMarketData.supplyBalanceNative === amount) {
-          await currentSdk.withdraw(
+          const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
           );
+
+          await tx?.wait();
         } else {
-          await currentSdk.withdraw(
+          const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             amountAsBInt as any
           );
+
+          await tx?.wait();
         }
       } catch (error) {
         console.error(error);
