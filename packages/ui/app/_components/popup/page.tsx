@@ -101,17 +101,19 @@ const Popup = ({
     },
     0
   );
-  const amountAsBInt = useMemo<string>(() => {
-    const marketDataDecimals = parseInt(
-      selectedMarketData.underlyingDecimals.toString()
-    );
-
-    return amount
-      ? (
-          amount * Math.pow(10, marketDataDecimals > 8 ? 8 : marketDataDecimals)
-        ).toString()
-      : '0';
-  }, [amount]);
+  const amountAsBInt = useMemo<string>(
+    () =>
+      amount
+        ? (
+            amount *
+            Math.pow(
+              10,
+              parseInt(selectedMarketData.underlyingDecimals.toString())
+            )
+          ).toString()
+        : '0',
+    [amount]
+  );
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
   const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(
     selectedMarketData,
