@@ -21,7 +21,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
-  const MIN_BORROW_USD = chainId === 97 || chainId == 245022934 ? 0.1 : 100;
+
+  let MIN_BORROW_USD;
+  if (chainId === 97 || chainId == 245022934) MIN_BORROW_USD = 0.1;
+  else if (chainId == 34443) MIN_BORROW_USD = 4;
+  else MIN_BORROW_USD = 100;
+
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
   const balance = await ethers.provider.getBalance(deployer);

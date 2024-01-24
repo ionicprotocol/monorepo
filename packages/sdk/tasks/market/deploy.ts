@@ -1,30 +1,20 @@
 import { assetFilter, assetSymbols, MarketConfig, underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
+
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
 
-task("market:deploy:mode:weth", "deploy mode weth market").setAction(async (taskArgs, { run }) => {
-  await run("market:deploy", {
-    signer: "deployer",
-    cf: "70",
-    underlying: underlying(modeAssets, assetSymbols.WETH),
-    comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
-    symbol: "iWETH",
-    name: "Wrapped Ether"
-  });
-});
-
-
-task("markets:deploy:mode:others", "deploy mode markets").setAction(async (taskArgs, { run }) => {
+task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {
   const symbols = [
+    // assetSymbols.WETH,
     // assetSymbols.USDC,
     // assetSymbols.USDT,
-    // assetSymbols.UNI,
-    assetSymbols.SNX,
-    assetSymbols.LINK,
     assetSymbols.DAI,
+    assetSymbols.LINK,
     assetSymbols.BAL,
-    assetSymbols.AAVE,
+    assetSymbols.SNX,
+    assetSymbols.UNI,
     assetSymbols.WBTC,
+    assetSymbols.AAVE
   ];
 
   for (let i = 0; i < symbols.length; i++) {
@@ -35,8 +25,8 @@ task("markets:deploy:mode:others", "deploy mode markets").setAction(async (taskA
       cf: "70",
       underlying: asset.underlying,
       comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
-      symbol: "i" + asset.symbol,
-      name: asset.name
+      symbol: "ion" + asset.symbol,
+      name: `Ionic ${asset.name}`
     });
   }
 });
