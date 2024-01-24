@@ -86,18 +86,9 @@ const Popup = ({
       const marketDataDecimals = parseInt(
         selectedMarketData.underlyingDecimals.toString()
       );
+      const decimalsToUse = marketDataDecimals > 8 ? 8 : marketDataDecimals;
 
-      if (
-        decimals &&
-        decimals.length >
-          parseInt(selectedMarketData.underlyingDecimals.toString())
-      ) {
-        return currentValue;
-      }
-
-      return parseFloat(
-        value.toFixed(marketDataDecimals > 8 ? 8 : marketDataDecimals)
-      );
+      return parseFloat(value.toFixed(decimalsToUse));
     },
     0
   );

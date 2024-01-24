@@ -21,6 +21,10 @@ const Amount = ({
   max = 0,
   symbol
 }: IAmount) => {
+  const marketDataDecimals = parseInt(
+    selectedMarketData.underlyingDecimals.toString()
+  );
+  const decimalsToUse = marketDataDecimals > 8 ? 8 : marketDataDecimals;
   //neeed to get the wallet balance
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     const currentValue =
@@ -37,7 +41,7 @@ const Amount = ({
       <div className={`flex w-full items-center text-[10px] text-white/50 `}>
         <span className={``}>Amount</span>
         <span className={`ml-auto`}>
-          {hintText} {max.toFixed(8)}
+          {hintText} {max.toFixed(decimalsToUse)}
         </span>
         <button
           onClick={() => handleMax(max)}
