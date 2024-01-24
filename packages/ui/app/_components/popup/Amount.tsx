@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { MarketData } from '@ui/types/TokensDataMap';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 
 interface IAmount {
+  selectedMarketData: MarketData;
   handleInput: (val?: number) => void;
   amount?: number;
   hintText?: string;
@@ -12,6 +14,7 @@ interface IAmount {
   symbol: string;
 }
 const Amount = ({
+  selectedMarketData,
   handleInput,
   amount,
   hintText = 'Wallet Balance',
@@ -34,7 +37,7 @@ const Amount = ({
       <div className={`flex w-full items-center text-[10px] text-white/50 `}>
         <span className={``}>Amount</span>
         <span className={`ml-auto`}>
-          {hintText} {max.toFixed(2)}
+          {hintText} {max.toFixed(8)}
         </span>
         <button
           onClick={() => handleMax(max)}

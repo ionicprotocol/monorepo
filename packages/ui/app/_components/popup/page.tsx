@@ -1,6 +1,6 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import SliderComponent from './Slider';
 import Approved from './Approved';
 import Amount from './Amount';
@@ -80,20 +80,38 @@ const Popup = ({
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
-  const [amount, setAmount] = useState<number>();
-  const amountAsBInt = useMemo<string>(
-    () =>
-      amount
-        ? (
-            amount *
-            Math.pow(
-              10,
-              parseInt(selectedMarketData.underlyingDecimals.toString())
-            )
-          ).toString()
-        : '0',
-    [amount]
+  const [amount, setAmount] = useReducer(
+    (currentValue: number, value: number): number => {
+      const [_, decimals] = value.toString().split('.');
+      const marketDataDecimals = parseInt(
+        selectedMarketData.underlyingDecimals.toString()
+      );
+
+      if (
+        decimals &&
+        decimals.length >
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+      ) {
+        return currentValue;
+      }
+
+      return parseFloat(
+        value.toFixed(marketDataDecimals > 8 ? 8 : marketDataDecimals)
+      );
+    },
+    0
   );
+  const amountAsBInt = useMemo<string>(() => {
+    const marketDataDecimals = parseInt(
+      selectedMarketData.underlyingDecimals.toString()
+    );
+
+    return amount
+      ? (
+          amount * Math.pow(10, marketDataDecimals > 8 ? 8 : marketDataDecimals)
+        ).toString()
+      : '0';
+  }, [amount]);
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
   const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(
     selectedMarketData,
@@ -172,12 +190,12 @@ const Popup = ({
         (
           (utilizationPercentage / 100) *
           parseFloat(balanceData?.formatted ?? '0.0')
-        ).toFixed(4)
+        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
   };
 
-  const supplyAmount = async () => {
+  const supplyAmount = async (collateral: boolean = false) => {
     if (!isExecutingAction && currentSdk && address && amount && amount > 0) {
       setIsExecutingAction(true);
 
@@ -194,6 +212,15 @@ const Popup = ({
           const tx = await currentSdk.approve(
             selectedMarketData.cToken,
             selectedMarketData.underlyingToken
+          );
+
+          await tx.wait();
+        }
+
+        if (collateral) {
+          const tx = await currentSdk.enterMarkets(
+            selectedMarketData.cToken,
+            comptrollerAddress
           );
 
           await tx.wait();
@@ -234,12 +261,12 @@ const Popup = ({
       address &&
       amount &&
       amount > 0 &&
-      amount <= selectedMarketData.totalSupplyFiat
+      amount <= selectedMarketData.supplyBalanceNative
     ) {
       setIsExecutingAction(true);
 
       try {
-        if (selectedMarketData.totalSupplyFiat === amount) {
+        if (selectedMarketData.supplyBalanceNative === amount) {
           await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
@@ -409,7 +436,8 @@ const Popup = ({
               {/* ---------------------------------------------------------------------------- */}
               <div className={`min-w-full py-5 px-[6%] h-min `}>
                 <Amount
-                  handleInput={setAmount}
+                  selectedMarketData={selectedMarketData}
+                  handleInput={(val?: number) => setAmount(val ?? 0)}
                   amount={amount}
                   max={parseFloat(balanceData?.formatted ?? '0')}
                   symbol={balanceData?.symbol ?? ''}
@@ -441,9 +469,9 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyFiat.toFixed(4)} -{'>'}{' '}
+                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
                     {(
-                      selectedMarketData.totalSupplyFiat + (amount ?? 0)
+                      selectedMarketData.totalSupplyNative + (amount ?? 0)
                     ).toFixed(4)}
                     {/* this will be dynamic */}
                   </span>
@@ -473,7 +501,7 @@ const Popup = ({
                     className={`w-full rounded-md py-1 transition-colors ${
                       amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
                     } `}
-                    onClick={supplyAmount}
+                    onClick={() => supplyAmount()}
                   >
                     <ResultHandler
                       isLoading={isExecutingAction}
@@ -484,6 +512,22 @@ const Popup = ({
                       Supply {selectedMarketData.underlyingSymbol}
                     </ResultHandler>
                   </button>
+
+                  <button
+                    className={`w-full rounded-md py-1 transition-colors ${
+                      amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                    } `}
+                    onClick={() => supplyAmount(true)}
+                  >
+                    <ResultHandler
+                      isLoading={isExecutingAction}
+                      width="20"
+                      height="20"
+                      color="#fff"
+                    >
+                      Collateral {selectedMarketData.underlyingSymbol}
+                    </ResultHandler>
+                  </button>
                 </div>
                 {/* <Approved /> */}
               </div>
@@ -492,9 +536,12 @@ const Popup = ({
                 {/* SUPPLY-Withdraw section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
-                  handleInput={setAmount}
+                  selectedMarketData={selectedMarketData}
+                  handleInput={(val?: number) => setAmount(val ?? 0)}
                   amount={amount}
-                  max={selectedMarketData.supplyBalanceFiat}
+                  max={parseFloat(
+                    selectedMarketData.supplyBalanceNative.toString()
+                  )}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Withdraw"
                 />
@@ -507,9 +554,9 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyFiat.toFixed(4)} -{'>'}{' '}
+                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
                     {(
-                      selectedMarketData.totalSupplyFiat - (amount ?? 0)
+                      selectedMarketData.totalSupplyNative - (amount ?? 0)
                     ).toFixed(4)}
                     {/* this will be dynamic */}
                   </span>
@@ -544,7 +591,8 @@ const Popup = ({
                 {/* SUPPLY-borrow section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
-                  handleInput={setAmount}
+                  selectedMarketData={selectedMarketData}
+                  handleInput={(val?: number) => setAmount(val ?? 0)}
                   amount={amount}
                   max={maxBorrowAmount ?? 0}
                   symbol={balanceData?.symbol ?? ''}
@@ -595,7 +643,8 @@ const Popup = ({
                 {/* SUPPLY-repay section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
-                  handleInput={setAmount}
+                  selectedMarketData={selectedMarketData}
+                  handleInput={(val?: number) => setAmount(val ?? 0)}
                   amount={amount}
                   max={parseFloat(balanceData?.formatted ?? '0')}
                   symbol={balanceData?.symbol ?? ''}
