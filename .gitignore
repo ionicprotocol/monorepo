@@ -5,7 +5,7 @@
 !.yarn/sdks
 !.yarn/versions
 
-#!.yarn/cache
+!.yarn/cache
 .pnp.*
 node_modules*
 !/packages/bots/liquidator/.env
