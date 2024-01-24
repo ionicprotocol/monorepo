@@ -267,6 +267,7 @@ const Popup = ({
 
           await tx?.wait();
         } else {
+          console.log(amountAsBInt);
           const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             amountAsBInt as any
