@@ -2,8 +2,8 @@ import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export interface DebtCeilingPerCollateralType {
   asset: NativePricedIonicAsset;
@@ -23,7 +23,7 @@ export const useDebtCeilingForAssetForCollateral = ({
   poolChainId: number;
 }) => {
   const sdk = useSdk(poolChainId);
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
 
   return useQuery(
     [
@@ -38,7 +38,10 @@ export const useDebtCeilingForAssetForCollateral = ({
       if (!sdk || collaterals.length === 0 || !address) return null;
 
       const debtCeilingPerCollateral: DebtCeilingPerCollateralType[] = [];
-      const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
+      const comptroller = sdk.createComptroller(
+        comptrollerAddress,
+        sdk.provider
+      );
 
       await Promise.all(
         assets.map(async (asset) => {
@@ -59,17 +62,21 @@ export const useDebtCeilingForAssetForCollateral = ({
                       debtCeiling: -1
                     });
                   } else {
-                    const debtCeiling = await comptroller.callStatic.borrowCapForCollateral(
-                      asset.cToken,
-                      collateralAsset.cToken
-                    );
+                    const debtCeiling =
+                      await comptroller.callStatic.borrowCapForCollateral(
+                        asset.cToken,
+                        collateralAsset.cToken
+                      );
 
                     if (debtCeiling.gt(constants.Zero)) {
                       debtCeilingPerCollateral.push({
                         asset,
                         collateralAsset,
                         debtCeiling: Number(
-                          utils.formatUnits(debtCeiling, asset.underlyingDecimals)
+                          utils.formatUnits(
+                            debtCeiling,
+                            asset.underlyingDecimals
+                          )
                         )
                       });
                     }
@@ -77,7 +84,11 @@ export const useDebtCeilingForAssetForCollateral = ({
                 } catch (e) {
                   console.warn(
                     `Getting debt ceilings error: `,
-                    { cToken: asset.cToken, collateralAsset, comptrollerAddress },
+                    {
+                      cToken: asset.cToken,
+                      collateralAsset,
+                      comptrollerAddress
+                    },
                     e
                   );
                 }
@@ -90,7 +101,9 @@ export const useDebtCeilingForAssetForCollateral = ({
       return debtCeilingPerCollateral;
     },
     {
-      enabled: !!sdk && collaterals.length > 0 && !!address
+      cacheTime: Infinity,
+      enabled: !!sdk && collaterals.length > 0 && !!address,
+      staleTime: Infinity
     }
   );
 };

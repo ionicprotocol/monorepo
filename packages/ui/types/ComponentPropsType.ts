@@ -1,29 +1,19 @@
-import type { BoxProps, FlexProps } from '@chakra-ui/react';
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import type {
   NativePricedIonicAsset,
   NewPosition,
   OpenPosition,
-  SupportedChains,
   VaultData
 } from '@ionicprotocol/types';
 import type { QueryObserverResult } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import type { ReactNode } from 'react';
 
-import type {
-  ALL_NETWORKS,
-  LENDING_MODE_FILTERS,
-  LENDING_POOL_FILTERS,
-  SEARCH
-} from '@ui/constants/index';
 import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 
-export type PageLayoutProps = {
+export type FusePageLayoutProps = {
   children?: ReactNode;
 };
-
-export type ExtendedBoxProps = BoxProps & { glow?: boolean };
 
 export type RefetchMovingStatProps = Omit<CaptionedStatProps, 'stat'> & {
   fetch: () => Promise<string>;
@@ -45,7 +35,11 @@ export type MainAxisAlignment =
   | MainAxisAlignmentStrings
   | { base: MainAxisAlignmentStrings; md: MainAxisAlignmentStrings };
 
-export type CrossAxisAlignmentStrings = 'center' | 'flex-end' | 'flex-start' | 'stretch';
+export type CrossAxisAlignmentStrings =
+  | 'center'
+  | 'flex-end'
+  | 'flex-start'
+  | 'stretch';
 
 export type CrossAxisAlignment =
   | CrossAxisAlignmentStrings
@@ -54,27 +48,8 @@ export type CrossAxisAlignment =
       md: CrossAxisAlignmentStrings;
     };
 
-export type CenterProps = FlexProps & {
-  children: React.ReactNode;
-  expand?: boolean;
-};
-
-export type ColumnProps = FlexProps & {
-  children?: React.ReactNode;
-  crossAxisAlignment?: CrossAxisAlignment;
-  expand?: boolean;
-  mainAxisAlignment?: MainAxisAlignment;
-};
-
-export type RowProps = FlexProps & {
-  children?: React.ReactNode;
-  crossAxisAlignment?: CrossAxisAlignment;
-  expand?: boolean;
-  mainAxisAlignment?: MainAxisAlignment;
-};
-
 export type AssetsMapWithTokenDataReturn = {
-  assetsArrayWithTokenData: NativePricedIonicAssetWithTokenData[][] | null; // Ionic Asset with additional info about the token appended on
+  assetsArrayWithTokenData: NativePricedIonicAssetWithTokenData[][] | null; // Fuse Asset with additional info about the token appended on
   tokensDataMap: TokensDataHash; // hashmap of unique assets and their token data
 };
 
@@ -87,7 +62,8 @@ export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
 // interfaces
 
-export interface NativePricedIonicAssetWithTokenData extends NativePricedIonicAsset {
+export interface NativePricedIonicAssetWithTokenData
+  extends NativePricedIonicAsset {
   tokenData: TokenData;
 }
 
@@ -273,14 +249,20 @@ export type VaultsPerChainStatus = {
 
 export type PositionsPerChainStatus = {
   [chainId: string]: {
-    data?: { newPositions: NewPosition[]; openPositions: OpenPosition[] } | null | undefined;
+    data?:
+      | { newPositions: NewPosition[]; openPositions: OpenPosition[] }
+      | null
+      | undefined;
     error: Error | undefined;
     isLoading: boolean;
   };
 };
 
 export type AllRewardsPerChainStatus = {
-  [chainId: string]: Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[] | null | undefined;
+  [chainId: string]:
+    | Pick<FlywheelClaimableRewards, 'amount' | 'rewardToken'>[]
+    | null
+    | undefined;
 };
 
 export type RewardsPerChainProps = {
@@ -289,7 +271,10 @@ export type RewardsPerChainProps = {
     error: Error | undefined;
     isLoading: boolean;
     refetch: () => Promise<
-      QueryObserverResult<FlywheelClaimableRewards[] | null | undefined, unknown>
+      QueryObserverResult<
+        FlywheelClaimableRewards[] | null | undefined,
+        unknown
+      >
     >;
   };
 };
@@ -300,17 +285,15 @@ export type IRMToCurveData = {
   rates: UtilizationChartData[];
 };
 
-export type UtilizationChartData = { borrowRate: number; depositRate: number; utilization: number };
+export type UtilizationChartData = {
+  borrowRate: number;
+  depositRate: number;
+  utilization: number;
+};
 
 export type TxStep = {
-  description: string;
-  index: number;
-  status: string;
+  desc: string;
+  done: boolean;
   title: string;
   txHash?: string;
 };
-
-export type LendingPoolFilter = (typeof LENDING_POOL_FILTERS)[number];
-export type LendingModeFilter = (typeof LENDING_MODE_FILTERS)[number];
-export type NetworkFilter = SupportedChains | typeof ALL_NETWORKS;
-export type LendingFilter = LendingModeFilter | LendingPoolFilter | NetworkFilter | typeof SEARCH;

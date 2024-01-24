@@ -38,10 +38,15 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
 
         if (vault) {
           const _vaultInfo: VaultApy[] = await axios
-            .get(`/api/vaultApy?chainId=${chainId}&vaultAddress=${vaultAddress}`)
+            .get(
+              `/api/vaultApy?chainId=${chainId}&vaultAddress=${vaultAddress}`
+            )
             .then((response) => response.data)
             .catch((error) => {
-              console.error(`Unable to fetch vaults apy of chain \`${chainId}\``, error);
+              console.error(
+                `Unable to fetch vaults apy of chain \`${chainId}\``,
+                error
+              );
 
               return [];
             });
@@ -57,7 +62,8 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
           return _vaultInfo.map((info) => {
             const supplyApy = Number((Number(info.supplyApy) * 100).toFixed(2));
             const totalSupplyRated =
-              (Number(utils.formatUnits(info.totalSupply)) / Number(utils.formatUnits(maxSupply))) *
+              (Number(utils.formatUnits(info.totalSupply)) /
+                Number(utils.formatUnits(maxSupply))) *
               100;
 
             const totalSupplyUsd =
@@ -80,7 +86,9 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
       return null;
     },
     {
-      enabled: Object.keys(vaultsPerChain).length > 0
+      cacheTime: Infinity,
+      enabled: Object.keys(vaultsPerChain).length > 0,
+      staleTime: Infinity
     }
   );
 }

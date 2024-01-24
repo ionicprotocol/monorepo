@@ -27,7 +27,10 @@ export const fetchTokenData = async (
           address: asset.underlying,
           decimals: asset.decimals,
           logoURL: asset.symbol
-            ? config.iconServerURL + '/token/96x96/' + asset.symbol.toLowerCase() + '.png'
+            ? config.iconServerURL +
+              '/token/96x96/' +
+              asset.symbol.toLowerCase() +
+              '.png'
             : undefined,
           name: asset.name,
           originalSymbol: asset.originalSymbol,
@@ -45,7 +48,11 @@ export const fetchTokenData = async (
           chain: chainId
         })
         .catch((e) => {
-          console.warn(`Getting token data from api error: `, { addresses, chainId }, e);
+          console.warn(
+            `Getting token data from api error: `,
+            { addresses, chainId },
+            e
+          );
 
           return { data: [] };
         });
@@ -79,6 +86,6 @@ export const useTokenData = (address: string, chainId?: number) => {
         return null;
       }
     },
-    { enabled: !!chainId }
+    { cacheTime: Infinity, enabled: !!chainId, staleTime: Infinity }
   );
 };

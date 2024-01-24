@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
 import { aprDays } from '@ui/constants/index';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { getAnkrBNBContract } from '@ui/utils/contracts';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
@@ -47,7 +47,9 @@ export const useAnkrBNBApr = (isEnabled: boolean, poolChainId?: number) => {
       return null;
     },
     {
-      enabled: !!sdk && !!poolChainId && isEnabled
+      cacheTime: Infinity,
+      enabled: !!sdk && !!poolChainId && isEnabled,
+      staleTime: Infinity
     }
   );
 };

@@ -2,7 +2,7 @@ import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
@@ -10,7 +10,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const useTotalSupplyAPYs = (
-  assets?: Pick<
+  assets: Pick<
     MarketData,
     'cToken' | 'supplyRatePerBlock' | 'underlyingSymbol' | 'underlyingToken'
   >[],
@@ -20,9 +20,9 @@ export const useTotalSupplyAPYs = (
 ) => {
   const sdk = useSdk(chainId);
   const isEnabled = useMemo(() => {
-    return assets
-      ? !!assets.find((asset) => asset.underlyingSymbol === assetSymbols.ankrBNB)
-      : false;
+    return !!assets.find(
+      (asset) => asset.underlyingSymbol === assetSymbols.ankrBNB
+    );
   }, [assets]);
 
   const { data: ankrBNBApr } = useAnkrBNBApr(isEnabled, chainId);
@@ -31,7 +31,7 @@ export const useTotalSupplyAPYs = (
     [
       'useTotalSupplyAPYs',
       { chain: sdk?.chainId },
-      { assets: assets?.map((a) => a.cToken).sort() },
+      { assets: assets.map((a) => a.cToken).sort() },
       { rewards: allRewards ? Object.keys(allRewards).sort() : undefined },
       { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined },
       ankrBNBApr
@@ -39,12 +39,15 @@ export const useTotalSupplyAPYs = (
     async () => {
       if (!sdk || !assets || !chainId) return null;
 
-      const result: { [market: string]: { apy: number; totalApy: number } } = {};
+      const result: { [market: string]: { apy: number; totalApy: number } } =
+        {};
 
       for (const asset of assets) {
         const apy =
-          sdk.ratePerBlockToAPY(asset.supplyRatePerBlock, getBlockTimePerMinuteByChainId(chainId)) /
-          100;
+          sdk.ratePerBlockToAPY(
+            asset.supplyRatePerBlock,
+            getBlockTimePerMinuteByChainId(chainId)
+          ) / 100;
 
         let marketTotalAPY = apy;
 
@@ -70,6 +73,10 @@ export const useTotalSupplyAPYs = (
 
       return result;
     },
-    { enabled: !!sdk && !!assets && !!chainId }
+    {
+      cacheTime: Infinity,
+      enabled: !!sdk && !!assets && !!chainId,
+      staleTime: Infinity
+    }
   );
 };

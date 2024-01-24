@@ -1,20 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
-export function useChartData(market?: string, poolChainId?: number) {
+export function useChartData(market: string, poolChainId: number) {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
     ['useChartData', market, sdk?.chainId],
     async () => {
-      if (sdk && market && poolChainId) {
-        const interestRateModel = await sdk.getInterestRateModel(market).catch((e) => {
-          console.warn(`Getting intereste rate modal error: `, { market, poolChainId }, e);
+      if (sdk) {
+        const interestRateModel = await sdk
+          .getInterestRateModel(market)
+          .catch((e) => {
+            console.warn(
+              `Getting intereste rate modal error: `,
+              { market, poolChainId },
+              e
+            );
 
-          return null;
-        });
+            return null;
+          });
 
         if (interestRateModel === null) {
           return { rates: null };
@@ -26,7 +32,9 @@ export function useChartData(market?: string, poolChainId?: number) {
       }
     },
     {
-      enabled: !!sdk && !!market && !!poolChainId
+      cacheTime: Infinity,
+      enabled: !!sdk && !!market,
+      staleTime: Infinity
     }
   );
 }

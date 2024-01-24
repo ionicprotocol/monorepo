@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 export function useAssetChartData(
@@ -13,7 +13,13 @@ export function useAssetChartData(
   const sdk = useSdk(poolChainId);
 
   return useQuery(
-    ['useAssetChartData', interestRateModelAddress, adminFee, reserveFactor, sdk?.chainId],
+    [
+      'useAssetChartData',
+      interestRateModelAddress,
+      adminFee,
+      reserveFactor,
+      sdk?.chainId
+    ],
     async () => {
       if (sdk) {
         const interestRateModel = await sdk
@@ -21,7 +27,12 @@ export function useAssetChartData(
           .catch((e) => {
             console.warn(
               `Identifying interest rate model error: `,
-              { adminFee, interestRateModelAddress, poolChainId, reserveFactor },
+              {
+                adminFee,
+                interestRateModelAddress,
+                poolChainId,
+                reserveFactor
+              },
               e
             );
 
@@ -42,7 +53,7 @@ export function useAssetChartData(
           // adminFee * 1e16,
           utils.parseEther((adminFee / 100).toString()),
 
-          // hardcoded 10% Ionic fee
+          // hardcoded 10% Fuse fee
           utils.parseEther((10 / 100).toString()),
           sdk.provider
         );
@@ -53,12 +64,14 @@ export function useAssetChartData(
       }
     },
     {
+      cacheTime: Infinity,
       enabled:
         !!interestRateModelAddress &&
         !!adminFee.toString() &&
         !!reserveFactor.toString() &&
         !!sdk &&
-        !!poolChainId
+        !!poolChainId,
+      staleTime: Infinity
     }
   );
 }

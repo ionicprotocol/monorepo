@@ -1,22 +1,27 @@
-import type { AssetPrice, AssetTotalApy, AssetTvl, ChartData } from '@ionicprotocol/types';
+import type {
+  AssetPrice,
+  AssetTotalApy,
+  AssetTvl,
+  ChartData
+} from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
 
-import { BORROW_APY, PRICE, SUPPLY_APY, TVL } from '@ui/constants/index';
+import { APY, PRICE, TVL } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export function useHistoryData(
   mode: string,
-  underlyingAddress?: string,
-  cTokenAddress?: string,
-  chainId?: number,
-  milliSeconds?: number
+  underlyingAddress: string,
+  cTokenAddress: string,
+  chainId: number,
+  milliSeconds: number
 ) {
   const { data: usdPrices } = useAllUsdPrices();
 
   const usdPrice = useMemo(() => {
-    if (chainId && usdPrices && usdPrices[chainId.toString()]) {
+    if (usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
     } else {
       return undefined;
@@ -24,9 +29,23 @@ export function useHistoryData(
   }, [usdPrices, chainId]);
 
   return useQuery<ChartData[] | null>(
-    ['useHistoryData', mode, chainId, underlyingAddress, cTokenAddress, milliSeconds, usdPrice],
+    [
+      'useHistoryData',
+      mode,
+      chainId,
+      underlyingAddress,
+      cTokenAddress,
+      milliSeconds,
+      usdPrice
+    ],
     async () => {
-      if (mode && chainId && underlyingAddress && cTokenAddress && milliSeconds) {
+      if (
+        mode &&
+        chainId &&
+        underlyingAddress &&
+        cTokenAddress &&
+        milliSeconds
+      ) {
         try {
           const info: ChartData[] = [];
 
@@ -53,7 +72,7 @@ export function useHistoryData(
                 tvl: data.tvlNative * usdPrice
               });
             });
-          } else if (mode === SUPPLY_APY || mode === BORROW_APY) {
+          } else if (mode === APY) {
             const { data: apys } = await axios.get(
               `/api/assetTotalApy?chainId=${chainId}&cTokenAddress=${cTokenAddress}&milliSeconds=${
                 Date.now() - milliSeconds
@@ -61,24 +80,20 @@ export function useHistoryData(
             );
 
             apys.map((data: AssetTotalApy) => {
-              const { createdAt, borrowApy, ...rest } = data;
-              if (mode === SUPPLY_APY) {
-                info.push({
-                  createdAt,
-                  ...rest
-                });
-              } else {
-                info.push({
-                  borrowApy: borrowApy ?? 0,
-                  createdAt
-                });
-              }
+              const { createdAt, ...rest } = data;
+              info.push({
+                createdAt,
+                ...rest
+              });
             });
           }
 
           return info;
         } catch (error) {
-          console.error(`Unable to fetch historical ${mode} data of chain \`${chainId}\``, error);
+          console.error(
+            `Unable to fetch historical ${mode} data of chain \`${chainId}\``,
+            error
+          );
 
           return [];
         }
@@ -87,7 +102,14 @@ export function useHistoryData(
       }
     },
     {
-      enabled: !!mode && !!chainId && !!underlyingAddress && !!cTokenAddress && !!milliSeconds
+      cacheTime: Infinity,
+      enabled:
+        !!mode &&
+        !!chainId &&
+        !!underlyingAddress &&
+        !!cTokenAddress &&
+        !!milliSeconds,
+      staleTime: Infinity
     }
   );
 }

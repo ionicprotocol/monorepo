@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useRewardsInfoForMarket = (
   flywheelAddress?: string,
@@ -29,7 +29,9 @@ export const useRewardsInfoForMarket = (
       }
     },
     {
-      enabled: !!flywheelAddress && !!marketAddress && !!sdk
+      cacheTime: Infinity,
+      enabled: !!flywheelAddress && !!marketAddress && !!sdk,
+      staleTime: Infinity
     }
   );
 };

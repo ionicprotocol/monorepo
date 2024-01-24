@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -22,7 +22,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
   amount,
   poolChainId
 }: UseUpdatedUserAssetsResult<T>) => {
-  const { currentSdk, currentChain } = useMultiIonic();
+  const { currentSdk, currentChain } = useMultiMidas();
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[poolChainId.toString()]) {
@@ -49,7 +49,11 @@ const useUpdatedUserAssets = <T extends MarketData>({
       const resAssets = await currentSdk
         .getUpdatedAssets(mode, index, assets, amount)
         .catch((e) => {
-          console.warn(`Updated assets error: `, { amount, assets, index, mode }, e);
+          console.warn(
+            `Updated assets error: `,
+            { amount, assets, index, mode },
+            e
+          );
 
           return [];
         });

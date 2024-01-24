@@ -1,17 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
 import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-export function useFlywheelRewardsForPositions(pools?: string[], chainIds?: number[]) {
-  const { getSdk } = useMultiIonic();
+export function useFlywheelRewardsForPositions(
+  pools?: string[],
+  chainIds?: number[]
+) {
+  const { getSdk } = useMultiMidas();
 
   return useQuery(
     ['useFlywheelRewardsForPositions', pools, chainIds],
     async () => {
-      if (chainIds && pools && chainIds.length > 0 && chainIds.length === pools.length) {
+      if (
+        chainIds &&
+        pools &&
+        chainIds.length > 0 &&
+        chainIds.length === pools.length
+      ) {
         return await Promise.all(
           chainIds.map(async (chainId, i) => {
             const sdk = getSdk(chainId);
@@ -27,12 +35,14 @@ export function useFlywheelRewardsForPositions(pools?: string[], chainIds?: numb
       return null;
     },
     {
+      cacheTime: Infinity,
       enabled:
         !!pools &&
         !!chainIds &&
         pools.length > 0 &&
         chainIds.length > 0 &&
-        pools.length === chainIds.length
+        pools.length === chainIds.length,
+      staleTime: Infinity
     }
   );
 }
@@ -42,7 +52,10 @@ export function useRewardsForPositions(
   chainIds: number[],
   pools: string[]
 ) {
-  const { data: flywheelRewards } = useFlywheelRewardsForPositions(pools, chainIds);
+  const { data: flywheelRewards } = useFlywheelRewardsForPositions(
+    pools,
+    chainIds
+  );
 
   return useQuery<UseRewardsData>(
     ['useRewardsForMarket', chainIds, assets, flywheelRewards],
@@ -71,7 +84,9 @@ export function useRewardsForPositions(
       return {};
     },
     {
-      enabled: !!assets && !!pools && !!chainIds
+      cacheTime: Infinity,
+      enabled: !!assets && !!pools && !!chainIds,
+      staleTime: Infinity
     }
   );
 }

@@ -38,16 +38,21 @@ export const useBorrowLimitTotal = (
 
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
-        if (options?.ignoreIsEnabledCheckFor === asset.cToken || asset.membership) {
+        if (
+          options?.ignoreIsEnabledCheckFor === asset.cToken ||
+          asset.membership
+        ) {
           _maxBorrow +=
             asset.supplyBalanceNative *
-            parseFloat(utils.formatUnits(asset.collateralFactor, DEFAULT_DECIMALS)) *
+            parseFloat(
+              utils.formatUnits(asset.collateralFactor, DEFAULT_DECIMALS)
+            ) *
             usdPrice;
         }
       }
 
       return _maxBorrow;
     },
-    { enabled: !!usdPrice }
+    { cacheTime: Infinity, enabled: !!usdPrice, staleTime: Infinity }
   );
 };

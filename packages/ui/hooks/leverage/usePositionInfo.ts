@@ -3,10 +3,14 @@ import type { PositionInfo } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const getPositionInfo = async (position: string, supplyApy: BigNumber, sdk: IonicSdk) => {
+export const getPositionInfo = async (
+  position: string,
+  supplyApy: BigNumber,
+  sdk: IonicSdk
+) => {
   const info = await sdk.getPositionInfo(position, supplyApy).catch((e) => {
     console.warn(
       `Getting levered position info error: `,
@@ -20,7 +24,11 @@ export const getPositionInfo = async (position: string, supplyApy: BigNumber, sd
   return info;
 };
 
-export function usePositionInfo(position: string, supplyApy?: BigNumber, chainId?: number) {
+export function usePositionInfo(
+  position: string,
+  supplyApy?: BigNumber,
+  chainId?: number
+) {
   const sdk = useSdk(chainId);
 
   return useQuery(
@@ -33,7 +41,9 @@ export function usePositionInfo(position: string, supplyApy?: BigNumber, chainId
       }
     },
     {
-      enabled: !!sdk && !!position && !!supplyApy && !!chainId
+      cacheTime: Infinity,
+      enabled: !!sdk && !!position && !!supplyApy && !!chainId,
+      staleTime: Infinity
     }
   );
 }
@@ -43,7 +53,7 @@ export function usePositionsInfo(
   totalApys?: (BigNumber | null)[],
   chainIds?: number[]
 ) {
-  const { getSdk } = useMultiIonic();
+  const { getSdk } = useMultiMidas();
 
   return useQuery(
     ['usePositionsInfo', positions, totalApys, chainIds],
@@ -73,7 +83,9 @@ export function usePositionsInfo(
       }
     },
     {
-      enabled: !!positions && !!totalApys && !!chainIds
+      cacheTime: Infinity,
+      enabled: !!positions && !!totalApys && !!chainIds,
+      staleTime: Infinity
     }
   );
 }

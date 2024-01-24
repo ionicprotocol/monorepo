@@ -2,22 +2,30 @@ import type { SupportedChains } from '@ionicprotocol/types';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import type { Err, PositionsPerChainStatus } from '@ui/types/ComponentPropsType';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import type {
+  Err,
+  PositionsPerChainStatus
+} from '@ui/types/ComponentPropsType';
 
 export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
-  const { address, getSdk } = useMultiIonic();
+  const { address, getSdk } = useMultiMidas();
 
   const positionQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
+        cacheTime: Infinity,
         enabled: !!chainId && !!address,
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
 
           if (chainId && sdk && address) {
             return await sdk.getAllLeveredPositions(address).catch((e) => {
-              console.warn(`Getting all levered positions error: `, { address, chainId }, e);
+              console.warn(
+                `Getting all levered positions error: `,
+                { address, chainId },
+                e
+              );
 
               return null;
             });
@@ -25,7 +33,8 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        queryKey: ['usePositionsPerChain', chainId, address]
+        queryKey: ['usePositionsPerChain', chainId, address],
+        staleTime: Infinity
       };
     })
   });

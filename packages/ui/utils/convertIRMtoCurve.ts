@@ -6,7 +6,7 @@ import type { UtilizationChartData } from '@ui/types/ComponentPropsType';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const convertIRMtoCurve = (
-  ionicSdk: IonicSdk,
+  midasSdk: IonicSdk,
   interestRateModel: InterestRateModel,
   chainId: number
 ) => {
@@ -16,16 +16,20 @@ export const convertIRMtoCurve = (
   for (let i = 0; i <= 100; i++) {
     const asEther = utils.parseUnits((i / 100).toString());
 
-    const supplyAPY = ionicSdk.ratePerBlockToAPY(
+    const supplyAPY = midasSdk.ratePerBlockToAPY(
       interestRateModel.getSupplyRate(asEther),
       blocksPerMin
     );
-    const borrowAPY = ionicSdk.ratePerBlockToAPY(
+    const borrowAPY = midasSdk.ratePerBlockToAPY(
       interestRateModel.getBorrowRate(asEther),
       blocksPerMin
     );
 
-    rates.push({ borrowRate: borrowAPY, depositRate: supplyAPY, utilization: i });
+    rates.push({
+      borrowRate: borrowAPY,
+      depositRate: supplyAPY,
+      utilization: i
+    });
   }
 
   return { rates };

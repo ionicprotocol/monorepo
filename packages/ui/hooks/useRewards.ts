@@ -5,32 +5,44 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { utils } from 'ethers';
 
-import type { RewardsResponse } from '../pages/api/rewards';
+// import type { RewardsResponse } from '../pages/api/rewards';
+type RewardsResponse = any;
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
-import { usePoolData } from '@ui/hooks/usePoolData';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseRewardsProps {
-  chainId?: number;
-  poolId?: string;
+  chainId: number;
+  poolId: string;
 }
 
 export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
-export const fetchFlywheelRewards = async (comptroller: string, sdk: IonicSdk) => {
+export const fetchFlywheelRewards = async (
+  comptroller: string,
+  sdk: IonicSdk
+) => {
   let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
   let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
 
   [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-    sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
-      console.error('Unable to get onchain Flywheel Rewards with APY', exception);
-      return [];
-    }),
+    sdk
+      .getFlywheelMarketRewardsByPoolWithAPR(comptroller)
+      .catch((exception) => {
+        console.error(
+          'Unable to get onchain Flywheel Rewards with APY',
+          exception
+        );
+        return [];
+      }),
     sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
-      console.error('Unable to get onchain Flywheel Rewards without APY', error);
+      console.error(
+        'Unable to get onchain Flywheel Rewards without APY',
+        error
+      );
       return [];
     })
   ]);
@@ -51,7 +63,9 @@ export function useFlywheelRewards(comptroller?: string, chainId?: number) {
       return null;
     },
     {
-      enabled: !!comptroller && !!chainId
+      cacheTime: Infinity,
+      enabled: !!comptroller && !!chainId,
+      staleTime: Infinity
     }
   );
 }
@@ -64,7 +78,9 @@ export const fetchRewards = async (
 ) => {
   try {
     const allFlywheelRewards = flywheelRewardsWithoutAPY.map((fwReward) => {
-      const rewardWithAPY = flywheelRewardsWithAPY.find((r) => r.market === fwReward.market);
+      const rewardWithAPY = flywheelRewardsWithAPY.find(
+        (r) => r.market === fwReward.market
+      );
       if (rewardWithAPY) return rewardWithAPY;
       return fwReward;
     });
@@ -76,10 +92,15 @@ export const fetchRewards = async (
         let pluginRewards: RewardsResponse = [];
         if (asset.plugin) {
           pluginRewards = await axios
-            .get(`/api/rewards?chainId=${chainId}&pluginAddress=${asset.plugin}`)
+            .get(
+              `/api/rewards?chainId=${chainId}&pluginAddress=${asset.plugin}`
+            )
             .then((response) => response.data)
             .catch((error) => {
-              console.error(`Unable to fetch reward for ${asset.plugin}`, error);
+              console.error(
+                `Unable to fetch reward for ${asset.plugin}`,
+                error
+              );
               return [];
             });
         }
@@ -90,12 +111,16 @@ export const fetchRewards = async (
         const allRewards = [...pluginRewards];
         if (flywheelRewards) {
           const flywheelsInPluginResponse = pluginRewards
-            .map((pluginReward) =>
-              'flywheel' in pluginReward ? pluginReward.flywheel.toLowerCase() : null
+            .map((pluginReward: any) =>
+              'flywheel' in pluginReward
+                ? pluginReward.flywheel.toLowerCase()
+                : null
             )
-            .filter((f) => !!f) as string[];
+            .filter((f: any) => !!f) as string[];
           for (const info of flywheelRewards.rewardsInfo) {
-            if (!flywheelsInPluginResponse.includes(info.flywheel.toLowerCase())) {
+            if (
+              !flywheelsInPluginResponse.includes(info.flywheel.toLowerCase())
+            ) {
               allRewards.push({
                 apy: info.formattedAPR
                   ? parseFloat(utils.formatUnits(info.formattedAPR, 18))
@@ -120,8 +145,11 @@ export const fetchRewards = async (
 };
 
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
-  const { data: poolData } = usePoolData(poolId, chainId);
-  const { data: flywheelRewards } = useFlywheelRewards(poolData?.comptroller, chainId);
+  const { data: poolData } = useFusePoolData(poolId, Number(chainId));
+  const { data: flywheelRewards } = useFlywheelRewards(
+    poolData?.comptroller,
+    chainId
+  );
 
   return useQuery<UseRewardsData>(
     [
@@ -143,7 +171,9 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
       return {};
     },
     {
-      enabled: !!poolData && !!flywheelRewards
+      cacheTime: Infinity,
+      enabled: !!poolData && !!flywheelRewards,
+      staleTime: Infinity
     }
   );
 }
@@ -174,7 +204,9 @@ export function useRewardsForMarket({
       return {};
     },
     {
-      enabled: !!asset && !!poolAddress
+      cacheTime: Infinity,
+      enabled: !!asset && !!poolAddress,
+      staleTime: Infinity
     }
   );
 }

@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const useHealthFactor = (pool?: string, chainId?: number) => {
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
   const sdk = useSdk(chainId);
 
   return useQuery(

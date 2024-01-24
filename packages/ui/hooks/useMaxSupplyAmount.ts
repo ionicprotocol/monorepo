@@ -3,17 +3,20 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
-import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export function useMaxSupplyAmount(
-  asset: Pick<NativePricedIonicAsset, 'cToken' | 'underlyingDecimals' | 'underlyingToken'>,
+  asset: Pick<
+    NativePricedIonicAsset,
+    'cToken' | 'underlyingDecimals' | 'underlyingToken'
+  >,
   comptrollerAddress: string,
   chainId: number
 ) {
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
   const sdk = useSdk(chainId);
   const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
     comptrollerAddress,
@@ -35,7 +38,11 @@ export function useMaxSupplyAmount(
     async () => {
       if (sdk && address && supplyCapsDataForAsset) {
         try {
-          const tokenBalance = await fetchTokenBalance(asset.underlyingToken, sdk, address);
+          const tokenBalance = await fetchTokenBalance(
+            asset.underlyingToken,
+            sdk,
+            address
+          );
 
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isWhitelisted] = await Promise.all([
@@ -47,7 +54,9 @@ export function useMaxSupplyAmount(
 
           // if address isn't in supply cap whitelist and asset has supply cap
           if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
-            const availableCap = supplyCap.sub(supplyCapsDataForAsset.nonWhitelistedTotalSupply);
+            const availableCap = supplyCap.sub(
+              supplyCapsDataForAsset.nonWhitelistedTotalSupply
+            );
 
             if (availableCap.lte(tokenBalance)) {
               bigNumber = availableCap;
@@ -60,7 +69,9 @@ export function useMaxSupplyAmount(
 
           return {
             bigNumber: bigNumber,
-            number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals))
+            number: Number(
+              utils.formatUnits(bigNumber, asset.underlyingDecimals)
+            )
           };
         } catch (e) {
           console.warn(
@@ -76,7 +87,9 @@ export function useMaxSupplyAmount(
       }
     },
     {
-      enabled: !!address && !!asset && !!sdk && !!comptrollerAddress
+      cacheTime: Infinity,
+      enabled: !!address && !!asset && !!sdk && !!comptrollerAddress,
+      staleTime: Infinity
     }
   );
 }

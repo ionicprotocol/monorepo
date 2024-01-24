@@ -1,7 +1,7 @@
 import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { getAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
@@ -17,7 +17,7 @@ export const usePositionsTotalSupplyApy = (
   allRewards?: UseRewardsData,
   assetInfos?: UseAssetsData
 ) => {
-  const { getSdk } = useMultiIonic();
+  const { getSdk } = useMultiMidas();
 
   return useQuery(
     [
@@ -29,7 +29,8 @@ export const usePositionsTotalSupplyApy = (
     ],
     async () => {
       if (assets && chainIds && chainIds.length > 0) {
-        const result: { [market: string]: { apy: number; totalApy: number } } = {};
+        const result: { [market: string]: { apy: number; totalApy: number } } =
+          {};
 
         await Promise.all(
           chainIds.map(async (chainId, i) => {
@@ -46,7 +47,10 @@ export const usePositionsTotalSupplyApy = (
 
               let marketTotalAPY = apy;
 
-              if (asset.underlyingSymbol === assetSymbols.ankrBNB && ankrBNBApr) {
+              if (
+                asset.underlyingSymbol === assetSymbols.ankrBNB &&
+                ankrBNBApr
+              ) {
                 marketTotalAPY += Number(ankrBNBApr) / 100;
               }
 
@@ -57,10 +61,15 @@ export const usePositionsTotalSupplyApy = (
                 );
               }
 
-              if (assetInfos && assetInfos[asset.underlyingToken.toLowerCase()]) {
-                assetInfos[asset.underlyingToken.toLowerCase()].map((reward) => {
-                  if (reward.apy) marketTotalAPY += reward.apy;
-                });
+              if (
+                assetInfos &&
+                assetInfos[asset.underlyingToken.toLowerCase()]
+              ) {
+                assetInfos[asset.underlyingToken.toLowerCase()].map(
+                  (reward) => {
+                    if (reward.apy) marketTotalAPY += reward.apy;
+                  }
+                );
               }
 
               result[asset.cToken] = { apy, totalApy: marketTotalAPY };
@@ -73,6 +82,10 @@ export const usePositionsTotalSupplyApy = (
 
       return null;
     },
-    { enabled: !!assets && !!chainIds }
+    {
+      cacheTime: Infinity,
+      enabled: !!assets && !!chainIds,
+      staleTime: Infinity
+    }
   );
 };

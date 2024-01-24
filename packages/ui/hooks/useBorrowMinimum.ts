@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
-  const { currentSdk } = useMultiIonic();
+  const { currentSdk } = useMultiMidas();
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[poolChainId.toString()]) {
@@ -21,7 +21,7 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
     [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],
     async () => {
       if (currentSdk) {
-        return await currentSdk.contracts.FeeDistributor.callStatic
+        return await currentSdk.contracts.FuseFeeDistributor.callStatic
           .getMinBorrowEth(asset.cToken)
           .catch((e) => {
             console.warn(
@@ -37,7 +37,9 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
       }
     },
     {
-      enabled: !!currentSdk
+      cacheTime: Infinity,
+      enabled: !!currentSdk,
+      staleTime: Infinity
     }
   );
 
