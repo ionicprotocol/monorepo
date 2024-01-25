@@ -80,13 +80,11 @@ const Popup = ({
   const router = useRouter();
   const [amount, setAmount] = useReducer(
     (currentValue: number, value: number): number => {
-      const [_, decimals] = value.toString().split('.');
       const marketDataDecimals = parseInt(
         selectedMarketData.underlyingDecimals.toString()
       );
-      const decimalsToUse = marketDataDecimals > 8 ? 8 : marketDataDecimals;
 
-      return parseFloat(value.toFixed(decimalsToUse));
+      return parseFloat(value.toFixed(marketDataDecimals));
     },
     0
   );
