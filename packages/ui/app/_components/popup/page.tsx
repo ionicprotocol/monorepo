@@ -302,7 +302,7 @@ const Popup = ({
       amount &&
       amount > 0 &&
       minBorrowAmount &&
-      amount > parseFloat(minBorrowAmount.minBorrowNative?.toString() ?? '0') &&
+      amount > (minBorrowAmount?.minBorrowUSD ?? 0) &&
       maxBorrowAmount &&
       amount <= maxBorrowAmount.number
     ) {
@@ -642,10 +642,8 @@ const Popup = ({
                     className={`w-full rounded-md py-1 transition-colors ${
                       amount &&
                       amount > 0 &&
-                      amount >
-                        parseFloat(
-                          minBorrowAmount.minBorrowNative?.toString() ?? '0'
-                        ) &&
+                      minBorrowAmount &&
+                      amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
                       maxBorrowAmount &&
                       amount <= maxBorrowAmount.number
                         ? 'bg-accent'
