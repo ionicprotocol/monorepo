@@ -622,7 +622,7 @@ const Popup = ({
                 >
                   <span className={``}>MAX BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {maxBorrowAmount?.number?.toFixed(2) ?? '0.00'}
+                    {maxBorrowAmount?.number?.toFixed(4) ?? '0.00'}
                     {/* this will be dynamic */}
                   </span>
                 </div>
