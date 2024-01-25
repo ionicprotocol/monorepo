@@ -65,7 +65,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className="dark"
+    >
       <body className={'p-4 pt-12 scrollbar-hide font-inter'}>
         <WagmiConfig client={wagmiConfig}>
           <RainbowKitProvider
