@@ -50,6 +50,7 @@ LINEA = "true"
 NEON = "true"
 IS_SENTRY_ENABLED = "false"
 IS_PRODUCTION = "false"
+NODE_ENV = "production"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -63,6 +64,7 @@ LINEA = "true"
 NEON = "true"
 IS_SENTRY_ENABLED = "true"
 IS_PRODUCTION = "true"
+NODE_ENV = "production"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"
