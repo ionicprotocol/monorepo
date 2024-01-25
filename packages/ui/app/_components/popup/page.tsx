@@ -389,15 +389,6 @@ const Popup = ({
     setIsExecutingAction(false);
   };
 
-  const humanlyReadableBalance = (
-    val: BigNumberish,
-    decimalsAfterConversion: number = 4
-  ): string => {
-    return parseFloat(
-      formatUnits(val, selectedMarketData.underlyingDecimals)
-    ).toFixed(decimalsAfterConversion);
-  };
-
   // console.log(supplyUtilization);
   // console.log(amount);
 
@@ -474,10 +465,15 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.liquidityNative.toFixed(4)} -{'> '}
+                    {selectedMarketData.liquidityNative.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}{' '}
+                    -{'> '}
                     {(
                       selectedMarketData.liquidityNative + (amount ?? 0)
-                    ).toFixed(4)}
+                    ).toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -559,10 +555,15 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.liquidityNative.toFixed(4)} -{'> '}
+                    {selectedMarketData.liquidityNative.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}{' '}
+                    -{'> '}
                     {(
                       selectedMarketData.liquidityNative - (amount ?? 0)
-                    ).toFixed(4)}
+                    ).toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -611,8 +612,9 @@ const Popup = ({
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {humanlyReadableBalance(
-                      minBorrowAmount?.minBorrowAsset ?? '0'
+                    {formatUnits(
+                      minBorrowAmount?.minBorrowAsset ?? '0',
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
                     )}
                     {/* this will be dynamic */}
                   </span>
@@ -622,7 +624,9 @@ const Popup = ({
                 >
                   <span className={``}>MAX BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {maxBorrowAmount?.number?.toFixed(4) ?? '0.00'}
+                    {maxBorrowAmount?.number?.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    ) ?? '0.00'}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -676,7 +680,10 @@ const Popup = ({
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
                   <span className={`font-bold pl-2`}>
-                    ${selectedMarketData.borrowBalanceFiat.toFixed(2) ?? '0.00'}
+                    $
+                    {selectedMarketData.borrowBalanceFiat.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    ) ?? '0.00'}
                     {/* this will be dynamic */}
                   </span>
                 </div>
