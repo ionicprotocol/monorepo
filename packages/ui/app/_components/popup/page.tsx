@@ -18,11 +18,14 @@ import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useQueryClient } from '@tanstack/react-query';
 import ResultHandler from '../ResultHandler';
-import { BigNumber, constants } from 'ethers';
+import { BigNumber, BigNumberish, constants, ethers } from 'ethers';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import { fetchBalance } from 'wagmi/actions';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { formatUnits } from 'ethers/lib/utils.js';
 
 interface IPopup {
   mode?: string;
@@ -46,22 +49,6 @@ const Popup = ({
   const { data: balanceData } = useBalance({
     address: (address as any) ?? `0x0`,
     token: selectedMarketData.underlyingToken as any
-  });
-  const { data: borrowLimitTotal } = useBorrowLimitTotal(
-    [selectedMarketData],
-    chainId
-  );
-  const { data: borrowLimit2 } = useBorrowLimitMarket(
-    selectedMarketData,
-    [selectedMarketData],
-    chainId,
-    comptrollerAddress
-  );
-  const { data: fundedInfo } = useAllFundedInfo();
-  const { data: marketRewards } = useRewardsForMarket({
-    asset: selectedMarketData,
-    poolAddress: comptrollerAddress,
-    chainId
   });
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
@@ -120,10 +107,6 @@ const Popup = ({
   const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(
     selectedMarketData,
     chainId
-  );
-  const maxWidthdrawAmountAsFloat = useMemo<number>(
-    () => (maxWithdrawAmount ? parseFloat(maxWithdrawAmount.toString()) : 0),
-    [maxWithdrawAmount]
   );
   const { data: maxBorrowAmount } = useMaxBorrowAmount(
     selectedMarketData,
@@ -406,6 +389,15 @@ const Popup = ({
     setIsExecutingAction(false);
   };
 
+  const humanlyReadableBalance = (
+    val: BigNumberish,
+    decimalsAfterConversion: number = 4
+  ): string => {
+    return parseFloat(
+      formatUnits(val, selectedMarketData.underlyingDecimals)
+    ).toFixed(decimalsAfterConversion);
+  };
+
   // console.log(supplyUtilization);
   // console.log(amount);
 
@@ -482,10 +474,10 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    ${selectedMarketData.liquidityFiat.toFixed(2)} -{'>'} $
-                    {(selectedMarketData.liquidityFiat + (amount ?? 0)).toFixed(
-                      2
-                    )}
+                    {selectedMarketData.liquidityNative.toFixed(4)} -{'> '}
+                    {(
+                      selectedMarketData.liquidityNative + (amount ?? 0)
+                    ).toFixed(4)}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -567,10 +559,10 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    ${selectedMarketData.liquidityFiat.toFixed(2)} -{'>'} $
-                    {(selectedMarketData.liquidityFiat - (amount ?? 0)).toFixed(
-                      2
-                    )}
+                    {selectedMarketData.liquidityNative.toFixed(4)} -{'> '}
+                    {(
+                      selectedMarketData.liquidityNative - (amount ?? 0)
+                    ).toFixed(4)}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -619,7 +611,9 @@ const Popup = ({
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    ${minBorrowAmount?.minBorrowUSD?.toFixed(2)}
+                    {humanlyReadableBalance(
+                      minBorrowAmount?.minBorrowAsset ?? '0'
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -628,7 +622,7 @@ const Popup = ({
                 >
                   <span className={``}>MAX BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    ${maxBorrowAmount?.number?.toFixed(2)}
+                    {maxBorrowAmount?.number?.toFixed(2) ?? '0.00'}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -682,7 +676,7 @@ const Popup = ({
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
                   <span className={`font-bold pl-2`}>
-                    ${selectedMarketData.borrowBalanceFiat.toFixed(2)}
+                    ${selectedMarketData.borrowBalanceFiat.toFixed(2) ?? '0.00'}
                     {/* this will be dynamic */}
                   </span>
                 </div>
