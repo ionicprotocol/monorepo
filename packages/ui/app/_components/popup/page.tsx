@@ -130,7 +130,6 @@ const Popup = ({
     comptrollerAddress,
     chainId
   );
-  console.log(maxBorrowAmount);
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
@@ -616,9 +615,18 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
                 >
-                  <span className={``}>BORROWING LIMIT</span>
+                  <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {borrowLimitTotal?.toFixed(2)}
+                    {minBorrowAmount?.minBorrowUSD?.toFixed(2)}
+                    {/* this will be dynamic */}
+                  </span>
+                </div>
+                <div
+                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                >
+                  <span className={``}>MAX BORROW</span>
+                  <span className={`font-bold pl-2`}>
+                    {maxBorrowAmount?.number?.toFixed(2)}
                     {/* this will be dynamic */}
                   </span>
                 </div>
