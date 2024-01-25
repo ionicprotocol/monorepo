@@ -40,7 +40,7 @@ const Popup = ({
   comptrollerAddress
 }: IPopup) => {
   // console.log(mode);
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address } = useMultiMidas();
   const chainId = useChainId();
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,
@@ -99,10 +99,6 @@ const Popup = ({
     [amount]
   );
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
-  const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(
-    selectedMarketData,
-    chainId
-  );
   const { data: maxBorrowAmount } = useMaxBorrowAmount(
     selectedMarketData,
     comptrollerAddress,
