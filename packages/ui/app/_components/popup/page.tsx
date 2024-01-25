@@ -482,10 +482,10 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
-                    {(
-                      selectedMarketData.totalSupplyNative + (amount ?? 0)
-                    ).toFixed(4)}
+                    {selectedMarketData.liquidityFiat.toFixed(4)} -{'>'}{' '}
+                    {(selectedMarketData.liquidityFiat + (amount ?? 0)).toFixed(
+                      4
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -567,10 +567,10 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
-                    {(
-                      selectedMarketData.totalSupplyNative - (amount ?? 0)
-                    ).toFixed(4)}
+                    {selectedMarketData.liquidityFiat.toFixed(4)} -{'>'}{' '}
+                    {(selectedMarketData.liquidityFiat - (amount ?? 0)).toFixed(
+                      4
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
