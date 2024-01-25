@@ -78,16 +78,13 @@ const Popup = ({
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
-  const [amount, setAmount] = useReducer(
-    (currentValue: number, value: number): number => {
-      const marketDataDecimals = parseInt(
-        selectedMarketData.underlyingDecimals.toString()
-      );
+  const [amount, setAmount] = useReducer((_: number, value: number): number => {
+    const marketDataDecimals = parseInt(
+      selectedMarketData.underlyingDecimals.toString()
+    );
 
-      return parseFloat(value.toFixed(marketDataDecimals));
-    },
-    0
-  );
+    return parseFloat(value.toFixed(marketDataDecimals));
+  }, 0);
   const amountAsBInt = useMemo<string>(
     () =>
       amount
