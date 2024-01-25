@@ -51,14 +51,12 @@ const Popup = ({
     [selectedMarketData],
     chainId
   );
-  console.log(`Borrow limit total`, borrowLimitTotal);
   const { data: borrowLimit2 } = useBorrowLimitMarket(
     selectedMarketData,
     [selectedMarketData],
     chainId,
     comptrollerAddress
   );
-  console.log(`Borrow limit 2`, borrowLimit2);
   const { data: fundedInfo } = useAllFundedInfo();
   const { data: marketRewards } = useRewardsForMarket({
     asset: selectedMarketData,
@@ -127,10 +125,12 @@ const Popup = ({
     () => (maxWithdrawAmount ? parseFloat(maxWithdrawAmount.toString()) : 0),
     [maxWithdrawAmount]
   );
-  const { data: maxBorrowAmount } = useBorrowLimitTotal(
-    [selectedMarketData],
+  const { data: maxBorrowAmount } = useMaxBorrowAmount(
+    selectedMarketData,
+    comptrollerAddress,
     chainId
   );
+  console.log(maxBorrowAmount);
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
@@ -280,7 +280,6 @@ const Popup = ({
 
           await tx?.wait();
         } else {
-          console.log(amountAsBInt);
           const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             amountAsBInt as any
@@ -304,7 +303,7 @@ const Popup = ({
       amount &&
       amount > 0 &&
       maxBorrowAmount &&
-      amount <= maxBorrowAmount
+      amount <= maxBorrowAmount.number
     ) {
       setIsExecutingAction(true);
 
@@ -369,13 +368,15 @@ const Popup = ({
           await tx.wait();
         }
 
-        const isRepayingMax = BigNumber.from(amount).eq(
-          selectedMarketData.borrowBalance
-        );
+        const isRepayingMax =
+          parseInt(selectedMarketData.borrowBalance.toString()) <=
+          parseInt(amountAsBInt);
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
           isRepayingMax,
-          amountAsBInt as any
+          isRepayingMax
+            ? selectedMarketData.borrowBalance
+            : (amountAsBInt as any)
         );
 
         if (errorCode) {
@@ -605,7 +606,7 @@ const Popup = ({
                   selectedMarketData={selectedMarketData}
                   handleInput={(val?: number) => setAmount(val ?? 0)}
                   amount={amount}
-                  max={maxBorrowAmount ?? 0}
+                  max={maxBorrowAmount?.number ?? 0}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Borrow Amount"
                 />
@@ -632,7 +633,7 @@ const Popup = ({
                       amount &&
                       amount > 0 &&
                       maxBorrowAmount &&
-                      amount <= maxBorrowAmount
+                      amount <= maxBorrowAmount.number
                         ? 'bg-accent'
                         : 'bg-stone-500'
                     } `}

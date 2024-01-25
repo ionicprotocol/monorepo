@@ -22,7 +22,6 @@ export default function Market() {
     '0',
     chainId
   );
-  console.log(poolData);
   const { data: assetsBorrowAprData, isLoading: isLoadingAssetsBorrowAprData } =
     useBorrowAPYs(poolData?.assets ?? [], chainId);
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
