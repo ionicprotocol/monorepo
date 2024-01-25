@@ -18,11 +18,14 @@ import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useQueryClient } from '@tanstack/react-query';
 import ResultHandler from '../ResultHandler';
-import { BigNumber, constants } from 'ethers';
+import { BigNumber, BigNumberish, constants, ethers } from 'ethers';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import { fetchBalance } from 'wagmi/actions';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { formatUnits } from 'ethers/lib/utils.js';
 
 interface IPopup {
   mode?: string;
@@ -37,7 +40,7 @@ const Popup = ({
   comptrollerAddress
 }: IPopup) => {
   // console.log(mode);
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address } = useMultiMidas();
   const chainId = useChainId();
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,
@@ -46,24 +49,6 @@ const Popup = ({
   const { data: balanceData } = useBalance({
     address: (address as any) ?? `0x0`,
     token: selectedMarketData.underlyingToken as any
-  });
-  const { data: borrowLimitTotal } = useBorrowLimitTotal(
-    [selectedMarketData],
-    chainId
-  );
-  console.log(`Borrow limit total`, borrowLimitTotal);
-  const { data: borrowLimit2 } = useBorrowLimitMarket(
-    selectedMarketData,
-    [selectedMarketData],
-    chainId,
-    comptrollerAddress
-  );
-  console.log(`Borrow limit 2`, borrowLimit2);
-  const { data: fundedInfo } = useAllFundedInfo();
-  const { data: marketRewards } = useRewardsForMarket({
-    asset: selectedMarketData,
-    poolAddress: comptrollerAddress,
-    chainId
   });
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
@@ -93,18 +78,13 @@ const Popup = ({
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
-  const [amount, setAmount] = useReducer(
-    (currentValue: number, value: number): number => {
-      const [_, decimals] = value.toString().split('.');
-      const marketDataDecimals = parseInt(
-        selectedMarketData.underlyingDecimals.toString()
-      );
-      const decimalsToUse = marketDataDecimals > 8 ? 8 : marketDataDecimals;
+  const [amount, setAmount] = useReducer((_: number, value: number): number => {
+    const marketDataDecimals = parseInt(
+      selectedMarketData.underlyingDecimals.toString()
+    );
 
-      return parseFloat(value.toFixed(decimalsToUse));
-    },
-    0
-  );
+    return parseFloat(value.toFixed(marketDataDecimals));
+  }, 0);
   const amountAsBInt = useMemo<string>(
     () =>
       amount
@@ -119,16 +99,9 @@ const Popup = ({
     [amount]
   );
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
-  const { data: maxWithdrawAmount, isLoading } = useMaxWithdrawAmount(
+  const { data: maxBorrowAmount } = useMaxBorrowAmount(
     selectedMarketData,
-    chainId
-  );
-  const maxWidthdrawAmountAsFloat = useMemo<number>(
-    () => (maxWithdrawAmount ? parseFloat(maxWithdrawAmount.toString()) : 0),
-    [maxWithdrawAmount]
-  );
-  const { data: maxBorrowAmount } = useBorrowLimitTotal(
-    [selectedMarketData],
+    comptrollerAddress,
     chainId
   );
   const currentBorrowAmountAsFloat = useMemo<number>(
@@ -280,7 +253,6 @@ const Popup = ({
 
           await tx?.wait();
         } else {
-          console.log(amountAsBInt);
           const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             amountAsBInt as any
@@ -303,8 +275,10 @@ const Popup = ({
       address &&
       amount &&
       amount > 0 &&
+      minBorrowAmount &&
+      amount > (minBorrowAmount?.minBorrowUSD ?? 0) &&
       maxBorrowAmount &&
-      amount <= maxBorrowAmount
+      amount <= maxBorrowAmount.number
     ) {
       setIsExecutingAction(true);
 
@@ -369,13 +343,15 @@ const Popup = ({
           await tx.wait();
         }
 
-        const isRepayingMax = BigNumber.from(amount).eq(
-          selectedMarketData.borrowBalance
-        );
+        const isRepayingMax =
+          parseInt(selectedMarketData.borrowBalance.toString()) <=
+          parseInt(amountAsBInt);
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
           isRepayingMax,
-          amountAsBInt as any
+          isRepayingMax
+            ? selectedMarketData.borrowBalance
+            : (amountAsBInt as any)
         );
 
         if (errorCode) {
@@ -480,10 +456,15 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
+                    {selectedMarketData.liquidityNative.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}{' '}
+                    -{'> '}
                     {(
-                      selectedMarketData.totalSupplyNative + (amount ?? 0)
-                    ).toFixed(4)}
+                      selectedMarketData.liquidityNative + (amount ?? 0)
+                    ).toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -565,10 +546,15 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.totalSupplyNative.toFixed(4)} -{'>'}{' '}
+                    {selectedMarketData.liquidityNative.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}{' '}
+                    -{'> '}
                     {(
-                      selectedMarketData.totalSupplyNative - (amount ?? 0)
-                    ).toFixed(4)}
+                      selectedMarketData.liquidityNative - (amount ?? 0)
+                    ).toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -605,7 +591,7 @@ const Popup = ({
                   selectedMarketData={selectedMarketData}
                   handleInput={(val?: number) => setAmount(val ?? 0)}
                   amount={amount}
-                  max={maxBorrowAmount ?? 0}
+                  max={maxBorrowAmount?.number ?? 0}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Borrow Amount"
                 />
@@ -615,9 +601,23 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
                 >
-                  <span className={``}>BORROWING LIMIT</span>
+                  <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {borrowLimitTotal?.toFixed(2)}
+                    {formatUnits(
+                      minBorrowAmount?.minBorrowAsset ?? '0',
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    )}
+                    {/* this will be dynamic */}
+                  </span>
+                </div>
+                <div
+                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                >
+                  <span className={``}>MAX BORROW</span>
+                  <span className={`font-bold pl-2`}>
+                    {maxBorrowAmount?.number?.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    ) ?? '0.00'}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -631,8 +631,10 @@ const Popup = ({
                     className={`w-full rounded-md py-1 transition-colors ${
                       amount &&
                       amount > 0 &&
+                      minBorrowAmount &&
+                      amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
                       maxBorrowAmount &&
-                      amount <= maxBorrowAmount
+                      amount <= maxBorrowAmount.number
                         ? 'bg-accent'
                         : 'bg-stone-500'
                     } `}
@@ -669,7 +671,9 @@ const Popup = ({
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.borrowBalanceNative.toFixed(4)}
+                    {selectedMarketData.borrowBalanceNative.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    ) ?? '0.00'}
                     {/* this will be dynamic */}
                   </span>
                 </div>

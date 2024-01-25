@@ -21,7 +21,7 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
     [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],
     async () => {
       if (currentSdk) {
-        return await currentSdk.contracts.FuseFeeDistributor.callStatic
+        return await currentSdk.contracts.FeeDistributor.callStatic
           .getMinBorrowEth(asset.cToken)
           .catch((e) => {
             console.warn(
