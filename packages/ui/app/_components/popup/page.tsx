@@ -482,9 +482,9 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.liquidityFiat.toFixed(4)} -{'>'}{' '}
+                    ${selectedMarketData.liquidityFiat.toFixed(2)} -{'>'} $
                     {(selectedMarketData.liquidityFiat + (amount ?? 0)).toFixed(
-                      4
+                      2
                     )}
                     {/* this will be dynamic */}
                   </span>
@@ -567,9 +567,9 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply Balance</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.liquidityFiat.toFixed(4)} -{'>'}{' '}
+                    ${selectedMarketData.liquidityFiat.toFixed(2)} -{'>'} $
                     {(selectedMarketData.liquidityFiat - (amount ?? 0)).toFixed(
-                      4
+                      2
                     )}
                     {/* this will be dynamic */}
                   </span>
@@ -619,7 +619,7 @@ const Popup = ({
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {minBorrowAmount?.minBorrowUSD?.toFixed(2)}
+                    ${minBorrowAmount?.minBorrowUSD?.toFixed(2)}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -628,7 +628,7 @@ const Popup = ({
                 >
                   <span className={``}>MAX BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {maxBorrowAmount?.number?.toFixed(2)}
+                    ${maxBorrowAmount?.number?.toFixed(2)}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -682,7 +682,7 @@ const Popup = ({
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.borrowBalanceFiat.toFixed(4)}
+                    ${selectedMarketData.borrowBalanceFiat.toFixed(2)}
                     {/* this will be dynamic */}
                   </span>
                 </div>
