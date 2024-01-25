@@ -678,7 +678,7 @@ const Popup = ({
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
                   <span className={`font-bold pl-2`}>
-                    {selectedMarketData.borrowBalanceNative.toFixed(4)}
+                    {selectedMarketData.borrowBalanceFiat.toFixed(4)}
                     {/* this will be dynamic */}
                   </span>
                 </div>
