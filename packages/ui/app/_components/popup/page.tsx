@@ -138,7 +138,8 @@ const Popup = ({
     updatedBorrowAPR,
     supplyBalanceFrom,
     supplyBalanceTo,
-    updatedTotalBorrows
+    borrowBalanceFrom,
+    borrowBalanceTo
   } = useMemo(() => {
     const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
 
@@ -166,6 +167,20 @@ const Popup = ({
               )
             )
           : undefined,
+        borrowBalanceFrom: utils.commify(
+          utils.formatUnits(
+            selectedMarketData.borrowBalance,
+            selectedMarketData.underlyingDecimals
+          )
+        ),
+        borrowBalanceTo: updatedAsset
+          ? utils.commify(
+              utils.formatUnits(
+                updatedAsset.borrowBalance,
+                updatedAsset.underlyingDecimals
+              )
+            )
+          : undefined,
         updatedBorrowAPR: updatedAsset
           ? currentSdk.ratePerBlockToAPY(
               updatedAsset.borrowRatePerBlock,
@@ -178,6 +193,10 @@ const Popup = ({
               blocksPerMinute
             )
           : undefined,
+        totalBorrows: updatedAssets?.reduce(
+          (acc, cur) => acc + cur.borrowBalanceFiat,
+          0
+        ),
         updatedTotalBorrows: updatedAssets
           ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
           : undefined
@@ -569,16 +588,16 @@ const Popup = ({
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
                 >
                   <span className={``}>Market Supply Balance</span>
-                  <span className={`font-bold pl-2`}>
-                    {selectedMarketData.liquidityNative.toFixed(
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    )}{' '}
-                    -{'> '}
-                    {(
-                      selectedMarketData.liquidityNative + (amount ?? 0)
-                    ).toFixed(
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    )}
+                  <span className={`flex font-bold pl-2`}>
+                    {supplyBalanceFrom}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {supplyBalanceTo}
+                    </ResultHandler>
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -649,16 +668,16 @@ const Popup = ({
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
                 >
                   <span className={``}>Market Supply Balance</span>
-                  <span className={`font-bold pl-2`}>
-                    {selectedMarketData.liquidityNative.toFixed(
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    )}{' '}
-                    -{'> '}
-                    {(
-                      selectedMarketData.liquidityNative - (amount ?? 0)
-                    ).toFixed(
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    )}
+                  <span className={`flex font-bold pl-2`}>
+                    {supplyBalanceFrom}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {supplyBalanceTo}
+                    </ResultHandler>
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -739,6 +758,22 @@ const Popup = ({
                   </span>
                 </div>
                 <div
+                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
+                >
+                  <span className={``}>CURRENTLY BORROWING</span>
+                  <span className={`flex font-bold pl-2`}>
+                    {`${borrowBalanceFrom}`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {borrowBalanceTo}
+                    </ResultHandler>
+                  </span>
+                </div>
+                <div
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
                 >
                   <span className={``}>Market Borrow Apr</span>
@@ -800,11 +835,16 @@ const Popup = ({
                   className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
-                  <span className={`font-bold pl-2`}>
-                    {selectedMarketData.borrowBalanceNative.toFixed(
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    ) ?? '0.00'}
-                    {/* this will be dynamic */}
+                  <span className={`flex font-bold pl-2`}>
+                    {`${borrowBalanceFrom}`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {borrowBalanceTo}
+                    </ResultHandler>
                   </span>
                 </div>
                 <div
