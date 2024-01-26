@@ -8,10 +8,10 @@ type CONFIG = {
   isEvmosEnabled: boolean;
   isFWDeployEnabled: boolean;
   isFantomEnabled: boolean;
+  isModeEnabled: boolean;
   isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
   isTestnetEnabled: boolean;
-  isModeEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabaseAssetApyTableName: string;
@@ -37,9 +37,9 @@ const config: CONFIG = {
   isEvmosEnabled: process.env.EVMOS === 'true',
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
   isFantomEnabled: process.env.FANTOM === 'true',
+  isModeEnabled: true,
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
-  isModeEnabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
