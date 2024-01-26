@@ -1,21 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
-import PoolToggle from './_components/markets/PoolToggle';
-import PoolRows from './_components/markets/PoolRows';
-import Popup from './_components/popup/page';
-import { useSearchParams } from 'next/navigation';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useChainId } from 'wagmi';
-import { MarketData } from '@ui/types/TokensDataMap';
-import { useAssets } from '@ui/hooks/useAssets';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import ResultHandler from './_components/ResultHandler';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import type { MarketData } from '@ui/types/TokensDataMap';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { BigNumber } from 'ethers';
+import { useSearchParams } from 'next/navigation';
+import { useMemo, useState } from 'react';
+import { useChainId } from 'wagmi';
+
+import PoolRows from './_components/markets/PoolRows';
+import PoolToggle from './_components/markets/PoolToggle';
+import Popup from './_components/popup/page';
+import ResultHandler from './_components/ResultHandler';
 
 export default function Market() {
   const { currentSdk } = useMultiMidas();
@@ -31,7 +29,8 @@ export default function Market() {
     [poolData]
   );
   const dataIsLoading = useMemo<boolean>(
-    () => isLoadingPoolData[isLoadingPoolData]
+    () => isLoadingPoolData,
+    [isLoadingPoolData]
   );
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -39,7 +38,7 @@ export default function Market() {
       poolData?.assets.find(
         (_asset) => _asset.underlyingSymbol === selectedSymbol
       ),
-    [selectedSymbol]
+    [selectedSymbol, poolData?.assets]
   );
 
   return (
@@ -50,15 +49,15 @@ export default function Market() {
         >
           <div className={`flex items-center justify-center gap-2 py-3 pt-2 `}>
             <img
-              src="/img/logo/MODE.png"
               alt="modlogo"
               className={`w-8`}
+              src="/img/logo/MODE.png"
             />
             <h1 className={`font-semibold`}>Mode Market</h1>
             <img
-              src="/img/assets/downarr.png"
               alt="downarr"
               className={`w-4`}
+              src="/img/assets/downarr.png"
             />
           </div>
           <ResultHandler isLoading={isLoadingPoolData}>
@@ -151,40 +150,40 @@ export default function Market() {
               {assets &&
                 assets.map((val: MarketData, idx: number) => (
                   <PoolRows
-                    key={idx}
                     asset={val.underlyingSymbol}
-                    supplyBalance={`${
-                      val.supplyBalanceNative
-                        ? val.supplyBalanceNative.toFixed(6)
-                        : '0'
-                    } / $${val.supplyBalanceFiat.toFixed(2)}`}
-                    totalSupplied={`${
-                      val.liquidityNative ? val.liquidityNative.toFixed(6) : '0'
-                    } / $${val.liquidityFiat.toFixed(2)}`}
-                    borrowBalance={`${
-                      val.borrowBalanceNative
-                        ? val.borrowBalanceNative.toFixed(6)
-                        : '0'
-                    } / $${val.borrowBalanceFiat.toFixed(2)}`}
-                    totalBorrowing={`${
-                      val.totalBorrowNative
-                        ? val.totalBorrowNative.toFixed(6)
-                        : '0'
-                    } / $${val.totalBorrowFiat.toFixed(2)}`}
-                    supplyAPR={`${currentSdk
-                      ?.ratePerBlockToAPY(
-                        val?.supplyRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2)}%`}
                     borrowAPR={`${currentSdk
                       ?.ratePerBlockToAPY(
                         val?.borrowRatePerBlock ?? BigNumber.from(0),
                         getBlockTimePerMinuteByChainId(chainId)
                       )
                       .toFixed(2)}%`}
+                    borrowBalance={`${
+                      val.borrowBalanceNative
+                        ? val.borrowBalanceNative.toFixed(6)
+                        : '0'
+                    } / $${val.borrowBalanceFiat.toFixed(2)}`}
+                    key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     setSelectedSymbol={setSelectedSymbol}
+                    supplyAPR={`${currentSdk
+                      ?.ratePerBlockToAPY(
+                        val?.supplyRatePerBlock ?? BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2)}%`}
+                    supplyBalance={`${
+                      val.supplyBalanceNative
+                        ? val.supplyBalanceNative.toFixed(6)
+                        : '0'
+                    } / $${val.supplyBalanceFiat.toFixed(2)}`}
+                    totalBorrowing={`${
+                      val.totalBorrowNative
+                        ? val.totalBorrowNative.toFixed(6)
+                        : '0'
+                    } / $${val.totalBorrowFiat.toFixed(2)}`}
+                    totalSupplied={`${
+                      val.liquidityNative ? val.liquidityNative.toFixed(6) : '0'
+                    } / $${val.liquidityFiat.toFixed(2)}`}
                   />
                 ))}
             </>
@@ -193,9 +192,9 @@ export default function Market() {
       </div>
       {popmode && selectedMarketData && poolData && (
         <Popup
+          comptrollerAddress={poolData.comptroller}
           mode={popmode}
           selectedMarketData={selectedMarketData}
-          comptrollerAddress={poolData.comptroller}
         />
       )}
     </main>
