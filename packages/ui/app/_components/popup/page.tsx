@@ -91,8 +91,6 @@ const Popup = ({
         selectedMarketData.underlyingDecimals.toString()
       );
 
-      console.log(value);
-
       return typeof value === 'number'
         ? parseFloat(value.toFixed(marketDataDecimals))
         : undefined;
