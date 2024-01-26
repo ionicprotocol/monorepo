@@ -20,6 +20,7 @@ import Tab from './Tab';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { FundOperationMode } from 'types/dist';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import ResultHandler from '../ResultHandler';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -70,10 +71,6 @@ const Popup = ({
     [selectedMarketData],
     chainId
   );
-  const { data: assetsBorrowAprData } = useBorrowAPYs(
-    [selectedMarketData],
-    chainId
-  );
   const collateralApr = useMemo<string>(() => {
     // Todo: add the market rewards to this calculation
     if (assetsSupplyAprData) {
@@ -84,13 +81,6 @@ const Popup = ({
 
     return '0.00%';
   }, [assetsSupplyAprData]);
-  const borrowApr = useMemo<string>(() => {
-    if (assetsBorrowAprData) {
-      return `${assetsBorrowAprData[selectedMarketData.cToken].toFixed(2)}%`;
-    }
-
-    return '0.00%';
-  }, [assetsBorrowAprData]);
   const [currentInfoMessage, setCurrentInfoMessage] = useState<string>();
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
@@ -125,70 +115,71 @@ const Popup = ({
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
   );
-  // const { data: updatedAssets } = useUpdatedUserAssets({
-  //   mode: FundOperationMode.SUPPLY,
-  //   poolChainId: chainId,
-  //   amount: amountAsBInt as any,
-  //   assets: [selectedMarketData],
-  //   index: 0
-  // });
-  // const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
-  // const {
-  //   supplyAPY,
-  //   borrowAPR,
-  //   updatedSupplyAPY,
-  //   updatedBorrowAPR,
-  //   supplyBalanceFrom,
-  //   supplyBalanceTo,
-  //   updatedTotalBorrows
-  // } = useMemo(() => {
-  //   const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+  const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
+    useUpdatedUserAssets({
+      mode: FundOperationMode.SUPPLY,
+      poolChainId: chainId,
+      amount: amountAsBInt as any,
+      assets: [selectedMarketData],
+      index: 0
+    });
+  const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
+  const {
+    supplyAPY,
+    borrowAPR,
+    updatedSupplyAPY,
+    updatedBorrowAPR,
+    supplyBalanceFrom,
+    supplyBalanceTo,
+    updatedTotalBorrows
+  } = useMemo(() => {
+    const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
 
-  //   if (currentSdk) {
-  //     return {
-  //       borrowAPR: currentSdk.ratePerBlockToAPY(
-  //         selectedMarketData.borrowRatePerBlock,
-  //         blocksPerMinute
-  //       ),
-  //       supplyAPY: currentSdk.ratePerBlockToAPY(
-  //         selectedMarketData.supplyRatePerBlock,
-  //         blocksPerMinute
-  //       ),
-  //       supplyBalanceFrom: utils.commify(
-  //         utils.formatUnits(
-  //           selectedMarketData.supplyBalance,
-  //           selectedMarketData.underlyingDecimals
-  //         )
-  //       ),
-  //       supplyBalanceTo: updatedAsset
-  //         ? utils.commify(
-  //             utils.formatUnits(
-  //               updatedAsset.supplyBalance,
-  //               updatedAsset.underlyingDecimals
-  //             )
-  //           )
-  //         : undefined,
-  //       updatedBorrowAPR: updatedAsset
-  //         ? currentSdk.ratePerBlockToAPY(
-  //             updatedAsset.borrowRatePerBlock,
-  //             blocksPerMinute
-  //           )
-  //         : undefined,
-  //       updatedSupplyAPY: updatedAsset
-  //         ? currentSdk.ratePerBlockToAPY(
-  //             updatedAsset.supplyRatePerBlock,
-  //             blocksPerMinute
-  //           )
-  //         : undefined,
-  //       updatedTotalBorrows: updatedAssets
-  //         ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
-  //         : undefined
-  //     };
-  //   }
+    if (currentSdk) {
+      return {
+        borrowAPR: currentSdk.ratePerBlockToAPY(
+          selectedMarketData.borrowRatePerBlock,
+          blocksPerMinute
+        ),
+        supplyAPY: currentSdk.ratePerBlockToAPY(
+          selectedMarketData.supplyRatePerBlock,
+          blocksPerMinute
+        ),
+        supplyBalanceFrom: utils.commify(
+          utils.formatUnits(
+            selectedMarketData.supplyBalance,
+            selectedMarketData.underlyingDecimals
+          )
+        ),
+        supplyBalanceTo: updatedAsset
+          ? utils.commify(
+              utils.formatUnits(
+                updatedAsset.supplyBalance,
+                updatedAsset.underlyingDecimals
+              )
+            )
+          : undefined,
+        updatedBorrowAPR: updatedAsset
+          ? currentSdk.ratePerBlockToAPY(
+              updatedAsset.borrowRatePerBlock,
+              blocksPerMinute
+            )
+          : undefined,
+        updatedSupplyAPY: updatedAsset
+          ? currentSdk.ratePerBlockToAPY(
+              updatedAsset.supplyRatePerBlock,
+              blocksPerMinute
+            )
+          : undefined,
+        updatedTotalBorrows: updatedAssets
+          ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
+          : undefined
+      };
+    }
 
-  //   return {};
-  // }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
-  // console.log(updatedBorrowAPR, updatedSupplyAPY);
+    return {};
+  }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  console.log(updatedBorrowAPR, updatedSupplyAPY);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -567,30 +558,32 @@ const Popup = ({
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
                 >
                   <span className={``}>Market Supply APR</span>
-                  <span className={`font-bold pl-2`}>
-                    {currentSdk
-                      ?.ratePerBlockToAPY(
-                        selectedMarketData.supplyRatePerBlock ??
-                          BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2)}
-                    %{/* this will be dynamic */}
+                  <span className={`flex font-bold pl-2`}>
+                    {`${supplyAPY?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedSupplyAPY?.toFixed(2)}%
+                    </ResultHandler>
                   </span>
                 </div>
                 <div
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
                 >
                   <span className={``}>Market Borrow Apr</span>
-                  <span className={`font-bold pl-2`}>
-                    {currentSdk
-                      ?.ratePerBlockToAPY(
-                        selectedMarketData.borrowRatePerBlock ??
-                          BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2)}
-                    %{/* this will be dynamic */}
+                  <span className={`flex font-bold pl-2`}>
+                    {`${borrowAPR?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedBorrowAPR?.toFixed(2)}%
+                    </ResultHandler>
                   </span>
                 </div>
                 <div

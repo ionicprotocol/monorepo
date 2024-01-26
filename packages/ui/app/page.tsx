@@ -26,24 +26,12 @@ export default function Market() {
     '0',
     chainId
   );
-  const { data: assetsBorrowAprData, isLoading: isLoadingAssetsBorrowAprData } =
-    useBorrowAPYs(poolData?.assets ?? [], chainId);
-  const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
-    useTotalSupplyAPYs(poolData?.assets ?? [], chainId);
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
   );
   const dataIsLoading = useMemo<boolean>(
-    () =>
-      isLoadingPoolData &&
-      isLoadingAssetsBorrowAprData &&
-      isLoadingAssetsSupplyAprData,
-    [
-      isLoadingPoolData,
-      isLoadingAssetsBorrowAprData,
-      isLoadingAssetsSupplyAprData
-    ]
+    () => isLoadingPoolData[isLoadingPoolData]
   );
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -161,8 +149,6 @@ export default function Market() {
           <ResultHandler isLoading={dataIsLoading}>
             <>
               {assets &&
-                assetsBorrowAprData &&
-                assetsSupplyAprData &&
                 assets.map((val: MarketData, idx: number) => (
                   <PoolRows
                     key={idx}

@@ -20,16 +20,14 @@ export default function ResultHandler({
 }: ResultHandlerProps) {
   if (isLoading || isFetching) {
     return (
-      <div className="flex justify-center">
-        <ThreeCircles
-          visible={true}
-          height={height}
-          width={width}
-          color={color}
-          ariaLabel="three-circles-loading"
-          wrapperClass=""
-        />
-      </div>
+      <ThreeCircles
+        visible={true}
+        height={height}
+        width={width}
+        color={color}
+        ariaLabel="three-circles-loading"
+        wrapperClass=""
+      />
     );
   }
 
