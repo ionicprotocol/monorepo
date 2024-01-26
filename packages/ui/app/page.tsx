@@ -163,26 +163,28 @@ export default function Market() {
                   <PoolRows
                     key={idx}
                     asset={val.underlyingSymbol}
-                    colleteralT={`${
+                    supplyBalance={`${
                       val.supplyBalanceNative
                         ? val.supplyBalanceNative.toFixed(6)
                         : '0'
                     } / $${val.supplyBalanceFiat.toFixed(2)}`}
-                    borrowing={`${
+                    totalSupplied={`${
+                      val.liquidityNative ? val.liquidityNative.toFixed(6) : '0'
+                    } / $${val.liquidityFiat.toFixed(2)}`}
+                    borrowBalance={`${
                       val.borrowBalanceNative
                         ? val.borrowBalanceNative.toFixed(6)
                         : '0'
                     } / $${val.borrowBalanceFiat.toFixed(2)}`}
-                    borrowingT={`${
+                    totalBorrowing={`${
                       val.totalBorrowNative
                         ? val.totalBorrowNative.toFixed(6)
                         : '0'
                     } / $${val.totalBorrowFiat.toFixed(2)}`}
-                    lendingT={`${
-                      val.liquidityNative ? val.liquidityNative.toFixed(6) : '0'
-                    } / $${val.liquidityFiat.toFixed(2)}`}
-                    lAPR={`${assetsSupplyAprData[val.cToken].apy.toFixed(2)}%`}
-                    bAPR={`${assetsBorrowAprData[val.cToken].toFixed(2)}%`}
+                    supplyAPR={`${assetsSupplyAprData[val.cToken].apy.toFixed(
+                      2
+                    )}%`}
+                    borrowAPR={`${assetsBorrowAprData[val.cToken].toFixed(2)}%`}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     setSelectedSymbol={setSelectedSymbol}
                   />
