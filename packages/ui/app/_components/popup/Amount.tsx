@@ -27,9 +27,9 @@ const Amount = ({
   //neeed to get the wallet balance
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     const currentValue =
-      e.target.value.trim() === '' ? 0 : parseFloat(e.target.value);
+      e.target.value.trim() === '' ? undefined : parseFloat(e.target.value);
 
-    handleInput(currentValue > max ? max : currentValue);
+    handleInput(currentValue && currentValue > max ? max : currentValue);
   }
   function handleMax(val: number) {
     handleInput(val);
@@ -55,8 +55,8 @@ const Amount = ({
         <input
           value={amount}
           type="number"
-          placeholder="0.00"
-          className={`focus:outline-none  font-bold bg-transparent`}
+          placeholder="0"
+          className={`focus:outline-none amount-field font-bold bg-transparent`}
           onChange={handlInpData}
         />
         <img
