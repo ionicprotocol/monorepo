@@ -86,12 +86,16 @@ const Popup = ({
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
   const [amount, setAmount] = useReducer(
-    (_?: number, value?: number): number | undefined => {
+    (_: number | undefined, value: number | undefined): number | undefined => {
       const marketDataDecimals = parseInt(
         selectedMarketData.underlyingDecimals.toString()
       );
 
-      return value ? parseFloat(value.toFixed(marketDataDecimals)) : undefined;
+      console.log(value);
+
+      return typeof value === 'number'
+        ? parseFloat(value.toFixed(marketDataDecimals))
+        : undefined;
     },
     undefined
   );
@@ -536,7 +540,7 @@ const Popup = ({
               <div className={`min-w-full py-5 px-[6%] h-min `}>
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val ?? 0)}
+                  handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
                   max={parseFloat(balanceData?.formatted ?? '0')}
                   symbol={balanceData?.symbol ?? ''}
@@ -631,7 +635,7 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val ?? 0)}
+                  handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
                   max={parseFloat(
                     selectedMarketData.supplyBalanceNative.toString()
@@ -704,7 +708,7 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val ?? 0)}
+                  handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
                   max={maxBorrowAmount?.number ?? 0}
                   symbol={balanceData?.symbol ?? ''}
@@ -785,7 +789,7 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val ?? 0)}
+                  handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
                   max={parseFloat(balanceData?.formatted ?? '0')}
                   symbol={balanceData?.symbol ?? ''}
