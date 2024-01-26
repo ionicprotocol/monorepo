@@ -77,7 +77,7 @@ export default function Navbar() {
               Lend
             </p>
           </Link> */}
-          <Link href={`/market`}>
+          {/* <Link href={`/market`}>
             <p
               className={`${
                 pathname == '/market' ? 'text-accent' : null
@@ -85,7 +85,7 @@ export default function Navbar() {
             >
               Market
             </p>
-          </Link>
+          </Link> */}
           {/* <Link href={`/borrow`}>
             <p
               className={`${

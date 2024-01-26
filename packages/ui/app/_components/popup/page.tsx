@@ -1,31 +1,48 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import SliderComponent from './Slider';
-import Approved from './Approved';
-import Amount from './Amount';
-import Tab from './Tab';
-import { useRouter } from 'next/navigation';
-import { useAccount, useBalance, useChainId } from 'wagmi';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import { MarketData } from '@ui/types/TokensDataMap';
-import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
-import { useRewardsForMarket } from '@ui/hooks/useRewards';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useQueryClient } from '@tanstack/react-query';
-import ResultHandler from '../ResultHandler';
-import { BigNumber, BigNumberish, constants, ethers } from 'ethers';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
-import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
+import { INFO_MESSAGES } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { fetchBalance } from 'wagmi/actions';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { MarketData } from '@ui/types/TokensDataMap';
+import { BigNumber, constants, utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { ThreeCircles } from 'react-loader-spinner';
+import { useBalance, useChainId } from 'wagmi';
+import Amount from './Amount';
+import SliderComponent from './Slider';
+import Tab from './Tab';
+import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
+import { FundOperationMode } from 'types/dist';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import ResultHandler from '../ResultHandler';
+
+type LoadingButtonWithTextProps = {
+  text: String;
+};
+
+function LoadingButtonWithText({ text }: LoadingButtonWithTextProps) {
+  return (
+    <button className={`w-full rounded-md py-1 transition-colors bg-accent`}>
+      <span className="flex justify-center">
+        <span className="block mr-2">{text}</span>{' '}
+        <ThreeCircles
+          visible={true}
+          height="20"
+          width="20"
+          color="#0a0a0aff"
+          ariaLabel="three-circles-loading"
+          wrapperClass=""
+        />
+      </span>
+    </button>
+  );
+}
 
 interface IPopup {
   mode?: string;
@@ -54,10 +71,6 @@ const Popup = ({
     [selectedMarketData],
     chainId
   );
-  const { data: assetsBorrowAprData } = useBorrowAPYs(
-    [selectedMarketData],
-    chainId
-  );
   const collateralApr = useMemo<string>(() => {
     // Todo: add the market rewards to this calculation
     if (assetsSupplyAprData) {
@@ -68,13 +81,7 @@ const Popup = ({
 
     return '0.00%';
   }, [assetsSupplyAprData]);
-  const borrowApr = useMemo<string>(() => {
-    if (assetsBorrowAprData) {
-      return `${assetsBorrowAprData[selectedMarketData.cToken].toFixed(2)}%`;
-    }
-
-    return '0.00%';
-  }, [assetsBorrowAprData]);
+  const [currentInfoMessage, setCurrentInfoMessage] = useState<string>();
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
@@ -108,6 +115,72 @@ const Popup = ({
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
   );
+  const [currentFundOperation, setCurrentFundOperation] =
+    useState<FundOperationMode>(FundOperationMode.SUPPLY);
+  const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
+    useUpdatedUserAssets({
+      mode: currentFundOperation,
+      poolChainId: chainId,
+      amount: amountAsBInt as any,
+      assets: [selectedMarketData],
+      index: 0
+    });
+  const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
+  const {
+    supplyAPY,
+    borrowAPR,
+    updatedSupplyAPY,
+    updatedBorrowAPR,
+    supplyBalanceFrom,
+    supplyBalanceTo,
+    updatedTotalBorrows
+  } = useMemo(() => {
+    const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+
+    if (currentSdk) {
+      return {
+        borrowAPR: currentSdk.ratePerBlockToAPY(
+          selectedMarketData.borrowRatePerBlock,
+          blocksPerMinute
+        ),
+        supplyAPY: currentSdk.ratePerBlockToAPY(
+          selectedMarketData.supplyRatePerBlock,
+          blocksPerMinute
+        ),
+        supplyBalanceFrom: utils.commify(
+          utils.formatUnits(
+            selectedMarketData.supplyBalance,
+            selectedMarketData.underlyingDecimals
+          )
+        ),
+        supplyBalanceTo: updatedAsset
+          ? utils.commify(
+              utils.formatUnits(
+                updatedAsset.supplyBalance,
+                updatedAsset.underlyingDecimals
+              )
+            )
+          : undefined,
+        updatedBorrowAPR: updatedAsset
+          ? currentSdk.ratePerBlockToAPY(
+              updatedAsset.borrowRatePerBlock,
+              blocksPerMinute
+            )
+          : undefined,
+        updatedSupplyAPY: updatedAsset
+          ? currentSdk.ratePerBlockToAPY(
+              updatedAsset.supplyRatePerBlock,
+              blocksPerMinute
+            )
+          : undefined,
+        updatedTotalBorrows: updatedAssets
+          ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
+          : undefined
+      };
+    }
+
+    return {};
+  }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -130,6 +203,28 @@ const Popup = ({
 
   useEffect(() => {
     setAmount(0);
+
+    switch (active) {
+      case 'COLLATERAL':
+        setCurrentFundOperation(FundOperationMode.SUPPLY);
+
+        break;
+
+      case 'WITHDRAW':
+        setCurrentFundOperation(FundOperationMode.WITHDRAW);
+
+        break;
+
+      case 'BORROW':
+        setCurrentFundOperation(FundOperationMode.BORROW);
+
+        break;
+
+      case 'REPAY':
+        setCurrentFundOperation(FundOperationMode.REPAY);
+
+        break;
+    }
 
     if (mode === 'DEFAULT') {
       if (active === 'COLLATERAL') {
@@ -179,6 +274,8 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
+        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.APPROVE);
+
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -197,6 +294,8 @@ const Popup = ({
         }
 
         if (collateral) {
+          setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.COLLATERAL);
+
           const tx = await currentSdk.enterMarkets(
             selectedMarketData.cToken,
             comptrollerAddress
@@ -204,6 +303,8 @@ const Popup = ({
 
           await tx.wait();
         }
+
+        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.SUPPLYING);
 
         const { tx } = await currentSdk.mint(
           selectedMarketData.cToken,
@@ -245,7 +346,9 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
-        if (selectedMarketData.supplyBalanceNative === amount) {
+        setCurrentInfoMessage(INFO_MESSAGES.WITHDRAW.WITHDRAWING);
+
+        if (selectedMarketData.supplyBalanceNative <= amount) {
           const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
@@ -283,6 +386,8 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
+        setCurrentInfoMessage(INFO_MESSAGES.BORROW.BORROWING);
+
         const { tx, errorCode } = await currentSdk.borrow(
           selectedMarketData.cToken,
           amountAsBInt as any
@@ -326,6 +431,8 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
+        setCurrentInfoMessage(INFO_MESSAGES.REPAY.APPROVE);
+
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -342,6 +449,8 @@ const Popup = ({
 
           await tx.wait();
         }
+
+        setCurrentInfoMessage(INFO_MESSAGES.REPAY.REPAYING);
 
         const isRepayingMax =
           parseInt(selectedMarketData.borrowBalance.toString()) <=
@@ -388,7 +497,7 @@ const Popup = ({
       className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center`}
     >
       <div
-        className={`w-[40%] relative  bg-grayUnselect rounded-xl max-h-[65vh] overflow-x-hidden overflow-y-scroll scrollbar-hide`}
+        className={`w-[45%] relative  bg-grayUnselect rounded-xl max-h-[65vh] overflow-x-hidden overflow-y-scroll scrollbar-hide`}
       >
         <img
           src="/img/assets/close.png"
@@ -472,54 +581,44 @@ const Popup = ({
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
                 >
                   <span className={``}>Market Supply APR</span>
-                  <span className={`font-bold pl-2`}>
-                    {collateralApr}
-                    {/* this will be dynamic */}
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                >
-                  <span className={``}>Market Borrow Apr</span>
-                  <span className={`font-bold pl-2`}>
-                    {borrowApr}
-                    {/* this will be dynamic */}
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
-                >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                    } `}
-                    onClick={() => supplyAmount()}
-                  >
+                  <span className={`flex font-bold pl-2`}>
+                    {`${supplyAPY?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
                     <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
                     >
-                      Supply {selectedMarketData.underlyingSymbol}
+                      {updatedSupplyAPY?.toFixed(2)}%
                     </ResultHandler>
-                  </button>
+                  </span>
+                </div>
+                <div
+                  className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
+                >
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <>
+                      <button
+                        className={`w-full rounded-md py-1 transition-colors ${
+                          amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                        } `}
+                        onClick={() => supplyAmount()}
+                      >
+                        Supply {selectedMarketData.underlyingSymbol}
+                      </button>
 
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                    } `}
-                    onClick={() => supplyAmount(true)}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
-                    >
-                      Collateral {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                      <button
+                        className={`w-full rounded-md py-1 transition-colors ${
+                          amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                        } `}
+                        onClick={() => supplyAmount(true)}
+                      >
+                        Collateral {selectedMarketData.underlyingSymbol}
+                      </button>
+                    </>
+                  )}
                 </div>
                 {/* <Approved /> */}
               </div>
@@ -559,23 +658,36 @@ const Popup = ({
                   </span>
                 </div>
                 <div
+                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                >
+                  <span className={``}>Market Supply APR</span>
+                  <span className={`flex font-bold pl-2`}>
+                    {`${supplyAPY?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedSupplyAPY?.toFixed(2)}%
+                    </ResultHandler>
+                  </span>
+                </div>
+                <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                    } `}
-                    onClick={withdrawAmount}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <button
+                      className={`w-full rounded-md py-1 transition-colors ${
+                        amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                      } `}
+                      onClick={withdrawAmount}
                     >
                       Withdraw {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                    </button>
+                  )}
                 </div>
                 {/* <Approved /> */}
               </div>
@@ -599,7 +711,7 @@ const Popup = ({
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
                 <div
-                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
@@ -611,7 +723,7 @@ const Popup = ({
                   </span>
                 </div>
                 <div
-                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
                   <span className={``}>MAX BORROW</span>
                   <span className={`font-bold pl-2`}>
@@ -622,33 +734,46 @@ const Popup = ({
                   </span>
                 </div>
                 <div
+                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                >
+                  <span className={``}>Market Borrow Apr</span>
+                  <span className={`flex font-bold pl-2`}>
+                    {`${borrowAPR?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedBorrowAPR?.toFixed(2)}%
+                    </ResultHandler>
+                  </span>
+                </div>
+                <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount &&
-                      amount > 0 &&
-                      minBorrowAmount &&
-                      amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
-                      maxBorrowAmount &&
-                      amount <= maxBorrowAmount.number
-                        ? 'bg-accent'
-                        : 'bg-stone-500'
-                    } `}
-                    onClick={borrowAmount}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <button
+                      className={`w-full rounded-md py-1 transition-colors ${
+                        amount &&
+                        amount > 0 &&
+                        minBorrowAmount &&
+                        amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
+                        maxBorrowAmount &&
+                        amount <= maxBorrowAmount.number
+                          ? 'bg-accent'
+                          : 'bg-stone-500'
+                      } `}
+                      onClick={borrowAmount}
                     >
                       Borrow {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                    </button>
+                  )}
                 </div>
               </div>
               <div className={`min-w-full py-5 px-[6%] h-min`}>
@@ -667,7 +792,7 @@ const Popup = ({
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
                 <div
-                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
                   <span className={`font-bold pl-2`}>
@@ -678,28 +803,41 @@ const Popup = ({
                   </span>
                 </div>
                 <div
+                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                >
+                  <span className={``}>Market Borrow Apr</span>
+                  <span className={`flex font-bold pl-2`}>
+                    {`${borrowAPR?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedBorrowAPR?.toFixed(2)}%
+                    </ResultHandler>
+                  </span>
+                </div>
+                <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 && currentBorrowAmountAsFloat
-                        ? 'bg-accent'
-                        : 'bg-stone-500'
-                    } `}
-                    onClick={repayAmount}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <button
+                      className={`w-full rounded-md py-1 transition-colors ${
+                        amount && amount > 0 && currentBorrowAmountAsFloat
+                          ? 'bg-accent'
+                          : 'bg-stone-500'
+                      } `}
+                      onClick={repayAmount}
                     >
                       Repay {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                    </button>
+                  )}
                 </div>
               </div>
             </>

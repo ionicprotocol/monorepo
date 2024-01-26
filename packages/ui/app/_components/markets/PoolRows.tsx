@@ -6,23 +6,23 @@ import React, { Dispatch, SetStateAction } from 'react';
 
 interface IRows {
   asset: string;
-  colleteralT: string;
-  borrowing: string;
-  borrowingT: string;
-  lendingT: string;
-  lAPR: string;
-  bAPR: string;
+  supplyBalance: string;
+  totalSupplied: string;
+  borrowBalance: string;
+  totalBorrowing: string;
+  supplyAPR: string;
+  borrowAPR: string;
   logo: string;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
 }
 const PoolRows = ({
   asset,
-  colleteralT,
-  borrowing,
-  borrowingT,
-  lendingT,
-  lAPR,
-  bAPR,
+  supplyBalance,
+  totalSupplied,
+  borrowBalance,
+  totalBorrowing,
+  supplyAPR,
+  borrowAPR,
   logo,
   setSelectedSymbol
 }: IRows) => {
@@ -38,26 +38,26 @@ const PoolRows = ({
         />
         <h3 className={` `}>{asset}</h3>
       </div>
-      <h3 className={` col-span-2`}>{colleteralT}</h3>
-      <h3 className={` col-span-2`}>{lendingT}</h3>
-      <h3 className={` col-span-2`}>{borrowing}</h3>
-      <h3 className={` col-span-2`}>{borrowingT}</h3>
-      <h3 className={` col-span-2`}>{lAPR}</h3>
-      <h3 className={` col-span-2`}>{bAPR}</h3>
+      <h3 className={` col-span-2`}>{supplyBalance}</h3>
+      <h3 className={` col-span-2`}>{totalSupplied}</h3>
+      <h3 className={` col-span-2`}>{borrowBalance}</h3>
+      <h3 className={` col-span-2`}>{totalBorrowing}</h3>
+      <h3 className={` col-span-2`}>{supplyAPR}</h3>
+      <h3 className={` col-span-2`}>{borrowAPR}</h3>
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
         <Link
-          href={`/market?popmode=SUPPLY`}
+          href={`/?popmode=SUPPLY`}
           className={`rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => setSelectedSymbol(asset)}
         >
-          Supply
+          Supply / Withdraw
         </Link>
         <Link
-          href={`/market?popmode=BORROW`}
+          href={`/?popmode=BORROW`}
           className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
           onClick={() => setSelectedSymbol(asset)}
         >
-          Borrow
+          Borrow / Repay
         </Link>
       </div>
       {/* <Link
