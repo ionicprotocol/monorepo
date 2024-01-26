@@ -50,14 +50,14 @@ const PoolRows = ({
           className={`rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => setSelectedSymbol(asset)}
         >
-          Supply
+          Supply / Withdraw
         </Link>
         <Link
           href={`/?popmode=BORROW`}
           className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
           onClick={() => setSelectedSymbol(asset)}
         >
-          Borrow
+          Borrow / Repay
         </Link>
       </div>
       {/* <Link
