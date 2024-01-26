@@ -181,7 +181,6 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
-  console.log(updatedBorrowAPR, updatedSupplyAPY);
   const queryClient = useQueryClient();
 
   useEffect(() => {
