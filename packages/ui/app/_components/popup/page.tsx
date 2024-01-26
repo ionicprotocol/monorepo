@@ -1,31 +1,44 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import SliderComponent from './Slider';
-import Approved from './Approved';
-import Amount from './Amount';
-import Tab from './Tab';
-import { useRouter } from 'next/navigation';
-import { useAccount, useBalance, useChainId } from 'wagmi';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import { MarketData } from '@ui/types/TokensDataMap';
-import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
-import { useRewardsForMarket } from '@ui/hooks/useRewards';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { useAllFundedInfo } from '@ui/hooks/useAllFundedInfo';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useQueryClient } from '@tanstack/react-query';
-import ResultHandler from '../ResultHandler';
-import { BigNumber, BigNumberish, constants, ethers } from 'ethers';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
-import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
+import { INFO_MESSAGES } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { fetchBalance } from 'wagmi/actions';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { MarketData } from '@ui/types/TokensDataMap';
+import { constants } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { ThreeCircles } from 'react-loader-spinner';
+import { useBalance, useChainId } from 'wagmi';
+import Amount from './Amount';
+import SliderComponent from './Slider';
+import Tab from './Tab';
+
+type LoadingButtonWithTextProps = {
+  text: String;
+};
+
+function LoadingButtonWithText({ text }: LoadingButtonWithTextProps) {
+  return (
+    <button className={`w-full rounded-md py-1 transition-colors bg-accent`}>
+      <span className="flex justify-center">
+        <span className="block mr-2">{text}</span>{' '}
+        <ThreeCircles
+          visible={true}
+          height="20"
+          width="20"
+          color="#0a0a0aff"
+          ariaLabel="three-circles-loading"
+          wrapperClass=""
+        />
+      </span>
+    </button>
+  );
+}
 
 interface IPopup {
   mode?: string;
@@ -75,6 +88,7 @@ const Popup = ({
 
     return '0.00%';
   }, [assetsBorrowAprData]);
+  const [currentInfoMessage, setCurrentInfoMessage] = useState<string>();
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
@@ -179,6 +193,8 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
+        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.APPROVE);
+
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -197,6 +213,8 @@ const Popup = ({
         }
 
         if (collateral) {
+          setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.COLLATERAL);
+
           const tx = await currentSdk.enterMarkets(
             selectedMarketData.cToken,
             comptrollerAddress
@@ -204,6 +222,8 @@ const Popup = ({
 
           await tx.wait();
         }
+
+        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.SUPPLYING);
 
         const { tx } = await currentSdk.mint(
           selectedMarketData.cToken,
@@ -245,7 +265,9 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
-        if (selectedMarketData.supplyBalanceNative === amount) {
+        setCurrentInfoMessage(INFO_MESSAGES.WITHDRAW.WITHDRAWING);
+
+        if (selectedMarketData.supplyBalanceNative <= amount) {
           const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
@@ -283,6 +305,8 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
+        setCurrentInfoMessage(INFO_MESSAGES.BORROW.BORROWING);
+
         const { tx, errorCode } = await currentSdk.borrow(
           selectedMarketData.cToken,
           amountAsBInt as any
@@ -326,6 +350,8 @@ const Popup = ({
       setIsExecutingAction(true);
 
       try {
+        setCurrentInfoMessage(INFO_MESSAGES.REPAY.APPROVE);
+
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -342,6 +368,8 @@ const Popup = ({
 
           await tx.wait();
         }
+
+        setCurrentInfoMessage(INFO_MESSAGES.REPAY.REPAYING);
 
         const isRepayingMax =
           parseInt(selectedMarketData.borrowBalance.toString()) <=
@@ -489,37 +517,29 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                    } `}
-                    onClick={() => supplyAmount()}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
-                    >
-                      Supply {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <>
+                      <button
+                        className={`w-full rounded-md py-1 transition-colors ${
+                          amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                        } `}
+                        onClick={() => supplyAmount()}
+                      >
+                        Supply {selectedMarketData.underlyingSymbol}
+                      </button>
 
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                    } `}
-                    onClick={() => supplyAmount(true)}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
-                    >
-                      Collateral {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                      <button
+                        className={`w-full rounded-md py-1 transition-colors ${
+                          amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                        } `}
+                        onClick={() => supplyAmount(true)}
+                      >
+                        Collateral {selectedMarketData.underlyingSymbol}
+                      </button>
+                    </>
+                  )}
                 </div>
                 {/* <Approved /> */}
               </div>
@@ -561,21 +581,18 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                    } `}
-                    onClick={withdrawAmount}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <button
+                      className={`w-full rounded-md py-1 transition-colors ${
+                        amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                      } `}
+                      onClick={withdrawAmount}
                     >
                       Withdraw {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                    </button>
+                  )}
                 </div>
                 {/* <Approved /> */}
               </div>
@@ -627,28 +644,25 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount &&
-                      amount > 0 &&
-                      minBorrowAmount &&
-                      amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
-                      maxBorrowAmount &&
-                      amount <= maxBorrowAmount.number
-                        ? 'bg-accent'
-                        : 'bg-stone-500'
-                    } `}
-                    onClick={borrowAmount}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <button
+                      className={`w-full rounded-md py-1 transition-colors ${
+                        amount &&
+                        amount > 0 &&
+                        minBorrowAmount &&
+                        amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
+                        maxBorrowAmount &&
+                        amount <= maxBorrowAmount.number
+                          ? 'bg-accent'
+                          : 'bg-stone-500'
+                      } `}
+                      onClick={borrowAmount}
                     >
                       Borrow {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                    </button>
+                  )}
                 </div>
               </div>
               <div className={`min-w-full py-5 px-[6%] h-min`}>
@@ -683,23 +697,20 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  <button
-                    className={`w-full rounded-md py-1 transition-colors ${
-                      amount && amount > 0 && currentBorrowAmountAsFloat
-                        ? 'bg-accent'
-                        : 'bg-stone-500'
-                    } `}
-                    onClick={repayAmount}
-                  >
-                    <ResultHandler
-                      isLoading={isExecutingAction}
-                      width="20"
-                      height="20"
-                      color="#fff"
+                  {isExecutingAction ? (
+                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  ) : (
+                    <button
+                      className={`w-full rounded-md py-1 transition-colors ${
+                        amount && amount > 0 && currentBorrowAmountAsFloat
+                          ? 'bg-accent'
+                          : 'bg-stone-500'
+                      } `}
+                      onClick={repayAmount}
                     >
                       Repay {selectedMarketData.underlyingSymbol}
-                    </ResultHandler>
-                  </button>
+                    </button>
+                  )}
                 </div>
               </div>
             </>

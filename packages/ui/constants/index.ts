@@ -358,3 +358,21 @@ export const LEVERAGE_VALUE = {
   MAX: 3.0,
   MIN: 1.0
 };
+
+export const INFO_MESSAGES = {
+  SUPPLY: {
+    APPROVE: 'Approve amount for spending',
+    COLLATERAL: 'Enable as collateral',
+    SUPPLYING: 'Add to supply'
+  },
+  WITHDRAW: {
+    WITHDRAWING: 'Withdrawing funds'
+  },
+  BORROW: {
+    BORROWING: 'Borrowing funds'
+  },
+  REPAY: {
+    APPROVE: 'Approve amount for spending',
+    REPAYING: 'Repaying'
+  }
+};
