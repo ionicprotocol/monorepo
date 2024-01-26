@@ -46,14 +46,14 @@ const PoolRows = ({
       <h3 className={` col-span-2`}>{bAPR}</h3>
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
         <Link
-          href={`/market?popmode=SUPPLY`}
+          href={`/?popmode=SUPPLY`}
           className={`rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => setSelectedSymbol(asset)}
         >
           Supply
         </Link>
         <Link
-          href={`/market?popmode=BORROW`}
+          href={`/?popmode=BORROW`}
           className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
           onClick={() => setSelectedSymbol(asset)}
         >
