@@ -13,8 +13,12 @@ import { useAssets } from '@ui/hooks/useAssets';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import ResultHandler from './_components/ResultHandler';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { BigNumber } from 'ethers';
 
 export default function Market() {
+  const { currentSdk } = useMultiMidas();
   const searchParams = useSearchParams();
   const popmode = searchParams.get('popmode');
   const chainId = useChainId();
@@ -181,10 +185,18 @@ export default function Market() {
                         ? val.totalBorrowNative.toFixed(6)
                         : '0'
                     } / $${val.totalBorrowFiat.toFixed(2)}`}
-                    supplyAPR={`${assetsSupplyAprData[val.cToken].apy.toFixed(
-                      2
-                    )}%`}
-                    borrowAPR={`${assetsBorrowAprData[val.cToken].toFixed(2)}%`}
+                    supplyAPR={`${currentSdk
+                      ?.ratePerBlockToAPY(
+                        val?.supplyRatePerBlock ?? BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2)}%`}
+                    borrowAPR={`${currentSdk
+                      ?.ratePerBlockToAPY(
+                        val?.borrowRatePerBlock ?? BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2)}%`}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     setSelectedSymbol={setSelectedSymbol}
                   />

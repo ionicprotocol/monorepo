@@ -8,7 +8,7 @@ import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { constants } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -17,6 +17,9 @@ import { useBalance, useChainId } from 'wagmi';
 import Amount from './Amount';
 import SliderComponent from './Slider';
 import Tab from './Tab';
+import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
+import { FundOperationMode } from 'types/dist';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -122,6 +125,70 @@ const Popup = ({
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
   );
+  // const { data: updatedAssets } = useUpdatedUserAssets({
+  //   mode: FundOperationMode.SUPPLY,
+  //   poolChainId: chainId,
+  //   amount: amountAsBInt as any,
+  //   assets: [selectedMarketData],
+  //   index: 0
+  // });
+  // const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
+  // const {
+  //   supplyAPY,
+  //   borrowAPR,
+  //   updatedSupplyAPY,
+  //   updatedBorrowAPR,
+  //   supplyBalanceFrom,
+  //   supplyBalanceTo,
+  //   updatedTotalBorrows
+  // } = useMemo(() => {
+  //   const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+
+  //   if (currentSdk) {
+  //     return {
+  //       borrowAPR: currentSdk.ratePerBlockToAPY(
+  //         selectedMarketData.borrowRatePerBlock,
+  //         blocksPerMinute
+  //       ),
+  //       supplyAPY: currentSdk.ratePerBlockToAPY(
+  //         selectedMarketData.supplyRatePerBlock,
+  //         blocksPerMinute
+  //       ),
+  //       supplyBalanceFrom: utils.commify(
+  //         utils.formatUnits(
+  //           selectedMarketData.supplyBalance,
+  //           selectedMarketData.underlyingDecimals
+  //         )
+  //       ),
+  //       supplyBalanceTo: updatedAsset
+  //         ? utils.commify(
+  //             utils.formatUnits(
+  //               updatedAsset.supplyBalance,
+  //               updatedAsset.underlyingDecimals
+  //             )
+  //           )
+  //         : undefined,
+  //       updatedBorrowAPR: updatedAsset
+  //         ? currentSdk.ratePerBlockToAPY(
+  //             updatedAsset.borrowRatePerBlock,
+  //             blocksPerMinute
+  //           )
+  //         : undefined,
+  //       updatedSupplyAPY: updatedAsset
+  //         ? currentSdk.ratePerBlockToAPY(
+  //             updatedAsset.supplyRatePerBlock,
+  //             blocksPerMinute
+  //           )
+  //         : undefined,
+  //       updatedTotalBorrows: updatedAssets
+  //         ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
+  //         : undefined
+  //     };
+  //   }
+
+  //   return {};
+  // }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  // console.log(updatedBorrowAPR, updatedSupplyAPY);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -501,8 +568,14 @@ const Popup = ({
                 >
                   <span className={``}>Market Supply APR</span>
                   <span className={`font-bold pl-2`}>
-                    {collateralApr}
-                    {/* this will be dynamic */}
+                    {currentSdk
+                      ?.ratePerBlockToAPY(
+                        selectedMarketData.supplyRatePerBlock ??
+                          BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2)}
+                    %{/* this will be dynamic */}
                   </span>
                 </div>
                 <div
@@ -510,8 +583,14 @@ const Popup = ({
                 >
                   <span className={``}>Market Borrow Apr</span>
                   <span className={`font-bold pl-2`}>
-                    {borrowApr}
-                    {/* this will be dynamic */}
+                    {currentSdk
+                      ?.ratePerBlockToAPY(
+                        selectedMarketData.borrowRatePerBlock ??
+                          BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2)}
+                    %{/* this will be dynamic */}
                   </span>
                 </div>
                 <div
