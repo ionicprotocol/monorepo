@@ -115,9 +115,11 @@ const Popup = ({
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
   );
+  const [currentFundOperation, setCurrentFundOperation] =
+    useState<FundOperationMode>(FundOperationMode.SUPPLY);
   const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
     useUpdatedUserAssets({
-      mode: FundOperationMode.SUPPLY,
+      mode: currentFundOperation,
       poolChainId: chainId,
       amount: amountAsBInt as any,
       assets: [selectedMarketData],
@@ -202,6 +204,28 @@ const Popup = ({
 
   useEffect(() => {
     setAmount(0);
+
+    switch (active) {
+      case 'COLLATERAL':
+        setCurrentFundOperation(FundOperationMode.SUPPLY);
+
+        break;
+
+      case 'WITHDRAW':
+        setCurrentFundOperation(FundOperationMode.WITHDRAW);
+
+        break;
+
+      case 'BORROW':
+        setCurrentFundOperation(FundOperationMode.BORROW);
+
+        break;
+
+      case 'REPAY':
+        setCurrentFundOperation(FundOperationMode.REPAY);
+
+        break;
+    }
 
     if (mode === 'DEFAULT') {
       if (active === 'COLLATERAL') {
@@ -571,23 +595,7 @@ const Popup = ({
                   </span>
                 </div>
                 <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                >
-                  <span className={``}>Market Borrow Apr</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {`${borrowAPR?.toFixed(2)}%`}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                      height="16"
-                    >
-                      {updatedBorrowAPR?.toFixed(2)}%
-                    </ResultHandler>
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
+                  className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
                 >
                   {isExecutingAction ? (
                     <LoadingButtonWithText text={currentInfoMessage ?? ''} />
@@ -651,6 +659,22 @@ const Popup = ({
                   </span>
                 </div>
                 <div
+                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                >
+                  <span className={``}>Market Supply APR</span>
+                  <span className={`flex font-bold pl-2`}>
+                    {`${supplyAPY?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedSupplyAPY?.toFixed(2)}%
+                    </ResultHandler>
+                  </span>
+                </div>
+                <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
                   {isExecutingAction ? (
@@ -688,7 +712,7 @@ const Popup = ({
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
                 <div
-                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
@@ -700,7 +724,7 @@ const Popup = ({
                   </span>
                 </div>
                 <div
-                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
                   <span className={``}>MAX BORROW</span>
                   <span className={`font-bold pl-2`}>
@@ -708,6 +732,22 @@ const Popup = ({
                       parseInt(selectedMarketData.underlyingDecimals.toString())
                     ) ?? '0.00'}
                     {/* this will be dynamic */}
+                  </span>
+                </div>
+                <div
+                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                >
+                  <span className={``}>Market Borrow Apr</span>
+                  <span className={`flex font-bold pl-2`}>
+                    {`${borrowAPR?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedBorrowAPR?.toFixed(2)}%
+                    </ResultHandler>
                   </span>
                 </div>
                 <div
@@ -753,7 +793,7 @@ const Popup = ({
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
                 <div
-                  className={`flex w-full items-center justify-between mb-2 text-sm text-white/50 `}
+                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
                   <span className={``}>CURRENTLY BORROWING</span>
                   <span className={`font-bold pl-2`}>
@@ -761,6 +801,22 @@ const Popup = ({
                       parseInt(selectedMarketData.underlyingDecimals.toString())
                     ) ?? '0.00'}
                     {/* this will be dynamic */}
+                  </span>
+                </div>
+                <div
+                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                >
+                  <span className={``}>Market Borrow Apr</span>
+                  <span className={`flex font-bold pl-2`}>
+                    {`${borrowAPR?.toFixed(2)}%`}
+                    <span className="mx-1">{`->`}</span>
+                    <ResultHandler
+                      isLoading={isLoadingUpdatedAssets}
+                      width="16"
+                      height="16"
+                    >
+                      {updatedBorrowAPR?.toFixed(2)}%
+                    </ResultHandler>
                   </span>
                 </div>
                 <div
