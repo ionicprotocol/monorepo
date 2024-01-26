@@ -1,11 +1,6 @@
 [[plugins]]
 package = "@netlify/plugin-nextjs"
 
-[[redirects]]
-from = "https://development.ionic.money"
-to = "https://development.ionic.money/market"
-status = 200
-
 [build]
 base = "./"
 publish = "./packages/ui/.next"
