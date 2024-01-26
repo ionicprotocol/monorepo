@@ -16,6 +16,7 @@ import ResultHandler from './_components/ResultHandler';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 
 export default function Market() {
   const { currentSdk } = useMultiMidas();
@@ -155,20 +156,36 @@ export default function Market() {
                     asset={val.underlyingSymbol}
                     supplyBalance={`${
                       val.supplyBalanceNative
-                        ? val.supplyBalanceNative.toFixed(6)
+                        ? parseFloat(
+                            formatUnits(
+                              val.supplyBalance,
+                              val.underlyingDecimals
+                            )
+                          ).toFixed(6)
                         : '0'
                     } / $${val.supplyBalanceFiat.toFixed(2)}`}
                     totalSupplied={`${
-                      val.liquidityNative ? val.liquidityNative.toFixed(6) : '0'
+                      val.liquidityNative
+                        ? parseFloat(
+                            formatUnits(val.liquidity, val.underlyingDecimals)
+                          ).toFixed(6)
+                        : '0'
                     } / $${val.liquidityFiat.toFixed(2)}`}
                     borrowBalance={`${
                       val.borrowBalanceNative
-                        ? val.borrowBalanceNative.toFixed(6)
+                        ? parseFloat(
+                            formatUnits(
+                              val.borrowBalance,
+                              val.underlyingDecimals
+                            )
+                          ).toFixed(6)
                         : '0'
                     } / $${val.borrowBalanceFiat.toFixed(2)}`}
                     totalBorrowing={`${
                       val.totalBorrowNative
-                        ? val.totalBorrowNative.toFixed(6)
+                        ? parseFloat(
+                            formatUnits(val.totalBorrow, val.underlyingDecimals)
+                          ).toFixed(6)
                         : '0'
                     } / $${val.totalBorrowFiat.toFixed(2)}`}
                     supplyAPR={`${currentSdk
