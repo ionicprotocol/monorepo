@@ -27,6 +27,36 @@
     -webkit-appearance: none;
     appearance: none;
   }
+
+  .amount-field {
+    color: #fff;
+  }
+  .amount-field::-webkit-input-placeholder {
+    /* WebKit, Blink, Edge */
+    color: rgb(255 255 255 / 0.5);
+  }
+  .amount-field:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: rgb(255 255 255 / 0.5);
+    opacity: 1;
+  }
+  .amount-field::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: rgb(255 255 255 / 0.5);
+    opacity: 1;
+  }
+  .amount-field:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: rgb(255 255 255 / 0.5);
+  }
+  .amount-field::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: rgb(255 255 255 / 0.5);
+  }
+  .amount-field::placeholder {
+    /* Most modern browsers support this now. */
+    color: rgb(255 255 255 / 0.5);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
