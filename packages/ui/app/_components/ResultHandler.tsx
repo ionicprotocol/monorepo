@@ -8,6 +8,7 @@ type ResultHandlerProps = {
   width?: string;
   height?: string;
   color?: string;
+  center?: boolean;
 };
 
 export default function ResultHandler({
@@ -16,7 +17,8 @@ export default function ResultHandler({
   isFetching,
   width = '40',
   height = '40',
-  color = '#39ff88'
+  color = '#39ff88',
+  center = false
 }: ResultHandlerProps) {
   if (isLoading || isFetching) {
     return (
@@ -25,6 +27,11 @@ export default function ResultHandler({
         height={height}
         width={width}
         color={color}
+        wrapperStyle={{
+          width: `${width}px`,
+          height: `${height}px`,
+          margin: center ? 'auto' : '0px'
+        }}
         ariaLabel="three-circles-loading"
         wrapperClass=""
       />

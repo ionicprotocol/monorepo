@@ -21,6 +21,10 @@ import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { FundOperationMode } from 'types/dist';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import ResultHandler from '../ResultHandler';
+import toast from 'react-hot-toast';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
+import { bignumber } from 'mathjs';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -97,6 +101,10 @@ const Popup = ({
     },
     undefined
   );
+  const { data: maxRepayAmount } = useMaxRepayAmount(
+    selectedMarketData,
+    chainId
+  );
   const amountAsBInt = useMemo<string>(
     () =>
       amount
@@ -120,6 +128,8 @@ const Popup = ({
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
   );
+  const [currentUtilizationPercentage, setCurrentUtilizationPercentage] =
+    useState<number>(0);
   const [currentFundOperation, setCurrentFundOperation] =
     useState<FundOperationMode>(FundOperationMode.SUPPLY);
   const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
@@ -131,6 +141,10 @@ const Popup = ({
       index: 0
     });
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
+  const { data: maxWithdrawAmount } = useMaxWithdrawAmount(
+    selectedMarketData,
+    chainId
+  );
   const {
     supplyAPY,
     borrowAPR,
@@ -207,6 +221,70 @@ const Popup = ({
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
   const queryClient = useQueryClient();
 
+  /**
+   * Update utilization percentage when amount changes
+   */
+  useEffect(() => {
+    switch (active) {
+      case 'COLLATERAL':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) / parseFloat(balanceData?.formatted ?? '1')) * 100
+          )
+        );
+
+        break;
+
+      case 'WITHDRAW':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) /
+              parseFloat(
+                formatUnits(
+                  maxWithdrawAmount ?? '0',
+                  selectedMarketData.underlyingDecimals
+                ) ?? '1'
+              )) *
+              100
+          )
+        );
+
+        break;
+
+      case 'BORROW':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) /
+              parseFloat(
+                formatUnits(
+                  maxBorrowAmount?.bigNumber ?? '0',
+                  selectedMarketData.underlyingDecimals
+                ) ?? '1'
+              )) *
+              100
+          )
+        );
+
+        break;
+
+      case 'REPAY':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) /
+              parseFloat(
+                formatUnits(
+                  maxRepayAmount ?? '0',
+                  selectedMarketData.underlyingDecimals
+                ) ?? '1'
+              )) *
+              100
+          )
+        );
+
+        break;
+    }
+  }, [amount]);
+
   useEffect(() => {
     if (mode === 'DEFAULT' || 'SUPPLY') {
       if (specific) {
@@ -227,6 +305,7 @@ const Popup = ({
 
   useEffect(() => {
     setAmount(0);
+    setCurrentUtilizationPercentage(0);
 
     switch (active) {
       case 'COLLATERAL':
@@ -293,6 +372,54 @@ const Popup = ({
     );
   };
 
+  const handleWithdrawUtilization = (utilizationPercentage: number) => {
+    setAmount(
+      parseFloat(
+        (
+          (utilizationPercentage / 100) *
+          parseFloat(
+            formatUnits(
+              maxWithdrawAmount ?? '0',
+              selectedMarketData.underlyingDecimals
+            ) ?? '0.0'
+          )
+        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      )
+    );
+  };
+
+  const handleBorrowUtilization = (utilizationPercentage: number) => {
+    setAmount(
+      parseFloat(
+        (
+          (utilizationPercentage / 100) *
+          parseFloat(
+            formatUnits(
+              maxBorrowAmount?.bigNumber ?? '0',
+              selectedMarketData.underlyingDecimals
+            ) ?? '0.0'
+          )
+        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      )
+    );
+  };
+
+  const handleRepayUtilization = (utilizationPercentage: number) => {
+    setAmount(
+      parseFloat(
+        (
+          (utilizationPercentage / 100) *
+          parseFloat(
+            formatUnits(
+              maxRepayAmount ?? '0',
+              selectedMarketData.underlyingDecimals
+            ) ?? '0.0'
+          )
+        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      )
+    );
+  };
+
   const supplyAmount = async (collateral: boolean = false) => {
     if (!isExecutingAction && currentSdk && address && amount && amount > 0) {
       setIsExecutingAction(true);
@@ -330,10 +457,14 @@ const Popup = ({
 
         setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.SUPPLYING);
 
-        const { tx } = await currentSdk.mint(
+        const { tx, errorCode } = await currentSdk.mint(
           selectedMarketData.cToken,
           amountAsBInt as any
         );
+
+        if (errorCode) {
+          throw new Error('Error during supplying!');
+        }
 
         await tx?.wait();
 
@@ -350,8 +481,12 @@ const Popup = ({
             queryKey: ['useBorrowCapsDataForAsset']
           })
         ]);
+
+        toast.success(
+          `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
+        );
       } catch (error) {
-        console.error(error);
+        toast.error('Error while supplying!');
       }
     }
 
@@ -365,30 +500,57 @@ const Popup = ({
       address &&
       amount &&
       amount > 0 &&
-      amount <= selectedMarketData.supplyBalanceNative
+      amount <=
+        parseFloat(
+          formatUnits(
+            maxWithdrawAmount ?? '0',
+            selectedMarketData.underlyingDecimals
+          )
+        )
     ) {
       setIsExecutingAction(true);
 
       try {
         setCurrentInfoMessage(INFO_MESSAGES.WITHDRAW.WITHDRAWING);
 
-        if (selectedMarketData.supplyBalanceNative <= amount) {
-          const { tx } = await currentSdk.withdraw(
+        if (
+          parseFloat(
+            formatUnits(
+              selectedMarketData.supplyBalance,
+              selectedMarketData.underlyingDecimals
+            )
+          ) <= amount
+        ) {
+          const { tx, errorCode } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
           );
 
+          if (errorCode) {
+            throw new Error('Error during withdrawing!');
+          }
+
           await tx?.wait();
         } else {
-          const { tx } = await currentSdk.withdraw(
+          const { tx, errorCode } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             amountAsBInt as any
           );
 
+          if (errorCode) {
+            throw new Error('Error during withdrawing!');
+          }
+
           await tx?.wait();
         }
+
+        toast.success(
+          `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
+        );
       } catch (error) {
         console.error(error);
+
+        toast.error('Error while withdrawing!');
       }
     }
 
@@ -418,7 +580,7 @@ const Popup = ({
         );
 
         if (errorCode) {
-          console.error(`Borrowing error: ${errorCode}`);
+          throw new Error('Error during withdrawing!');
         }
 
         await tx?.wait();
@@ -435,8 +597,14 @@ const Popup = ({
         await queryClient.refetchQueries({
           queryKey: ['useBorrowCapsDataForAsset']
         });
+
+        toast.success(
+          `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
+        );
       } catch (error) {
         console.error(error);
+
+        toast.error('Error while borrowing!');
       }
     }
 
@@ -477,7 +645,7 @@ const Popup = ({
         setCurrentInfoMessage(INFO_MESSAGES.REPAY.REPAYING);
 
         const isRepayingMax =
-          parseInt(selectedMarketData.borrowBalance.toString()) <=
+          parseInt((maxRepayAmount ?? '0').toString()) <=
           parseInt(amountAsBInt);
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
@@ -507,6 +675,8 @@ const Popup = ({
         });
       } catch (error) {
         console.error(error);
+
+        toast.error('Error while repaying!');
       }
     }
 
@@ -562,6 +732,10 @@ const Popup = ({
                   max={parseFloat(balanceData?.formatted ?? '0')}
                   symbol={balanceData?.symbol ?? ''}
                 />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleSupplyUtilization}
+                />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
@@ -574,13 +748,6 @@ const Popup = ({
                     {/* to do: add the rewards to the calculation */}
                   </span>
                 </div>
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
-                <p className={`text-[10px] text-white/50`}>
-                  BALANCE UTILIZATION
-                </p>
-                <SliderComponent handleUtilization={handleSupplyUtilization} />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
@@ -655,10 +822,17 @@ const Popup = ({
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
                   max={parseFloat(
-                    selectedMarketData.supplyBalanceNative.toString()
+                    formatUnits(
+                      maxWithdrawAmount ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )
                   )}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Withdraw"
+                />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleWithdrawUtilization}
                 />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
@@ -730,6 +904,10 @@ const Popup = ({
                   max={maxBorrowAmount?.number ?? 0}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Borrow Amount"
+                />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleBorrowUtilization}
                 />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
@@ -824,10 +1002,19 @@ const Popup = ({
                   selectedMarketData={selectedMarketData}
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
-                  max={parseFloat(balanceData?.formatted ?? '0')}
+                  hintText={'Max Repay Amount'}
+                  max={parseFloat(
+                    formatUnits(
+                      maxRepayAmount ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )
+                  )}
                   symbol={balanceData?.symbol ?? ''}
                 />
-                <SliderComponent handleUtilization={handleSupplyUtilization} />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleRepayUtilization}
+                />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>

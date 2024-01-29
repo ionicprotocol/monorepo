@@ -148,7 +148,10 @@ export default function Market() {
             <h3 className={` col-span-2`}>BORROW APR</h3>
             <h3 className={` col-span-4`}>SUPPLY/BORROW</h3>
           </div>
-          <ResultHandler isLoading={dataIsLoading}>
+          <ResultHandler
+            isLoading={dataIsLoading}
+            center
+          >
             <>
               {assets &&
                 assets.map((val: MarketData, idx: number) => (
@@ -189,18 +192,22 @@ export default function Market() {
                           ).toFixed(6)
                         : '0'
                     } / $${val.totalBorrowFiat.toFixed(2)}`}
-                    supplyAPR={`${currentSdk
-                      ?.ratePerBlockToAPY(
-                        val?.supplyRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2)}%`}
-                    borrowAPR={`${currentSdk
-                      ?.ratePerBlockToAPY(
-                        val?.borrowRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2)}%`}
+                    supplyAPR={`${
+                      currentSdk
+                        ?.ratePerBlockToAPY(
+                          val?.supplyRatePerBlock ?? BigNumber.from(0),
+                          getBlockTimePerMinuteByChainId(chainId)
+                        )
+                        .toFixed(2) ?? '0.00'
+                    }%`}
+                    borrowAPR={`${
+                      currentSdk
+                        ?.ratePerBlockToAPY(
+                          val?.borrowRatePerBlock ?? BigNumber.from(0),
+                          getBlockTimePerMinuteByChainId(chainId)
+                        )
+                        .toFixed(2) ?? '0.00'
+                    }%`}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     setSelectedSymbol={setSelectedSymbol}
                   />

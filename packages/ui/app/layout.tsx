@@ -18,6 +18,7 @@ import {
   MultiIonicProvider
 } from '@ui/context/MultiIonicContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 
 const supportedChains: Chain[] = Object.values(getSupportedChains()).map(
   (data) => {
@@ -88,6 +89,21 @@ export default function RootLayout({
                 />
                 <Navbar />
                 {children}
+                <Toaster
+                  toastOptions={{
+                    position: 'bottom-center',
+                    style: {
+                      color: '#000',
+                      background: '#3bff89ff'
+                    },
+                    error: {
+                      style: {
+                        color: '#fff',
+                        background: '#e10000'
+                      }
+                    }
+                  }}
+                />
               </MultiIonicProvider>
             </QueryClientProvider>
           </RainbowKitProvider>

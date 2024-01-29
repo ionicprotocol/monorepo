@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import Link from 'next/link';
 
 import React, { Dispatch, SetStateAction } from 'react';
@@ -26,6 +28,8 @@ const PoolRows = ({
   logo,
   setSelectedSymbol
 }: IRows) => {
+  const { address } = useMultiMidas();
+
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold text-center items-center `}
@@ -45,20 +49,26 @@ const PoolRows = ({
       <h3 className={` col-span-2`}>{supplyAPR}</h3>
       <h3 className={` col-span-2`}>{borrowAPR}</h3>
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
-        <Link
-          href={`/?popmode=SUPPLY`}
-          className={`rounded-lg bg-accent text-black py-1.5 px-3`}
-          onClick={() => setSelectedSymbol(asset)}
-        >
-          Supply / Withdraw
-        </Link>
-        <Link
-          href={`/?popmode=BORROW`}
-          className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
-          onClick={() => setSelectedSymbol(asset)}
-        >
-          Borrow / Repay
-        </Link>
+        {address ? (
+          <>
+            <Link
+              href={`/?popmode=SUPPLY`}
+              className={`rounded-lg bg-accent text-black py-1.5 px-3`}
+              onClick={() => setSelectedSymbol(asset)}
+            >
+              Supply / Withdraw
+            </Link>
+            <Link
+              href={`/?popmode=BORROW`}
+              className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
+              onClick={() => setSelectedSymbol(asset)}
+            >
+              Borrow / Repay
+            </Link>
+          </>
+        ) : (
+          <ConnectButton />
+        )}
       </div>
       {/* <Link
         href={`/market/details/${asset}`}
