@@ -655,7 +655,10 @@ const Popup = ({
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
                   max={parseFloat(
-                    selectedMarketData.supplyBalanceNative.toString()
+                    formatUnits(
+                      selectedMarketData.supplyBalance,
+                      selectedMarketData.underlyingDecimals
+                    )
                   )}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Withdraw"

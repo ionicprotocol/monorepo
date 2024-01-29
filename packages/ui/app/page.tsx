@@ -189,18 +189,22 @@ export default function Market() {
                           ).toFixed(6)
                         : '0'
                     } / $${val.totalBorrowFiat.toFixed(2)}`}
-                    supplyAPR={`${currentSdk
-                      ?.ratePerBlockToAPY(
-                        val?.supplyRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2)}%`}
-                    borrowAPR={`${currentSdk
-                      ?.ratePerBlockToAPY(
-                        val?.borrowRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2)}%`}
+                    supplyAPR={`${
+                      currentSdk
+                        ?.ratePerBlockToAPY(
+                          val?.supplyRatePerBlock ?? BigNumber.from(0),
+                          getBlockTimePerMinuteByChainId(chainId)
+                        )
+                        .toFixed(2) ?? '0.00'
+                    }%`}
+                    borrowAPR={`${
+                      currentSdk
+                        ?.ratePerBlockToAPY(
+                          val?.borrowRatePerBlock ?? BigNumber.from(0),
+                          getBlockTimePerMinuteByChainId(chainId)
+                        )
+                        .toFixed(2) ?? '0.00'
+                    }%`}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     setSelectedSymbol={setSelectedSymbol}
                   />
