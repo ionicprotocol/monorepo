@@ -365,7 +365,13 @@ const Popup = ({
       address &&
       amount &&
       amount > 0 &&
-      amount <= selectedMarketData.supplyBalanceNative
+      amount <=
+        parseFloat(
+          formatUnits(
+            selectedMarketData.supplyBalance,
+            selectedMarketData.underlyingDecimals
+          )
+        )
     ) {
       setIsExecutingAction(true);
 
