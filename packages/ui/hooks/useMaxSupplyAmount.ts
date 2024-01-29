@@ -7,6 +7,7 @@ import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useBalance } from 'wagmi';
 
 export function useMaxSupplyAmount(
   asset: Pick<
@@ -23,6 +24,10 @@ export function useMaxSupplyAmount(
     asset.cToken,
     chainId
   );
+  const { data: balanceData } = useBalance({
+    address: address as any,
+    token: asset.underlyingToken as any
+  });
 
   return useQuery(
     [
@@ -36,13 +41,9 @@ export function useMaxSupplyAmount(
       supplyCapsDataForAsset
     ],
     async () => {
-      if (sdk && address && supplyCapsDataForAsset) {
+      if (sdk && address && supplyCapsDataForAsset && balanceData) {
         try {
-          const tokenBalance = await fetchTokenBalance(
-            asset.underlyingToken,
-            sdk,
-            address
-          );
+          const tokenBalance = balanceData.value;
 
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isWhitelisted] = await Promise.all([

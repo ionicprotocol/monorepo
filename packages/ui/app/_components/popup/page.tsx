@@ -25,6 +25,7 @@ import toast from 'react-hot-toast';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { bignumber } from 'mathjs';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -67,10 +68,11 @@ const Popup = ({
     selectedMarketData,
     chainId
   );
-  const { data: balanceData } = useBalance({
-    address: (address as any) ?? `0x0`,
-    token: selectedMarketData.underlyingToken as any
-  });
+  const { data: maxSupplyAmount } = useMaxSupplyAmount(
+    selectedMarketData,
+    comptrollerAddress,
+    chainId
+  );
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
     chainId
@@ -229,7 +231,14 @@ const Popup = ({
       case 'COLLATERAL':
         setCurrentUtilizationPercentage(
           Math.round(
-            ((amount ?? 0) / parseFloat(balanceData?.formatted ?? '1')) * 100
+            ((amount ?? 0) /
+              parseFloat(
+                formatUnits(
+                  maxSupplyAmount?.bigNumber ?? '0',
+                  selectedMarketData.underlyingDecimals
+                )
+              )) *
+              100
           )
         );
 
@@ -366,7 +375,12 @@ const Popup = ({
       parseFloat(
         (
           (utilizationPercentage / 100) *
-          parseFloat(balanceData?.formatted ?? '0.0')
+          parseFloat(
+            formatUnits(
+              maxSupplyAmount?.bigNumber ?? '0',
+              selectedMarketData.underlyingDecimals
+            ) ?? '0.0'
+          )
         ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
@@ -421,7 +435,15 @@ const Popup = ({
   };
 
   const supplyAmount = async (collateral: boolean = false) => {
-    if (!isExecutingAction && currentSdk && address && amount && amount > 0) {
+    if (
+      !isExecutingAction &&
+      currentSdk &&
+      address &&
+      amount &&
+      amount > 0 &&
+      maxSupplyAmount &&
+      amount <= maxSupplyAmount.number
+    ) {
       setIsExecutingAction(true);
 
       try {
@@ -729,8 +751,13 @@ const Popup = ({
                   selectedMarketData={selectedMarketData}
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
-                  max={parseFloat(balanceData?.formatted ?? '0')}
-                  symbol={balanceData?.symbol ?? ''}
+                  max={parseFloat(
+                    formatUnits(
+                      maxSupplyAmount?.bigNumber ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    ) ?? '0.0'
+                  )}
+                  symbol={selectedMarketData.underlyingSymbol}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -827,7 +854,7 @@ const Popup = ({
                       selectedMarketData.underlyingDecimals
                     )
                   )}
-                  symbol={balanceData?.symbol ?? ''}
+                  symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Withdraw"
                 />
                 <SliderComponent
@@ -902,7 +929,7 @@ const Popup = ({
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
                   max={maxBorrowAmount?.number ?? 0}
-                  symbol={balanceData?.symbol ?? ''}
+                  symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Borrow Amount"
                 />
                 <SliderComponent
@@ -1009,7 +1036,7 @@ const Popup = ({
                       selectedMarketData.underlyingDecimals
                     )
                   )}
-                  symbol={balanceData?.symbol ?? ''}
+                  symbol={selectedMarketData.underlyingSymbol}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}

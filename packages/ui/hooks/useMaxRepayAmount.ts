@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useBalance } from 'wagmi';
 
 export function useMaxRepayAmount(
   asset: NativePricedIonicAsset,
@@ -11,6 +11,10 @@ export function useMaxRepayAmount(
 ) {
   const { address } = useMultiMidas();
   const sdk = useSdk(chainId);
+  const { data: balanceData } = useBalance({
+    address: address as any,
+    token: asset.underlyingToken as any
+  });
 
   return useQuery(
     [
@@ -21,12 +25,8 @@ export function useMaxRepayAmount(
       address
     ],
     async () => {
-      if (sdk && address) {
-        const balance = await fetchTokenBalance(
-          asset.underlyingToken,
-          sdk,
-          address
-        );
+      if (sdk && address && balanceData) {
+        const balance = balanceData.value;
         const debt = asset.borrowBalance;
 
         return balance.gt(debt) ? debt : balance;
