@@ -435,7 +435,15 @@ const Popup = ({
   };
 
   const supplyAmount = async (collateral: boolean = false) => {
-    if (!isExecutingAction && currentSdk && address && amount && amount > 0) {
+    if (
+      !isExecutingAction &&
+      currentSdk &&
+      address &&
+      amount &&
+      amount > 0 &&
+      maxSupplyAmount &&
+      amount <= maxSupplyAmount.number
+    ) {
       setIsExecutingAction(true);
 
       try {
