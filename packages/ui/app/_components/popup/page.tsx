@@ -382,7 +382,10 @@ const Popup = ({
       amount > 0 &&
       amount <=
         parseFloat(
-          formatUnits(maxWithdrawAmount, selectedMarketData.underlyingDecimals)
+          formatUnits(
+            maxWithdrawAmount ?? '0',
+            selectedMarketData.underlyingDecimals
+          )
         )
     ) {
       setIsExecutingAction(true);
