@@ -131,7 +131,6 @@ const Popup = ({
       assets: [selectedMarketData],
       index: 0
     });
-  console.log(selectedMarketData);
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
   const {
     supplyAPY,
