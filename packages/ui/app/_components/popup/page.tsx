@@ -24,6 +24,7 @@ import ResultHandler from '../ResultHandler';
 import toast from 'react-hot-toast';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { bignumber } from 'mathjs';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -99,6 +100,10 @@ const Popup = ({
         : undefined;
     },
     undefined
+  );
+  const { data: maxRepayAmount } = useMaxRepayAmount(
+    selectedMarketData,
+    chainId
   );
   const amountAsBInt = useMemo<string>(
     () =>
@@ -268,7 +273,7 @@ const Popup = ({
             ((amount ?? 0) /
               parseFloat(
                 formatUnits(
-                  selectedMarketData.borrowBalance,
+                  maxRepayAmount ?? '0',
                   selectedMarketData.underlyingDecimals
                 ) ?? '1'
               )) *
@@ -406,7 +411,7 @@ const Popup = ({
           (utilizationPercentage / 100) *
           parseFloat(
             formatUnits(
-              selectedMarketData.borrowBalance,
+              maxRepayAmount ?? '0',
               selectedMarketData.underlyingDecimals
             ) ?? '0.0'
           )
@@ -640,7 +645,7 @@ const Popup = ({
         setCurrentInfoMessage(INFO_MESSAGES.REPAY.REPAYING);
 
         const isRepayingMax =
-          parseInt(selectedMarketData.borrowBalance.toString()) <=
+          parseInt((maxRepayAmount ?? '0').toString()) <=
           parseInt(amountAsBInt);
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
@@ -1000,7 +1005,7 @@ const Popup = ({
                   hintText={'Max Repay Amount'}
                   max={parseFloat(
                     formatUnits(
-                      selectedMarketData.borrowBalance,
+                      maxRepayAmount ?? '0',
                       selectedMarketData.underlyingDecimals
                     )
                   )}
