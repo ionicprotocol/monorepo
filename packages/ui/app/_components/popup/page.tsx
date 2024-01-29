@@ -378,7 +378,14 @@ const Popup = ({
       try {
         setCurrentInfoMessage(INFO_MESSAGES.WITHDRAW.WITHDRAWING);
 
-        if (selectedMarketData.supplyBalanceNative <= amount) {
+        if (
+          parseFloat(
+            formatUnits(
+              selectedMarketData.supplyBalance,
+              selectedMarketData.underlyingDecimals
+            )
+          ) <= amount
+        ) {
           const { tx } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
