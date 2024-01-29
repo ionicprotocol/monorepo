@@ -21,6 +21,7 @@ import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { FundOperationMode } from 'types/dist';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import ResultHandler from '../ResultHandler';
+import toast from 'react-hot-toast';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -130,6 +131,7 @@ const Popup = ({
       assets: [selectedMarketData],
       index: 0
     });
+  console.log(selectedMarketData);
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
   const {
     supplyAPY,
@@ -330,10 +332,14 @@ const Popup = ({
 
         setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.SUPPLYING);
 
-        const { tx } = await currentSdk.mint(
+        const { tx, errorCode } = await currentSdk.mint(
           selectedMarketData.cToken,
           amountAsBInt as any
         );
+
+        if (errorCode) {
+          throw new Error('Error during supplying!');
+        }
 
         await tx?.wait();
 
@@ -350,8 +356,12 @@ const Popup = ({
             queryKey: ['useBorrowCapsDataForAsset']
           })
         ]);
+
+        toast.success(
+          `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
+        );
       } catch (error) {
-        console.error(error);
+        toast.error('Error while supplying!');
       }
     }
 
@@ -386,22 +396,36 @@ const Popup = ({
             )
           ) <= amount
         ) {
-          const { tx } = await currentSdk.withdraw(
+          const { tx, errorCode } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
           );
 
+          if (errorCode) {
+            throw new Error('Error during withdrawing!');
+          }
+
           await tx?.wait();
         } else {
-          const { tx } = await currentSdk.withdraw(
+          const { tx, errorCode } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             amountAsBInt as any
           );
 
+          if (errorCode) {
+            throw new Error('Error during withdrawing!');
+          }
+
           await tx?.wait();
         }
+
+        toast.success(
+          `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
+        );
       } catch (error) {
         console.error(error);
+
+        toast.error('Error while withdrawing!');
       }
     }
 
@@ -431,7 +455,7 @@ const Popup = ({
         );
 
         if (errorCode) {
-          console.error(`Borrowing error: ${errorCode}`);
+          throw new Error('Error during withdrawing!');
         }
 
         await tx?.wait();
@@ -448,8 +472,14 @@ const Popup = ({
         await queryClient.refetchQueries({
           queryKey: ['useBorrowCapsDataForAsset']
         });
+
+        toast.success(
+          `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
+        );
       } catch (error) {
         console.error(error);
+
+        toast.error('Error while borrowing!');
       }
     }
 
@@ -520,6 +550,8 @@ const Popup = ({
         });
       } catch (error) {
         console.error(error);
+
+        toast.error('Error while repaying!');
       }
     }
 
