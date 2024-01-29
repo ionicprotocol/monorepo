@@ -123,6 +123,8 @@ const Popup = ({
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
   );
+  const [currentUtilizationPercentage, setCurrentUtilizationPercentage] =
+    useState<number>(0);
   const [currentFundOperation, setCurrentFundOperation] =
     useState<FundOperationMode>(FundOperationMode.SUPPLY);
   const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
@@ -214,6 +216,38 @@ const Popup = ({
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
   const queryClient = useQueryClient();
 
+  /**
+   * Update utilization percentage when amount changes
+   */
+  useEffect(() => {
+    switch (active) {
+      case 'COLLATERAL':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) / parseFloat(balanceData?.formatted ?? '1')) * 100
+          )
+        );
+
+        break;
+
+      case 'REPAY':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) /
+              parseFloat(
+                formatUnits(
+                  selectedMarketData.borrowBalance,
+                  selectedMarketData.underlyingDecimals
+                ) ?? '1'
+              )) *
+              100
+          )
+        );
+
+        break;
+    }
+  }, [amount]);
+
   useEffect(() => {
     if (mode === 'DEFAULT' || 'SUPPLY') {
       if (specific) {
@@ -234,6 +268,7 @@ const Popup = ({
 
   useEffect(() => {
     setAmount(0);
+    setCurrentUtilizationPercentage(0);
 
     switch (active) {
       case 'COLLATERAL':
@@ -295,6 +330,22 @@ const Popup = ({
         (
           (utilizationPercentage / 100) *
           parseFloat(balanceData?.formatted ?? '0.0')
+        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      )
+    );
+  };
+
+  const handleRepayUtilization = (utilizationPercentage: number) => {
+    setAmount(
+      parseFloat(
+        (
+          (utilizationPercentage / 100) *
+          parseFloat(
+            formatUnits(
+              selectedMarketData.borrowBalance,
+              selectedMarketData.underlyingDecimals
+            ) ?? '0.0'
+          )
         ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
@@ -630,7 +681,10 @@ const Popup = ({
                 <p className={`text-[10px] text-white/50`}>
                   BALANCE UTILIZATION
                 </p>
-                <SliderComponent handleUtilization={handleSupplyUtilization} />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleSupplyUtilization}
+                />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
@@ -886,7 +940,10 @@ const Popup = ({
                   )}
                   symbol={balanceData?.symbol ?? ''}
                 />
-                <SliderComponent handleUtilization={handleSupplyUtilization} />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleRepayUtilization}
+                />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>

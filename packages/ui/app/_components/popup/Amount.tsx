@@ -53,7 +53,7 @@ const Amount = ({
         className={`flex w-full  pt-1.5 items-center text-lg text-white/50 `}
       >
         <input
-          defaultValue={amount}
+          value={amount}
           type="number"
           placeholder="0"
           className={`focus:outline-none amount-field font-bold bg-transparent`}
