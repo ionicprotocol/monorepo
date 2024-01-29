@@ -22,6 +22,8 @@ import { FundOperationMode } from 'types/dist';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import ResultHandler from '../ResultHandler';
 import toast from 'react-hot-toast';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
+import { bignumber } from 'mathjs';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -132,6 +134,10 @@ const Popup = ({
       index: 0
     });
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
+  const { data: maxWithdrawAmount } = useMaxWithdrawAmount(
+    selectedMarketData,
+    chainId
+  );
   const {
     supplyAPY,
     borrowAPR,
@@ -376,10 +382,7 @@ const Popup = ({
       amount > 0 &&
       amount <=
         parseFloat(
-          formatUnits(
-            selectedMarketData.supplyBalance,
-            selectedMarketData.underlyingDecimals
-          )
+          formatUnits(maxWithdrawAmount, selectedMarketData.underlyingDecimals)
         )
     ) {
       setIsExecutingAction(true);
@@ -700,7 +703,7 @@ const Popup = ({
                   amount={amount}
                   max={parseFloat(
                     formatUnits(
-                      selectedMarketData.supplyBalance,
+                      maxWithdrawAmount ?? '0',
                       selectedMarketData.underlyingDecimals
                     )
                   )}
