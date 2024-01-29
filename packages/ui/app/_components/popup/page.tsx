@@ -230,6 +230,38 @@ const Popup = ({
 
         break;
 
+      case 'WITHDRAW':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) /
+              parseFloat(
+                formatUnits(
+                  maxWithdrawAmount ?? '0',
+                  selectedMarketData.underlyingDecimals
+                ) ?? '1'
+              )) *
+              100
+          )
+        );
+
+        break;
+
+      case 'BORROW':
+        setCurrentUtilizationPercentage(
+          Math.round(
+            ((amount ?? 0) /
+              parseFloat(
+                formatUnits(
+                  maxBorrowAmount?.bigNumber ?? '0',
+                  selectedMarketData.underlyingDecimals
+                ) ?? '1'
+              )) *
+              100
+          )
+        );
+
+        break;
+
       case 'REPAY':
         setCurrentUtilizationPercentage(
           Math.round(
@@ -330,6 +362,38 @@ const Popup = ({
         (
           (utilizationPercentage / 100) *
           parseFloat(balanceData?.formatted ?? '0.0')
+        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      )
+    );
+  };
+
+  const handleWithdrawUtilization = (utilizationPercentage: number) => {
+    setAmount(
+      parseFloat(
+        (
+          (utilizationPercentage / 100) *
+          parseFloat(
+            formatUnits(
+              maxWithdrawAmount ?? '0',
+              selectedMarketData.underlyingDecimals
+            ) ?? '0.0'
+          )
+        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      )
+    );
+  };
+
+  const handleBorrowUtilization = (utilizationPercentage: number) => {
+    setAmount(
+      parseFloat(
+        (
+          (utilizationPercentage / 100) *
+          parseFloat(
+            formatUnits(
+              maxBorrowAmount?.bigNumber ?? '0',
+              selectedMarketData.underlyingDecimals
+            ) ?? '0.0'
+          )
         ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
@@ -761,6 +825,10 @@ const Popup = ({
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Withdraw"
                 />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleWithdrawUtilization}
+                />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
@@ -831,6 +899,10 @@ const Popup = ({
                   max={maxBorrowAmount?.number ?? 0}
                   symbol={balanceData?.symbol ?? ''}
                   hintText="Max Borrow Amount"
+                />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleBorrowUtilization}
                 />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
