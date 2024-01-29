@@ -663,6 +663,10 @@ const Popup = ({
                   max={parseFloat(balanceData?.formatted ?? '0')}
                   symbol={balanceData?.symbol ?? ''}
                 />
+                <SliderComponent
+                  currentUtilizationPercentage={currentUtilizationPercentage}
+                  handleUtilization={handleSupplyUtilization}
+                />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
@@ -675,16 +679,6 @@ const Popup = ({
                     {/* to do: add the rewards to the calculation */}
                   </span>
                 </div>
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
-                <p className={`text-[10px] text-white/50`}>
-                  BALANCE UTILIZATION
-                </p>
-                <SliderComponent
-                  currentUtilizationPercentage={currentUtilizationPercentage}
-                  handleUtilization={handleSupplyUtilization}
-                />
                 <div
                   className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                 ></div>
