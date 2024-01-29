@@ -827,7 +827,13 @@ const Popup = ({
                   selectedMarketData={selectedMarketData}
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
-                  max={parseFloat(balanceData?.formatted ?? '0')}
+                  hintText={'Max Repay Amount'}
+                  max={parseFloat(
+                    formatUnits(
+                      selectedMarketData.borrowBalance,
+                      selectedMarketData.underlyingDecimals
+                    )
+                  )}
                   symbol={balanceData?.symbol ?? ''}
                 />
                 <SliderComponent handleUtilization={handleSupplyUtilization} />
