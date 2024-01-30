@@ -103,14 +103,17 @@ const Popup = ({
   const amountAsBInt = useMemo<BigNumber>(
     () =>
       BigNumber.from(
-        (amount ?? 0) *
-          Math.pow(
-            10,
-            parseInt(selectedMarketData.underlyingDecimals.toString())
-          )
+        Math.round(
+          (amount ?? 0) *
+            Math.pow(
+              10,
+              parseInt(selectedMarketData.underlyingDecimals.toString())
+            )
+        )
       ),
     [amount]
   );
+  console.log(amountAsBInt.toNumber());
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
