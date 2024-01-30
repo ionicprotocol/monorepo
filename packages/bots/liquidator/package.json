@@ -8,7 +8,7 @@
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
     "staging": "NODE_ENV=staging node build/server.js",
-    "dev": "HTTPS=true NODE_ENV=development ts-node-dev --inspect --respawn src/server.ts",
+    "dev": "HTTPS=true NODE_ENV=development ts-node-dev --inspect --respawn src/run.ts",
     "test": "NODE_ENV=test nyc ./node_modules/.bin/mocha --require ts-node/register ./src/test/**/**/**/**/*.test.ts",
     "build": "rimraf build && tsc -p tsconfig.json"
   },
@@ -18,7 +18,7 @@
   },
   "author": {
     "name": "Ionic Protocol",
-    "email": "admin@midascapital.xyz",
+    "email": "admin@ionic.money",
     "url": "https://github.com/ionicprotocol"
   },
   "dependencies": {
@@ -34,7 +34,8 @@
     "ethers": "^5.6.5",
     "pino": "^8.0.0",
     "pino-pretty": "^9.1.1",
-    "prettier": "2.6.2"
+    "prettier": "2.6.2",
+    "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
     "@types/eslint": "^8.4.3",
