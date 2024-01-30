@@ -47,7 +47,7 @@ export default function Market() {
   );
 
   return (
-    <main className={`pt-18`}>
+    <main className={`pt-20`}>
       <div className="w-full  flex flex-col items-center justify-start min-h-screen transition-all duration-200 ease-linear">
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
