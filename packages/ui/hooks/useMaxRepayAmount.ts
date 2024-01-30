@@ -1,7 +1,7 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useBalance } from 'wagmi';
 
@@ -9,7 +9,7 @@ export function useMaxRepayAmount(
   asset: NativePricedIonicAsset,
   chainId: number
 ) {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
   const { data: balanceData } = useBalance({
     address: address as any,

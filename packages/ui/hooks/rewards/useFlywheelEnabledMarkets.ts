@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
 
   return useQuery(
     ['useFlywheelEnabledMarkets', flywheelAddress, currentSdk?.chainId],

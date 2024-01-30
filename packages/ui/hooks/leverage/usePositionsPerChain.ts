@@ -2,14 +2,14 @@ import type { SupportedChains } from '@ionicprotocol/types';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type {
   Err,
   PositionsPerChainStatus
 } from '@ui/types/ComponentPropsType';
 
 export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
-  const { address, getSdk } = useMultiMidas();
+  const { address, getSdk } = useMultiIonic();
 
   const positionQueries = useQueries({
     queries: chainIds.map((chainId) => {

@@ -37,6 +37,6 @@ export const { chains, provider } = configureChains(supportedChains, [
 ]);
 
 export const { connectors } = getDefaultWallets({
-  appName: 'Midas Capital',
+  appName: 'Ionic Protocol',
   chains
 });

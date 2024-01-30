@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheel = (flywheelAddress?: string) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
 
   return useQuery(
     ['useFlywheel', currentSdk?.chainId, flywheelAddress],

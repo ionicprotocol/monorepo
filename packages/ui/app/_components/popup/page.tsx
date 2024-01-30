@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
 import { INFO_MESSAGES } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
@@ -145,7 +145,7 @@ const Popup = ({
     },
     []
   );
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
   const chainId = useChainId();
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,

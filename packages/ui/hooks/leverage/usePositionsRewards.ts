@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
 import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -9,7 +9,7 @@ export function useFlywheelRewardsForPositions(
   pools?: string[],
   chainIds?: number[]
 ) {
-  const { getSdk } = useMultiMidas();
+  const { getSdk } = useMultiIonic();
 
   return useQuery(
     ['useFlywheelRewardsForPositions', pools, chainIds],

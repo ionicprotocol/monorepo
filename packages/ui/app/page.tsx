@@ -14,12 +14,12 @@ import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import ResultHandler from './_components/ResultHandler';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 
 export default function Market() {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const searchParams = useSearchParams();
   const popmode = searchParams.get('popmode');
   const chainId = useChainId();

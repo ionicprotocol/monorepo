@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[poolChainId.toString()]) {

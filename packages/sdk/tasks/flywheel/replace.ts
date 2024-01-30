@@ -43,7 +43,7 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
 
       //// deploy a replacing flywheel
       const replacingFw = await deployments.deploy(flywheelContractName, {
-        contract: "MidasReplacingFlywheel",
+        contract: "IonicReplacingFlywheel",
         from: deployer.address,
         log: true,
         proxy: {

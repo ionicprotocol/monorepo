@@ -2,7 +2,7 @@ import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 // export const fetchFuseNumberTVL = async (midasSdk: IonicSdk) => {
@@ -23,7 +23,7 @@ import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 // >;
 
 // export const useTVL = () => {
-//   const { sdks } = useMultiMidas();
+//   const { sdks } = useMultiIonic();
 //   const { data: prices, isLoading, error } = useAllUsdPrices();
 
 //   return useQuery<CrossChainTVL | null | undefined>(

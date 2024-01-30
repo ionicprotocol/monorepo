@@ -94,8 +94,12 @@ export default function Navbar() {
             >
               Borrow
             </p>
-          </Link>
-          <Link href={'/points'}>
+          </Link> */}
+          <Link
+            aria-disabled
+            // href={'/points'}
+            href={'#'}
+          >
             <p
               className={`${
                 pathname == '/points' ? 'text-accent' : null
@@ -103,7 +107,7 @@ export default function Navbar() {
             >
               Points
             </p>
-          </Link> */}
+          </Link>
         </div>
 
         <div

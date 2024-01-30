@@ -16,7 +16,7 @@ import {
 import type { Chain } from 'wagmi';
 import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
+import { IONIC_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { FetchSignerResult } from 'wagmi/actions';
 import { Signer } from 'ethers';
@@ -150,7 +150,7 @@ export const MultiIonicProvider = (
   }, [chain]);
 
   useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
     if (oldData && JSON.parse(oldData).isSidebarCollapsed) {
       setIsSidebarCollapsed(true);
     } else {
@@ -160,13 +160,13 @@ export const MultiIonicProvider = (
 
   useEffect(() => {
     if (isSidebarCollapsed !== undefined) {
-      const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+      const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
       let oldObj;
       if (oldData) {
         oldObj = JSON.parse(oldData);
       }
       const data = { ...oldObj, isSidebarCollapsed };
-      localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+      localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
   }, [isSidebarCollapsed]);
 
@@ -216,11 +216,11 @@ export const MultiIonicProvider = (
 };
 
 // Hook
-export function useMultiMidas() {
+export function useMultiIonic() {
   const context = useContext(MultiIonicContext);
 
   if (context === undefined) {
-    throw new Error(`useMultiMidas must be used within a MultiMidasProvider`);
+    throw new Error(`useMultiIonic must be used within a MultiIonicProvider`);
   }
 
   return context;

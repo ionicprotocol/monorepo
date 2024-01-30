@@ -54,7 +54,7 @@ chain_id
 ```
 
 For the `docker_image` you can find the latest commit hash in
-the [fuse-liquidator-bot image releases](https://github.com/Midas-Protocol/fuse-liquidator-bot/pkgs/container/fuse-liquidator-bot)
+the [fuse-liquidator-bot image releases](https://github.com/Ionic-Protocol/fuse-liquidator-bot/pkgs/container/fuse-liquidator-bot)
 
 Commit and push. CI will take care of deploying the bot.
 

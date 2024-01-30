@@ -9,12 +9,12 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
 export const ABILLY = 1e9;
 
-export const MIDAS_DOCS_URL = 'https://docs.midascapital.xyz/';
-export const MIDAS_SECURITY_DOCS_URL =
+export const IONIC_DOCS_URL = 'https://docs.midascapital.xyz/';
+export const IONIC_SECURITY_DOCS_URL =
   'https://docs.midascapital.xyz/security/security-outline/4626-strategy-risk-scoring';
-export const MIDAS_DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
-export const MIDAS_TELEGRAM_URL = 'https://t.me/midascapitaltg';
-export const MIDAS_TWITTER_URL = 'https://twitter.com/MidasCapitalxyz';
+export const IONIC_DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
+export const IONIC_TELEGRAM_URL = 'https://t.me/midascapitaltg';
+export const IONIC_TWITTER_URL = 'https://twitter.com/IonicCapitalxyz';
 
 export const CLOSE_FACTOR = {
   DEFAULT: 50,
@@ -140,7 +140,7 @@ export const ADMIN_FEE_TOOLTIP =
 export const LOAN_TO_VALUE_TOOLTIP =
   'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.';
 export const PERFORMANCE_FEE_TOOLTIP =
-  'The fee taken by Midas Capital, as a percentage of the rewards earned by this strategy';
+  'The fee taken by Ionic Capital, as a percentage of the rewards earned by this strategy';
 export const ASSET_SUPPLIED_TOOLTIP =
   'Total Supply of this asset is limited for the overall safety of this pool';
 export const ASSET_BORROWED_TOOLTIP =
@@ -151,12 +151,12 @@ export const BORROW_CAP_WHITELIST_TOOLTIP =
   'Add or remove address with no borrow cap';
 export const DEBT_CEILING_WHITELIST_TOOLTIP =
   'Add or remove address with no debt ceilings';
-export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
+export const IONIC_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
-export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
+export const IONIC_T_AND_C_ACCEPTED = 'IonicTandCAccepted';
 export const SUPPLY_STEPS = (symbol: string) =>
   [
-    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    { desc: 'Allow Ionic to use your tokens', done: false, title: 'Approve' },
     {
       desc: 'Allows supplied assets to be used as collateral',
       done: false,
@@ -171,7 +171,7 @@ export const SUPPLY_STEPS = (symbol: string) =>
 
 export const SWAP_STEPS = (inputSymbol: string, outputSymbol: string) =>
   [
-    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    { desc: 'Allow Ionic to use your tokens', done: false, title: 'Approve' },
     {
       desc: `Swaps from ${inputSymbol} to get ${outputSymbol}`,
       done: false,
@@ -192,7 +192,7 @@ export const WITHDRAW_STEPS = (symbol: string) =>
   ] as TxStep[];
 export const REPAY_STEPS = (symbol: string) =>
   [
-    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    { desc: 'Allow Ionic to use your tokens', done: false, title: 'Approve' },
     {
       desc: `Repays a borrow position of ${symbol} token`,
       done: false,
@@ -201,7 +201,7 @@ export const REPAY_STEPS = (symbol: string) =>
   ] as TxStep[];
 export const CREATE_NEW_POSITION_STEPS = (symbol: string) =>
   [
-    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    { desc: 'Allow Ionic to use your tokens', done: false, title: 'Approve' },
     {
       desc: `Creates new levered position with ${symbol} market`,
       done: false,
@@ -238,7 +238,7 @@ export const REMOVE_CLOSED_POSITION_STEPS = (symbol: string) =>
 
 export const FUND_POSITION_STEPS = (symbol: string) =>
   [
-    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    { desc: 'Allow Ionic to use your tokens', done: false, title: 'Approve' },
     {
       desc: `Funds position with ${symbol} market`,
       done: false,
@@ -325,7 +325,7 @@ export const HIGH_RISK_RATIO = 0.8;
 
 export const VAULT_SUPPLY_STEPS = (symbol: string) =>
   [
-    { desc: 'Allow Midas to use your tokens', done: false, title: 'Approve' },
+    { desc: 'Allow Ionic to use your tokens', done: false, title: 'Approve' },
     {
       desc: `Mints tokens which represent your share in the ${symbol} vault`,
       done: false,

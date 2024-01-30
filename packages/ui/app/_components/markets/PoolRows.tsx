@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import Link from 'next/link';
 
 import React, { Dispatch, SetStateAction } from 'react';
@@ -28,7 +28,7 @@ const PoolRows = ({
   logo,
   setSelectedSymbol
 }: IRows) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return (
     <div

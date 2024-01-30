@@ -3,7 +3,7 @@ import type {
   IonicPoolData as SDKFusePoolData
 } from '@ionicprotocol/types';
 
-export type MidasApiTokenData = {
+export type IonicApiTokenData = {
   address: string;
   color: string;
   decimals: number;
@@ -13,7 +13,7 @@ export type MidasApiTokenData = {
   symbol: string;
 };
 
-export type TokensDataMap = { [address: string]: MidasApiTokenData };
+export type TokensDataMap = { [address: string]: IonicApiTokenData };
 
 export interface MarketData extends NativePricedIonicAsset {
   borrowBalanceFiat: number;

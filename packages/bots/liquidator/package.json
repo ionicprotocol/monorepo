@@ -1,7 +1,7 @@
 {
   "name": "@ionicprotocol/liquidator",
   "version": "1.0.2",
-  "description": "Liquidates unhealthy Midas pool loans.",
+  "description": "Liquidates unhealthy Ionic pool loans.",
   "main": "index.js",
   "scripts": {
     "prod": "NODE_ENV=production node build/server.js",

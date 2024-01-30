@@ -1,7 +1,7 @@
 import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { getAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
@@ -17,7 +17,7 @@ export const usePositionsTotalSupplyApy = (
   allRewards?: UseRewardsData,
   assetInfos?: UseAssetsData
 ) => {
-  const { getSdk } = useMultiMidas();
+  const { getSdk } = useMultiIonic();
 
   return useQuery(
     [
