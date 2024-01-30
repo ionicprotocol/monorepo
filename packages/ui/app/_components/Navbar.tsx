@@ -99,7 +99,15 @@ export default function Navbar() {
               Borrow
             </p>
           </Link>
-          <Link href={'/points'}>
+           */}
+
+          <Link
+            href={'/'}
+            className="pointer-events-none relative"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              Soon!
+            </span>
             <p
               className={`${
                 pathname == '/points' ? 'text-accent' : null
@@ -107,7 +115,7 @@ export default function Navbar() {
             >
               Points
             </p>
-          </Link> */}
+          </Link>
         </div>
 
         <div
