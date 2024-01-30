@@ -59,8 +59,9 @@ const PoolRows = ({
               Supply / Withdraw
             </Link>
             <Link
-              href={`/?popmode=BORROW`}
-              className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
+              // href={`/?popmode=BORROW`}
+              href={`/`}
+              className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3 opacity-30 pointer-events-none	`}
               onClick={() => setSelectedSymbol(asset)}
             >
               Borrow / Repay

@@ -59,6 +59,15 @@
   }
 }
 
+.bg-lime {
+  background: #dffe00;
+}
+
+.text-xxs {
+  font-size: 0.6rem;
+  line-height: 0.75rem;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
