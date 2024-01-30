@@ -113,7 +113,6 @@ const Popup = ({
       ),
     [amount]
   );
-  console.log(amountAsBInt.toNumber());
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
