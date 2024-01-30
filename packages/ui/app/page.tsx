@@ -17,8 +17,10 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
+import Swap from './_components/popup/Swap';
 
 export default function Market() {
+  const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiMidas();
   const searchParams = useSearchParams();
   const popmode = searchParams.get('popmode');
@@ -45,7 +47,7 @@ export default function Market() {
   );
 
   return (
-    <main className={`pt-14`}>
+    <main className={`pt-20`}>
       <div className="w-full  flex flex-col items-center justify-start min-h-screen transition-all duration-200 ease-linear">
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
@@ -95,6 +97,27 @@ export default function Market() {
               </div>
             </div>
           </ResultHandler>
+
+          <button
+            className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold`}
+            onClick={() => setSwapOpen(true)}
+          >
+            {'Swap '}
+
+            <img
+              className="inline-block"
+              src="/img/symbols/32/color/eth.png"
+              width="20"
+              height="20"
+            />
+            <span>{' -> '}</span>
+            <img
+              className="inline-block"
+              src="/img/symbols/32/color/weth.png"
+              width="20"
+              height="20"
+            />
+          </button>
         </div>
         <div
           className={`bg-grayone min-h-[60vh] pb-20 w-full px-[3%] mt-3 rounded-xl`}
@@ -218,6 +241,8 @@ export default function Market() {
           comptrollerAddress={poolData.comptroller}
         />
       )}
+
+      {swapOpen && <Swap close={() => setSwapOpen(false)} />}
     </main>
   );
 }
