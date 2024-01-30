@@ -68,11 +68,8 @@ const Popup = ({
     selectedMarketData,
     chainId
   );
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
+  const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
+    useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
     chainId
@@ -103,10 +100,8 @@ const Popup = ({
     },
     undefined
   );
-  const { data: maxRepayAmount } = useMaxRepayAmount(
-    selectedMarketData,
-    chainId
-  );
+  const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
+    useMaxRepayAmount(selectedMarketData, chainId);
   const amountAsBInt = useMemo<string>(
     () =>
       amount
@@ -121,11 +116,8 @@ const Popup = ({
     [amount]
   );
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
-  const { data: maxBorrowAmount } = useMaxBorrowAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
+  const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
+    useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
@@ -143,10 +135,8 @@ const Popup = ({
       index: 0
     });
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
-  const { data: maxWithdrawAmount } = useMaxWithdrawAmount(
-    selectedMarketData,
-    chainId
-  );
+  const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
+    useMaxWithdrawAmount(selectedMarketData, chainId);
   const {
     supplyAPY,
     borrowAPR,
@@ -758,6 +748,7 @@ const Popup = ({
                     ) ?? '0.0'
                   )}
                   symbol={selectedMarketData.underlyingSymbol}
+                  isLoading={isLoadingMaxSupply}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -856,6 +847,7 @@ const Popup = ({
                   )}
                   symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Withdraw"
+                  isLoading={isLoadingMaxWithdrawAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -931,6 +923,7 @@ const Popup = ({
                   max={maxBorrowAmount?.number ?? 0}
                   symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Borrow Amount"
+                  isLoading={isLoadingMaxBorrowAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -1037,6 +1030,7 @@ const Popup = ({
                     )
                   )}
                   symbol={selectedMarketData.underlyingSymbol}
+                  isLoading={isLoadingMaxRepayAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}

@@ -20,7 +20,7 @@ export const fetchTokenBalance = async (
       balance = await sdk.provider.getBalance(address);
     } else {
       // const contract = sdk.createCTokenWithExtensions(tokenAddress);
-      balance = await sdk.provider.getBalance(address, tokenAddress);
+      // balance = await sdk.provider.;
       console.log(balance);
     }
   } catch (e) {
