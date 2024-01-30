@@ -3,29 +3,27 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { MarketData } from '@ui/types/TokensDataMap';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { BigNumber, constants, utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { ThreeCircles } from 'react-loader-spinner';
-import { useBalance, useChainId } from 'wagmi';
+import { FundOperationMode } from 'types/dist';
+import { useChainId } from 'wagmi';
+import ResultHandler from '../ResultHandler';
 import Amount from './Amount';
 import SliderComponent from './Slider';
 import Tab from './Tab';
-import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
-import { FundOperationMode } from 'types/dist';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import ResultHandler from '../ResultHandler';
-import toast from 'react-hot-toast';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import { bignumber } from 'mathjs';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
 type LoadingButtonWithTextProps = {
   text: String;
@@ -102,17 +100,15 @@ const Popup = ({
   );
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
-  const amountAsBInt = useMemo<string>(
+  const amountAsBInt = useMemo<BigNumber>(
     () =>
-      amount
-        ? (
-            amount *
-            Math.pow(
-              10,
-              parseInt(selectedMarketData.underlyingDecimals.toString())
-            )
-          ).toString()
-        : '0',
+      BigNumber.from(
+        (amount ?? 0) *
+          Math.pow(
+            10,
+            parseInt(selectedMarketData.underlyingDecimals.toString())
+          )
+      ),
     [amount]
   );
   const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
@@ -130,7 +126,7 @@ const Popup = ({
     useUpdatedUserAssets({
       mode: currentFundOperation,
       poolChainId: chainId,
-      amount: amountAsBInt as any,
+      amount: amountAsBInt,
       assets: [selectedMarketData],
       index: 0
     });
@@ -453,7 +449,7 @@ const Popup = ({
 
         const { tx, errorCode } = await currentSdk.mint(
           selectedMarketData.cToken,
-          amountAsBInt as any
+          amountAsBInt
         );
 
         if (errorCode) {
@@ -528,7 +524,7 @@ const Popup = ({
         } else {
           const { tx, errorCode } = await currentSdk.withdraw(
             selectedMarketData.cToken,
-            amountAsBInt as any
+            amountAsBInt
           );
 
           if (errorCode) {
@@ -570,7 +566,7 @@ const Popup = ({
 
         const { tx, errorCode } = await currentSdk.borrow(
           selectedMarketData.cToken,
-          amountAsBInt as any
+          amountAsBInt
         );
 
         if (errorCode) {
@@ -638,15 +634,11 @@ const Popup = ({
 
         setCurrentInfoMessage(INFO_MESSAGES.REPAY.REPAYING);
 
-        const isRepayingMax =
-          parseInt((maxRepayAmount ?? '0').toString()) <=
-          parseInt(amountAsBInt);
+        const isRepayingMax = amountAsBInt.gte(maxRepayAmount ?? '0');
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
           isRepayingMax,
-          isRepayingMax
-            ? selectedMarketData.borrowBalance
-            : (amountAsBInt as any)
+          isRepayingMax ? selectedMarketData.borrowBalance : amountAsBInt
         );
 
         if (errorCode) {
