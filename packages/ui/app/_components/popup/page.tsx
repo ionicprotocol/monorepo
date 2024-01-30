@@ -13,7 +13,7 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { BigNumber, constants, utils } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -118,16 +118,11 @@ const Popup = ({
     useMaxRepayAmount(selectedMarketData, chainId);
   const amountAsBInt = useMemo<BigNumber>(
     () =>
-      BigNumber.from(
-        Math.round(
-          (amount ?? 0) *
-            Math.pow(
-              10,
-              parseInt(selectedMarketData.underlyingDecimals.toString())
-            )
-        )
+      parseUnits(
+        amount?.toString() ?? '0',
+        selectedMarketData.underlyingDecimals
       ),
-    [amount]
+    [amount, selectedMarketData.underlyingDecimals]
   );
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
