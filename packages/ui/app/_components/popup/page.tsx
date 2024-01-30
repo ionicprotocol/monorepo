@@ -25,28 +25,6 @@ import Amount from './Amount';
 import SliderComponent from './Slider';
 import Tab from './Tab';
 
-type LoadingButtonWithTextProps = {
-  text: String;
-};
-
-function LoadingButtonWithText({ text }: LoadingButtonWithTextProps) {
-  return (
-    <button className={`w-full rounded-md py-1 transition-colors bg-accent`}>
-      <span className="flex justify-center">
-        <span className="block mr-2">{text}</span>{' '}
-        <ThreeCircles
-          visible={true}
-          height="20"
-          width="20"
-          color="#0a0a0aff"
-          ariaLabel="three-circles-loading"
-          wrapperClass=""
-        />
-      </span>
-    </button>
-  );
-}
-
 type TransactionStep = {
   message: string;
   success: boolean;
@@ -132,6 +110,7 @@ const Popup = ({
   selectedMarketData,
   comptrollerAddress
 }: IPopup) => {
+  const [enableCollateral, setEnableCollateral] = useState<boolean>(false);
   const [transactionSteps, upsertTransactionStep] = useReducer(
     (
       prevState: TransactionStep[],
@@ -520,7 +499,7 @@ const Popup = ({
     upsertTransactionStep(undefined);
   };
 
-  const supplyAmount = async (collateral: boolean = false) => {
+  const supplyAmount = async () => {
     if (
       !transactionSteps.length &&
       currentSdk &&
@@ -537,7 +516,7 @@ const Popup = ({
           success: false,
           error: false
         },
-        ...(collateral
+        ...(enableCollateral
           ? [
               {
                 message: INFO_MESSAGES.SUPPLY.COLLATERAL,
@@ -589,7 +568,7 @@ const Popup = ({
 
         currentTransactionStep++;
 
-        if (collateral) {
+        if (enableCollateral) {
           const tx = await currentSdk.enterMarkets(
             selectedMarketData.cToken,
             comptrollerAddress
@@ -1071,6 +1050,21 @@ const Popup = ({
                   </span>
                 </div>
                 <div
+                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                ></div>
+                <div className="flex items-center text-sm text-white/50 uppercase">
+                  Enable collateral
+                  <div className="ml-2">
+                    <span
+                      className={`toggle ${enableCollateral && 'is-on'}`}
+                      onClick={() =>
+                        !transactionSteps.length &&
+                        setEnableCollateral(!enableCollateral)
+                      }
+                    />
+                  </div>
+                </div>
+                <div
                   className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
                 >
                   {transactionSteps.length > 0 ? (
@@ -1087,15 +1081,6 @@ const Popup = ({
                         onClick={() => supplyAmount()}
                       >
                         Supply {selectedMarketData.underlyingSymbol}
-                      </button>
-
-                      <button
-                        className={`w-full rounded-md py-1 transition-colors ${
-                          amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                        } `}
-                        onClick={() => supplyAmount(true)}
-                      >
-                        Collateral {selectedMarketData.underlyingSymbol}
                       </button>
                     </>
                   )}
