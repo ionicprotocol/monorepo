@@ -72,7 +72,10 @@ export default function Market() {
                     ? (
                         poolData?.totalLiquidityFiat +
                         poolData?.totalBorrowedFiat
-                      ).toFixed(2)
+                      ).toLocaleString('en-US', {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2
+                      })
                     : '0'}
                 </p>
                 {/* this neeeds to be changed */}
@@ -82,7 +85,11 @@ export default function Market() {
               >
                 <p className={`text-white/60 text-sm`}>Total Available</p>
                 <p className={`font-semibold`}>
-                  ${poolData?.totalLiquidityFiat.toFixed(2) ?? '0'}
+                  $
+                  {poolData?.totalLiquidityFiat.toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                  }) ?? '0'}
                 </p>
                 {/* this neeeds to be changed */}
               </div>
@@ -91,7 +98,11 @@ export default function Market() {
               >
                 <p className={`text-white/60 text-sm`}>Total Borrows</p>
                 <p className={`font-semibold`}>
-                  ${poolData?.totalBorrowedFiat.toFixed(2) ?? '0'}
+                  $
+                  {poolData?.totalBorrowedFiat.toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                  }) ?? '0'}
                 </p>
                 {/* this neeeds to be changed */}
               </div>
