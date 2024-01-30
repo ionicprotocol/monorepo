@@ -57,11 +57,6 @@ export default function Market() {
               className={`w-8`}
             />
             <h1 className={`font-semibold`}>Mode Market</h1>
-            <img
-              src="/img/assets/downarr.png"
-              alt="downarr"
-              className={`w-4`}
-            />
           </div>
           <ResultHandler isLoading={isLoadingPoolData}>
             <div className={`w-full flex items-center gap-4`}>
@@ -105,7 +100,7 @@ export default function Market() {
           className={`bg-grayone min-h-[60vh] pb-20 w-full px-[3%] mt-3 rounded-xl`}
         >
           <div className={` w-full flex items-center justify-between py-3 `}>
-            <h1 className={`font-semibold`}>Mode Lending & Borrowing</h1>
+            {/* <h1 className={`font-semibold`}>Mode Lending & Borrowing</h1> */}
             {/* <div
               className={` min-w-[30%] flex gap-x-2  items-center justify-center `}
             >
@@ -135,7 +130,7 @@ export default function Market() {
               </div>
             </div> */}
           </div>
-          <PoolToggle />
+          {/* <PoolToggle /> */}
           <div
             className={`w-full gap-x-1 grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
