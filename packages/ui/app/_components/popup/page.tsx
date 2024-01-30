@@ -211,6 +211,16 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  const minBorrowAmountAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          minBorrowAmount?.minBorrowAsset ?? '0',
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [minBorrowAmount]
+  );
   const queryClient = useQueryClient();
 
   /**
@@ -220,16 +230,7 @@ const Popup = ({
     switch (active) {
       case 'COLLATERAL':
         setCurrentUtilizationPercentage(
-          Math.round(
-            ((amount ?? 0) /
-              parseFloat(
-                formatUnits(
-                  maxSupplyAmount?.bigNumber ?? '0',
-                  selectedMarketData.underlyingDecimals
-                )
-              )) *
-              100
-          )
+          Math.round(((amount ?? 0) / (maxSupplyAmount?.number ?? 0)) * 100)
         );
 
         break;
@@ -252,16 +253,7 @@ const Popup = ({
 
       case 'BORROW':
         setCurrentUtilizationPercentage(
-          Math.round(
-            ((amount ?? 0) /
-              parseFloat(
-                formatUnits(
-                  maxBorrowAmount?.bigNumber ?? '0',
-                  selectedMarketData.underlyingDecimals
-                ) ?? '1'
-              )) *
-              100
-          )
+          Math.round(((amount ?? 0) / (maxBorrowAmount?.number ?? 1)) * 100)
         );
 
         break;
@@ -365,12 +357,7 @@ const Popup = ({
       parseFloat(
         (
           (utilizationPercentage / 100) *
-          parseFloat(
-            formatUnits(
-              maxSupplyAmount?.bigNumber ?? '0',
-              selectedMarketData.underlyingDecimals
-            ) ?? '0.0'
-          )
+          (maxSupplyAmount?.number ?? 0)
         ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
@@ -397,12 +384,7 @@ const Popup = ({
       parseFloat(
         (
           (utilizationPercentage / 100) *
-          parseFloat(
-            formatUnits(
-              maxBorrowAmount?.bigNumber ?? '0',
-              selectedMarketData.underlyingDecimals
-            ) ?? '0.0'
-          )
+          (maxBorrowAmount?.number ?? 0)
         ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
@@ -577,7 +559,7 @@ const Popup = ({
       amount &&
       amount > 0 &&
       minBorrowAmount &&
-      amount > (minBorrowAmount?.minBorrowUSD ?? 0) &&
+      amount > minBorrowAmountAsNumber &&
       maxBorrowAmount &&
       amount <= maxBorrowAmount.number
     ) {
@@ -741,12 +723,7 @@ const Popup = ({
                   selectedMarketData={selectedMarketData}
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
-                  max={parseFloat(
-                    formatUnits(
-                      maxSupplyAmount?.bigNumber ?? '0',
-                      selectedMarketData.underlyingDecimals
-                    ) ?? '0.0'
-                  )}
+                  max={maxSupplyAmount?.number ?? 0}
                   symbol={selectedMarketData.underlyingSymbol}
                   isLoading={isLoadingMaxSupply}
                 />
@@ -937,10 +914,7 @@ const Popup = ({
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {formatUnits(
-                      minBorrowAmount?.minBorrowAsset ?? '0',
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    )}
+                    {minBorrowAmountAsNumber}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -1001,7 +975,7 @@ const Popup = ({
                         amount &&
                         amount > 0 &&
                         minBorrowAmount &&
-                        amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
+                        amount >= minBorrowAmountAsNumber &&
                         maxBorrowAmount &&
                         amount <= maxBorrowAmount.number
                           ? 'bg-accent'
