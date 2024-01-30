@@ -1176,7 +1176,7 @@ const Popup = ({
                           ? 'bg-accent'
                           : 'bg-stone-500'
                       } `}
-                      onClick={borrowAmount}
+                      // onClick={borrowAmount}
                     >
                       Borrow {selectedMarketData.underlyingSymbol}
                     </button>
@@ -1258,7 +1258,7 @@ const Popup = ({
                           ? 'bg-accent'
                           : 'bg-stone-500'
                       } `}
-                      onClick={repayAmount}
+                      // onClick={repayAmount}
                     >
                       Repay {selectedMarketData.underlyingSymbol}
                     </button>
