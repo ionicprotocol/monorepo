@@ -3,49 +3,98 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { MarketData } from '@ui/types/TokensDataMap';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { BigNumber, constants, utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { ThreeCircles } from 'react-loader-spinner';
-import { useBalance, useChainId } from 'wagmi';
+import { FundOperationMode } from 'types/dist';
+import { useChainId } from 'wagmi';
+import ResultHandler from '../ResultHandler';
 import Amount from './Amount';
 import SliderComponent from './Slider';
 import Tab from './Tab';
-import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
-import { FundOperationMode } from 'types/dist';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import ResultHandler from '../ResultHandler';
-import toast from 'react-hot-toast';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import { bignumber } from 'mathjs';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
-type LoadingButtonWithTextProps = {
-  text: String;
+type TransactionStep = {
+  message: string;
+  success: boolean;
+  error: boolean;
+  txHash?: string;
+};
+type TransactionStepsHandlerProps = {
+  transactionSteps: TransactionStep[];
+  resetTransactionSteps: () => void;
 };
 
-function LoadingButtonWithText({ text }: LoadingButtonWithTextProps) {
+function TransactionStepsHandler({
+  transactionSteps,
+  resetTransactionSteps
+}: TransactionStepsHandlerProps) {
   return (
-    <button className={`w-full rounded-md py-1 transition-colors bg-accent`}>
-      <span className="flex justify-center">
-        <span className="block mr-2">{text}</span>{' '}
-        <ThreeCircles
-          visible={true}
-          height="20"
-          width="20"
-          color="#0a0a0aff"
-          ariaLabel="three-circles-loading"
-          wrapperClass=""
-        />
-      </span>
-    </button>
+    <div className="mx-auto text-sm">
+      {transactionSteps.map((transactionStep, i) => (
+        <div key={`transaction-step-${i}`}>
+          <div
+            className={`flex align-center mt-2 ${
+              !transactionStep.error && !transactionStep.success && 'text-white'
+            } ${transactionStep.success && 'text-accent'} ${
+              transactionStep.error && 'text-error'
+            }`}
+          >
+            {!transactionStep.error && !transactionStep.success && (
+              <ThreeCircles
+                visible={true}
+                height="20"
+                width="20"
+                color="#39ff88"
+                ariaLabel="three-circles-loading"
+              />
+            )}
+
+            {transactionStep.error && <span className="error-icon" />}
+
+            {transactionStep.success && <span className="success-icon" />}
+
+            <span className="ml-1">{transactionStep.message}</span>
+          </div>
+
+          {transactionStep.txHash && (
+            <div className="pl-6 text-cyan-400">
+              <a
+                href={`https://explorer.mode.network/tx/${transactionStep.txHash}`}
+                target="_blank"
+              >
+                0x{transactionStep.txHash.slice(2, 4)}...
+                {transactionStep.txHash.slice(-6)}
+              </a>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {(transactionSteps.filter((step) => step.success).length ===
+        transactionSteps.length ||
+        transactionSteps.find((step) => step.error) !== undefined) && (
+        <div className="text-center">
+          <button
+            className="mt-4 px-3 rounded-md py-1 transition-colors bg-accent text-center"
+            onClick={resetTransactionSteps}
+          >
+            CONTINUE
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -61,18 +110,49 @@ const Popup = ({
   selectedMarketData,
   comptrollerAddress
 }: IPopup) => {
-  // console.log(mode);
+  const [enableCollateral, setEnableCollateral] = useState<boolean>(false);
+  const [transactionSteps, upsertTransactionStep] = useReducer(
+    (
+      prevState: TransactionStep[],
+      updatedStep:
+        | { transactionStep: TransactionStep; index: number }
+        | undefined
+    ): TransactionStep[] => {
+      if (!updatedStep) {
+        return [];
+      }
+
+      const currentSteps = prevState.slice();
+
+      currentSteps[updatedStep.index] = {
+        ...currentSteps[updatedStep.index],
+        ...updatedStep.transactionStep
+      };
+
+      if (
+        updatedStep.transactionStep.error &&
+        updatedStep.index + 1 < currentSteps.length
+      ) {
+        for (let i = updatedStep.index + 1; i < currentSteps.length; i++) {
+          currentSteps[i] = {
+            ...currentSteps[i],
+            error: true
+          };
+        }
+      }
+
+      return currentSteps;
+    },
+    []
+  );
   const { currentSdk, address } = useMultiMidas();
   const chainId = useChainId();
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,
     chainId
   );
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
+  const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
+    useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
     chainId
@@ -87,7 +167,6 @@ const Popup = ({
 
     return '0.00%';
   }, [assetsSupplyAprData]);
-  const [currentInfoMessage, setCurrentInfoMessage] = useState<string>();
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
@@ -103,29 +182,23 @@ const Popup = ({
     },
     undefined
   );
-  const { data: maxRepayAmount } = useMaxRepayAmount(
-    selectedMarketData,
-    chainId
-  );
-  const amountAsBInt = useMemo<string>(
+  const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
+    useMaxRepayAmount(selectedMarketData, chainId);
+  const amountAsBInt = useMemo<BigNumber>(
     () =>
-      amount
-        ? (
-            amount *
+      BigNumber.from(
+        Math.round(
+          (amount ?? 0) *
             Math.pow(
               10,
               parseInt(selectedMarketData.underlyingDecimals.toString())
             )
-          ).toString()
-        : '0',
+        )
+      ),
     [amount]
   );
-  const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
-  const { data: maxBorrowAmount } = useMaxBorrowAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
+  const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
+    useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
@@ -138,15 +211,13 @@ const Popup = ({
     useUpdatedUserAssets({
       mode: currentFundOperation,
       poolChainId: chainId,
-      amount: amountAsBInt as any,
+      amount: amountAsBInt,
       assets: [selectedMarketData],
       index: 0
     });
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
-  const { data: maxWithdrawAmount } = useMaxWithdrawAmount(
-    selectedMarketData,
-    chainId
-  );
+  const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
+    useMaxWithdrawAmount(selectedMarketData, chainId);
   const {
     supplyAPY,
     borrowAPR,
@@ -221,6 +292,16 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  const minBorrowAmountAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          minBorrowAmount?.minBorrowAsset ?? '0',
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [minBorrowAmount]
+  );
   const queryClient = useQueryClient();
 
   /**
@@ -230,16 +311,7 @@ const Popup = ({
     switch (active) {
       case 'COLLATERAL':
         setCurrentUtilizationPercentage(
-          Math.round(
-            ((amount ?? 0) /
-              parseFloat(
-                formatUnits(
-                  maxSupplyAmount?.bigNumber ?? '0',
-                  selectedMarketData.underlyingDecimals
-                )
-              )) *
-              100
-          )
+          Math.round(((amount ?? 0) / (maxSupplyAmount?.number ?? 0)) * 100)
         );
 
         break;
@@ -262,16 +334,7 @@ const Popup = ({
 
       case 'BORROW':
         setCurrentUtilizationPercentage(
-          Math.round(
-            ((amount ?? 0) /
-              parseFloat(
-                formatUnits(
-                  maxBorrowAmount?.bigNumber ?? '0',
-                  selectedMarketData.underlyingDecimals
-                ) ?? '1'
-              )) *
-              100
-          )
+          Math.round(((amount ?? 0) / (maxBorrowAmount?.number ?? 1)) * 100)
         );
 
         break;
@@ -315,6 +378,7 @@ const Popup = ({
   useEffect(() => {
     setAmount(0);
     setCurrentUtilizationPercentage(0);
+    upsertTransactionStep(undefined);
 
     switch (active) {
       case 'COLLATERAL':
@@ -375,12 +439,7 @@ const Popup = ({
       parseFloat(
         (
           (utilizationPercentage / 100) *
-          parseFloat(
-            formatUnits(
-              maxSupplyAmount?.bigNumber ?? '0',
-              selectedMarketData.underlyingDecimals
-            ) ?? '0.0'
-          )
+          (maxSupplyAmount?.number ?? 0)
         ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
@@ -407,12 +466,7 @@ const Popup = ({
       parseFloat(
         (
           (utilizationPercentage / 100) *
-          parseFloat(
-            formatUnits(
-              maxBorrowAmount?.bigNumber ?? '0',
-              selectedMarketData.underlyingDecimals
-            ) ?? '0.0'
-          )
+          (maxBorrowAmount?.number ?? 0)
         ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
       )
     );
@@ -434,9 +488,39 @@ const Popup = ({
     );
   };
 
-  const supplyAmount = async (collateral: boolean = false) => {
+  const addStepsForAction = (steps: TransactionStep[]) => {
+    steps.forEach((step, i) =>
+      upsertTransactionStep({ transactionStep: step, index: i })
+    );
+  };
+
+  const resetTransactionSteps = () => {
+    refetchUsedQueries();
+    upsertTransactionStep(undefined);
+  };
+
+  const refetchUsedQueries = async () => {
+    queryClient.invalidateQueries({ queryKey: ['useFusePoolData'] });
+    queryClient.invalidateQueries({ queryKey: ['useBorrowMinimum'] });
+    queryClient.invalidateQueries({ queryKey: ['useUsdPrice'] });
+    queryClient.invalidateQueries({ queryKey: ['useAllUsdPrices'] });
+    queryClient.invalidateQueries({ queryKey: ['useTotalSupplyAPYs'] });
+    queryClient.invalidateQueries({ queryKey: ['useUpdatedUserAssets'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxSupplyAmount'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxWithdrawAmount'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxBorrowAmount'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxRepayAmount'] });
+    queryClient.invalidateQueries({
+      queryKey: ['useSupplyCapsDataForPool']
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['useBorrowCapsDataForAsset']
+    });
+  };
+
+  const supplyAmount = async () => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
@@ -444,11 +528,30 @@ const Popup = ({
       maxSupplyAmount &&
       amount <= maxSupplyAmount.number
     ) {
-      setIsExecutingAction(true);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.SUPPLY.APPROVE,
+          success: false,
+          error: false
+        },
+        ...(enableCollateral
+          ? [
+              {
+                message: INFO_MESSAGES.SUPPLY.COLLATERAL,
+                success: false,
+                error: false
+              }
+            ]
+          : []),
+        {
+          message: INFO_MESSAGES.SUPPLY.SUPPLYING,
+          success: false,
+          error: false
+        }
+      ]);
 
       try {
-        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.APPROVE);
-
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -463,61 +566,101 @@ const Popup = ({
             selectedMarketData.underlyingToken
           );
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx.wait();
         }
 
-        if (collateral) {
-          setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.COLLATERAL);
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
 
+        currentTransactionStep++;
+
+        if (enableCollateral) {
           const tx = await currentSdk.enterMarkets(
             selectedMarketData.cToken,
             comptrollerAddress
           );
 
-          await tx.wait();
-        }
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx.hash
+            },
+            index: currentTransactionStep
+          });
 
-        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.SUPPLYING);
+          await tx.wait();
+
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              success: true
+            },
+            index: currentTransactionStep
+          });
+
+          currentTransactionStep++;
+        }
 
         const { tx, errorCode } = await currentSdk.mint(
           selectedMarketData.cToken,
-          amountAsBInt as any
+          amountAsBInt
         );
 
         if (errorCode) {
           throw new Error('Error during supplying!');
         }
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx?.hash
+          },
+          index: currentTransactionStep
+        });
+
         await tx?.wait();
 
-        await Promise.all([
-          queryClient.refetchQueries({ queryKey: ['useFusePoolData'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] }),
-          queryClient.refetchQueries({
-            queryKey: ['useSupplyCapsDataForPool']
-          }),
-          queryClient.refetchQueries({
-            queryKey: ['useBorrowCapsDataForAsset']
-          })
-        ]);
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
 
         toast.success(
           `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
         );
       } catch (error) {
         toast.error('Error while supplying!');
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
       }
     }
-
-    setIsExecutingAction(false);
   };
 
   const withdrawAmount = async () => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
@@ -530,11 +673,16 @@ const Popup = ({
           )
         )
     ) {
-      setIsExecutingAction(true);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
+          success: false,
+          error: false
+        }
+      ]);
 
       try {
-        setCurrentInfoMessage(INFO_MESSAGES.WITHDRAW.WITHDRAWING);
-
         if (
           parseFloat(
             formatUnits(
@@ -552,19 +700,43 @@ const Popup = ({
             throw new Error('Error during withdrawing!');
           }
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx?.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx?.wait();
         } else {
           const { tx, errorCode } = await currentSdk.withdraw(
             selectedMarketData.cToken,
-            amountAsBInt as any
+            amountAsBInt
           );
 
           if (errorCode) {
             throw new Error('Error during withdrawing!');
           }
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx?.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx?.wait();
         }
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
 
         toast.success(
           `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
@@ -572,52 +744,66 @@ const Popup = ({
       } catch (error) {
         console.error(error);
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
+
         toast.error('Error while withdrawing!');
       }
     }
-
-    setIsExecutingAction(false);
   };
 
   const borrowAmount = async () => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
       amount > 0 &&
       minBorrowAmount &&
-      amount > (minBorrowAmount?.minBorrowUSD ?? 0) &&
+      amount > minBorrowAmountAsNumber &&
       maxBorrowAmount &&
       amount <= maxBorrowAmount.number
     ) {
-      setIsExecutingAction(true);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.BORROW.BORROWING,
+          success: false,
+          error: false
+        }
+      ]);
 
       try {
-        setCurrentInfoMessage(INFO_MESSAGES.BORROW.BORROWING);
-
         const { tx, errorCode } = await currentSdk.borrow(
           selectedMarketData.cToken,
-          amountAsBInt as any
+          amountAsBInt
         );
 
         if (errorCode) {
-          throw new Error('Error during withdrawing!');
+          throw new Error('Error during borrowing!');
         }
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx?.hash
+          },
+          index: currentTransactionStep
+        });
+
         await tx?.wait();
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useMaxWithdrawAmount']
-        });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useSupplyCapsDataForPool']
-        });
-        await queryClient.refetchQueries({
-          queryKey: ['useBorrowCapsDataForAsset']
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
         });
 
         toast.success(
@@ -626,27 +812,43 @@ const Popup = ({
       } catch (error) {
         console.error(error);
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
+
         toast.error('Error while borrowing!');
       }
     }
-
-    setIsExecutingAction(false);
   };
 
   const repayAmount = async () => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
       amount > 0 &&
       currentBorrowAmountAsFloat
     ) {
-      setIsExecutingAction(true);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.REPAY.APPROVE,
+          success: false,
+          error: false
+        },
+        {
+          message: INFO_MESSAGES.REPAY.REPAYING,
+          success: false,
+          error: false
+        }
+      ]);
 
       try {
-        setCurrentInfoMessage(INFO_MESSAGES.REPAY.APPROVE);
-
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -661,52 +863,70 @@ const Popup = ({
             selectedMarketData.underlyingToken
           );
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx.wait();
         }
 
-        setCurrentInfoMessage(INFO_MESSAGES.REPAY.REPAYING);
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
 
-        const isRepayingMax =
-          parseInt((maxRepayAmount ?? '0').toString()) <=
-          parseInt(amountAsBInt);
+        currentTransactionStep++;
+
+        const isRepayingMax = amountAsBInt.gte(maxRepayAmount ?? '0');
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
           isRepayingMax,
-          isRepayingMax
-            ? selectedMarketData.borrowBalance
-            : (amountAsBInt as any)
+          isRepayingMax ? selectedMarketData.borrowBalance : amountAsBInt
         );
 
         if (errorCode) {
           throw new Error('Error during repaying!');
         }
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx?.hash
+          },
+          index: currentTransactionStep
+        });
+
         await tx?.wait();
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useMaxWithdrawAmount']
-        });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useSupplyCapsDataForPool']
-        });
-        await queryClient.refetchQueries({
-          queryKey: ['useBorrowCapsDataForAsset']
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
         });
       } catch (error) {
         console.error(error);
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
+
         toast.error('Error while repaying!');
       }
     }
-
-    setIsExecutingAction(false);
   };
-
-  // console.log(supplyUtilization);
-  // console.log(amount);
 
   return (
     <div
@@ -751,13 +971,9 @@ const Popup = ({
                   selectedMarketData={selectedMarketData}
                   handleInput={(val?: number) => setAmount(val)}
                   amount={amount}
-                  max={parseFloat(
-                    formatUnits(
-                      maxSupplyAmount?.bigNumber ?? '0',
-                      selectedMarketData.underlyingDecimals
-                    ) ?? '0.0'
-                  )}
+                  max={maxSupplyAmount?.number ?? 0}
                   symbol={selectedMarketData.underlyingSymbol}
+                  isLoading={isLoadingMaxSupply}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -812,10 +1028,28 @@ const Popup = ({
                   </span>
                 </div>
                 <div
+                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                ></div>
+                <div className="flex items-center text-sm text-white/50 uppercase">
+                  Enable collateral
+                  <div className="ml-2">
+                    <span
+                      className={`toggle ${enableCollateral && 'is-on'}`}
+                      onClick={() =>
+                        !transactionSteps.length &&
+                        setEnableCollateral(!enableCollateral)
+                      }
+                    />
+                  </div>
+                </div>
+                <div
                   className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <>
                       <button
@@ -825,15 +1059,6 @@ const Popup = ({
                         onClick={() => supplyAmount()}
                       >
                         Supply {selectedMarketData.underlyingSymbol}
-                      </button>
-
-                      <button
-                        className={`w-full rounded-md py-1 transition-colors ${
-                          amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
-                        } `}
-                        onClick={() => supplyAmount(true)}
-                      >
-                        Collateral {selectedMarketData.underlyingSymbol}
                       </button>
                     </>
                   )}
@@ -856,6 +1081,7 @@ const Popup = ({
                   )}
                   symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Withdraw"
+                  isLoading={isLoadingMaxWithdrawAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -901,8 +1127,11 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <button
                       className={`w-full rounded-md py-1 transition-colors ${
@@ -931,6 +1160,7 @@ const Popup = ({
                   max={maxBorrowAmount?.number ?? 0}
                   symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Borrow Amount"
+                  isLoading={isLoadingMaxBorrowAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -944,10 +1174,7 @@ const Popup = ({
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {formatUnits(
-                      minBorrowAmount?.minBorrowAsset ?? '0',
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    )}
+                    {minBorrowAmountAsNumber}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -1000,15 +1227,18 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <button
                       className={`w-full rounded-md py-1 transition-colors ${
                         amount &&
                         amount > 0 &&
                         minBorrowAmount &&
-                        amount >= (minBorrowAmount?.minBorrowUSD ?? 0) &&
+                        amount >= minBorrowAmountAsNumber &&
                         maxBorrowAmount &&
                         amount <= maxBorrowAmount.number
                           ? 'bg-accent'
@@ -1037,6 +1267,7 @@ const Popup = ({
                     )
                   )}
                   symbol={selectedMarketData.underlyingSymbol}
+                  isLoading={isLoadingMaxRepayAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
@@ -1083,8 +1314,11 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <button
                       className={`w-full rounded-md py-1 transition-colors ${

@@ -4,6 +4,7 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
+import ResultHandler from '../ResultHandler';
 
 interface IAmount {
   selectedMarketData: MarketData;
@@ -12,6 +13,7 @@ interface IAmount {
   hintText?: string;
   max?: number;
   symbol: string;
+  isLoading?: boolean;
 }
 const Amount = ({
   selectedMarketData,
@@ -19,7 +21,8 @@ const Amount = ({
   amount,
   hintText = 'Wallet Balance',
   max = 0,
-  symbol
+  symbol,
+  isLoading = false
 }: IAmount) => {
   const marketDataDecimals = parseInt(
     selectedMarketData.underlyingDecimals.toString()
@@ -39,15 +42,25 @@ const Amount = ({
     <div className={`w-full flex-col items-start justify-start`}>
       <div className={`flex w-full items-center text-[10px] text-white/50 `}>
         <span className={``}>Amount</span>
-        <span className={`ml-auto`}>
-          {hintText} {max.toFixed(marketDataDecimals)}
-        </span>
-        <button
-          onClick={() => handleMax(max)}
-          className={`text-accent pl-2`}
-        >
-          MAX
-        </button>
+        <div className="ml-auto">
+          <ResultHandler
+            width="15"
+            height="15"
+            isLoading={isLoading}
+          >
+            <>
+              <span className={`ml-auto`}>
+                {hintText} {max.toFixed(marketDataDecimals)}
+              </span>
+              <button
+                onClick={() => handleMax(max)}
+                className={`text-accent pl-2`}
+              >
+                MAX
+              </button>
+            </>
+          </ResultHandler>
+        </div>
       </div>
       <div
         className={`flex w-full  pt-1.5 items-center text-lg text-white/50 `}
