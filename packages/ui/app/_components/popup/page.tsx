@@ -47,6 +47,79 @@ function LoadingButtonWithText({ text }: LoadingButtonWithTextProps) {
   );
 }
 
+type TransactionStep = {
+  message: string;
+  success: boolean;
+  error: boolean;
+  txHash?: string;
+};
+type TransactionStepsHandlerProps = {
+  transactionSteps: TransactionStep[];
+  resetTransactionSteps: () => void;
+};
+
+function TransactionStepsHandler({
+  transactionSteps,
+  resetTransactionSteps
+}: TransactionStepsHandlerProps) {
+  return (
+    <div className="mx-auto text-sm">
+      {transactionSteps.map((transactionStep, i) => (
+        <div key={`transaction-step-${i}`}>
+          <div
+            className={`flex align-center mt-2 ${
+              !transactionStep.error && !transactionStep.success && 'text-white'
+            } ${transactionStep.success && 'text-accent'} ${
+              transactionStep.error && 'text-error'
+            }`}
+          >
+            {!transactionStep.error && !transactionStep.success && (
+              <ThreeCircles
+                visible={true}
+                height="20"
+                width="20"
+                color="#39ff88"
+                ariaLabel="three-circles-loading"
+              />
+            )}
+
+            {transactionStep.error && <span className="error-icon" />}
+
+            {transactionStep.success && <span className="success-icon" />}
+
+            <span className="ml-1">{transactionStep.message}</span>
+          </div>
+
+          {transactionStep.txHash && (
+            <div className="pl-6 text-cyan-400">
+              <a
+                href={`https://explorer.mode.network/tx/${transactionStep.txHash}`}
+                target="_blank"
+              >
+                0x{transactionStep.txHash.slice(2, 4)}...
+                {transactionStep.txHash.slice(-6)}
+              </a>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {(transactionSteps.filter((step) => step.success).length ===
+        transactionSteps.length ||
+        transactionSteps.find((step) => step.error) !== undefined) && (
+        <div className="text-center">
+          <button
+            className="mt-4 px-3 rounded-md py-1 transition-colors bg-accent text-center"
+            onClick={resetTransactionSteps}
+          >
+            CONTINUE
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface IPopup {
   mode?: string;
   specific?: string | null;
@@ -59,7 +132,40 @@ const Popup = ({
   selectedMarketData,
   comptrollerAddress
 }: IPopup) => {
-  // console.log(mode);
+  const [transactionSteps, upsertTransactionStep] = useReducer(
+    (
+      prevState: TransactionStep[],
+      updatedStep:
+        | { transactionStep: TransactionStep; index: number }
+        | undefined
+    ): TransactionStep[] => {
+      if (!updatedStep) {
+        return [];
+      }
+
+      const currentSteps = prevState.slice();
+
+      currentSteps[updatedStep.index] = {
+        ...currentSteps[updatedStep.index],
+        ...updatedStep.transactionStep
+      };
+
+      if (
+        updatedStep.transactionStep.error &&
+        updatedStep.index + 1 < currentSteps.length
+      ) {
+        for (let i = updatedStep.index + 1; i < currentSteps.length; i++) {
+          currentSteps[i] = {
+            ...currentSteps[i],
+            error: true
+          };
+        }
+      }
+
+      return currentSteps;
+    },
+    []
+  );
   const { currentSdk, address } = useMultiMidas();
   const chainId = useChainId();
   const { data: minBorrowAmount } = useBorrowMinimum(
@@ -404,6 +510,16 @@ const Popup = ({
     );
   };
 
+  const addStepsForAction = (steps: TransactionStep[]) => {
+    steps.forEach((step, i) =>
+      upsertTransactionStep({ transactionStep: step, index: i })
+    );
+  };
+
+  const resetTransactionSteps = () => {
+    upsertTransactionStep(undefined);
+  };
+
   const supplyAmount = async (collateral: boolean = false) => {
     if (
       !isExecutingAction &&
@@ -416,9 +532,30 @@ const Popup = ({
     ) {
       setIsExecutingAction(true);
 
-      try {
-        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.APPROVE);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.SUPPLY.APPROVE,
+          success: false,
+          error: false
+        },
+        ...(collateral
+          ? [
+              {
+                message: INFO_MESSAGES.SUPPLY.COLLATERAL,
+                success: false,
+                error: false
+              }
+            ]
+          : []),
+        {
+          message: INFO_MESSAGES.SUPPLY.SUPPLYING,
+          success: false,
+          error: false
+        }
+      ]);
 
+      try {
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -433,21 +570,53 @@ const Popup = ({
             selectedMarketData.underlyingToken
           );
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx.wait();
         }
 
-        if (collateral) {
-          setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.COLLATERAL);
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
 
+        currentTransactionStep++;
+
+        if (collateral) {
           const tx = await currentSdk.enterMarkets(
             selectedMarketData.cToken,
             comptrollerAddress
           );
 
-          await tx.wait();
-        }
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx.hash
+            },
+            index: currentTransactionStep
+          });
 
-        setCurrentInfoMessage(INFO_MESSAGES.SUPPLY.SUPPLYING);
+          await tx.wait();
+
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              success: true
+            },
+            index: currentTransactionStep
+          });
+
+          currentTransactionStep++;
+        }
 
         const { tx, errorCode } = await currentSdk.mint(
           selectedMarketData.cToken,
@@ -457,6 +626,14 @@ const Popup = ({
         if (errorCode) {
           throw new Error('Error during supplying!');
         }
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx?.hash
+          },
+          index: currentTransactionStep
+        });
 
         await tx?.wait();
 
@@ -474,11 +651,27 @@ const Popup = ({
           })
         ]);
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
+
         toast.success(
           `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
         );
       } catch (error) {
         toast.error('Error while supplying!');
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
       }
     }
 
@@ -671,9 +864,6 @@ const Popup = ({
     setIsExecutingAction(false);
   };
 
-  // console.log(supplyUtilization);
-  // console.log(amount);
-
   return (
     <div
       className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center`}
@@ -776,8 +966,11 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <>
                       <button

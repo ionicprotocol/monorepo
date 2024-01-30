@@ -33,7 +33,6 @@ export default function ResultHandler({
           margin: center ? 'auto' : '0px'
         }}
         ariaLabel="three-circles-loading"
-        wrapperClass=""
       />
     );
   }
