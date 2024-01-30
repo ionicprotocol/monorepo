@@ -574,7 +574,7 @@ const Popup = ({
         );
 
         if (errorCode) {
-          throw new Error('Error during withdrawing!');
+          throw new Error('Error during borrowing!');
         }
 
         await tx?.wait();
