@@ -41,7 +41,7 @@ export default function Market() {
       poolData?.assets.find(
         (_asset) => _asset.underlyingSymbol === selectedSymbol
       ),
-    [selectedSymbol]
+    [selectedSymbol, poolData]
   );
 
   return (

@@ -167,7 +167,6 @@ const Popup = ({
 
     return '0.00%';
   }, [assetsSupplyAprData]);
-  const [currentInfoMessage, setCurrentInfoMessage] = useState<string>();
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
@@ -496,7 +495,27 @@ const Popup = ({
   };
 
   const resetTransactionSteps = () => {
+    refetchUsedQueries();
     upsertTransactionStep(undefined);
+  };
+
+  const refetchUsedQueries = async () => {
+    queryClient.invalidateQueries({ queryKey: ['useFusePoolData'] });
+    queryClient.invalidateQueries({ queryKey: ['useBorrowMinimum'] });
+    queryClient.invalidateQueries({ queryKey: ['useUsdPrice'] });
+    queryClient.invalidateQueries({ queryKey: ['useAllUsdPrices'] });
+    queryClient.invalidateQueries({ queryKey: ['useTotalSupplyAPYs'] });
+    queryClient.invalidateQueries({ queryKey: ['useUpdatedUserAssets'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxSupplyAmount'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxWithdrawAmount'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxBorrowAmount'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxRepayAmount'] });
+    queryClient.invalidateQueries({
+      queryKey: ['useSupplyCapsDataForPool']
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['useBorrowCapsDataForAsset']
+    });
   };
 
   const supplyAmount = async () => {
@@ -613,20 +632,6 @@ const Popup = ({
         });
 
         await tx?.wait();
-
-        await Promise.all([
-          queryClient.refetchQueries({ queryKey: ['useFusePoolData'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxWithdrawAmount'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] }),
-          queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] }),
-          queryClient.refetchQueries({
-            queryKey: ['useSupplyCapsDataForPool']
-          }),
-          queryClient.refetchQueries({
-            queryKey: ['useBorrowCapsDataForAsset']
-          })
-        ]);
 
         upsertTransactionStep({
           transactionStep: {
@@ -801,20 +806,6 @@ const Popup = ({
           index: currentTransactionStep
         });
 
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useMaxWithdrawAmount']
-        });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useSupplyCapsDataForPool']
-        });
-        await queryClient.refetchQueries({
-          queryKey: ['useBorrowCapsDataForAsset']
-        });
-
         toast.success(
           `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
         );
@@ -920,19 +911,6 @@ const Popup = ({
             success: true
           },
           index: currentTransactionStep
-        });
-        await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useMaxWithdrawAmount']
-        });
-        await queryClient.refetchQueries({ queryKey: ['useMaxBorrowAmount'] });
-        await queryClient.refetchQueries({ queryKey: ['useMaxRepayAmount'] });
-        await queryClient.refetchQueries({
-          queryKey: ['useSupplyCapsDataForPool']
-        });
-        await queryClient.refetchQueries({
-          queryKey: ['useBorrowCapsDataForAsset']
         });
       } catch (error) {
         console.error(error);
