@@ -6,8 +6,8 @@ FROM node as build
 
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
-RUN yum update -y 
-RUN yum install -y git 
+RUN dnf update -y 
+RUN dnf install -y git 
 
 RUN corepack enable
 RUN yarn set version stable
