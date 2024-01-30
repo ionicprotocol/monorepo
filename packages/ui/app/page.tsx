@@ -17,8 +17,10 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
+import Swap from './_components/popup/Swap';
 
 export default function Market() {
+  const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiMidas();
   const searchParams = useSearchParams();
   const popmode = searchParams.get('popmode');
@@ -95,6 +97,13 @@ export default function Market() {
               </div>
             </div>
           </ResultHandler>
+
+          <button
+            className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone`}
+            onClick={() => setSwapOpen(true)}
+          >
+            {'SWAP ETH->WETH'}
+          </button>
         </div>
         <div
           className={`bg-grayone min-h-[60vh] pb-20 w-full px-[3%] mt-3 rounded-xl`}
@@ -218,6 +227,8 @@ export default function Market() {
           comptrollerAddress={poolData.comptroller}
         />
       )}
+
+      {swapOpen && <Swap close={() => setSwapOpen(false)} />}
     </main>
   );
 }
