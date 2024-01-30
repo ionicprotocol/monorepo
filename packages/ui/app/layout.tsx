@@ -47,9 +47,9 @@ const { chains, provider } = configureChains(supportedChains, [
 ]);
 
 const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
-  projectId: '3bbe45c28cc24c790a601f9cd2aa466b',
-  chains
+  appName: 'Ionic Money',
+  chains,
+  projectId: '923645e96d6f05f650d266a32ea7295f'
 });
 
 const wagmiConfig = createClient({

@@ -109,26 +109,28 @@ export default function Market() {
             </div>
           </ResultHandler>
 
-          {/* <button
+          <button
             className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold`}
             onClick={() => setSwapOpen(true)}
           >
-            {'Swap '}
+            {'Wrap ETH '}
 
             <img
+              alt=""
               className="inline-block"
+              height="20"
               src="/img/symbols/32/color/eth.png"
               width="20"
-              height="20"
             />
             <span>{' -> '}</span>
             <img
+              alt=""
               className="inline-block"
+              height="20"
               src="/img/symbols/32/color/weth.png"
               width="20"
-              height="20"
             />
-          </button> */}
+          </button>
         </div>
         <div
           className={`bg-grayone min-h-[60vh] pb-20 w-full px-[3%] mt-3 rounded-xl`}

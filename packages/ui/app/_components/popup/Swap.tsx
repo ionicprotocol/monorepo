@@ -11,6 +11,7 @@ import TransactionStepsHandler, {
 } from './TransactionStepHandler';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSwapAmount } from '@ui/hooks/useSwapAmount';
+import { parseEther } from 'ethers/lib/utils.js';
 
 export type SwapProps = {
   close: () => void;
@@ -94,10 +95,7 @@ export default function Swap({ close }: SwapProps) {
     []
   );
   const amountAsBInt = useMemo<BigNumber>(
-    () =>
-      BigNumber.from(
-        Math.round((amount ?? 0) * Math.pow(10, ethBalance?.decimals ?? 1))
-      ),
+    () => parseEther(amount?.toString() ?? '0'),
     [amount]
   );
 
@@ -263,7 +261,7 @@ export default function Swap({ close }: SwapProps) {
               className={`px-6 rounded-md py-1 transition-colors bg-accent text-darkone`}
               onClick={() => swapAmount()}
             >
-              SWAP
+              WRAP
             </button>
           )}
         </div>
