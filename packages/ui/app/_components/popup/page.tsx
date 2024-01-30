@@ -219,7 +219,6 @@ const Popup = ({
       ),
     [amount]
   );
-  const [isExecutingAction, setIsExecutingAction] = useState<boolean>(false);
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
   const currentBorrowAmountAsFloat = useMemo<number>(
@@ -401,6 +400,7 @@ const Popup = ({
   useEffect(() => {
     setAmount(0);
     setCurrentUtilizationPercentage(0);
+    upsertTransactionStep(undefined);
 
     switch (active) {
       case 'COLLATERAL':
@@ -522,7 +522,7 @@ const Popup = ({
 
   const supplyAmount = async (collateral: boolean = false) => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
@@ -530,8 +530,6 @@ const Popup = ({
       maxSupplyAmount &&
       amount <= maxSupplyAmount.number
     ) {
-      setIsExecutingAction(true);
-
       let currentTransactionStep = 0;
       addStepsForAction([
         {
@@ -674,13 +672,11 @@ const Popup = ({
         });
       }
     }
-
-    setIsExecutingAction(false);
   };
 
   const withdrawAmount = async () => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
@@ -693,11 +689,16 @@ const Popup = ({
           )
         )
     ) {
-      setIsExecutingAction(true);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
+          success: false,
+          error: false
+        }
+      ]);
 
       try {
-        setCurrentInfoMessage(INFO_MESSAGES.WITHDRAW.WITHDRAWING);
-
         if (
           parseFloat(
             formatUnits(
@@ -715,6 +716,14 @@ const Popup = ({
             throw new Error('Error during withdrawing!');
           }
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx?.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx?.wait();
         } else {
           const { tx, errorCode } = await currentSdk.withdraw(
@@ -726,8 +735,24 @@ const Popup = ({
             throw new Error('Error during withdrawing!');
           }
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx?.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx?.wait();
         }
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
 
         toast.success(
           `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
@@ -735,16 +760,22 @@ const Popup = ({
       } catch (error) {
         console.error(error);
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
+
         toast.error('Error while withdrawing!');
       }
     }
-
-    setIsExecutingAction(false);
   };
 
   const borrowAmount = async () => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
@@ -754,11 +785,16 @@ const Popup = ({
       maxBorrowAmount &&
       amount <= maxBorrowAmount.number
     ) {
-      setIsExecutingAction(true);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.BORROW.BORROWING,
+          success: false,
+          error: false
+        }
+      ]);
 
       try {
-        setCurrentInfoMessage(INFO_MESSAGES.BORROW.BORROWING);
-
         const { tx, errorCode } = await currentSdk.borrow(
           selectedMarketData.cToken,
           amountAsBInt
@@ -768,7 +804,24 @@ const Popup = ({
           throw new Error('Error during borrowing!');
         }
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx?.hash
+          },
+          index: currentTransactionStep
+        });
+
         await tx?.wait();
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
+
         await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
         await queryClient.refetchQueries({
@@ -789,27 +842,43 @@ const Popup = ({
       } catch (error) {
         console.error(error);
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
+
         toast.error('Error while borrowing!');
       }
     }
-
-    setIsExecutingAction(false);
   };
 
   const repayAmount = async () => {
     if (
-      !isExecutingAction &&
+      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
       amount > 0 &&
       currentBorrowAmountAsFloat
     ) {
-      setIsExecutingAction(true);
+      let currentTransactionStep = 0;
+      addStepsForAction([
+        {
+          message: INFO_MESSAGES.REPAY.APPROVE,
+          success: false,
+          error: false
+        },
+        {
+          message: INFO_MESSAGES.REPAY.REPAYING,
+          success: false,
+          error: false
+        }
+      ]);
 
       try {
-        setCurrentInfoMessage(INFO_MESSAGES.REPAY.APPROVE);
-
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
@@ -824,10 +893,26 @@ const Popup = ({
             selectedMarketData.underlyingToken
           );
 
+          upsertTransactionStep({
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              txHash: tx.hash
+            },
+            index: currentTransactionStep
+          });
+
           await tx.wait();
         }
 
-        setCurrentInfoMessage(INFO_MESSAGES.REPAY.REPAYING);
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
+
+        currentTransactionStep++;
 
         const isRepayingMax = amountAsBInt.gte(maxRepayAmount ?? '0');
         const { tx, errorCode } = await currentSdk.repay(
@@ -840,7 +925,23 @@ const Popup = ({
           throw new Error('Error during repaying!');
         }
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx?.hash
+          },
+          index: currentTransactionStep
+        });
+
         await tx?.wait();
+
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            success: true
+          },
+          index: currentTransactionStep
+        });
         await queryClient.refetchQueries({ queryKey: ['useFusePoolData'] });
         await queryClient.refetchQueries({ queryKey: ['useMaxSupplyAmount'] });
         await queryClient.refetchQueries({
@@ -857,11 +958,17 @@ const Popup = ({
       } catch (error) {
         console.error(error);
 
+        upsertTransactionStep({
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            error: true
+          },
+          index: currentTransactionStep
+        });
+
         toast.error('Error while repaying!');
       }
     }
-
-    setIsExecutingAction(false);
   };
 
   return (
@@ -1057,8 +1164,11 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <button
                       className={`w-full rounded-md py-1 transition-colors ${
@@ -1154,8 +1264,11 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <button
                       className={`w-full rounded-md py-1 transition-colors ${
@@ -1238,8 +1351,11 @@ const Popup = ({
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
-                  {isExecutingAction ? (
-                    <LoadingButtonWithText text={currentInfoMessage ?? ''} />
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      transactionSteps={transactionSteps}
+                      resetTransactionSteps={resetTransactionSteps}
+                    />
                   ) : (
                     <button
                       className={`w-full rounded-md py-1 transition-colors ${
