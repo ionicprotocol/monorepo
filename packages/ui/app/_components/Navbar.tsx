@@ -16,7 +16,11 @@ export default function Navbar() {
 
   // },[pathname])
   return (
-    <nav className="fixed z-50 flex items-center justify-between w-full py-4 pt-8 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 bg-transparent backdrop-blur-sm font-inter top-0 left-1/2 rounded-xl">
+    <nav className="fixed z-50 flex items-center justify-between w-full py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 bg-transparent backdrop-blur-sm font-inter top-0 left-1/2 rounded-xl">
+      <div className="absolute w-full top-full left-0 bg-lime text-center p-2 text-darkone text-sm">
+        Hello, Mode! lonic is open for deposits! Supply ETH, USDC, or USDT to
+        earn Ionic points. Borrowing will be open soon...
+      </div>
       <Link
         href={'/market'}
         className={`flex items-center  pr-10  `}

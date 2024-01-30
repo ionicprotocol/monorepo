@@ -10,6 +10,7 @@ import TransactionStepsHandler, {
   TransactionStep
 } from './TransactionStepHandler';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSwapAmount } from '@ui/hooks/useSwapAmount';
 
 export type SwapProps = {
   close: () => void;
@@ -47,6 +48,13 @@ export default function Swap({ close }: SwapProps) {
       currentSdk.signer
     );
   }, [currentSdk]);
+  // const { data } = useSwapAmount(
+  //   currentSdk?.chainSpecificAddresses.STABLE_TOKEN,
+  //   BigNumber.from('1000'),
+  //   currentSdk?.chainSpecificAddresses.W_TOKEN,
+  //   BigNumber.from('10000')
+  // );
+  // console.log(data);
   const maxAmount = useMemo<number>(
     () => parseFloat(ethBalance?.formatted ?? '0'),
     [ethBalance]
