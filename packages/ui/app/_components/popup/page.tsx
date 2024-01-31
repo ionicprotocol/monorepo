@@ -212,16 +212,6 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
-  const minBorrowAmountAsNumber = useMemo<number>(
-    () =>
-      parseFloat(
-        formatUnits(
-          minBorrowAmount?.minBorrowAsset ?? '0',
-          selectedMarketData.underlyingDecimals
-        )
-      ),
-    [minBorrowAmount]
-  );
   const queryClient = useQueryClient();
 
   /**
@@ -1074,7 +1064,10 @@ const Popup = ({
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {minBorrowAmountAsNumber}
+                    {formatUnits(
+                      minBorrowAmount?.minBorrowAsset ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
