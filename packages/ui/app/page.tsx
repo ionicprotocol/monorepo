@@ -195,16 +195,28 @@ export default function Market() {
                               val.supplyBalance,
                               val.underlyingDecimals
                             )
-                          ).toFixed(6)
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 6
+                          })
                         : '0'
-                    } / $${val.supplyBalanceFiat.toFixed(2)}`}
+                    } ${
+                      val.underlyingSymbol
+                    } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
+                      maximumFractionDigits: 2
+                    })}`}
                     totalSupplied={`${
                       val.liquidityNative
                         ? parseFloat(
                             formatUnits(val.liquidity, val.underlyingDecimals)
-                          ).toFixed(6)
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 6
+                          })
                         : '0'
-                    } / $${val.liquidityFiat.toFixed(2)}`}
+                    } ${
+                      val.underlyingSymbol
+                    } / $${val.liquidityFiat.toLocaleString('en-US', {
+                      maximumFractionDigits: 2
+                    })}`}
                     borrowBalance={`${
                       val.borrowBalanceNative
                         ? parseFloat(
@@ -212,16 +224,28 @@ export default function Market() {
                               val.borrowBalance,
                               val.underlyingDecimals
                             )
-                          ).toFixed(6)
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 6
+                          })
                         : '0'
-                    } / $${val.borrowBalanceFiat.toFixed(2)}`}
+                    } ${
+                      val.underlyingSymbol
+                    } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
+                      maximumFractionDigits: 2
+                    })}`}
                     totalBorrowing={`${
                       val.totalBorrowNative
                         ? parseFloat(
                             formatUnits(val.totalBorrow, val.underlyingDecimals)
-                          ).toFixed(6)
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 6
+                          })
                         : '0'
-                    } / $${val.totalBorrowFiat.toFixed(2)}`}
+                    } ${
+                      val.underlyingSymbol
+                    } / $${val.totalBorrowFiat.toLocaleString('en-US', {
+                      maximumFractionDigits: 2
+                    })}`}
                     supplyAPR={`${
                       currentSdk
                         ?.ratePerBlockToAPY(
