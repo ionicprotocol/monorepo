@@ -84,7 +84,7 @@ const Amount = ({
         <input
           value={amount}
           type="number"
-          placeholder="0"
+          placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
           className={`focus:outline-none amount-field font-bold bg-transparent`}
           onChange={handlInpData}
         />
