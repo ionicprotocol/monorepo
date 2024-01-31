@@ -24,19 +24,9 @@ export default function Swap({ close }: SwapProps) {
     [currentSdk]
   );
   const [amount, setAmount] = useState<number>();
-  const [currentOutputToken, setCurrentOutputToken] = useState<
-    string | undefined
-  >(enabledOutputTokens.length ? enabledOutputTokens[0] : undefined);
-  const {
-    data: ethBalance,
-    isLoading: isLoadingEthBalance,
-    refetch: refetchEthBalance
-  } = useBalance({ address: address as any });
-  const {
-    data: wethBalance,
-    isLoading: wethBalanceLoading,
-    refetch: refetchwethBalance
-  } = useBalance({ address: address as any, token: currentOutputToken as any });
+  const { data: ethBalance, refetch: refetchEthBalance } = useBalance({
+    address: address as any
+  });
   const queryClient = useQueryClient();
   const WTokenContract = useMemo<Contract | undefined>(() => {
     if (!currentSdk) {
