@@ -19,6 +19,7 @@ import {
 } from '@ui/context/MultiIonicContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
+import Link from 'next/link';
 
 const supportedChains: Chain[] = Object.values(getSupportedChains()).map(
   (data) => {
@@ -70,7 +71,7 @@ export default function RootLayout({
       lang="en"
       className="dark"
     >
-      <body className={'p-4 pt-12 scrollbar-hide font-inter'}>
+      <body className={'scrollbar-hide font-inter'}>
         <WagmiConfig client={wagmiConfig}>
           <RainbowKitProvider
             chains={chains}
@@ -87,23 +88,124 @@ export default function RootLayout({
                   options={{ showSpinner: false }}
                   shallowRouting
                 />
-                <Navbar />
-                {children}
-                <Toaster
-                  toastOptions={{
-                    position: 'bottom-center',
-                    style: {
-                      color: '#000',
-                      background: '#3bff89ff'
-                    },
-                    error: {
+
+                <div className="relative px-4 pt-[128px] pb-[280px] min-h-screen">
+                  <Navbar />
+                  <main>{children}</main>
+                  <footer
+                    className={`absolute bottom-4 right-4 left-4 bg-grayone px-[3%] mt-3 rounded-xl py-10`}
+                  >
+                    <div className="flex">
+                      <div className="flex-initial mr-12">
+                        <div className="mb-20">
+                          <Link
+                            href={'/'}
+                            className={`flex items-center  pr-10`}
+                          >
+                            <img
+                              src="/img/logo/logo.png"
+                              alt="logo"
+                              className={`h-5 `}
+                            />
+                          </Link>
+                        </div>
+
+                        <div className="flex">
+                          <Link
+                            href="/social-media"
+                            target="_blank"
+                          >
+                            <span className="rounded-lg border w-[40px] h-[40px] mr-2 flex justify-center items-center content-center hover:opacity-70 transition-opacity">
+                              Icon
+                            </span>
+                          </Link>
+
+                          <Link
+                            href="/social-media"
+                            target="_blank"
+                          >
+                            <span className="rounded-lg border w-[40px] h-[40px] mr-2 flex justify-center items-center content-center hover:opacity-70 transition-opacity">
+                              Icon
+                            </span>
+                          </Link>
+
+                          <Link
+                            href="/social-media"
+                            target="_blank"
+                          >
+                            <span className="rounded-lg border w-[40px] h-[40px] mr-2 flex justify-center items-center content-center hover:opacity-70 transition-opacity">
+                              Icon
+                            </span>
+                          </Link>
+                        </div>
+                      </div>
+
+                      <div className="flex-initial mr-12">
+                        <h4 className="text-lg text-bold mb-2">
+                          Title goes here
+                        </h4>
+
+                        <ul className="text-sm">
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li>
+                            <a href="#">Link goes here</a>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="flex-initial mr-12">
+                        <h4 className="text-lg text-bold mb-2">
+                          Title goes here
+                        </h4>
+
+                        <ul className="text-sm">
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li className="mb-1">
+                            <a href="#">Link goes here</a>
+                          </li>
+                          <li>
+                            <a href="#">Link goes here</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </footer>
+
+                  <Toaster
+                    toastOptions={{
+                      position: 'bottom-center',
                       style: {
-                        color: '#fff',
-                        background: '#e10000'
+                        color: '#000',
+                        background: '#3bff89ff'
+                      },
+                      error: {
+                        style: {
+                          color: '#fff',
+                          background: '#e10000'
+                        }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                </div>
               </MultiIonicProvider>
             </QueryClientProvider>
           </RainbowKitProvider>
