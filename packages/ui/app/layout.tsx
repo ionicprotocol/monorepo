@@ -123,6 +123,42 @@ export default function RootLayout({
                               className={`h-5 `}
                             />
                           </Link>
+
+                          <Link
+                            href={'https://t.me/ionicmoney'}
+                            target="_blank"
+                            className={`flex items-center  pr-5`}
+                          >
+                            <img
+                              src="/images/tg.png"
+                              alt="logo"
+                              className={`h-5 `}
+                            />
+                          </Link>
+
+                          <Link
+                            href={'https://twitter.com/ionicmoney'}
+                            target="_blank"
+                            className={`flex items-center  pr-5`}
+                          >
+                            <img
+                              src="/images/x.png"
+                              alt="logo"
+                              className={`h-5 `}
+                            />
+                          </Link>
+
+                          <Link
+                            href={'https://discord.gg/FmgedqR9wn'}
+                            target="_blank"
+                            className={`flex items-center  pr-5`}
+                          >
+                            <img
+                              src="/images/discord.png"
+                              alt="logo"
+                              className={`h-5 `}
+                            />
+                          </Link>
                         </div>
                       </div>
 
