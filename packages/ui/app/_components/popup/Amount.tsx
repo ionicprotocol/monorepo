@@ -25,10 +25,6 @@ const Amount = ({
   symbol,
   isLoading = false
 }: IAmount) => {
-  const marketDataDecimals = parseInt(
-    selectedMarketData.underlyingDecimals.toString()
-  );
-  //neeed to get the wallet balance
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     const currentValue = e.target.value.trim();
     const newAmount = currentValue === '' ? undefined : currentValue;

@@ -105,7 +105,7 @@ const Popup = ({
   const [amount, setAmount] = useReducer(
     (_: string | undefined, value: string | undefined): string | undefined =>
       value,
-    undefined
+    '0'
   );
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
@@ -281,7 +281,7 @@ const Popup = ({
   }, [mode, specific]);
 
   useEffect(() => {
-    setAmount(undefined);
+    setAmount('0');
     setCurrentUtilizationPercentage(0);
     upsertTransactionStep(undefined);
 
