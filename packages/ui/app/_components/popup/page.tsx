@@ -324,21 +324,17 @@ const Popup = ({
     if (mode === 'SUPPLY') {
       if (active === 'COLLATERAL') {
         slide.current.style.transform = 'translateX(0%)';
-        slide.current.style.height = `${slide.current.children[0].clientHeight}px`;
       }
       if (active === 'WITHDRAW') {
         slide.current.style.transform = 'translateX(-100%)';
-        slide.current.style.height = `${slide.current.children[1].clientHeight}px`;
       }
     }
     if (mode === 'BORROW') {
       if (active === 'BORROW') {
         slide.current.style.transform = 'translateX(0%)';
-        slide.current.style.height = `${slide.current.children[0].clientHeight}px`;
       }
       if (active === 'REPAY') {
         slide.current.style.transform = 'translateX(-100%)';
-        slide.current.style.height = `${slide.current.children[1].clientHeight}px`;
       }
     }
   }, [active, mode]);
