@@ -980,7 +980,7 @@ const Popup = ({
                   ) : (
                     <>
                       <button
-                        className={`w-full rounded-md py-1 transition-colors ${
+                        className={`w-full font-bold rounded-md py-1 transition-colors ${
                           amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
                         } `}
                         onClick={() => supplyAmount()}
@@ -1061,7 +1061,7 @@ const Popup = ({
                     />
                   ) : (
                     <button
-                      className={`w-full rounded-md py-1 transition-colors ${
+                      className={`w-full font-bold rounded-md py-1 transition-colors ${
                         amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
                       } `}
                       onClick={withdrawAmount}
@@ -1161,7 +1161,7 @@ const Popup = ({
                     />
                   ) : (
                     <button
-                      className={`w-full rounded-md py-1 transition-colors ${
+                      className={`w-full font-bold rounded-md py-1 transition-colors ${
                         amount &&
                         amount > 0 &&
                         minBorrowAmount &&
@@ -1248,7 +1248,7 @@ const Popup = ({
                     />
                   ) : (
                     <button
-                      className={`w-full rounded-md py-1 transition-colors ${
+                      className={`w-full font-bold rounded-md py-1 transition-colors ${
                         amount && amount > 0 && currentBorrowAmountAsFloat
                           ? 'bg-accent'
                           : 'bg-stone-500'
