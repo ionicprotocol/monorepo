@@ -75,8 +75,7 @@ export default function Swap({ close }: SwapProps) {
     () => parseEther(amount ?? '0'),
     [amount]
   );
-
-  function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
+  const handlInpData = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!ethBalance) {
       return;
     }
@@ -103,12 +102,10 @@ export default function Swap({ close }: SwapProps) {
     }
 
     setAmount(newAmount);
-  }
-
-  function handleMax(val: string) {
+  };
+  const handleMax = (val: string) => {
     setAmount(val.trim());
-  }
-
+  };
   const addStepsForAction = (steps: TransactionStep[]) => {
     steps.forEach((step, i) =>
       upsertTransactionStep({ transactionStep: step, index: i })
