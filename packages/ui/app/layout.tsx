@@ -96,7 +96,7 @@ export default function RootLayout({
                     className={`absolute bottom-4 right-4 left-4 bg-grayone px-[3%] mt-3 rounded-xl py-10`}
                   >
                     <div className="flex">
-                      <div className="flex-initial mr-12">
+                      <div className="flex-initial mr-20">
                         <div className="mb-20">
                           <Link
                             href={'/'}
@@ -140,7 +140,7 @@ export default function RootLayout({
                         </div>
                       </div>
 
-                      <div className="flex-initial mr-12">
+                      <div className="flex-initial mr-20">
                         <h4 className="text-lg text-bold mb-2">
                           Title goes here
                         </h4>
@@ -164,7 +164,7 @@ export default function RootLayout({
                         </ul>
                       </div>
 
-                      <div className="flex-initial mr-12">
+                      <div className="flex-initial mr-20">
                         <h4 className="text-lg text-bold mb-2">
                           Title goes here
                         </h4>
