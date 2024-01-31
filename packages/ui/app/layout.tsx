@@ -99,7 +99,8 @@ export default function RootLayout({
                       <div className="flex-initial mr-20">
                         <div className="mb-20">
                           <Link
-                            href={'/'}
+                            href={'https://ionic.money'}
+                            target="_blank"
                             className={`flex items-center  pr-10`}
                           >
                             <img
@@ -112,78 +113,61 @@ export default function RootLayout({
 
                         <div className="flex">
                           <Link
-                            href="/social-media"
+                            href={'https://ionic.money'}
                             target="_blank"
+                            className={`flex items-center  pr-5`}
                           >
-                            <span className="rounded-lg border w-[40px] h-[40px] mr-2 flex justify-center items-center content-center hover:opacity-70 transition-opacity">
-                              Icon
-                            </span>
-                          </Link>
-
-                          <Link
-                            href="/social-media"
-                            target="_blank"
-                          >
-                            <span className="rounded-lg border w-[40px] h-[40px] mr-2 flex justify-center items-center content-center hover:opacity-70 transition-opacity">
-                              Icon
-                            </span>
-                          </Link>
-
-                          <Link
-                            href="/social-media"
-                            target="_blank"
-                          >
-                            <span className="rounded-lg border w-[40px] h-[40px] mr-2 flex justify-center items-center content-center hover:opacity-70 transition-opacity">
-                              Icon
-                            </span>
+                            <img
+                              src="/images/globe.png"
+                              alt="logo"
+                              className={`h-5 `}
+                            />
                           </Link>
                         </div>
                       </div>
 
                       <div className="flex-initial mr-20">
-                        <h4 className="text-lg text-bold mb-2">
-                          Title goes here
-                        </h4>
+                        <h4 className="text-lg text-bold mb-2">Resources</h4>
 
                         <ul className="text-sm">
                           <li className="mb-1">
-                            <a href="#">Link goes here</a>
+                            <a
+                              href="https://doc.ionic.money/ionic-documentation/audit"
+                              target="_blank"
+                            >
+                              Audit
+                            </a>
                           </li>
                           <li className="mb-1">
-                            <a href="#">Link goes here</a>
+                            <a
+                              href="https://doc.ionic.money/"
+                              target="_blank"
+                            >
+                              Documentation
+                            </a>
                           </li>
                           <li className="mb-1">
-                            <a href="#">Link goes here</a>
-                          </li>
-                          <li className="mb-1">
-                            <a href="#">Link goes here</a>
-                          </li>
-                          <li>
-                            <a href="#">Link goes here</a>
+                            <a
+                              href="https://github.com/orgs/ionicprotocol/repositories"
+                              target="_blank"
+                            >
+                              GitHub
+                            </a>
                           </li>
                         </ul>
                       </div>
 
                       <div className="flex-initial mr-20">
-                        <h4 className="text-lg text-bold mb-2">
-                          Title goes here
-                        </h4>
+                        <h4 className="text-lg text-bold mb-2">Tools</h4>
 
                         <ul className="text-sm">
                           <li className="mb-1">
-                            <a href="#">Link goes here</a>
-                          </li>
-                          <li className="mb-1">
-                            <a href="#">Link goes here</a>
-                          </li>
-                          <li className="mb-1">
-                            <a href="#">Link goes here</a>
-                          </li>
-                          <li className="mb-1">
-                            <a href="#">Link goes here</a>
-                          </li>
-                          <li>
-                            <a href="#">Link goes here</a>
+                            <a
+                              href="https://defillama.com/protocol/ionic-protocol"
+                              target="_blank"
+                            >
+                              DeFi Llama
+                            </a>
                           </li>
                         </ul>
                       </div>
