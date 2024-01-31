@@ -32,8 +32,19 @@ const Amount = ({
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     const currentValue = e.target.value.trim();
     const newAmount = currentValue === '' ? undefined : currentValue;
+    const numbersBeforeSeparator = new RegExp(/[0-9]\./gm).test(
+      currentValue ?? ''
+    )
+      ? 1
+      : 0;
 
-    if (newAmount && newAmount.length > 20) {
+    if (
+      newAmount &&
+      newAmount.length >
+        selectedMarketData.underlyingDecimals.toNumber() +
+          1 +
+          numbersBeforeSeparator
+    ) {
       return;
     }
 
