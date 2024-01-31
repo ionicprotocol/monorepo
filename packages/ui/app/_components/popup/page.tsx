@@ -820,7 +820,7 @@ const Popup = ({
       className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center`}
     >
       <div
-        className={`w-[45%] relative  bg-grayUnselect rounded-xl overflow-x-hidden overflow-y-scroll scrollbar-hide`}
+        className={`w-[45%] relative  bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide`}
       >
         <img
           src="/img/assets/close.png"
