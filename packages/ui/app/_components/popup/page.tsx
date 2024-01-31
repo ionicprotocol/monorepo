@@ -392,6 +392,7 @@ const Popup = ({
   const resetTransactionSteps = () => {
     refetchUsedQueries();
     upsertTransactionStep(undefined);
+    router.back();
   };
 
   const refetchUsedQueries = async () => {
