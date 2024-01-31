@@ -1,5 +1,6 @@
 import { task } from "hardhat/config";
 
+import { ComptrollerFirstExtension } from "../../typechain";
 import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
 import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
 import { ERC20 } from "../../typechain/ERC20";
@@ -98,4 +99,35 @@ task("test:txs").setAction(async ({}, { ethers, getNamedAccounts }) => {
     await tx.wait();
     console.log(`mined ${tx.hash}`);
   }
+});
+
+task("mode:sfs:register").setAction(async ({}, { ethers, getNamedAccounts }) => {
+  let tx;
+  const { deployer } = await getNamedAccounts();
+  const modePoolAddr = "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556";
+
+  const comptrollerAsExtension = (await ethers.getContractAt(
+    "ComptrollerFirstExtension",
+    modePoolAddr,
+    deployer
+  )) as ComptrollerFirstExtension;
+
+  tx = await comptrollerAsExtension.registerInSFS();
+  console.log(`registering the pool in SFS with tx ${tx.hash}`);
+  await tx.wait();
+  console.log(`registered the pool in SFS`);
+
+  const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
+  for (let j = 0; j < markets.length; j++) {
+    const market = markets[j];
+    console.log(`market ${market}`);
+    const cTokenInstance = (await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", market)) as ICErc20;
+
+    tx = await cTokenInstance.registerInSFS();
+    console.log(`registering the market ${market} in SFS with tx ${tx.hash}`);
+    await tx.wait();
+    console.log(`registered the market ${market} in SFS`);
+  }
+
+  console.log(`Done`);
 });
