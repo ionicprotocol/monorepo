@@ -14,6 +14,7 @@ import { useSwapAmount } from '@ui/hooks/useSwapAmount';
 import { formatUnits, parseEther } from 'ethers/lib/utils.js';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { bignumber } from 'mathjs';
+import { useRouter } from 'next/router';
 
 export type SwapProps = {
   close: () => void;
@@ -249,6 +250,7 @@ export default function Swap({ close }: SwapProps) {
                     resetTransactionSteps={() => {
                       upsertTransactionStep(undefined);
                       refetchUsedQueries();
+                      close();
                     }}
                   />
                 </div>
