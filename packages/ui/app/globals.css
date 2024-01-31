@@ -68,6 +68,10 @@
   line-height: 0.75rem;
 }
 
+.btn-green {
+  @apply font-bold rounded-md px-3 py-1 text-center transition-colors bg-accent text-darkone;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;

@@ -11,7 +11,7 @@ import TransactionStepsHandler, {
 } from './TransactionStepHandler';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSwapAmount } from '@ui/hooks/useSwapAmount';
-import { parseEther } from 'ethers/lib/utils.js';
+import { formatUnits, parseEther } from 'ethers/lib/utils.js';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export type SwapProps = {
@@ -20,7 +20,7 @@ export type SwapProps = {
 
 export default function Swap({ close }: SwapProps) {
   const { address, currentSdk } = useMultiMidas();
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<string>();
   const { data: ethBalance, refetch: refetchEthBalance } = useBalance({
     address: address as any
   });
@@ -36,10 +36,6 @@ export default function Swap({ close }: SwapProps) {
       currentSdk.signer
     );
   }, [currentSdk]);
-  const maxAmount = useMemo<number>(
-    () => parseFloat(ethBalance?.formatted ?? '0'),
-    [ethBalance]
-  );
   const [transactionSteps, upsertTransactionStep] = useReducer(
     (
       prevState: TransactionStep[],
@@ -75,21 +71,33 @@ export default function Swap({ close }: SwapProps) {
     []
   );
   const amountAsBInt = useMemo<BigNumber>(
-    () => parseEther(amount?.toString() ?? '0'),
+    () => parseEther(amount ?? '0'),
     [amount]
   );
 
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
-    const currentValue =
-      e.target.value.trim() === '' ? undefined : parseFloat(e.target.value);
+    if (!ethBalance) {
+      return;
+    }
 
-    setAmount(
-      currentValue && currentValue > maxAmount ? maxAmount : currentValue
-    );
+    const currentValue = e.target.value.trim();
+    const newAmount = currentValue === '' ? undefined : currentValue;
+
+    if (newAmount && newAmount.length > 20) {
+      return;
+    }
+
+    if (newAmount && ethBalance.value.lt(parseEther(newAmount))) {
+      setAmount(ethBalance.formatted);
+
+      return;
+    }
+
+    setAmount(newAmount);
   }
 
-  function handleMax(val: number) {
-    setAmount(val);
+  function handleMax(val: string) {
+    setAmount(val.trim());
   }
 
   const addStepsForAction = (steps: TransactionStep[]) => {
@@ -217,7 +225,7 @@ export default function Swap({ close }: SwapProps) {
                   >
                     <span>{ethBalance?.formatted}</span>
                     <button
-                      onClick={() => handleMax(maxAmount)}
+                      onClick={() => handleMax(ethBalance?.formatted ?? '0')}
                       className={`text-accent pl-2`}
                     >
                       MAX
@@ -240,7 +248,7 @@ export default function Swap({ close }: SwapProps) {
                 </div>
               ) : (
                 <button
-                  className={`px-6 rounded-md py-1 transition-colors bg-accent text-darkone font-bold`}
+                  className={`px-6 btn-green`}
                   onClick={() => swapAmount()}
                 >
                   WRAP
