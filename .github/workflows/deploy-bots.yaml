@@ -92,7 +92,7 @@ jobs:
     needs: [terraform-infra]
     runs-on: ubuntu-latest
     env:
-      REGISTRY: public.ecr.aws/y8i7d7x9
+      REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
       REPOSITORY: ionic-liquidator
 
     steps:
@@ -136,7 +136,7 @@ jobs:
     needs: [terraform-infra]
     runs-on: ubuntu-latest
     env:
-      REGISTRY: public.ecr.aws/y8i7d7x9
+      REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
       REPOSITORY: ionic-oracles-monitor
 
     steps:
@@ -180,7 +180,7 @@ jobs:
     needs: [terraform-infra]
     runs-on: ubuntu-latest
     env:
-      REGISTRY: public.ecr.aws/y8i7d7x9
+      REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
       REPOSITORY: ionic-pyth-updater
 
     steps:
