@@ -11,7 +11,10 @@ import TransactionStepsHandler, {
 } from './TransactionStepHandler';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSwapAmount } from '@ui/hooks/useSwapAmount';
-import { parseEther } from 'ethers/lib/utils.js';
+import { formatUnits, parseEther } from 'ethers/lib/utils.js';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { bignumber } from 'mathjs';
+import { useRouter } from 'next/router';
 
 export type SwapProps = {
   close: () => void;
@@ -19,27 +22,13 @@ export type SwapProps = {
 
 export default function Swap({ close }: SwapProps) {
   const { address, currentSdk } = useMultiMidas();
-  const enabledOutputTokens = useMemo<string[]>(
-    () => [...(currentSdk ? [currentSdk?.chainSpecificAddresses.W_TOKEN] : [])],
-    [currentSdk]
-  );
-  const [amount, setAmount] = useState<number>();
-  const [currentOutputToken, setCurrentOutputToken] = useState<
-    string | undefined
-  >(enabledOutputTokens.length ? enabledOutputTokens[0] : undefined);
-  const {
-    data: ethBalance,
-    isLoading: isLoadingEthBalance,
-    refetch: refetchEthBalance
-  } = useBalance({ address: address as any });
-  const {
-    data: wethBalance,
-    isLoading: wethBalanceLoading,
-    refetch: refetchwethBalance
-  } = useBalance({ address: address as any, token: currentOutputToken as any });
+  const [amount, setAmount] = useState<string>();
+  const { data: ethBalance, refetch: refetchEthBalance } = useBalance({
+    address: address as any
+  });
   const queryClient = useQueryClient();
   const WTokenContract = useMemo<Contract | undefined>(() => {
-    if (!currentSdk) {
+    if (!currentSdk || !address) {
       return;
     }
 
@@ -49,17 +38,6 @@ export default function Swap({ close }: SwapProps) {
       currentSdk.signer
     );
   }, [currentSdk]);
-  // const { data } = useSwapAmount(
-  //   currentSdk?.chainSpecificAddresses.STABLE_TOKEN,
-  //   BigNumber.from('1000'),
-  //   currentSdk?.chainSpecificAddresses.W_TOKEN,
-  //   BigNumber.from('10000')
-  // );
-  // console.log(data);
-  const maxAmount = useMemo<number>(
-    () => parseFloat(ethBalance?.formatted ?? '0'),
-    [ethBalance]
-  );
   const [transactionSteps, upsertTransactionStep] = useReducer(
     (
       prevState: TransactionStep[],
@@ -95,23 +73,40 @@ export default function Swap({ close }: SwapProps) {
     []
   );
   const amountAsBInt = useMemo<BigNumber>(
-    () => parseEther(amount?.toString() ?? '0'),
+    () => parseEther(amount ?? '0'),
     [amount]
   );
+  const handlInpData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!ethBalance) {
+      return;
+    }
 
-  function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
-    const currentValue =
-      e.target.value.trim() === '' ? undefined : parseFloat(e.target.value);
+    const currentValue = e.target.value.trim();
+    const newAmount = currentValue === '' ? undefined : currentValue;
+    const numbersBeforeSeparator = new RegExp(/[0-9]\./gm).test(
+      currentValue ?? ''
+    )
+      ? 1
+      : 0;
 
-    setAmount(
-      currentValue && currentValue > maxAmount ? maxAmount : currentValue
-    );
-  }
+    if (
+      newAmount &&
+      newAmount.length > ethBalance.decimals + 1 + numbersBeforeSeparator
+    ) {
+      return;
+    }
 
-  function handleMax(val: number) {
-    setAmount(val);
-  }
+    if (newAmount && ethBalance.value.lt(parseEther(newAmount))) {
+      setAmount(ethBalance.formatted);
 
+      return;
+    }
+
+    setAmount(newAmount);
+  };
+  const handleMax = (val: string) => {
+    setAmount(val.trim());
+  };
   const addStepsForAction = (steps: TransactionStep[]) => {
     steps.forEach((step, i) =>
       upsertTransactionStep({ transactionStep: step, index: i })
@@ -217,54 +212,63 @@ export default function Swap({ close }: SwapProps) {
 
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}></div>
 
-        <div className="flex text-center">
-          <div className="relative w-1/2 mx-auto">
-            <input
-              type="number"
-              placeholder="ETH Amount"
-              value={amount}
-              onChange={(e) => handlInpData(e)}
-              className={`focus:outline-none w-full h-12 amount-field font-bold text-center bg-zinc-900 rounded-md`}
-            />
+        {address ? (
+          <>
+            <div className="flex text-center">
+              <div className="relative w-1/2 mx-auto">
+                <input
+                  type="number"
+                  placeholder="ETH Amount"
+                  value={amount}
+                  onChange={(e) => handlInpData(e)}
+                  className={`focus:outline-none w-full h-12 amount-field font-bold text-center bg-zinc-900 rounded-md`}
+                />
 
-            <div className="flex w-full justify-center items-center mt-1 text-[10px] text-white/50">
-              <ResultHandler
-                width="15"
-                height="15"
-                isLoading={!ethBalance}
-              >
-                <span>{ethBalance?.formatted}</span>
+                <div className="flex w-full justify-center items-center mt-1 text-[10px] text-white/50">
+                  <ResultHandler
+                    width="15"
+                    height="15"
+                    isLoading={!ethBalance}
+                  >
+                    <span>{ethBalance?.formatted}</span>
+                    <button
+                      onClick={() => handleMax(ethBalance?.formatted ?? '0')}
+                      className={`text-accent pl-2`}
+                    >
+                      MAX
+                    </button>
+                  </ResultHandler>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 text-center">
+              {transactionSteps.length > 0 ? (
+                <div className="flex justify-center text-left">
+                  <TransactionStepsHandler
+                    transactionSteps={transactionSteps}
+                    resetTransactionSteps={() => {
+                      upsertTransactionStep(undefined);
+                      refetchUsedQueries();
+                      close();
+                    }}
+                  />
+                </div>
+              ) : (
                 <button
-                  onClick={() => handleMax(maxAmount)}
-                  className={`text-accent pl-2`}
+                  className={`px-6 btn-green`}
+                  onClick={() => swapAmount()}
                 >
-                  MAX
+                  WRAP
                 </button>
-              </ResultHandler>
+              )}
             </div>
+          </>
+        ) : (
+          <div className="flex justify-center uppercase connect-button">
+            <ConnectButton />
           </div>
-        </div>
-
-        <div className="pt-4 text-center">
-          {transactionSteps.length > 0 ? (
-            <div className="flex justify-center text-left">
-              <TransactionStepsHandler
-                transactionSteps={transactionSteps}
-                resetTransactionSteps={() => {
-                  upsertTransactionStep(undefined);
-                  refetchUsedQueries();
-                }}
-              />
-            </div>
-          ) : (
-            <button
-              className={`px-6 rounded-md py-1 transition-colors bg-accent text-darkone`}
-              onClick={() => swapAmount()}
-            >
-              WRAP
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

@@ -5,13 +5,14 @@ import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import ResultHandler from '../ResultHandler';
+import { parseUnits } from 'ethers/lib/utils.js';
 
 interface IAmount {
   selectedMarketData: MarketData;
-  handleInput: (val?: number) => void;
-  amount?: number;
+  handleInput: (val?: string) => void;
+  amount?: string;
   hintText?: string;
-  max?: number;
+  max?: string;
   symbol: string;
   isLoading?: boolean;
 }
@@ -20,21 +21,43 @@ const Amount = ({
   handleInput,
   amount,
   hintText = 'Wallet Balance',
-  max = 0,
+  max = '0',
   symbol,
   isLoading = false
 }: IAmount) => {
-  const marketDataDecimals = parseInt(
-    selectedMarketData.underlyingDecimals.toString()
-  );
-  //neeed to get the wallet balance
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
-    const currentValue =
-      e.target.value.trim() === '' ? undefined : parseFloat(e.target.value);
+    const currentValue = e.target.value.trim();
+    const newAmount = currentValue === '' ? undefined : currentValue;
+    const numbersBeforeSeparator = new RegExp(/[0-9]\./gm).test(
+      currentValue ?? ''
+    )
+      ? 1
+      : 0;
 
-    handleInput(currentValue && currentValue > max ? max : currentValue);
+    if (
+      newAmount &&
+      newAmount.length >
+        selectedMarketData.underlyingDecimals.toNumber() +
+          1 +
+          numbersBeforeSeparator
+    ) {
+      return;
+    }
+
+    if (
+      newAmount &&
+      parseUnits(max, selectedMarketData.underlyingDecimals).lt(
+        parseUnits(newAmount, selectedMarketData.underlyingDecimals)
+      )
+    ) {
+      handleInput(max);
+
+      return;
+    }
+
+    handleInput(newAmount);
   }
-  function handleMax(val: number) {
+  function handleMax(val: string) {
     handleInput(val);
   }
 
@@ -50,7 +73,7 @@ const Amount = ({
           >
             <>
               <span className={`ml-auto`}>
-                {hintText} {max.toFixed(marketDataDecimals)}
+                {hintText} {max}
               </span>
               <button
                 onClick={() => handleMax(max)}
@@ -68,7 +91,7 @@ const Amount = ({
         <input
           value={amount}
           type="number"
-          placeholder="0"
+          placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
           className={`focus:outline-none amount-field font-bold bg-transparent`}
           onChange={handlInpData}
         />

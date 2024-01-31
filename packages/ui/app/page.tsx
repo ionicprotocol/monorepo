@@ -18,6 +18,7 @@ import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import Swap from './_components/popup/Swap';
+import Link from 'next/link';
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
@@ -47,8 +48,8 @@ export default function Market() {
   );
 
   return (
-    <main className={`pt-20`}>
-      <div className="w-full  flex flex-col items-center justify-start min-h-screen transition-all duration-200 ease-linear">
+    <>
+      <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
@@ -110,7 +111,7 @@ export default function Market() {
           </ResultHandler>
 
           <button
-            className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold`}
+            className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
             onClick={() => setSwapOpen(true)}
           >
             {'Wrap ETH '}
@@ -132,12 +133,10 @@ export default function Market() {
             />
           </button>
         </div>
-        <div
-          className={`bg-grayone min-h-[60vh] pb-20 w-full px-[3%] mt-3 rounded-xl`}
-        >
-          <div className={` w-full flex items-center justify-between py-3 `}>
-            {/* <h1 className={`font-semibold`}>Mode Lending & Borrowing</h1> */}
-            {/* <div
+        <div className={`bg-grayone w-full px-[3%] mt-3 rounded-xl pt-3 pb-7`}>
+          {/* <div className={` w-full flex items-center justify-between py-3 `}> */}
+          {/* <h1 className={`font-semibold`}>Mode Lending & Borrowing</h1> */}
+          {/* <div
               className={` min-w-[30%] flex gap-x-2  items-center justify-center `}
             >
               <img
@@ -165,7 +164,7 @@ export default function Market() {
                 />
               </div>
             </div> */}
-          </div>
+          {/* </div> */}
           {/* <PoolToggle /> */}
           <div
             className={`w-full gap-x-1 grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
@@ -256,7 +255,7 @@ export default function Market() {
       )}
 
       {swapOpen && <Swap close={() => setSwapOpen(false)} />}
-    </main>
+    </>
   );
 }
 

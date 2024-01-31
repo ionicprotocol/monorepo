@@ -103,16 +103,9 @@ const Popup = ({
   const slide = useRef<HTMLDivElement>(null!);
   const router = useRouter();
   const [amount, setAmount] = useReducer(
-    (_: number | undefined, value: number | undefined): number | undefined => {
-      const marketDataDecimals = parseInt(
-        selectedMarketData.underlyingDecimals.toString()
-      );
-
-      return typeof value === 'number'
-        ? parseFloat(value.toFixed(marketDataDecimals))
-        : undefined;
-    },
-    undefined
+    (_: string | undefined, value: string | undefined): string | undefined =>
+      value,
+    '0'
   );
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
@@ -219,16 +212,6 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
-  const minBorrowAmountAsNumber = useMemo<number>(
-    () =>
-      parseFloat(
-        formatUnits(
-          minBorrowAmount?.minBorrowAsset ?? '0',
-          selectedMarketData.underlyingDecimals
-        )
-      ),
-    [minBorrowAmount]
-  );
   const queryClient = useQueryClient();
 
   /**
@@ -238,7 +221,11 @@ const Popup = ({
     switch (active) {
       case 'COLLATERAL':
         setCurrentUtilizationPercentage(
-          Math.round(((amount ?? 0) / (maxSupplyAmount?.number ?? 0)) * 100)
+          Math.round(
+            (amountAsBInt.toNumber() /
+              (maxSupplyAmount?.bigNumber.toNumber() ?? 1)) *
+              100
+          )
         );
 
         break;
@@ -246,13 +233,7 @@ const Popup = ({
       case 'WITHDRAW':
         setCurrentUtilizationPercentage(
           Math.round(
-            ((amount ?? 0) /
-              parseFloat(
-                formatUnits(
-                  maxWithdrawAmount ?? '0',
-                  selectedMarketData.underlyingDecimals
-                ) ?? '1'
-              )) *
+            (amountAsBInt.toNumber() / (maxWithdrawAmount?.toNumber() ?? 1)) *
               100
           )
         );
@@ -261,7 +242,11 @@ const Popup = ({
 
       case 'BORROW':
         setCurrentUtilizationPercentage(
-          Math.round(((amount ?? 0) / (maxBorrowAmount?.number ?? 1)) * 100)
+          Math.round(
+            (amountAsBInt.toNumber() /
+              (maxBorrowAmount?.bigNumber.toNumber() ?? 1)) *
+              100
+          )
         );
 
         break;
@@ -269,20 +254,13 @@ const Popup = ({
       case 'REPAY':
         setCurrentUtilizationPercentage(
           Math.round(
-            ((amount ?? 0) /
-              parseFloat(
-                formatUnits(
-                  maxRepayAmount ?? '0',
-                  selectedMarketData.underlyingDecimals
-                ) ?? '1'
-              )) *
-              100
+            (amountAsBInt.toNumber() / (maxRepayAmount?.toNumber() ?? 1)) * 100
           )
         );
 
         break;
     }
-  }, [amount]);
+  }, [amountAsBInt]);
 
   useEffect(() => {
     if (mode === 'DEFAULT' || 'SUPPLY') {
@@ -303,7 +281,7 @@ const Popup = ({
   }, [mode, specific]);
 
   useEffect(() => {
-    setAmount(0);
+    setAmount('0');
     setCurrentUtilizationPercentage(0);
     upsertTransactionStep(undefined);
 
@@ -363,55 +341,45 @@ const Popup = ({
 
   const handleSupplyUtilization = (utilizationPercentage: number) => {
     setAmount(
-      parseFloat(
-        (
-          (utilizationPercentage / 100) *
-          (maxSupplyAmount?.number ?? 0)
-        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      ((utilizationPercentage / 100) * (maxSupplyAmount?.number ?? 0)).toFixed(
+        parseInt(selectedMarketData.underlyingDecimals.toString())
       )
     );
   };
 
   const handleWithdrawUtilization = (utilizationPercentage: number) => {
     setAmount(
-      parseFloat(
-        (
-          (utilizationPercentage / 100) *
-          parseFloat(
-            formatUnits(
-              maxWithdrawAmount ?? '0',
-              selectedMarketData.underlyingDecimals
-            ) ?? '0.0'
-          )
-        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
-      )
+      (
+        (utilizationPercentage / 100) *
+        parseFloat(
+          formatUnits(
+            maxWithdrawAmount ?? '0',
+            selectedMarketData.underlyingDecimals
+          ) ?? '0.0'
+        )
+      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
     );
   };
 
   const handleBorrowUtilization = (utilizationPercentage: number) => {
     setAmount(
-      parseFloat(
-        (
-          (utilizationPercentage / 100) *
-          (maxBorrowAmount?.number ?? 0)
-        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
+      ((utilizationPercentage / 100) * (maxBorrowAmount?.number ?? 0)).toFixed(
+        parseInt(selectedMarketData.underlyingDecimals.toString())
       )
     );
   };
 
   const handleRepayUtilization = (utilizationPercentage: number) => {
     setAmount(
-      parseFloat(
-        (
-          (utilizationPercentage / 100) *
-          parseFloat(
-            formatUnits(
-              maxRepayAmount ?? '0',
-              selectedMarketData.underlyingDecimals
-            ) ?? '0.0'
-          )
-        ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
-      )
+      (
+        (utilizationPercentage / 100) *
+        parseFloat(
+          formatUnits(
+            maxRepayAmount ?? '0',
+            selectedMarketData.underlyingDecimals
+          ) ?? '0.0'
+        )
+      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
     );
   };
 
@@ -424,6 +392,7 @@ const Popup = ({
   const resetTransactionSteps = () => {
     refetchUsedQueries();
     upsertTransactionStep(undefined);
+    router.back();
   };
 
   const refetchUsedQueries = async () => {
@@ -451,9 +420,9 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amount > 0 &&
+      amountAsBInt.gt('0') &&
       maxSupplyAmount &&
-      amount <= maxSupplyAmount.number
+      amountAsBInt.lte(maxSupplyAmount.bigNumber)
     ) {
       let currentTransactionStep = 0;
       addStepsForAction([
@@ -591,14 +560,8 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amount > 0 &&
-      amount <=
-        parseFloat(
-          formatUnits(
-            maxWithdrawAmount ?? '0',
-            selectedMarketData.underlyingDecimals
-          )
-        )
+      amountAsBInt.gt('0') &&
+      amountAsBInt.lte(maxWithdrawAmount ?? '0')
     ) {
       let currentTransactionStep = 0;
       addStepsForAction([
@@ -610,14 +573,7 @@ const Popup = ({
       ]);
 
       try {
-        if (
-          parseFloat(
-            formatUnits(
-              selectedMarketData.supplyBalance,
-              selectedMarketData.underlyingDecimals
-            )
-          ) <= amount
-        ) {
+        if (selectedMarketData.supplyBalance.lte(amountAsBInt)) {
           const { tx, errorCode } = await currentSdk.withdraw(
             selectedMarketData.cToken,
             constants.MaxUint256
@@ -690,11 +646,11 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amount > 0 &&
+      amountAsBInt.gt('0') &&
       minBorrowAmount &&
-      amount > minBorrowAmountAsNumber &&
+      amountAsBInt.gte(minBorrowAmount.minBorrowAsset ?? '0') &&
       maxBorrowAmount &&
-      amount <= maxBorrowAmount.number
+      amountAsBInt.lte(maxBorrowAmount.bigNumber)
     ) {
       let currentTransactionStep = 0;
       addStepsForAction([
@@ -758,7 +714,7 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amount > 0 &&
+      amountAsBInt.gt('0') &&
       currentBorrowAmountAsFloat
     ) {
       let currentTransactionStep = 0;
@@ -860,7 +816,7 @@ const Popup = ({
       className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center`}
     >
       <div
-        className={`w-[45%] relative  bg-grayUnselect rounded-xl max-h-[65vh] overflow-x-hidden overflow-y-scroll scrollbar-hide`}
+        className={`w-[45%] relative  bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide`}
       >
         <img
           src="/img/assets/close.png"
@@ -896,9 +852,12 @@ const Popup = ({
               <div className={`min-w-full py-5 px-[6%] h-min `}>
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val)}
+                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
-                  max={maxSupplyAmount?.number ?? 0}
+                  max={formatUnits(
+                    maxSupplyAmount?.bigNumber ?? '0',
+                    selectedMarketData.underlyingDecimals
+                  )}
                   symbol={selectedMarketData.underlyingSymbol}
                   isLoading={isLoadingMaxSupply}
                 />
@@ -980,8 +939,10 @@ const Popup = ({
                   ) : (
                     <>
                       <button
-                        className={`w-full rounded-md py-1 transition-colors ${
-                          amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                        className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
+                          amount && amountAsBInt.gt('0')
+                            ? 'bg-accent'
+                            : 'bg-stone-500'
                         } `}
                         onClick={() => supplyAmount()}
                       >
@@ -998,13 +959,11 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val)}
+                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
-                  max={parseFloat(
-                    formatUnits(
-                      maxWithdrawAmount ?? '0',
-                      selectedMarketData.underlyingDecimals
-                    )
+                  max={formatUnits(
+                    maxWithdrawAmount ?? '0',
+                    selectedMarketData.underlyingDecimals
                   )}
                   symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Withdraw"
@@ -1061,8 +1020,10 @@ const Popup = ({
                     />
                   ) : (
                     <button
-                      className={`w-full rounded-md py-1 transition-colors ${
-                        amount && amount > 0 ? 'bg-accent' : 'bg-stone-500'
+                      className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
+                        amount && amountAsBInt.gt('0')
+                          ? 'bg-accent'
+                          : 'bg-stone-500'
                       } `}
                       onClick={withdrawAmount}
                     >
@@ -1082,9 +1043,12 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val)}
+                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
-                  max={maxBorrowAmount?.number ?? 0}
+                  max={formatUnits(
+                    maxBorrowAmount?.bigNumber ?? '0',
+                    selectedMarketData.underlyingDecimals
+                  )}
                   symbol={selectedMarketData.underlyingSymbol}
                   hintText="Max Borrow Amount"
                   isLoading={isLoadingMaxBorrowAmount}
@@ -1101,7 +1065,10 @@ const Popup = ({
                 >
                   <span className={``}>MIN BORROW</span>
                   <span className={`font-bold pl-2`}>
-                    {minBorrowAmountAsNumber}
+                    {formatUnits(
+                      minBorrowAmount?.minBorrowAsset ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )}
                     {/* this will be dynamic */}
                   </span>
                 </div>
@@ -1161,13 +1128,15 @@ const Popup = ({
                     />
                   ) : (
                     <button
-                      className={`w-full rounded-md py-1 transition-colors ${
+                      className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
                         amount &&
-                        amount > 0 &&
+                        amountAsBInt.gt('0') &&
                         minBorrowAmount &&
-                        amount >= minBorrowAmountAsNumber &&
+                        amountAsBInt.gte(
+                          minBorrowAmount.minBorrowAsset ?? '0'
+                        ) &&
                         maxBorrowAmount &&
-                        amount <= maxBorrowAmount.number
+                        amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0')
                           ? 'bg-accent'
                           : 'bg-stone-500'
                       } `}
@@ -1184,14 +1153,12 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
                   selectedMarketData={selectedMarketData}
-                  handleInput={(val?: number) => setAmount(val)}
+                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
                   hintText={'Max Repay Amount'}
-                  max={parseFloat(
-                    formatUnits(
-                      maxRepayAmount ?? '0',
-                      selectedMarketData.underlyingDecimals
-                    )
+                  max={formatUnits(
+                    maxRepayAmount ?? '0',
+                    selectedMarketData.underlyingDecimals
                   )}
                   symbol={selectedMarketData.underlyingSymbol}
                   isLoading={isLoadingMaxRepayAmount}
@@ -1248,8 +1215,10 @@ const Popup = ({
                     />
                   ) : (
                     <button
-                      className={`w-full rounded-md py-1 transition-colors ${
-                        amount && amount > 0 && currentBorrowAmountAsFloat
+                      className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
+                        amount &&
+                        amountAsBInt.gt('0') &&
+                        currentBorrowAmountAsFloat
                           ? 'bg-accent'
                           : 'bg-stone-500'
                       } `}

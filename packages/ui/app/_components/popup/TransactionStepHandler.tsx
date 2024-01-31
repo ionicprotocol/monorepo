@@ -64,7 +64,7 @@ function TransactionStepsHandler({
         transactionSteps.find((step) => step.error) !== undefined) && (
         <div className="text-center">
           <button
-            className="mt-4 px-3 rounded-md py-1 transition-colors bg-accent text-center"
+            className="mt-4 btn-green uppercase"
             onClick={resetTransactionSteps}
           >
             CONTINUE
