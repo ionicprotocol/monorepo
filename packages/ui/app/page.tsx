@@ -110,7 +110,7 @@ export default function Market() {
           </ResultHandler>
 
           <button
-            className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold`}
+            className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
             onClick={() => setSwapOpen(true)}
           >
             {'Wrap ETH '}

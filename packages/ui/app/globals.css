@@ -188,6 +188,10 @@
   color: #e10000;
 }
 
+.connect-button button {
+  text-transform: uppercase;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(

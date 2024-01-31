@@ -265,7 +265,7 @@ export default function Swap({ close }: SwapProps) {
             </div>
           </>
         ) : (
-          <div className="flex justify-center">
+          <div className="flex justify-center uppercase connect-button">
             <ConnectButton />
           </div>
         )}

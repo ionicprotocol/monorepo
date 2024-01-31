@@ -53,7 +53,7 @@ const PoolRows = ({
           <>
             <Link
               href={`/?popmode=SUPPLY`}
-              className={`rounded-lg bg-accent text-black py-1.5 px-3`}
+              className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
               onClick={() => setSelectedSymbol(asset)}
             >
               Supply / Withdraw
@@ -61,14 +61,16 @@ const PoolRows = ({
             <Link
               // href={`/?popmode=BORROW`}
               href={`/`}
-              className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3 opacity-30 pointer-events-none	`}
+              className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3 uppercase opacity-30 pointer-events-none	`}
               onClick={() => setSelectedSymbol(asset)}
             >
               Borrow / Repay
             </Link>
           </>
         ) : (
-          <ConnectButton />
+          <div className="connect-button">
+            <ConnectButton />
+          </div>
         )}
       </div>
       {/* <Link

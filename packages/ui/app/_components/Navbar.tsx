@@ -121,8 +121,8 @@ export default function Navbar() {
         <div
           className={`  ${
             isActive
-              ? 'flex flex-col  my-2 mx-auto  '
-              : ' hidden md:flex md:items-center md:justify-center gap-4 my-auto '
+              ? 'flex flex-col  my-2 mx-auto uppercase connect-button'
+              : ' hidden md:flex md:items-center md:justify-center gap-4 my-auto uppercase connect-button'
           }`}
         >
           <ConnectButton />
