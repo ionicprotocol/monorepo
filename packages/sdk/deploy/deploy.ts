@@ -487,13 +487,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   let liquidatorContractName;
 
   // if (chainId !== 34443) {
-    liquidatorContractName = await deployIonicLiquidator({
-      run,
-      ethers,
-      getNamedAccounts,
-      deployments,
-      deployConfig: chainDeployParams
-    });
+  liquidatorContractName = await deployIonicLiquidator({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig: chainDeployParams
+  });
   // } else {
   //   liquidatorContractName = await deployIonicUniV3Liquidator({
   //     run,
