@@ -40,13 +40,13 @@ const SupplyRows = ({
       <h3 className={``}>{rewards}</h3>
       <div className={` col-span-2 flex items-center justify-center gap-3`}>
         <Link
+          className={`w-full rounded-lg bg-accent text-black py-1.5 px-3`}
           href={`${pathname}?popmode=${
             mode === 'SUPPLY'
               ? 'BORROW&specific=REPAY'
               : 'SUPPLY&specific=WITHDRAW'
           }`}
           // changed on borrow condition
-          className={`w-full rounded-lg bg-accent text-black py-1.5 px-3`}
         >
           {mode === 'SUPPLY' ? 'REPAY' : 'Withdraw'}
         </Link>

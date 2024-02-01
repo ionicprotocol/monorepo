@@ -5,7 +5,10 @@ import { useMemo } from 'react';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const usePoolDetails = (assets?: NativePricedIonicAsset[], poolChainId?: number) => {
+export const usePoolDetails = (
+  assets?: NativePricedIonicAsset[],
+  poolChainId?: number
+) => {
   const sdk = useSdk(poolChainId);
 
   const blocksPerMinute = useMemo(() => {
@@ -16,9 +19,15 @@ export const usePoolDetails = (assets?: NativePricedIonicAsset[], poolChainId?: 
     [
       'usePoolDetails',
       assets
-        ?.sort((assetA, assetB) => assetA.underlyingToken.localeCompare(assetB.underlyingToken))
+        ?.sort((assetA, assetB) =>
+          assetA.underlyingToken.localeCompare(assetB.underlyingToken)
+        )
         .map(
-          (asset) => (asset.totalSupplyNative, asset.supplyRatePerBlock, asset.borrowRatePerBlock)
+          (asset) => (
+            asset.totalSupplyNative,
+            asset.supplyRatePerBlock,
+            asset.borrowRatePerBlock
+          )
         ),
       sdk?.chainId
     ],
@@ -34,13 +43,19 @@ export const usePoolDetails = (assets?: NativePricedIonicAsset[], poolChainId?: 
             }
             if (
               sdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
-              sdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
+              sdk.ratePerBlockToAPY(
+                topLendingAPYAsset.supplyRatePerBlock,
+                blocksPerMinute
+              )
             ) {
               topLendingAPYAsset = asset;
             }
             if (
               sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
-              sdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
+              sdk.ratePerBlockToAPY(
+                topBorrowAPRAsset.borrowRatePerBlock,
+                blocksPerMinute
+              )
             ) {
               topBorrowAPRAsset = asset;
             }

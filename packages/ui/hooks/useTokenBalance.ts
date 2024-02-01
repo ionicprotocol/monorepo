@@ -4,7 +4,6 @@ import { BigNumber, constants } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useBalance } from 'wagmi';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
@@ -21,7 +20,7 @@ export const fetchTokenBalance = async (
     } else {
       // const contract = sdk.createCTokenWithExtensions(tokenAddress);
       // balance = await sdk.provider.;
-      console.log(balance);
+      // console.log(balance);
     }
   } catch (e) {
     console.warn(

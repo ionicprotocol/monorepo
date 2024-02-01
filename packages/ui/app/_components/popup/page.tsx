@@ -13,9 +13,11 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import SliderComponent from './Slider';
-
 import Tab from './Tab';
-import { COLLATERAL, INFO_MESSAGES } from '@ui/constants/index';
+import type { TransactionStep } from './TransactionStepHandler';
+import TransactionStepsHandler from './TransactionStepHandler';
+
+import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
@@ -24,12 +26,8 @@ import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-
-
-import type { TransactionStep } from './TransactionStepHandler';
-import TransactionStepsHandler from './TransactionStepHandler';
 
 export enum PopupMode {
   SUPPLY = 1,

@@ -9,7 +9,10 @@ export interface SupplyCapsDataForPoolType {
   supplyCaps: BigNumber;
 }
 
-export const useSupplyCapsDataForPool = (comptrollerAddress?: string, poolChainId?: number) => {
+export const useSupplyCapsDataForPool = (
+  comptrollerAddress?: string,
+  poolChainId?: number
+) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
@@ -20,7 +23,9 @@ export const useSupplyCapsDataForPool = (comptrollerAddress?: string, poolChainI
           const res: SupplyCapsDataForPoolType[] = [];
 
           const supplyCapsData =
-            await sdk.contracts.PoolLens.callStatic.getSupplyCapsDataForPool(comptrollerAddress);
+            await sdk.contracts.PoolLens.callStatic.getSupplyCapsDataForPool(
+              comptrollerAddress
+            );
 
           if (supplyCapsData) {
             supplyCapsData[0].map((data, i) => {
@@ -34,7 +39,11 @@ export const useSupplyCapsDataForPool = (comptrollerAddress?: string, poolChainI
 
           return res;
         } catch (e) {
-          console.warn(`Getting supply caps error: `, { comptrollerAddress, poolChainId }, e);
+          console.warn(
+            `Getting supply caps error: `,
+            { comptrollerAddress, poolChainId },
+            e
+          );
 
           return null;
         }
@@ -53,17 +62,24 @@ export const useSupplyCapsDataForAsset = (
   cTokenAddress?: string,
   poolChainId?: number
 ) => {
-  const { data: supplyCapsDataForPool } = useSupplyCapsDataForPool(comptrollerAddress, poolChainId);
+  const { data: supplyCapsDataForPool } = useSupplyCapsDataForPool(
+    comptrollerAddress,
+    poolChainId
+  );
 
   return useQuery(
     [
       'useSupplyCapsDataForAsset',
-      supplyCapsDataForPool?.sort((a, b) => a.cTokenAddress.localeCompare(b.cTokenAddress)),
+      supplyCapsDataForPool?.sort((a, b) =>
+        a.cTokenAddress.localeCompare(b.cTokenAddress)
+      ),
       cTokenAddress
     ],
     () => {
       if (supplyCapsDataForPool && cTokenAddress) {
-        const res = supplyCapsDataForPool.find((data) => data.cTokenAddress === cTokenAddress);
+        const res = supplyCapsDataForPool.find(
+          (data) => data.cTokenAddress === cTokenAddress
+        );
 
         if (res) {
           return res;

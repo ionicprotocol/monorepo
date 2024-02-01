@@ -1,15 +1,15 @@
 import {
-  chainIdToConfig,
-  ethereum,
+  arbitrum,
   bsc,
+  chainIdToConfig,
   chapel,
+  ethereum,
   ganache,
+  linea,
+  mode,
   neon,
   polygon,
-  arbitrum,
-  linea,
-  zkevm,
-  mode
+  zkevm
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,

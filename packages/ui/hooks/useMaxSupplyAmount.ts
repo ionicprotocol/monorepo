@@ -2,12 +2,11 @@ import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
+import { useBalance } from 'wagmi';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
-import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
-import { useBalance } from 'wagmi';
 
 export function useMaxSupplyAmount(
   asset: Pick<
@@ -25,8 +24,8 @@ export function useMaxSupplyAmount(
     chainId
   );
   const { data: balanceData } = useBalance({
-    address: address as any,
-    token: asset.underlyingToken as any
+    address: address,
+    token: asset.underlyingToken as `0x${string}`
   });
 
   return useQuery(

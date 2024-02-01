@@ -2,7 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
-export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number) => {
+export const useIsUpgradeable = (
+  comptrollerAddress: string,
+  poolChainId: number
+) => {
   const sdk = useSdk(poolChainId);
 
   const { data } = useQuery(
@@ -11,11 +14,16 @@ export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number
       if (sdk) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
-          const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
+          const isUpgradeable: boolean =
+            await comptroller.callStatic.adminHasRights();
 
           return isUpgradeable;
         } catch (e) {
-          console.warn(`Checking upgradeable error: `, { comptrollerAddress, poolChainId }, e);
+          console.warn(
+            `Checking upgradeable error: `,
+            { comptrollerAddress, poolChainId },
+            e
+          );
 
           return null;
         }

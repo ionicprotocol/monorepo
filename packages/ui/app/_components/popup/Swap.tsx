@@ -16,17 +16,40 @@ import type { TransactionStep } from './TransactionStepHandler';
 import TransactionStepsHandler from './TransactionStepHandler';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { FetchBalanceResult } from 'wagmi/actions';
 
 export type SwapProps = {
   close: () => void;
 };
 
+enum SwapType {
+  ETH_WETH = 1,
+  WETH_ETH
+}
+
 export default function Swap({ close }: SwapProps) {
   const { address, currentSdk } = useMultiMidas();
   const [amount, setAmount] = useState<string>();
+  const [swapType, setSwapType] = useState<SwapType>(SwapType.ETH_WETH);
   const { data: ethBalance, refetch: refetchEthBalance } = useBalance({
-    address: address
+    address
   });
+  const { data: wethBalance, refetch: refetchWethBalance } = useBalance({
+    address,
+    token: currentSdk?.chainSpecificAddresses.W_TOKEN as `0x${string}`
+  });
+  const currentUsedBalance = useMemo<FetchBalanceResult | undefined>(() => {
+    switch (swapType) {
+      case SwapType.ETH_WETH:
+        return ethBalance;
+
+      case SwapType.WETH_ETH:
+        return wethBalance;
+
+      default:
+        return undefined;
+    }
+  }, [ethBalance, wethBalance, swapType]);
   const queryClient = useQueryClient();
   const WTokenContract = useMemo<Contract | undefined>(() => {
     if (!currentSdk || !address) {
@@ -102,7 +125,7 @@ export default function Swap({ close }: SwapProps) {
 
   const initiateCloseAnimation = () => setIsMounted(false);
   const handlInpData = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!ethBalance) {
+    if (!currentUsedBalance) {
       return;
     }
 
@@ -125,13 +148,14 @@ export default function Swap({ close }: SwapProps) {
 
     if (
       newAmount &&
-      newAmount.length > ethBalance.decimals + 1 + numbersBeforeSeparator
+      newAmount.length >
+        currentUsedBalance.decimals + 1 + numbersBeforeSeparator
     ) {
       return;
     }
 
-    if (newAmount && ethBalance.value.lt(parseEther(newAmount))) {
-      setAmount(ethBalance.formatted);
+    if (newAmount && currentUsedBalance.value.lt(parseEther(newAmount))) {
+      setAmount(currentUsedBalance.formatted);
 
       return;
     }
@@ -153,15 +177,21 @@ export default function Swap({ close }: SwapProps) {
       addStepsForAction([
         {
           error: false,
-          message: 'Swapping ETH -> WETH',
+          message:
+            swapType === SwapType.ETH_WETH
+              ? 'Wrapping ETH -> WETH'
+              : 'Unwrapping WETH -> ETH',
           success: false
         }
       ]);
 
       try {
-        const tx = await WTokenContract.deposit({
-          value: amountAsBInt
-        });
+        const tx =
+          swapType === SwapType.ETH_WETH
+            ? await WTokenContract.deposit({
+                value: amountAsBInt
+              })
+            : await WTokenContract.withdraw(amountAsBInt);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -212,6 +242,7 @@ export default function Swap({ close }: SwapProps) {
       queryKey: ['useBorrowCapsDataForAsset']
     });
     refetchEthBalance();
+    refetchWethBalance();
   };
 
   return (
@@ -228,29 +259,62 @@ export default function Swap({ close }: SwapProps) {
         <Image
           alt="close"
           className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
+          height="20"
           onClick={initiateCloseAnimation}
           src="/img/assets/close.png"
+          width="20"
         />
 
         <div className="text-center text-lg font-bold mb-2">Swap Tokens</div>
 
-        <div className="flex justify-center items-center">
-          <Image
-            alt="eth icon"
-            height="30"
-            src="/img/symbols/32/color/eth.png"
-            width="30"
-          />
-          <div className="mx-1">{' -> '}</div>
-          <Image
-            alt="weth icon"
-            height="30"
-            src="/img/symbols/32/color/weth.png"
-            width="30"
-          />
+        <div
+          className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 grid ${'grid-cols-2'} text-center gap-x-1 text-xs items-center justify-center mb-4`}
+        >
+          <div
+            className={`rounded-md py-1 text-center  cursor-pointer flex justify-center items-center ${
+              swapType === SwapType.ETH_WETH
+                ? 'bg-darkone text-accent '
+                : 'text-white/40 '
+            } transition-all duration-200 ease-linear `}
+            onClick={() => setSwapType(SwapType.ETH_WETH)}
+          >
+            <Image
+              alt="eth icon"
+              height="30"
+              src="/img/symbols/32/color/eth.png"
+              width="30"
+            />
+            <div className="mx-1">{' -> '}</div>
+            <Image
+              alt="weth icon"
+              height="30"
+              src="/img/symbols/32/color/weth.png"
+              width="30"
+            />
+          </div>
+          <div
+            className={` rounded-md py-1 px-3  flex justify-center items-center ${
+              swapType === SwapType.WETH_ETH
+                ? 'bg-darkone text-accent '
+                : 'text-white/40'
+            } cursor-pointer transition-all duration-200 ease-linear`}
+            onClick={() => setSwapType(SwapType.WETH_ETH)}
+          >
+            <Image
+              alt="weth icon"
+              height="30"
+              src="/img/symbols/32/color/weth.png"
+              width="30"
+            />
+            <div className="mx-1">{' -> '}</div>
+            <Image
+              alt="eth icon"
+              height="30"
+              src="/img/symbols/32/color/eth.png"
+              width="30"
+            />
+          </div>
         </div>
-
-        <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
 
         {address ? (
           <>
@@ -259,7 +323,9 @@ export default function Swap({ close }: SwapProps) {
                 <input
                   className={`focus:outline-none w-full h-12 amount-field font-bold text-center bg-zinc-900 rounded-md`}
                   onChange={(e) => handlInpData(e)}
-                  placeholder="ETH Amount"
+                  placeholder={`${
+                    swapType === SwapType.ETH_WETH ? 'ETH' : 'WETH'
+                  } Amount`}
                   type="number"
                   value={amount}
                 />
@@ -267,13 +333,15 @@ export default function Swap({ close }: SwapProps) {
                 <div className="flex w-full justify-center items-center mt-1 text-[10px] text-white/50">
                   <ResultHandler
                     height="15"
-                    isLoading={!ethBalance}
+                    isLoading={!currentUsedBalance}
                     width="15"
                   >
-                    <span>{ethBalance?.formatted}</span>
+                    <span>{currentUsedBalance?.formatted}</span>
                     <button
                       className={`text-accent pl-2`}
-                      onClick={() => handleMax(ethBalance?.formatted ?? '0')}
+                      onClick={() =>
+                        handleMax(currentUsedBalance?.formatted ?? '0')
+                      }
                     >
                       MAX
                     </button>
@@ -299,7 +367,7 @@ export default function Swap({ close }: SwapProps) {
                   className={`px-6 btn-green`}
                   onClick={() => swapAmount()}
                 >
-                  WRAP
+                  {swapType === SwapType.ETH_WETH ? 'WRAP' : 'UNWRAP'}
                 </button>
               )}
             </div>

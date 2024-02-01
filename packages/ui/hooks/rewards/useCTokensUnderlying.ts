@@ -1,8 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import type { CTokensUnderlyingMap } from '@ui/types/ComponentPropsType';
-
 // export const useCTokensUnderlying = (
 //   cTokenAddresses: string[]
 // ): CTokensUnderlyingMap => {
