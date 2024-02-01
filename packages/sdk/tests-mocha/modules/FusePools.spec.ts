@@ -44,6 +44,7 @@ describe("FusePools", () => {
     FusePools = withPools(IonicBase);
 
     ganache.chainDeployments = {
+      AddressesProvider: { abi: [], address: mkAddress("0xabb") },
       CErc20Delegate: { abi: [], address: mkAddress("0xabc") },
       CErc20PluginDelegate: { abi: [], address: CErc20PluginDelegateAddress },
       CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
