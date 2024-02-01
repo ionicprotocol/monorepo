@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:16 as node
+FROM public.ecr.aws/lambda/nodejs:20 as node
 
 FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
 
@@ -6,11 +6,11 @@ FROM node as build
 
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
-RUN yum update -y 
-RUN yum install -y git 
+RUN dnf update -y 
+RUN dnf install -y git 
 
-RUN npm install --global yarn
-RUN yarn set version berry
+RUN corepack enable
+RUN yarn set version stable
 
 ENV HOME=/tmp/build \
     PATH=/tmp/build/node_modules/.bin:./node_modules/.bin:${PATH}

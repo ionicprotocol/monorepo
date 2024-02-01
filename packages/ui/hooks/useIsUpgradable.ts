@@ -1,22 +1,32 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
 export const useIsUpgradeable = (comptrollerAddress: string) => {
-  const { currentSdk, currentChain } = useMultiIonic();
+  const { currentSdk, currentChain } = useMultiMidas();
 
   const { data } = useQuery(
-    ['useIsUpgradeable', currentChain?.id, comptrollerAddress, currentSdk?.chainId],
+    [
+      'useIsUpgradeable',
+      currentChain?.id,
+      comptrollerAddress,
+      currentSdk?.chainId
+    ],
     async () => {
       if (currentSdk) {
         try {
           const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
-          const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
+          const isUpgradeable: boolean =
+            await comptroller.callStatic.adminHasRights();
 
           return isUpgradeable;
         } catch (e) {
-          console.warn(`Checking upgradeable error: `, { comptrollerAddress }, e);
+          console.warn(
+            `Checking upgradeable error: `,
+            { comptrollerAddress },
+            e
+          );
 
           return null;
         }
@@ -25,7 +35,9 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
       }
     },
     {
-      enabled: !!comptrollerAddress && !!currentChain && !!currentSdk
+      cacheTime: Infinity,
+      enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
+      staleTime: Infinity
     }
   );
 

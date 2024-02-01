@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import type { DebtCeilingPerCollateralType } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 
 export const useRestricted = (
@@ -10,31 +10,41 @@ export const useRestricted = (
   debtCeilings: DebtCeilingPerCollateralType[] | null | undefined
 ) => {
   const sdk = useSdk(poolChainId);
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
 
   return useQuery(
     ['useRestricted', comptrollerAddress, debtCeilings, sdk?.chainId, address],
     async () => {
       const restricted: DebtCeilingPerCollateralType[] = [];
 
-      if (sdk && debtCeilings && debtCeilings.length > 0 && address && comptrollerAddress) {
+      if (
+        sdk &&
+        debtCeilings &&
+        debtCeilings.length > 0 &&
+        address &&
+        comptrollerAddress
+      ) {
         try {
-          const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
+          const comptroller = sdk.createComptroller(
+            comptrollerAddress,
+            sdk.provider
+          );
 
           await Promise.all(
             debtCeilings.map(async (debtCeiling) => {
-              const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] = await Promise.all([
-                comptroller.callStatic.isBlacklistBorrowingAgainstCollateralWhitelisted(
-                  debtCeiling.asset.cToken,
-                  debtCeiling.collateralAsset.cToken,
-                  address
-                ),
-                comptroller.callStatic.isBorrowCapForCollateralWhitelisted(
-                  debtCeiling.asset.cToken,
-                  debtCeiling.collateralAsset.cToken,
-                  address
-                )
-              ]);
+              const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] =
+                await Promise.all([
+                  comptroller.callStatic.isBlacklistBorrowingAgainstCollateralWhitelisted(
+                    debtCeiling.asset.cToken,
+                    debtCeiling.collateralAsset.cToken,
+                    address
+                  ),
+                  comptroller.callStatic.isBorrowCapForCollateralWhitelisted(
+                    debtCeiling.asset.cToken,
+                    debtCeiling.collateralAsset.cToken,
+                    address
+                  )
+                ]);
 
               if (!isAssetBlacklistWhitelist && !isDebtCeilingWhitelist) {
                 restricted.push(debtCeiling);
@@ -49,8 +59,14 @@ export const useRestricted = (
       return restricted;
     },
     {
+      cacheTime: Infinity,
       enabled:
-        !!comptrollerAddress && !!debtCeilings && debtCeilings.length > 0 && !!address && !!sdk
+        !!comptrollerAddress &&
+        !!debtCeilings &&
+        debtCeilings.length > 0 &&
+        !!address &&
+        !!sdk,
+      staleTime: Infinity
     }
   );
 };

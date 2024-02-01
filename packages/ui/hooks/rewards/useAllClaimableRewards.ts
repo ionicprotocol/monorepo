@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
 interface AllRewardsType {
   amount: BigNumber;
@@ -12,7 +12,7 @@ interface AllRewardsType {
 }
 
 export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
-  const { address, getSdk } = useMultiIonic();
+  const { address, getSdk } = useMultiMidas();
 
   return useQuery(
     ['useAllClaimableRewards', chainIds, address],
@@ -25,11 +25,15 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
             const sdk = getSdk(chainId);
 
             if (sdk) {
-              const rewards = await sdk.getAllFlywheelClaimableRewards(address).catch(() => {
-                console.warn('Getting all claimable reward error', { chainId });
+              const rewards = await sdk
+                .getAllFlywheelClaimableRewards(address)
+                .catch(() => {
+                  console.warn('Getting all claimable reward error', {
+                    chainId
+                  });
 
-                return [];
-              });
+                  return [];
+                });
               rewards.map((reward) => {
                 if (reward.amount.gt(constants.Zero)) {
                   allRewards.push({
@@ -49,7 +53,9 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
       return null;
     },
     {
-      enabled: !!address || chainIds.length > 0
+      cacheTime: Infinity,
+      enabled: !!address || chainIds.length > 0,
+      staleTime: Infinity
     }
   );
 };

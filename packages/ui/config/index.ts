@@ -5,14 +5,13 @@ type CONFIG = {
   isBscEnabled: boolean;
   isDevelopment: boolean;
   isEthereumEnabled: boolean;
+  isEvmosEnabled: boolean;
   isFWDeployEnabled: boolean;
-  isLineaEnabled: boolean;
+  isFantomEnabled: boolean;
   isModeEnabled: boolean;
-  isNeonEnabled: boolean;
+  isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
-  isProduction: boolean;
   isTestnetEnabled: boolean;
-  isZkevmEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabaseAssetApyTableName: string;
@@ -24,7 +23,6 @@ type CONFIG = {
   supabasePublicKey: string;
   supabaseUrl: string;
   supabaseVaultApyTableName: string;
-  walletConnectProjectId: string;
 };
 
 const config: CONFIG = {
@@ -36,26 +34,27 @@ const config: CONFIG = {
   isBscEnabled: process.env.BSC === 'true',
   isDevelopment: process.env.NODE_ENV === 'development',
   isEthereumEnabled: process.env.ETHEREUM === 'true',
+  isEvmosEnabled: process.env.EVMOS === 'true',
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
-  isLineaEnabled: process.env.LINEA === 'true',
-  isModeEnabled: process.env.MODE_MAINNET === 'true',
-  isNeonEnabled: process.env.NEON === 'true',
+  isFantomEnabled: process.env.FANTOM === 'true',
+  isModeEnabled: true,
+  isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
-  isProduction: process.env.IS_PRODUCTION === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
-  isZkevmEnabled: process.env.ZKEVM === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
   supabaseAssetApyTableName: process.env.SUPABASE_ASSET_APY_TABLE_NAME ?? '',
-  supabaseAssetPriceTableName: process.env.SUPABASE_ASSET_PRICE_TABLE_NAME ?? '',
-  supabaseAssetTotalApyTableName: process.env.SUPABASE_ASSET_TOTAL_APY_TABLE_NAME ?? '',
+  supabaseAssetPriceTableName:
+    process.env.SUPABASE_ASSET_PRICE_TABLE_NAME ?? '',
+  supabaseAssetTotalApyTableName:
+    process.env.SUPABASE_ASSET_TOTAL_APY_TABLE_NAME ?? '',
   supabaseAssetTvlTableName: process.env.SUPABASE_ASSET_TVL_TABLE_NAME ?? '',
-  supabasePluginRewardsTableName: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME ?? '',
+  supabasePluginRewardsTableName:
+    process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME ?? '',
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabaseUrl: process.env.SUPABASE_URL ?? '',
-  supabaseVaultApyTableName: process.env.SUPABASE_VAULT_APY_TABLE_NAME ?? '',
-  walletConnectProjectId: process.env.WALLET_CONNECT_PROJECT_ID ?? 'WALLET_CONNECT_PROJECT_ID'
+  supabaseVaultApyTableName: process.env.SUPABASE_VAULT_APY_TABLE_NAME ?? ''
 };
 
 export { config };

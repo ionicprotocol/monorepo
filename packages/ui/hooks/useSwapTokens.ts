@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export interface SwapTokenType {
   underlyingDecimals: BigNumber;
@@ -26,7 +26,11 @@ export function useSwapTokens(outputToken: string, chainId: number) {
             };
           });
         } catch (e) {
-          console.error('Could not get swap tokens', { chainId, outputToken }, e);
+          console.error(
+            'Could not get swap tokens',
+            { chainId, outputToken },
+            e
+          );
 
           return null;
         }
@@ -35,7 +39,9 @@ export function useSwapTokens(outputToken: string, chainId: number) {
       }
     },
     {
-      enabled: !!outputToken && !!sdk
+      cacheTime: Infinity,
+      enabled: !!outputToken && !!sdk,
+      staleTime: Infinity
     }
   );
 }

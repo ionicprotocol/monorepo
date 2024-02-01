@@ -3,19 +3,25 @@ import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/m
 import { useQuery } from '@tanstack/react-query';
 import { constants } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useAssetClaimableRewards = (
   marketAddress: string,
   poolAddress: string,
   poolChainId?: number
 ) => {
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
-    ['useAssetClaimableRewards', poolAddress, marketAddress, address, sdk?.chainId],
+    [
+      'useAssetClaimableRewards',
+      poolAddress,
+      marketAddress,
+      address,
+      sdk?.chainId
+    ],
     async () => {
       if (sdk && poolAddress && marketAddress && address) {
         try {
@@ -41,7 +47,9 @@ export const useAssetClaimableRewards = (
       return null;
     },
     {
-      enabled: !!poolAddress && !!marketAddress && !!address && !!sdk
+      cacheTime: Infinity,
+      enabled: !!poolAddress && !!marketAddress && !!address && !!sdk,
+      staleTime: Infinity
     }
   );
 };
@@ -55,9 +63,16 @@ export const getAssetsClaimableRewards = async (
   const allRewards = await Promise.all(
     assetsAddress.map(async (assetAddress) => {
       try {
-        return await sdk.getFlywheelClaimableRewardsForMarket(poolAddress, assetAddress, address);
+        return await sdk.getFlywheelClaimableRewardsForMarket(
+          poolAddress,
+          assetAddress,
+          address
+        );
       } catch (error) {
-        console.warn(`Unable to fetch claimable rewards for asset: '${assetAddress}'`, error);
+        console.warn(
+          `Unable to fetch claimable rewards for asset: '${assetAddress}'`,
+          error
+        );
         return null;
       }
     })
@@ -82,20 +97,35 @@ export const useAssetsClaimableRewards = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
 
-  return useQuery<{ [key: string]: FlywheelClaimableRewards[] } | null | undefined>(
-    ['useAssetsClaimableRewards', poolAddress, assetsAddress, address, sdk?.chainId],
+  return useQuery<
+    { [key: string]: FlywheelClaimableRewards[] } | null | undefined
+  >(
+    [
+      'useAssetsClaimableRewards',
+      poolAddress,
+      assetsAddress,
+      address,
+      sdk?.chainId
+    ],
     async () => {
       if (sdk && address) {
-        return await getAssetsClaimableRewards(poolAddress, assetsAddress, sdk, address);
+        return await getAssetsClaimableRewards(
+          poolAddress,
+          assetsAddress,
+          sdk,
+          address
+        );
       }
 
       return null;
     },
     {
-      enabled: !!poolAddress && !!address && !!sdk
+      cacheTime: Infinity,
+      enabled: !!poolAddress && !!address && !!sdk,
+      staleTime: Infinity
     }
   );
 };

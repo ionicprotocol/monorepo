@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useUpdatedNetApyAfterFunding(
   positionAddress: string,
@@ -13,7 +13,13 @@ export function useUpdatedNetApyAfterFunding(
   const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useUpdatedNetApyAfterFunding', positionAddress, supplyApy, amount, sdk?.chainId],
+    [
+      'useUpdatedNetApyAfterFunding',
+      positionAddress,
+      supplyApy,
+      amount,
+      sdk?.chainId
+    ],
     async () => {
       if (sdk && supplyApy !== undefined && amount && positionAddress) {
         const netApy = await sdk
@@ -39,7 +45,10 @@ export function useUpdatedNetApyAfterFunding(
       }
     },
     {
-      enabled: !!sdk && supplyApy !== undefined && !!amount && !!positionAddress
+      cacheTime: Infinity,
+      enabled:
+        !!sdk && supplyApy !== undefined && !!amount && !!positionAddress,
+      staleTime: Infinity
     }
   );
 }

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
   const sdk = useSdk(poolChainId);
@@ -23,7 +23,9 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
       }
     },
     {
-      enabled: !!pluginAddress && !!sdk
+      cacheTime: Infinity,
+      enabled: !!pluginAddress && !!sdk,
+      staleTime: Infinity
     }
   );
 };

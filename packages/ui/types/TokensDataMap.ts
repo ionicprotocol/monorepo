@@ -1,6 +1,6 @@
 import type {
   NativePricedIonicAsset,
-  IonicPoolData as SDKIonicPoolData
+  IonicPoolData as SDKFusePoolData
 } from '@ionicprotocol/types';
 
 export type MidasApiTokenData = {
@@ -24,12 +24,11 @@ export interface MarketData extends NativePricedIonicAsset {
   totalSupplyFiat: number;
 }
 
-export interface PoolData extends SDKIonicPoolData {
+export interface PoolData extends SDKFusePoolData {
   assets: MarketData[];
   totalAvailableLiquidityFiat: number;
   totalBorrowBalanceFiat: number;
   totalBorrowedFiat: number;
-  totalCollateralSupplyBalanceFiat: number;
   totalLiquidityFiat: number;
   totalSuppliedFiat: number;
   totalSupplyBalanceFiat: number;

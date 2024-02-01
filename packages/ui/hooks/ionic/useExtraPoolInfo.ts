@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
-export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: number) => {
-  const { address } = useMultiIonic();
+export const useExtraPoolInfo = (
+  comptrollerAddress?: string,
+  poolChainId?: number
+) => {
+  const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
 
   return useQuery(
@@ -26,7 +29,9 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
           pendingAdmin,
           oracle
         ] = await Promise.all([
-          sdk.contracts.PoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
+          sdk.contracts.PoolLensSecondary.callStatic.getPoolOwnership(
+            comptrollerAddress
+          ),
           comptroller.callStatic.closeFactorMantissa(),
           comptroller.callStatic.liquidationIncentiveMantissa(),
           comptroller.callStatic
@@ -38,7 +43,9 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
             .then((x: string[]) => x)
             .catch(() => []),
           comptroller.callStatic.pendingAdmin(),
-          comptroller.callStatic.oracle().then((oracleAddress) => sdk.getPriceOracle(oracleAddress))
+          comptroller.callStatic
+            .oracle()
+            .then((oracleAddress) => sdk.getPriceOracle(oracleAddress))
         ]);
 
         return {
@@ -46,7 +53,8 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
           closeFactor,
           enforceWhitelist,
           isPendingAdmin: pendingAdmin.toLowerCase() === address?.toLowerCase(),
-          isPowerfulAdmin: admin.toLowerCase() === address?.toLowerCase() && upgradeable,
+          isPowerfulAdmin:
+            admin.toLowerCase() === address?.toLowerCase() && upgradeable,
           liquidationIncentive,
           oracle,
           pendingAdmin,
@@ -54,7 +62,11 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
           whitelist: whitelist as string[]
         };
       } catch (e) {
-        console.warn(`Getting extra pool info error: `, { comptrollerAddress, poolChainId }, e);
+        console.warn(
+          `Getting extra pool info error: `,
+          { comptrollerAddress, poolChainId },
+          e
+        );
 
         return null;
       }

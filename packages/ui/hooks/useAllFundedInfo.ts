@@ -6,8 +6,8 @@ import axios from 'axios';
 import { utils } from 'ethers';
 
 import { aprDays } from '@ui/constants/index';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useCrossPools } from '@ui/hooks/ionic/useCrossPools';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -15,7 +15,10 @@ import type { UseRewardsData } from '@ui/hooks/useRewards';
 import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getAnkrBNBContract } from '@ui/utils/contracts';
-import { ChainSupportedAssets, getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import {
+  ChainSupportedAssets,
+  getBlockTimePerMinuteByChainId
+} from '@ui/utils/networkData';
 
 export interface FundedAsset extends MarketData {
   chainId: string;
@@ -24,7 +27,6 @@ export interface FundedAsset extends MarketData {
   poolName: string;
   totalBorrowBalanceFiat: number;
   totalBorrowBalanceNative: number;
-  totalCollateralSupplyBalanceNative: number;
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
 }
@@ -38,7 +40,6 @@ export interface resQuery {
   rewards: UseRewardsData;
   totalBorrowBalanceFiat: number;
   totalBorrowBalanceNative: number;
-  totalCollateralSupplyBalanceNative: number;
   totalSupplyAPYs: { [market: string]: { apy: number; totalApy: number } };
   totalSupplyBalanceFiat: number;
   totalSupplyBalanceNative: number;
@@ -46,8 +47,8 @@ export interface resQuery {
 
 export function useAllFundedInfo() {
   const enabledChains = useEnabledChains();
-  const { poolsPerChain } = useCrossPools([...enabledChains]);
-  const { getSdk, address } = useMultiIonic();
+  const { poolsPerChain } = useCrossFusePools([...enabledChains]);
+  const { getSdk, address } = useMultiMidas();
 
   return useQuery<resQuery | null>(
     [
@@ -63,14 +64,15 @@ export function useAllFundedInfo() {
           [key: string]: FlywheelClaimableRewards[];
         } = {};
         let assetInfos: UseAssetsData = {};
-        const totalSupplyAPYs: { [market: string]: { apy: number; totalApy: number } } = {};
+        const totalSupplyAPYs: {
+          [market: string]: { apy: number; totalApy: number };
+        } = {};
         const borrowAPYs: { [market: string]: number } = {};
         const rewards: UseRewardsData = {};
 
         let totalSupplyBalanceFiat = 0;
         let totalBorrowBalanceFiat = 0;
         let totalSupplyBalanceNative = 0;
-        const totalCollateralSupplyBalanceNative = 0;
         let totalBorrowBalanceNative = 0;
 
         await Promise.all(
@@ -81,7 +83,10 @@ export function useAllFundedInfo() {
               .get(`/api/assets?chainId=${chainId}`)
               .then((response) => response.data)
               .catch((error) => {
-                console.error(`Unable to fetch assets of chain \`${chainId}\``, error);
+                console.error(
+                  `Unable to fetch assets of chain \`${chainId}\``,
+                  error
+                );
                 return {};
               });
 
@@ -94,7 +99,8 @@ export function useAllFundedInfo() {
                   if (
                     address &&
                     sdk &&
-                    (pool.totalSupplyBalanceFiat > 0 || pool.totalBorrowBalanceFiat > 0)
+                    (pool.totalSupplyBalanceFiat > 0 ||
+                      pool.totalBorrowBalanceFiat > 0)
                   ) {
                     totalSupplyBalanceFiat += pool.totalSupplyBalanceFiat;
                     totalBorrowBalanceFiat += pool.totalBorrowBalanceFiat;
@@ -102,7 +108,9 @@ export function useAllFundedInfo() {
                     totalBorrowBalanceNative += pool.totalBorrowBalanceNative;
                     // get assets which user funded
                     const assets = pool.assets.filter(
-                      (asset) => asset.supplyBalanceFiat > 0 || asset.borrowBalanceFiat > 0
+                      (asset) =>
+                        asset.supplyBalanceFiat > 0 ||
+                        asset.borrowBalanceFiat > 0
                     );
 
                     if (assets.length > 0) {
@@ -114,15 +122,17 @@ export function useAllFundedInfo() {
                           poolId: pool.id.toString(),
                           poolName: pool.name,
                           totalBorrowBalanceFiat: pool.totalBorrowBalanceFiat,
-                          totalBorrowBalanceNative: pool.totalBorrowBalanceNative,
-                          totalCollateralSupplyBalanceNative:
-                            pool.totalCollateralSupplyBalanceNative,
+                          totalBorrowBalanceNative:
+                            pool.totalBorrowBalanceNative,
                           totalSupplyBalanceFiat: pool.totalSupplyBalanceFiat,
-                          totalSupplyBalanceNative: pool.totalSupplyBalanceNative
+                          totalSupplyBalanceNative:
+                            pool.totalSupplyBalanceNative
                         });
                       });
-                      const { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY } =
-                        await fetchFlywheelRewards(pool.comptroller, sdk);
+                      const {
+                        flywheelRewardsWithAPY,
+                        flywheelRewardsWithoutAPY
+                      } = await fetchFlywheelRewards(pool.comptroller, sdk);
                       //get rewards
                       const rewards = await fetchRewards(
                         assets,
@@ -133,14 +143,18 @@ export function useAllFundedInfo() {
 
                       // get claimable rewards
 
-                      const assetsClaimableRewards = await getAssetsClaimableRewards(
-                        pool.comptroller,
-                        assets.map((asset) => asset.cToken),
-                        sdk,
-                        address
-                      );
+                      const assetsClaimableRewards =
+                        await getAssetsClaimableRewards(
+                          pool.comptroller,
+                          assets.map((asset) => asset.cToken),
+                          sdk,
+                          address
+                        );
 
-                      allClaimableRewards = { ...allClaimableRewards, ...assetsClaimableRewards };
+                      allClaimableRewards = {
+                        ...allClaimableRewards,
+                        ...assetsClaimableRewards
+                      };
 
                       // get totalSupplyApys
 
@@ -151,15 +165,17 @@ export function useAllFundedInfo() {
                       ].find((asset) => asset.symbol === assetSymbols.ankrBNB);
 
                       const isEnabled = !!assets.find(
-                        (asset) => asset.underlyingSymbol === assetSymbols.ankrBNB
+                        (asset) =>
+                          asset.underlyingSymbol === assetSymbols.ankrBNB
                       );
 
                       if (ankrAsset && isEnabled) {
                         const contract = getAnkrBNBContract(sdk);
-                        const apr = await contract.callStatic.averagePercentageRate(
-                          ankrAsset.underlying,
-                          aprDays
-                        );
+                        const apr =
+                          await contract.callStatic.averagePercentageRate(
+                            ankrAsset.underlying,
+                            aprDays
+                          );
 
                         ankrBNBApr = Number(utils.formatUnits(apr));
                       }
@@ -173,7 +189,10 @@ export function useAllFundedInfo() {
 
                         let marketTotalAPY = apy;
 
-                        if (asset.underlyingSymbol === assetSymbols.ankrBNB && ankrBNBApr) {
+                        if (
+                          asset.underlyingSymbol === assetSymbols.ankrBNB &&
+                          ankrBNBApr
+                        ) {
                           marketTotalAPY += Number(ankrBNBApr) / 100;
                         }
 
@@ -184,13 +203,21 @@ export function useAllFundedInfo() {
                           );
                         }
 
-                        if (assetInfos && assetInfos[asset.underlyingToken.toLowerCase()]) {
-                          assetInfos[asset.underlyingToken.toLowerCase()].map((reward) => {
-                            if (reward.apy) marketTotalAPY += reward.apy;
-                          });
+                        if (
+                          assetInfos &&
+                          assetInfos[asset.underlyingToken.toLowerCase()]
+                        ) {
+                          assetInfos[asset.underlyingToken.toLowerCase()].map(
+                            (reward) => {
+                              if (reward.apy) marketTotalAPY += reward.apy;
+                            }
+                          );
                         }
 
-                        totalSupplyAPYs[asset.cToken] = { apy, totalApy: marketTotalAPY };
+                        totalSupplyAPYs[asset.cToken] = {
+                          apy,
+                          totalApy: marketTotalAPY
+                        };
                       }
 
                       // get borrowAPYs
@@ -219,7 +246,6 @@ export function useAllFundedInfo() {
           rewards,
           totalBorrowBalanceFiat,
           totalBorrowBalanceNative,
-          totalCollateralSupplyBalanceNative,
           totalSupplyAPYs,
           totalSupplyBalanceFiat,
           totalSupplyBalanceNative
@@ -229,7 +255,9 @@ export function useAllFundedInfo() {
       return null;
     },
     {
-      enabled: enabledChains.length > 0 && !!poolsPerChain
+      cacheTime: Infinity,
+      enabled: enabledChains.length > 0 && !!poolsPerChain,
+      staleTime: Infinity
     }
   );
 }

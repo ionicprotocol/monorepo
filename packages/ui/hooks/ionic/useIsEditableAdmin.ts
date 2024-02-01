@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
 
-export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: number) => {
+export const useIsEditableAdmin = (
+  comptrollerAddress?: string,
+  poolChainId?: number
+) => {
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
-  const { currentChain } = useMultiIonic();
+  const { currentChain } = useMultiMidas();
 
   const { data } = useQuery(
     [
@@ -29,7 +32,10 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
     },
     {
       enabled:
-        !!comptrollerAddress && !!poolInfo?.isPowerfulAdmin && !!currentChain?.id && !!poolChainId
+        !!comptrollerAddress &&
+        !!poolInfo?.isPowerfulAdmin &&
+        !!currentChain?.id &&
+        !!poolChainId
     }
   );
 

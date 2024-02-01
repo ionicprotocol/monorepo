@@ -67,13 +67,17 @@ export const poolSortByAddress = (pools: PoolData[]) => {
   });
 };
 
-export const sortTopUserSuppliedAssets = <T extends MarketData>(assets: T[]) => {
+export const sortTopUserSuppliedAssets = <T extends MarketData>(
+  assets: T[]
+) => {
   return [...assets].sort((a, b) => {
     return b.supplyBalanceFiat - a.supplyBalanceFiat;
   });
 };
 
-export const sortTopUserBorrowedAssets = <T extends MarketData>(assets: T[]) => {
+export const sortTopUserBorrowedAssets = <T extends MarketData>(
+  assets: T[]
+) => {
   return [...assets].sort((a, b) => {
     return b.borrowBalanceFiat - a.borrowBalanceFiat;
   });
@@ -85,8 +89,12 @@ export const sortVaults = <T extends VaultData>(vaults: T[]) => {
   });
 };
 
-export const sortPositions = <T extends NewPosition | OpenPosition>(positions: T[]) => {
+export const sortPositions = <T extends NewPosition | OpenPosition>(
+  positions: T[]
+) => {
   return positions.sort((a, b) => {
-    return a.collateral.underlyingToken.localeCompare(b.collateral.underlyingToken);
+    return a.collateral.underlyingToken.localeCompare(
+      b.collateral.underlyingToken
+    );
   });
 };

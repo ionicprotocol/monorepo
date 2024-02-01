@@ -49,16 +49,23 @@ export const useBorrowLimitMarket = (
         // Don't include and subtract current markets borrow
         if (currentAsset.cToken === asset.cToken) continue;
 
-        if (options?.ignoreIsEnabledCheckFor === currentAsset.cToken || currentAsset.membership) {
+        if (
+          options?.ignoreIsEnabledCheckFor === currentAsset.cToken ||
+          currentAsset.membership
+        ) {
           _maxBorrow +=
             currentAsset.supplyBalanceNative *
-            parseFloat(utils.formatUnits(currentAsset.collateralFactor, DEFAULT_DECIMALS)) *
+            parseFloat(
+              utils.formatUnits(currentAsset.collateralFactor, DEFAULT_DECIMALS)
+            ) *
             usdPrice;
         }
       }
 
-      return borrowCaps && borrowCaps.usdCap < _maxBorrow ? borrowCaps.usdCap : _maxBorrow;
+      return borrowCaps && borrowCaps.usdCap < _maxBorrow
+        ? borrowCaps.usdCap
+        : _maxBorrow;
     },
-    { enabled: !!usdPrice }
+    { cacheTime: Infinity, enabled: !!usdPrice, staleTime: Infinity }
   );
 };

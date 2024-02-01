@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useCurrentLeverageRatio(position: string, chainId?: number) {
   const sdk = useSdk(chainId);
@@ -10,11 +10,17 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
     ['useCurrentLeverageRatio', sdk?.chainId, position],
     async () => {
       if (sdk) {
-        const currentLeverageRatio = await sdk.getCurrentLeverageRatio(position).catch((e) => {
-          console.warn(`Getting current leverage ratio error: `, { chainId, position }, e);
+        const currentLeverageRatio = await sdk
+          .getCurrentLeverageRatio(position)
+          .catch((e) => {
+            console.warn(
+              `Getting current leverage ratio error: `,
+              { chainId, position },
+              e
+            );
 
-          return null;
-        });
+            return null;
+          });
 
         if (currentLeverageRatio) {
           return Number(utils.formatUnits(currentLeverageRatio));
@@ -26,7 +32,9 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
       }
     },
     {
-      enabled: !!sdk && !!position
+      cacheTime: Infinity,
+      enabled: !!sdk && !!position,
+      staleTime: Infinity
     }
   );
 }

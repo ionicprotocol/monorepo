@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useGetNetApy(
   collateralMarket: string,
@@ -37,7 +37,13 @@ export function useGetNetApy(
           .catch((e) => {
             console.warn(
               `Getting net apy error: `,
-              { amount, borrowableMarket, collateralMarket, leverageRatio, supplyApy },
+              {
+                amount,
+                borrowableMarket,
+                collateralMarket,
+                leverageRatio,
+                supplyApy
+              },
               e
             );
 
@@ -50,7 +56,9 @@ export function useGetNetApy(
       }
     },
     {
-      enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio
+      cacheTime: Infinity,
+      enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
+      staleTime: Infinity
     }
   );
 }

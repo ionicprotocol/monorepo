@@ -4,7 +4,10 @@ import { useRewardsForPositions } from '@ui/hooks/leverage/usePositionsRewards';
 import { usePositionsTotalSupplyApy } from '@ui/hooks/leverage/usePositionsTotalSupplyApy';
 import { useAssets } from '@ui/hooks/useAssets';
 
-export function usePositionsSupplyApy(collaterals: LeveredCollateral[], chainIds: number[]) {
+export function usePositionsSupplyApy(
+  collaterals: LeveredCollateral[],
+  chainIds: number[]
+) {
   const assets = collaterals.map((collateral) => {
     return {
       cToken: collateral.cToken,

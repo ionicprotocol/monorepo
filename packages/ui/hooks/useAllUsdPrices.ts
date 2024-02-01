@@ -1,4 +1,5 @@
 import { chainIdToConfig } from '@ionicprotocol/chains';
+import { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -30,9 +31,14 @@ export function useAllUsdPrices() {
                 prices[id.toString()] = { symbol: '$', value: data[_cgId].usd };
               }
             } catch (e) {
-              const { data } = await axios.get(`${DEFI_LLAMA_API}coingecko:${_cgId}`);
+              const { data } = await axios.get(
+                `${DEFI_LLAMA_API}coingecko:${_cgId}`
+              );
 
-              if (data.coins[`coingecko:${_cgId}`] && data.coins[`coingecko:${_cgId}`].price) {
+              if (
+                data.coins[`coingecko:${_cgId}`] &&
+                data.coins[`coingecko:${_cgId}`].price
+              ) {
                 prices[id.toString()] = {
                   symbol: '$',
                   value: data.coins[`coingecko:${_cgId}`].price
@@ -41,10 +47,20 @@ export function useAllUsdPrices() {
             }
 
             if (!prices[id.toString()]) {
+              // if (
+              //   config.chainId ===
+              //   chainIdToConfig[SupportedChains.neon_devnet].chainId
+              // ) {
+              //   prices[id.toString()] = {
+              //     symbol: config.specificParams.metadata.nativeCurrency.symbol,
+              //     value: 1.2
+              //   };
+              // } else {
               prices[id.toString()] = {
                 symbol: config.specificParams.metadata.nativeCurrency.symbol,
                 value: 1
               };
+              // }
             }
           }
         })
@@ -52,7 +68,11 @@ export function useAllUsdPrices() {
 
       return prices;
     },
-    { enabled: !!chainIds && chainIds.length > 0 }
+    {
+      cacheTime: Infinity,
+      enabled: !!chainIds && chainIds.length > 0,
+      staleTime: Infinity
+    }
   );
 }
 
@@ -68,6 +88,10 @@ export function useUsdPrice(chainId: string) {
         return null;
       }
     },
-    { enabled: !!chainId && !!usdPrices }
+    {
+      cacheTime: Infinity,
+      enabled: !!chainId && !!usdPrices,
+      staleTime: Infinity
+    }
   );
 }

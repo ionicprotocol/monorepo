@@ -3,17 +3,20 @@ import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
-import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { Cap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseSupplyCapParams {
-  chainId?: number;
-  comptroller?: string;
-  market?: Pick<MarketData, 'cToken' | 'totalSupply' | 'underlyingDecimals' | 'underlyingPrice'>;
+  chainId: number;
+  comptroller: string;
+  market: Pick<
+    MarketData,
+    'cToken' | 'totalSupply' | 'underlyingDecimals' | 'underlyingPrice'
+  >;
 }
 export const useSupplyCap = ({
   comptroller: comptrollerAddress,
@@ -21,9 +24,9 @@ export const useSupplyCap = ({
   market
 }: UseSupplyCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
   const usdPrice = useMemo(() => {
-    if (chainId && usdPrices && usdPrices[chainId.toString()]) {
+    if (usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
     } else {
       return undefined;
@@ -32,7 +35,7 @@ export const useSupplyCap = ({
   const sdk = useSdk(chainId);
   const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
     comptrollerAddress,
-    market?.cToken,
+    market.cToken,
     chainId
   );
 
@@ -41,21 +44,24 @@ export const useSupplyCap = ({
       'useSupplyCap',
       comptrollerAddress,
       sdk?.chainId,
-      market?.cToken,
-      market?.totalSupply,
-      market?.underlyingPrice,
-      market?.underlyingDecimals,
+      market.cToken,
+      market.totalSupply,
+      market.underlyingPrice,
+      market.underlyingDecimals,
       usdPrice,
       address,
       supplyCapsDataForAsset
     ],
     async () => {
-      if (comptrollerAddress && sdk && usdPrice && market && address && supplyCapsDataForAsset) {
+      if (sdk && usdPrice && market && address && supplyCapsDataForAsset) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
             comptroller.callStatic.supplyCaps(market.cToken),
-            comptroller.callStatic.isSupplyCapWhitelisted(market.cToken, address)
+            comptroller.callStatic.isSupplyCapWhitelisted(
+              market.cToken,
+              address
+            )
           ]);
 
           if (isSupplyCapWhitelist || supplyCap.eq(constants.Zero)) {
@@ -65,10 +71,14 @@ export const useSupplyCap = ({
               supplyCapsDataForAsset.nonWhitelistedTotalSupply
             );
             const underlyingCap = supplyCap.add(whitelistedTotalSupply);
-            const tokenCap = Number(utils.formatUnits(underlyingCap, market.underlyingDecimals));
+            const tokenCap = Number(
+              utils.formatUnits(underlyingCap, market.underlyingDecimals)
+            );
             const usdCap =
               tokenCap *
-              Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
+              Number(
+                utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)
+              ) *
               usdPrice;
 
             return { tokenCap, type: 'supply', underlyingCap, usdCap };
@@ -86,13 +96,14 @@ export const useSupplyCap = ({
       }
     },
     {
+      cacheTime: Infinity,
       enabled:
         !!sdk &&
         !!usdPrice &&
         !!market &&
         !!address &&
-        !!supplyCapsDataForAsset &&
-        !!comptrollerAddress
+        !!supplyCapsDataForAsset,
+      staleTime: Infinity
     }
   );
 };

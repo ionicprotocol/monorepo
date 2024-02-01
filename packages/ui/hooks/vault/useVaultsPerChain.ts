@@ -2,15 +2,16 @@ import type { SupportedChains } from '@ionicprotocol/types';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import type { Err, VaultsPerChainStatus } from '@ui/types/ComponentPropsType';
 
 export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
-  const { address, getSdk } = useMultiIonic();
+  const { address, getSdk } = useMultiMidas();
 
   const vaultsQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
+        cacheTime: Infinity,
         enabled: !!chainId,
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
@@ -25,7 +26,8 @@ export const useVaultsPerChain = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        queryKey: ['useVaultsPerChain', chainId, address]
+        queryKey: ['useVaultsPerChain', chainId, address],
+        staleTime: Infinity
       };
     })
   });

@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) => {
+export const useRewardTokensOfPool = (
+  poolAddress?: string,
+  chainId?: number
+) => {
   const sdk = useSdk(chainId);
 
-  return useQuery(
+  const { data } = useQuery(
     ['useRewardTokensOfPool', sdk?.chainId, poolAddress],
     async () => {
       if (poolAddress && sdk) {
@@ -17,7 +20,11 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
             .map((ri) => ri.rewardToken)
             .filter((value, index, self) => self.indexOf(value) === index);
         } catch (e) {
-          console.warn(`Getting reward tokens of pool error: `, { chainId, poolAddress }, e);
+          console.warn(
+            `Getting reward tokens of pool error: `,
+            { chainId, poolAddress },
+            e
+          );
 
           return null;
         }
@@ -26,8 +33,12 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
       }
     },
     {
+      cacheTime: Infinity,
       enabled: !!poolAddress && !!sdk,
-      placeholderData: []
+      placeholderData: [],
+      staleTime: Infinity
     }
   );
+
+  return data || [];
 };

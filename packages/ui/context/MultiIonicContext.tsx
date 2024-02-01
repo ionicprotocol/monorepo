@@ -4,14 +4,22 @@ import { IonicSdk } from '@ionicprotocol/sdk';
 import Security from '@ionicprotocol/security';
 import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
-import type { FetchSignerResult, Signer } from '@wagmi/core';
 import type { Dispatch, ReactNode } from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import type { Chain } from 'wagmi';
 import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import { IONIC_LOCALSTORAGE_KEYS } from '@ui/constants/index';
+import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
+import { FetchSignerResult } from 'wagmi/actions';
+import { Signer } from 'ethers';
 
 export interface MultiIonicContextData {
   address?: string;
@@ -34,13 +42,17 @@ export interface MultiIonicContextData {
   signer?: FetchSignerResult<Signer>;
 }
 
-export const MultiIonicContext = createContext<MultiIonicContextData | undefined>(undefined);
+export const MultiIonicContext = createContext<
+  MultiIonicContextData | undefined
+>(undefined);
 
 interface MultiIonicProviderProps {
   children: ReactNode;
 }
 
-export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { children: null }) => {
+export const MultiIonicProvider = (
+  { children }: MultiIonicProviderProps = { children: null }
+) => {
   const enabledChains = useEnabledChains();
   const { chain } = useNetwork();
   // const { chain, chains } = useNetwork();
@@ -67,14 +79,18 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
       const config = chainIdToConfig[chainId];
       _sdks.push(
         new IonicSdk(
-          new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
+          new JsonRpcProvider(
+            config.specificParams.metadata.rpcUrls.default.http[0]
+          ),
           config
         )
       );
       _securities.push(
         new Security(
           chainId,
-          new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0])
+          new JsonRpcProvider(
+            config.specificParams.metadata.rpcUrls.default.http[0]
+          )
         )
       );
       _chainIds.push(chainId);
@@ -97,7 +113,8 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
   );
 
   const getSecurity = useCallback(
-    (chainId: number) => securities.find((security) => security.chainConfig.chainId === chainId),
+    (chainId: number) =>
+      securities.find((security) => security.chainConfig.chainId === chainId),
     [securities]
   );
 
@@ -112,7 +129,9 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
       sdks.map((sdk) => {
         const config = chainIdToConfig[sdk.chainId];
         sdk.removeSigner(
-          new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0])
+          new JsonRpcProvider(
+            config.specificParams.metadata.rpcUrls.default.http[0]
+          )
         );
       });
     }
@@ -131,7 +150,7 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
   }, [chain]);
 
   useEffect(() => {
-    const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
     if (oldData && JSON.parse(oldData).isSidebarCollapsed) {
       setIsSidebarCollapsed(true);
     } else {
@@ -141,13 +160,13 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
 
   useEffect(() => {
     if (isSidebarCollapsed !== undefined) {
-      const oldData = localStorage.getItem(IONIC_LOCALSTORAGE_KEYS);
+      const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
       let oldObj;
       if (oldData) {
         oldObj = JSON.parse(oldData);
       }
       const data = { ...oldObj, isSidebarCollapsed };
-      localStorage.setItem(IONIC_LOCALSTORAGE_KEYS, JSON.stringify(data));
+      localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
   }, [isSidebarCollapsed]);
 
@@ -189,15 +208,19 @@ export const MultiIonicProvider = ({ children }: MultiIonicProviderProps = { chi
     setIsSidebarCollapsed
   ]);
 
-  return <MultiIonicContext.Provider value={value}>{children}</MultiIonicContext.Provider>;
+  return (
+    <MultiIonicContext.Provider value={value}>
+      {children}
+    </MultiIonicContext.Provider>
+  );
 };
 
 // Hook
-export function useMultiIonic() {
+export function useMultiMidas() {
   const context = useContext(MultiIonicContext);
 
   if (context === undefined) {
-    throw new Error(`useMultiIonic must be used within a MultiIonicProvider`);
+    throw new Error(`useMultiMidas must be used within a MultiMidasProvider`);
   }
 
   return context;

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useUpdatedLeverageRatioAfterFunding(
   positionAddress: string,
@@ -12,22 +12,29 @@ export function useUpdatedLeverageRatioAfterFunding(
   const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useUpdatedLeverageRatioAfterFunding', positionAddress, amount, sdk?.chainId],
+    [
+      'useUpdatedLeverageRatioAfterFunding',
+      positionAddress,
+      amount,
+      sdk?.chainId
+    ],
     async () => {
       if (sdk && amount && positionAddress) {
-        const ratio = await sdk.getLeverageRatioAfterFunding(positionAddress, amount).catch((e) => {
-          console.warn(
-            `Getting updated leverage ratio error: `,
-            {
-              amount,
-              chainId,
-              positionAddress
-            },
-            e
-          );
+        const ratio = await sdk
+          .getLeverageRatioAfterFunding(positionAddress, amount)
+          .catch((e) => {
+            console.warn(
+              `Getting updated leverage ratio error: `,
+              {
+                amount,
+                chainId,
+                positionAddress
+              },
+              e
+            );
 
-          return null;
-        });
+            return null;
+          });
 
         return ratio ? Number(utils.formatUnits(ratio)) : null;
       } else {
@@ -35,7 +42,9 @@ export function useUpdatedLeverageRatioAfterFunding(
       }
     },
     {
-      enabled: !!sdk && !!amount && !!positionAddress
+      cacheTime: Infinity,
+      enabled: !!sdk && !!amount && !!positionAddress,
+      staleTime: Infinity
     }
   );
 }

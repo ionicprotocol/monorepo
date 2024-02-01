@@ -2,17 +2,18 @@ import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const fetchVaultNumberTVL = async (ionicSdk: IonicSdk) => {
-  const optimizedVaultsRegistry = ionicSdk.createOptimizedVaultsRegistry();
+export const fetchVaultNumberTVL = async (midasSdk: IonicSdk) => {
+  const optimizedVaultsRegistry = midasSdk.createOptimizedVaultsRegistry();
   const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
   const tvlNative = vaultsData.reduce(
     (tvl, vault) => (tvl = tvl.add(vault.estimatedTotalAssets)),
     constants.Zero
   );
-  const decimals = ionicSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
+  const decimals =
+    midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
   return Number(utils.formatUnits(tvlNative, decimals));
 };
@@ -27,7 +28,7 @@ type CrossChainVaultTVL = Map<
 >;
 
 export const useVaultTVL = () => {
-  const { sdks } = useMultiIonic();
+  const { sdks } = useMultiMidas();
   const { data: prices, isLoading, error } = useAllUsdPrices();
 
   return useQuery<CrossChainVaultTVL | null | undefined>(
@@ -47,7 +48,9 @@ export const useVaultTVL = () => {
               chainVaultTVLs.set(sdk.chainId.toString(), {
                 logo: sdk.chainSpecificParams.metadata.img,
                 name: sdk.chainSpecificParams.metadata.name,
-                value: (await fetchVaultNumberTVL(sdk)) * prices[sdk.chainId.toString()].value
+                value:
+                  (await fetchVaultNumberTVL(sdk)) *
+                  prices[sdk.chainId.toString()].value
               });
             } catch (e) {
               console.warn(`Unable to fetch TVL for chain ${sdk.chainId}`, e);
@@ -55,8 +58,8 @@ export const useVaultTVL = () => {
           })
         );
 
-        const sortedChainVaultTVLs = new Map(
-          [...chainVaultTVLs].sort((a, b) => b[1].value - a[1].value)
+        const sortedChainVaultTVLs: CrossChainVaultTVL = new Map(
+          [...(chainVaultTVLs as any)].sort((a, b) => b[1].value - a[1].value)
         );
 
         return sortedChainVaultTVLs;
@@ -64,6 +67,10 @@ export const useVaultTVL = () => {
 
       return null;
     },
-    { enabled: !!prices && !isLoading }
+    {
+      cacheTime: Infinity,
+      enabled: !!prices && !isLoading,
+      staleTime: Infinity
+    }
   );
 };

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { type BigNumber, constants } from 'ethers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
 export interface SwapTokenType {
   underlyingDecimals: BigNumber;
@@ -15,10 +15,17 @@ export function useSwapAmount(
   outputToken?: string,
   balance?: BigNumber | null
 ) {
-  const { address, currentSdk } = useMultiIonic();
+  const { address, currentSdk } = useMultiMidas();
 
   return useQuery(
-    ['useSwapAmount', inputToken, amount, outputToken, currentSdk?.chainId, address],
+    [
+      'useSwapAmount',
+      inputToken,
+      amount,
+      outputToken,
+      currentSdk?.chainId,
+      address
+    ],
     async () => {
       if (
         currentSdk &&
@@ -42,11 +49,12 @@ export function useSwapAmount(
             await currentSdk.approveLiquidatorsRegistry(inputToken);
           }
 
-          const { outputAmount, slippage } = await currentSdk.getAmountOutAndSlippageOfSwap(
-            inputToken,
-            amount,
-            outputToken
-          );
+          const { outputAmount, slippage } =
+            await currentSdk.getAmountOutAndSlippageOfSwap(
+              inputToken,
+              amount,
+              outputToken
+            );
 
           return { outputAmount, slippage };
         } catch (e) {
@@ -70,7 +78,10 @@ export function useSwapAmount(
       }
     },
     {
-      enabled: !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address
+      cacheTime: Infinity,
+      enabled:
+        !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address,
+      staleTime: Infinity
     }
   );
 }

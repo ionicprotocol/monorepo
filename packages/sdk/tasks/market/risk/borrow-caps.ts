@@ -7,6 +7,7 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
   .addParam("maxBorrow", "Maximum amount of tokens that can be borrowed", undefined, types.string)
   .setAction(async ({ admin, market, maxBorrow }, { ethers }) => {
     const signer = await ethers.getNamedSigner(admin);
+    console.log("signer: ", signer.address);
 
     const ionicSdkModule = await import("../../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic(signer);
@@ -15,7 +16,7 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
     const comptroller = await cToken.callStatic.comptroller();
     const pool = sdk.createComptroller(comptroller, signer);
 
-    const currentBorrowCap = await pool.callStatic.supplyCaps(cToken.address);
+    const currentBorrowCap = await pool.callStatic.borrowCaps(cToken.address);
     console.log(`Current borrow cap is ${currentBorrowCap}`);
 
     const newBorrowCap = ethers.BigNumber.from(maxBorrow);
@@ -27,8 +28,8 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
     const tx: providers.TransactionResponse = await pool._setMarketBorrowCaps([cToken.address], [newBorrowCap]);
     await tx.wait();
 
-    const newSupplyCapSet = await pool.callStatic.supplyCaps(cToken.address);
-    console.log(`New supply cap set: ${newSupplyCapSet.toNumber()}`);
+    const newBorrowCapset = await pool.callStatic.borrowCaps(cToken.address);
+    console.log(`New borrow cap set: ${newBorrowCapset.toString()}`);
   });
 
 task("market:set-borrow-cap-whitelist", "Pauses borrowing on a market")

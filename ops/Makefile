@@ -96,9 +96,9 @@ liquidator-smoke-test:
 	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
-				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
+				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
-				-e TARGET_CHAIN_ID=56 \
+				-e TARGET_CHAIN_ID=34443 \
 				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} packages/bots/liquidator/build/test/run.js
 
 
@@ -108,8 +108,8 @@ feed-verifier-smoke-test:
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e SUPABASE_KEY=${SUPABASE_KEY} \
 				-e NODE_ENV="development" \
-				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
-				-e TARGET_CHAIN_ID=56 \
+				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e TARGET_CHAIN_ID=34443 \
 				-e SERVICE=feed-verifier \
 				ghcr.io/ionicprotocol/ionic-oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
 
@@ -119,8 +119,8 @@ price-verifier-smoke-test:
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e SUPABASE_KEY=${SUPABASE_KEY} \
 				-e NODE_ENV="development" \
-				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
-				-e TARGET_CHAIN_ID=56 \
+				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e TARGET_CHAIN_ID=34443 \
 				-e SERVICE=price-verifier \
 				ghcr.io/ionicprotocol/ionic-oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
 
@@ -130,7 +130,7 @@ price-change-verifier-smoke-test:
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e SUPABASE_KEY=${SUPABASE_KEY} \
 				-e NODE_ENV="development" \
-				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
-				-e TARGET_CHAIN_ID=56 \
+				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e TARGET_CHAIN_ID=34443 \
 				-e SERVICE=price-change-verifier \
 				ghcr.io/ionicprotocol/ionic-oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js

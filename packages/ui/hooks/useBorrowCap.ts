@@ -4,9 +4,9 @@ import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -18,9 +18,9 @@ export interface Cap {
 }
 
 interface UseBorrowCapParams {
-  chainId?: number;
-  comptroller?: string;
-  market?: MarketData;
+  chainId: number;
+  comptroller: string;
+  market: MarketData;
 }
 export const useBorrowCap = ({
   comptroller: comptrollerAddress,
@@ -28,9 +28,9 @@ export const useBorrowCap = ({
   market
 }: UseBorrowCapParams) => {
   const { data: usdPrices } = useAllUsdPrices();
-  const { address } = useMultiIonic();
+  const { address } = useMultiMidas();
   const usdPrice = useMemo(() => {
-    if (chainId && usdPrices && usdPrices[chainId.toString()]) {
+    if (usdPrices && usdPrices[chainId.toString()]) {
       return usdPrices[chainId.toString()].value;
     } else {
       return undefined;
@@ -38,16 +38,19 @@ export const useBorrowCap = ({
   }, [usdPrices, chainId]);
 
   const sdk = useSdk(chainId);
-  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(market?.cToken, chainId);
+  const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(
+    market.cToken,
+    chainId
+  );
 
   return useQuery<Cap | null | undefined>(
     [
       'useBorrowCap',
       comptrollerAddress,
       sdk?.chainId,
-      market?.underlyingPrice,
-      market?.cToken,
-      market?.totalBorrow,
+      market.underlyingPrice,
+      market.cToken,
+      market.totalBorrow,
       usdPrice,
       borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
       address
@@ -56,7 +59,6 @@ export const useBorrowCap = ({
       if (
         sdk &&
         usdPrice &&
-        comptrollerAddress &&
         market &&
         address &&
         borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
@@ -65,7 +67,10 @@ export const useBorrowCap = ({
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [borrowCap, isBorrowCapWhitelist] = await Promise.all([
             comptroller.callStatic.borrowCaps(market.cToken),
-            comptroller.callStatic.isBorrowCapWhitelisted(market.cToken, address)
+            comptroller.callStatic.isBorrowCapWhitelisted(
+              market.cToken,
+              address
+            )
           ]);
 
           if (isBorrowCapWhitelist || borrowCap.eq(constants.Zero)) {
@@ -75,10 +80,14 @@ export const useBorrowCap = ({
               borrowCapsDataForAsset.nonWhitelistedTotalBorrows
             );
             const underlyingCap = borrowCap.add(whitelistedTotalBorrows);
-            const tokenCap = Number(utils.formatUnits(underlyingCap, market.underlyingDecimals));
+            const tokenCap = Number(
+              utils.formatUnits(underlyingCap, market.underlyingDecimals)
+            );
             const usdCap =
               tokenCap *
-              Number(utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
+              Number(
+                utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)
+              ) *
               usdPrice;
 
             return { tokenCap, type: 'borrow', underlyingCap, usdCap };
@@ -97,13 +106,14 @@ export const useBorrowCap = ({
       }
     },
     {
+      cacheTime: Infinity,
       enabled:
         !!sdk &&
         !!usdPrice &&
         !!market &&
         !!address &&
-        !!comptrollerAddress &&
-        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
+        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+      staleTime: Infinity
     }
   );
 };

@@ -1,19 +1,32 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
-import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useBalance } from 'wagmi';
 
-export function useMaxRepayAmount(asset: NativePricedIonicAsset, chainId: number) {
-  const { address } = useMultiIonic();
+export function useMaxRepayAmount(
+  asset: NativePricedIonicAsset,
+  chainId: number
+) {
+  const { address } = useMultiMidas();
   const sdk = useSdk(chainId);
+  const { data: balanceData } = useBalance({
+    address: address as any,
+    token: asset.underlyingToken as any
+  });
 
   return useQuery(
-    ['useMaxRepayAmount', asset.underlyingToken, asset.borrowBalance, sdk?.chainId, address],
+    [
+      'useMaxRepayAmount',
+      asset.underlyingToken,
+      asset.borrowBalance,
+      sdk?.chainId,
+      address
+    ],
     async () => {
-      if (sdk && address) {
-        const balance = await fetchTokenBalance(asset.underlyingToken, sdk, address);
+      if (sdk && address && balanceData) {
+        const balance = balanceData.value;
         const debt = asset.borrowBalance;
 
         return balance.gt(debt) ? debt : balance;
@@ -22,7 +35,9 @@ export function useMaxRepayAmount(asset: NativePricedIonicAsset, chainId: number
       }
     },
     {
-      enabled: !!address && !!asset && !!sdk
+      cacheTime: Infinity,
+      enabled: !!address && !!asset && !!sdk,
+      staleTime: Infinity
     }
   );
 }

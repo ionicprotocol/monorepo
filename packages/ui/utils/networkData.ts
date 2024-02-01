@@ -1,15 +1,15 @@
 import {
-  arbitrum,
-  bsc,
   chainIdToConfig,
-  chapel,
   ethereum,
+  bsc,
+  chapel,
   ganache,
-  linea,
-  mode,
   neon,
   polygon,
-  zkevm
+  arbitrum,
+  linea,
+  zkevm,
+  mode
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
@@ -35,7 +35,8 @@ export function getSupportedChainIds(): number[] {
 
 export function getSupportedChains(): ChainConfig[] {
   return Object.values(chainIdToConfig).filter(
-    (chainMetadata) => supportedChainIdToConfig[chainMetadata.chainId].supported
+    (chainMetadata) =>
+      supportedChainIdToConfig[chainMetadata.chainId]?.supported
   );
 }
 
@@ -43,7 +44,9 @@ export function getChainConfig(chainId: number): ChainConfig | undefined {
   return chainIdToConfig[chainId];
 }
 
-export function getScanUrlByChainId(chainId: SupportedChains | number): string | null {
+export function getScanUrlByChainId(
+  chainId: SupportedChains | number
+): string | null {
   const chain = chainIdToConfig[chainId];
 
   return chain && chain.specificParams.metadata.blockExplorerUrls.default
@@ -55,53 +58,31 @@ export function getBlockTimePerMinuteByChainId(chainId: number): number {
   const chain = chainIdToConfig[chainId];
 
   return chain
-    ? chain.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber()
+    ? chain.specificParams.blocksPerYear
+        .div(BigNumber.from(MINUTES_PER_YEAR))
+        .toNumber()
     : 0;
 }
 
 export function getEnabledChains() {
   const enabledChains: SupportedChains[] = [];
 
-  if (config.isBscEnabled) {
-    enabledChains.push(SupportedChains.bsc);
-  }
-  if (config.isPolygonEnabled) {
-    enabledChains.push(SupportedChains.polygon);
-  }
-  if (config.isArbitrumEnabled) {
-    enabledChains.push(SupportedChains.arbitrum);
-  }
-  if (config.isEthereumEnabled) {
-    enabledChains.push(SupportedChains.ethereum);
-  }
-  if (config.isZkevmEnabled) {
-    enabledChains.push(SupportedChains.zkevm);
-  }
-  if (config.isLineaEnabled) {
-    enabledChains.push(SupportedChains.linea);
-  }
-  if (config.isNeonEnabled) {
-    enabledChains.push(SupportedChains.neon);
-  }
   if (config.isModeEnabled) {
     enabledChains.push(SupportedChains.mode);
-  }
-  if (config.isTestnetEnabled) {
-    enabledChains.push(SupportedChains.chapel);
   }
 
   return enabledChains;
 }
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
+  [SupportedChains.ethereum]: ethereum.assets,
   [SupportedChains.bsc]: bsc.assets,
-  [SupportedChains.polygon]: polygon.assets,
-  [SupportedChains.ganache]: ganache.assets,
   [SupportedChains.chapel]: chapel.assets,
+  [SupportedChains.ganache]: ganache.assets,
   [SupportedChains.neon]: neon.assets,
+  [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.linea]: linea.assets,
-  [SupportedChains.ethereum]: ethereum.assets,
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets
 };
@@ -111,10 +92,7 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.polygon]: polygon.deployedPlugins,
   [SupportedChains.ganache]: ganache.deployedPlugins,
   [SupportedChains.chapel]: chapel.deployedPlugins,
-  [SupportedChains.neon]: neon.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
-  [SupportedChains.linea]: linea.deployedPlugins,
   [SupportedChains.ethereum]: ethereum.deployedPlugins,
-  [SupportedChains.zkevm]: zkevm.deployedPlugins,
   [SupportedChains.mode]: mode.deployedPlugins
 };

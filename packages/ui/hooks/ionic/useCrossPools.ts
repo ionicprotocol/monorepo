@@ -1,15 +1,15 @@
 import type { IonicPoolData, SupportedChains } from '@ionicprotocol/types';
 import { useQueries } from '@tanstack/react-query';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import type { PoolsPerChain } from '@ui/types/ChainMetaData';
+import type { FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import type { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { poolSort, poolSortByAddress } from '@ui/utils/sorts';
 
 export const useCrossPools = (chainIds: SupportedChains[]) => {
-  const { address, getSdk } = useMultiIonic();
+  const { address, getSdk } = useMultiMidas();
   const { data: prices } = useAllUsdPrices();
 
   const poolsQueries = useQueries({
@@ -20,7 +20,7 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
           const sdk = getSdk(Number(chainId));
 
           if (chainId && prices && prices[chainId.toString()] && sdk) {
-            const chainPools: PoolsPerChain = {};
+            const chainPools: FusePoolsPerChain = {};
             const _allPools: IonicPoolData[] = [];
 
             try {
@@ -28,7 +28,13 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
               const visiblePools: IonicPoolData[] = !pools
                 ? []
                 : poolSort(
-                    pools.map((p) => ({ ...p, chainId: Number(sdk.chainId) }) as IonicPoolData)
+                    pools.map(
+                      (p) =>
+                        ({
+                          ...p,
+                          chainId: Number(sdk.chainId)
+                        }) as IonicPoolData
+                    )
                   );
 
               chainPools[sdk.chainId] = visiblePools;
@@ -44,17 +50,23 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
                       assetsWithPrice.push({
                         ...asset,
                         borrowBalanceFiat:
-                          asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
+                          asset.borrowBalanceNative *
+                          prices[pool.chainId.toString()].value,
                         liquidityFiat:
-                          asset.liquidityNative * prices[pool.chainId.toString()].value,
+                          asset.liquidityNative *
+                          prices[pool.chainId.toString()].value,
                         netSupplyBalanceFiat:
-                          asset.netSupplyBalanceNative * prices[pool.chainId.toString()].value,
+                          asset.netSupplyBalanceNative *
+                          prices[pool.chainId.toString()].value,
                         supplyBalanceFiat:
-                          asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
+                          asset.supplyBalanceNative *
+                          prices[pool.chainId.toString()].value,
                         totalBorrowFiat:
-                          asset.totalBorrowNative * prices[pool.chainId.toString()].value,
+                          asset.totalBorrowNative *
+                          prices[pool.chainId.toString()].value,
                         totalSupplyFiat:
-                          asset.totalSupplyNative * prices[pool.chainId.toString()].value
+                          asset.totalSupplyNative *
+                          prices[pool.chainId.toString()].value
                       });
                     });
                   }
@@ -62,20 +74,26 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
                     ...pool,
                     assets: assetsWithPrice,
                     totalAvailableLiquidityFiat:
-                      pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()].value,
-                    totalBorrowBalanceFiat:
-                      pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
-                    totalBorrowedFiat:
-                      pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
-                    totalCollateralSupplyBalanceFiat:
-                      pool.totalCollateralSupplyBalanceNative *
+                      pool.totalAvailableLiquidityNative *
                       prices[pool.chainId.toString()].value,
+                    totalBorrowBalanceFiat:
+                      pool.totalBorrowBalanceNative *
+                      prices[pool.chainId.toString()].value,
+                    totalBorrowedFiat:
+                      pool.totalBorrowedNative *
+                      prices[pool.chainId.toString()].value,
+                    // totalCollateralSupplyBalanceFiat:
+                    //   pool.totalCollateralSupplyBalanceNative *
+                    //   prices[pool.chainId.toString()].value,
                     totalLiquidityFiat:
-                      pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
+                      pool.totalLiquidityNative *
+                      prices[pool.chainId.toString()].value,
                     totalSuppliedFiat:
-                      pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
+                      pool.totalSuppliedNative *
+                      prices[pool.chainId.toString()].value,
                     totalSupplyBalanceFiat:
-                      pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value
+                      pool.totalSupplyBalanceNative *
+                      prices[pool.chainId.toString()].value
                   };
 
                   return adaptedIonicPoolData;
@@ -92,7 +110,12 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
             return null;
           }
         },
-        queryKey: ['useCrossPools', chainId, address, prices && prices[chainId.toString()]]
+        queryKey: [
+          'useCrossPools',
+          chainId,
+          address,
+          prices && prices[chainId.toString()]
+        ]
       };
     })
   });
