@@ -3,7 +3,6 @@
 
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
-import { useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 

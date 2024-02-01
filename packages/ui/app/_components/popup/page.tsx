@@ -27,8 +27,8 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -666,6 +666,7 @@ const Popup = ({
     }
   };
 
+  // eslint-disable-next-line
   const borrowAmount = async () => {
     if (
       !transactionSteps.length &&
@@ -734,6 +735,7 @@ const Popup = ({
     }
   };
 
+  // eslint-disable-next-line
   const repayAmount = async () => {
     if (
       !transactionSteps.length &&

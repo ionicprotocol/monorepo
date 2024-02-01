@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { WETHAbi } from 'sdk/dist/cjs/src';
 import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
 import { useBalance } from 'wagmi';
+import type { FetchBalanceResult } from 'wagmi/actions';
 
 import ResultHandler from '../ResultHandler';
 
@@ -16,7 +17,6 @@ import type { TransactionStep } from './TransactionStepHandler';
 import TransactionStepsHandler from './TransactionStepHandler';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import { FetchBalanceResult } from 'wagmi/actions';
 
 export type SwapProps = {
   close: () => void;

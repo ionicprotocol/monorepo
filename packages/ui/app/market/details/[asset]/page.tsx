@@ -47,13 +47,13 @@ import {
   donutoptions
 } from '../../../_constants/mock';
 
-const data = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 }
-];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+// const data = [
+//   { name: 'Group A', value: 400 },
+//   { name: 'Group B', value: 300 },
+//   { name: 'Group C', value: 300 },
+//   { name: 'Group D', value: 200 }
+// ];
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const Asset = ({ params }: IProp) => {
   //here we need to make a api to get the data of a certain asset (we can also check the current user with the help of wagmi)
@@ -73,7 +73,6 @@ const Asset = ({ params }: IProp) => {
 
   const searchParams = useSearchParams();
   const info = searchParams.get('info');
-  const popmode = searchParams.get('popmode');
   return (
     <div className={`pt-14 pb-10 `}>
       <div

@@ -1,16 +1,16 @@
 'use client';
 import './globals.css';
 // import NextNProgress from "nextjs-progressbar";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Link from 'next/link';
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
-import '@rainbow-me/rainbowkit/styles.css';
-
 import {
   darkTheme,
   getDefaultWallets,
   RainbowKitProvider
 } from '@rainbow-me/rainbowkit';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Image from 'next/image';
+import Link from 'next/link';
+import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
+import '@rainbow-me/rainbowkit/styles.css';
 import { Toaster } from 'react-hot-toast';
 import type { Chain } from 'wagmi';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
@@ -103,10 +103,12 @@ export default function RootLayout({
                             href={'https://ionic.money'}
                             target="_blank"
                           >
-                            <img
+                            <Image
                               alt="logo"
                               className={`h-5 `}
+                              height="20"
                               src="/img/logo/logo.png"
+                              width="20"
                             />
                           </Link>
                         </div>
@@ -117,10 +119,12 @@ export default function RootLayout({
                             href={'https://ionic.money'}
                             target="_blank"
                           >
-                            <img
+                            <Image
                               alt="logo"
                               className={`h-5 `}
+                              height="20"
                               src="/images/globe.png"
+                              width="20"
                             />
                           </Link>
 
@@ -129,10 +133,12 @@ export default function RootLayout({
                             href={'https://t.me/ionicmoney'}
                             target="_blank"
                           >
-                            <img
+                            <Image
                               alt="logo"
                               className={`h-5 `}
+                              height="20"
                               src="/images/tg.png"
+                              width="20"
                             />
                           </Link>
 
@@ -141,10 +147,12 @@ export default function RootLayout({
                             href={'https://twitter.com/ionicmoney'}
                             target="_blank"
                           >
-                            <img
+                            <Image
                               alt="logo"
                               className={`h-5 `}
+                              height="20"
                               src="/images/x.png"
+                              width="20"
                             />
                           </Link>
 
@@ -153,10 +161,12 @@ export default function RootLayout({
                             href={'https://discord.gg/FmgedqR9wn'}
                             target="_blank"
                           >
-                            <img
+                            <Image
                               alt="logo"
                               className={`h-5 `}
+                              height="20"
                               src="/images/discord.png"
+                              width="20"
                             />
                           </Link>
                         </div>

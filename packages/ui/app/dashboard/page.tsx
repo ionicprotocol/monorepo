@@ -2,13 +2,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 
 import SupplyRows from '../_components/dashboards/SupplyRows';
 export default function Dashboard() {
-  const searchParams = useSearchParams();
-  const popmode = searchParams.get('popmode');
-  const specific = searchParams.get('specific');
   const supplyrow = [
     {
       amount: 168,
@@ -161,7 +157,7 @@ export default function Dashboard() {
             <h3 className={` `}>REWARDS</h3>
           </div>
           {supplyrow &&
-            supplyrow.map((val: any, idx: number) => (
+            supplyrow.map((val, idx: number) => (
               <SupplyRows
                 amount={val.amount}
                 asset={val.asset}
@@ -216,7 +212,7 @@ export default function Dashboard() {
             <h3 className={` `}>REWARDS</h3>
           </div>
           {supplyrow &&
-            supplyrow.map((val: any, idx: number) => (
+            supplyrow.map((val, idx: number) => (
               <SupplyRows
                 amount={val.amount}
                 asset={val.asset}

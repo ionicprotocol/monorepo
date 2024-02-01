@@ -127,7 +127,7 @@ export default function Points() {
           <h3 className={` `}>PERCENTAGE EARNINGS</h3>
         </div>
         {strategyData &&
-          strategyData.map((val: any, idx: number) => (
+          strategyData.map((val, idx: number) => (
             <StrategyROW
               amount={val.amount}
               color={val.color}
@@ -158,7 +158,7 @@ export default function Points() {
           <h3 className={` `}>% EARNINGS</h3>
         </div>
         {leaderboardData &&
-          leaderboardData.map((val: any, idx: number) => (
+          leaderboardData.map((val, idx: number) => (
             <ReferralLeaderboard
               eid={val.eid}
               key={idx}
@@ -187,7 +187,7 @@ export default function Points() {
           <h3 className={` `}>% EARNINGS</h3>
         </div>
         {leaderboardData &&
-          leaderboardData.map((val: any, idx: number) => (
+          leaderboardData.map((val, idx: number) => (
             <ReferralLeaderboard
               eid={val.eid}
               key={idx}
