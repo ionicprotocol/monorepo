@@ -220,7 +220,29 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const queryClient = useQueryClient();
+
+  /**
+   * Fade in animation
+   */
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    let closeTimer: ReturnType<typeof setTimeout>;
+
+    if (!isMounted) {
+      closeTimer = setTimeout(() => {
+        closePopup();
+      }, 301);
+    }
+
+    return () => {
+      clearTimeout(closeTimer);
+    };
+  }, [isMounted]);
 
   /**
    * Update utilization percentage when amount changes
@@ -339,6 +361,8 @@ const Popup = ({
     }
   }, [active, mode]);
 
+  const initiateCloseAnimation = () => setIsMounted(false);
+
   const handleSupplyUtilization = (utilizationPercentage: number) => {
     setAmount(
       ((utilizationPercentage / 100) * (maxSupplyAmount?.number ?? 0)).toFixed(
@@ -392,7 +416,7 @@ const Popup = ({
   const resetTransactionSteps = () => {
     refetchUsedQueries();
     upsertTransactionStep(undefined);
-    closePopup();
+    initiateCloseAnimation();
   };
 
   const refetchUsedQueries = async () => {
@@ -813,16 +837,20 @@ const Popup = ({
 
   return (
     <div
-      className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center`}
+      className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center transition-opacity duration-300 animate-fade-in ${
+        isMounted && 'animated'
+      }`}
     >
       <div
-        className={`w-[45%] relative  bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide`}
+        className={`w-[45%] relative  bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
+          isMounted && 'animated'
+        }`}
       >
         <img
           src="/img/assets/close.png"
           alt="close"
           className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
-          onClick={closePopup}
+          onClick={initiateCloseAnimation}
         />
         <div className={`flex w-20 mx-auto mt-4 mb-2 relative text-center`}>
           <img

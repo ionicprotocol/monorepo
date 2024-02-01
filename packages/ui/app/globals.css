@@ -192,6 +192,22 @@
   text-transform: uppercase;
 }
 
+.animate-fade-in {
+  opacity: 0;
+}
+.animate-fade-in.animated {
+  opacity: 1;
+}
+
+.animate-pop-in {
+  transform: scale(0.8);
+  opacity: 0;
+}
+.animate-pop-in.animated {
+  transform: scale(1);
+  opacity: 1;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
