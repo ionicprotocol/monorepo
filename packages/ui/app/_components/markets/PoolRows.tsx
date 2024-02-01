@@ -60,8 +60,18 @@ const PoolRows = ({
       <h3 className={` col-span-2`}>{totalSupplied}</h3>
       <h3 className={` col-span-2`}>{borrowBalance}</h3>
       <h3 className={` col-span-2`}>{totalBorrowing}</h3>
-      <h3 className={` col-span-2`}>{supplyAPR}</h3>
-      <h3 className={` col-span-2`}>{borrowAPR}</h3>
+      <h3 className={` col-span-2`}>
+        <div className="flex flex-col items-center">
+          {supplyAPR}{' '}
+          <span className="text-darkone bg-lime rounded-lg w-20">+ POINTS</span>
+        </div>
+      </h3>
+      <h3 className={` col-span-2`}>
+        <div className="flex flex-col items-center">
+          {borrowAPR}{' '}
+          <span className="text-darkone bg-lime rounded-lg w-20">+ POINTS</span>
+        </div>
+      </h3>
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
         {address ? (
           <>
