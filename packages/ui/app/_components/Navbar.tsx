@@ -63,7 +63,28 @@ export default function Navbar() {
               : ' hidden md:flex md:items-center md:justify-center my-auto   gap-1  text-sm'
           }`}
         >
-          {/* <Link href={`/dashboard`}>
+          <Link
+            href={'/'}
+            className="pointer-events-none relative"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              Soon!
+            </span>
+            <p
+              className={`${
+                pathname == '/points' ? 'text-accent' : null
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+            >
+              Points
+            </p>
+          </Link>
+          <Link
+            href={'/'}
+            className="pointer-events-none relative"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              Soon!
+            </span>
             <p
               className={`${
                 pathname == '/dashboard' ? 'text-accent' : null
@@ -72,7 +93,7 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-          <Link href={`/lend`}>
+          {/* <Link href={`/lend`}>
             <p
               className={` ${
                 pathname == '/lend' ? 'text-accent' : null
@@ -100,20 +121,15 @@ export default function Navbar() {
             </p>
           </Link>
            */}
-
           <Link
-            href={'/'}
-            className="pointer-events-none relative"
+            className="relative"
+            href="https://app.mode.network/"
+            target="_blank"
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              Soon!
-            </span>
             <p
-              className={`${
-                pathname == '/points' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+              className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
-              Points
+              Bridge
             </p>
           </Link>
         </div>
