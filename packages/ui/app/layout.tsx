@@ -1,6 +1,8 @@
 'use client';
 import './globals.css';
 // import NextNProgress from "nextjs-progressbar";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Link from 'next/link';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -9,17 +11,15 @@ import {
   getDefaultWallets,
   RainbowKitProvider
 } from '@rainbow-me/rainbowkit';
-import { Chain, configureChains, createClient, WagmiConfig } from 'wagmi';
-import Navbar from './_components/Navbar';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { getSupportedChains } from '@ui/utils/networkData';
-import {
-  MultiIonicContext,
-  MultiIonicProvider
-} from '@ui/context/MultiIonicContext';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import Link from 'next/link';
+import type { Chain } from 'wagmi';
+import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+
+import Navbar from './_components/Navbar';
+
+import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
+import { getSupportedChains } from '@ui/utils/networkData';
 
 const supportedChains: Chain[] = Object.values(getSupportedChains()).map(
   (data) => {
@@ -68,8 +68,8 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
       className="dark"
+      lang="en"
     >
       <body className={'scrollbar-hide font-inter'}>
         <WagmiConfig client={wagmiConfig}>
@@ -83,8 +83,8 @@ export default function RootLayout({
             <QueryClientProvider client={queryClient}>
               <MultiIonicProvider>
                 <ProgressBar
-                  height="2px"
                   color="#3bff89ff"
+                  height="2px"
                   options={{ showSpinner: false }}
                   shallowRouting
                 />
@@ -99,64 +99,64 @@ export default function RootLayout({
                       <div className="flex-initial mr-20">
                         <div className="mb-20">
                           <Link
+                            className={`flex items-center  pr-10`}
                             href={'https://ionic.money'}
                             target="_blank"
-                            className={`flex items-center  pr-10`}
                           >
                             <img
-                              src="/img/logo/logo.png"
                               alt="logo"
                               className={`h-5 `}
+                              src="/img/logo/logo.png"
                             />
                           </Link>
                         </div>
 
                         <div className="flex">
                           <Link
+                            className={`flex items-center  pr-5`}
                             href={'https://ionic.money'}
                             target="_blank"
-                            className={`flex items-center  pr-5`}
                           >
                             <img
-                              src="/images/globe.png"
                               alt="logo"
                               className={`h-5 `}
+                              src="/images/globe.png"
                             />
                           </Link>
 
                           <Link
+                            className={`flex items-center  pr-5`}
                             href={'https://t.me/ionicmoney'}
                             target="_blank"
-                            className={`flex items-center  pr-5`}
                           >
                             <img
-                              src="/images/tg.png"
                               alt="logo"
                               className={`h-5 `}
+                              src="/images/tg.png"
                             />
                           </Link>
 
                           <Link
+                            className={`flex items-center  pr-5`}
                             href={'https://twitter.com/ionicmoney'}
                             target="_blank"
-                            className={`flex items-center  pr-5`}
                           >
                             <img
-                              src="/images/x.png"
                               alt="logo"
                               className={`h-5 `}
+                              src="/images/x.png"
                             />
                           </Link>
 
                           <Link
+                            className={`flex items-center  pr-5`}
                             href={'https://discord.gg/FmgedqR9wn'}
                             target="_blank"
-                            className={`flex items-center  pr-5`}
                           >
                             <img
-                              src="/images/discord.png"
                               alt="logo"
                               className={`h-5 `}
+                              src="/images/discord.png"
                             />
                           </Link>
                         </div>
@@ -212,16 +212,16 @@ export default function RootLayout({
 
                   <Toaster
                     toastOptions={{
-                      position: 'bottom-center',
-                      style: {
-                        color: '#000',
-                        background: '#3bff89ff'
-                      },
                       error: {
                         style: {
-                          color: '#fff',
-                          background: '#e10000'
+                          background: '#e10000',
+                          color: '#fff'
                         }
+                      },
+                      position: 'bottom-center',
+                      style: {
+                        background: '#3bff89ff',
+                        color: '#000'
                       }
                     }}
                   />

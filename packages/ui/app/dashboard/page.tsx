@@ -1,39 +1,38 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useState } from 'react';
-import SupplyRows from '../_components/dashboards/SupplyRows';
-import Popup from '../_components/popup/page';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+
+import SupplyRows from '../_components/dashboards/SupplyRows';
 export default function Dashboard() {
   const searchParams = useSearchParams();
   const popmode = searchParams.get('popmode');
   const specific = searchParams.get('specific');
   const supplyrow = [
     {
-      asset: 'DUSD',
       amount: 168,
+      asset: 'DUSD',
       cAPR: 2,
+      rewards: 65,
       sAPR: 5,
-      utilisation: 234,
-      rewards: 65
+      utilisation: 234
     },
     {
-      asset: 'DUSD',
       amount: 245,
+      asset: 'DUSD',
       cAPR: 42,
+      rewards: 64535,
       sAPR: 54,
-      utilisation: 234354,
-      rewards: 64535
+      utilisation: 234354
     },
     {
-      asset: 'DUSD',
       amount: 45,
+      asset: 'DUSD',
       cAPR: 6,
+      rewards: 6588,
       sAPR: 765,
-      utilisation: 2364,
-      rewards: 6588
+      utilisation: 2364
     }
   ];
   return (
@@ -112,8 +111,8 @@ export default function Dashboard() {
               <span> 73982</span>
             </div>
             <Link
-              href={`/points`}
               className={`w-full rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
+              href={`/points`}
             >
               CLAIM POINTS
             </Link>
@@ -126,27 +125,27 @@ export default function Dashboard() {
               className={` min-w-[30%] flex gap-x-2  items-center justify-center `}
             >
               <img
-                src="/img/assets/search.png"
                 alt="searchico"
                 className={`h-4`}
+                src="/img/assets/search.png"
               />
               <input
-                type="text"
-                name=""
-                id=""
-                placeholder="Search by asset name, symbol or address"
                 className={
                   ' w-full focus:outline-none placeholder:text-xs  bg-grayone border-r px-2 border-white/20'
                 }
+                id=""
+                name=""
+                placeholder="Search by asset name, symbol or address"
+                type="text"
               />
               <div
                 className={`flex w-[30%] flex-nowrap items-center justify-center text-xs px-2`}
               >
                 <p className="w-full truncate flex-nowrap">Sort By</p>
                 <img
-                  src="/img/assets/downarr.png"
                   alt="downarr"
                   className={`w-4`}
+                  src="/img/assets/downarr.png"
                 />
               </div>
             </div>
@@ -164,13 +163,13 @@ export default function Dashboard() {
           {supplyrow &&
             supplyrow.map((val: any, idx: number) => (
               <SupplyRows
-                key={idx}
-                asset={val.asset}
                 amount={val.amount}
+                asset={val.asset}
                 cAPR={val.cAPR}
+                key={idx}
+                rewards={val.rewards}
                 sAPR={val.sAPR}
                 utilisation={val.utilisation}
-                rewards={val.rewards}
               />
             ))}
         </div>
@@ -181,27 +180,27 @@ export default function Dashboard() {
               className={` min-w-[30%] flex gap-x-2  items-center justify-center `}
             >
               <img
-                src="/img/assets/search.png"
                 alt="searchico"
                 className={`h-4`}
+                src="/img/assets/search.png"
               />
               <input
-                type="text"
-                name=""
-                id=""
-                placeholder="Search by asset name, symbol or address"
                 className={
                   ' w-full focus:outline-none placeholder:text-xs  bg-grayone border-r px-2 border-white/20'
                 }
+                id=""
+                name=""
+                placeholder="Search by asset name, symbol or address"
+                type="text"
               />
               <div
                 className={`flex w-[30%] flex-nowrap items-center justify-center text-xs px-2`}
               >
                 <p className="w-full truncate flex-nowrap">Sort By</p>
                 <img
-                  src="/img/assets/downarr.png"
                   alt="downarr"
                   className={`w-4`}
+                  src="/img/assets/downarr.png"
                 />
               </div>
             </div>
@@ -219,14 +218,14 @@ export default function Dashboard() {
           {supplyrow &&
             supplyrow.map((val: any, idx: number) => (
               <SupplyRows
-                mode={'BORROW'}
-                key={idx}
-                asset={val.asset}
                 amount={val.amount}
+                asset={val.asset}
                 cAPR={val.cAPR}
+                key={idx}
+                mode={'BORROW'}
+                rewards={val.rewards}
                 sAPR={val.sAPR}
                 utilisation={val.utilisation}
-                rewards={val.rewards}
               />
             ))}
         </div>

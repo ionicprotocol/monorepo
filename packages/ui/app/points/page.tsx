@@ -1,58 +1,56 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useState } from 'react';
-import { Doughnut } from 'react-chartjs-2';
 import FlatMap from '../_components/points_comp/FlatMap';
-import StrategyROW from '../_components/points_comp/StrategyROW';
 import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard';
+import StrategyROW from '../_components/points_comp/StrategyROW';
 
 export default function Points() {
   const strategyData = [
     {
-      earnBy: 'referral',
       amount: 2,
-      vaultSupply: 34,
-      points: 435,
+      color: '#f3fa96ff',
+      earnBy: 'referral',
       percent: 45,
-      color: '#f3fa96ff'
+      points: 435,
+      vaultSupply: 34
     },
     {
-      earnBy: 'supply',
       amount: 54,
-      vaultSupply: 65,
-      points: 24,
+      color: '#c768f2ff',
+      earnBy: 'supply',
       percent: 53,
-      color: '#c768f2ff'
+      points: 24,
+      vaultSupply: 65
     },
     {
-      earnBy: 'borrow',
       amount: 67,
-      vaultSupply: 34,
-      points: 34,
+      color: '#f29c3fff',
+      earnBy: 'borrow',
       percent: 35,
-      color: '#f29c3fff'
+      points: 34,
+      vaultSupply: 34
     }
   ];
 
   const leaderboardData = [
     {
       eid: '0x4e1b87465e51e1557e5b097f363e873d893e0ca2',
-      vaultSupply: 98437,
+      percent: 98,
       points: 34,
-      percent: 98
+      vaultSupply: 98437
     },
     {
       eid: '0x8f3a11c613CfE14980e0325d3aB4E172Fd347f1B',
-      vaultSupply: 3573,
+      percent: 28,
       points: 549,
-      percent: 28
+      vaultSupply: 3573
     },
     {
       eid: '0x1D46B84cFeBb50Cfb5b257fA32f902B1d704f513',
-      vaultSupply: 426,
+      percent: 78,
       points: 982,
-      percent: 78
+      vaultSupply: 426
     }
   ];
   return (
@@ -64,9 +62,9 @@ export default function Points() {
           className={`flex items-center text-xl justify-center gap-2 py-3 pt-2 `}
         >
           <img
-            src="/img/assets/back.png"
             alt="modlogo"
             className={`w-5`}
+            src="/img/assets/back.png"
           />
           <h1 className={`font-semibold `}>Your Points</h1>
         </div>
@@ -75,7 +73,7 @@ export default function Points() {
         <p className={`text-sm text-white/50 mx-auto mb-2`}>
           Your Global Rank : 36
         </p>
-        <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}></div>
+        <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <div
           className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
         >
@@ -100,7 +98,7 @@ export default function Points() {
           <p className={``}>Points for Extra</p>
           <p className={`text-white font-semibold`}>987</p>
         </div>
-        <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}></div>
+        <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <button
           className={`w-full rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
         >
@@ -131,13 +129,13 @@ export default function Points() {
         {strategyData &&
           strategyData.map((val: any, idx: number) => (
             <StrategyROW
-              key={idx}
+              amount={val.amount}
               color={val.color}
               earnBy={val.earnBy}
-              amount={val.amount}
-              vaultSupply={val.vaultSupply}
-              points={val.points}
+              key={idx}
               percent={val.percent}
+              points={val.points}
+              vaultSupply={val.vaultSupply}
             />
           ))}
       </div>
@@ -162,12 +160,12 @@ export default function Points() {
         {leaderboardData &&
           leaderboardData.map((val: any, idx: number) => (
             <ReferralLeaderboard
-              key={idx}
-              rank={idx + 1}
               eid={val.eid}
-              vaultSupply={val.vaultSupply}
-              points={val.points}
+              key={idx}
               percent={val.percent}
+              points={val.points}
+              rank={idx + 1}
+              vaultSupply={val.vaultSupply}
             />
           ))}
       </div>
@@ -191,12 +189,12 @@ export default function Points() {
         {leaderboardData &&
           leaderboardData.map((val: any, idx: number) => (
             <ReferralLeaderboard
-              key={idx}
-              rank={idx + 1}
               eid={val.eid}
-              vaultSupply={val.vaultSupply}
-              points={val.points}
+              key={idx}
               percent={val.percent}
+              points={val.points}
+              rank={idx + 1}
+              vaultSupply={val.vaultSupply}
             />
           ))}
       </div>

@@ -1,11 +1,12 @@
 import React from 'react';
+
 import PercentMeter from './PercentMeter';
 interface IRefLed {
-  rank: number;
   eid: string;
-  vaultSupply: number;
-  points: number;
   percent: number;
+  points: number;
+  rank: number;
+  vaultSupply: number;
 }
 const ReferralLeaderboard = ({
   rank,

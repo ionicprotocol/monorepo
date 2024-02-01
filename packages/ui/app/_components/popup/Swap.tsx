@@ -1,20 +1,21 @@
 'use client';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
-import { useBalance } from 'wagmi';
-import ResultHandler from '../ResultHandler';
-import { BigNumber, Contract } from 'ethers';
-import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
-import { WETHAbi } from 'sdk/dist/cjs/src';
-import TransactionStepsHandler, {
-  TransactionStep
-} from './TransactionStepHandler';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSwapAmount } from '@ui/hooks/useSwapAmount';
-import { formatUnits, parseEther } from 'ethers/lib/utils.js';
+
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { bignumber } from 'mathjs';
-import { useRouter } from 'next/router';
+import { useQueryClient } from '@tanstack/react-query';
+import type { BigNumber, Contract } from 'ethers';
+import { parseEther } from 'ethers/lib/utils.js';
+import Image from 'next/image';
+import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import { WETHAbi } from 'sdk/dist/cjs/src';
+import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
+import { useBalance } from 'wagmi';
+
+import ResultHandler from '../ResultHandler';
+
+import type { TransactionStep } from './TransactionStepHandler';
+import TransactionStepsHandler from './TransactionStepHandler';
+
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
 export type SwapProps = {
   close: () => void;
@@ -24,7 +25,7 @@ export default function Swap({ close }: SwapProps) {
   const { address, currentSdk } = useMultiMidas();
   const [amount, setAmount] = useState<string>();
   const { data: ethBalance, refetch: refetchEthBalance } = useBalance({
-    address: address as any
+    address: address
   });
   const queryClient = useQueryClient();
   const WTokenContract = useMemo<Contract | undefined>(() => {
@@ -37,12 +38,12 @@ export default function Swap({ close }: SwapProps) {
       WETHAbi.abi,
       currentSdk.signer
     );
-  }, [currentSdk]);
+  }, [address, currentSdk]);
   const [transactionSteps, upsertTransactionStep] = useReducer(
     (
       prevState: TransactionStep[],
       updatedStep:
-        | { transactionStep: TransactionStep; index: number }
+        | { index: number; transactionStep: TransactionStep }
         | undefined
     ): TransactionStep[] => {
       if (!updatedStep) {
@@ -97,7 +98,7 @@ export default function Swap({ close }: SwapProps) {
     return () => {
       clearTimeout(closeTimer);
     };
-  }, [isMounted]);
+  }, [close, isMounted]);
 
   const initiateCloseAnimation = () => setIsMounted(false);
   const handlInpData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,18 +143,18 @@ export default function Swap({ close }: SwapProps) {
   };
   const addStepsForAction = (steps: TransactionStep[]) => {
     steps.forEach((step, i) =>
-      upsertTransactionStep({ transactionStep: step, index: i })
+      upsertTransactionStep({ index: i, transactionStep: step })
     );
   };
   const swapAmount = async () => {
     if (amountAsBInt && amountAsBInt.gt('0') && WTokenContract) {
-      let currentTransactionStep = 0;
+      const currentTransactionStep = 0;
 
       addStepsForAction([
         {
+          error: false,
           message: 'Swapping ETH -> WETH',
-          success: false,
-          error: false
+          success: false
         }
       ]);
 
@@ -163,31 +164,31 @@ export default function Swap({ close }: SwapProps) {
         });
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             txHash: tx.hash
-          },
-          index: currentTransactionStep
+          }
         });
 
         await tx.wait();
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             success: true
-          },
-          index: currentTransactionStep
+          }
         });
       } catch (error) {
         console.error(error);
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             error: true
-          },
-          index: currentTransactionStep
+          }
         });
       }
     }
@@ -224,53 +225,55 @@ export default function Swap({ close }: SwapProps) {
           isMounted && 'animated'
         }`}
       >
-        <img
-          src="/img/assets/close.png"
+        <Image
           alt="close"
           className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
           onClick={initiateCloseAnimation}
+          src="/img/assets/close.png"
         />
 
         <div className="text-center text-lg font-bold mb-2">Swap Tokens</div>
 
         <div className="flex justify-center items-center">
-          <img
+          <Image
+            alt="eth icon"
+            height="30"
             src="/img/symbols/32/color/eth.png"
             width="30"
-            height="30"
           />
           <div className="mx-1">{' -> '}</div>
-          <img
+          <Image
+            alt="weth icon"
+            height="30"
             src="/img/symbols/32/color/weth.png"
             width="30"
-            height="30"
           />
         </div>
 
-        <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}></div>
+        <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
 
         {address ? (
           <>
             <div className="flex text-center">
               <div className="relative w-1/2 mx-auto">
                 <input
-                  type="number"
-                  placeholder="ETH Amount"
-                  value={amount}
-                  onChange={(e) => handlInpData(e)}
                   className={`focus:outline-none w-full h-12 amount-field font-bold text-center bg-zinc-900 rounded-md`}
+                  onChange={(e) => handlInpData(e)}
+                  placeholder="ETH Amount"
+                  type="number"
+                  value={amount}
                 />
 
                 <div className="flex w-full justify-center items-center mt-1 text-[10px] text-white/50">
                   <ResultHandler
-                    width="15"
                     height="15"
                     isLoading={!ethBalance}
+                    width="15"
                   >
                     <span>{ethBalance?.formatted}</span>
                     <button
-                      onClick={() => handleMax(ethBalance?.formatted ?? '0')}
                       className={`text-accent pl-2`}
+                      onClick={() => handleMax(ethBalance?.formatted ?? '0')}
                     >
                       MAX
                     </button>
@@ -283,12 +286,12 @@ export default function Swap({ close }: SwapProps) {
               {transactionSteps.length > 0 ? (
                 <div className="flex justify-center text-left">
                   <TransactionStepsHandler
-                    transactionSteps={transactionSteps}
                     resetTransactionSteps={() => {
                       upsertTransactionStep(undefined);
                       refetchUsedQueries();
                       initiateCloseAnimation();
                     }}
+                    transactionSteps={transactionSteps}
                   />
                 </div>
               ) : (

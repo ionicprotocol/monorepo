@@ -22,7 +22,7 @@ import { FetchSignerResult } from 'wagmi/actions';
 import { Signer } from 'ethers';
 
 export interface MultiIonicContextData {
-  address?: string;
+  address?: `0x${string}`;
   chainIds: SupportedChains[];
   currentChain?: Chain & {
     unsupported?: boolean | undefined;

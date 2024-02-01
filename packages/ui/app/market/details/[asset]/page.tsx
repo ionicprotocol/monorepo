@@ -1,32 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 //---------------------IMPORTS-------------------
-import React from 'react';
-import { useSearchParams, usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-
-import Link from 'next/link';
 import {
-  Chart as ChartJS,
+  ArcElement,
   CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
+  Chart as ChartJS,
   Filler,
   Legend,
-  ArcElement
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip
 } from 'chart.js';
-import { Line, Doughnut } from 'react-chartjs-2';
-import {
-  chartoptions,
-  chartoptions2,
-  chartdata,
-  chartdata2,
-  donutdata,
-  donutoptions
-} from '../../../_constants/mock';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import React from 'react';
+import { Doughnut, Line } from 'react-chartjs-2';
 
 //-------------------Interfaces------------
 interface IProp {
@@ -48,8 +38,14 @@ ChartJS.register(
 
 //-------------------------components-----------
 
-import { PieChart, Pie, Sector, Cell } from 'recharts';
-import Popup from '../../../_components/popup/page';
+import {
+  chartdata,
+  chartdata2,
+  chartoptions,
+  chartoptions2,
+  donutdata,
+  donutoptions
+} from '../../../_constants/mock';
 
 const data = [
   { name: 'Group A', value: 400 },
@@ -66,12 +62,12 @@ const Asset = ({ params }: IProp) => {
   // using mock data
   const assetdetails = {
     asset: 'ETH',
-    colleteralT: 454,
+    bAPR: 8345,
     borrowingT: 435,
-    lendingT: 65655,
     cAPR: 25,
+    colleteralT: 454,
     lAPR: 45,
-    bAPR: 8345
+    lendingT: 65655
   };
   const router = useRouter();
 
@@ -85,21 +81,21 @@ const Asset = ({ params }: IProp) => {
       >
         <div className={`flex items-center justify-center gap-2 py-3 pt-2 `}>
           <img
-            onClick={() => router.back()}
-            src="/img/assets/back.png"
             alt="modlogo"
             className={`h-5 cursor-pointer`}
+            onClick={() => router.back()}
+            src="/img/assets/back.png"
           />
           <img
-            src={`/img/logo/${assetdetails.asset}.png `}
             alt={assetdetails.asset}
             className={`w-8`}
+            src={`/img/logo/${assetdetails.asset}.png `}
           />
           <h1 className={`font-semibold`}>{assetdetails.asset}</h1>
           <img
-            src="/img/assets/link.png"
             alt="downarr"
             className={`w-4`}
+            src="/img/assets/link.png"
           />
         </div>
         <div className={`w-full flex items-center gap-4`}>
@@ -135,14 +131,14 @@ const Asset = ({ params }: IProp) => {
             className={`flex  justify-center gap-4 px-4 py-2 font-bold text-base `}
           >
             <Link
-              href={`/market/details/${params.asset}`}
               className={` ${info ? 'text-white/40' : null}`}
+              href={`/market/details/${params.asset}`}
             >
               Supply Info
             </Link>
             <Link
-              href={`/market/details/${params.asset}?info=borrow`}
               className={` ${info ? null : 'text-white/40'}`}
+              href={`/market/details/${params.asset}?info=borrow`}
             >
               Borrow Info
             </Link>
@@ -151,8 +147,8 @@ const Asset = ({ params }: IProp) => {
           <div className={`w-full flex items-center justify-start gap-5`}>
             <div className={` w-14 h-14`}>
               <Doughnut
-                options={donutoptions}
                 data={donutdata}
+                options={donutoptions}
                 updateMode="resize"
               />
             </div>
@@ -183,9 +179,9 @@ const Asset = ({ params }: IProp) => {
                 className={`flex flex-col  items-center justify-center gap-y-1`}
               >
                 <img
-                  src={`/img/logo/${assetdetails.asset}.png `}
                   alt={assetdetails.asset}
                   className={`h-6`}
+                  src={`/img/logo/${assetdetails.asset}.png `}
                 />
                 <p className={`text-white/60 text-[8px] text-center`}>
                   COLLATERAL ASSET
@@ -225,8 +221,8 @@ const Asset = ({ params }: IProp) => {
 
           <div className={` w-full h-28`}>
             <Line
-              options={chartoptions}
               data={chartdata}
+              options={chartoptions}
               updateMode="resize"
             />
           </div>
@@ -241,7 +237,7 @@ const Asset = ({ params }: IProp) => {
             Wallet Info
           </p>
           <p className={` font-semibold text-lg pt-1 `}>$786</p>
-          <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}></div>
+          <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
           <p
             className={`text-white/60 w-full flex items-center justify-between text-sm mt-2`}
           >
@@ -252,8 +248,8 @@ const Asset = ({ params }: IProp) => {
           >
             <span> 568793 USDC</span>
             <Link
-              href={`${pathname}?popmode=SUPPLY`}
               className={`rounded-lg bg-accent text-sm text-black py-1 px-3`}
+              href={`${pathname}?popmode=SUPPLY`}
             >
               Supply
             </Link>
@@ -273,8 +269,8 @@ const Asset = ({ params }: IProp) => {
           >
             <span> 786 USDC</span>
             <Link
-              href={`${pathname}?popmode=BORROW`}
               className={`rounded-lg bg-graylite text-sm  text-white/50 py-1 px-3`}
+              href={`${pathname}?popmode=BORROW`}
             >
               Borrow
             </Link>
@@ -288,9 +284,9 @@ const Asset = ({ params }: IProp) => {
             className={`flex my-4 items-center justify-center w-full py-2 px-3 rounded-xl border border-[#f3fa96ff] text-[#f3fa96ff]`}
           >
             <img
-              src={`/img/assets/warn.png `}
               alt="warn"
               className={`h-7 px-2`}
+              src={`/img/assets/warn.png `}
             />
             <span className={`text-sm py-1`}>
               To borrow you need to supply any asset to be used as collateral
@@ -309,9 +305,9 @@ const Asset = ({ params }: IProp) => {
             >
               <span>Interest Rate Strategy</span>
               <img
-                src={`/img/assets/link.png `}
                 alt="link"
                 className={`h-4`}
+                src={`/img/assets/link.png `}
               />
             </div>
           </div>
@@ -323,8 +319,8 @@ const Asset = ({ params }: IProp) => {
           </div>
           <div className={` w-full h-28`}>
             <Line
-              options={chartoptions2}
               data={chartdata2}
+              options={chartoptions2}
               updateMode="resize"
             />
           </div>

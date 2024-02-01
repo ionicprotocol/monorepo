@@ -3,14 +3,14 @@
 import { ThreeCircles } from 'react-loader-spinner';
 
 export type TransactionStep = {
+  error: boolean;
   message: string;
   success: boolean;
-  error: boolean;
   txHash?: string;
 };
 export type TransactionStepsHandlerProps = {
-  transactionSteps: TransactionStep[];
   resetTransactionSteps: () => void;
+  transactionSteps: TransactionStep[];
 };
 
 function TransactionStepsHandler({
@@ -30,11 +30,11 @@ function TransactionStepsHandler({
           >
             {!transactionStep.error && !transactionStep.success && (
               <ThreeCircles
-                visible={true}
-                height="20"
-                width="20"
-                color="#39ff88"
                 ariaLabel="three-circles-loading"
+                color="#39ff88"
+                height="20"
+                visible={true}
+                width="20"
               />
             )}
 

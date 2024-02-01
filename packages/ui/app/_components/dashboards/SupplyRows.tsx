@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import React from 'react';
 import { usePathname } from 'next/navigation';
+import React from 'react';
 interface ISupply {
-  asset: string;
   amount: number;
+  asset: string;
   cAPR: number;
+  mode?: string;
+  rewards: number;
   sAPR: number;
   utilisation: number;
-  rewards: number;
-  mode?: string;
 }
 const SupplyRows = ({
   asset,
@@ -27,9 +27,9 @@ const SupplyRows = ({
     >
       <div className={`  flex gap-2 items-center justify-center  `}>
         <img
-          src={`/img/logo/${asset}.png `}
           alt={asset}
           className="h-7"
+          src={`/img/logo/${asset}.png `}
         />
         <h3 className={` `}>{asset}</h3>
       </div>
@@ -51,8 +51,8 @@ const SupplyRows = ({
           {mode === 'SUPPLY' ? 'REPAY' : 'Withdraw'}
         </Link>
         <Link
-          href={`${pathname}?popmode=DEFAULT`}
           className={`w-full rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
+          href={`${pathname}?popmode=DEFAULT`}
         >
           Manage
         </Link>

@@ -1,23 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import Link from 'next/link';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 
-import React, { Dispatch, SetStateAction } from 'react';
 import { PopupMode } from '../popup/page';
+
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
 interface IRows {
   asset: string;
-  supplyBalance: string;
-  totalSupplied: string;
-  borrowBalance: string;
-  totalBorrowing: string;
-  supplyAPR: string;
   borrowAPR: string;
+  borrowBalance: string;
   logo: string;
-  setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
+  setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
+  supplyAPR: string;
+  supplyBalance: string;
+  totalBorrowing: string;
+  totalSupplied: string;
 }
 const PoolRows = ({
   asset,
@@ -39,9 +40,9 @@ const PoolRows = ({
     >
       <div className={`col-span-2  flex gap-2 items-center justify-center  `}>
         <img
-          src={logo}
           alt={asset}
           className="h-7"
+          src={logo}
         />
         <h3 className={` `}>{asset}</h3>
       </div>
