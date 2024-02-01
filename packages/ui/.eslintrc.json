@@ -4,6 +4,7 @@
     "es2021": true
   },
   "extends": [
+    "prettier",
     "../../.eslintrc.json",
     "plugin:@typescript-eslint/recommended",
     "next",
@@ -25,7 +26,8 @@
     "@typescript-eslint",
     "unused-imports",
     "typescript-sort-keys",
-    "sort-keys"
+    "sort-keys",
+    "prettier"
   ],
   "settings": {
     "import/resolver": {
