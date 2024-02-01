@@ -196,7 +196,7 @@ export default function Market() {
                               val.underlyingDecimals
                             )
                           ).toLocaleString('en-US', {
-                            maximumFractionDigits: 6
+                            maximumFractionDigits: 2
                           })
                         : '0'
                     } ${
@@ -209,7 +209,7 @@ export default function Market() {
                         ? parseFloat(
                             formatUnits(val.liquidity, val.underlyingDecimals)
                           ).toLocaleString('en-US', {
-                            maximumFractionDigits: 6
+                            maximumFractionDigits: 2
                           })
                         : '0'
                     } ${
@@ -225,7 +225,7 @@ export default function Market() {
                               val.underlyingDecimals
                             )
                           ).toLocaleString('en-US', {
-                            maximumFractionDigits: 6
+                            maximumFractionDigits: 2
                           })
                         : '0'
                     } ${
@@ -238,7 +238,7 @@ export default function Market() {
                         ? parseFloat(
                             formatUnits(val.totalBorrow, val.underlyingDecimals)
                           ).toLocaleString('en-US', {
-                            maximumFractionDigits: 6
+                            maximumFractionDigits: 2
                           })
                         : '0'
                     } ${
