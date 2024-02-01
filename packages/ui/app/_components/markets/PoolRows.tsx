@@ -13,6 +13,7 @@ interface IRows {
   borrowAPR: string;
   borrowBalance: string;
   logo: string;
+  membership: boolean;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   supplyAPR: string;
@@ -25,6 +26,7 @@ const PoolRows = ({
   supplyBalance,
   totalSupplied,
   borrowBalance,
+  membership,
   totalBorrowing,
   supplyAPR,
   borrowAPR,
@@ -36,8 +38,14 @@ const PoolRows = ({
 
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold text-center items-center `}
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
     >
+      {membership && (
+        <span className="absolute top-[-8px] right-[-15px] px-2 text-darkone bg-lime rounded-lg">
+          Collateral
+        </span>
+      )}
+
       <div className={`col-span-2  flex gap-2 items-center justify-center  `}>
         <img
           alt={asset}

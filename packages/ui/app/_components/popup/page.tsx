@@ -868,8 +868,6 @@ const Popup = ({
                 currentSdk.signer
               );
 
-              console.log('here');
-
               tx = await comptrollerContract.exitMarket(
                 selectedMarketData.cToken
               );

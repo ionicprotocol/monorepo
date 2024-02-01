@@ -210,6 +210,7 @@ export default function Market() {
                     })}`}
                     key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                    membership={val?.membership ?? false}
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
                     supplyAPR={`${
