@@ -1,28 +1,28 @@
 //----------donut chart
 
 export const donutdata = {
-  labels: ['Lend', 'Total'],
   datasets: [
     {
+      backgroundColor: ['#3bff89ff', '#34363dff'],
       // label: 'My First Dataset',
-      data: [30, 70],
-      backgroundColor: ['#3bff89ff', '#34363dff']
+      data: [30, 70]
     }
-  ]
+  ],
+  labels: ['Lend', 'Total']
 };
 
 export const donutoptions = {
+  elements: {
+    arc: {
+      borderDash: [90],
+      borderWidth: 0
+    }
+  },
   maintainAspectRatio: false,
   // spacing :10 ,
   plugins: {
     legend: {
       display: false
-    }
-  },
-  elements: {
-    arc: {
-      borderWidth: 0,
-      borderDash: [90]
     }
   }
 };
@@ -65,7 +65,7 @@ export const donutoptions = {
 
 //------------------------graph chart-------------------
 export const chartoptions = {
-  responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: false,
@@ -73,18 +73,18 @@ export const chartoptions = {
     },
     title: {
       display: true,
-      text: 'Supply APR',
-      position: 'top' as const
+      position: 'top' as const,
+      text: 'Supply APR'
     }
   },
-  maintainAspectRatio: false,
+  responsive: true,
   scales: {
-    y: {
+    x: {
       grid: {
         display: false
       }
     },
-    x: {
+    y: {
       grid: {
         display: false
       }
@@ -92,25 +92,25 @@ export const chartoptions = {
   }
 };
 export const chartoptions2 = {
-  responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: false
     },
     title: {
       display: true,
-      text: 'Borrow APR Variable',
-      position: 'top' as const
+      position: 'top' as const,
+      text: 'Borrow APR Variable'
     }
   },
-  maintainAspectRatio: false,
+  responsive: true,
   scales: {
-    y: {
+    x: {
       grid: {
         display: false
       }
     },
-    x: {
+    y: {
       grid: {
         display: false
       }
@@ -122,30 +122,29 @@ const x = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 const y = [87, -73, 24, 45, 75, -44, 76];
 
 export const chartdata = {
-  labels: x,
   datasets: [
     {
-      fill: true,
-      label: 'Dataset 2',
-      data: y,
+      backgroundColor: '#3bff8910',
       borderColor: '#3bff89ff',
-      backgroundColor: '#3bff8910'
+      data: y,
+      fill: true,
+      label: 'Dataset 2'
     }
-  ]
+  ],
+  labels: x
 };
 
 const x1 = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 const y1 = [0, 0, 0, 0, 75, 44, 76];
 
 export const chartdata2 = {
-  labels: x1,
   datasets: [
     // {
     {
-      fill: 'origin',
-      data: y1,
+      backgroundColor: '#ff386310',
       borderColor: '#ff3863ff',
-      backgroundColor: '#ff386310'
+      data: y1,
+      fill: 'origin'
     }
 
     // 0: fill to 'origin'
@@ -158,5 +157,6 @@ export const chartdata2 = {
     // borderColor: '#3bff89ff',
     // backgroundColor: '#3bff8910',
     // },
-  ]
+  ],
+  labels: x1
 };

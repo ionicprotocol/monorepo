@@ -1,30 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
-import PoolToggle from './_components/markets/PoolToggle';
-import PoolRows from './_components/markets/PoolRows';
-import Popup, { PopupMode } from './_components/popup/page';
-import { useSearchParams } from 'next/navigation';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useChainId } from 'wagmi';
-import { MarketData } from '@ui/types/TokensDataMap';
-import { useAssets } from '@ui/hooks/useAssets';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import ResultHandler from './_components/ResultHandler';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
+import { useMemo, useState } from 'react';
+import { useChainId } from 'wagmi';
+
+import PoolRows from './_components/markets/PoolRows';
+import type { PopupMode } from './_components/popup/page';
+import Popup from './_components/popup/page';
 import Swap from './_components/popup/Swap';
-import Link from 'next/link';
+import ResultHandler from './_components/ResultHandler';
+
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import type { MarketData } from '@ui/types/TokensDataMap';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiMidas();
-  const searchParams = useSearchParams();
-  const popmode = searchParams.get('popmode');
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
@@ -56,9 +51,9 @@ export default function Market() {
         >
           <div className={`flex items-center justify-center gap-2 py-3 pt-2 `}>
             <img
-              src="/img/logo/MODE.png"
               alt="modlogo"
               className={`w-8`}
+              src="/img/logo/MODE.png"
             />
             <h1 className={`font-semibold`}>Mode Market</h1>
           </div>
@@ -180,44 +175,22 @@ export default function Market() {
             <h3 className={` col-span-4`}>SUPPLY/BORROW</h3>
           </div>
           <ResultHandler
-            isLoading={dataIsLoading}
             center
+            isLoading={dataIsLoading}
           >
             <>
               {assets &&
                 assets.map((val: MarketData, idx: number) => (
                   <PoolRows
-                    key={idx}
                     asset={val.underlyingSymbol}
-                    supplyBalance={`${
-                      val.supplyBalanceNative
-                        ? parseFloat(
-                            formatUnits(
-                              val.supplyBalance,
-                              val.underlyingDecimals
-                            )
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                    totalSupplied={`${
-                      val.liquidityNative
-                        ? parseFloat(
-                            formatUnits(val.liquidity, val.underlyingDecimals)
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.liquidityFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
+                    borrowAPR={`${
+                      currentSdk
+                        ?.ratePerBlockToAPY(
+                          val?.borrowRatePerBlock ?? BigNumber.from(0),
+                          getBlockTimePerMinuteByChainId(chainId)
+                        )
+                        .toFixed(2) ?? '0.00'
+                    }%`}
                     borrowBalance={`${
                       val.borrowBalanceNative
                         ? parseFloat(
@@ -234,6 +207,35 @@ export default function Market() {
                     } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
                       maximumFractionDigits: 2
                     })}`}
+                    key={idx}
+                    logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                    membership={val?.membership ?? false}
+                    setPopupMode={setPopupMode}
+                    setSelectedSymbol={setSelectedSymbol}
+                    supplyAPR={`${
+                      currentSdk
+                        ?.ratePerBlockToAPY(
+                          val?.supplyRatePerBlock ?? BigNumber.from(0),
+                          getBlockTimePerMinuteByChainId(chainId)
+                        )
+                        .toFixed(2) ?? '0.00'
+                    }%`}
+                    supplyBalance={`${
+                      val.supplyBalanceNative
+                        ? parseFloat(
+                            formatUnits(
+                              val.supplyBalance,
+                              val.underlyingDecimals
+                            )
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 2
+                          })
+                        : '0'
+                    } ${
+                      val.underlyingSymbol
+                    } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
+                      maximumFractionDigits: 2
+                    })}`}
                     totalBorrowing={`${
                       val.totalBorrowNative
                         ? parseFloat(
@@ -247,25 +249,19 @@ export default function Market() {
                     } / $${val.totalBorrowFiat.toLocaleString('en-US', {
                       maximumFractionDigits: 2
                     })}`}
-                    supplyAPR={`${
-                      currentSdk
-                        ?.ratePerBlockToAPY(
-                          val?.supplyRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(chainId)
-                        )
-                        .toFixed(2) ?? '0.00'
-                    }%`}
-                    borrowAPR={`${
-                      currentSdk
-                        ?.ratePerBlockToAPY(
-                          val?.borrowRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(chainId)
-                        )
-                        .toFixed(2) ?? '0.00'
-                    }%`}
-                    logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
-                    setSelectedSymbol={setSelectedSymbol}
-                    setPopupMode={setPopupMode}
+                    totalSupplied={`${
+                      val.liquidityNative
+                        ? parseFloat(
+                            formatUnits(val.liquidity, val.underlyingDecimals)
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 2
+                          })
+                        : '0'
+                    } ${
+                      val.underlyingSymbol
+                    } / $${val.liquidityFiat.toLocaleString('en-US', {
+                      maximumFractionDigits: 2
+                    })}`}
                   />
                 ))}
             </>
@@ -274,10 +270,10 @@ export default function Market() {
       </div>
       {popupMode && selectedMarketData && poolData && (
         <Popup
+          closePopup={() => setPopupMode(undefined)}
+          comptrollerAddress={poolData.comptroller}
           mode={popupMode}
           selectedMarketData={selectedMarketData}
-          comptrollerAddress={poolData.comptroller}
-          closePopup={() => setPopupMode(undefined)}
         />
       )}
 

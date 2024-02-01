@@ -1,5 +1,4 @@
 import { chainIdToConfig } from '@ionicprotocol/chains';
-import { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 

@@ -1,7 +1,23 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
-import { COLLATERAL, INFO_MESSAGES } from '@ui/constants/index';
+import type { BigNumber } from 'ethers';
+import { constants, utils } from 'ethers';
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { FundOperationMode } from 'types/dist';
+import { useChainId } from 'wagmi';
+
+import ResultHandler from '../ResultHandler';
+
+import Amount from './Amount';
+import SliderComponent from './Slider';
+import Tab from './Tab';
+import type { TransactionStep } from './TransactionStepHandler';
+import TransactionStepsHandler from './TransactionStepHandler';
+
+import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
@@ -10,25 +26,9 @@ import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
+import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { BigNumber, constants, utils } from 'ethers';
-import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
-import { ThreeCircles } from 'react-loader-spinner';
-import { FundOperationMode } from 'types/dist';
-import { useChainId } from 'wagmi';
-import ResultHandler from '../ResultHandler';
-import Amount from './Amount';
-import SliderComponent from './Slider';
-import Tab from './Tab';
-import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
-import { WETHAbi } from 'sdk/dist/cjs/src';
-import TransactionStepsHandler, {
-  TransactionStep
-} from './TransactionStepHandler';
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -38,11 +38,11 @@ export enum PopupMode {
 }
 
 interface IPopup {
-  mode?: PopupMode;
-  specific?: string | null;
-  selectedMarketData: MarketData;
-  comptrollerAddress: string;
   closePopup: () => void;
+  comptrollerAddress: string;
+  mode?: PopupMode;
+  selectedMarketData: MarketData;
+  specific?: string | null;
 }
 const Popup = ({
   mode = PopupMode.SUPPLY,
@@ -51,12 +51,11 @@ const Popup = ({
   closePopup,
   comptrollerAddress
 }: IPopup) => {
-  const [enableCollateral, setEnableCollateral] = useState<boolean>(false);
   const [transactionSteps, upsertTransactionStep] = useReducer(
     (
       prevState: TransactionStep[],
       updatedStep:
-        | { transactionStep: TransactionStep; index: number }
+        | { index: number; transactionStep: TransactionStep }
         | undefined
     ): TransactionStep[] => {
       if (!updatedStep) {
@@ -107,7 +106,7 @@ const Popup = ({
     }
 
     return '0.00%';
-  }, [assetsSupplyAprData]);
+  }, [assetsSupplyAprData, selectedMarketData.cToken]);
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const [amount, setAmount] = useReducer(
@@ -137,11 +136,11 @@ const Popup = ({
     useState<FundOperationMode>(FundOperationMode.SUPPLY);
   const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
     useUpdatedUserAssets({
-      mode: currentFundOperation,
-      poolChainId: chainId,
       amount: amountAsBInt,
       assets: [selectedMarketData],
-      index: 0
+      index: 0,
+      mode: currentFundOperation,
+      poolChainId: chainId
     });
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
   const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
@@ -164,6 +163,20 @@ const Popup = ({
           selectedMarketData.borrowRatePerBlock,
           blocksPerMinute
         ),
+        borrowBalanceFrom: utils.commify(
+          utils.formatUnits(
+            selectedMarketData.borrowBalance,
+            selectedMarketData.underlyingDecimals
+          )
+        ),
+        borrowBalanceTo: updatedAsset
+          ? utils.commify(
+              utils.formatUnits(
+                updatedAsset.borrowBalance,
+                updatedAsset.underlyingDecimals
+              )
+            )
+          : undefined,
         supplyAPY: currentSdk.ratePerBlockToAPY(
           selectedMarketData.supplyRatePerBlock,
           blocksPerMinute
@@ -182,20 +195,10 @@ const Popup = ({
               )
             )
           : undefined,
-        borrowBalanceFrom: utils.commify(
-          utils.formatUnits(
-            selectedMarketData.borrowBalance,
-            selectedMarketData.underlyingDecimals
-          )
+        totalBorrows: updatedAssets?.reduce(
+          (acc, cur) => acc + cur.borrowBalanceFiat,
+          0
         ),
-        borrowBalanceTo: updatedAsset
-          ? utils.commify(
-              utils.formatUnits(
-                updatedAsset.borrowBalance,
-                updatedAsset.underlyingDecimals
-              )
-            )
-          : undefined,
         updatedBorrowAPR: updatedAsset
           ? currentSdk.ratePerBlockToAPY(
               updatedAsset.borrowRatePerBlock,
@@ -208,10 +211,6 @@ const Popup = ({
               blocksPerMinute
             )
           : undefined,
-        totalBorrows: updatedAssets?.reduce(
-          (acc, cur) => acc + cur.borrowBalanceFiat,
-          0
-        ),
         updatedTotalBorrows: updatedAssets
           ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
           : undefined
@@ -220,6 +219,9 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  const [enableCollateral, setEnableCollateral] = useState<boolean>(
+    selectedMarketData.membership && selectedMarketData.supplyBalance.gt('0')
+  );
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
@@ -242,7 +244,7 @@ const Popup = ({
     return () => {
       clearTimeout(closeTimer);
     };
-  }, [isMounted]);
+  }, [isMounted, closePopup]);
 
   /**
    * Update utilization percentage when amount changes
@@ -409,7 +411,7 @@ const Popup = ({
 
   const addStepsForAction = (steps: TransactionStep[]) => {
     steps.forEach((step, i) =>
-      upsertTransactionStep({ transactionStep: step, index: i })
+      upsertTransactionStep({ index: i, transactionStep: step })
     );
   };
 
@@ -451,23 +453,23 @@ const Popup = ({
       let currentTransactionStep = 0;
       addStepsForAction([
         {
+          error: false,
           message: INFO_MESSAGES.SUPPLY.APPROVE,
-          success: false,
-          error: false
+          success: false
         },
         ...(enableCollateral
           ? [
               {
+                error: false,
                 message: INFO_MESSAGES.SUPPLY.COLLATERAL,
-                success: false,
-                error: false
+                success: false
               }
             ]
           : []),
         {
+          error: false,
           message: INFO_MESSAGES.SUPPLY.SUPPLYING,
-          success: false,
-          error: false
+          success: false
         }
       ]);
 
@@ -487,22 +489,22 @@ const Popup = ({
           );
 
           upsertTransactionStep({
+            index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
               txHash: tx.hash
-            },
-            index: currentTransactionStep
+            }
           });
 
           await tx.wait();
         }
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             success: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         currentTransactionStep++;
@@ -514,21 +516,21 @@ const Popup = ({
           );
 
           upsertTransactionStep({
+            index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
               txHash: tx.hash
-            },
-            index: currentTransactionStep
+            }
           });
 
           await tx.wait();
 
           upsertTransactionStep({
+            index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
               success: true
-            },
-            index: currentTransactionStep
+            }
           });
 
           currentTransactionStep++;
@@ -544,21 +546,21 @@ const Popup = ({
         }
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             txHash: tx?.hash
-          },
-          index: currentTransactionStep
+          }
         });
 
         await tx?.wait();
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             success: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         toast.success(
@@ -568,11 +570,11 @@ const Popup = ({
         toast.error('Error while supplying!');
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             error: true
-          },
-          index: currentTransactionStep
+          }
         });
       }
     }
@@ -587,12 +589,12 @@ const Popup = ({
       amountAsBInt.gt('0') &&
       amountAsBInt.lte(maxWithdrawAmount ?? '0')
     ) {
-      let currentTransactionStep = 0;
+      const currentTransactionStep = 0;
       addStepsForAction([
         {
+          error: false,
           message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
-          success: false,
-          error: false
+          success: false
         }
       ]);
 
@@ -608,11 +610,11 @@ const Popup = ({
           }
 
           upsertTransactionStep({
+            index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
               txHash: tx?.hash
-            },
-            index: currentTransactionStep
+            }
           });
 
           await tx?.wait();
@@ -627,22 +629,22 @@ const Popup = ({
           }
 
           upsertTransactionStep({
+            index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
               txHash: tx?.hash
-            },
-            index: currentTransactionStep
+            }
           });
 
           await tx?.wait();
         }
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             success: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         toast.success(
@@ -652,11 +654,11 @@ const Popup = ({
         console.error(error);
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             error: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         toast.error('Error while withdrawing!');
@@ -664,6 +666,7 @@ const Popup = ({
     }
   };
 
+  // eslint-disable-next-line
   const borrowAmount = async () => {
     if (
       !transactionSteps.length &&
@@ -676,12 +679,12 @@ const Popup = ({
       maxBorrowAmount &&
       amountAsBInt.lte(maxBorrowAmount.bigNumber)
     ) {
-      let currentTransactionStep = 0;
+      const currentTransactionStep = 0;
       addStepsForAction([
         {
+          error: false,
           message: INFO_MESSAGES.BORROW.BORROWING,
-          success: false,
-          error: false
+          success: false
         }
       ]);
 
@@ -696,21 +699,21 @@ const Popup = ({
         }
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             txHash: tx?.hash
-          },
-          index: currentTransactionStep
+          }
         });
 
         await tx?.wait();
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             success: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         toast.success(
@@ -720,11 +723,11 @@ const Popup = ({
         console.error(error);
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             error: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         toast.error('Error while borrowing!');
@@ -732,6 +735,7 @@ const Popup = ({
     }
   };
 
+  // eslint-disable-next-line
   const repayAmount = async () => {
     if (
       !transactionSteps.length &&
@@ -744,14 +748,14 @@ const Popup = ({
       let currentTransactionStep = 0;
       addStepsForAction([
         {
+          error: false,
           message: INFO_MESSAGES.REPAY.APPROVE,
-          success: false,
-          error: false
+          success: false
         },
         {
+          error: false,
           message: INFO_MESSAGES.REPAY.REPAYING,
-          success: false,
-          error: false
+          success: false
         }
       ]);
 
@@ -771,22 +775,22 @@ const Popup = ({
           );
 
           upsertTransactionStep({
+            index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
               txHash: tx.hash
-            },
-            index: currentTransactionStep
+            }
           });
 
           await tx.wait();
         }
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             success: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         currentTransactionStep++;
@@ -803,35 +807,169 @@ const Popup = ({
         }
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             txHash: tx?.hash
-          },
-          index: currentTransactionStep
+          }
         });
 
         await tx?.wait();
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             success: true
-          },
-          index: currentTransactionStep
+          }
         });
       } catch (error) {
         console.error(error);
 
         upsertTransactionStep({
+          index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
             error: true
-          },
-          index: currentTransactionStep
+          }
         });
 
         toast.error('Error while repaying!');
       }
+    }
+  };
+
+  const handleCollateralToggle = async () => {
+    if (!transactionSteps.length) {
+      if (currentSdk && selectedMarketData.supplyBalance.gt('0')) {
+        const currentTransactionStep = 0;
+
+        try {
+          let tx;
+
+          switch (enableCollateral) {
+            case true:
+              const comptrollerContract = currentSdk.createComptroller(
+                comptrollerAddress,
+                currentSdk.signer
+              );
+
+              const exitCode = await comptrollerContract.callStatic.exitMarket(
+                selectedMarketData.cToken
+              );
+
+              if (!exitCode.eq('0')) {
+                toast.error(errorCodeToMessage(exitCode.toNumber()));
+
+                return;
+              }
+
+              addStepsForAction([
+                {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
+                  success: false
+                }
+              ]);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
+                  success: false
+                }
+              });
+
+              tx = await comptrollerContract.exitMarket(
+                selectedMarketData.cToken
+              );
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  txHash: tx.hash
+                }
+              });
+
+              await tx.wait();
+
+              setEnableCollateral(false);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  success: true
+                }
+              });
+
+              break;
+
+            case false:
+              addStepsForAction([
+                {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
+                  success: false
+                }
+              ]);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
+                  success: false
+                }
+              });
+
+              tx = await currentSdk.enterMarkets(
+                selectedMarketData.cToken,
+                comptrollerAddress
+              );
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  txHash: tx.hash
+                }
+              });
+
+              await tx.wait();
+
+              setEnableCollateral(true);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  success: true
+                }
+              });
+
+              break;
+          }
+
+          refetchUsedQueries();
+
+          return;
+        } catch (error) {
+          console.error(error);
+
+          upsertTransactionStep({
+            index: currentTransactionStep,
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              error: true
+            }
+          });
+        }
+      }
+
+      setEnableCollateral(!enableCollateral);
     }
   };
 
@@ -847,30 +985,30 @@ const Popup = ({
         }`}
       >
         <img
-          src="/img/assets/close.png"
           alt="close"
           className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
           onClick={initiateCloseAnimation}
+          src="/img/assets/close.png"
         />
         <div className={`flex w-20 mx-auto mt-4 mb-2 relative text-center`}>
           <img
-            src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
             alt="modlogo"
-            width="32"
-            height="32"
             className="mx-auto"
+            height="32"
+            src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
+            width="32"
           />
         </div>
         <Tab
-          setActive={setActive}
-          mode={mode}
           active={active}
+          mode={mode}
+          setActive={setActive}
         />
         {/* all the respective slides */}
 
         <div
-          ref={slide}
           className={`w-full transition-all duration-300 ease-linear h-min  flex`}
+          ref={slide}
         >
           {mode === PopupMode.SUPPLY && (
             <>
@@ -879,23 +1017,21 @@ const Popup = ({
               {/* ---------------------------------------------------------------------------- */}
               <div className={`min-w-full py-5 px-[6%] h-min `}>
                 <Amount
-                  selectedMarketData={selectedMarketData}
-                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
+                  handleInput={(val?: string) => setAmount(val)}
+                  isLoading={isLoadingMaxSupply}
                   max={formatUnits(
                     maxSupplyAmount?.bigNumber ?? '0',
                     selectedMarketData.underlyingDecimals
                   )}
+                  selectedMarketData={selectedMarketData}
                   symbol={selectedMarketData.underlyingSymbol}
-                  isLoading={isLoadingMaxSupply}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
                   handleUtilization={handleSupplyUtilization}
                 />
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between text-sm text-white/50 `}
                 >
@@ -905,9 +1041,7 @@ const Popup = ({
                     {/* to do: add the rewards to the calculation */}
                   </span>
                 </div>
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
                 >
@@ -916,9 +1050,9 @@ const Popup = ({
                     {supplyBalanceFrom}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {supplyBalanceTo}
                     </ResultHandler>
@@ -933,26 +1067,21 @@ const Popup = ({
                     {`${supplyAPY?.toFixed(2)}%`}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {updatedSupplyAPY?.toFixed(2)}%
                     </ResultHandler>
                   </span>
                 </div>
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div className="flex items-center text-sm text-white/50 uppercase">
                   Enable collateral
                   <div className="ml-2">
                     <span
                       className={`toggle ${enableCollateral && 'is-on'}`}
-                      onClick={() =>
-                        !transactionSteps.length &&
-                        setEnableCollateral(!enableCollateral)
-                      }
+                      onClick={handleCollateralToggle}
                     />
                   </div>
                 </div>
@@ -961,8 +1090,8 @@ const Popup = ({
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
-                      transactionSteps={transactionSteps}
                       resetTransactionSteps={resetTransactionSteps}
+                      transactionSteps={transactionSteps}
                     />
                   ) : (
                     <>
@@ -986,24 +1115,22 @@ const Popup = ({
                 {/* SUPPLY-Withdraw section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
-                  selectedMarketData={selectedMarketData}
-                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
+                  handleInput={(val?: string) => setAmount(val)}
+                  hintText="Max Withdraw"
+                  isLoading={isLoadingMaxWithdrawAmount}
                   max={formatUnits(
                     maxWithdrawAmount ?? '0',
                     selectedMarketData.underlyingDecimals
                   )}
+                  selectedMarketData={selectedMarketData}
                   symbol={selectedMarketData.underlyingSymbol}
-                  hintText="Max Withdraw"
-                  isLoading={isLoadingMaxWithdrawAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
                   handleUtilization={handleWithdrawUtilization}
                 />
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
 
                 <div
                   className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
@@ -1013,9 +1140,9 @@ const Popup = ({
                     {supplyBalanceFrom}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {supplyBalanceTo}
                     </ResultHandler>
@@ -1030,9 +1157,9 @@ const Popup = ({
                     {`${supplyAPY?.toFixed(2)}%`}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {updatedSupplyAPY?.toFixed(2)}%
                     </ResultHandler>
@@ -1043,8 +1170,8 @@ const Popup = ({
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
-                      transactionSteps={transactionSteps}
                       resetTransactionSteps={resetTransactionSteps}
+                      transactionSteps={transactionSteps}
                     />
                   ) : (
                     <button
@@ -1070,24 +1197,22 @@ const Popup = ({
                 {/* SUPPLY-borrow section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
-                  selectedMarketData={selectedMarketData}
-                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
+                  handleInput={(val?: string) => setAmount(val)}
+                  hintText="Max Borrow Amount"
+                  isLoading={isLoadingMaxBorrowAmount}
                   max={formatUnits(
                     maxBorrowAmount?.bigNumber ?? '0',
                     selectedMarketData.underlyingDecimals
                   )}
+                  selectedMarketData={selectedMarketData}
                   symbol={selectedMarketData.underlyingSymbol}
-                  hintText="Max Borrow Amount"
-                  isLoading={isLoadingMaxBorrowAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
                   handleUtilization={handleBorrowUtilization}
                 />
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
@@ -1119,9 +1244,9 @@ const Popup = ({
                     {`${borrowBalanceFrom}`}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {borrowBalanceTo}
                     </ResultHandler>
@@ -1135,24 +1260,22 @@ const Popup = ({
                     {`${borrowAPR?.toFixed(2)}%`}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {updatedBorrowAPR?.toFixed(2)}%
                     </ResultHandler>
                   </span>
                 </div>
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
-                      transactionSteps={transactionSteps}
                       resetTransactionSteps={resetTransactionSteps}
+                      transactionSteps={transactionSteps}
                     />
                   ) : (
                     <button
@@ -1180,24 +1303,22 @@ const Popup = ({
                 {/* SUPPLY-repay section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <Amount
-                  selectedMarketData={selectedMarketData}
-                  handleInput={(val?: string) => setAmount(val)}
                   amount={amount}
+                  handleInput={(val?: string) => setAmount(val)}
                   hintText={'Max Repay Amount'}
+                  isLoading={isLoadingMaxRepayAmount}
                   max={formatUnits(
                     maxRepayAmount ?? '0',
                     selectedMarketData.underlyingDecimals
                   )}
+                  selectedMarketData={selectedMarketData}
                   symbol={selectedMarketData.underlyingSymbol}
-                  isLoading={isLoadingMaxRepayAmount}
                 />
                 <SliderComponent
                   currentUtilizationPercentage={currentUtilizationPercentage}
                   handleUtilization={handleRepayUtilization}
                 />
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                 >
@@ -1206,9 +1327,9 @@ const Popup = ({
                     {`${borrowBalanceFrom}`}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {borrowBalanceTo}
                     </ResultHandler>
@@ -1222,24 +1343,22 @@ const Popup = ({
                     {`${borrowAPR?.toFixed(2)}%`}
                     <span className="mx-1">{`->`}</span>
                     <ResultHandler
+                      height="16"
                       isLoading={isLoadingUpdatedAssets}
                       width="16"
-                      height="16"
                     >
                       {updatedBorrowAPR?.toFixed(2)}%
                     </ResultHandler>
                   </span>
                 </div>
-                <div
-                  className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                ></div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
-                      transactionSteps={transactionSteps}
                       resetTransactionSteps={resetTransactionSteps}
+                      transactionSteps={transactionSteps}
                     />
                   ) : (
                     <button

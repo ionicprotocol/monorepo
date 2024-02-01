@@ -26,7 +26,7 @@ const Approved = ({ status = 'STEP0' }: IApproved) => {
               ? 'bg-accent'
               : 'bg-stone-600'
           }`}
-        ></div>
+        />
         {/* <div></div> */}
       </div>
       <div

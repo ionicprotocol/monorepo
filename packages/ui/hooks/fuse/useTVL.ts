@@ -1,10 +1,3 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
-import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
-
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-
 // export const fetchFuseNumberTVL = async (midasSdk: IonicSdk) => {
 //   const tvlNative = await midasSdk.getTotalValueLocked(false);
 //   const decimals =

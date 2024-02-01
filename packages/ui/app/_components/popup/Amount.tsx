@@ -1,20 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { MarketData } from '@ui/types/TokensDataMap';
-import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
-import { useAccount, useBalance } from 'wagmi';
-import ResultHandler from '../ResultHandler';
 import { parseUnits } from 'ethers/lib/utils.js';
+import dynamic from 'next/dynamic';
+import React from 'react';
+
+import ResultHandler from '../ResultHandler';
+
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface IAmount {
-  selectedMarketData: MarketData;
-  handleInput: (val?: string) => void;
   amount?: string;
+  handleInput: (val?: string) => void;
   hintText?: string;
-  max?: string;
-  symbol: string;
   isLoading?: boolean;
+  max?: string;
+  selectedMarketData: MarketData;
+  symbol: string;
 }
 const Amount = ({
   selectedMarketData,
@@ -76,17 +77,17 @@ const Amount = ({
         <span className={``}>Amount</span>
         <div className="ml-auto">
           <ResultHandler
-            width="15"
             height="15"
             isLoading={isLoading}
+            width="15"
           >
             <>
               <span className={`ml-auto`}>
                 {hintText} {max}
               </span>
               <button
-                onClick={() => handleMax(max)}
                 className={`text-accent pl-2`}
+                onClick={() => handleMax(max)}
               >
                 MAX
               </button>
@@ -98,16 +99,16 @@ const Amount = ({
         className={`flex w-full  pt-1.5 items-center text-lg text-white/50 `}
       >
         <input
-          value={amount}
-          type="number"
-          placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
           className={`focus:outline-none amount-field font-bold bg-transparent`}
           onChange={handlInpData}
+          placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
+          type="number"
+          value={amount}
         />
         <img
-          src={`/img/symbols/32/color/${symbol?.toLowerCase()}.png`}
           alt="link"
           className={`h-4 ml-auto`}
+          src={`/img/symbols/32/color/${symbol?.toLowerCase()}.png`}
         />
         <span className={`text-white pl-2`}>{symbol}</span>
       </div>

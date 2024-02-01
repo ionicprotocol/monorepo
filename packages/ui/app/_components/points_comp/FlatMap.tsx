@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
 interface IFlatMap {
-  rewardsData?: number[];
   colorData?: string[];
+  rewardsData?: number[];
 }
 const FlatMap = ({
   rewardsData = [10, 30, 30, 15, 5],
@@ -23,9 +23,9 @@ const FlatMap = ({
       {percentVals[0] &&
         percentVals.map((vals: number, idx: number) => (
           <span
-            key={idx}
             className={` h-3`}
-            style={{ width: `${vals}%`, backgroundColor: `${colorData[idx]}` }}
+            key={idx}
+            style={{ backgroundColor: `${colorData[idx]}`, width: `${vals}%` }}
           >
             {' '}
           </span>

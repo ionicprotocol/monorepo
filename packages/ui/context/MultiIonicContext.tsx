@@ -4,6 +4,7 @@ import { IonicSdk } from '@ionicprotocol/sdk';
 import Security from '@ionicprotocol/security';
 import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
+import type { Signer } from 'ethers';
 import type { Dispatch, ReactNode } from 'react';
 import {
   createContext,
@@ -15,14 +16,13 @@ import {
 } from 'react';
 import type { Chain } from 'wagmi';
 import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
+import type { FetchSignerResult } from 'wagmi/actions';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { FetchSignerResult } from 'wagmi/actions';
-import { Signer } from 'ethers';
 
 export interface MultiIonicContextData {
-  address?: string;
+  address?: `0x${string}`;
   chainIds: SupportedChains[];
   currentChain?: Chain & {
     unsupported?: boolean | undefined;
@@ -36,7 +36,7 @@ export interface MultiIonicContextData {
   isSidebarCollapsed: boolean | undefined;
   sdks: IonicSdk[];
   securities: Security[];
-  setAddress: Dispatch<string>;
+  setAddress: Dispatch<`0x${string}`>;
   setGlobalLoading: Dispatch<boolean>;
   setIsSidebarCollapsed: Dispatch<boolean>;
   signer?: FetchSignerResult<Signer>;
@@ -61,7 +61,7 @@ export const MultiIonicProvider = (
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
   const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
-  const [address, setAddress] = useState<string | undefined>();
+  const [address, setAddress] = useState<`0x${string}` | undefined>();
   const [currentChain, setCurrentChain] = useState<
     | (Chain & {
         unsupported?: boolean | undefined;

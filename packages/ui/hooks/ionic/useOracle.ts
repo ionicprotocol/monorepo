@@ -15,7 +15,11 @@ export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
 
           return oracle;
         } catch (e) {
-          console.warn(`Getting oracle error: `, { poolChainId, underlyingAddress }, e);
+          console.warn(
+            `Getting oracle error: `,
+            { poolChainId, underlyingAddress },
+            e
+          );
 
           return null;
         }

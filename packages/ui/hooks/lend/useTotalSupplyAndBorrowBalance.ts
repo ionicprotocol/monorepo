@@ -12,7 +12,10 @@ export const useTotalSupplyAndBorrowBalance = () => {
       'useTotalSupplyAndBorrowBalance',
       allPools
         ?.map(
-          (pool) => pool.comptroller + pool.totalSupplyBalanceFiat + pool.totalBorrowBalanceFiat
+          (pool) =>
+            pool.comptroller +
+            pool.totalSupplyBalanceFiat +
+            pool.totalBorrowBalanceFiat
         )
         .sort()
     ],
