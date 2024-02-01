@@ -36,7 +36,7 @@ export interface MultiIonicContextData {
   isSidebarCollapsed: boolean | undefined;
   sdks: IonicSdk[];
   securities: Security[];
-  setAddress: Dispatch<string>;
+  setAddress: Dispatch<`0x${string}`>;
   setGlobalLoading: Dispatch<boolean>;
   setIsSidebarCollapsed: Dispatch<boolean>;
   signer?: FetchSignerResult<Signer>;
@@ -61,7 +61,7 @@ export const MultiIonicProvider = (
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
   const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
-  const [address, setAddress] = useState<string | undefined>();
+  const [address, setAddress] = useState<`0x${string}` | undefined>();
   const [currentChain, setCurrentChain] = useState<
     | (Chain & {
         unsupported?: boolean | undefined;

@@ -59,7 +59,7 @@ export const useVaultTVL = () => {
         );
 
         const sortedChainVaultTVLs: CrossChainVaultTVL = new Map(
-          [...chainVaultTVLs].sort((a, b) => b[1].value - a[1].value)
+          [...(chainVaultTVLs as any)].sort((a, b) => b[1].value - a[1].value)
         );
 
         return sortedChainVaultTVLs;
