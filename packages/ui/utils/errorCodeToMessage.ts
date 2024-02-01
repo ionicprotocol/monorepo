@@ -2,8 +2,8 @@ import { ComptrollerErrorCodes } from '@ionicprotocol/types';
 
 export const errorCodeToMessage = (errorCode: number) => {
   switch (errorCode) {
-    case ComptrollerErrorCodes.NO_ERROR:
-      return undefined;
+    // case ComptrollerErrorCodes.NO_ERROR:
+    //   return undefined;
     case ComptrollerErrorCodes.NONZERO_BORROW_BALANCE:
       return 'You have to repay all your borrowed assets before you can disable any assets as collateral.';
     default:

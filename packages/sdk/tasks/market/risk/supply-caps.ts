@@ -28,7 +28,7 @@ export default task("market:set-supply-cap", "Pauses borrowing on a market")
     await tx.wait();
 
     const newSupplyCapSet = await pool.callStatic.supplyCaps(cToken.address);
-    console.log(`New supply cap set: ${newSupplyCapSet.toNumber()}`);
+    console.log(`New supply cap set: ${newSupplyCapSet.toString()}`);
   });
 
 task("market:set-supply-cap-whitelist", "Pauses borrowing on a market")

@@ -6,6 +6,7 @@ import axios from 'axios';
 import { utils } from 'ethers';
 
 // import type { RewardsResponse } from '../pages/api/rewards';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RewardsResponse = any;
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -111,11 +112,13 @@ export const fetchRewards = async (
         const allRewards = [...pluginRewards];
         if (flywheelRewards) {
           const flywheelsInPluginResponse = pluginRewards
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .map((pluginReward: any) =>
               'flywheel' in pluginReward
                 ? pluginReward.flywheel.toLowerCase()
                 : null
             )
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .filter((f: any) => !!f) as string[];
           for (const info of flywheelRewards.rewardsInfo) {
             if (

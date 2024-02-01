@@ -1,55 +1,55 @@
 import React from 'react';
+
+import { PopupMode } from './page';
 interface IMode {
-  mode: string;
-  setActive: (val: string) => void;
   active: string;
+  mode: PopupMode;
+  setActive: (val: string) => void;
 }
 const Tab = ({ mode, setActive, active }: IMode) => {
   return (
     <div
-      className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 grid ${
-        mode === 'DEFAULT' ? 'grid-cols-4' : 'grid-cols-2'
-      } text-center gap-x-1 text-xs items-center justify-center`}
+      className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 grid ${'grid-cols-2'} text-center gap-x-1 text-xs items-center justify-center`}
     >
-      {(mode === 'SUPPLY' || mode === 'DEFAULT') && (
+      {mode === PopupMode.SUPPLY && (
         <>
           <p
-            onClick={() => setActive('COLLATERAL')}
             className={`rounded-md py-1 text-center  cursor-pointer ${
               active === 'COLLATERAL'
                 ? 'bg-darkone text-accent '
                 : 'text-white/40 '
             } transition-all duration-200 ease-linear `}
+            onClick={() => setActive('COLLATERAL')}
           >
             COLLATERAL
           </p>
           <p
-            onClick={() => setActive('WITHDRAW')}
             className={` rounded-md py-1 px-3   ${
               active === 'WITHDRAW'
                 ? 'bg-darkone text-accent '
                 : 'text-white/40'
             } cursor-pointer transition-all duration-200 ease-linear`}
+            onClick={() => setActive('WITHDRAW')}
           >
             WITHDRAW
           </p>
         </>
       )}
-      {(mode === 'BORROW' || mode === 'DEFAULT') && (
+      {mode === PopupMode.BORROW && (
         <>
           <p
-            onClick={() => setActive('BORROW')}
             className={` rounded-md py-1 px-3   ${
               active === 'BORROW' ? 'bg-darkone text-accent ' : 'text-white/40'
             } cursor-pointer transition-all duration-200 ease-linear`}
+            onClick={() => setActive('BORROW')}
           >
             BORROW
           </p>
           <p
-            onClick={() => setActive('REPAY')}
             className={` rounded-md py-1 px-3   ${
               active === 'REPAY' ? 'bg-darkone text-accent ' : 'text-white/40'
             } cursor-pointer transition-all duration-200 ease-linear`}
+            onClick={() => setActive('REPAY')}
           >
             REPAY
           </p>

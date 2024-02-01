@@ -12,7 +12,11 @@ interface UseUpdatedUserVaultResult {
   vault: VaultData;
 }
 
-export const useUpdatedUserVault = ({ mode, amount, vault }: UseUpdatedUserVaultResult) => {
+export const useUpdatedUserVault = ({
+  mode,
+  amount,
+  vault
+}: UseUpdatedUserVaultResult) => {
   const sdk = useSdk(Number(vault.chainId));
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {

@@ -2,13 +2,13 @@ import React from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
 
 type ResultHandlerProps = {
-  children: React.ReactNode;
-  isLoading: boolean;
-  isFetching?: boolean;
-  width?: string;
-  height?: string;
-  color?: string;
   center?: boolean;
+  children: React.ReactNode;
+  color?: string;
+  height?: string;
+  isFetching?: boolean;
+  isLoading: boolean;
+  width?: string;
 };
 
 export default function ResultHandler({
@@ -23,16 +23,16 @@ export default function ResultHandler({
   if (isLoading || isFetching) {
     return (
       <ThreeCircles
-        visible={true}
-        height={height}
-        width={width}
-        color={color}
-        wrapperStyle={{
-          width: `${width}px`,
-          height: `${height}px`,
-          margin: center ? 'auto' : '0px'
-        }}
         ariaLabel="three-circles-loading"
+        color={color}
+        height={height}
+        visible={true}
+        width={width}
+        wrapperStyle={{
+          height: `${height}px`,
+          margin: center ? 'auto' : '0px',
+          width: `${width}px`
+        }}
       />
     );
   }

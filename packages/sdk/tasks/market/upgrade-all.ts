@@ -16,7 +16,7 @@ task("market:set-latest", "Updates the markets' implementations whitelist").setA
   const cfe = (await ethers.getContract("CTokenFirstExtension")) as CTokenFirstExtension;
   {
     const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Delegate.address);
-    if (!exts.length) {
+    if (exts.length == 0 || exts[0] != cfe.address) {
       console.log(`setting the extension for delegate ${erc20Delegate.address}`);
       tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20Delegate.address, [
         erc20Delegate.address,
@@ -32,7 +32,7 @@ task("market:set-latest", "Updates the markets' implementations whitelist").setA
 
   {
     const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginDelegate.address);
-    if (!exts.length) {
+    if (exts.length == 0 || exts[0] != cfe.address) {
       console.log(`setting the extension for plugin delegate ${erc20PluginDelegate.address}`);
       tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginDelegate.address, [
         erc20PluginDelegate.address,
@@ -48,7 +48,7 @@ task("market:set-latest", "Updates the markets' implementations whitelist").setA
 
   {
     const exts = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginRewardsDelegate.address);
-    if (!exts.length) {
+    if (exts.length == 0 || exts[0] != cfe.address) {
       console.log(`setting the extension for plugin rewards delegate ${erc20PluginRewardsDelegate.address}`);
       tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDelegate.address, [
         erc20PluginRewardsDelegate.address,

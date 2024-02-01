@@ -16,7 +16,11 @@ export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
 
           return irm;
         } catch (e) {
-          console.warn(`Getting IRM error: `, { cTokenAddress, poolChainId }, e);
+          console.warn(
+            `Getting IRM error: `,
+            { cTokenAddress, poolChainId },
+            e
+          );
 
           return null;
         }

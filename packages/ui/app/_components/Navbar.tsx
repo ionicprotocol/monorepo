@@ -1,11 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
-// import { useStore } from "@/store/Store";
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import React, { useState } from 'react';
+// import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -22,13 +21,13 @@ export default function Navbar() {
         earn Ionic points. Borrowing will be open soon...
       </div>
       <Link
-        href={'/'}
         className={`flex items-center  pr-10  `}
+        href={'/'}
       >
         <img
-          src="/img/logo/logo.png"
           alt="logo"
           className={`h-5 `}
+          src="/img/logo/logo.png"
         />
       </Link>
 
@@ -41,17 +40,17 @@ export default function Navbar() {
         >
           {!isActive ? (
             <img
-              src="/img/menu.png"
               alt="menu"
-              width={'38'}
               className={` duration-100 transition-all ease-linear`}
+              src="/img/menu.png"
+              width={'38'}
             />
           ) : (
             <img
-              src="/img/plus.png"
               alt="menu"
-              width={'38'}
               className={` duration-100 transition-all ease-linear rotate-45`}
+              src="/img/plus.png"
+              width={'38'}
             />
           )}
         </div>
@@ -63,7 +62,28 @@ export default function Navbar() {
               : ' hidden md:flex md:items-center md:justify-center my-auto   gap-1  text-sm'
           }`}
         >
-          {/* <Link href={`/dashboard`}>
+          <Link
+            className="pointer-events-none relative"
+            href={'/'}
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              Soon!
+            </span>
+            <p
+              className={`${
+                pathname == '/points' ? 'text-accent' : null
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+            >
+              Points
+            </p>
+          </Link>
+          <Link
+            className="pointer-events-none relative"
+            href={'/'}
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              Soon!
+            </span>
             <p
               className={`${
                 pathname == '/dashboard' ? 'text-accent' : null
@@ -72,7 +92,7 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-          <Link href={`/lend`}>
+          {/* <Link href={`/lend`}>
             <p
               className={` ${
                 pathname == '/lend' ? 'text-accent' : null
@@ -100,20 +120,15 @@ export default function Navbar() {
             </p>
           </Link>
            */}
-
           <Link
-            href={'/'}
-            className="pointer-events-none relative"
+            className="relative"
+            href="https://app.mode.network/"
+            target="_blank"
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              Soon!
-            </span>
             <p
-              className={`${
-                pathname == '/points' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+              className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
-              Points
+              Bridge
             </p>
           </Link>
         </div>

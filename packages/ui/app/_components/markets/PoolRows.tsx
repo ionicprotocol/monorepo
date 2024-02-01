@@ -1,44 +1,58 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import Link from 'next/link';
+import type { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 
-import React, { Dispatch, SetStateAction } from 'react';
+import { PopupMode } from '../popup/page';
+
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
 interface IRows {
   asset: string;
-  supplyBalance: string;
-  totalSupplied: string;
-  borrowBalance: string;
-  totalBorrowing: string;
-  supplyAPR: string;
   borrowAPR: string;
+  borrowBalance: string;
   logo: string;
+  membership: boolean;
+  setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
+  supplyAPR: string;
+  supplyBalance: string;
+  totalBorrowing: string;
+  totalSupplied: string;
 }
 const PoolRows = ({
   asset,
   supplyBalance,
   totalSupplied,
   borrowBalance,
+  membership,
   totalBorrowing,
   supplyAPR,
   borrowAPR,
   logo,
-  setSelectedSymbol
+  setSelectedSymbol,
+  setPopupMode
 }: IRows) => {
   const { address } = useMultiMidas();
 
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold text-center items-center `}
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
+        membership && 'border border-lime'
+      }`}
     >
+      {membership && (
+        <span className="absolute top-[-9px] right-[-15px] px-2 text-darkone bg-lime rounded-lg">
+          Collateral
+        </span>
+      )}
+
       <div className={`col-span-2  flex gap-2 items-center justify-center  `}>
         <img
-          src={logo}
           alt={asset}
           className="h-7"
+          src={logo}
         />
         <h3 className={` `}>{asset}</h3>
       </div>
@@ -51,21 +65,24 @@ const PoolRows = ({
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
         {address ? (
           <>
-            <Link
-              href={`/?popmode=SUPPLY`}
+            <button
               className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
-              onClick={() => setSelectedSymbol(asset)}
+              onClick={() => {
+                setSelectedSymbol(asset);
+                setPopupMode(PopupMode.SUPPLY);
+              }}
             >
               Supply / Withdraw
-            </Link>
-            <Link
-              // href={`/?popmode=BORROW`}
-              href={`/`}
+            </button>
+            <button
               className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3 uppercase opacity-30 pointer-events-none	`}
-              onClick={() => setSelectedSymbol(asset)}
+              // onClick={() => {
+              //   setSelectedSymbol(asset);
+              //   setPopupMode(PopupMode.BORROW);
+              // }}
             >
               Borrow / Repay
-            </Link>
+            </button>
           </>
         ) : (
           <div className="connect-button">

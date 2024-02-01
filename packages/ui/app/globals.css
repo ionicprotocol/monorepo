@@ -63,6 +63,14 @@
   background: #dffe00;
 }
 
+.text-lime {
+  color: #dffe00;
+}
+
+.border-lime {
+  border-color: #dffe00;
+}
+
 .text-xxs {
   font-size: 0.6rem;
   line-height: 0.75rem;
@@ -190,6 +198,22 @@
 
 .connect-button button {
   text-transform: uppercase;
+}
+
+.animate-fade-in {
+  opacity: 0;
+}
+.animate-fade-in.animated {
+  opacity: 1;
+}
+
+.animate-pop-in {
+  transform: scale(0.8);
+  opacity: 0;
+}
+.animate-pop-in.animated {
+  transform: scale(1);
+  opacity: 1;
 }
 
 body {

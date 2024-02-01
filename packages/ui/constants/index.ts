@@ -360,6 +360,17 @@ export const LEVERAGE_VALUE = {
 };
 
 export const INFO_MESSAGES = {
+  BORROW: {
+    BORROWING: 'Borrowing funds'
+  },
+  COLLATERAL: {
+    DISABLE: 'Disabling collateral',
+    ENABLE: 'Enabling collateral'
+  },
+  REPAY: {
+    APPROVE: 'Approve amount for spending',
+    REPAYING: 'Repaying'
+  },
   SUPPLY: {
     APPROVE: 'Approve amount for spending',
     COLLATERAL: 'Enable as collateral',
@@ -367,12 +378,5 @@ export const INFO_MESSAGES = {
   },
   WITHDRAW: {
     WITHDRAWING: 'Withdrawing funds'
-  },
-  BORROW: {
-    BORROWING: 'Borrowing funds'
-  },
-  REPAY: {
-    APPROVE: 'Approve amount for spending',
-    REPAYING: 'Repaying'
   }
 };

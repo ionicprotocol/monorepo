@@ -1,13 +1,14 @@
 import React from 'react';
+
 import PercentMeter from './PercentMeter';
 
 interface IStrategy {
-  earnBy: string;
   amount: number;
-  vaultSupply: number;
-  points: number;
-  percent: number;
   color: string;
+  earnBy: string;
+  percent: number;
+  points: number;
+  vaultSupply: number;
 }
 const StrategyROW = ({
   earnBy,
@@ -25,15 +26,15 @@ const StrategyROW = ({
         <span
           className="h-4 w-4 rounded-full"
           style={{ backgroundColor: `${color}` }}
-        ></span>
+        />
         <span className={` `}>{earnBy}</span>
       </div>
       <span className={``}>{amount}</span>
       <span className={``}>${vaultSupply}</span>
       <span className={``}>{points}</span>
       <PercentMeter
-        percent={percent}
         color={color}
+        percent={percent}
       />
     </div>
   );

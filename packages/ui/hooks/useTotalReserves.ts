@@ -11,11 +11,17 @@ export const useTotalReserves = (cTokenAddress?: string, chainId?: number) => {
       if (cTokenAddress && sdk) {
         try {
           const cToken = sdk.createICErc20(cTokenAddress);
-          const [totalReserves] = await Promise.all([cToken.callStatic.totalReserves()]);
+          const [totalReserves] = await Promise.all([
+            cToken.callStatic.totalReserves()
+          ]);
 
           return totalReserves;
         } catch (e) {
-          console.warn(`Getting total reserves data error: `, { cTokenAddress, chainId }, e);
+          console.warn(
+            `Getting total reserves data error: `,
+            { cTokenAddress, chainId },
+            e
+          );
 
           return null;
         }

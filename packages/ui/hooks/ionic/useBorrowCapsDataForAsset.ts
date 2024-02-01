@@ -17,7 +17,10 @@ export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: string[]) => {
 
   await Promise.all(
     cTokens.map(async (cToken) => {
-      const borrowCaps = await sdk.contracts.PoolLens.callStatic.getBorrowCapsDataForAsset(cToken);
+      const borrowCaps =
+        await sdk.contracts.PoolLens.callStatic.getBorrowCapsDataForAsset(
+          cToken
+        );
 
       cTokenToBorrowCaps[cToken] = borrowCaps;
     })
@@ -26,7 +29,10 @@ export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: string[]) => {
   return cTokenToBorrowCaps;
 };
 
-export const useBorrowCapsDataForAsset = (cTokenAddress?: string, poolChainId?: number) => {
+export const useBorrowCapsDataForAsset = (
+  cTokenAddress?: string,
+  poolChainId?: number
+) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
@@ -38,7 +44,11 @@ export const useBorrowCapsDataForAsset = (cTokenAddress?: string, poolChainId?: 
 
           return borrowCaps[cTokenAddress];
         } catch (e) {
-          console.warn(`Getting borrow caps error: `, { cTokenAddress, poolChainId }, e);
+          console.warn(
+            `Getting borrow caps error: `,
+            { cTokenAddress, poolChainId },
+            e
+          );
 
           return null;
         }
@@ -52,7 +62,10 @@ export const useBorrowCapsDataForAsset = (cTokenAddress?: string, poolChainId?: 
   );
 };
 
-export const useBorrowCapsForAssets = (cTokens?: string[], poolChainId?: number) => {
+export const useBorrowCapsForAssets = (
+  cTokens?: string[],
+  poolChainId?: number
+) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
@@ -62,7 +75,11 @@ export const useBorrowCapsForAssets = (cTokens?: string[], poolChainId?: number)
         try {
           return await fetchBorrowCaps(sdk, cTokens);
         } catch (e) {
-          console.warn(`Getting borrow caps error: `, { cTokens, poolChainId }, e);
+          console.warn(
+            `Getting borrow caps error: `,
+            { cTokens, poolChainId },
+            e
+          );
 
           return null;
         }
