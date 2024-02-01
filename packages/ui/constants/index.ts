@@ -363,6 +363,10 @@ export const INFO_MESSAGES = {
   BORROW: {
     BORROWING: 'Borrowing funds'
   },
+  COLLATERAL: {
+    DISABLE: 'Disabling collateral',
+    ENABLE: 'Enabling collateral'
+  },
   REPAY: {
     APPROVE: 'Approve amount for spending',
     REPAYING: 'Repaying'

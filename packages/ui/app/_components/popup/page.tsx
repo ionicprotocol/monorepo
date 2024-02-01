@@ -50,7 +50,6 @@ const Popup = ({
   closePopup,
   comptrollerAddress
 }: IPopup) => {
-  const [enableCollateral, setEnableCollateral] = useState<boolean>(false);
   const [transactionSteps, upsertTransactionStep] = useReducer(
     (
       prevState: TransactionStep[],
@@ -219,6 +218,9 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  const [enableCollateral, setEnableCollateral] = useState<boolean>(
+    selectedMarketData.membership && selectedMarketData.supplyBalance.gt('0')
+  );
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
@@ -241,7 +243,7 @@ const Popup = ({
     return () => {
       clearTimeout(closeTimer);
     };
-  }, [isMounted]);
+  }, [isMounted, closePopup]);
 
   /**
    * Update utilization percentage when amount changes
@@ -834,6 +836,132 @@ const Popup = ({
     }
   };
 
+  const handleCollateralToggle = async () => {
+    if (!transactionSteps.length) {
+      if (currentSdk && selectedMarketData.supplyBalance.gt('0')) {
+        const currentTransactionStep = 0;
+
+        try {
+          let tx;
+
+          switch (enableCollateral) {
+            case true:
+              addStepsForAction([
+                {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
+                  success: false
+                }
+              ]);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
+                  success: false
+                }
+              });
+
+              const comptrollerContract = currentSdk.createComptroller(
+                comptrollerAddress,
+                currentSdk.signer
+              );
+
+              console.log('here');
+
+              tx = await comptrollerContract.exitMarket(
+                selectedMarketData.cToken
+              );
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  txHash: tx.hash
+                }
+              });
+
+              await tx.wait();
+
+              setEnableCollateral(false);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  success: true
+                }
+              });
+
+              break;
+
+            case false:
+              addStepsForAction([
+                {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
+                  success: false
+                }
+              ]);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  error: false,
+                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
+                  success: false
+                }
+              });
+
+              tx = await currentSdk.enterMarkets(
+                selectedMarketData.cToken,
+                comptrollerAddress
+              );
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  txHash: tx.hash
+                }
+              });
+
+              await tx.wait();
+
+              setEnableCollateral(true);
+
+              upsertTransactionStep({
+                index: currentTransactionStep,
+                transactionStep: {
+                  ...transactionSteps[currentTransactionStep],
+                  success: true
+                }
+              });
+
+              break;
+          }
+
+          refetchUsedQueries();
+
+          return;
+        } catch (error) {
+          console.error(error);
+
+          upsertTransactionStep({
+            index: currentTransactionStep,
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              error: true
+            }
+          });
+        }
+      }
+
+      setEnableCollateral(!enableCollateral);
+    }
+  };
+
   return (
     <div
       className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center transition-opacity duration-300 animate-fade-in ${
@@ -942,10 +1070,7 @@ const Popup = ({
                   <div className="ml-2">
                     <span
                       className={`toggle ${enableCollateral && 'is-on'}`}
-                      onClick={() =>
-                        !transactionSteps.length &&
-                        setEnableCollateral(!enableCollateral)
-                      }
+                      onClick={handleCollateralToggle}
                     />
                   </div>
                 </div>

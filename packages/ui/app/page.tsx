@@ -21,8 +21,6 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiMidas();
-  const searchParams = useSearchParams();
-  const popmode = searchParams.get('popmode');
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(

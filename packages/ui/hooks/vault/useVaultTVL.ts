@@ -59,6 +59,7 @@ export const useVaultTVL = () => {
         );
 
         const sortedChainVaultTVLs: CrossChainVaultTVL = new Map(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [...(chainVaultTVLs as any)].sort((a, b) => b[1].value - a[1].value)
         );
 
