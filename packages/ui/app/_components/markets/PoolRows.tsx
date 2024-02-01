@@ -5,6 +5,7 @@ import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import Link from 'next/link';
 
 import React, { Dispatch, SetStateAction } from 'react';
+import { PopupMode } from '../popup/page';
 
 interface IRows {
   asset: string;
@@ -16,6 +17,7 @@ interface IRows {
   borrowAPR: string;
   logo: string;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
+  setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
 }
 const PoolRows = ({
   asset,
@@ -26,7 +28,8 @@ const PoolRows = ({
   supplyAPR,
   borrowAPR,
   logo,
-  setSelectedSymbol
+  setSelectedSymbol,
+  setPopupMode
 }: IRows) => {
   const { address } = useMultiMidas();
 
@@ -51,21 +54,24 @@ const PoolRows = ({
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
         {address ? (
           <>
-            <Link
-              href={`/?popmode=SUPPLY`}
+            <button
               className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
-              onClick={() => setSelectedSymbol(asset)}
+              onClick={() => {
+                setSelectedSymbol(asset);
+                setPopupMode(PopupMode.SUPPLY);
+              }}
             >
               Supply / Withdraw
-            </Link>
-            <Link
-              // href={`/?popmode=BORROW`}
-              href={`/`}
+            </button>
+            <button
               className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3 uppercase opacity-30 pointer-events-none	`}
-              onClick={() => setSelectedSymbol(asset)}
+              // onClick={() => {
+              //   setSelectedSymbol(asset);
+              //   setPopupMode(PopupMode.BORROW);
+              // }}
             >
               Borrow / Repay
-            </Link>
+            </button>
           </>
         ) : (
           <div className="connect-button">

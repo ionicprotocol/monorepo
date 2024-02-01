@@ -14,22 +14,18 @@ const SliderComponent = ({
   };
 
   const getColor = () => {
-    if (currentUtilizationPercentage < 60) {
+    if (currentUtilizationPercentage <= 50) {
       return 'bg-accent';
-    } else if (currentUtilizationPercentage < 80) {
-      return 'bg-yellow-500';
-    } else {
-      return 'bg-red-500';
     }
+
+    return 'bg-lime';
   };
   const gettextColor = () => {
-    if (currentUtilizationPercentage < 60) {
+    if (currentUtilizationPercentage <= 50) {
       return 'text-accent';
-    } else if (currentUtilizationPercentage < 80) {
-      return 'text-yellow-500';
-    } else {
-      return 'text-red-500';
     }
+
+    return 'text-lime';
   };
 
   return (

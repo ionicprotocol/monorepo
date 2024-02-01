@@ -27,12 +27,21 @@ const Amount = ({
 }: IAmount) => {
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     const currentValue = e.target.value.trim();
-    const newAmount = currentValue === '' ? undefined : currentValue;
+    let newAmount = currentValue === '' ? undefined : currentValue;
     const numbersBeforeSeparator = new RegExp(/[0-9]\./gm).test(
       currentValue ?? ''
     )
       ? 1
       : 0;
+
+    if (
+      newAmount &&
+      newAmount.length > 1 &&
+      newAmount[0] === '0' &&
+      newAmount[1] !== '.'
+    ) {
+      newAmount = newAmount.slice(1, newAmount.length);
+    }
 
     if (
       newAmount &&
