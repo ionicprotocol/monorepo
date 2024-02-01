@@ -1,6 +1,6 @@
 'use client';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import React, { useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { useBalance } from 'wagmi';
 import ResultHandler from '../ResultHandler';
 import { BigNumber, Contract } from 'ethers';
@@ -76,6 +76,30 @@ export default function Swap({ close }: SwapProps) {
     () => parseEther(amount ?? '0'),
     [amount]
   );
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  /**
+   * Animation
+   */
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    let closeTimer: ReturnType<typeof setTimeout>;
+
+    if (!isMounted) {
+      closeTimer = setTimeout(() => {
+        close();
+      }, 301);
+    }
+
+    return () => {
+      clearTimeout(closeTimer);
+    };
+  }, [isMounted]);
+
+  const initiateCloseAnimation = () => setIsMounted(false);
   const handlInpData = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!ethBalance) {
       return;
@@ -191,16 +215,20 @@ export default function Swap({ close }: SwapProps) {
 
   return (
     <div
-      className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center`}
+      className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center transition-opacity duration-300 animate-fade-in ${
+        isMounted && 'animated'
+      }`}
     >
       <div
-        className={`w-[45%] max-w-[450px] relative p-6 bg-grayUnselect rounded-xl max-h-[65vh] overflow-x-hidden overflow-y-scroll scrollbar-hide`}
+        className={`w-[45%] max-w-[450px] relative p-6 bg-grayUnselect rounded-xl max-h-[65vh] overflow-x-hidden overflow-y-scroll scrollbar-hide transition-all duration-300 animate-pop-in ${
+          isMounted && 'animated'
+        }`}
       >
         <img
           src="/img/assets/close.png"
           alt="close"
           className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
-          onClick={() => close()}
+          onClick={initiateCloseAnimation}
         />
 
         <div className="text-center text-lg font-bold mb-2">Swap Tokens</div>
@@ -259,7 +287,7 @@ export default function Swap({ close }: SwapProps) {
                     resetTransactionSteps={() => {
                       upsertTransactionStep(undefined);
                       refetchUsedQueries();
-                      close();
+                      initiateCloseAnimation();
                     }}
                   />
                 </div>
