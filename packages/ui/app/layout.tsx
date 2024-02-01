@@ -108,7 +108,7 @@ export default function RootLayout({
                               className={`h-5 `}
                               height="20"
                               src="/img/logo/logo.png"
-                              width="20"
+                              width="80"
                             />
                           </Link>
                         </div>
