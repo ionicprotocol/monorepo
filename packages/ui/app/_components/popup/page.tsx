@@ -13,7 +13,7 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { BigNumber, constants, utils } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -219,48 +219,54 @@ const Popup = ({
    */
   useEffect(() => {
     switch (active) {
-      case 'COLLATERAL':
-        setCurrentUtilizationPercentage(
-          Math.round(
-            (amountAsBInt.toNumber() /
-              (maxSupplyAmount?.bigNumber.toNumber() ?? 1)) *
-              100
-          )
-        );
+      case 'COLLATERAL': {
+        const div =
+          Number(formatEther(amountAsBInt)) /
+          (maxSupplyAmount?.bigNumber
+            ? Number(formatEther(maxSupplyAmount?.bigNumber))
+            : 1);
+        setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
+      }
 
-      case 'WITHDRAW':
-        setCurrentUtilizationPercentage(
-          Math.round(
-            (amountAsBInt.toNumber() / (maxWithdrawAmount?.toNumber() ?? 1)) *
-              100
-          )
-        );
-
-        break;
-
-      case 'BORROW':
-        setCurrentUtilizationPercentage(
-          Math.round(
-            (amountAsBInt.toNumber() /
-              (maxBorrowAmount?.bigNumber.toNumber() ?? 1)) *
-              100
-          )
-        );
+      case 'WITHDRAW': {
+        const div =
+          Number(formatEther(amountAsBInt)) /
+          (maxWithdrawAmount ? Number(formatEther(maxWithdrawAmount)) : 1);
+        setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
+      }
 
-      case 'REPAY':
-        setCurrentUtilizationPercentage(
-          Math.round(
-            (amountAsBInt.toNumber() / (maxRepayAmount?.toNumber() ?? 1)) * 100
-          )
-        );
+      case 'BORROW': {
+        const div =
+          Number(formatEther(amountAsBInt)) /
+          (maxBorrowAmount?.bigNumber
+            ? Number(formatEther(maxBorrowAmount?.bigNumber))
+            : 1);
+        setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
+      }
+
+      case 'REPAY': {
+        const div =
+          Number(formatEther(amountAsBInt)) /
+          (maxRepayAmount ? Number(formatEther(maxRepayAmount)) : 1);
+        setCurrentUtilizationPercentage(Math.round(div * 100));
+
+        break;
+      }
     }
-  }, [amountAsBInt]);
+  }, [
+    amountAsBInt,
+    active,
+    maxBorrowAmount?.bigNumber,
+    maxRepayAmount,
+    maxSupplyAmount?.bigNumber,
+    maxWithdrawAmount
+  ]);
 
   useEffect(() => {
     if (mode === 'DEFAULT' || 'SUPPLY') {
