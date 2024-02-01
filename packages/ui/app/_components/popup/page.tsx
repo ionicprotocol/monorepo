@@ -28,6 +28,7 @@ import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -105,7 +106,7 @@ const Popup = ({
     }
 
     return '0.00%';
-  }, [assetsSupplyAprData]);
+  }, [assetsSupplyAprData, selectedMarketData.cToken]);
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
   const [amount, setAmount] = useReducer(
@@ -846,6 +847,21 @@ const Popup = ({
 
           switch (enableCollateral) {
             case true:
+              const comptrollerContract = currentSdk.createComptroller(
+                comptrollerAddress,
+                currentSdk.signer
+              );
+
+              const exitCode = await comptrollerContract.callStatic.exitMarket(
+                selectedMarketData.cToken
+              );
+
+              if (!exitCode.eq('0')) {
+                toast.error(errorCodeToMessage(exitCode.toNumber()));
+
+                return;
+              }
+
               addStepsForAction([
                 {
                   error: false,
@@ -862,11 +878,6 @@ const Popup = ({
                   success: false
                 }
               });
-
-              const comptrollerContract = currentSdk.createComptroller(
-                comptrollerAddress,
-                currentSdk.signer
-              );
 
               tx = await comptrollerContract.exitMarket(
                 selectedMarketData.cToken
