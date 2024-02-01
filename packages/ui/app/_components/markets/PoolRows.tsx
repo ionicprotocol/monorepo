@@ -65,10 +65,10 @@ const PoolRows = ({
             </button>
             <button
               className={`rounded-lg border text-white/50 border-white/50 py-1.5 px-3 uppercase opacity-30 pointer-events-none	`}
-              onClick={() => {
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.BORROW);
-              }}
+              // onClick={() => {
+              //   setSelectedSymbol(asset);
+              //   setPopupMode(PopupMode.BORROW);
+              // }}
             >
               Borrow / Repay
             </button>
