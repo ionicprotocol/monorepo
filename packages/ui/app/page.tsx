@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react';
 import PoolToggle from './_components/markets/PoolToggle';
 import PoolRows from './_components/markets/PoolRows';
-import Popup from './_components/popup/page';
+import Popup, { PopupMode } from './_components/popup/page';
 import { useSearchParams } from 'next/navigation';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useChainId } from 'wagmi';
@@ -25,6 +25,7 @@ export default function Market() {
   const { currentSdk } = useMultiMidas();
   const searchParams = useSearchParams();
   const popmode = searchParams.get('popmode');
+  const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     '0',
@@ -264,17 +265,19 @@ export default function Market() {
                     }%`}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     setSelectedSymbol={setSelectedSymbol}
+                    setPopupMode={setPopupMode}
                   />
                 ))}
             </>
           </ResultHandler>
         </div>
       </div>
-      {popmode && selectedMarketData && poolData && (
+      {popupMode && selectedMarketData && poolData && (
         <Popup
-          mode={popmode}
+          mode={popupMode}
           selectedMarketData={selectedMarketData}
           comptrollerAddress={poolData.comptroller}
+          closePopup={() => setPopupMode(undefined)}
         />
       )}
 

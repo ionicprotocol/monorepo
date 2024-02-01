@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
-import { INFO_MESSAGES } from '@ui/constants/index';
+import { COLLATERAL, INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
@@ -30,16 +30,25 @@ import TransactionStepsHandler, {
   TransactionStep
 } from './TransactionStepHandler';
 
+export enum PopupMode {
+  SUPPLY = 1,
+  COLLATERAL,
+  BORROW,
+  REPAY
+}
+
 interface IPopup {
-  mode?: string;
+  mode?: PopupMode;
   specific?: string | null;
   selectedMarketData: MarketData;
   comptrollerAddress: string;
+  closePopup: () => void;
 }
 const Popup = ({
-  mode = 'DEFAULT',
+  mode = PopupMode.SUPPLY,
   specific = null,
   selectedMarketData,
+  closePopup,
   comptrollerAddress
 }: IPopup) => {
   const [enableCollateral, setEnableCollateral] = useState<boolean>(false);
@@ -101,7 +110,6 @@ const Popup = ({
   }, [assetsSupplyAprData]);
   const [active, setActive] = useState<string>('');
   const slide = useRef<HTMLDivElement>(null!);
-  const router = useRouter();
   const [amount, setAmount] = useReducer(
     (_: string | undefined, value: string | undefined): string | undefined =>
       value,
@@ -269,7 +277,7 @@ const Popup = ({
   ]);
 
   useEffect(() => {
-    if (mode === 'DEFAULT' || 'SUPPLY') {
+    if (mode === PopupMode.SUPPLY) {
       if (specific) {
         setActive(specific);
         return;
@@ -277,7 +285,7 @@ const Popup = ({
       setActive('COLLATERAL');
     }
 
-    if (mode === 'BORROW') {
+    if (mode === PopupMode.BORROW) {
       if (specific) {
         setActive(specific);
         return;
@@ -313,21 +321,7 @@ const Popup = ({
         break;
     }
 
-    if (mode === 'DEFAULT') {
-      if (active === 'COLLATERAL') {
-        slide.current.style.transform = 'translateX(0%)';
-      }
-      if (active === 'WITHDRAW') {
-        slide.current.style.transform = 'translateX(-100%)';
-      }
-      if (active === 'BORROW') {
-        slide.current.style.transform = 'translateX(-200%)';
-      }
-      if (active === 'REPAY') {
-        slide.current.style.transform = 'translateX(-300%)';
-      }
-    }
-    if (mode === 'SUPPLY') {
+    if (mode === PopupMode.SUPPLY) {
       if (active === 'COLLATERAL') {
         slide.current.style.transform = 'translateX(0%)';
       }
@@ -335,7 +329,7 @@ const Popup = ({
         slide.current.style.transform = 'translateX(-100%)';
       }
     }
-    if (mode === 'BORROW') {
+    if (mode === PopupMode.BORROW) {
       if (active === 'BORROW') {
         slide.current.style.transform = 'translateX(0%)';
       }
@@ -398,7 +392,7 @@ const Popup = ({
   const resetTransactionSteps = () => {
     refetchUsedQueries();
     upsertTransactionStep(undefined);
-    router.back();
+    closePopup();
   };
 
   const refetchUsedQueries = async () => {
@@ -828,7 +822,7 @@ const Popup = ({
           src="/img/assets/close.png"
           alt="close"
           className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
-          onClick={() => router.back()}
+          onClick={closePopup}
         />
         <div className={`flex w-20 mx-auto mt-4 mb-2 relative text-center`}>
           <img
@@ -850,7 +844,7 @@ const Popup = ({
           ref={slide}
           className={`w-full transition-all duration-300 ease-linear h-min  flex`}
         >
-          {(mode === 'SUPPLY' || mode === 'DEFAULT') && (
+          {mode === PopupMode.SUPPLY && (
             <>
               {/* ---------------------------------------------------------------------------- */}
               {/* SUPPLY-Collateral section */}
@@ -1041,7 +1035,7 @@ const Popup = ({
               </div>
             </>
           )}
-          {(mode === 'BORROW' || mode === 'DEFAULT') && (
+          {mode === PopupMode.BORROW && (
             <>
               <div className={`min-w-full py-5 px-[6%] h-min`}>
                 {/* ---------------------------------------------------------------------------- */}

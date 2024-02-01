@@ -1,17 +1,16 @@
 import React from 'react';
+import { PopupMode } from './page';
 interface IMode {
-  mode: string;
+  mode: PopupMode;
   setActive: (val: string) => void;
   active: string;
 }
 const Tab = ({ mode, setActive, active }: IMode) => {
   return (
     <div
-      className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 grid ${
-        mode === 'DEFAULT' ? 'grid-cols-4' : 'grid-cols-2'
-      } text-center gap-x-1 text-xs items-center justify-center`}
+      className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 grid ${'grid-cols-2'} text-center gap-x-1 text-xs items-center justify-center`}
     >
-      {(mode === 'SUPPLY' || mode === 'DEFAULT') && (
+      {mode === PopupMode.SUPPLY && (
         <>
           <p
             onClick={() => setActive('COLLATERAL')}
@@ -35,7 +34,7 @@ const Tab = ({ mode, setActive, active }: IMode) => {
           </p>
         </>
       )}
-      {(mode === 'BORROW' || mode === 'DEFAULT') && (
+      {mode === PopupMode.BORROW && (
         <>
           <p
             onClick={() => setActive('BORROW')}
