@@ -141,9 +141,10 @@ export class IonicBase {
         this.provider
       ) as PoolLensSecondary,
       IonicLiquidator: new Contract(
-        // this.chainId == 34443
-        //   ? this.chainDeployment.IonicUniV3Liquidator.address :
-        this.chainDeployment.IonicLiquidator.address,
+        // remove this once IonicLiquidator is deployed
+        this.chainId == 34443
+          ? this.chainDeployment.IonicUniV3Liquidator.address
+          : this.chainDeployment.IonicLiquidator.address,
         IonicLiquidatorArtifact.abi,
         this.provider
       ) as ILiquidator,
