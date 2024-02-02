@@ -4,11 +4,11 @@
     "target": "es6",
     "skipLibCheck": true,
     "strict": true,
-    "resolveJsonModule":true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "outDir": "./dist"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/functions/asset-total-apy-bscmodets"],
   "exclude": ["node_modules"]
 }
