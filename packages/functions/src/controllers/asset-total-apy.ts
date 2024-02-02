@@ -20,24 +20,7 @@ import { getAPYProviders as getPluginAPYProviders } from '../providers/rewards/p
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
 
-export const ankrBNBContractAddress = '0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eBa';
 export const aprDays = 7;
-export const ankrBNBContractABI = [
-  {
-    inputs: [
-      { internalType: 'address', name: 'addr', type: 'address' },
-      { internalType: 'uint256', name: 'day', type: 'uint256' },
-    ],
-    name: 'averagePercentageRate',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-];
-
-export const getAnkrBNBContract = (sdk: IonicSdk) => {
-  return new Contract(ankrBNBContractAddress, ankrBNBContractABI, sdk.provider);
-};
 
 export interface TotalApy {
   cTokenAddress: string;
@@ -99,7 +82,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
             strategy: pluginData.strategy,
             rewards: await apyProvider.getApy(pluginAddress, pluginData),
           };
-        })
+        }),
       );
 
       _pluginRewards.map((reward) => {
@@ -132,7 +115,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
 
         totalAssets.push(...assets);
         allFlywheelRewards.push(...rewards);
-      })
+      }),
     );
 
     const apyProviders = await getAssetAPYProviders(chainId, {
@@ -146,7 +129,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           asset: assetAddress,
           rewards: await assetAPYProvider.getApy(assetAddress, {}),
         };
-      })
+      }),
     );
 
     await Promise.all(
@@ -156,7 +139,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           //get supplyAPY
           const supplyApy = sdk.ratePerBlockToAPY(
             asset.supplyRatePerBlock,
-            config.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber()
+            config.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber(),
           );
 
           totalSupplyApy += supplyApy;
@@ -167,23 +150,6 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
             totalSupplyApy,
             supplyApy,
           };
-
-          // hardcoded ankrBNBApr
-          let ankrBNBApr;
-
-          if (asset.underlyingSymbol === assetSymbols.ankrBNB) {
-            const contract = getAnkrBNBContract(sdk);
-            const apr = await contract.callStatic.averagePercentageRate(
-              asset.underlyingToken,
-              aprDays
-            );
-            ankrBNBApr = Number(utils.formatUnits(apr));
-          }
-
-          if (ankrBNBApr !== undefined) {
-            totalSupplyApy += ankrBNBApr;
-            result = { ...result, ankrBNBApr };
-          }
 
           //get asset rewards
           let compoundingApy = 0;
@@ -207,7 +173,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
 
           // get plugin rewards
           const flywheelRewards = allFlywheelRewards.find(
-            (fwRewardsInfo) => fwRewardsInfo.market === asset.cToken
+            (fwRewardsInfo) => fwRewardsInfo.market === asset.cToken,
           );
           const pluginRewards: Reward[] = [];
 
@@ -215,7 +181,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
 
           if (assetPlugin) {
             const data = allPluginRewards.find(
-              (rewards) => rewards.pluginAddress.toLowerCase() === assetPlugin.toLowerCase()
+              (rewards) => rewards.pluginAddress.toLowerCase() === assetPlugin.toLowerCase(),
             );
 
             if (data) {
@@ -228,7 +194,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           if (flywheelRewards) {
             const flywheelsInPluginResponse = pluginRewards
               .map((pluginReward) =>
-                'flywheel' in pluginReward ? pluginReward.flywheel.toLowerCase() : null
+                'flywheel' in pluginReward ? pluginReward.flywheel.toLowerCase() : null,
               )
               .filter((f) => !!f) as string[];
             for (const info of flywheelRewards.rewardsInfo) {
@@ -268,7 +234,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           if (!asset.borrowGuardianPaused || !asset.totalBorrow.isZero()) {
             borrowApy = sdk.ratePerBlockToAPY(
               asset.borrowRatePerBlock,
-              config.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber()
+              config.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber(),
             );
           }
 
@@ -281,10 +247,10 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           console.error(exception);
           await functionsAlert(
             `Functions.asset-total-apy: CToken '${asset.cToken}' / Chain '${chainId}'`,
-            JSON.stringify(exception)
+            JSON.stringify(exception),
           );
         }
-      })
+      }),
     );
 
     const rows = results
