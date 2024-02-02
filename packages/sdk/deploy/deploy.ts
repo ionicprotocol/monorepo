@@ -7,8 +7,7 @@ import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
   configureAddressesProviderAddresses,
   configureIonicLiquidator,
-  deployIonicLiquidator,
-  deployIonicUniV3Liquidator
+  deployIonicLiquidator
 } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
@@ -484,25 +483,24 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// Liquidator
-  let liquidatorContractName;
 
-  if (chainId !== 34443) {
-    liquidatorContractName = await deployIonicLiquidator({
-      run,
-      ethers,
-      getNamedAccounts,
-      deployments,
-      deployConfig: chainDeployParams
-    });
-  } else {
-    liquidatorContractName = await deployIonicUniV3Liquidator({
-      run,
-      ethers,
-      getNamedAccounts,
-      deployments,
-      deployConfig: chainDeployParams
-    });
-  }
+  // if (chainId !== 34443) {
+  const liquidatorContractName = await deployIonicLiquidator({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig: chainDeployParams
+  });
+  // } else {
+  //   liquidatorContractName = await deployIonicUniV3Liquidator({
+  //     run,
+  //     ethers,
+  //     getNamedAccounts,
+  //     deployments,
+  //     deployConfig: chainDeployParams
+  //   });
+  // }
 
   ///
 

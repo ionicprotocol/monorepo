@@ -33,13 +33,13 @@
       "address": "0x6352b5231de62be60c7ADB8250b08CA9CCF7a9A5"
     },
     "CTokenFirstExtension": {
-      "address": "0x8C58ECb9C0050824177f4e1Cd71C335421d4aeA2"
+      "address": "0x36a84B42fa436DBcB3854e2E46ba26546C651530"
     },
     "Comptroller": {
       "address": "0x8b2B6a9dC8Cd73309Cef8d64920831d4C73F43a7"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xE1A3006be645a80F206311d9f18C866c204bA02f"
+      "address": "0xCa41Aa7472C8f85C84a8Cb03deaF064ab6498Dd7"
     },
     "DefaultProxyAdmin": {
       "address": "0x985a323A1CccA8Cd5fb8935590EE33FbcFE849d0"
@@ -66,7 +66,7 @@
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
     },
     "IonicUniV3Liquidator_Implementation": {
-      "address": "0xB48221b8a1137895e384aBcaFF8120d053Be43F5"
+      "address": "0x462fAa7042542C5CF28BC73D8F8C029267EF3E51"
     },
     "IonicUniV3Liquidator_Proxy": {
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
@@ -96,7 +96,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xdd7F712Af76074993F05C0d544331792997Bd39b"
+      "address": "0xB08FAfc6E8280ce351CF22d2Db8ABd241E8A5E47"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x45A4a3eBb986083597Ac3B34ee2d7dcC3Be8c5C1"
