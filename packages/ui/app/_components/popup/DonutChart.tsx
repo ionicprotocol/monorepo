@@ -3,18 +3,18 @@ import React, { memo, useMemo } from 'react';
 
 export type DonutChartProps = {
   max: number;
-  value: number;
   radius?: number;
+  value: number;
 };
 
-export function DonutChart({ max, value, radius = 16 }: DonutChartProps) {
+export function DonutChart({ max, radius = 16, value }: DonutChartProps) {
   const circleCircumference = useMemo<number>(
     () => 2 * Math.PI * radius,
     [radius]
   );
   const valueAsStrokeDasharray = useMemo<number>(
     () => (value / max) * circleCircumference,
-    [max, value]
+    [circleCircumference, max, value]
   );
   const valueAsPercentage = useMemo<string>(
     () => `${((value / max) * 100).toFixed(2)}%`,

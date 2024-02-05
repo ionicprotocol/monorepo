@@ -3,13 +3,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import {
-  commify,
-  formatEther,
-  formatUnits,
-  parseEther,
-  parseUnits
-} from 'ethers/lib/utils.js';
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
@@ -29,6 +24,7 @@ import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
@@ -38,8 +34,6 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import millify from 'millify';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -118,7 +112,7 @@ const Popup = ({
           selectedMarketData.underlyingDecimals
         )
       ),
-    [supplyCap]
+    [supplyCap, selectedMarketData.underlyingDecimals]
   );
   const supplyCapAsFiat = useMemo<number>(
     () => pricePerSingleAsset * supplyCapAsNumber,
@@ -132,7 +126,7 @@ const Popup = ({
           selectedMarketData.underlyingDecimals
         )
       ),
-    [selectedMarketData]
+    [selectedMarketData.totalSupply, selectedMarketData.underlyingDecimals]
   );
   const { data: borrowCap } = useBorrowCapsDataForAsset(
     selectedMarketData.cToken,
@@ -146,7 +140,7 @@ const Popup = ({
           selectedMarketData.underlyingDecimals
         )
       ),
-    [borrowCap]
+    [borrowCap, selectedMarketData.underlyingDecimals]
   );
   const borrowCapAsFiat = useMemo<number>(
     () => pricePerSingleAsset * borrowCapAsNumber,
@@ -160,7 +154,7 @@ const Popup = ({
           selectedMarketData.underlyingDecimals
         )
       ),
-    [selectedMarketData]
+    [selectedMarketData.totalBorrow, selectedMarketData.underlyingDecimals]
   );
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,
