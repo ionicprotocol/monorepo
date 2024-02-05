@@ -2184,6 +2184,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.0.0"
     ethers: "npm:^5.7.2"
     mathjs: "npm:^12.3.0"
+    millify: "npm:^6.1.0"
     next: "npm:14.0.4"
     next-nprogress-bar: "npm:^2.1.2"
     nextjs-progressbar: "npm:^0.0.16"
@@ -16961,6 +16962,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"millify@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "millify@npm:6.1.0"
+  dependencies:
+    yargs: "npm:^17.0.1"
+  bin:
+    millify: bin/millify
+  checksum: 10/50c43824bbe5cf4cccdfd3520c70d352a4e3beeced7b2134f4a4ef6f60b789b14eb63dd5de8dc5bbee14e4cfc6e423283732af4d698f32f952762a58ad1135f2
+  languageName: node
+  linkType: hard
+
 "mime-db@npm:1.52.0, mime-db@npm:^1.28.0":
   version: 1.52.0
   resolution: "mime-db@npm:1.52.0"
@@ -24158,7 +24170,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.0.0, yargs@npm:^17.6.0, yargs@npm:^17.7.2":
+"yargs@npm:^17.0.0, yargs@npm:^17.0.1, yargs@npm:^17.6.0, yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:

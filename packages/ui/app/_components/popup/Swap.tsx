@@ -247,12 +247,12 @@ export default function Swap({ close }: SwapProps) {
 
   return (
     <div
-      className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center transition-opacity duration-300 animate-fade-in ${
+      className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/25 flex overflow-y-scroll transition-opacity duration-300 animate-fade-in ${
         isMounted && 'animated'
       }`}
     >
       <div
-        className={`w-[45%] max-w-[450px] relative p-6 bg-grayUnselect rounded-xl max-h-[65vh] overflow-x-hidden overflow-y-scroll scrollbar-hide transition-all duration-300 animate-pop-in ${
+        className={`w-[85%] sm:w-[45%] max-w-[450px] m-auto relative p-6 bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
           isMounted && 'animated'
         }`}
       >
