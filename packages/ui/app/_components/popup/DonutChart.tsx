@@ -1,7 +1,26 @@
 'use client';
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 
-export default function DonutChart() {
+export type DonutChartProps = {
+  max: number;
+  value: number;
+  radius?: number;
+};
+
+export function DonutChart({ max, value, radius = 16 }: DonutChartProps) {
+  const circleCircumference = useMemo<number>(
+    () => 2 * Math.PI * radius,
+    [radius]
+  );
+  const valueAsStrokeDasharray = useMemo<number>(
+    () => (value / max) * circleCircumference,
+    [max, value]
+  );
+  const valueAsPercentage = useMemo<string>(
+    () => `${((value / max) * 100).toFixed(2)}%`,
+    [max, value]
+  );
+
   return (
     <svg
       className="donut"
@@ -14,42 +33,45 @@ export default function DonutChart() {
         cx="20"
         cy="20"
         fill="transparent"
-        r="16"
+        r={radius}
       />
       <circle
         className="donut-ring"
         cx="20"
         cy="20"
         fill="transparent"
-        r="16"
+        r={radius}
         stroke="rgb(255 255 255 / 0.3)"
-        stroke-width="2"
+        strokeWidth="2"
       />
       <circle
         className="donut-segment donut-segment-2"
         cx="20"
         cy="20"
         fill="transparent"
-        r="16"
+        r={radius}
         stroke="#3bff89ff"
-        stroke-dasharray="69 31"
-        stroke-dashoffset="25"
-        stroke-width="4"
+        strokeDasharray={`${valueAsStrokeDasharray} ${
+          circleCircumference - valueAsStrokeDasharray
+        }`}
+        strokeDashoffset="25"
+        strokeLinecap="round"
+        strokeWidth="4"
       />
-      <g className="donut-text donut-text-1">
-        <text
-          transform="translate(0, 2)"
-          y="50%"
-        >
-          <tspan
-            className="donut-percent"
-            text-anchor="middle"
-            x="50%"
-          >
-            69%
-          </tspan>
-        </text>
-      </g>
+      <text
+        dominantBaseline="middle"
+        fill="#fff"
+        fontSize="7px"
+        textAnchor="middle"
+        x="50%"
+        y="50%"
+      >
+        {valueAsPercentage}
+      </text>
     </svg>
   );
 }
+
+const MemoizedDonutChart = memo(DonutChart);
+
+export default MemoizedDonutChart;

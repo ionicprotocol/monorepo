@@ -3,7 +3,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
-import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import {
+  commify,
+  formatEther,
+  formatUnits,
+  parseEther,
+  parseUnits
+} from 'ethers/lib/utils.js';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
@@ -12,6 +18,7 @@ import { useChainId } from 'wagmi';
 import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
+import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
 import Tab from './Tab';
 import type { TransactionStep } from './TransactionStepHandler';
@@ -19,6 +26,8 @@ import TransactionStepsHandler from './TransactionStepHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
@@ -29,6 +38,8 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import millify from 'millify';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -87,6 +98,70 @@ const Popup = ({
   );
   const { currentSdk, address } = useMultiMidas();
   const chainId = useChainId();
+  const { data: usdPrice } = useUsdPrice(chainId.toString());
+  const pricePerSingleAsset = useMemo<number>(
+    () =>
+      parseFloat(formatEther(selectedMarketData.underlyingPrice)) *
+      (usdPrice ?? 0),
+    [selectedMarketData, usdPrice]
+  );
+  const { data: supplyCap } = useSupplyCapsDataForAsset(
+    comptrollerAddress,
+    selectedMarketData.cToken,
+    chainId
+  );
+  const supplyCapAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          supplyCap?.supplyCaps ?? '0',
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [supplyCap]
+  );
+  const supplyCapAsFiat = useMemo<number>(
+    () => pricePerSingleAsset * supplyCapAsNumber,
+    [pricePerSingleAsset, supplyCapAsNumber]
+  );
+  const totalSupplyAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          selectedMarketData.totalSupply,
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [selectedMarketData]
+  );
+  const { data: borrowCap } = useBorrowCapsDataForAsset(
+    selectedMarketData.cToken,
+    chainId
+  );
+  const borrowCapAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          borrowCap?.totalBorrowCap ?? '0',
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [borrowCap]
+  );
+  const borrowCapAsFiat = useMemo<number>(
+    () => pricePerSingleAsset * borrowCapAsNumber,
+    [pricePerSingleAsset, borrowCapAsNumber]
+  );
+  const totalBorrowAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          selectedMarketData.totalBorrow,
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [selectedMarketData]
+  );
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,
     chainId
@@ -1076,6 +1151,42 @@ const Popup = ({
                   </span>
                 </div>
                 <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
+
+                <div className="flex justify-center items-center">
+                  <ResultHandler
+                    height="80"
+                    isLoading={!totalSupplyAsNumber && !supplyCapAsNumber}
+                    width="80"
+                  >
+                    <div className="w-[80px] mr-4">
+                      <MemoizedDonutChart
+                        max={supplyCapAsNumber}
+                        value={totalSupplyAsNumber}
+                      />
+                    </div>
+
+                    <div className="text">
+                      <div className="text-gray-400">Total Supplied:</div>
+
+                      <div className="text-white">
+                        <strong>
+                          {millify(Math.round(totalSupplyAsNumber))} of{' '}
+                          {millify(Math.round(supplyCapAsNumber))}
+                        </strong>
+                      </div>
+
+                      <div className="text-small text-gray-300">
+                        $
+                        {millify(
+                          Math.round(selectedMarketData.totalSupplyFiat)
+                        )}{' '}
+                        of ${millify(Math.round(supplyCapAsFiat))}
+                      </div>
+                    </div>
+                  </ResultHandler>
+                </div>
+
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div className="flex items-center text-sm text-white/50 uppercase">
                   Enable collateral
                   <div className="ml-2">
@@ -1268,6 +1379,42 @@ const Popup = ({
                     </ResultHandler>
                   </span>
                 </div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
+
+                <div className="flex justify-center items-center">
+                  <ResultHandler
+                    height="80"
+                    isLoading={!totalBorrowAsNumber && !borrowCapAsNumber}
+                    width="80"
+                  >
+                    <div className="w-[80px] mr-4">
+                      <MemoizedDonutChart
+                        max={borrowCapAsNumber}
+                        value={totalBorrowAsNumber}
+                      />
+                    </div>
+
+                    <div className="text">
+                      <div className="text-gray-400">Total Borrowed:</div>
+
+                      <div className="text-white">
+                        <strong>
+                          {millify(Math.round(totalBorrowAsNumber))} of{' '}
+                          {millify(Math.round(borrowCapAsNumber))}
+                        </strong>
+                      </div>
+
+                      <div className="text-small text-gray-300">
+                        $
+                        {millify(
+                          Math.round(selectedMarketData.totalBorrowFiat)
+                        )}{' '}
+                        of ${millify(Math.round(borrowCapAsFiat))}
+                      </div>
+                    </div>
+                  </ResultHandler>
+                </div>
+
                 <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
