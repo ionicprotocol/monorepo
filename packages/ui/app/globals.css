@@ -80,6 +80,16 @@
   @apply font-bold rounded-md px-3 py-1 text-center transition-colors bg-accent text-darkone;
 }
 
+.popover-container {
+  @apply relative;
+}
+.popover-container .popover {
+  transform-origin: 50% 0;
+}
+.popover-container:hover .popover {
+  @apply opacity-100 visible;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
