@@ -435,6 +435,17 @@ const Popup = ({
   const initiateCloseAnimation = () => setIsMounted(false);
 
   const handleSupplyUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxSupplyAmount?.bigNumber ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       ((utilizationPercentage / 100) * (maxSupplyAmount?.number ?? 0)).toFixed(
         parseInt(selectedMarketData.underlyingDecimals.toString())
@@ -443,6 +454,17 @@ const Popup = ({
   };
 
   const handleWithdrawUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxWithdrawAmount ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       (
         (utilizationPercentage / 100) *
@@ -457,6 +479,17 @@ const Popup = ({
   };
 
   const handleBorrowUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxBorrowAmount?.bigNumber ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       ((utilizationPercentage / 100) * (maxBorrowAmount?.number ?? 0)).toFixed(
         parseInt(selectedMarketData.underlyingDecimals.toString())
@@ -465,6 +498,17 @@ const Popup = ({
   };
 
   const handleRepayUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxRepayAmount ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       (
         (utilizationPercentage / 100) *
