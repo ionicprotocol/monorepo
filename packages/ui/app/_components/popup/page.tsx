@@ -1165,7 +1165,8 @@ const Popup = ({
                       <div className="text-white">
                         <strong>
                           {millify(Math.round(totalSupplyAsNumber))} of{' '}
-                          {millify(Math.round(supplyCapAsNumber))}
+                          {millify(Math.round(supplyCapAsNumber))}{' '}
+                          {selectedMarketData.underlyingSymbol}
                         </strong>
                       </div>
 
@@ -1394,7 +1395,8 @@ const Popup = ({
                       <div className="text-white">
                         <strong>
                           {millify(Math.round(totalBorrowAsNumber))} of{' '}
-                          {millify(Math.round(borrowCapAsNumber))}
+                          {millify(Math.round(borrowCapAsNumber))}{' '}
+                          {selectedMarketData.underlyingSymbol}
                         </strong>
                       </div>
 
