@@ -510,6 +510,7 @@ const Popup = ({
   };
 
   const supplyAmount = async () => {
+    console.log(amountAsBInt.lte(maxSupplyAmount.bigNumber));
     if (
       !transactionSteps.length &&
       currentSdk &&
