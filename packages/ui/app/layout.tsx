@@ -89,17 +89,17 @@ export default function RootLayout({
                   shallowRouting
                 />
 
-                <div className="relative px-4 pt-[128px] pb-[280px] min-h-screen">
+                <div className="relative px-4 pt-[128px] pb-4 sm:pb-[280px] min-h-screen">
                   <Navbar />
                   <main>{children}</main>
                   <footer
-                    className={`absolute bottom-4 right-4 left-4 bg-grayone px-[3%] mt-3 rounded-xl py-10`}
+                    className={`sm:absolute bottom-4 right-4 left-4 bg-grayone px-[3%] mt-3 rounded-xl py-4 sm:py-10`}
                   >
-                    <div className="flex">
-                      <div className="flex-initial mr-20">
-                        <div className="mb-20">
+                    <div className="text-center sm:text-left sm:flex">
+                      <div className="flex-initial sm:mr-20">
+                        <div className="mb-4 sm:mb-20">
                           <Link
-                            className={`flex items-center  pr-10`}
+                            className={`flex justify-center sm:justify-start items-center sm:pr-10`}
                             href={'https://ionic.money'}
                             target="_blank"
                           >
@@ -113,7 +113,7 @@ export default function RootLayout({
                           </Link>
                         </div>
 
-                        <div className="flex">
+                        <div className="flex justify-center sm:justify-start mb-4 sm:mb-0">
                           <Link
                             className={`flex items-center  pr-5`}
                             href={'https://ionic.money'}
@@ -157,7 +157,7 @@ export default function RootLayout({
                           </Link>
 
                           <Link
-                            className={`flex items-center  pr-5`}
+                            className={`flex items-center `}
                             href={'https://discord.gg/FmgedqR9wn'}
                             target="_blank"
                           >
@@ -172,7 +172,7 @@ export default function RootLayout({
                         </div>
                       </div>
 
-                      <div className="flex-initial mr-20">
+                      <div className="flex-initial sm:mr-20">
                         <h4 className="text-lg text-bold mb-2">Resources</h4>
 
                         <ul className="text-sm">
@@ -203,7 +203,7 @@ export default function RootLayout({
                         </ul>
                       </div>
 
-                      <div className="flex-initial mr-20">
+                      <div className="flex-initial mt-4 sm:mt-0 sm:mr-20">
                         <h4 className="text-lg text-bold mb-2">Tools</h4>
 
                         <ul className="text-sm">
