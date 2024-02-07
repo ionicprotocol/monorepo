@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
 import { constants, utils } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
@@ -12,6 +13,7 @@ import { useChainId } from 'wagmi';
 import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
+import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
 import Tab from './Tab';
 import type { TransactionStep } from './TransactionStepHandler';
@@ -19,7 +21,10 @@ import TransactionStepsHandler from './TransactionStepHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
@@ -87,6 +92,70 @@ const Popup = ({
   );
   const { currentSdk, address } = useMultiMidas();
   const chainId = useChainId();
+  const { data: usdPrice } = useUsdPrice(chainId.toString());
+  const pricePerSingleAsset = useMemo<number>(
+    () =>
+      parseFloat(formatEther(selectedMarketData.underlyingPrice)) *
+      (usdPrice ?? 0),
+    [selectedMarketData, usdPrice]
+  );
+  const { data: supplyCap } = useSupplyCapsDataForAsset(
+    comptrollerAddress,
+    selectedMarketData.cToken,
+    chainId
+  );
+  const supplyCapAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          supplyCap?.supplyCaps ?? '0',
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [supplyCap, selectedMarketData.underlyingDecimals]
+  );
+  const supplyCapAsFiat = useMemo<number>(
+    () => pricePerSingleAsset * supplyCapAsNumber,
+    [pricePerSingleAsset, supplyCapAsNumber]
+  );
+  const totalSupplyAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          selectedMarketData.totalSupply,
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [selectedMarketData.totalSupply, selectedMarketData.underlyingDecimals]
+  );
+  const { data: borrowCap } = useBorrowCapsDataForAsset(
+    selectedMarketData.cToken,
+    chainId
+  );
+  const borrowCapAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          borrowCap?.totalBorrowCap ?? '0',
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [borrowCap, selectedMarketData.underlyingDecimals]
+  );
+  const borrowCapAsFiat = useMemo<number>(
+    () => pricePerSingleAsset * borrowCapAsNumber,
+    [pricePerSingleAsset, borrowCapAsNumber]
+  );
+  const totalBorrowAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          selectedMarketData.totalBorrow,
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [selectedMarketData.totalBorrow, selectedMarketData.underlyingDecimals]
+  );
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,
     chainId
@@ -366,6 +435,17 @@ const Popup = ({
   const initiateCloseAnimation = () => setIsMounted(false);
 
   const handleSupplyUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxSupplyAmount?.bigNumber ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       ((utilizationPercentage / 100) * (maxSupplyAmount?.number ?? 0)).toFixed(
         parseInt(selectedMarketData.underlyingDecimals.toString())
@@ -374,6 +454,17 @@ const Popup = ({
   };
 
   const handleWithdrawUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxWithdrawAmount ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       (
         (utilizationPercentage / 100) *
@@ -388,6 +479,17 @@ const Popup = ({
   };
 
   const handleBorrowUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxBorrowAmount?.bigNumber ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       ((utilizationPercentage / 100) * (maxBorrowAmount?.number ?? 0)).toFixed(
         parseInt(selectedMarketData.underlyingDecimals.toString())
@@ -396,6 +498,17 @@ const Popup = ({
   };
 
   const handleRepayUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxRepayAmount ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
     setAmount(
       (
         (utilizationPercentage / 100) *
@@ -975,12 +1088,12 @@ const Popup = ({
 
   return (
     <div
-      className={` z-40 fixed top-0 right-0 w-full min-h-screen  bg-black/25 flex items-center justify-center transition-opacity duration-300 animate-fade-in ${
+      className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/25 flex transition-opacity duration-300 overflow-y-auto animate-fade-in ${
         isMounted && 'animated'
       }`}
     >
       <div
-        className={`w-[45%] relative  bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
+        className={`w-[85%] sm:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
           isMounted && 'animated'
         }`}
       >
@@ -1075,6 +1188,43 @@ const Popup = ({
                     </ResultHandler>
                   </span>
                 </div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
+
+                <div className="flex justify-center items-center">
+                  <ResultHandler
+                    height="80"
+                    isLoading={!totalSupplyAsNumber && !supplyCapAsNumber}
+                    width="80"
+                  >
+                    <div className="w-[80px] mr-4">
+                      <MemoizedDonutChart
+                        max={supplyCapAsNumber}
+                        value={totalSupplyAsNumber}
+                      />
+                    </div>
+
+                    <div className="text">
+                      <div className="text-gray-400">Total Supplied:</div>
+
+                      <div className="text-white">
+                        <strong>
+                          {millify(Math.round(totalSupplyAsNumber))} of{' '}
+                          {millify(Math.round(supplyCapAsNumber))}{' '}
+                          {selectedMarketData.underlyingSymbol}
+                        </strong>
+                      </div>
+
+                      <div className="text-small text-gray-300">
+                        $
+                        {millify(
+                          Math.round(selectedMarketData.totalSupplyFiat)
+                        )}{' '}
+                        of ${millify(Math.round(supplyCapAsFiat))}
+                      </div>
+                    </div>
+                  </ResultHandler>
+                </div>
+
                 <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div className="flex items-center text-sm text-white/50 uppercase">
                   Enable collateral
@@ -1268,6 +1418,43 @@ const Popup = ({
                     </ResultHandler>
                   </span>
                 </div>
+                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
+
+                <div className="flex justify-center items-center">
+                  <ResultHandler
+                    height="80"
+                    isLoading={!totalBorrowAsNumber && !borrowCapAsNumber}
+                    width="80"
+                  >
+                    <div className="w-[80px] mr-4">
+                      <MemoizedDonutChart
+                        max={borrowCapAsNumber}
+                        value={totalBorrowAsNumber}
+                      />
+                    </div>
+
+                    <div className="text">
+                      <div className="text-gray-400">Total Borrowed:</div>
+
+                      <div className="text-white">
+                        <strong>
+                          {millify(Math.round(totalBorrowAsNumber))} of{' '}
+                          {millify(Math.round(borrowCapAsNumber))}{' '}
+                          {selectedMarketData.underlyingSymbol}
+                        </strong>
+                      </div>
+
+                      <div className="text-small text-gray-300">
+                        $
+                        {millify(
+                          Math.round(selectedMarketData.totalBorrowFiat)
+                        )}{' '}
+                        of ${millify(Math.round(borrowCapAsFiat))}
+                      </div>
+                    </div>
+                  </ResultHandler>
+                </div>
+
                 <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}

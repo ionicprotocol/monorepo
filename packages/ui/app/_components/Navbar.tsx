@@ -15,55 +15,36 @@ export default function Navbar() {
 
   // },[pathname])
   return (
-    <nav className="fixed z-50 flex items-center justify-between w-full py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 bg-transparent backdrop-blur-sm font-inter top-0 left-1/2 rounded-xl">
+    <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black">
       <div className="absolute w-full top-full left-0 bg-lime text-center p-2 text-darkone text-sm">
         Hello, Mode! Ionic is open for deposits! Supply ETH, USDC, or USDT to
         earn Ionic points. Borrowing will be open soon...
       </div>
       <Link
-        className={`flex items-center  pr-10  `}
+        className={`flex items-center  md:pr-10  `}
         href={'/'}
       >
         <img
           alt="logo"
-          className={`h-5 `}
+          className={`w-[80px] min-w-[80px]`}
+          height="20"
           src="/img/logo/logo.png"
+          width="80"
         />
       </Link>
 
       <div
-        className={` flex items-end  justify-end md:justify-between md:w-full flex-col md:flex-row `}
+        className={`
+          md:flex items-end  justify-end md:justify-between md:w-full flex-col md:flex-row 
+        `}
       >
         <div
-          className="flex items-center justify-center p-1 px-6 transition-all duration-300 ease-linear rounded-full cursor-pointer md:hidden"
-          onClick={() => setIsActive((prev: boolean) => !prev)}
-        >
-          {!isActive ? (
-            <img
-              alt="menu"
-              className={` duration-100 transition-all ease-linear`}
-              src="/img/menu.png"
-              width={'38'}
-            />
-          ) : (
-            <img
-              alt="menu"
-              className={` duration-100 transition-all ease-linear rotate-45`}
-              src="/img/plus.png"
-              width={'38'}
-            />
-          )}
-        </div>
-
-        <div
-          className={`  ${
-            isActive
-              ? 'flex flex-col  md:flex-row my-auto gap-2 items-center justify-center '
-              : ' hidden md:flex md:items-center md:justify-center my-auto   gap-1  text-sm'
+          className={`absolute md:static top-full left-0 py-4 md:py-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-center my-auto   gap-1  text-sm bg-black md:bg-transparent transition-transform nav ${
+            isActive && 'nav-opened'
           }`}
         >
           <Link
-            className="pointer-events-none relative"
+            className="pointer-events-none relative mb-2 md:mb-0"
             href={'/'}
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
@@ -78,7 +59,7 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
-            className="pointer-events-none relative"
+            className="pointer-events-none relative mb-2 md:mb-0"
             href={'/'}
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
@@ -133,13 +114,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div
-          className={`  ${
-            isActive
-              ? 'flex flex-col  my-2 mx-auto uppercase connect-button'
-              : ' hidden md:flex md:items-center md:justify-center gap-4 my-auto uppercase connect-button'
-          }`}
-        >
+        <div className="flex items-center md:justify-center gap-4 my-auto uppercase connect-button">
           <ConnectButton />
           {/* <div>
             <img
@@ -148,6 +123,11 @@ export default function Navbar() {
               className={`w-5 `}
             />
           </div> */}
+
+          <div
+            className={`nav-btn md:hidden ${isActive && 'nav-opened'}`}
+            onClick={() => setIsActive(!isActive)}
+          />
         </div>
       </div>
     </nav>

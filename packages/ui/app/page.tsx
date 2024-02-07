@@ -58,7 +58,7 @@ export default function Market() {
             <h1 className={`font-semibold`}>Mode Market</h1>
           </div>
           <ResultHandler isLoading={isLoadingPoolData}>
-            <div className={`w-full flex items-center gap-4`}>
+            <div className={`w-full flex flex-wrap items-center gap-4`}>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
@@ -163,7 +163,7 @@ export default function Market() {
           {/* </div> */}
           {/* <PoolToggle /> */}
           <div
-            className={`w-full gap-x-1 grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
+            className={`w-full gap-x-1 hidden lg:grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
             <h3 className={` col-span-2  `}>ASSETS</h3>
             <h3 className={` col-span-2`}>SUPPLY BALANCE</h3>

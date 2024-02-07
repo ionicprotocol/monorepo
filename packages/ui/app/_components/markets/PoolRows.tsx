@@ -38,7 +38,7 @@ const PoolRows = ({
 
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
         membership && 'border border-lime'
       }`}
     >
@@ -48,7 +48,9 @@ const PoolRows = ({
         </span>
       )}
 
-      <div className={`col-span-2  flex gap-2 items-center justify-center  `}>
+      <div
+        className={`col-span-2 flex justify-center items-center mb-2 lg:mb-0  flex gap-2 items-center justify-center  `}
+      >
         <img
           alt={asset}
           className="h-7"
@@ -56,20 +58,68 @@ const PoolRows = ({
         />
         <h3 className={` `}>{asset}</h3>
       </div>
-      <h3 className={` col-span-2`}>{supplyBalance}</h3>
-      <h3 className={` col-span-2`}>{totalSupplied}</h3>
-      <h3 className={` col-span-2`}>{borrowBalance}</h3>
-      <h3 className={` col-span-2`}>{totalBorrowing}</h3>
-      <h3 className={` col-span-2`}>
-        <div className="flex flex-col items-center">
-          {supplyAPR}{' '}
-          <span className="text-darkone bg-lime rounded-lg w-20">+ POINTS</span>
+      <h3
+        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+      >
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          SUPPLY BALANCE:
+        </span>
+        {supplyBalance}
+      </h3>
+      <h3
+        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+      >
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          TOTAL SUPPLIED:
+        </span>
+        {totalSupplied}
+      </h3>
+      <h3
+        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+      >
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          BORROW BALANCE:
+        </span>
+        {borrowBalance}
+      </h3>
+      <h3
+        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+      >
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          TOTAL BORROWING:
+        </span>
+        {totalBorrowing}
+      </h3>
+      <h3
+        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+      >
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          SUPPLY APR:
+        </span>
+        <div className="popover-container relative flex lg:flex-col items-center">
+          {supplyAPR}
+          <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
+            + POINTS
+          </span>
+          <div className="popover absolute top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+            Supply to earn Ionic points
+          </div>
         </div>
       </h3>
-      <h3 className={` col-span-2`}>
-        <div className="flex flex-col items-center">
-          {borrowAPR}{' '}
-          <span className="text-darkone bg-lime rounded-lg w-20">+ POINTS</span>
+      <h3
+        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+      >
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          BORROW APR:
+        </span>
+        <div className="popover-container flex lg:flex-col items-center">
+          {borrowAPR}
+          <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
+            + POINTS
+          </span>
+          <div className="popover absolute top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+            Borrow to earn Ionic points
+          </div>
         </div>
       </h3>
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
@@ -102,7 +152,7 @@ const PoolRows = ({
       </div>
       {/* <Link
         href={`/market/details/${asset}`}
-        className={` w-[50%] mx-auto col-span-2 rounded-lg border text-white border-white py-1.5 `}
+        className={` w-[50%] mx-auto col-span-2 flex lg:block justify-center items-center rounded-lg border text-white border-white py-1.5 `}
       >
         Details
       </Link> */}
