@@ -33,9 +33,12 @@ export const deployIonicLiquidator = async ({
 
     const ionicLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
 
-    const tx = await ionicLiquidator.initialize(...initializeArgs);
-    await tx.wait();
-    console.log(`initialized the non-upgradeable Ionic Liquidator ${tx.hash}`);
+    const currentWToken = await ionicLiquidator.callStatic.W_NATIVE_ADDRESS();
+    if (currentWToken  === ethers.constants.AddressZero) {
+      const tx = await ionicLiquidator.initialize(...initializeArgs);
+      await tx.wait();
+      console.log(`initialized the non-upgradeable Ionic Liquidator ${tx.hash}`);
+    }
   } else {
     fsl = await deployments.deploy("IonicLiquidator", {
       from: deployer,
