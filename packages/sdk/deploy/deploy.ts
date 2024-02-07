@@ -38,7 +38,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     lastBaseFeePerGas: feeData.lastBaseFeePerGas?.toString(),
     maxFeePerGas: feeData.maxFeePerGas?.toString(),
     maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString(),
-    gasPrice: feeData.gasPrice?.toString(),
+    gasPrice: feeData.gasPrice?.toString()
   });
 
   if (!chainDeployConfig[chainId]) {
