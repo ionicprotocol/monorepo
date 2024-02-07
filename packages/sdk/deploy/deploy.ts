@@ -32,6 +32,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("balance: ", balance.toString());
   const price = await ethers.provider.getGasPrice();
   console.log("gas price: ", ethers.utils.formatUnits(price, "gwei"));
+  const feeData = await ethers.provider.getFeeData();
+
+  console.log("fee data: ", {
+    lastBaseFeePerGas: feeData.lastBaseFeePerGas?.toString(),
+    maxFeePerGas: feeData.maxFeePerGas?.toString(),
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString(),
+    gasPrice: feeData.gasPrice?.toString(),
+  });
 
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);
@@ -490,7 +498,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     ethers,
     getNamedAccounts,
     deployments,
-    deployConfig: chainDeployParams
+    deployConfig: chainDeployParams,
+    chainId
   });
   // } else {
   //   liquidatorContractName = await deployIonicUniV3Liquidator({

@@ -16,29 +16,46 @@ export const deployIonicLiquidator = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  deployConfig
+  deployConfig,
+  chainId
 }: LiquidatorDeployFnParams): Promise<string> => {
   const { deployer } = await getNamedAccounts();
-  const fsl = await deployments.deploy("IonicLiquidator", {
-    from: deployer,
-    log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [deployConfig.wtoken, deployConfig.uniswap, deployConfig.uniswap.flashSwapFee]
-        }
-      },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer
-    }
-  });
+
+  const initializeArgs = [deployConfig.wtoken, deployConfig.uniswap, deployConfig.uniswap.flashSwapFee];
+  let fsl;
+  if (chainId == 34443) {
+    fsl = await deployments.deploy("IonicLiquidator", {
+      from: deployer,
+      log: true,
+      args: [],
+      waitConfirmations: 1
+    });
+
+    const ionicLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
+
+    const tx = await ionicLiquidator.initialize(...initializeArgs);
+    await tx.wait();
+    console.log(`initialized the non-upgradeable Ionic Liquidator ${tx.hash}`);
+  } else {
+    fsl = await deployments.deploy("IonicLiquidator", {
+      from: deployer,
+
+      log: true,
+      proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: initializeArgs
+          }
+        },
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: deployer
+      }
+    });
+  }
+
   if (fsl.transactionHash) await ethers.provider.waitForTransaction(fsl.transactionHash);
   console.log("IonicLiquidator: ", fsl.address);
-
-  const fuseSafeLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
-  const fslOwner = await fuseSafeLiquidator.callStatic.owner();
-  console.log(`IonicLiquidator owner is ${fslOwner}`);
 
   return "IonicLiquidator";
 };
@@ -67,8 +84,8 @@ export const deployIonicUniV3Liquidator = async ({
   if (uniV3Liquidator.transactionHash) await ethers.provider.waitForTransaction(uniV3Liquidator.transactionHash);
   console.log("IonicUniV3Liquidator: ", uniV3Liquidator.address);
 
-  const fuseSafeLiquidator = (await ethers.getContract("IonicUniV3Liquidator", deployer)) as IonicUniV3Liquidator;
-  const uniV3LiquidatorOwner = await fuseSafeLiquidator.callStatic.owner();
+  const ionicLiquidator = (await ethers.getContract("IonicUniV3Liquidator", deployer)) as IonicUniV3Liquidator;
+  const uniV3LiquidatorOwner = await ionicLiquidator.callStatic.owner();
   console.log(`IonicUniV3Liquidator owner is ${uniV3LiquidatorOwner}`);
 
   return "IonicUniV3Liquidator";
@@ -84,13 +101,13 @@ export const configureIonicLiquidator = async ({
 
   const strategies: string[] = [];
   const arrayOfTrue: boolean[] = [];
-  const fuseSafeLiquidator = (await ethers.getContract(contractName, deployer)) as ILiquidator;
+  const ionicLiquidator = (await ethers.getContract(contractName, deployer)) as ILiquidator;
 
   for (const redemptionStrategyConfig of chainIdToConfig[chainId].redemptionStrategies) {
     const { strategy } = redemptionStrategyConfig;
     const redemptionStrategyContract = await ethers.getContract(strategy, deployer);
 
-    const whitelistedAlready = await fuseSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
+    const whitelistedAlready = await ionicLiquidator.callStatic.redemptionStrategiesWhitelist(
       redemptionStrategyContract.address
     );
     if (!whitelistedAlready) {
@@ -103,7 +120,7 @@ export const configureIonicLiquidator = async ({
     const { strategy } = fundingStrategy;
     const fundingStrategyContract = await ethers.getContract(strategy, deployer);
 
-    const whitelistedAlready = await fuseSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
+    const whitelistedAlready = await ionicLiquidator.callStatic.redemptionStrategiesWhitelist(
       fundingStrategyContract.address
     );
     if (!whitelistedAlready) {
@@ -113,7 +130,7 @@ export const configureIonicLiquidator = async ({
   }
 
   if (strategies.length > 0) {
-    const tx = await fuseSafeLiquidator._whitelistRedemptionStrategies(strategies, arrayOfTrue);
+    const tx = await ionicLiquidator._whitelistRedemptionStrategies(strategies, arrayOfTrue);
     await tx.wait();
     console.log("_whitelistRedemptionStrategies: ", tx.hash);
   } else {
