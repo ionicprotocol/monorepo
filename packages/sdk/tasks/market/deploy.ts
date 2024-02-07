@@ -13,7 +13,7 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     // assetSymbols.BAL,
     // assetSymbols.SNX,
     // assetSymbols.UNI,
-    assetSymbols.WBTC,
+    assetSymbols.WBTC
     // assetSymbols.AAVE
   ];
 
