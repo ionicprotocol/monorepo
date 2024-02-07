@@ -49,7 +49,7 @@ const PoolRows = ({
       )}
 
       <div
-        className={`col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0  flex gap-2 items-center justify-center  `}
+        className={`col-span-2 flex justify-center items-center mb-2 lg:mb-0  flex gap-2 items-center justify-center  `}
       >
         <img
           alt={asset}
