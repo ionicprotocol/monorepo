@@ -38,7 +38,6 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
 export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class IonicPools extends Base {
     async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<IonicPoolData | null> {
-      console.log("this.contracts: ", this.contracts);
       const {
         comptroller,
         name: _unfiliteredName,
