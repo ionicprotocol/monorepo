@@ -1,4 +1,3 @@
-'use client';
 import { http } from '@wagmi/core';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 import type { Chain } from 'viem';
