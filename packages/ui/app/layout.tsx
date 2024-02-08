@@ -32,12 +32,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const connectButtonCSSOverrides = `
-    :root {
-        --wui-color-inverse-100: #0a0a0aff;
-      }
-  `;
-
   return (
     <html
       className="dark"
@@ -205,8 +199,6 @@ export default function RootLayout({
           </QueryClientProvider>
         </WagmiProvider>
       </body>
-
-      <style>{connectButtonCSSOverrides}</style>
     </html>
   );
 }
