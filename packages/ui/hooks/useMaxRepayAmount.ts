@@ -1,5 +1,6 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
+import { BigNumber } from 'ethers';
 import { useBalance } from 'wagmi';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
@@ -26,7 +27,7 @@ export function useMaxRepayAmount(
     ],
     async () => {
       if (sdk && address && balanceData) {
-        const balance = balanceData.value;
+        const balance = BigNumber.from(balanceData.value.toString());
         const debt = asset.borrowBalance;
 
         return balance.gt(debt) ? debt : balance;
