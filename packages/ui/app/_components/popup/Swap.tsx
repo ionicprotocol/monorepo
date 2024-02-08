@@ -1,8 +1,9 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import type { BigNumber, Contract } from 'ethers';
-import { parseEther } from 'ethers/lib/utils.js';
+import type { Contract } from 'ethers';
+import { BigNumber } from 'ethers';
+import { formatEther, parseEther } from 'ethers/lib/utils.js';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { WETHAbi } from 'sdk/dist/cjs/src';
@@ -10,13 +11,13 @@ import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
 import { useBalance } from 'wagmi';
 import type { GetBalanceData } from 'wagmi/query';
 
+import ConnectButton from '../ConnectButton';
 import ResultHandler from '../ResultHandler';
 
 import type { TransactionStep } from './TransactionStepHandler';
 import TransactionStepsHandler from './TransactionStepHandler';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
-import ConnectButton from '../ConnectButton';
 
 export type SwapProps = {
   close: () => void;
@@ -50,6 +51,10 @@ export default function Swap({ close }: SwapProps) {
         return undefined;
     }
   }, [ethBalance, wethBalance, swapType]);
+  const currentUsedBalanceAsBigInt = useMemo<BigNumber>(
+    () => BigNumber.from(currentUsedBalance?.value.toString() ?? '0'),
+    [currentUsedBalance]
+  );
   const queryClient = useQueryClient();
   const WTokenContract = useMemo<Contract | undefined>(() => {
     if (!currentSdk || !address) {
@@ -154,8 +159,8 @@ export default function Swap({ close }: SwapProps) {
       return;
     }
 
-    if (newAmount && currentUsedBalance.value.lt(parseEther(newAmount))) {
-      setAmount(currentUsedBalance.formatted);
+    if (newAmount && currentUsedBalanceAsBigInt.lt(parseEther(newAmount))) {
+      setAmount(formatEther(currentUsedBalanceAsBigInt));
 
       return;
     }

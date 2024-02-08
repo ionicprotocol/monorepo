@@ -1,7 +1,6 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { useBalance } from 'wagmi';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
@@ -42,7 +41,7 @@ export function useMaxSupplyAmount(
     async () => {
       if (sdk && address && supplyCapsDataForAsset && balanceData) {
         try {
-          const tokenBalance = balanceData.value;
+          const tokenBalance = BigNumber.from(balanceData.value.toString());
 
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isWhitelisted] = await Promise.all([
