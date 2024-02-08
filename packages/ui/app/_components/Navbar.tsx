@@ -3,12 +3,17 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+import { useBalance } from 'wagmi';
+
 import ConnectButton from './ConnectButton';
 // import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
+  const { data: balance } = useBalance();
+
+  console.log(balance);
 
   // useEffect(()=>{
   //   console.log(pathbox.current.getElementsByClassName(pathname));
