@@ -24,7 +24,7 @@ const metadata = {
   description: 'Ionic Web3Modal Sign In',
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
   name: 'Ionic Web3Modal',
-  url: 'http://localhost:3000'
+  url: 'https://app.ionic.money'
 };
 
 export const projectId = '923645e96d6f05f650d266a32ea7295f';
@@ -34,6 +34,7 @@ export const wagmiConfig = defaultWagmiConfig({
   chains: supportedChains as any,
   metadata,
   projectId: projectId,
+  ssr: true,
   transports: supportedChains.reduce(
     (accumulator, currentChain) => ({
       ...accumulator,
