@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
@@ -145,9 +144,7 @@ const PoolRows = ({
             </button>
           </>
         ) : (
-          <div className="connect-button">
-            <ConnectButton />
-          </div>
+          <div className="connect-button">{/* <ConnectButton /> */}</div>
         )}
       </div>
       {/* <Link

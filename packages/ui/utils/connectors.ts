@@ -1,10 +1,5 @@
-import '@rainbow-me/rainbowkit/styles.css';
-
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
-import type { Chain } from 'wagmi';
-import { configureChains } from 'wagmi';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { publicProvider } from 'wagmi/providers/public';
+import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
+import type { Chain } from 'viem';
 
 import { getSupportedChains } from '@ui/utils/networkData';
 
@@ -27,16 +22,24 @@ const supportedChains: Chain[] = Object.values(getSupportedChains()).map(
   }
 );
 
-export const { chains, provider } = configureChains(supportedChains, [
-  publicProvider(),
-  jsonRpcProvider({
-    rpc: (chain) => ({
-      http: chain.rpcUrls.default.http[0]
-    })
-  })
-]);
+const metadata = {
+  description: 'Ionic Web3Modal Sign In',
+  icons: ['https://avatars.githubusercontent.com/u/37784886'],
+  name: 'Ionic Web3Modal',
+  url: 'http://localhost:3000'
+};
 
-export const { connectors } = getDefaultWallets({
-  appName: 'Midas Capital',
-  chains
+export const projectId = '923645e96d6f05f650d266a32ea7295f';
+
+export const wagmiConfig = defaultWagmiConfig({
+  chains: supportedChains as any,
+  metadata,
+  projectId: projectId,
+  transports: supportedChains.reduce(
+    (accumulator, currentChain) => ({
+      ...accumulator,
+      [currentChain.id]: currentChain.rpcUrls.default.http[0]
+    }),
+    {}
+  )
 });

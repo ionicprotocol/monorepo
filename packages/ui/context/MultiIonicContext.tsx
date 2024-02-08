@@ -14,9 +14,8 @@ import {
   useMemo,
   useState
 } from 'react';
-import type { Chain } from 'wagmi';
-import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
-import type { FetchSignerResult } from 'wagmi/actions';
+import type { Chain } from 'viem';
+import { useAccount, useDisconnect, useSigner } from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -54,12 +53,11 @@ export const MultiIonicProvider = (
   { children }: MultiIonicProviderProps = { children: null }
 ) => {
   const enabledChains = useEnabledChains();
-  const { chain } = useNetwork();
   // const { chain, chains } = useNetwork();
-  const { address: wagmiAddress, isConnected } = useAccount();
+  const { address: wagmiAddress, chain, connector, isConnected } = useAccount();
   // const { address, isConnecting, isReconnecting, isConnected } = useAccount();
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
-  const { data: signer } = useSigner();
+  const [signer, setSigner] = useState<Signer>();
   const { disconnect } = useDisconnect();
   const [address, setAddress] = useState<`0x${string}` | undefined>();
   const [currentChain, setCurrentChain] = useState<
@@ -117,6 +115,15 @@ export const MultiIonicProvider = (
       securities.find((security) => security.chainConfig.chainId === chainId),
     [securities]
   );
+
+  useEffect(() => {
+    if (connector) {
+      connector
+        .getProvider()
+        .then((provider) => console.log(provider))
+        .catch((error) => console.error(error));
+    }
+  }, [connector]);
 
   useEffect(() => {
     if (currentSdk && signer) {

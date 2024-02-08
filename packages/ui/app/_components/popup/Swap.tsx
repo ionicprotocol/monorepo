@@ -1,6 +1,5 @@
 'use client';
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber, Contract } from 'ethers';
 import { parseEther } from 'ethers/lib/utils.js';
@@ -9,7 +8,7 @@ import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { WETHAbi } from 'sdk/dist/cjs/src';
 import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
 import { useBalance } from 'wagmi';
-import type { FetchBalanceResult } from 'wagmi/actions';
+import type { GetBalanceData } from 'wagmi/query';
 
 import ResultHandler from '../ResultHandler';
 
@@ -38,7 +37,7 @@ export default function Swap({ close }: SwapProps) {
     address,
     token: currentSdk?.chainSpecificAddresses.W_TOKEN as `0x${string}`
   });
-  const currentUsedBalance = useMemo<FetchBalanceResult | undefined>(() => {
+  const currentUsedBalance = useMemo<GetBalanceData | undefined>(() => {
     switch (swapType) {
       case SwapType.ETH_WETH:
         return ethBalance;

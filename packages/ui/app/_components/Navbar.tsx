@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
@@ -115,7 +114,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center md:justify-center gap-4 my-auto uppercase connect-button">
-          <ConnectButton />
+          {/* <ConnectButton /> */}
           {/* <div>
             <img
               src="/img/assets/moon.png"
