@@ -16,6 +16,7 @@ import type { TransactionStep } from './TransactionStepHandler';
 import TransactionStepsHandler from './TransactionStepHandler';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import ConnectButton from '../ConnectButton';
 
 export type SwapProps = {
   close: () => void;

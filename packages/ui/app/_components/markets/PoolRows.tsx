@@ -3,6 +3,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
+import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
@@ -144,7 +145,9 @@ const PoolRows = ({
             </button>
           </>
         ) : (
-          <div className="connect-button">{/* <ConnectButton /> */}</div>
+          <div className="connect-button">
+            <ConnectButton size="sm" />
+          </div>
         )}
       </div>
       {/* <Link

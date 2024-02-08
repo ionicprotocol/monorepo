@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+import ConnectButton from './ConnectButton';
 // import { useStore } from "@/store/Store";
 
 export default function Navbar() {
@@ -114,14 +115,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center md:justify-center gap-4 my-auto uppercase connect-button">
-          {/* <ConnectButton /> */}
-          {/* <div>
-            <img
-              src="/img/assets/moon.png"
-              alt="logo"
-              className={`w-5 `}
-            />
-          </div> */}
+          <ConnectButton />
 
           <div
             className={`nav-btn md:hidden ${isActive && 'nav-opened'}`}

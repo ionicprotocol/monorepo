@@ -18,7 +18,13 @@ import { WagmiProvider } from 'wagmi';
 // Create the new web3 modal
 createWeb3Modal({
   wagmiConfig,
-  projectId
+  projectId,
+  themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent': '#3bff89ff',
+    '--w3m-color-mix': '#0a0a0aff',
+    '--w3m-border-radius-master': '10px'
+  }
 });
 
 const queryClient = new QueryClient();
