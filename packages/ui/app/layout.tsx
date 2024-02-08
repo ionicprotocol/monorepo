@@ -1,29 +1,28 @@
 'use client';
 import './globals.css';
 // import NextNProgress from "nextjs-progressbar";
-import { createWeb3Modal } from '@web3modal/wagmi/react';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
+import { createWeb3Modal } from '@web3modal/wagmi/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from 'react-hot-toast';
+import { WagmiProvider } from 'wagmi';
 
 import Navbar from './_components/Navbar';
 
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
 import { projectId, wagmiConfig } from '@ui/utils/connectors';
-import { WagmiProvider } from 'wagmi';
 
 // Create the new web3 modal
 createWeb3Modal({
-  wagmiConfig,
   projectId,
   themeMode: 'dark',
   themeVariables: {
     '--w3m-accent': '#3bff89ff',
     '--w3m-color-mix': '#0a0a0aff'
-  }
+  },
+  wagmiConfig
 });
 
 const queryClient = new QueryClient();
