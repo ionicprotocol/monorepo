@@ -1,10 +1,11 @@
+'use client';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk } from '@ionicprotocol/sdk';
 import Security from '@ionicprotocol/security';
 import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
-import type { Signer } from 'ethers';
+import type { providers } from 'ethers';
 import type { Dispatch, ReactNode } from 'react';
 import {
   createContext,
@@ -14,12 +15,12 @@ import {
   useMemo,
   useState
 } from 'react';
-import type { Chain } from 'wagmi';
-import { useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
-import type { FetchSignerResult } from 'wagmi/actions';
+import type { Chain } from 'viem';
+import { useAccount, useDisconnect } from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
+import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 
 export interface MultiIonicContextData {
   address?: `0x${string}`;
@@ -39,7 +40,7 @@ export interface MultiIonicContextData {
   setAddress: Dispatch<`0x${string}`>;
   setGlobalLoading: Dispatch<boolean>;
   setIsSidebarCollapsed: Dispatch<boolean>;
-  signer?: FetchSignerResult<Signer>;
+  signer?: providers.JsonRpcSigner;
 }
 
 export const MultiIonicContext = createContext<
@@ -54,12 +55,12 @@ export const MultiIonicProvider = (
   { children }: MultiIonicProviderProps = { children: null }
 ) => {
   const enabledChains = useEnabledChains();
-  const { chain } = useNetwork();
   // const { chain, chains } = useNetwork();
-  const { address: wagmiAddress, isConnected } = useAccount();
+  const { address: wagmiAddress, chain, isConnected } = useAccount();
+
   // const { address, isConnecting, isReconnecting, isConnected } = useAccount();
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
-  const { data: signer } = useSigner();
+  const signer = useEthersSigner();
   const { disconnect } = useDisconnect();
   const [address, setAddress] = useState<`0x${string}` | undefined>();
   const [currentChain, setCurrentChain] = useState<
@@ -100,7 +101,7 @@ export const MultiIonicProvider = (
   }, [enabledChains]);
 
   const currentSdk = useMemo(() => {
-    if (chain && !chain.unsupported) {
+    if (chain) {
       return sdks.find((sdk) => sdk.chainId === chain.id);
     }
   }, [sdks, chain]);

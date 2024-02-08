@@ -93,12 +93,14 @@
 .nav {
   transform: rotateX(90deg);
   transform-origin: 50% 0;
+}
 
-  &.nav-opened {
-    transform: rotateX(0deg);
-  }
+.nav.nav-opened {
+  transform: rotateX(0deg);
+}
 
-  @media only screen and (min-width: 768px) {
+@media only screen and (min-width: 768px) {
+  .nav {
     transform: none;
   }
 }
@@ -110,42 +112,41 @@
   border-radius: 4px;
   background: #fff;
   transition: background 0.3s;
+}
 
-  &.nav-opened {
-    background: transparent;
+.nav-btn.nav-opened {
+  background: transparent;
+}
+.nav-btn.nav-opened:before {
+  bottom: 0;
+  margin: 0;
+  transform: rotate(45deg);
+}
+.nav-btn.nav-opened:after {
+  top: 0;
+  margin: 0;
+  transform: rotate(-45deg);
+}
 
-    &:before {
-      bottom: 0;
-      margin: 0;
-      transform: rotate(45deg);
-    }
-    &:after {
-      top: 0;
-      margin: 0;
-      transform: rotate(-45deg);
-    }
-  }
+.nav-btn:before {
+  bottom: 100%;
+  margin-bottom: 3px;
+}
+.nav-btn:after {
+  top: 100%;
+  margin-top: 3px;
+}
 
-  &:before {
-    bottom: 100%;
-    margin-bottom: 3px;
-  }
-  &:after {
-    top: 100%;
-    margin-top: 3px;
-  }
-
-  &:before,
-  &:after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    border-radius: 2px;
-    background: #fff;
-    transition: 0.3s;
-  }
+.nav-btn:before,
+.nav-btn:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  border-radius: 2px;
+  background: #fff;
+  transition: 0.3s;
 }
 
 @media (prefers-color-scheme: dark) {

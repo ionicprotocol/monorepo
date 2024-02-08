@@ -1,16 +1,17 @@
 'use client';
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
-import type { BigNumber, Contract } from 'ethers';
-import { parseEther } from 'ethers/lib/utils.js';
+import type { Contract } from 'ethers';
+import { BigNumber } from 'ethers';
+import { formatEther, parseEther } from 'ethers/lib/utils.js';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { WETHAbi } from 'sdk/dist/cjs/src';
 import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
 import { useBalance } from 'wagmi';
-import type { FetchBalanceResult } from 'wagmi/actions';
+import type { GetBalanceData } from 'wagmi/query';
 
+import ConnectButton from '../ConnectButton';
 import ResultHandler from '../ResultHandler';
 
 import type { TransactionStep } from './TransactionStepHandler';
@@ -38,7 +39,7 @@ export default function Swap({ close }: SwapProps) {
     address,
     token: currentSdk?.chainSpecificAddresses.W_TOKEN as `0x${string}`
   });
-  const currentUsedBalance = useMemo<FetchBalanceResult | undefined>(() => {
+  const currentUsedBalance = useMemo<GetBalanceData | undefined>(() => {
     switch (swapType) {
       case SwapType.ETH_WETH:
         return ethBalance;
@@ -50,6 +51,10 @@ export default function Swap({ close }: SwapProps) {
         return undefined;
     }
   }, [ethBalance, wethBalance, swapType]);
+  const currentUsedBalanceAsBigInt = useMemo<BigNumber>(
+    () => BigNumber.from(currentUsedBalance?.value.toString() ?? '0'),
+    [currentUsedBalance]
+  );
   const queryClient = useQueryClient();
   const WTokenContract = useMemo<Contract | undefined>(() => {
     if (!currentSdk || !address) {
@@ -154,8 +159,8 @@ export default function Swap({ close }: SwapProps) {
       return;
     }
 
-    if (newAmount && currentUsedBalance.value.lt(parseEther(newAmount))) {
-      setAmount(currentUsedBalance.formatted);
+    if (newAmount && currentUsedBalanceAsBigInt.lt(parseEther(newAmount))) {
+      setAmount(formatEther(currentUsedBalanceAsBigInt));
 
       return;
     }
