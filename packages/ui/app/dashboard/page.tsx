@@ -9,10 +9,13 @@ import { useChainId } from 'wagmi';
 import SupplyRows from '../_components/dashboards/SupplyRows';
 import ResultHandler from '../_components/ResultHandler';
 
+import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
+  const { currentSdk } = useMultiMidas();
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
@@ -22,31 +25,46 @@ export default function Dashboard() {
     marketData?.assets ?? [],
     chainId
   );
-  const [totalCollateral, avgCollateralApr] = useMemo<
-    [string, string] | [undefined, undefined]
-  >(() => {
-    if (marketData && assetsSupplyAprData) {
-      let calculatedTotalCollateral = 0;
-      let totalApr = 0;
-      let memberships = 0;
+  const { avgCollateralApr, borrowApr, supplyApr, totalCollateral } =
+    useMemo(() => {
+      if (marketData && assetsSupplyAprData && currentSdk) {
+        const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+        let totalCollateral = 0;
+        let avgCollateralApr = 0;
+        let borrowApr = 0;
+        let supplyApr = 0;
+        let memberships = 0;
 
-      marketData.assets.forEach((asset) => {
-        if (asset.membership) {
-          calculatedTotalCollateral += asset.supplyBalanceFiat;
-          totalApr += assetsSupplyAprData[asset.cToken].apy;
+        marketData.assets.forEach((asset) => {
+          if (asset.membership) {
+            totalCollateral += asset.supplyBalanceFiat;
+            avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
 
-          memberships++;
-        }
-      });
+            memberships++;
+          }
 
-      return [
-        `$${millify(calculatedTotalCollateral)}`,
-        `${(totalApr / memberships).toFixed(2)}%`
-      ];
-    }
+          borrowApr += currentSdk.ratePerBlockToAPY(
+            asset.borrowRatePerBlock,
+            blocksPerMinute
+          );
+          supplyApr += currentSdk.ratePerBlockToAPY(
+            asset.supplyRatePerBlock,
+            blocksPerMinute
+          );
+        });
 
-    return [undefined, undefined];
-  }, [assetsSupplyAprData, marketData]);
+        return {
+          avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
+          borrowApr: `${(borrowApr / marketData.assets.length).toFixed(2)}%`,
+          supplyApr: `${(supplyApr / marketData.assets.length).toFixed(2)}%`,
+          totalCollateral: `$${millify(totalCollateral)}`
+        };
+      }
+
+      return {};
+    }, [assetsSupplyAprData, currentSdk, chainId, marketData]);
+
+  console.log(marketData);
 
   const supplyrow = [
     {
@@ -154,14 +172,30 @@ export default function Dashboard() {
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>EVG BORROWING APR</p>
-                <p className={`font-semibold`}>4%</p>
+                <p className={`font-semibold`}>
+                  <ResultHandler
+                    height="24"
+                    isLoading={!borrowApr}
+                    width="24"
+                  >
+                    {borrowApr}
+                  </ResultHandler>
+                </p>
                 {/* this neeeds to be changed */}
               </div>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>EVG SUPPLY APR</p>
-                <p className={`font-semibold`}>78%</p>
+                <p className={`font-semibold`}>
+                  <ResultHandler
+                    height="24"
+                    isLoading={!supplyApr}
+                    width="24"
+                  >
+                    {supplyApr}
+                  </ResultHandler>
+                </p>
                 {/* this neeeds to be changed */}
               </div>
             </div>
