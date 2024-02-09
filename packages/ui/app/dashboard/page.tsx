@@ -2,9 +2,51 @@
 'use client';
 
 import Link from 'next/link';
+import { useChainId } from 'wagmi';
+import millify from 'millify';
 
 import SupplyRows from '../_components/dashboards/SupplyRows';
+
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useMemo } from 'react';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+
 export default function Dashboard() {
+  const chainId = useChainId();
+  const { data: marketData } = useFusePoolData('0', chainId);
+  const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
+    marketData?.assets ?? [],
+    chainId
+  );
+  const [totalCollateral, avgCollateralApr] = useMemo<
+    [string, string] | [undefined, undefined]
+  >(() => {
+    if (marketData && assetsSupplyAprData) {
+      let calculatedTotalCollateral = 0;
+      let totalApr = 0;
+      let memberships = 0;
+
+      marketData.assets.forEach((asset) => {
+        if (asset.membership) {
+          calculatedTotalCollateral += asset.supplyBalanceFiat;
+          totalApr += assetsSupplyAprData[asset.cToken].apy;
+
+          memberships++;
+          // totalApr += asset.supplyA
+        }
+      });
+
+      return [
+        `$${millify(calculatedTotalCollateral)}`,
+        `$${millify(totalApr / memberships)}`
+      ];
+    }
+
+    return [undefined, undefined];
+  }, [assetsSupplyAprData, marketData]);
+
+  console.log(marketData);
+
   const supplyrow = [
     {
       amount: 168,
