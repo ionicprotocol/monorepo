@@ -218,34 +218,6 @@ export default function Dashboard() {
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (supply)</h1>
-            <div
-              className={` min-w-[30%] flex gap-x-2  items-center justify-center `}
-            >
-              <img
-                alt="searchico"
-                className={`h-4`}
-                src="/img/assets/search.png"
-              />
-              <input
-                className={
-                  ' w-full focus:outline-none placeholder:text-xs  bg-grayone border-r px-2 border-white/20'
-                }
-                id=""
-                name=""
-                placeholder="Search by asset name, symbol or address"
-                type="text"
-              />
-              <div
-                className={`flex w-[30%] flex-nowrap items-center justify-center text-xs px-2`}
-              >
-                <p className="w-full truncate flex-nowrap">Sort By</p>
-                <img
-                  alt="downarr"
-                  className={`w-4`}
-                  src="/img/assets/downarr.png"
-                />
-              </div>
-            </div>
           </div>
           <div
             className={`w-full gap-x-1 grid  grid-cols-8  py-4 text-[10px] text-white/40 font-semibold text-center  `}
@@ -273,34 +245,6 @@ export default function Dashboard() {
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Borrows (Loans)</h1>
-            <div
-              className={` min-w-[30%] flex gap-x-2  items-center justify-center `}
-            >
-              <img
-                alt="searchico"
-                className={`h-4`}
-                src="/img/assets/search.png"
-              />
-              <input
-                className={
-                  ' w-full focus:outline-none placeholder:text-xs  bg-grayone border-r px-2 border-white/20'
-                }
-                id=""
-                name=""
-                placeholder="Search by asset name, symbol or address"
-                type="text"
-              />
-              <div
-                className={`flex w-[30%] flex-nowrap items-center justify-center text-xs px-2`}
-              >
-                <p className="w-full truncate flex-nowrap">Sort By</p>
-                <img
-                  alt="downarr"
-                  className={`w-4`}
-                  src="/img/assets/downarr.png"
-                />
-              </div>
-            </div>
           </div>
           <div
             className={`w-full gap-x-1 grid  grid-cols-8  py-4 text-[10px] text-white/40 font-semibold text-center  `}
