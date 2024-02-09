@@ -1,55 +1,57 @@
-import React from 'react';
-
 import { PopupMode } from './page';
 interface IMode {
-  active: string;
+  active: PopupMode;
   mode: PopupMode;
-  setActive: (val: string) => void;
+  setActive: (val: PopupMode) => void;
 }
 const Tab = ({ mode, setActive, active }: IMode) => {
   return (
     <div
       className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 grid ${'grid-cols-2'} text-center gap-x-1 text-xs items-center justify-center`}
     >
-      {mode === PopupMode.SUPPLY && (
+      {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
         <>
           <p
             className={`rounded-md py-1 text-center  cursor-pointer ${
-              active === 'COLLATERAL'
+              active === PopupMode.SUPPLY
                 ? 'bg-darkone text-accent '
                 : 'text-white/40 '
             } transition-all duration-200 ease-linear `}
-            onClick={() => setActive('COLLATERAL')}
+            onClick={() => setActive(PopupMode.SUPPLY)}
           >
             COLLATERAL
           </p>
           <p
             className={` rounded-md py-1 px-3   ${
-              active === 'WITHDRAW'
+              active === PopupMode.WITHDRAW
                 ? 'bg-darkone text-accent '
                 : 'text-white/40'
             } cursor-pointer transition-all duration-200 ease-linear`}
-            onClick={() => setActive('WITHDRAW')}
+            onClick={() => setActive(PopupMode.WITHDRAW)}
           >
             WITHDRAW
           </p>
         </>
       )}
-      {mode === PopupMode.BORROW && (
+      {(mode === PopupMode.BORROW || mode === PopupMode.REPAY) && (
         <>
           <p
             className={` rounded-md py-1 px-3   ${
-              active === 'BORROW' ? 'bg-darkone text-accent ' : 'text-white/40'
+              active === PopupMode.BORROW
+                ? 'bg-darkone text-accent '
+                : 'text-white/40'
             } cursor-pointer transition-all duration-200 ease-linear`}
-            onClick={() => setActive('BORROW')}
+            onClick={() => setActive(PopupMode.BORROW)}
           >
             BORROW
           </p>
           <p
             className={` rounded-md py-1 px-3   ${
-              active === 'REPAY' ? 'bg-darkone text-accent ' : 'text-white/40'
+              active === PopupMode.REPAY
+                ? 'bg-darkone text-accent '
+                : 'text-white/40'
             } cursor-pointer transition-all duration-200 ease-linear`}
-            onClick={() => setActive('REPAY')}
+            onClick={() => setActive(PopupMode.REPAY)}
           >
             REPAY
           </p>

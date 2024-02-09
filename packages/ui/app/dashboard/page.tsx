@@ -1,24 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import SupplyRows from '../_components/dashboards/SupplyRows';
+import type { PopupMode } from '../_components/popup/page';
+import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiMidas();
   const chainId = useChainId();
+  const [selectedSymbol, setSelectedSymbol] = useState<string>();
+  const [popupMode, setPopupMode] = useState<PopupMode>();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
     chainId
@@ -63,35 +68,16 @@ export default function Dashboard() {
 
       return {};
     }, [assetsSupplyAprData, currentSdk, chainId, marketData]);
+  const selectedMarketData = useMemo<MarketData | undefined>(
+    () =>
+      marketData?.assets.find(
+        (_asset) => _asset.underlyingSymbol === selectedSymbol
+      ),
+    [marketData, selectedSymbol]
+  );
 
   console.log(marketData, assetsSupplyAprData);
 
-  const supplyrow = [
-    {
-      amount: 168,
-      asset: 'DUSD',
-      cAPR: 2,
-      rewards: 65,
-      sAPR: 5,
-      utilisation: 234
-    },
-    {
-      amount: 245,
-      asset: 'DUSD',
-      cAPR: 42,
-      rewards: 64535,
-      sAPR: 54,
-      utilisation: 234354
-    },
-    {
-      amount: 45,
-      asset: 'DUSD',
-      cAPR: 6,
-      rewards: 6588,
-      sAPR: 765,
-      utilisation: 2364
-    }
-  ];
   return (
     <main className={`pt-14`}>
       <div className="w-full flex flex-col items-start justify-start min-h-screen transition-all duration-200 ease-linear px-[3%]">
@@ -261,6 +247,8 @@ export default function Dashboard() {
                   key={`supply-row-${asset.underlyingSymbol}`}
                   logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                   rewards={''}
+                  setPopupMode={setPopupMode}
+                  setSelectedSymbol={setSelectedSymbol}
                   supplyApr={`${
                     currentSdk
                       ?.ratePerBlockToAPY(
@@ -304,12 +292,14 @@ export default function Dashboard() {
             ))}
         </div> */}
       </div>
-      {/* {popmode && (
+      {popupMode && selectedMarketData && marketData && (
         <Popup
-          mode={popmode}
-          specific={specific}
+          closePopup={() => setPopupMode(undefined)}
+          comptrollerAddress={marketData.comptroller}
+          mode={popupMode}
+          selectedMarketData={selectedMarketData}
         />
-      )} */}
+      )}
     </main>
   );
 }
