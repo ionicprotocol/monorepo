@@ -55,7 +55,7 @@ const SupplyRows = ({
       <h3 className={``}>{rewards}</h3>
       <div className={` col-span-2 flex items-center justify-center gap-3`}>
         <button
-          className={`w-full rounded-lg bg-accent text-black py-1.5 px-3`}
+          className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => {
             setSelectedSymbol(asset);
             setPopupMode(PopupMode.WITHDRAW);
@@ -65,7 +65,7 @@ const SupplyRows = ({
         </button>
 
         <button
-          className={`w-full rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
+          className={`w-full uppercase rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
           onClick={() => {
             setSelectedSymbol(asset);
             setPopupMode(PopupMode.SUPPLY);
