@@ -13,6 +13,8 @@ import { useMultiMidas } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiMidas();
@@ -21,10 +23,8 @@ export default function Dashboard() {
     '0',
     chainId
   );
-  const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
-    marketData?.assets ?? [],
-    chainId
-  );
+  const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
+    useTotalSupplyAPYs(marketData?.assets ?? [], chainId);
   const { avgCollateralApr, borrowApr, supplyApr, totalCollateral } =
     useMemo(() => {
       if (marketData && assetsSupplyAprData && currentSdk) {
@@ -64,7 +64,7 @@ export default function Dashboard() {
       return {};
     }, [assetsSupplyAprData, currentSdk, chainId, marketData]);
 
-  console.log(marketData);
+  console.log(marketData, assetsSupplyAprData);
 
   const supplyrow = [
     {
@@ -229,20 +229,53 @@ export default function Dashboard() {
             <h3 className={` `}>UTILISATION</h3>
             <h3 className={` `}>REWARDS</h3>
           </div>
-          {supplyrow &&
-            supplyrow.map((val, idx: number) => (
-              <SupplyRows
-                amount={val.amount}
-                asset={val.asset}
-                cAPR={val.cAPR}
-                key={idx}
-                rewards={val.rewards}
-                sAPR={val.sAPR}
-                utilisation={val.utilisation}
-              />
-            ))}
+          <ResultHandler
+            center
+            isLoading={isLoadingMarketData || isLoadingAssetsSupplyAprData}
+          >
+            <>
+              {marketData?.assets.map((asset) => (
+                <SupplyRows
+                  amount={`${
+                    asset.supplyBalanceNative
+                      ? parseFloat(
+                          formatUnits(
+                            asset.supplyBalance,
+                            asset.underlyingDecimals
+                          )
+                        ).toLocaleString('en-US', {
+                          maximumFractionDigits: 2
+                        })
+                      : '0'
+                  } ${
+                    asset.underlyingSymbol
+                  } / $${asset.supplyBalanceFiat.toLocaleString('en-US', {
+                    maximumFractionDigits: 2
+                  })}`}
+                  asset={asset.underlyingSymbol}
+                  collateralApr={`${
+                    assetsSupplyAprData
+                      ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
+                      : ''
+                  }%`}
+                  key={`supply-row-${asset.underlyingSymbol}`}
+                  logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
+                  rewards={''}
+                  supplyApr={`${
+                    currentSdk
+                      ?.ratePerBlockToAPY(
+                        asset?.supplyRatePerBlock ?? BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2) ?? '0.00'
+                  }%`}
+                  utilization={''}
+                />
+              ))}
+            </>
+          </ResultHandler>
         </div>
-        <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
+        {/* <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Borrows (Loans)</h1>
           </div>
@@ -269,7 +302,7 @@ export default function Dashboard() {
                 utilisation={val.utilisation}
               />
             ))}
-        </div>
+        </div> */}
       </div>
       {/* {popmode && (
         <Popup
