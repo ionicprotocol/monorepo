@@ -76,8 +76,6 @@ export default function Dashboard() {
     [marketData, selectedSymbol]
   );
 
-  console.log(marketData, assetsSupplyAprData);
-
   return (
     <main className={`pt-14`}>
       <div className="w-full flex flex-col items-start justify-start min-h-screen transition-all duration-200 ease-linear px-[3%]">
@@ -246,6 +244,7 @@ export default function Dashboard() {
                   }%`}
                   key={`supply-row-${asset.underlyingSymbol}`}
                   logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
+                  membership={asset.membership}
                   rewards={''}
                   setPopupMode={setPopupMode}
                   setSelectedSymbol={setSelectedSymbol}

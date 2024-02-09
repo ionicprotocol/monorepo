@@ -8,6 +8,7 @@ export type SupplyRowsProps = {
   asset: string;
   collateralApr: string;
   logo: string;
+  membership: boolean;
   rewards: string;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
@@ -20,6 +21,7 @@ const SupplyRows = ({
   asset,
   collateralApr,
   logo,
+  membership,
   rewards,
   setSelectedSymbol,
   setPopupMode,
@@ -28,8 +30,16 @@ const SupplyRows = ({
 }: SupplyRowsProps) => {
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-8  py-4 text-xs text-white/80 font-semibold text-center items-center `}
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-8  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
+        membership && 'border border-lime'
+      }`}
     >
+      {membership && (
+        <span className="absolute top-[-9px] right-[-15px] px-2 text-darkone bg-lime rounded-lg">
+          Collateral
+        </span>
+      )}
+
       <div className={`  flex gap-2 items-center justify-center  `}>
         <img
           alt={asset}
