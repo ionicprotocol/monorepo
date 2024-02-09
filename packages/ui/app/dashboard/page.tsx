@@ -7,13 +7,17 @@ import { useMemo } from 'react';
 import { useChainId } from 'wagmi';
 
 import SupplyRows from '../_components/dashboards/SupplyRows';
+import ResultHandler from '../_components/ResultHandler';
 
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 
 export default function Dashboard() {
   const chainId = useChainId();
-  const { data: marketData } = useFusePoolData('0', chainId);
+  const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
+    '0',
+    chainId
+  );
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     marketData?.assets ?? [],
     chainId
@@ -32,7 +36,6 @@ export default function Dashboard() {
           totalApr += assetsSupplyAprData[asset.cToken].apy;
 
           memberships++;
-          // totalApr += asset.supplyA
         }
       });
 
@@ -91,7 +94,15 @@ export default function Dashboard() {
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>Total Collateral</p>
-                <p className={`font-semibold`}>$867</p>
+                <p className={`font-semibold`}>
+                  <ResultHandler
+                    height="24"
+                    isLoading={!!totalCollateral}
+                    width="24"
+                  >
+                    {totalCollateral}
+                  </ResultHandler>
+                </p>
                 {/* this neeeds to be changed */}
               </div>
               <div
@@ -105,7 +116,15 @@ export default function Dashboard() {
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>Total Supply</p>
-                <p className={`font-semibold`}>$29387</p>
+                <p className={`font-semibold`}>
+                  <ResultHandler
+                    height="24"
+                    isLoading={isLoadingMarketData}
+                    width="24"
+                  >
+                    ${millify(marketData?.totalSupplyBalanceFiat) ?? 0}
+                  </ResultHandler>
+                </p>
                 {/* this neeeds to be changed */}
               </div>
             </div>
