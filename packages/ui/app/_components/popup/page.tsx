@@ -16,8 +16,8 @@ import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
 import Tab from './Tab';
-import type { TransactionStep } from './TransactionStepHandler';
-import TransactionStepsHandler from './TransactionStepHandler';
+import type { TransactionStep } from './TransactionStepsHandler';
+import TransactionStepsHandler from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiIonicContext';

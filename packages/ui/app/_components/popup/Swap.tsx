@@ -14,8 +14,8 @@ import type { GetBalanceData } from 'wagmi/query';
 import ConnectButton from '../ConnectButton';
 import ResultHandler from '../ResultHandler';
 
-import type { TransactionStep } from './TransactionStepHandler';
-import TransactionStepsHandler from './TransactionStepHandler';
+import type { TransactionStep } from './TransactionStepsHandler';
+import TransactionStepsHandler from './TransactionStepsHandler';
 
 import { useMultiMidas } from '@ui/context/MultiIonicContext';
 
