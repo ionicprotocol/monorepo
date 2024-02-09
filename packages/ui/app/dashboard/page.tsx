@@ -97,7 +97,7 @@ export default function Dashboard() {
                 <p className={`font-semibold`}>
                   <ResultHandler
                     height="24"
-                    isLoading={!!totalCollateral}
+                    isLoading={!totalCollateral}
                     width="24"
                   >
                     {totalCollateral}
@@ -122,7 +122,7 @@ export default function Dashboard() {
                     isLoading={isLoadingMarketData}
                     width="24"
                   >
-                    ${millify(marketData?.totalSupplyBalanceFiat) ?? 0}
+                    ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
                   </ResultHandler>
                 </p>
                 {/* this neeeds to be changed */}
