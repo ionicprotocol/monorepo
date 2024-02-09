@@ -1,13 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import usePointsForSupply from '@ui/hooks/usePointsForSupply';
 import FlatMap from '../_components/points_comp/FlatMap';
 import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard';
 import StrategyROW from '../_components/points_comp/StrategyROW';
 
+import { usePointsForUSDCQuery } from '@ui/hooks/usePointsQueries';
+
 export default function Points() {
-  const { data: pointsData } = usePointsForSupply();
+  const { data: pointsData } = usePointsForUSDCQuery();
   console.log(pointsData);
   const strategyData = [
     {
