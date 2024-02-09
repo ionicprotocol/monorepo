@@ -1,14 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import Link from 'next/link';
-import { useChainId } from 'wagmi';
 import millify from 'millify';
+import Link from 'next/link';
+import { useMemo } from 'react';
+import { useChainId } from 'wagmi';
 
 import SupplyRows from '../_components/dashboards/SupplyRows';
 
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useMemo } from 'react';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 
 export default function Dashboard() {
