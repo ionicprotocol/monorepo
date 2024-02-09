@@ -77,8 +77,8 @@ export default function Dashboard() {
   );
 
   return (
-    <main className={`pt-14`}>
-      <div className="w-full flex flex-col items-start justify-start min-h-screen transition-all duration-200 ease-linear px-[3%]">
+    <>
+      <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
         <div
           className={`grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
         >
@@ -299,6 +299,6 @@ export default function Dashboard() {
           selectedMarketData={selectedMarketData}
         />
       )}
-    </main>
+    </>
   );
 }
