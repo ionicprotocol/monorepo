@@ -41,14 +41,12 @@ export default function Dashboard() {
 
       return [
         `$${millify(calculatedTotalCollateral)}`,
-        `$${millify(totalApr / memberships)}`
+        `${(totalApr / memberships).toFixed(2)}%`
       ];
     }
 
     return [undefined, undefined];
   }, [assetsSupplyAprData, marketData]);
-
-  console.log(marketData);
 
   const supplyrow = [
     {
@@ -141,7 +139,15 @@ export default function Dashboard() {
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>EVG. COLLATERAL APR</p>
-                <p className={`font-semibold`}>4.54%</p>
+                <p className={`font-semibold`}>
+                  <ResultHandler
+                    height="24"
+                    isLoading={!avgCollateralApr}
+                    width="24"
+                  >
+                    {avgCollateralApr}
+                  </ResultHandler>
+                </p>
                 {/* this neeeds to be changed */}
               </div>
               <div
