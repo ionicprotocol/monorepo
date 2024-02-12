@@ -32,7 +32,7 @@ export const wagmiConfig = defaultWagmiConfig({
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   chains: supportedChains as any,
   metadata,
-  projectId: projectId,
+  projectId,
   ssr: true,
   transports: supportedChains.reduce(
     (accumulator, currentChain) => ({
