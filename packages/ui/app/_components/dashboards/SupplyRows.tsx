@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+'use client';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { PopupMode } from '../popup/page';
