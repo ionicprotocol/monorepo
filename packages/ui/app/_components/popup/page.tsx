@@ -20,7 +20,7 @@ import type { TransactionStep } from './TransactionStepsHandler';
 import TransactionStepsHandler from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
@@ -88,7 +88,7 @@ const Popup = ({
     },
     []
   );
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const pricePerSingleAsset = useMemo<number>(

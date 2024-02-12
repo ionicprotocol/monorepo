@@ -4,10 +4,10 @@ import type {
 } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export const useClaimableRewardsForVaults = (chainIds: SupportedChains[]) => {
-  const { address, getSdk } = useMultiMidas();
+  const { address, getSdk } = useMultiIonic();
 
   return useQuery<FlywheelRewardsInfoForVault[] | null | undefined>(
     ['useClaimableRewardsForVaults', address],

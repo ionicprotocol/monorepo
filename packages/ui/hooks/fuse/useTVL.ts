@@ -16,7 +16,7 @@
 // >;
 
 // export const useTVL = () => {
-//   const { sdks } = useMultiMidas();
+//   const { sdks } = useMultiIonic();
 //   const { data: prices, isLoading, error } = useAllUsdPrices();
 
 //   return useQuery<CrossChainTVL | null | undefined>(

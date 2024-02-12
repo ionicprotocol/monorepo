@@ -3,14 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { useBalance } from 'wagmi';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useMaxRepayAmount(
   asset: NativePricedIonicAsset,
   chainId: number
 ) {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
   const { data: balanceData } = useBalance({
     address: address,

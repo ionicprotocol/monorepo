@@ -6,7 +6,7 @@ import React from 'react';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 interface IRows {
   asset: string;
@@ -34,7 +34,7 @@ const PoolRows = ({
   setSelectedSymbol,
   setPopupMode
 }: IRows) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return (
     <div

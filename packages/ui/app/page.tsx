@@ -12,14 +12,14 @@ import Popup from './_components/popup/page';
 import Swap from './_components/popup/Swap';
 import ResultHandler from './_components/ResultHandler';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(

@@ -13,14 +13,14 @@ import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const [popupMode, setPopupMode] = useState<PopupMode>();

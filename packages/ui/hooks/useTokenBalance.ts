@@ -2,7 +2,7 @@ import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const fetchTokenBalance = async (
@@ -38,7 +38,7 @@ export function useTokenBalance(
   chainId?: number,
   customAddress?: string
 ) {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
 
   const addressToCheck = customAddress ?? address;

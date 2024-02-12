@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { fetchData } from '@ui/utils/functions';
 
 /**
  * Get the USDC points
  */
 const usePointsForUSDCQuery = () => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return useQuery({
     cacheTime: Infinity,
@@ -33,7 +33,7 @@ const usePointsForUSDCQuery = () => {
  * Get the USDT points
  */
 const usePointsForUSDTQuery = () => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return useQuery({
     cacheTime: Infinity,
@@ -59,7 +59,7 @@ const usePointsForUSDTQuery = () => {
  * Get the WETH points
  */
 const usePointsForWETHQuery = () => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return useQuery({
     cacheTime: Infinity,
@@ -88,7 +88,7 @@ const usePointsForWETHQuery = () => {
  * Get the WETH points
  */
 const usePointsForWBTCQuery = () => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return useQuery({
     cacheTime: Infinity,

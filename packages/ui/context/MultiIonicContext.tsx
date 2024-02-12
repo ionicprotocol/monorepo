@@ -217,11 +217,11 @@ export const MultiIonicProvider = (
 };
 
 // Hook
-export function useMultiMidas() {
+export function useMultiIonic() {
   const context = useContext(MultiIonicContext);
 
   if (context === undefined) {
-    throw new Error(`useMultiMidas must be used within a MultiMidasProvider`);
+    throw new Error(`useMultiIonic must be used within a MultiIonicProvider`);
   }
 
   return context;

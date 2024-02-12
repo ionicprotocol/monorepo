@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useBalance } from 'wagmi';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 
@@ -15,7 +15,7 @@ export function useMaxSupplyAmount(
   comptrollerAddress: string,
   chainId: number
 ) {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
   const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
     comptrollerAddress,
