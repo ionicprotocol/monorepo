@@ -1,16 +1,15 @@
 import { task } from "hardhat/config";
 
-import { IonicLiquidator} from "../../typechain";
+import { IonicLiquidator } from "../../typechain";
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
-import {configureLiquidatorsRegistry} from "../../chainDeploy/helpers/liquidators/registry";
-import {configureIonicLiquidator} from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
+import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
+import { configureIonicLiquidator } from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
 
 task("deploy:kim:liquidaotor").setAction(async ({}, { ethers, getChainId, deployments, getNamedAccounts }) => {
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
   const { deployer } = await getNamedAccounts();
-  const { config: chainDeployParams }: { config: ChainDeployConfig; } =
-    chainDeployConfig[chainId];
+  const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
   console.log("chainDeployParams: ", chainDeployParams);
 
   //// kim exchange uni-v2-like redemptions
@@ -37,7 +36,7 @@ task("deploy:kim:liquidaotor").setAction(async ({}, { ethers, getChainId, deploy
   const ionicLiquidator = (await ethers.getContract("IonicLiquidator", deployer)) as IonicLiquidator;
 
   const currentWToken = await ionicLiquidator.callStatic.W_NATIVE_ADDRESS();
-  if (currentWToken  === ethers.constants.AddressZero) {
+  if (currentWToken === ethers.constants.AddressZero) {
     const tx = await ionicLiquidator.initialize(
       chainDeployParams.wtoken,
       chainDeployParams.uniswap.uniswapV2RouterAddress,
@@ -57,7 +56,9 @@ task("deploy:kim:liquidaotor").setAction(async ({}, { ethers, getChainId, deploy
   });
 
   await configureLiquidatorsRegistry({
-    ethers, getNamedAccounts, chainId
+    ethers,
+    getNamedAccounts,
+    chainId
   });
 
   console.log(`Done`);
