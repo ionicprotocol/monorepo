@@ -1,11 +1,11 @@
 import { task } from "hardhat/config";
 
-import { IonicLiquidator } from "../../typechain/IonicLiquidator";
-import { LiquidatorsRegistry } from "../../typechain/LiquidatorsRegistry";
-import { LiquidatorsRegistryExtension } from "../../typechain/LiquidatorsRegistryExtension";
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
 import { configureIonicLiquidator } from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
+import { IonicLiquidator } from "../../typechain/IonicLiquidator";
+import { LiquidatorsRegistry } from "../../typechain/LiquidatorsRegistry";
+import { LiquidatorsRegistryExtension } from "../../typechain/LiquidatorsRegistryExtension";
 
 task("deploy:kim:liquidator").setAction(async ({}, { ethers, getChainId, deployments, getNamedAccounts }) => {
   const chainId = parseInt(await getChainId());
