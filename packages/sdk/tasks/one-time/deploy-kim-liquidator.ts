@@ -1,11 +1,6 @@
 import { task } from "hardhat/config";
 
-import {
-  ILiquidatorsRegistry,
-  IonicLiquidator,
-  LiquidatorsRegistry,
-  LiquidatorsRegistryExtension
-} from "../../typechain";
+import { IonicLiquidator, LiquidatorsRegistry, LiquidatorsRegistryExtension } from "../../typechain";
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
 import { configureIonicLiquidator } from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
@@ -60,7 +55,10 @@ task("deploy:kim:liquidator").setAction(async ({}, { ethers, getChainId, deploym
     getNamedAccounts
   });
 
-  const liquidatorsRegistryExtension = (await ethers.getContract("LiquidatorsRegistryExtension", deployer)) as LiquidatorsRegistryExtension;
+  const liquidatorsRegistryExtension = (await ethers.getContract(
+    "LiquidatorsRegistryExtension",
+    deployer
+  )) as LiquidatorsRegistryExtension;
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
 
   const liquidatorsRegistryExtensionDep = await deployments.deploy("LiquidatorsRegistryExtension", {
@@ -72,7 +70,7 @@ task("deploy:kim:liquidator").setAction(async ({}, { ethers, getChainId, deploym
     await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
   console.log("LiquidatorsRegistryExtension: ", liquidatorsRegistryExtensionDep.address);
 
-  let tx = await liquidatorsRegistry._registerExtension(
+  const tx = await liquidatorsRegistry._registerExtension(
     liquidatorsRegistryExtensionDep.address,
     liquidatorsRegistryExtension.address
   );
