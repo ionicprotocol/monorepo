@@ -17,7 +17,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapData: [],
     uniswapOracleInitialDeployTokens: [],
     uniswapV2FactoryAddress: ethers.constants.AddressZero,
-    uniswapV2RouterAddress: ethers.constants.AddressZero,
+    uniswapV2RouterAddress: "0x5D61c537393cf21893BE619E36fC94cd73C77DD3",
     uniswapV3SwapRouter: "0xC9Adff795f46105E53be9bbf14221b1C9919EE25",
     uniswapV3Quoter: "0x7Fd569b2021850fbA53887dd07736010aCBFc787"
   },

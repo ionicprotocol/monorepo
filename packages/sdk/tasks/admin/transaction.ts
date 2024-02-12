@@ -34,13 +34,14 @@ task("cancel:tx", "cancel a tx with the same nonce")
     const chainid = parseInt(await getChainId());
     let maxFeePerGas;
     let maxPriorityFeePerGas;
-    let gasPrice;
     if (chainid == 137) {
       maxFeePerGas = ethers.utils.parseUnits("300", "gwei");
       maxPriorityFeePerGas = ethers.utils.parseUnits("120", "gwei");
     } else if (chainid == 34443) {
       maxFeePerGas = 166;
       maxPriorityFeePerGas = 13;
+      maxFeePerGas = ethers.utils.parseUnits("8", "gwei");
+      maxPriorityFeePerGas = ethers.utils.parseUnits("1", "gwei");
     } else {
       throw new Error(`configure the max gas fees for the chain`);
     }
@@ -54,7 +55,7 @@ task("cancel:tx", "cancel a tx with the same nonce")
       maxFeePerGas,
       maxPriorityFeePerGas
     });
-    console.log(`cancelling tx hash ${tx.hash}`);
+    console.log(`cancelling with tx hash ${tx.hash}`);
     await tx.wait();
     console.log(`tx mined ${tx.hash}`);
   });
