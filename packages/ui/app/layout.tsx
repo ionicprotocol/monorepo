@@ -181,8 +181,8 @@ export default function RootLayout({
                       <svg
                         className="stroke-2 fill-white"
                         height="30"
-                        width="100"
                         viewBox="0 0 370.99 127.93"
+                        width="100"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
