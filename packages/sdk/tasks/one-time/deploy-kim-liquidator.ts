@@ -1,11 +1,16 @@
 import { task } from "hardhat/config";
 
-import { IonicLiquidator } from "../../typechain";
+import {
+  ILiquidatorsRegistry,
+  IonicLiquidator,
+  LiquidatorsRegistry,
+  LiquidatorsRegistryExtension
+} from "../../typechain";
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
 import { configureIonicLiquidator } from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
 
-task("deploy:kim:liquidaotor").setAction(async ({}, { ethers, getChainId, deployments, getNamedAccounts }) => {
+task("deploy:kim:liquidator").setAction(async ({}, { ethers, getChainId, deployments, getNamedAccounts }) => {
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
   const { deployer } = await getNamedAccounts();
@@ -54,6 +59,27 @@ task("deploy:kim:liquidaotor").setAction(async ({}, { ethers, getChainId, deploy
     ethers,
     getNamedAccounts
   });
+
+  const liquidatorsRegistryExtension = (await ethers.getContract("LiquidatorsRegistryExtension", deployer)) as LiquidatorsRegistryExtension;
+  const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
+
+  const liquidatorsRegistryExtensionDep = await deployments.deploy("LiquidatorsRegistryExtension", {
+    from: deployer,
+    log: true,
+    args: []
+  });
+  if (liquidatorsRegistryExtensionDep.transactionHash)
+    await ethers.provider.waitForTransaction(liquidatorsRegistryExtensionDep.transactionHash);
+  console.log("LiquidatorsRegistryExtension: ", liquidatorsRegistryExtensionDep.address);
+
+  let tx = await liquidatorsRegistry._registerExtension(
+    liquidatorsRegistryExtensionDep.address,
+    liquidatorsRegistryExtension.address
+  );
+  await tx.wait();
+  console.log(
+    `replaced the liquidators registry first extension ${liquidatorsRegistryExtension.address} with the new ${liquidatorsRegistryExtensionDep.address}`
+  );
 
   await configureLiquidatorsRegistry({
     ethers,
