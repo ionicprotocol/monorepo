@@ -80,10 +80,10 @@ export default function Dashboard() {
     <>
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
         <div
-          className={`grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
+          className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
         >
           <div
-            className={`w-full bg-grayone rounded-xl py-3 px-6   col-span-3   flex flex-col items-center justify-start `}
+            className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6   col-span-3   flex flex-col items-center justify-start `}
           >
             <div className={`w-full flex justify-between  pb-6 items-center`}>
               <span>NET ASSET VALUE</span>
@@ -130,7 +130,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div
-            className={`w-full bg-grayone rounded-xl py-3 px-6 col-span-3 flex flex-col items-center justify-start `}
+            className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-3 flex flex-col items-center justify-start `}
           >
             <div className={`w-full flex justify-between  pb-6 items-center`}>
               <span>NET APR</span>
@@ -185,9 +185,9 @@ export default function Dashboard() {
             </div>
           </div>
           <div
-            className={`w-full bg-grayone rounded-xl py-3 px-6 col-span-2 flex flex-col items-center justify-start `}
+            className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-2 flex flex-col items-center justify-start `}
           >
-            <div className={`w-full flex justify-between items-center`}>
+            <div className={`w-full flex justify-between items-center mb-2`}>
               <span>CLAIMABLE POINTS</span>
               <span> 73982</span>
             </div>
