@@ -21,7 +21,7 @@ export const deployIonicLiquidator = async ({
 }: LiquidatorDeployFnParams): Promise<string> => {
   const { deployer } = await getNamedAccounts();
 
-  const initializeArgs = [deployConfig.wtoken, deployConfig.uniswap, deployConfig.uniswap.flashSwapFee];
+  const initializeArgs = [deployConfig.wtoken, deployConfig.uniswap.uniswapV2RouterAddress, deployConfig.uniswap.flashSwapFee];
   let fsl;
   if (chainId == 34443) {
     fsl = await deployments.deploy("IonicLiquidator", {
