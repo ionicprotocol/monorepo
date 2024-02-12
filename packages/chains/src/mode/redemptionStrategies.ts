@@ -1,6 +1,6 @@
-import {assetSymbols, RedemptionStrategy, RedemptionStrategyContract, underlying} from "@ionicprotocol/types";
+import { assetSymbols, RedemptionStrategy, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
 
-import {assets} from "./assets";
+import { assets } from "./assets";
 
 const redemptionStrategies: RedemptionStrategy[] = [
   {
@@ -42,7 +42,7 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.WBTC),
     strategy: RedemptionStrategyContract.KimUniV2Liquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
-  },
+  }
 ];
 
 export default redemptionStrategies;
