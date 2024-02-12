@@ -582,7 +582,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("LiquidatorsRegistrySecondExtension: ", liquidatorsRegistryExtensionDep.address);
 
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
-  const currentLRExtensions = await liquidatorsRegistry._listExtensions();
+  const currentLRExtensions = await liquidatorsRegistry.callStatic._listExtensions();
   if (currentLRExtensions.length == 0) {
     tx = await liquidatorsRegistry._registerExtension(liquidatorsRegistryExtensionDep.address, constants.AddressZero);
     await tx.wait();
