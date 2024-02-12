@@ -94,15 +94,13 @@ export default function Dashboard() {
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>Total Collateral</p>
-                <p className={`font-semibold`}>
-                  <ResultHandler
-                    height="24"
-                    isLoading={!totalCollateral}
-                    width="24"
-                  >
-                    {totalCollateral}
-                  </ResultHandler>
-                </p>
+                <ResultHandler
+                  height="24"
+                  isLoading={!totalCollateral}
+                  width="24"
+                >
+                  <p className={`font-semibold`}>{totalCollateral}</p>
+                </ResultHandler>
                 {/* this neeeds to be changed */}
               </div>
               <div
@@ -116,15 +114,15 @@ export default function Dashboard() {
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>Total Supply</p>
-                <p className={`font-semibold`}>
-                  <ResultHandler
-                    height="24"
-                    isLoading={isLoadingMarketData}
-                    width="24"
-                  >
+                <ResultHandler
+                  height="24"
+                  isLoading={isLoadingMarketData}
+                  width="24"
+                >
+                  <p className={`font-semibold`}>
                     ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
-                  </ResultHandler>
-                </p>
+                  </p>
+                </ResultHandler>
                 {/* this neeeds to be changed */}
               </div>
             </div>
@@ -141,45 +139,39 @@ export default function Dashboard() {
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>EVG. COLLATERAL APR</p>
-                <p className={`font-semibold`}>
-                  <ResultHandler
-                    height="24"
-                    isLoading={!avgCollateralApr}
-                    width="24"
-                  >
-                    {avgCollateralApr}
-                  </ResultHandler>
-                </p>
+                <ResultHandler
+                  height="24"
+                  isLoading={!avgCollateralApr}
+                  width="24"
+                >
+                  <p className={`font-semibold`}>{avgCollateralApr}</p>
+                </ResultHandler>
                 {/* this neeeds to be changed */}
               </div>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>EVG BORROWING APR</p>
-                <p className={`font-semibold`}>
-                  <ResultHandler
-                    height="24"
-                    isLoading={!borrowApr}
-                    width="24"
-                  >
-                    {borrowApr}
-                  </ResultHandler>
-                </p>
+                <ResultHandler
+                  height="24"
+                  isLoading={!borrowApr}
+                  width="24"
+                >
+                  <p className={`font-semibold`}>{borrowApr}</p>
+                </ResultHandler>
                 {/* this neeeds to be changed */}
               </div>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
                 <p className={`text-white/60 text-xs`}>EVG SUPPLY APR</p>
-                <p className={`font-semibold`}>
-                  <ResultHandler
-                    height="24"
-                    isLoading={!supplyApr}
-                    width="24"
-                  >
-                    {supplyApr}
-                  </ResultHandler>
-                </p>
+                <ResultHandler
+                  height="24"
+                  isLoading={!supplyApr}
+                  width="24"
+                >
+                  <p className={`font-semibold`}>{supplyApr}</p>
+                </ResultHandler>
                 {/* this neeeds to be changed */}
               </div>
             </div>
