@@ -30,7 +30,7 @@ const SupplyRows = ({
 }: SupplyRowsProps) => {
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-8  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-8  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
         membership && 'border border-lime'
       }`}
     >
@@ -40,7 +40,7 @@ const SupplyRows = ({
         </span>
       )}
 
-      <div className={`  flex gap-2 items-center justify-center  `}>
+      <div className={`  flex gap-2 items-center justify-center mb-2 lg:mb-0`}>
         <img
           alt={asset}
           className="h-7"
@@ -48,11 +48,36 @@ const SupplyRows = ({
         />
         <h3 className={` `}>{asset}</h3>
       </div>
-      <h3 className={``}>{amount}</h3>
-      <h3 className={``}>{collateralApr}</h3>
-      <h3 className={``}>{supplyApr}</h3>
-      <h3 className={``}>{utilization}</h3>
-      <h3 className={``}>{rewards}</h3>
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          AMOUNT:
+        </span>
+        {amount}
+      </h3>
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          COLLATERAL APR:
+        </span>
+        {collateralApr}
+      </h3>
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          SUPPLY APR:
+        </span>
+        {supplyApr}
+      </h3>
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          UTILIZATION:
+        </span>
+        {utilization}
+      </h3>
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          REWARDS:
+        </span>
+        {rewards}
+      </h3>
       <div className={` col-span-2 flex items-center justify-center gap-3`}>
         <button
           className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
