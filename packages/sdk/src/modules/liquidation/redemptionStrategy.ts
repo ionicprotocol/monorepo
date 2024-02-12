@@ -13,7 +13,7 @@ export const getRedemptionStrategiesAndDatas = async (
   expectedOutputToken: string
 ): Promise<[StrategiesAndDatas, string[]]> => {
   const liquidatorsRegistry = sdk.createILiquidatorsRegistry();
-  const [strategies, datas, tokenPath] = await liquidatorsRegistry.getRedemptionStrategies(
+  const [strategies, datas, tokenPath] = await liquidatorsRegistry.callStatic.getRedemptionStrategies(
     inputToken,
     expectedOutputToken
   );
