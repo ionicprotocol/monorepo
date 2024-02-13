@@ -184,19 +184,19 @@ export default function Points() {
                 <span className={` `}>Supply</span>
               </div>
               <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   AMOUNT:
                 </span>
                 5
               </div>
               <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                  VALUT SUPPLY:
+                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                  VAULT SUPPLY:
                 </span>
                 ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
               </div>
               <div className={`mb-4 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
                 {summedSupplyPoints}
@@ -223,19 +223,19 @@ export default function Points() {
                 <span className={` `}>Borrow</span>
               </div>
               <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   AMOUNT:
                 </span>
                 5
               </div>
               <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   VAULT SUPPLY:
                 </span>
                 ${millify(marketData?.totalBorrowBalanceFiat ?? 0)}
               </div>
               <div className={`mb-4 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
                 {summedBorrowPoints}
