@@ -63,10 +63,8 @@ export default function Points() {
   );
 
   return (
-    <main
-      className={`py-14  flex flex-col items-center justify-start min-h-screen transition-all duration-200 ease-linear`}
-    >
-      <div className="w-full lg:w-[70%] flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl">
+    <div className="w-full lg:w-[70%] mx-auto">
+      <div className=" flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl">
         <div
           className={`flex items-center text-xl justify-center gap-2 py-3 pt-2 `}
         >
@@ -136,7 +134,7 @@ export default function Points() {
         </p>
         {/* this will be a link inn future */}
       </div>
-      <div className="w-full lg:w-[70%] flex flex-col items-start py-4 justify-start mt-3 bg-grayone h-min px-[3%] rounded-xl">
+      <div className=" flex flex-col items-start py-4 justify-start mt-3 bg-grayone h-min px-[3%] rounded-xl">
         <p className={`font-semibold text-lg `}>Your Earning Strategy</p>
         <div
           className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
@@ -255,7 +253,7 @@ export default function Points() {
         </ResultHandler>
       </div>
 
-      {/* <div className="w-full lg:w-[70%] flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
+      {/* <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
         <h1 className={`font-semibold text-xl `}>Your Top Referrals</h1>
         <div
           className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
@@ -284,7 +282,7 @@ export default function Points() {
             />
           ))}
       </div> */}
-      {/* <div className="w-full lg:w-[70%] flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
+      {/* <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
         <h1 className={`font-semibold text-xl `}>Global Leaderboard </h1>
         <div
           className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
@@ -313,7 +311,7 @@ export default function Points() {
             />
           ))}
       </div> */}
-    </main>
+    </div>
   );
 }
 //  amount: 67,
