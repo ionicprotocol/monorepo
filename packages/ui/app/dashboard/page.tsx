@@ -156,7 +156,7 @@ export default function Dashboard() {
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
-                <p className={`text-white/60 text-xs`}>EVG. COLLATERAL APR</p>
+                <p className={`text-white/60 text-xs`}>Avg. Collateral APR</p>
                 <ResultHandler
                   height="24"
                   isLoading={!avgCollateralApr}
@@ -169,7 +169,7 @@ export default function Dashboard() {
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
-                <p className={`text-white/60 text-xs`}>EVG BORROWING APR</p>
+                <p className={`text-white/60 text-xs`}>Avg. Borrowing APR</p>
                 <ResultHandler
                   height="24"
                   isLoading={!borrowApr}
@@ -182,7 +182,7 @@ export default function Dashboard() {
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
-                <p className={`text-white/60 text-xs`}>EVG SUPPLY APR</p>
+                <p className={`text-white/60 text-xs`}>Avg. Supply APR</p>
                 <ResultHandler
                   height="24"
                   isLoading={!supplyApr}
@@ -198,14 +198,14 @@ export default function Dashboard() {
             className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-2 flex flex-col items-center justify-start `}
           >
             <div className={`w-full flex justify-between items-center mb-2`}>
-              <span>CLAIMABLE POINTS</span>
-              <span> 73982</span>
+              <span>TOTAL POINTS</span>
+              <span>73982</span>
             </div>
             <Link
               className={`w-full rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
               href={`/points`}
             >
-              CLAIM POINTS
+              VIEW POINTS
             </Link>
           </div>
         </div>
