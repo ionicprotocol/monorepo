@@ -160,10 +160,12 @@ export default function Points() {
           }
         >
           <>
-            <FlatMap rewardsData={[summedSupplyPoints, summedBorrowPoints]} />
+            <div className="w-full mb-2 md:mt-0">
+              <FlatMap rewardsData={[summedSupplyPoints, summedBorrowPoints]} />
+            </div>
 
             <div
-              className={`w-full gap-x-1 grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+              className={`hidden md:grid w-full gap-x-1  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center `}
             >
               <h3 className={` `}>STRATEGY</h3>
               <h3 className={` `}>AMOUNT</h3>
@@ -172,20 +174,35 @@ export default function Points() {
               <h3 className={` `}>PERCENTAGE EARNINGS</h3>
             </div>
             <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
             >
-              <div className={`  flex gap-2 items-center justify-center  `}>
+              <div
+                className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+              >
                 <span
                   className="h-4 w-4 rounded-full"
                   style={{ backgroundColor: `#3bff89` }}
                 />
                 <span className={` `}>Supply</span>
               </div>
-              <span className={``}>5</span>
-              <span className={``}>
+              <div className={`mb-2 md:mb-0`}>
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  AMOUNT:
+                </span>
+                5
+              </div>
+              <div className={`mb-2 md:mb-0`}>
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  VALUT SUPPLY:
+                </span>
                 ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
-              </span>
-              <span className={``}>{summedSupplyPoints}</span>
+              </div>
+              <div className={`mb-4 md:mb-0`}>
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  POINTS:
+                </span>
+                {summedSupplyPoints}
+              </div>
               <PercentMeter
                 color="#3bff89"
                 percent={
@@ -196,20 +213,35 @@ export default function Points() {
               />
             </div>
             <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
             >
-              <div className={`  flex gap-2 items-center justify-center  `}>
+              <div
+                className={`  flex gap-2 items-center justify-center  mb-2 md:mb-0`}
+              >
                 <span
                   className="h-4 w-4 rounded-full"
                   style={{ backgroundColor: `#f3fa96` }}
                 />
                 <span className={` `}>Borrow</span>
               </div>
-              <span className={``}>5</span>
-              <span className={``}>
+              <div className={`mb-2 md:mb-0`}>
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  AMOUNT:
+                </span>
+                5
+              </div>
+              <div className={`mb-2 md:mb-0`}>
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  VAULT SUPPLY:
+                </span>
                 ${millify(marketData?.totalBorrowBalanceFiat ?? 0)}
-              </span>
-              <span className={``}>{summedBorrowPoints}</span>
+              </div>
+              <div className={`mb-4 md:mb-0`}>
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  POINTS:
+                </span>
+                {summedBorrowPoints}
+              </div>
               <PercentMeter
                 color="#f3fa96"
                 percent={
