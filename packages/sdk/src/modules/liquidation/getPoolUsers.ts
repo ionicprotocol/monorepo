@@ -76,7 +76,7 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: string) {
     sdk.logger.error("Errored results", { erroredResults });
   }
   const results = validResults.map((r, i) => {
-    return { user: users[i], liquidity: r[1], shortfall: r[2] };
+    return { user: users[i], collateralValue: r[1], liquidity: r[2], shortfall: r[3] };
   });
   const minimumTransactionCost = await sdk.provider.getGasPrice().then((g) => g.mul(BigNumber.from(500000)));
   return results.filter((user) => user.shortfall.gt(minimumTransactionCost));
