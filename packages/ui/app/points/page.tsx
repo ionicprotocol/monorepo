@@ -1,9 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import {
+  usePointsForBorrow,
+  usePointsForSupply
+} from '@ui/hooks/usePointsQueries';
 import FlatMap from '../_components/points_comp/FlatMap';
 import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard';
 import StrategyROW from '../_components/points_comp/StrategyROW';
+import { useMemo } from 'react';
+import ResultHandler from '../_components/ResultHandler';
 
 export default function Points() {
   const strategyData = [
@@ -53,6 +59,45 @@ export default function Points() {
       vaultSupply: 426
     }
   ];
+  const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
+    usePointsForSupply();
+  const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
+    usePointsForBorrow();
+  const summedSupplyPoints = useMemo<number>(() => {
+    if (supplyPoints) {
+      return supplyPoints.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [supplyPoints]);
+  const summedBorrowPoints = useMemo<number>(() => {
+    if (borrowPoints) {
+      return borrowPoints.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [borrowPoints]);
+  const totalPoints = useMemo<number>(
+    () => summedBorrowPoints + summedSupplyPoints,
+    [summedBorrowPoints, summedSupplyPoints]
+  );
+
   return (
     <main
       className={`py-14  flex flex-col items-center justify-start min-h-screen transition-all duration-200 ease-linear`}
@@ -69,7 +114,17 @@ export default function Points() {
           <h1 className={`font-semibold `}>Your Points</h1>
         </div>
         <p className={`text-[10px] text-white/50`}>TOTAL AMOUNT</p>
-        <p className={`text-3xl font-bold text-white mx-auto my-1`}>964783</p>
+
+        <div className="mx-auto my-1">
+          <ResultHandler
+            center
+            height="36"
+            isLoading={isLoadingBorrowPoints || isLoadingSupplyPoints}
+            width="36"
+          >
+            <p className={`text-3xl font-bold text-white`}>{totalPoints}</p>
+          </ResultHandler>
+        </div>
         <p className={`text-sm text-white/50 mx-auto mb-2`}>
           Your Global Rank : 36
         </p>
@@ -78,25 +133,25 @@ export default function Points() {
           className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
         >
           <p className={``}>Points for Supply</p>
-          <p className={`text-white font-semibold`}>873</p>
+          <ResultHandler
+            height="15"
+            isLoading={isLoadingSupplyPoints}
+            width="15"
+          >
+            <p className={`text-white font-semibold`}>{summedSupplyPoints}</p>
+          </ResultHandler>
         </div>
         <div
           className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
         >
           <p className={``}>Points for Borrow</p>
-          <p className={`text-white font-semibold`}>8348</p>
-        </div>
-        <div
-          className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
-        >
-          <p className={``}>Points for Referal</p>
-          <p className={`text-white font-semibold`}>27</p>
-        </div>
-        <div
-          className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
-        >
-          <p className={``}>Points for Extra</p>
-          <p className={`text-white font-semibold`}>987</p>
+          <ResultHandler
+            height="15"
+            isLoading={isLoadingBorrowPoints}
+            width="15"
+          >
+            <p className={`text-white font-semibold`}>{summedBorrowPoints}</p>
+          </ResultHandler>
         </div>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <button
