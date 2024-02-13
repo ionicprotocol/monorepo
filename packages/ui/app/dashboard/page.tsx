@@ -18,6 +18,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -30,11 +31,12 @@ export default function Dashboard() {
   );
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
     useTotalSupplyAPYs(marketData?.assets ?? [], chainId);
-  const { avgCollateralApr, borrowApr, supplyApr, totalCollateral } =
+  const { avgCollateralApr, borrowApr, supplyApr, totalBorrow } =
     useMemo(() => {
       if (marketData && assetsSupplyAprData && currentSdk) {
         const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
         let totalCollateral = 0;
+        let totalBorrow = 0;
         let avgCollateralApr = 0;
         let borrowApr = 0;
         let supplyApr = 0;
@@ -48,6 +50,7 @@ export default function Dashboard() {
             memberships++;
           }
 
+          totalBorrow += asset.borrowBalanceFiat;
           borrowApr += currentSdk.ratePerBlockToAPY(
             asset.borrowRatePerBlock,
             blocksPerMinute
@@ -62,6 +65,7 @@ export default function Dashboard() {
           avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
           borrowApr: `${(borrowApr / marketData.assets.length).toFixed(2)}%`,
           supplyApr: `${(supplyApr / marketData.assets.length).toFixed(2)}%`,
+          totalBorrow: `$${millify(totalBorrow)}`,
           totalCollateral: `$${millify(totalCollateral)}`
         };
       }
@@ -75,6 +79,12 @@ export default function Dashboard() {
       ),
     [marketData, selectedSymbol]
   );
+  const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
+    '0',
+    chainId
+  );
+
+  console.log(healthData);
 
   return (
     <>
@@ -93,26 +103,6 @@ export default function Dashboard() {
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
-                <p className={`text-white/60 text-xs`}>Total Collateral</p>
-                <ResultHandler
-                  height="24"
-                  isLoading={!totalCollateral}
-                  width="24"
-                >
-                  <p className={`font-semibold`}>{totalCollateral}</p>
-                </ResultHandler>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 text-xs`}>Total Utilization</p>
-                <p className={`font-semibold`}>$36782</p>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
                 <p className={`text-white/60 text-xs`}>Total Supply</p>
                 <ResultHandler
                   height="24"
@@ -121,6 +111,34 @@ export default function Dashboard() {
                 >
                   <p className={`font-semibold`}>
                     ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
+                  </p>
+                </ResultHandler>
+                {/* this neeeds to be changed */}
+              </div>
+              <div
+                className={`flex flex-col items-start justify-center  gap-y-1`}
+              >
+                <p className={`text-white/60 text-xs`}>Total Borrow</p>
+                <ResultHandler
+                  height="24"
+                  isLoading={!totalBorrow}
+                  width="24"
+                >
+                  <p className={`font-semibold`}>{totalBorrow}</p>
+                </ResultHandler>
+                {/* this neeeds to be changed */}
+              </div>
+              <div
+                className={`flex flex-col items-start justify-center  gap-y-1`}
+              >
+                <p className={`text-white/60 text-xs`}>Position Health</p>
+                <ResultHandler
+                  height="24"
+                  isLoading={isLoadingHealthData}
+                  width="24"
+                >
+                  <p className={`font-semibold`}>
+                    {healthData ?? 'Unavailable'}
                   </p>
                 </ResultHandler>
                 {/* this neeeds to be changed */}
