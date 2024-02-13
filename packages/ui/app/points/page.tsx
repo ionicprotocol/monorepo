@@ -1,16 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import Link from 'next/link';
+import { useMemo } from 'react';
+
+import FlatMap from '../_components/points_comp/FlatMap';
+import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard';
+import StrategyROW from '../_components/points_comp/StrategyROW';
+import ResultHandler from '../_components/ResultHandler';
+
 import {
   usePointsForBorrow,
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
-import FlatMap from '../_components/points_comp/FlatMap';
-import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard';
-import StrategyROW from '../_components/points_comp/StrategyROW';
-import { useMemo } from 'react';
-import ResultHandler from '../_components/ResultHandler';
-import Link from 'next/link';
+import PercentMeter from '../_components/points_comp/PercentMeter';
 
 export default function Points() {
   const strategyData = [
@@ -172,10 +175,16 @@ export default function Points() {
           className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
         >
           <p className={``}>Total Points</p>
-          <p className={`text-white font-semibold`}>4359</p>
+          <ResultHandler
+            height="15"
+            isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
+            width="15"
+          >
+            <p className={`text-white font-semibold`}>{totalPoints}</p>
+          </ResultHandler>
         </div>
 
-        <FlatMap />
+        <FlatMap rewardsData={[summedSupplyPoints, summedBorrowPoints]} />
         <div
           className={`w-full gap-x-1 grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
         >
@@ -185,18 +194,46 @@ export default function Points() {
           <h3 className={` `}>POINTS</h3>
           <h3 className={` `}>PERCENTAGE EARNINGS</h3>
         </div>
-        {strategyData &&
-          strategyData.map((val, idx: number) => (
-            <StrategyROW
-              amount={val.amount}
-              color={val.color}
-              earnBy={val.earnBy}
-              key={idx}
-              percent={val.percent}
-              points={val.points}
-              vaultSupply={val.vaultSupply}
+        <div
+          className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+        >
+          <div className={`  flex gap-2 items-center justify-center  `}>
+            <span
+              className="h-4 w-4 rounded-full"
+              style={{ backgroundColor: `#3bff89` }}
             />
-          ))}
+            <span className={` `}>Supply</span>
+          </div>
+          <span className={``}>5</span>
+          <span className={``}>5</span>
+          <span className={``}>{summedSupplyPoints}</span>
+          <PercentMeter
+            color="#3bff89"
+            percent={parseFloat(
+              ((summedSupplyPoints / totalPoints) * 100).toFixed(1)
+            )}
+          />
+        </div>
+        <div
+          className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+        >
+          <div className={`  flex gap-2 items-center justify-center  `}>
+            <span
+              className="h-4 w-4 rounded-full"
+              style={{ backgroundColor: `#f3fa96` }}
+            />
+            <span className={` `}>Borrow</span>
+          </div>
+          <span className={``}>5</span>
+          <span className={``}>5</span>
+          <span className={``}>{summedBorrowPoints}</span>
+          <PercentMeter
+            color="#f3fa96"
+            percent={parseFloat(
+              ((summedBorrowPoints / totalPoints) * 100).toFixed(1)
+            )}
+          />
+        </div>
       </div>
 
       <div className="w-[70%] flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
