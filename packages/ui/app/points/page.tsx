@@ -88,7 +88,10 @@ export default function Points() {
           </ResultHandler>
         </div>
         <p className={`text-sm text-white/50 mx-auto mb-2`}>
-          Your Global Rank : 36
+          Your Global Rank :{' '}
+          <span className="px-2 py-1 bg-lime rounded-lg text-md text-darkone whitespace-nowrap">
+            Soon!
+          </span>
         </p>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <div
@@ -163,16 +166,15 @@ export default function Points() {
             </div>
 
             <div
-              className={`hidden md:grid w-full gap-x-1  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center `}
+              className={`hidden md:grid w-full gap-x-1  grid-cols-4 py-4 text-[10px] text-white/40 font-semibold text-center `}
             >
               <h3 className={` `}>STRATEGY</h3>
-              <h3 className={` `}>AMOUNT</h3>
               <h3 className={` `}>VAULT SUPPLY</h3>
               <h3 className={` `}>POINTS</h3>
               <h3 className={` `}>PERCENTAGE EARNINGS</h3>
             </div>
             <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
             >
               <div
                 className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
@@ -182,12 +184,6 @@ export default function Points() {
                   style={{ backgroundColor: `#3bff89` }}
                 />
                 <span className={` `}>Supply</span>
-              </div>
-              <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  AMOUNT:
-                </span>
-                5
               </div>
               <div className={`mb-2 md:mb-0`}>
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
@@ -211,7 +207,7 @@ export default function Points() {
               />
             </div>
             <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-5  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
             >
               <div
                 className={`  flex gap-2 items-center justify-center  mb-2 md:mb-0`}
@@ -221,12 +217,6 @@ export default function Points() {
                   style={{ backgroundColor: `#f3fa96` }}
                 />
                 <span className={` `}>Borrow</span>
-              </div>
-              <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  AMOUNT:
-                </span>
-                5
               </div>
               <div className={`mb-2 md:mb-0`}>
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
@@ -282,35 +272,16 @@ export default function Points() {
             />
           ))}
       </div> */}
-      {/* <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
+      <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
         <h1 className={`font-semibold text-xl `}>Global Leaderboard </h1>
         <div
-          className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
+          className={` w-full flex items-center justify-center text-[10px] my-2 text-white/50`}
         >
-          <p className={``}>Total Referrals</p>
-          <p className={`text-white font-semibold`}>43</p>
+          <span className="px-4 py-2 bg-lime rounded-lg text-lg text-darkone whitespace-nowrap	font-bold">
+            Coming Soon!
+          </span>
         </div>
-        <div
-          className={`w-full gap-x-1 grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
-        >
-          <h3 className={` `}>PERFORMER</h3>
-          <h3 className={` col-span-3 `}>ID</h3>
-          <h3 className={` `}>VAULT SUPPLY</h3>
-          <h3 className={` `}>POINTS</h3>
-          <h3 className={` `}>% EARNINGS</h3>
-        </div>
-        {leaderboardData &&
-          leaderboardData.map((val, idx: number) => (
-            <ReferralLeaderboard
-              eid={val.eid}
-              key={idx}
-              percent={val.percent}
-              points={val.points}
-              rank={idx + 1}
-              vaultSupply={val.vaultSupply}
-            />
-          ))}
-      </div> */}
+      </div>
     </div>
   );
 }
