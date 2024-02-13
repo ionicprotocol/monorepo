@@ -15,6 +15,26 @@ import {
 } from '@ui/hooks/usePointsQueries';
 
 export default function Points() {
+  const leaderboardData = [
+    {
+      eid: '0x4e1b87465e51e1557e5b097f363e873d893e0ca2',
+      percent: 98,
+      points: 34,
+      vaultSupply: 98437
+    },
+    {
+      eid: '0x8f3a11c613CfE14980e0325d3aB4E172Fd347f1B',
+      percent: 28,
+      points: 549,
+      vaultSupply: 3573
+    },
+    {
+      eid: '0x1D46B84cFeBb50Cfb5b257fA32f902B1d704f513',
+      percent: 78,
+      points: 982,
+      vaultSupply: 426
+    }
+  ];
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
     usePointsForSupply();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
