@@ -210,9 +210,11 @@ export default function Points() {
               <span className={``}>{summedSupplyPoints}</span>
               <PercentMeter
                 color="#3bff89"
-                percent={parseFloat(
-                  ((summedSupplyPoints / totalPoints) * 100).toFixed(1)
-                )}
+                percent={
+                  parseFloat(
+                    ((summedSupplyPoints / totalPoints) * 100).toFixed(1)
+                  ) || 0
+                }
               />
             </div>
             <div
@@ -232,9 +234,11 @@ export default function Points() {
               <span className={``}>{summedBorrowPoints}</span>
               <PercentMeter
                 color="#f3fa96"
-                percent={parseFloat(
-                  ((summedBorrowPoints / totalPoints) * 100).toFixed(1)
-                )}
+                percent={
+                  parseFloat(
+                    ((summedBorrowPoints / totalPoints) * 100).toFixed(1)
+                  ) || 0
+                }
               />
             </div>
           </>
