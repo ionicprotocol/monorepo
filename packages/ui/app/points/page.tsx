@@ -1,13 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import millify from 'millify';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useChainId } from 'wagmi';
 
 import FlatMap from '../_components/points_comp/FlatMap';
 import PercentMeter from '../_components/points_comp/PercentMeter';
-import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard';
 import ResultHandler from '../_components/ResultHandler';
 
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -15,36 +16,13 @@ import {
   usePointsForBorrow,
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
-import millify from 'millify';
-import Image from 'next/image';
 
 export default function Points() {
-  const leaderboardData = [
-    {
-      eid: '0x4e1b87465e51e1557e5b097f363e873d893e0ca2',
-      percent: 98,
-      points: 34,
-      vaultSupply: 98437
-    },
-    {
-      eid: '0x8f3a11c613CfE14980e0325d3aB4E172Fd347f1B',
-      percent: 28,
-      points: 549,
-      vaultSupply: 3573
-    },
-    {
-      eid: '0x1D46B84cFeBb50Cfb5b257fA32f902B1d704f513',
-      percent: 78,
-      points: 982,
-      vaultSupply: 426
-    }
-  ];
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
     chainId
   );
-  console.log(marketData);
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
     usePointsForSupply();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
@@ -88,7 +66,7 @@ export default function Points() {
     <main
       className={`py-14  flex flex-col items-center justify-start min-h-screen transition-all duration-200 ease-linear`}
     >
-      <div className="w-[70%] flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl">
+      <div className="w-full lg:w-[70%] flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl">
         <div
           className={`flex items-center text-xl justify-center gap-2 py-3 pt-2 `}
         >
@@ -158,7 +136,7 @@ export default function Points() {
         </p>
         {/* this will be a link inn future */}
       </div>
-      <div className="w-[70%] flex flex-col items-start py-4 justify-start mt-3 bg-grayone h-min px-[3%] rounded-xl">
+      <div className="w-full lg:w-[70%] flex flex-col items-start py-4 justify-start mt-3 bg-grayone h-min px-[3%] rounded-xl">
         <p className={`font-semibold text-lg `}>Your Earning Strategy</p>
         <div
           className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
@@ -245,7 +223,7 @@ export default function Points() {
         </ResultHandler>
       </div>
 
-      {/* <div className="w-[70%] flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
+      {/* <div className="w-full lg:w-[70%] flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
         <h1 className={`font-semibold text-xl `}>Your Top Referrals</h1>
         <div
           className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
@@ -274,7 +252,7 @@ export default function Points() {
             />
           ))}
       </div> */}
-      {/* <div className="w-[70%] flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
+      {/* <div className="w-full lg:w-[70%] flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
         <h1 className={`font-semibold text-xl `}>Global Leaderboard </h1>
         <div
           className={` w-full flex items-center justify-between text-[10px] my-2 text-white/50`}
