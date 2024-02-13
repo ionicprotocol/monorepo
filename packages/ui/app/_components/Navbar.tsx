@@ -58,7 +58,7 @@ export default function Navbar() {
           </Link>
           <Link
             className="pointer-events-none relative mb-2 md:mb-0"
-            href={'/'}
+            href={'#'}
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
               Soon!

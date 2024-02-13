@@ -120,8 +120,8 @@ export default function Points() {
         </div>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <Link
-          className={`w-full flex justify-center items-center rounded-md bg-neutral-500	 text-black py-2 px-6 text-center text-xs mt-auto text-white `}
-          href="/dashboard"
+          className={`w-full flex justify-center items-center rounded-md bg-neutral-500	 text-black py-2 px-6 text-center text-xs mt-auto text-white pointer-events-none`}
+          href="#"
         >
           Go to Dashboard - Earn more Points
           <Image
