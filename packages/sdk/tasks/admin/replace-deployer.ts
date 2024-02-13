@@ -173,7 +173,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           await tx.wait();
           console.log(`dpa.transferOwnership tx mined ${tx.hash}`);
         } else if (currentOwnerDPA != newDeployer) {
-          console.error(`unknown  owner ${currentOwnerDPA}`);
+          console.error(`unknown owner ${currentOwnerDPA}`);
         }
       }
 
