@@ -10,6 +10,7 @@ import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard'
 import StrategyROW from '../_components/points_comp/StrategyROW';
 import { useMemo } from 'react';
 import ResultHandler from '../_components/ResultHandler';
+import Link from 'next/link';
 
 export default function Points() {
   const strategyData = [
@@ -154,12 +155,15 @@ export default function Points() {
           </ResultHandler>
         </div>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-        <button
+        <Link
           className={`w-full rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
+          href="/dashboard"
         >
-          CLAIM POINTS
-        </button>
-        <p className={` text-sm mx-auto mt-3`}>How do Points work ?</p>
+          Go to Dashboard - Earn more Points
+        </Link>
+        <p className={` text-lg font-semibold mx-auto mt-3`}>
+          How do Points work ?
+        </p>
         {/* this will be a link inn future */}
       </div>
       <div className="w-[70%] flex flex-col items-start py-4 justify-start mt-3 bg-grayone h-min px-[3%] rounded-xl">
