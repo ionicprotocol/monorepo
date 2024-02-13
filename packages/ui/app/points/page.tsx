@@ -5,64 +5,16 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 
 import FlatMap from '../_components/points_comp/FlatMap';
+import PercentMeter from '../_components/points_comp/PercentMeter';
 import ReferralLeaderboard from '../_components/points_comp/ReferralLeaderboard';
-import StrategyROW from '../_components/points_comp/StrategyROW';
 import ResultHandler from '../_components/ResultHandler';
 
 import {
   usePointsForBorrow,
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
-import PercentMeter from '../_components/points_comp/PercentMeter';
 
 export default function Points() {
-  const strategyData = [
-    {
-      amount: 2,
-      color: '#f3fa96ff',
-      earnBy: 'referral',
-      percent: 45,
-      points: 435,
-      vaultSupply: 34
-    },
-    {
-      amount: 54,
-      color: '#c768f2ff',
-      earnBy: 'supply',
-      percent: 53,
-      points: 24,
-      vaultSupply: 65
-    },
-    {
-      amount: 67,
-      color: '#f29c3fff',
-      earnBy: 'borrow',
-      percent: 35,
-      points: 34,
-      vaultSupply: 34
-    }
-  ];
-
-  const leaderboardData = [
-    {
-      eid: '0x4e1b87465e51e1557e5b097f363e873d893e0ca2',
-      percent: 98,
-      points: 34,
-      vaultSupply: 98437
-    },
-    {
-      eid: '0x8f3a11c613CfE14980e0325d3aB4E172Fd347f1B',
-      percent: 28,
-      points: 549,
-      vaultSupply: 3573
-    },
-    {
-      eid: '0x1D46B84cFeBb50Cfb5b257fA32f902B1d704f513',
-      percent: 78,
-      points: 982,
-      vaultSupply: 426
-    }
-  ];
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
     usePointsForSupply();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
