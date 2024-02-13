@@ -14,11 +14,11 @@ import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -83,8 +83,6 @@ export default function Dashboard() {
     '0',
     chainId
   );
-
-  console.log(healthData);
 
   return (
     <>
