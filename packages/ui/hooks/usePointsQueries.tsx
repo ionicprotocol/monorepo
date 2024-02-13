@@ -53,6 +53,7 @@ export type QueryResponse = {
               min: number;
               q1: number;
               q3: number;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               sd: any;
             };
           };
@@ -74,7 +75,7 @@ export type QueryResponse = {
     };
     native: {
       query: string;
-      'template-tags': {};
+      'template-tags': unknown;
     };
     type: string;
   };

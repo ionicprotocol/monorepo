@@ -16,13 +16,13 @@ import ResultHandler from '../_components/ResultHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import type { MarketData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import {
   usePointsForBorrow,
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import type { MarketData } from '@ui/types/TokensDataMap';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
