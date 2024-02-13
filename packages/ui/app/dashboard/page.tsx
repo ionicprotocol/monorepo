@@ -19,6 +19,10 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import {
+  usePointsForBorrow,
+  usePointsForSupply
+} from '@ui/hooks/usePointsQueries';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -83,6 +87,38 @@ export default function Dashboard() {
     '0',
     chainId
   );
+  const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
+    usePointsForSupply();
+  const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
+    usePointsForBorrow();
+  const totalPoints = useMemo<number>(() => {
+    if (supplyPoints && borrowPoints) {
+      return (
+        supplyPoints.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        borrowPoints.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        )
+      );
+    }
+
+    return 0;
+  }, [borrowPoints, supplyPoints]);
 
   return (
     <>
@@ -197,7 +233,13 @@ export default function Dashboard() {
           >
             <div className={`w-full flex justify-between items-center mb-2`}>
               <span>TOTAL POINTS</span>
-              <span>73982</span>
+              <ResultHandler
+                height="24"
+                isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
+                width="24"
+              >
+                <span>{totalPoints}</span>
+              </ResultHandler>
             </div>
             <Link
               className={`w-full rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
