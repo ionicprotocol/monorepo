@@ -16,6 +16,7 @@ import ResultHandler from '../_components/ResultHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrow,
   usePointsForSupply
@@ -23,7 +24,6 @@ import {
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
