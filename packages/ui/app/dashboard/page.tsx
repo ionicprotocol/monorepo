@@ -342,7 +342,6 @@ export default function Dashboard() {
                   key={`supply-row-${asset.underlyingSymbol}`}
                   logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                   membership={asset.membership}
-                  rewards={'0'}
                   setPopupMode={setPopupMode}
                   setSelectedSymbol={setSelectedSymbol}
                   supplyApr={`${
