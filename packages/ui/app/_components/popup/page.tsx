@@ -1527,7 +1527,7 @@ const Popup = ({
                           ? 'bg-accent'
                           : 'bg-stone-500'
                       } `}
-                      // onClick={repayAmount}
+                      onClick={repayAmount}
                     >
                       Repay {selectedMarketData.underlyingSymbol}
                     </button>
