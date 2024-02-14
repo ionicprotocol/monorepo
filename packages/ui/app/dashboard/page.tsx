@@ -92,7 +92,14 @@ export default function Dashboard() {
       }
 
       return {};
-    }, [assetsSupplyAprData, currentSdk, chainId, marketData]);
+    }, [
+      assetsSupplyAprData,
+      borrowedAssets,
+      currentSdk,
+      chainId,
+      marketData,
+      suppliedAssets
+    ]);
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
       marketData?.assets.find(
