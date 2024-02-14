@@ -750,7 +750,6 @@ const Popup = ({
     }
   };
 
-  // eslint-disable-next-line
   const borrowAmount = async () => {
     if (
       !transactionSteps.length &&
@@ -819,7 +818,6 @@ const Popup = ({
     }
   };
 
-  // eslint-disable-next-line
   const repayAmount = async () => {
     if (
       !transactionSteps.length &&
