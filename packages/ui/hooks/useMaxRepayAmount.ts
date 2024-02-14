@@ -37,7 +37,7 @@ export function useMaxRepayAmount(
     },
     {
       cacheTime: Infinity,
-      enabled: !!address && !!asset && !!sdk,
+      enabled: !!address && !!asset && !!sdk && !!balanceData,
       staleTime: Infinity
     }
   );
