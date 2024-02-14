@@ -98,7 +98,7 @@ export function useMaxBorrowAmounts(
         return borrowCapsData;
       }
 
-      return null;
+      return [];
     },
     {
       cacheTime: Infinity,

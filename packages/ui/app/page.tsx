@@ -22,9 +22,6 @@ export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
-  const { data } = usePointsForSupply();
-
-  console.log(data);
   const chainId = useChainId();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     '0',

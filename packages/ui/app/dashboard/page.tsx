@@ -23,6 +23,7 @@ import {
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -93,6 +94,12 @@ export default function Dashboard() {
     usePointsForSupply();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
     usePointsForBorrow();
+  const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
+    useMaxBorrowAmounts(
+      marketData?.assets ?? [],
+      marketData?.comptroller ?? '',
+      chainId
+    );
   const totalPoints = useMemo<number>(() => {
     if (supplyPoints && borrowPoints) {
       return (
@@ -121,6 +128,27 @@ export default function Dashboard() {
 
     return 0;
   }, [borrowPoints, supplyPoints]);
+  const utilizations = useMemo<string[]>(() => {
+    if (borrowCaps && marketData) {
+      return borrowCaps.map((borrowCap, i) => {
+        const totalBorrow = marketData.assets[i].borrowBalance.add(
+          borrowCap?.bigNumber ?? '0'
+        );
+
+        return `${
+          totalBorrow.eq('0')
+            ? '0.00'
+            : (
+                (marketData.assets[i].borrowBalance.toNumber() /
+                  totalBorrow.toNumber()) *
+                100
+              ).toFixed(2)
+        }%`;
+      });
+    }
+
+    return marketData?.assets.map(() => '0.00%') ?? [];
+  }, [borrowCaps, marketData]);
 
   return (
     <>
@@ -281,10 +309,14 @@ export default function Dashboard() {
           </div>
           <ResultHandler
             center
-            isLoading={isLoadingMarketData || isLoadingAssetsSupplyAprData}
+            isLoading={
+              isLoadingMarketData ||
+              isLoadingAssetsSupplyAprData ||
+              isLoadingBorrowCaps
+            }
           >
             <>
-              {marketData?.assets.map((asset) => (
+              {marketData?.assets.map((asset, i) => (
                 <SupplyRows
                   amount={`${
                     asset.supplyBalanceNative
@@ -322,7 +354,7 @@ export default function Dashboard() {
                       )
                       .toFixed(2) ?? '0.00'
                   }%`}
-                  utilization={'0'}
+                  utilization={utilizations[i]}
                 />
               ))}
             </>
