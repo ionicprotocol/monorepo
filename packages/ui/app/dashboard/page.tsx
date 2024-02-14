@@ -149,6 +149,16 @@ export default function Dashboard() {
 
     return marketData?.assets.map(() => '0.00%') ?? [];
   }, [borrowCaps, marketData]);
+  const suppliedAssets = useMemo<MarketData[]>(
+    () =>
+      marketData?.assets.filter((asset) => asset.supplyBalanceFiat > 0) ?? [],
+    [marketData]
+  );
+  const borrowedAssets = useMemo<MarketData[]>(
+    () =>
+      marketData?.assets.filter((asset) => asset.borrowBalanceFiat > 0) ?? [],
+    [marketData]
+  );
 
   return (
     <>
@@ -297,15 +307,7 @@ export default function Dashboard() {
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (supply)</h1>
           </div>
-          <div
-            className={`w-full gap-x-1 hidden lg:grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
-          >
-            <h3 className={` `}>SUPPLY ASSETS</h3>
-            <h3 className={` `}>AMOUNT</h3>
-            <h3 className={` `}>COLLATERAL APR</h3>
-            <h3 className={` `}>SUPPLY APR</h3>
-            <h3 className={` `}>UTILISATION</h3>
-          </div>
+
           <ResultHandler
             center
             isLoading={
@@ -315,47 +317,65 @@ export default function Dashboard() {
             }
           >
             <>
-              {marketData?.assets.map((asset, i) => (
-                <InfoRows
-                  amount={`${
-                    asset.supplyBalanceNative
-                      ? parseFloat(
-                          formatUnits(
-                            asset.supplyBalance,
-                            asset.underlyingDecimals
+              {suppliedAssets.length > 0 ? (
+                <>
+                  <div
+                    className={`w-full gap-x-1 hidden lg:grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                  >
+                    <h3 className={` `}>SUPPLY ASSETS</h3>
+                    <h3 className={` `}>AMOUNT</h3>
+                    <h3 className={` `}>COLLATERAL APR</h3>
+                    <h3 className={` `}>SUPPLY APR</h3>
+                    <h3 className={` `}>UTILISATION</h3>
+                  </div>
+
+                  {suppliedAssets.map((asset, i) => (
+                    <InfoRows
+                      amount={`${
+                        asset.supplyBalanceNative
+                          ? parseFloat(
+                              formatUnits(
+                                asset.supplyBalance,
+                                asset.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        asset.underlyingSymbol
+                      } / $${asset.supplyBalanceFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      apr={`${
+                        currentSdk
+                          ?.ratePerBlockToAPY(
+                            asset?.supplyRatePerBlock ?? BigNumber.from(0),
+                            getBlockTimePerMinuteByChainId(chainId)
                           )
-                        ).toLocaleString('en-US', {
-                          maximumFractionDigits: 2
-                        })
-                      : '0'
-                  } ${
-                    asset.underlyingSymbol
-                  } / $${asset.supplyBalanceFiat.toLocaleString('en-US', {
-                    maximumFractionDigits: 2
-                  })}`}
-                  apr={`${
-                    currentSdk
-                      ?.ratePerBlockToAPY(
-                        asset?.supplyRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2) ?? '0.00'
-                  }%`}
-                  asset={asset.underlyingSymbol}
-                  collateralApr={`${
-                    assetsSupplyAprData
-                      ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
-                      : ''
-                  }%`}
-                  key={`supply-row-${asset.underlyingSymbol}`}
-                  logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
-                  membership={asset.membership}
-                  mode={InfoMode.SUPPLY}
-                  setPopupMode={setPopupMode}
-                  setSelectedSymbol={setSelectedSymbol}
-                  utilization={utilizations[i]}
-                />
-              ))}
+                          .toFixed(2) ?? '0.00'
+                      }%`}
+                      asset={asset.underlyingSymbol}
+                      collateralApr={`${
+                        assetsSupplyAprData
+                          ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
+                          : ''
+                      }%`}
+                      key={`supply-row-${asset.underlyingSymbol}`}
+                      logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
+                      membership={asset.membership}
+                      mode={InfoMode.SUPPLY}
+                      setPopupMode={setPopupMode}
+                      setSelectedSymbol={setSelectedSymbol}
+                      utilization={utilizations[i]}
+                    />
+                  ))}
+                </>
+              ) : (
+                <div className="text-center mx-auto py-2">
+                  No assets supplied!
+                </div>
+              )}
             </>
           </ResultHandler>
         </div>
@@ -363,15 +383,7 @@ export default function Dashboard() {
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Borrows (Loans)</h1>
           </div>
-          <div
-            className={`w-full gap-x-1 grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
-          >
-            <h3 className={` `}>BORROW ASSETS</h3>
-            <h3 className={` `}>AMOUNT</h3>
-            <h3 className={` `}>COLLATERAL APR</h3>
-            <h3 className={` `}>BORROW APR</h3>
-            <h3 className={` `}>UTILISATION</h3>
-          </div>
+
           <ResultHandler
             center
             isLoading={
@@ -381,47 +393,65 @@ export default function Dashboard() {
             }
           >
             <>
-              {marketData?.assets.map((asset, i) => (
-                <InfoRows
-                  amount={`${
-                    asset.borrowBalanceFiat
-                      ? parseFloat(
-                          formatUnits(
-                            asset.borrowBalance,
-                            asset.underlyingDecimals
+              {borrowedAssets.length > 0 ? (
+                <>
+                  <div
+                    className={`w-full gap-x-1 grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                  >
+                    <h3 className={` `}>BORROW ASSETS</h3>
+                    <h3 className={` `}>AMOUNT</h3>
+                    <h3 className={` `}>COLLATERAL APR</h3>
+                    <h3 className={` `}>BORROW APR</h3>
+                    <h3 className={` `}>UTILISATION</h3>
+                  </div>
+
+                  {borrowedAssets.map((asset, i) => (
+                    <InfoRows
+                      amount={`${
+                        asset.borrowBalanceFiat
+                          ? parseFloat(
+                              formatUnits(
+                                asset.borrowBalance,
+                                asset.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        asset.underlyingSymbol
+                      } / $${asset.borrowBalanceFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      apr={`${
+                        currentSdk
+                          ?.ratePerBlockToAPY(
+                            asset?.borrowRatePerBlock ?? BigNumber.from(0),
+                            getBlockTimePerMinuteByChainId(chainId)
                           )
-                        ).toLocaleString('en-US', {
-                          maximumFractionDigits: 2
-                        })
-                      : '0'
-                  } ${
-                    asset.underlyingSymbol
-                  } / $${asset.borrowBalanceFiat.toLocaleString('en-US', {
-                    maximumFractionDigits: 2
-                  })}`}
-                  apr={`${
-                    currentSdk
-                      ?.ratePerBlockToAPY(
-                        asset?.borrowRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2) ?? '0.00'
-                  }%`}
-                  asset={asset.underlyingSymbol}
-                  collateralApr={`${
-                    assetsSupplyAprData
-                      ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
-                      : ''
-                  }%`}
-                  key={`supply-row-${asset.underlyingSymbol}`}
-                  logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
-                  membership={asset.membership}
-                  mode={InfoMode.BORROW}
-                  setPopupMode={setPopupMode}
-                  setSelectedSymbol={setSelectedSymbol}
-                  utilization={utilizations[i]}
-                />
-              ))}
+                          .toFixed(2) ?? '0.00'
+                      }%`}
+                      asset={asset.underlyingSymbol}
+                      collateralApr={`${
+                        assetsSupplyAprData
+                          ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
+                          : ''
+                      }%`}
+                      key={`supply-row-${asset.underlyingSymbol}`}
+                      logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
+                      membership={asset.membership}
+                      mode={InfoMode.BORROW}
+                      setPopupMode={setPopupMode}
+                      setSelectedSymbol={setSelectedSymbol}
+                      utilization={utilizations[i]}
+                    />
+                  ))}
+                </>
+              ) : (
+                <div className="text-center mx-auto py-2">
+                  No assets borrowed!
+                </div>
+              )}
             </>
           </ResultHandler>
         </div>
