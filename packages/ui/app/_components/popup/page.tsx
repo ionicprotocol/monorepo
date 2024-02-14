@@ -1449,7 +1449,7 @@ const Popup = ({
                           ? 'bg-accent'
                           : 'bg-stone-500'
                       } `}
-                      // onClick={borrowAmount}
+                      onClick={borrowAmount}
                     >
                       Borrow {selectedMarketData.underlyingSymbol}
                     </button>
