@@ -135,7 +135,7 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg border bg-lime text-black border-white/50 py-1.5 px-3 uppercase`}
+              className={`rounded-lg bg-lime text-black py-1.5 px-3 uppercase`}
               onClick={() => {
                 setSelectedSymbol(asset);
                 setPopupMode(PopupMode.BORROW);
