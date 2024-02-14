@@ -91,7 +91,7 @@ const SupplyRows = ({
         </button>
 
         <button
-          className={`w-full uppercase rounded-lg border text-white/50 border-white/50 py-1.5 px-3`}
+          className={`w-full uppercase bg-lime rounded-lg text-black py-1.5 px-3`}
           onClick={() => {
             setSelectedSymbol(asset);
             setPopupMode(PopupMode.SUPPLY);

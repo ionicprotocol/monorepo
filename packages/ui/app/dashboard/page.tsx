@@ -35,57 +35,49 @@ export default function Dashboard() {
   );
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
     useTotalSupplyAPYs(marketData?.assets ?? [], chainId);
-  const {
-    avgCollateralApr,
-    borrowApr,
-    netApr,
-    netAssetValue,
-    supplyApr,
-    totalBorrow
-  } = useMemo(() => {
-    if (marketData && assetsSupplyAprData && currentSdk) {
-      const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
-      let totalCollateral = 0;
-      let totalBorrow = 0;
-      let avgCollateralApr = 0;
-      let borrowApr = 0;
-      let supplyApr = 0;
-      let memberships = 0;
+  const { avgCollateralApr, borrowApr, netApr, netAssetValue, supplyApr } =
+    useMemo(() => {
+      if (marketData && assetsSupplyAprData && currentSdk) {
+        const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+        let totalCollateral = 0;
+        let avgCollateralApr = 0;
+        let borrowApr = 0;
+        let supplyApr = 0;
+        let memberships = 0;
 
-      marketData.assets.forEach((asset) => {
-        if (asset.membership) {
-          totalCollateral += asset.supplyBalanceFiat;
-          avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
+        marketData.assets.forEach((asset) => {
+          if (asset.membership) {
+            totalCollateral += asset.supplyBalanceFiat;
+            avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
 
-          memberships++;
-        }
+            memberships++;
+          }
 
-        totalBorrow += asset.borrowBalanceFiat;
-        borrowApr += currentSdk.ratePerBlockToAPY(
-          asset.borrowRatePerBlock,
-          blocksPerMinute
-        );
-        supplyApr += currentSdk.ratePerBlockToAPY(
-          asset.supplyRatePerBlock,
-          blocksPerMinute
-        );
-      });
+          borrowApr += currentSdk.ratePerBlockToAPY(
+            asset.borrowRatePerBlock,
+            blocksPerMinute
+          );
+          supplyApr += currentSdk.ratePerBlockToAPY(
+            asset.supplyRatePerBlock,
+            blocksPerMinute
+          );
+        });
 
-      return {
-        avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
-        borrowApr: `${(borrowApr / marketData.assets.length).toFixed(2)}%`,
-        netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
-        netAssetValue: `$${millify(
-          (marketData?.totalSupplyBalanceFiat ?? 0) - totalBorrow
-        )}`,
-        supplyApr: `${(supplyApr / marketData.assets.length).toFixed(2)}%`,
-        totalBorrow: `$${millify(totalBorrow)}`,
-        totalCollateral: `$${millify(totalCollateral)}`
-      };
-    }
+        return {
+          avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
+          borrowApr: `${(borrowApr / marketData.assets.length).toFixed(2)}%`,
+          netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
+          netAssetValue: `$${millify(
+            (marketData?.totalSupplyBalanceFiat ?? 0) -
+              (marketData?.totalBorrowBalanceFiat ?? 0)
+          )}`,
+          supplyApr: `${(supplyApr / marketData.assets.length).toFixed(2)}%`,
+          totalCollateral: `$${millify(totalCollateral)}`
+        };
+      }
 
-    return {};
-  }, [assetsSupplyAprData, currentSdk, chainId, marketData]);
+      return {};
+    }, [assetsSupplyAprData, currentSdk, chainId, marketData]);
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
       marketData?.assets.find(
@@ -171,10 +163,12 @@ export default function Dashboard() {
                 <p className={`text-white/60 text-xs`}>Total Borrow</p>
                 <ResultHandler
                   height="24"
-                  isLoading={!totalBorrow}
+                  isLoading={isLoadingMarketData}
                   width="24"
                 >
-                  <p className={`font-semibold`}>{totalBorrow}</p>
+                  <p className={`font-semibold`}>
+                    ${millify(marketData?.totalBorrowBalanceFiat ?? 0)}
+                  </p>
                 </ResultHandler>
                 {/* this neeeds to be changed */}
               </div>
