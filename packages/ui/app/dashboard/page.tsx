@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
-import SupplyRows from '../_components/dashboards/SupplyRows';
+import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
@@ -316,7 +316,7 @@ export default function Dashboard() {
           >
             <>
               {marketData?.assets.map((asset, i) => (
-                <SupplyRows
+                <InfoRows
                   amount={`${
                     asset.supplyBalanceNative
                       ? parseFloat(
@@ -333,6 +333,14 @@ export default function Dashboard() {
                   } / $${asset.supplyBalanceFiat.toLocaleString('en-US', {
                     maximumFractionDigits: 2
                   })}`}
+                  apr={`${
+                    currentSdk
+                      ?.ratePerBlockToAPY(
+                        asset?.supplyRatePerBlock ?? BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2) ?? '0.00'
+                  }%`}
                   asset={asset.underlyingSymbol}
                   collateralApr={`${
                     assetsSupplyAprData
@@ -342,50 +350,81 @@ export default function Dashboard() {
                   key={`supply-row-${asset.underlyingSymbol}`}
                   logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                   membership={asset.membership}
+                  mode={InfoMode.SUPPLY}
                   setPopupMode={setPopupMode}
                   setSelectedSymbol={setSelectedSymbol}
-                  supplyApr={`${
-                    currentSdk
-                      ?.ratePerBlockToAPY(
-                        asset?.supplyRatePerBlock ?? BigNumber.from(0),
-                        getBlockTimePerMinuteByChainId(chainId)
-                      )
-                      .toFixed(2) ?? '0.00'
-                  }%`}
                   utilization={utilizations[i]}
                 />
               ))}
             </>
           </ResultHandler>
         </div>
-        {/* <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
+        <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Borrows (Loans)</h1>
           </div>
           <div
-            className={`w-full gap-x-1 grid  grid-cols-8  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+            className={`w-full gap-x-1 grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
           >
-            <h3 className={` `}>SUPPLY ASSETS</h3>
+            <h3 className={` `}>BORROW ASSETS</h3>
             <h3 className={` `}>AMOUNT</h3>
             <h3 className={` `}>COLLATERAL APR</h3>
-            <h3 className={` `}>SUPPLY APR</h3>
+            <h3 className={` `}>BORROW APR</h3>
             <h3 className={` `}>UTILISATION</h3>
-            <h3 className={` `}>REWARDS</h3>
           </div>
-          {supplyrow &&
-            supplyrow.map((val, idx: number) => (
-              <SupplyRows
-                amount={val.amount}
-                asset={val.asset}
-                cAPR={val.cAPR}
-                key={idx}
-                mode={'BORROW'}
-                rewards={val.rewards}
-                sAPR={val.sAPR}
-                utilisation={val.utilisation}
-              />
-            ))}
-        </div> */}
+          <ResultHandler
+            center
+            isLoading={
+              isLoadingMarketData ||
+              isLoadingAssetsSupplyAprData ||
+              isLoadingBorrowCaps
+            }
+          >
+            <>
+              {marketData?.assets.map((asset, i) => (
+                <InfoRows
+                  amount={`${
+                    asset.borrowBalanceFiat
+                      ? parseFloat(
+                          formatUnits(
+                            asset.borrowBalance,
+                            asset.underlyingDecimals
+                          )
+                        ).toLocaleString('en-US', {
+                          maximumFractionDigits: 2
+                        })
+                      : '0'
+                  } ${
+                    asset.underlyingSymbol
+                  } / $${asset.borrowBalanceFiat.toLocaleString('en-US', {
+                    maximumFractionDigits: 2
+                  })}`}
+                  apr={`${
+                    currentSdk
+                      ?.ratePerBlockToAPY(
+                        asset?.borrowRatePerBlock ?? BigNumber.from(0),
+                        getBlockTimePerMinuteByChainId(chainId)
+                      )
+                      .toFixed(2) ?? '0.00'
+                  }%`}
+                  asset={asset.underlyingSymbol}
+                  collateralApr={`${
+                    assetsSupplyAprData
+                      ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
+                      : ''
+                  }%`}
+                  key={`supply-row-${asset.underlyingSymbol}`}
+                  logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
+                  membership={asset.membership}
+                  mode={InfoMode.BORROW}
+                  setPopupMode={setPopupMode}
+                  setSelectedSymbol={setSelectedSymbol}
+                  utilization={utilizations[i]}
+                />
+              ))}
+            </>
+          </ResultHandler>
+        </div>
       </div>
       {popupMode && selectedMarketData && marketData && (
         <Popup

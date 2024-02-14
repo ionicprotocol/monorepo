@@ -4,29 +4,36 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { PopupMode } from '../popup/page';
 
-export type SupplyRowsProps = {
+export enum InfoMode {
+  SUPPLY,
+  BORROW
+}
+
+export type InfoRowsProps = {
   amount: string;
+  apr: string;
   asset: string;
   collateralApr: string;
   logo: string;
   membership: boolean;
+  mode: InfoMode;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
-  supplyApr: string;
   utilization: string;
 };
 
-const SupplyRows = ({
+const InfoRows = ({
   amount,
   asset,
   collateralApr,
   logo,
   membership,
+  mode,
   setSelectedSymbol,
   setPopupMode,
-  supplyApr,
+  apr,
   utilization
-}: SupplyRowsProps) => {
+}: InfoRowsProps) => {
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-7  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
@@ -61,9 +68,9 @@ const SupplyRows = ({
       </h3>
       <h3 className={`mb-2 lg:mb-0`}>
         <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          SUPPLY APR:
+          {mode === InfoMode.SUPPLY ? 'SUPPLY' : 'BORROW'} APR:
         </span>
-        {supplyApr}
+        {apr}
       </h3>
       <h3 className={`mb-2 lg:mb-0`}>
         <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
@@ -76,24 +83,28 @@ const SupplyRows = ({
           className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => {
             setSelectedSymbol(asset);
-            setPopupMode(PopupMode.WITHDRAW);
+            setPopupMode(
+              mode === InfoMode.SUPPLY ? PopupMode.WITHDRAW : PopupMode.REPAY
+            );
           }}
         >
-          Withdraw
+          {mode === InfoMode.SUPPLY ? 'Withdraw' : 'Repay'}
         </button>
 
         <button
           className={`w-full uppercase bg-lime rounded-lg text-black py-1.5 px-3`}
           onClick={() => {
             setSelectedSymbol(asset);
-            setPopupMode(PopupMode.SUPPLY);
+            setPopupMode(
+              mode === InfoMode.SUPPLY ? PopupMode.SUPPLY : PopupMode.BORROW
+            );
           }}
         >
-          Manage
+          {mode === InfoMode.SUPPLY ? 'Manage' : 'Borrow'}
         </button>
       </div>
     </div>
   );
 };
 
-export default SupplyRows;
+export default InfoRows;
