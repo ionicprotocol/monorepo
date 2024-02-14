@@ -10,7 +10,6 @@ export type SupplyRowsProps = {
   collateralApr: string;
   logo: string;
   membership: boolean;
-  rewards: string;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   supplyApr: string;
@@ -23,7 +22,6 @@ const SupplyRows = ({
   collateralApr,
   logo,
   membership,
-  rewards,
   setSelectedSymbol,
   setPopupMode,
   supplyApr,

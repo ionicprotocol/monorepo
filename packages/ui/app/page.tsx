@@ -16,7 +16,6 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { usePointsForSupply } from '@ui/hooks/usePointsQueries';
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
