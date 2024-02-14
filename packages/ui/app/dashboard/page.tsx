@@ -36,6 +36,16 @@ export default function Dashboard() {
   );
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
     useTotalSupplyAPYs(marketData?.assets ?? [], chainId);
+  const suppliedAssets = useMemo<MarketData[]>(
+    () =>
+      marketData?.assets.filter((asset) => asset.supplyBalanceFiat > 0) ?? [],
+    [marketData]
+  );
+  const borrowedAssets = useMemo<MarketData[]>(
+    () =>
+      marketData?.assets.filter((asset) => asset.borrowBalanceFiat > 0) ?? [],
+    [marketData]
+  );
   const { avgCollateralApr, borrowApr, netApr, netAssetValue, supplyApr } =
     useMemo(() => {
       if (marketData && assetsSupplyAprData && currentSdk) {
@@ -66,13 +76,17 @@ export default function Dashboard() {
 
         return {
           avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
-          borrowApr: `${(borrowApr / marketData.assets.length).toFixed(2)}%`,
+          borrowApr: `${(borrowApr / (borrowedAssets.length || 1)).toFixed(
+            2
+          )}%`,
           netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
           netAssetValue: `$${millify(
             (marketData?.totalSupplyBalanceFiat ?? 0) -
               (marketData?.totalBorrowBalanceFiat ?? 0)
           )}`,
-          supplyApr: `${(supplyApr / marketData.assets.length).toFixed(2)}%`,
+          supplyApr: `${(supplyApr / (suppliedAssets.length || 1)).toFixed(
+            2
+          )}%`,
           totalCollateral: `$${millify(totalCollateral)}`
         };
       }
@@ -149,16 +163,6 @@ export default function Dashboard() {
 
     return marketData?.assets.map(() => '0.00%') ?? [];
   }, [borrowCaps, marketData]);
-  const suppliedAssets = useMemo<MarketData[]>(
-    () =>
-      marketData?.assets.filter((asset) => asset.supplyBalanceFiat > 0) ?? [],
-    [marketData]
-  );
-  const borrowedAssets = useMemo<MarketData[]>(
-    () =>
-      marketData?.assets.filter((asset) => asset.borrowBalanceFiat > 0) ?? [],
-    [marketData]
-  );
 
   return (
     <>
