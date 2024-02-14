@@ -298,14 +298,13 @@ export default function Dashboard() {
             <h1 className={`font-semibold`}>Your Collateral (supply)</h1>
           </div>
           <div
-            className={`w-full gap-x-1 hidden lg:grid  grid-cols-8  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+            className={`w-full gap-x-1 hidden lg:grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
           >
             <h3 className={` `}>SUPPLY ASSETS</h3>
             <h3 className={` `}>AMOUNT</h3>
             <h3 className={` `}>COLLATERAL APR</h3>
             <h3 className={` `}>SUPPLY APR</h3>
             <h3 className={` `}>UTILISATION</h3>
-            <h3 className={` `}>REWARDS</h3>
           </div>
           <ResultHandler
             center
