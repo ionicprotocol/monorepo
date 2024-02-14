@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 
 export const useIsEditableAdmin = (
@@ -8,7 +8,7 @@ export const useIsEditableAdmin = (
   poolChainId?: number
 ) => {
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
-  const { currentChain } = useMultiMidas();
+  const { currentChain } = useMultiIonic();
 
   const { data } = useQuery(
     [

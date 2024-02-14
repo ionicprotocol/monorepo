@@ -6,7 +6,7 @@ import React from 'react';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 interface IRows {
   asset: string;
@@ -34,7 +34,7 @@ const PoolRows = ({
   setSelectedSymbol,
   setPopupMode
 }: IRows) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return (
     <div
@@ -135,7 +135,7 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg border bg-lime text-black border-white/50 py-1.5 px-3 uppercase`}
+              className={`rounded-lg bg-lime text-black py-1.5 px-3 uppercase`}
               onClick={() => {
                 setSelectedSymbol(asset);
                 setPopupMode(PopupMode.BORROW);

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '../ionic/useSdk';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export const useIsAuth = (
   pool?: string,
@@ -12,7 +12,7 @@ export const useIsAuth = (
   chainId?: number
 ) => {
   const sdk = useSdk(chainId);
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
 
   return useQuery(
     ['useIsAuth', sdk?.chainId, pool, role, address],

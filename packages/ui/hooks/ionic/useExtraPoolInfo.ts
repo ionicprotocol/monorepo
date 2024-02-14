@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const useExtraPoolInfo = (
   comptrollerAddress?: string,
   poolChainId?: number
 ) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
   return useQuery(

@@ -16,11 +16,11 @@ import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
 import Tab from './Tab';
-import type { TransactionStep } from './TransactionStepHandler';
-import TransactionStepsHandler from './TransactionStepHandler';
+import type { TransactionStep } from './TransactionStepsHandler';
+import TransactionStepsHandler from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
@@ -37,7 +37,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export enum PopupMode {
   SUPPLY = 1,
-  COLLATERAL,
+  WITHDRAW,
   BORROW,
   REPAY
 }
@@ -47,11 +47,9 @@ interface IPopup {
   comptrollerAddress: string;
   mode?: PopupMode;
   selectedMarketData: MarketData;
-  specific?: string | null;
 }
 const Popup = ({
   mode = PopupMode.SUPPLY,
-  specific = null,
   selectedMarketData,
   closePopup,
   comptrollerAddress
@@ -90,7 +88,7 @@ const Popup = ({
     },
     []
   );
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const pricePerSingleAsset = useMemo<number>(
@@ -176,7 +174,7 @@ const Popup = ({
 
     return '0.00%';
   }, [assetsSupplyAprData, selectedMarketData.cToken]);
-  const [active, setActive] = useState<string>('');
+  const [active, setActive] = useState<PopupMode>(mode);
   const slide = useRef<HTMLDivElement>(null!);
   const [amount, setAmount] = useReducer(
     (_: string | undefined, value: string | undefined): string | undefined =>
@@ -320,7 +318,7 @@ const Popup = ({
    */
   useEffect(() => {
     switch (active) {
-      case 'COLLATERAL': {
+      case PopupMode.SUPPLY: {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxSupplyAmount?.bigNumber
@@ -331,7 +329,7 @@ const Popup = ({
         break;
       }
 
-      case 'WITHDRAW': {
+      case PopupMode.WITHDRAW: {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxWithdrawAmount ? Number(formatEther(maxWithdrawAmount)) : 1);
@@ -340,7 +338,7 @@ const Popup = ({
         break;
       }
 
-      case 'BORROW': {
+      case PopupMode.BORROW: {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxBorrowAmount?.bigNumber
@@ -351,7 +349,7 @@ const Popup = ({
         break;
       }
 
-      case 'REPAY': {
+      case PopupMode.REPAY: {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxRepayAmount ? Number(formatEther(maxRepayAmount)) : 1);
@@ -370,65 +368,38 @@ const Popup = ({
   ]);
 
   useEffect(() => {
-    if (mode === PopupMode.SUPPLY) {
-      if (specific) {
-        setActive(specific);
-        return;
-      }
-      setActive('COLLATERAL');
-    }
-
-    if (mode === PopupMode.BORROW) {
-      if (specific) {
-        setActive(specific);
-        return;
-      }
-      setActive('BORROW');
-    }
-  }, [mode, specific]);
-
-  useEffect(() => {
     setAmount('0');
     setCurrentUtilizationPercentage(0);
     upsertTransactionStep(undefined);
 
     switch (active) {
-      case 'COLLATERAL':
+      case PopupMode.SUPPLY:
+        slide.current.style.transform = 'translateX(0%)';
+
         setCurrentFundOperation(FundOperationMode.SUPPLY);
 
         break;
 
-      case 'WITHDRAW':
+      case PopupMode.WITHDRAW:
+        slide.current.style.transform = 'translateX(-100%)';
+
         setCurrentFundOperation(FundOperationMode.WITHDRAW);
 
         break;
 
-      case 'BORROW':
+      case PopupMode.BORROW:
+        slide.current.style.transform = 'translateX(0%)';
+
         setCurrentFundOperation(FundOperationMode.BORROW);
 
         break;
 
-      case 'REPAY':
+      case PopupMode.REPAY:
+        slide.current.style.transform = 'translateX(-100%)';
+
         setCurrentFundOperation(FundOperationMode.REPAY);
 
         break;
-    }
-
-    if (mode === PopupMode.SUPPLY) {
-      if (active === 'COLLATERAL') {
-        slide.current.style.transform = 'translateX(0%)';
-      }
-      if (active === 'WITHDRAW') {
-        slide.current.style.transform = 'translateX(-100%)';
-      }
-    }
-    if (mode === PopupMode.BORROW) {
-      if (active === 'BORROW') {
-        slide.current.style.transform = 'translateX(0%)';
-      }
-      if (active === 'REPAY') {
-        slide.current.style.transform = 'translateX(-100%)';
-      }
     }
   }, [active, mode]);
 
@@ -779,7 +750,6 @@ const Popup = ({
     }
   };
 
-  // eslint-disable-next-line
   const borrowAmount = async () => {
     if (
       !transactionSteps.length &&
@@ -848,7 +818,6 @@ const Popup = ({
     }
   };
 
-  // eslint-disable-next-line
   const repayAmount = async () => {
     if (
       !transactionSteps.length &&
@@ -1123,7 +1092,7 @@ const Popup = ({
           className={`w-full transition-all duration-300 ease-linear h-min  flex`}
           ref={slide}
         >
-          {mode === PopupMode.SUPPLY && (
+          {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
             <>
               {/* ---------------------------------------------------------------------------- */}
               {/* SUPPLY-Collateral section */}
@@ -1340,7 +1309,7 @@ const Popup = ({
               </div>
             </>
           )}
-          {mode === PopupMode.BORROW && (
+          {(mode === PopupMode.BORROW || mode === PopupMode.REPAY) && (
             <>
               <div className={`min-w-full py-5 px-[6%] h-min`}>
                 {/* ---------------------------------------------------------------------------- */}
@@ -1556,7 +1525,7 @@ const Popup = ({
                           ? 'bg-accent'
                           : 'bg-stone-500'
                       } `}
-                      // onClick={repayAmount}
+                      onClick={repayAmount}
                     >
                       Repay {selectedMarketData.underlyingSymbol}
                     </button>

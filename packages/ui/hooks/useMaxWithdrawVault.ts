@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export function useMaxWithdrawVault(vault: string) {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address } = useMultiIonic();
 
   return useQuery(
     ['useMaxWithdrawVault', vault, currentSdk?.chainId, address],

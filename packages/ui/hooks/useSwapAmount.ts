@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { type BigNumber, constants } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export interface SwapTokenType {
   underlyingDecimals: BigNumber;
@@ -15,7 +15,7 @@ export function useSwapAmount(
   outputToken?: string,
   balance?: BigNumber | null
 ) {
-  const { address, currentSdk } = useMultiMidas();
+  const { address, currentSdk } = useMultiIonic();
 
   return useQuery(
     [
