@@ -3,7 +3,7 @@ import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/m
 import { useQuery } from '@tanstack/react-query';
 import { constants } from 'ethers';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useAssetClaimableRewards = (
@@ -11,7 +11,7 @@ export const useAssetClaimableRewards = (
   poolAddress: string,
   poolChainId?: number
 ) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
   return useQuery<FlywheelClaimableRewards[] | null | undefined>(
@@ -97,7 +97,7 @@ export const useAssetsClaimableRewards = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
-  const { address } = useMultiMidas();
+  const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
   return useQuery<

@@ -14,10 +14,10 @@ import type { GetBalanceData } from 'wagmi/query';
 import ConnectButton from '../ConnectButton';
 import ResultHandler from '../ResultHandler';
 
-import type { TransactionStep } from './TransactionStepHandler';
-import TransactionStepsHandler from './TransactionStepHandler';
+import type { TransactionStep } from './TransactionStepsHandler';
+import TransactionStepsHandler from './TransactionStepsHandler';
 
-import { useMultiMidas } from '@ui/context/MultiIonicContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export type SwapProps = {
   close: () => void;
@@ -29,7 +29,7 @@ enum SwapType {
 }
 
 export default function Swap({ close }: SwapProps) {
-  const { address, currentSdk } = useMultiMidas();
+  const { address, currentSdk } = useMultiIonic();
   const [amount, setAmount] = useState<string>();
   const [swapType, setSwapType] = useState<SwapType>(SwapType.ETH_WETH);
   const { data: ethBalance, refetch: refetchEthBalance } = useBalance({

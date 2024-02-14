@@ -11,7 +11,7 @@ const FlatMap = ({
   const totalSum: number = rewardsData.reduce((acc, curr) => acc + curr, 0);
   function calculatePercentages(numbers: number[], total: number): number[] {
     return numbers.map(
-      (number: number) => +((number / total) * 100).toFixed(1)
+      (number: number) => +((number / total) * 100).toFixed(1) || 0
     );
   }
   const percentVals = useMemo(() => {
@@ -19,17 +19,18 @@ const FlatMap = ({
   }, [rewardsData, totalSum]);
 
   return (
-    <div className={`w-full  rounded-xl overflow-hidden flex `}>
-      {percentVals[0] &&
-        percentVals.map((vals: number, idx: number) => (
-          <span
-            className={` h-3`}
-            key={idx}
-            style={{ backgroundColor: `${colorData[idx]}`, width: `${vals}%` }}
-          >
-            {' '}
-          </span>
-        ))}
+    <div
+      className={`w-full bg-grayUnselect rounded-xl overflow-hidden flex h-3`}
+    >
+      {percentVals.map((vals: number, idx: number) => (
+        <span
+          className={` h-3`}
+          key={idx}
+          style={{ backgroundColor: `${colorData[idx]}`, width: `${vals}%` }}
+        >
+          {' '}
+        </span>
+      ))}
     </div>
   );
 };
