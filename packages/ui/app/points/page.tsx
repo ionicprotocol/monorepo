@@ -1,11 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import {
-  usePointsForBorrow,
-  usePointsForSupply
-} from '@ui/hooks/usePointsQueries';
 import millify from 'millify';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,6 +10,12 @@ import { useChainId } from 'wagmi';
 import FlatMap from '../_components/points_comp/FlatMap';
 import PercentMeter from '../_components/points_comp/PercentMeter';
 import ResultHandler from '../_components/ResultHandler';
+
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import {
+  usePointsForBorrow,
+  usePointsForSupply
+} from '@ui/hooks/usePointsQueries';
 
 export default function Points() {
   const chainId = useChainId();
