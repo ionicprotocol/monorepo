@@ -50,8 +50,24 @@ export default function Navbar() {
           >
             <p
               className={`${
-                pathname == '/points' ? 'text-accent' : null
+                pathname == '/' ? 'text-accent' : null
               } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+            >
+              Markets
+            </p>
+          </Link>
+
+          <Link
+            className="relative mb-2 md:mb-0"
+            href={'/points'}
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={`${
+                pathname == '/points' ? 'text-accent' : null
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Points
             </p>
