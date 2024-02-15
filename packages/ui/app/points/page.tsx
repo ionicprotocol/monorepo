@@ -144,6 +144,13 @@ export default function Points() {
             width="21"
           />
         </Link>
+        <Link
+          className={` text-lg font-semibold mx-auto mt-3`}
+          href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-1-points-squared"
+          target="_blank"
+        >
+          How do Points work ?
+        </Link>
         {/* this will be a link inn future */}
       </div>
       <div className=" flex flex-col items-start py-4 justify-start mt-3 bg-grayone h-min px-[3%] rounded-xl">
