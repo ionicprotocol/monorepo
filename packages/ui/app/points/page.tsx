@@ -132,9 +132,6 @@ export default function Points() {
             width="21"
           />
         </Link>
-        <p className={` text-lg font-semibold mx-auto mt-3`}>
-          How do Points work ?
-        </p>
         {/* this will be a link inn future */}
       </div>
       <div className=" flex flex-col items-start py-4 justify-start mt-3 bg-grayone h-min px-[3%] rounded-xl">
