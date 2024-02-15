@@ -4,6 +4,7 @@
 import millify from 'millify';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useChainId } from 'wagmi';
 
@@ -18,6 +19,7 @@ import {
 } from '@ui/hooks/usePointsQueries';
 
 export default function Points() {
+  const router = useRouter();
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
@@ -70,7 +72,8 @@ export default function Points() {
         >
           <img
             alt="modlogo"
-            className={`w-5`}
+            className={`w-5 cursor-pointer`}
+            onClick={() => router.back()}
             src="/img/assets/back.png"
           />
           <h1 className={`font-semibold `}>Your Points</h1>

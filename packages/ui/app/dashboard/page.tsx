@@ -108,7 +108,7 @@ export default function Dashboard() {
     [marketData, selectedSymbol]
   );
   const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
-    '0',
+    marketData?.comptroller,
     chainId
   );
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
