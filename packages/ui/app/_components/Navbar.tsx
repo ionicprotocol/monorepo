@@ -46,7 +46,7 @@ export default function Navbar() {
         >
           <Link
             className="relative mb-2 md:mb-0"
-            href={'/'}
+            href={'/points'}
           >
             <p
               className={`${
