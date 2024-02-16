@@ -33,13 +33,13 @@
       "address": "0x6352b5231de62be60c7ADB8250b08CA9CCF7a9A5"
     },
     "CTokenFirstExtension": {
-      "address": "0x36a84B42fa436DBcB3854e2E46ba26546C651530"
+      "address": "0xe419c13f22e4318F87973082675c1cE650EA87EC"
     },
     "Comptroller": {
       "address": "0x8b2B6a9dC8Cd73309Cef8d64920831d4C73F43a7"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xCa41Aa7472C8f85C84a8Cb03deaF064ab6498Dd7"
+      "address": "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5"
     },
     "DefaultProxyAdmin": {
       "address": "0x985a323A1CccA8Cd5fb8935590EE33FbcFE849d0"
@@ -59,8 +59,8 @@
     "IonicFlywheelLensRouter": {
       "address": "0xa6BA5F1164dc66F9C5bDCE33A6d2fC70bE8Da108"
     },
-    "IonicLiquidator_Implementation": {
-      "address": "0x48bf6bd4B3d8b4E75863B5340b977E888BacE19a"
+    "IonicLiquidator": {
+      "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
     },
     "IonicUniV3Liquidator": {
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
@@ -73,6 +73,9 @@
     },
     "JumpRateModel": {
       "address": "0x21a455cEd9C79BC523D4E340c2B97521F4217817"
+    },
+    "KimUniV2Liquidator": {
+      "address": "0x6aC17D406a820fa464fFdc0940FCa7E60b3b36B7"
     },
     "LeveredPositionFactory": {
       "address": "0x9B506A03bBFf2a842866b10BC6732da72640cd45"
@@ -96,7 +99,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xB08FAfc6E8280ce351CF22d2Db8ABd241E8A5E47"
+      "address": "0xac409691b385Fdbb66752Ff2D97e50BC23fF2295"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x45A4a3eBb986083597Ac3B34ee2d7dcC3Be8c5C1"
