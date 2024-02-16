@@ -541,7 +541,7 @@ const Popup = ({
           message: INFO_MESSAGES.SUPPLY.APPROVE,
           success: false
         },
-        ...(enableCollateral
+        ...(enableCollateral && !selectedMarketData.membership
           ? [
               {
                 error: false,
