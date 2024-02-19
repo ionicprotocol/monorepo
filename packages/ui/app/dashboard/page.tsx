@@ -149,6 +149,19 @@ export default function Dashboard() {
 
     return 0;
   }, [borrowPoints, supplyPoints]);
+  const healthColorClass = useMemo<string>(() => {
+    const healthDataAsNumber = parseFloat(healthData);
+
+    if (healthDataAsNumber >= 3) {
+      return 'text-accent';
+    }
+
+    if (healthDataAsNumber >= 1.5) {
+      return 'text-lime';
+    }
+
+    return 'text-error';
+  }, [healthData]);
   const utilizations = useMemo<string[]>(() => {
     if (borrowCaps && marketData) {
       return borrowCaps.map((borrowCap, i) => {
@@ -230,9 +243,18 @@ export default function Dashboard() {
                   isLoading={isLoadingHealthData}
                   width="24"
                 >
-                  <p className={`font-semibold`}>
-                    {healthData ?? 'Unavailable'}
-                  </p>
+                  <div className="popover-container">
+                    <p className={`font-semibold ${healthColorClass}`}>
+                      {healthData ?? 'Unavailable'}
+                    </p>
+
+                    <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+                      Health Factor represent safety of your deposited
+                      collateral against the borrowed assets and its underlying
+                      value. If the health factor goes below 1, the liquidation
+                      of your collateral might be triggered.
+                    </div>
+                  </div>
                 </ResultHandler>
                 {/* this neeeds to be changed */}
               </div>
