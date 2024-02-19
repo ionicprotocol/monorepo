@@ -210,7 +210,7 @@
   height: 20px;
   border-radius: 50%;
   vertical-align: middle;
-  background: #e10000;
+  background: #af0303;
 }
 .error-icon:before {
   transform: rotate(45deg);
@@ -262,7 +262,7 @@
 }
 
 .text-error {
-  color: #e10000;
+  color: #af0303;
 }
 
 .connect-button button {
