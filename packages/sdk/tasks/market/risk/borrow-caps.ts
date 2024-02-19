@@ -76,7 +76,6 @@ task("market:set-borrow-cap-guardian", "Set borrow cap guardian on market")
 
     const pool = sdk.createComptroller(poolAddress, signer);
 
-
     const tx: providers.TransactionResponse = await pool._setBorrowCapGuardian(borrowGuardian);
     await tx.wait();
 
