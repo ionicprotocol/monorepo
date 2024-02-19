@@ -245,7 +245,9 @@ export default function Dashboard() {
                 >
                   <div className="popover-container">
                     <p className={`font-semibold ${healthColorClass}`}>
-                      {healthData ?? 'Unavailable'}
+                      {healthData && parseFloat(healthData) < 0
+                        ? '∞'
+                        : healthData ?? 'Unavailable'}
                     </p>
 
                     <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
@@ -325,7 +327,7 @@ export default function Dashboard() {
                 isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
                 width="24"
               >
-                <span>{totalPoints}</span>
+                <span>{Math.round(totalPoints)}</span>
               </ResultHandler>
             </div>
             <Link
