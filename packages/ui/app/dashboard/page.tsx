@@ -150,7 +150,7 @@ export default function Dashboard() {
     return 0;
   }, [borrowPoints, supplyPoints]);
   const healthColorClass = useMemo<string>(() => {
-    const healthDataAsNumber = parseFloat(healthData);
+    const healthDataAsNumber = parseFloat(healthData ?? '0');
 
     if (healthDataAsNumber >= 3) {
       return 'text-accent';
