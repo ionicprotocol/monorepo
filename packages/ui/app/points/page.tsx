@@ -87,7 +87,11 @@ export default function Points() {
             isLoading={isLoadingBorrowPoints || isLoadingSupplyPoints}
             width="36"
           >
-            <p className={`text-3xl font-bold text-white`}>{totalPoints}</p>
+            <p className={`text-3xl font-bold text-white`}>
+              {totalPoints.toLocaleString('en-US', {
+                maximumFractionDigits: 0
+              })}
+            </p>
           </ResultHandler>
         </div>
         <p className={`text-sm text-white/50 mx-auto mb-2`}>
@@ -106,7 +110,11 @@ export default function Points() {
             isLoading={isLoadingSupplyPoints}
             width="15"
           >
-            <p className={`text-white font-semibold`}>{summedSupplyPoints}</p>
+            <p className={`text-white font-semibold`}>
+              {summedSupplyPoints.toLocaleString('en-US', {
+                maximumFractionDigits: 0
+              })}
+            </p>
           </ResultHandler>
         </div>
         <div
@@ -118,7 +126,11 @@ export default function Points() {
             isLoading={isLoadingBorrowPoints}
             width="15"
           >
-            <p className={`text-white font-semibold`}>{summedBorrowPoints}</p>
+            <p className={`text-white font-semibold`}>
+              {summedBorrowPoints.toLocaleString('en-US', {
+                maximumFractionDigits: 0
+              })}
+            </p>
           </ResultHandler>
         </div>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
@@ -155,7 +167,11 @@ export default function Points() {
             isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
             width="15"
           >
-            <p className={`text-white font-semibold`}>{totalPoints}</p>
+            <p className={`text-white font-semibold`}>
+              {totalPoints.toLocaleString('en-US', {
+                maximumFractionDigits: 0
+              })}
+            </p>
           </ResultHandler>
         </div>
 
@@ -202,7 +218,9 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedSupplyPoints}
+                {summedSupplyPoints.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}
               </div>
               <PercentMeter
                 color="#3bff89"
@@ -235,7 +253,9 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedBorrowPoints}
+                {summedBorrowPoints.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}
               </div>
               <PercentMeter
                 color="#f3fa96"
@@ -284,7 +304,7 @@ export default function Points() {
         <div
           className={` w-full flex items-center justify-center text-[10px] my-2 text-white/50`}
         >
-          <span className="px-4 py-2 bg-lime rounded-lg text-lg text-darkone whitespace-nowrap	font-bold">
+          <span className="px-4 py-2 bg-lime rounded-lg text-lg text-darkone whitespace-nowrap">
             Coming Soon!
           </span>
         </div>
