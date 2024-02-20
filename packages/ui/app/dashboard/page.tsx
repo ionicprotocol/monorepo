@@ -134,7 +134,7 @@ export default function Dashboard() {
       chainId
     );
   const totalPoints = useMemo<number>(() => {
-    if (supplyPoints && borrowPoints) {
+    if (supplyPoints !== undefined && borrowPoints !== undefined) {
       return supplyPoints + borrowPoints;
     }
 

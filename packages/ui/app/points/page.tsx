@@ -30,7 +30,7 @@ export default function Points() {
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
     usePointsForBorrow();
   const totalPoints = useMemo<number>(() => {
-    if (borrowPoints && supplyPoints) {
+    if (borrowPoints !== undefined && supplyPoints !== undefined) {
       return borrowPoints + supplyPoints;
     }
 

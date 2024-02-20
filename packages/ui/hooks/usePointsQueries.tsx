@@ -263,8 +263,6 @@ export const usePointsForSupply = () => {
       const data = [wethData, usdtData, usdcData, wbtcData];
       const calculatedPoints = data.reduce((acc, current) => acc + current, 0);
 
-      console.log(calculatedPoints);
-
       return Math.round(calculatedPoints);
     },
     queryKey: ['points', 'supply', address],
