@@ -541,7 +541,7 @@ const Popup = ({
           message: INFO_MESSAGES.SUPPLY.APPROVE,
           success: false
         },
-        ...(enableCollateral
+        ...(enableCollateral && !selectedMarketData.membership
           ? [
               {
                 error: false,
@@ -670,8 +670,7 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amountAsBInt.gt('0') &&
-      amountAsBInt.lte(maxWithdrawAmount ?? '0')
+      amountAsBInt.gt('0')
     ) {
       const currentTransactionStep = 0;
       addStepsForAction([
@@ -683,45 +682,30 @@ const Popup = ({
       ]);
 
       try {
-        if (selectedMarketData.supplyBalance.lte(amountAsBInt)) {
-          const { tx, errorCode } = await currentSdk.withdraw(
-            selectedMarketData.cToken,
-            constants.MaxUint256
-          );
+        const amountToWithdraw = selectedMarketData.supplyBalance.lte(
+          amountAsBInt
+        )
+          ? constants.MaxUint256
+          : amountAsBInt;
 
-          if (errorCode) {
-            throw new Error('Error during withdrawing!');
-          }
+        const { tx, errorCode } = await currentSdk.withdraw(
+          selectedMarketData.cToken,
+          amountToWithdraw
+        );
 
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              txHash: tx?.hash
-            }
-          });
-
-          await tx?.wait();
-        } else {
-          const { tx, errorCode } = await currentSdk.withdraw(
-            selectedMarketData.cToken,
-            amountAsBInt
-          );
-
-          if (errorCode) {
-            throw new Error('Error during withdrawing!');
-          }
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              txHash: tx?.hash
-            }
-          });
-
-          await tx?.wait();
+        if (errorCode) {
+          throw new Error('Error during withdrawing!');
         }
+
+        upsertTransactionStep({
+          index: currentTransactionStep,
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx?.hash
+          }
+        });
+
+        await tx?.wait();
 
         upsertTransactionStep({
           index: currentTransactionStep,
