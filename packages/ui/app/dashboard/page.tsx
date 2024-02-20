@@ -135,28 +135,7 @@ export default function Dashboard() {
     );
   const totalPoints = useMemo<number>(() => {
     if (supplyPoints && borrowPoints) {
-      return (
-        supplyPoints.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        ) +
-        borrowPoints.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        )
-      );
+      return supplyPoints + borrowPoints;
     }
 
     return 0;
@@ -341,7 +320,7 @@ export default function Dashboard() {
                 isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
                 width="24"
               >
-                <span>{Math.round(totalPoints)}</span>
+                <span>{totalPoints}</span>
               </ResultHandler>
             </div>
             <Link

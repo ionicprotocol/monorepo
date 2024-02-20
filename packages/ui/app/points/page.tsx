@@ -29,40 +29,13 @@ export default function Points() {
     usePointsForSupply();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
     usePointsForBorrow();
-  const summedSupplyPoints = useMemo<number>(() => {
-    if (supplyPoints) {
-      return supplyPoints.rows.reduce(
-        (accumulator, current) =>
-          accumulator +
-          current.reduce(
-            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
-            0
-          ),
-        0
-      );
+  const totalPoints = useMemo<number>(() => {
+    if (borrowPoints && supplyPoints) {
+      return borrowPoints + supplyPoints;
     }
 
     return 0;
-  }, [supplyPoints]);
-  const summedBorrowPoints = useMemo<number>(() => {
-    if (borrowPoints) {
-      return borrowPoints.rows.reduce(
-        (accumulator, current) =>
-          accumulator +
-          current.reduce(
-            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
-            0
-          ),
-        0
-      );
-    }
-
-    return 0;
-  }, [borrowPoints]);
-  const totalPoints = useMemo<number>(
-    () => summedBorrowPoints + summedSupplyPoints,
-    [summedBorrowPoints, summedSupplyPoints]
-  );
+  }, [borrowPoints, supplyPoints]);
 
   return (
     <div className="w-full lg:w-[70%] mx-auto">
@@ -111,7 +84,7 @@ export default function Points() {
             width="15"
           >
             <p className={`text-white font-semibold`}>
-              {summedSupplyPoints.toLocaleString('en-US', {
+              {supplyPoints?.toLocaleString('en-US', {
                 maximumFractionDigits: 0
               })}
             </p>
@@ -127,7 +100,7 @@ export default function Points() {
             width="15"
           >
             <p className={`text-white font-semibold`}>
-              {summedBorrowPoints.toLocaleString('en-US', {
+              {borrowPoints?.toLocaleString('en-US', {
                 maximumFractionDigits: 0
               })}
             </p>
@@ -185,7 +158,7 @@ export default function Points() {
         >
           <>
             <div className="w-full mb-2 md:mt-0">
-              <FlatMap rewardsData={[summedSupplyPoints, summedBorrowPoints]} />
+              <FlatMap rewardsData={[supplyPoints ?? 0, borrowPoints ?? 0]} />
             </div>
 
             <div
@@ -218,7 +191,7 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedSupplyPoints.toLocaleString('en-US', {
+                {supplyPoints?.toLocaleString('en-US', {
                   maximumFractionDigits: 0
                 })}
               </div>
@@ -226,7 +199,7 @@ export default function Points() {
                 color="#3bff89"
                 percent={
                   parseFloat(
-                    ((summedSupplyPoints / totalPoints) * 100).toFixed(1)
+                    (((supplyPoints ?? 0) / totalPoints) * 100).toFixed(1)
                   ) || 0
                 }
               />
@@ -253,7 +226,7 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedBorrowPoints.toLocaleString('en-US', {
+                {borrowPoints?.toLocaleString('en-US', {
                   maximumFractionDigits: 0
                 })}
               </div>
@@ -261,7 +234,7 @@ export default function Points() {
                 color="#f3fa96"
                 percent={
                   parseFloat(
-                    ((summedBorrowPoints / totalPoints) * 100).toFixed(1)
+                    (((borrowPoints ?? 0) / totalPoints) * 100).toFixed(1)
                   ) || 0
                 }
               />
