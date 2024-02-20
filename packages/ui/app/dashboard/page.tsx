@@ -121,7 +121,7 @@ export default function Dashboard() {
       return '∞';
     }
 
-    return healthData;
+    return healthData ?? '∞';
   }, [healthData, marketData]);
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
     usePointsForSupply();
