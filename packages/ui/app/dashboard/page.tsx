@@ -46,62 +46,58 @@ export default function Dashboard() {
       marketData?.assets.filter((asset) => asset.borrowBalanceFiat > 0) ?? [],
     [marketData]
   );
-  const { avgCollateralApr, borrowApr, netApr, netAssetValue, supplyApr } =
-    useMemo(() => {
-      if (marketData && assetsSupplyAprData && currentSdk) {
-        const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
-        let totalCollateral = 0;
-        let avgCollateralApr = 0;
-        let borrowApr = 0;
-        let supplyApr = 0;
-        let memberships = 0;
+  const { borrowApr, netApr, netAssetValue, supplyApr } = useMemo(() => {
+    if (marketData && assetsSupplyAprData && currentSdk) {
+      const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+      let totalCollateral = 0;
+      let avgCollateralApr = 0;
+      let borrowApr = 0;
+      let supplyApr = 0;
+      let memberships = 0;
 
-        marketData.assets.forEach((asset) => {
-          if (asset.membership) {
-            totalCollateral += asset.supplyBalanceFiat;
-            avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
+      marketData.assets.forEach((asset) => {
+        if (asset.membership) {
+          totalCollateral += asset.supplyBalanceFiat;
+          avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
 
-            memberships++;
-          }
+          memberships++;
+        }
 
-          if (marketData.totalBorrowBalanceFiat) {
-            borrowApr += currentSdk.ratePerBlockToAPY(
-              asset.borrowRatePerBlock,
-              blocksPerMinute
-            );
-          }
-          supplyApr += currentSdk.ratePerBlockToAPY(
-            asset.supplyRatePerBlock,
+        if (marketData.totalBorrowBalanceFiat) {
+          borrowApr += currentSdk.ratePerBlockToAPY(
+            asset.borrowRatePerBlock,
             blocksPerMinute
           );
-        });
+        }
+        supplyApr += currentSdk.ratePerBlockToAPY(
+          asset.supplyRatePerBlock,
+          blocksPerMinute
+        );
+      });
 
-        return {
-          avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
-          borrowApr: `${(borrowApr / (borrowedAssets.length || 1)).toFixed(
-            2
-          )}%`,
-          netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
-          netAssetValue: `$${millify(
-            (marketData?.totalSupplyBalanceFiat ?? 0) -
-              (marketData?.totalBorrowBalanceFiat ?? 0)
-          )}`,
-          supplyApr: `${(supplyApr / (suppliedAssets.length || 1)).toFixed(
-            2
-          )}%`,
-          totalCollateral: `$${millify(totalCollateral)}`
-        };
-      }
+      return {
+        avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
+        borrowApr: `${(borrowApr / (borrowedAssets.length || 1)).toFixed(2)}%`,
+        netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
+        netAssetValue: `$${millify(
+          (marketData?.totalSupplyBalanceFiat ?? 0) +
+            (marketData?.totalBorrowBalanceFiat ?? 0),
+          { precision: 2 }
+        )}`,
+        supplyApr: `${(supplyApr / (suppliedAssets.length || 1)).toFixed(2)}%`,
+        totalCollateral: `$${millify(totalCollateral, { precision: 2 })}`
+      };
+    }
 
-      return {};
-    }, [
-      assetsSupplyAprData,
-      borrowedAssets,
-      currentSdk,
-      chainId,
-      marketData,
-      suppliedAssets
-    ]);
+    return {};
+  }, [
+    assetsSupplyAprData,
+    borrowedAssets,
+    currentSdk,
+    chainId,
+    marketData,
+    suppliedAssets
+  ]);
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
       marketData?.assets.find(

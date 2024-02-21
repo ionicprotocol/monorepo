@@ -86,7 +86,7 @@ const InfoRows = ({
             );
           }}
         >
-          {mode === InfoMode.SUPPLY ? 'Manage' : 'Borrow'}
+          {mode === InfoMode.SUPPLY ? 'Add Collateral' : 'Borrow More'}
         </button>
       </div>
     </div>
