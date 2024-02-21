@@ -265,7 +265,7 @@ export default function Dashboard() {
                     </p>
 
                     <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
-                      Health Factor represent safety of your deposited
+                      Health Factor represents safety of your deposited
                       collateral against the borrowed assets and its underlying
                       value. If the health factor goes below 1, the liquidation
                       of your collateral might be triggered.
@@ -286,23 +286,19 @@ export default function Dashboard() {
                 isLoading={!netApr}
                 width="24"
               >
-                <span>{netApr}</span>
+                <div className="popover-container">
+                  <span>{netApr}</span>
+
+                  <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+                    Net APR is the difference between the average borrwing APR
+                    you are paying versus the average supply APR you are
+                    earning. earning. This does not include the future value of
+                    Ionic points that you are earning!
+                  </div>
+                </div>
               </ResultHandler>
             </div>
             <div className={`flex items-center justify-between w-full gap-x-3`}>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 text-xs`}>Avg. Collateral APR</p>
-                <ResultHandler
-                  height="24"
-                  isLoading={!avgCollateralApr}
-                  width="24"
-                >
-                  <p className={`font-semibold`}>{avgCollateralApr}</p>
-                </ResultHandler>
-                {/* this neeeds to be changed */}
-              </div>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
@@ -354,7 +350,7 @@ export default function Dashboard() {
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
-            <h1 className={`font-semibold`}>Your Collateral (supply)</h1>
+            <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
           </div>
 
           <ResultHandler
@@ -369,13 +365,11 @@ export default function Dashboard() {
               {suppliedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 hidden lg:grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden lg:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>SUPPLY ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
-                    <h3 className={` `}>COLLATERAL APR</h3>
                     <h3 className={` `}>SUPPLY APR</h3>
-                    <h3 className={` `}>UTILISATION</h3>
                   </div>
 
                   {suppliedAssets.map((asset, i) => (
@@ -445,13 +439,11 @@ export default function Dashboard() {
               {borrowedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 grid  grid-cols-7  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>BORROW ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
-                    <h3 className={` `}>COLLATERAL APR</h3>
                     <h3 className={` `}>BORROW APR</h3>
-                    <h3 className={` `}>UTILISATION</h3>
                   </div>
 
                   {borrowedAssets.map((asset, i) => (
