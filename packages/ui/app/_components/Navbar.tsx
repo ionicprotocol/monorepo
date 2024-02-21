@@ -102,7 +102,7 @@ export default function Navbar() {
                 onClick={openGasbotModal}
               >
                 <p
-                  className={`null px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+                  className={`null px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer text-white/50`}
                 >
                   Get Gas
                 </p>
