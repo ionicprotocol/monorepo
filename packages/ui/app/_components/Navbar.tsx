@@ -73,11 +73,11 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
-            className="pointer-events-none relative mb-2 md:mb-0"
-            href={'#'}
+            className="relative mb-2 md:mb-0"
+            href={'/dashboard'}
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              Soon!
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
             </span>
             <p
               className={`${
