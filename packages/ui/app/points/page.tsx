@@ -135,10 +135,10 @@ export default function Points() {
         </div>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <Link
-          className={`w-full flex justify-center items-center rounded-md bg-neutral-500	 text-black py-2 px-6 text-center text-xs mt-auto text-white pointer-events-none`}
-          href="#"
+          className={`w-full flex justify-center items-center rounded-md bg-neutral-500	text-black py-2 px-6 text-center text-xs mt-auto text-white`}
+          href="/"
         >
-          Go to Dashboard - Earn more Points
+          Go to Markets - Earn more Points by supplying and borrowing
           <Image
             alt="ionic minilogo"
             className="ml-2"
@@ -192,7 +192,7 @@ export default function Points() {
               className={`hidden md:grid w-full gap-x-1  grid-cols-4 py-4 text-[10px] text-white/40 font-semibold text-center `}
             >
               <h3 className={` `}>STRATEGY</h3>
-              <h3 className={` `}>VAULT SUPPLY</h3>
+              <h3 className={` `}>AMOUNT</h3>
               <h3 className={` `}>POINTS</h3>
               <h3 className={` `}>PERCENTAGE EARNINGS</h3>
             </div>
@@ -210,7 +210,7 @@ export default function Points() {
               </div>
               <div className={`mb-2 md:mb-0`}>
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  VAULT SUPPLY:
+                  AMOUNT:
                 </span>
                 ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
               </div>
@@ -245,7 +245,7 @@ export default function Points() {
               </div>
               <div className={`mb-2 md:mb-0`}>
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  VAULT SUPPLY:
+                  AMOUNT:
                 </span>
                 ${millify(marketData?.totalBorrowBalanceFiat ?? 0)}
               </div>

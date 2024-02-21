@@ -61,3 +61,23 @@ task("market:set-borrow-cap-whitelist", "Pauses borrowing on a market")
       console.log(`Whitelist status for ${account} set: ${await pool.callStatic.supplyCapWhitelist(market, account)}`);
     }
   });
+
+task("market:set-borrow-cap-guardian", "Set borrow cap guardian on market")
+  .addParam("poolAddress", "The address of the pool", undefined, types.string)
+  .addParam("borrowGuardian", "The address of the borrow cap guardian", undefined, types.string)
+  .setAction(async ({ poolAddress, borrowGuardian }, { ethers, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    console.log("signer: ", deployer);
+
+    const signer = await ethers.getSigner(deployer);
+
+    const ionicSdkModule = await import("../../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
+
+    const pool = sdk.createComptroller(poolAddress, signer);
+
+    const tx: providers.TransactionResponse = await pool._setBorrowCapGuardian(borrowGuardian);
+    await tx.wait();
+
+    console.log(`Configured the borrow cap guardian to : ${borrowGuardian}`);
+  });
