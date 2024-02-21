@@ -333,7 +333,11 @@ export default function Dashboard() {
                 isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
                 width="24"
               >
-                <span>{Math.round(totalPoints)}</span>
+                <span>
+                  {Math.round(totalPoints).toLocaleString('en-us', {
+                    maximumFractionDigits: 0
+                  })}
+                </span>
               </ResultHandler>
             </div>
             <Link
