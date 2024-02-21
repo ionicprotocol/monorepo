@@ -25,18 +25,16 @@ export type InfoRowsProps = {
 const InfoRows = ({
   amount,
   asset,
-  collateralApr,
   logo,
   membership,
   mode,
   setSelectedSymbol,
   setPopupMode,
-  apr,
-  utilization
+  apr
 }: InfoRowsProps) => {
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-7  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
         membership && 'border border-lime'
       }`}
     >
@@ -62,21 +60,9 @@ const InfoRows = ({
       </h3>
       <h3 className={`mb-2 lg:mb-0`}>
         <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          COLLATERAL APR:
-        </span>
-        {collateralApr}
-      </h3>
-      <h3 className={`mb-2 lg:mb-0`}>
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
           {mode === InfoMode.SUPPLY ? 'SUPPLY' : 'BORROW'} APR:
         </span>
         {apr}
-      </h3>
-      <h3 className={`mb-2 lg:mb-0`}>
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          UTILIZATION:
-        </span>
-        {utilization}
       </h3>
       <div className={` col-span-2 flex items-center justify-center gap-3`}>
         <button
@@ -100,7 +86,7 @@ const InfoRows = ({
             );
           }}
         >
-          {mode === InfoMode.SUPPLY ? 'Manage' : 'Borrow'}
+          {mode === InfoMode.SUPPLY ? 'Add Collateral' : 'Borrow More'}
         </button>
       </div>
     </div>
