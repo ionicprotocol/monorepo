@@ -1,15 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { Gasbot } from '@gasbot/widget';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
+
+import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
+  const signer = useEthersSigner();
 
   // useEffect(()=>{
   //   console.log(pathbox.current.getElementsByClassName(pathname));
@@ -73,11 +78,11 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
-            className="pointer-events-none relative mb-2 md:mb-0"
-            href={'#'}
+            className="relative mb-2 md:mb-0"
+            href={'/dashboard'}
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-lime rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              Soon!
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
             </span>
             <p
               className={`${
@@ -87,15 +92,24 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-          {/* <Link href={`/lend`}>
-            <p
-              className={` ${
-                pathname == '/lend' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
-            >
-              Lend
-            </p>
-          </Link> */}
+          <Gasbot.CustomRender
+            limitDestination={34443}
+            walletClientOrSigner={signer}
+          >
+            {({ openGasbotModal }) => (
+              <Link
+                className="relative mb-2 md:mb-0"
+                href="#"
+                onClick={openGasbotModal}
+              >
+                <p
+                  className={`null px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer text-white/50`}
+                >
+                  Get Gas
+                </p>
+              </Link>
+            )}
+          </Gasbot.CustomRender>
           {/* <Link href={`/market`}>
             <p
               className={`${
