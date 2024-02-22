@@ -1,7 +1,6 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
@@ -62,6 +61,10 @@ export function useMaxBorrowAmount(
             }
           } else {
             bigNumber = maxBorrow;
+          }
+
+          if (bigNumber.lt(0)) {
+            bigNumber = BigNumber.from(0);
           }
 
           return {
