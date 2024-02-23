@@ -1,15 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { Gasbot } from '@gasbot/widget';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
+
+import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
+  const signer = useEthersSigner();
 
   // useEffect(()=>{
   //   console.log(pathbox.current.getElementsByClassName(pathname));
@@ -51,7 +56,7 @@ export default function Navbar() {
             <p
               className={`${
                 pathname == '/' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Markets
             </p>
@@ -67,7 +72,7 @@ export default function Navbar() {
             <p
               className={`${
                 pathname == '/points' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Points
             </p>
@@ -82,20 +87,29 @@ export default function Navbar() {
             <p
               className={`${
                 pathname == '/dashboard' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Dashboard
             </p>
           </Link>
-          {/* <Link href={`/lend`}>
-            <p
-              className={` ${
-                pathname == '/lend' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
-            >
-              Lend
-            </p>
-          </Link> */}
+          <Gasbot.CustomRender
+            limitDestination={34443}
+            walletClientOrSigner={signer}
+          >
+            {({ openGasbotModal }) => (
+              <Link
+                className="relative mb-2 md:mb-0"
+                href="#"
+                onClick={openGasbotModal}
+              >
+                <p
+                  className={`hover:text-accent null px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer text-white/50`}
+                >
+                  Get Gas
+                </p>
+              </Link>
+            )}
+          </Gasbot.CustomRender>
           {/* <Link href={`/market`}>
             <p
               className={`${
