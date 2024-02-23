@@ -56,7 +56,7 @@ export default function Navbar() {
             <p
               className={`${
                 pathname == '/' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Markets
             </p>
@@ -72,7 +72,7 @@ export default function Navbar() {
             <p
               className={`${
                 pathname == '/points' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Points
             </p>
@@ -87,7 +87,7 @@ export default function Navbar() {
             <p
               className={`${
                 pathname == '/dashboard' ? 'text-accent' : null
-              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer `}
+              } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Dashboard
             </p>
@@ -103,7 +103,7 @@ export default function Navbar() {
                 onClick={openGasbotModal}
               >
                 <p
-                  className={`null px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer text-white/50`}
+                  className={`hover:text-accent null px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer text-white/50`}
                 >
                   Get Gas
                 </p>
