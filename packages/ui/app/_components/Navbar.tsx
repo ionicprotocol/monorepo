@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { Gasbot } from '@gasbot/widget';
+// import { Gasbot } from '@gasbot/widget';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-import '@gasbot/widget/style.css';
+// import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
 
@@ -92,7 +92,7 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-          <Gasbot.CustomRender
+          {/* TODO: NOT WORKING <Gasbot.CustomRender
             limitDestination={34443}
             walletClientOrSigner={signer}
           >
@@ -109,7 +109,7 @@ export default function Navbar() {
                 </p>
               </Link>
             )}
-          </Gasbot.CustomRender>
+          </Gasbot.CustomRender> */}
           {/* <Link href={`/market`}>
             <p
               className={`${
