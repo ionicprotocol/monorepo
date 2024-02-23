@@ -8,13 +8,13 @@ import React, { useState } from 'react';
 
 import ConnectButton from './ConnectButton';
 
-import { useEthersSigner } from '@ui/hooks/useEthersSigner';
+// import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
-  const signer = useEthersSigner();
+  // const signer = useEthersSigner();
 
   // useEffect(()=>{
   //   console.log(pathbox.current.getElementsByClassName(pathname));
