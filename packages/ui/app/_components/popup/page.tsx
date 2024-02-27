@@ -670,7 +670,8 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amountAsBInt.gt('0')
+      amountAsBInt.gt('0') &&
+      maxWithdrawAmount
     ) {
       const currentTransactionStep = 0;
       addStepsForAction([
@@ -682,9 +683,7 @@ const Popup = ({
       ]);
 
       try {
-        const amountToWithdraw = selectedMarketData.supplyBalance.lte(
-          amountAsBInt
-        )
+        const amountToWithdraw = maxWithdrawAmount.lte(amountAsBInt)
           ? constants.MaxUint256
           : amountAsBInt;
 
