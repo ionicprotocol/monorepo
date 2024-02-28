@@ -182,12 +182,11 @@ export default function Dashboard() {
         );
 
         return `${
-          totalBorrow.eq('0')
+          totalBorrow.lte('0') || marketData.assets[i].borrowBalance.lte(0)
             ? '0.00'
             : (
-                (marketData.assets[i].borrowBalance.toNumber() /
-                  totalBorrow.toNumber()) *
-                100
+                100 /
+                totalBorrow.div(marketData.assets[i].borrowBalance).toNumber()
               ).toFixed(2)
         }%`;
       });
