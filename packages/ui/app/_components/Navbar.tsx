@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-import '@gasbot/widget/style.css';
+// import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
 
