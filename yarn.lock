@@ -1963,9 +1963,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gasbot/widget@npm:^0.3.8":
-  version: 0.3.8
-  resolution: "@gasbot/widget@npm:0.3.8"
+"@gasbot/widget@npm:^0.3.11":
+  version: 0.3.11
+  resolution: "@gasbot/widget@npm:0.3.11"
   dependencies:
     "@radix-ui/react-dialog": "npm:^1.0.5"
     "@radix-ui/react-popover": "npm:^1.0.7"
@@ -1986,7 +1986,7 @@ __metadata:
     ethers: ^5.0.0 || ^6.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10/293a15dc7a33cfec421bb05c1a64582d7a271667bc8913f0905c7f49b107bd9f6723c8725ba3923e90ce2e97b34705e51016cf417ce1ac81299a2dd799f61e85
+  checksum: 10/b2d9f1b72b7222c9f1bcba4c696e0cae9ebe79973bc6691d0b577bbdd63b945c0e0cb14688b55b1aecadc9e4bb7838fd3108e9d1914930524ff783eaef79ebf9
   languageName: node
   linkType: hard
 
@@ -2367,7 +2367,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/ui@workspace:packages/ui"
   dependencies:
-    "@gasbot/widget": "npm:^0.3.8"
+    "@gasbot/widget": "npm:^0.3.11"
     "@sentry/nextjs": "npm:^7.48.0"
     "@tanstack/react-query": "npm:4.29.3"
     "@types/node": "npm:^20"
@@ -2401,7 +2401,7 @@ __metadata:
     tailwind-scrollbar-hide: "npm:^1.1.7"
     tailwindcss: "npm:^3.3.0"
     typescript: "npm:^5"
-    viem: "npm:^2.7.6"
+    viem: "npm:^2.7.16"
     wagmi: "npm:^2.5.6"
     zustand: "npm:^4.4.7"
   languageName: unknown
@@ -18378,7 +18378,7 @@ __metadata:
     netlify-cli: "npm:^16.3.1"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.2.2"
-    viem: "npm:^2.1.1"
+    viem: "npm:^2.7.16"
   languageName: unknown
   linkType: soft
 
@@ -24663,9 +24663,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.1.1":
-  version: 2.5.0
-  resolution: "viem@npm:2.5.0"
+"viem@npm:^2.7.16":
+  version: 2.7.16
+  resolution: "viem@npm:2.7.16"
   dependencies:
     "@adraffy/ens-normalize": "npm:1.10.0"
     "@noble/curves": "npm:1.2.0"
@@ -24680,28 +24680,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/96d1b853530b6a19a26d4df0bfa02793d9e8023e60a2f24a14f34b81ccb49412fb237ba26364a889bbb75c1a3acb89a0c8ba685a8c1b66cb7e0d5756ff343455
-  languageName: node
-  linkType: hard
-
-"viem@npm:^2.7.6":
-  version: 2.7.6
-  resolution: "viem@npm:2.7.6"
-  dependencies:
-    "@adraffy/ens-normalize": "npm:1.10.0"
-    "@noble/curves": "npm:1.2.0"
-    "@noble/hashes": "npm:1.3.2"
-    "@scure/bip32": "npm:1.3.2"
-    "@scure/bip39": "npm:1.2.1"
-    abitype: "npm:1.0.0"
-    isows: "npm:1.0.3"
-    ws: "npm:8.13.0"
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10/2903cc708ce9553aae8d072f6cce6b386139767fde3dc9d42619e92041882b9dec7f09b9f1b9a6c090814493fd08eee731dba1eb3ef0c1dc653dfb20eca7dc74
+  checksum: 10/302ab8aed585b1853638cca24efae299c4628a16216434b98eee1f2ecf6ae5c57ce4b775bcf0af446e586bf176c519e135dc76fc7a48de82e64ea3a242e8f215
   languageName: node
   linkType: hard
 

@@ -63,16 +63,19 @@ export default function Dashboard() {
           memberships++;
         }
 
-        if (marketData.totalBorrowBalanceFiat) {
+        if (asset.borrowBalanceFiat) {
           borrowApr += currentSdk.ratePerBlockToAPY(
             asset.borrowRatePerBlock,
             blocksPerMinute
           );
         }
-        supplyApr += currentSdk.ratePerBlockToAPY(
-          asset.supplyRatePerBlock,
-          blocksPerMinute
-        );
+
+        if (asset.supplyBalanceFiat) {
+          supplyApr += currentSdk.ratePerBlockToAPY(
+            asset.supplyRatePerBlock,
+            blocksPerMinute
+          );
+        }
       });
 
       return {
@@ -285,7 +288,7 @@ export default function Dashboard() {
                   <span>{netApr}</span>
 
                   <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
-                    Net APR is the difference between the average borrwing APR
+                    Net APR is the difference between the average borrowing APR
                     you are paying versus the average supply APR you are
                     earning. earning. This does not include the future value of
                     Ionic points that you are earning!

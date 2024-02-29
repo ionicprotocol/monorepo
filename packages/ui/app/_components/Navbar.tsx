@@ -61,7 +61,6 @@ export default function Navbar() {
               Markets
             </p>
           </Link>
-
           <Link
             className="relative mb-2 md:mb-0"
             href={'/points'}
@@ -92,7 +91,7 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-          {/* TODO: NOT WORKING <Gasbot.CustomRender
+          {/* <Gasbot.CustomRender
             limitDestination={34443}
             walletClientOrSigner={signer}
           >
