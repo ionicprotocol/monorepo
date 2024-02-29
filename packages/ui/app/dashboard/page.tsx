@@ -63,16 +63,19 @@ export default function Dashboard() {
           memberships++;
         }
 
-        if (marketData.totalBorrowBalanceFiat) {
+        if (asset.borrowBalanceFiat) {
           borrowApr += currentSdk.ratePerBlockToAPY(
             asset.borrowRatePerBlock,
             blocksPerMinute
           );
         }
-        supplyApr += currentSdk.ratePerBlockToAPY(
-          asset.supplyRatePerBlock,
-          blocksPerMinute
-        );
+
+        if (asset.supplyBalanceFiat) {
+          supplyApr += currentSdk.ratePerBlockToAPY(
+            asset.supplyRatePerBlock,
+            blocksPerMinute
+          );
+        }
       });
 
       return {
