@@ -78,16 +78,19 @@ export default function Dashboard() {
         }
       });
 
+      supplyApr = supplyApr / (suppliedAssets.length || 1);
+      borrowApr = borrowApr / (borrowedAssets.length || 1);
+
       return {
         avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
-        borrowApr: `${(borrowApr / (borrowedAssets.length || 1)).toFixed(2)}%`,
+        borrowApr: `${borrowApr.toFixed(2)}%`,
         netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
         netAssetValue: `$${millify(
           (marketData?.totalSupplyBalanceFiat ?? 0) +
             (marketData?.totalBorrowBalanceFiat ?? 0),
           { precision: 2 }
         )}`,
-        supplyApr: `${(supplyApr / (suppliedAssets.length || 1)).toFixed(2)}%`,
+        supplyApr: `${supplyApr.toFixed(2)}%`,
         totalCollateral: `$${millify(totalCollateral, { precision: 2 })}`
       };
     }
