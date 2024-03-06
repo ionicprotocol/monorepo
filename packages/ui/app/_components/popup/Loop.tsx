@@ -1,15 +1,16 @@
 import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import Image from 'next/image';
 import React, { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import Modal from '../Modal';
 
+import Amount from './Amount';
+
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import Amount from './Amount';
-import { formatUnits } from 'ethers/lib/utils';
 
 export type LoopProps = {
   selectedMarketData: MarketData;
@@ -29,6 +30,16 @@ type LoopInfoDisplayProps = {
   title: string;
   usdAmount: number;
 };
+
+type SupplyActionsProps = {
+  amount?: string;
+  setAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
+};
+
+enum SupplyActionsMode {
+  DEPOSIT,
+  WITHDRAW
+}
 
 function LoopHealthRatioDisplay({
   currentValue,
@@ -129,6 +140,14 @@ function LoopInfoDisplay({
   );
 }
 
+function SupplyActions({ amount, setAmount }: SupplyActionsProps) {
+  const [mode, setMode] = useState<SupplyActionsMode>(
+    SupplyActionsMode.DEPOSIT
+  );
+
+  return <div></div>;
+}
+
 export default function Loop({ selectedMarketData }: LoopProps) {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const { currentSdk } = useMultiIonic();
@@ -220,14 +239,9 @@ export default function Loop({ selectedMarketData }: LoopProps) {
 
           <div className="separator" />
 
-          <Amount
+          <SupplyActions
             amount={amount}
-            handleInput={(val?: string) => setAmount(val)}
-            hintText="AMOUNT TO DEPOSIT"
-            isLoading={false}
-            max={formatUnits('0', selectedMarketData.underlyingDecimals)}
-            selectedMarketData={selectedMarketData}
-            symbol={selectedMarketData.underlyingSymbol}
+            setAmount={setAmount}
           />
         </Modal>
       )}
