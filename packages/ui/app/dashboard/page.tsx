@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
+import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
@@ -28,7 +29,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
-  const [selectedSymbol, setSelectedSymbol] = useState<string>();
+  const [selectedSymbol, setSelectedSymbol] = useState<string>('USDC');
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
@@ -510,6 +511,8 @@ export default function Dashboard() {
           selectedMarketData={selectedMarketData}
         />
       )}
+
+      {selectedMarketData && <Loop selectedMarketData={selectedMarketData} />}
     </>
   );
 }
