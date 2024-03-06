@@ -15,7 +15,9 @@ import ResultHandler from '../_components/ResultHandler';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import {
   usePointsForBorrow,
-  usePointsForSupply
+  usePointsForSupply,
+  useLeaderboard,
+  useGlobalRank
 } from '@ui/hooks/usePointsQueries';
 
 export default function Points() {
@@ -29,6 +31,12 @@ export default function Points() {
     usePointsForSupply();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
     usePointsForBorrow();
+  const { data: leaderboard, isLoading: isLoadingLeaderboard } =
+    useLeaderboard();
+  const { data: globalRank, isLoading: isLoadingGlobalRank } = useGlobalRank();
+  console.log('isLoadingGlobalRank: ', isLoadingGlobalRank);
+  console.log('globalRank: ', globalRank);
+
   const summedSupplyPoints = useMemo<number>(() => {
     if (supplyPoints) {
       return supplyPoints.rows.reduce(
@@ -97,7 +105,13 @@ export default function Points() {
         <p className={`text-sm text-white/50 mx-auto mb-2`}>
           Your Global Rank :{' '}
           <span className="px-2 py-1 bg-lime rounded-lg text-md text-darkone whitespace-nowrap">
-            Soon!
+            {globalRank?.rank?.rank && globalRank?.total?.rank
+              ? `${globalRank.rank.rank.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })} / ${globalRank.total.rank.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}`
+              : 'N/A'}
           </span>
         </p>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
@@ -299,16 +313,55 @@ export default function Points() {
             />
           ))}
       </div> */}
-      <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
-        <h1 className={`font-semibold text-xl `}>Global Leaderboard </h1>
-        <div
-          className={` w-full flex items-center justify-center text-[10px] my-2 text-white/50`}
-        >
-          <span className="px-4 py-2 bg-lime rounded-lg text-lg text-darkone whitespace-nowrap">
-            Coming Soon!
-          </span>
+      <ResultHandler
+        center
+        isLoading={isLoadingLeaderboard}
+      >
+        <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
+          <h1 className={`font-semibold text-xl `}>Global Leaderboard </h1>
+          <div
+            className={` w-full flex items-center justify-center text-[10px] my-2 text-white/50`}
+          >
+            <div
+              className={`hidden md:grid w-full gap-x-1  grid-cols-4 py-4 text-[10px] text-white/40 font-semibold text-center `}
+            >
+              <h3 className={` `}>RANK</h3>
+              <h3 className={`col-span-2`}>ADDRESS</h3>
+              <h3 className={` `}>POINTS</h3>
+            </div>
+          </div>
+          {leaderboard &&
+            leaderboard.map((val, idx) => (
+              <div
+                className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+                key={idx}
+              >
+                <div className={``}>
+                  <span className={``}>{val.rank}</span>
+                </div>
+                <div
+                  className={`col-span-2 cursor-pointer hover:text-blue-600`}
+                >
+                  <a
+                    href={`https://modescan.io/address/${val.address}`}
+                    target="_blank"
+                  >
+                    {val.ens ?? val.address}
+                  </a>
+                </div>
+                <div className={``}>
+                  <span className={``}>
+                    {val.points
+                      ? val.points.toLocaleString('en-US', {
+                          maximumFractionDigits: 0
+                        })
+                      : 'N/A'}
+                  </span>
+                </div>
+              </div>
+            ))}
         </div>
-      </div>
+      </ResultHandler>
     </div>
   );
 }
