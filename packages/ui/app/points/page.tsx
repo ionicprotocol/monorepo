@@ -14,10 +14,10 @@ import ResultHandler from '../_components/ResultHandler';
 
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import {
-  usePointsForBorrow,
-  usePointsForSupply,
+  useGlobalRank,
   useLeaderboard,
-  useGlobalRank
+  usePointsForBorrow,
+  usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
 
 export default function Points() {
@@ -33,9 +33,7 @@ export default function Points() {
     usePointsForBorrow();
   const { data: leaderboard, isLoading: isLoadingLeaderboard } =
     useLeaderboard();
-  const { data: globalRank, isLoading: isLoadingGlobalRank } = useGlobalRank();
-  console.log('isLoadingGlobalRank: ', isLoadingGlobalRank);
-  console.log('globalRank: ', globalRank);
+  const { data: globalRank } = useGlobalRank();
 
   const summedSupplyPoints = useMemo<number>(() => {
     if (supplyPoints) {
