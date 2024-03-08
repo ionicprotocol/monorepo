@@ -87,7 +87,7 @@ export enum OracleTypes {
   WSTEthPriceOracle = "WSTEthPriceOracle",
   ERC4626Oracle = "ERC4626Oracle",
   PythPriceOracle = "PythPriceOracle",
-  RedstonePriceOracle = "RedstonePriceOracle"
+  RedstoneAdapterPriceOracle = "RedstoneAdapterPriceOracle"
 }
 
 export enum IrmTypes {
@@ -218,6 +218,7 @@ export enum assetSymbols {
   SUSHI = "SUSHI",
   YFI = "YFI",
   ezETH = "ezETH",
+  weETH = "weETH",
 
   // bsc
   WBNB = "WBNB",
