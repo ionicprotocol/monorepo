@@ -12,6 +12,7 @@ export const LINK = "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb";
 export const DAI = "0xE7798f023fC62146e8Aa1b36Da45fb70855a77Ea";
 export const BAL = "0xD08a2917653d4E460893203471f0000826fb4034";
 export const AAVE = "0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2";
+export const ezETH = "0x2416092f143378750bb29b79eD961ab195CcEea5";
 
 export const assets: SupportedAsset[] = [
   {
@@ -42,9 +43,17 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.WBTC,
     underlying: WBTC,
     name: "Wrapped Bitcoin",
-    decimals: 8, // TODO verify
+    decimals: 8,
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", WBTC)
+  },
+  {
+    symbol: assetSymbols.ezETH,
+    underlying: ezETH,
+    name: "Renzo Restaked ETH",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    extraDocs: defaultDocs("https://explorer.mode.network", ezETH)
   },
   {
     symbol: assetSymbols.UNI,
