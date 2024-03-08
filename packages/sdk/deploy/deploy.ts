@@ -618,24 +618,29 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         currentLRExtensions[0] != liquidatorsRegistryExtensionDep.address ||
         currentLRExtensions[1] != liquidatorsRegistrySecondExtensionDep.address
       ) {
-        tx = await liquidatorsRegistry._registerExtension(
-          liquidatorsRegistryExtensionDep.address,
-          currentLRExtensions[0]
-        );
-        await tx.wait();
-        console.log(
-          `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
-        );
-        tx = await liquidatorsRegistry._registerExtension(
-          liquidatorsRegistrySecondExtensionDep.address,
-          currentLRExtensions[1]
-        );
-        await tx.wait();
-        console.log(
-          `replaced the liquidators registry second extension ${currentLRExtensions[1]} with the new ${liquidatorsRegistrySecondExtensionDep.address}`
-        );
-      } else {
-        console.log(`no liquidators registry extensions to update`);
+        if (
+          currentLRExtensions[1] != liquidatorsRegistryExtensionDep.address ||
+          currentLRExtensions[0] != liquidatorsRegistrySecondExtensionDep.address
+        ) {
+          tx = await liquidatorsRegistry._registerExtension(
+            liquidatorsRegistryExtensionDep.address,
+            currentLRExtensions[0]
+          );
+          await tx.wait();
+          console.log(
+            `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
+          );
+          tx = await liquidatorsRegistry._registerExtension(
+            liquidatorsRegistrySecondExtensionDep.address,
+            currentLRExtensions[1]
+          );
+          await tx.wait();
+          console.log(
+            `replaced the liquidators registry second extension ${currentLRExtensions[1]} with the new ${liquidatorsRegistrySecondExtensionDep.address}`
+          );
+        } else {
+          console.log(`no liquidators registry extensions to update`);
+        }
       }
     }
   }

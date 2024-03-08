@@ -45,13 +45,15 @@ export const deployPythPriceOracle = async ({
   console.log("PythPriceOracle: ", pyth.address);
 
   const pythOracle = (await ethers.getContract("PythPriceOracle", deployer)) as PythPriceOracle;
-  const tx: providers.TransactionResponse = await pythOracle.setPriceFeeds(
-    pythAssets.map((f) => f.underlying),
-    pythAssets.map((f) => f.feed)
-  );
-  console.log(`Set price feeds for PythPriceOracle: ${tx.hash}`);
-  await tx.wait();
-  console.log(`Set price feeds for PythPriceOracle mined: ${tx.hash}`);
+  if (pythAssets.length > 0) {
+    const tx: providers.TransactionResponse = await pythOracle.setPriceFeeds(
+      pythAssets.map((f) => f.underlying),
+      pythAssets.map((f) => f.feed)
+    );
+    console.log(`Set price feeds for PythPriceOracle: ${tx.hash}`);
+    await tx.wait();
+    console.log(`Set price feeds for PythPriceOracle mined: ${tx.hash}`);
+  }
 
   const underlyings = pythAssets.map((f) => f.underlying);
   await addUnderlyingsToMpo(mpo, underlyings, pythOracle.address);
