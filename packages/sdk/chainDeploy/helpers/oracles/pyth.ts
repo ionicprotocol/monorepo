@@ -1,5 +1,6 @@
 import { providers } from "ethers";
 
+import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { PythPriceOracle } from "../../../typechain/PythPriceOracle";
 import { PythDeployFnParams } from "../types";
 
@@ -16,7 +17,7 @@ export const deployPythPriceOracle = async ({
 }: PythDeployFnParams): Promise<{ pythOracle: PythPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
 
-  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
+  const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
 
   //// Pyth Oracle
   const pyth = await deployments.deploy("PythPriceOracle", {
