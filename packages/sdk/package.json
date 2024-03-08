@@ -51,7 +51,7 @@
     "deploy:arbitrum": "hardhat --network arbitrum deploy --tags prod --no-compile",
     "deploy:neon": "hardhat --network neon deploy --tags prod --no-compile",
     "deploy:linea": "hardhat --network linea deploy --tags prod --no-compile",
-    "deploy:mode": "hardhat --network mode deploy --tags prod --no-compile --gasprice 100",
+    "deploy:mode": "hardhat --network mode deploy --tags prod --no-compile --gasprice 1000260",
     "deploy:zkevm": "hardhat --network zkevm deploy --tags prod --no-compile",
     "deploy:localhost": "hardhat --network localhost deploy --tags prod --no-compile",
     "deploy:localeth": "hardhat --network localeth deploy --tags prod --no-compile",
