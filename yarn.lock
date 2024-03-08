@@ -2308,7 +2308,7 @@ __metadata:
     sinon-chai: "npm:^3.7.0"
     ts-mocha: "npm:^10.0.0"
     ts-node: "npm:^10.9.1"
-    typechain: "npm:^8.3.1"
+    typechain: "npm:^8.3.2"
     typescript: "npm:^5.2.2"
     utf-8-validate: "npm:^6.0.3"
   languageName: unknown
@@ -23940,7 +23940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typechain@npm:^8.0.0, typechain@npm:^8.3.1":
+"typechain@npm:^8.0.0, typechain@npm:^8.3.2":
   version: 8.3.2
   resolution: "typechain@npm:8.3.2"
   dependencies:

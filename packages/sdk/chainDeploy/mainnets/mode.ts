@@ -3,8 +3,8 @@ import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
-import { PythAsset, RedStoneAsset } from "../helpers/types";
 import { deployRedStonePriceOracle } from "../helpers/oracles/redstone";
+import { PythAsset, RedStoneAsset } from "../helpers/types";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
@@ -86,9 +86,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     ethers,
     getNamedAccounts,
     deployments,
-    usdToken: mode.chainAddresses.STABLE_TOKEN,
     redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
-    redStoneAssets,
-    nativeTokenUsdFeed: "0x5553444300000000000000000000000000000000000000000000000000000000"
+    redStoneAssets
   });
 };

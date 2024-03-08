@@ -218,10 +218,8 @@ export type PythDeployFnParams = ChainDeployFnParams & {
 
 export type RedStoneDeployFnParams = ChainDeployFnParams & {
   redStoneAddress: string;
-  usdToken: string;
   redStoneAssets: RedStoneAsset[];
   deployConfig: ChainDeployConfig;
-  nativeTokenUsdFeed: string;
 };
 
 export type WombatDeployFnParams = ChainDeployFnParams & {

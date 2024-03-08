@@ -1,5 +1,4 @@
-import { providers } from "ethers";
-
+import { RedstoneAdapterPriceOracle } from "../../../typechain/RedstoneAdapterPriceOracle";
 import { RedStoneDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
@@ -9,10 +8,8 @@ export const deployRedStonePriceOracle = async ({
   getNamedAccounts,
   deployments,
   redStoneAddress,
-  usdToken,
-  redStoneAssets,
-  nativeTokenUsdFeed
-}: RedStoneDeployFnParams): Promise<{ redStoneOracle: any }> => {
+  redStoneAssets
+}: RedStoneDeployFnParams): Promise<{ redStoneOracle: RedstoneAdapterPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
@@ -20,29 +17,15 @@ export const deployRedStonePriceOracle = async ({
   //// RedStone Oracle
   const redStone = await deployments.deploy("RedStonePriceOracle", {
     from: deployer,
-    args: [],
+    args: [redStoneAddress],
     log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [usdToken, nativeTokenUsdFeed, redStoneAddress]
-        },
-        onUpgrade: {
-          methodName: "reinitialize",
-          args: [usdToken, nativeTokenUsdFeed, redStoneAddress]
-        }
-      },
-      owner: deployer,
-      proxyContract: "OpenZeppelinTransparentProxy"
-    },
     waitConfirmations: 1
   });
 
   if (redStone.transactionHash) await ethers.provider.waitForTransaction(redStone.transactionHash);
   console.log("RedStonePriceOracle: ", redStone.address);
 
-  const redStoneOracle = (await ethers.getContract("RedStonePriceOracle", deployer)) as any;
+  const redStoneOracle = (await ethers.getContract("RedStonePriceOracle", deployer)) as RedstoneAdapterPriceOracle;
 
   const underlyings = redStoneAssets.map((f) => f.underlying);
   await addUnderlyingsToMpo(mpo, underlyings, redStoneOracle.address);
