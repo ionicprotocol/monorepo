@@ -30,6 +30,7 @@ const FORK_RPC_URL = process.env.FORK_RPC_URL;
 const FORK_CHAIN_ID = process.env.FORK_CHAIN_ID;
 const FORK_BLOCK_NUMBER = process.env.FORK_BLOCK_NUMBER;
 
+// eslint-disable-next-line no-console
 console.info({
   OVERRIDE_RPC_URL,
   FORK_RPC_URL,
@@ -180,6 +181,10 @@ const config: HardhatUserConfig = {
       initialBaseFeePerGas: 2e9,
       gasMultiplier: 3
     }
+  },
+  typechain: {
+    outDir: "typechain",
+    target: "ethers-v5"
   }
 };
 

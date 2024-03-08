@@ -94,6 +94,9 @@ export type UmbrellaAsset = {
 };
 export type PythAsset = UmbrellaAsset;
 export type Api3Asset = UmbrellaAsset;
+export type RedStoneAsset = {
+  underlying: string;
+};
 
 export type WombatAsset = {
   symbol: string;
@@ -211,6 +214,12 @@ export type PythDeployFnParams = ChainDeployFnParams & {
   pythAssets: PythAsset[];
   deployConfig: ChainDeployConfig;
   nativeTokenUsdFeed: string;
+};
+
+export type RedStoneDeployFnParams = ChainDeployFnParams & {
+  redStoneAddress: string;
+  redStoneAssets: RedStoneAsset[];
+  deployConfig: ChainDeployConfig;
 };
 
 export type WombatDeployFnParams = ChainDeployFnParams & {
