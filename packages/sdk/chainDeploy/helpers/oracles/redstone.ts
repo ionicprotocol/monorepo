@@ -15,7 +15,7 @@ export const deployRedStonePriceOracle = async ({
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
   //// RedStone Oracle
-  const redStone = await deployments.deploy("RedStonePriceOracle", {
+  const redStone = await deployments.deploy("RedstoneAdapterPriceOracle", {
     from: deployer,
     args: [redStoneAddress],
     log: true,
@@ -23,9 +23,12 @@ export const deployRedStonePriceOracle = async ({
   });
 
   if (redStone.transactionHash) await ethers.provider.waitForTransaction(redStone.transactionHash);
-  console.log("RedStonePriceOracle: ", redStone.address);
+  console.log("RedstoneAdapterPriceOracle: ", redStone.address);
 
-  const redStoneOracle = (await ethers.getContract("RedStonePriceOracle", deployer)) as RedstoneAdapterPriceOracle;
+  const redStoneOracle = (await ethers.getContract(
+    "RedstoneAdapterPriceOracle",
+    deployer
+  )) as RedstoneAdapterPriceOracle;
 
   const underlyings = redStoneAssets.map((f) => f.underlying);
   await addUnderlyingsToMpo(mpo, underlyings, redStoneOracle.address);
