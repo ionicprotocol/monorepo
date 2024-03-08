@@ -1,4 +1,3 @@
-import { RedstoneAdapterPriceOracle } from "../../../typechain/RedstoneAdapterPriceOracle";
 import { RedStoneDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
@@ -9,7 +8,7 @@ export const deployRedStonePriceOracle = async ({
   deployments,
   redStoneAddress,
   redStoneAssets
-}: RedStoneDeployFnParams): Promise<{ redStoneOracle: RedstoneAdapterPriceOracle }> => {
+}: RedStoneDeployFnParams): Promise<{ redStoneOracle: any }> => {
   const { deployer } = await getNamedAccounts();
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
@@ -25,10 +24,7 @@ export const deployRedStonePriceOracle = async ({
   if (redStone.transactionHash) await ethers.provider.waitForTransaction(redStone.transactionHash);
   console.log("RedstoneAdapterPriceOracle: ", redStone.address);
 
-  const redStoneOracle = (await ethers.getContract(
-    "RedstoneAdapterPriceOracle",
-    deployer
-  )) as RedstoneAdapterPriceOracle;
+  const redStoneOracle = (await ethers.getContract("RedstoneAdapterPriceOracle", deployer)) as any;
 
   const underlyings = redStoneAssets.map((f) => f.underlying);
   await addUnderlyingsToMpo(mpo, underlyings, redStoneOracle.address);
