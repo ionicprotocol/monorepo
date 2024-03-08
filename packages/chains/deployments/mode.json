@@ -135,7 +135,7 @@
       "address": "0x39C353Cf9041CcF467A04d0e78B63d961E81458a"
     },
     "PoolLens": {
-      "address": "0x611a68618412c2e15A36e3e59C0b979746d87AB8"
+      "address": "0xbC6D8Da615003323B77D442b34976BB9D1124d39"
     },
     "PoolLensSecondary": {
       "address": "0x7Ea7BB80F3bBEE9b52e6Ed3775bA06C9C80D4154"
@@ -148,6 +148,9 @@
     },
     "PythPriceOracle_Proxy": {
       "address": "0x52Ee6E740C1785412e51A381B0d87fb1692a7b23"
+    },
+    "RedstoneAdapterPriceOracle": {
+      "address": "0x63A1531a06F0Ac597a0DfA5A516a37073c3E1e0a"
     },
     "SimplePriceOracle": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"

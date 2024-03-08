@@ -42,6 +42,26 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.WBTC),
     strategy: RedemptionStrategyContract.KimUniV2Liquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.ezETH),
+    strategy: RedemptionStrategyContract.KimUniV2Liquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.KimUniV2Liquidator,
+    outputToken: underlying(assets, assetSymbols.ezETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.weETH),
+    strategy: RedemptionStrategyContract.KimUniV2Liquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.KimUniV2Liquidator,
+    outputToken: underlying(assets, assetSymbols.weETH)
   }
 ];
 
