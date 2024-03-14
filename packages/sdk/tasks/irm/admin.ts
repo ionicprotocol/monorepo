@@ -1,6 +1,7 @@
 import { task, types } from "hardhat/config";
 
 import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
+import { chainDeployConfig } from "../../chainDeploy";
 
 export default task("irm:set", "Set new IRM to ctoken")
   .addParam("ctokens", "cToken for which to set the IRM", undefined, types.string)
@@ -39,4 +40,41 @@ task("irm:set-non-owner", "Set new IRM to ctoken")
       await tx.wait();
       console.log(`become with ${tx.hash}`);
     }
+  });
+
+task("deploy:mode:ezeth:irm")
+  .setAction(async ({}, { run, ethers }) => {
+    const ezEthMarket = "0x59e710215d45F584f44c0FEe83DA6d43D762D857";
+
+    await run("deploy:discouraging:irm");
+
+    const jrm = await ethers.getContract("DiscouragingJumpRateModel");
+
+    await run("irm:set", {
+      ctokens: [ezEthMarket],
+      irmAddress: jrm.address
+    })
+  });
+
+task("deploy:discouraging:irm")
+  .setAction(async ({}, { ethers, deployments, getChainId, getNamedAccounts }) => {
+    const chainId = await getChainId();
+    const { deployer } = await getNamedAccounts();
+    const { config } = chainDeployConfig[chainId];
+
+    const jrm = await deployments.deploy("DiscouragingJumpRateModel", {
+      contract: "JumpRateModel",
+      from: deployer,
+      args: [
+        config.blocksPerYear,
+        ethers.utils.parseEther("0.99").toString(), // too high in order to discourage borrowing
+        ethers.utils.parseEther("0.18").toString(),
+        ethers.utils.parseEther("4").toString(),
+        ethers.utils.parseEther("0.8").toString()
+      ],
+      log: true,
+      skipIfAlreadyDeployed: true
+    });
+
+    console.log(`deployed the discouraging IRM at address ${jrm.address}`);
   });

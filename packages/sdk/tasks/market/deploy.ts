@@ -15,7 +15,7 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     // assetSymbols.UNI,
     // assetSymbols.WBTC
     // assetSymbols.AAVE
-    assetSymbols.ezETH
+    assetSymbols.weETH
   ];
 
   for (let i = 0; i < symbols.length; i++) {
@@ -39,7 +39,8 @@ task("market:deploy", "deploy market")
   .addParam("comptroller", "Comptroller address", undefined, types.string)
   .addParam("symbol", "CToken symbol", undefined, types.string)
   .addParam("name", "CToken name", undefined, types.string)
-  .setAction(async (taskArgs, { ethers }) => {
+  .setAction(async (taskArgs, { ethers, getChainId }) => {
+    const chainId = await getChainId();
     const signer = await ethers.getNamedSigner(taskArgs.signer);
     const ionicSdkModule = await import("../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic(signer);
@@ -84,23 +85,36 @@ task("market:deploy", "deploy market")
       deployArgs
     );
 
-    // Test Transaction
-    const errorCode = await comptroller.callStatic._deployMarket(
-      delegateType,
-      constructorData,
-      implementationData,
-      collateralFactorBN
-    );
-    if (errorCode.toNumber() !== 0) {
-      throw `Unable to _deployMarket: ${sdk.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
-    }
-    // Make actual Transaction
-    const tx = await comptroller._deployMarket(delegateType, constructorData, implementationData, collateralFactorBN);
-    console.log("tx", tx.hash, tx.nonce);
+    if (chainId == 34443) {
+      const gnosisContractAddress = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
+      const populatedTx = await comptroller.populateTransaction._deployMarket(
+        delegateType,
+        constructorData,
+        implementationData,
+        collateralFactorBN
+      );
 
-    // Recreate Address of Deployed Market
-    const receipt = await tx.wait();
-    if (receipt.status != ethers.constants.One.toNumber()) {
-      throw `Failed to deploy market for ${config.underlying}`;
+
+      console.log(populatedTx.data);
+    } else {
+      // Test Transaction
+      const errorCode = await comptroller.callStatic._deployMarket(
+        delegateType,
+        constructorData,
+        implementationData,
+        collateralFactorBN
+      );
+      if (errorCode.toNumber() !== 0) {
+        throw `Unable to _deployMarket: ${sdk.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
+      }
+      // Make actual Transaction
+      const tx = await comptroller._deployMarket(delegateType, constructorData, implementationData, collateralFactorBN);
+      console.log("tx", tx.hash, tx.nonce);
+
+      // Recreate Address of Deployed Market
+      const receipt = await tx.wait();
+      if (receipt.status != ethers.constants.One.toNumber()) {
+        throw `Failed to deploy market for ${config.underlying}`;
+      }
     }
   });
