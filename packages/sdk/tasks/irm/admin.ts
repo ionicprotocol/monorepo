@@ -65,10 +65,10 @@ task("deploy:discouraging:irm").setAction(async ({}, { ethers, deployments, getC
     from: deployer,
     args: [
       config.blocksPerYear,
-      ethers.utils.parseEther("0.99").toString(), // too high in order to discourage borrowing
-      ethers.utils.parseEther("0.18").toString(),
-      ethers.utils.parseEther("4").toString(),
-      ethers.utils.parseEther("0.8").toString()
+      ethers.utils.parseEther("0.99").toString(), // baseRatePerYear    99% // too high in order to discourage borrowing
+      ethers.utils.parseEther("0.18").toString(), // multiplierPerYear  18%
+      ethers.utils.parseEther("4").toString(), // jumpMultiplierPerYear 400%
+      ethers.utils.parseEther("0.8").toString() // kink                 80%
     ],
     log: true,
     skipIfAlreadyDeployed: true
