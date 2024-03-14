@@ -67,6 +67,9 @@ export function useMaxBorrowAmount(
             bigNumber = BigNumber.from(0);
           }
 
+          // Limit the max borrow amount to 90%
+          bigNumber = bigNumber.div(10).mul(9);
+
           return {
             bigNumber: bigNumber,
             number: Number(
