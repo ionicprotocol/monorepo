@@ -44,15 +44,20 @@ task("irm:set-non-owner", "Set new IRM to ctoken")
 
 task("deploy:mode:ezeth:irm").setAction(async ({}, { run, ethers }) => {
   const ezEthMarket = "0x59e710215d45F584f44c0FEe83DA6d43D762D857";
+  const { deployer } = await ethers.getNamedSigners();
+
+  const ionicSdkModule = await import("../ionicSdk");
+  const sdk = await ionicSdkModule.getOrCreateIonic();
 
   await run("deploy:discouraging:irm");
 
   const jrm = await ethers.getContract("DiscouragingJumpRateModel");
 
-  await run("irm:set", {
-    ctokens: [ezEthMarket],
-    irmAddress: jrm.address
-  });
+  const cToken = sdk.createICErc20(ezEthMarket, deployer);
+  const ptx = await cToken.populateTransaction._setInterestRateModel(jrm.address);
+
+  // just print it
+  console.log(`tx data ${ptx.data}`);
 });
 
 task("deploy:discouraging:irm").setAction(async ({}, { ethers, deployments, getChainId, getNamedAccounts }) => {
