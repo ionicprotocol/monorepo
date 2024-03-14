@@ -67,7 +67,7 @@ export default function Market() {
                   $
                   {poolData
                     ? (
-                        poolData?.totalLiquidityFiat +
+                        poolData?.totalSuppliedFiat +
                         poolData?.totalBorrowedFiat
                       ).toLocaleString('en-US', {
                         maximumFractionDigits: 2,
@@ -83,7 +83,7 @@ export default function Market() {
                 <p className={`text-white/60 text-sm`}>Total Available</p>
                 <p className={`font-semibold`}>
                   $
-                  {poolData?.totalLiquidityFiat.toLocaleString('en-US', {
+                  {poolData?.totalSuppliedFiat.toLocaleString('en-US', {
                     maximumFractionDigits: 2,
                     minimumFractionDigits: 2
                   }) ?? '0'}
@@ -250,16 +250,16 @@ export default function Market() {
                       maximumFractionDigits: 2
                     })}`}
                     totalSupplied={`${
-                      val.liquidityNative
+                      val.totalSupplyNative
                         ? parseFloat(
-                            formatUnits(val.liquidity, val.underlyingDecimals)
+                            formatUnits(val.totalSupply, val.underlyingDecimals)
                           ).toLocaleString('en-US', {
                             maximumFractionDigits: 2
                           })
                         : '0'
                     } ${
                       val.underlyingSymbol
-                    } / $${val.liquidityFiat.toLocaleString('en-US', {
+                    } / $${val.totalSupplyFiat.toLocaleString('en-US', {
                       maximumFractionDigits: 2
                     })}`}
                   />
