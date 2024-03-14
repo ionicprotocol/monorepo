@@ -1096,6 +1096,7 @@ const Popup = ({
                   currentUtilizationPercentage={currentUtilizationPercentage}
                   handleUtilization={handleSupplyUtilization}
                 />
+
                 <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between text-sm text-white/50 `}
@@ -1314,6 +1315,14 @@ const Popup = ({
                   currentUtilizationPercentage={currentUtilizationPercentage}
                   handleUtilization={handleBorrowUtilization}
                 />
+
+                {currentUtilizationPercentage >= 70 && (
+                  <div className="text-lime text-xs text-center">
+                    Warning: You are close to the liquidation threshold and will
+                    need to manage your health factor.
+                  </div>
+                )}
+
                 <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
                 <div
                   className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}

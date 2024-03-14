@@ -1,7 +1,17 @@
+import { createClient } from '@supabase/supabase-js';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { Database } from '@ui/types/Supabase';
 import { fetchData } from '@ui/utils/functions';
+import { createConfig, getEnsName, http } from '@wagmi/core';
+import { Address } from 'viem';
+import { mainnet } from 'viem/chains';
+
+const supabaseUrl = 'https://uoagtjstsdrjypxlkuzr.supabase.co';
+const supabaseKey =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
+const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 export type QueryResponse = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -141,4 +151,73 @@ const usePointsForBorrow = () => {
   });
 };
 
-export { usePointsForSupply, usePointsForBorrow };
+const config = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() }
+});
+
+const useLeaderboard = () => {
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      const response = await supabase
+        .from('ranks')
+        .select('*')
+        .order('rank', { ascending: true })
+        .limit(50);
+
+      // get ENS address
+      const data = response.data
+        ? await Promise.all(
+            response.data.map(async (row) => {
+              const ens = await getEnsName(config, {
+                address: row.address as Address
+              });
+              return { ...row, ens };
+            })
+          )
+        : [];
+
+      return data;
+    },
+    queryKey: ['points', 'leaderboard'],
+    staleTime: Infinity
+  });
+};
+
+const useGlobalRank = () => {
+  const { address } = useMultiIonic();
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      if (!address) {
+        return null;
+      }
+      const response = await supabase
+        .from('ranks')
+        .select('*')
+        .eq('address', address.toLowerCase())
+        .limit(1);
+
+      const highest = await supabase
+        .from('ranks')
+        .select('*')
+        .order('rank', { ascending: false })
+        .limit(1);
+
+      return {
+        rank: response.data ? response.data[0] : null,
+        total: highest.data ? highest.data[0] : null
+      };
+    },
+    queryKey: ['points', 'rank', address],
+    staleTime: Infinity
+  });
+};
+
+export {
+  usePointsForSupply,
+  usePointsForBorrow,
+  useLeaderboard,
+  useGlobalRank
+};
