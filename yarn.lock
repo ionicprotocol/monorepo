@@ -1963,9 +1963,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gasbot/widget@npm:^0.3.11":
-  version: 0.3.11
-  resolution: "@gasbot/widget@npm:0.3.11"
+"@gasbot/widget@npm:^0.3.19":
+  version: 0.3.19
+  resolution: "@gasbot/widget@npm:0.3.19"
   dependencies:
     "@radix-ui/react-dialog": "npm:^1.0.5"
     "@radix-ui/react-popover": "npm:^1.0.7"
@@ -1986,7 +1986,7 @@ __metadata:
     ethers: ^5.0.0 || ^6.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10/b2d9f1b72b7222c9f1bcba4c696e0cae9ebe79973bc6691d0b577bbdd63b945c0e0cb14688b55b1aecadc9e4bb7838fd3108e9d1914930524ff783eaef79ebf9
+  checksum: 10/503aed29e93a26374cb2e864044074db30c5e0acd3582a5732e9849adf82e60e2ddfe0b24f27b38c5dc8b39b67552510626015c5573e8e39acf2159c283607c3
   languageName: node
   linkType: hard
 
@@ -2367,7 +2367,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/ui@workspace:packages/ui"
   dependencies:
-    "@gasbot/widget": "npm:^0.3.11"
+    "@gasbot/widget": "npm:^0.3.19"
     "@sentry/nextjs": "npm:^7.48.0"
     "@supabase/supabase-js": "npm:^2.39.7"
     "@tanstack/react-query": "npm:4.29.3"

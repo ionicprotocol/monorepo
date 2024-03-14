@@ -1,20 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-// import { Gasbot } from '@gasbot/widget';
+import { Gasbot } from '@gasbot/widget';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-// import '@gasbot/widget/style.css';
+import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
 
-// import { useEthersSigner } from '@ui/hooks/useEthersSigner';
+import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
-  // const signer = useEthersSigner();
+  const signer = useEthersSigner();
 
   // useEffect(()=>{
   //   console.log(pathbox.current.getElementsByClassName(pathname));
@@ -91,9 +91,10 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-          {/* <Gasbot.CustomRender
+          <Gasbot.CustomRender
             limitDestination={34443}
             walletClientOrSigner={signer}
+            avoidChainSwitching={true}
           >
             {({ openGasbotModal }) => (
               <Link
@@ -108,7 +109,7 @@ export default function Navbar() {
                 </p>
               </Link>
             )}
-          </Gasbot.CustomRender> */}
+          </Gasbot.CustomRender>
           {/* <Link href={`/market`}>
             <p
               className={`${
