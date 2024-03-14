@@ -158,10 +158,7 @@ const PoolRows = ({
         {address ? (
           <>
             <button
-              className={`rounded-lg ${
-                asset === 'weETH' ? 'bg-neutral-500' : 'bg-accent'
-              } text-black py-1.5 px-3 uppercase`}
-              disabled={asset === 'weETH'}
+              className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
               onClick={() => {
                 setSelectedSymbol(asset);
                 setPopupMode(PopupMode.SUPPLY);
@@ -170,10 +167,7 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg ${
-                asset === 'weETH' ? 'bg-neutral-500' : 'bg-lime'
-              } text-black py-1.5 px-3 uppercase`}
-              disabled={asset === 'weETH'}
+              className={`rounded-lg bg-lime text-black py-1.5 px-3 uppercase`}
               onClick={() => {
                 setSelectedSymbol(asset);
                 setPopupMode(PopupMode.BORROW);
