@@ -5,6 +5,8 @@ import { useChainId } from 'wagmi';
 
 import Modal from '../Modal';
 
+import Amount from './Amount';
+
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -30,6 +32,7 @@ type LoopInfoDisplayProps = {
 
 type SupplyActionsProps = {
   amount?: string;
+  selectedMarketData: LoopProps['selectedMarketData'];
   setAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
@@ -137,14 +140,18 @@ function LoopInfoDisplay({
   );
 }
 
-function SupplyActions({ amount, setAmount }: SupplyActionsProps) {
+function SupplyActions({
+  amount,
+  selectedMarketData,
+  setAmount
+}: SupplyActionsProps) {
   const [mode, setMode] = useState<SupplyActionsMode>(
     SupplyActionsMode.DEPOSIT
   );
 
   return (
     <div>
-      <div className="inline-flex rounded-2xl text-center p-1 bg-grayone">
+      <div className="mb-2 inline-flex rounded-2xl text-center p-1 bg-grayone">
         <div
           className={`rounded-xl transition-all cursor-pointer py-2 px-4 ${
             mode === SupplyActionsMode.DEPOSIT
@@ -167,6 +174,16 @@ function SupplyActions({ amount, setAmount }: SupplyActionsProps) {
           Withdraw
         </div>
       </div>
+
+      <Amount
+        amount={amount}
+        handleInput={(val?: string) => setAmount(val)}
+        hintText="Available:"
+        isLoading={false}
+        max={'0'}
+        selectedMarketData={selectedMarketData}
+        symbol={selectedMarketData.underlyingSymbol}
+      />
     </div>
   );
 }
@@ -264,6 +281,7 @@ export default function Loop({ selectedMarketData }: LoopProps) {
 
           <SupplyActions
             amount={amount}
+            selectedMarketData={selectedMarketData}
             setAmount={setAmount}
           />
         </Modal>
