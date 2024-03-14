@@ -94,7 +94,6 @@ task("market:deploy", "deploy market")
         collateralFactorBN
       );
 
-
       console.log(populatedTx.data);
     } else {
       // Test Transaction
