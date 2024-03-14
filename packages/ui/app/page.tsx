@@ -169,7 +169,7 @@ export default function Market() {
             <h3 className={` col-span-2`}>SUPPLY BALANCE</h3>
             <h3 className={` col-span-2`}>TOTAL SUPPLIED</h3>
             <h3 className={` col-span-2`}>BORROW BALANCE</h3>
-            <h3 className={` col-span-2`}>TOTAL BORROWING</h3>
+            <h3 className={` col-span-2`}>TOTAL BORROWED</h3>
             <h3 className={` col-span-2`}>SUPPLY APR</h3>
             <h3 className={` col-span-2`}>BORROW APR</h3>
             <h3 className={` col-span-4`}>SUPPLY/BORROW</h3>
