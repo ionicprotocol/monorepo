@@ -1,12 +1,9 @@
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import Image from 'next/image';
 import React, { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import Modal from '../Modal';
-
-import Amount from './Amount';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -145,7 +142,33 @@ function SupplyActions({ amount, setAmount }: SupplyActionsProps) {
     SupplyActionsMode.DEPOSIT
   );
 
-  return <div></div>;
+  return (
+    <div>
+      <div className="inline-flex rounded-2xl text-center p-1 bg-grayone">
+        <div
+          className={`rounded-xl transition-all cursor-pointer py-2 px-4 ${
+            mode === SupplyActionsMode.DEPOSIT
+              ? 'bg-darkone text-accent font-bold'
+              : 'text-white/40'
+          }`}
+          onClick={() => setMode(SupplyActionsMode.DEPOSIT)}
+        >
+          Deposit
+        </div>
+
+        <div
+          className={`rounded-xl transition-all cursor-pointer py-2 px-4 ${
+            mode === SupplyActionsMode.WITHDRAW
+              ? 'bg-darkone text-accent font-bold'
+              : 'text-white/40'
+          }`}
+          onClick={() => setMode(SupplyActionsMode.WITHDRAW)}
+        >
+          Withdraw
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Loop({ selectedMarketData }: LoopProps) {
