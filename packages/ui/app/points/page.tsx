@@ -382,9 +382,12 @@ export default function Points() {
           <div className="flex w-full justify-between text-sm pt-3">
             <button
               className={`font-bold uppercase rounded-md py-1 px-2 text-darkone transition-colors ${
-                leaderboardPage > 0 ? 'bg-accent' : 'bg-stone-500'
+                leaderboardPage > 0 && !isFetchingLeaderboard
+                  ? 'bg-accent'
+                  : 'bg-stone-500'
               } `}
               onClick={() =>
+                !isFetchingLeaderboard &&
                 setLeaderboardPage(
                   leaderboardPage < 1 ? leaderboardPage : leaderboardPage - 1
                 )
@@ -395,9 +398,12 @@ export default function Points() {
 
             <button
               className={`font-bold uppercase rounded-md py-1 px-2 text-darkone transition-colors ${
-                true ? 'bg-accent' : 'bg-stone-500'
+                !isFetchingLeaderboard ? 'bg-accent' : 'bg-stone-500'
               } `}
-              onClick={() => setLeaderboardPage(leaderboardPage + 1)}
+              onClick={() =>
+                !isFetchingLeaderboard &&
+                setLeaderboardPage(leaderboardPage + 1)
+              }
             >
               Next
             </button>
