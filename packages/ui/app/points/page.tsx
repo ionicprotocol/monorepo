@@ -5,7 +5,7 @@ import millify from 'millify';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import FlatMap from '../_components/points_comp/FlatMap';
@@ -27,12 +27,16 @@ export default function Points() {
     '0',
     chainId
   );
+  const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
     usePointsForSupply();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
     usePointsForBorrow();
-  const { data: leaderboard, isLoading: isLoadingLeaderboard } =
-    useLeaderboard();
+  const {
+    data: leaderboard,
+    isLoading: isLoadingLeaderboard,
+    isFetching: isFetchingLeaderboard
+  } = useLeaderboard(leaderboardPage);
   const { data: globalRank } = useGlobalRank();
 
   const summedSupplyPoints = useMemo<number>(() => {
@@ -317,6 +321,9 @@ export default function Points() {
       >
         <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
           <h1 className={`font-semibold text-xl `}>Global Leaderboard </h1>
+          <div onClick={() => setLeaderboardPage(leaderboardPage + 1)}>
+            test
+          </div>
           <div
             className={` w-full flex items-center justify-center text-[10px] my-2 text-white/50`}
           >
@@ -328,36 +335,79 @@ export default function Points() {
               <h3 className={` `}>POINTS</h3>
             </div>
           </div>
-          {leaderboard &&
-            leaderboard.map((val, idx) => (
-              <div
-                className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
-                key={idx}
-              >
-                <div className={``}>
-                  <span className={``}>{val.rank}</span>
-                </div>
+          <div className={'relative w-full'}>
+            <div
+              className={`absolute ${
+                isFetchingLeaderboard ? 'flex' : 'hidden'
+              } w-full h-full t-0 l-0 justify-center items-center rounded-xl bg-gray-700 bg-opacity-50`}
+            >
+              <ResultHandler isLoading={true}>
+                <></>
+              </ResultHandler>
+            </div>
+            {leaderboard &&
+              leaderboard.map((val, idx) => (
                 <div
-                  className={`col-span-2 cursor-pointer hover:text-blue-600`}
+                  className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl ${
+                    idx + 1 < leaderboard.length ? 'mb-3' : ''
+                  } px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+                  key={idx}
                 >
-                  <a
-                    href={`https://modescan.io/address/${val.address}`}
-                    target="_blank"
+                  <div className={``}>
+                    <span className={``}>{val.rank}</span>
+                  </div>
+                  <div
+                    className={`col-span-2 cursor-pointer hover:text-blue-600`}
                   >
-                    {val.ens ?? val.address}
-                  </a>
+                    <a
+                      href={`https://modescan.io/address/${val.address}`}
+                      target="_blank"
+                    >
+                      {val.ens ?? val.address}
+                    </a>
+                  </div>
+                  <div className={``}>
+                    <span className={``}>
+                      {val.points
+                        ? val.points.toLocaleString('en-US', {
+                            maximumFractionDigits: 0
+                          })
+                        : 'N/A'}
+                    </span>
+                  </div>
                 </div>
-                <div className={``}>
-                  <span className={``}>
-                    {val.points
-                      ? val.points.toLocaleString('en-US', {
-                          maximumFractionDigits: 0
-                        })
-                      : 'N/A'}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))}
+          </div>
+
+          <div className="flex w-full justify-between text-sm pt-3">
+            <button
+              className={`font-bold uppercase rounded-md py-1 px-2 text-darkone transition-colors ${
+                leaderboardPage > 0 && !isFetchingLeaderboard
+                  ? 'bg-accent'
+                  : 'bg-stone-500'
+              } `}
+              onClick={() =>
+                !isFetchingLeaderboard &&
+                setLeaderboardPage(
+                  leaderboardPage < 1 ? leaderboardPage : leaderboardPage - 1
+                )
+              }
+            >
+              Previous
+            </button>
+
+            <button
+              className={`font-bold uppercase rounded-md py-1 px-2 text-darkone transition-colors ${
+                !isFetchingLeaderboard ? 'bg-accent' : 'bg-stone-500'
+              } `}
+              onClick={() =>
+                !isFetchingLeaderboard &&
+                setLeaderboardPage(leaderboardPage + 1)
+              }
+            >
+              Next
+            </button>
+          </div>
         </div>
       </ResultHandler>
     </div>
