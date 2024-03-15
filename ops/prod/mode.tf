@@ -15,7 +15,7 @@ module "mode_mainnet_liquidation_rpc_0" {
     local.liquidation_variables,
     { WEB3_HTTP_PROVIDER_URL = local.mode_mainnet_rpc_0 }
   )
-  schedule_expression = "rate(2 minutes)"
+  schedule_expression = "rate(5 minutes)"
   timeout             = 700
-  memory_size         = 256
+  memory_size         = 512
 }
