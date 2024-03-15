@@ -1,6 +1,8 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
+import { useFusePoolData } from './useFusePoolData';
+
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
@@ -10,11 +12,12 @@ export function useMaxWithdrawAmount(
 ) {
   const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
+  const { data: poolData } = useFusePoolData('0', chainId);
 
   return useQuery(
     ['useMaxWithdrawAmount', asset.cToken, sdk?.chainId, address],
     async () => {
-      if (sdk && address) {
+      if (sdk && address && poolData) {
         const maxRedeem = await sdk.contracts.PoolLensSecondary.callStatic
           .getMaxRedeem(address, asset.cToken, { from: address })
           .catch((e) => {
@@ -27,14 +30,16 @@ export function useMaxWithdrawAmount(
             return null;
           });
 
-        return maxRedeem;
+        return !!poolData.totalBorrowBalanceFiat
+          ? maxRedeem?.div(10).mul(9)
+          : maxRedeem;
       } else {
         return null;
       }
     },
     {
       cacheTime: Infinity,
-      enabled: !!address && !!asset && !!sdk,
+      enabled: !!address && !!asset && !!sdk && !!poolData,
       staleTime: Infinity
     }
   );
