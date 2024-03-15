@@ -1,10 +1,10 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
+import { useFusePoolData } from './useFusePoolData';
+
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useFusePoolData } from './useFusePoolData';
-import { useChainId } from 'wagmi';
 
 export function useMaxWithdrawAmount(
   asset: NativePricedIonicAsset,
