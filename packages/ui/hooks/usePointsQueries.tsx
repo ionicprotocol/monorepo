@@ -1,17 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { useQuery } from '@tanstack/react-query';
+import { createConfig, getEnsName, http } from '@wagmi/core';
+import type { Address } from 'viem';
+import { mainnet } from 'viem/chains';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { Database } from '@ui/types/Supabase';
 import { fetchData } from '@ui/utils/functions';
-import { createConfig, getEnsName, http } from '@wagmi/core';
-import { Address } from 'viem';
-import { mainnet } from 'viem/chains';
 
 const supabaseUrl = 'https://uoagtjstsdrjypxlkuzr.supabase.co';
 const supabaseKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
-const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export type QueryResponse = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -156,15 +155,19 @@ const config = createConfig({
   transports: { [mainnet.id]: http() }
 });
 
-const useLeaderboard = () => {
+const useLeaderboard = (page: number) => {
+  const pageSize = 50;
+
   return useQuery({
     cacheTime: Infinity,
+    keepPreviousData: true,
     queryFn: async () => {
       const response = await supabase
         .from('ranks')
         .select('*')
         .order('rank', { ascending: true })
-        .limit(50);
+        .limit(pageSize)
+        .range(page * pageSize, (page + 1) * pageSize - 1);
 
       // get ENS address
       const data = response.data
@@ -180,7 +183,7 @@ const useLeaderboard = () => {
 
       return data;
     },
-    queryKey: ['points', 'leaderboard'],
+    queryKey: ['points', 'leaderboard', page],
     staleTime: Infinity
   });
 };
