@@ -86,7 +86,7 @@ export default function Dashboard() {
         borrowApr: `${borrowApr.toFixed(2)}%`,
         netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
         netAssetValue: `$${millify(
-          (marketData?.totalSupplyBalanceFiat ?? 0) +
+          (marketData?.totalSupplyBalanceFiat ?? 0) -
             (marketData?.totalBorrowBalanceFiat ?? 0),
           { precision: 2 }
         )}`,
