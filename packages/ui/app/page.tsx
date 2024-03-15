@@ -26,6 +26,7 @@ export default function Market() {
     '0',
     chainId
   );
+  console.log(poolData);
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
