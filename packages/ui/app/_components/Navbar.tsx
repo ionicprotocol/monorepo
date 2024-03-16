@@ -92,9 +92,9 @@ export default function Navbar() {
             </p>
           </Link>
           <Gasbot.CustomRender
+            avoidChainSwitching={true}
             limitDestination={34443}
             walletClientOrSigner={signer}
-            avoidChainSwitching={true}
           >
             {({ openGasbotModal }) => (
               <Link
