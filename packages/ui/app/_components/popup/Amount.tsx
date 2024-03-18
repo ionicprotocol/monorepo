@@ -13,15 +13,18 @@ interface IAmount {
   handleInput: (val?: string) => void;
   hintText?: string;
   isLoading?: boolean;
+  mainText?: string;
   max?: string;
   selectedMarketData: MarketData;
   symbol: string;
 }
+
 const Amount = ({
   selectedMarketData,
   handleInput,
   amount,
   hintText = 'Wallet Balance',
+  mainText = 'Amount',
   max = '0',
   symbol,
   isLoading = false
@@ -74,7 +77,7 @@ const Amount = ({
   return (
     <div className={`w-full flex-col items-start justify-start`}>
       <div className={`flex w-full items-center text-[10px] text-white/50 `}>
-        <span className={``}>Amount</span>
+        <span className={``}>{mainText}</span>
         <div className="ml-auto">
           <ResultHandler
             height="15"

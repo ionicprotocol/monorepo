@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
@@ -13,6 +13,8 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -39,6 +41,13 @@ type SupplyActionsProps = {
   comptrollerAddress: LoopProps['comptrollerAddress'];
   selectedMarketData: LoopProps['selectedMarketData'];
   setAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
+};
+
+type BorrowActionsProps = {
+  borrowAmount?: string;
+  comptrollerAddress: LoopProps['comptrollerAddress'];
+  selectedMarketData: LoopProps['selectedMarketData'];
+  setBorrowAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 enum SupplyActionsMode {
@@ -236,6 +245,7 @@ function SupplyActions({
             handleInput={(val?: string) => setAmount(val)}
             hintText="Available:"
             isLoading={isLoadingMaxSupply}
+            mainText="AMOUNT TO DEPOSIT"
             max={formatUnits(
               maxSupplyAmount?.bigNumber ?? '0',
               selectedMarketData.underlyingDecimals
@@ -261,6 +271,44 @@ function SupplyActions({
   );
 }
 
+function BorrowActions({
+  borrowAmount,
+  comptrollerAddress,
+  selectedMarketData,
+  setBorrowAmount
+}: BorrowActionsProps) {
+  const chainId = useChainId();
+  const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
+    useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
+  const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
+    '0',
+    chainId
+  );
+  const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
+    MarketData | undefined
+  >(marketData?.assets[0]);
+
+  return (
+    <>
+      {selectedBorrowAsset && (
+        <Amount
+          amount={borrowAmount}
+          handleInput={(val?: string) => setBorrowAmount(val)}
+          hintText="Available:"
+          isLoading={isLoadingMaxBorrowAmount}
+          mainText="AMOUNT TO BORROW"
+          max={formatUnits(
+            maxBorrowAmount?.bigNumber ?? '0',
+            selectedBorrowAsset.underlyingDecimals
+          )}
+          selectedMarketData={selectedBorrowAsset}
+          symbol={selectedBorrowAsset.underlyingSymbol}
+        />
+      )}
+    </>
+  );
+}
+
 export default function Loop({
   selectedMarketData,
   comptrollerAddress
@@ -269,6 +317,7 @@ export default function Loop({
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
+  const [borrowAmount, setBorrowAmount] = useState<string>();
 
   return (
     <>
@@ -332,10 +381,19 @@ export default function Loop({
           <div className={`separator`} />
 
           <LoopInfoDisplay
-            aprPercentage={'0.00%'}
+            aprPercentage={`${
+              currentSdk
+                ?.ratePerBlockToAPY(
+                  selectedMarketData.supplyRatePerBlock ?? BigNumber.from(0),
+                  getBlockTimePerMinuteByChainId(chainId)
+                )
+                .toFixed(2) ?? '0.00'
+            }%`}
             aprText={'Collateral APR'}
             nativeAmount={formatUnits(
-              selectedMarketData.supplyBalance,
+              selectedMarketData.supplyBalance.add(
+                parseUnits(amount ?? '0', selectedMarketData.underlyingDecimals)
+              ),
               selectedMarketData.underlyingDecimals
             )}
             symbol={selectedMarketData.underlyingSymbol}
@@ -364,6 +422,13 @@ export default function Loop({
           />
 
           <div className="separator" />
+
+          <BorrowActions
+            borrowAmount={borrowAmount}
+            comptrollerAddress={comptrollerAddress}
+            selectedMarketData={selectedMarketData}
+            setBorrowAmount={setBorrowAmount}
+          />
         </Modal>
       )}
     </>
