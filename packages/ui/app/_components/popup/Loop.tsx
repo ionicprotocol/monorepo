@@ -16,6 +16,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import ResultHandler from '../ResultHandler';
+import CustomSlider from '../CustomSlider';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -301,6 +302,7 @@ function BorrowActions({
         : 0,
     [selectedBorrowAsset]
   );
+  const [loopValue, setLoopValue] = useState<number>(1);
 
   return (
     <ResultHandler isLoading={isLoadingMarketData}>
@@ -330,6 +332,11 @@ function BorrowActions({
               selectedBorrowDataUSDPrice * parseFloat(borrowAmount ?? '0')
             ).toFixed(2)}
           </div>
+
+          <CustomSlider
+            currentValue={loopValue}
+            setLoopValue={(val: number) => setLoopValue(val)}
+          />
         </>
       )}
     </ResultHandler>
