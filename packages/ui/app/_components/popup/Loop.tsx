@@ -288,27 +288,49 @@ function BorrowActions({
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
   >(marketData?.assets[0]);
+  const selectedBorrowDataUSDPrice = useMemo<number>(
+    () =>
+      selectedBorrowAsset
+        ? selectedBorrowAsset.totalSupplyFiat /
+          parseFloat(
+            formatUnits(
+              selectedBorrowAsset.totalSupply,
+              selectedBorrowAsset.underlyingDecimals
+            )
+          )
+        : 0,
+    [selectedBorrowAsset]
+  );
 
   return (
     <ResultHandler isLoading={isLoadingMarketData}>
       {selectedBorrowAsset && (
-        <Amount
-          amount={borrowAmount}
-          availableAssets={marketData?.assets}
-          handleInput={(val?: string) => setBorrowAmount(val)}
-          hintText="Available:"
-          isLoading={isLoadingMaxBorrowAmount}
-          mainText="AMOUNT TO BORROW"
-          max={formatUnits(
-            maxBorrowAmount?.bigNumber ?? '0',
-            selectedBorrowAsset.underlyingDecimals
-          )}
-          selectedMarketData={selectedBorrowAsset}
-          setSelectedAsset={(asset: MarketData) =>
-            setSelectedBorrowAsset(asset)
-          }
-          symbol={selectedBorrowAsset.underlyingSymbol}
-        />
+        <>
+          <Amount
+            amount={borrowAmount}
+            availableAssets={marketData?.assets}
+            handleInput={(val?: string) => setBorrowAmount(val)}
+            hintText="Available:"
+            isLoading={isLoadingMaxBorrowAmount}
+            mainText="AMOUNT TO BORROW"
+            max={formatUnits(
+              maxBorrowAmount?.bigNumber ?? '0',
+              selectedBorrowAsset.underlyingDecimals
+            )}
+            selectedMarketData={selectedBorrowAsset}
+            setSelectedAsset={(asset: MarketData) =>
+              setSelectedBorrowAsset(asset)
+            }
+            symbol={selectedBorrowAsset.underlyingSymbol}
+          />
+
+          <div className="flex text-xs text-white/50">
+            $
+            {(
+              selectedBorrowDataUSDPrice * parseFloat(borrowAmount ?? '0')
+            ).toFixed(2)}
+          </div>
+        </>
       )}
     </ResultHandler>
   );
