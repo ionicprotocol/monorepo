@@ -127,6 +127,15 @@ const Amount = ({
             width="20"
           />
           <span className={`text-white pl-2`}>{symbol}</span>
+
+          {availableAssets && (
+            <img
+              alt="link"
+              height="24"
+              src={`/images/chevron-down.png`}
+              width="24"
+            />
+          )}
         </div>
 
         {availableAssets && (
