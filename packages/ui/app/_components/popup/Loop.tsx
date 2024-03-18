@@ -1,17 +1,21 @@
 import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import Image from 'next/image';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import Modal from '../Modal';
 
 import Amount from './Amount';
+import SliderComponent from './Slider';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export type LoopProps = {
+  comptrollerAddress: string;
   selectedMarketData: MarketData;
 };
 
@@ -24,7 +28,7 @@ type LoopHealthRatioDisplayProps = {
 type LoopInfoDisplayProps = {
   aprPercentage: string;
   aprText: string;
-  nativeAmount: number;
+  nativeAmount: string;
   symbol: string;
   title: string;
   usdAmount: number;
@@ -32,6 +36,7 @@ type LoopInfoDisplayProps = {
 
 type SupplyActionsProps = {
   amount?: string;
+  comptrollerAddress: LoopProps['comptrollerAddress'];
   selectedMarketData: LoopProps['selectedMarketData'];
   setAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
@@ -112,10 +117,8 @@ function LoopInfoDisplay({
 
       <div className="flex justify-between items-start mb-1">
         <div className="text-white/50 text-xs">
-          <span className="block font-bold text-lg">
-            {nativeAmount.toFixed(2)}
-          </span>{' '}
-          ${usdAmount.toFixed(2)}
+          <span className="block font-bold text-lg">{nativeAmount}</span> $
+          {usdAmount.toFixed(2)}
         </div>
 
         <div className="flex items-center font-bold">
@@ -142,12 +145,63 @@ function LoopInfoDisplay({
 
 function SupplyActions({
   amount,
+  comptrollerAddress,
   selectedMarketData,
   setAmount
 }: SupplyActionsProps) {
+  const chainId = useChainId();
   const [mode, setMode] = useState<SupplyActionsMode>(
     SupplyActionsMode.DEPOSIT
   );
+  const [utilization, setUtilization] = useState<number>(0);
+  const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
+    useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
+  const selectedMarketDataUSDPrice = useMemo<number>(
+    () =>
+      selectedMarketData.totalSupplyFiat /
+      parseFloat(
+        formatUnits(
+          selectedMarketData.totalSupply,
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [selectedMarketData]
+  );
+
+  const handleSupplyUtilization = (utilizationPercentage: number) => {
+    if (utilizationPercentage >= 100) {
+      setAmount(
+        formatUnits(
+          maxSupplyAmount?.bigNumber ?? '0',
+          parseInt(selectedMarketData.underlyingDecimals.toString())
+        )
+      );
+
+      return;
+    }
+
+    setAmount(
+      ((utilizationPercentage / 100) * (maxSupplyAmount?.number ?? 0)).toFixed(
+        parseInt(selectedMarketData.underlyingDecimals.toString())
+      )
+    );
+  };
+
+  useEffect(() => {
+    switch (mode) {
+      case SupplyActionsMode.DEPOSIT:
+        setUtilization(
+          Math.round(
+            (parseFloat(amount ?? '0') / (maxSupplyAmount?.number ?? 1)) * 100
+          )
+        );
+
+        break;
+
+      case SupplyActionsMode.WITHDRAW:
+        break;
+    }
+  }, [amount, maxSupplyAmount, mode]);
 
   return (
     <div>
@@ -175,26 +229,46 @@ function SupplyActions({
         </div>
       </div>
 
-      <Amount
-        amount={amount}
-        handleInput={(val?: string) => setAmount(val)}
-        hintText="Available:"
-        isLoading={false}
-        max={'0'}
-        selectedMarketData={selectedMarketData}
-        symbol={selectedMarketData.underlyingSymbol}
-      />
+      {mode === SupplyActionsMode.DEPOSIT && (
+        <>
+          <Amount
+            amount={amount}
+            handleInput={(val?: string) => setAmount(val)}
+            hintText="Available:"
+            isLoading={isLoadingMaxSupply}
+            max={formatUnits(
+              maxSupplyAmount?.bigNumber ?? '0',
+              selectedMarketData.underlyingDecimals
+            )}
+            selectedMarketData={selectedMarketData}
+            symbol={selectedMarketData.underlyingSymbol}
+          />
+
+          <div className="flex text-xs text-white/50">
+            $
+            {(selectedMarketDataUSDPrice * parseFloat(amount ?? '0')).toFixed(
+              2
+            )}
+          </div>
+
+          <SliderComponent
+            currentUtilizationPercentage={utilization}
+            handleUtilization={handleSupplyUtilization}
+          />
+        </>
+      )}
     </div>
   );
 }
 
-export default function Loop({ selectedMarketData }: LoopProps) {
+export default function Loop({
+  selectedMarketData,
+  comptrollerAddress
+}: LoopProps) {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
-
-  console.log(selectedMarketData);
 
   return (
     <>
@@ -260,10 +334,13 @@ export default function Loop({ selectedMarketData }: LoopProps) {
           <LoopInfoDisplay
             aprPercentage={'0.00%'}
             aprText={'Collateral APR'}
-            nativeAmount={0}
-            symbol={'ETH'}
+            nativeAmount={formatUnits(
+              selectedMarketData.supplyBalance,
+              selectedMarketData.underlyingDecimals
+            )}
+            symbol={selectedMarketData.underlyingSymbol}
             title={'My Collateral'}
-            usdAmount={0}
+            usdAmount={selectedMarketData.supplyBalanceNative}
           />
 
           <div className="separator" />
@@ -271,7 +348,7 @@ export default function Loop({ selectedMarketData }: LoopProps) {
           <LoopInfoDisplay
             aprPercentage={'0.00%'}
             aprText={'Borrow APR'}
-            nativeAmount={0}
+            nativeAmount={'0'}
             symbol={'ETH'}
             title={'My Borrow'}
             usdAmount={0}
@@ -281,9 +358,12 @@ export default function Loop({ selectedMarketData }: LoopProps) {
 
           <SupplyActions
             amount={amount}
+            comptrollerAddress={comptrollerAddress}
             selectedMarketData={selectedMarketData}
             setAmount={setAmount}
           />
+
+          <div className="separator" />
         </Modal>
       )}
     </>

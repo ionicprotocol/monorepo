@@ -29,7 +29,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
-  const [selectedSymbol, setSelectedSymbol] = useState<string>('USDC');
+  const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
@@ -512,7 +512,12 @@ export default function Dashboard() {
         />
       )}
 
-      {selectedMarketData && <Loop selectedMarketData={selectedMarketData} />}
+      {selectedMarketData && (
+        <Loop
+          comptrollerAddress={marketData?.comptroller ?? ''}
+          selectedMarketData={selectedMarketData}
+        />
+      )}
     </>
   );
 }
