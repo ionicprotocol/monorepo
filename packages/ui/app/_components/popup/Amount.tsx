@@ -2,7 +2,7 @@
 'use client';
 import { parseUnits } from 'ethers/lib/utils.js';
 import dynamic from 'next/dynamic';
-import React from 'react';
+import React, { useState } from 'react';
 
 import ResultHandler from '../ResultHandler';
 
@@ -10,12 +10,14 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface IAmount {
   amount?: string;
+  availableAssets?: MarketData[];
   handleInput: (val?: string) => void;
   hintText?: string;
   isLoading?: boolean;
   mainText?: string;
   max?: string;
   selectedMarketData: MarketData;
+  setSelectedAsset?: (asset: MarketData) => void;
   symbol: string;
 }
 
@@ -23,12 +25,17 @@ const Amount = ({
   selectedMarketData,
   handleInput,
   amount,
+  availableAssets,
   hintText = 'Wallet Balance',
   mainText = 'Amount',
   max = '0',
   symbol,
-  isLoading = false
+  isLoading = false,
+  setSelectedAsset
 }: IAmount) => {
+  const [availableAssetsOpen, setAvailableAssetsOpen] =
+    useState<boolean>(false);
+
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     const currentValue = e.target.value.trim();
     let newAmount = currentValue === '' ? undefined : currentValue;
@@ -99,7 +106,7 @@ const Amount = ({
         </div>
       </div>
       <div
-        className={`flex w-full  pt-1.5 items-center text-lg text-white/50 `}
+        className={`relative flex w-full  pt-1.5 items-center text-lg text-white/50 justify-between`}
       >
         <input
           className={`focus:outline-none amount-field font-bold bg-transparent`}
@@ -108,12 +115,50 @@ const Amount = ({
           type="number"
           value={amount}
         />
-        <img
-          alt="link"
-          className={`h-4 ml-auto`}
-          src={`/img/symbols/32/color/${symbol?.toLowerCase()}.png`}
-        />
-        <span className={`text-white pl-2`}>{symbol}</span>
+
+        <div
+          className="relative flex items-center cursor-pointer"
+          onClick={() => setAvailableAssetsOpen(!availableAssetsOpen)}
+        >
+          <img
+            alt="link"
+            height="20"
+            src={`/img/symbols/32/color/${symbol?.toLowerCase()}.png`}
+            width="20"
+          />
+          <span className={`text-white pl-2`}>{symbol}</span>
+        </div>
+
+        {availableAssets && (
+          <div
+            className={`absolute w-[180px] top-full right-0 px-4 py-3 origin-top-right rounded-lg bg-grayone transition-all ${
+              availableAssetsOpen
+                ? 'visible opacity-100 scale-100 '
+                : 'opacity-0 scale-90 invisible'
+            }`}
+          >
+            {availableAssets.map((asset) => (
+              <div
+                className="flex py-1 items-center font-bold text-white cursor-pointer"
+                key={`asset-${asset.underlyingSymbol}`}
+                onClick={() => {
+                  setSelectedAsset && setSelectedAsset(asset);
+                  setAvailableAssetsOpen(false);
+                }}
+              >
+                <img
+                  alt="link"
+                  height="20"
+                  src={`/img/symbols/32/color/${asset.underlyingSymbol?.toLowerCase()}.png`}
+                  width="20"
+                />
+                <span className={`text-white pl-2`}>
+                  {asset.underlyingSymbol}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

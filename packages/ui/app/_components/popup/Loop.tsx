@@ -15,6 +15,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import ResultHandler from '../ResultHandler';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -289,10 +290,11 @@ function BorrowActions({
   >(marketData?.assets[0]);
 
   return (
-    <>
+    <ResultHandler isLoading={isLoadingMarketData}>
       {selectedBorrowAsset && (
         <Amount
           amount={borrowAmount}
+          availableAssets={marketData?.assets}
           handleInput={(val?: string) => setBorrowAmount(val)}
           hintText="Available:"
           isLoading={isLoadingMaxBorrowAmount}
@@ -302,10 +304,13 @@ function BorrowActions({
             selectedBorrowAsset.underlyingDecimals
           )}
           selectedMarketData={selectedBorrowAsset}
+          setSelectedAsset={(asset: MarketData) =>
+            setSelectedBorrowAsset(asset)
+          }
           symbol={selectedBorrowAsset.underlyingSymbol}
         />
       )}
-    </>
+    </ResultHandler>
   );
 }
 

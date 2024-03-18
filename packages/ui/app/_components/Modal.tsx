@@ -37,7 +37,7 @@ export default function Modal({ children, close }: ModalProps) {
       }`}
     >
       <div
-        className={`w-[85%] max-w-[800px] m-auto relative p-6 bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
+        className={`w-[85%] max-w-[800px] m-auto relative p-6 bg-grayUnselect rounded-xl scrollbar-hide transition-all duration-300 animate-pop-in ${
           isMounted && 'animated'
         }`}
       >
