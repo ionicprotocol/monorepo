@@ -23,11 +23,11 @@ export default function Range({
   return (
     <div className="w-full">
       <div className={`h-1 rounded-full relative`}>
+        <div className={`w-full absolute bg-graylite h-1 top-0`} />
         <div
           className={`h-full flex bg-accent relative rounded-l-full`}
           style={{ width: `${currentPercentage}%` }}
         />
-        <div className={`w-full absolute bg-graylite h-1 top-0`} />
         <div
           className={`h-4 w-4 bg-accent rounded-full absolute -top-1.5 -translate-x-1/2 `}
           style={{ left: `${currentPercentage}%` }}
