@@ -61,9 +61,13 @@ async function getFusePoolUsers(
   };
 }
 
+const PAGE_SIZE = 300;
+
 async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: string) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
-  const users = await comptrollerInstance.callStatic.getAllBorrowers();
+  const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
+  const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
+  const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
   const promises = users.map((user) => {
     return comptrollerInstance.callStatic.getAccountLiquidity(user);
   });
