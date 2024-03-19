@@ -341,7 +341,7 @@ function BorrowActions({
             </div>
 
             <div className="w-full">
-              <div className="flex justify-between mb-2">
+              <div className="flex justify-between mb-2 text-xs md:text-sm">
                 {[
                   '0x',
                   '1x',
@@ -376,6 +376,12 @@ function BorrowActions({
                 }
                 step={1}
               />
+
+              <div className="flex justify-between pt-2 text-white/50 text-xs">
+                <span>{'<'} Repay</span>
+
+                <span>Borrow {'>'}</span>
+              </div>
             </div>
           </div>
         </>
@@ -504,6 +510,10 @@ export default function Loop({
             selectedMarketData={selectedMarketData}
             setBorrowAmount={setBorrowAmount}
           />
+
+          <div className="mt-4">
+            <button className="block w-full btn-green">Apply</button>
+          </div>
         </Modal>
       )}
     </>
