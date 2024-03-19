@@ -309,23 +309,25 @@ function BorrowActions({
     <ResultHandler isLoading={isLoadingMarketData}>
       {selectedBorrowAsset && (
         <>
-          <Amount
-            amount={borrowAmount}
-            availableAssets={marketData?.assets}
-            handleInput={(val?: string) => setBorrowAmount(val)}
-            hintText="Available:"
-            isLoading={isLoadingMaxBorrowAmount}
-            mainText="AMOUNT TO BORROW"
-            max={formatUnits(
-              maxBorrowAmount?.bigNumber ?? '0',
-              selectedBorrowAsset.underlyingDecimals
-            )}
-            selectedMarketData={selectedBorrowAsset}
-            setSelectedAsset={(asset: MarketData) =>
-              setSelectedBorrowAsset(asset)
-            }
-            symbol={selectedBorrowAsset.underlyingSymbol}
-          />
+          <div className="relative z-50">
+            <Amount
+              amount={borrowAmount}
+              availableAssets={marketData?.assets}
+              handleInput={(val?: string) => setBorrowAmount(val)}
+              hintText="Available:"
+              isLoading={isLoadingMaxBorrowAmount}
+              mainText="AMOUNT TO BORROW"
+              max={formatUnits(
+                maxBorrowAmount?.bigNumber ?? '0',
+                selectedBorrowAsset.underlyingDecimals
+              )}
+              selectedMarketData={selectedBorrowAsset}
+              setSelectedAsset={(asset: MarketData) =>
+                setSelectedBorrowAsset(asset)
+              }
+              symbol={selectedBorrowAsset.underlyingSymbol}
+            />
+          </div>
 
           <div className="flex text-xs text-white/50 mb-2">
             $

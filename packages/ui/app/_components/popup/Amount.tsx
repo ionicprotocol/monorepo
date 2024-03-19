@@ -82,7 +82,7 @@ const Amount = ({
   }
 
   return (
-    <div className={`w-full flex-col items-start justify-start`}>
+    <div className={`relative w-full flex-col items-start justify-start`}>
       <div className={`flex w-full items-center text-[10px] text-white/50 `}>
         <span className={``}>{mainText}</span>
         <div className="ml-auto">
