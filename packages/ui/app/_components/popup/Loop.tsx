@@ -401,6 +401,27 @@ export default function Loop({
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
   const [borrowAmount, setBorrowAmount] = useState<string>();
+  const selectedMarketDataUSDPrice = useMemo<number>(
+    () =>
+      selectedMarketData.totalSupplyFiat /
+      parseFloat(
+        formatUnits(
+          selectedMarketData.totalSupply,
+          selectedMarketData.underlyingDecimals
+        )
+      ),
+    [selectedMarketData]
+  );
+  const totalCollateralAmount = useMemo<string>(
+    () =>
+      formatUnits(
+        selectedMarketData.supplyBalance.add(
+          parseUnits(amount ?? '0', selectedMarketData.underlyingDecimals)
+        ),
+        selectedMarketData.underlyingDecimals
+      ),
+    [amount, selectedMarketData]
+  );
 
   return (
     <>
@@ -473,15 +494,12 @@ export default function Loop({
                 .toFixed(2) ?? '0.00'
             }%`}
             aprText={'Collateral APR'}
-            nativeAmount={formatUnits(
-              selectedMarketData.supplyBalance.add(
-                parseUnits(amount ?? '0', selectedMarketData.underlyingDecimals)
-              ),
-              selectedMarketData.underlyingDecimals
-            )}
+            nativeAmount={totalCollateralAmount}
             symbol={selectedMarketData.underlyingSymbol}
             title={'My Collateral'}
-            usdAmount={selectedMarketData.supplyBalanceNative}
+            usdAmount={
+              parseFloat(totalCollateralAmount) * selectedMarketDataUSDPrice
+            }
           />
 
           <div className="separator" />
