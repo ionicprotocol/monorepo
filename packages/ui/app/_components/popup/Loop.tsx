@@ -20,7 +20,9 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export type LoopProps = {
   comptrollerAddress: string;
+  isOpen: boolean;
   selectedMarketData: MarketData;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 type LoopHealthRatioDisplayProps = {
@@ -337,7 +339,7 @@ function BorrowActions({
           </div>
 
           <div className="flex items-center text-center text-white/50">
-            <div className="mr-4 text-sm">
+            <div className="mr-6 text-sm">
               LOOP
               <div className="text-lg font-bold">{loopValue.toFixed(1)}</div>
             </div>
@@ -394,9 +396,10 @@ function BorrowActions({
 
 export default function Loop({
   selectedMarketData,
-  comptrollerAddress
+  isOpen,
+  comptrollerAddress,
+  setIsOpen
 }: LoopProps) {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();

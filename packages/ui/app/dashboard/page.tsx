@@ -136,6 +136,7 @@ export default function Dashboard() {
       marketData?.comptroller ?? '',
       chainId
     );
+  const [loopOpen, setLoopOpen] = useState<boolean>(false);
   const totalPoints = useMemo<number>(() => {
     if (supplyPoints && borrowPoints) {
       return (
@@ -414,6 +415,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.SUPPLY}
+                      setLoopOpen={() => setLoopOpen(true)}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
@@ -488,6 +490,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
+                      setLoopOpen={() => setLoopOpen(true)}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
@@ -512,10 +515,12 @@ export default function Dashboard() {
         />
       )}
 
-      {selectedMarketData && (
+      {loopOpen && selectedMarketData && (
         <Loop
           comptrollerAddress={marketData?.comptroller ?? ''}
+          isOpen={loopOpen}
           selectedMarketData={selectedMarketData}
+          setIsOpen={setLoopOpen}
         />
       )}
     </>

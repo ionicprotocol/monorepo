@@ -17,6 +17,7 @@ export type InfoRowsProps = {
   logo: string;
   membership: boolean;
   mode: InfoMode;
+  setLoopOpen: Dispatch<SetStateAction<boolean>>;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
@@ -28,6 +29,7 @@ const InfoRows = ({
   logo,
   membership,
   mode,
+  setLoopOpen,
   setSelectedSymbol,
   setPopupMode,
   apr
@@ -65,6 +67,16 @@ const InfoRows = ({
         {apr}
       </h3>
       <div className={` col-span-2 flex items-center justify-center gap-3`}>
+        <button
+          className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
+          onClick={() => {
+            setSelectedSymbol(asset);
+            setLoopOpen(true);
+          }}
+        >
+          LOOP
+        </button>
+
         <button
           className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => {
