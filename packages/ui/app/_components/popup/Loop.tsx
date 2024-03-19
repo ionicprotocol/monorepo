@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import Image from 'next/image';
+import type { Dispatch, SetStateAction } from 'react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
