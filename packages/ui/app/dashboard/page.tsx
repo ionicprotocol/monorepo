@@ -266,7 +266,7 @@ export default function Dashboard() {
                       {handledHealthData}
                     </p>
 
-                    <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+                    <div className="popover absolute w-[250px] right-0 md:right-auto top-full md:left-[50%] p-2 mt-1 md:ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
                       Health Factor represents safety of your deposited
                       collateral against the borrowed assets and its underlying
                       value. If the health factor goes below 1, the liquidation
@@ -291,7 +291,7 @@ export default function Dashboard() {
                 <div className="popover-container">
                   <span>{netApr}</span>
 
-                  <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+                  <div className="popover absolute w-[250px] top-full right-0 md:right-auto md:left-[50%] p-2 mt-1 md:ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
                     Net APR is the difference between the average borrowing APR
                     you are paying versus the average supply APR you are
                     earning. earning. This does not include the future value of
