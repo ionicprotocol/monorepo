@@ -33,13 +33,13 @@
       "address": "0x6352b5231de62be60c7ADB8250b08CA9CCF7a9A5"
     },
     "CTokenFirstExtension": {
-      "address": "0xe419c13f22e4318F87973082675c1cE650EA87EC"
+      "address": "0xF4090e9cC87e0A5C269F7D99f8AbE12c134ea2d4"
     },
     "Comptroller": {
       "address": "0x8b2B6a9dC8Cd73309Cef8d64920831d4C73F43a7"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5"
+      "address": "0xdc4aBE2cd9a276b187200d4896d4B219c0B8920A"
     },
     "DefaultProxyAdmin": {
       "address": "0x985a323A1CccA8Cd5fb8935590EE33FbcFE849d0"
