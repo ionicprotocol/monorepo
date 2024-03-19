@@ -5,18 +5,18 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import Modal from '../Modal';
+import Range from '../Range';
+import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import SliderComponent from './Slider';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import ResultHandler from '../ResultHandler';
-import CustomSlider from '../CustomSlider';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -303,6 +303,7 @@ function BorrowActions({
     [selectedBorrowAsset]
   );
   const [loopValue, setLoopValue] = useState<number>(1);
+  const maxLoop = 2;
 
   return (
     <ResultHandler isLoading={isLoadingMarketData}>
@@ -326,17 +327,57 @@ function BorrowActions({
             symbol={selectedBorrowAsset.underlyingSymbol}
           />
 
-          <div className="flex text-xs text-white/50">
+          <div className="flex text-xs text-white/50 mb-2">
             $
             {(
               selectedBorrowDataUSDPrice * parseFloat(borrowAmount ?? '0')
             ).toFixed(2)}
           </div>
 
-          <CustomSlider
-            currentValue={loopValue}
-            setLoopValue={(val: number) => setLoopValue(val)}
-          />
+          <div className="flex items-center text-center text-white/50">
+            <div className="mr-4 text-sm">
+              LOOP
+              <div className="text-lg font-bold">{loopValue.toFixed(1)}</div>
+            </div>
+
+            <div className="w-full">
+              <div className="flex justify-between mb-2">
+                {[
+                  '0x',
+                  '1x',
+                  '2x',
+                  '3x',
+                  '4x',
+                  '5x',
+                  '6x',
+                  '7x',
+                  '8x',
+                  '9x',
+                  '10x'
+                ].map((label, i) => (
+                  <span
+                    className={`cursor-pointer ${
+                      i > maxLoop && 'text-white/20'
+                    }`}
+                    key={`label-${label}`}
+                    onClick={() => setLoopValue(i > maxLoop ? maxLoop : i)}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+
+              <Range
+                currentValue={loopValue}
+                max={10}
+                min={0}
+                setCurrentValue={(val: number) =>
+                  setLoopValue(val > maxLoop ? maxLoop : val)
+                }
+                step={1}
+              />
+            </div>
+          </div>
         </>
       )}
     </ResultHandler>
