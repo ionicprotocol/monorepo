@@ -362,7 +362,7 @@ function BorrowActions({
                   <span
                     className={`cursor-pointer ${
                       i > maxLoop && 'text-white/20'
-                    }`}
+                    } ${loopValue === i && 'text-accent'}`}
                     key={`label-${label}`}
                     onClick={() => setLoopValue(i > maxLoop ? maxLoop : i)}
                   >
