@@ -75,7 +75,7 @@ function LoopHealthRatioDisplay({
   }, [healthRatio]);
 
   return (
-    <div>
+    <div className="grow-0 shrink-0 basis-[45%]">
       <div
         className={`flex w-full mb-2 items-center justify-between mb-1 hint-text-uppercase `}
       >
@@ -123,7 +123,7 @@ function LoopInfoDisplay({
   usdAmount
 }: LoopInfoDisplayProps) {
   return (
-    <div>
+    <div className="grow-0 shrink-0 basis-[45%]">
       <div className="text-lg font-bold color-white">{title}</div>
 
       <div className="flex justify-between items-start mb-1">
@@ -215,7 +215,7 @@ function SupplyActions({
   }, [amount, maxSupplyAmount, mode]);
 
   return (
-    <div>
+    <div className="grow-0 shrink-0 basis-[45%]">
       <div className="mb-2 inline-flex rounded-2xl text-center p-1 bg-grayone">
         <div
           className={`rounded-xl transition-all cursor-pointer py-2 px-4 ${
@@ -308,7 +308,7 @@ function BorrowActions({
   return (
     <ResultHandler isLoading={isLoadingMarketData}>
       {selectedBorrowAsset && (
-        <>
+        <div className="grow-0 shrink-0 basis-[45%]">
           <div className="relative z-50">
             <Amount
               amount={borrowAmount}
@@ -386,7 +386,7 @@ function BorrowActions({
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </ResultHandler>
   );
@@ -439,97 +439,115 @@ export default function Loop({
             {selectedMarketData.underlyingSymbol}
           </div>
 
-          <div
-            className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
-          >
-            <span className={``}>Position Value</span>
-            <span className={`flex text-sm font-bold pl-2 text-white`}>
-              $
-              {selectedMarketData.supplyBalanceFiat.toLocaleString('en-US', {
-                maximumFractionDigits: 2
-              })}
-            </span>
-          </div>
-          <div
-            className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
-          >
-            <span className={``}>Net APR</span>
-            <span className={`flex text-sm font-bold pl-2 text-white`}>
-              {currentSdk
-                ?.ratePerBlockToAPY(
-                  selectedMarketData.supplyRatePerBlock ?? BigNumber.from(0),
-                  getBlockTimePerMinuteByChainId(chainId)
-                )
-                .toFixed(2) ?? '0.00'}
-              %
-            </span>
-          </div>
+          <div className="lg:flex justify-between items-center">
+            <div className="grow-0 shrink-0 basis-[45%]">
+              <div
+                className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
+              >
+                <span className={``}>Position Value</span>
+                <span className={`flex text-sm font-bold pl-2 text-white`}>
+                  $
+                  {selectedMarketData.supplyBalanceFiat.toLocaleString(
+                    'en-US',
+                    {
+                      maximumFractionDigits: 2
+                    }
+                  )}
+                </span>
+              </div>
+              <div
+                className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
+              >
+                <span className={``}>Net APR</span>
+                <span className={`flex text-sm font-bold pl-2 text-white`}>
+                  {currentSdk
+                    ?.ratePerBlockToAPY(
+                      selectedMarketData.supplyRatePerBlock ??
+                        BigNumber.from(0),
+                      getBlockTimePerMinuteByChainId(chainId)
+                    )
+                    .toFixed(2) ?? '0.00'}
+                  %
+                </span>
+              </div>
 
-          <div
-            className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
-          >
-            <span className={``}>Annual yield</span>
-            <span className={`flex text-sm font-bold pl-2 text-white`}>
-              TODO
-            </span>
+              <div
+                className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
+              >
+                <span className={``}>Annual yield</span>
+                <span className={`flex text-sm font-bold pl-2 text-white`}>
+                  TODO
+                </span>
+              </div>
+            </div>
+
+            <div className={`separator lg:hidden`} />
+
+            <div className="separator-vertical hidden lg:block" />
+
+            <LoopHealthRatioDisplay
+              currentValue={0}
+              healthRatio={11}
+              liquidationValue={0}
+            />
           </div>
 
           <div className={`separator`} />
 
-          <LoopHealthRatioDisplay
-            currentValue={0}
-            healthRatio={11}
-            liquidationValue={0}
-          />
+          <div className="flex justify-between items-center">
+            <LoopInfoDisplay
+              aprPercentage={`${
+                currentSdk
+                  ?.ratePerBlockToAPY(
+                    selectedMarketData.supplyRatePerBlock ?? BigNumber.from(0),
+                    getBlockTimePerMinuteByChainId(chainId)
+                  )
+                  .toFixed(2) ?? '0.00'
+              }%`}
+              aprText={'Collateral APR'}
+              nativeAmount={totalCollateralAmount}
+              symbol={selectedMarketData.underlyingSymbol}
+              title={'My Collateral'}
+              usdAmount={
+                parseFloat(totalCollateralAmount) * selectedMarketDataUSDPrice
+              }
+            />
 
-          <div className={`separator`} />
+            <div className="separator lg:hidden" />
 
-          <LoopInfoDisplay
-            aprPercentage={`${
-              currentSdk
-                ?.ratePerBlockToAPY(
-                  selectedMarketData.supplyRatePerBlock ?? BigNumber.from(0),
-                  getBlockTimePerMinuteByChainId(chainId)
-                )
-                .toFixed(2) ?? '0.00'
-            }%`}
-            aprText={'Collateral APR'}
-            nativeAmount={totalCollateralAmount}
-            symbol={selectedMarketData.underlyingSymbol}
-            title={'My Collateral'}
-            usdAmount={
-              parseFloat(totalCollateralAmount) * selectedMarketDataUSDPrice
-            }
-          />
+            <div className="separator-vertical hidden lg:block" />
 
-          <div className="separator" />
-
-          <LoopInfoDisplay
-            aprPercentage={'0.00%'}
-            aprText={'Borrow APR'}
-            nativeAmount={'0'}
-            symbol={'ETH'}
-            title={'My Borrow'}
-            usdAmount={0}
-          />
+            <LoopInfoDisplay
+              aprPercentage={'0.00%'}
+              aprText={'Borrow APR'}
+              nativeAmount={'0'}
+              symbol={'ETH'}
+              title={'My Borrow'}
+              usdAmount={0}
+            />
+          </div>
 
           <div className="separator" />
 
-          <SupplyActions
-            amount={amount}
-            comptrollerAddress={comptrollerAddress}
-            selectedMarketData={selectedMarketData}
-            setAmount={setAmount}
-          />
+          <div className="lg:flex justify-between items-center">
+            <SupplyActions
+              amount={amount}
+              comptrollerAddress={comptrollerAddress}
+              selectedMarketData={selectedMarketData}
+              setAmount={setAmount}
+            />
 
-          <div className="separator" />
+            <div className="separator lg:hidden" />
 
-          <BorrowActions
-            borrowAmount={borrowAmount}
-            comptrollerAddress={comptrollerAddress}
-            selectedMarketData={selectedMarketData}
-            setBorrowAmount={setBorrowAmount}
-          />
+            <div className="separator-vertical hidden lg:block" />
+
+            <BorrowActions
+              borrowAmount={borrowAmount}
+              comptrollerAddress={comptrollerAddress}
+              selectedMarketData={selectedMarketData}
+              setBorrowAmount={setBorrowAmount}
+            />
+          </div>
 
           <div className="mt-4">
             <button className="block w-full btn-green">Apply</button>

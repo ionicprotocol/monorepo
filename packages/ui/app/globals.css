@@ -311,6 +311,10 @@
   @apply w-full h-[1px] bg-white/30 mx-auto my-3;
 }
 
+.separator-vertical {
+  @apply w-[1px] bg-white/30 mx-auto my-1 self-stretch;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(

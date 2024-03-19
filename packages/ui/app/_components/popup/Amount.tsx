@@ -109,7 +109,7 @@ const Amount = ({
         className={`relative flex w-full  pt-1.5 items-center text-lg text-white/50 justify-between`}
       >
         <input
-          className={`focus:outline-none amount-field font-bold bg-transparent`}
+          className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
           onChange={handlInpData}
           placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
           type="number"
@@ -117,7 +117,7 @@ const Amount = ({
         />
 
         <div
-          className="relative flex items-center cursor-pointer"
+          className="relative flex items-center cursor-pointer grow-0 shrink-0"
           onClick={() => setAvailableAssetsOpen(!availableAssetsOpen)}
         >
           <img
