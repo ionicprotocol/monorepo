@@ -321,9 +321,7 @@ export default function Points() {
       >
         <div className=" flex flex-col items-start py-4 mt-3 justify-start bg-grayone h-min px-[3%] rounded-xl">
           <h1 className={`font-semibold text-xl `}>Global Leaderboard </h1>
-          <div onClick={() => setLeaderboardPage(leaderboardPage + 1)}>
-            test
-          </div>
+
           <div
             className={` w-full flex items-center justify-center text-[10px] my-2 text-white/50`}
           >
