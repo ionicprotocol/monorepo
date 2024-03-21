@@ -18,6 +18,7 @@ import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useOpenPositionMutation } from '@ui/hooks/leverage/useOpenPositionMutation';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -435,6 +436,7 @@ export default function Loop({
         : 0,
     [selectedBorrowAsset]
   );
+  const { mutate: openPosition } = useOpenPositionMutation();
 
   return (
     <>
@@ -568,7 +570,22 @@ export default function Loop({
           </div>
 
           <div className="mt-4">
-            <button className="block w-full btn-green">Apply</button>
+            <button
+              className="block w-full btn-green"
+              onClick={() =>
+                openPosition({
+                  borrowMarket: selectedBorrowAsset?.underlyingToken ?? '',
+                  collateralMarket: selectedCollateralAsset.underlyingToken,
+                  fundingAmount: parseUnits(
+                    amount ?? '',
+                    selectedCollateralAsset.underlyingDecimals
+                  ),
+                  fundingAsset: selectedCollateralAsset.underlyingToken
+                })
+              }
+            >
+              Apply
+            </button>
           </div>
         </Modal>
       )}
