@@ -33,6 +33,8 @@ function getPositionHealth(totalBorrow: BigNumber, totalCollateral: BigNumber): 
     : BigNumber.from(10).pow(36);
 }
 
+const PAGE_SIZE = 300;
+
 async function getFusePoolUsers(
   sdk: IonicSdk,
   comptroller: string,
@@ -40,7 +42,9 @@ async function getFusePoolUsers(
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
-  const users = await comptrollerInstance.callStatic.getAllBorrowers();
+  const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
+  const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
+  const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
   for (const user of users) {
     const assets = await sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
       from: user
@@ -63,7 +67,9 @@ async function getFusePoolUsers(
 
 async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: string) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
-  const users = await comptrollerInstance.callStatic.getAllBorrowers();
+  const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
+  const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
+  const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
   const promises = users.map((user) => {
     return comptrollerInstance.callStatic.getAccountLiquidity(user);
   });
