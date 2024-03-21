@@ -23,7 +23,7 @@ export const getRedemptionStrategiesAndDatas = async (
       strategies,
       datas
     },
-    tokenPath
+    tokenPath || [] // TODO fix
   ];
 };
 
