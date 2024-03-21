@@ -22,7 +22,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 export type LoopProps = {
   comptrollerAddress: string;
   isOpen: boolean;
-  selectedCollateralData: MarketData;
+  selectedCollateralAsset: MarketData;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -44,14 +44,14 @@ type LoopInfoDisplayProps = {
 type SupplyActionsProps = {
   amount?: string;
   comptrollerAddress: LoopProps['comptrollerAddress'];
-  selectedCollateralData: LoopProps['selectedCollateralData'];
+  selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
   setAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 type BorrowActionsProps = {
   borrowAmount?: string;
   comptrollerAddress: LoopProps['comptrollerAddress'];
-  selectedCollateralData: LoopProps['selectedCollateralData'];
+  selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
   setBorrowAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
@@ -160,7 +160,7 @@ function LoopInfoDisplay({
 function SupplyActions({
   amount,
   comptrollerAddress,
-  selectedCollateralData,
+  selectedCollateralAsset,
   setAmount
 }: SupplyActionsProps) {
   const chainId = useChainId();
@@ -169,17 +169,17 @@ function SupplyActions({
   );
   const [utilization, setUtilization] = useState<number>(0);
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
-    useMaxSupplyAmount(selectedCollateralData, comptrollerAddress, chainId);
-  const selectedCollateralDataUSDPrice = useMemo<number>(
+    useMaxSupplyAmount(selectedCollateralAsset, comptrollerAddress, chainId);
+  const selectedCollateralAssetUSDPrice = useMemo<number>(
     () =>
-      selectedCollateralData.totalSupplyFiat /
+      selectedCollateralAsset.totalSupplyFiat /
       parseFloat(
         formatUnits(
-          selectedCollateralData.totalSupply,
-          selectedCollateralData.underlyingDecimals
+          selectedCollateralAsset.totalSupply,
+          selectedCollateralAsset.underlyingDecimals
         )
       ),
-    [selectedCollateralData]
+    [selectedCollateralAsset]
   );
 
   const handleSupplyUtilization = (utilizationPercentage: number) => {
@@ -187,7 +187,7 @@ function SupplyActions({
       setAmount(
         formatUnits(
           maxSupplyAmount?.bigNumber ?? '0',
-          parseInt(selectedCollateralData.underlyingDecimals.toString())
+          parseInt(selectedCollateralAsset.underlyingDecimals.toString())
         )
       );
 
@@ -196,7 +196,7 @@ function SupplyActions({
 
     setAmount(
       ((utilizationPercentage / 100) * (maxSupplyAmount?.number ?? 0)).toFixed(
-        parseInt(selectedCollateralData.underlyingDecimals.toString())
+        parseInt(selectedCollateralAsset.underlyingDecimals.toString())
       )
     );
   };
@@ -253,16 +253,16 @@ function SupplyActions({
             mainText="AMOUNT TO DEPOSIT"
             max={formatUnits(
               maxSupplyAmount?.bigNumber ?? '0',
-              selectedCollateralData.underlyingDecimals
+              selectedCollateralAsset.underlyingDecimals
             )}
-            selectedMarketData={selectedCollateralData}
-            symbol={selectedCollateralData.underlyingSymbol}
+            selectedMarketData={selectedCollateralAsset}
+            symbol={selectedCollateralAsset.underlyingSymbol}
           />
 
           <div className="flex text-xs text-white/50">
             $
             {(
-              selectedCollateralDataUSDPrice * parseFloat(amount ?? '0')
+              selectedCollateralAssetUSDPrice * parseFloat(amount ?? '0')
             ).toFixed(2)}
           </div>
 
@@ -279,12 +279,12 @@ function SupplyActions({
 function BorrowActions({
   borrowAmount,
   comptrollerAddress,
-  selectedCollateralData,
+  selectedCollateralAsset,
   setBorrowAmount
 }: BorrowActionsProps) {
   const chainId = useChainId();
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
-    useMaxBorrowAmount(selectedCollateralData, comptrollerAddress, chainId);
+    useMaxBorrowAmount(selectedCollateralAsset, comptrollerAddress, chainId);
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
     chainId
@@ -292,7 +292,7 @@ function BorrowActions({
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
   >(marketData?.assets[0]);
-  const selectedBorrowDataUSDPrice = useMemo<number>(
+  const selectedBorrowAssetUSDPrice = useMemo<number>(
     () =>
       selectedBorrowAsset
         ? selectedBorrowAsset.totalSupplyFiat /
@@ -335,7 +335,7 @@ function BorrowActions({
           <div className="flex text-xs text-white/50 mb-2">
             $
             {(
-              selectedBorrowDataUSDPrice * parseFloat(borrowAmount ?? '0')
+              selectedBorrowAssetUSDPrice * parseFloat(borrowAmount ?? '0')
             ).toFixed(2)}
           </div>
 
@@ -396,7 +396,7 @@ function BorrowActions({
 }
 
 export default function Loop({
-  selectedCollateralData,
+  selectedCollateralAsset,
   isOpen,
   comptrollerAddress,
   setIsOpen
@@ -405,26 +405,26 @@ export default function Loop({
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
   const [borrowAmount, setBorrowAmount] = useState<string>();
-  const selectedCollateralDataUSDPrice = useMemo<number>(
+  const selectedCollateralAssetUSDPrice = useMemo<number>(
     () =>
-      selectedCollateralData.totalSupplyFiat /
+      selectedCollateralAsset.totalSupplyFiat /
       parseFloat(
         formatUnits(
-          selectedCollateralData.totalSupply,
-          selectedCollateralData.underlyingDecimals
+          selectedCollateralAsset.totalSupply,
+          selectedCollateralAsset.underlyingDecimals
         )
       ),
-    [selectedCollateralData]
+    [selectedCollateralAsset]
   );
   const totalCollateralAmount = useMemo<string>(
     () =>
       formatUnits(
-        selectedCollateralData.supplyBalance.add(
-          parseUnits(amount ?? '0', selectedCollateralData.underlyingDecimals)
+        selectedCollateralAsset.supplyBalance.add(
+          parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals)
         ),
-        selectedCollateralData.underlyingDecimals
+        selectedCollateralAsset.underlyingDecimals
       ),
-    [amount, selectedCollateralData]
+    [amount, selectedCollateralAsset]
   );
 
   return (
@@ -436,11 +436,11 @@ export default function Loop({
               alt=""
               className="mr-2"
               height="20"
-              src={`/img/symbols/32/color/${selectedCollateralData.underlyingSymbol.toLowerCase()}.png`}
+              src={`/img/symbols/32/color/${selectedCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
               width="20"
             />
 
-            {selectedCollateralData.underlyingSymbol}
+            {selectedCollateralAsset.underlyingSymbol}
           </div>
 
           <div className="lg:flex justify-between items-center">
@@ -451,7 +451,7 @@ export default function Loop({
                 <span className={``}>Position Value</span>
                 <span className={`flex text-sm font-bold pl-2 text-white`}>
                   $
-                  {selectedCollateralData.supplyBalanceFiat.toLocaleString(
+                  {selectedCollateralAsset.supplyBalanceFiat.toLocaleString(
                     'en-US',
                     {
                       maximumFractionDigits: 2
@@ -466,7 +466,7 @@ export default function Loop({
                 <span className={`flex text-sm font-bold pl-2 text-white`}>
                   {currentSdk
                     ?.ratePerBlockToAPY(
-                      selectedCollateralData.supplyRatePerBlock ??
+                      selectedCollateralAsset.supplyRatePerBlock ??
                         BigNumber.from(0),
                       getBlockTimePerMinuteByChainId(chainId)
                     )
@@ -503,7 +503,7 @@ export default function Loop({
               aprPercentage={`${
                 currentSdk
                   ?.ratePerBlockToAPY(
-                    selectedCollateralData.supplyRatePerBlock ??
+                    selectedCollateralAsset.supplyRatePerBlock ??
                       BigNumber.from(0),
                     getBlockTimePerMinuteByChainId(chainId)
                   )
@@ -511,11 +511,11 @@ export default function Loop({
               }%`}
               aprText={'Collateral APR'}
               nativeAmount={totalCollateralAmount}
-              symbol={selectedCollateralData.underlyingSymbol}
+              symbol={selectedCollateralAsset.underlyingSymbol}
               title={'My Collateral'}
               usdAmount={
                 parseFloat(totalCollateralAmount) *
-                selectedCollateralDataUSDPrice
+                selectedCollateralAssetUSDPrice
               }
             />
 
@@ -539,7 +539,7 @@ export default function Loop({
             <SupplyActions
               amount={amount}
               comptrollerAddress={comptrollerAddress}
-              selectedCollateralData={selectedCollateralData}
+              selectedCollateralAsset={selectedCollateralAsset}
               setAmount={setAmount}
             />
 
@@ -550,7 +550,7 @@ export default function Loop({
             <BorrowActions
               borrowAmount={borrowAmount}
               comptrollerAddress={comptrollerAddress}
-              selectedCollateralData={selectedCollateralData}
+              selectedCollateralAsset={selectedCollateralAsset}
               setBorrowAmount={setBorrowAmount}
             />
           </div>

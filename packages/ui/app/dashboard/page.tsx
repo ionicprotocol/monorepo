@@ -519,7 +519,7 @@ export default function Dashboard() {
         <Loop
           comptrollerAddress={marketData?.comptroller ?? ''}
           isOpen={loopOpen}
-          selectedCollateralData={selectedMarketData}
+          selectedCollateralAsset={selectedMarketData}
           setIsOpen={setLoopOpen}
         />
       )}
