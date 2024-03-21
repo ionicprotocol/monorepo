@@ -51,8 +51,13 @@ type SupplyActionsProps = {
 type BorrowActionsProps = {
   borrowAmount?: string;
   comptrollerAddress: LoopProps['comptrollerAddress'];
+  selectedBorrowAsset?: MarketData;
+  selectedBorrowAssetUSDPrice: number;
   selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
   setBorrowAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setSelectedBorrowAsset: React.Dispatch<
+    React.SetStateAction<MarketData | undefined>
+  >;
 };
 
 enum SupplyActionsMode {
@@ -279,33 +284,20 @@ function SupplyActions({
 function BorrowActions({
   borrowAmount,
   comptrollerAddress,
+  selectedBorrowAsset,
+  selectedBorrowAssetUSDPrice,
   selectedCollateralAsset,
+  setSelectedBorrowAsset,
   setBorrowAmount
 }: BorrowActionsProps) {
   const chainId = useChainId();
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedCollateralAsset, comptrollerAddress, chainId);
+  const [loopValue, setLoopValue] = useState<number>(1);
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
     chainId
   );
-  const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
-    MarketData | undefined
-  >(marketData?.assets[0]);
-  const selectedBorrowAssetUSDPrice = useMemo<number>(
-    () =>
-      selectedBorrowAsset
-        ? selectedBorrowAsset.totalSupplyFiat /
-          parseFloat(
-            formatUnits(
-              selectedBorrowAsset.totalSupply,
-              selectedBorrowAsset.underlyingDecimals
-            )
-          )
-        : 0,
-    [selectedBorrowAsset]
-  );
-  const [loopValue, setLoopValue] = useState<number>(1);
   const maxLoop = 2;
 
   return (
@@ -405,6 +397,7 @@ export default function Loop({
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
   const [borrowAmount, setBorrowAmount] = useState<string>();
+  const { data: marketData } = useFusePoolData('0', chainId);
   const selectedCollateralAssetUSDPrice = useMemo<number>(
     () =>
       selectedCollateralAsset.totalSupplyFiat /
@@ -425,6 +418,22 @@ export default function Loop({
         selectedCollateralAsset.underlyingDecimals
       ),
     [amount, selectedCollateralAsset]
+  );
+  const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
+    MarketData | undefined
+  >(marketData?.assets[0]);
+  const selectedBorrowAssetUSDPrice = useMemo<number>(
+    () =>
+      selectedBorrowAsset
+        ? selectedBorrowAsset.totalSupplyFiat /
+          parseFloat(
+            formatUnits(
+              selectedBorrowAsset.totalSupply,
+              selectedBorrowAsset.underlyingDecimals
+            )
+          )
+        : 0,
+    [selectedBorrowAsset]
   );
 
   return (
@@ -550,8 +559,11 @@ export default function Loop({
             <BorrowActions
               borrowAmount={borrowAmount}
               comptrollerAddress={comptrollerAddress}
+              selectedBorrowAsset={selectedBorrowAsset}
+              selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
               selectedCollateralAsset={selectedCollateralAsset}
               setBorrowAmount={setBorrowAmount}
+              setSelectedBorrowAsset={setSelectedBorrowAsset}
             />
           </div>
 
