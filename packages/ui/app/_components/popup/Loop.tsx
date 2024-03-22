@@ -13,12 +13,12 @@ import Amount from './Amount';
 import SliderComponent from './Slider';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useOpenPositionMutation } from '@ui/hooks/leverage/useOpenPositionMutation';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useOpenPositionMutation } from '@ui/hooks/leverage/useOpenPositionMutation';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -574,13 +574,14 @@ export default function Loop({
               className="block w-full btn-green"
               onClick={() =>
                 openPosition({
-                  borrowMarket: selectedBorrowAsset?.underlyingToken ?? '',
-                  collateralMarket: selectedCollateralAsset.underlyingToken,
+                  borrowMarket: selectedBorrowAsset?.cToken ?? '',
+                  collateralMarket: selectedCollateralAsset.cToken,
                   fundingAmount: parseUnits(
                     amount ?? '',
                     selectedCollateralAsset.underlyingDecimals
                   ),
-                  fundingAsset: selectedCollateralAsset.underlyingToken
+                  fundingAsset: selectedCollateralAsset.underlyingToken,
+                  leverage: BigNumber.from(1)
                 })
               }
             >

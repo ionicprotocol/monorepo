@@ -8,6 +8,7 @@ export type OpenPositionMutationParams = {
   collateralMarket: string;
   fundingAmount: BigNumber;
   fundingAsset: string;
+  leverage: BigNumber;
 };
 
 export const useOpenPositionMutation = () => {
@@ -18,17 +19,21 @@ export const useOpenPositionMutation = () => {
       borrowMarket,
       collateralMarket,
       fundingAmount,
-      fundingAsset
+      fundingAsset,
+      leverage
     }: OpenPositionMutationParams) => {
       if (!currentSdk) {
         throw new Error('Error while opening position');
       }
 
-      const tx = await currentSdk.createAndFundPosition(
+      console.log(borrowMarket, collateralMarket);
+
+      const tx = await currentSdk.createAndFundPositionAtRatio(
         collateralMarket,
         borrowMarket,
         fundingAsset,
-        fundingAmount
+        fundingAmount,
+        leverage
       );
 
       await tx.wait();
