@@ -51,10 +51,10 @@ task("deploy:mode:ezeth:irm").setAction(async ({}, { run, ethers }) => {
 
   await run("deploy:discouraging:irm");
 
-  const jrm = await ethers.getContract("DiscouragingJumpRateModel");
+  const drm10 = await ethers.getContract("DiscouragingJumpRateModel_10");
 
   const cToken = sdk.createICErc20(ezEthMarket, deployer);
-  const ptx = await cToken._setInterestRateModel(jrm.address);
+  const ptx = await cToken._setInterestRateModel(drm10.address);
   console.log("ptx: ", ptx);
 
   // just print it
@@ -66,12 +66,12 @@ task("deploy:discouraging:irm").setAction(async ({}, { ethers, deployments, getC
   const { deployer } = await getNamedAccounts();
   const { config } = chainDeployConfig[chainId];
 
-  const jrm = await deployments.deploy("DiscouragingJumpRateModel", {
+  const jrm = await deployments.deploy("DiscouragingJumpRateModel_10", {
     contract: "JumpRateModel",
     from: deployer,
     args: [
       config.blocksPerYear,
-      ethers.utils.parseEther("0.05").toString(), // baseRatePerYear    5% // too high in order to discourage borrowing
+      ethers.utils.parseEther("0.10").toString(), // baseRatePerYear    10% // too high in order to discourage borrowing
       ethers.utils.parseEther("0.18").toString(), // multiplierPerYear  18%
       ethers.utils.parseEther("4").toString(), // jumpMultiplierPerYear 400%
       ethers.utils.parseEther("0.8").toString() // kink                 80%

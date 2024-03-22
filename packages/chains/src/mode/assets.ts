@@ -29,7 +29,7 @@ export const assets: SupportedAsset[] = [
     underlying: USDC,
     name: "USD Coin",
     decimals: 6,
-    oracle: OracleTypes.RedstoneAdapterPriceOracle,
+    oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", USDC)
   },
   {
@@ -37,7 +37,7 @@ export const assets: SupportedAsset[] = [
     underlying: USDT,
     name: "Tether USD",
     decimals: 6,
-    oracle: OracleTypes.RedstoneAdapterPriceOracle,
+    oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", USDT)
   },
   {
@@ -45,7 +45,7 @@ export const assets: SupportedAsset[] = [
     underlying: WBTC,
     name: "Wrapped Bitcoin",
     decimals: 8,
-    oracle: OracleTypes.RedstoneAdapterPriceOracle,
+    oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", WBTC)
   },
   {
