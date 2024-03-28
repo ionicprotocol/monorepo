@@ -235,8 +235,6 @@ const usePointsForBorrow = () => {
         )
       ]);
 
-      console.log(response);
-
       const totalPoints = response.reduce(
         (acc, current) => acc + current.data.rows[0][0],
         0
