@@ -130,6 +130,13 @@ const usePointsForSupply = () => {
             query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-03-14')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM weeth_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM weeth_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-14'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
           },
           { method: 'POST' }
+        ),
+        fetchData<QueryResponse, QueryData>(
+          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+          {
+            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-03-26')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM ststone_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM ststone_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-26'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
+          },
+          { method: 'POST' }
         )
       ]);
 
