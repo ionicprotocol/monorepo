@@ -466,23 +466,21 @@ export default function Loop({
     currentPosition?.address ?? '',
     chainId
   );
-  const { data: positionNetApy, isLoading: isLoadingPositionNetApy } =
+  const { data: positionNetApy, isFetching: isFetchingPositionNetApy } =
     useGetNetApy(
       selectedCollateralAsset.cToken,
       selectedBorrowAsset?.cToken ?? '',
       equity,
       leverageRatio,
       collateralsAPR &&
-        collateralsAPR[selectedCollateralAsset.underlyingToken] !== undefined
+        collateralsAPR[selectedCollateralAsset.cToken] !== undefined
         ? parseUnits(
-            collateralsAPR[
-              selectedCollateralAsset.underlyingToken
-            ].totalApy.toString()
+            collateralsAPR[selectedCollateralAsset.cToken].totalApy.toString(),
+            selectedCollateralAsset.underlyingDecimals
           )
         : undefined,
       chainId
     );
-  console.log(positionNetApy);
   const { positionValue } = useMemo(() => {
     return {
       positionValue: millify(
@@ -529,16 +527,15 @@ export default function Loop({
                 className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
               >
                 <span className={``}>Net APR</span>
-                <span className={`flex text-sm font-bold pl-2 text-white`}>
-                  {currentSdk
-                    ?.ratePerBlockToAPY(
-                      selectedCollateralAsset.supplyRatePerBlock ??
-                        BigNumber.from(0),
-                      getBlockTimePerMinuteByChainId(chainId)
-                    )
-                    .toFixed(2) ?? '0.00'}
-                  %
-                </span>
+                <ResultHandler
+                  height="20"
+                  isLoading={isFetchingPositionNetApy}
+                  width="20"
+                >
+                  <span className={`flex text-sm font-bold pl-2 text-white`}>
+                    {positionNetApy?.toFixed(2) ?? '0.00'}%
+                  </span>
+                </ResultHandler>
               </div>
 
               <div
