@@ -43,7 +43,7 @@ type LoopHealthRatioDisplayProps = {
 };
 
 type LoopInfoDisplayProps = {
-  aprPercentage: string;
+  aprPercentage: React.ReactNode;
   aprText: string;
   nativeAmount: string;
   symbol: string;
@@ -492,8 +492,6 @@ export default function Loop({
     chainId.toString()
   );
 
-  console.log(positionInfo);
-
   return (
     <>
       {isOpen && (
@@ -571,13 +569,21 @@ export default function Loop({
 
           <div className="flex justify-between items-center">
             <LoopInfoDisplay
-              aprPercentage={`${
-                collateralsAPR
-                  ? collateralsAPR[
-                      selectedCollateralAsset.underlyingToken.toLowerCase()
-                    ]?.apy.toFixed(4) ?? '0.00'
-                  : '0.00'
-              }%`}
+              aprPercentage={
+                <ResultHandler
+                  height="24"
+                  isLoading={isFetchingPositionInfo}
+                  width="24"
+                >
+                  {collateralsAPR &&
+                  collateralsAPR[selectedCollateralAsset.cToken]
+                    ? collateralsAPR[
+                        selectedCollateralAsset.cToken
+                      ].totalApy.toFixed(4)
+                    : '0.00'}
+                  %
+                </ResultHandler>
+              }
               aprText={'Collateral APR'}
               nativeAmount={totalCollateralAmount}
               symbol={selectedCollateralAsset.underlyingSymbol}
