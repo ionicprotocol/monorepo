@@ -518,7 +518,7 @@ export default function Loop({
                         formatUnits(positionInfo?.positionSupplyAmount ?? '0')
                       ) *
                         (usdPrice ?? 0) *
-                        leverageRatio
+                        (leverageRatio ?? 1)
                     )}
                   </span>
                 </ResultHandler>
