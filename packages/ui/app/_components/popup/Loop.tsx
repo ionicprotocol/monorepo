@@ -419,16 +419,6 @@ export default function Loop({
       ),
     [selectedCollateralAsset]
   );
-  const totalCollateralAmount = useMemo<string>(
-    () =>
-      formatUnits(
-        selectedCollateralAsset.supplyBalance.add(
-          parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals)
-        ),
-        selectedCollateralAsset.underlyingDecimals
-      ),
-    [amount, selectedCollateralAsset]
-  );
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
   >(marketData?.assets[0]);
@@ -492,6 +482,8 @@ export default function Loop({
     chainId.toString()
   );
 
+  console.log(currentPosition);
+
   return (
     <>
       {isOpen && (
@@ -524,7 +516,9 @@ export default function Loop({
                     {millify(
                       Number(
                         formatUnits(positionInfo?.positionSupplyAmount ?? '0')
-                      ) * (usdPrice ?? 0)
+                      ) *
+                        (usdPrice ?? 0) *
+                        leverageRatio
                     )}
                   </span>
                 </ResultHandler>
@@ -585,12 +579,25 @@ export default function Loop({
                 </ResultHandler>
               }
               aprText={'Collateral APR'}
-              nativeAmount={totalCollateralAmount}
+              nativeAmount={
+                currentPosition
+                  ? formatUnits(
+                      positionInfo?.positionSupplyAmount ?? '0',
+                      currentPosition.collateral.underlyingDecimals
+                    )
+                  : '0'
+              }
               symbol={selectedCollateralAsset.underlyingSymbol}
               title={'My Collateral'}
               usdAmount={
-                parseFloat(totalCollateralAmount) *
-                selectedCollateralAssetUSDPrice
+                parseFloat(
+                  currentPosition
+                    ? formatUnits(
+                        positionInfo?.positionSupplyAmount ?? '0',
+                        currentPosition.collateral.underlyingDecimals
+                      )
+                    : '0'
+                ) * selectedCollateralAssetUSDPrice
               }
             />
 
