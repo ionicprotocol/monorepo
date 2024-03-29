@@ -27,6 +27,7 @@ import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRa
 import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
 import millify from 'millify';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -462,34 +463,36 @@ export default function Loop({
     positions?.openPositions.map((position) => position.collateral) ?? [],
     [chainId]
   );
-  const { data: equity, isLoading: isLoadingEquity } = useEquityAmount(
-    currentPosition?.address ?? '',
-    chainId
-  );
-  const { data: positionNetApy, isFetching: isFetchingPositionNetApy } =
-    useGetNetApy(
-      selectedCollateralAsset.cToken,
-      selectedBorrowAsset?.cToken ?? '',
-      equity,
-      leverageRatio,
+  const { data: positionInfo, isFetching: isFetchingPositionInfo } =
+    usePositionInfo(
+      currentPosition?.address ?? '',
       collateralsAPR &&
         collateralsAPR[selectedCollateralAsset.cToken] !== undefined
         ? parseUnits(
-            collateralsAPR[selectedCollateralAsset.cToken].totalApy.toString(),
-            selectedCollateralAsset.underlyingDecimals
+            collateralsAPR[selectedCollateralAsset.cToken].totalApy.toFixed(18)
           )
         : undefined,
       chainId
     );
-  const { positionValue } = useMemo(() => {
-    return {
-      positionValue: millify(
-        parseFloat(
-          formatUnits(equity ?? '0', selectedCollateralAsset.underlyingDecimals)
-        ) * selectedCollateralAssetUSDPrice
-      )
-    };
-  }, [equity, selectedCollateralAsset, selectedCollateralAssetUSDPrice]);
+  const { data: positionNetApy, isFetching: isFetchingPositionNetApy } =
+    useGetNetApy(
+      selectedCollateralAsset.cToken,
+      selectedBorrowAsset?.cToken ?? '',
+      positionInfo?.equityAmount,
+      leverageRatio,
+      collateralsAPR &&
+        collateralsAPR[selectedCollateralAsset.cToken] !== undefined
+        ? parseUnits(
+            collateralsAPR[selectedCollateralAsset.cToken].totalApy.toFixed(18)
+          )
+        : undefined,
+      chainId
+    );
+  const { data: usdPrice, isLoading: isLoadingUsdPrice } = useUsdPrice(
+    chainId.toString()
+  );
+
+  console.log(positionInfo);
 
   return (
     <>
@@ -515,11 +518,16 @@ export default function Loop({
                 <span className={``}>Position Value</span>
                 <ResultHandler
                   height="20"
-                  isLoading={isLoadingEquity}
+                  isLoading={isLoadingUsdPrice || isFetchingPositionInfo}
                   width="20"
                 >
                   <span className={`flex text-sm font-bold pl-2 text-white`}>
-                    ${positionValue}
+                    $
+                    {millify(
+                      Number(
+                        formatUnits(positionInfo?.positionSupplyAmount ?? '0')
+                      ) * (usdPrice ?? 0)
+                    )}
                   </span>
                 </ResultHandler>
               </div>
