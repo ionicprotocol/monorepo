@@ -26,8 +26,6 @@ export const useOpenPositionMutation = () => {
         throw new Error('Error while opening position');
       }
 
-      console.log(borrowMarket, collateralMarket);
-
       const tx = await currentSdk.createAndFundPositionAtRatio(
         collateralMarket,
         borrowMarket,

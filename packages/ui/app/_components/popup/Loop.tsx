@@ -19,6 +19,14 @@ import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
+import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
+import { OpenPosition } from 'types/dist';
+import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
+import millify from 'millify';
+import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -436,7 +444,54 @@ export default function Loop({
         : 0,
     [selectedBorrowAsset]
   );
+  const { data: positions, isLoading: isLoadingPositions } =
+    usePositionsQuery();
+  const currentPosition = useMemo<OpenPosition | undefined>(() => {
+    return positions?.openPositions.find(
+      (position) =>
+        position.borrowable.underlyingToken ===
+          selectedBorrowAsset?.underlyingToken &&
+        position.collateral.underlyingToken ===
+          selectedCollateralAsset.underlyingToken
+    );
+  }, [positions, selectedBorrowAsset, selectedCollateralAsset]);
+  const { data: leverageRatio, isLoading: isLoadingLeverageRatio } =
+    useCurrentLeverageRatio(currentPosition?.address ?? '', chainId);
   const { mutate: openPosition } = useOpenPositionMutation();
+  const collateralsAPR = usePositionsSupplyApy(
+    positions?.openPositions.map((position) => position.collateral) ?? [],
+    [chainId]
+  );
+  const { data: equity, isLoading: isLoadingEquity } = useEquityAmount(
+    currentPosition?.address ?? '',
+    chainId
+  );
+  const { data: positionNetApy, isLoading: isLoadingPositionNetApy } =
+    useGetNetApy(
+      selectedCollateralAsset.cToken,
+      selectedBorrowAsset?.cToken ?? '',
+      equity,
+      leverageRatio,
+      collateralsAPR &&
+        collateralsAPR[selectedCollateralAsset.underlyingToken] !== undefined
+        ? parseUnits(
+            collateralsAPR[
+              selectedCollateralAsset.underlyingToken
+            ].totalApy.toString()
+          )
+        : undefined,
+      chainId
+    );
+  console.log(positionNetApy);
+  const { positionValue } = useMemo(() => {
+    return {
+      positionValue: millify(
+        parseFloat(
+          formatUnits(equity ?? '0', selectedCollateralAsset.underlyingDecimals)
+        ) * selectedCollateralAssetUSDPrice
+      )
+    };
+  }, [equity, selectedCollateralAsset, selectedCollateralAssetUSDPrice]);
 
   return (
     <>
@@ -460,15 +515,15 @@ export default function Loop({
                 className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
               >
                 <span className={``}>Position Value</span>
-                <span className={`flex text-sm font-bold pl-2 text-white`}>
-                  $
-                  {selectedCollateralAsset.supplyBalanceFiat.toLocaleString(
-                    'en-US',
-                    {
-                      maximumFractionDigits: 2
-                    }
-                  )}
-                </span>
+                <ResultHandler
+                  height="20"
+                  isLoading={isLoadingEquity}
+                  width="20"
+                >
+                  <span className={`flex text-sm font-bold pl-2 text-white`}>
+                    ${positionValue}
+                  </span>
+                </ResultHandler>
               </div>
               <div
                 className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
@@ -512,13 +567,11 @@ export default function Loop({
           <div className="flex justify-between items-center">
             <LoopInfoDisplay
               aprPercentage={`${
-                currentSdk
-                  ?.ratePerBlockToAPY(
-                    selectedCollateralAsset.supplyRatePerBlock ??
-                      BigNumber.from(0),
-                    getBlockTimePerMinuteByChainId(chainId)
-                  )
-                  .toFixed(2) ?? '0.00'
+                collateralsAPR
+                  ? collateralsAPR[
+                      selectedCollateralAsset.underlyingToken.toLowerCase()
+                    ]?.apy.toFixed(4) ?? '0.00'
+                  : '0.00'
               }%`}
               aprText={'Collateral APR'}
               nativeAmount={totalCollateralAmount}
