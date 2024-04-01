@@ -247,6 +247,8 @@ async function configureAddress(ap: AddressesProvider, key: string, value?: stri
     const tx = await ap.setAddress(key, value);
     await tx.wait();
     console.log(`setAddress ${key}: ${tx.hash}`);
+  } else {
+    console.log(`already configured ${key}: ${value}`);
   }
 }
 
