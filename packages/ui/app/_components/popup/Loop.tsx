@@ -24,6 +24,7 @@ import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy'
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -415,32 +416,23 @@ export default function Loop({
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
   const { data: marketData } = useFusePoolData('0', chainId);
+  const { data: usdPrice } = useUsdPrice(chainId.toString());
   const selectedCollateralAssetUSDPrice = useMemo<number>(
     () =>
-      selectedCollateralAsset.totalSupplyFiat /
-      parseFloat(
-        formatUnits(
-          selectedCollateralAsset.totalSupply,
-          selectedCollateralAsset.underlyingDecimals
-        )
-      ),
-    [selectedCollateralAsset]
+      (usdPrice ?? 0) *
+      parseFloat(formatUnits(selectedCollateralAsset.underlyingPrice)),
+    [selectedCollateralAsset, usdPrice]
   );
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
   >(marketData?.assets[0]);
   const selectedBorrowAssetUSDPrice = useMemo<number>(
     () =>
-      selectedBorrowAsset
-        ? selectedBorrowAsset.totalSupplyFiat /
-          parseFloat(
-            formatUnits(
-              selectedBorrowAsset.totalSupply,
-              selectedBorrowAsset.underlyingDecimals
-            )
-          )
+      usdPrice && selectedBorrowAsset
+        ? (usdPrice ?? 0) *
+          parseFloat(formatUnits(selectedBorrowAsset.underlyingPrice))
         : 0,
-    [selectedBorrowAsset]
+    [selectedBorrowAsset, usdPrice]
   );
   const { data: positions } = usePositionsQuery();
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
