@@ -309,8 +309,6 @@ function BorrowActions({
   setSelectedBorrowAsset
 }: BorrowActionsProps) {
   const chainId = useChainId();
-  const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
-    useMaxBorrowAmount(selectedCollateralAsset, comptrollerAddress, chainId);
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
     chainId
@@ -327,12 +325,9 @@ function BorrowActions({
               availableAssets={marketData?.assets}
               handleInput={() => {}}
               hintText="Available:"
-              isLoading={isLoadingMaxBorrowAmount}
+              isLoading={false}
               mainText="AMOUNT TO BORROW"
-              max={formatUnits(
-                maxBorrowAmount?.bigNumber ?? '0',
-                selectedBorrowAsset.underlyingDecimals
-              )}
+              max={''}
               readonly
               selectedMarketData={selectedBorrowAsset}
               setSelectedAsset={(asset: MarketData) =>
@@ -692,23 +687,28 @@ export default function Loop({
           </div>
 
           <div className="mt-4">
-            <button
-              className="block w-full btn-green"
-              onClick={() =>
-                openPosition({
-                  borrowMarket: selectedBorrowAsset?.cToken ?? '',
-                  collateralMarket: selectedCollateralAsset.cToken,
-                  fundingAmount: parseUnits(
-                    amount ?? '',
-                    selectedCollateralAsset.underlyingDecimals
-                  ),
-                  fundingAsset: selectedCollateralAsset.underlyingToken,
-                  leverage: BigNumber.from(currentLeverage)
-                })
-              }
+            <ResultHandler
+              height="32"
+              isLoading={isFetchingPositionInfo}
             >
-              Apply
-            </button>
+              <button
+                className="block w-full btn-green"
+                onClick={() =>
+                  openPosition({
+                    borrowMarket: selectedBorrowAsset?.cToken ?? '',
+                    collateralMarket: selectedCollateralAsset.cToken,
+                    fundingAmount: parseUnits(
+                      amount ?? '',
+                      selectedCollateralAsset.underlyingDecimals
+                    ),
+                    fundingAsset: selectedCollateralAsset.underlyingToken,
+                    leverage: BigNumber.from(currentLeverage)
+                  })
+                }
+              >
+                Loop
+              </button>
+            </ResultHandler>
           </div>
         </Modal>
       )}
