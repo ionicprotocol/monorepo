@@ -515,17 +515,6 @@ export default function Loop({
     positionInfo
   ]);
 
-  // console.log(positionValue);
-
-  if (positionInfo && currentPosition) {
-    // console.log(currentPosition, positionInfo);
-    // console.log(formatUnits(positionInfo.safetyBuffer));
-    // console.log(
-    //   formatUnits(positionInfo.equityAmount)
-    // );
-    // console.log(formatUnits(currentPosition.borrowable.rate));
-  }
-
   return (
     <>
       {isOpen && (
