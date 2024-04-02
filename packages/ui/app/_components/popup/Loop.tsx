@@ -687,20 +687,19 @@ export default function Loop({
                 {currentPosition ? (
                   <div className="md:flex">
                     <button
-                      className={`block w-full btn-green md:mr-4 ${
-                        amount && parseFloat(amount) <= 0 && '!bg-stone-500'
-                      }`}
+                      className={`block w-full btn-green md:mr-4`}
+                      disabled={!!amount && parseFloat(amount) <= 0}
                     >
                       Fund position
                     </button>
 
                     <button
-                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-4 ${
-                        currentPositionLeverageRatio &&
+                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-4`}
+                      disabled={
+                        !!currentPositionLeverageRatio &&
                         Math.round(currentPositionLeverageRatio) ===
-                          currentLeverage &&
-                        '!bg-stone-500'
-                      }`}
+                          currentLeverage
+                      }
                     >
                       Adjust leverage
                     </button>
