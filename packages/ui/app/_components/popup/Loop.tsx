@@ -417,23 +417,9 @@ export default function Loop({
   const [amount, setAmount] = useState<string>();
   const { data: marketData } = useFusePoolData('0', chainId);
   const { data: usdPrice } = useUsdPrice(chainId.toString());
-  const selectedCollateralAssetUSDPrice = useMemo<number>(
-    () =>
-      (usdPrice ?? 0) *
-      parseFloat(formatUnits(selectedCollateralAsset.underlyingPrice)),
-    [selectedCollateralAsset, usdPrice]
-  );
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
   >(marketData?.assets[0]);
-  const selectedBorrowAssetUSDPrice = useMemo<number>(
-    () =>
-      usdPrice && selectedBorrowAsset
-        ? (usdPrice ?? 0) *
-          parseFloat(formatUnits(selectedBorrowAsset.underlyingPrice))
-        : 0,
-    [selectedBorrowAsset, usdPrice]
-  );
   const { data: positions } = usePositionsQuery();
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
     return positions?.openPositions.find(
@@ -485,8 +471,17 @@ export default function Loop({
     borrowedToCollateralRatio,
     positionValueMillified,
     liquidationValue,
-    healthRatio
+    healthRatio,
+    selectedBorrowAssetUSDPrice
   } = useMemo(() => {
+    const selectedCollateralAssetUSDPrice =
+      (usdPrice ?? 0) *
+      parseFloat(formatUnits(selectedCollateralAsset.underlyingPrice));
+    const selectedBorrowAssetUSDPrice =
+      usdPrice && selectedBorrowAsset
+        ? (usdPrice ?? 0) *
+          parseFloat(formatUnits(selectedBorrowAsset.underlyingPrice))
+        : 0;
     const positionValue =
       Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) *
       (selectedCollateralAssetUSDPrice ?? 0);
@@ -505,13 +500,11 @@ export default function Loop({
       healthRatio,
       liquidationValue,
       positionValue,
-      positionValueMillified: `${millify(positionValue)}`
+      positionValueMillified: `${millify(positionValue)}`,
+      selectedBorrowAssetUSDPrice,
+      selectedCollateralAssetUSDPrice
     };
-  }, [
-    selectedBorrowAssetUSDPrice,
-    selectedCollateralAssetUSDPrice,
-    positionInfo
-  ]);
+  }, [selectedBorrowAsset, selectedCollateralAsset, positionInfo, usdPrice]);
 
   return (
     <>
