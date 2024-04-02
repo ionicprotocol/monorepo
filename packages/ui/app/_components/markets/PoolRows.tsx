@@ -12,6 +12,7 @@ interface IRows {
   asset: string;
   borrowAPR: string;
   borrowBalance: string;
+  collateralFactor: number;
   logo: string;
   membership: boolean;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
@@ -26,6 +27,7 @@ const PoolRows = ({
   supplyBalance,
   totalSupplied,
   borrowBalance,
+  collateralFactor,
   membership,
   totalBorrowing,
   supplyAPR,
@@ -38,7 +40,7 @@ const PoolRows = ({
 
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
         membership && 'border border-lime'
       }`}
     >
@@ -217,6 +219,14 @@ const PoolRows = ({
             )}
           </div>
         </div>
+      </h3>
+      <h3
+        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+      >
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          COLLATERAL FACTOR:
+        </span>
+        {collateralFactor}%
       </h3>
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
         {address ? (
