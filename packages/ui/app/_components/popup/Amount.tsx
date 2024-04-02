@@ -16,6 +16,7 @@ interface IAmount {
   isLoading?: boolean;
   mainText?: string;
   max?: string;
+  readonly?: boolean;
   selectedMarketData: MarketData;
   setSelectedAsset?: (asset: MarketData) => void;
   symbol: string;
@@ -31,6 +32,7 @@ const Amount = ({
   max = '0',
   symbol,
   isLoading = false,
+  readonly,
   setSelectedAsset
 }: IAmount) => {
   const [availableAssetsOpen, setAvailableAssetsOpen] =
@@ -85,25 +87,28 @@ const Amount = ({
     <div className={`relative w-full flex-col items-start justify-start`}>
       <div className={`flex w-full items-center text-[10px] text-white/50 `}>
         <span className={``}>{mainText}</span>
-        <div className="ml-auto">
-          <ResultHandler
-            height="15"
-            isLoading={isLoading}
-            width="15"
-          >
-            <>
-              <span className={`ml-auto`}>
-                {hintText} {max}
-              </span>
-              <button
-                className={`text-accent pl-2`}
-                onClick={() => handleMax(max)}
-              >
-                MAX
-              </button>
-            </>
-          </ResultHandler>
-        </div>
+
+        {!readonly && (
+          <div className="ml-auto">
+            <ResultHandler
+              height="15"
+              isLoading={isLoading}
+              width="15"
+            >
+              <>
+                <span className={`ml-auto`}>
+                  {hintText} {max}
+                </span>
+                <button
+                  className={`text-accent pl-2`}
+                  onClick={() => handleMax(max)}
+                >
+                  MAX
+                </button>
+              </>
+            </ResultHandler>
+          </div>
+        )}
       </div>
       <div
         className={`relative flex w-full  pt-1.5 items-center text-lg text-white/50 justify-between`}
@@ -114,6 +119,7 @@ const Amount = ({
           placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
           type="number"
           value={amount}
+          readOnly={!!readonly}
         />
 
         <div

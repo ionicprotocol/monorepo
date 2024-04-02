@@ -78,9 +78,7 @@ function LoopHealthRatioDisplay({
   healthRatio,
   liquidationValue
 }: LoopHealthRatioDisplayProps) {
-  console.log(healthRatio);
   const healthRatioPosition = useMemo<number>(() => {
-    console.log(healthRatio);
     if (healthRatio < 0) {
       return 0;
     }
@@ -335,6 +333,7 @@ function BorrowActions({
                 maxBorrowAmount?.bigNumber ?? '0',
                 selectedBorrowAsset.underlyingDecimals
               )}
+              readonly
               selectedMarketData={selectedBorrowAsset}
               setSelectedAsset={(asset: MarketData) =>
                 setSelectedBorrowAsset(asset)
@@ -490,7 +489,7 @@ export default function Loop({
     chainId.toString()
   );
   const {
-    positionValue,
+    borrowedAssetAmount,
     positionValueMillified,
     liquidationValue,
     healthRatio
@@ -502,28 +501,38 @@ export default function Loop({
     const liquidationValue =
       positionValue * Number(formatUnits(positionInfo?.safetyBuffer ?? '0'));
     const healthRatio = positionValue / liquidationValue - 1;
+    const borrowedToCollateralRatio =
+      selectedBorrowAssetUSDPrice / selectedCollateralAssetUSDPrice;
+    const borrowedAssetAmount =
+      (Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) /
+        borrowedToCollateralRatio) *
+      (leverageRatio ?? 1);
 
     return {
+      borrowedAssetAmount,
+      borrowedToCollateralRatio,
       healthRatio,
       liquidationValue,
       positionValue,
       positionValueMillified: `${millify(positionValue)}`
     };
-  }, [leverageRatio, selectedCollateralAssetUSDPrice, positionInfo]);
+  }, [
+    leverageRatio,
+    selectedBorrowAssetUSDPrice,
+    selectedCollateralAssetUSDPrice,
+    positionInfo
+  ]);
 
   // console.log(positionValue);
 
   if (positionInfo && currentPosition) {
     console.log(currentPosition, positionInfo);
-    // console.log(formatUnits(positionInfo.liquidationThreshold));
+    // console.log(formatUnits(positionInfo.safetyBuffer));
+    // console.log(
+    //   formatUnits(positionInfo.equityAmount)
+    // );
 
-    console.log(formatUnits(positionInfo.safetyBuffer));
-
-    console.log(
-      formatUnits(positionInfo.equityAmount)
-      // formatUnits(positionInfo.borrowedAssetPrice),
-      // selectedCollateralAssetUSDPrice
-    );
+    // console.log(formatUnits(currentPosition.borrowable.rate));
   }
 
   return (
@@ -630,29 +639,19 @@ export default function Loop({
 
             <LoopInfoDisplay
               aprPercentage={`
-                  ${
-                    collateralsAPR &&
-                    collateralsAPR[selectedBorrowAsset?.cToken ?? '']
-                      ? collateralsAPR[
-                          selectedBorrowAsset?.cToken ?? ''
-                        ].totalApy.toFixed(4)
-                      : '0.00'
-                  }
+                  ${0}
                   %
               `}
               aprText={'Borrow APR'}
               isLoading={isFetchingPositionInfo}
-              nativeAmount={
-                currentPosition
-                  ? formatUnits(
-                      positionInfo?.positionSupplyAmount ?? '0',
-                      currentPosition.borrowable.underlyingDecimals
-                    )
-                  : '0'
-              }
+              nativeAmount={borrowedAssetAmount.toFixed(
+                selectedBorrowAsset?.underlyingDecimals.toNumber() ?? 18
+              )}
               symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
               title={'My Borrow'}
-              usdAmount={positionValueMillified}
+              usdAmount={millify(
+                borrowedAssetAmount * selectedBorrowAssetUSDPrice
+              )}
             />
           </div>
 
@@ -693,7 +692,7 @@ export default function Loop({
                     selectedCollateralAsset.underlyingDecimals
                   ),
                   fundingAsset: selectedCollateralAsset.underlyingToken,
-                  leverage: BigNumber.from(1)
+                  leverage: BigNumber.from(2)
                 })
               }
             >
