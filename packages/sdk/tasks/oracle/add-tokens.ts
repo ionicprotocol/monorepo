@@ -20,6 +20,6 @@ task("oracle:add-tokens", "Initialize MasterPriceOracle with underlying oracle f
     }
 
     const tx = await mpo.add(underlyingTokens, underlyingOracles);
-    await tx.wait();
+    console.log("tx: ", tx.hash);
     console.log(`Master Price Oracle updated for tokens ${underlyingTokens.join(", ")}`);
   });
