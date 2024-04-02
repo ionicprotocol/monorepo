@@ -59,8 +59,10 @@ type SupplyActionsProps = {
 type BorrowActionsProps = {
   borrowAmount?: string;
   comptrollerAddress: LoopProps['comptrollerAddress'];
+  currentLeverage: number;
   selectedBorrowAsset?: MarketData;
   selectedBorrowAssetUSDPrice: number;
+  setCurrentLeverage: Dispatch<SetStateAction<number>>;
   selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
   setBorrowAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
   setSelectedBorrowAsset: React.Dispatch<
@@ -300,9 +302,11 @@ function SupplyActions({
 
 function BorrowActions({
   borrowAmount,
+  currentLeverage,
   comptrollerAddress,
   selectedBorrowAsset,
   selectedBorrowAssetUSDPrice,
+  setCurrentLeverage,
   selectedCollateralAsset,
   setSelectedBorrowAsset,
   setBorrowAmount
@@ -310,7 +314,6 @@ function BorrowActions({
   const chainId = useChainId();
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedCollateralAsset, comptrollerAddress, chainId);
-  const [loopValue, setLoopValue] = useState<number>(1);
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
     chainId
@@ -352,7 +355,9 @@ function BorrowActions({
           <div className="flex items-center text-center text-white/50">
             <div className="mr-6 text-sm">
               LOOP
-              <div className="text-lg font-bold">{loopValue.toFixed(1)}</div>
+              <div className="text-lg font-bold">
+                {currentLeverage.toFixed(1)}
+              </div>
             </div>
 
             <div className="w-full">
@@ -373,9 +378,11 @@ function BorrowActions({
                   <span
                     className={`cursor-pointer ${
                       i > maxLoop && 'text-white/20'
-                    } ${loopValue === i && 'text-accent'}`}
+                    } ${currentLeverage === i + 1 && 'text-accent'}`}
                     key={`label-${label}`}
-                    onClick={() => setLoopValue(i > maxLoop ? maxLoop : i)}
+                    onClick={() =>
+                      setCurrentLeverage(i > maxLoop ? maxLoop + 1 : i + 1)
+                    }
                   >
                     {label}
                   </span>
@@ -383,11 +390,11 @@ function BorrowActions({
               </div>
 
               <Range
-                currentValue={loopValue}
+                currentValue={currentLeverage - 1}
                 max={10}
                 min={0}
                 setCurrentValue={(val: number) =>
-                  setLoopValue(val > maxLoop ? maxLoop : val)
+                  setCurrentLeverage(val > maxLoop ? maxLoop + 1 : val + 1)
                 }
                 step={1}
               />
@@ -442,8 +449,7 @@ export default function Loop({
         : 0,
     [selectedBorrowAsset]
   );
-  const { data: positions, isLoading: isLoadingPositions } =
-    usePositionsQuery();
+  const { data: positions } = usePositionsQuery();
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
     return positions?.openPositions.find(
       (position) =>
@@ -453,8 +459,10 @@ export default function Loop({
           selectedCollateralAsset.underlyingToken
     );
   }, [positions, selectedBorrowAsset, selectedCollateralAsset]);
-  const { data: leverageRatio, isLoading: isLoadingLeverageRatio } =
-    useCurrentLeverageRatio(currentPosition?.address ?? '', chainId);
+  const { data: currentPositionLeverageRatio } = useCurrentLeverageRatio(
+    currentPosition?.address ?? '',
+    chainId
+  );
   const { mutate: openPosition } = useOpenPositionMutation();
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
@@ -476,7 +484,7 @@ export default function Loop({
       selectedCollateralAsset.cToken,
       selectedBorrowAsset?.cToken ?? '',
       positionInfo?.equityAmount,
-      leverageRatio,
+      currentPositionLeverageRatio,
       collateralsAPR &&
         collateralsAPR[selectedCollateralAsset.cToken] !== undefined
         ? parseUnits(
@@ -488,8 +496,10 @@ export default function Loop({
   const { data: usdPrice, isLoading: isLoadingUsdPrice } = useUsdPrice(
     chainId.toString()
   );
+  const [currentLeverage, setCurrentLeverage] = useState<number>(1);
   const {
     borrowedAssetAmount,
+    borrowedToCollateralRatio,
     positionValueMillified,
     liquidationValue,
     healthRatio
@@ -497,7 +507,7 @@ export default function Loop({
     const positionValue =
       Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) *
       (selectedCollateralAssetUSDPrice ?? 0) *
-      (leverageRatio ?? 1);
+      (currentPositionLeverageRatio ?? 1);
     const liquidationValue =
       positionValue * Number(formatUnits(positionInfo?.safetyBuffer ?? '0'));
     const healthRatio = positionValue / liquidationValue - 1;
@@ -506,7 +516,7 @@ export default function Loop({
     const borrowedAssetAmount =
       (Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) /
         borrowedToCollateralRatio) *
-      (leverageRatio ?? 1);
+      (currentPositionLeverageRatio ?? 1);
 
     return {
       borrowedAssetAmount,
@@ -517,7 +527,7 @@ export default function Loop({
       positionValueMillified: `${millify(positionValue)}`
     };
   }, [
-    leverageRatio,
+    currentPositionLeverageRatio,
     selectedBorrowAssetUSDPrice,
     selectedCollateralAssetUSDPrice,
     positionInfo
@@ -670,10 +680,19 @@ export default function Loop({
             <div className="separator-vertical hidden lg:block" />
 
             <BorrowActions
-              borrowAmount={borrowAmount}
+              borrowAmount={(
+                (parseFloat(amount ?? '0') / borrowedToCollateralRatio) *
+                currentLeverage
+              ).toFixed(
+                parseInt(
+                  selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
+                )
+              )}
+              currentLeverage={currentLeverage}
               comptrollerAddress={comptrollerAddress}
               selectedBorrowAsset={selectedBorrowAsset}
               selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
+              setCurrentLeverage={setCurrentLeverage}
               selectedCollateralAsset={selectedCollateralAsset}
               setBorrowAmount={setBorrowAmount}
               setSelectedBorrowAsset={setSelectedBorrowAsset}
@@ -692,7 +711,7 @@ export default function Loop({
                     selectedCollateralAsset.underlyingDecimals
                   ),
                   fundingAsset: selectedCollateralAsset.underlyingToken,
-                  leverage: BigNumber.from(2)
+                  leverage: BigNumber.from(currentLeverage)
                 })
               }
             >

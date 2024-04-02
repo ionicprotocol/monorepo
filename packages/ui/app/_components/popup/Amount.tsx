@@ -117,9 +117,9 @@ const Amount = ({
           className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
           onChange={handlInpData}
           placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
+          readOnly={!!readonly}
           type="number"
           value={amount}
-          readOnly={!!readonly}
         />
 
         <div
