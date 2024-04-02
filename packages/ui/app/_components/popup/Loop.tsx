@@ -64,7 +64,6 @@ type BorrowActionsProps = {
   selectedBorrowAssetUSDPrice: number;
   setCurrentLeverage: Dispatch<SetStateAction<number>>;
   selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
-  setBorrowAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
   setSelectedBorrowAsset: React.Dispatch<
     React.SetStateAction<MarketData | undefined>
   >;
@@ -308,8 +307,7 @@ function BorrowActions({
   selectedBorrowAssetUSDPrice,
   setCurrentLeverage,
   selectedCollateralAsset,
-  setSelectedBorrowAsset,
-  setBorrowAmount
+  setSelectedBorrowAsset
 }: BorrowActionsProps) {
   const chainId = useChainId();
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
@@ -328,7 +326,7 @@ function BorrowActions({
             <Amount
               amount={borrowAmount}
               availableAssets={marketData?.assets}
-              handleInput={(val?: string) => setBorrowAmount(val)}
+              handleInput={(val?: string) => {}}
               hintText="Available:"
               isLoading={isLoadingMaxBorrowAmount}
               mainText="AMOUNT TO BORROW"
@@ -420,7 +418,6 @@ export default function Loop({
 }: LoopProps) {
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
-  const [borrowAmount, setBorrowAmount] = useState<string>();
   const { data: marketData } = useFusePoolData('0', chainId);
   const selectedCollateralAssetUSDPrice = useMemo<number>(
     () =>
@@ -493,9 +490,6 @@ export default function Loop({
         : undefined,
       chainId
     );
-  const { data: usdPrice, isLoading: isLoadingUsdPrice } = useUsdPrice(
-    chainId.toString()
-  );
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
   const {
     borrowedAssetAmount,
@@ -569,7 +563,7 @@ export default function Loop({
                 <span className={``}>Position Value</span>
                 <ResultHandler
                   height="20"
-                  isLoading={isLoadingUsdPrice || isFetchingPositionInfo}
+                  isLoading={isFetchingPositionInfo}
                   width="20"
                 >
                   <span className={`flex text-sm font-bold pl-2 text-white`}>
@@ -694,7 +688,6 @@ export default function Loop({
               selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
               setCurrentLeverage={setCurrentLeverage}
               selectedCollateralAsset={selectedCollateralAsset}
-              setBorrowAmount={setBorrowAmount}
               setSelectedBorrowAsset={setSelectedBorrowAsset}
             />
           </div>
