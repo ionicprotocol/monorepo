@@ -519,12 +519,11 @@ export default function Loop({
   // console.log(positionValue);
 
   if (positionInfo && currentPosition) {
-    console.log(currentPosition, positionInfo);
+    // console.log(currentPosition, positionInfo);
     // console.log(formatUnits(positionInfo.safetyBuffer));
     // console.log(
     //   formatUnits(positionInfo.equityAmount)
     // );
-
     // console.log(formatUnits(currentPosition.borrowable.rate));
   }
 
@@ -687,17 +686,30 @@ export default function Loop({
               <>
                 {currentPosition ? (
                   <div className="md:flex">
-                    <button className="block w-full btn-green md:mr-4">
+                    <button
+                      className={`block w-full btn-green md:mr-4 ${
+                        amount && parseFloat(amount) <= 0 && '!bg-stone-500'
+                      }`}
+                    >
                       Fund position
                     </button>
 
-                    <button className="block w-full btn-green mt-2 md:mt-0 md:ml-4">
+                    <button
+                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-4 ${
+                        currentPositionLeverageRatio &&
+                        Math.round(currentPositionLeverageRatio) ===
+                          currentLeverage &&
+                        '!bg-stone-500'
+                      }`}
+                    >
                       Adjust leverage
                     </button>
                   </div>
                 ) : (
                   <button
-                    className="block w-full btn-green"
+                    className={`block w-full btn-green ${
+                      amount && parseFloat(amount) <= 0 && '!bg-stone-500'
+                    }`}
                     onClick={() =>
                       openPosition({
                         borrowMarket: selectedBorrowAsset?.cToken ?? '',
