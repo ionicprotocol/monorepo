@@ -686,14 +686,14 @@ export default function Loop({
                 {currentPosition ? (
                   <div className="md:flex">
                     <button
-                      className={`block w-full btn-green md:mr-4 uppercase`}
+                      className={`block w-full btn-green md:mr-6 uppercase`}
                       disabled={parseFloat(amount ?? '0') <= 0}
                     >
                       Fund position
                     </button>
 
                     <button
-                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-4 uppercase`}
+                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-6 uppercase`}
                       disabled={
                         !!currentPositionLeverageRatio &&
                         Math.round(currentPositionLeverageRatio) ===
