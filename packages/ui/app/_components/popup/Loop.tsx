@@ -356,7 +356,7 @@ function BorrowActions({
             <div className="mr-6 text-sm">
               LOOP
               <div className="text-lg font-bold">
-                {currentLeverage.toFixed(1)}
+                {(currentLeverage - 1).toFixed(1)}
               </div>
             </div>
 
