@@ -21,10 +21,10 @@ import { useOpenPositionMutation } from '@ui/hooks/leverage/useOpenPositionMutat
 import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -53,6 +53,7 @@ type SupplyActionsProps = {
   amount?: string;
   comptrollerAddress: LoopProps['comptrollerAddress'];
   selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
+  selectedCollateralAssetUSDPrice: number;
   setAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
@@ -183,6 +184,7 @@ function SupplyActions({
   amount,
   comptrollerAddress,
   selectedCollateralAsset,
+  selectedCollateralAssetUSDPrice,
   setAmount
 }: SupplyActionsProps) {
   const chainId = useChainId();
@@ -192,17 +194,6 @@ function SupplyActions({
   const [utilization, setUtilization] = useState<number>(0);
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
     useMaxSupplyAmount(selectedCollateralAsset, comptrollerAddress, chainId);
-  const selectedCollateralAssetUSDPrice = useMemo<number>(
-    () =>
-      selectedCollateralAsset.totalSupplyFiat /
-      parseFloat(
-        formatUnits(
-          selectedCollateralAsset.totalSupply,
-          selectedCollateralAsset.underlyingDecimals
-        )
-      ),
-    [selectedCollateralAsset]
-  );
 
   const handleSupplyUtilization = (utilizationPercentage: number) => {
     if (utilizationPercentage >= 100) {
@@ -472,7 +463,8 @@ export default function Loop({
     positionValueMillified,
     liquidationValue,
     healthRatio,
-    selectedBorrowAssetUSDPrice
+    selectedBorrowAssetUSDPrice,
+    selectedCollateralAssetUSDPrice
   } = useMemo(() => {
     const selectedCollateralAssetUSDPrice =
       (usdPrice ?? 0) *
@@ -633,6 +625,7 @@ export default function Loop({
               amount={amount}
               comptrollerAddress={comptrollerAddress}
               selectedCollateralAsset={selectedCollateralAsset}
+              selectedCollateralAssetUSDPrice={selectedCollateralAssetUSDPrice}
               setAmount={setAmount}
             />
 
