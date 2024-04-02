@@ -1,39 +1,26 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export type OpenPositionMutationParams = {
-  borrowMarket: string;
-  collateralMarket: string;
-  fundingAmount: BigNumber;
-  fundingAsset: string;
-  leverage: BigNumber;
+export type AdjustLeverageMutationParams = {
+  address: string;
+  leverage: number;
 };
 
-export const useOpenPositionMutation = () => {
+export const useAdjustLeverageMutation = () => {
   const { currentSdk } = useMultiIonic();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
-      borrowMarket,
-      collateralMarket,
-      fundingAmount,
-      fundingAsset,
+      address,
       leverage
-    }: OpenPositionMutationParams): Promise<void> => {
-      if (!currentSdk) {
-        throw new Error('Error while opening position');
-      }
+    }: AdjustLeverageMutationParams): Promise<void> => {
+      const tx = await currentSdk?.adjustLeverageRatio(address, leverage);
 
-      const tx = await currentSdk.createAndFundPositionAtRatio(
-        collateralMarket,
-        borrowMarket,
-        fundingAsset,
-        fundingAmount,
-        leverage
-      );
+      if (!tx) {
+        throw new Error('Error while adjusting leverage');
+      }
 
       await tx.wait();
     },

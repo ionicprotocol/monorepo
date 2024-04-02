@@ -23,6 +23,7 @@ import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy'
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { useAdjustLeverageMutation } from '@ui/hooks/leverage/useAdjustLeverageMutation';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -450,6 +451,7 @@ export default function Loop({
     chainId
   );
   const { mutate: openPosition } = useOpenPositionMutation();
+  const { mutate: adjustLeverage } = useAdjustLeverageMutation();
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
     [chainId]
@@ -489,17 +491,15 @@ export default function Loop({
   } = useMemo(() => {
     const positionValue =
       Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) *
-      (selectedCollateralAssetUSDPrice ?? 0) *
-      (currentPositionLeverageRatio ?? 1);
+      (selectedCollateralAssetUSDPrice ?? 0);
     const liquidationValue =
       positionValue * Number(formatUnits(positionInfo?.safetyBuffer ?? '0'));
     const healthRatio = positionValue / liquidationValue - 1;
     const borrowedToCollateralRatio =
       selectedBorrowAssetUSDPrice / selectedCollateralAssetUSDPrice;
     const borrowedAssetAmount =
-      (Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) /
-        borrowedToCollateralRatio) *
-      (currentPositionLeverageRatio ?? 1);
+      Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) /
+      borrowedToCollateralRatio;
 
     return {
       borrowedAssetAmount,
@@ -510,7 +510,6 @@ export default function Loop({
       positionValueMillified: `${millify(positionValue)}`
     };
   }, [
-    currentPositionLeverageRatio,
     selectedBorrowAssetUSDPrice,
     selectedCollateralAssetUSDPrice,
     positionInfo
@@ -688,7 +687,7 @@ export default function Loop({
                   <div className="md:flex">
                     <button
                       className={`block w-full btn-green md:mr-4 uppercase`}
-                      disabled={!!amount && parseFloat(amount) <= 0}
+                      disabled={parseFloat(amount ?? '0') <= 0}
                     >
                       Fund position
                     </button>
@@ -700,6 +699,12 @@ export default function Loop({
                         Math.round(currentPositionLeverageRatio) ===
                           currentLeverage
                       }
+                      onClick={() =>
+                        adjustLeverage({
+                          address: currentPosition.address,
+                          leverage: currentLeverage
+                        })
+                      }
                     >
                       Adjust leverage
                     </button>
@@ -707,7 +712,7 @@ export default function Loop({
                 ) : (
                   <button
                     className={`block w-full btn-green uppercase`}
-                    disabled={!!amount && parseFloat(amount) <= 0}
+                    disabled={parseFloat(amount ?? '0') <= 0}
                     onClick={() =>
                       openPosition({
                         borrowMarket: selectedBorrowAsset?.cToken ?? '',
