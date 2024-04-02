@@ -61,8 +61,8 @@ type BorrowActionsProps = {
   currentLeverage: number;
   selectedBorrowAsset?: MarketData;
   selectedBorrowAssetUSDPrice: number;
-  setCurrentLeverage: Dispatch<SetStateAction<number>>;
   selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
+  setCurrentLeverage: Dispatch<SetStateAction<number>>;
   setSelectedBorrowAsset: React.Dispatch<
     React.SetStateAction<MarketData | undefined>
   >;
@@ -113,13 +113,13 @@ function LoopHealthRatioDisplay({
 
       <div className="flex justify-between">
         <div className={`hint-text`}>
-          <span className="block text-white text-sm">${currentValue}</span>
-          Current value
+          <span className="block text-white text-sm">${liquidationValue}</span>
+          Liquidation
         </div>
 
         <div className={`hint-text text-right`}>
-          <span className="block text-white text-sm">${liquidationValue}</span>
-          Liquidation
+          <span className="block text-white text-sm">${currentValue}</span>
+          Current value
         </div>
       </div>
     </div>
@@ -325,7 +325,7 @@ function BorrowActions({
             <Amount
               amount={borrowAmount}
               availableAssets={marketData?.assets}
-              handleInput={(val?: string) => {}}
+              handleInput={() => {}}
               hintText="Available:"
               isLoading={isLoadingMaxBorrowAmount}
               mainText="AMOUNT TO BORROW"
@@ -681,12 +681,12 @@ export default function Loop({
                   selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
                 )
               )}
-              currentLeverage={currentLeverage}
               comptrollerAddress={comptrollerAddress}
+              currentLeverage={currentLeverage}
               selectedBorrowAsset={selectedBorrowAsset}
               selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
-              setCurrentLeverage={setCurrentLeverage}
               selectedCollateralAsset={selectedCollateralAsset}
+              setCurrentLeverage={setCurrentLeverage}
               setSelectedBorrowAsset={setSelectedBorrowAsset}
             />
           </div>
