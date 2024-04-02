@@ -684,23 +684,37 @@ export default function Loop({
               height="32"
               isLoading={isFetchingPositionInfo}
             >
-              <button
-                className="block w-full btn-green"
-                onClick={() =>
-                  openPosition({
-                    borrowMarket: selectedBorrowAsset?.cToken ?? '',
-                    collateralMarket: selectedCollateralAsset.cToken,
-                    fundingAmount: parseUnits(
-                      amount ?? '',
-                      selectedCollateralAsset.underlyingDecimals
-                    ),
-                    fundingAsset: selectedCollateralAsset.underlyingToken,
-                    leverage: BigNumber.from(currentLeverage)
-                  })
-                }
-              >
-                Loop
-              </button>
+              <>
+                {currentPosition ? (
+                  <div className="md:flex">
+                    <button className="block w-full btn-green md:mr-4">
+                      Fund position
+                    </button>
+
+                    <button className="block w-full btn-green mt-2 md:mt-0 md:ml-4">
+                      Adjust leverage
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="block w-full btn-green"
+                    onClick={() =>
+                      openPosition({
+                        borrowMarket: selectedBorrowAsset?.cToken ?? '',
+                        collateralMarket: selectedCollateralAsset.cToken,
+                        fundingAmount: parseUnits(
+                          amount ?? '',
+                          selectedCollateralAsset.underlyingDecimals
+                        ),
+                        fundingAsset: selectedCollateralAsset.underlyingToken,
+                        leverage: BigNumber.from(currentLeverage)
+                      })
+                    }
+                  >
+                    Loop
+                  </button>
+                )}
+              </>
             </ResultHandler>
           </div>
         </Modal>
