@@ -687,14 +687,14 @@ export default function Loop({
                 {currentPosition ? (
                   <div className="md:flex">
                     <button
-                      className={`block w-full btn-green md:mr-4 text-uppercase`}
+                      className={`block w-full btn-green md:mr-4 uppercase`}
                       disabled={!!amount && parseFloat(amount) <= 0}
                     >
                       Fund position
                     </button>
 
                     <button
-                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-4 text-uppercase`}
+                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-4 uppercase`}
                       disabled={
                         !!currentPositionLeverageRatio &&
                         Math.round(currentPositionLeverageRatio) ===
@@ -706,7 +706,7 @@ export default function Loop({
                   </div>
                 ) : (
                   <button
-                    className={`block w-full btn-green`}
+                    className={`block w-full btn-green uppercase`}
                     disabled={!!amount && parseFloat(amount) <= 0}
                     onClick={() =>
                       openPosition({
