@@ -58,6 +58,7 @@ type SupplyActionsProps = {
 type BorrowActionsProps = {
   borrowAmount?: string;
   currentLeverage: number;
+  currentPositionLeverage?: number;
   selectedBorrowAsset?: MarketData;
   selectedBorrowAssetUSDPrice: number;
   setCurrentLeverage: Dispatch<SetStateAction<number>>;
@@ -299,6 +300,7 @@ function SupplyActions({
 function BorrowActions({
   borrowAmount,
   currentLeverage,
+  currentPositionLeverage,
   selectedBorrowAsset,
   selectedBorrowAssetUSDPrice,
   setCurrentLeverage,
@@ -365,8 +367,12 @@ function BorrowActions({
                 ].map((label, i) => (
                   <span
                     className={`cursor-pointer ${
-                      i > maxLoop && 'text-white/20'
-                    } ${currentLeverage === i + 1 && 'text-accent'}`}
+                      currentPositionLeverage &&
+                      currentPositionLeverage === i + 1 &&
+                      'text-lime'
+                    } ${i > maxLoop && 'text-white/20'} ${
+                      currentLeverage === i + 1 && '!text-accent'
+                    } `}
                     key={`label-${label}`}
                     onClick={() =>
                       setCurrentLeverage(i > maxLoop ? maxLoop + 1 : i + 1)
@@ -659,6 +665,11 @@ export default function Loop({
                 )
               )}
               currentLeverage={currentLeverage}
+              currentPositionLeverage={
+                currentPositionLeverageRatio
+                  ? Math.round(currentPositionLeverageRatio)
+                  : undefined
+              }
               selectedBorrowAsset={selectedBorrowAsset}
               selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
               setCurrentLeverage={setCurrentLeverage}
