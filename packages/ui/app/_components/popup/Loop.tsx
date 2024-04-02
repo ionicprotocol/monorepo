@@ -1,8 +1,10 @@
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import millify from 'millify';
 import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useEffect, useMemo, useState } from 'react';
+import type { OpenPosition } from 'types/dist';
 import { useChainId } from 'wagmi';
 
 import Modal from '../Modal';
@@ -12,22 +14,17 @@ import ResultHandler from '../ResultHandler';
 import Amount from './Amount';
 import SliderComponent from './Slider';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
+import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useOpenPositionMutation } from '@ui/hooks/leverage/useOpenPositionMutation';
+import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
+import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
+import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
-import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
-import { OpenPosition } from 'types/dist';
-import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
-import { useEquityAmount } from '@ui/hooks/leverage/useEquityAmount';
-import millify from 'millify';
-import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -37,18 +34,19 @@ export type LoopProps = {
 };
 
 type LoopHealthRatioDisplayProps = {
-  currentValue: number;
+  currentValue: string;
   healthRatio: number;
-  liquidationValue: number;
+  liquidationValue: string;
 };
 
 type LoopInfoDisplayProps = {
-  aprPercentage: React.ReactNode;
+  aprPercentage: string;
   aprText: string;
+  isLoading: boolean;
   nativeAmount: string;
   symbol: string;
   title: string;
-  usdAmount: number;
+  usdAmount: string;
 };
 
 type SupplyActionsProps = {
@@ -115,16 +113,12 @@ function LoopHealthRatioDisplay({
 
       <div className="flex justify-between">
         <div className={`hint-text`}>
-          <span className="block text-white text-sm">
-            ${currentValue.toFixed(2)}
-          </span>
+          <span className="block text-white text-sm">${currentValue}</span>
           Current value
         </div>
 
         <div className={`hint-text text-right`}>
-          <span className="block text-white text-sm">
-            ${liquidationValue.toFixed(2)}
-          </span>
+          <span className="block text-white text-sm">${liquidationValue}</span>
           Liquidation
         </div>
       </div>
@@ -135,6 +129,7 @@ function LoopHealthRatioDisplay({
 function LoopInfoDisplay({
   aprText,
   aprPercentage,
+  isLoading,
   nativeAmount,
   symbol,
   title,
@@ -146,8 +141,14 @@ function LoopInfoDisplay({
 
       <div className="flex justify-between items-start mb-1">
         <div className="text-white/50 text-xs">
-          <span className="block font-bold text-lg">{nativeAmount}</span> $
-          {usdAmount.toFixed(2)}
+          <ResultHandler
+            height="28"
+            isLoading={isLoading}
+            width="28"
+          >
+            <span className="block font-bold text-lg">{nativeAmount}</span> $
+            {usdAmount}
+          </ResultHandler>
         </div>
 
         <div className="flex items-center font-bold">
@@ -166,7 +167,13 @@ function LoopInfoDisplay({
       <div className="flex justify-between items-center">
         <span className="hint-text-uppercase">{aprText}</span>
 
-        <span className="font-bold">{aprPercentage}</span>
+        <ResultHandler
+          height="24"
+          isLoading={isLoading}
+          width="24"
+        >
+          <span className="font-bold">{aprPercentage}</span>
+        </ResultHandler>
       </div>
     </div>
   );
@@ -403,7 +410,6 @@ export default function Loop({
   comptrollerAddress,
   setIsOpen
 }: LoopProps) {
-  const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
   const [borrowAmount, setBorrowAmount] = useState<string>();
@@ -481,8 +487,36 @@ export default function Loop({
   const { data: usdPrice, isLoading: isLoadingUsdPrice } = useUsdPrice(
     chainId.toString()
   );
+  const { positionValue, positionValueMillified, liquidationValue } =
+    useMemo(() => {
+      const positionValue =
+        Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) *
+        (selectedCollateralAssetUSDPrice ?? 0) *
+        (leverageRatio ?? 1);
+      const liquidationValue =
+        positionValue * Number(formatUnits(positionInfo?.safetyBuffer ?? '0'));
 
-  console.log(currentPosition);
+      return {
+        liquidationValue,
+        positionValue,
+        positionValueMillified: `${millify(positionValue)}`
+      };
+    }, [leverageRatio, selectedCollateralAssetUSDPrice, positionInfo]);
+
+  // console.log(positionValue);
+
+  if (positionInfo && currentPosition) {
+    console.log(currentPosition, positionInfo);
+    // console.log(formatUnits(positionInfo.liquidationThreshold));
+
+    console.log(formatUnits(positionInfo.safetyBuffer));
+
+    console.log(
+      formatUnits(positionInfo.equityAmount)
+      // formatUnits(positionInfo.borrowedAssetPrice),
+      // selectedCollateralAssetUSDPrice
+    );
+  }
 
   return (
     <>
@@ -512,14 +546,7 @@ export default function Loop({
                   width="20"
                 >
                   <span className={`flex text-sm font-bold pl-2 text-white`}>
-                    $
-                    {millify(
-                      Number(
-                        formatUnits(positionInfo?.positionSupplyAmount ?? '0')
-                      ) *
-                        (usdPrice ?? 0) *
-                        (leverageRatio ?? 1)
-                    )}
+                    ${positionValueMillified}
                   </span>
                 </ResultHandler>
               </div>
@@ -553,9 +580,9 @@ export default function Loop({
             <div className="separator-vertical hidden lg:block" />
 
             <LoopHealthRatioDisplay
-              currentValue={0}
+              currentValue={positionValueMillified}
               healthRatio={11}
-              liquidationValue={0}
+              liquidationValue={millify(liquidationValue)}
             />
           </div>
 
@@ -563,22 +590,19 @@ export default function Loop({
 
           <div className="flex justify-between items-center">
             <LoopInfoDisplay
-              aprPercentage={
-                <ResultHandler
-                  height="24"
-                  isLoading={isFetchingPositionInfo}
-                  width="24"
-                >
-                  {collateralsAPR &&
-                  collateralsAPR[selectedCollateralAsset.cToken]
-                    ? collateralsAPR[
-                        selectedCollateralAsset.cToken
-                      ].totalApy.toFixed(4)
-                    : '0.00'}
+              aprPercentage={`
+                  ${
+                    collateralsAPR &&
+                    collateralsAPR[selectedCollateralAsset.cToken]
+                      ? collateralsAPR[
+                          selectedCollateralAsset.cToken
+                        ].totalApy.toFixed(4)
+                      : '0.00'
+                  }
                   %
-                </ResultHandler>
-              }
+              `}
               aprText={'Collateral APR'}
+              isLoading={isFetchingPositionInfo}
               nativeAmount={
                 currentPosition
                   ? formatUnits(
@@ -589,16 +613,7 @@ export default function Loop({
               }
               symbol={selectedCollateralAsset.underlyingSymbol}
               title={'My Collateral'}
-              usdAmount={
-                parseFloat(
-                  currentPosition
-                    ? formatUnits(
-                        positionInfo?.positionSupplyAmount ?? '0',
-                        currentPosition.collateral.underlyingDecimals
-                      )
-                    : '0'
-                ) * selectedCollateralAssetUSDPrice
-              }
+              usdAmount={positionValueMillified}
             />
 
             <div className="separator lg:hidden" />
@@ -606,12 +621,30 @@ export default function Loop({
             <div className="separator-vertical hidden lg:block" />
 
             <LoopInfoDisplay
-              aprPercentage={'0.00%'}
+              aprPercentage={`
+                  ${
+                    collateralsAPR &&
+                    collateralsAPR[selectedBorrowAsset?.cToken ?? '']
+                      ? collateralsAPR[
+                          selectedBorrowAsset?.cToken ?? ''
+                        ].totalApy.toFixed(4)
+                      : '0.00'
+                  }
+                  %
+              `}
               aprText={'Borrow APR'}
-              nativeAmount={'0'}
-              symbol={'ETH'}
+              isLoading={isFetchingPositionInfo}
+              nativeAmount={
+                currentPosition
+                  ? formatUnits(
+                      positionInfo?.positionSupplyAmount ?? '0',
+                      currentPosition.borrowable.underlyingDecimals
+                    )
+                  : '0'
+              }
+              symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
               title={'My Borrow'}
-              usdAmount={0}
+              usdAmount={positionValueMillified}
             />
           </div>
 
