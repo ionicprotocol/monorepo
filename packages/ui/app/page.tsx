@@ -2,7 +2,7 @@
 'use client';
 
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
+import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
@@ -163,15 +163,16 @@ export default function Market() {
           {/* </div> */}
           {/* <PoolToggle /> */}
           <div
-            className={`w-full gap-x-1 hidden lg:grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
+            className={`w-full gap-x-1 hidden lg:grid  grid-cols-20 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
-            <h3 className={` col-span-2  `}>ASSETS</h3>
+            <h3 className={` col-span-2`}>ASSETS</h3>
             <h3 className={` col-span-2`}>SUPPLY BALANCE</h3>
             <h3 className={` col-span-2`}>TOTAL SUPPLIED</h3>
             <h3 className={` col-span-2`}>BORROW BALANCE</h3>
             <h3 className={` col-span-2`}>TOTAL BORROWED</h3>
             <h3 className={` col-span-2`}>SUPPLY APR</h3>
             <h3 className={` col-span-2`}>BORROW APR</h3>
+            <h3 className={` col-span-2`}>COLLATERAL FACTOR</h3>
             <h3 className={` col-span-4`}>SUPPLY/BORROW</h3>
           </div>
           <ResultHandler
@@ -207,6 +208,10 @@ export default function Market() {
                     } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
                       maximumFractionDigits: 2
                     })}`}
+                    collateralFactor={
+                      (val ? Number(formatEther(val.collateralFactor)) : 0) *
+                      100
+                    }
                     key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     membership={val?.membership ?? false}
