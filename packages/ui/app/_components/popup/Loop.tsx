@@ -14,6 +14,7 @@ import ResultHandler from '../ResultHandler';
 import Amount from './Amount';
 import SliderComponent from './Slider';
 
+import { useAdjustLeverageMutation } from '@ui/hooks/leverage/useAdjustLeverageMutation';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { useOpenPositionMutation } from '@ui/hooks/leverage/useOpenPositionMutation';
@@ -23,7 +24,6 @@ import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy'
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { useAdjustLeverageMutation } from '@ui/hooks/leverage/useAdjustLeverageMutation';
 
 export type LoopProps = {
   comptrollerAddress: string;
