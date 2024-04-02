@@ -78,16 +78,18 @@ function LoopHealthRatioDisplay({
   healthRatio,
   liquidationValue
 }: LoopHealthRatioDisplayProps) {
+  console.log(healthRatio);
   const healthRatioPosition = useMemo<number>(() => {
-    if (healthRatio < 1) {
+    console.log(healthRatio);
+    if (healthRatio < 0) {
       return 0;
     }
 
-    if (healthRatio > 10) {
+    if (healthRatio > 1) {
       return 100;
     }
 
-    return (healthRatio / 10) * 100;
+    return healthRatio * 100;
   }, [healthRatio]);
 
   return (
@@ -105,9 +107,9 @@ function LoopHealthRatioDisplay({
             left: `${healthRatioPosition}%`
           }}
         >
-          <span className="absolute bottom-full right-1/2 mb-1 translate-x-1/2 text-sm">
+          {/* <span className="absolute bottom-full right-1/2 mb-1 translate-x-1/2 text-sm">
             {healthRatio.toFixed(2)}
-          </span>
+          </span> */}
         </div>
       </div>
 
@@ -487,21 +489,27 @@ export default function Loop({
   const { data: usdPrice, isLoading: isLoadingUsdPrice } = useUsdPrice(
     chainId.toString()
   );
-  const { positionValue, positionValueMillified, liquidationValue } =
-    useMemo(() => {
-      const positionValue =
-        Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) *
-        (selectedCollateralAssetUSDPrice ?? 0) *
-        (leverageRatio ?? 1);
-      const liquidationValue =
-        positionValue * Number(formatUnits(positionInfo?.safetyBuffer ?? '0'));
+  const {
+    positionValue,
+    positionValueMillified,
+    liquidationValue,
+    healthRatio
+  } = useMemo(() => {
+    const positionValue =
+      Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) *
+      (selectedCollateralAssetUSDPrice ?? 0) *
+      (leverageRatio ?? 1);
+    const liquidationValue =
+      positionValue * Number(formatUnits(positionInfo?.safetyBuffer ?? '0'));
+    const healthRatio = positionValue / liquidationValue - 1;
 
-      return {
-        liquidationValue,
-        positionValue,
-        positionValueMillified: `${millify(positionValue)}`
-      };
-    }, [leverageRatio, selectedCollateralAssetUSDPrice, positionInfo]);
+    return {
+      healthRatio,
+      liquidationValue,
+      positionValue,
+      positionValueMillified: `${millify(positionValue)}`
+    };
+  }, [leverageRatio, selectedCollateralAssetUSDPrice, positionInfo]);
 
   // console.log(positionValue);
 
@@ -581,7 +589,7 @@ export default function Loop({
 
             <LoopHealthRatioDisplay
               currentValue={positionValueMillified}
-              healthRatio={11}
+              healthRatio={healthRatio}
               liquidationValue={millify(liquidationValue)}
             />
           </div>
