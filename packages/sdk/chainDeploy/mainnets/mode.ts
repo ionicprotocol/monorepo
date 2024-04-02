@@ -89,4 +89,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
     redStoneAssets
   });
+
+  const deployer = await ethers.getNamedSigner("deployer");
+  const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (algebraSwapLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(algebraSwapLiquidator.transactionHash);
+  }
+  console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
 };
