@@ -21,7 +21,6 @@ import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -57,11 +56,9 @@ type SupplyActionsProps = {
 
 type BorrowActionsProps = {
   borrowAmount?: string;
-  comptrollerAddress: LoopProps['comptrollerAddress'];
   currentLeverage: number;
   selectedBorrowAsset?: MarketData;
   selectedBorrowAssetUSDPrice: number;
-  selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
   setCurrentLeverage: Dispatch<SetStateAction<number>>;
   setSelectedBorrowAsset: React.Dispatch<
     React.SetStateAction<MarketData | undefined>
@@ -301,11 +298,9 @@ function SupplyActions({
 function BorrowActions({
   borrowAmount,
   currentLeverage,
-  comptrollerAddress,
   selectedBorrowAsset,
   selectedBorrowAssetUSDPrice,
   setCurrentLeverage,
-  selectedCollateralAsset,
   setSelectedBorrowAsset
 }: BorrowActionsProps) {
   const chainId = useChainId();
@@ -676,11 +671,9 @@ export default function Loop({
                   selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
                 )
               )}
-              comptrollerAddress={comptrollerAddress}
               currentLeverage={currentLeverage}
               selectedBorrowAsset={selectedBorrowAsset}
               selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
-              selectedCollateralAsset={selectedCollateralAsset}
               setCurrentLeverage={setCurrentLeverage}
               setSelectedBorrowAsset={setSelectedBorrowAsset}
             />
