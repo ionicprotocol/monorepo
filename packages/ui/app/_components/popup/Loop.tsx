@@ -485,14 +485,12 @@ export default function Loop({
       chainId
     );
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
-  const { data: borrowApr } = useGetPositionBorrowApr({
-    amount: amountAsBInt,
-    borrowMarket: selectedBorrowAsset?.cToken ?? '',
-    collateralMarket: selectedCollateralAsset.cToken,
-    leverage: BigNumber.from(currentLeverage)
-  });
-
-  console.log(borrowApr);
+  // const { data: borrowApr } = useGetPositionBorrowApr({
+  //   amount: amountAsBInt,
+  //   borrowMarket: selectedBorrowAsset?.cToken ?? '',
+  //   collateralMarket: selectedCollateralAsset.cToken,
+  //   leverage: BigNumber.from(currentLeverage)
+  // });
 
   const {
     borrowedAssetAmount,
