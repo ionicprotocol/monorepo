@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
@@ -13,11 +14,13 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import SliderComponent from './Slider';
+import { useTransactionSteps } from './TransactionStepsHandler';
 
+import { INFO_MESSAGES } from '@ui/constants/index';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAdjustLeverageMutation } from '@ui/hooks/leverage/useAdjustLeverageMutation';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
-import { useOpenPositionMutation } from '@ui/hooks/leverage/useOpenPositionMutation';
 import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
@@ -25,7 +28,6 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { useTransactionSteps } from './TransactionStepsHandler';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -426,7 +428,6 @@ export default function Loop({
     currentPosition?.address ?? '',
     chainId
   );
-  const { mutateAsync: openPosition } = useOpenPositionMutation();
   const { mutateAsync: adjustLeverage } = useAdjustLeverageMutation();
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
@@ -498,13 +499,127 @@ export default function Loop({
       selectedCollateralAssetUSDPrice
     };
   }, [selectedBorrowAsset, selectedCollateralAsset, positionInfo, usdPrice]);
-  const { transactionSteps, upsertTransactionStep } = useTransactionSteps();
+  const { currentSdk, address } = useMultiIonic();
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
+  const amountAsBInt = useMemo<BigNumber>(
+    () =>
+      parseUnits(amount ?? '0', selectedCollateralAsset?.underlyingDecimals),
+    [amount, selectedCollateralAsset]
+  );
+  const queryClient = useQueryClient();
+
+  /**
+   * Reset neccessary queries after actions
+   */
+  const resetQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ['useCurrentLeverageRatio'] });
+    queryClient.invalidateQueries({ queryKey: ['useGetNetApy'] });
+    queryClient.invalidateQueries({ queryKey: ['usePositionInfo'] });
+    queryClient.invalidateQueries({ queryKey: ['positions'] });
+    queryClient.invalidateQueries({ queryKey: ['useMaxSupplyAmount'] });
+  };
 
   /**
    * Handle position opening
    */
   const handleOpenPosition = async (): Promise<void> => {
-    const currentTransactionStep = 0;
+    if (!currentSdk || !address) {
+      return;
+    }
+
+    let currentTransactionStep = 0;
+
+    addStepsForAction([
+      {
+        error: false,
+        message: INFO_MESSAGES.OPEN_POSITION.APPROVE,
+        success: false
+      },
+      {
+        error: false,
+        message: INFO_MESSAGES.OPEN_POSITION.OPENING,
+        success: false
+      }
+    ]);
+
+    try {
+      const token = currentSdk.getEIP20TokenInstance(
+        selectedCollateralAsset.underlyingToken,
+        currentSdk.signer
+      );
+      const hasApprovedEnough = (
+        await token.callStatic.allowance(
+          address,
+          selectedCollateralAsset.cToken
+        )
+      ).gte(amountAsBInt);
+
+      if (!hasApprovedEnough) {
+        const tx = await currentSdk.approve(
+          selectedCollateralAsset.cToken,
+          selectedCollateralAsset.underlyingToken
+        );
+
+        upsertTransactionStep({
+          index: currentTransactionStep,
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx.hash
+          }
+        });
+
+        await tx.wait();
+      }
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+
+      currentTransactionStep++;
+
+      const tx = await currentSdk.createAndFundPositionAtRatio(
+        selectedCollateralAsset.cToken,
+        selectedBorrowAsset?.cToken ?? '',
+        selectedCollateralAsset.underlyingToken,
+        amountAsBInt,
+        BigNumber.from(currentLeverage)
+      );
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          txHash: tx.hash
+        }
+      });
+
+      await tx.wait();
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+
+      resetQueries();
+    } catch (error) {
+      console.error(error);
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          error: true
+        }
+      });
+    }
   };
 
   return (
@@ -701,18 +816,7 @@ export default function Loop({
                   <button
                     className={`block w-full btn-green uppercase`}
                     disabled={parseFloat(amount ?? '0') <= 0}
-                    onClick={() =>
-                      openPosition({
-                        borrowMarket: selectedBorrowAsset?.cToken ?? '',
-                        collateralMarket: selectedCollateralAsset.cToken,
-                        fundingAmount: parseUnits(
-                          amount ?? '',
-                          selectedCollateralAsset.underlyingDecimals
-                        ),
-                        fundingAsset: selectedCollateralAsset.underlyingToken,
-                        leverage: BigNumber.from(currentLeverage)
-                      })
-                    }
+                    onClick={handleOpenPosition}
                   >
                     Loop
                   </button>
