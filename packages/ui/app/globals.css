@@ -79,10 +79,9 @@
 
 .btn-green {
   @apply font-bold rounded-md px-3 py-1 text-center transition-colors bg-accent text-darkone;
-
-  &[disabled] {
-    @apply bg-stone-500;
-  }
+}
+.btn-green[disabled] {
+  @apply bg-stone-500;
 }
 
 .popover-container {
