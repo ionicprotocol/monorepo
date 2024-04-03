@@ -5,7 +5,7 @@ import type { Contract } from 'ethers';
 import { BigNumber } from 'ethers';
 import { formatEther, parseEther } from 'ethers/lib/utils.js';
 import Image from 'next/image';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { WETHAbi } from 'sdk/dist/cjs/src';
 import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
 import { useBalance } from 'wagmi';
@@ -15,7 +15,9 @@ import ConnectButton from '../ConnectButton';
 import ResultHandler from '../ResultHandler';
 
 import type { TransactionStep } from './TransactionStepsHandler';
-import TransactionStepsHandler from './TransactionStepsHandler';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './TransactionStepsHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
@@ -67,40 +69,7 @@ export default function Swap({ close }: SwapProps) {
       currentSdk.signer
     );
   }, [address, currentSdk]);
-  const [transactionSteps, upsertTransactionStep] = useReducer(
-    (
-      prevState: TransactionStep[],
-      updatedStep:
-        | { index: number; transactionStep: TransactionStep }
-        | undefined
-    ): TransactionStep[] => {
-      if (!updatedStep) {
-        return [];
-      }
-
-      const currentSteps = prevState.slice();
-
-      currentSteps[updatedStep.index] = {
-        ...currentSteps[updatedStep.index],
-        ...updatedStep.transactionStep
-      };
-
-      if (
-        updatedStep.transactionStep.error &&
-        updatedStep.index + 1 < currentSteps.length
-      ) {
-        for (let i = updatedStep.index + 1; i < currentSteps.length; i++) {
-          currentSteps[i] = {
-            ...currentSteps[i],
-            error: true
-          };
-        }
-      }
-
-      return currentSteps;
-    },
-    []
-  );
+  const { transactionSteps, upsertTransactionStep } = useTransactionSteps();
   const amountAsBInt = useMemo<BigNumber>(
     () => parseEther(amount ?? '0'),
     [amount]

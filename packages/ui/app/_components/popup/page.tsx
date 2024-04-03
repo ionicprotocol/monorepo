@@ -17,7 +17,9 @@ import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
 import Tab from './Tab';
 import type { TransactionStep } from './TransactionStepsHandler';
-import TransactionStepsHandler from './TransactionStepsHandler';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -54,40 +56,7 @@ const Popup = ({
   closePopup,
   comptrollerAddress
 }: IPopup) => {
-  const [transactionSteps, upsertTransactionStep] = useReducer(
-    (
-      prevState: TransactionStep[],
-      updatedStep:
-        | { index: number; transactionStep: TransactionStep }
-        | undefined
-    ): TransactionStep[] => {
-      if (!updatedStep) {
-        return [];
-      }
-
-      const currentSteps = prevState.slice();
-
-      currentSteps[updatedStep.index] = {
-        ...currentSteps[updatedStep.index],
-        ...updatedStep.transactionStep
-      };
-
-      if (
-        updatedStep.transactionStep.error &&
-        updatedStep.index + 1 < currentSteps.length
-      ) {
-        for (let i = updatedStep.index + 1; i < currentSteps.length; i++) {
-          currentSteps[i] = {
-            ...currentSteps[i],
-            error: true
-          };
-        }
-      }
-
-      return currentSteps;
-    },
-    []
-  );
+  const { transactionSteps, upsertTransactionStep } = useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
@@ -401,7 +370,7 @@ const Popup = ({
 
         break;
     }
-  }, [active, mode]);
+  }, [active, mode, upsertTransactionStep]);
 
   const initiateCloseAnimation = () => setIsMounted(false);
 
