@@ -29,6 +29,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { useGetPositionBorrowApr } from '@ui/hooks/leverage/useGetPositionBorrowApr';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -430,6 +431,10 @@ export default function Loop({
 }: LoopProps) {
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
+  const amountAsBInt = useMemo<BigNumber>(
+    () => parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals),
+    [amount, selectedCollateralAsset]
+  );
   const { data: marketData } = useFusePoolData('0', chainId);
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
@@ -480,6 +485,15 @@ export default function Loop({
       chainId
     );
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
+  const { data: borrowApr } = useGetPositionBorrowApr({
+    amount: amountAsBInt,
+    borrowMarket: selectedBorrowAsset?.cToken ?? '',
+    collateralMarket: selectedCollateralAsset.cToken,
+    leverage: BigNumber.from(currentLeverage)
+  });
+
+  console.log(borrowApr);
+
   const {
     borrowedAssetAmount,
     borrowedToCollateralRatio,
@@ -505,9 +519,12 @@ export default function Loop({
     const healthRatio = positionValue / liquidationValue - 1;
     const borrowedToCollateralRatio =
       selectedBorrowAssetUSDPrice / selectedCollateralAssetUSDPrice;
-    const borrowedAssetAmount =
-      Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) /
-      borrowedToCollateralRatio;
+    const borrowedAssetAmount = Number(
+      formatUnits(
+        positionInfo?.debtAmount ?? '0',
+        currentPosition?.borrowable.underlyingDecimals
+      )
+    );
 
     return {
       borrowedAssetAmount,
@@ -519,15 +536,16 @@ export default function Loop({
       selectedBorrowAssetUSDPrice,
       selectedCollateralAssetUSDPrice
     };
-  }, [selectedBorrowAsset, selectedCollateralAsset, positionInfo, usdPrice]);
+  }, [
+    currentPosition,
+    selectedBorrowAsset,
+    selectedCollateralAsset,
+    positionInfo,
+    usdPrice
+  ]);
   const { currentSdk, address } = useMultiIonic();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
-  const amountAsBInt = useMemo<BigNumber>(
-    () =>
-      parseUnits(amount ?? '0', selectedCollateralAsset?.underlyingDecimals),
-    [amount, selectedCollateralAsset]
-  );
   const queryClient = useQueryClient();
 
   /**
