@@ -29,7 +29,6 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { useGetPositionBorrowApr } from '@ui/hooks/leverage/useGetPositionBorrowApr';
 
 export type LoopProps = {
   comptrollerAddress: string;
