@@ -675,6 +675,104 @@ export default function Loop({
   };
 
   /**
+   * Handle position funding
+   */
+  const handlePositionFunding = async (): Promise<void> => {
+    if (!currentSdk || !address) {
+      return;
+    }
+
+    let currentTransactionStep = 0;
+
+    addStepsForAction([
+      {
+        error: false,
+        message: INFO_MESSAGES.FUNDING_POSITION.APPROVE,
+        success: false
+      },
+      {
+        error: false,
+        message: INFO_MESSAGES.FUNDING_POSITION.FUNDING,
+        success: false
+      }
+    ]);
+
+    try {
+      const token = currentSdk.getEIP20TokenInstance(
+        selectedCollateralAsset.underlyingToken,
+        currentSdk.signer
+      );
+      const hasApprovedEnough = (
+        await token.callStatic.allowance(
+          address,
+          selectedCollateralAsset.cToken
+        )
+      ).gte(amountAsBInt);
+
+      if (!hasApprovedEnough) {
+        const tx = await currentSdk.approve(
+          selectedCollateralAsset.cToken,
+          selectedCollateralAsset.underlyingToken
+        );
+
+        upsertTransactionStep({
+          index: currentTransactionStep,
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx.hash
+          }
+        });
+
+        await tx.wait();
+      }
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+
+      currentTransactionStep++;
+
+      const tx = await currentSdk.fundPosition(
+        currentPosition?.address ?? '',
+        selectedCollateralAsset.underlyingToken,
+        amountAsBInt
+      );
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          txHash: tx.hash
+        }
+      });
+
+      await tx.wait();
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+    } catch (error) {
+      console.error(error);
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          error: true
+        }
+      });
+    }
+  };
+
+  /**
    * Handle transaction steps reset
    */
   const handleTransactionStepsReset = (): void => {
@@ -860,6 +958,7 @@ export default function Loop({
                         <button
                           className={`block w-full btn-green md:mr-6 uppercase`}
                           disabled={parseFloat(amount ?? '0') <= 0}
+                          onClick={handlePositionFunding}
                         >
                           Fund position
                         </button>
