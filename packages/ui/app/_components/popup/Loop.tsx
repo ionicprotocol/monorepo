@@ -657,6 +657,7 @@ export default function Loop({
 
           <div className="mt-4">
             <ResultHandler
+              center
               height="32"
               isLoading={isFetchingPositionInfo}
             >
