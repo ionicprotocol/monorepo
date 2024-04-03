@@ -143,9 +143,9 @@ function LoopInfoDisplay({
       <div className="flex justify-between items-start mb-1">
         <div className="text-white/50 text-xs">
           <ResultHandler
-            height="28"
+            height="44"
             isLoading={isLoading}
-            width="28"
+            width="44"
           >
             <span className="block font-bold text-lg">{nativeAmount}</span> $
             {usdAmount}
@@ -582,7 +582,7 @@ export default function Loop({
                   %
               `}
               aprText={'Collateral APR'}
-              isLoading={isFetchingPositionInfo}
+              isLoading={isFetchingPositionInfo || !collateralsAPR}
               nativeAmount={
                 currentPosition
                   ? formatUnits(
