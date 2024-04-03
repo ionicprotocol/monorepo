@@ -366,6 +366,9 @@ export const INFO_MESSAGES = {
   BORROW: {
     BORROWING: 'Borrowing funds'
   },
+  CLOSE_POSITION: {
+    CLOSING: 'Closing position'
+  },
   COLLATERAL: {
     DISABLE: 'Disabling collateral',
     ENABLE: 'Enabling collateral'

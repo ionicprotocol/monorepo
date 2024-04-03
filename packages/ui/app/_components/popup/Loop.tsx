@@ -56,6 +56,8 @@ type LoopInfoDisplayProps = {
 type SupplyActionsProps = {
   amount?: string;
   comptrollerAddress: LoopProps['comptrollerAddress'];
+  handleClosePosition: () => void;
+  isClosingPosition: boolean;
   selectedCollateralAsset: LoopProps['selectedCollateralAsset'];
   selectedCollateralAssetUSDPrice: number;
   setAmount: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -187,6 +189,8 @@ function LoopInfoDisplay({
 function SupplyActions({
   amount,
   comptrollerAddress,
+  handleClosePosition,
+  isClosingPosition,
   selectedCollateralAsset,
   selectedCollateralAssetUSDPrice,
   setAmount
@@ -288,6 +292,22 @@ function SupplyActions({
             handleUtilization={handleSupplyUtilization}
           />
         </>
+      )}
+
+      {mode === SupplyActionsMode.WITHDRAW && (
+        <div className="py-5 text-center">
+          <p className="text-sm mb-2">
+            Click the button to withdraw your funds
+          </p>
+
+          <button
+            className="btn-green uppercase"
+            disabled={isClosingPosition}
+            onClick={handleClosePosition}
+          >
+            Withdraw
+          </button>
+        </div>
       )}
     </div>
   );
@@ -422,7 +442,8 @@ export default function Loop({
         position.borrowable.underlyingToken ===
           selectedBorrowAsset?.underlyingToken &&
         position.collateral.underlyingToken ===
-          selectedCollateralAsset.underlyingToken
+          selectedCollateralAsset.underlyingToken &&
+        !position.isClosed
     );
   }, [positions, selectedBorrowAsset, selectedCollateralAsset]);
   const { data: currentPositionLeverageRatio } = useCurrentLeverageRatio(
@@ -773,6 +794,59 @@ export default function Loop({
   };
 
   /**
+   * Handle position closing
+   */
+  const handleClosePosition = async (): Promise<void> => {
+    const currentTransactionStep = 0;
+
+    addStepsForAction([
+      {
+        error: false,
+        message: INFO_MESSAGES.CLOSE_POSITION.CLOSING,
+        success: false
+      }
+    ]);
+
+    try {
+      const tx = await currentSdk?.closeLeveredPosition(
+        currentPosition?.address ?? ''
+      );
+
+      if (!tx) {
+        throw new Error('Error while closing position');
+      }
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          txHash: tx.hash
+        }
+      });
+
+      await tx.wait();
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+    } catch (error) {
+      console.error(error);
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          error: true
+        }
+      });
+    }
+  };
+
+  /**
    * Handle transaction steps reset
    */
   const handleTransactionStepsReset = (): void => {
@@ -906,6 +980,8 @@ export default function Loop({
             <SupplyActions
               amount={amount}
               comptrollerAddress={comptrollerAddress}
+              handleClosePosition={handleClosePosition}
+              isClosingPosition={!!transactionSteps.length}
               selectedCollateralAsset={selectedCollateralAsset}
               selectedCollateralAssetUSDPrice={selectedCollateralAssetUSDPrice}
               setAmount={setAmount}
