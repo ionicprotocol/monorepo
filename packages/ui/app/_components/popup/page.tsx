@@ -16,7 +16,6 @@ import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
 import Tab from './Tab';
-import type { TransactionStep } from './TransactionStepsHandler';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
@@ -56,7 +55,8 @@ const Popup = ({
   closePopup,
   comptrollerAddress
 }: IPopup) => {
-  const { transactionSteps, upsertTransactionStep } = useTransactionSteps();
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
@@ -459,12 +459,6 @@ const Popup = ({
           ) ?? '0.0'
         )
       ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
-    );
-  };
-
-  const addStepsForAction = (steps: TransactionStep[]) => {
-    steps.forEach((step, i) =>
-      upsertTransactionStep({ index: i, transactionStep: step })
     );
   };
 

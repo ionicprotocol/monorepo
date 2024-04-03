@@ -1,6 +1,7 @@
 'use client';
 
-import { Dispatch, useReducer } from 'react';
+import type { Dispatch } from 'react';
+import { useReducer } from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
 
 export type TransactionStep = {
@@ -14,6 +15,7 @@ export type TransactionStepsHandlerProps = {
   transactionSteps: TransactionStep[];
 };
 export type UseTransactionSteps = {
+  addStepsForAction: (steps: TransactionStep[]) => void;
   transactionSteps: TransactionStep[];
   upsertTransactionStep: Dispatch<
     | {
@@ -60,7 +62,14 @@ export const useTransactionSteps = (): UseTransactionSteps => {
     []
   );
 
+  const addStepsForAction = (steps: TransactionStep[]) => {
+    steps.forEach((step, i) =>
+      upsertTransactionStep({ index: i, transactionStep: step })
+    );
+  };
+
   return {
+    addStepsForAction,
     transactionSteps,
     upsertTransactionStep
   };

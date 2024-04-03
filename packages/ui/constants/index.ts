@@ -367,6 +367,10 @@ export const INFO_MESSAGES = {
     DISABLE: 'Disabling collateral',
     ENABLE: 'Enabling collateral'
   },
+  OPEN_POSITION: {
+    APPROVE: 'Approve amount for spending',
+    OPENING: 'Opening position'
+  },
   REPAY: {
     APPROVE: 'Approve amount for spending',
     REPAYING: 'Repaying'

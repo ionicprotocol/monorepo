@@ -14,7 +14,6 @@ import type { GetBalanceData } from 'wagmi/query';
 import ConnectButton from '../ConnectButton';
 import ResultHandler from '../ResultHandler';
 
-import type { TransactionStep } from './TransactionStepsHandler';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
@@ -69,7 +68,8 @@ export default function Swap({ close }: SwapProps) {
       currentSdk.signer
     );
   }, [address, currentSdk]);
-  const { transactionSteps, upsertTransactionStep } = useTransactionSteps();
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
   const amountAsBInt = useMemo<BigNumber>(
     () => parseEther(amount ?? '0'),
     [amount]
@@ -138,11 +138,6 @@ export default function Swap({ close }: SwapProps) {
   };
   const handleMax = (val: string) => {
     setAmount(val.trim());
-  };
-  const addStepsForAction = (steps: TransactionStep[]) => {
-    steps.forEach((step, i) =>
-      upsertTransactionStep({ index: i, transactionStep: step })
-    );
   };
   const swapAmount = async () => {
     if (amountAsBInt && amountAsBInt.gt('0') && WTokenContract) {

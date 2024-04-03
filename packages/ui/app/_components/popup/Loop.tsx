@@ -25,6 +25,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { useTransactionSteps } from './TransactionStepsHandler';
 
 export type LoopProps = {
   comptrollerAddress: string;
@@ -425,8 +426,8 @@ export default function Loop({
     currentPosition?.address ?? '',
     chainId
   );
-  const { mutate: openPosition } = useOpenPositionMutation();
-  const { mutate: adjustLeverage } = useAdjustLeverageMutation();
+  const { mutateAsync: openPosition } = useOpenPositionMutation();
+  const { mutateAsync: adjustLeverage } = useAdjustLeverageMutation();
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
     [chainId]
@@ -497,6 +498,14 @@ export default function Loop({
       selectedCollateralAssetUSDPrice
     };
   }, [selectedBorrowAsset, selectedCollateralAsset, positionInfo, usdPrice]);
+  const { transactionSteps, upsertTransactionStep } = useTransactionSteps();
+
+  /**
+   * Handle position opening
+   */
+  const handleOpenPosition = async (): Promise<void> => {
+    const currentTransactionStep = 0;
+  };
 
   return (
     <>
