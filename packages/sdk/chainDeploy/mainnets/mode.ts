@@ -92,7 +92,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
 
   const deployer = await ethers.getNamedSigner("deployer");
   const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
-    from: deployer,
+    from: deployer.address,
     args: [],
     log: true,
     waitConfirmations: 1

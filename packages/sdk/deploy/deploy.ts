@@ -54,6 +54,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
+  const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
 
   const ffd = await deployments.deploy("FeeDistributor", {
     from: deployer,
@@ -66,7 +67,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           args: [ethers.utils.parseEther("0.1")]
         }
       },
-      owner: deployer
+      owner: multisig
     }
   });
   if (ffd.transactionHash) await ethers.provider.waitForTransaction(ffd.transactionHash);
@@ -178,7 +179,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           args: [false, []]
         }
       },
-      owner: deployer
+      owner: multisig
     },
     waitConfirmations: 1
   });
@@ -434,7 +435,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer
+      owner: multisig
     },
     waitConfirmations: 1
   });
@@ -459,7 +460,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer
+      owner: multisig
     },
     waitConfirmations: 1
   });
@@ -480,7 +481,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer
+      owner: multisig
     },
     waitConfirmations: 1
   });
@@ -544,7 +545,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer
+        owner: multisig
       },
       waitConfirmations: 1
     });
@@ -749,7 +750,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer
+        owner: multisig
       }
     });
     if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
@@ -772,7 +773,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer
+        owner: multisig
       },
       waitConfirmations: 1
     });
