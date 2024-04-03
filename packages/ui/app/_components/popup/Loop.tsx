@@ -14,11 +14,12 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import SliderComponent from './Slider';
-import { useTransactionSteps } from './TransactionStepsHandler';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useAdjustLeverageMutation } from '@ui/hooks/leverage/useAdjustLeverageMutation';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
 import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
@@ -428,7 +429,6 @@ export default function Loop({
     currentPosition?.address ?? '',
     chainId
   );
-  const { mutateAsync: adjustLeverage } = useAdjustLeverageMutation();
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
     [chainId]
@@ -607,8 +607,6 @@ export default function Loop({
           success: true
         }
       });
-
-      resetQueries();
     } catch (error) {
       console.error(error);
 
@@ -620,6 +618,68 @@ export default function Loop({
         }
       });
     }
+  };
+
+  /**
+   * Handle leverage adjustment
+   */
+  const handleLeverageAdjustment = async (): Promise<void> => {
+    const currentTransactionStep = 0;
+
+    addStepsForAction([
+      {
+        error: false,
+        message: INFO_MESSAGES.ADJUST_LEVERAGE.ADJUSTING,
+        success: false
+      }
+    ]);
+
+    try {
+      const tx = await currentSdk?.adjustLeverageRatio(
+        currentPosition?.address ?? '',
+        currentLeverage
+      );
+
+      if (!tx) {
+        throw new Error('Error while adjusting leverage');
+      }
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          txHash: tx.hash
+        }
+      });
+
+      await tx.wait();
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+    } catch (error) {
+      console.error(error);
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          error: true
+        }
+      });
+    }
+  };
+
+  /**
+   * Handle transaction steps reset
+   */
+  const handleTransactionStepsReset = (): void => {
+    resetQueries();
+    upsertTransactionStep(undefined);
   };
 
   return (
@@ -786,40 +846,46 @@ export default function Loop({
               isLoading={isFetchingPositionInfo}
             >
               <>
-                {currentPosition ? (
-                  <div className="md:flex">
-                    <button
-                      className={`block w-full btn-green md:mr-6 uppercase`}
-                      disabled={parseFloat(amount ?? '0') <= 0}
-                    >
-                      Fund position
-                    </button>
-
-                    <button
-                      className={`block w-full btn-green mt-2 md:mt-0 md:ml-6 uppercase`}
-                      disabled={
-                        !!currentPositionLeverageRatio &&
-                        Math.round(currentPositionLeverageRatio) ===
-                          currentLeverage
-                      }
-                      onClick={() =>
-                        adjustLeverage({
-                          address: currentPosition.address,
-                          leverage: currentLeverage
-                        })
-                      }
-                    >
-                      Adjust leverage
-                    </button>
+                {transactionSteps.length > 0 ? (
+                  <div className="flex justify-center">
+                    <TransactionStepsHandler
+                      resetTransactionSteps={handleTransactionStepsReset}
+                      transactionSteps={transactionSteps}
+                    />
                   </div>
                 ) : (
-                  <button
-                    className={`block w-full btn-green uppercase`}
-                    disabled={parseFloat(amount ?? '0') <= 0}
-                    onClick={handleOpenPosition}
-                  >
-                    Loop
-                  </button>
+                  <>
+                    {currentPosition ? (
+                      <div className="md:flex">
+                        <button
+                          className={`block w-full btn-green md:mr-6 uppercase`}
+                          disabled={parseFloat(amount ?? '0') <= 0}
+                        >
+                          Fund position
+                        </button>
+
+                        <button
+                          className={`block w-full btn-green mt-2 md:mt-0 md:ml-6 uppercase`}
+                          disabled={
+                            !!currentPositionLeverageRatio &&
+                            Math.round(currentPositionLeverageRatio) ===
+                              currentLeverage
+                          }
+                          onClick={handleLeverageAdjustment}
+                        >
+                          Adjust leverage
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className={`block w-full btn-green uppercase`}
+                        disabled={parseFloat(amount ?? '0') <= 0}
+                        onClick={handleOpenPosition}
+                      >
+                        Loop
+                      </button>
+                    )}
+                  </>
                 )}
               </>
             </ResultHandler>

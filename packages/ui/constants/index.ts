@@ -360,6 +360,9 @@ export const LEVERAGE_VALUE = {
 };
 
 export const INFO_MESSAGES = {
+  ADJUST_LEVERAGE: {
+    ADJUSTING: 'Adjusting leverage'
+  },
   BORROW: {
     BORROWING: 'Borrowing funds'
   },
