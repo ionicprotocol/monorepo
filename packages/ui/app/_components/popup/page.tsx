@@ -14,6 +14,7 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
+import Loop from './Loop';
 import SliderComponent from './Slider';
 import Tab from './Tab';
 import TransactionStepsHandler, {
@@ -35,13 +36,13 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import Loop from './Loop';
 
 export enum PopupMode {
   SUPPLY = 1,
   WITHDRAW,
   BORROW,
-  REPAY
+  REPAY,
+  LOOP
 }
 
 interface IPopup {
@@ -328,6 +329,12 @@ const Popup = ({
 
         break;
       }
+
+      case PopupMode.LOOP: {
+        setLoopOpen(true);
+
+        break;
+      }
     }
   }, [
     amountAsBInt,
@@ -337,6 +344,12 @@ const Popup = ({
     maxSupplyAmount?.bigNumber,
     maxWithdrawAmount
   ]);
+
+  useEffect(() => {
+    if (!loopOpen) {
+      setActive(PopupMode.BORROW);
+    }
+  }, [loopOpen]);
 
   useEffect(() => {
     setAmount('0');
