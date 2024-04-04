@@ -487,7 +487,6 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
-                      setLoopOpen={() => setLoopOpen(true)}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
