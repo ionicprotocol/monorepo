@@ -31,10 +31,10 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export type LoopProps = {
+  closeLoop: () => void;
   comptrollerAddress: string;
   isOpen: boolean;
   selectedCollateralAsset: MarketData;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 type LoopHealthRatioDisplayProps = {
@@ -423,10 +423,10 @@ function BorrowActions({
 }
 
 export default function Loop({
-  selectedCollateralAsset,
-  isOpen,
+  closeLoop,
   comptrollerAddress,
-  setIsOpen
+  selectedCollateralAsset,
+  isOpen
 }: LoopProps) {
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
@@ -872,7 +872,7 @@ export default function Loop({
   return (
     <>
       {isOpen && (
-        <Modal close={() => setIsOpen(false)}>
+        <Modal close={() => closeLoop()}>
           <div className="flex mb-4 items-center text-lg font-bold">
             <Image
               alt=""

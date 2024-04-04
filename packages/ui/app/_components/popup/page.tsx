@@ -346,12 +346,6 @@ const Popup = ({
   ]);
 
   useEffect(() => {
-    if (!loopOpen) {
-      setActive(PopupMode.BORROW);
-    }
-  }, [loopOpen]);
-
-  useEffect(() => {
     setAmount('0');
     setCurrentUtilizationPercentage(0);
     upsertTransactionStep(undefined);
@@ -1532,10 +1526,13 @@ const Popup = ({
       </div>
 
       <Loop
+        closeLoop={() => {
+          setLoopOpen(false);
+          setActive(PopupMode.BORROW);
+        }}
         comptrollerAddress={comptrollerAddress}
         isOpen={loopOpen}
         selectedCollateralAsset={selectedMarketData}
-        setIsOpen={setLoopOpen}
       />
     </>
   );
