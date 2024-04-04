@@ -715,7 +715,7 @@ export default function Loop({
    * Handle position funding
    */
   const handlePositionFunding = async (): Promise<void> => {
-    if (!currentSdk || !address) {
+    if (!currentSdk || !address || !currentPosition) {
       return;
     }
 
@@ -739,13 +739,12 @@ export default function Loop({
         selectedCollateralAsset.underlyingToken,
         currentSdk.signer
       );
-      const factory = currentSdk.createLeveredPositionFactory();
       const hasApprovedEnough = (
-        await token.callStatic.allowance(address, factory.address)
+        await token.callStatic.allowance(address, currentPosition.address)
       ).gte(amountAsBInt);
 
       if (!hasApprovedEnough) {
-        const tx = await token.approve(factory.address, amountAsBInt);
+        const tx = await token.approve(currentPosition.address, amountAsBInt);
 
         upsertTransactionStep({
           index: currentTransactionStep,
