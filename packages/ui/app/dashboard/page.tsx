@@ -9,7 +9,6 @@ import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
-import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
@@ -136,7 +135,6 @@ export default function Dashboard() {
       marketData?.comptroller ?? '',
       chainId
     );
-  const [loopOpen, setLoopOpen] = useState<boolean>(false);
   const totalPoints = useMemo<number>(() => {
     if (supplyPoints && borrowPoints) {
       return (
@@ -415,7 +413,6 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.SUPPLY}
-                      setLoopOpen={() => setLoopOpen(true)}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
@@ -512,15 +509,6 @@ export default function Dashboard() {
           comptrollerAddress={marketData.comptroller}
           mode={popupMode}
           selectedMarketData={selectedMarketData}
-        />
-      )}
-
-      {loopOpen && selectedMarketData && (
-        <Loop
-          comptrollerAddress={marketData?.comptroller ?? ''}
-          isOpen={loopOpen}
-          selectedCollateralAsset={selectedMarketData}
-          setIsOpen={setLoopOpen}
         />
       )}
     </>

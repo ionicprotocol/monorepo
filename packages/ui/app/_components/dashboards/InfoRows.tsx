@@ -71,16 +71,6 @@ const InfoRows = ({
           className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => {
             setSelectedSymbol(asset);
-            setLoopOpen(true);
-          }}
-        >
-          LOOP
-        </button>
-
-        <button
-          className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
-          onClick={() => {
-            setSelectedSymbol(asset);
             setPopupMode(
               mode === InfoMode.SUPPLY ? PopupMode.WITHDRAW : PopupMode.REPAY
             );
