@@ -44,6 +44,12 @@
     "DefaultProxyAdmin": {
       "address": "0x985a323A1CccA8Cd5fb8935590EE33FbcFE849d0"
     },
+    "DiscouragingJumpRateModel": {
+      "address": "0x413aD59b80b1632988d478115a466bdF9B26743a"
+    },
+    "DiscouragingJumpRateModel_10": {
+      "address": "0x223adDF725814eaC6eC9f29c85A5111a7c09e6EE"
+    },
     "FeeDistributor": {
       "address": "0x8ea3fc79D9E463464C5159578d38870b770f6E57"
     },

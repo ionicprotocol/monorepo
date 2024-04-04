@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Script from 'next/script';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
@@ -37,6 +38,17 @@ export default function RootLayout({
       className="dark"
       lang="en"
     >
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-PBTG02B74E"
+      />
+      <Script id="ga-tag">
+        {`window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-PBTG02B74E');`}
+      </Script>
       <body className={'scrollbar-hide font-inter'}>
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
