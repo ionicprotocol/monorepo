@@ -17,7 +17,6 @@ export type InfoRowsProps = {
   logo: string;
   membership: boolean;
   mode: InfoMode;
-  setLoopOpen: Dispatch<SetStateAction<boolean>>;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
@@ -29,7 +28,6 @@ const InfoRows = ({
   logo,
   membership,
   mode,
-  setLoopOpen,
   setSelectedSymbol,
   setPopupMode,
   apr
