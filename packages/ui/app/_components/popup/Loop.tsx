@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
+import { constants, type BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Image from 'next/image';
@@ -596,7 +596,7 @@ export default function Loop({
       ).gte(amountAsBInt);
 
       if (!hasApprovedEnough) {
-        const tx = await token.approve(factory.address, amountAsBInt);
+        const tx = await token.approve(factory.address, constants.MaxUint256);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -744,7 +744,10 @@ export default function Loop({
       ).gte(amountAsBInt);
 
       if (!hasApprovedEnough) {
-        const tx = await token.approve(currentPosition.address, amountAsBInt);
+        const tx = await token.approve(
+          currentPosition.address,
+          constants.MaxUint256
+        );
 
         upsertTransactionStep({
           index: currentTransactionStep,
