@@ -710,8 +710,6 @@ export default function Loop({
     }
   };
 
-  console.log(positions, positionInfo);
-
   /**
    * Handle position funding
    */
