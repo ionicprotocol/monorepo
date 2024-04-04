@@ -1,12 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useEffect, useMemo, useState } from 'react';
 import type { OpenPosition } from 'types/dist';
-import { useChainId } from 'wagmi';
+import { useBalance, useChainId } from 'wagmi';
 
 import Modal from '../Modal';
 import Range from '../Range';
@@ -29,6 +29,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { useGetPositionBorrowApr } from '@ui/hooks/leverage/useGetPositionBorrowApr';
 
 export type LoopProps = {
   closeLoop: () => void;
@@ -484,12 +485,14 @@ export default function Loop({
       chainId
     );
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
-  // const { data: borrowApr } = useGetPositionBorrowApr({
-  //   amount: amountAsBInt,
-  //   borrowMarket: selectedBorrowAsset?.cToken ?? '',
-  //   collateralMarket: selectedCollateralAsset.cToken,
-  //   leverage: BigNumber.from(currentLeverage)
-  // });
+  const { data: borrowApr } = useGetPositionBorrowApr({
+    amount: amountAsBInt,
+    borrowMarket: selectedBorrowAsset?.cToken ?? '',
+    collateralMarket: selectedCollateralAsset.cToken,
+    leverage: parseUnits(currentLeverage.toString())
+  });
+
+  console.log(borrowApr);
 
   const {
     borrowedAssetAmount,
@@ -543,6 +546,10 @@ export default function Loop({
   const { currentSdk, address } = useMultiIonic();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
+  const { refetch: refetchBalance } = useBalance({
+    address,
+    token: selectedCollateralAsset.underlyingToken as `0x${string}`
+  });
   const queryClient = useQueryClient();
 
   /**
@@ -554,6 +561,7 @@ export default function Loop({
     queryClient.invalidateQueries({ queryKey: ['usePositionInfo'] });
     queryClient.invalidateQueries({ queryKey: ['positions'] });
     queryClient.invalidateQueries({ queryKey: ['useMaxSupplyAmount'] });
+    refetchBalance();
   };
 
   /**
@@ -584,18 +592,13 @@ export default function Loop({
         selectedCollateralAsset.underlyingToken,
         currentSdk.signer
       );
+      const factory = currentSdk.createLeveredPositionFactory();
       const hasApprovedEnough = (
-        await token.callStatic.allowance(
-          address,
-          selectedCollateralAsset.cToken
-        )
+        await token.callStatic.allowance(address, factory.address)
       ).gte(amountAsBInt);
 
       if (!hasApprovedEnough) {
-        const tx = await currentSdk.approve(
-          selectedCollateralAsset.cToken,
-          selectedCollateralAsset.underlyingToken
-        );
+        const tx = await token.approve(factory.address, amountAsBInt);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -623,7 +626,7 @@ export default function Loop({
         selectedBorrowAsset?.cToken ?? '',
         selectedCollateralAsset.underlyingToken,
         amountAsBInt,
-        BigNumber.from(currentLeverage)
+        parseUnits(currentLeverage.toString())
       );
 
       upsertTransactionStep({
@@ -738,18 +741,13 @@ export default function Loop({
         selectedCollateralAsset.underlyingToken,
         currentSdk.signer
       );
+      const factory = currentSdk.createLeveredPositionFactory();
       const hasApprovedEnough = (
-        await token.callStatic.allowance(
-          address,
-          selectedCollateralAsset.cToken
-        )
+        await token.callStatic.allowance(address, factory.address)
       ).gte(amountAsBInt);
 
       if (!hasApprovedEnough) {
-        const tx = await currentSdk.approve(
-          selectedCollateralAsset.cToken,
-          selectedCollateralAsset.underlyingToken
-        );
+        const tx = await token.approve(factory.address, amountAsBInt);
 
         upsertTransactionStep({
           index: currentTransactionStep,
