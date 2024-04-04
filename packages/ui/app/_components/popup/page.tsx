@@ -571,7 +571,7 @@ const Popup = ({
 
         currentTransactionStep++;
 
-        if (enableCollateral) {
+        if (enableCollateral && !selectedMarketData.membership) {
           const tx = await currentSdk.enterMarkets(
             selectedMarketData.cToken,
             comptrollerAddress
