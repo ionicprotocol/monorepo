@@ -492,8 +492,6 @@ export default function Loop({
     leverage: parseUnits(currentLeverage.toString())
   });
 
-  console.log(borrowApr);
-
   const {
     borrowedAssetAmount,
     borrowedToCollateralRatio,
@@ -971,7 +969,7 @@ export default function Loop({
 
             <LoopInfoDisplay
               aprPercentage={`
-                  ${0}
+                  ${Number(formatUnits(borrowApr ?? '0')).toFixed(2)}
                   %
               `}
               aprText={'Borrow APR'}
