@@ -368,7 +368,7 @@ function BorrowActions({
             </div>
 
             <div className="w-full">
-              <div className="flex justify-between mb-2 text-xs md:text-sm">
+              <div className="relative h-[20px] mb-2 text-xs md:text-sm">
                 {[
                   '0x',
                   '1x',
@@ -383,7 +383,7 @@ function BorrowActions({
                   '10x'
                 ].map((label, i) => (
                   <span
-                    className={`cursor-pointer ${
+                    className={`absolute top-0 cursor-pointer translate-x-[-50%] ${
                       currentPositionLeverage &&
                       currentPositionLeverage === i + 1 &&
                       'text-lime'
@@ -394,6 +394,7 @@ function BorrowActions({
                     onClick={() =>
                       setCurrentLeverage(i > maxLoop ? maxLoop + 1 : i + 1)
                     }
+                    style={{ left: `${(i / 10) * 100}%` }}
                   >
                     {label}
                   </span>
