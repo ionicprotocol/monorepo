@@ -144,10 +144,11 @@ export default async function getPotentialLiquidation(
     flashSwapFundingToken
   );
 
-  let flashSwapPair;
-  let tokenA, tokenB;
-  //if (sdk.chainId == 34443) {
-  if (false) {
+  let flashSwapPair: string;
+  let tokenA: string;
+  let tokenB: string;
+  if (sdk.chainId == 34443) {
+    // if (false) {
     const uniV3Factory = IUniswapV3Factory__factory.connect(
       sdk.chainSpecificAddresses.UNISWAP_V3?.FACTORY || "0xC33Ce0058004d44E7e1F366E5797A578fDF38584",
       sdk.provider
