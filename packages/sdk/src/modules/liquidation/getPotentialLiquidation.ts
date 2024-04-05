@@ -165,7 +165,8 @@ export default async function getPotentialLiquidation(
     // query the configured univ3 pool fee from the liquidators registry
     const lrAddress = await sdk.contracts.AddressesProvider.getAddress("LiquidatorsRegistry");
     const liquidatorsRegistry = LiquidatorsRegistry__factory.connect(lrAddress, sdk.provider) as LiquidatorsRegistry;
-    const fee = await liquidatorsRegistry.callStatic.uniswapV3Fees(tokenA, tokenB);
+    let fee = await liquidatorsRegistry.callStatic.uniswapV3Fees(tokenA, tokenB);
+    if (fee == 0) fee = 500;
 
     flashSwapPair = await uniV3Factory.callStatic.getPool(tokenA, tokenB, fee);
     if (tokenPath.indexOf(flashSwapPair) > 0) {
