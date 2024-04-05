@@ -1,7 +1,7 @@
+import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { RedStoneDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
-import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 
 export const deployRedStonePriceOracle = async ({
   ethers,
@@ -12,7 +12,7 @@ export const deployRedStonePriceOracle = async ({
 }: RedStoneDeployFnParams): Promise<{ redStoneOracle: any }> => {
   const { deployer } = await getNamedAccounts();
 
-  const mpo = await ethers.getContract("MasterPriceOracle", deployer) as MasterPriceOracle;
+  const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
 
   //// RedStone Oracle
   const redStone = await deployments.deploy("RedstoneAdapterPriceOracle", {
