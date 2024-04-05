@@ -11,6 +11,9 @@
     "AddressesProvider_Proxy": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
     },
+    "AlgebraSwapLiquidator": {
+      "address": "0x5cA3fd2c285C4138185Ef1BdA7573D415020F3C8"
+    },
     "AuthoritiesRegistry": {
       "address": "0xC3cEc17c135d3C5d6BadC284AFF08f396447DaaC"
     },
@@ -49,6 +52,9 @@
     },
     "DiscouragingJumpRateModel_10": {
       "address": "0x223adDF725814eaC6eC9f29c85A5111a7c09e6EE"
+    },
+    "DiscouragingJumpRateModel_20": {
+      "address": "0x2e06C354dd5f4674Fa99d04E8b5Df6150AE0595E"
     },
     "FeeDistributor": {
       "address": "0x8ea3fc79D9E463464C5159578d38870b770f6E57"
@@ -105,7 +111,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xac409691b385Fdbb66752Ff2D97e50BC23fF2295"
+      "address": "0x3FA4BC2FCAc5515d5b758D4D580bbD626c93D621"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x45A4a3eBb986083597Ac3B34ee2d7dcC3Be8c5C1"
