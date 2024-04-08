@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { NON_BORROWABLE_SYMBOLS } from '../constants';
+
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { NON_BORROWABLE_SYMBOLS } from '../constants';
 
 export const useFusePoolData = (
   poolId: string,
