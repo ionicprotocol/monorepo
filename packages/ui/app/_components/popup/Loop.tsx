@@ -326,7 +326,8 @@ function BorrowActions({
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
-    chainId
+    chainId,
+    true
   );
   const maxLoop = 2;
 
@@ -436,7 +437,8 @@ export default function Loop({
     () => parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals),
     [amount, selectedCollateralAsset]
   );
-  const { data: marketData } = useFusePoolData('0', chainId);
+  const { data: marketData } = useFusePoolData('0', chainId, true);
+  console.log(marketData);
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined

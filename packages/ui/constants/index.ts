@@ -359,6 +359,8 @@ export const LEVERAGE_VALUE = {
   MIN: 1.0
 };
 
+export const NON_BORROWABLE_SYMBOLS = ['ezETH'];
+
 export const INFO_MESSAGES = {
   ADJUST_LEVERAGE: {
     ADJUSTING: 'Adjusting leverage'
