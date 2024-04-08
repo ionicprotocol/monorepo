@@ -1,8 +1,8 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
-import { IAlgebraFactory__factory } from "../../../typechain/factories/IAlgebraFactory__factory";
 import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
+import { IAlgebraFactory__factory } from "../../../typechain/factories/IAlgebraFactory__factory";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
 import { IonicSdk } from "../../IonicSdk";
 
