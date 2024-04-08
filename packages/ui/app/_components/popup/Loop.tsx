@@ -438,7 +438,6 @@ export default function Loop({
     [amount, selectedCollateralAsset]
   );
   const { data: marketData } = useFusePoolData('0', chainId, true);
-  console.log(marketData);
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
@@ -552,6 +551,16 @@ export default function Loop({
     token: selectedCollateralAsset.underlyingToken as `0x${string}`
   });
   const queryClient = useQueryClient();
+
+  /**
+   * Update selected borrow asset
+   * when market data loads
+   */
+  useEffect(() => {
+    if (!selectedBorrowAsset && marketData) {
+      setSelectedBorrowAsset(marketData.assets[0]);
+    }
+  }, [marketData, selectedBorrowAsset]);
 
   /**
    * Reset neccessary queries after actions
