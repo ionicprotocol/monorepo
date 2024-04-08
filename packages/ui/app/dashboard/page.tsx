@@ -2,7 +2,7 @@
 'use client';
 
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -24,6 +24,10 @@ import {
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
+import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
+import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -34,6 +38,25 @@ export default function Dashboard() {
     '0',
     chainId
   );
+  const { data: positions, isLoading: isLoadingPositions } =
+    usePositionsQuery();
+  const collateralsAPR = usePositionsSupplyApy(
+    positions?.openPositions.map((position) => position.collateral) ?? [],
+    [chainId]
+  );
+  const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
+    usePositionsInfo(
+      positions?.openPositions.map((position) => position.address) ?? [],
+      positions?.openPositions.map((position) =>
+        collateralsAPR &&
+        collateralsAPR[position.collateral.cToken] !== undefined
+          ? parseUnits(
+              collateralsAPR[position.collateral.cToken].totalApy.toFixed(18)
+            )
+          : null
+      ),
+      positions?.openPositions.map(() => chainId) ?? []
+    );
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
     useTotalSupplyAPYs(marketData?.assets ?? [], chainId);
   const suppliedAssets = useMemo<MarketData[]>(
@@ -114,6 +137,9 @@ export default function Dashboard() {
   const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
     marketData?.comptroller,
     chainId
+  );
+  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
+    chainId.toString()
   );
   const handledHealthData = useMemo<string>(() => {
     if (
@@ -496,6 +522,139 @@ export default function Dashboard() {
               ) : (
                 <div className="text-center mx-auto py-2">
                   No assets borrowed!
+                </div>
+              )}
+            </>
+          </ResultHandler>
+        </div>
+
+        <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
+          <div className={` w-full flex items-center justify-between py-3 `}>
+            <h1 className={`font-semibold`}>Your Loops</h1>
+          </div>
+
+          <ResultHandler
+            center
+            isLoading={
+              isLoadingPositions || isLoadingPositionsInfo || isLoadingUSDPrice
+            }
+          >
+            <>
+              {positions && positions.openPositions.length > 0 ? (
+                <>
+                  <div
+                    className={`w-full gap-x-1 grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                  >
+                    <h3 className={` `}>LOOPED ASSETS</h3>
+                    <h3 className={` `}>LOOP VALUE</h3>
+                    <h3 className={` `}>BORROW</h3>
+                    <h3 className={` `}>LOOPS</h3>
+                  </div>
+
+                  {positions?.openPositions.map((position) => {
+                    const currentPositionInfo = positionsInfo
+                      ? positionsInfo[position.address]
+                      : undefined;
+
+                    if (!currentPositionInfo) {
+                      return <></>;
+                    }
+
+                    return (
+                      <div
+                        className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
+                        key={`position-${position.address}`}
+                      >
+                        <div
+                          className={`  flex gap-2 items-center justify-center mb-2 lg:mb-0`}
+                        >
+                          <img
+                            alt={position.address}
+                            className="h-7"
+                            src={`/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`}
+                          />
+                          <h3 className={` `}>{position.collateral.symbol}</h3>
+                          /
+                          <img
+                            alt={position.address}
+                            className="h-7"
+                            src={`/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`}
+                          />
+                          <h3 className={` `}>{position.borrowable.symbol}</h3>
+                        </div>
+
+                        <h3 className={`mb-2 lg:mb-0`}>
+                          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                            POSITION VALUE:
+                          </span>
+                          {Number(
+                            formatUnits(
+                              currentPositionInfo.positionSupplyAmount,
+                              position.collateral.underlyingDecimals
+                            )
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 2
+                          })}{' '}
+                          / $
+                          {millify(
+                            Number(
+                              formatUnits(
+                                currentPositionInfo.positionSupplyAmount,
+                                position.collateral.underlyingDecimals
+                              )
+                            ) *
+                              ((usdPrice ?? 0) *
+                                Number(
+                                  formatUnits(
+                                    marketData?.assets.find(
+                                      (asset) =>
+                                        asset.underlyingSymbol ===
+                                        position.collateral.symbol
+                                    )?.underlyingPrice ?? '0'
+                                  )
+                                ))
+                          )}
+                        </h3>
+
+                        <h3 className={`mb-2 lg:mb-0`}>
+                          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                            BORROW:
+                          </span>
+                          {Number(
+                            formatUnits(
+                              currentPositionInfo.debtAmount,
+                              position.borrowable.underlyingDecimals
+                            )
+                          ).toLocaleString('en-US', {
+                            maximumFractionDigits: 2
+                          })}{' '}
+                          / $
+                          {millify(
+                            Number(
+                              formatUnits(
+                                currentPositionInfo.debtAmount,
+                                position.borrowable.underlyingDecimals
+                              )
+                            ) *
+                              ((usdPrice ?? 0) *
+                                Number(
+                                  formatUnits(
+                                    marketData?.assets.find(
+                                      (asset) =>
+                                        asset.underlyingSymbol ===
+                                        position.borrowable.symbol
+                                    )?.underlyingPrice ?? '0'
+                                  )
+                                ))
+                          )}
+                        </h3>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <div className="text-center mx-auto py-2">
+                  No assets looped!
                 </div>
               )}
             </>
