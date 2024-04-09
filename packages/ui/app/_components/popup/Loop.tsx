@@ -533,25 +533,15 @@ export default function Loop({
       )
     );
     const projectedAmount = formatUnits(
-      positionInfo?.positionSupplyAmount.add(amountAsBInt) ?? '0',
+      positionInfo?.equityAmount.add(amountAsBInt) ?? '0',
       selectedCollateralAsset.underlyingDecimals
     );
     const projectedPositionValue =
       Number(projectedAmount) * selectedCollateralAssetUSDPrice;
-    const projectedBorrowAmount = formatUnits(
-      positionInfo?.debtAmount.add(
-        parseUnits(
-          (
-            (parseFloat(amount ?? '0') / borrowedToCollateralRatio) *
-            currentLeverage
-          ).toFixed(
-            parseInt(selectedBorrowAsset?.underlyingDecimals.toString() ?? '18')
-          ),
-          selectedBorrowAsset?.underlyingDecimals
-        )
-      ) ?? '0',
-      selectedBorrowAsset?.underlyingDecimals
-    );
+    const projectedBorrowAmount =
+      (Number(projectedAmount) / borrowedToCollateralRatio) *
+      (currentLeverage - 1);
+
     return {
       borrowedAssetAmount,
       borrowedToCollateralRatio,
@@ -566,7 +556,6 @@ export default function Loop({
       selectedCollateralAssetUSDPrice
     };
   }, [
-    amount,
     amountAsBInt,
     currentLeverage,
     currentPosition,
@@ -1010,14 +999,21 @@ export default function Loop({
               nativeAmount={
                 currentPosition
                   ? formatUnits(
-                      positionInfo?.positionSupplyAmount ?? '0',
+                      positionInfo?.equityAmount ?? '0',
                       currentPosition.collateral.underlyingDecimals
                     )
                   : '0'
               }
               symbol={selectedCollateralAsset.underlyingSymbol}
               title={'My Collateral'}
-              usdAmount={positionValueMillified}
+              usdAmount={millify(
+                Number(
+                  formatUnits(
+                    positionInfo?.equityAmount ?? '0',
+                    selectedCollateralAsset.underlyingDecimals
+                  )
+                ) * selectedCollateralAssetUSDPrice
+              )}
             />
 
             <div className="separator lg:hidden" />
@@ -1061,7 +1057,7 @@ export default function Loop({
 
                 <LoopInfoDisplay
                   isLoading={isFetchingPositionInfo}
-                  nativeAmount={projectedBorrowAmount ?? '0'}
+                  nativeAmount={projectedBorrowAmount.toString() ?? '0'}
                   symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
                   title={'Projected Borrow'}
                   usdAmount={millify(
@@ -1092,7 +1088,7 @@ export default function Loop({
             <BorrowActions
               borrowAmount={(
                 (parseFloat(amount ?? '0') / borrowedToCollateralRatio) *
-                currentLeverage
+                (currentLeverage - 1)
               ).toFixed(
                 parseInt(
                   selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
