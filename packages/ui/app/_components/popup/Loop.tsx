@@ -46,8 +46,8 @@ type LoopHealthRatioDisplayProps = {
 };
 
 type LoopInfoDisplayProps = {
-  aprPercentage: string;
-  aprText: string;
+  aprPercentage?: string;
+  aprText?: string;
   isLoading: boolean;
   nativeAmount: string;
   symbol: string;
@@ -173,17 +173,19 @@ function LoopInfoDisplay({
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
-        <span className="hint-text-uppercase">{aprText}</span>
+      {aprText && aprPercentage && (
+        <div className="flex justify-between items-center">
+          <span className="hint-text-uppercase">{aprText}</span>
 
-        <ResultHandler
-          height="24"
-          isLoading={isLoading}
-          width="24"
-        >
-          <span className="font-bold">{aprPercentage}</span>
-        </ResultHandler>
-      </div>
+          <ResultHandler
+            height="24"
+            isLoading={isLoading}
+            width="24"
+          >
+            <span className="font-bold">{aprPercentage}</span>
+          </ResultHandler>
+        </div>
+      )}
     </div>
   );
 }
@@ -502,6 +504,9 @@ export default function Loop({
     positionValueMillified,
     liquidationValue,
     healthRatio,
+    projectedAmount,
+    projectedBorrowAmount,
+    projectedPositionValue,
     selectedBorrowAssetUSDPrice,
     selectedCollateralAssetUSDPrice
   } = useMemo(() => {
@@ -527,7 +532,26 @@ export default function Loop({
         currentPosition?.borrowable.underlyingDecimals
       )
     );
-
+    const projectedAmount = formatUnits(
+      positionInfo?.positionSupplyAmount.add(amountAsBInt) ?? '0',
+      selectedCollateralAsset.underlyingDecimals
+    );
+    const projectedPositionValue =
+      Number(projectedAmount) * selectedCollateralAssetUSDPrice;
+    const projectedBorrowAmount = formatUnits(
+      positionInfo?.debtAmount.add(
+        parseUnits(
+          (
+            (parseFloat(amount ?? '0') / borrowedToCollateralRatio) *
+            currentLeverage
+          ).toFixed(
+            parseInt(selectedBorrowAsset?.underlyingDecimals.toString() ?? '18')
+          ),
+          selectedBorrowAsset?.underlyingDecimals
+        )
+      ) ?? '0',
+      selectedBorrowAsset?.underlyingDecimals
+    );
     return {
       borrowedAssetAmount,
       borrowedToCollateralRatio,
@@ -535,10 +559,16 @@ export default function Loop({
       liquidationValue,
       positionValue,
       positionValueMillified: `${millify(positionValue)}`,
+      projectedAmount,
+      projectedBorrowAmount,
+      projectedPositionValue,
       selectedBorrowAssetUSDPrice,
       selectedCollateralAssetUSDPrice
     };
   }, [
+    amount,
+    amountAsBInt,
+    currentLeverage,
     currentPosition,
     selectedBorrowAsset,
     selectedCollateralAsset,
@@ -1013,6 +1043,36 @@ export default function Loop({
           </div>
 
           <div className="separator" />
+
+          {currentPosition && (
+            <>
+              <div className="flex justify-between items-center">
+                <LoopInfoDisplay
+                  isLoading={isFetchingPositionInfo || !collateralsAPR}
+                  nativeAmount={projectedAmount}
+                  symbol={selectedCollateralAsset.underlyingSymbol}
+                  title={'Projected Collateral'}
+                  usdAmount={millify(projectedPositionValue)}
+                />
+
+                <div className="separator lg:hidden" />
+
+                <div className="separator-vertical hidden lg:block" />
+
+                <LoopInfoDisplay
+                  isLoading={isFetchingPositionInfo}
+                  nativeAmount={projectedBorrowAmount ?? '0'}
+                  symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
+                  title={'Projected Borrow'}
+                  usdAmount={millify(
+                    Number(projectedBorrowAmount) * selectedBorrowAssetUSDPrice
+                  )}
+                />
+              </div>
+
+              <div className="separator" />
+            </>
+          )}
 
           <div className="lg:flex justify-between items-center">
             <SupplyActions
