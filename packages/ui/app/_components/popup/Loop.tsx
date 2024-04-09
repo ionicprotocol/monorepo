@@ -981,7 +981,7 @@ export default function Loop({
 
           <div className={`separator`} />
 
-          <div className="flex justify-between items-center">
+          <div className="md:flex justify-between items-center">
             <LoopInfoDisplay
               aprPercentage={`
                   ${
@@ -1042,7 +1042,7 @@ export default function Loop({
 
           {currentPosition && (
             <>
-              <div className="flex justify-between items-center">
+              <div className="md:flex justify-between items-center">
                 <LoopInfoDisplay
                   isLoading={isFetchingPositionInfo || !collateralsAPR}
                   nativeAmount={projectedAmount}
