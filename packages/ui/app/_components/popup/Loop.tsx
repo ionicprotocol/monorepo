@@ -34,6 +34,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export type LoopProps = {
   closeLoop: () => void;
   comptrollerAddress: string;
+  currentBorrowAsset?: MarketData;
   isOpen: boolean;
   selectedCollateralAsset: MarketData;
 };
@@ -428,6 +429,7 @@ function BorrowActions({
 export default function Loop({
   closeLoop,
   comptrollerAddress,
+  currentBorrowAsset,
   selectedCollateralAsset,
   isOpen
 }: LoopProps) {
@@ -441,7 +443,7 @@ export default function Loop({
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
-  >(marketData?.assets[0]);
+  >(currentBorrowAsset ?? marketData?.assets[0]);
   const { data: positions } = usePositionsQuery();
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
     return positions?.openPositions.find(
