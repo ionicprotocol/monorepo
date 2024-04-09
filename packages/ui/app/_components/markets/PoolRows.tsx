@@ -153,6 +153,16 @@ const PoolRows = ({
                 </div>
               </>
             )}
+            {(asset === 'ezETH' || asset === 'weETH') && (
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/eigen.png"
+                />{' '}
+                + EigenLayer Points
+              </div>
+            )}
           </div>
         </div>
       </h3>
@@ -167,7 +177,7 @@ const PoolRows = ({
           <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
             + POINTS
           </span>
-          <div className="popover absolute w-[150px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+          <div className="popover absolute w-[155px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
             Base APR: {borrowAPR}
             {asset === 'ezETH' ? (
               <>
@@ -216,6 +226,16 @@ const PoolRows = ({
                   + Mode Points
                 </div>
               </>
+            )}
+            {(asset === 'ezETH' || asset === 'weETH') && (
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/eigen.png"
+                />{' '}
+                + EigenLayer Points
+              </div>
             )}
           </div>
         </div>

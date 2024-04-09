@@ -6,6 +6,7 @@ import { PythDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
+const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
 export const deployPythPriceOracle = async ({
   ethers,
   getNamedAccounts,
@@ -35,7 +36,7 @@ export const deployPythPriceOracle = async ({
           args: [pythAddress, nativeTokenUsdFeed, usdToken]
         }
       },
-      owner: deployer,
+      owner: multisig,
       proxyContract: "OpenZeppelinTransparentProxy"
     },
     waitConfirmations: 1

@@ -1,3 +1,4 @@
+import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { RedStoneDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
@@ -11,7 +12,7 @@ export const deployRedStonePriceOracle = async ({
 }: RedStoneDeployFnParams): Promise<{ redStoneOracle: any }> => {
   const { deployer } = await getNamedAccounts();
 
-  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
+  const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
 
   //// RedStone Oracle
   const redStone = await deployments.deploy("RedstoneAdapterPriceOracle", {
@@ -27,6 +28,11 @@ export const deployRedStonePriceOracle = async ({
   const redStoneOracle = (await ethers.getContract("RedstoneAdapterPriceOracle", deployer)) as any;
 
   const underlyings = redStoneAssets.map((f) => f.underlying);
-  await addUnderlyingsToMpo(mpo, underlyings, redStoneOracle.address);
+  const mpoAdmin = await mpo.callStatic.admin();
+  if (mpoAdmin != deployer) {
+    console.error(`failed to update mpo - use gnosis multisig? ${mpoAdmin} ${deployer}`);
+  } else {
+    await addUnderlyingsToMpo(mpo, underlyings, redStoneOracle.address);
+  }
   return { redStoneOracle };
 };
