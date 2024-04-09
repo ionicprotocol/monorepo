@@ -14,7 +14,11 @@ import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
+import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
+import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
@@ -24,10 +28,6 @@ import {
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
-import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
-import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
