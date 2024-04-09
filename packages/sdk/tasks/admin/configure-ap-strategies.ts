@@ -1,7 +1,10 @@
 import { task } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
-import { configureAddressesProviderAddresses } from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
+import {
+  configureAddressesProviderAddresses,
+  configureIonicLiquidator
+} from "../../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../../chainDeploy/helpers/liquidators/registry";
 
 export default task(
@@ -28,6 +31,16 @@ export default task(
 
   //// Configure Liquidators Registry
   await configureLiquidatorsRegistry({
+    ethers,
+    getNamedAccounts,
+    chainId
+  });
+});
+
+task("config:ionic:liquidator").setAction(async ({}, { ethers, getNamedAccounts, getChainId }) => {
+  const chainId = parseInt(await getChainId());
+  await configureIonicLiquidator({
+    contractName: "IonicUniV3Liquidator",
     ethers,
     getNamedAccounts,
     chainId
