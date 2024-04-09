@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useCurrentLeverageRatio(position: string, chainId?: number) {
@@ -38,3 +39,27 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
     }
   );
 }
+
+export const useCurrentLeverageRatios = (positionAddresses: string[]) => {
+  const { currentSdk } = useMultiIonic();
+
+  return useQuery({
+    enabled: !!currentSdk,
+    queryFn: async () => {
+      if (!currentSdk) {
+        return null;
+      }
+
+      const positionsLoopValues = await Promise.all(
+        positionAddresses.map(async (positionAddress) =>
+          currentSdk.getCurrentLeverageRatio(positionAddress)
+        )
+      );
+
+      return positionsLoopValues.map((loopValue) =>
+        Number(utils.formatUnits(loopValue))
+      );
+    },
+    queryKey: ['positions', 'leverage', ...positionAddresses]
+  });
+};

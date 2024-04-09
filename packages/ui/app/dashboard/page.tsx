@@ -14,6 +14,7 @@ import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
@@ -56,6 +57,10 @@ export default function Dashboard() {
           : null
       ),
       positions?.openPositions.map(() => chainId) ?? []
+    );
+  const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
+    useCurrentLeverageRatios(
+      positions?.openPositions.map((position) => position.address) ?? []
     );
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
     useTotalSupplyAPYs(marketData?.assets ?? [], chainId);
@@ -536,7 +541,10 @@ export default function Dashboard() {
           <ResultHandler
             center
             isLoading={
-              isLoadingPositions || isLoadingPositionsInfo || isLoadingUSDPrice
+              isLoadingPositions ||
+              isLoadingPositionsInfo ||
+              isLoadingUSDPrice ||
+              isLoadingPositionLeverages
             }
           >
             <>
@@ -551,7 +559,7 @@ export default function Dashboard() {
                     <h3 className={` `}>LOOPS</h3>
                   </div>
 
-                  {positions?.openPositions.map((position) => {
+                  {positions?.openPositions.map((position, i) => {
                     const currentPositionInfo = positionsInfo
                       ? positionsInfo[position.address]
                       : undefined;
@@ -647,6 +655,18 @@ export default function Dashboard() {
                                   )
                                 ))
                           )}
+                        </h3>
+
+                        <h3 className={`mb-2 lg:mb-0`}>
+                          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                            LOOPS:
+                          </span>
+
+                          {(
+                            Math.ceil(
+                              positionLeverages ? positionLeverages[i] : 0
+                            ) - 1
+                          ).toFixed(1)}
                         </h3>
                       </div>
                     );
