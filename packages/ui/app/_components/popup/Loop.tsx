@@ -4,7 +4,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { OpenPosition } from 'types/dist';
 import { useBalance, useChainId } from 'wagmi';
 
@@ -43,6 +43,7 @@ type LoopHealthRatioDisplayProps = {
   currentValue: string;
   healthRatio: number;
   liquidationValue: string;
+  projectedHealthRatio?: number;
 };
 
 type LoopInfoDisplayProps = {
@@ -85,19 +86,20 @@ enum SupplyActionsMode {
 function LoopHealthRatioDisplay({
   currentValue,
   healthRatio,
-  liquidationValue
+  liquidationValue,
+  projectedHealthRatio
 }: LoopHealthRatioDisplayProps) {
-  const healthRatioPosition = useMemo<number>(() => {
-    if (healthRatio < 0) {
+  const healthRatioPosition = useCallback((value: number): number => {
+    if (value < 0) {
       return 0;
     }
 
-    if (healthRatio > 1) {
+    if (value > 1) {
       return 100;
     }
 
-    return healthRatio * 100;
-  }, [healthRatio]);
+    return value * 100;
+  }, []);
 
   return (
     <div className="grow-0 shrink-0 basis-[45%]">
@@ -111,13 +113,18 @@ function LoopHealthRatioDisplay({
         <div
           className="absolute w-[8px] h-[8px] top-1/2 rounded-[8px] mt-[-4px] ml-[-4px] shadow-health-ratio-handle bg-white transition-all"
           style={{
-            left: `${healthRatioPosition}%`
+            left: `${healthRatioPosition(healthRatio)}%`
           }}
-        >
-          {/* <span className="absolute bottom-full right-1/2 mb-1 translate-x-1/2 text-sm">
-            {healthRatio.toFixed(2)}
-          </span> */}
-        </div>
+        />
+
+        <div
+          className={`absolute w-[8px] h-[8px] top-1/2 rounded-[8px] mt-[-4px] ml-[-4px] shadow-health-ratio-handle bg-lime transition-all ${
+            projectedHealthRatio ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            left: `${healthRatioPosition(projectedHealthRatio ?? healthRatio)}%`
+          }}
+        />
       </div>
 
       <div className="flex justify-between">
@@ -502,11 +509,12 @@ export default function Loop({
     borrowedAssetAmount,
     borrowedToCollateralRatio,
     positionValueMillified,
+    projectedHealthRatio,
     liquidationValue,
     healthRatio,
-    projectedAmount,
+    projectedCollateral,
     projectedBorrowAmount,
-    projectedPositionValue,
+    projectedCollateralValue,
     selectedBorrowAssetUSDPrice,
     selectedCollateralAssetUSDPrice
   } = useMemo(() => {
@@ -532,15 +540,21 @@ export default function Loop({
         currentPosition?.borrowable.underlyingDecimals
       )
     );
-    const projectedAmount = formatUnits(
+    const projectedCollateral = formatUnits(
       positionInfo?.equityAmount.add(amountAsBInt) ?? '0',
       selectedCollateralAsset.underlyingDecimals
     );
-    const projectedPositionValue =
-      Number(projectedAmount) * selectedCollateralAssetUSDPrice;
+    const projectedCollateralValue =
+      Number(projectedCollateral) * selectedCollateralAssetUSDPrice;
     const projectedBorrowAmount =
-      (Number(projectedAmount) / borrowedToCollateralRatio) *
+      (Number(projectedCollateral) / borrowedToCollateralRatio) *
       (currentLeverage - 1);
+    const projectedHealthRatio = currentPosition
+      ? (projectedCollateralValue +
+          projectedBorrowAmount * selectedBorrowAssetUSDPrice) /
+          liquidationValue -
+        1
+      : undefined;
 
     return {
       borrowedAssetAmount,
@@ -549,9 +563,10 @@ export default function Loop({
       liquidationValue,
       positionValue,
       positionValueMillified: `${millify(positionValue)}`,
-      projectedAmount,
       projectedBorrowAmount,
-      projectedPositionValue,
+      projectedCollateral,
+      projectedCollateralValue,
+      projectedHealthRatio,
       selectedBorrowAssetUSDPrice,
       selectedCollateralAssetUSDPrice
     };
@@ -976,6 +991,13 @@ export default function Loop({
               currentValue={positionValueMillified}
               healthRatio={healthRatio}
               liquidationValue={millify(liquidationValue)}
+              projectedHealthRatio={
+                parseFloat(amount ?? '0') > 0 ||
+                (!!currentPositionLeverageRatio &&
+                  Math.round(currentPositionLeverageRatio) !== currentLeverage)
+                  ? projectedHealthRatio
+                  : undefined
+              }
             />
           </div>
 
@@ -1045,10 +1067,10 @@ export default function Loop({
               <div className="md:flex justify-between items-center">
                 <LoopInfoDisplay
                   isLoading={isFetchingPositionInfo || !collateralsAPR}
-                  nativeAmount={projectedAmount}
+                  nativeAmount={projectedCollateral}
                   symbol={selectedCollateralAsset.underlyingSymbol}
                   title={'Projected Collateral'}
-                  usdAmount={millify(projectedPositionValue)}
+                  usdAmount={millify(projectedCollateralValue)}
                 />
 
                 <div className="separator lg:hidden" />
