@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
+import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
@@ -139,6 +140,9 @@ export default function Dashboard() {
       ),
     [marketData, selectedSymbol]
   );
+  const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
+    useState<MarketData>();
+  const [loopOpen, setLoopOpen] = useState<boolean>(false);
   const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
     marketData?.comptroller,
     chainId
@@ -668,6 +672,25 @@ export default function Dashboard() {
                             ) - 1
                           ).toFixed(1)}
                         </h3>
+
+                        <h3 className={`mb-2 lg:mb-0`}>
+                          <button
+                            className="w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3"
+                            onClick={() => {
+                              setSelectedLoopBorrowData(
+                                marketData?.assets.find(
+                                  (asset) =>
+                                    asset.underlyingSymbol ===
+                                    position.borrowable.symbol
+                                )
+                              );
+                              setSelectedSymbol(position.collateral.symbol);
+                              setLoopOpen(true);
+                            }}
+                          >
+                            Adjust / Close
+                          </button>
+                        </h3>
                       </div>
                     );
                   })}
@@ -681,6 +704,19 @@ export default function Dashboard() {
           </ResultHandler>
         </div>
       </div>
+
+      {selectedMarketData && (
+        <Loop
+          closeLoop={() => {
+            setLoopOpen(false);
+          }}
+          comptrollerAddress={marketData?.comptroller ?? ''}
+          currentBorrowAsset={selectedLoopBorrowData}
+          isOpen={loopOpen}
+          selectedCollateralAsset={selectedMarketData}
+        />
+      )}
+
       {popupMode && selectedMarketData && marketData && (
         <Popup
           closePopup={() => setPopupMode(undefined)}

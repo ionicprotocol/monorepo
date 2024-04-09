@@ -555,6 +555,17 @@ export default function Loop({
   const queryClient = useQueryClient();
 
   /**
+   * Force new borrow asset
+   * when currentBorrowAsset
+   * is present
+   */
+  useEffect(() => {
+    if (currentBorrowAsset && isOpen) {
+      setSelectedBorrowAsset(currentBorrowAsset);
+    }
+  }, [currentBorrowAsset, isOpen]);
+
+  /**
    * Update selected borrow asset
    * when market data loads
    */
