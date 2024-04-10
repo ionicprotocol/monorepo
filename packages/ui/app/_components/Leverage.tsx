@@ -117,35 +117,35 @@ export default function Leverage({ marketData }: LeverageProps) {
       <div className="separator" />
 
       <div
-        className={`flex w-full items-center justify-between mb-2 text-xs text-sm text-white/50 `}
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>POSITION VALUE</span>
         <span className={`font-bold pl-2 text-white`}>$0.00</span>
       </div>
 
       <div
-        className={`flex w-full items-center justify-between mb-2 text-xs text-sm text-white/50 `}
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>NET APR</span>
         <span className={`font-bold pl-2 text-white`}>$0.00</span>
       </div>
 
       <div
-        className={`flex w-full items-center justify-between mb-2 text-xs text-sm text-white/50 `}
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>ANNUAL YIELD</span>
         <span className={`font-bold pl-2 text-white`}>$0.00</span>
       </div>
 
       <div
-        className={`flex w-full items-center justify-between mb-2 text-xs text-sm text-white/50 `}
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>COLLATERAL APR</span>
         <span className={`font-bold pl-2 text-white`}>$0.00</span>
       </div>
 
       <div
-        className={`flex w-full items-center justify-between mb-2 text-xs text-sm text-white/50 `}
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>HEALTH RATIO</span>
         <span className={`font-bold pl-2 text-white`}>$0.00</span>
