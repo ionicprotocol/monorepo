@@ -262,7 +262,7 @@ export default function Dashboard() {
                 >
                   <div className="popover-container">
                     <p className={`font-semibold ${healthColorClass}`}>
-                      {handledHealthData}
+                      {handledHealthData} <i className="popover-hint">i</i>
                     </p>
 
                     <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
@@ -288,7 +288,9 @@ export default function Dashboard() {
                 width="24"
               >
                 <div className="popover-container">
-                  <span>{netApr}</span>
+                  <span>
+                    {netApr} <i className="popover-hint">i</i>
+                  </span>
 
                   <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
                     Net APR is the difference between the average borrowing APR
