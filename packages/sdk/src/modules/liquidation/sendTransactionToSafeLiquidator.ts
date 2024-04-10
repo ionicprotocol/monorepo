@@ -3,7 +3,7 @@ import { BigNumber, Wallet } from "ethers";
 
 import { IonicBase } from "../../IonicSdk";
 
-import { fetchGasLimitForTransaction } from "./utils";
+import { fetchGasLimitForTransaction, fetchGasPrice } from "./utils";
 
 export default async function sendTransactionToSafeLiquidator(
   sdk: IonicBase,
@@ -26,9 +26,11 @@ export default async function sendTransactionToSafeLiquidator(
   };
   // Estimate gas for transaction
   const gasLimit = await fetchGasLimitForTransaction(sdk, method, tx);
+  const gasPrice = await fetchGasPrice(sdk, method);
   const txRequest: TransactionRequest = {
     ...tx,
-    gasLimit: gasLimit
+    gasLimit,
+    gasPrice
   };
 
   sdk.logger.info("Signing and sending", method, "transaction:", tx);
