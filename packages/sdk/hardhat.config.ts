@@ -73,7 +73,10 @@ const config: HardhatUserConfig = {
     deployer: { default: 0 },
     alice: { default: 1 },
     bob: { default: 2 },
-    rando: { default: 3 }
+    rando: { default: 3 },
+    multisig: {
+      34443: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2"
+    }
   },
   networks: {
     // This is the unchangeable default network which is started with `hardhat node`
