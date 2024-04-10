@@ -1,4 +1,8 @@
+'use client';
+
 import React, { useState } from 'react';
+
+import Amount from './popup/Amount';
 
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
@@ -16,5 +20,21 @@ export default function Leverage({ marketData }: LeverageProps) {
     marketData.assets[2]
   );
 
-  return <div>Leverage</div>;
+  return (
+    <div>
+      <Amount
+        amount={'0'}
+        availableAssets={marketData.assets}
+        handleInput={(val?: string) => {}}
+        isLoading={false}
+        mainText="Borrow"
+        readonly
+        selectedMarketData={selectedBorrowAsset}
+        setSelectedAsset={(asset: MarketData) => setSelectedBorrowAsset(asset)}
+        symbol={selectedBorrowAsset.underlyingSymbol}
+      />
+
+      <div className="separator" />
+    </div>
+  );
 }
