@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import { formatEther, formatUnits } from 'ethers/lib/utils';
+import React, { useMemo, useState } from 'react';
+import { useChainId } from 'wagmi';
 
 import Amount from './popup/Amount';
 
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export type LeverageProps = {
@@ -11,6 +14,7 @@ export type LeverageProps = {
 };
 
 export default function Leverage({ marketData }: LeverageProps) {
+  const chainId = useChainId();
   const [selectedFundingAsset, setSelectedFundingAsset] = useState<MarketData>(
     marketData.assets[0]
   );
@@ -19,13 +23,34 @@ export default function Leverage({ marketData }: LeverageProps) {
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<MarketData>(
     marketData.assets[2]
   );
+  const [fundingAmount, setFundingAmount] = useState<string>();
+  const [currentLeverage, setCurrentLeverage] = useState<number>(1);
+  const borrowToFundingRatio = useMemo<number>(
+    () =>
+      Number(formatEther(selectedBorrowAsset.underlyingPrice)) /
+      Number(formatEther(selectedFundingAsset.underlyingPrice)),
+    [selectedBorrowAsset, selectedFundingAsset]
+  );
+  const borrowAmount = useMemo<string>(
+    () =>
+      (
+        (Number(fundingAmount) / borrowToFundingRatio) *
+        currentLeverage
+      ).toString(),
+    [borrowToFundingRatio, currentLeverage, fundingAmount]
+  );
+  const { data: maxSupplyAmount } = useMaxSupplyAmount(
+    selectedFundingAsset,
+    marketData.comptroller,
+    chainId
+  );
 
   return (
     <div>
       <Amount
-        amount={'0'}
+        amount={borrowAmount}
         availableAssets={marketData.assets}
-        handleInput={(val?: string) => {}}
+        handleInput={() => {}}
         isLoading={false}
         mainText="Borrow"
         readonly
@@ -35,6 +60,20 @@ export default function Leverage({ marketData }: LeverageProps) {
       />
 
       <div className="separator" />
+
+      <Amount
+        amount={fundingAmount}
+        availableAssets={marketData.assets}
+        handleInput={(val?: string) => setFundingAmount(val)}
+        mainText="Funding"
+        max={formatUnits(
+          maxSupplyAmount?.bigNumber ?? '0',
+          selectedFundingAsset.underlyingDecimals
+        )}
+        selectedMarketData={selectedFundingAsset}
+        setSelectedAsset={(asset: MarketData) => setSelectedFundingAsset(asset)}
+        symbol={selectedFundingAsset.underlyingSymbol}
+      />
     </div>
   );
 }

@@ -19,9 +19,12 @@ export default function Page() {
     <>
       <div className={`flex`}>
         <div
-          className={`grow-0 shrink-0 basis-[350px] mr-4 bg-grayone rounded-xl py-3 px-6`}
+          className={`grow-0 shrink-0 basis-[450px] mr-4 bg-grayone rounded-xl py-3 px-6`}
         >
-          <ResultHandler isLoading={isLoadingMarketData}>
+          <ResultHandler
+            center
+            isLoading={isLoadingMarketData}
+          >
             {marketData && <Leverage marketData={marketData} />}
           </ResultHandler>
         </div>
