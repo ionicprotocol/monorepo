@@ -359,13 +359,29 @@ export const LEVERAGE_VALUE = {
   MIN: 1.0
 };
 
+export const NON_BORROWABLE_SYMBOLS = ['ezETH'];
+
 export const INFO_MESSAGES = {
+  ADJUST_LEVERAGE: {
+    ADJUSTING: 'Adjusting leverage'
+  },
   BORROW: {
     BORROWING: 'Borrowing funds'
+  },
+  CLOSE_POSITION: {
+    CLOSING: 'Closing position'
   },
   COLLATERAL: {
     DISABLE: 'Disabling collateral',
     ENABLE: 'Enabling collateral'
+  },
+  FUNDING_POSITION: {
+    APPROVE: 'Approve amount for spending',
+    FUNDING: 'Funding position'
+  },
+  OPEN_POSITION: {
+    APPROVE: 'Approve amount for spending',
+    OPENING: 'Opening position'
   },
   REPAY: {
     APPROVE: 'Approve amount for spending',

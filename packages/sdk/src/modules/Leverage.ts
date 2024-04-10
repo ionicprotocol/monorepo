@@ -63,7 +63,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                   (asset) => asset.underlying === borrowableUnderlyings[i]
                 );
                 const position = positions.find(
-                  (pos) => pos.collateralMarket === collateralCToken && pos.borrowMarket === borrowableMarket
+                  (pos) =>
+                    pos.collateralMarket === collateralCToken && pos.borrowMarket === borrowableMarket && !pos.isClosed
                 );
 
                 const borrowable = {

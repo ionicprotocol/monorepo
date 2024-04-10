@@ -98,6 +98,9 @@
 .btn-green {
   @apply font-bold rounded-md px-3 py-1 text-center transition-colors bg-accent text-darkone;
 }
+.btn-green[disabled] {
+  @apply bg-stone-500;
+}
 
 .popover-container {
   @apply relative;
@@ -302,6 +305,35 @@
 .animate-pop-in.animated {
   transform: scale(1);
   opacity: 1;
+}
+
+.bg-health-ratio-gradient {
+  background: linear-gradient(
+    90deg,
+    #ff3864 8.12%,
+    #f1f996 60.25%,
+    #39ff88 98.45%
+  );
+}
+
+.shadow-health-ratio-handle {
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.hint-text {
+  @apply text-xs text-white/50;
+}
+
+.hint-text-uppercase {
+  @apply hint-text uppercase;
+}
+
+.separator {
+  @apply w-full h-[1px] bg-white/30 mx-auto my-3;
+}
+
+.separator-vertical {
+  @apply w-[1px] bg-white/30 mx-auto my-1 self-stretch;
 }
 
 body {

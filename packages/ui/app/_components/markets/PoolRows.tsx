@@ -267,7 +267,7 @@ const PoolRows = ({
                 setPopupMode(PopupMode.BORROW);
               }}
             >
-              Borrow / Repay
+              Borrow / Repay / Loop
             </button>
           </>
         ) : (
