@@ -63,6 +63,14 @@ export async function fetchGasLimitForTransaction(sdk: IonicBase, method: string
   }
 }
 
+export async function fetchGasPrice(sdk: IonicBase, method: string, pctBump = 10) {
+  try {
+    return (await sdk.provider.getGasPrice()).mul(100 + pctBump).div(100);
+  } catch (error) {
+    throw `Failed to get gas price before signing and sending ${method} transaction: ${error}`;
+  }
+}
+
 export const logLiquidation = (
   sdk: IonicBase,
   borrower: PoolUserWithAssets,
