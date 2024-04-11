@@ -22,6 +22,7 @@ import {
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { useUsetNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -46,7 +47,8 @@ export default function Dashboard() {
       marketData?.assets.filter((asset) => asset.borrowBalanceFiat > 0) ?? [],
     [marketData]
   );
-  const { borrowApr, netApr, netAssetValue, supplyApr } = useMemo(() => {
+  const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUsetNetApr();
+  const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
     if (marketData && assetsSupplyAprData && currentSdk) {
       const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
       let totalCollateral = 0;
@@ -84,7 +86,6 @@ export default function Dashboard() {
       return {
         avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
         borrowApr: `${borrowApr.toFixed(2)}%`,
-        netApr: `${(supplyApr - borrowApr).toFixed(2)}%`,
         netAssetValue: `$${millify(
           (marketData?.totalSupplyBalanceFiat ?? 0) -
             (marketData?.totalBorrowBalanceFiat ?? 0),
@@ -284,19 +285,20 @@ export default function Dashboard() {
               <span>NET APR</span>
               <ResultHandler
                 height="24"
-                isLoading={!netApr}
+                isLoading={isLoadingUserNetApr}
                 width="24"
               >
                 <div className="popover-container">
                   <span>
-                    {netApr} <i className="popover-hint">i</i>
+                    {Number(formatUnits(userNetApr ?? '0')).toFixed(2)}%{' '}
+                    <i className="popover-hint">i</i>
                   </span>
 
                   <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
                     Net APR is the difference between the average borrowing APR
                     you are paying versus the average supply APR you are
-                    earning. earning. This does not include the future value of
-                    Ionic points that you are earning!
+                    earning. This does not include the future value of Ionic
+                    points that you are earning!
                   </div>
                 </div>
               </ResultHandler>
