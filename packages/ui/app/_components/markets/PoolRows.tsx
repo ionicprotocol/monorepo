@@ -121,6 +121,16 @@ const PoolRows = ({
               />{' '}
               + {/ezETH|weETH|STONE/gm.test(asset) && '2x'} Mode Points
             </div>
+            {asset === 'weETH' && (
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/etherfi.png"
+                />{' '}
+                + ether.fi Points
+              </div>
+            )}
             {asset === 'ezETH' && (
               <div className="flex">
                 <img
@@ -173,6 +183,16 @@ const PoolRows = ({
               />{' '}
               + {/ezETH|weETH|STONE/gm.test(asset) && '2x'} Mode Points
             </div>
+            {asset === 'weETH' && (
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/etherfi.png"
+                />{' '}
+                + ether.fi Points
+              </div>
+            )}
             {asset === 'ezETH' && (
               <div className="flex">
                 <img
