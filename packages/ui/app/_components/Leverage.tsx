@@ -5,10 +5,10 @@ import React, { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import Amount from './popup/Amount';
+import Range from './Range';
 
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import Range from './Range';
 
 export type LeverageProps = {
   marketData: PoolData;
