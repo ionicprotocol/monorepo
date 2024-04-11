@@ -22,9 +22,9 @@ import {
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
+import { useUsetNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useUsetNetApr } from '@ui/hooks/useUserNetApr';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
