@@ -290,7 +290,8 @@ export default function Dashboard() {
               >
                 <div className="popover-container">
                   <span>
-                    {Number(formatUnits(userNetApr ?? '0')).toFixed(2)}%<i className="popover-hint">i</i>
+                    {Number(formatUnits(userNetApr ?? '0')).toFixed(2)}%{' '}
+                    <i className="popover-hint">i</i>
                   </span>
 
                   <div className="popover absolute w-[250px] top-full left-[50%] p-2 mt-1 ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
