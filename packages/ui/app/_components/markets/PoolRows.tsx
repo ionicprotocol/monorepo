@@ -101,7 +101,7 @@ const PoolRows = ({
         <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
           {supplyAPR}
           <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
-            + POINTS
+            + POINTS <i className="popover-hint">i</i>
           </span>
           <div className="popover absolute w-[150px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap">
             Base APR: {supplyAPR}
@@ -163,7 +163,7 @@ const PoolRows = ({
         <div className="popover-container flex lg:flex-col items-center cursor-pointer">
           {borrowAPR}
           <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
-            + POINTS
+            + POINTS <i className="popover-hint">i</i>
           </span>
           <div className="popover absolute w-[155px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
             Base APR: {borrowAPR}
