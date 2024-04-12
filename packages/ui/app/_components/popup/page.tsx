@@ -28,6 +28,7 @@ import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForP
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
@@ -48,11 +49,13 @@ export enum PopupMode {
 interface IPopup {
   closePopup: () => void;
   comptrollerAddress: string;
+  loopMarkets?: LoopMarketData;
   mode?: PopupMode;
   selectedMarketData: MarketData;
 }
 const Popup = ({
   mode = PopupMode.SUPPLY,
+  loopMarkets,
   selectedMarketData,
   closePopup,
   comptrollerAddress
@@ -1039,6 +1042,11 @@ const Popup = ({
           </div>
           <Tab
             active={active}
+            loopPossible={
+              loopMarkets
+                ? loopMarkets[selectedMarketData.cToken].length > 0
+                : false
+            }
             mode={mode}
             setActive={setActive}
           />
@@ -1526,6 +1534,9 @@ const Popup = ({
       </div>
 
       <Loop
+        borrowableAssets={
+          loopMarkets ? loopMarkets[selectedMarketData.cToken] : []
+        }
         closeLoop={() => {
           setLoopOpen(false);
           setActive(PopupMode.BORROW);

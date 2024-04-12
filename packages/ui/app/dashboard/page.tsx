@@ -22,6 +22,7 @@ import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy'
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrow,
@@ -74,6 +75,9 @@ export default function Dashboard() {
     () =>
       marketData?.assets.filter((asset) => asset.borrowBalanceFiat > 0) ?? [],
     [marketData]
+  );
+  const { data: loopData } = useLoopMarkets(
+    marketData?.assets.map((asset) => asset.cToken) ?? []
   );
   const { borrowApr, netApr, netAssetValue, supplyApr } = useMemo(() => {
     if (marketData && assetsSupplyAprData && currentSdk) {
@@ -707,6 +711,7 @@ export default function Dashboard() {
 
       {selectedMarketData && (
         <Loop
+          borrowableAssets={loopData ? loopData[selectedMarketData.cToken] : []}
           closeLoop={() => {
             setLoopOpen(false);
           }}

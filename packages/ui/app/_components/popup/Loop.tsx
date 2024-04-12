@@ -32,6 +32,7 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export type LoopProps = {
+  borrowableAssets: string[];
   closeLoop: () => void;
   comptrollerAddress: string;
   currentBorrowAsset?: MarketData;
@@ -68,6 +69,7 @@ type SupplyActionsProps = {
 
 type BorrowActionsProps = {
   borrowAmount?: string;
+  borrowableAssets: LoopProps['borrowableAssets'];
   currentLeverage: number;
   currentPositionLeverage?: number;
   selectedBorrowAsset?: MarketData;
@@ -326,6 +328,7 @@ function SupplyActions({
 
 function BorrowActions({
   borrowAmount,
+  borrowableAssets,
   currentLeverage,
   currentPositionLeverage,
   selectedBorrowAsset,
@@ -348,7 +351,11 @@ function BorrowActions({
           <div className="relative z-50">
             <Amount
               amount={borrowAmount}
-              availableAssets={marketData?.assets}
+              availableAssets={marketData?.assets.filter((asset) =>
+                borrowableAssets.find(
+                  (borrowableAsset) => borrowableAsset === asset.cToken
+                )
+              )}
               handleInput={() => {}}
               hintText="Available:"
               isLoading={false}
@@ -436,6 +443,7 @@ function BorrowActions({
 }
 
 export default function Loop({
+  borrowableAssets,
   closeLoop,
   comptrollerAddress,
   currentBorrowAsset,
@@ -452,7 +460,7 @@ export default function Loop({
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
-  >(currentBorrowAsset ?? marketData?.assets[0]);
+  >(currentBorrowAsset);
   const { data: positions } = usePositionsQuery();
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
     return positions?.openPositions.find(
@@ -605,9 +613,15 @@ export default function Loop({
    */
   useEffect(() => {
     if (!selectedBorrowAsset && marketData) {
-      setSelectedBorrowAsset(marketData.assets[0]);
+      setSelectedBorrowAsset(
+        marketData.assets.filter((asset) =>
+          borrowableAssets.find(
+            (borrowableAsset) => borrowableAsset === asset.cToken
+          )
+        )[0]
+      );
     }
-  }, [marketData, selectedBorrowAsset]);
+  }, [borrowableAssets, marketData, selectedBorrowAsset]);
 
   /**
    * Reset neccessary queries after actions
@@ -1116,6 +1130,7 @@ export default function Loop({
                   selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
                 )
               )}
+              borrowableAssets={borrowableAssets}
               currentLeverage={currentLeverage}
               currentPositionLeverage={
                 currentPositionLeverageRatio
