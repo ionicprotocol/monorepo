@@ -25,6 +25,17 @@ task("pool:create:mode").setAction(async ({}, { run, ethers }) => {
   });
 });
 
+task("pool:create:base").setAction(async ({}, { run }) => {
+  await run("pool:create", {
+    name: "Base Market",
+    creator: "deployer",
+    priceOracle: "0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4", // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 // update the MPO=0x429041250873643235cb3788871447c6fF3205aA
 // npx hardhat pool:create --name Test --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
 
