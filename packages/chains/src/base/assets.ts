@@ -9,6 +9,7 @@ export const cbETH = "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22";
 export const ezETH = "0x2416092f143378750bb29b79eD961ab195CcEea5";
 export const AERO = "0x940181a94A35A4569E4529A3CDfB74e38FD98631";
 export const SNX = "0x22e6966B799c4D5B13BE962E1D117b56327FDa66";
+export const WBTC = "0x1ceA84203673764244E05693e42E6Ace62bE9BA5";
 
 export const assets: SupportedAsset[] = [
   {
@@ -63,9 +64,17 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.SNX,
     underlying: SNX,
     name: "Synthetix Network Token",
-    decimals: 18, // TODO verify
+    decimals: 18,
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", SNX)
+  },
+  {
+    symbol: assetSymbols.WBTC,
+    underlying: WBTC,
+    name: "Wrapped Bitcoin",
+    decimals: 8,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://explorer.mode.network", WBTC)
   }
 ];
 

@@ -5,7 +5,7 @@ import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((30 * 60 * 24 * 365).toString()), // 30 blocks per minute = 2 sec block time
-  cgId: "ethereum",
+  cgId: "base",
   metadata: {
     chainIdHex: "0x2105",
     name: "Base Mainnet",

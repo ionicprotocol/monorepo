@@ -50,6 +50,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     symbol: assetSymbols.SNX,
     aggregator: "0xe3971Ed6F1A5903321479Ef3148B5950c0612075",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+  },
+  {
+    symbol: assetSymbols.WBTC,
+    aggregator: "0xCCADC697c55bbB68dc5bCdf8d3CBe83CdD4E071E",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
   }
 ];
 
