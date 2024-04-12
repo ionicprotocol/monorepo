@@ -22,7 +22,8 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3SwapRouter: "0x2626664c2603336E57B271c5C0b26F421741e481",
     uniswapV3Quoter: "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a"
   },
-  wtoken: base.chainAddresses.W_TOKEN
+  wtoken: base.chainAddresses.W_TOKEN,
+  nativeTokenUsdChainlinkFeed: base.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -59,6 +60,8 @@ const chainlinkAssets: ChainlinkAsset[] = [
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
+
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({
     run,
@@ -69,4 +72,21 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     assets,
     chainlinkAssets
   });
+
+  //// Uniswap V3 Liquidator Funder
+  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+
+  const solidlySwapLiquidator = await deployments.deploy("SolidlySwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("solidlySwapLiquidator: ", solidlySwapLiquidator.address);
 };

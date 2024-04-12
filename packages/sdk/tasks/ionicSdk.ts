@@ -1,5 +1,17 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { arbitrum, bsc, chapel, ethereum, ganache, linea, mode, neon, polygon, zkevm } from "@ionicprotocol/chains";
+import {
+  arbitrum,
+  base,
+  bsc,
+  chapel,
+  ethereum,
+  ganache,
+  linea,
+  mode,
+  neon,
+  polygon,
+  zkevm
+} from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -183,33 +195,13 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         chainConfig = ganache;
         chainConfig.chainDeployments = chainDeployment;
         break;
-      case SupportedChains.bsc:
-        chainConfig = bsc;
-        break;
-      case SupportedChains.chapel:
-        chainConfig = chapel;
-        break;
-      case SupportedChains.neon:
-        chainConfig = neon;
-        break;
-      case SupportedChains.polygon:
-        chainConfig = polygon;
-        break;
-      case SupportedChains.arbitrum:
-        chainConfig = arbitrum;
-        break;
-      case SupportedChains.ethereum:
-        chainConfig = ethereum;
-        break;
-      case SupportedChains.linea:
-        chainConfig = linea;
-        break;
-      case SupportedChains.zkevm:
-        chainConfig = zkevm;
-        break;
+      case SupportedChains.base:
+        chainConfig = base;
       case SupportedChains.mode:
         chainConfig = mode;
         break;
+      default:
+        throw new Error("Chain not supported");
     }
 
     // Override for when in SIMULATION
