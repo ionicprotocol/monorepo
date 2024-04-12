@@ -5,14 +5,17 @@ import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";
 
 import { DiscordService } from "./discord";
+import { EmailService } from "./email";
 
 export class Liquidator {
   sdk: IonicSdk;
   alert: DiscordService;
+  email: EmailService;
 
   constructor(ionicSdk: IonicSdk) {
     this.sdk = ionicSdk;
     this.alert = new DiscordService(ionicSdk.chainId);
+    this.email = new EmailService(ionicSdk.chainId);
   }
   async fetchLiquidations(): Promise<LiquidatablePool[]> {
     try {
@@ -49,6 +52,7 @@ export class Liquidator {
         .join("\n");
       const errorMsg = erroredLiquidations.map((liquidation) => liquidation.error).join("\n");
       this.alert.sendLiquidationFailure(liquidations, errorMsg);
+      this.email.sendLiquidationFailure(liquidations, errorMsg);
       logger.error(logMsg);
     }
     if (succeededLiquidations.length > 0) {

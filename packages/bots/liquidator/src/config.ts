@@ -10,6 +10,7 @@ const config = {
   adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? "",
   excludedComptrollers: process.env.EXCLUDED_COMPTROLLERS ? process.env.EXCLUDED_COMPTROLLERS.split(",") : [],
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
+  sendgridApiKey: process.env.SENDGRID_API_KEY ?? "",
 };
 
 export enum EXCLUDED_ERROR_CODES {
