@@ -69,7 +69,7 @@
       "address": "0x1D7669b6BDfdb83066dd7C0aDa4B630b25cBc28a"
     },
     "IonicFlywheelLensRouter": {
-      "address": "0xa6BA5F1164dc66F9C5bDCE33A6d2fC70bE8Da108"
+      "address": "0xa1B7c312499E2FBE663B4A1BC8c38fCED27eAde9"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
@@ -78,7 +78,7 @@
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
     },
     "IonicUniV3Liquidator_Implementation": {
-      "address": "0x462fAa7042542C5CF28BC73D8F8C029267EF3E51"
+      "address": "0x88911E638f04b5d25242e8b587B3F8C8054B0d8F"
     },
     "IonicUniV3Liquidator_Proxy": {
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
