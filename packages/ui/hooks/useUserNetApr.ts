@@ -17,7 +17,7 @@ export const useUsetNetApr = () => {
 
       const netApr = await flywheelLens.callStatic.getUserNetApr(
         address,
-        BigNumber.from(3600 * 24 * 365)
+        BigNumber.from((3600 * 24 * 365) / 2)
       );
 
       return netApr;
