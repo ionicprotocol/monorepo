@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
+import { utils } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -683,9 +683,7 @@ const Popup = ({
       ]);
 
       try {
-        const amountToWithdraw = maxWithdrawAmount.lte(amountAsBInt)
-          ? constants.MaxUint256
-          : amountAsBInt;
+        const amountToWithdraw = amountAsBInt;
 
         const { tx, errorCode } = await currentSdk.withdraw(
           selectedMarketData.cToken,
