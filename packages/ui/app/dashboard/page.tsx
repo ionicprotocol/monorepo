@@ -29,7 +29,7 @@ import {
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { useUsetNetApr } from '@ui/hooks/useUserNetApr';
+import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -80,7 +80,7 @@ export default function Dashboard() {
   const { data: loopData } = useLoopMarkets(
     marketData?.assets.map((asset) => asset.cToken) ?? []
   );
-  const { borrowApr, netApr, netAssetValue, supplyApr } = useMemo(() => {
+  const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
     if (marketData && assetsSupplyAprData && currentSdk) {
       const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
       let totalCollateral = 0;
@@ -202,6 +202,7 @@ export default function Dashboard() {
 
     return 0;
   }, [borrowPoints, supplyPoints]);
+  const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
     const healthDataAsNumber = parseFloat(healthData ?? '0');
 
