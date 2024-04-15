@@ -296,7 +296,7 @@ const Popup = ({
       case PopupMode.SUPPLY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxSupplyAmount?.bigNumber
+          (maxSupplyAmount?.bigNumber && maxSupplyAmount.number > 0
             ? Number(formatEther(maxSupplyAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -307,7 +307,9 @@ const Popup = ({
       case PopupMode.WITHDRAW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxWithdrawAmount ? Number(formatEther(maxWithdrawAmount)) : 1);
+          (maxWithdrawAmount && maxWithdrawAmount.gt(0)
+            ? Number(formatEther(maxWithdrawAmount))
+            : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
@@ -316,7 +318,7 @@ const Popup = ({
       case PopupMode.BORROW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxBorrowAmount?.bigNumber
+          (maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
             ? Number(formatEther(maxBorrowAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -327,7 +329,9 @@ const Popup = ({
       case PopupMode.REPAY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxRepayAmount ? Number(formatEther(maxRepayAmount)) : 1);
+          (maxRepayAmount && maxRepayAmount.gt(0)
+            ? Number(formatEther(maxRepayAmount))
+            : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
@@ -342,9 +346,9 @@ const Popup = ({
   }, [
     amountAsBInt,
     active,
-    maxBorrowAmount?.bigNumber,
+    maxBorrowAmount,
     maxRepayAmount,
-    maxSupplyAmount?.bigNumber,
+    maxSupplyAmount,
     maxWithdrawAmount
   ]);
 
