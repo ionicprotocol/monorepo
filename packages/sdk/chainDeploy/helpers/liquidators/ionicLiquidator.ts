@@ -19,7 +19,7 @@ export const deployIonicLiquidator = async ({
   deployConfig,
   chainId
 }: LiquidatorDeployFnParams): Promise<string> => {
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
 
   const initializeArgs = [
     deployConfig.wtoken,
@@ -56,7 +56,7 @@ export const deployIonicLiquidator = async ({
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: deployer
+        owner: multisig
       }
     });
   }
@@ -73,7 +73,7 @@ export const deployIonicUniV3Liquidator = async ({
   deployments,
   deployConfig
 }: LiquidatorDeployFnParams): Promise<string> => {
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
   const uniV3Liquidator = await deployments.deploy("IonicUniV3Liquidator", {
     from: deployer,
     log: true,
@@ -85,7 +85,7 @@ export const deployIonicUniV3Liquidator = async ({
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy",
-      owner: deployer
+      owner: multisig
     }
   });
   if (uniV3Liquidator.transactionHash) await ethers.provider.waitForTransaction(uniV3Liquidator.transactionHash);

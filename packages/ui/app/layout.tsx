@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Script from 'next/script';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
+import { Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
 
@@ -53,12 +54,14 @@ export default function RootLayout({
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
             <MultiIonicProvider>
-              <ProgressBar
-                color="#3bff89ff"
-                height="2px"
-                options={{ showSpinner: false }}
-                shallowRouting
-              />
+              <Suspense fallback={<></>}>
+                <ProgressBar
+                  color="#3bff89ff"
+                  height="2px"
+                  options={{ showSpinner: false }}
+                  shallowRouting
+                />
+              </Suspense>
 
               <div className="relative px-4 pt-[128px] pb-4 sm:pb-[280px] min-h-screen">
                 <Navbar />

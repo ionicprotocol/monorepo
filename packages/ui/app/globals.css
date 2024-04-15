@@ -10,6 +10,21 @@
   --gasbot-primary: #38fe89;
 }
 
+.popover-hint {
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  top: -1px;
+  vertical-align: middle;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 8px;
+  line-height: 8px;
+  font-style: normal;
+  text-align: center;
+}
+
 @layer utilities {
   .grid-cols-21 {
     grid-template-columns: repeat(21, minmax(0, 1fr));

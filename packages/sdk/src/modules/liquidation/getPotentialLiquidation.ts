@@ -161,7 +161,7 @@ export default async function getPotentialLiquidation(
     }
 
     flashSwapPair = await algebraFactory.callStatic.poolByPair(tokenA, tokenB);
-    if (tokenPath.indexOf(flashSwapPair) > 0) {
+    if (flashSwapPair == constants.AddressZero || tokenPath.indexOf(flashSwapPair) > 0) {
       // in case the Uniswap pair LP token is on the path of redemptions, we should use
       // another pair because reentrancy checks prevent us from using the pair
       // when inside the execution of a flash swap from the same pair
@@ -200,6 +200,10 @@ export default async function getPotentialLiquidation(
         sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
       }
     }
+  }
+  if (flashSwapPair == constants.AddressZero || tokenPath.indexOf(flashSwapPair) > 0) {
+    sdk.logger.error(`No good source for flash loan ${flashSwapPair}`);
+    return null;
   }
 
   let expectedGasAmount: BigNumber;
