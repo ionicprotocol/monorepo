@@ -240,7 +240,11 @@ function SupplyActions({
       case SupplyActionsMode.DEPOSIT:
         setUtilization(
           Math.round(
-            (parseFloat(amount ?? '0') / (maxSupplyAmount?.number ?? 1)) * 100
+            (parseFloat(amount ?? '0') /
+              (maxSupplyAmount && maxSupplyAmount.number > 0
+                ? maxSupplyAmount.number
+                : 1)) *
+              100
           )
         );
 
