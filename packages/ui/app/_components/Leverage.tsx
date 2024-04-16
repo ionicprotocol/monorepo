@@ -1,21 +1,21 @@
 'use client';
 
+import { constants } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useChainId } from 'wagmi';
 
 import Amount from './popup/Amount';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './popup/TransactionStepsHandler';
 import Range from './Range';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import TransactionStepsHandler, {
-  useTransactionSteps
-} from './popup/TransactionStepsHandler';
-import { constants } from 'ethers';
-import toast from 'react-hot-toast';
 
 export type LeverageProps = {
   marketData: PoolData;
