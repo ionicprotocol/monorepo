@@ -16,6 +16,7 @@ import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
 
 export type LeverageProps = {
   marketData: PoolData;
@@ -34,24 +35,41 @@ export default function Leverage({ marketData }: LeverageProps) {
   );
   const [fundingAmount, setFundingAmount] = useState<string>();
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
-  const borrowToFundingRatio = useMemo<number>(
-    () =>
+
+  const { borrowAmount, collateralAmount } = useMemo(() => {
+    const borrowToFundingRatio =
       Number(formatEther(selectedBorrowAsset.underlyingPrice)) /
-      Number(formatEther(selectedFundingAsset.underlyingPrice)),
-    [selectedBorrowAsset, selectedFundingAsset]
-  );
-  const borrowAmount = useMemo<string>(
-    () =>
-      (
-        (Number(fundingAmount) / borrowToFundingRatio) *
-        currentLeverage
-      ).toString(),
-    [borrowToFundingRatio, currentLeverage, fundingAmount]
-  );
+      Number(formatEther(selectedFundingAsset.underlyingPrice));
+    const collateralToFundingRatio =
+      Number(formatEther(selectedCollateralAsset.underlyingPrice)) /
+      Number(formatEther(selectedFundingAsset.underlyingPrice));
+    const borrowAmount = (
+      (Number(fundingAmount) / borrowToFundingRatio) *
+      currentLeverage
+    ).toFixed(Number(selectedBorrowAsset.underlyingDecimals.toString()));
+    const collateralAmount = (
+      (Number(fundingAmount) / collateralToFundingRatio) *
+      currentLeverage
+    ).toFixed(Number(selectedCollateralAsset.underlyingDecimals.toString()));
+
+    return { borrowAmount, borrowToFundingRatio, collateralAmount };
+  }, [
+    currentLeverage,
+    fundingAmount,
+    selectedBorrowAsset,
+    selectedCollateralAsset,
+    selectedFundingAsset
+  ]);
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
     useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
+  const { data: maxLeverage, isLoading: isLoadingMaxLeverage } =
+    useMaxLeverageAmount(
+      selectedCollateralAsset.cToken,
+      collateralAmount,
+      selectedBorrowAsset.cToken
+    );
 
   /**
    * Open a position
