@@ -56,6 +56,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     symbol: assetSymbols.WBTC,
     aggregator: "0xCCADC697c55bbB68dc5bCdf8d3CBe83CdD4E071E",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+  },
+  {
+    symbol: assetSymbols.ezETH,
+    aggregator: "0x960BDD1dFD20d7c98fa482D793C3dedD73A113a3",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   }
 ];
 

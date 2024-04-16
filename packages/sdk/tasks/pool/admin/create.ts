@@ -3,17 +3,6 @@ import { task, types } from "hardhat/config";
 
 import { getPoolByName, logPoolData } from "../utils";
 
-task("pool:create:chapel").setAction(async ({}, { run, ethers }) => {
-  await run("pool:create", {
-    name: "IONIC Test BOMB Pool",
-    creator: "deployer",
-    priceOracle: "0xc625139B9471432Abea0F9f97A84611BCDC4cbdD", // MPO
-    closeFactor: "50",
-    liquidationIncentive: "8",
-    enforceWhitelist: "false"
-  });
-});
-
 task("pool:create:mode").setAction(async ({}, { run, ethers }) => {
   await run("pool:create", {
     name: "Mode Market",

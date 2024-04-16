@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@ionicprotocol/types";
 
-import deployments from "../../deployments/mode.json";
+import deployments from "../../deployments/base.json";
 
 import chainAddresses from "./addresses";
 import { assets } from "./assets";

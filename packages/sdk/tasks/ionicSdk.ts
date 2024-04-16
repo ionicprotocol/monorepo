@@ -1,23 +1,12 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
-import {
-  arbitrum,
-  base,
-  bsc,
-  chapel,
-  ethereum,
-  ganache,
-  linea,
-  mode,
-  neon,
-  polygon,
-  zkevm
-} from "@ionicprotocol/chains";
+import { JsonRpcProvider, Provider } from "@ethersproject/providers";
+import { base, bsc, ganache, mode } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { IonicSdk } from "../src";
 import { WETH } from "../typechain/WETH";
+import { SignerOrProvider } from "../src/IonicSdk";
 
 let ionicSdk: IonicSdk;
 
@@ -166,7 +155,7 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
 
 export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | string): Promise<IonicSdk> => {
   if (!ionicSdk) {
-    let signer;
+    let signer: SignerOrProvider;
     if (!signerOrProviderOrSignerName) {
       signer = ethers.provider;
     } else {
@@ -197,6 +186,7 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.base:
         chainConfig = base;
+        break;
       case SupportedChains.mode:
         chainConfig = mode;
         break;
@@ -213,7 +203,7 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
     ionicSdk = new IonicSdk(signer, chainConfig);
 
     // patch WETH for local deployment
-    if (chainId === 31337 || chainId === 1337) {
+    if (chainId === 1337) {
       const weth = (await ethers.getContract("WETH")) as WETH;
       ionicSdk.chainSpecificAddresses.W_TOKEN = weth.address;
     }
