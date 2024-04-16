@@ -2,6 +2,7 @@
 
 import { constants } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
+import millify from 'millify';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useChainId } from 'wagmi';
@@ -11,14 +12,16 @@ import TransactionStepsHandler, {
   useTransactionSteps
 } from './popup/TransactionStepsHandler';
 import Range from './Range';
+import ResultHandler from './ResultHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBorrowRates } from '@ui/hooks/levato/useBorrowRates';
 import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import millify from 'millify';
+import { useLiquidationThreshold } from '@ui/hooks/levato/useLiquidationThreshold';
 
 export type LeverageProps = {
   marketData: PoolData;
@@ -80,9 +83,35 @@ export default function Leverage({ marketData }: LeverageProps) {
   const { data: maxLeverage, isLoading: isLoadingMaxLeverage } =
     useMaxLeverageAmount(
       selectedCollateralAsset.cToken,
-      collateralAmount,
+      parseUnits(
+        collateralAmount,
+        selectedCollateralAsset.underlyingDecimals
+      ).toString(),
       selectedBorrowAsset.cToken
     );
+  const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
+    marketData.assets.map((asset) => asset.underlyingToken)
+  );
+  const {
+    data: liquidationThreshold,
+    isLoading: isLoadingLiquidationThreshold
+  } = useLiquidationThreshold(
+    selectedCollateralAsset.underlyingToken,
+    parseUnits(
+      collateralAmount,
+      selectedCollateralAsset.underlyingDecimals
+    ).toString(),
+    selectedBorrowAsset.underlyingToken,
+    currentLeverage.toString()
+  );
+
+  console.log(
+    liquidationThreshold,
+    parseUnits(
+      collateralAmount,
+      selectedCollateralAsset.underlyingDecimals
+    ).toString()
+  );
 
   /**
    * Open a position
@@ -249,7 +278,7 @@ export default function Leverage({ marketData }: LeverageProps) {
 
           <Range
             currentValue={currentLeverage}
-            max={10}
+            max={Number(maxLeverage ? formatEther(maxLeverage) : '10')}
             min={1}
             setCurrentValue={(val: number) => setCurrentLeverage(val)}
             step={1}
@@ -277,28 +306,29 @@ export default function Leverage({ marketData }: LeverageProps) {
       <div
         className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
-        <span className={``}>NET APR</span>
+        <span className={``}>BORROW RATE</span>
+        <span className={`font-bold pl-2 text-white`}>
+          <ResultHandler
+            height="16"
+            isLoading={isLoadingBorrowRates}
+            width="16"
+          >
+            {borrowRates?.get(selectedBorrowAsset.underlyingToken)}
+          </ResultHandler>
+        </span>
+      </div>
+
+      <div
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
+      >
+        <span className={``}>Debt value</span>
         <span className={`font-bold pl-2 text-white`}>$0.00</span>
       </div>
 
       <div
         className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
-        <span className={``}>ANNUAL YIELD</span>
-        <span className={`font-bold pl-2 text-white`}>$0.00</span>
-      </div>
-
-      <div
-        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
-      >
-        <span className={``}>COLLATERAL APR</span>
-        <span className={`font-bold pl-2 text-white`}>$0.00</span>
-      </div>
-
-      <div
-        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
-      >
-        <span className={``}>HEALTH RATIO</span>
+        <span className={``}>Liquidation threshold</span>
         <span className={`font-bold pl-2 text-white`}>$0.00</span>
       </div>
 

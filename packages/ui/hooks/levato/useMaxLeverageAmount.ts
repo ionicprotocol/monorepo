@@ -25,6 +25,12 @@ export const useMaxLeverageAmount = (
 
       return maxLeverageAmount;
     },
-    queryKey: ['levato', 'leverage']
+    queryKey: [
+      'levato',
+      'leverage',
+      collateralUnderlying,
+      collateralAmount,
+      borrowAssetUnderlying
+    ]
   });
 };
