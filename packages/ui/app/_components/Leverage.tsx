@@ -1,12 +1,13 @@
 'use client';
 
-import { formatEther, formatUnits } from 'ethers/lib/utils';
-import React, { useMemo, useState } from 'react';
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
+import { useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import Amount from './popup/Amount';
 import Range from './Range';
 
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
@@ -16,6 +17,7 @@ export type LeverageProps = {
 
 export default function Leverage({ marketData }: LeverageProps) {
   const chainId = useChainId();
+  const { levatoSdk } = useMultiIonic();
   const [selectedFundingAsset, setSelectedFundingAsset] = useState<MarketData>(
     marketData.assets[0]
   );
@@ -42,6 +44,26 @@ export default function Leverage({ marketData }: LeverageProps) {
   );
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
     useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
+
+  /**
+   * Open a position
+   */
+  const openPosition = async () => {
+    try {
+      await levatoSdk?.openPosition(
+        selectedCollateralAsset.underlyingToken,
+        selectedBorrowAsset.underlyingToken,
+        parseUnits(
+          fundingAmount ?? '0',
+          selectedFundingAsset.underlyingDecimals
+        ),
+        selectedFundingAsset.underlyingToken,
+        currentLeverage.toString()
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div>
@@ -154,7 +176,12 @@ export default function Leverage({ marketData }: LeverageProps) {
       <div className="separator" />
 
       <div className="text-center">
-        <button className="btn-green">OPEN POSITION</button>
+        <button
+          className="btn-green"
+          onClick={openPosition}
+        >
+          OPEN POSITION
+        </button>
       </div>
     </div>
   );

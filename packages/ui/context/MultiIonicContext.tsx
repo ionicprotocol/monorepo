@@ -6,6 +6,7 @@ import Security from '@ionicprotocol/security';
 import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
 import type { providers } from 'ethers';
+import LevatoSDK from 'levato-sdk';
 import type { Dispatch, ReactNode } from 'react';
 import {
   createContext,
@@ -35,6 +36,7 @@ export interface MultiIonicContextData {
   isConnected: boolean;
   isGlobalLoading: boolean;
   isSidebarCollapsed: boolean | undefined;
+  levatoSdk?: LevatoSDK;
   sdks: IonicSdk[];
   securities: Security[];
   setAddress: Dispatch<`0x${string}`>;
@@ -71,6 +73,22 @@ export const MultiIonicProvider = (
   >();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>();
+  const levatoSdk = useMemo(
+    () =>
+      signer
+        ? new LevatoSDK({
+            creditDelegatorContractAddress:
+              '0x764F74892350fe3c7649310e56daf12bc8BD6240',
+            factoryContractAddress:
+              '0x82Ff5FF5Dc348f4433b80e4d098BE85786978e92',
+            flashLoanRouterContractAddress:
+              '0x2b9A599E910DAeB69DD3b80BE180C8d20E504995',
+            lensContractAddress: '0xd08Cda21481c8dE705357F99167984C68b8cdCc5',
+            signer
+          })
+        : undefined,
+    [signer]
+  );
 
   const [sdks, securities, chainIds] = useMemo(() => {
     const _sdks: IonicSdk[] = [];
@@ -183,6 +201,7 @@ export const MultiIonicProvider = (
       isConnected,
       isGlobalLoading,
       isSidebarCollapsed,
+      levatoSdk,
       sdks,
       securities,
       setAddress,
@@ -200,6 +219,7 @@ export const MultiIonicProvider = (
     currentChain,
     currentSdk,
     getSdk,
+    levatoSdk,
     address,
     disconnect,
     isConnected,

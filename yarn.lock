@@ -2389,6 +2389,7 @@ __metadata:
     eslint-plugin-typescript-sort-keys: "npm:^3.0.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     ethers: "npm:^5.7.2"
+    levato-sdk: "npm:^1.0.4"
     mathjs: "npm:^12.3.0"
     millify: "npm:^6.1.0"
     next: "npm:14.0.4"
@@ -13616,7 +13617,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.6.5, ethers@npm:^5.7.0, ethers@npm:^5.7.1, ethers@npm:^5.7.2":
+"ethers@npm:5, ethers@npm:^5.6.5, ethers@npm:^5.7.0, ethers@npm:^5.7.1, ethers@npm:^5.7.2":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -17583,6 +17584,15 @@ __metadata:
   dependencies:
     readable-stream: "npm:^2.0.5"
   checksum: 10/35f8cf8b5799c76570b211b079d4d706a20cbf13a4936d44cc7dbdacab1de6b346ab339ed3e3805f4693155ee5bbebbda4050fa2b666d61956e89a573089e3d4
+  languageName: node
+  linkType: hard
+
+"levato-sdk@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "levato-sdk@npm:1.0.4"
+  dependencies:
+    ethers: "npm:5"
+  checksum: 10/9ace3136557c5d1dc87c28d211dc2680c12e691cabb5dab03517cadefc4087718e5034b3821d2ae88c63a9486b4685019ec18a24ef2413d4264ea0f5139aaaed
   languageName: node
   linkType: hard
 
