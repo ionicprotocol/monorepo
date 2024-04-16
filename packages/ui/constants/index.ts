@@ -379,6 +379,10 @@ export const INFO_MESSAGES = {
     APPROVE: 'Approve amount for spending',
     FUNDING: 'Funding position'
   },
+  OPEN_LEVATO_POSITION: {
+    APPROVE: 'Approve amount for spending',
+    OPENING: 'Opening position'
+  },
   OPEN_POSITION: {
     APPROVE: 'Approve amount for spending',
     OPENING: 'Opening position'

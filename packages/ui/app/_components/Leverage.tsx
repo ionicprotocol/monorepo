@@ -7,9 +7,15 @@ import { useChainId } from 'wagmi';
 import Amount from './popup/Amount';
 import Range from './Range';
 
+import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './popup/TransactionStepsHandler';
+import { constants } from 'ethers';
+import toast from 'react-hot-toast';
 
 export type LeverageProps = {
   marketData: PoolData;
@@ -17,7 +23,7 @@ export type LeverageProps = {
 
 export default function Leverage({ marketData }: LeverageProps) {
   const chainId = useChainId();
-  const { levatoSdk } = useMultiIonic();
+  const { currentSdk, levatoSdk, address } = useMultiIonic();
   const [selectedFundingAsset, setSelectedFundingAsset] = useState<MarketData>(
     marketData.assets[0]
   );
@@ -44,24 +50,114 @@ export default function Leverage({ marketData }: LeverageProps) {
   );
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
     useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
 
   /**
    * Open a position
    */
   const openPosition = async () => {
+    let currentTransactionStep = 0;
+
+    addStepsForAction([
+      {
+        error: false,
+        message: INFO_MESSAGES.OPEN_LEVATO_POSITION.APPROVE,
+        success: false
+      },
+      {
+        error: false,
+        message: INFO_MESSAGES.OPEN_LEVATO_POSITION.OPENING,
+        success: false
+      }
+    ]);
+
     try {
-      await levatoSdk?.openPosition(
+      if (!currentSdk || !levatoSdk || !address) {
+        return;
+      }
+
+      const amountAsBInt = parseUnits(
+        fundingAmount ?? '0',
+        selectedFundingAsset.underlyingDecimals
+      );
+      const token = currentSdk.getEIP20TokenInstance(
+        selectedFundingAsset.underlyingToken,
+        currentSdk.signer
+      );
+      const factoryContract = levatoSdk.factoryContract;
+      const hasApprovedEnough = (
+        await token.callStatic.allowance(address, factoryContract.address)
+      ).gte(amountAsBInt);
+
+      if (!hasApprovedEnough) {
+        const tx = await token.approve(
+          factoryContract.address,
+          constants.MaxUint256
+        );
+
+        upsertTransactionStep({
+          index: currentTransactionStep,
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx.hash
+          }
+        });
+
+        await tx.wait();
+      }
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+
+      currentTransactionStep++;
+
+      const tx = await levatoSdk.openPosition(
         selectedCollateralAsset.underlyingToken,
         selectedBorrowAsset.underlyingToken,
-        parseUnits(
-          fundingAmount ?? '0',
-          selectedFundingAsset.underlyingDecimals
-        ),
+        amountAsBInt,
         selectedFundingAsset.underlyingToken,
         currentLeverage.toString()
       );
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          txHash: tx.hash
+        }
+      });
+
+      await tx.wait();
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+
+      toast.success(
+        `Opened position for ${selectedFundingAsset.underlyingSymbol}/${selectedBorrowAsset.underlyingSymbol}`
+      );
     } catch (error) {
       console.error(error);
+
+      toast.error(`Error while opening position!`);
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          error: true
+        }
+      });
     }
   };
 
@@ -176,12 +272,21 @@ export default function Leverage({ marketData }: LeverageProps) {
       <div className="separator" />
 
       <div className="text-center">
-        <button
-          className="btn-green"
-          onClick={openPosition}
-        >
-          OPEN POSITION
-        </button>
+        {transactionSteps.length > 0 ? (
+          <div className="flex justify-center">
+            <TransactionStepsHandler
+              resetTransactionSteps={() => upsertTransactionStep(undefined)}
+              transactionSteps={transactionSteps}
+            />
+          </div>
+        ) : (
+          <button
+            className="btn-green"
+            onClick={openPosition}
+          >
+            OPEN POSITION
+          </button>
+        )}
       </div>
     </div>
   );
