@@ -72,6 +72,10 @@ export function getEnabledChains() {
     enabledChains.push(SupportedChains.mode);
   }
 
+  if (config.isBaseEnabled) {
+    enabledChains.push(SupportedChains.base);
+  }
+
   return enabledChains;
 }
 

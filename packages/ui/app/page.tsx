@@ -4,6 +4,7 @@
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useMemo, useState } from 'react';
+import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import PoolRows from './_components/markets/PoolRows';
@@ -17,11 +18,27 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
+type UiConfig = {
+  logo: string;
+  name: string;
+};
+const chainUiConfig: Record<number, UiConfig> = {
+  [mode.id]: {
+    logo: '/img/logo/MODE.png',
+    name: 'Mode Market'
+  },
+  [base.id]: {
+    logo: '/img/logo/BASE.png',
+    name: 'Base Market'
+  }
+};
+
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
+  const config = chainUiConfig[chainId];
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     '0',
     chainId
@@ -53,9 +70,9 @@ export default function Market() {
             <img
               alt="modlogo"
               className={`w-8`}
-              src="/img/logo/MODE.png"
+              src={config.logo}
             />
-            <h1 className={`font-semibold`}>Mode Market</h1>
+            <h1 className={`font-semibold`}>{config.name}</h1>
           </div>
           <ResultHandler isLoading={isLoadingPoolData}>
             <div className={`w-full flex flex-wrap items-center gap-4`}>
