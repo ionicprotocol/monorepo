@@ -14,9 +14,11 @@ import Range from './Range';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
+import millify from 'millify';
 
 export type LeverageProps = {
   marketData: PoolData;
@@ -25,6 +27,7 @@ export type LeverageProps = {
 export default function Leverage({ marketData }: LeverageProps) {
   const chainId = useChainId();
   const { currentSdk, levatoSdk, address } = useMultiIonic();
+  const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedFundingAsset, setSelectedFundingAsset] = useState<MarketData>(
     marketData.assets[0]
   );
@@ -36,7 +39,7 @@ export default function Leverage({ marketData }: LeverageProps) {
   const [fundingAmount, setFundingAmount] = useState<string>();
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
 
-  const { borrowAmount, collateralAmount } = useMemo(() => {
+  const { borrowAmount, collateralAmount, positionValue } = useMemo(() => {
     const borrowToFundingRatio =
       Number(formatEther(selectedBorrowAsset.underlyingPrice)) /
       Number(formatEther(selectedFundingAsset.underlyingPrice));
@@ -44,21 +47,31 @@ export default function Leverage({ marketData }: LeverageProps) {
       Number(formatEther(selectedCollateralAsset.underlyingPrice)) /
       Number(formatEther(selectedFundingAsset.underlyingPrice));
     const borrowAmount = (
-      (Number(fundingAmount) / borrowToFundingRatio) *
+      (Number(fundingAmount ?? '0') / borrowToFundingRatio) *
       currentLeverage
     ).toFixed(Number(selectedBorrowAsset.underlyingDecimals.toString()));
     const collateralAmount = (
-      (Number(fundingAmount) / collateralToFundingRatio) *
+      (Number(fundingAmount ?? '0') / collateralToFundingRatio) *
       currentLeverage
     ).toFixed(Number(selectedCollateralAsset.underlyingDecimals.toString()));
+    const positionValue = !!usdPrice
+      ? Number(borrowAmount) *
+        (usdPrice * Number(formatEther(selectedBorrowAsset.underlyingPrice)))
+      : 0;
 
-    return { borrowAmount, borrowToFundingRatio, collateralAmount };
+    return {
+      borrowAmount,
+      borrowToFundingRatio,
+      collateralAmount,
+      positionValue
+    };
   }, [
     currentLeverage,
     fundingAmount,
     selectedBorrowAsset,
     selectedCollateralAsset,
-    selectedFundingAsset
+    selectedFundingAsset,
+    usdPrice
   ]);
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
     useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
@@ -256,7 +269,9 @@ export default function Leverage({ marketData }: LeverageProps) {
         className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>POSITION VALUE</span>
-        <span className={`font-bold pl-2 text-white`}>$0.00</span>
+        <span className={`font-bold pl-2 text-white`}>
+          ${millify(positionValue)}
+        </span>
       </div>
 
       <div
