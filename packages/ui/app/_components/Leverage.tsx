@@ -109,7 +109,9 @@ export default function Leverage({ marketData }: LeverageProps) {
   } = useLiquidationThreshold(
     selectedBorrowAsset.underlyingToken,
     parseUnits(borrowAmount, selectedBorrowAsset.underlyingDecimals).toString(),
-    selectedCollateralAsset.underlyingToken,
+    leverageMode === LeverageMode.LONG
+      ? selectedCollateralAsset.underlyingToken
+      : selectedBorrowAsset.underlyingToken,
     parseEther(currentLeverage.toString()).toString()
   );
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
@@ -193,8 +195,12 @@ export default function Leverage({ marketData }: LeverageProps) {
       currentTransactionStep++;
 
       const tx = await levatoSdk.openPosition(
-        selectedCollateralAsset.underlyingToken,
-        selectedBorrowAsset.underlyingToken,
+        leverageMode === LeverageMode.LONG
+          ? selectedCollateralAsset.underlyingToken
+          : selectedBorrowAsset.underlyingToken,
+        leverageMode === LeverageMode.LONG
+          ? selectedBorrowAsset.underlyingToken
+          : selectedCollateralAsset.underlyingToken,
         amountAsBInt,
         selectedFundingAsset.underlyingToken,
         currentLeverage.toString()
@@ -267,7 +273,7 @@ export default function Leverage({ marketData }: LeverageProps) {
         availableAssets={availableAssets}
         handleInput={() => {}}
         isLoading={false}
-        mainText="Long"
+        mainText={leverageMode === LeverageMode.LONG ? 'Long' : 'Short'}
         readonly
         selectedMarketData={selectedCollateralAsset}
         setSelectedAsset={(asset: MarketData) =>
