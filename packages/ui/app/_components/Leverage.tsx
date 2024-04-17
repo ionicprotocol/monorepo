@@ -263,20 +263,24 @@ export default function Leverage({ marketData }: LeverageProps) {
 
         <div className="w-full">
           <div className="relative h-[20px] mb-2 text-xs md:text-sm">
-            {['1x', '2x', '3x', '4x', '5x', '6x', '7x', '8x', '9x', '10x'].map(
-              (label, i) => (
-                <span
-                  className={`absolute top-0 cursor-pointer translate-x-[-50%] ${
-                    currentLeverage === i + 1 && 'text-accent'
-                  }`}
-                  key={`label-${label}`}
-                  onClick={() => setCurrentLeverage(i + 1)}
-                  style={{ left: `${(i / 9) * 100}%` }}
-                >
-                  {label}
-                </span>
-              )
-            )}
+            {[1, 5, 10, 20, 30, 40, 50].map((label, i) => (
+              <span
+                className={`absolute top-0 cursor-pointer translate-x-[-50%] ${
+                  currentLeverage === label && 'text-accent'
+                }`}
+                key={`label-${label}`}
+                onClick={() => setCurrentLeverage(label)}
+                style={{
+                  left: `${
+                    (label /
+                      (maxLeverage ? Number(formatEther(maxLeverage)) : 50)) *
+                    100
+                  }%`
+                }}
+              >
+                {label}x
+              </span>
+            ))}
           </div>
 
           <Range
@@ -286,12 +290,6 @@ export default function Leverage({ marketData }: LeverageProps) {
             setCurrentValue={(val: number) => setCurrentLeverage(val)}
             step={1}
           />
-
-          <div className="flex justify-between pt-2 text-white/50 text-xs">
-            <span>{'<'} Repay</span>
-
-            <span>Borrow {'>'}</span>
-          </div>
         </div>
       </div>
 
