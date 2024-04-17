@@ -1,30 +1,34 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-// import { Gasbot } from '@gasbot/widget';
+import '@gasbot/widget/style.css';
+import { Gasbot } from '@gasbot/widget';
+import { useWeb3ModalEvents } from '@web3modal/wagmi/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-// import '@gasbot/widget/style.css';
+import { createWalletClient, custom } from 'viem';
+import { useWalletClient } from 'wagmi';
 
 import ConnectButton from './ConnectButton';
-
-// import { useEthersSigner } from '@ui/hooks/useEthersSigner';
-// import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
-  // const signer = useEthersSigner();
 
-  // useEffect(()=>{
-  //   console.log(pathbox.current.getElementsByClassName(pathname));
+  const events = useWeb3ModalEvents();
+  const { data } = useWalletClient();
 
-  // },[pathname])
+  const client = !data
+    ? null
+    : createWalletClient({
+        transport: custom(data?.transport)
+      });
+
   return (
     <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black">
       <div className="absolute w-full top-full left-0 bg-lime text-center p-2 text-darkone text-sm font-medium">
-        Hello, Mode! Ionic is open for lending and borrowing! Supply assets to
-        earn Ionic points. Borrow to earn multiplied points!
+        Hello, Mode! Ionic is open for lending and borrowing! Supply ETH, USDC,
+        USDT, or WBTC to earn Ionic points. Borrow to earn multiplied points!
       </div>
       <Link
         className={`flex items-center  md:pr-10  `}
@@ -91,9 +95,11 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-          {/* <Gasbot.CustomRender
+          <Gasbot.CustomRender
+            data-events={events}
             limitDestination={34443}
-            walletClientOrSigner={signer}
+            // @ts-ignore
+            walletClientOrSigner={client}
           >
             {({ openGasbotModal }) => (
               <Link
@@ -108,7 +114,7 @@ export default function Navbar() {
                 </p>
               </Link>
             )}
-          </Gasbot.CustomRender> */}
+          </Gasbot.CustomRender>
           {/* <Link href={`/market`}>
             <p
               className={`${
