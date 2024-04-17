@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { Listbox, Transition } from '@headlessui/react';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { base, mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 
 import PoolRows from './_components/markets/PoolRows';
 import type { PopupMode } from './_components/popup/page';
@@ -18,27 +20,30 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-type UiConfig = {
-  logo: string;
-  name: string;
-};
-const chainUiConfig: Record<number, UiConfig> = {
-  [mode.id]: {
-    logo: '/img/logo/MODE.png',
-    name: 'Mode Market'
-  },
-  [base.id]: {
-    logo: '/img/logo/BASE.png',
+function classNames(...classes: boolean[] | string[]) {
+  return classes.filter(Boolean).join(' ');
+}
+
+const people = [
+  {
+    avatar: '/img/logo/BASE.png',
+    id: base.id,
     name: 'Base Market'
+  },
+  {
+    avatar: '/img/logo/MODE.png',
+    id: mode.id,
+    name: 'Mode Market'
   }
-};
+];
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [selected, setSelected] = useState(people[0]);
   const chainId = useChainId();
-  const config = chainUiConfig[chainId];
+  const { switchChain } = useSwitchChain();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     '0',
     chainId
@@ -66,16 +71,97 @@ export default function Market() {
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
-          <div className={`flex items-center justify-center gap-2 py-3 pt-2 `}>
-            <img
-              alt="modlogo"
-              className={`w-8`}
-              src={config.logo}
-            />
-            <h1 className={`font-semibold`}>{config.name}</h1>
-          </div>
+          <Listbox
+            onChange={(event) => {
+              setSelected(event);
+              switchChain({ chainId: event.id });
+            }}
+            value={selected}
+          >
+            {({ open }) => (
+              <>
+                <div className="relative mt-2">
+                  <Listbox.Button className="relative w-full cursor-default rounded-md bg-grayone py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                    <span className="flex items-center">
+                      <img
+                        alt=""
+                        className="h-5 w-5 flex-shrink-0 rounded-full"
+                        src={selected.avatar}
+                      />
+                      <span className="ml-3 block truncate">
+                        {selected.name}
+                      </span>
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                      <ChevronUpDownIcon
+                        aria-hidden="true"
+                        className="h-5 w-5 text-gray-400"
+                      />
+                    </span>
+                  </Listbox.Button>
+
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    show={open}
+                  >
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-grayone py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                      {people.map((person) => (
+                        <Listbox.Option
+                          className={({ active }) =>
+                            classNames(
+                              active ? 'bg-accent text-white' : 'text-white',
+                              'relative cursor-default select-none py-2 pl-3 pr-9'
+                            )
+                          }
+                          key={person.id}
+                          value={person}
+                        >
+                          {({ selected, active }) => (
+                            <>
+                              <div className="flex items-center">
+                                <img
+                                  alt=""
+                                  className="h-5 w-5 flex-shrink-0 rounded-full"
+                                  src={person.avatar}
+                                />
+                                <span
+                                  className={classNames(
+                                    selected ? 'font-semibold' : 'font-normal',
+                                    'ml-3 block truncate'
+                                  )}
+                                >
+                                  {person.name}
+                                </span>
+                              </div>
+
+                              {selected ? (
+                                <span
+                                  className={classNames(
+                                    active ? 'text-white' : 'text-indigo-600',
+                                    'absolute inset-y-0 right-0 flex items-center pr-4'
+                                  )}
+                                >
+                                  <CheckIcon
+                                    aria-hidden="true"
+                                    className="h-5 w-5"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </>
+            )}
+          </Listbox>
           <ResultHandler isLoading={isLoadingPoolData}>
-            <div className={`w-full flex flex-wrap items-center gap-4`}>
+            <div className={`w-full flex flex-wrap items-center gap-4 pt-4`}>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >

@@ -83,6 +83,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.19",
+    "@heroicons/react": "^2.1.3",
     "@ionicprotocol/chains": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
