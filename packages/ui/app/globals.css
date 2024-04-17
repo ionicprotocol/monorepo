@@ -90,6 +90,18 @@
   border-color: #dffe00;
 }
 
+.bg-baseblue {
+  background: #0052ff;
+}
+
+.text-baseblue {
+  color: #0052ff;
+}
+
+.border-baseblue {
+  border-color: #0052ff;
+}
+
 .text-xxs {
   font-size: 0.6rem;
   line-height: 0.75rem;
