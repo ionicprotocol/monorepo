@@ -1,12 +1,12 @@
-import { JsonRpcProvider, Provider } from "@ethersproject/providers";
+import { JsonRpcProvider } from "@ethersproject/providers";
 import { base, bsc, ganache, mode } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { IonicSdk } from "../src";
-import { WETH } from "../typechain/WETH";
 import { SignerOrProvider } from "../src/IonicSdk";
+import { WETH } from "../typechain/WETH";
 
 let ionicSdk: IonicSdk;
 
@@ -163,7 +163,7 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         signer = await ethers.getNamedSigner(signerOrProviderOrSignerName);
       }
       if (JsonRpcProvider.isProvider(signerOrProviderOrSignerName) || Signer.isSigner(signerOrProviderOrSignerName)) {
-        signer = signerOrProviderOrSignerName;
+        signer = signerOrProviderOrSignerName as SignerOrProvider;
       } else {
         signer = await ethers.getSigners()[0];
       }
