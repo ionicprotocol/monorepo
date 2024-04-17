@@ -4,11 +4,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+import { base } from 'viem/chains';
+import { useChainId } from 'wagmi';
 // import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
-import { useChainId } from 'wagmi';
-import { base, mode } from 'viem/chains';
 
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";

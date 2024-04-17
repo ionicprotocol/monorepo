@@ -2,12 +2,12 @@
 'use client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
+import { mode } from 'viem/chains';
 
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { mode } from 'viem/chains';
 
 interface IRows {
   asset: string;
