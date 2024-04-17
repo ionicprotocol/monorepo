@@ -81,7 +81,11 @@ export default function Market() {
             {({ open }) => (
               <>
                 <div className="relative mt-2">
-                  <Listbox.Button className="relative w-full cursor-default rounded-md bg-grayone py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                  <Listbox.Button
+                    className={`${
+                      chainId === base.id ? 'ring-baseblue' : 'ring-lime'
+                    } relative w-full cursor-default rounded-md bg-grayone py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-2 ring-inset focus:outline-none sm:text-sm sm:leading-6`}
+                  >
                     <span className="flex items-center">
                       <img
                         alt=""

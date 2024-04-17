@@ -90,6 +90,10 @@
   border-color: #dffe00;
 }
 
+.ring-lime {
+  --tw-ring-color: #dffe00;
+}
+
 .bg-baseblue {
   background: #0052ff;
 }
@@ -100,6 +104,10 @@
 
 .border-baseblue {
   border-color: #0052ff;
+}
+
+.ring-baseblue {
+  --tw-ring-color: #0052ff;
 }
 
 .text-xxs {
