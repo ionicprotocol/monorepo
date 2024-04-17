@@ -32,17 +32,26 @@ export type LeverageProps = {
   marketData: PoolData;
 };
 
+const ENABLED_LEVERAGE_SYMBOLS = ['USDT', 'USDC', 'WBTC', 'WETH'];
+
 export default function Leverage({ marketData }: LeverageProps) {
+  const availableAssets = useMemo(
+    () =>
+      marketData.assets.filter(
+        (asset) => ENABLED_LEVERAGE_SYMBOLS.indexOf(asset.underlyingSymbol) > -1
+      ),
+    [marketData]
+  );
   const chainId = useChainId();
   const { currentSdk, levatoSdk, address } = useMultiIonic();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedFundingAsset, setSelectedFundingAsset] = useState<MarketData>(
-    marketData.assets[0]
+    availableAssets[0]
   );
   const [selectedCollateralAsset, setSelectedCollateralAsset] =
-    useState<MarketData>(marketData.assets[1]);
+    useState<MarketData>(availableAssets[1]);
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<MarketData>(
-    marketData.assets[2]
+    availableAssets[2]
   );
   const [fundingAmount, setFundingAmount] = useState<string>();
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
@@ -110,7 +119,7 @@ export default function Leverage({ marketData }: LeverageProps) {
     selectedBorrowAsset.cToken
   );
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
-    marketData.assets.map((asset) => asset.underlyingToken)
+    availableAssets.map((asset) => asset.underlyingToken)
   );
 
   /**
@@ -225,7 +234,7 @@ export default function Leverage({ marketData }: LeverageProps) {
     <div>
       <Amount
         amount={collateralAmount}
-        availableAssets={marketData.assets}
+        availableAssets={availableAssets}
         handleInput={() => {}}
         isLoading={false}
         mainText="Borrow"
@@ -241,7 +250,7 @@ export default function Leverage({ marketData }: LeverageProps) {
 
       <Amount
         amount={fundingAmount}
-        availableAssets={marketData.assets}
+        availableAssets={availableAssets}
         handleInput={(val?: string) => setFundingAmount(val)}
         isLoading={isLoadingMaxSupplyAmount}
         mainText="Funding"
