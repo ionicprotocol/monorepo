@@ -18,9 +18,7 @@ export const useLiquidationThreshold = (
         throw new Error('Error while fetching liquidation threshold');
       }
 
-      console.log(collateralAmount);
-
-      const liquidationThreshold = await levatoSdk?.getLiquidationThreshold(
+      const liquidationThreshold = await levatoSdk.getLiquidationThreshold(
         collateralAsset,
         collateralAmount,
         borrowedAsset,

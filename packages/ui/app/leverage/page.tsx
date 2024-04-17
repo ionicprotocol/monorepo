@@ -12,7 +12,8 @@ export default function Page() {
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
-    chainId
+    chainId,
+    true
   );
 
   return (

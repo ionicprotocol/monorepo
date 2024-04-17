@@ -1,7 +1,12 @@
 'use client';
 
 import { constants } from 'ethers';
-import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
+import {
+  formatEther,
+  formatUnits,
+  parseEther,
+  parseUnits
+} from 'ethers/lib/utils';
 import millify from 'millify';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -17,11 +22,11 @@ import ResultHandler from './ResultHandler';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowRates } from '@ui/hooks/levato/useBorrowRates';
+import { useLiquidationThreshold } from '@ui/hooks/levato/useLiquidationThreshold';
 import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { useLiquidationThreshold } from '@ui/hooks/levato/useLiquidationThreshold';
 
 export type LeverageProps = {
   marketData: PoolData;
@@ -36,46 +41,62 @@ export default function Leverage({ marketData }: LeverageProps) {
   );
   const [selectedCollateralAsset, setSelectedCollateralAsset] =
     useState<MarketData>(marketData.assets[1]);
-  const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<MarketData>(
-    marketData.assets[2]
-  );
+  const [selectedPositionAsset, setSelectedPositionAsset] =
+    useState<MarketData>(marketData.assets[2]);
   const [fundingAmount, setFundingAmount] = useState<string>();
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
 
-  const { borrowAmount, collateralAmount, positionValue } = useMemo(() => {
-    const borrowToFundingRatio =
-      Number(formatEther(selectedBorrowAsset.underlyingPrice)) /
-      Number(formatEther(selectedFundingAsset.underlyingPrice));
-    const collateralToFundingRatio =
-      Number(formatEther(selectedCollateralAsset.underlyingPrice)) /
-      Number(formatEther(selectedFundingAsset.underlyingPrice));
-    const borrowAmount = (
-      (Number(fundingAmount ?? '0') / borrowToFundingRatio) *
-      currentLeverage
-    ).toFixed(Number(selectedBorrowAsset.underlyingDecimals.toString()));
-    const collateralAmount = (
-      (Number(fundingAmount ?? '0') / collateralToFundingRatio) *
-      currentLeverage
-    ).toFixed(Number(selectedCollateralAsset.underlyingDecimals.toString()));
-    const positionValue = !!usdPrice
-      ? Number(borrowAmount) *
-        (usdPrice * Number(formatEther(selectedBorrowAsset.underlyingPrice)))
-      : 0;
+  const { debtValue, positionAmount, collateralAmount, positionValue } =
+    useMemo(() => {
+      const positionToFundingRatio =
+        Number(formatEther(selectedPositionAsset.underlyingPrice)) /
+        Number(formatEther(selectedFundingAsset.underlyingPrice));
+      const collateralToFundingRatio =
+        Number(formatEther(selectedCollateralAsset.underlyingPrice)) /
+        Number(formatEther(selectedFundingAsset.underlyingPrice));
+      const positionAmount = (
+        (Number(fundingAmount ?? '0') / positionToFundingRatio) *
+        currentLeverage
+      ).toFixed(Number(selectedPositionAsset.underlyingDecimals.toString()));
+      const collateralAmount = (
+        (Number(fundingAmount ?? '0') / collateralToFundingRatio) *
+        (currentLeverage - 1)
+      ).toFixed(Number(selectedCollateralAsset.underlyingDecimals.toString()));
+      const fundingValue = !!usdPrice
+        ? Number(fundingAmount ?? '0') *
+          usdPrice *
+          Number(formatEther(selectedFundingAsset.underlyingPrice))
+        : 0;
+      const positionValue = fundingValue * currentLeverage;
+      const debtValue = positionValue - fundingValue;
 
-    return {
-      borrowAmount,
-      borrowToFundingRatio,
+      return {
+        collateralAmount,
+        debtValue,
+        positionAmount,
+        positionToFundingRatio,
+        positionValue
+      };
+    }, [
+      currentLeverage,
+      fundingAmount,
+      selectedPositionAsset,
+      selectedCollateralAsset,
+      selectedFundingAsset,
+      usdPrice
+    ]);
+  const {
+    data: liquidationThreshold,
+    isLoading: isLoadingLiquidationThreshold
+  } = useLiquidationThreshold(
+    selectedCollateralAsset.underlyingToken,
+    parseUnits(
       collateralAmount,
-      positionValue
-    };
-  }, [
-    currentLeverage,
-    fundingAmount,
-    selectedBorrowAsset,
-    selectedCollateralAsset,
-    selectedFundingAsset,
-    usdPrice
-  ]);
+      selectedCollateralAsset.underlyingDecimals
+    ).toString(),
+    selectedPositionAsset.underlyingToken,
+    parseEther(currentLeverage.toString()).toString()
+  );
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
     useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
@@ -87,30 +108,10 @@ export default function Leverage({ marketData }: LeverageProps) {
         collateralAmount,
         selectedCollateralAsset.underlyingDecimals
       ).toString(),
-      selectedBorrowAsset.cToken
+      selectedPositionAsset.cToken
     );
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
     marketData.assets.map((asset) => asset.underlyingToken)
-  );
-  const {
-    data: liquidationThreshold,
-    isLoading: isLoadingLiquidationThreshold
-  } = useLiquidationThreshold(
-    selectedCollateralAsset.underlyingToken,
-    parseUnits(
-      collateralAmount,
-      selectedCollateralAsset.underlyingDecimals
-    ).toString(),
-    selectedBorrowAsset.underlyingToken,
-    currentLeverage.toString()
-  );
-
-  console.log(
-    liquidationThreshold,
-    parseUnits(
-      collateralAmount,
-      selectedCollateralAsset.underlyingDecimals
-    ).toString()
   );
 
   /**
@@ -179,7 +180,7 @@ export default function Leverage({ marketData }: LeverageProps) {
 
       const tx = await levatoSdk.openPosition(
         selectedCollateralAsset.underlyingToken,
-        selectedBorrowAsset.underlyingToken,
+        selectedPositionAsset.underlyingToken,
         amountAsBInt,
         selectedFundingAsset.underlyingToken,
         currentLeverage.toString()
@@ -204,7 +205,7 @@ export default function Leverage({ marketData }: LeverageProps) {
       });
 
       toast.success(
-        `Opened position for ${selectedFundingAsset.underlyingSymbol}/${selectedBorrowAsset.underlyingSymbol}`
+        `Opened position for ${selectedFundingAsset.underlyingSymbol}/${selectedPositionAsset.underlyingSymbol}`
       );
     } catch (error) {
       console.error(error);
@@ -224,15 +225,17 @@ export default function Leverage({ marketData }: LeverageProps) {
   return (
     <div>
       <Amount
-        amount={borrowAmount}
+        amount={positionAmount}
         availableAssets={marketData.assets}
         handleInput={() => {}}
         isLoading={false}
         mainText="Borrow"
         readonly
-        selectedMarketData={selectedBorrowAsset}
-        setSelectedAsset={(asset: MarketData) => setSelectedBorrowAsset(asset)}
-        symbol={selectedBorrowAsset.underlyingSymbol}
+        selectedMarketData={selectedPositionAsset}
+        setSelectedAsset={(asset: MarketData) =>
+          setSelectedPositionAsset(asset)
+        }
+        symbol={selectedPositionAsset.underlyingSymbol}
       />
 
       <div className="separator" />
@@ -278,7 +281,7 @@ export default function Leverage({ marketData }: LeverageProps) {
 
           <Range
             currentValue={currentLeverage}
-            max={Number(maxLeverage ? formatEther(maxLeverage) : '10')}
+            max={Number(maxLeverage ? formatEther(maxLeverage) : '50')}
             min={1}
             setCurrentValue={(val: number) => setCurrentLeverage(val)}
             step={1}
@@ -313,7 +316,7 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingBorrowRates}
             width="16"
           >
-            {borrowRates?.get(selectedBorrowAsset.underlyingToken)}
+            {borrowRates?.get(selectedPositionAsset.underlyingToken)}
           </ResultHandler>
         </span>
       </div>
@@ -322,14 +325,27 @@ export default function Leverage({ marketData }: LeverageProps) {
         className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>Debt value</span>
-        <span className={`font-bold pl-2 text-white`}>$0.00</span>
+        <span className={`font-bold pl-2 text-white`}>
+          ${millify(debtValue)}
+        </span>
       </div>
 
       <div
         className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
         <span className={``}>Liquidation threshold</span>
-        <span className={`font-bold pl-2 text-white`}>$0.00</span>
+        <span className={`font-bold pl-2 text-white`}>
+          <ResultHandler
+            height="16"
+            isLoading={isLoadingLiquidationThreshold}
+            width="16"
+          >
+            $
+            {millify(
+              Number(formatEther(liquidationThreshold ?? '0')) * (usdPrice ?? 0)
+            )}
+          </ResultHandler>
+        </span>
       </div>
 
       <div className="separator" />
