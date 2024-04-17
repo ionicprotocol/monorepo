@@ -2,6 +2,7 @@
 'use client';
 import '@gasbot/widget/style.css';
 import { Gasbot } from '@gasbot/widget';
+import type { GasbotConfig } from '@gasbot/widget';
 import { useWeb3ModalEvents } from '@web3modal/wagmi/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -96,10 +97,12 @@ export default function Navbar() {
             </p>
           </Link>
           <Gasbot.CustomRender
+            accentColor="#3AFE89"
             data-events={events}
             limitDestination={34443}
-            // @ts-ignore
-            walletClientOrSigner={client}
+            walletClientOrSigner={
+              client as GasbotConfig['walletClientOrSigner']
+            }
           >
             {({ openGasbotModal }) => (
               <Link
