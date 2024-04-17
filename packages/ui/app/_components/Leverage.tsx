@@ -101,15 +101,14 @@ export default function Leverage({ marketData }: LeverageProps) {
     useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
-  const { data: maxLeverage, isLoading: isLoadingMaxLeverage } =
-    useMaxLeverageAmount(
-      selectedCollateralAsset.cToken,
-      parseUnits(
-        collateralAmount,
-        selectedCollateralAsset.underlyingDecimals
-      ).toString(),
-      selectedPositionAsset.cToken
-    );
+  const { data: maxLeverage } = useMaxLeverageAmount(
+    selectedCollateralAsset.cToken,
+    parseUnits(
+      collateralAmount,
+      selectedCollateralAsset.underlyingDecimals
+    ).toString(),
+    selectedPositionAsset.cToken
+  );
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
     marketData.assets.map((asset) => asset.underlyingToken)
   );
@@ -340,7 +339,13 @@ export default function Leverage({ marketData }: LeverageProps) {
           >
             $
             {millify(
-              Number(formatEther(liquidationThreshold ?? '0')) * (usdPrice ?? 0)
+              Number(
+                formatEther(
+                  liquidationThreshold
+                    ? liquidationThreshold.mul(parseEther('1'))
+                    : '0'
+                )
+              ) / (usdPrice ?? 0)
             )}
           </ResultHandler>
         </span>
