@@ -56,7 +56,7 @@ export default function Leverage({ marketData }: LeverageProps) {
   const [selectedCollateralAsset, setSelectedCollateralAsset] =
     useState<MarketData>(availableAssets[1]);
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<MarketData>(
-    availableAssets[0]
+    availableAssets[2]
   );
   const [fundingAmount, setFundingAmount] = useState<string>();
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
@@ -107,11 +107,21 @@ export default function Leverage({ marketData }: LeverageProps) {
     data: liquidationThreshold,
     isLoading: isLoadingLiquidationThreshold
   } = useLiquidationThreshold(
-    selectedBorrowAsset.underlyingToken,
-    parseUnits(borrowAmount, selectedBorrowAsset.underlyingDecimals).toString(),
     leverageMode === LeverageMode.LONG
       ? selectedCollateralAsset.underlyingToken
       : selectedBorrowAsset.underlyingToken,
+    leverageMode === LeverageMode.LONG
+      ? parseUnits(
+          collateralAmount,
+          selectedCollateralAsset.underlyingDecimals
+        ).toString()
+      : parseUnits(
+          borrowAmount,
+          selectedBorrowAsset.underlyingDecimals
+        ).toString(),
+    leverageMode === LeverageMode.LONG
+      ? selectedBorrowAsset.underlyingToken
+      : selectedCollateralAsset.underlyingToken,
     parseEther(currentLeverage.toString()).toString()
   );
   const { liquidationThresholdValue, healthRatio } = useMemo(() => {
