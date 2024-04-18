@@ -13,6 +13,7 @@ import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useChainId } from 'wagmi';
 
+import AssetsList from './AssetsList';
 import Amount from './popup/Amount';
 import TransactionStepsHandler, {
   useTransactionSteps
@@ -28,7 +29,6 @@ import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import AssetsList from './AssetsList';
 
 enum LeverageMode {
   LONG,
@@ -333,7 +333,7 @@ export default function Leverage({ marketData }: LeverageProps) {
 
         <div className="w-full">
           <div className="relative h-[20px] mb-2 text-xs md:text-sm">
-            {[1, 5, 10, 20, 30, 40, 50].map((label, i) => (
+            {[1, 5, 10, 20, 30, 40, 50].map((label) => (
               <span
                 className={`absolute top-0 cursor-pointer translate-x-[-50%] ${
                   currentLeverage === label && 'text-accent'
