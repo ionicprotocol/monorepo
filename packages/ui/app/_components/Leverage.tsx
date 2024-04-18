@@ -114,6 +114,19 @@ export default function Leverage({ marketData }: LeverageProps) {
       : selectedBorrowAsset.underlyingToken,
     parseEther(currentLeverage.toString()).toString()
   );
+  const { liquidationThresholdValue, healthRatio } = useMemo(() => {
+    const liquidationThresholdValue =
+      Number(
+        formatEther(
+          liquidationThreshold ? liquidationThreshold.mul(parseEther('1')) : '0'
+        )
+      ) / (usdPrice ?? 0);
+    const healthRatio = !!liquidationThresholdValue
+      ? (positionValue / liquidationThresholdValue).toFixed(2)
+      : 0.0;
+
+    return { healthRatio, liquidationThresholdValue };
+  }, [liquidationThreshold, usdPrice, positionValue]);
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
     useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
@@ -382,16 +395,22 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingLiquidationThreshold}
             width="16"
           >
-            $
-            {millify(
-              Number(
-                formatEther(
-                  liquidationThreshold
-                    ? liquidationThreshold.mul(parseEther('1'))
-                    : '0'
-                )
-              ) / (usdPrice ?? 0)
-            )}
+            ${millify(liquidationThresholdValue)}
+          </ResultHandler>
+        </span>
+      </div>
+
+      <div
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
+      >
+        <span className={``}>Health ratio</span>
+        <span className={`font-bold pl-2 text-white`}>
+          <ResultHandler
+            height="16"
+            isLoading={isLoadingLiquidationThreshold}
+            width="16"
+          >
+            {healthRatio}
           </ResultHandler>
         </span>
       </div>
