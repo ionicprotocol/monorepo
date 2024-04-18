@@ -4,10 +4,10 @@ import { parseUnits } from 'ethers/lib/utils.js';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 
+import AssetsList from '../AssetsList';
 import ResultHandler from '../ResultHandler';
 
 import type { MarketData } from '@ui/types/TokensDataMap';
-import AssetsList from '../AssetsList';
 
 interface IAmount {
   amount?: string;
