@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import ResultHandler from '../ResultHandler';
 
 import type { MarketData } from '@ui/types/TokensDataMap';
+import AssetsList from '../AssetsList';
 
 interface IAmount {
   amount?: string;
@@ -145,34 +146,14 @@ const Amount = ({
         </div>
 
         {availableAssets && (
-          <div
-            className={`absolute w-[180px] top-full right-0 px-4 py-3 origin-top-right rounded-lg bg-grayone transition-all ${
-              availableAssetsOpen
-                ? 'visible opacity-100 scale-100 z-50'
-                : 'opacity-0 scale-90 invisible'
-            }`}
-          >
-            {availableAssets.map((asset) => (
-              <div
-                className="flex py-1 items-center font-bold text-white cursor-pointer"
-                key={`asset-${asset.underlyingSymbol}`}
-                onClick={() => {
-                  setSelectedAsset && setSelectedAsset(asset);
-                  setAvailableAssetsOpen(false);
-                }}
-              >
-                <img
-                  alt="link"
-                  height="20"
-                  src={`/img/symbols/32/color/${asset.underlyingSymbol?.toLowerCase()}.png`}
-                  width="20"
-                />
-                <span className={`text-white pl-2`}>
-                  {asset.underlyingSymbol}
-                </span>
-              </div>
-            ))}
-          </div>
+          <AssetsList
+            availableAssets={availableAssets}
+            isOpen={availableAssetsOpen}
+            onChange={(asset) => {
+              setSelectedAsset && setSelectedAsset(asset);
+              setAvailableAssetsOpen(false);
+            }}
+          />
         )}
       </div>
     </div>
