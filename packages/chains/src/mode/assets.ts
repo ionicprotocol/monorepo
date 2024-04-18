@@ -14,6 +14,7 @@ export const BAL = "0xD08a2917653d4E460893203471f0000826fb4034";
 export const AAVE = "0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2";
 export const ezETH = "0x2416092f143378750bb29b79eD961ab195CcEea5";
 export const weETH = "0x028227c4dd1e5419d11Bb6fa6e661920c519D4F5";
+export const wrsETH = "0xe7903B1F75C534Dd8159b313d92cDCfbC62cB3Cd";
 
 export const assets: SupportedAsset[] = [
   {
@@ -63,6 +64,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.RedstoneAdapterPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", weETH)
+  },
+  {
+    symbol: assetSymbols.wrsETH,
+    underlying: wrsETH,
+    name: "rsETHWrapper",
+    decimals: 18,
+    oracle: OracleTypes.RedstoneAdapterWrsETHPriceOracle,
+    extraDocs: defaultDocs("https://explorer.mode.network", wrsETH)
   },
   {
     symbol: assetSymbols.UNI,

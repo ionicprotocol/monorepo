@@ -7,6 +7,7 @@ import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 const assetsSortingOrder = [
+  'wrsETH',
   'ezETH',
   'weETH',
   'STONE',
