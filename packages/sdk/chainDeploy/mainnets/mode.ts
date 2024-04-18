@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
 import { deployRedStonePriceOracle } from "../helpers/oracles/redstone";
+import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
 import { PythAsset, RedStoneAsset } from "../helpers/types";
 
 export const deployConfig: ChainDeployConfig = {
@@ -54,6 +55,12 @@ const redStoneAssets: RedStoneAsset[] = [
   }
 ];
 
+const redStoneWrsETHAssets: RedStoneAsset[] = [
+  {
+    underlying: underlying(mode.assets, assetSymbols.wrsETH)
+  }
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   await deployPythPriceOracle({
     run,
@@ -75,6 +82,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployments,
     redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
     redStoneAssets
+  });
+
+  await deployRedStoneWrsETHPriceOracle({
+    run,
+    deployConfig,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
+    redStoneAssets: redStoneWrsETHAssets
   });
 
   const deployer = await ethers.getNamedSigner("deployer");
