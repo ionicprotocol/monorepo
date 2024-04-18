@@ -8,6 +8,7 @@ import {
   parseUnits
 } from 'ethers/lib/utils';
 import millify from 'millify';
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useChainId } from 'wagmi';
@@ -27,6 +28,7 @@ import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import AssetsList from './AssetsList';
 
 enum LeverageMode {
   LONG,
@@ -63,6 +65,7 @@ export default function Leverage({ marketData }: LeverageProps) {
   const [leverageMode, setLeverageMode] = useState<LeverageMode>(
     LeverageMode.LONG
   );
+  const [borrowSelectOpen, setBorrowSelectOpen] = useState<boolean>(false);
 
   const { borrowAmount, debtValue, collateralAmount, positionValue } =
     useMemo(() => {
@@ -356,6 +359,52 @@ export default function Leverage({ marketData }: LeverageProps) {
             min={1}
             setCurrentValue={(val: number) => setCurrentLeverage(val)}
             step={1}
+          />
+        </div>
+      </div>
+
+      <div className="separator" />
+
+      <div
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
+      >
+        <span className={``}>
+          {leverageMode === LeverageMode.LONG ? 'Borrowed' : 'Collateral'} asset
+        </span>
+        <div className={`relative font-bold pl-2 text-white `}>
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => setBorrowSelectOpen(!borrowSelectOpen)}
+          >
+            <Image
+              alt="link"
+              className="mr-1"
+              height="20"
+              src={`/img/symbols/32/color/${selectedBorrowAsset.underlyingSymbol.toLowerCase()}.png`}
+              width="20"
+            />
+
+            {selectedBorrowAsset.underlyingSymbol}
+
+            <Image
+              alt="link"
+              height="24"
+              src={`/images/chevron-down.png`}
+              width="24"
+            />
+          </div>
+
+          <AssetsList
+            availableAssets={availableAssets.filter(
+              (asset) =>
+                asset.underlyingSymbol !==
+                selectedCollateralAsset.underlyingSymbol
+            )}
+            isOpen={borrowSelectOpen}
+            onChange={(asset) => {
+              setSelectedBorrowAsset(asset);
+              setBorrowSelectOpen(false);
+            }}
           />
         </div>
       </div>

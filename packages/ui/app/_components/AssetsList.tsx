@@ -16,7 +16,7 @@ export default function AssetsList({
 }: AssetsListProps) {
   return (
     <div
-      className={`absolute w-[180px] top-full right-0 px-4 py-3 origin-top-right rounded-lg bg-grayone transition-all ${
+      className={`absolute w-[180px] top-full right-0 px-4 py-3 origin-top-right rounded-lg text-lg bg-grayone transition-all ${
         isOpen
           ? 'visible opacity-100 scale-100 z-50'
           : 'opacity-0 scale-90 invisible'
