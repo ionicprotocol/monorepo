@@ -41,6 +41,9 @@
   .grid-cols-16 {
     grid-template-columns: repeat(16, minmax(0, 1fr));
   }
+  .grid-cols-15 {
+    grid-template-columns: repeat(15, minmax(0, 1fr));
+  }
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
