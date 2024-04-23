@@ -9,13 +9,14 @@ import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 const assetsSortingOrder = [
   'wrsETH',
   'ezETH',
-  'weETH',
+  'weETH.mode',
   'STONE',
   'M-BTC',
   'WETH',
   'WBTC',
   'USDC',
-  'USDT'
+  'USDT',
+  'weETH'
 ];
 
 export const useFusePoolData = (poolId: string, poolChainId: number) => {

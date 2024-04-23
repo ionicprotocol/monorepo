@@ -15,9 +15,9 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     // assetSymbols.UNI,
     // assetSymbols.WBTC
     // assetSymbols.AAVE
-    // assetSymbols.weETH,
+    assetSymbols.weETH
     // assetSymbols.wrsETH,
-    assetSymbols.mBTC
+    // assetSymbols.mBTC
   ];
 
   for (let i = 0; i < symbols.length; i++) {
@@ -25,7 +25,7 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     const asset = assetFilter(modeAssets, symbol);
     await run("market:deploy", {
       signer: "deployer",
-      cf: "64.5",
+      cf: "70",
       underlying: asset.underlying,
       comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
       symbol: "ion" + asset.symbol,
