@@ -19,9 +19,9 @@ export default function Page() {
 
   return (
     <>
-      <div className={`flex`}>
+      <div className={`md:flex`}>
         <div
-          className={`grow-0 shrink-0 basis-[450px] mr-4 bg-grayone rounded-xl py-3 px-6`}
+          className={`grow-0 shrink-0 basis-[350px] lg:basis-[450px] md:mr-4 md:mb-0 bg-grayone rounded-xl py-3 px-6 mb-2 `}
         >
           <ResultHandler
             center
