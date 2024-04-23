@@ -1,20 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import type { LeveragedPositionsLens } from 'levato-sdk';
+
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 /**
  * Get positions info
  */
 export const useGetPositionsInfoQuery = () => {
-  // const { levatoSdk, address } = useMultiIonic();
+  const { levatoSdk, address } = useMultiIonic();
 
   return useQuery({
-    // enabled: !!levatoSdk && !!address,
-    initialData: [
+    enabled: !!levatoSdk && !!address,
+    initialData: () => [
       [
         {
           borrowedAssetPrice: BigNumber.from('0'),
           closed: false,
-          collateralAsset: '0x4200000000000000000000000000000000000006',
+          collateralAsset: '0xcDd475325D6F564d27247D1DddBb0DAc6fA0a5CF',
           collateralAssetPrice: BigNumber.from('0'),
           debtAmount: BigNumber.from('0'),
           debtRatio: BigNumber.from('0'),
@@ -33,7 +36,7 @@ export const useGetPositionsInfoQuery = () => {
           positionValue: BigNumber.from('0'),
           rewardsApy: BigNumber.from('0'),
           safetyBuffer: BigNumber.from('0'),
-          stableAsset: '0xcDd475325D6F564d27247D1DddBb0DAc6fA0a5CF'
+          stableAsset: '0x4200000000000000000000000000000000000006'
         }
       ],
       [
@@ -63,42 +66,42 @@ export const useGetPositionsInfoQuery = () => {
         }
       ]
     ],
-    // queryFn: async (): Promise<
-    //   [
-    //     LeveragedPositionsLens.PositionInfoStructOutput[],
-    //     LeveragedPositionsLens.PositionInfoStructOutput[]
-    //   ]
-    // > => {
-    //   if (!address || !levatoSdk) {
-    //     throw new Error('Error while fetching position info!');
-    //   }
+    queryFn: async (): Promise<
+      [
+        LeveragedPositionsLens.PositionInfoStructOutput[],
+        LeveragedPositionsLens.PositionInfoStructOutput[]
+      ]
+    > => {
+      throw new Error('testing');
+      if (!address || !levatoSdk) {
+        throw new Error('Error while fetching position info!');
+      }
 
-    //   const [positions] =
-    //     await levatoSdk.factoryContract.callStatic.getPositionsByAccount(
-    //       address
-    //     );
+      const [positions] =
+        await levatoSdk.factoryContract.callStatic.getPositionsByAccount(
+          address
+        );
 
-    //   const apys = positions.map(() => '0');
-    //   const positionsData =
-    //     await levatoSdk.lensContract.callStatic.getPositionsInfo(
-    //       JSON.parse(JSON.stringify(positions)),
-    //       apys
-    //     );
-    //   const openPositions: LeveragedPositionsLens.PositionInfoStructOutput[] =
-    //     [];
-    //   const closedPositions: LeveragedPositionsLens.PositionInfoStructOutput[] =
-    //     [];
+      const apys = positions.map(() => '0');
+      const positionsData =
+        await levatoSdk.lensContract.callStatic.getPositionsInfo(
+          JSON.parse(JSON.stringify(positions)),
+          apys
+        );
+      const openPositions: LeveragedPositionsLens.PositionInfoStructOutput[] =
+        [];
+      const closedPositions: LeveragedPositionsLens.PositionInfoStructOutput[] =
+        [];
 
-    //   for (let i = 0; i < positionsData.length; i++) {
-    //     positionsData[i].closed
-    //       ? closedPositions.push(positionsData[i])
-    //       : openPositions.push(positionsData[i]);
-    //   }
+      for (let i = 0; i < positionsData.length; i++) {
+        positionsData[i].closed
+          ? closedPositions.push(positionsData[i])
+          : openPositions.push(positionsData[i]);
+      }
 
-    //   // Reverse to sort them in descending order
-    //   return [openPositions.reverse(), closedPositions.reverse()];
-    // },
-    // queryKey: ['positions', address],
-    structuralSharing: false
+      // Reverse to sort them in descending order
+      return [openPositions.reverse(), closedPositions.reverse()];
+    },
+    queryKey: ['positions', address]
   });
 };
