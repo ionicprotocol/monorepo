@@ -1,4 +1,4 @@
-import { assetFilter, assetSymbols, MarketConfig, underlying } from "@ionicprotocol/types";
+import { assetFilter, assetSymbols, MarketConfig } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
@@ -16,7 +16,8 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     // assetSymbols.WBTC
     // assetSymbols.AAVE
     // assetSymbols.weETH,
-    assetSymbols.wrsETH
+    // assetSymbols.wrsETH,
+    assetSymbols.mBTC
   ];
 
   for (let i = 0; i < symbols.length; i++) {
@@ -24,7 +25,7 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     const asset = assetFilter(modeAssets, symbol);
     await run("market:deploy", {
       signer: "deployer",
-      cf: "70",
+      cf: "64.5",
       underlying: asset.underlying,
       comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
       symbol: "ion" + asset.symbol,

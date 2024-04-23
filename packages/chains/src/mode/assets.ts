@@ -15,6 +15,7 @@ export const AAVE = "0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2";
 export const ezETH = "0x2416092f143378750bb29b79eD961ab195CcEea5";
 export const weETH = "0x028227c4dd1e5419d11Bb6fa6e661920c519D4F5";
 export const wrsETH = "0xe7903B1F75C534Dd8159b313d92cDCfbC62cB3Cd";
+export const mBTC = "0x59889b7021243dB5B1e065385F918316cD90D46c";
 
 export const assets: SupportedAsset[] = [
   {
@@ -120,6 +121,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18, // TODO verify
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", AAVE)
+  },
+  {
+    symbol: assetSymbols.mBTC,
+    underlying: mBTC,
+    name: "Merlin BTC",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    extraDocs: defaultDocs("https://explorer.mode.network", mBTC)
   }
 ];
 
