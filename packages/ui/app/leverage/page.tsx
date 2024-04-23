@@ -4,6 +4,7 @@ import React from 'react';
 import { useChainId } from 'wagmi';
 
 import Leverage from '../_components/Leverage';
+import LeveragedPositionsInfo from '../_components/LeveragedPositionsInfo';
 import ResultHandler from '../_components/ResultHandler';
 
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -33,7 +34,7 @@ export default function Page() {
         <div
           className={`grow-0 shrink-1 basis-[100%] bg-grayone rounded-xl py-3 px-6`}
         >
-          test
+          <LeveragedPositionsInfo />
         </div>
       </div>
     </>
