@@ -4,9 +4,9 @@ import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
 import { deployRedStonePriceOracle } from "../helpers/oracles/redstone";
+import { deployRedStoneWeETHPriceOracle } from "../helpers/oracles/redstoneWeETH";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
 import { PythAsset, RedStoneAsset } from "../helpers/types";
-import { deployRedStoneWeETHPriceOracle } from "../helpers/oracles/redstoneWeETH";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
@@ -70,37 +70,37 @@ const redStoneWeETHAssets: RedStoneAsset[] = [
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
-  // await deployPythPriceOracle({
-  //   run,
-  //   deployConfig,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   usdToken: mode.chainAddresses.STABLE_TOKEN,
-  //   pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
-  //   pythAssets,
-  //   nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
-  // });
+  await deployPythPriceOracle({
+    run,
+    deployConfig,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    usdToken: mode.chainAddresses.STABLE_TOKEN,
+    pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
+    pythAssets,
+    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
+  });
 
-  // await deployRedStonePriceOracle({
-  //   run,
-  //   deployConfig,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
-  //   redStoneAssets
-  // });
+  await deployRedStonePriceOracle({
+    run,
+    deployConfig,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
+    redStoneAssets
+  });
 
-  // await deployRedStoneWrsETHPriceOracle({
-  //   run,
-  //   deployConfig,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
-  //   redStoneAssets: redStoneWrsETHAssets
-  // });
+  await deployRedStoneWrsETHPriceOracle({
+    run,
+    deployConfig,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
+    redStoneAssets: redStoneWrsETHAssets
+  });
 
   await deployRedStoneWeETHPriceOracle({
     run,
@@ -112,15 +112,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     redStoneAssets: redStoneWeETHAssets
   });
 
-  // const deployer = await ethers.getNamedSigner("deployer");
-  // const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
-  //   from: deployer.address,
-  //   args: [],
-  //   log: true,
-  //   waitConfirmations: 1
-  // });
-  // if (algebraSwapLiquidator.transactionHash) {
-  //   await ethers.provider.waitForTransaction(algebraSwapLiquidator.transactionHash);
-  // }
-  // console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
+  const deployer = await ethers.getNamedSigner("deployer");
+  const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
+    from: deployer.address,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (algebraSwapLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(algebraSwapLiquidator.transactionHash);
+  }
+  console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
 };
