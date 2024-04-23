@@ -11,6 +11,7 @@ const assetsSortingOrder = [
   'ezETH',
   'weETH',
   'STONE',
+  'M-BTC',
   'WETH',
   'WBTC',
   'USDC',

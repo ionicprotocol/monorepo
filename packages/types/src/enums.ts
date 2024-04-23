@@ -184,19 +184,25 @@ export enum assetOriginalSymbols {
 }
 
 export enum assetSymbols {
-  // agnostic
+  // mode
   WETH = "WETH",
-  DAI = "DAI",
+  ezETH = "ezETH",
+  weETH = "weETH",
+  wrsETH = "wrsETH",
   ETH = "ETH",
-  AUTO = "AUTO",
-  BIFI = "BIFI",
   USDC = "USDC",
   USDT = "USDT",
+  WBTC = "WBTC",
+  mBTC = "M-BTC",
+
+  // legacy
+  DAI = "DAI",
+  AUTO = "AUTO",
+  BIFI = "BIFI",
   UST = "UST",
   TUSD = "TUSD",
   FRAX = "FRAX",
   FTM = "FTM",
-  WBTC = "WBTC",
   BAL = "BAL",
   BTC = "BTC",
   LINK = "LINK",
@@ -217,11 +223,8 @@ export enum assetSymbols {
   UNI = "UNI",
   SOL = "SOL",
   SUSHI = "SUSHI",
-  YFI = "YFI",
-  ezETH = "ezETH",
-  weETH = "weETH",
-  wrsETH = "wrsETH",
 
+  YFI = "YFI",
   // bsc
   WBNB = "WBNB",
   BNB = "BNB",
