@@ -66,6 +66,7 @@ prod-plan:
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_liquidation_sendgrid_api_key=${SENDGRID_API_KEY} && \
 	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_infura_api_key=${INFURA_API_KEY} && \
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
@@ -80,6 +81,7 @@ prod-deploy:
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_liquidation_sendgrid_api_key=${SENDGRID_API_KEY} && \
 	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_infura_api_key=${INFURA_API_KEY} && \
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
