@@ -39,6 +39,9 @@ variable "liquidation_discord_webhook_url" {
   type = string
 }
 
+variable "liquidation_sendgrid_api_key" {
+  type = string
+}
 
 variable "supabase_key" {
   type = string
