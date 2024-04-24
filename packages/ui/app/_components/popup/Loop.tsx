@@ -991,14 +991,14 @@ export default function Loop({
                 </ResultHandler>
               </div>
 
-              <div
+              {/* <div
                 className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
               >
                 <span className={``}>Annual yield</span>
                 <span className={`flex text-sm font-bold pl-2 text-white`}>
                   TODO
                 </span>
-              </div>
+              </div> */}
             </div>
 
             <div className={`separator lg:hidden`} />
