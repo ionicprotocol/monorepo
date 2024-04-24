@@ -164,6 +164,12 @@
     "RedstoneAdapterPriceOracle": {
       "address": "0x63A1531a06F0Ac597a0DfA5A516a37073c3E1e0a"
     },
+    "RedstoneAdapterPriceOracleWeETH": {
+      "address": "0x9c0819E3235c8fF74e79f0caBb51ec477603DE78"
+    },
+    "RedstoneAdapterPriceOracleWrsETH": {
+      "address": "0xE3643FD41095658cDF063e15f5cb30A5738979e8"
+    },
     "SimplePriceOracle": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"
     },
