@@ -626,6 +626,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during supplying!');
         }
 
@@ -761,6 +763,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during borrowing!');
         }
 
