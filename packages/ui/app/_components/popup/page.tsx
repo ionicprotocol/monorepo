@@ -691,6 +691,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during withdrawing!');
         }
 
@@ -866,6 +868,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during repaying!');
         }
 
