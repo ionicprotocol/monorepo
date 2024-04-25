@@ -690,7 +690,7 @@ const Popup = ({
         console.warn(
           'Withdraw params:',
           selectedMarketData.cToken,
-          amountToWithdraw
+          amountToWithdraw.toString()
         );
 
         const { tx, errorCode } = await currentSdk.withdraw(
@@ -875,7 +875,9 @@ const Popup = ({
           'Repay params:',
           selectedMarketData.cToken,
           isRepayingMax,
-          isRepayingMax ? selectedMarketData.borrowBalance : amountAsBInt
+          isRepayingMax
+            ? selectedMarketData.borrowBalance.toString()
+            : amountAsBInt.toString()
         );
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
