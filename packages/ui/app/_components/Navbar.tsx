@@ -139,6 +139,21 @@ export default function Navbar() {
               Bridge
             </p>
           </Link>
+          <Link
+            className="relative"
+            href="/earn"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={` ${
+                pathname == '/earn' ? 'text-accent' : null
+              } hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              Earn
+            </p>
+          </Link>
         </div>
 
         <div className="flex items-center md:justify-center gap-4 my-auto uppercase connect-button">
