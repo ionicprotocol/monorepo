@@ -3,6 +3,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
+import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
@@ -58,7 +59,7 @@ const PoolRows = ({
           className="h-7"
           src={logo}
         />
-        <h3 className={` `}>{asset === 'weETH' ? 'weETH (OLD)' : asset}</h3>
+        <h3 className={` `}>{getAssetName(asset)}</h3>
       </div>
       <h3
         className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}

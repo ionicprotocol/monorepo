@@ -626,6 +626,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during supplying!');
         }
 
@@ -685,12 +687,20 @@ const Popup = ({
       try {
         const amountToWithdraw = amountAsBInt;
 
+        console.warn(
+          'Withdraw params:',
+          selectedMarketData.cToken,
+          amountToWithdraw.toString()
+        );
+
         const { tx, errorCode } = await currentSdk.withdraw(
           selectedMarketData.cToken,
           amountToWithdraw
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during withdrawing!');
         }
 
@@ -759,6 +769,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during borrowing!');
         }
 
@@ -859,6 +871,14 @@ const Popup = ({
         currentTransactionStep++;
 
         const isRepayingMax = amountAsBInt.gte(maxRepayAmount ?? '0');
+        console.warn(
+          'Repay params:',
+          selectedMarketData.cToken,
+          isRepayingMax,
+          isRepayingMax
+            ? selectedMarketData.borrowBalance.toString()
+            : amountAsBInt.toString()
+        );
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
           isRepayingMax,
@@ -866,6 +886,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during repaying!');
         }
 
