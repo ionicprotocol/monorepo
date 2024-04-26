@@ -16,7 +16,7 @@ export default function EarnRows({
   asset = ['ionUSDC', 'ionUSDT'],
   apr = 5,
   network = 'MODE',
-  protocol = 'Balancer',
+  protocol = 'Steer',
   tvl = 1200
 }: IEarnRow) {
   // const ;
