@@ -714,6 +714,8 @@ export default function Loop({
 
       await tx.wait();
 
+      setAmount(undefined);
+
       upsertTransactionStep({
         index: currentTransactionStep,
         transactionStep: {
@@ -862,6 +864,8 @@ export default function Loop({
       });
 
       await tx.wait();
+
+      setAmount(undefined);
 
       upsertTransactionStep({
         index: currentTransactionStep,
