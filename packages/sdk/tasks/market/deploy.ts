@@ -17,6 +17,8 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     // assetSymbols.WBTC
     // assetSymbols.AAVE
     assetSymbols.weETH
+    // assetSymbols.wrsETH,
+    // assetSymbols.mBTC
   ];
 
   for (let i = 0; i < symbols.length; i++) {
@@ -119,7 +121,7 @@ task("market:deploy", "deploy market")
         collateralFactorBN
       );
 
-      console.log(populatedTx.data);
+      console.log(populatedTx);
     } else {
       // Test Transaction
       const errorCode = await comptroller.callStatic._deployMarket(
