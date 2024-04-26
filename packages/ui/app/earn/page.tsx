@@ -30,8 +30,9 @@ export default function Lend() {
   }, []);
   return (
     <>
-      <h1 className="mb-4 text-center text-white/40 ">
-        ✨ Add here something to explain what earning opportunities are{' '}
+      <h1 className="mb-4 text-center text-white/80 ">
+        ✨ Earn extra yield using the opportunities listed to make use of your
+        Ionic deposits! ✨
       </h1>
       <div className="flex flex-col items-start justify-start px-6 rounded-2xl bg-graylite dark:bg-grayone w-full  ">
         <div
@@ -43,7 +44,7 @@ export default function Lend() {
           <h1 className="col-span-1"> APR</h1>
           <h1 className="col-span-1"> TVL</h1>
           <h1 className="col-span-3"> </h1>
-          <h1 className="col-span-2"> DEPOSIT </h1>
+          <h1 className="col-span-2"> </h1>
         </div>
 
         {/* this will get mapped out in future with the possible api data structure mentioned below */}
