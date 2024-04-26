@@ -24,7 +24,7 @@ function classNames(...classes: boolean[] | string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-const people = [
+const markets = [
   {
     avatar: '/img/logo/BASE.png',
     id: base.id,
@@ -39,14 +39,16 @@ const people = [
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const { currentSdk } = useMultiIonic();
+  const { getSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
-  const [selected, setSelected] = useState(people[0]);
   const chainId = useChainId();
+  const market = markets.find((market) => market.id === chainId);
+  const [selectedMarket, setSelectedMarket] = useState(market ?? markets[0]);
+  const sdk = getSdk(market?.id ?? base.id);
   const { switchChain } = useSwitchChain();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     '0',
-    chainId
+    selectedMarket.id
   );
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
@@ -73,27 +75,29 @@ export default function Market() {
         >
           <Listbox
             onChange={(event) => {
-              setSelected(event);
+              setSelectedMarket(event);
               switchChain({ chainId: event.id });
             }}
-            value={selected}
+            value={selectedMarket}
           >
             {({ open }) => (
               <>
                 <div className="relative mt-2">
                   <Listbox.Button
                     className={`${
-                      chainId === base.id ? 'ring-baseblue' : 'ring-lime'
+                      selectedMarket.id === base.id
+                        ? 'ring-baseblue'
+                        : 'ring-lime'
                     } relative w-full cursor-default rounded-md bg-grayone py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-2 ring-inset focus:outline-none sm:text-sm sm:leading-6`}
                   >
                     <span className="flex items-center">
                       <img
                         alt=""
                         className="h-5 w-5 flex-shrink-0 rounded-full"
-                        src={selected.avatar}
+                        src={selectedMarket.avatar}
                       />
                       <span className="ml-3 block truncate">
-                        {selected.name}
+                        {selectedMarket.name}
                       </span>
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
@@ -112,7 +116,7 @@ export default function Market() {
                     show={open}
                   >
                     <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-grayone py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                      {people.map((person) => (
+                      {markets.map((person) => (
                         <Listbox.Option
                           className={({ active }) =>
                             classNames(
@@ -292,10 +296,10 @@ export default function Market() {
                   <PoolRows
                     asset={val.underlyingSymbol}
                     borrowAPR={`${
-                      currentSdk
+                      sdk
                         ?.ratePerBlockToAPY(
                           val?.borrowRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(chainId)
+                          getBlockTimePerMinuteByChainId(selectedMarket.id)
                         )
                         .toFixed(2) ?? '0.00'
                     }%`}
@@ -325,10 +329,10 @@ export default function Market() {
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
                     supplyAPR={`${
-                      currentSdk
+                      sdk
                         ?.ratePerBlockToAPY(
                           val?.supplyRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(chainId)
+                          getBlockTimePerMinuteByChainId(selectedMarket.id)
                         )
                         .toFixed(2) ?? '0.00'
                     }%`}

@@ -321,7 +321,7 @@ const Popup = ({
       case PopupMode.SUPPLY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxSupplyAmount?.bigNumber
+          (maxSupplyAmount?.bigNumber && maxSupplyAmount?.bigNumber.gt(0)
             ? Number(formatEther(maxSupplyAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -332,7 +332,9 @@ const Popup = ({
       case PopupMode.WITHDRAW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxWithdrawAmount ? Number(formatEther(maxWithdrawAmount)) : 1);
+          (maxWithdrawAmount && maxWithdrawAmount.gt(0)
+            ? Number(formatEther(maxWithdrawAmount))
+            : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
@@ -341,7 +343,7 @@ const Popup = ({
       case PopupMode.BORROW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxBorrowAmount?.bigNumber
+          (maxBorrowAmount?.bigNumber && maxBorrowAmount?.bigNumber.gt(0)
             ? Number(formatEther(maxBorrowAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -1191,6 +1193,7 @@ const Popup = ({
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
+                      chainId={chainId}
                       resetTransactionSteps={resetTransactionSteps}
                       transactionSteps={transactionSteps}
                     />
@@ -1271,6 +1274,7 @@ const Popup = ({
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
+                      chainId={chainId}
                       resetTransactionSteps={resetTransactionSteps}
                       transactionSteps={transactionSteps}
                     />
@@ -1420,6 +1424,7 @@ const Popup = ({
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
+                      chainId={chainId}
                       resetTransactionSteps={resetTransactionSteps}
                       transactionSteps={transactionSteps}
                     />
@@ -1503,6 +1508,7 @@ const Popup = ({
                 >
                   {transactionSteps.length > 0 ? (
                     <TransactionStepsHandler
+                      chainId={chainId}
                       resetTransactionSteps={resetTransactionSteps}
                       transactionSteps={transactionSteps}
                     />
