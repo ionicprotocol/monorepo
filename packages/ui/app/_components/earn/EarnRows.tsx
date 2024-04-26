@@ -1,6 +1,6 @@
 'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
 interface IEarnRow {
   apr?: number | string;
@@ -14,9 +14,9 @@ interface IEarnRow {
 
 export default function EarnRows({
   asset = ['ionUSDC', 'ionUSDT'],
-  protocol = 'Balancer',
-  network = 'MODE',
   apr = 5,
+  network = 'MODE',
+  protocol = 'Balancer',
   tvl = 1200
 }: IEarnRow) {
   // const ;
@@ -27,20 +27,23 @@ export default function EarnRows({
           ASSET
         </span>
         <div className={` flex ml-auto md:ml-0 `}>
-          {asset.map((coin: any, idx: number) => (
+          {asset.map((coin: string, idx: number) => (
             <img
-              src={`/img/logo/${coin}.png`}
               alt="logos"
-              key={idx}
               className={` w-5 h-5  top-0 left-0 ${
                 idx !== 0 && ' -translate-x-1'
               } `}
+              key={idx}
+              src={`/img/logo/${coin}.png`}
             />
           ))}
         </div>
         <div>
-          {asset.map((val: any, idx: number) => (
-            <span className="text-center">
+          {asset.map((val: string, idx: number) => (
+            <span
+              className="text-center"
+              key={idx}
+            >
               {idx !== 0 && '/'}
               {val}
             </span>
@@ -54,32 +57,35 @@ export default function EarnRows({
         </span>
         {protocol}
       </p>
-      <h1 className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
+      <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
         <span className="text-white/40 text-xs font-semibold md:hidden">
           NETWORK
         </span>
         <img
-          src={`/img/logo/${network}.png`}
           alt="logos"
           className={` w-5 h-5  md:mx-auto ml-auto top-0 left-0 `}
+          src={`/img/logo/${network}.png`}
         />
-      </h1>
-      <h1 className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
+      </div>
+      <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
         <span className="text-white/40 text-xs font-semibold md:hidden">
           APR
         </span>
         {apr}%
-      </h1>
-      <h1 className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
+      </div>
+      <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
         <span className="text-white/40 text-xs font-semibold md:hidden">
           TVL
         </span>
         ${+tvl.toFixed(4)}
-      </h1>
-      <h1 className="col-span-3"> </h1>
-      <Link className="col-span-2 w-max bg-accent text-darkone rounded-xl py-2 px-6 font-semibold cursor-pointer mx-auto"
-      href={'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a'}
-      target="_blank"
+      </div>
+      <div className="col-span-3"> </div>
+      <Link
+        className="col-span-2 w-max bg-accent text-darkone rounded-xl py-2 px-6 font-semibold cursor-pointer mx-auto"
+        href={
+          'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a'
+        }
+        target="_blank"
       >
         DEPOSIT
       </Link>
