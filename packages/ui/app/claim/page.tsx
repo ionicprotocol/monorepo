@@ -1,0 +1,152 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import ConnectButton from '../_components/ConnectButton';
+import ResultHandler from '../_components/ResultHandler';
+
+export default function Claim() {
+  const [eligibility, setEligibility] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [popup, setPopup] = useState<boolean>(false);
+  const slideref = useRef<HTMLDivElement>(null!);
+
+  function eligibilitySlide(val: number) {
+    if (!slideref.current) return;
+    slideref.current.style.transform = `translateX(${val * -100}%)`;
+  }
+
+  function checkEligibility() {
+    setPopup(true);
+    // the checking from the api will be done here
+
+    // the loading will be set here
+    // setLoading()
+
+    // logic goes here
+    // ...Claim logic............
+
+    // setting the wallet if it is eligible or not
+    // setEligibility()
+  }
+  return (
+    <div
+      className={`w-full bg-graylite dark:bg-grayone  flex overflow-x-hidden rounded-xl relative `}
+    >
+      <div
+        className={`flex w-full  transition-all duration-500 ease-out `}
+        ref={slideref}
+      >
+        <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
+          <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wider md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
+            <p>Welcome to the </p> <p>$ION Airdrop </p>
+            <button
+              onClick={() => eligibilitySlide(1)}
+              className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
+            >
+              Check Eligibility
+            </button>
+          </div>
+          <div className="grid grid-cols-3 ml-auto gap-3">
+            {[...Array(6)].map((_, index) => (
+              <img
+                className="md:w-36 w-10  "
+                key={index}
+                src={'/img/ionEllipse.png'}
+                alt={`Image ${index}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div
+          className={`min-w-full px-10 py-8 transition-all duration-200 ease-linear flex md:flex-row flex-col items-start justify-start  `}
+        >
+          <div>
+            <div
+              className="w-full relative  items-center justify-center gap-x-2  cursor-pointer group"
+              onClick={() => eligibilitySlide(0)}
+            >
+              <img
+                className={`w-3 h-3 group-hover:opacity-60 transition-all absolute top-1/2 -translate-y-1/2 -left-6 ease-linear`}
+                src="https://img.icons8.com/ios/50/ffffff/back--v1.png"
+                alt="back--v1"
+              />
+
+              <p className="w-full  group-hover:text-white/60 transition-all  ease-linear text-lg">
+                {' '}
+                Check Eligibility{' '}
+              </p>
+            </div>
+
+            <div className={`bg-accent w-max my-2 rounded-xl text-black`}>
+              <ConnectButton />
+            </div>
+            <button
+              onClick={() => checkEligibility()}
+              className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm mb-4 font-semibold`}
+            >
+              Check
+            </button>
+
+            <p className="md:w-[30%] text-sm text-white/60 w-full">
+              $ION airdrop will be send out to the confirmed eligible wallet
+              addresses by the Ionic Team. Once you sign in with your wallet, no
+              further actions needs to be taken
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 md:ml-auto mt-6 md:mt-0 gap-3">
+            {[...Array(6)].map((_, index) => (
+              <img
+                className="md:w-36 w-10  "
+                key={index}
+                src={'/img/ionEllipse.png'}
+                alt={`Image ${index}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      {popup && (
+        <div
+          className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
+        >
+          <div
+            className={`md:w-[30%] w-[70%] bg-grayone py-4 px-2 rounded-xl  flex flex-col items-center justify-center min-h-[20vh]`}
+          >
+            <ResultHandler isLoading={loading}>
+              {eligibility ? (
+                <div className="flex flex-col my-auto items-center justify-center">
+                  <img
+                    className="md:w-6 w-6 mb-2 "
+                    key={'id'}
+                    src={'/img/success.png'}
+                    alt={`Image `}
+                  />
+                  <span className='text-center'> You are eligible </span>
+                </div>
+              ) : (
+                <div className="flex flex-col my-auto items-center justify-center">
+                  <img
+                    className="md:w-6 w-6  mb-2"
+                    key={'id'}
+                    src={'/img/failure.png'}
+                    alt={`Image `}
+                  />
+                  <span className='text-center'> You are NOT eligible </span>
+                </div>
+              )}
+            </ResultHandler>
+
+            <button
+              onClick={() => setPopup(false)}
+              className={`mt-auto w-full bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm `}
+            >
+              Back to Claim
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
