@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+
 import ConnectButton from '../_components/ConnectButton';
 import ResultHandler from '../_components/ResultHandler';
 
@@ -20,13 +21,13 @@ export default function Claim() {
     // the checking from the api will be done here
 
     // the loading will be set here
-    // setLoading()
+    setLoading(false);
 
     // logic goes here
     // ...Claim logic............
 
     // setting the wallet if it is eligible or not
-    // setEligibility()
+    setEligibility(true);
   }
   return (
     <div
@@ -40,8 +41,8 @@ export default function Claim() {
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wider md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
             <button
-              onClick={() => eligibilitySlide(1)}
               className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
+              onClick={() => eligibilitySlide(1)}
             >
               Check Eligibility
             </button>
@@ -49,10 +50,10 @@ export default function Claim() {
           <div className="grid grid-cols-3 ml-auto gap-3">
             {[...Array(6)].map((_, index) => (
               <img
+                alt={`Image ${index}`}
                 className="md:w-36 w-10  "
                 key={index}
                 src={'/img/ionEllipse.png'}
-                alt={`Image ${index}`}
               />
             ))}
           </div>
@@ -67,9 +68,9 @@ export default function Claim() {
               onClick={() => eligibilitySlide(0)}
             >
               <img
+                alt="back--v1"
                 className={`w-3 h-3 group-hover:opacity-60 transition-all absolute top-1/2 -translate-y-1/2 -left-6 ease-linear`}
                 src="https://img.icons8.com/ios/50/ffffff/back--v1.png"
-                alt="back--v1"
               />
 
               <p className="w-full  group-hover:text-white/60 transition-all  ease-linear text-lg">
@@ -82,8 +83,8 @@ export default function Claim() {
               <ConnectButton />
             </div>
             <button
-              onClick={() => checkEligibility()}
               className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm mb-4 font-semibold`}
+              onClick={() => checkEligibility()}
             >
               Check
             </button>
@@ -98,10 +99,10 @@ export default function Claim() {
           <div className="grid grid-cols-3 md:ml-auto mt-6 md:mt-0 gap-3">
             {[...Array(6)].map((_, index) => (
               <img
+                alt={`Image ${index}`}
                 className="md:w-36 w-10  "
                 key={index}
                 src={'/img/ionEllipse.png'}
-                alt={`Image ${index}`}
               />
             ))}
           </div>
@@ -118,29 +119,29 @@ export default function Claim() {
               {eligibility ? (
                 <div className="flex flex-col my-auto items-center justify-center">
                   <img
+                    alt={`Image `}
                     className="md:w-6 w-6 mb-2 "
                     key={'id'}
                     src={'/img/success.png'}
-                    alt={`Image `}
                   />
-                  <span className='text-center'> You are eligible </span>
+                  <span className="text-center"> You are eligible </span>
                 </div>
               ) : (
                 <div className="flex flex-col my-auto items-center justify-center">
                   <img
+                    alt={`Image `}
                     className="md:w-6 w-6  mb-2"
                     key={'id'}
                     src={'/img/failure.png'}
-                    alt={`Image `}
                   />
-                  <span className='text-center'> You are NOT eligible </span>
+                  <span className="text-center"> You are NOT eligible </span>
                 </div>
               )}
             </ResultHandler>
 
             <button
-              onClick={() => setPopup(false)}
               className={`mt-auto w-full bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm `}
+              onClick={() => setPopup(false)}
             >
               Back to Claim
             </button>

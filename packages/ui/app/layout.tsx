@@ -24,7 +24,7 @@ createWeb3Modal({
     '--w3m-accent': '#3bff89ff',
     '--w3m-color-mix': '#0a0a0aff'
   },
-  wagmiConfig 
+  wagmiConfig
 });
 
 const queryClient = new QueryClient();
