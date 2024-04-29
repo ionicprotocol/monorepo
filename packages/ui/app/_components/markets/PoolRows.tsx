@@ -15,6 +15,7 @@ interface IRows {
   borrowBalance: string;
   collateralFactor: number;
   logo: string;
+  loopPossible: boolean;
   membership: boolean;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
@@ -34,6 +35,7 @@ const PoolRows = ({
   supplyAPR,
   borrowAPR,
   logo,
+  loopPossible,
   setSelectedSymbol,
   setPopupMode
 }: IRows) => {
@@ -275,7 +277,7 @@ const PoolRows = ({
                 setPopupMode(PopupMode.BORROW);
               }}
             >
-              Borrow / Repay
+              Borrow / Repay {loopPossible && '/ Loop'}
             </button>
           </>
         ) : (

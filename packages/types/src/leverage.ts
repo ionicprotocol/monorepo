@@ -61,6 +61,8 @@ export interface PositionInfo {
   debtRatio: BigNumber;
   liquidationThreshold: BigNumber;
   safetyBuffer: BigNumber;
+  collateralAssetPrice: BigNumber;
+  borrowedAssetPrice: BigNumber;
 }
 
 export type LeveragePoolConfig = { pool: string; pairs: LeveragePair[] };

@@ -19,7 +19,7 @@ export type InfoRowsProps = {
   membership: boolean;
   mode: InfoMode;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
-  setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
+  setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
 };
 

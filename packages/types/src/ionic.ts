@@ -55,6 +55,7 @@ export interface NativePricedIonicAsset extends IonicAsset {
   utilization: number;
 
   extraDocs?: string;
+  exchangeRate: BigNumber;
 
   borrowGuardianPaused: boolean;
   mintGuardianPaused: boolean;

@@ -14,10 +14,12 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
+import Loop from './Loop';
 import SliderComponent from './Slider';
 import Tab from './Tab';
-import type { TransactionStep } from './TransactionStepsHandler';
-import TransactionStepsHandler from './TransactionStepsHandler';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -26,6 +28,7 @@ import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForP
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
@@ -39,55 +42,26 @@ export enum PopupMode {
   SUPPLY = 1,
   WITHDRAW,
   BORROW,
-  REPAY
+  REPAY,
+  LOOP
 }
 
 interface IPopup {
   closePopup: () => void;
   comptrollerAddress: string;
+  loopMarkets?: LoopMarketData;
   mode?: PopupMode;
   selectedMarketData: MarketData;
 }
 const Popup = ({
   mode = PopupMode.SUPPLY,
+  loopMarkets,
   selectedMarketData,
   closePopup,
   comptrollerAddress
 }: IPopup) => {
-  const [transactionSteps, upsertTransactionStep] = useReducer(
-    (
-      prevState: TransactionStep[],
-      updatedStep:
-        | { index: number; transactionStep: TransactionStep }
-        | undefined
-    ): TransactionStep[] => {
-      if (!updatedStep) {
-        return [];
-      }
-
-      const currentSteps = prevState.slice();
-
-      currentSteps[updatedStep.index] = {
-        ...currentSteps[updatedStep.index],
-        ...updatedStep.transactionStep
-      };
-
-      if (
-        updatedStep.transactionStep.error &&
-        updatedStep.index + 1 < currentSteps.length
-      ) {
-        for (let i = updatedStep.index + 1; i < currentSteps.length; i++) {
-          currentSteps[i] = {
-            ...currentSteps[i],
-            error: true
-          };
-        }
-      }
-
-      return currentSteps;
-    },
-    []
-  );
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
@@ -290,6 +264,7 @@ const Popup = ({
     selectedMarketData.membership && selectedMarketData.supplyBalance.gt('0')
   );
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [loopOpen, setLoopOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   /**
@@ -321,7 +296,7 @@ const Popup = ({
       case PopupMode.SUPPLY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxSupplyAmount?.bigNumber
+          (maxSupplyAmount?.bigNumber && maxSupplyAmount.number > 0
             ? Number(formatEther(maxSupplyAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -332,7 +307,9 @@ const Popup = ({
       case PopupMode.WITHDRAW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxWithdrawAmount ? Number(formatEther(maxWithdrawAmount)) : 1);
+          (maxWithdrawAmount && maxWithdrawAmount.gt(0)
+            ? Number(formatEther(maxWithdrawAmount))
+            : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
@@ -341,7 +318,7 @@ const Popup = ({
       case PopupMode.BORROW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxBorrowAmount?.bigNumber
+          (maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
             ? Number(formatEther(maxBorrowAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -352,8 +329,16 @@ const Popup = ({
       case PopupMode.REPAY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxRepayAmount ? Number(formatEther(maxRepayAmount)) : 1);
+          (maxRepayAmount && maxRepayAmount.gt(0)
+            ? Number(formatEther(maxRepayAmount))
+            : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
+
+        break;
+      }
+
+      case PopupMode.LOOP: {
+        setLoopOpen(true);
 
         break;
       }
@@ -361,9 +346,9 @@ const Popup = ({
   }, [
     amountAsBInt,
     active,
-    maxBorrowAmount?.bigNumber,
+    maxBorrowAmount,
     maxRepayAmount,
-    maxSupplyAmount?.bigNumber,
+    maxSupplyAmount,
     maxWithdrawAmount
   ]);
 
@@ -401,7 +386,7 @@ const Popup = ({
 
         break;
     }
-  }, [active, mode]);
+  }, [active, mode, upsertTransactionStep]);
 
   const initiateCloseAnimation = () => setIsMounted(false);
 
@@ -490,12 +475,6 @@ const Popup = ({
           ) ?? '0.0'
         )
       ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()))
-    );
-  };
-
-  const addStepsForAction = (steps: TransactionStep[]) => {
-    steps.forEach((step, i) =>
-      upsertTransactionStep({ index: i, transactionStep: step })
     );
   };
 
@@ -593,7 +572,7 @@ const Popup = ({
 
         currentTransactionStep++;
 
-        if (enableCollateral) {
+        if (enableCollateral && !selectedMarketData.membership) {
           const tx = await currentSdk.enterMarkets(
             selectedMarketData.cToken,
             comptrollerAddress
@@ -1059,496 +1038,538 @@ const Popup = ({
   };
 
   return (
-    <div
-      className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/25 flex transition-opacity duration-300 overflow-y-auto animate-fade-in ${
-        isMounted && 'animated'
-      }`}
-    >
+    <>
       <div
-        className={`w-[85%] sm:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
+        className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/25 flex transition-opacity duration-300 overflow-y-auto animate-fade-in ${
           isMounted && 'animated'
         }`}
       >
-        <img
-          alt="close"
-          className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
-          onClick={initiateCloseAnimation}
-          src="/img/assets/close.png"
-        />
-        <div className={`flex w-20 mx-auto mt-4 mb-2 relative text-center`}>
-          <img
-            alt="modlogo"
-            className="mx-auto"
-            height="32"
-            src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
-            width="32"
-          />
-        </div>
-        <Tab
-          active={active}
-          mode={mode}
-          setActive={setActive}
-        />
-        {/* all the respective slides */}
-
         <div
-          className={`w-full transition-all duration-300 ease-linear h-min  flex`}
-          ref={slide}
+          className={`w-[85%] sm:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
+            isMounted && 'animated'
+          }`}
         >
-          {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
-            <>
-              {/* ---------------------------------------------------------------------------- */}
-              {/* SUPPLY-Collateral section */}
-              {/* ---------------------------------------------------------------------------- */}
-              <div className={`min-w-full py-5 px-[6%] h-min `}>
-                <Amount
-                  amount={amount}
-                  handleInput={(val?: string) => setAmount(val)}
-                  isLoading={isLoadingMaxSupply}
-                  max={formatUnits(
-                    maxSupplyAmount?.bigNumber ?? '0',
-                    selectedMarketData.underlyingDecimals
-                  )}
-                  selectedMarketData={selectedMarketData}
-                  symbol={selectedMarketData.underlyingSymbol}
-                />
-                <SliderComponent
-                  currentUtilizationPercentage={currentUtilizationPercentage}
-                  handleUtilization={handleSupplyUtilization}
-                />
+          <img
+            alt="close"
+            className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
+            onClick={initiateCloseAnimation}
+            src="/img/assets/close.png"
+          />
+          <div className={`flex w-20 mx-auto mt-4 mb-2 relative text-center`}>
+            <img
+              alt="modlogo"
+              className="mx-auto"
+              height="32"
+              src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
+              width="32"
+            />
+          </div>
+          <Tab
+            active={active}
+            loopPossible={
+              loopMarkets
+                ? loopMarkets[selectedMarketData.cToken].length > 0
+                : false
+            }
+            mode={mode}
+            setActive={setActive}
+          />
+          {/* all the respective slides */}
 
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-                <div
-                  className={`flex w-full items-center justify-between text-sm text-white/50 `}
-                >
-                  <span className={``}>COLLATERAL APR</span>
-                  <span className={`font-bold pl-2`}>
-                    {collateralApr}
-                    {/* to do: add the rewards to the calculation */}
-                  </span>
-                </div>
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-                <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
-                >
-                  <span className={``}>Market Supply Balance</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {supplyBalanceFrom}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {supplyBalanceTo}
-                    </ResultHandler>
-                    {/* this will be dynamic */}
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                >
-                  <span className={``}>Market Supply APR</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {`${supplyAPY?.toFixed(2)}%`}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {updatedSupplyAPY?.toFixed(2)}%
-                    </ResultHandler>
-                  </span>
-                </div>
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
+          <div
+            className={`w-full transition-all duration-300 ease-linear h-min  flex`}
+            ref={slide}
+          >
+            {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
+              <>
+                {/* ---------------------------------------------------------------------------- */}
+                {/* SUPPLY-Collateral section */}
+                {/* ---------------------------------------------------------------------------- */}
+                <div className={`min-w-full py-5 px-[6%] h-min `}>
+                  <Amount
+                    amount={amount}
+                    handleInput={(val?: string) => setAmount(val)}
+                    isLoading={isLoadingMaxSupply}
+                    max={formatUnits(
+                      maxSupplyAmount?.bigNumber ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )}
+                    selectedMarketData={selectedMarketData}
+                    symbol={selectedMarketData.underlyingSymbol}
+                  />
+                  <SliderComponent
+                    currentUtilizationPercentage={currentUtilizationPercentage}
+                    handleUtilization={handleSupplyUtilization}
+                  />
 
-                <div className="flex justify-center items-center">
-                  <ResultHandler
-                    height="80"
-                    isLoading={!totalSupplyAsNumber && !supplyCapAsNumber}
-                    width="80"
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <div
+                    className={`flex w-full items-center justify-between text-sm text-white/50 `}
                   >
-                    <div className="w-[80px] mr-4">
-                      <MemoizedDonutChart
-                        max={supplyCapAsNumber}
-                        value={totalSupplyAsNumber}
+                    <span className={``}>COLLATERAL APR</span>
+                    <span className={`font-bold pl-2`}>
+                      {collateralApr}
+                      {/* to do: add the rewards to the calculation */}
+                    </span>
+                  </div>
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
+                  >
+                    <span className={``}>Market Supply Balance</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {supplyBalanceFrom}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {supplyBalanceTo}
+                      </ResultHandler>
+                      {/* this will be dynamic */}
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Market Supply APR</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${supplyAPY?.toFixed(2)}%`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {updatedSupplyAPY?.toFixed(2)}%
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+
+                  <div className="flex justify-center items-center">
+                    <ResultHandler
+                      height="80"
+                      isLoading={!totalSupplyAsNumber && !supplyCapAsNumber}
+                      width="80"
+                    >
+                      <div className="w-[80px] mr-4">
+                        <MemoizedDonutChart
+                          max={supplyCapAsNumber}
+                          value={totalSupplyAsNumber}
+                        />
+                      </div>
+
+                      <div className="text">
+                        <div className="text-gray-400">Total Supplied:</div>
+
+                        <div className="text-white">
+                          <strong>
+                            {millify(Math.round(totalSupplyAsNumber))} of{' '}
+                            {millify(Math.round(supplyCapAsNumber))}{' '}
+                            {selectedMarketData.underlyingSymbol}
+                          </strong>
+                        </div>
+
+                        <div className="text-small text-gray-300">
+                          $
+                          {millify(
+                            Math.round(selectedMarketData.totalSupplyFiat)
+                          )}{' '}
+                          of ${millify(Math.round(supplyCapAsFiat))}
+                        </div>
+                      </div>
+                    </ResultHandler>
+                  </div>
+
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <div className="flex items-center text-sm text-white/50 uppercase">
+                    Enable collateral
+                    <div className="ml-2">
+                      <span
+                        className={`toggle ${enableCollateral && 'is-on'}`}
+                        onClick={handleCollateralToggle}
                       />
                     </div>
-
-                    <div className="text">
-                      <div className="text-gray-400">Total Supplied:</div>
-
-                      <div className="text-white">
-                        <strong>
-                          {millify(Math.round(totalSupplyAsNumber))} of{' '}
-                          {millify(Math.round(supplyCapAsNumber))}{' '}
-                          {selectedMarketData.underlyingSymbol}
-                        </strong>
-                      </div>
-
-                      <div className="text-small text-gray-300">
-                        $
-                        {millify(
-                          Math.round(selectedMarketData.totalSupplyFiat)
-                        )}{' '}
-                        of ${millify(Math.round(supplyCapAsFiat))}
-                      </div>
-                    </div>
-                  </ResultHandler>
-                </div>
-
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-                <div className="flex items-center text-sm text-white/50 uppercase">
-                  Enable collateral
-                  <div className="ml-2">
-                    <span
-                      className={`toggle ${enableCollateral && 'is-on'}`}
-                      onClick={handleCollateralToggle}
-                    />
                   </div>
+                  <div
+                    className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
+                  >
+                    {transactionSteps.length > 0 ? (
+                      <TransactionStepsHandler
+                        resetTransactionSteps={resetTransactionSteps}
+                        transactionSteps={transactionSteps}
+                      />
+                    ) : (
+                      <>
+                        <button
+                          className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
+                            amount && amountAsBInt.gt('0')
+                              ? 'bg-accent'
+                              : 'bg-stone-500'
+                          } `}
+                          onClick={() => supplyAmount()}
+                        >
+                          Supply {selectedMarketData.underlyingSymbol}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  {/* <Approved /> */}
                 </div>
-                <div
-                  className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
-                >
-                  {transactionSteps.length > 0 ? (
-                    <TransactionStepsHandler
-                      resetTransactionSteps={resetTransactionSteps}
-                      transactionSteps={transactionSteps}
-                    />
-                  ) : (
-                    <>
+                <div className={`min-w-full py-5 px-[6%] h-min`}>
+                  {/* ---------------------------------------------------------------------------- */}
+                  {/* SUPPLY-Withdraw section */}
+                  {/* ---------------------------------------------------------------------------- */}
+                  <Amount
+                    amount={amount}
+                    handleInput={(val?: string) => setAmount(val)}
+                    hintText="Max Withdraw"
+                    isLoading={isLoadingMaxWithdrawAmount}
+                    max={formatUnits(
+                      maxWithdrawAmount ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )}
+                    selectedMarketData={selectedMarketData}
+                    symbol={selectedMarketData.underlyingSymbol}
+                  />
+                  <SliderComponent
+                    currentUtilizationPercentage={currentUtilizationPercentage}
+                    handleUtilization={handleWithdrawUtilization}
+                  />
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
+                  >
+                    <span className={``}>Market Supply Balance</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {supplyBalanceFrom}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {supplyBalanceTo}
+                      </ResultHandler>
+                      {/* this will be dynamic */}
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Market Supply APR</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${supplyAPY?.toFixed(2)}%`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {updatedSupplyAPY?.toFixed(2)}%
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
+                  >
+                    {transactionSteps.length > 0 ? (
+                      <TransactionStepsHandler
+                        resetTransactionSteps={resetTransactionSteps}
+                        transactionSteps={transactionSteps}
+                      />
+                    ) : (
                       <button
                         className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
                           amount && amountAsBInt.gt('0')
                             ? 'bg-accent'
                             : 'bg-stone-500'
                         } `}
-                        onClick={() => supplyAmount()}
+                        onClick={withdrawAmount}
                       >
-                        Supply {selectedMarketData.underlyingSymbol}
+                        Withdraw {selectedMarketData.underlyingSymbol}
                       </button>
-                    </>
-                  )}
-                </div>
-                {/* <Approved /> */}
-              </div>
-              <div className={`min-w-full py-5 px-[6%] h-min`}>
-                {/* ---------------------------------------------------------------------------- */}
-                {/* SUPPLY-Withdraw section */}
-                {/* ---------------------------------------------------------------------------- */}
-                <Amount
-                  amount={amount}
-                  handleInput={(val?: string) => setAmount(val)}
-                  hintText="Max Withdraw"
-                  isLoading={isLoadingMaxWithdrawAmount}
-                  max={formatUnits(
-                    maxWithdrawAmount ?? '0',
-                    selectedMarketData.underlyingDecimals
-                  )}
-                  selectedMarketData={selectedMarketData}
-                  symbol={selectedMarketData.underlyingSymbol}
-                />
-                <SliderComponent
-                  currentUtilizationPercentage={currentUtilizationPercentage}
-                  handleUtilization={handleWithdrawUtilization}
-                />
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-
-                <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
-                >
-                  <span className={``}>Market Supply Balance</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {supplyBalanceFrom}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {supplyBalanceTo}
-                    </ResultHandler>
-                    {/* this will be dynamic */}
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                >
-                  <span className={``}>Market Supply APR</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {`${supplyAPY?.toFixed(2)}%`}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {updatedSupplyAPY?.toFixed(2)}%
-                    </ResultHandler>
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
-                >
-                  {transactionSteps.length > 0 ? (
-                    <TransactionStepsHandler
-                      resetTransactionSteps={resetTransactionSteps}
-                      transactionSteps={transactionSteps}
-                    />
-                  ) : (
-                    <button
-                      className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                        amount && amountAsBInt.gt('0')
-                          ? 'bg-accent'
-                          : 'bg-stone-500'
-                      } `}
-                      onClick={withdrawAmount}
-                    >
-                      Withdraw {selectedMarketData.underlyingSymbol}
-                    </button>
-                  )}
-                </div>
-                {/* <Approved /> */}
-              </div>
-            </>
-          )}
-          {(mode === PopupMode.BORROW || mode === PopupMode.REPAY) && (
-            <>
-              <div className={`min-w-full py-5 px-[6%] h-min`}>
-                {/* ---------------------------------------------------------------------------- */}
-                {/* SUPPLY-borrow section */}
-                {/* ---------------------------------------------------------------------------- */}
-                <Amount
-                  amount={amount}
-                  handleInput={(val?: string) => setAmount(val)}
-                  hintText="Max Borrow Amount"
-                  isLoading={isLoadingMaxBorrowAmount}
-                  max={formatUnits(
-                    maxBorrowAmount?.bigNumber ?? '0',
-                    selectedMarketData.underlyingDecimals
-                  )}
-                  selectedMarketData={selectedMarketData}
-                  symbol={selectedMarketData.underlyingSymbol}
-                />
-                <SliderComponent
-                  currentUtilizationPercentage={currentUtilizationPercentage}
-                  handleUtilization={handleBorrowUtilization}
-                />
-
-                {currentUtilizationPercentage >= 70 && (
-                  <div className="text-lime text-xs text-center">
-                    Warning: You are close to the liquidation threshold and will
-                    need to manage your health factor.
+                    )}
                   </div>
-                )}
-
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-                <div
-                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                >
-                  <span className={``}>MIN BORROW</span>
-                  <span className={`font-bold pl-2`}>
-                    {formatUnits(
-                      minBorrowAmount?.minBorrowAsset ?? '0',
+                  {/* <Approved /> */}
+                </div>
+              </>
+            )}
+            {(mode === PopupMode.BORROW || mode === PopupMode.REPAY) && (
+              <>
+                <div className={`min-w-full py-5 px-[6%] h-min`}>
+                  {/* ---------------------------------------------------------------------------- */}
+                  {/* SUPPLY-borrow section */}
+                  {/* ---------------------------------------------------------------------------- */}
+                  <Amount
+                    amount={amount}
+                    handleInput={(val?: string) => setAmount(val)}
+                    hintText="Max Borrow Amount"
+                    isLoading={isLoadingMaxBorrowAmount}
+                    max={formatUnits(
+                      maxBorrowAmount?.bigNumber ?? '0',
                       selectedMarketData.underlyingDecimals
                     )}
-                    {/* this will be dynamic */}
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                >
-                  <span className={``}>MAX BORROW</span>
-                  <span className={`font-bold pl-2`}>
-                    {maxBorrowAmount?.number?.toFixed(
-                      parseInt(selectedMarketData.underlyingDecimals.toString())
-                    ) ?? '0.00'}
-                    {/* this will be dynamic */}
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                >
-                  <span className={``}>CURRENTLY BORROWING</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {`${borrowBalanceFrom}`}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {borrowBalanceTo}
-                    </ResultHandler>
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                >
-                  <span className={``}>Market Borrow Apr</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {`${borrowAPR?.toFixed(2)}%`}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {updatedBorrowAPR?.toFixed(2)}%
-                    </ResultHandler>
-                  </span>
-                </div>
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
+                    selectedMarketData={selectedMarketData}
+                    symbol={selectedMarketData.underlyingSymbol}
+                  />
+                  <SliderComponent
+                    currentUtilizationPercentage={currentUtilizationPercentage}
+                    handleUtilization={handleBorrowUtilization}
+                  />
 
-                <div className="flex justify-center items-center">
-                  <ResultHandler
-                    height="80"
-                    isLoading={!totalBorrowAsNumber && !borrowCapAsNumber}
-                    width="80"
+                  {currentUtilizationPercentage >= 70 && (
+                    <div className="text-lime text-xs text-center">
+                      Warning: You are close to the liquidation threshold and
+                      will need to manage your health factor.
+                    </div>
+                  )}
+
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <div
+                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
                   >
-                    <div className="w-[80px] mr-4">
-                      <MemoizedDonutChart
-                        max={borrowCapAsNumber}
-                        value={totalBorrowAsNumber}
+                    <span className={``}>MIN BORROW</span>
+                    <span className={`font-bold pl-2`}>
+                      {formatUnits(
+                        minBorrowAmount?.minBorrowAsset ?? '0',
+                        selectedMarketData.underlyingDecimals
+                      )}
+                      {/* this will be dynamic */}
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
+                  >
+                    <span className={``}>MAX BORROW</span>
+                    <span className={`font-bold pl-2`}>
+                      {maxBorrowAmount?.number?.toFixed(
+                        parseInt(
+                          selectedMarketData.underlyingDecimals.toString()
+                        )
+                      ) ?? '0.00'}
+                      {/* this will be dynamic */}
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
+                  >
+                    <span className={``}>CURRENTLY BORROWING</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${borrowBalanceFrom}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {borrowBalanceTo}
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Market Borrow Apr</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${borrowAPR?.toFixed(2)}%`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {updatedBorrowAPR?.toFixed(2)}%
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+
+                  <div className="flex justify-center items-center">
+                    <ResultHandler
+                      height="80"
+                      isLoading={!totalBorrowAsNumber && !borrowCapAsNumber}
+                      width="80"
+                    >
+                      <div className="w-[80px] mr-4">
+                        <MemoizedDonutChart
+                          max={borrowCapAsNumber}
+                          value={totalBorrowAsNumber}
+                        />
+                      </div>
+
+                      <div className="text">
+                        <div className="text-gray-400">Total Borrowed:</div>
+
+                        <div className="text-white">
+                          <strong>
+                            {millify(Math.round(totalBorrowAsNumber))} of{' '}
+                            {millify(Math.round(borrowCapAsNumber))}{' '}
+                            {selectedMarketData.underlyingSymbol}
+                          </strong>
+                        </div>
+
+                        <div className="text-small text-gray-300">
+                          $
+                          {millify(
+                            Math.round(selectedMarketData.totalBorrowFiat)
+                          )}{' '}
+                          of ${millify(Math.round(borrowCapAsFiat))}
+                        </div>
+                      </div>
+                    </ResultHandler>
+                  </div>
+
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <div
+                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
+                  >
+                    {transactionSteps.length > 0 ? (
+                      <TransactionStepsHandler
+                        resetTransactionSteps={resetTransactionSteps}
+                        transactionSteps={transactionSteps}
                       />
-                    </div>
-
-                    <div className="text">
-                      <div className="text-gray-400">Total Borrowed:</div>
-
-                      <div className="text-white">
-                        <strong>
-                          {millify(Math.round(totalBorrowAsNumber))} of{' '}
-                          {millify(Math.round(borrowCapAsNumber))}{' '}
-                          {selectedMarketData.underlyingSymbol}
-                        </strong>
-                      </div>
-
-                      <div className="text-small text-gray-300">
-                        $
-                        {millify(
-                          Math.round(selectedMarketData.totalBorrowFiat)
-                        )}{' '}
-                        of ${millify(Math.round(borrowCapAsFiat))}
-                      </div>
-                    </div>
-                  </ResultHandler>
+                    ) : (
+                      <button
+                        className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
+                          amount &&
+                          amountAsBInt.gt('0') &&
+                          minBorrowAmount &&
+                          amountAsBInt.gte(
+                            minBorrowAmount.minBorrowAsset ?? '0'
+                          ) &&
+                          maxBorrowAmount &&
+                          amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0')
+                            ? 'bg-accent'
+                            : 'bg-stone-500'
+                        } `}
+                        onClick={borrowAmount}
+                      >
+                        Borrow {selectedMarketData.underlyingSymbol}
+                      </button>
+                    )}
+                  </div>
                 </div>
-
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-                <div
-                  className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
-                >
-                  {transactionSteps.length > 0 ? (
-                    <TransactionStepsHandler
-                      resetTransactionSteps={resetTransactionSteps}
-                      transactionSteps={transactionSteps}
-                    />
-                  ) : (
-                    <button
-                      className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                        amount &&
-                        amountAsBInt.gt('0') &&
-                        minBorrowAmount &&
-                        amountAsBInt.gte(
-                          minBorrowAmount.minBorrowAsset ?? '0'
-                        ) &&
-                        maxBorrowAmount &&
-                        amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0')
-                          ? 'bg-accent'
-                          : 'bg-stone-500'
-                      } `}
-                      onClick={borrowAmount}
-                    >
-                      Borrow {selectedMarketData.underlyingSymbol}
-                    </button>
-                  )}
+                <div className={`min-w-full py-5 px-[6%] h-min`}>
+                  {/* ---------------------------------------------------------------------------- */}
+                  {/* SUPPLY-repay section */}
+                  {/* ---------------------------------------------------------------------------- */}
+                  <Amount
+                    amount={amount}
+                    handleInput={(val?: string) => setAmount(val)}
+                    hintText={'Max Repay Amount'}
+                    isLoading={isLoadingMaxRepayAmount}
+                    max={formatUnits(
+                      maxRepayAmount ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )}
+                    selectedMarketData={selectedMarketData}
+                    symbol={selectedMarketData.underlyingSymbol}
+                  />
+                  <SliderComponent
+                    currentUtilizationPercentage={currentUtilizationPercentage}
+                    handleUtilization={handleRepayUtilization}
+                  />
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <div
+                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
+                  >
+                    <span className={``}>CURRENTLY BORROWING</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${borrowBalanceFrom}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {borrowBalanceTo}
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Market Borrow Apr</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${borrowAPR?.toFixed(2)}%`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingUpdatedAssets}
+                        width="16"
+                      >
+                        {updatedBorrowAPR?.toFixed(2)}%
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <div
+                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
+                  >
+                    {transactionSteps.length > 0 ? (
+                      <TransactionStepsHandler
+                        resetTransactionSteps={resetTransactionSteps}
+                        transactionSteps={transactionSteps}
+                      />
+                    ) : (
+                      <button
+                        className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
+                          amount &&
+                          amountAsBInt.gt('0') &&
+                          currentBorrowAmountAsFloat
+                            ? 'bg-accent'
+                            : 'bg-stone-500'
+                        } `}
+                        onClick={repayAmount}
+                      >
+                        Repay {selectedMarketData.underlyingSymbol}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className={`min-w-full py-5 px-[6%] h-min`}>
-                {/* ---------------------------------------------------------------------------- */}
-                {/* SUPPLY-repay section */}
-                {/* ---------------------------------------------------------------------------- */}
-                <Amount
-                  amount={amount}
-                  handleInput={(val?: string) => setAmount(val)}
-                  hintText={'Max Repay Amount'}
-                  isLoading={isLoadingMaxRepayAmount}
-                  max={formatUnits(
-                    maxRepayAmount ?? '0',
-                    selectedMarketData.underlyingDecimals
-                  )}
-                  selectedMarketData={selectedMarketData}
-                  symbol={selectedMarketData.underlyingSymbol}
-                />
-                <SliderComponent
-                  currentUtilizationPercentage={currentUtilizationPercentage}
-                  handleUtilization={handleRepayUtilization}
-                />
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-                <div
-                  className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                >
-                  <span className={``}>CURRENTLY BORROWING</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {`${borrowBalanceFrom}`}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {borrowBalanceTo}
-                    </ResultHandler>
-                  </span>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                >
-                  <span className={``}>Market Borrow Apr</span>
-                  <span className={`flex font-bold pl-2`}>
-                    {`${borrowAPR?.toFixed(2)}%`}
-                    <span className="mx-1">{`->`}</span>
-                    <ResultHandler
-                      height="16"
-                      isLoading={isLoadingUpdatedAssets}
-                      width="16"
-                    >
-                      {updatedBorrowAPR?.toFixed(2)}%
-                    </ResultHandler>
-                  </span>
-                </div>
-                <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-                <div
-                  className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
-                >
-                  {transactionSteps.length > 0 ? (
-                    <TransactionStepsHandler
-                      resetTransactionSteps={resetTransactionSteps}
-                      transactionSteps={transactionSteps}
-                    />
-                  ) : (
-                    <button
-                      className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                        amount &&
-                        amountAsBInt.gt('0') &&
-                        currentBorrowAmountAsFloat
-                          ? 'bg-accent'
-                          : 'bg-stone-500'
-                      } `}
-                      onClick={repayAmount}
-                    >
-                      Repay {selectedMarketData.underlyingSymbol}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      <Loop
+        borrowableAssets={
+          loopMarkets ? loopMarkets[selectedMarketData.cToken] : []
+        }
+        closeLoop={() => {
+          setLoopOpen(false);
+          setActive(PopupMode.BORROW);
+        }}
+        comptrollerAddress={comptrollerAddress}
+        isOpen={loopOpen}
+        selectedCollateralAsset={selectedMarketData}
+      />
+    </>
   );
 };
 

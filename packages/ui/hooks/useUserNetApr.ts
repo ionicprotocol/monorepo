@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export const useUsetNetApr = () => {
+export const useUserNetApr = () => {
   const { address, currentSdk } = useMultiIonic();
 
   return useQuery({
