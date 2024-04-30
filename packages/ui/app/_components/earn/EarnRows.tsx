@@ -83,7 +83,7 @@ export default function EarnRows({
       <Link
         className="col-span-2 w-max bg-accent text-darkone rounded-xl py-2 px-6 font-semibold cursor-pointer mx-auto"
         href={
-          'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a'
+          'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a/34443'
         }
         target="_blank"
       >
