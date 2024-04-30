@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@gasbot/widget": "^0.3.11",
+    "@gasbot/widget": "^0.4.2",
     "@netlify/plugin-nextjs": "4",
     "@sentry/nextjs": "^7.48.0",
     "@supabase/supabase-js": "^2.39.7",
