@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { NON_BORROWABLE_SYMBOLS } from '../constants';
+
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
@@ -19,7 +21,11 @@ const assetsSortingOrder = [
   'weETH'
 ];
 
-export const useFusePoolData = (poolId: string, poolChainId: number) => {
+export const useFusePoolData = (
+  poolId: string,
+  poolChainId: number,
+  excludeNonBorrowable?: boolean
+) => {
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
   const { data: usdPrices } = useAllUsdPrices();
@@ -32,7 +38,14 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
   }, [usdPrices, poolChainId]);
 
   return useQuery(
-    ['useFusePoolData', poolId, address, sdk?.chainId, usdPrice],
+    [
+      'useFusePoolData',
+      poolId,
+      address,
+      sdk?.chainId,
+      usdPrice,
+      excludeNonBorrowable
+    ],
     async () => {
       if (usdPrice && sdk?.chainId && poolId) {
         const response = await sdk
@@ -51,6 +64,7 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
         }
         const assetsWithPrice: MarketData[] = [];
         const { assets } = response;
+        const excludedAssetsIndexes: number[] = [];
 
         if (assets && assets.length !== 0) {
           const unsortedAssets: MarketData[] = [];
@@ -97,7 +111,17 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
           totalBorrowedFiat: response.totalBorrowedNative * usdPrice,
           totalLiquidityFiat: response.totalLiquidityNative * usdPrice,
           totalSuppliedFiat: response.totalSuppliedNative * usdPrice,
-          totalSupplyBalanceFiat: response.totalSupplyBalanceNative * usdPrice
+          totalSupplyBalanceFiat: response.totalSupplyBalanceNative * usdPrice,
+          underlyingSymbols: excludeNonBorrowable
+            ? response.underlyingSymbols.filter(
+                (_, i) => excludedAssetsIndexes.indexOf(i) === -1
+              )
+            : response.underlyingSymbols,
+          underlyingTokens: excludeNonBorrowable
+            ? response.underlyingTokens.filter(
+                (_, i) => excludedAssetsIndexes.indexOf(i) === -1
+              )
+            : response.underlyingTokens
         };
 
         return adaptedFusePoolData;

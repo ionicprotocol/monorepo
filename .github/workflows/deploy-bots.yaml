@@ -237,6 +237,7 @@ jobs:
       LIQUIDATION_DISCORD_WEBHOOK_URL: ${{ secrets.LIQUIDATION_DISCORD_WEBHOOK_URL }}
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
 
     steps:
       - name: Checkout repository
@@ -279,6 +280,7 @@ jobs:
       PYTH_UPDATER_DISCORD_WEBHOOK_URL: ${{ secrets.PYTH_UPDATER_DISCORD_WEBHOOK_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
     steps:
       - name: Checkout
         uses: actions/checkout@master

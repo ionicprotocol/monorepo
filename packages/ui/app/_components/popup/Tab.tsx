@@ -1,18 +1,19 @@
 import { PopupMode } from './page';
 interface IMode {
   active: PopupMode;
+  loopPossible: boolean;
   mode: PopupMode;
   setActive: (val: PopupMode) => void;
 }
-const Tab = ({ mode, setActive, active }: IMode) => {
+const Tab = ({ loopPossible, mode, setActive, active }: IMode) => {
   return (
     <div
-      className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 grid ${'grid-cols-2'} text-center gap-x-1 text-xs items-center justify-center`}
+      className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 flex text-center gap-x-1 text-xs items-center justify-center`}
     >
       {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
         <>
           <p
-            className={`rounded-md py-1 text-center  cursor-pointer ${
+            className={`rounded-md py-1 text-center w-full cursor-pointer ${
               active === PopupMode.SUPPLY
                 ? 'bg-darkone text-accent '
                 : 'text-white/40 '
@@ -22,7 +23,7 @@ const Tab = ({ mode, setActive, active }: IMode) => {
             COLLATERAL
           </p>
           <p
-            className={` rounded-md py-1 px-3   ${
+            className={` rounded-md py-1 px-3  w-full ${
               active === PopupMode.WITHDRAW
                 ? 'bg-darkone text-accent '
                 : 'text-white/40'
@@ -33,10 +34,12 @@ const Tab = ({ mode, setActive, active }: IMode) => {
           </p>
         </>
       )}
-      {(mode === PopupMode.BORROW || mode === PopupMode.REPAY) && (
+      {(mode === PopupMode.BORROW ||
+        mode === PopupMode.REPAY ||
+        mode === PopupMode.LOOP) && (
         <>
           <p
-            className={` rounded-md py-1 px-3   ${
+            className={` rounded-md py-1 px-3  w-full ${
               active === PopupMode.BORROW
                 ? 'bg-darkone text-accent '
                 : 'text-white/40'
@@ -46,7 +49,7 @@ const Tab = ({ mode, setActive, active }: IMode) => {
             BORROW
           </p>
           <p
-            className={` rounded-md py-1 px-3   ${
+            className={` rounded-md py-1 px-3 w-full  ${
               active === PopupMode.REPAY
                 ? 'bg-darkone text-accent '
                 : 'text-white/40'
@@ -55,6 +58,19 @@ const Tab = ({ mode, setActive, active }: IMode) => {
           >
             REPAY
           </p>
+
+          {loopPossible && (
+            <p
+              className={` rounded-md py-1 px-3  w-full ${
+                active === PopupMode.LOOP
+                  ? 'bg-darkone text-accent '
+                  : 'text-white/40'
+              } cursor-pointer transition-all duration-200 ease-linear`}
+              onClick={() => setActive(PopupMode.LOOP)}
+            >
+              LOOP
+            </p>
+          )}
         </>
       )}
     </div>
