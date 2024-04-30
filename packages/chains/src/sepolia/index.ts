@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@ionicprotocol/types";
 
-import deployments from "../../deployments/mode.json";
+import deployments from "../../deployments/optimismSepolia.json";
 
 import chainAddresses from "./addresses";
 import { assets } from "./assets";
@@ -14,7 +14,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.mode,
+  chainId: 11155420,
   chainAddresses,
   assets,
   irms,

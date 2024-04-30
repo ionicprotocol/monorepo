@@ -2,6 +2,7 @@ import { assetFilter, assetSymbols, MarketConfig, underlying } from "@ionicproto
 import { task, types } from "hardhat/config";
 
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
+import { assets as sepoliaAssets } from "../../../chains/src/sepolia/assets";
 
 task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {
   const symbols = [
@@ -27,6 +28,28 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
       cf: "70",
       underlying: asset.underlying,
       comptroller: "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556",
+      symbol: "ion" + asset.symbol,
+      name: `Ionic ${asset.name}`
+    });
+  }
+});
+
+task("markets:deploy:optimismSepolia", "deploy optimism sepolia markets").setAction(async (taskArgs, { run }) => {
+  const symbols = [
+    // assetSymbols.WETH
+    // assetSymbols.USDC
+    assetSymbols.USDT,
+    assetSymbols.WBTC
+  ];
+
+  for (let i = 0; i < symbols.length; i++) {
+    const symbol = symbols[i];
+    const asset = assetFilter(sepoliaAssets, symbol);
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: "50",
+      underlying: asset.underlying,
+      comptroller: "0xf9F7412e8e4395EA91A8a557320013e081872054",
       symbol: "ion" + asset.symbol,
       name: `Ionic ${asset.name}`
     });
@@ -117,4 +140,18 @@ task("market:deploy", "deploy market")
         throw `Failed to deploy market for ${config.underlying}`;
       }
     }
+  });
+
+task("deploy:mock", "Deploys a mock ERC20 token")
+  .addParam("name", "The name of the token")
+  .addParam("symbol", "The symbol of the token")
+  .addParam("addr", "address to receive the tokens")
+  .addParam("amount", "number of tokens to add")
+  .addParam("decimals", "The number of decimals", "18", types.string) // Default to 18 decimals
+  .setAction(async ({ name, symbol, decimals, addr, amount }, { ethers }) => {
+    const MockERC20 = await ethers.getContractFactory("MockERC20");
+    const mockERC20 = await MockERC20.deploy(name, symbol, decimals);
+    await mockERC20.deployed();
+    await mockERC20.mint(addr, ethers.utils.parseUnits(amount, decimals));
+    console.log(`MockERC20 deployed to: ${mockERC20.address}`);
   });

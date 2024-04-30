@@ -25,6 +25,17 @@ task("pool:create:mode").setAction(async ({}, { run, ethers }) => {
   });
 });
 
+task("pool:create:sepolia").setAction(async ({}, { run, ethers }) => {
+  await run("pool:create", {
+    name: "Sepolia Market 2",
+    creator: "deployer",
+    priceOracle: "0x32E347Fb95b9a2e132BdBFfbAF06128582a519EE", // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 // update the MPO=0x429041250873643235cb3788871447c6fF3205aA
 // npx hardhat pool:create --name Test --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
 

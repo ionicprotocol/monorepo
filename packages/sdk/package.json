@@ -41,6 +41,7 @@
     "export:zkevm": "hardhat export --network zkevm --export ../chains/deployments/zkevm.json",
     "export:chapel": "hardhat export --network chapel --export ../chains/deployments/chapel.json",
     "export:ganache": "hardhat export --network localhost --export ../chains/deployments/ganache.json",
+    "export:optimismSepolia": "hardhat export --network optimismSepolia --export ../chains/deployments/optimismSepolia.json",
     "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",

@@ -10,8 +10,9 @@ import { default as mode } from "./mode";
 import { default as neon } from "./neon";
 import { default as polygon } from "./polygon";
 import { default as zkevm } from "./zkevm";
+import { default as sepolia } from "./sepolia";
 
-export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode };
+export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode, sepolia };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -23,5 +24,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [linea.chainId]: linea,
   [ethereum.chainId]: ethereum,
   [zkevm.chainId]: zkevm,
-  [mode.chainId]: mode
+  [mode.chainId]: mode,
+  [sepolia.chainId]: sepolia
 };

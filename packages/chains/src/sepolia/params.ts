@@ -8,7 +8,7 @@ const specificParams: ChainParams = {
   cgId: "ethereum",
   metadata: {
     chainIdHex: "0x868B",
-    name: "Mode Mainnet",
+    name: "Optimism Sepolia Testnet",
     shortName: "Mode",
     uniswapV3Fees: {},
     img: "https://1430441113-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FmOUA87dDndFyiETJjxpf%2Ficon%2FzSRXk7tkG8rWFi6tG9wV%2FIYXD4bdy_400x400.jpg?alt=media",

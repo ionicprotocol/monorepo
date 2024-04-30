@@ -6,14 +6,14 @@ import { assets } from "./assets";
 const chainAddresses: ChainAddresses = {
   PAIR_INIT_HASH: "", // TODO is this used anywhere?
   STABLE_TOKEN: underlying(assets, assetSymbols.USDC),
-  UNISWAP_V2_ROUTER: "0x5D61c537393cf21893BE619E36fC94cd73C77DD3",
-  UNISWAP_V2_FACTORY: "0xc02155946dd8c89d3d3238a6c8a64d04e2cd4500",
+  UNISWAP_V2_ROUTER: "0x5b0AB9AFe2e5a6eA801fe93BF65478d5A2f8e903",
+  UNISWAP_V2_FACTORY: "0xde57CDA805f01c1647c4b6fc6FFdAF36AE6f6600",
   UNISWAP_V3: {
-    FACTORY: "0xB5F00c2C5f8821155D8ed27E31932CFD9DB3C5D5", // kim v4
+    FACTORY: "0xCD63bA972E72834c6D73a2C0A1Df0F11e0535803", // kim v4
     PAIR_INIT_HASH: "", // unused
-    QUOTER_V2: "" // unused
+    QUOTER_V2: "0xC5290058841028F1614F3A6F0F5816cAd0df5E27" // unused
   },
-  UNISWAP_V3_ROUTER: "0xAc48FcF1049668B285f3dC72483DF5Ae2162f7e8", // kim v4
+  UNISWAP_V3_ROUTER: "0x403616fBc3D2d0E9a0aBAf7cDCbc6611F41f7142", // kim v4
   W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
   W_TOKEN: underlying(assets, assetSymbols.WETH),
   W_TOKEN_USD_CHAINLINK_PRICE_FEED: ethers.constants.AddressZero

@@ -1,4 +1,16 @@
-import { arbitrum, bsc, chapel, ethereum, ganache, linea, mode, neon, polygon, zkevm } from "@ionicprotocol/chains";
+import {
+  arbitrum,
+  bsc,
+  chapel,
+  ethereum,
+  ganache,
+  linea,
+  mode,
+  neon,
+  polygon,
+  zkevm,
+  sepolia
+} from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -32,7 +44,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.linea]: linea.assets,
   [SupportedChains.ethereum]: ethereum.assets,
   [SupportedChains.zkevm]: zkevm.assets,
-  [SupportedChains.mode]: mode.assets
+  [SupportedChains.mode]: mode.assets,
+  [SupportedChains.optimism_sepolia]: sepolia.assets
 };
 
 export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {

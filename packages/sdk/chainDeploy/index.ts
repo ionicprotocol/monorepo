@@ -9,6 +9,7 @@ import { deploy as deploy245022934, deployConfig as deployConfig245022934 } from
 import { deploy as deploy137, deployConfig as deployConfig137 } from "./mainnets/polygon";
 import { deploy as deploy1101, deployConfig as deployConfig1101 } from "./mainnets/zkevm";
 import { deploy as deploy97, deployConfig as deployConfig97 } from "./testnets/chapel";
+import { deploy as deploy11155420, deployConfig as deployConfig11155420 } from "./testnets/sepolia";
 
 export const chainDeployConfig: Record<number, { config: ChainDeployConfig; deployFunc: any }> = {
   // mainnets
@@ -20,6 +21,7 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   // testnets
   97: { config: deployConfig97, deployFunc: deploy97 },
   245022934: { config: deployConfig245022934, deployFunc: deploy245022934 },
+  11155420: { config: deployConfig11155420, deployFunc: deploy11155420 },
   // local
   1337: { config: deployConfig1337, deployFunc: deploy1337 },
   59144: { config: deployConfig59144, deployFunc: deploy59144 },

@@ -42,26 +42,6 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.WBTC),
     strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.ezETH),
-    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WETH)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.ezETH)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.weETH),
-    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WETH)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.weETH)
   }
 ];
 

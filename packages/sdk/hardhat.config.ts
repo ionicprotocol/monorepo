@@ -176,7 +176,7 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 1101
     },
-    sepolia: {
+    optimismSepolia: {
       url: "https://opt-sepolia.g.alchemy.com/v2/kICdxhU4AsrkVaVnMBSszuDX309P9pMM",
       accounts: [process.env.OPTIMISM_PK || ""],
       chainId: 11155420

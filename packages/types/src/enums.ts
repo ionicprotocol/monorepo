@@ -8,7 +8,8 @@ export enum SupportedChains {
   arbitrum = 42161,
   linea = 59144,
   zkevm = 1101,
-  mode = 34443
+  mode = 34443,
+  optimism_sepolia = 11155420
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
