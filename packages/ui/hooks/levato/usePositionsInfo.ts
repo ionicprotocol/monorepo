@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import type { LeveragedPositionsLens } from 'levato-sdk';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { Address } from 'viem';
 
 /**
  * Get positions info
@@ -78,13 +79,13 @@ export const useGetPositionsInfoQuery = () => {
       }
 
       const [positions] =
-        await levatoSdk.factoryContract.callStatic.getPositionsByAccount(
-          address
+        await levatoSdk!.factoryContract.callStatic.getPositionsByAccount(
+          address as Address
         );
 
       const apys = positions.map(() => '0');
       const positionsData =
-        await levatoSdk.lensContract.callStatic.getPositionsInfo(
+        await levatoSdk!.lensContract.callStatic.getPositionsInfo(
           JSON.parse(JSON.stringify(positions)),
           apys
         );
