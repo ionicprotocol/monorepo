@@ -87,7 +87,7 @@ export default function EarnRows({
         }
         target="_blank"
       >
-       <span> DEPOSIT</span>
+        <span>DEPOSIT</span>
         <img
           alt="external-link"
           className={`w-3 h-3`}
