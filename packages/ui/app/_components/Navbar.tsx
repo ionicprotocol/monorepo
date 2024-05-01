@@ -23,8 +23,8 @@ export default function Navbar() {
   return (
     <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black">
       <div className="absolute w-full top-full left-0 bg-lime text-center p-2 text-darkone text-sm font-medium">
-        Hello, Mode! Ionic is open for lending and borrowing! Supply ETH, USDC,
-        USDT, or WBTC to earn Ionic points. Borrow to earn multiplied points!
+        Hello, Mode! Ionic is open for lending and borrowing! Supply assets to
+        earn Ionic points. Borrow to earn multiplied points!
       </div>
       <Link
         className={`flex items-center  md:pr-10  `}
@@ -65,9 +65,6 @@ export default function Navbar() {
             className="relative mb-2 md:mb-0"
             href={'/points'}
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              NEW!
-            </span>
             <p
               className={`${
                 pathname == '/points' ? 'text-accent' : null
@@ -80,9 +77,6 @@ export default function Navbar() {
             className="relative mb-2 md:mb-0"
             href={'/dashboard'}
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              NEW!
-            </span>
             <p
               className={`${
                 pathname == '/dashboard' ? 'text-accent' : null
@@ -137,6 +131,21 @@ export default function Navbar() {
               className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Bridge
+            </p>
+          </Link>
+          <Link
+            className="relative"
+            href="/earn"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={` ${
+                pathname == '/earn' ? 'text-accent' : null
+              } hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              Earn
             </p>
           </Link>
         </div>

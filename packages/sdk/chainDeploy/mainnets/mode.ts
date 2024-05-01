@@ -4,6 +4,8 @@ import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
 import { deployRedStonePriceOracle } from "../helpers/oracles/redstone";
+import { deployRedStoneWeETHPriceOracle } from "../helpers/oracles/redstoneWeETH";
+import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
 import { PythAsset, RedStoneAsset } from "../helpers/types";
 
 export const deployConfig: ChainDeployConfig = {
@@ -27,41 +29,41 @@ export const deployConfig: ChainDeployConfig = {
 
 // TODO add more assets https://pyth.network/developers/price-feed-ids
 const pythAssets: PythAsset[] = [
-  // {
-  //   underlying: underlying(mode.assets, assetSymbols.WETH),
-  //   feed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
-  // },
-  // {
-  //   underlying: underlying(mode.assets, assetSymbols.USDC),
-  //   feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
-  // },
-  // {
-  //   underlying: underlying(mode.assets, assetSymbols.USDT),
-  //   feed: "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b"
-  // },
-  // {
-  //   underlying: underlying(mode.assets, assetSymbols.WBTC),
-  //   feed: "0xc9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33"
-  // }
-  // migrate to redstone
+  {
+    underlying: underlying(mode.assets, assetSymbols.WETH),
+    feed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
+  },
+  {
+    underlying: underlying(mode.assets, assetSymbols.USDC),
+    feed: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a"
+  },
+  {
+    underlying: underlying(mode.assets, assetSymbols.USDT),
+    feed: "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b"
+  },
+  {
+    underlying: underlying(mode.assets, assetSymbols.WBTC),
+    feed: "0xc9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33"
+  },
+  {
+    underlying: underlying(mode.assets, assetSymbols.mBTC),
+    feed: "0xc9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33"
+  }
 ];
 
 const redStoneAssets: RedStoneAsset[] = [
   {
     underlying: underlying(mode.assets, assetSymbols.ezETH)
-  },
+  }
+];
+
+const redStoneWrsETHAssets: RedStoneAsset[] = [
   {
-    underlying: underlying(mode.assets, assetSymbols.WBTC)
-  },
-  {
-    underlying: underlying(mode.assets, assetSymbols.USDC)
-  },
-  {
-    underlying: underlying(mode.assets, assetSymbols.USDT)
-  },
-  {
-    underlying: underlying(mode.assets, assetSymbols.WETH)
-  },
+    underlying: underlying(mode.assets, assetSymbols.wrsETH)
+  }
+];
+
+const redStoneWeETHAssets: RedStoneAsset[] = [
   {
     underlying: underlying(mode.assets, assetSymbols.weETH)
   }
@@ -88,6 +90,26 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployments,
     redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
     redStoneAssets
+  });
+
+  await deployRedStoneWrsETHPriceOracle({
+    run,
+    deployConfig,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
+    redStoneAssets: redStoneWrsETHAssets
+  });
+
+  await deployRedStoneWeETHPriceOracle({
+    run,
+    deployConfig,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
+    redStoneAssets: redStoneWeETHAssets
   });
 
   const deployer = await ethers.getNamedSigner("deployer");

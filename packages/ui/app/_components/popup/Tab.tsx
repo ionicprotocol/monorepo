@@ -1,10 +1,11 @@
 import { PopupMode } from './page';
 interface IMode {
   active: PopupMode;
+  loopPossible: boolean;
   mode: PopupMode;
   setActive: (val: PopupMode) => void;
 }
-const Tab = ({ mode, setActive, active }: IMode) => {
+const Tab = ({ loopPossible, mode, setActive, active }: IMode) => {
   return (
     <div
       className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 flex text-center gap-x-1 text-xs items-center justify-center`}
@@ -58,16 +59,18 @@ const Tab = ({ mode, setActive, active }: IMode) => {
             REPAY
           </p>
 
-          <p
-            className={` rounded-md py-1 px-3  w-full ${
-              active === PopupMode.LOOP
-                ? 'bg-darkone text-accent '
-                : 'text-white/40'
-            } cursor-pointer transition-all duration-200 ease-linear`}
-            onClick={() => setActive(PopupMode.LOOP)}
-          >
-            LOOP
-          </p>
+          {loopPossible && (
+            <p
+              className={` rounded-md py-1 px-3  w-full ${
+                active === PopupMode.LOOP
+                  ? 'bg-darkone text-accent '
+                  : 'text-white/40'
+              } cursor-pointer transition-all duration-200 ease-linear`}
+              onClick={() => setActive(PopupMode.LOOP)}
+            >
+              LOOP
+            </p>
+          )}
         </>
       )}
     </div>

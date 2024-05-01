@@ -7,7 +7,8 @@ import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
   configureAddressesProviderAddresses,
   configureIonicLiquidator,
-  deployIonicLiquidator
+  deployIonicLiquidator,
+  deployIonicUniV3Liquidator
 } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { AddressesProvider } from "../typechain/AddressesProvider";
@@ -26,8 +27,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   else if (chainId == 34443) MIN_BORROW_USD = 4;
   else MIN_BORROW_USD = 100;
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
   console.log("deployer: ", deployer);
+  console.log("multisig: ", multisig);
   const balance = await ethers.provider.getBalance(deployer);
   console.log("balance: ", balance.toString());
   const price = await ethers.provider.getGasPrice();
@@ -54,7 +56,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
-  const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
 
   const ffd = await deployments.deploy("FeeDistributor", {
     from: deployer,
@@ -493,24 +494,26 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   //// Liquidator
 
-  // if (chainId !== 34443) {
-  const liquidatorContractName = await deployIonicLiquidator({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig: chainDeployParams,
-    chainId
-  });
-  // } else {
-  //   liquidatorContractName = await deployIonicUniV3Liquidator({
-  //     run,
-  //     ethers,
-  //     getNamedAccounts,
-  //     deployments,
-  //     deployConfig: chainDeployParams
-  //   });
-  // }
+  let liquidatorContractName;
+  if (chainId !== 34443) {
+    liquidatorContractName = await deployIonicLiquidator({
+      run,
+      ethers,
+      getNamedAccounts,
+      deployments,
+      deployConfig: chainDeployParams,
+      chainId
+    });
+  } else {
+    liquidatorContractName = await deployIonicUniV3Liquidator({
+      run,
+      ethers,
+      getNamedAccounts,
+      deployments,
+      deployConfig: chainDeployParams,
+      chainId
+    });
+  }
 
   ///
 

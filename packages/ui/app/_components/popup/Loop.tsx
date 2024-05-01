@@ -32,6 +32,7 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export type LoopProps = {
+  borrowableAssets: string[];
   closeLoop: () => void;
   comptrollerAddress: string;
   currentBorrowAsset?: MarketData;
@@ -68,6 +69,7 @@ type SupplyActionsProps = {
 
 type BorrowActionsProps = {
   borrowAmount?: string;
+  borrowableAssets: LoopProps['borrowableAssets'];
   currentLeverage: number;
   currentPositionLeverage?: number;
   selectedBorrowAsset?: MarketData;
@@ -238,7 +240,11 @@ function SupplyActions({
       case SupplyActionsMode.DEPOSIT:
         setUtilization(
           Math.round(
-            (parseFloat(amount ?? '0') / (maxSupplyAmount?.number ?? 1)) * 100
+            (parseFloat(amount ?? '0') /
+              (maxSupplyAmount && maxSupplyAmount.number > 0
+                ? maxSupplyAmount.number
+                : 1)) *
+              100
           )
         );
 
@@ -326,6 +332,7 @@ function SupplyActions({
 
 function BorrowActions({
   borrowAmount,
+  borrowableAssets,
   currentLeverage,
   currentPositionLeverage,
   selectedBorrowAsset,
@@ -348,7 +355,11 @@ function BorrowActions({
           <div className="relative z-50">
             <Amount
               amount={borrowAmount}
-              availableAssets={marketData?.assets}
+              availableAssets={marketData?.assets.filter((asset) =>
+                borrowableAssets.find(
+                  (borrowableAsset) => borrowableAsset === asset.cToken
+                )
+              )}
               handleInput={() => {}}
               hintText="Available:"
               isLoading={false}
@@ -436,6 +447,7 @@ function BorrowActions({
 }
 
 export default function Loop({
+  borrowableAssets,
   closeLoop,
   comptrollerAddress,
   currentBorrowAsset,
@@ -452,7 +464,7 @@ export default function Loop({
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
-  >(currentBorrowAsset ?? marketData?.assets[0]);
+  >(currentBorrowAsset);
   const { data: positions } = usePositionsQuery();
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
     return positions?.openPositions.find(
@@ -605,9 +617,15 @@ export default function Loop({
    */
   useEffect(() => {
     if (!selectedBorrowAsset && marketData) {
-      setSelectedBorrowAsset(marketData.assets[0]);
+      setSelectedBorrowAsset(
+        marketData.assets.filter((asset) =>
+          borrowableAssets.find(
+            (borrowableAsset) => borrowableAsset === asset.cToken
+          )
+        )[0]
+      );
     }
-  }, [marketData, selectedBorrowAsset]);
+  }, [borrowableAssets, marketData, selectedBorrowAsset]);
 
   /**
    * Reset neccessary queries after actions
@@ -695,6 +713,8 @@ export default function Loop({
       });
 
       await tx.wait();
+
+      setAmount('0');
 
       upsertTransactionStep({
         index: currentTransactionStep,
@@ -845,6 +865,8 @@ export default function Loop({
 
       await tx.wait();
 
+      setAmount('0');
+
       upsertTransactionStep({
         index: currentTransactionStep,
         transactionStep: {
@@ -973,14 +995,14 @@ export default function Loop({
                 </ResultHandler>
               </div>
 
-              <div
+              {/* <div
                 className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
               >
                 <span className={``}>Annual yield</span>
                 <span className={`flex text-sm font-bold pl-2 text-white`}>
                   TODO
                 </span>
-              </div>
+              </div> */}
             </div>
 
             <div className={`separator lg:hidden`} />
@@ -1116,6 +1138,7 @@ export default function Loop({
                   selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
                 )
               )}
+              borrowableAssets={borrowableAssets}
               currentLeverage={currentLeverage}
               currentPositionLeverage={
                 currentPositionLeverageRatio

@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
 import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
+import { utils } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -28,6 +28,7 @@ import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForP
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
@@ -48,11 +49,13 @@ export enum PopupMode {
 interface IPopup {
   closePopup: () => void;
   comptrollerAddress: string;
+  loopMarkets?: LoopMarketData;
   mode?: PopupMode;
   selectedMarketData: MarketData;
 }
 const Popup = ({
   mode = PopupMode.SUPPLY,
+  loopMarkets,
   selectedMarketData,
   closePopup,
   comptrollerAddress
@@ -293,7 +296,7 @@ const Popup = ({
       case PopupMode.SUPPLY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxSupplyAmount?.bigNumber
+          (maxSupplyAmount?.bigNumber && maxSupplyAmount.number > 0
             ? Number(formatEther(maxSupplyAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -304,7 +307,9 @@ const Popup = ({
       case PopupMode.WITHDRAW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxWithdrawAmount ? Number(formatEther(maxWithdrawAmount)) : 1);
+          (maxWithdrawAmount && maxWithdrawAmount.gt(0)
+            ? Number(formatEther(maxWithdrawAmount))
+            : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
@@ -313,7 +318,7 @@ const Popup = ({
       case PopupMode.BORROW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxBorrowAmount?.bigNumber
+          (maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
             ? Number(formatEther(maxBorrowAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -324,7 +329,9 @@ const Popup = ({
       case PopupMode.REPAY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxRepayAmount ? Number(formatEther(maxRepayAmount)) : 1);
+          (maxRepayAmount && maxRepayAmount.gt(0)
+            ? Number(formatEther(maxRepayAmount))
+            : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
 
         break;
@@ -339,9 +346,9 @@ const Popup = ({
   }, [
     amountAsBInt,
     active,
-    maxBorrowAmount?.bigNumber,
+    maxBorrowAmount,
     maxRepayAmount,
-    maxSupplyAmount?.bigNumber,
+    maxSupplyAmount,
     maxWithdrawAmount
   ]);
 
@@ -598,6 +605,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during supplying!');
         }
 
@@ -655,9 +664,13 @@ const Popup = ({
       ]);
 
       try {
-        const amountToWithdraw = maxWithdrawAmount.lte(amountAsBInt)
-          ? constants.MaxUint256
-          : amountAsBInt;
+        const amountToWithdraw = amountAsBInt;
+
+        console.warn(
+          'Withdraw params:',
+          selectedMarketData.cToken,
+          amountToWithdraw.toString()
+        );
 
         const { tx, errorCode } = await currentSdk.withdraw(
           selectedMarketData.cToken,
@@ -665,6 +678,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during withdrawing!');
         }
 
@@ -733,6 +748,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during borrowing!');
         }
 
@@ -833,6 +850,14 @@ const Popup = ({
         currentTransactionStep++;
 
         const isRepayingMax = amountAsBInt.gte(maxRepayAmount ?? '0');
+        console.warn(
+          'Repay params:',
+          selectedMarketData.cToken,
+          isRepayingMax,
+          isRepayingMax
+            ? selectedMarketData.borrowBalance.toString()
+            : amountAsBInt.toString()
+        );
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
           isRepayingMax,
@@ -840,6 +865,8 @@ const Popup = ({
         );
 
         if (errorCode) {
+          console.error(errorCode);
+
           throw new Error('Error during repaying!');
         }
 
@@ -1039,6 +1066,11 @@ const Popup = ({
           </div>
           <Tab
             active={active}
+            loopPossible={
+              loopMarkets
+                ? loopMarkets[selectedMarketData.cToken].length > 0
+                : false
+            }
             mode={mode}
             setActive={setActive}
           />
@@ -1526,6 +1558,9 @@ const Popup = ({
       </div>
 
       <Loop
+        borrowableAssets={
+          loopMarkets ? loopMarkets[selectedMarketData.cToken] : []
+        }
         closeLoop={() => {
           setLoopOpen(false);
           setActive(PopupMode.BORROW);
