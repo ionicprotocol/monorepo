@@ -81,13 +81,18 @@ export default function EarnRows({
       </div>
       <div className="col-span-3"> </div>
       <Link
-        className="col-span-2 w-max bg-accent text-darkone rounded-xl py-2 px-6 font-semibold cursor-pointer mx-auto"
+        className="col-span-2 w-max bg-accent text-darkone rounded-xl py-2 px-6 font-semibold cursor-pointer mx-auto flex items-center justify-center gap-2"
         href={
           'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a/34443'
         }
         target="_blank"
       >
-        DEPOSIT
+       <span> DEPOSIT</span>
+        <img
+          alt="external-link"
+          className={`w-3 h-3`}
+          src="https://img.icons8.com/material-outlined/24/external-link.png"
+        />
       </Link>
     </div>
   );
