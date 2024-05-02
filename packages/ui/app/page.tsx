@@ -17,6 +17,7 @@ import ResultHandler from './_components/ResultHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -65,6 +66,9 @@ export default function Market() {
         (_asset) => _asset.underlyingSymbol === selectedSymbol
       ),
     [selectedSymbol, poolData]
+  );
+  const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
+    poolData?.assets.map((asset) => asset.cToken) ?? []
   );
 
   return (
@@ -168,7 +172,7 @@ export default function Market() {
               </>
             )}
           </Listbox>
-          <ResultHandler isLoading={isLoadingPoolData}>
+          <ResultHandler isLoading={isLoadingPoolData || isLoadingLoopMarkets}>
             <div className={`w-full flex flex-wrap items-center gap-4 pt-4`}>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
@@ -325,6 +329,9 @@ export default function Market() {
                     }
                     key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                    loopPossible={
+                      loopMarkets ? loopMarkets[val.cToken].length > 0 : false
+                    }
                     membership={val?.membership ?? false}
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
@@ -388,6 +395,7 @@ export default function Market() {
         <Popup
           closePopup={() => setPopupMode(undefined)}
           comptrollerAddress={poolData.comptroller}
+          loopMarkets={loopMarkets}
           mode={popupMode}
           selectedMarketData={selectedMarketData}
         />

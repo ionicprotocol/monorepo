@@ -24,8 +24,8 @@ export class EmailService {
 
   private create(): MailDataRequired {
     return {
-      to: "dev@ionic.money", // Change to your recipient
-      from: "rahul@ionic.money", // Change to your verified sender
+      to: config.sendgridEmailTo,
+      from: "rahul@ionic.money",
       text: "",
     };
   }
