@@ -1,32 +1,38 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import EarnRows from '../_components/earn/EarnRows';
 
 export default function Lend() {
   const [apr, setApr] = useState<number>(0);
   const [tvl, setTvl] = useState<number>(0);
-  useMemo(async () => {
-    //  async function getApr (){
 
-    try {
-      const response = await fetch(
-        'https://api.steer.finance/pool/fee-apr?address=0x17694615caba46ef765a3673fa488e04332b522a&chain=34443&interval=604800'
-      );
-      const val = await response.json();
-      setApr(val?.apr);
+  useEffect(() => {
+    async function getApr() {
+      try {
+        const response = await fetch(
+          'https://api.steer.finance/pool/fee-apr?address=0x17694615caba46ef765a3673fa488e04332b522a&chain=34443&interval=604800'
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error: Status ${response.status}`);
+        }
+        const val = await response.json();
+        setApr(val?.apr);
 
-      const tvlresponse = await fetch(
-        'https://api.steer.finance/pool/lp/value?chain=34443&address=0x17694615caba46ef765a3673fa488e04332b522a'
-      );
-
-      const tvlval = await tvlresponse.json();
-      setTvl(tvlval?.tvl);
-    } catch (err) {
-      // console.log(err);
+        const tvlresponse = await fetch(
+          'https://api.steer.finance/pool/lp/value?chain=34443&address=0x17694615caba46ef765a3673fa488e04332b522a'
+        );
+        if (!tvlresponse.ok) {
+          throw new Error(`HTTP error: Status ${tvlresponse.status}`);
+        }
+        const tvlval = await tvlresponse.json();
+        setTvl(tvlval?.tvl);
+      } catch (err) {
+        // console.log(err);
+      }
     }
-    // }
+    getApr();
   }, []);
   return (
     <>
