@@ -106,7 +106,10 @@ const PoolRows = ({
           <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <div className="popover absolute w-[150px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap">
+          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+            + TURTLE <i className="popover-hint">i</i>
+          </span>
+          <div className="popover absolute w-[170px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap">
             Base APR: {supplyAPR}
             <div className="flex pt-4">
               <img
@@ -120,41 +123,87 @@ const PoolRows = ({
             <div className="flex">
               <img
                 alt=""
+                className="size-4 rounded mr-1"
+                src="/images/turtle-ionic.png"
+              />{' '}
+              + Turtle Ionic Points
+            </div>
+            <div className="flex">
+              <img
+                alt=""
                 className="size-4 mr-1"
                 src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
               />{' '}
               + {/ezETH|STONE|wrsETH/gm.test(asset) && '2x'}
               {/weETH\.mode/gm.test(asset) && '3x'} Mode Points
             </div>
+            <div className="flex">
+              <img
+                alt=""
+                className="size-4 mr-1"
+                src="/images/turtle-mode.png"
+              />{' '}
+              + Turtle Mode Points
+            </div>
             {asset === 'weETH.mode' && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/etherfi.png"
-                />{' '}
-                + {/weETH\.mode/gm.test(asset) && '3x'} ether.fi Points
-              </div>
+              <>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/etherfi.png"
+                  />{' '}
+                  + {/weETH\.mode/gm.test(asset) && '3x'} ether.fi Points
+                </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/turtle-etherfi.png"
+                  />{' '}
+                  + Turtle ether.fi Points
+                </div>
+              </>
             )}
             {asset === 'ezETH' && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/renzo.png"
-                />{' '}
-                + 2x Renzo Points
-              </div>
+              <>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/renzo.png"
+                  />{' '}
+                  + 2x Renzo Points
+                </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/turtle-renzo.png"
+                  />{' '}
+                  + Turtle Renzo Points
+                </div>
+              </>
             )}
             {asset === 'wrsETH' && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/kelpmiles.png"
-                />{' '}
-                + 2x Kelp Miles
-              </div>
+              <>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/kelpmiles.png"
+                  />{' '}
+                  + 2x Kelp Miles
+                </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/turtle-renzo.png"
+                  />{' '}
+                  + Turtle Kelp Points
+                </div>
+              </>
             )}
             {(asset === 'ezETH' ||
               asset === 'weETH.mode' ||
@@ -182,7 +231,10 @@ const PoolRows = ({
           <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <div className="popover absolute w-[155px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+            + TURTLE <i className="popover-hint">i</i>
+          </span>
+          <div className="popover absolute w-[170px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
             Base APR: {borrowAPR}
             <div className="flex pt-4">
               <img
@@ -191,6 +243,14 @@ const PoolRows = ({
                 src="/img/ionic-sq.png"
               />{' '}
               + {/ezETH|weETH|STONE|wrsETH/gm.test(asset) && '2x'} Ionic Points
+            </div>
+            <div className="flex">
+              <img
+                alt=""
+                className="size-4 rounded mr-1"
+                src="/images/turtle-ionic.png"
+              />{' '}
+              + Turtle Ionic Points
             </div>
             <div className="flex">
               <img
@@ -204,35 +264,53 @@ const PoolRows = ({
                 '2x'}
               {/weETH\.mode/gm.test(asset) && '3x'} Mode Points
             </div>
+            <div className="flex">
+              <img
+                alt=""
+                className="size-4 mr-1"
+                src="/images/turtle-mode.png"
+              />{' '}
+              + Turtle Mode Points
+            </div>
             {(asset === 'weETH' || asset === 'weETH.mode') && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/etherfi.png"
-                />{' '}
-                + {/weETH\.mode/gm.test(asset) && '3x'} ether.fi Points
-              </div>
-            )}
-            {asset === 'ezETH' && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/renzo.png"
-                />{' '}
-                + 2x Renzo Points
-              </div>
+              <>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/etherfi.png"
+                  />{' '}
+                  + {/weETH\.mode/gm.test(asset) && '3x'} ether.fi Points
+                </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/turtle-etherfi.png"
+                  />{' '}
+                  + Turtle ether.fi Points
+                </div>
+              </>
             )}
             {asset === 'wrsETH' && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/kelpmiles.png"
-                />{' '}
-                + 2x Kelp Miles
-              </div>
+              <>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/kelpmiles.png"
+                  />{' '}
+                  + 2x Kelp Miles
+                </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/turtle-renzo.png"
+                  />{' '}
+                  + Turtle Kelp Points
+                </div>
+              </>
             )}
             {(asset === 'ezETH' ||
               asset === 'weETH' ||
