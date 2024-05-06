@@ -39,7 +39,6 @@ const PoolRows = ({
   setSelectedSymbol,
   setPopupMode
 }: IRows) => {
-  console.log('asset: ', asset);
   const { address } = useMultiIonic();
 
   return (
