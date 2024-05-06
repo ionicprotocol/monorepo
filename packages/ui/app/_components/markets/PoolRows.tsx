@@ -109,7 +109,7 @@ const PoolRows = ({
           <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
             + TURTLE <i className="popover-hint">i</i>
           </span>
-          <div className="popover absolute w-[160px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap">
+          <div className="popover absolute w-[170px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap">
             Base APR: {supplyAPR}
             <div className="flex pt-4">
               <img
@@ -234,7 +234,7 @@ const PoolRows = ({
           <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
             + TURTLE <i className="popover-hint">i</i>
           </span>
-          <div className="popover absolute w-[160px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+          <div className="popover absolute w-[170px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
             Base APR: {borrowAPR}
             <div className="flex pt-4">
               <img
