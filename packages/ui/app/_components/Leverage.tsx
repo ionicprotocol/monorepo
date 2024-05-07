@@ -236,7 +236,7 @@ export default function Leverage({ marketData }: LeverageProps) {
           : selectedCollateralAsset.underlyingToken,
         amountAsBInt,
         selectedFundingAsset.underlyingToken,
-        currentLeverage.toString()
+        parseUnits(currentLeverage.toString()).toString()
       );
 
       upsertTransactionStep({
