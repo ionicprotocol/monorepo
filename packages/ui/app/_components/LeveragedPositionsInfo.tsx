@@ -1,4 +1,5 @@
 'use client';
+import { useQueryClient } from '@tanstack/react-query';
 import { formatEther, formatUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Image from 'next/image';
@@ -23,13 +24,14 @@ export default function LeveragedPositionsInfo() {
   const { data: positionsData, isLoading: isLoadingPositionsData } =
     useGetPositionsInfoQuery();
   const currentVisiblePositions = useMemo(
-    () => positionsData[0],
+    () => (positionsData ? positionsData[0] : undefined),
     [positionsData]
   );
   const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
     chainId.toString()
   );
   const { levatoSdk } = useMultiIonic();
+  const queryClient = useQueryClient();
 
   const handlePositionClosing = async (positionAddress: string) => {
     try {
@@ -49,6 +51,8 @@ export default function LeveragedPositionsInfo() {
       setClosingPositions((closingPositions) =>
         closingPositions.filter((position) => position !== positionAddress)
       );
+
+      queryClient.invalidateQueries(['positions']);
     } catch (error) {
       console.error(error);
 
@@ -78,7 +82,7 @@ export default function LeveragedPositionsInfo() {
         <div className={`col-span-3`}>ACTIONS</div>
       </div>
 
-      {currentVisiblePositions.map((position) => {
+      {currentVisiblePositions?.map((position) => {
         const positionCollateralAsset = marketData?.assets.find(
           (asset) => asset.underlyingToken === position.collateralAsset
         );

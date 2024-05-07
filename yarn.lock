@@ -2390,7 +2390,7 @@ __metadata:
     eslint-plugin-typescript-sort-keys: "npm:^3.0.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     ethers: "npm:^5.7.2"
-    levato-sdk: "npm:^1.0.10"
+    levato-sdk: "npm:^1.0.11"
     mathjs: "npm:^12.3.0"
     millify: "npm:^6.1.0"
     next: "npm:^14.2.2"
@@ -17636,12 +17636,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"levato-sdk@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "levato-sdk@npm:1.0.10"
+"levato-sdk@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "levato-sdk@npm:1.0.11"
   dependencies:
     ethers: "npm:5"
-  checksum: 10/a2c0222ac35c84066fe9535c921fbc3d15a6e20c7d82ce438e81622d971e647c3e85f24eeabfcd44c97ada455359bfc21725a6ec13d68732de212c08b50e1786
+  checksum: 10/aec9709923e8d71468ba2237d5e9ddbb5db746f6f5e6f9865d065e823b1db060dfe64264f2135255eeffcb834aec932333add9d44c9c7eb7b4c1c12b5b25cdbe
   languageName: node
   linkType: hard
 
