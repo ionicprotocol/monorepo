@@ -96,13 +96,13 @@
       "address": "0x4e20eB2AF6bE30660323cB25204e071116737FEA"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x2Afb71C0fe11A2315eba9A501a48700B83C19E33"
+      "address": "0x14bB1c7293c4e3E28Ef4A74c3d73baDd5dE6d000"
     },
     "LeveredPositionsLens": {
       "address": "0x1DD45c9fB4C8CcB678781982774F006F24b8EaC1"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0xD9a5677594694819F69D0907C3094EAb480F3a28"
+      "address": "0xE64E425F7a00fE4a41Bd89Fa89eDFB6d1493C2C4"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x1DD45c9fB4C8CcB678781982774F006F24b8EaC1"

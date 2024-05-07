@@ -93,6 +93,10 @@
   border-color: #dffe00;
 }
 
+.border-mode {
+  border-color: #dffd04;
+}
+
 .text-xxs {
   font-size: 0.6rem;
   line-height: 0.75rem;
