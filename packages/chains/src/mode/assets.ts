@@ -16,6 +16,9 @@ export const ezETH = "0x2416092f143378750bb29b79eD961ab195CcEea5";
 export const weETH = "0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A";
 export const wrsETH = "0xe7903B1F75C534Dd8159b313d92cDCfbC62cB3Cd";
 export const mBTC = "0x59889b7021243dB5B1e065385F918316cD90D46c";
+export const MODE = "0xDfc7C877a950e49D2610114102175A06C2e3167a";
+export const ION = "0x18470019bf0e94611f15852f7e93cf5d65bc34ca";
+export const KIM = "0x6863fb62Ed27A9DdF458105B507C15b5d741d62e";
 
 export const assets: SupportedAsset[] = [
   {
@@ -74,6 +77,32 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.RedstoneAdapterWrsETHPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", wrsETH)
   },
+  {
+    symbol: assetSymbols.MODE,
+    underlying: MODE,
+    name: "Mode Token",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    extraDocs: defaultDocs("https://explorer.mode.network", MODE)
+  },
+  {
+    symbol: assetSymbols.ION,
+    underlying: ION,
+    name: "Ionic Token",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    extraDocs: defaultDocs("https://explorer.mode.network", ION)
+  },
+  {
+    symbol: assetSymbols.KIM,
+    underlying: KIM,
+    name: "Kim Token",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    extraDocs: defaultDocs("https://explorer.mode.network", KIM)
+  },
+
+  /////// UNUSED ASSETS
   {
     symbol: assetSymbols.UNI,
     underlying: UNI,

@@ -18,13 +18,25 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
+const pools = [
+  {
+    id: '0',
+    name: 'Mode Market'
+  },
+  {
+    id: '1',
+    name: 'Mode Native Market'
+  }
+];
+
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
+  const [selectedPool, setSelectedPool] = useState(pools[1].id);
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
-    '0',
+    selectedPool,
     chainId
   );
   const assets = useMemo<MarketData[] | undefined>(
@@ -47,20 +59,45 @@ export default function Market() {
     poolData?.assets.map((asset) => asset.cToken) ?? []
   );
 
+  const selectedPoolClass = 'rounded-md border-mode border-2';
+
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
-          <div className={`flex items-center justify-center gap-2 py-3 pt-2 `}>
-            <img
-              alt="modlogo"
-              className={`w-8`}
-              src="/img/logo/MODE.png"
-            />
-            <h1 className={`font-semibold`}>Mode Market</h1>
+          <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
+          <div className="flex mb-4">
+            <div
+              className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8 cursor-pointer ${
+                selectedPool === pools[0].id ? selectedPoolClass : ''
+              }`}
+              onClick={() => setSelectedPool(pools[0].id)}
+            >
+              <img
+                alt="modlogo"
+                className={`w-8`}
+                src="/img/logo/MODE.png"
+              />
+              <h1 className={`font-semibold`}>{pools[0].name}</h1>
+            </div>
+
+            <div
+              className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer ${
+                selectedPool === pools[1].id ? selectedPoolClass : ''
+              }`}
+              onClick={() => setSelectedPool(pools[1].id)}
+            >
+              <img
+                alt="modlogo"
+                className={`w-8`}
+                src="/img/logo/MODE.png"
+              />
+              <h1 className={`font-semibold`}>{pools[1].name}</h1>
+            </div>
           </div>
+
           <ResultHandler isLoading={isLoadingPoolData || isLoadingLoopMarkets}>
             <div className={`w-full flex flex-wrap items-center gap-4`}>
               <div
