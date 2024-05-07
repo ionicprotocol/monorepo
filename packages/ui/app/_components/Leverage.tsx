@@ -28,7 +28,6 @@ import { useBorrowRates } from '@ui/hooks/levato/useBorrowRates';
 import { useLiquidationThreshold } from '@ui/hooks/levato/useLiquidationThreshold';
 import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 enum LeverageMode {
@@ -141,8 +140,14 @@ export default function Leverage({ marketData }: LeverageProps) {
 
     return { healthRatio, liquidationThresholdValue };
   }, [liquidationThreshold, usdPrice, positionValue]);
-  const { data: maxSupplyAmount, isLoading: isLoadingMaxSupplyAmount } =
-    useMaxSupplyAmount(selectedFundingAsset, marketData.comptroller, chainId);
+  const {
+    data: maxSupplyAmount,
+    isLoading: isLoadingMaxSupplyAmount,
+    refetch: refetchBalance
+  } = useBalance({
+    address,
+    token: selectedFundingAsset.underlyingToken as `0x${string}`
+  });
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
   const { data: maxLeverage } = useMaxLeverageAmount(
@@ -156,10 +161,6 @@ export default function Leverage({ marketData }: LeverageProps) {
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
     availableAssets.map((asset) => asset.underlyingToken)
   );
-  const { refetch: refetchBalance } = useBalance({
-    address: address,
-    token: selectedFundingAsset.underlyingToken as `0x${string}`
-  });
   const queryClient = useQueryClient();
 
   /**
@@ -259,9 +260,6 @@ export default function Leverage({ marketData }: LeverageProps) {
       toast.success(
         `Opened position for ${selectedFundingAsset.underlyingSymbol}/${selectedBorrowAsset.underlyingSymbol}`
       );
-
-      queryClient.invalidateQueries(['positions']);
-      refetchBalance();
     } catch (error) {
       console.error(error);
 
@@ -326,7 +324,7 @@ export default function Leverage({ marketData }: LeverageProps) {
         isLoading={isLoadingMaxSupplyAmount}
         mainText="Funding"
         max={formatUnits(
-          maxSupplyAmount?.bigNumber ?? '0',
+          maxSupplyAmount?.value ?? '0',
           selectedFundingAsset.underlyingDecimals
         )}
         selectedMarketData={selectedFundingAsset}
@@ -489,7 +487,11 @@ export default function Leverage({ marketData }: LeverageProps) {
         {transactionSteps.length > 0 ? (
           <div className="flex justify-center">
             <TransactionStepsHandler
-              resetTransactionSteps={() => upsertTransactionStep(undefined)}
+              resetTransactionSteps={() => {
+                queryClient.invalidateQueries(['positions']);
+                refetchBalance();
+                upsertTransactionStep(undefined);
+              }}
               transactionSteps={transactionSteps}
             />
           </div>
