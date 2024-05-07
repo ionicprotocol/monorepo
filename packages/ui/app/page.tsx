@@ -34,7 +34,7 @@ export default function Market() {
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
-  const [selectedPool, setSelectedPool] = useState(pools[1].id);
+  const [selectedPool, setSelectedPool] = useState(pools[0].id);
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     selectedPool,
     chainId
