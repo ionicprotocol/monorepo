@@ -5,7 +5,7 @@ import millify from 'millify';
 import Image from 'next/image';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useChainId } from 'wagmi';
+import { useBalance, useChainId } from 'wagmi';
 
 import ResultHandler from './ResultHandler';
 
@@ -15,6 +15,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 
 export default function LeveragedPositionsInfo() {
+  const { address } = useMultiIonic();
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
@@ -32,6 +33,7 @@ export default function LeveragedPositionsInfo() {
   );
   const { levatoSdk } = useMultiIonic();
   const queryClient = useQueryClient();
+  const { refetch: refetchBalance } = useBalance({ address });
 
   const handlePositionClosing = async (positionAddress: string) => {
     try {
@@ -53,6 +55,14 @@ export default function LeveragedPositionsInfo() {
       );
 
       queryClient.invalidateQueries(['positions']);
+
+      const currentPosition = currentVisiblePositions?.find(
+        (position) => position.positionAddress === positionAddress
+      );
+
+      if (currentPosition) {
+        refetchBalance();
+      }
     } catch (error) {
       console.error(error);
 
@@ -82,97 +92,98 @@ export default function LeveragedPositionsInfo() {
         <div className={`col-span-3`}>ACTIONS</div>
       </div>
 
-      {currentVisiblePositions?.map((position) => {
-        const positionCollateralAsset = marketData?.assets.find(
-          (asset) => asset.underlyingToken === position.collateralAsset
-        );
-        const positionStableAsset = marketData?.assets.find(
-          (asset) => asset.underlyingToken === position.stableAsset
-        );
+      {currentVisiblePositions && currentVisiblePositions.length ? (
+        currentVisiblePositions.map((position) => {
+          const positionCollateralAsset = marketData?.assets.find(
+            (asset) => asset.underlyingToken === position.collateralAsset
+          );
+          const positionStableAsset = marketData?.assets.find(
+            (asset) => asset.underlyingToken === position.stableAsset
+          );
 
-        if (!positionCollateralAsset || !positionStableAsset) {
-          return <></>;
-        }
+          if (!positionCollateralAsset || !positionStableAsset) {
+            return <></>;
+          }
 
-        return (
-          <div
-            className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-15  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative`}
-            key={position.positionAddress}
-          >
+          return (
             <div
-              className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-15  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative`}
+              key={position.positionAddress}
             >
-              <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                LONG / SHORT
-              </span>
-              <Image
-                alt="Alt"
-                height="16"
-                src={`/img/symbols/32/color/${positionCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
-                style={{
-                  display: 'inline-block',
-                  position: 'relative',
-                  top: '-1px',
-                  verticalAlign: 'middle'
-                }}
-                width="16"
-              />{' '}
-              {positionCollateralAsset.underlyingSymbol} /{' '}
-              <Image
-                alt="Alt"
-                height="16"
-                src={`/img/symbols/32/color/${positionStableAsset.underlyingSymbol.toLowerCase()}.png`}
-                style={{
-                  display: 'inline-block',
-                  position: 'relative',
-                  top: '-1px',
-                  verticalAlign: 'middle'
-                }}
-                width="16"
-              />{' '}
-              {positionStableAsset.underlyingSymbol}
-            </div>
+              <div
+                className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+              >
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  LONG / SHORT
+                </span>
+                <Image
+                  alt="Alt"
+                  height="16"
+                  src={`/img/symbols/32/color/${positionCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
+                  style={{
+                    display: 'inline-block',
+                    position: 'relative',
+                    top: '-1px',
+                    verticalAlign: 'middle'
+                  }}
+                  width="16"
+                />{' '}
+                {positionCollateralAsset.underlyingSymbol} /{' '}
+                <Image
+                  alt="Alt"
+                  height="16"
+                  src={`/img/symbols/32/color/${positionStableAsset.underlyingSymbol.toLowerCase()}.png`}
+                  style={{
+                    display: 'inline-block',
+                    position: 'relative',
+                    top: '-1px',
+                    verticalAlign: 'middle'
+                  }}
+                  width="16"
+                />{' '}
+                {positionStableAsset.underlyingSymbol}
+              </div>
 
-            <div
-              className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-            >
-              <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                VALUE
-              </span>
-              {Number(
-                formatUnits(
-                  position.positionSupplyAmount,
-                  positionCollateralAsset.underlyingDecimals
-                )
-              ).toFixed(3)}{' '}
-              <Image
-                alt="Alt"
-                height="16"
-                src={`/img/symbols/32/color/${positionCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
-                style={{
-                  display: 'inline-block',
-                  position: 'relative',
-                  top: '-1px',
-                  verticalAlign: 'middle'
-                }}
-                width="16"
-              />{' '}
-              $
-              {millify(
-                Number(formatEther(position.positionValue)) * (usdPrice ?? 0)
-              )}
-            </div>
+              <div
+                className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+              >
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  VALUE
+                </span>
+                {Number(
+                  formatUnits(
+                    position.positionSupplyAmount,
+                    positionCollateralAsset.underlyingDecimals
+                  )
+                ).toFixed(3)}{' '}
+                <Image
+                  alt="Alt"
+                  height="16"
+                  src={`/img/symbols/32/color/${positionCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
+                  style={{
+                    display: 'inline-block',
+                    position: 'relative',
+                    top: '-1px',
+                    verticalAlign: 'middle'
+                  }}
+                  width="16"
+                />{' '}
+                $
+                {millify(
+                  Number(formatEther(position.positionValue)) * (usdPrice ?? 0)
+                )}
+              </div>
 
-            <div
-              className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-            >
-              <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                LEVERAGE
-              </span>
-              {Number(formatEther(position.leverageRatio)).toFixed(3)}x
-            </div>
+              <div
+                className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+              >
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  LEVERAGE
+                </span>
+                {Number(formatEther(position.leverageRatio)).toFixed(3)}x
+              </div>
 
-            {/* <div
+              {/* <div
               className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
             >
               <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
@@ -181,47 +192,53 @@ export default function LeveragedPositionsInfo() {
               test
             </div> */}
 
-            <div
-              className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-            >
-              <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                MARK/LIQ PRICE
-              </span>
-              $
-              {millify(
-                Number(formatEther(positionCollateralAsset.underlyingPrice)) *
-                  (usdPrice ?? 0)
-              )}{' '}
-              / $
-              {millify(
-                Number(formatEther(position.liquidationPrice)) * (usdPrice ?? 0)
-              )}
-            </div>
-
-            <div
-              className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-            >
-              <button
-                className="btn-green text-sm uppercase"
-                disabled={
-                  closingPositions.indexOf(position.positionAddress) > -1
-                }
-                onClick={() => handlePositionClosing(position.positionAddress)}
+              <div
+                className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
               >
-                <ResultHandler
-                  height="20"
-                  isLoading={
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  MARK/LIQ PRICE
+                </span>
+                $
+                {millify(
+                  Number(formatEther(positionCollateralAsset.underlyingPrice)) *
+                    (usdPrice ?? 0)
+                )}{' '}
+                / $
+                {millify(
+                  Number(formatEther(position.liquidationPrice)) *
+                    (usdPrice ?? 0)
+                )}
+              </div>
+
+              <div
+                className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+              >
+                <button
+                  className="btn-green text-sm uppercase"
+                  disabled={
                     closingPositions.indexOf(position.positionAddress) > -1
                   }
-                  width="20"
+                  onClick={() =>
+                    handlePositionClosing(position.positionAddress)
+                  }
                 >
-                  Close
-                </ResultHandler>
-              </button>
+                  <ResultHandler
+                    height="20"
+                    isLoading={
+                      closingPositions.indexOf(position.positionAddress) > -1
+                    }
+                    width="20"
+                  >
+                    Close
+                  </ResultHandler>
+                </button>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      ) : (
+        <div className="text-center">No open positions</div>
+      )}
     </ResultHandler>
   );
 }

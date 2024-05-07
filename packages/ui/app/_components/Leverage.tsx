@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
 import {
   formatEther,
@@ -11,7 +12,7 @@ import millify from 'millify';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useChainId } from 'wagmi';
+import { useBalance, useChainId } from 'wagmi';
 
 import AssetsList from './AssetsList';
 import Amount from './popup/Amount';
@@ -155,6 +156,11 @@ export default function Leverage({ marketData }: LeverageProps) {
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
     availableAssets.map((asset) => asset.underlyingToken)
   );
+  const { refetch: refetchBalance } = useBalance({
+    address: address,
+    token: selectedFundingAsset.underlyingToken as `0x${string}`
+  });
+  const queryClient = useQueryClient();
 
   /**
    * Open a position
@@ -253,6 +259,9 @@ export default function Leverage({ marketData }: LeverageProps) {
       toast.success(
         `Opened position for ${selectedFundingAsset.underlyingSymbol}/${selectedBorrowAsset.underlyingSymbol}`
       );
+
+      queryClient.invalidateQueries(['positions']);
+      refetchBalance();
     } catch (error) {
       console.error(error);
 
@@ -487,6 +496,9 @@ export default function Leverage({ marketData }: LeverageProps) {
         ) : (
           <button
             className="btn-green"
+            disabled={
+              !fundingAmount || (!!fundingAmount && Number(fundingAmount) === 0)
+            }
             onClick={openPosition}
           >
             OPEN POSITION
