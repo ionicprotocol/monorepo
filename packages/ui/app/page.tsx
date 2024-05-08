@@ -3,7 +3,7 @@
 
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useChainId } from 'wagmi';
 
 import PoolRows from './_components/markets/PoolRows';
@@ -15,25 +15,51 @@ import ResultHandler from './_components/ResultHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import type { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+const pools = [
+  {
+    id: '0',
+    name: 'Mode - Main Market'
+  },
+  {
+    id: '1',
+    name: 'Mode - Native Market'
+  }
+];
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
-  const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
-    '0',
+  const [selectedPool, setSelectedPool] = useState(pools[0].id);
+  const [poolData, setPoolData] = useState<PoolData>();
+  const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
+    pools[0].id,
     chainId
   );
+  const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
+    pools[1].id,
+    chainId
+  );
+
+  useEffect(() => {
+    if (selectedPool === pools[0].id && pool1Data) {
+      setPoolData(pool1Data);
+    } else if (selectedPool === pools[1].id && pool2Data) {
+      setPoolData(pool2Data);
+    }
+  }, [pool1Data, pool2Data, selectedPool]);
+
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
   );
   const dataIsLoading = useMemo<boolean>(
-    () => isLoadingPoolData,
-    [isLoadingPoolData]
+    () => isLoadingPool1Data || isLoadingPool2Data,
+    [isLoadingPool1Data, isLoadingPool2Data]
   );
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -47,21 +73,78 @@ export default function Market() {
     poolData?.assets.map((asset) => asset.cToken) ?? []
   );
 
+  const selectedPoolClass = 'rounded-md border-mode border-2';
+
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
-          <div className={`flex items-center justify-center gap-2 py-3 pt-2 `}>
-            <img
-              alt="modlogo"
-              className={`w-8`}
-              src="/img/logo/MODE.png"
-            />
-            <h1 className={`font-semibold`}>Mode Market</h1>
+          <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
+          <div className="flex mb-4">
+            <div
+              className={`flex flex-col cursor-pointer mr-2 ${
+                selectedPool === pools[0].id ? selectedPoolClass : ''
+              }`}
+              onClick={() => setSelectedPool(pools[0].id)}
+            >
+              <div
+                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
+              >
+                <img
+                  alt="modlogo"
+                  className={`w-8`}
+                  src="/img/logo/MODE.png"
+                />
+                <h1 className={`font-semibold`}>{pools[0].name}</h1>
+              </div>
+              <div className="flex items-center justify-center pb-2">
+                {pool1Data?.assets.map((val, idx) => (
+                  <img
+                    alt="modlogo"
+                    className={`w-6`}
+                    key={idx}
+                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div
+              className={`flex flex-col cursor-pointer ml-2 ${
+                selectedPool === pools[1].id ? selectedPoolClass : ''
+              }`}
+              onClick={() => setSelectedPool(pools[1].id)}
+            >
+              <div
+                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
+              >
+                <img
+                  alt="modlogo"
+                  className={`w-8`}
+                  src="/img/logo/MODE.png"
+                />
+                <h1 className={`font-semibold`}>{pools[1].name}</h1>
+              </div>
+              <div className="flex items-center justify-center pb-2">
+                {pool2Data?.assets.map((val, idx) => (
+                  <img
+                    alt="modlogo"
+                    className={`w-6`}
+                    key={idx}
+                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          <ResultHandler isLoading={isLoadingPoolData || isLoadingLoopMarkets}>
+
+          <ResultHandler
+            isLoading={
+              isLoadingPool1Data || isLoadingPool2Data || isLoadingLoopMarkets
+            }
+          >
             <div className={`w-full flex flex-wrap items-center gap-4`}>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
