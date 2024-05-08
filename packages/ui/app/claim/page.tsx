@@ -1,34 +1,95 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useAccount, useSignMessage } from 'wagmi';
 
 import ConnectButton from '../_components/ConnectButton';
 import ResultHandler from '../_components/ResultHandler';
 
+const claimMessage = (nonce: string) => `Welcome to the $ION Airdrop!
+
+Sign this message to prove you own this address!
+
+Nonce: ${nonce}`;
+
+type User = {
+  claimed: boolean;
+  ion_amount: string;
+  nonce: string;
+  user: string;
+};
+
 export default function Claim() {
-  const [eligibility, setEligibility] = useState<boolean>(true);
+  const [eligibility, setEligibility] = useState<boolean>(false);
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const [claimed, setClaimed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [popup, setPopup] = useState<boolean>(false);
   const slideref = useRef<HTMLDivElement>(null!);
+  const account = useAccount();
+  const { signMessageAsync } = useSignMessage();
+  console.log('claimed: ', claimed);
 
   function eligibilitySlide(val: number) {
     if (!slideref.current) return;
     slideref.current.style.transform = `translateX(${val * -100}%)`;
   }
 
-  function checkEligibility() {
+  async function checkEligibility() {
     setPopup(true);
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:3000/address/${account.address}`
+      );
+      const [_user]: User[] = await res.json();
+      console.log('user: ', _user);
+      if (!_user || BigInt(_user.ion_amount) === BigInt(0)) {
+        throw new Error('User not found or amount is 0');
+      }
+      setUser(_user);
+      setClaimed(_user.claimed);
+      // setting the wallet if it is eligible or not
+      setEligibility(true);
+    } catch (error) {
+      console.error('error: ', error);
+      setEligibility(false);
+    }
     // the checking from the api will be done here
 
     // the loading will be set here
     setLoading(false);
-
-    // logic goes here
-    // ...Claim logic............
-
-    // setting the wallet if it is eligible or not
-    setEligibility(true);
   }
+
+  async function claimTokens() {
+    setLoading(true);
+    try {
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const signature = await signMessageAsync({
+        message: claimMessage(user.nonce)
+      });
+      const res = await fetch(`http://localhost:3000/airdrop`, {
+        body: JSON.stringify({ address: account.address, signature }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+      const data = await res.json();
+      console.log('airdrop claim response: ', data);
+      if (!data.res.data[0].claimed) {
+        throw new Error('Claim not updated in DB!');
+      }
+      setClaimed(true);
+    } catch (error) {
+      console.error('error: ', error);
+      setClaimed(false);
+    }
+    setLoading(false);
+  }
+
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex overflow-x-hidden rounded-xl relative `}
@@ -139,12 +200,26 @@ export default function Claim() {
               )}
             </ResultHandler>
 
-            <button
-              className={`mt-auto w-full bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm `}
-              onClick={() => setPopup(false)}
-            >
-              Back to Claim
-            </button>
+            {eligibility ? (
+              <button
+                className={`mt-auto w-full ${
+                  claimed
+                    ? 'bg-graylite text-white'
+                    : 'bg-accent cursor-pointer text-darkone'
+                } rounded-lg py-2 px-6 text-sm `}
+                disabled={claimed}
+                onClick={() => claimTokens()}
+              >
+                {claimed ? 'Claimed' : 'Claim Tokens'}
+              </button>
+            ) : (
+              <button
+                className={`mt-auto w-full bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm `}
+                onClick={() => setPopup(false)}
+              >
+                Back to Claim
+              </button>
+            )}
           </div>
         </div>
       )}
