@@ -30,11 +30,7 @@ export function useMaxWithdrawAmount(
             return null;
           });
 
-        // Limit the max withdraw amount to 90%
-        // if the user has borrows
-        return !!poolData.totalBorrowBalanceFiat
-          ? maxRedeem?.mul(9).div(10)
-          : maxRedeem;
+        return maxRedeem;
       } else {
         return null;
       }
