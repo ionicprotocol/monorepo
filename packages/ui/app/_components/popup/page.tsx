@@ -849,7 +849,9 @@ const Popup = ({
 
         currentTransactionStep++;
 
-        const isRepayingMax = amountAsBInt.gte(maxRepayAmount ?? '0');
+        const isRepayingMax = amountAsBInt.gte(
+          selectedMarketData.borrowBalance ?? '0'
+        );
         console.warn(
           'Repay params:',
           selectedMarketData.cToken,
