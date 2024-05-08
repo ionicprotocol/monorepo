@@ -1513,14 +1513,18 @@ const Popup = ({
                   >
                     <span className={``}>Market Borrow Apr</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${borrowAPR?.toFixed(2)}%`}
+                      <span className="text-error">
+                        {`${borrowAPR?.toFixed(2)}%`}
+                      </span>
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingUpdatedAssets}
                         width="16"
                       >
-                        {updatedBorrowAPR?.toFixed(2)}%
+                        <span className="text-accent">
+                          {updatedBorrowAPR?.toFixed(2)}%
+                        </span>
                       </ResultHandler>
                     </span>
                   </div>
