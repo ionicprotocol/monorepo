@@ -38,8 +38,9 @@ export default function Dashboard() {
   const chainId = useChainId();
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [poolMarket, setPoolMarket] = useState<string>('0');
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
-    '0',
+    poolMarket,
     chainId
   );
   const { data: positions, isLoading: isLoadingPositions } =
@@ -395,6 +396,26 @@ export default function Dashboard() {
               VIEW POINTS
             </Link>
           </div>
+        </div>
+        <div
+          className={`flex items-center justify-center text-sm gap-2 p-1 my-1`}
+        >
+          <button
+            className={`py-2 px-4 border rounded-xl   ${
+              poolMarket === '0' ? 'bg-lime text-black' : ''
+            }`}
+            onClick={() => setPoolMarket('0')}
+          >
+            Mode Main Market
+          </button>
+          <button
+            className={`py-2 px-4 border rounded-xl border-lime ${
+              poolMarket === '1' ? 'bg-lime text-black ' : ' '
+            }`}
+            onClick={() => setPoolMarket('1')}
+          >
+            Mode Native Market
+          </button>
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
