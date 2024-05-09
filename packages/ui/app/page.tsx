@@ -84,8 +84,8 @@ export default function Market() {
           <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
             <div
-              className={`flex flex-col cursor-pointer  py-2 ${
-                selectedPool === pools[0].id ? selectedPoolClass : ''
+              className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
+                selectedPool === pools[0].id ? selectedPoolClass : 'rounded-md border-stone-700 border-2'
               }`}
               onClick={() => setSelectedPool(pools[0].id)}
             >
@@ -112,8 +112,8 @@ export default function Market() {
             </div>
 
             <div
-              className={`flex flex-col cursor-pointer py-2 ${
-                selectedPool === pools[1].id ? selectedPoolClass : ''
+              className={`flex flex-col cursor-pointer py-2 md:px-4 ${
+                selectedPool === pools[1].id ? selectedPoolClass : 'rounded-md border-stone-700 border-2'
               }`}
               onClick={() => setSelectedPool(pools[1].id)}
             >
