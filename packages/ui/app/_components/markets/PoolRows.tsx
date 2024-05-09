@@ -117,8 +117,8 @@ const PoolRows = ({
                 className="size-4 rounded mr-1"
                 src="/img/ionic-sq.png"
               />{' '}
-              + {/ezETH|weETH\.mode|STONE|wrsETH/gm.test(asset) ? '2x' : '3x'} Ionic
-              Points
+              + {/ezETH|weETH\.mode|STONE|wrsETH/gm.test(asset) ? '2x' : '3x'}
+              Ionic Points
             </div>
             <div className="flex">
               <img

@@ -85,7 +85,9 @@ export default function Market() {
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
             <div
               className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
-                selectedPool === pools[0].id ? selectedPoolClass : 'rounded-md border-stone-700 border-2'
+                selectedPool === pools[0].id
+                  ? selectedPoolClass
+                  : 'rounded-md border-stone-700 border-2'
               }`}
               onClick={() => setSelectedPool(pools[0].id)}
             >
@@ -103,7 +105,7 @@ export default function Market() {
                 {pool1Data?.assets.map((val, idx) => (
                   <img
                     alt="modlogo"
-                    className={`w-6 ${idx !== 0 ? '-translate-x-' : ""}`}
+                    className={`w-6`}
                     key={idx}
                     src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                   />
@@ -113,7 +115,9 @@ export default function Market() {
 
             <div
               className={`flex flex-col cursor-pointer py-2 md:px-4 ${
-                selectedPool === pools[1].id ? selectedPoolClass : 'rounded-md border-stone-700 border-2'
+                selectedPool === pools[1].id
+                  ? selectedPoolClass
+                  : 'rounded-md border-stone-700 border-2'
               }`}
               onClick={() => setSelectedPool(pools[1].id)}
             >
