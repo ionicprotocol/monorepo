@@ -82,9 +82,9 @@ export default function Market() {
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
           <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
-          <div className="flex mb-4">
+          <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
             <div
-              className={`flex flex-col cursor-pointer mr-2 ${
+              className={`flex flex-col cursor-pointer  py-2 ${
                 selectedPool === pools[0].id ? selectedPoolClass : ''
               }`}
               onClick={() => setSelectedPool(pools[0].id)}
@@ -103,7 +103,7 @@ export default function Market() {
                 {pool1Data?.assets.map((val, idx) => (
                   <img
                     alt="modlogo"
-                    className={`w-6`}
+                    className={`w-6 ${idx !== 0 ? '-translate-x-' : ""}`}
                     key={idx}
                     src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                   />
@@ -112,7 +112,7 @@ export default function Market() {
             </div>
 
             <div
-              className={`flex flex-col cursor-pointer ml-2 ${
+              className={`flex flex-col cursor-pointer py-2 ${
                 selectedPool === pools[1].id ? selectedPoolClass : ''
               }`}
               onClick={() => setSelectedPool(pools[1].id)}
