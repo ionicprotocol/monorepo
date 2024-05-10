@@ -3,7 +3,7 @@ import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 
-import func from "./deploy";
+import func from "./00-deploy";
 
 // use with mainnet forking to simulate the prod environment
 const forkMainnet: DeployFunction = async (hre): Promise<void> => {
