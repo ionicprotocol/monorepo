@@ -1248,6 +1248,13 @@ const Popup = ({
                     currentUtilizationPercentage={currentUtilizationPercentage}
                     handleUtilization={handleWithdrawUtilization}
                   />
+
+                  {currentUtilizationPercentage >= 100 && (
+                    <div className="text-lime text-xs text-center">
+                      Warning: Mind the Health Factor when max withdrawing
+                    </div>
+                  )}
+
                   <div
                     className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                   />
