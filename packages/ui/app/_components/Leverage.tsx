@@ -127,19 +127,13 @@ export default function Leverage({ marketData }: LeverageProps) {
       : selectedCollateralAsset.underlyingToken,
     parseEther(currentLeverage.toString()).toString()
   );
-  const { liquidationThresholdValue, healthRatio } = useMemo(() => {
-    const liquidationThresholdValue =
-      Number(
-        formatEther(
-          liquidationThreshold ? liquidationThreshold.mul(parseEther('1')) : '0'
-        )
-      ) / (usdPrice ?? 0);
-    const healthRatio = !!liquidationThresholdValue
-      ? (positionValue / liquidationThresholdValue).toFixed(2)
+  const { healthRatio } = useMemo(() => {
+    const healthRatio = !!liquidationThreshold
+      ? (positionValue / liquidationThreshold).toFixed(2)
       : 0.0;
 
-    return { healthRatio, liquidationThresholdValue };
-  }, [liquidationThreshold, usdPrice, positionValue]);
+    return { healthRatio };
+  }, [liquidationThreshold, positionValue]);
   const {
     data: maxSupplyAmount,
     isLoading: isLoadingMaxSupplyAmount,
@@ -461,7 +455,7 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingLiquidationThreshold}
             width="16"
           >
-            ${millify(liquidationThresholdValue)}
+            ${millify(liquidationThreshold ?? 0)}
           </ResultHandler>
         </span>
       </div>
