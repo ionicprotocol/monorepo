@@ -12,6 +12,8 @@ Sign this message to prove you own this address!
 
 Nonce: ${nonce}`;
 
+const AIRDROP_URL = 'https://ionic.ninja';
+
 type User = {
   claimed: boolean;
   ion_amount: string;
@@ -38,7 +40,7 @@ export default function Claim() {
     setPopup(true);
     setLoading(true);
     try {
-      const res = await fetch(`https://ionic.ninja/address/${account.address}`);
+      const res = await fetch(`${AIRDROP_URL}/address/${account.address}`);
       const [_user]: User[] = await res.json();
       if (!_user || BigInt(_user.ion_amount) === BigInt(0)) {
         throw new Error('User not found or amount is 0');
@@ -66,7 +68,7 @@ export default function Claim() {
       const signature = await signMessageAsync({
         message: claimMessage(user.nonce)
       });
-      const res = await fetch(`http://localhost:3000/airdrop`, {
+      const res = await fetch(`${AIRDROP_URL}/airdrop`, {
         body: JSON.stringify({ address: account.address, signature }),
         headers: {
           'Content-Type': 'application/json'
