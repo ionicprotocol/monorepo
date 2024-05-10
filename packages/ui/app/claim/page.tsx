@@ -28,7 +28,6 @@ export default function Claim() {
   const slideref = useRef<HTMLDivElement>(null!);
   const account = useAccount();
   const { signMessageAsync } = useSignMessage();
-  console.log('claimed: ', claimed);
 
   function eligibilitySlide(val: number) {
     if (!slideref.current) return;
@@ -39,11 +38,8 @@ export default function Claim() {
     setPopup(true);
     setLoading(true);
     try {
-      const res = await fetch(
-        `http://localhost:3000/address/${account.address}`
-      );
+      const res = await fetch(`https://ionic.ninja/address/${account.address}`);
       const [_user]: User[] = await res.json();
-      console.log('user: ', _user);
       if (!_user || BigInt(_user.ion_amount) === BigInt(0)) {
         throw new Error('User not found or amount is 0');
       }
@@ -78,7 +74,6 @@ export default function Claim() {
         method: 'POST'
       });
       const data = await res.json();
-      console.log('airdrop claim response: ', data);
       if (!data.res.data[0].claimed) {
         throw new Error('Claim not updated in DB!');
       }
