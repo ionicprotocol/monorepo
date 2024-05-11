@@ -4,6 +4,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+import { base } from 'viem/chains';
+import { useChainId } from 'wagmi';
 // import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
@@ -14,6 +16,7 @@ import ConnectButton from './ConnectButton';
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
+  const chainId = useChainId();
   // const signer = useEthersSigner();
 
   // useEffect(()=>{
@@ -22,9 +25,16 @@ export default function Navbar() {
   // },[pathname])
   return (
     <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black">
-      <div className="absolute w-full top-full left-0 bg-lime text-center p-2 text-darkone text-sm font-medium">
-        Hello, Mode! Ionic is open for lending and borrowing! Supply assets to
-        earn Ionic points. Borrow to earn multiplied points!
+      <div
+        className={`${
+          chainId === base.id
+            ? 'bg-baseblue text-white'
+            : 'bg-lime text-darkone'
+        } absolute w-full top-full left-0 text-center p-2 text-sm font-medium`}
+      >
+        Hello, {chainId === base.id ? 'Base' : 'Mode'}! Ionic is open for
+        lending and borrowing! Supply assets to earn Ionic points. Borrow to
+        earn multiplied points!
       </div>
       <Link
         className={`flex items-center  md:pr-10  `}

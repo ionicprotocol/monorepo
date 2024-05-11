@@ -1,6 +1,7 @@
 import { assetFilter, assetSymbols, MarketConfig } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
+import { assets as baseAssets } from "../../../chains/src/base/assets";
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
 
 task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {
@@ -52,6 +53,30 @@ task("markets:deploy:modenative", "deploy mode native markets").setAction(async 
       comptroller: "0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a",
       symbol: "ion" + asset.symbol + ".modenative",
       name: `Ionic ${asset.name} - Mode Native Market`
+    });
+  }
+});
+
+task("markets:deploy:base", "deploy base markets").setAction(async (taskArgs, { run }) => {
+  const symbols = [
+    { symbol: assetSymbols.AERO, cf: "65" },
+    { symbol: assetSymbols.cbETH, cf: "80" },
+    { symbol: assetSymbols.USDC, cf: "90" },
+    { symbol: assetSymbols.wstETH, cf: "82.5" },
+    { symbol: assetSymbols.ezETH, cf: "67.5" },
+    { symbol: assetSymbols.WETH, cf: "82.5" }
+  ];
+
+  for (let i = 0; i < symbols.length; i++) {
+    const symbol = symbols[i];
+    const asset = assetFilter(baseAssets, symbol.symbol);
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: symbol.cf,
+      underlying: asset.underlying,
+      comptroller: "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13",
+      symbol: "ion" + asset.symbol,
+      name: `Ionic ${asset.name}`
     });
   }
 });

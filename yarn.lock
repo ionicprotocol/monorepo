@@ -1832,6 +1832,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@headlessui/react@npm:^1.7.19":
+  version: 1.7.19
+  resolution: "@headlessui/react@npm:1.7.19"
+  dependencies:
+    "@tanstack/react-virtual": "npm:^3.0.0-beta.60"
+    client-only: "npm:^0.0.1"
+  peerDependencies:
+    react: ^16 || ^17 || ^18
+    react-dom: ^16 || ^17 || ^18
+  checksum: 10/682dddfb53e4dc1e457f47fa3ee3a35ad02255b552eec90e703a2b4cb6b07428da7c392844c24ac846e8061cd0fb840e1933b6b91b5416fde3d2648f075a6765
+  languageName: node
+  linkType: hard
+
+"@heroicons/react@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "@heroicons/react@npm:2.1.3"
+  peerDependencies:
+    react: ">= 16"
+  checksum: 10/b9a1100a1381b13567ac5c5a43d77f39fc5d20682bc3e9a1674eecbe656ad756287e5f1c9024cec8f5a2245607f2372278c956c6279ee9b79ef305a7337fd5b8
+  languageName: node
+  linkType: hard
+
 "@honeycombio/opentelemetry-node@npm:^0.5.0":
   version: 0.5.0
   resolution: "@honeycombio/opentelemetry-node@npm:0.5.0"
@@ -2096,6 +2118,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/sdk@workspace:packages/sdk"
   dependencies:
+    "@headlessui/react": "npm:^1.7.19"
+    "@heroicons/react": "npm:^2.1.3"
     "@ionicprotocol/chains": "workspace:*"
     "@ionicprotocol/types": "workspace:*"
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
@@ -2124,7 +2148,7 @@ __metadata:
     ethers: "npm:^5.7.2"
     hardhat: "npm:^2.17.2"
     hardhat-abi-exporter: "npm:^2.10.1"
-    hardhat-deploy: "npm:^0.11.37"
+    hardhat-deploy: "npm:^0.12.2"
     lint-staged: "npm:14.0.1"
     mocha: "npm:^10.2.0"
     nyc: "npm:^15.1.0"
@@ -2201,7 +2225,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
-    "@web3modal/wagmi": "npm:^4.0.1"
+    "@web3modal/wagmi": "npm:^4.1.9"
     autoprefixer: "npm:^10.0.1"
     chart.js: "npm:^4.4.1"
     eslint: "npm:8.48.0"
@@ -2229,8 +2253,8 @@ __metadata:
     tailwind-scrollbar-hide: "npm:^1.1.7"
     tailwindcss: "npm:^3.3.0"
     typescript: "npm:^5"
-    viem: "npm:^2.7.16"
-    wagmi: "npm:^2.5.6"
+    viem: "npm:^2.9.19"
+    wagmi: "npm:^2.5.20"
     zustand: "npm:^4.4.7"
   languageName: unknown
   linkType: soft
@@ -2537,9 +2561,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.18.5":
-  version: 0.18.5
-  resolution: "@metamask/sdk-communication-layer@npm:0.18.5"
+"@metamask/sdk-communication-layer@npm:0.20.2":
+  version: 0.20.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.20.2"
   dependencies:
     bufferutil: "npm:^4.0.8"
     date-fns: "npm:^2.29.3"
@@ -2552,13 +2576,13 @@ __metadata:
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: 10/1326e66f0721c9f2f4b7c56eba62fa3be4cbccc3fa3dfbe3888e334886d1096cbee783f7ce6d12a82565e99db3f7f544528dc7bef994091b06ce15c8f86deaa3
+  checksum: 10/7353bd8f1faae0f41c2140015ae716000070d67193cdcbd2de586b8fb603fa98d0327dc85cb666e60fd0c4bcb96c06d6c3e635bf973f315f0d349dd8f7c305a9
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.18.5":
-  version: 0.18.5
-  resolution: "@metamask/sdk-install-modal-web@npm:0.18.5"
+"@metamask/sdk-install-modal-web@npm:0.20.2":
+  version: 0.20.2
+  resolution: "@metamask/sdk-install-modal-web@npm:0.20.2"
   dependencies:
     qr-code-styling: "npm:^1.6.0-rc.1"
   peerDependencies:
@@ -2574,18 +2598,18 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10/3c34dc55c6ba57638e51aacf5328e1c1a7f37d1da5a6a4214eae5c5d23e20e8a9bfe5247eaf54bc2f8325925ff1cd32fa9ecf42a26e97545c1df609fec7fc94c
+  checksum: 10/0c6758c4be340e86a439addec0084facf53b32bc79d8d4ade6b04ebd2c08676b0fd779a410c716f90f4ee43deb83cb606da760a613685d3b9e5b998af5a3a763
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:0.18.6":
-  version: 0.18.6
-  resolution: "@metamask/sdk@npm:0.18.6"
+"@metamask/sdk@npm:0.20.3":
+  version: 0.20.3
+  resolution: "@metamask/sdk@npm:0.20.3"
   dependencies:
     "@metamask/onboarding": "npm:^1.0.1"
     "@metamask/providers": "npm:^15.0.0"
-    "@metamask/sdk-communication-layer": "npm:0.18.5"
-    "@metamask/sdk-install-modal-web": "npm:0.18.5"
+    "@metamask/sdk-communication-layer": "npm:0.20.2"
+    "@metamask/sdk-install-modal-web": "npm:0.20.2"
     "@types/dom-screen-wake-lock": "npm:^1.0.0"
     bowser: "npm:^2.9.0"
     cross-fetch: "npm:^4.0.0"
@@ -2605,20 +2629,14 @@ __metadata:
     util: "npm:^0.12.4"
     uuid: "npm:^8.3.2"
   peerDependencies:
-    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-native: "*"
   peerDependenciesMeta:
-    "@react-native-async-storage/async-storage":
-      optional: true
     react:
       optional: true
     react-dom:
       optional: true
-    react-native:
-      optional: true
-  checksum: 10/3846e10c574ae6fd21910ca964495f60d3d4471f2be8c4b780cc4bfcd091ea4cfe2154447a330dc2e6cae456c0824283b529ddd16571d1a878c101247ba670cf
+  checksum: 10/8cc21b13b1c6493fdbfabc823650d8836db4a886bb94f20f3abdaa6ab26a9a27eecfde9faadeae51fff75221738526ffd807a7c934dea4c0586bc35e92a1151c
   languageName: node
   linkType: hard
 
@@ -6879,6 +6897,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/react-virtual@npm:^3.0.0-beta.60":
+  version: 3.5.0
+  resolution: "@tanstack/react-virtual@npm:3.5.0"
+  dependencies:
+    "@tanstack/virtual-core": "npm:3.5.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 10/ecb1424b9961ada3c7516b8f05a1bb37fb1b75cb88035e06530a9365e4e565e701b5de9668c17f727bbcb3be1bbe6482f7bd37af9e0b144846e5a67fc9dfd57d
+  languageName: node
+  linkType: hard
+
+"@tanstack/virtual-core@npm:3.5.0":
+  version: 3.5.0
+  resolution: "@tanstack/virtual-core@npm:3.5.0"
+  checksum: 10/76a37734118c59f992bfdd540bb5900aa30d040c723909312c1e7071af1619da6ddedabba1834802fee7e0f6497c38d0fe8bc70ab4950d2d09342558b5c89bb2
+  languageName: node
+  linkType: hard
+
 "@tenderly/hardhat-tenderly@npm:^1.7.7":
   version: 1.8.0
   resolution: "@tenderly/hardhat-tenderly@npm:1.8.0"
@@ -7879,30 +7916,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/connectors@npm:4.3.7":
-  version: 4.3.7
-  resolution: "@wagmi/connectors@npm:4.3.7"
+"@wagmi/connectors@npm:4.3.8":
+  version: 4.3.8
+  resolution: "@wagmi/connectors@npm:4.3.8"
   dependencies:
     "@coinbase/wallet-sdk": "npm:3.9.1"
-    "@metamask/sdk": "npm:0.18.6"
+    "@metamask/sdk": "npm:0.20.3"
     "@safe-global/safe-apps-provider": "npm:0.18.1"
     "@safe-global/safe-apps-sdk": "npm:8.1.0"
     "@walletconnect/ethereum-provider": "npm:2.13.0"
     "@walletconnect/modal": "npm:2.6.2"
   peerDependencies:
-    "@wagmi/core": 2.9.5
+    "@wagmi/core": 2.9.6
     typescript: ">=5.0.4"
     viem: 2.x
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/31a18e43be75d0deb427bea98c3aa0d2e0c59f07fc903371385a200e209f8d1c35a12745f333fee0e11a317bc016e2f51ee6ec4075f1c6dd34e8b549e351277f
+  checksum: 10/c0faf0e3e1f9fefebe678ae208ab491cbc5d853fc735e7bf14189560e32bbc19e508f9eb9c784cf9b8b4a659d84dee9d769db97cbf9ae1a6a012f917aa13c5c6
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:2.9.5, @wagmi/core@npm:^2.2.1":
-  version: 2.9.5
-  resolution: "@wagmi/core@npm:2.9.5"
+"@wagmi/core@npm:2.9.6, @wagmi/core@npm:^2.2.1":
+  version: 2.9.6
+  resolution: "@wagmi/core@npm:2.9.6"
   dependencies:
     eventemitter3: "npm:5.0.1"
     mipd: "npm:0.0.5"
@@ -7916,7 +7953,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10/25f16387f366465b1f8bba9f0681db1941e2ccf08e792c63e43d1598b61f12c2a09daf758d1b468d8d7a9e81780eaa7bb491b06f3e9fe1699d7fac376d4284ce
+  checksum: 10/44170be7d953b28e1d10578def384340154c45d0b3f1db38f1b9153c56a866607d969dbf83535de581c6d888638c4aba6f30fe818feb8e1a677d4d2978ccefb0
   languageName: node
   linkType: hard
 
@@ -8344,7 +8381,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/wagmi@npm:^4.0.1":
+"@web3modal/wagmi@npm:^4.1.9":
   version: 4.1.11
   resolution: "@web3modal/wagmi@npm:4.1.11"
   dependencies:
@@ -12314,9 +12351,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.762
-  resolution: "electron-to-chromium@npm:1.4.762"
-  checksum: 10/8f14dfe22c8442314e351263c39d07218bc6dfeb2f753787229fdbda56a16bc55431f388aa7a904f3c162dd930e0833c6cfd004cc83cb533971a91f6536122f5
+  version: 1.4.763
+  resolution: "electron-to-chromium@npm:1.4.763"
+  checksum: 10/088c53acfe4723d40077a9fd98cc67e74af2c8d0c5c12e75ffddacfd6e98c009c75fff07e3443a3dc499f599a71b7cf0bcbfb1b0c574355436d297c88979056b
   languageName: node
   linkType: hard
 
@@ -13746,7 +13783,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.6.5, ethers@npm:^5.7.0, ethers@npm:^5.7.2":
+"ethers@npm:^5.6.5, ethers@npm:^5.7.0, ethers@npm:^5.7.2, ethers@npm:~5.7.0":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -15541,7 +15578,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat-deploy@npm:^0.11.14, hardhat-deploy@npm:^0.11.37":
+"hardhat-deploy@npm:^0.11.14":
   version: 0.11.45
   resolution: "hardhat-deploy@npm:0.11.45"
   dependencies:
@@ -15570,6 +15607,38 @@ __metadata:
     qs: "npm:^6.9.4"
     zksync-web3: "npm:^0.14.3"
   checksum: 10/84acb88da991805b4adb8707450884af6be632b359b209ddf13afb71acb0abfb53bfad02ca5b1b00f0f1e437969f197c00c36d80ce6b1d33f7fdc86ed5fe7255
+  languageName: node
+  linkType: hard
+
+"hardhat-deploy@npm:^0.12.2":
+  version: 0.12.4
+  resolution: "hardhat-deploy@npm:0.12.4"
+  dependencies:
+    "@ethersproject/abi": "npm:^5.7.0"
+    "@ethersproject/abstract-signer": "npm:^5.7.0"
+    "@ethersproject/address": "npm:^5.7.0"
+    "@ethersproject/bignumber": "npm:^5.7.0"
+    "@ethersproject/bytes": "npm:^5.7.0"
+    "@ethersproject/constants": "npm:^5.7.0"
+    "@ethersproject/contracts": "npm:^5.7.0"
+    "@ethersproject/providers": "npm:^5.7.2"
+    "@ethersproject/solidity": "npm:^5.7.0"
+    "@ethersproject/transactions": "npm:^5.7.0"
+    "@ethersproject/wallet": "npm:^5.7.0"
+    "@types/qs": "npm:^6.9.7"
+    axios: "npm:^0.21.1"
+    chalk: "npm:^4.1.2"
+    chokidar: "npm:^3.5.2"
+    debug: "npm:^4.3.2"
+    enquirer: "npm:^2.3.6"
+    ethers: "npm:^5.7.0"
+    form-data: "npm:^4.0.0"
+    fs-extra: "npm:^10.0.0"
+    match-all: "npm:^1.2.6"
+    murmur-128: "npm:^0.2.1"
+    qs: "npm:^6.9.4"
+    zksync-ethers: "npm:^5.0.0"
+  checksum: 10/127feddc4f95eaa530e7fe77021f7634e23f7f182a8a2e6d51ef5c7254037b05862c54aaa79dd7e07cac627dbae6bff68f8439851ca048ccc571110704998f9d
   languageName: node
   linkType: hard
 
@@ -25586,12 +25655,12 @@ __metadata:
   linkType: hard
 
 "utf-8-validate@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "utf-8-validate@npm:6.0.3"
+  version: 6.0.4
+  resolution: "utf-8-validate@npm:6.0.4"
   dependencies:
     node-gyp: "npm:latest"
     node-gyp-build: "npm:^4.3.0"
-  checksum: 10/d137d076c58d4b4ed1a5524f4a2aefbbd4983eda58246e2c45d2c93a55ccc3741923d54cdd9571bf1b8584a8f43dfcdac69fcdda0fbc543fa53587ce40c3cb0e
+  checksum: 10/046fc81e7c7528661b8162262e62750ab23439e9901dece161b4c6faf36c699f55b8ebd3d9701da2881e315cdce1ee9597121f7dd2f4e405b8aeeec09ded8684
   languageName: node
   linkType: hard
 
@@ -25748,7 +25817,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.7.16":
+"viem@npm:^2.7.16, viem@npm:^2.9.19":
   version: 2.10.3
   resolution: "viem@npm:2.10.3"
   dependencies:
@@ -25769,12 +25838,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^2.5.6":
-  version: 2.8.5
-  resolution: "wagmi@npm:2.8.5"
+"wagmi@npm:^2.5.20":
+  version: 2.8.6
+  resolution: "wagmi@npm:2.8.6"
   dependencies:
-    "@wagmi/connectors": "npm:4.3.7"
-    "@wagmi/core": "npm:2.9.5"
+    "@wagmi/connectors": "npm:4.3.8"
+    "@wagmi/core": "npm:2.9.6"
     use-sync-external-store: "npm:1.2.0"
   peerDependencies:
     "@tanstack/react-query": ">=5.0.0"
@@ -25784,7 +25853,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/d5e9bf0018669bb7c55502c8cd8c38f5ebb04c7f939761f94bfb0b1e907581dafa3a7ae5fc4c834930eedda606e285913628d30d9833c6cd8927ea2c1800794b
+  checksum: 10/ae7cd2b627c988237d68fda2f45a682e711e98b9b75b634e5b98a010a9c105f73d646ca44b9d0ac41614e5a1aa1b6158a6d78553545a189885968138b30eb249
   languageName: node
   linkType: hard
 
@@ -26583,6 +26652,17 @@ __metadata:
     compress-commons: "npm:^6.0.2"
     readable-stream: "npm:^4.0.0"
   checksum: 10/aa5abd6a89590eadeba040afbc375f53337f12637e5e98330012a12d9886cde7a3ccc28bd91aafab50576035bbb1de39a9a316eecf2411c8b9009c9f94f0db27
+  languageName: node
+  linkType: hard
+
+"zksync-ethers@npm:^5.0.0":
+  version: 5.7.2
+  resolution: "zksync-ethers@npm:5.7.2"
+  dependencies:
+    ethers: "npm:~5.7.0"
+  peerDependencies:
+    ethers: ~5.7.0
+  checksum: 10/f43c79f4820a77c50531af17dea09caa8d4e8c1a11a4663d00cb9c6fff6dd2a74fd4ccaa754406e7c36cd07ff58d66e3a74d23153ff0a038b2023eccd0190f1f
   languageName: node
   linkType: hard
 

@@ -19,6 +19,8 @@ export const deployChainlinkOracle = async ({
 
   //// Chainlink Oracle
 
+  console.log("deployConfig.stableToken: ", deployConfig.stableToken);
+  console.log("deployConfig.nativeTokenUsdChainlinkFeed: ", deployConfig.nativeTokenUsdChainlinkFeed);
   const cpo = await deployments.deploy("ChainlinkPriceOracleV2", {
     from: deployer,
     args: [],

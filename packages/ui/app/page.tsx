@@ -1,10 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+// import { Listbox, Transition } from '@headlessui/react';
+// import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
-import { useEffect, useMemo, useState } from 'react';
-import { useChainId } from 'wagmi';
+import { useEffect, Fragment, useMemo, useState } from 'react';
+import { base, mode } from 'viem/chains';
+import { useChainId, useSwitchChain } from 'wagmi';
 
 import PoolRows from './_components/markets/PoolRows';
 import type { PopupMode } from './_components/popup/page';
@@ -26,6 +29,10 @@ const pools = [
   {
     id: '1',
     name: 'Mode - Native Market'
+  },
+  {
+    id: '0',
+    name: 'Base Market'
   }
 ];
 
@@ -35,6 +42,7 @@ export default function Market() {
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pools[0].id);
+  const [selectedTab, setSelectedTab] = useState('');
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
@@ -44,22 +52,28 @@ export default function Market() {
     pools[1].id,
     chainId
   );
+  const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
+    pools[2].id,
+    chainId
+  );
 
   useEffect(() => {
     if (selectedPool === pools[0].id && pool1Data) {
       setPoolData(pool1Data);
     } else if (selectedPool === pools[1].id && pool2Data) {
       setPoolData(pool2Data);
+    } else if (selectedPool === pools[2].id && pool3Data) {
+      setPoolData(pool3Data);
     }
-  }, [pool1Data, pool2Data, selectedPool]);
+  }, [pool1Data, pool2Data, pool3Data, selectedPool]);
 
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
   );
   const dataIsLoading = useMemo<boolean>(
-    () => isLoadingPool1Data || isLoadingPool2Data,
-    [isLoadingPool1Data, isLoadingPool2Data]
+    () => isLoadingPool1Data || isLoadingPool2Data || isLoadingPool3Data,
+    [isLoadingPool1Data, isLoadingPool2Data, isLoadingPool3Data]
   );
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -85,11 +99,13 @@ export default function Market() {
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
             <div
               className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
-                selectedPool === pools[0].id
+                selectedPool === pools[0].id && selectedTab === pools[0].name
                   ? selectedPoolClass
                   : 'rounded-md border-stone-700 border-2'
               }`}
-              onClick={() => setSelectedPool(pools[0].id)}
+              onClick={() => (
+                setSelectedPool(pools[0].id), setSelectedTab(pools[0].name)
+              )}
             >
               <div
                 className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
@@ -119,7 +135,9 @@ export default function Market() {
                   ? selectedPoolClass
                   : 'rounded-md border-stone-700 border-2'
               }`}
-              onClick={() => setSelectedPool(pools[1].id)}
+              onClick={() => (
+                setSelectedPool(pools[1].id), setSelectedTab(pools[1].name)
+              )}
             >
               <div
                 className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
@@ -142,11 +160,45 @@ export default function Market() {
                 ))}
               </div>
             </div>
+            <div
+              className={`flex flex-col cursor-pointer py-2 md:px-4 ${
+                selectedPool === '0' && selectedTab === 'BASE'
+                  ? selectedPoolClass
+                  : 'rounded-md border-stone-700 border-2'
+              }`}
+              onClick={() => (
+                setSelectedPool(pools[2].id), setSelectedTab('BASE')
+              )}
+            >
+              <div
+                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
+              >
+                <img
+                  alt="modlogo"
+                  className={`w-8`}
+                  src="/img/logo/BASE.png"
+                />
+                <h1 className={`font-semibold`}>{pools[2].name}</h1>
+              </div>
+              <div className="flex items-center justify-center pb-2">
+                {pool3Data?.assets.map((val, idx) => (
+                  <img
+                    alt="modlogo"
+                    className={`w-6`}
+                    key={idx}
+                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
           <ResultHandler
             isLoading={
-              isLoadingPool1Data || isLoadingPool2Data || isLoadingLoopMarkets
+              isLoadingPool1Data ||
+              isLoadingPool2Data ||
+              isLoadingPool3Data ||
+              isLoadingLoopMarkets
             }
           >
             <div className={`w-full flex flex-wrap items-center gap-4`}>

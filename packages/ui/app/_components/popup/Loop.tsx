@@ -1162,6 +1162,7 @@ export default function Loop({
                 {transactionSteps.length > 0 ? (
                   <div className="flex justify-center">
                     <TransactionStepsHandler
+                      chainId={chainId}
                       resetTransactionSteps={handleTransactionStepsReset}
                       transactionSteps={transactionSteps}
                     />
