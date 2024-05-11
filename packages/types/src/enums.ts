@@ -195,6 +195,9 @@ export enum assetSymbols {
   USDT = "USDT",
   WBTC = "WBTC",
   mBTC = "M-BTC",
+  MODE = "MODE",
+  ION = "ION",
+  KIM = "KIM",
 
   // base
   AERO = "AERO",

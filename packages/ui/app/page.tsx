@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+// import { Listbox, Transition } from '@headlessui/react';
+// import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
-import { Fragment, useMemo, useState } from 'react';
-import { base, mode } from 'viem/chains';
-import { useChainId, useSwitchChain } from 'wagmi';
+import { useEffect, useMemo, useState } from 'react';
+// import { base, mode } from 'viem/chains';
+import { useChainId } from 'wagmi';
 
 import PoolRows from './_components/markets/PoolRows';
 import type { PopupMode } from './_components/popup/page';
@@ -18,46 +18,62 @@ import ResultHandler from './_components/ResultHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import type { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-function classNames(...classes: boolean[] | string[]) {
-  return classes.filter(Boolean).join(' ');
-}
-
-const markets = [
+const pools = [
   {
-    avatar: '/img/logo/BASE.png',
-    id: base.id,
-    name: 'Base Market'
+    id: '0',
+    name: 'Mode - Main Market'
   },
   {
-    avatar: '/img/logo/MODE.png',
-    id: mode.id,
-    name: 'Mode Market'
+    id: '1',
+    name: 'Mode - Native Market'
+  },
+  {
+    id: '0',
+    name: 'Base Market'
   }
 ];
 
 export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const { getSdk } = useMultiIonic();
+  const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
-  const market = markets.find((market) => market.id === chainId);
-  const [selectedMarket, setSelectedMarket] = useState(market ?? markets[0]);
-  const sdk = getSdk(market?.id ?? base.id);
-  const { switchChain } = useSwitchChain();
-  const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
-    '0',
-    selectedMarket.id
+  const [selectedPool, setSelectedPool] = useState(pools[0].id);
+  const [selectedTab, setSelectedTab] = useState('');
+  const [poolData, setPoolData] = useState<PoolData>();
+  const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
+    pools[0].id,
+    chainId
   );
+  const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
+    pools[1].id,
+    chainId
+  );
+  const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
+    pools[2].id,
+    chainId
+  );
+
+  useEffect(() => {
+    if (selectedPool === pools[0].id && pool1Data) {
+      setPoolData(pool1Data);
+    } else if (selectedPool === pools[1].id && pool2Data) {
+      setPoolData(pool2Data);
+    } else if (selectedPool === pools[2].id && pool3Data) {
+      setPoolData(pool3Data);
+    }
+  }, [pool1Data, pool2Data, pool3Data, selectedPool]);
+
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
   );
   const dataIsLoading = useMemo<boolean>(
-    () => isLoadingPoolData,
-    [isLoadingPoolData]
+    () => isLoadingPool1Data || isLoadingPool2Data || isLoadingPool3Data,
+    [isLoadingPool1Data, isLoadingPool2Data, isLoadingPool3Data]
   );
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -71,109 +87,121 @@ export default function Market() {
     poolData?.assets.map((asset) => asset.cToken) ?? []
   );
 
+  const selectedPoolClass = 'rounded-md border-mode border-2';
+
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
-          <Listbox
-            onChange={(event) => {
-              setSelectedMarket(event);
-              switchChain({ chainId: event.id });
-            }}
-            value={selectedMarket}
+          <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
+          <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
+            <div
+              className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
+                selectedPool === pools[0].id && selectedTab === pools[0].name
+                  ? selectedPoolClass
+                  : 'rounded-md border-stone-700 border-2'
+              }`}
+              onClick={() => (
+                setSelectedPool(pools[0].id), setSelectedTab(pools[0].name)
+              )}
+            >
+              <div
+                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
+              >
+                <img
+                  alt="modlogo"
+                  className={`w-8`}
+                  src="/img/logo/MODE.png"
+                />
+                <h1 className={`font-semibold`}>{pools[0].name}</h1>
+              </div>
+              <div className="flex items-center justify-center pb-2">
+                {pool1Data?.assets.map((val, idx) => (
+                  <img
+                    alt="modlogo"
+                    className={`w-6`}
+                    key={idx}
+                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div
+              className={`flex flex-col cursor-pointer py-2 md:px-4 ${
+                selectedPool === pools[1].id
+                  ? selectedPoolClass
+                  : 'rounded-md border-stone-700 border-2'
+              }`}
+              onClick={() => (
+                setSelectedPool(pools[1].id), setSelectedTab(pools[1].name)
+              )}
+            >
+              <div
+                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
+              >
+                <img
+                  alt="modlogo"
+                  className={`w-8`}
+                  src="/img/logo/MODE.png"
+                />
+                <h1 className={`font-semibold`}>{pools[1].name}</h1>
+              </div>
+              <div className="flex items-center justify-center pb-2">
+                {pool2Data?.assets.map((val, idx) => (
+                  <img
+                    alt="modlogo"
+                    className={`w-6`}
+                    key={idx}
+                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                  />
+                ))}
+              </div>
+            </div>
+            <div
+              className={`flex flex-col cursor-pointer py-2 md:px-4 ${
+                selectedPool === '0' && selectedTab === 'BASE'
+                  ? selectedPoolClass
+                  : 'rounded-md border-stone-700 border-2'
+              }`}
+              onClick={() => (
+                setSelectedPool(pools[2].id), setSelectedTab('BASE')
+              )}
+            >
+              <div
+                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
+              >
+                <img
+                  alt="modlogo"
+                  className={`w-8`}
+                  src="/img/logo/BASE.png"
+                />
+                <h1 className={`font-semibold`}>{pools[2].name}</h1>
+              </div>
+              <div className="flex items-center justify-center pb-2">
+                {pool3Data?.assets.map((val, idx) => (
+                  <img
+                    alt="modlogo"
+                    className={`w-6`}
+                    key={idx}
+                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <ResultHandler
+            isLoading={
+              isLoadingPool1Data ||
+              isLoadingPool2Data ||
+              isLoadingPool3Data ||
+              isLoadingLoopMarkets
+            }
           >
-            {({ open }) => (
-              <>
-                <div className="relative mt-2">
-                  <Listbox.Button
-                    className={`${
-                      selectedMarket.id === base.id
-                        ? 'ring-baseblue'
-                        : 'ring-lime'
-                    } relative w-full cursor-default rounded-md bg-grayone py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-2 ring-inset focus:outline-none sm:text-sm sm:leading-6`}
-                  >
-                    <span className="flex items-center">
-                      <img
-                        alt=""
-                        className="h-5 w-5 flex-shrink-0 rounded-full"
-                        src={selectedMarket.avatar}
-                      />
-                      <span className="ml-3 block truncate">
-                        {selectedMarket.name}
-                      </span>
-                    </span>
-                    <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                      <ChevronUpDownIcon
-                        aria-hidden="true"
-                        className="h-5 w-5 text-gray-400"
-                      />
-                    </span>
-                  </Listbox.Button>
-
-                  <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                    show={open}
-                  >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-grayone py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                      {markets.map((person) => (
-                        <Listbox.Option
-                          className={({ active }) =>
-                            classNames(
-                              active ? 'bg-accent text-white' : 'text-white',
-                              'relative cursor-default select-none py-2 pl-3 pr-9'
-                            )
-                          }
-                          key={person.id}
-                          value={person}
-                        >
-                          {({ selected, active }) => (
-                            <>
-                              <div className="flex items-center">
-                                <img
-                                  alt=""
-                                  className="h-5 w-5 flex-shrink-0 rounded-full"
-                                  src={person.avatar}
-                                />
-                                <span
-                                  className={classNames(
-                                    selected ? 'font-semibold' : 'font-normal',
-                                    'ml-3 block truncate'
-                                  )}
-                                >
-                                  {person.name}
-                                </span>
-                              </div>
-
-                              {selected ? (
-                                <span
-                                  className={classNames(
-                                    active ? 'text-white' : 'text-indigo-600',
-                                    'absolute inset-y-0 right-0 flex items-center pr-4'
-                                  )}
-                                >
-                                  <CheckIcon
-                                    aria-hidden="true"
-                                    className="h-5 w-5"
-                                  />
-                                </span>
-                              ) : null}
-                            </>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </>
-            )}
-          </Listbox>
-          <ResultHandler isLoading={isLoadingPoolData || isLoadingLoopMarkets}>
-            <div className={`w-full flex flex-wrap items-center gap-4 pt-4`}>
+            <div className={`w-full flex flex-wrap items-center gap-4`}>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
@@ -300,10 +328,10 @@ export default function Market() {
                   <PoolRows
                     asset={val.underlyingSymbol}
                     borrowAPR={`${
-                      sdk
+                      currentSdk
                         ?.ratePerBlockToAPY(
                           val?.borrowRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(selectedMarket.id)
+                          getBlockTimePerMinuteByChainId(chainId)
                         )
                         .toFixed(2) ?? '0.00'
                     }%`}
@@ -336,10 +364,10 @@ export default function Market() {
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
                     supplyAPR={`${
-                      sdk
+                      currentSdk
                         ?.ratePerBlockToAPY(
                           val?.supplyRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(selectedMarket.id)
+                          getBlockTimePerMinuteByChainId(chainId)
                         )
                         .toFixed(2) ?? '0.00'
                     }%`}

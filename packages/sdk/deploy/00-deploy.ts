@@ -350,53 +350,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
-  const fplDeployment = await deployments.deploy("PoolLens", {
-    from: deployer,
-    log: true,
-    waitConfirmations: 1
-  });
-
-  if (fplDeployment.transactionHash) await ethers.provider.waitForTransaction(fplDeployment.transactionHash);
-  console.log("PoolLens: ", fplDeployment.address);
-  const fusePoolLens = await ethers.getContract("PoolLens", deployer);
-  let directory = await fusePoolLens.directory();
-  if (directory === constants.AddressZero) {
-    tx = await fusePoolLens.initialize(
-      fusePoolDirectory.address,
-      chainDeployParams.nativeTokenName,
-      chainDeployParams.nativeTokenSymbol,
-      chainDeployParams.uniswap.hardcoded.map((h) => h.address),
-      chainDeployParams.uniswap.hardcoded.map((h) => h.name),
-      chainDeployParams.uniswap.hardcoded.map((h) => h.symbol),
-      chainDeployParams.uniswap.uniswapData.map((u) => u.lpName),
-      chainDeployParams.uniswap.uniswapData.map((u) => u.lpSymbol),
-      chainDeployParams.uniswap.uniswapData.map((u) => u.lpDisplayName)
-    );
-    await tx.wait();
-    console.log("PoolLens initialized", tx.hash);
-  } else {
-    console.log("PoolLens already initialized");
-  }
-
-  const fpls = await deployments.deploy("PoolLensSecondary", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  if (fpls.transactionHash) await ethers.provider.waitForTransaction(fpls.transactionHash);
-  console.log("PoolLensSecondary: ", fpls.address);
-
-  const fusePoolLensSecondary = await ethers.getContract("PoolLensSecondary", deployer);
-  directory = await fusePoolLensSecondary.directory();
-  if (directory === constants.AddressZero) {
-    tx = await fusePoolLensSecondary.initialize(fusePoolDirectory.address);
-    await tx.wait();
-    console.log("PoolLensSecondary initialized", tx.hash);
-  } else {
-    console.log("PoolLensSecondary already initialized");
-  }
-
   const mflrReceipt = await deployments.deploy("IonicFlywheelLensRouter", {
     from: deployer,
     args: [fpd.address],

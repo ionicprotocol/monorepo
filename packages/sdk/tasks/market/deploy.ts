@@ -35,6 +35,28 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
   }
 });
 
+task("markets:deploy:modenative", "deploy mode native markets").setAction(async (taskArgs, { run }) => {
+  const symbols = [
+    // { symbol: assetSymbols.WETH, cf: "82.5" },
+    // { symbol: assetSymbols.USDC, cf: "90" },
+    // { symbol: assetSymbols.USDT, cf: "90" },
+    { symbol: assetSymbols.MODE, cf: "35" }
+  ];
+
+  for (let i = 0; i < symbols.length; i++) {
+    const symbol = symbols[i];
+    const asset = assetFilter(modeAssets, symbol.symbol);
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: symbol.cf,
+      underlying: asset.underlying,
+      comptroller: "0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a",
+      symbol: "ion" + asset.symbol + ".modenative",
+      name: `Ionic ${asset.name} - Mode Native Market`
+    });
+  }
+});
+
 task("markets:deploy:base", "deploy base markets").setAction(async (taskArgs, { run }) => {
   const symbols = [
     { symbol: assetSymbols.AERO, cf: "65" },
@@ -112,8 +134,8 @@ task("market:deploy", "deploy market")
       deployArgs
     );
 
-    if (chainId == 34443) {
-      const gnosisContractAddress = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
+    if (chainId == 34443 && comptroller.address === "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556") {
+      // const gnosisContractAddress = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
       const populatedTx = await comptroller.populateTransaction._deployMarket(
         delegateType,
         constructorData,

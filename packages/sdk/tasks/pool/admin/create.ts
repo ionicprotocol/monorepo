@@ -14,6 +14,17 @@ task("pool:create:mode").setAction(async ({}, { run, ethers }) => {
   });
 });
 
+task("pool:create:modenative").setAction(async ({}, { run, ethers }) => {
+  await run("pool:create", {
+    name: "Mode Native Market",
+    creator: "deployer",
+    priceOracle: "0x2BAF3A2B667A5027a83101d218A9e8B73577F117", // MPO
+    closeFactor: "55",
+    liquidationIncentive: "17",
+    enforceWhitelist: "false"
+  });
+});
+
 task("pool:create:base").setAction(async ({}, { run }) => {
   await run("pool:create", {
     name: "Base Market",
