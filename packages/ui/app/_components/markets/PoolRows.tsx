@@ -2,7 +2,7 @@
 'use client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
-import { mode } from 'viem/chains';
+// import { mode } from 'viem/chains';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
@@ -40,7 +40,7 @@ const PoolRows = ({
   setSelectedSymbol,
   setPopupMode
 }: IRows) => {
-  const { address, currentChain } = useMultiIonic();
+  const { address } = useMultiIonic();
 
   return (
     <div

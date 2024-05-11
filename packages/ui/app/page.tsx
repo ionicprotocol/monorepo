@@ -5,9 +5,9 @@
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
-import { useEffect, Fragment, useMemo, useState } from 'react';
-import { base, mode } from 'viem/chains';
-import { useChainId, useSwitchChain } from 'wagmi';
+import { useEffect, useMemo, useState } from 'react';
+// import { base, mode } from 'viem/chains';
+import { useChainId } from 'wagmi';
 
 import PoolRows from './_components/markets/PoolRows';
 import type { PopupMode } from './_components/popup/page';
