@@ -12,7 +12,7 @@ Sign this message to prove you own this address!
 
 Nonce: ${nonce}`;
 
-const AIRDROP_URL = 'https://ionic.ninja';
+const AIRDROP_URL = 'https://airdrop.ionic.ninja';
 
 type User = {
   claimed: boolean;
