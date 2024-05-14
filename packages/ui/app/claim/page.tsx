@@ -182,7 +182,13 @@ export default function Claim() {
                     key={'id'}
                     src={'/img/success.png'}
                   />
-                  <span className="text-center"> You are eligible </span>
+                  <span className="text-center">
+                    Congratulations! You are eligible to receive the $ION
+                    airdrop, the first tranche of the airdrop will be
+                    distributed to all participants on May 30th by the team.
+                    Your wallet address has been recorded and no further action
+                    is needed from your side.
+                  </span>
                 </div>
               ) : (
                 <div className="flex flex-col my-auto items-center justify-center">
