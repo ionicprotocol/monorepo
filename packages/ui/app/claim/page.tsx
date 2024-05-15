@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useAccount, useSignMessage } from 'wagmi';
 
 import ConnectButton from '../_components/ConnectButton';
@@ -27,14 +27,8 @@ export default function Claim() {
   const [claimed, setClaimed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [popup, setPopup] = useState<boolean>(false);
-  const slideref = useRef<HTMLDivElement>(null!);
   const account = useAccount();
   const { signMessageAsync } = useSignMessage();
-
-  function eligibilitySlide(val: number) {
-    // if (!slideref.current) return;
-    // slideref.current.style.transform = `translateX(${val * -100}%)`;
-  }
 
   async function checkEligibility() {
     setPopup(true);
@@ -91,9 +85,7 @@ export default function Claim() {
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex overflow-x-hidden rounded-xl relative `}
     >
-      <div
-        className={`flex w-full  transition-all duration-500 ease-out `}
-      >
+      <div className={`flex w-full  transition-all duration-500 ease-out `}>
         <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wider md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
@@ -125,11 +117,8 @@ export default function Claim() {
           >
             <ResultHandler isLoading={loading}>
               {eligibility === null && (
-
-                  <div className="w-full px-2 mt-2 relative  items-center justify-center gap-x-2  cursor-pointer ">
-                    <p className="w-full text-lg">
-                      Check Eligibility
-                    </p>
+                <div className="w-full px-2 mt-2 relative  items-center justify-center gap-x-2  cursor-pointer ">
+                  <p className="w-full text-lg">Check Eligibility</p>
 
                   <div className={`bg-accent w-max my-2 rounded-xl text-black`}>
                     <ConnectButton />
@@ -137,7 +126,7 @@ export default function Claim() {
                   <button
                     className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm mb-4 font-semibold`}
                     onClick={() => checkEligibility()}
-                    >
+                  >
                     Check
                   </button>
 
@@ -146,8 +135,7 @@ export default function Claim() {
                     wallet addresses by the Ionic Team. Once you sign in with
                     your wallet, no further actions needs to be taken
                   </p>
-                    </div>
-
+                </div>
               )}
 
               {eligibility && eligibility === true ? (
