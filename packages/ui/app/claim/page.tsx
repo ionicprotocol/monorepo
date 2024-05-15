@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { formatEther } from 'viem';
 import { useAccount, useSignMessage } from 'wagmi';
 
 import ConnectButton from '../_components/ConnectButton';
@@ -146,12 +147,34 @@ export default function Claim() {
                     key={'id'}
                     src={'/img/success.png'}
                   />
-                  <span className="text-center">
-                    Congratulations! You are eligible to receive the $ION
-                    airdrop, the first tranche of the airdrop will be
-                    distributed to all participants on May 30th by the team.
-                    Your wallet address has been recorded and no further action
-                    is needed from your side.
+                  <span className="text-center pb-6">
+                    Congratulations, you are eligible for the airdrop! Your
+                    allocation:
+                  </span>
+                  <span className="text-center pb-6 text-3xl">
+                    {Number(
+                      formatEther(BigInt(user?.ion_amount ?? '0'))
+                    ).toLocaleString()}{' '}
+                    $ION
+                  </span>
+                  <span className="text-center pb-6">
+                    The first tranche of your $ION airdrop allocation (
+                    {Math.floor(
+                      Number(
+                        formatEther(
+                          (BigInt(user?.ion_amount ?? '0') * BigInt(16)) /
+                            BigInt(100)
+                        )
+                      )
+                    ).toLocaleString()}{' '}
+                    $ION), will be distributed on May 30th directly to your
+                    wallet address. The rest of the tokens are vested for 3
+                    months. Details on vesting and vesting reduction will follow
+                    soon.
+                  </span>
+                  <span className="text-center pb-12">
+                    Press the button below to sign a message and prove ownership
+                    of your address. After that, no further actions needed.
                   </span>
                 </div>
               ) : eligibility === false ? (
