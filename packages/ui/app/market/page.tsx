@@ -3,12 +3,15 @@
 
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { switchChain } from '@wagmi/core';
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
 // import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
+import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
@@ -19,8 +22,10 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { wagmiConfig } from '@ui/utils/connectors';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
+//@ts-ignore
 const pools = [
   {
     id: '0',
@@ -37,12 +42,16 @@ const pools = [
 ];
 
 export default function Market() {
+  const searchParams = useSearchParams();
+  const chain = searchParams.get('chain');
+  const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
-  const [selectedPool, setSelectedPool] = useState(pools[0].id);
-  const [selectedTab, setSelectedTab] = useState('');
+  const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
+
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
@@ -57,7 +66,20 @@ export default function Market() {
     chainId
   );
 
-  //need to add three things 1 change the path to /market 2 add a dropdown filter to see the pool of selected network 3 add a query so that we can directly go to pool if query passed
+  useEffect(() => {
+    const handleSwitchOriginChain = async (chain: number) => {
+      try {
+        if (chainId || chain !== chainId) {
+          await switchChain(wagmiConfig, {
+            chainId: chain
+          });
+        }
+      } catch (err) {}
+    };
+
+    if (!chain) return;
+    handleSwitchOriginChain(+chain);
+  }, [chain, chainId]);
 
   useEffect(() => {
     if (selectedPool === pools[0].id && pool1Data) {
@@ -91,108 +113,133 @@ export default function Market() {
 
   const selectedPoolClass = 'rounded-md border-mode border-2';
 
+  const newRef = useRef(null!);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const handleOutsideClick = (e: any) => {
+    //@ts-ignore
+    if (newRef.current && !newRef.current?.contains(e?.target)) {
+      setOpen(false);
+    }
+  };
+
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         <div
           className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
+          <div className={`w-[20%] mb-2 `}>
+            {' '}
+            <NetworkSelector
+              chainId={chain as string}
+              newRef={newRef}
+              open={open}
+              setOpen={setOpen}
+            />
+          </div>
           <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
-            <div
-              className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
-                selectedPool === pools[0].id && selectedTab === pools[0].name
-                  ? selectedPoolClass
-                  : 'rounded-md border-stone-700 border-2'
-              }`}
-              onClick={() => (
-                setSelectedPool(pools[0].id), setSelectedTab(pools[0].name)
-              )}
-            >
+            {chainId === 34443 && (
+              <>
+                <div
+                  className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
+                    selectedPool === pools[0].id
+                      ? selectedPoolClass
+                      : 'rounded-md border-stone-700 border-2'
+                  }`}
+                  onClick={() => setSelectedPool(pools[0].id)}
+                >
+                  <div
+                    className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
+                  >
+                    <img
+                      alt="modlogo"
+                      className={`w-8`}
+                      src="/img/logo/MODE.png"
+                    />
+                    <h1 className={`font-semibold`}>{pools[0].name}</h1>
+                  </div>
+                  <div className="flex items-center justify-center pb-2">
+                    {pool1Data?.assets.map((val, idx) => (
+                      <img
+                        alt="modlogo"
+                        className={`w-6`}
+                        key={idx}
+                        src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div
+                  className={`flex flex-col cursor-pointer py-2 md:px-4 ${
+                    selectedPool === pools[1].id
+                      ? selectedPoolClass
+                      : 'rounded-md border-stone-700 border-2'
+                  }`}
+                  onClick={() => setSelectedPool(pools[1].id)}
+                >
+                  <div
+                    className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
+                  >
+                    <img
+                      alt="modlogo"
+                      className={`w-8`}
+                      src="/img/logo/MODE.png"
+                    />
+                    <h1 className={`font-semibold`}>{pools[1].name}</h1>
+                  </div>
+                  <div className="flex items-center justify-center pb-2">
+                    {pool2Data?.assets.map((val, idx) => (
+                      <img
+                        alt="modlogo"
+                        className={`w-6`}
+                        key={idx}
+                        src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                      />
+                    ))}
+                  </div>
+                </div>{' '}
+              </>
+            )}
+            {chainId === 8453 && (
               <div
-                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
+                className={`flex flex-col cursor-pointer py-2 md:px-4 ${
+                  selectedPool === '0'
+                    ? 'border-blue-600 border-2 rounded-md'
+                    : 'rounded-md border-stone-700 border-2'
+                }`}
+                onClick={() => setSelectedPool(pools[2].id)}
               >
-                <img
-                  alt="modlogo"
-                  className={`w-8`}
-                  src="/img/logo/MODE.png"
-                />
-                <h1 className={`font-semibold`}>{pools[0].name}</h1>
-              </div>
-              <div className="flex items-center justify-center pb-2">
-                {pool1Data?.assets.map((val, idx) => (
+                <div
+                  className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
+                >
                   <img
                     alt="modlogo"
-                    className={`w-6`}
-                    key={idx}
-                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                    className={`w-8`}
+                    src="/img/logo/BASE.png"
                   />
-                ))}
+                  <h1 className={`font-semibold`}>{pools[2].name}</h1>
+                </div>
+                <div className="flex items-center justify-center pb-2">
+                  {pool3Data?.assets.map((val, idx) => (
+                    <img
+                      alt="modlogo"
+                      className={`w-6`}
+                      key={idx}
+                      src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-
-            <div
-              className={`flex flex-col cursor-pointer py-2 md:px-4 ${
-                selectedPool === pools[1].id
-                  ? selectedPoolClass
-                  : 'rounded-md border-stone-700 border-2'
-              }`}
-              onClick={() => (
-                setSelectedPool(pools[1].id), setSelectedTab(pools[1].name)
-              )}
-            >
-              <div
-                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
-              >
-                <img
-                  alt="modlogo"
-                  className={`w-8`}
-                  src="/img/logo/MODE.png"
-                />
-                <h1 className={`font-semibold`}>{pools[1].name}</h1>
-              </div>
-              <div className="flex items-center justify-center pb-2">
-                {pool2Data?.assets.map((val, idx) => (
-                  <img
-                    alt="modlogo"
-                    className={`w-6`}
-                    key={idx}
-                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
-                  />
-                ))}
-              </div>
-            </div>
-            <div
-              className={`flex flex-col cursor-pointer py-2 md:px-4 ${
-                selectedPool === '0' && selectedTab === 'BASE'
-                  ? selectedPoolClass
-                  : 'rounded-md border-stone-700 border-2'
-              }`}
-              onClick={() => (
-                setSelectedPool(pools[2].id), setSelectedTab('BASE')
-              )}
-            >
-              <div
-                className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
-              >
-                <img
-                  alt="modlogo"
-                  className={`w-8`}
-                  src="/img/logo/BASE.png"
-                />
-                <h1 className={`font-semibold`}>{pools[2].name}</h1>
-              </div>
-              <div className="flex items-center justify-center pb-2">
-                {pool3Data?.assets.map((val, idx) => (
-                  <img
-                    alt="modlogo"
-                    className={`w-6`}
-                    key={idx}
-                    src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
-                  />
-                ))}
-              </div>
-            </div>
+            )}
           </div>
 
           <ResultHandler
@@ -434,9 +481,4 @@ export default function Market() {
       {swapOpen && <Swap close={() => setSwapOpen(false)} />}
     </>
   );
-}
-
-{
-  /* <div className={``}></div>  <p className={``}></p>
-          <p className={``}></p>  colleteralT , borrowingT , lendingT , cAPR , lAPR , bAPR} */
 }

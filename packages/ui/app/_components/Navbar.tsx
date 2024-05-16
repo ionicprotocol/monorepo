@@ -28,7 +28,7 @@ export default function Navbar() {
       <div
         className={`${
           chainId === base.id
-            ? 'bg-baseblue text-white'
+            ? 'bg-blue-600 text-white'
             : 'bg-lime text-darkone'
         } absolute w-full top-full left-0 text-center p-2 text-sm font-medium`}
       >
