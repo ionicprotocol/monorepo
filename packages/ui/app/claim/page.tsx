@@ -1,13 +1,19 @@
 'use client';
 
+import { createClient } from '@supabase/supabase-js';
 import { useState } from 'react';
 import Confetti from 'react-confetti';
-import { formatEther } from 'viem';
 import { useAccount, useSignMessage } from 'wagmi';
+
+// Create a single supabase client for interacting with your database
 
 import ConnectButton from '../_components/ConnectButton';
 import ResultHandler from '../_components/ResultHandler';
 
+const supabase = createClient(
+  'https://uoagtjstsdrjypxlkuzr.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
+);
 const claimMessage = (nonce: string) => `Welcome to the $ION Airdrop!
 
 Sign this message to prove you own this address!
@@ -15,6 +21,7 @@ Sign this message to prove you own this address!
 Nonce: ${nonce}`;
 
 const AIRDROP_URL = 'https://airdrop.ionic.ninja';
+const AIRDROP_FIRST_TRANCHE = 0.16;
 
 type User = {
   claimed: boolean;
@@ -33,11 +40,20 @@ export default function Claim() {
   const { signMessageAsync } = useSignMessage();
 
   async function checkEligibility() {
+    if (!account?.address) {
+      throw new Error('No account address');
+    }
     setPopup(true);
     setLoading(true);
     try {
-      const res = await fetch(`${AIRDROP_URL}/address/${account.address}`);
-      const [_user]: User[] = await res.json();
+      const { data: airdrop, error } = await supabase
+        .from('airdrop')
+        .select('*')
+        .ilike('user', account.address);
+      if (error) {
+        throw new Error('Error fetching user: ' + error);
+      }
+      const [_user]: User[] = airdrop;
       if (!_user || BigInt(_user.ion_amount) === BigInt(0)) {
         throw new Error('User not found or amount is 0');
       }
@@ -169,20 +185,12 @@ export default function Claim() {
                     allocation:
                   </span>
                   <span className="text-center pb-6 text-3xl">
-                    {Number(
-                      formatEther(BigInt(user?.ion_amount ?? '0'))
-                    ).toLocaleString()}{' '}
-                    $ION
+                    {Number(user?.ion_amount ?? '0').toLocaleString()} $ION
                   </span>
                   <span className="text-center text-white/60 text-sm pb-4">
                     The first tranche of your $ION airdrop allocation (
                     {Math.floor(
-                      Number(
-                        formatEther(
-                          (BigInt(user?.ion_amount ?? '0') * BigInt(16)) /
-                            BigInt(100)
-                        )
-                      )
+                      Number(user?.ion_amount ?? '0') * AIRDROP_FIRST_TRANCHE
                     ).toLocaleString()}{' '}
                     $ION), will be distributed on May 30th directly to your
                     wallet address. The rest of the tokens are vested for 3
@@ -217,7 +225,7 @@ export default function Claim() {
                 disabled={claimed}
                 onClick={() => claimTokens()}
               >
-                {claimed ? 'Claimed' : 'Sign with the Wallet'}
+                {claimed ? 'Claimed' : 'Sign Using Your Wallet'}
               </button>
             ) : null}
           </div>

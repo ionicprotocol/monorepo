@@ -2100,6 +2100,7 @@ __metadata:
     "@ionicprotocol/types": "workspace:*"
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": "npm:^2.0.6"
+    "@supabase/supabase-js": "npm:^2.43.2"
     "@tenderly/hardhat-tenderly": "npm:^1.7.7"
     "@typechain/ethers-v5": "npm:^11.1.1"
     "@typechain/hardhat": "npm:^9.0.0"
@@ -6824,6 +6825,20 @@ __metadata:
     "@supabase/realtime-js": "npm:2.9.5"
     "@supabase/storage-js": "npm:2.5.5"
   checksum: 10/3e453ac8eaa8e1b906c0ba119ee21ac7da9d121caf6daea9c97febeb0f216e673d699edc38d7a2eebf26f567d11e0a0dc193a06c657718c9f4d209ad0d7a8ec3
+  languageName: node
+  linkType: hard
+
+"@supabase/supabase-js@npm:^2.43.2":
+  version: 2.43.2
+  resolution: "@supabase/supabase-js@npm:2.43.2"
+  dependencies:
+    "@supabase/auth-js": "npm:2.64.2"
+    "@supabase/functions-js": "npm:2.3.1"
+    "@supabase/node-fetch": "npm:2.6.15"
+    "@supabase/postgrest-js": "npm:1.15.2"
+    "@supabase/realtime-js": "npm:2.9.5"
+    "@supabase/storage-js": "npm:2.5.5"
+  checksum: 10/0e3a4b3457713f2af5fc8f3191c57d83b521162cb10e5ab99625b2d280bf98a48b0d12a5089e50d247b7730f1a7d1a225524baf78a9b3afb26db3e47d5ae7d7b
   languageName: node
   linkType: hard
 
