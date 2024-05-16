@@ -192,9 +192,9 @@ export default function Claim() {
                     {Math.floor(
                       Number(user?.ion_amount ?? '0') * AIRDROP_FIRST_TRANCHE
                     ).toLocaleString()}{' '}
-                    $ION), will be distributed on May 30th directly to your
+                    $ION) will be distributed on May 30th directly to your
                     wallet address. The rest of the tokens are vested for 3
-                    months. Details on vesting and vesting reduction will follow
+                    months. Details on vesting and instant claim will follow
                     soon.
                   </span>
                   <span className="text-center pb-5">
