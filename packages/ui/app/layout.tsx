@@ -63,7 +63,7 @@ export default function RootLayout({
                 />
               </Suspense>
 
-              <div className="relative px-4 pt-[128px] pb-4 sm:pb-[280px] min-h-screen">
+              <div className=" w-full relative px-4 pt-[128px] pb-4 sm:pb-[280px] min-h-screen overflow-x-hidden">
                 <Navbar />
                 <main>{children}</main>
                 <footer
