@@ -145,7 +145,6 @@ export default function Market() {
               setOpen={setOpen}
             />
           </div>
-          <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
             {chainId === 34443 && (
               <>
