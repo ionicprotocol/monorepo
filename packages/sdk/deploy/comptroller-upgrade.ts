@@ -1,10 +1,12 @@
-import { constants, providers, utils } from "ethers";
-import { DeployFunction } from "hardhat-deploy/types";
-import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
-import { PoolDirectory, Unitroller } from "../typechain";
 import fs from "fs";
 
-const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
+import { constants, providers } from "ethers";
+import { DeployFunction } from "hardhat-deploy/types";
+
+import { PoolDirectory, Unitroller } from "../typechain";
+import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
+
+const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
@@ -115,7 +117,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
       console.log(`current impl ${implBefore} latest ${latestImpl}`);
 
-      let shouldUpgrade = implBefore !== latestImpl;
+      const shouldUpgrade = implBefore !== latestImpl;
 
       if (shouldUpgrade) {
         logTransaction(`Would upgrade pool ${pool.comptroller}`, "_upgrade", []);
