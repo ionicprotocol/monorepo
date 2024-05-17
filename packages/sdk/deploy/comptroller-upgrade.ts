@@ -74,6 +74,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
 
   /// LATEST IMPLEMENTATIONS
   // Comptroller
+  const fuseAdmin = await fuseFeeDistributor.owner();
   if (oldComptroller) {
     const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
       oldComptroller.address
@@ -82,6 +83,15 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       latestComptrollerImplementation === constants.AddressZero ||
       latestComptrollerImplementation !== comptroller.address
     ) {
+      if (fuseAdmin.toLowerCase() === deployer.toLowerCase()) {
+        const tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
+          oldComptroller.address,
+          comptroller.address
+        );
+        console.log(
+          `Set latest comptroller implementation from ${oldComptroller.address} to ${comptroller.address} with tx ${tx.hash}`
+        );
+      }
       logTransaction(
         "Set Latest Comptroller Implementation",
         "_setLatestComptrollerImplementation",
@@ -98,6 +108,15 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       );
     }
   } else {
+    if (fuseAdmin.toLowerCase() === deployer.toLowerCase()) {
+      const tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
+        constants.AddressZero,
+        comptroller.address
+      );
+      console.log(
+        `Set latest comptroller implementation from ${constants.AddressZero} to ${comptroller.address} with tx ${tx.hash}`
+      );
+    }
     logTransaction(
       "Set Latest Comptroller Implementation",
       "_setLatestComptrollerImplementation",
