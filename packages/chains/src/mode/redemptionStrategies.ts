@@ -102,6 +102,16 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.ION),
     strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.mBTC),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.mBTC)
   }
   // ,{
   //   inputToken: underlying(assets, assetSymbols.WETH),
