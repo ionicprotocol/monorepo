@@ -144,13 +144,19 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       const shouldUpgrade = implBefore !== latestImpl;
 
       if (shouldUpgrade) {
-        logTransaction(
-          `Would upgrade pool ${pool.comptroller}`,
-          "_upgrade",
-          pool.comptroller,
-          await unitroller.populateTransaction._upgrade(),
-          []
-        );
+        if (deployer == admin) {
+          const tx = await unitroller._upgrade();
+          await tx.wait();
+          console.log(`Upgraded pool ${pool.comptroller} with tx ${tx.hash}`);
+        } else {
+          logTransaction(
+            `Would upgrade pool ${pool.comptroller}`,
+            "_upgrade",
+            pool.comptroller,
+            await unitroller.populateTransaction._upgrade(),
+            []
+          );
+        }
       }
     } catch (e) {
       console.error(`Error while checking for upgrade for pool ${JSON.stringify(pool)}`, e);
