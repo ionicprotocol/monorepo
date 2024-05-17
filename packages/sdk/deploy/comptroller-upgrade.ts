@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { constants, providers } from "ethers";
+import { constants, PopulatedTransaction } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { PoolDirectory, Unitroller } from "../typechain";
@@ -30,10 +30,18 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
   // Array to store transaction details
   const transactions: any[] = [];
 
-  const logTransaction = (description: string, functionName: string, args: any) => {
+  const logTransaction = (
+    description: string,
+    functionName: string,
+    address: string,
+    populated: PopulatedTransaction,
+    args: any
+  ) => {
+    console.log(`Target Address: ${address}`);
     console.log(`Transaction: ${description}`);
     console.log(`Function: ${functionName}`);
     console.log(`Arguments: ${JSON.stringify(args)}`);
+    console.log("Populated Transaction: ", populated);
 
     // Store transaction details
     transactions.push({ description, functionName, args });
@@ -41,8 +49,6 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
 
   ////
   //// COMPOUND CORE CONTRACTS
-  let tx: providers.TransactionResponse;
-
   const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
 
@@ -76,28 +82,46 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       latestComptrollerImplementation === constants.AddressZero ||
       latestComptrollerImplementation !== comptroller.address
     ) {
-      logTransaction("Set Latest Comptroller Implementation", "_setLatestComptrollerImplementation", [
-        oldComptroller.address,
-        comptroller.address
-      ]);
+      logTransaction(
+        "Set Latest Comptroller Implementation",
+        "_setLatestComptrollerImplementation",
+        fuseFeeDistributor.address,
+        await fuseFeeDistributor.populateTransaction._setLatestComptrollerImplementation(
+          oldComptroller.address,
+          comptroller.address
+        ),
+        [oldComptroller.address, comptroller.address]
+      );
     } else {
       console.log(
         `No change in the latest Comptroller implementation ${latestComptrollerImplementation} for ${comptroller.address}`
       );
     }
   } else {
-    logTransaction("Set Latest Comptroller Implementation", "_setLatestComptrollerImplementation", [
-      constants.AddressZero,
-      comptroller.address
-    ]);
+    logTransaction(
+      "Set Latest Comptroller Implementation",
+      "_setLatestComptrollerImplementation",
+      fuseFeeDistributor.address,
+      await fuseFeeDistributor.populateTransaction._setLatestComptrollerImplementation(
+        constants.AddressZero,
+        comptroller.address
+      ),
+      [constants.AddressZero, comptroller.address]
+    );
   }
 
   const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
   if (comptrollerExtensions.length == 0 || comptrollerExtensions[1] != compFirstExtension.address) {
-    logTransaction("Set Comptroller Extensions", "_setComptrollerExtensions", [
-      comptroller.address,
-      [comptroller.address, compFirstExtension.address]
-    ]);
+    logTransaction(
+      "Set Comptroller Extensions: ",
+      "_setComptrollerExtensions",
+      fuseFeeDistributor.address,
+      await fuseFeeDistributor.populateTransaction._setComptrollerExtensions(comptroller.address, [
+        comptroller.address,
+        compFirstExtension.address
+      ]),
+      [comptroller.address, [comptroller.address, compFirstExtension.address]]
+    );
   } else {
     console.log(`Comptroller extensions already configured`);
   }
@@ -120,7 +144,13 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       const shouldUpgrade = implBefore !== latestImpl;
 
       if (shouldUpgrade) {
-        logTransaction(`Would upgrade pool ${pool.comptroller}`, "_upgrade", []);
+        logTransaction(
+          `Would upgrade pool ${pool.comptroller}`,
+          "_upgrade",
+          pool.comptroller,
+          await unitroller.populateTransaction._upgrade(),
+          []
+        );
       }
     } catch (e) {
       console.error(`Error while checking for upgrade for pool ${JSON.stringify(pool)}`, e);
