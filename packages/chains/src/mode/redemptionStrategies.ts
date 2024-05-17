@@ -104,15 +104,25 @@ const redemptionStrategies: RedemptionStrategy[] = [
     outputToken: underlying(assets, assetSymbols.WETH)
   },
   {
-    inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.KIM)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.KIM),
+    inputToken: underlying(assets, assetSymbols.mBTC),
     strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.mBTC)
   }
+  // ,{
+  //   inputToken: underlying(assets, assetSymbols.WETH),
+  //   strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+  //   outputToken: underlying(assets, assetSymbols.KIM)
+  // },
+  // {
+  //   inputToken: underlying(assets, assetSymbols.KIM),
+  //   strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+  //   outputToken: underlying(assets, assetSymbols.WETH)
+  // }
 ];
 
 export default redemptionStrategies;

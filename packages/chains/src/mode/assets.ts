@@ -93,64 +93,14 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", ION)
   },
-  {
-    symbol: assetSymbols.KIM,
-    underlying: KIM,
-    name: "Kim Token",
-    decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", KIM)
-  },
-
-  /////// UNUSED ASSETS
-  {
-    symbol: assetSymbols.UNI,
-    underlying: UNI,
-    name: "Uniswap Token",
-    decimals: 18, // TODO verify
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", UNI)
-  },
-  {
-    symbol: assetSymbols.SNX,
-    underlying: SNX,
-    name: "Synthetix Network Token",
-    decimals: 18, // TODO verify
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", SNX)
-  },
-  {
-    symbol: assetSymbols.LINK,
-    underlying: LINK,
-    name: "Chainlink Token",
-    decimals: 18, // TODO verify
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", LINK)
-  },
-  {
-    symbol: assetSymbols.DAI,
-    underlying: DAI,
-    name: "DAI Token",
-    decimals: 18, // TODO verify
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", DAI)
-  },
-  {
-    symbol: assetSymbols.BAL,
-    underlying: BAL,
-    name: "Balancer Token",
-    decimals: 18, // TODO verify
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", BAL)
-  },
-  {
-    symbol: assetSymbols.AAVE,
-    underlying: AAVE,
-    name: "AAVE Token",
-    decimals: 18, // TODO verify
-    oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", AAVE)
-  },
+  // {
+  //   symbol: assetSymbols.KIM,
+  //   underlying: KIM,
+  //   name: "Kim Token",
+  //   decimals: 18,
+  //   oracle: OracleTypes.PythPriceOracle,
+  //   extraDocs: defaultDocs("https://explorer.mode.network", KIM)
+  // },
   {
     symbol: assetSymbols.mBTC,
     underlying: mBTC,

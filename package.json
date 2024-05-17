@@ -47,7 +47,7 @@
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
     "build:deploy:pyth-updater": "yarn build:sdk && yarn build:pyth-updater",
     "build:deploy:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && yarn build:functions",
-    "dev:ui": "yarn workspace @ionicprotocol/sdk export:ganache; yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn workspace @ionicprotocol/ui dev",
+    "dev:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn workspace @ionicprotocol/ui dev",
     "dev:liquidator": "yarn workspace @ionicprotocol/liquidator dev",
     "dev:functions": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @ionicprotocol/sdk hardhat node --no-deploy",

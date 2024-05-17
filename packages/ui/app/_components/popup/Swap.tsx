@@ -8,6 +8,7 @@ import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import { WETHAbi } from 'sdk/dist/cjs/src';
 import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
+import { mode } from 'viem/chains';
 import { useBalance } from 'wagmi';
 import type { GetBalanceData } from 'wagmi/query';
 
@@ -323,6 +324,7 @@ export default function Swap({ close }: SwapProps) {
               {transactionSteps.length > 0 ? (
                 <div className="flex justify-center text-left">
                   <TransactionStepsHandler
+                    chainId={currentSdk?.chainId || mode.id}
                     resetTransactionSteps={() => {
                       upsertTransactionStep(undefined);
                       refetchUsedQueries();

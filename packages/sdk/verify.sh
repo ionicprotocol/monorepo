@@ -1,13 +1,31 @@
 #!/bin/zsh
 
-CONTRACTS_AND_ADDRESSES=$(cat ../chains/deployments/mode.json | jq '.contracts | to_entries')
-LENGTH=$(echo $CONTRACTS_AND_ADDRESSES | jq 'length')
+# Ensure the JSON file exists
+json_file="../../../chains/deployments/base.json"
+if [[ ! -f "$json_file" ]]; then
+  echo "Error: JSON file does not exist at path $json_file"
+  exit 1
+fi
 
-for i in {1..$LENGTH}
-do
-  ADDRESS=$(echo $CONTRACTS_AND_ADDRESSES | jq -r '.['$(($i-1))'].value.address')
-  CONTRACT=$(echo $CONTRACTS_AND_ADDRESSES | jq -r '.['$(($i-1))'].key')
-  #echo Verifying $CONTRACT at $ADDRESS ...
-  echo ''
-  echo "forge verify-contract --verifier blockscout --verifier-url 'https://explorer.mode.network/api?' --watch $ADDRESS $CONTRACT"
+# Parse JSON and store it in a variable
+contracts_and_addresses=$(jq '.contracts | to_entries' "$json_file")
+
+# Calculate the length of the entries array
+length=$(echo "$contracts_and_addresses" | jq 'length')
+
+# Loop over the number of entries
+for i in $(seq 1 $length); do
+  index=$(($i - 1)) # Adjust index for 0-based array access
+
+  # Extract the address and contract name using jq directly
+  address=$(echo "$contracts_and_addresses" | jq -r ".[$index].value.address")
+  contract=$(echo "$contracts_and_addresses" | jq -r ".[$index].key")
+  contract=${contract//_Implementation/}
+  contract=${DefaultProxyAdmin//ProxyAdmin/}
+  if [[ "$contract" == *"_Proxy"* ]]; then
+    contract="TransparentUpgradeableProxy"
+  fi
+
+  # Command output for verification
+  forge verify-contract --watch --chain base $address $contract
 done

@@ -8,7 +8,8 @@ export enum SupportedChains {
   arbitrum = 42161,
   linea = 59144,
   zkevm = 1101,
-  mode = 34443
+  mode = 34443,
+  base = 8453
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -197,6 +198,9 @@ export enum assetSymbols {
   MODE = "MODE",
   ION = "ION",
   KIM = "KIM",
+
+  // base
+  AERO = "AERO",
 
   // legacy
   DAI = "DAI",
