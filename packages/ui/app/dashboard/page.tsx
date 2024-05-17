@@ -39,6 +39,7 @@ export default function Dashboard() {
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const [poolMarket, setPoolMarket] = useState<string>('0');
+  const [selectedTab, setSelectedTab] = useState('');
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     poolMarket,
     chainId
@@ -402,9 +403,11 @@ export default function Dashboard() {
         >
           <button
             className={`py-2 px-4 border rounded-xl   ${
-              poolMarket === '0' ? 'bg-lime text-black' : ''
+              poolMarket === '0' && selectedTab === 'MODE'
+                ? 'bg-lime text-black'
+                : ''
             }`}
-            onClick={() => setPoolMarket('0')}
+            onClick={() => (setPoolMarket('0'), setSelectedTab('MODE'))}
           >
             Mode Main Market
           </button>
@@ -415,6 +418,16 @@ export default function Dashboard() {
             onClick={() => setPoolMarket('1')}
           >
             Mode Native Market
+          </button>
+          <button
+            className={`py-2 px-4 border rounded-xl border-lime ${
+              poolMarket === '0' && selectedTab === 'BASE'
+                ? 'bg-lime text-black '
+                : ' '
+            }`}
+            onClick={() => (setPoolMarket('0'), setSelectedTab('BASE'))}
+          >
+            Base Market
           </button>
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>

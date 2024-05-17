@@ -862,7 +862,7 @@ const Popup = ({
         );
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
-          isRepayingMax,
+          false,
           isRepayingMax ? selectedMarketData.borrowBalance : amountAsBInt
         );
 
@@ -1208,6 +1208,7 @@ const Popup = ({
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />
@@ -1297,6 +1298,7 @@ const Popup = ({
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />
@@ -1454,6 +1456,7 @@ const Popup = ({
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />
@@ -1543,6 +1546,7 @@ const Popup = ({
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />

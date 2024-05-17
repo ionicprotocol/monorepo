@@ -3,6 +3,7 @@
 import type { Dispatch } from 'react';
 import { useReducer } from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
+import { base, mode } from 'viem/chains';
 
 export type TransactionStep = {
   error: boolean;
@@ -11,6 +12,7 @@ export type TransactionStep = {
   txHash?: string;
 };
 export type TransactionStepsHandlerProps = {
+  chainId: number;
   resetTransactionSteps: () => void;
   transactionSteps: TransactionStep[];
 };
@@ -75,9 +77,15 @@ export const useTransactionSteps = (): UseTransactionSteps => {
   };
 };
 
+const explorerLinks: Record<number, string> = {
+  [mode.id]: 'https://explorer.mode.network',
+  [base.id]: 'https://basescan.org'
+};
+
 function TransactionStepsHandler({
   transactionSteps,
-  resetTransactionSteps
+  resetTransactionSteps,
+  chainId
 }: TransactionStepsHandlerProps) {
   return (
     <div className="mx-auto text-sm">
@@ -110,7 +118,7 @@ function TransactionStepsHandler({
           {transactionStep.txHash && (
             <div className="pl-6 text-cyan-400">
               <a
-                href={`https://explorer.mode.network/tx/${transactionStep.txHash}`}
+                href={`${explorerLinks[chainId]}/tx/${transactionStep.txHash}`}
                 target="_blank"
               >
                 0x{transactionStep.txHash.slice(2, 4)}...

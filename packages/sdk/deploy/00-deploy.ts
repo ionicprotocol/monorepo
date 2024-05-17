@@ -43,6 +43,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     gasPrice: feeData.gasPrice?.toString()
   });
 
+  console.log("chainId: ", chainId);
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);
   }

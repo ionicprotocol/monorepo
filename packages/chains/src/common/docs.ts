@@ -41,8 +41,12 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapAddress: "https://quickswap.exchange/#/swap?swapIndex=2&currency1=0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9"
     },
     [SupportedChains.mode]: {
-      swapName: "// TODO",
-      swapAddress: "// TODO"
+      swapName: "Kim",
+      swapAddress: "https://app.kim.exchange/swap"
+    },
+    [SupportedChains.base]: {
+      swapName: "Uniswap",
+      swapAddress: "https://app.uniswap.org/?chain=base"
     }
   }[chainId];
 

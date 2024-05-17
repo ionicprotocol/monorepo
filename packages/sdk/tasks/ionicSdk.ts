@@ -1,10 +1,11 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { arbitrum, bsc, chapel, ethereum, ganache, linea, mode, neon, polygon, zkevm } from "@ionicprotocol/chains";
+import { base, bsc, ganache, mode } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { IonicSdk } from "../src";
+import { SignerOrProvider } from "../src/IonicSdk";
 import { WETH } from "../typechain/WETH";
 
 let ionicSdk: IonicSdk;
@@ -154,7 +155,7 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
 
 export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | string): Promise<IonicSdk> => {
   if (!ionicSdk) {
-    let signer;
+    let signer: SignerOrProvider;
     if (!signerOrProviderOrSignerName) {
       signer = ethers.provider;
     } else {
@@ -162,7 +163,7 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         signer = await ethers.getNamedSigner(signerOrProviderOrSignerName);
       }
       if (JsonRpcProvider.isProvider(signerOrProviderOrSignerName) || Signer.isSigner(signerOrProviderOrSignerName)) {
-        signer = signerOrProviderOrSignerName;
+        signer = signerOrProviderOrSignerName as SignerOrProvider;
       } else {
         signer = await ethers.getSigners()[0];
       }
@@ -183,33 +184,14 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         chainConfig = ganache;
         chainConfig.chainDeployments = chainDeployment;
         break;
-      case SupportedChains.bsc:
-        chainConfig = bsc;
-        break;
-      case SupportedChains.chapel:
-        chainConfig = chapel;
-        break;
-      case SupportedChains.neon:
-        chainConfig = neon;
-        break;
-      case SupportedChains.polygon:
-        chainConfig = polygon;
-        break;
-      case SupportedChains.arbitrum:
-        chainConfig = arbitrum;
-        break;
-      case SupportedChains.ethereum:
-        chainConfig = ethereum;
-        break;
-      case SupportedChains.linea:
-        chainConfig = linea;
-        break;
-      case SupportedChains.zkevm:
-        chainConfig = zkevm;
+      case SupportedChains.base:
+        chainConfig = base;
         break;
       case SupportedChains.mode:
         chainConfig = mode;
         break;
+      default:
+        throw new Error("Chain not supported");
     }
 
     // Override for when in SIMULATION
@@ -221,7 +203,7 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
     ionicSdk = new IonicSdk(signer, chainConfig);
 
     // patch WETH for local deployment
-    if (chainId === 31337 || chainId === 1337) {
+    if (chainId === 1337) {
       const weth = (await ethers.getContract("WETH")) as WETH;
       ionicSdk.chainSpecificAddresses.W_TOKEN = weth.address;
     }
