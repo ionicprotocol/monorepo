@@ -5,16 +5,7 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
     return config;
-  },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/market',
-        permanent: true,
-      },
-    ]
-  },
+  }
 };
 
 module.exports = nextConfig;
