@@ -3,13 +3,12 @@
 
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { switchChain } from '@wagmi/core';
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 // import { base, mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
@@ -22,7 +21,6 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { wagmiConfig } from '@ui/utils/connectors';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 //@ts-ignore
@@ -51,6 +49,7 @@ export default function Market() {
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
+  const { switchChain } = useSwitchChain();
 
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
@@ -69,8 +68,8 @@ export default function Market() {
   useEffect(() => {
     const handleSwitchOriginChain = async (chain: number) => {
       try {
-        if (chainId || chain !== chainId) {
-          await switchChain(wagmiConfig, {
+        if (chainId && chain !== chainId) {
+          switchChain({
             chainId: chain
           });
         }
@@ -79,7 +78,7 @@ export default function Market() {
 
     if (!chain) return;
     handleSwitchOriginChain(+chain);
-  }, [chain, chainId]);
+  }, [chain, chainId, switchChain]);
 
   useEffect(() => {
     if (selectedPool === pools[0].id && pool1Data) {

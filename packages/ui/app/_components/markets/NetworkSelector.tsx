@@ -22,7 +22,7 @@ export default function NetworkSelector({
   const networkOptions = [
     {
       chain: 34443,
-      name: 'Mode Mainnet'
+      name: 'Mode'
     },
     {
       chain: 8453,
