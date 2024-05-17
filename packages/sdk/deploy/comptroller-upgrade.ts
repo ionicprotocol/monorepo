@@ -74,6 +74,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
 
   /// LATEST IMPLEMENTATIONS
   // Comptroller
+  const fuseAdmin = await fuseFeeDistributor.owner();
   if (oldComptroller) {
     const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
       oldComptroller.address
@@ -82,46 +83,79 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       latestComptrollerImplementation === constants.AddressZero ||
       latestComptrollerImplementation !== comptroller.address
     ) {
-      logTransaction(
-        "Set Latest Comptroller Implementation",
-        "_setLatestComptrollerImplementation",
-        fuseFeeDistributor.address,
-        await fuseFeeDistributor.populateTransaction._setLatestComptrollerImplementation(
+      if (fuseAdmin.toLowerCase() === deployer.toLowerCase()) {
+        const tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
           oldComptroller.address,
           comptroller.address
-        ),
-        [oldComptroller.address, comptroller.address]
-      );
+        );
+        console.log(
+          `Set latest comptroller implementation from ${oldComptroller.address} to ${comptroller.address} with tx ${tx.hash}`
+        );
+      } else {
+        logTransaction(
+          "Set Latest Comptroller Implementation",
+          "_setLatestComptrollerImplementation",
+          fuseFeeDistributor.address,
+          await fuseFeeDistributor.populateTransaction._setLatestComptrollerImplementation(
+            oldComptroller.address,
+            comptroller.address
+          ),
+          [oldComptroller.address, comptroller.address]
+        );
+      }
     } else {
       console.log(
         `No change in the latest Comptroller implementation ${latestComptrollerImplementation} for ${comptroller.address}`
       );
     }
   } else {
-    logTransaction(
-      "Set Latest Comptroller Implementation",
-      "_setLatestComptrollerImplementation",
-      fuseFeeDistributor.address,
-      await fuseFeeDistributor.populateTransaction._setLatestComptrollerImplementation(
+    if (fuseAdmin.toLowerCase() === deployer.toLowerCase()) {
+      const tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
         constants.AddressZero,
         comptroller.address
-      ),
-      [constants.AddressZero, comptroller.address]
-    );
+      );
+      console.log(
+        `Set latest comptroller implementation from ${constants.AddressZero} to ${comptroller.address} with tx ${tx.hash}`
+      );
+    } else {
+      logTransaction(
+        "Set Latest Comptroller Implementation",
+        "_setLatestComptrollerImplementation",
+        fuseFeeDistributor.address,
+        await fuseFeeDistributor.populateTransaction._setLatestComptrollerImplementation(
+          constants.AddressZero,
+          comptroller.address
+        ),
+        [constants.AddressZero, comptroller.address]
+      );
+    }
   }
 
   const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
   if (comptrollerExtensions.length == 0 || comptrollerExtensions[1] != compFirstExtension.address) {
-    logTransaction(
-      "Set Comptroller Extensions: ",
-      "_setComptrollerExtensions",
-      fuseFeeDistributor.address,
-      await fuseFeeDistributor.populateTransaction._setComptrollerExtensions(comptroller.address, [
+    if (fuseAdmin.toLowerCase() === deployer.toLowerCase()) {
+      const tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [
         comptroller.address,
         compFirstExtension.address
-      ]),
-      [comptroller.address, [comptroller.address, compFirstExtension.address]]
-    );
+      ]);
+      console.log(
+        `Set comptroller extensions on ${comptroller.address} to ${[
+          comptroller.address,
+          compFirstExtension.address
+        ]} with tx ${tx.hash}`
+      );
+    } else {
+      logTransaction(
+        "Set Comptroller Extensions: ",
+        "_setComptrollerExtensions",
+        fuseFeeDistributor.address,
+        await fuseFeeDistributor.populateTransaction._setComptrollerExtensions(comptroller.address, [
+          comptroller.address,
+          compFirstExtension.address
+        ]),
+        [comptroller.address, [comptroller.address, compFirstExtension.address]]
+      );
+    }
   } else {
     console.log(`Comptroller extensions already configured`);
   }
@@ -144,13 +178,19 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       const shouldUpgrade = implBefore !== latestImpl;
 
       if (shouldUpgrade) {
-        logTransaction(
-          `Would upgrade pool ${pool.comptroller}`,
-          "_upgrade",
-          pool.comptroller,
-          await unitroller.populateTransaction._upgrade(),
-          []
-        );
+        if (deployer == admin) {
+          const tx = await unitroller._upgrade();
+          await tx.wait();
+          console.log(`Upgraded pool ${pool.comptroller} with tx ${tx.hash}`);
+        } else {
+          logTransaction(
+            `Would upgrade pool ${pool.comptroller}`,
+            "_upgrade",
+            pool.comptroller,
+            await unitroller.populateTransaction._upgrade(),
+            []
+          );
+        }
       }
     } catch (e) {
       console.error(`Error while checking for upgrade for pool ${JSON.stringify(pool)}`, e);

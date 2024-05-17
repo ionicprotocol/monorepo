@@ -45,7 +45,7 @@
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
     },
     "Comptroller": {
-      "address": "0x9a0aF901CAE82f309F1047e1026F66A08C6FCEEC"
+      "address": "0x2b3A2c76D57850FD4018B97dCCC8849bBD54C35c"
     },
     "ComptrollerFirstExtension": {
       "address": "0x151af46d007Cb7E60759318Ec1553c3Bdd8b93dB"
@@ -138,7 +138,7 @@
       "address": "0xE1A3006be645a80F206311d9f18C866c204bA02f"
     },
     "PoolLens": {
-      "address": "0x7AABEfD7d8d2576Dc932EbE97bE8Ba90299a4ee4"
+      "address": "0x6ec80f9aCd960b568932696C0F0bE06FBfCd175a"
     },
     "PoolLensSecondary": {
       "address": "0x431C87E08e2636733a945D742d25Ba77577ED480"

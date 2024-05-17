@@ -9,7 +9,7 @@ import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 // import { base, mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
@@ -55,6 +55,7 @@ export default function Market() {
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
+  const { switchChain } = useSwitchChain();
 
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
@@ -154,7 +155,6 @@ export default function Market() {
               setOpen={setOpen}
             />
           </div>
-          <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
             {dropdownSelectedChain === 34443 && (
               <>
