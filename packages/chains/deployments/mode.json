@@ -39,7 +39,7 @@
       "address": "0xF4090e9cC87e0A5C269F7D99f8AbE12c134ea2d4"
     },
     "Comptroller": {
-      "address": "0x8b2B6a9dC8Cd73309Cef8d64920831d4C73F43a7"
+      "address": "0xa855F8697D82F840c511433A36f7c60efF6c6BE7"
     },
     "ComptrollerFirstExtension": {
       "address": "0xdc4aBE2cd9a276b187200d4896d4B219c0B8920A"
@@ -147,7 +147,7 @@
       "address": "0x39C353Cf9041CcF467A04d0e78B63d961E81458a"
     },
     "PoolLens": {
-      "address": "0xbC6D8Da615003323B77D442b34976BB9D1124d39"
+      "address": "0x70BB19a56BfAEc65aE861E6275A90163AbDF36a6"
     },
     "PoolLensSecondary": {
       "address": "0x7Ea7BB80F3bBEE9b52e6Ed3775bA06C9C80D4154"
