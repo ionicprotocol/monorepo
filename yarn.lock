@@ -2124,6 +2124,7 @@ __metadata:
     "@ionicprotocol/types": "workspace:*"
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": "npm:^2.0.6"
+    "@supabase/supabase-js": "npm:^2.43.2"
     "@tenderly/hardhat-tenderly": "npm:^1.7.7"
     "@typechain/ethers-v5": "npm:^11.1.1"
     "@typechain/hardhat": "npm:^9.0.0"
@@ -6842,6 +6843,20 @@ __metadata:
     "@supabase/realtime-js": "npm:2.9.5"
     "@supabase/storage-js": "npm:2.5.5"
   checksum: 10/3e453ac8eaa8e1b906c0ba119ee21ac7da9d121caf6daea9c97febeb0f216e673d699edc38d7a2eebf26f567d11e0a0dc193a06c657718c9f4d209ad0d7a8ec3
+  languageName: node
+  linkType: hard
+
+"@supabase/supabase-js@npm:^2.43.2":
+  version: 2.43.2
+  resolution: "@supabase/supabase-js@npm:2.43.2"
+  dependencies:
+    "@supabase/auth-js": "npm:2.64.2"
+    "@supabase/functions-js": "npm:2.3.1"
+    "@supabase/node-fetch": "npm:2.6.15"
+    "@supabase/postgrest-js": "npm:1.15.2"
+    "@supabase/realtime-js": "npm:2.9.5"
+    "@supabase/storage-js": "npm:2.5.5"
+  checksum: 10/0e3a4b3457713f2af5fc8f3191c57d83b521162cb10e5ab99625b2d280bf98a48b0d12a5089e50d247b7730f1a7d1a225524baf78a9b3afb26db3e47d5ae7d7b
   languageName: node
   linkType: hard
 
@@ -19247,6 +19262,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^6.6.0"
     "@wagmi/core": "npm:^2.2.1"
     netlify-cli: "npm:^16.3.1"
+    react-confetti: "npm:^6.1.0"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.2.2"
     viem: "npm:^2.7.16"
@@ -21837,6 +21853,17 @@ __metadata:
     chart.js: ^4.1.1
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: 10/0a70b60e1a0d1f0cecdd69d70d9ac1c191618c1033d8f942d4728f5eb84c893c82c9e3318be8a3158eb3a7186c0251a8fe0356c9610ea0f0f3f2d4a9c4a0b388
+  languageName: node
+  linkType: hard
+
+"react-confetti@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "react-confetti@npm:6.1.0"
+  dependencies:
+    tween-functions: "npm:^1.2.0"
+  peerDependencies:
+    react: ^16.3.0 || ^17.0.1 || ^18.0.0
+  checksum: 10/33423767c42362b29e0c8fd09f60bcf40d64aeb721fd63564f85c61357706a6080563ec40f33435d210d5b5b1af7277aef4545deccf771d08785a3cb19749470
   languageName: node
   linkType: hard
 
@@ -24894,6 +24921,13 @@ __metadata:
   dependencies:
     safe-buffer: "npm:^5.0.1"
   checksum: 10/7f0d9ed5c22404072b2ae8edc45c071772affd2ed14a74f03b4e71b4dd1a14c3714d85aed64abcaaee5fec2efc79002ba81155c708f4df65821b444abb0cfade
+  languageName: node
+  linkType: hard
+
+"tween-functions@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "tween-functions@npm:1.2.0"
+  checksum: 10/f145f39187aacfe6e3c6bfe8452be4061a569b8e1e75c28169c55b7cdf519daa1877c79a8a2cdc902b68f49b67b8478f34818ff02529d27ae5aa0545e7fbdc06
   languageName: node
   linkType: hard
 
