@@ -3,7 +3,7 @@
 
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { switchChain } from '@wagmi/core';
+// import { switchChain } from '@wagmi/core';
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useSearchParams } from 'next/navigation';
@@ -22,20 +22,23 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { wagmiConfig } from '@ui/utils/connectors';
+// import { wagmiConfig } from '@ui/utils/connectors';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 //@ts-ignore
 const pools = [
   {
+    chain: 34443,
     id: '0',
     name: 'Mode - Main Market'
   },
   {
+    chain: 34443,
     id: '1',
     name: 'Mode - Native Market'
   },
   {
+    chain: 8453,
     id: '0',
     name: 'Base Market'
   }
@@ -46,6 +49,7 @@ export default function Market() {
   const chain = searchParams.get('chain');
   const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
+  const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
@@ -55,31 +59,35 @@ export default function Market() {
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
-    chainId
+    pools[0].chain
   );
   const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
     pools[1].id,
-    chainId
+    pools[1].chain
   );
   const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
     pools[2].id,
-    chainId
+    pools[2].chain
   );
 
   useEffect(() => {
-    const handleSwitchOriginChain = async (chain: number) => {
-      try {
-        if (chainId || chain !== chainId) {
-          await switchChain(wagmiConfig, {
-            chainId: chain
-          });
-        }
-      } catch (err) {}
-    };
-
     if (!chain) return;
-    handleSwitchOriginChain(+chain);
-  }, [chain, chainId]);
+    setDropdownSelectedChain(+chain);
+  }, [chain]);
+
+  useEffect(() => {
+    // const handleSwitchOriginChain = async (chain: number) => {
+    //   try {
+    //     if (chainId || chain !== chainId) {
+    //       await switchChain(wagmiConfig, {
+    //         chainId: chain
+    //       });
+    //     }
+    //   } catch (err) {}
+    // };
+    // if (!chain) return;
+    // handleSwitchOriginChain(+chain);
+  }, [chainId]);
 
   useEffect(() => {
     if (selectedPool === pools[0].id && pool1Data) {
@@ -140,6 +148,7 @@ export default function Market() {
             {' '}
             <NetworkSelector
               chainId={chain as string}
+              dropdownSelectedChain={dropdownSelectedChain}
               newRef={newRef}
               open={open}
               setOpen={setOpen}
@@ -147,7 +156,7 @@ export default function Market() {
           </div>
           <h1 className={`font-semibold pb-4 text-2xl`}>Select Market</h1>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
-            {chainId === 34443 && (
+            {dropdownSelectedChain === 34443 && (
               <>
                 <div
                   className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
@@ -209,7 +218,7 @@ export default function Market() {
                 </div>{' '}
               </>
             )}
-            {chainId === 8453 && (
+            {dropdownSelectedChain === 8453 && (
               <div
                 className={`flex flex-col cursor-pointer py-2 md:px-4 ${
                   selectedPool === '0'

@@ -3,22 +3,22 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
 
 interface INetworkSelector {
   chainId?: string;
+  dropdownSelectedChain: number;
   newRef: any;
   open: boolean;
   setOpen: any;
 }
 
 export default function NetworkSelector({
+  dropdownSelectedChain,
   setOpen,
   open,
   newRef
 }: INetworkSelector) {
-  const { chain } = useAccount();
-
   const networkOptions = [
     {
       chain: 34443,
@@ -41,17 +41,25 @@ export default function NetworkSelector({
       >
         <div
           className={`py-2 px-2 w-full relative items-center ${
-            chain?.id === 8453 ? 'bg-blue-600 text-white' : 'bg-lime'
+            dropdownSelectedChain === networkOptions[1].chain
+              ? 'bg-blue-600 text-white'
+              : 'bg-lime'
           } ${open ? 'rounded-t-md' : 'rounded-xl'}  `}
         >
-          {chain?.id ? chain.name : 'Select Chain'}
+          {dropdownSelectedChain === networkOptions[1].chain
+            ? 'Base'
+            : dropdownSelectedChain === networkOptions[0].chain
+            ? 'Mode Mainnet'
+            : 'Select Chain'}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
               open ? 'rotate-180' : 'rotate-0'
             } `}
             src={`https://img.icons8.com/ios/50/${
-              chain?.id === 8453 ? 'ffffff' : '000000'
+              dropdownSelectedChain === networkOptions[1].chain
+                ? 'ffffff'
+                : '000000'
             }/expand-arrow--v2.png`}
           />
         </div>
@@ -63,7 +71,7 @@ export default function NetworkSelector({
           {networkOptions.map((network: any, idx: number) => (
             <Link
               className={`flex justify-between items-center p-2 mb-1 text-black rounded-md ${
-                network.chain === 8453
+                network.chain === networkOptions[1].chain
                   ? 'bg-blue-600  text-white '
                   : ' bg-lime '
               }`}
@@ -71,7 +79,7 @@ export default function NetworkSelector({
               key={idx}
             >
               {network.name}{' '}
-              {chain?.id == network.chain && (
+              {dropdownSelectedChain == network.chain && (
                 <img
                   alt="checkmark--v1"
                   className={`w-4 h-4 stroke-lime`}
