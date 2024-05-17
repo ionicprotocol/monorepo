@@ -1,6 +1,5 @@
 import { constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
-import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
 import { PoolDirectory, Unitroller } from "../typechain";
 import fs from "fs";
@@ -9,11 +8,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
-
-  let MIN_BORROW_USD;
-  if (chainId === 97 || chainId == 245022934) MIN_BORROW_USD = 0.1;
-  else if (chainId == 34443) MIN_BORROW_USD = 4;
-  else MIN_BORROW_USD = 100;
 
   const { deployer, multisig } = await getNamedAccounts();
   console.log("deployer: ", deployer);
@@ -30,12 +24,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString(),
     gasPrice: feeData.gasPrice?.toString()
   });
-
-  if (!chainDeployConfig[chainId]) {
-    throw new Error(`Config invalid for ${chainId}`);
-  }
-  const { config: chainDeployParams }: { config: ChainDeployConfig; deployFunc: any } = chainDeployConfig[chainId];
-  console.log("chainDeployParams: ", chainDeployParams);
 
   // Array to store transaction details
   const transactions: any[] = [];
