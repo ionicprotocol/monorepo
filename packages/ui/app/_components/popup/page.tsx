@@ -1248,6 +1248,13 @@ const Popup = ({
                     currentUtilizationPercentage={currentUtilizationPercentage}
                     handleUtilization={handleWithdrawUtilization}
                   />
+
+                  {currentUtilizationPercentage >= 100 && (
+                    <div className="text-lime text-xs text-center">
+                      Warning: Mind the Health Factor when max withdrawing
+                    </div>
+                  )}
+
                   <div
                     className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                   />
@@ -1499,14 +1506,16 @@ const Popup = ({
                   >
                     <span className={``}>CURRENTLY BORROWING</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${borrowBalanceFrom}`}
+                      <span className={`text-error`}>
+                        {`${borrowBalanceFrom}`}
+                      </span>
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingUpdatedAssets}
                         width="16"
                       >
-                        {borrowBalanceTo}
+                        <span className="text-accent">{borrowBalanceTo}</span>
                       </ResultHandler>
                     </span>
                   </div>
@@ -1515,18 +1524,14 @@ const Popup = ({
                   >
                     <span className={``}>Market Borrow Apr</span>
                     <span className={`flex font-bold pl-2`}>
-                      <span className="text-error">
-                        {`${borrowAPR?.toFixed(2)}%`}
-                      </span>
+                      <span className="">{`${borrowAPR?.toFixed(2)}%`}</span>
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingUpdatedAssets}
                         width="16"
                       >
-                        <span className="text-accent">
-                          {updatedBorrowAPR?.toFixed(2)}%
-                        </span>
+                        <span>{updatedBorrowAPR?.toFixed(2)}%</span>
                       </ResultHandler>
                     </span>
                   </div>
