@@ -10,6 +10,164 @@ import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
+type Multipliers = {
+  eigenlayer?: boolean;
+  etherfi?: number;
+  ionic?: number;
+  kelp?: number;
+  mode?: number;
+  renzo?: number;
+};
+
+const multipliers: Record<
+  number,
+  Record<string, Record<string, Record<'borrow' | 'supply', Multipliers>>>
+> = {
+  34443: {
+    '0': {
+      'M-BTC': {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      STONE: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 2,
+          mode: 2
+        }
+      },
+      USDC: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      USDT: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      WBTC: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      WETH: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      ezETH: {
+        borrow: {},
+        supply: {
+          eigenlayer: true,
+          ionic: 2,
+          mode: 2,
+          renzo: 2
+        }
+      },
+      'weETH.mode': {
+        borrow: {
+          eigenlayer: true,
+          etherfi: 3,
+          ionic: 2.5,
+          mode: 3
+        },
+        supply: {
+          eigenlayer: true,
+          etherfi: 3,
+          ionic: 2,
+          mode: 3
+        }
+      },
+      wrsETH: {
+        borrow: {
+          eigenlayer: true,
+          ionic: 2.5,
+          kelp: 2,
+          mode: 1
+        },
+        supply: {
+          eigenlayer: true,
+          ionic: 2,
+          kelp: 2,
+          mode: 2
+        }
+      }
+    },
+    '1': {
+      MODE: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 3,
+          mode: 3
+        }
+      },
+      USDC: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      USDT: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      WETH: {
+        borrow: {
+          ionic: 2.5,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      }
+    }
+  }
+};
+
 interface IRows {
   asset: string;
   borrowAPR: string;
@@ -18,6 +176,8 @@ interface IRows {
   logo: string;
   loopPossible: boolean;
   membership: boolean;
+  selectedChain: number;
+  selectedPoolId: string;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   supplyAPR: string;
@@ -38,9 +198,14 @@ const PoolRows = ({
   logo,
   loopPossible,
   setSelectedSymbol,
-  setPopupMode
+  setPopupMode,
+  selectedChain,
+  selectedPoolId
 }: IRows) => {
   const { address } = useMultiIonic();
+  console.log('asset: ', asset);
+  console.log('selectedPoolId: ', selectedPoolId);
+  console.log('selectedChain: ', selectedChain);
 
   return (
     <div
@@ -112,14 +277,22 @@ const PoolRows = ({
           </span>
           <div className="popover absolute w-[170px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap">
             Base APR: {supplyAPR}
+            {
+              multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+                .ionic
+            }
             <div className="flex pt-4">
               <img
                 alt=""
                 className="size-4 rounded mr-1"
                 src="/img/ionic-sq.png"
               />{' '}
-              + {/ezETH|weETH\.mode|STONE|wrsETH/gm.test(asset) ? '2x' : '3x'}
-              Ionic Points
+              +{' '}
+              {
+                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+                  .ionic
+              }
+              x Ionic Points
             </div>
             <div className="flex">
               <img
@@ -136,12 +309,11 @@ const PoolRows = ({
                 src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
               />{' '}
               +{' '}
-              {/ezETH|STONE|wrsETH/gm.test(asset)
-                ? '2x'
-                : /weETH\.mode/gm.test(asset)
-                ? '3x'
-                : '3x'}{' '}
-              Mode Points
+              {
+                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+                  .mode
+              }
+              x Mode Points
             </div>
             <div className="flex">
               <img
@@ -151,7 +323,8 @@ const PoolRows = ({
               />{' '}
               + Turtle Mode Points
             </div>
-            {asset === 'weETH.mode' && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+              .etherfi && (
               <>
                 <div className="flex">
                   <img
@@ -159,7 +332,12 @@ const PoolRows = ({
                     className="size-4 mr-1"
                     src="/images/etherfi.png"
                   />{' '}
-                  + {/weETH\.mode/gm.test(asset) && '3x'} ether.fi Points
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.supply.etherfi
+                  }{' '}
+                  ether.fi Points
                 </div>
                 <div className="flex">
                   <img
@@ -171,7 +349,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {asset === 'ezETH' && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+              .renzo && (
               <>
                 <div className="flex">
                   <img
@@ -179,7 +358,12 @@ const PoolRows = ({
                     className="size-4 mr-1"
                     src="/images/renzo.png"
                   />{' '}
-                  + 2x Renzo Points
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.supply.renzo
+                  }
+                  x Renzo Points
                 </div>
                 <div className="flex">
                   <img
@@ -191,7 +375,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {asset === 'wrsETH' && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+              .kelp && (
               <>
                 <div className="flex">
                   <img
@@ -199,7 +384,12 @@ const PoolRows = ({
                     className="size-4 mr-1"
                     src="/images/kelpmiles.png"
                   />{' '}
-                  + 2x Kelp Miles
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.supply.kelp
+                  }
+                  x Kelp Miles
                 </div>
                 <div className="flex">
                   <img
@@ -211,9 +401,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {(asset === 'ezETH' ||
-              asset === 'weETH.mode' ||
-              asset === 'wrsETH') && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+              .eigenlayer && (
               <div className="flex">
                 <img
                   alt=""
@@ -248,7 +437,12 @@ const PoolRows = ({
                 className="size-4 rounded mr-1"
                 src="/img/ionic-sq.png"
               />{' '}
-              + {/ezETH|weETH|STONE|wrsETH/gm.test(asset) && '2x'} Ionic Points
+              +{' '}
+              {
+                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+                  .ionic
+              }
+              x Ionic Points
             </div>
             <div className="flex">
               <img
@@ -265,10 +459,11 @@ const PoolRows = ({
                 src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
               />{' '}
               +{' '}
-              {/ezETH|weETH|STONE|wrsETH/gm.test(asset) &&
-                asset !== 'weETH.mode' &&
-                '2x'}
-              {/weETH\.mode/gm.test(asset) && '3x'} Mode Points
+              {
+                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+                  .mode
+              }
+              x Mode Points
             </div>
             <div className="flex">
               <img
@@ -278,7 +473,8 @@ const PoolRows = ({
               />{' '}
               + Turtle Mode Points
             </div>
-            {(asset === 'weETH' || asset === 'weETH.mode') && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+              .etherfi && (
               <>
                 <div className="flex">
                   <img
@@ -286,7 +482,12 @@ const PoolRows = ({
                     className="size-4 mr-1"
                     src="/images/etherfi.png"
                   />{' '}
-                  + {/weETH\.mode/gm.test(asset) && '3x'} ether.fi Points
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.borrow.etherfi
+                  }
+                  x ether.fi Points
                 </div>
                 <div className="flex">
                   <img
@@ -298,7 +499,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {asset === 'wrsETH' && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+              .kelp && (
               <>
                 <div className="flex">
                   <img
@@ -306,7 +508,12 @@ const PoolRows = ({
                     className="size-4 mr-1"
                     src="/images/kelpmiles.png"
                   />{' '}
-                  + 2x Kelp Miles
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.borrow.kelp
+                  }
+                  x Kelp Miles
                 </div>
                 <div className="flex">
                   <img
@@ -318,10 +525,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {(asset === 'ezETH' ||
-              asset === 'weETH' ||
-              asset === 'wrsETH' ||
-              asset === 'weETH.mode') && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+              .eigenlayer && (
               <div className="flex">
                 <img
                   alt=""
