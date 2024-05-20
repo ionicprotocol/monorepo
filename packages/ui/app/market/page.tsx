@@ -3,12 +3,13 @@
 
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 // import { base, mode } from 'viem/chains';
-import { useChainId, useSwitchChain } from 'wagmi';
+import { useChainId } from 'wagmi';
 
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
@@ -22,6 +23,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+// import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 //@ts-ignore
 const pools = [
@@ -47,41 +49,31 @@ export default function Market() {
   const chain = searchParams.get('chain');
   const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
+  const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
-  const { switchChain } = useSwitchChain();
 
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
-    chainId
+    pools[0].chain
   );
   const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
     pools[1].id,
-    chainId
+    pools[1].chain
   );
   const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
     pools[2].id,
-    chainId
+    pools[2].chain
   );
 
   useEffect(() => {
-    const handleSwitchOriginChain = async (chain: number) => {
-      try {
-        if (chainId && chain !== chainId) {
-          switchChain({
-            chainId: chain
-          });
-        }
-      } catch (err) {}
-    };
-
     if (!chain) return;
-    handleSwitchOriginChain(+chain);
-  }, [chain, chainId, switchChain]);
+    setDropdownSelectedChain(+chain);
+  }, [chain]);
 
   useEffect(() => {
     if (selectedPool === pools[0].id && pool1Data) {
@@ -142,13 +134,14 @@ export default function Market() {
             {' '}
             <NetworkSelector
               chainId={chain as string}
+              dropdownSelectedChain={dropdownSelectedChain}
               newRef={newRef}
               open={open}
               setOpen={setOpen}
             />
           </div>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
-            {chainId === 34443 && (
+            {dropdownSelectedChain === 34443 && (
               <>
                 <div
                   className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
@@ -210,7 +203,7 @@ export default function Market() {
                 </div>{' '}
               </>
             )}
-            {chainId === 8453 && (
+            {dropdownSelectedChain === 8453 && (
               <div
                 className={`flex flex-col cursor-pointer py-2 md:px-4 ${
                   selectedPool === '0'
@@ -405,6 +398,7 @@ export default function Market() {
                       (val ? Number(formatEther(val.collateralFactor)) : 0) *
                       100
                     }
+                    dropdownSelectedChain={dropdownSelectedChain}
                     key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     loopPossible={
@@ -481,7 +475,13 @@ export default function Market() {
         />
       )}
 
-      {swapOpen && <Swap close={() => setSwapOpen(false)} />}
+      {swapOpen && (
+        <Swap
+          close={() => setSwapOpen(false)}
+          dropdownSelectedChain={dropdownSelectedChain}
+          selectedChain={chainId}
+        />
+      )}
     </>
   );
 }
