@@ -658,12 +658,14 @@ const PoolRows = ({
             <button
               className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
               onClick={async () => {
-                await handleSwitchOriginChain(
+                const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
                   selectedChain
                 );
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.SUPPLY);
+                if (result) {
+                  setSelectedSymbol(asset);
+                  setPopupMode(PopupMode.SUPPLY);
+                }
               }}
             >
               Supply / Withdraw
@@ -673,12 +675,14 @@ const PoolRows = ({
                 chainColors(selectedChain).text
               } py-1.5 px-3 uppercase`}
               onClick={async () => {
-                await handleSwitchOriginChain(
+                const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
                   selectedChain
                 );
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.BORROW);
+                if (result) {
+                  setSelectedSymbol(asset);
+                  setPopupMode(PopupMode.BORROW);
+                }
               }}
             >
               Borrow / Repay {loopPossible && '/ Loop'}

@@ -23,23 +23,24 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+// import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 //@ts-ignore
 const pools = [
   {
     chain: 34443,
     id: '0',
-    name: 'Mode - Main Market'
+    name: 'Main Market'
   },
   {
     chain: 34443,
     id: '1',
-    name: 'Mode - Native Market'
+    name: 'Native Market'
   },
   {
     chain: 8453,
     id: '0',
-    name: 'Base Market'
+    name: 'Main Market'
   }
 ];
 
@@ -474,7 +475,13 @@ export default function Market() {
         />
       )}
 
-      {swapOpen && <Swap close={() => setSwapOpen(false)} />}
+      {swapOpen && (
+        <Swap
+          close={() => setSwapOpen(false)}
+          dropdownSelectedChain={dropdownSelectedChain}
+          selectedChain={chainId}
+        />
+      )}
     </>
   );
 }

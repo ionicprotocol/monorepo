@@ -45,7 +45,7 @@ export default function NetworkSelector({
   }, [chain, dropdownSelectedChain]);
   return (
     <div
-      className="w-full capitalize text-sm  relative  "
+      className="w-full capitalize text-md  relative font-bold"
       ref={newRef}
     >
       <div
@@ -62,7 +62,7 @@ export default function NetworkSelector({
           {dropdownSelectedChain === networkOptions[1].chain
             ? 'Base'
             : dropdownSelectedChain === networkOptions[0].chain
-            ? 'Mode Mainnet'
+            ? 'Mode'
             : 'Select Chain'}
           <img
             alt="expand-arrow--v2"
