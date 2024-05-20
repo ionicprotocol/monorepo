@@ -89,7 +89,7 @@ const multipliers: Record<
         }
       },
       ezETH: {
-        borrow: {},
+        borrow: undefined,
         supply: {
           eigenlayer: true,
           ionic: 2,
@@ -100,9 +100,9 @@ const multipliers: Record<
       'weETH.mode': {
         borrow: {
           eigenlayer: true,
-          etherfi: 3,
+          etherfi: 1,
           ionic: 2.5,
-          mode: 3
+          mode: 1
         },
         supply: {
           eigenlayer: true,
@@ -115,7 +115,7 @@ const multipliers: Record<
         borrow: {
           eigenlayer: true,
           ionic: 2.5,
-          kelp: 2,
+          kelp: 1,
           mode: 1
         },
         supply: {
