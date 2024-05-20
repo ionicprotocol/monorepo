@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import React from 'react';
-// import { useAccount } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 interface INetworkSelector {
   chainId?: string;
@@ -19,6 +19,7 @@ export default function NetworkSelector({
   open,
   newRef
 }: INetworkSelector) {
+  const { chain } = useAccount();
   const networkOptions = [
     {
       chain: 34443,
@@ -30,20 +31,30 @@ export default function NetworkSelector({
     }
   ];
 
+  const chainColors = (chainId?: number) => {
+    if (chainId === 34443) {
+      return { arrow: '000000', bg: 'bg-lime', text: 'text-darkone' };
+    }
+    if (chainId === 8453) {
+      return { arrow: 'ffffff', bg: 'bg-blue-600', text: 'text-white' };
+    }
+    return { arrow: 'ffffff', bg: 'bg-primary', text: 'text-white' };
+  };
+
   return (
     <div
       className="w-full capitalize text-sm  relative  "
       ref={newRef}
     >
       <div
-        className={`   text-darkone cursor-pointer my-2  w-full   flex  flex-col items-start justify-start order border-b-none border-stone-700  `}
+        className={`   ${
+          chainColors(chain?.id).text
+        } cursor-pointer my-2  w-full   flex  flex-col items-start justify-start order border-b-none border-stone-700  `}
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
           className={`py-2 px-2 w-full relative items-center ${
-            dropdownSelectedChain === networkOptions[1].chain
-              ? 'bg-blue-600 text-white'
-              : 'bg-lime'
+            chainColors(chain?.id).bg
           } ${open ? 'rounded-t-md' : 'rounded-xl'}  `}
         >
           {dropdownSelectedChain === networkOptions[1].chain
@@ -57,9 +68,7 @@ export default function NetworkSelector({
               open ? 'rotate-180' : 'rotate-0'
             } `}
             src={`https://img.icons8.com/ios/50/${
-              dropdownSelectedChain === networkOptions[1].chain
-                ? 'ffffff'
-                : '000000'
+              chainColors(chain?.id).arrow
             }/expand-arrow--v2.png`}
           />
         </div>
@@ -70,11 +79,9 @@ export default function NetworkSelector({
         >
           {networkOptions.map((network: any, idx: number) => (
             <Link
-              className={`flex justify-between items-center p-2 mb-1 text-black rounded-md ${
-                network.chain === networkOptions[1].chain
-                  ? 'bg-blue-600  text-white '
-                  : ' bg-lime '
-              }`}
+              className={`flex justify-between items-center p-2 mb-1 ${
+                chainColors(network.chain).text
+              } rounded-md ${chainColors(network.chain).bg}`}
               href={`/market?chain=${network.chain}`}
               key={idx}
             >
