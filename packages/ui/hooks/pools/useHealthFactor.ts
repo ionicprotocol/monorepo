@@ -58,6 +58,14 @@ export const useHealthFactorPrediction = (
 
       return predictedHealthFactor;
     },
-    queryKey: ['healthFactor', 'prediction', address]
+    queryKey: [
+      'healthFactor',
+      'prediction',
+      address,
+      cTokenModify,
+      redeemTokens,
+      borrowAmount,
+      repayAmount
+    ]
   });
 };
