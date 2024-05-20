@@ -57,7 +57,9 @@ export default function NetworkSelector({
         <div
           className={`py-2 px-2 w-full relative items-center ${
             chainColors(chain?.id).bg
-          } ${open ? 'rounded-t-md' : 'rounded-xl'}  `}
+          } ${open ? 'rounded-t-md' : 'rounded-xl'} ${
+            chainColors(chain?.id).text
+          }`}
         >
           {dropdownSelectedChain === networkOptions[1].chain
             ? 'Base'
