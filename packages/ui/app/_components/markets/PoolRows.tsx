@@ -203,9 +203,6 @@ const PoolRows = ({
   selectedPoolId
 }: IRows) => {
   const { address } = useMultiIonic();
-  console.log('asset: ', asset);
-  console.log('selectedPoolId: ', selectedPoolId);
-  console.log('selectedChain: ', selectedChain);
 
   return (
     <div
