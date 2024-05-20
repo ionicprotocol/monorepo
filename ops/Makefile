@@ -111,7 +111,7 @@ pyth-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
-				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} packages/bots/pyth-updater/build/test/run.js
+				ghcr.io/ionicprotocol/ionic-pyth-updater:${IMAGE_TAG} packages/bots/pyth-updater/build/test/run.js
 
 
 feed-verifier-smoke-test:
