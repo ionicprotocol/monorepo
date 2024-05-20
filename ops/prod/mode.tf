@@ -19,7 +19,7 @@ module "mode_mainnet_liquidation_rpc_0" {
   timeout             = 700
   memory_size         = 512
 }
-module "mode_mainnet_liquidation_rpc_0" {
+module "mode_mainnet_pyth_rpc_0" {
   source              = "../modules/lambda"
   ecr_repository_name = local.pyth-updater_ecr_repository_name
   docker_image_tag    = var.bots_image_tag
