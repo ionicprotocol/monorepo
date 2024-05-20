@@ -9,6 +9,8 @@ import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import { useAccount } from 'wagmi';
 
 type Multipliers = {
   eigenlayer?: boolean;
@@ -228,6 +230,7 @@ interface IRows {
   borrowAPR: string;
   borrowBalance: string;
   collateralFactor: number;
+  dropdownSelectedChain: number;
   logo: string;
   loopPossible: boolean;
   membership: boolean;
@@ -256,6 +259,7 @@ const PoolRows = ({
   totalSupplied,
   borrowBalance,
   collateralFactor,
+  dropdownSelectedChain,
   membership,
   totalBorrowing,
   supplyAPR,
@@ -268,7 +272,6 @@ const PoolRows = ({
   selectedPoolId
 }: IRows) => {
   const { address } = useMultiIonic();
-
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
@@ -654,7 +657,11 @@ const PoolRows = ({
           <>
             <button
               className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
-              onClick={() => {
+              onClick={async () => {
+                await handleSwitchOriginChain(
+                  dropdownSelectedChain,
+                  selectedChain
+                );
                 setSelectedSymbol(asset);
                 setPopupMode(PopupMode.SUPPLY);
               }}
@@ -665,7 +672,11 @@ const PoolRows = ({
               className={`rounded-lg ${chainColors(selectedChain).bg} ${
                 chainColors(selectedChain).text
               } py-1.5 px-3 uppercase`}
-              onClick={() => {
+              onClick={async () => {
+                await handleSwitchOriginChain(
+                  dropdownSelectedChain,
+                  selectedChain
+                );
                 setSelectedSymbol(asset);
                 setPopupMode(PopupMode.BORROW);
               }}

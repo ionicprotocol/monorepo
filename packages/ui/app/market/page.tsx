@@ -397,6 +397,7 @@ export default function Market() {
                       (val ? Number(formatEther(val.collateralFactor)) : 0) *
                       100
                     }
+                    dropdownSelectedChain={dropdownSelectedChain}
                     key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                     loopPossible={

@@ -2,7 +2,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
 interface INetworkSelector {
@@ -40,7 +40,10 @@ export default function NetworkSelector({
     }
     return { arrow: 'ffffff', bg: 'bg-primary', text: 'text-white' };
   };
-
+  
+  useEffect(() => {
+    chainColors(dropdownSelectedChain);
+  }, [chain]);
   return (
     <div
       className="w-full capitalize text-sm  relative  "
