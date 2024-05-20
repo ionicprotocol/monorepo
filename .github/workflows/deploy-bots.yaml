@@ -254,6 +254,10 @@ jobs:
         working-directory: ./ops
         run: make liquidator-smoke-test
 
+      - name: run smoke tests for liquidator bot
+        working-directory: ./ops
+        run: make pyth-smoke-test  
+
       # - name: run smoke tests for feed verifier
       #   working-directory: ./ops
       #   run: make feed-verifier-smoke-test
