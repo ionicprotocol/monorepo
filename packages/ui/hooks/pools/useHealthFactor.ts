@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import type { BigNumber, BigNumberish } from 'ethers';
 import { constants, utils } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -27,4 +28,36 @@ export const useHealthFactor = (pool?: string, chainId?: number) => {
       enabled: !!pool && !!chainId && !!address
     }
   );
+};
+
+export const useHealthFactorPrediction = (
+  pool: string,
+  account: string,
+  cTokenModify: string,
+  redeemTokens: BigNumberish,
+  borrowAmount: BigNumberish,
+  repayAmount: BigNumberish
+) => {
+  const { address, currentSdk } = useMultiIonic();
+
+  return useQuery({
+    enabled: !!address && !!currentSdk,
+    queryFn: async (): Promise<BigNumber> => {
+      if (!currentSdk || !address) {
+        throw new Error('Error while predicting health factor!');
+      }
+
+      const predictedHealthFactor = currentSdk.getHealthFactorPrediction(
+        pool,
+        account,
+        cTokenModify,
+        redeemTokens,
+        borrowAmount,
+        repayAmount
+      );
+
+      return predictedHealthFactor;
+    },
+    queryKey: ['healthFactor', 'prediction', address]
+  });
 };
