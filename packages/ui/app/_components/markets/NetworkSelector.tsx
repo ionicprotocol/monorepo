@@ -2,8 +2,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import Link from 'next/link';
-import React, { useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import React from 'react';
 
 interface INetworkSelector {
   chainId?: string;
@@ -19,7 +18,6 @@ export default function NetworkSelector({
   open,
   newRef
 }: INetworkSelector) {
-  const { chain } = useAccount();
   const networkOptions = [
     {
       chain: 34443,
@@ -40,9 +38,6 @@ export default function NetworkSelector({
     }
     return { arrow: 'ffffff', bg: 'bg-primary', text: 'text-white' };
   };
-  useEffect(() => {
-    chainColors(dropdownSelectedChain);
-  }, [chain, dropdownSelectedChain]);
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -50,15 +45,15 @@ export default function NetworkSelector({
     >
       <div
         className={`   ${
-          chainColors(chain?.id).text
+          chainColors(dropdownSelectedChain).text
         } cursor-pointer my-2  w-full   flex  flex-col items-start justify-start order border-b-none border-stone-700  `}
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
           className={`py-2 px-2 w-full relative items-center ${
-            chainColors(chain?.id).bg
+            chainColors(dropdownSelectedChain).bg
           } ${open ? 'rounded-t-md' : 'rounded-xl'} ${
-            chainColors(chain?.id).text
+            chainColors(dropdownSelectedChain).text
           }`}
         >
           {dropdownSelectedChain === networkOptions[1].chain
@@ -72,7 +67,7 @@ export default function NetworkSelector({
               open ? 'rotate-180' : 'rotate-0'
             } `}
             src={`https://img.icons8.com/ios/50/${
-              chainColors(chain?.id).arrow
+              chainColors(dropdownSelectedChain).arrow
             }/expand-arrow--v2.png`}
           />
         </div>
