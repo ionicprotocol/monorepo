@@ -10,7 +10,7 @@ import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
 
 type Multipliers = {
   eigenlayer?: boolean;

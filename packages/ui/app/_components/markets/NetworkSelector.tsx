@@ -40,10 +40,9 @@ export default function NetworkSelector({
     }
     return { arrow: 'ffffff', bg: 'bg-primary', text: 'text-white' };
   };
-  
   useEffect(() => {
     chainColors(dropdownSelectedChain);
-  }, [chain]);
+  }, [chain, dropdownSelectedChain]);
   return (
     <div
       className="w-full capitalize text-sm  relative  "
