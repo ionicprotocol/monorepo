@@ -1,4 +1,5 @@
 import { switchChain } from '@wagmi/core';
+
 import { wagmiConfig } from './connectors';
 
 export const handleSwitchOriginChain = async (
