@@ -26,16 +26,19 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 //@ts-ignore
 const pools = [
   {
+    chain: 34443,
     id: '0',
-    name: 'Mode - Main Market'
+    name: 'Main Market'
   },
   {
+    chain: 34443,
     id: '1',
-    name: 'Mode - Native Market'
+    name: 'Native Market'
   },
   {
+    chain: 8453,
     id: '0',
-    name: 'Base Market'
+    name: 'Main Market'
   }
 ];
 

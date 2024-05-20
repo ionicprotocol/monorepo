@@ -42,7 +42,7 @@ export default function NetworkSelector({
 
   return (
     <div
-      className="w-full capitalize text-sm  relative  "
+      className="w-full capitalize text-md font-bold relative  "
       ref={newRef}
     >
       <div
@@ -54,7 +54,9 @@ export default function NetworkSelector({
         <div
           className={`py-2 px-2 w-full relative items-center ${
             chainColors(chain?.id).bg
-          } ${open ? 'rounded-t-md' : 'rounded-xl'}  `}
+          } ${open ? 'rounded-t-md' : 'rounded-xl'} ${
+            chainColors(chain?.id).text
+          }`}
         >
           {chain?.id ? chain.name : 'Select Chain'}
           <img
