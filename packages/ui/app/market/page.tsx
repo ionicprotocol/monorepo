@@ -408,6 +408,8 @@ export default function Market() {
                       loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                     }
                     membership={val?.membership ?? false}
+                    selectedChain={chainId}
+                    selectedPoolId={selectedPool}
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
                     supplyAPR={`${
