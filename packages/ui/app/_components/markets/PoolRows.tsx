@@ -165,6 +165,58 @@ const multipliers: Record<
         }
       }
     }
+  },
+  8453: {
+    '0': {
+      AERO: {
+        borrow: {
+          ionic: 2
+        },
+        supply: {
+          ionic: 1.5
+        }
+      },
+      USDC: {
+        borrow: {
+          ionic: 2.5
+        },
+        supply: {
+          ionic: 1.5
+        }
+      },
+      WETH: {
+        borrow: {
+          ionic: 2
+        },
+        supply: {
+          ionic: 1.5
+        }
+      },
+      cbETH: {
+        borrow: {
+          ionic: 2.5
+        },
+        supply: {
+          ionic: 1.5
+        }
+      },
+      ezETH: {
+        borrow: {},
+        supply: {
+          eigenlayer: true,
+          ionic: 2,
+          renzo: 2
+        }
+      },
+      wstETH: {
+        borrow: {
+          ionic: 2
+        },
+        supply: {
+          ionic: 1.5
+        }
+      }
+    }
   }
 };
 
@@ -299,27 +351,37 @@ const PoolRows = ({
               />{' '}
               + Turtle Ionic Points
             </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 mr-1"
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
-              />{' '}
-              +{' '}
-              {
-                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-                  .mode
-              }
-              x Mode Points
-            </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 mr-1"
-                src="/images/turtle-mode.png"
-              />{' '}
-              + Turtle Mode Points
-            </div>
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+              .mode && (
+              <>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
+                  />{' '}
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.supply.mode
+                  }
+                  x Mode Points
+                </div>
+                <div className="flex">
+                  {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+                    .mode && (
+                    <>
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="/images/turtle-mode.png"
+                      />{' '}
+                      + Turtle Mode Points
+                    </>
+                  )}
+                </div>
+              </>
+            )}
             {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
               .etherfi && (
               <>
@@ -449,27 +511,32 @@ const PoolRows = ({
               />{' '}
               + Turtle Ionic Points
             </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 mr-1"
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
-              />{' '}
-              +{' '}
-              {
-                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-                  .mode
-              }
-              x Mode Points
-            </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 mr-1"
-                src="/images/turtle-mode.png"
-              />{' '}
-              + Turtle Mode Points
-            </div>
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+              .mode && (
+              <>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
+                  />{' '}
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.borrow.mode
+                  }
+                  x Mode Points
+                </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/turtle-mode.png"
+                  />{' '}
+                  + Turtle Mode Points
+                </div>
+              </>
+            )}
             {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
               .etherfi && (
               <>
