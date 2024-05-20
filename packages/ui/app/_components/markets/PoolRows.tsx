@@ -21,7 +21,10 @@ type Multipliers = {
 
 const multipliers: Record<
   number,
-  Record<string, Record<string, Record<'borrow' | 'supply', Multipliers>>>
+  Record<
+    string,
+    Record<string, Record<'borrow' | 'supply', Multipliers | undefined>>
+  >
 > = {
   34443: {
     '0': {
@@ -170,7 +173,7 @@ const multipliers: Record<
     '0': {
       AERO: {
         borrow: {
-          ionic: 2
+          ionic: 2.5
         },
         supply: {
           ionic: 1.5
@@ -186,7 +189,7 @@ const multipliers: Record<
       },
       WETH: {
         borrow: {
-          ionic: 2
+          ionic: 2.5
         },
         supply: {
           ionic: 1.5
@@ -201,7 +204,7 @@ const multipliers: Record<
         }
       },
       ezETH: {
-        borrow: {},
+        borrow: undefined,
         supply: {
           eigenlayer: true,
           ionic: 2,
@@ -210,7 +213,7 @@ const multipliers: Record<
       },
       wstETH: {
         borrow: {
-          ionic: 2
+          ionic: 2.5
         },
         supply: {
           ionic: 1.5
@@ -342,35 +345,40 @@ const PoolRows = ({
           <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
             + TURTLE <i className="popover-hint">i</i>
           </span>
-          <div className="popover absolute w-[170px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap">
+          <div
+            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
+              chainColors(selectedChain).border
+            } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+          >
             Base APR: {supplyAPR}
-            {
-              multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-                .ionic
-            }
-            <div className="flex pt-4">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/img/ionic-sq.png"
-              />{' '}
-              +{' '}
-              {
-                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-                  .ionic
-              }
-              x Ionic Points
-            </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/images/turtle-ionic.png"
-              />{' '}
-              + Turtle Ionic Points
-            </div>
             {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              .mode && (
+              ?.ionic && (
+              <>
+                <div className="flex pt-4">
+                  <img
+                    alt=""
+                    className="size-4 rounded mr-1"
+                    src="/img/ionic-sq.png"
+                  />{' '}
+                  +{' '}
+                  {
+                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                      ?.supply?.ionic
+                  }
+                  x Ionic Points
+                </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 rounded mr-1"
+                    src="/images/turtle-ionic.png"
+                  />{' '}
+                  + Turtle Ionic Points
+                </div>
+              </>
+            )}
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
+              ?.mode && (
               <>
                 <div className="flex">
                   <img
@@ -381,13 +389,13 @@ const PoolRows = ({
                   +{' '}
                   {
                     multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply.mode
+                      ?.supply?.mode
                   }
                   x Mode Points
                 </div>
                 <div className="flex">
                   {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-                    .mode && (
+                    ?.mode && (
                     <>
                       <img
                         alt=""
@@ -401,7 +409,7 @@ const PoolRows = ({
               </>
             )}
             {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              .etherfi && (
+              ?.etherfi && (
               <>
                 <div className="flex">
                   <img
@@ -412,7 +420,7 @@ const PoolRows = ({
                   +{' '}
                   {
                     multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply.etherfi
+                      ?.supply?.etherfi
                   }{' '}
                   ether.fi Points
                 </div>
@@ -427,7 +435,7 @@ const PoolRows = ({
               </>
             )}
             {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              .renzo && (
+              ?.renzo && (
               <>
                 <div className="flex">
                   <img
@@ -438,7 +446,7 @@ const PoolRows = ({
                   +{' '}
                   {
                     multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply.renzo
+                      ?.supply?.renzo
                   }
                   x Renzo Points
                 </div>
@@ -453,7 +461,7 @@ const PoolRows = ({
               </>
             )}
             {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              .kelp && (
+              ?.kelp && (
               <>
                 <div className="flex">
                   <img
@@ -464,7 +472,7 @@ const PoolRows = ({
                   +{' '}
                   {
                     multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply.kelp
+                      ?.supply?.kelp
                   }
                   x Kelp Miles
                 </div>
@@ -479,7 +487,7 @@ const PoolRows = ({
               </>
             )}
             {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              .eigenlayer && (
+              ?.eigenlayer && (
               <div className="flex">
                 <img
                   alt=""
@@ -510,117 +518,125 @@ const PoolRows = ({
           <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
             + TURTLE <i className="popover-hint">i</i>
           </span>
-          <div className="popover absolute w-[170px] top-full p-2 mt-1 border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
+          <div
+            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
+              chainColors(selectedChain).border
+            } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+          >
             Base APR: {borrowAPR}
-            <div className="flex pt-4">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/img/ionic-sq.png"
-              />{' '}
-              +{' '}
-              {
-                multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-                  .ionic
-              }
-              x Ionic Points
-            </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/images/turtle-ionic.png"
-              />{' '}
-              + Turtle Ionic Points
-            </div>
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-              .mode && (
+            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow && (
               <>
-                <div className="flex">
+                <div className="flex pt-4">
                   <img
                     alt=""
-                    className="size-4 mr-1"
-                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
+                    className="size-4 rounded mr-1"
+                    src="/img/ionic-sq.png"
                   />{' '}
                   +{' '}
                   {
                     multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.borrow.mode
+                      ?.borrow?.ionic
                   }
-                  x Mode Points
+                  x Ionic Points
                 </div>
                 <div className="flex">
                   <img
                     alt=""
-                    className="size-4 mr-1"
-                    src="/images/turtle-mode.png"
+                    className="size-4 rounded mr-1"
+                    src="/images/turtle-ionic.png"
                   />{' '}
-                  + Turtle Mode Points
+                  + Turtle Ionic Points
                 </div>
+                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+                  ?.mode && (
+                  <>
+                    <div className="flex">
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
+                      />{' '}
+                      +{' '}
+                      {
+                        multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                          ?.borrow?.mode
+                      }
+                      x Mode Points
+                    </div>
+                    <div className="flex">
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="/images/turtle-mode.png"
+                      />{' '}
+                      + Turtle Mode Points
+                    </div>
+                  </>
+                )}
+                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+                  ?.etherfi && (
+                  <>
+                    <div className="flex">
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="/images/etherfi.png"
+                      />{' '}
+                      +{' '}
+                      {
+                        multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                          ?.borrow?.etherfi
+                      }
+                      x ether.fi Points
+                    </div>
+                    <div className="flex">
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="/images/turtle-etherfi.png"
+                      />{' '}
+                      + Turtle ether.fi Points
+                    </div>
+                  </>
+                )}
+                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+                  ?.kelp && (
+                  <>
+                    <div className="flex">
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="/images/kelpmiles.png"
+                      />{' '}
+                      +{' '}
+                      {
+                        multipliers[selectedChain]?.[selectedPoolId]?.[asset]
+                          ?.borrow?.kelp
+                      }
+                      x Kelp Miles
+                    </div>
+                    <div className="flex">
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="/images/turtle-renzo.png"
+                      />{' '}
+                      + Turtle Kelp Points
+                    </div>
+                  </>
+                )}
+                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
+                  ?.eigenlayer && (
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 mr-1"
+                      src="/images/eigen.png"
+                    />{' '}
+                    + EigenLayer Points
+                  </div>
+                )}
               </>
-            )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-              .etherfi && (
-              <>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/etherfi.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.borrow.etherfi
-                  }
-                  x ether.fi Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/turtle-etherfi.png"
-                  />{' '}
-                  + Turtle ether.fi Points
-                </div>
-              </>
-            )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-              .kelp && (
-              <>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/kelpmiles.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.borrow.kelp
-                  }
-                  x Kelp Miles
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/turtle-renzo.png"
-                  />{' '}
-                  + Turtle Kelp Points
-                </div>
-              </>
-            )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-              .eigenlayer && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/eigen.png"
-                />{' '}
-                + EigenLayer Points
-              </div>
             )}
           </div>
         </div>
