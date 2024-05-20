@@ -237,6 +237,16 @@ interface IRows {
   totalBorrowing: string;
   totalSupplied: string;
 }
+
+const chainColors = (chainId: number) => {
+  if (chainId === 34443) {
+    return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };
+  }
+  if (chainId === 8453) {
+    return { bg: 'bg-blue-600', border: 'border-blue-600', text: 'text-white' };
+  }
+  return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };
+};
 const PoolRows = ({
   asset,
   supplyBalance,
@@ -259,11 +269,15 @@ const PoolRows = ({
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
-        membership && 'border border-lime'
+        membership && `border ${chainColors(selectedChain).border}`
       }`}
     >
       {membership && (
-        <span className="absolute top-[-9px] right-[-15px] px-2 text-darkone bg-lime rounded-lg">
+        <span
+          className={`absolute top-[-9px] right-[-15px] px-2 ${
+            chainColors(selectedChain).text
+          } ${chainColors(selectedChain).bg} rounded-lg`}
+        >
           Collateral
         </span>
       )}
@@ -318,7 +332,11 @@ const PoolRows = ({
         </span>
         <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
           {supplyAPR}
-          <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
+          <span
+            className={`${chainColors(selectedChain).text} ${
+              chainColors(selectedChain).bg
+            } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+          >
             + POINTS <i className="popover-hint">i</i>
           </span>
           <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
@@ -482,7 +500,11 @@ const PoolRows = ({
         </span>
         <div className="popover-container flex lg:flex-col items-center cursor-pointer">
           {borrowAPR}
-          <span className="text-darkone bg-lime rounded-lg w-20 ml-1 lg:ml-0 text-center">
+          <span
+            className={`${chainColors(selectedChain).text} ${
+              chainColors(selectedChain).bg
+            } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+          >
             + POINTS <i className="popover-hint">i</i>
           </span>
           <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
@@ -624,7 +646,9 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg bg-lime text-black py-1.5 px-3 uppercase`}
+              className={`rounded-lg ${chainColors(selectedChain).bg} ${
+                chainColors(selectedChain).text
+              } py-1.5 px-3 uppercase`}
               onClick={() => {
                 setSelectedSymbol(asset);
                 setPopupMode(PopupMode.BORROW);
