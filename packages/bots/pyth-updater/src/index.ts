@@ -23,6 +23,9 @@ export const handler = async (
   const assetConfig = chainIdToConfig[config.chainId];
   const updater = await new Updater(sdk).init(assetConfig);
 
+  // Invoke the triggerTestNotification function
+  await updater.triggerTestNotification();
+
   sdk.logger.info(`Starting update loop bot on chain: ${config.chainId}`);
   sdk.logger.info(`Config for bot: ${JSON.stringify(config)}`);
   await updater.updateFeeds();
