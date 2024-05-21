@@ -254,7 +254,7 @@ jobs:
         working-directory: ./ops
         run: make liquidator-smoke-test
 
-      - name: run smoke tests for pyth-updater bot
+      - name: run smoke tests for liquidator bot
         working-directory: ./ops
         run: make pyth-smoke-test  
 
