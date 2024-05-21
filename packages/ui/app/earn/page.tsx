@@ -2,38 +2,70 @@
 
 import { useEffect, useState } from 'react';
 
-import EarnRows from '../_components/earn/EarnRows';
+import EarnRows, { EarnRow } from '../_components/earn/EarnRows';
 
-export default function Lend() {
-  const [apr, setApr] = useState<number>(0);
-  const [tvl, setTvl] = useState<number>(0);
+export default function Earn() {
+  const [rows, setRows] = useState<EarnRow[]>([
+    {
+      apr: 0,
+      asset: ['ION', 'WETH'],
+      getApr: () => Promise.resolve(0),
+      getTvl: () => Promise.resolve(0),
+      link: 'https://velodrome.finance/deposit?token0=0x18470019bF0E94611f15852F7e93cf5D65BC34CA&token1=0x4200000000000000000000000000000000000006&type=-1',
+      network: 'mode',
+      protocol: 'Velodrome',
+      tvl: 0
+    },
+    {
+      apr: 0,
+      asset: ['ionUSDC', 'ionUSDT'],
+      getApr: async () => {
+        try {
+          const response = await fetch(
+            'https://api.steer.finance/pool/fee-apr?address=0x17694615caba46ef765a3673fa488e04332b522a&chain=34443&interval=604800'
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error: Status ${response.status}`);
+          }
+          const val = await response.json();
+          return val?.apr ?? 0;
+        } catch (err) {
+          console.error(err);
+        }
+      },
+      getTvl: async () => {
+        try {
+          const response = await fetch(
+            'https://api.steer.finance/pool/lp/value?chain=34443&address=0x17694615caba46ef765a3673fa488e04332b522a'
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error: Status ${response.status}`);
+          }
+          const val = await response.json();
+          return val?.tvl ?? 0;
+        } catch (err) {
+          console.error(err);
+        }
+      },
+      link: 'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a/34443',
+      network: 'mode',
+      protocol: 'Steer',
+      tvl: 0
+    }
+  ]);
 
   useEffect(() => {
-    async function getApr() {
-      try {
-        const response = await fetch(
-          'https://api.steer.finance/pool/fee-apr?address=0x17694615caba46ef765a3673fa488e04332b522a&chain=34443&interval=604800'
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error: Status ${response.status}`);
-        }
-        const val = await response.json();
-        setApr(val?.apr);
-
-        const tvlresponse = await fetch(
-          'https://api.steer.finance/pool/lp/value?chain=34443&address=0x17694615caba46ef765a3673fa488e04332b522a'
-        );
-        if (!tvlresponse.ok) {
-          throw new Error(`HTTP error: Status ${tvlresponse.status}`);
-        }
-        const tvlval = await tvlresponse.json();
-        setTvl(tvlval?.tvl);
-      } catch (err) {
-        // console.log(err);
-      }
-    }
-    getApr();
-  }, []);
+    const populateVals = async () => {
+      await Promise.all(
+        rows.map(async (row) => {
+          row.apr = await row.getApr();
+          row.tvl = await row.getTvl();
+        })
+      );
+      setRows([...rows]);
+    };
+    populateVals();
+  }, [rows]);
   return (
     <>
       <h1 className="mb-4 text-center text-white/80 ">
@@ -54,10 +86,7 @@ export default function Lend() {
         </div>
 
         {/* this will get mapped out in future with the possible api data structure mentioned below */}
-        <EarnRows
-          apr={apr}
-          tvl={tvl}
-        />
+        <EarnRows rows={rows} />
       </div>
     </>
   );
