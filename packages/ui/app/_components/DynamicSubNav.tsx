@@ -1,18 +1,22 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import { base } from 'viem/chains';
-import { useChainId } from 'wagmi';
 
 function DynamicSubNav() {
-  const chainId = useChainId();
+  const searchParams = useSearchParams();
+  const chain = searchParams.get('chain');
+  const chainId = chain === null ? 34443 : chain;
+  // console.log(chain);
+
   return (
     <div
       className={`${
-        chainId === base.id ? 'bg-blue-600 text-white' : 'bg-lime text-darkone'
+        +chainId === base.id ? 'bg-blue-600 text-white' : 'bg-lime text-darkone'
       } absolute w-full top-full left-0 text-center p-2 text-sm font-medium`}
     >
-      Hello, {chainId === base.id ? 'Base' : 'Mode'}! Ionic is open for lending
+      Hello, {+chainId === base.id ? 'Base' : 'Mode'}! Ionic is open for lending
       and borrowing! Supply assets to earn Ionic points. Borrow to earn
       multiplied points!
     </div>

@@ -50,9 +50,9 @@ export default function NetworkSelector({
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
-          className={`py-2 px-2 w-full relative items-center ${
+          className={`py-2 px-2 w-full relative items-center border-2 border-stone-700 ${
             chainColors(dropdownSelectedChain).bg
-          } ${open ? 'rounded-t-md' : 'rounded-xl'} ${
+          } ${open ? 'rounded-t-md' : 'rounded-xl '} ${
             chainColors(dropdownSelectedChain).text
           }`}
         >
