@@ -39,10 +39,6 @@ export class Updater {
     this.pythNetworkAddress = await this.pythPriceOracle.callStatic.PYTH();
     this.assetConfigs = assetConfigs;
     this.pythContract = new Contract(this.pythNetworkAddress, PythAbi, this.sdk.provider) as IPyth;
-
-    // Trigger a test notification
-    await this.triggerTestNotification();
-
     return this;
   }
 
@@ -122,19 +118,25 @@ export class Updater {
     }
   }
 
-  // Custom function to trigger test notification
+  // Test notification function
   async triggerTestNotification(): Promise<void> {
-    const testAssetConfig = {
+    const testPriceConfig: PythAssetConfig = {
       priceId: 'testPriceId',
-      currentPrice: { price: 100, publishTime: Date.now() },
-      lastPrice: { price: 90, publishTime: Date.now() - 1000 },
+      currentPrice: {
+        price: 1000,
+        publishTime: Math.floor(Date.now() / 1000),
+      },
+      lastPrice: {
+        price: 900,
+        publishTime: Math.floor(Date.now() / 1000) - 3600,
+      },
+      configRefreshRateInSeconds: 60,
+      validTimePeriodSeconds: 600,
+      deviationThresholdBps: 500,
     };
 
-    try {
-      this.alert.sendPriceUpdateSuccess([testAssetConfig], {} as TransactionResponse);
-    } catch (e) {
-      this.sdk.logger.error(`Error sending test notification: ${e}`);
-      this.alert.sendPriceUpdateFailure([testAssetConfig], JSON.stringify(e));
-    }
+    this.alert.sendPriceUpdateSuccess([testPriceConfig], {
+      hash: 'testTransactionHash',
+    } as TransactionResponse);
   }
 }
