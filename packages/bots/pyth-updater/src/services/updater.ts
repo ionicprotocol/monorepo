@@ -99,7 +99,6 @@ export class Updater {
     }
     return null;
   }
-
   async forceUpdateFeeds(assetConfig: PythAssetConfig[]): Promise<TransactionResponse | null> {
     const priceIdsToUpdate = assetConfig.map((assetConfig) => assetConfig.priceId);
     const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
@@ -116,27 +115,5 @@ export class Updater {
       this.alert.sendPriceUpdateFailure(assetConfig, JSON.stringify(e));
       return null;
     }
-  }
-
-  // Test notification function
-  async triggerTestNotification(): Promise<void> {
-    const testPriceConfig: PythAssetConfig = {
-      priceId: 'testPriceId',
-      currentPrice: {
-        price: 1000,
-        publishTime: Math.floor(Date.now() / 1000),
-      },
-      lastPrice: {
-        price: 900,
-        publishTime: Math.floor(Date.now() / 1000) - 3600,
-      },
-      configRefreshRateInSeconds: 60,
-      validTimePeriodSeconds: 600,
-      deviationThresholdBps: 500,
-    };
-
-    this.alert.sendPriceUpdateSuccess([testPriceConfig], {
-      hash: 'testTransactionHash',
-    } as TransactionResponse);
   }
 }
