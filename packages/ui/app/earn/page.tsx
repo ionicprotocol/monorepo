@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import EarnRows, { EarnRow } from '../_components/earn/EarnRows';
+import EarnRows, { type EarnRow } from '../_components/earn/EarnRows';
 
 const earnOpps: EarnRow[] = [
   {
