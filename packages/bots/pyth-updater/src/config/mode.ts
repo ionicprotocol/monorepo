@@ -27,11 +27,18 @@ export const pythConfig: PythAssetConfig[] = [
   },
   {
     // price feed for MODE
-    priceId: '0x6665073f5bc307b97e68654ff11f3d8875abd6181855814d23ab01b8085c0906',
+    priceId: '0x0386e113cc716a7c6a55decd97b19c90ce080d9f2f5255ac78a0e26889446d1e',
     configRefreshRateInSeconds: 3600,
     validTimePeriodSeconds: 86400, // 24 hrs
     deviationThresholdBps: 100, // 1%
-  }
+  },
+  // {
+  //   // price feed for mBTC
+  //   priceId: '0x6665073f5bc307b97e68654ff11f3d8875abd6181855814d23ab01b8085c0906',
+  //   configRefreshRateInSeconds: 3600,
+  //   validTimePeriodSeconds: 86400, // 24 hrs
+  //   deviationThresholdBps: 100, // 1%
+  // },
   // {
   //   // price feed for UNI
   //   priceId: '0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501',
