@@ -10,7 +10,7 @@ import { setUpSdk } from './utils';
 
 export const handler = async (
   event: APIGatewayEvent,
-  context: Context,
+  context: Context
 ): Promise<APIGatewayProxyResult> => {
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
