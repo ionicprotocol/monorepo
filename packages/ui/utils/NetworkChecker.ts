@@ -12,6 +12,9 @@ export const handleSwitchOriginChain = async (
       });
       return true;
     }
+    if(selectedDropdownChain === walletsChain){
+      return true;
+    }
   } catch (err) {
     return false;
   }

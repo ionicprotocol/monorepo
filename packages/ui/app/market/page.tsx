@@ -49,7 +49,8 @@ export default function Market() {
   const chain = searchParams.get('chain');
   const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(0);
+  const [dropdownSelectedChain, setDropdownSelectedChain] =
+    useState<number>(34443);
   const [open, setOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
