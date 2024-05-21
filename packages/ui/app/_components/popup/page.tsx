@@ -190,11 +190,6 @@ const Popup = ({
       : parseUnits('0', selectedMarketData.underlyingDecimals)
   );
 
-  console.log(
-    amountAsBInt.toString(),
-    formatEther(predictedHealthFactor ?? '0')
-  );
-
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
