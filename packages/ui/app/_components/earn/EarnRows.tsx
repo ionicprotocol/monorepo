@@ -69,11 +69,42 @@ export default function EarnRows({ rows }: EarnRowsParams) {
               src={`/img/logo/${network}.png`}
             />
           </div>
-          <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
-            <span className="text-white/40 text-xs font-semibold md:hidden">
-              APR
+          <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
+            <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
+              <span className="text-white/40 text-xs font-semibold md:hidden">
+                APR
+              </span>
+              {apr && Number(apr) > 0 ? apr : '-'}%
+            </div>
+            <span
+              className={`text-xs font-bold rounded-lg bg-lime text-darkone w-20 ml-1 lg:ml-0 text-center`}
+            >
+              + POINTS <i className="popover-hint">i</i>
             </span>
-            {apr && Number(apr) > 0 ? apr : '-'}%
+            <span className="text-xs font-bold text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+              + TURTLE <i className="popover-hint">i</i>
+            </span>
+            <div
+              className={`font-bold popover absolute w-[160px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+            >
+              Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
+              <div className="flex pt-4">
+                <img
+                  alt=""
+                  className="size-4 rounded mr-1"
+                  src="/img/ionic-sq.png"
+                />{' '}
+                + 3x Ionic Points
+              </div>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 rounded mr-1"
+                  src="/images/turtle-ionic.png"
+                />{' '}
+                + Turtle Ionic Points
+              </div>
+            </div>
           </div>
           <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
             <span className="text-white/40 text-xs font-semibold md:hidden">
