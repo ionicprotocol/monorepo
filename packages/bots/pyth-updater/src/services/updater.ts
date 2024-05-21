@@ -30,7 +30,7 @@ export class Updater {
     this.pythPriceOracle = new Contract(
       this.sdk.chainDeployment.PythPriceOracle.address,
       ['function PYTH() external view returns (address) '],
-      this.sdk.provider
+      this.sdk.provider,
     );
     this.connection = new EvmPriceServiceConnection(config.priceServiceEndpoint);
   }
@@ -46,37 +46,37 @@ export class Updater {
     const configWithCurrentPrices = await getCurrentPrices(
       this.sdk,
       this.assetConfigs,
-      this.connection
+      this.connection,
     );
     if (configWithCurrentPrices === undefined) {
       this.sdk.logger.error(
-        `Error fetching current priceFeeds for priceIds: ${this.assetConfigs.map((a) => a.priceId)}`
+        `Error fetching current priceFeeds for priceIds: ${this.assetConfigs.map((a) => a.priceId)}`,
       );
       return null;
     }
     const configWithLastPrices = await getLastPrices(
       this.sdk,
       configWithCurrentPrices,
-      this.pythContract
+      this.pythContract,
     );
     this.sdk.logger.debug(
       `currentPrices: ${JSON.stringify(
-        configWithCurrentPrices.map((c) => c.currentPrice?.price)
-      )}\nlastPrices: ${JSON.stringify(configWithLastPrices.map((l) => l.lastPrice?.price))}`
+        configWithCurrentPrices.map((c) => c.currentPrice?.price),
+      )}\nlastPrices: ${JSON.stringify(configWithLastPrices.map((l) => l.lastPrice?.price))}`,
     );
     const assetConfigsToUpdate = configWithLastPrices.filter((configWithLastPrice) =>
-      priceFeedNeedsUpdate(this.sdk, configWithLastPrice)
+      priceFeedNeedsUpdate(this.sdk, configWithLastPrice),
     );
     if (assetConfigsToUpdate.length > 0) {
       const publishTimes = assetConfigsToUpdate.map(
-        (assetConfig) => assetConfig.currentPrice!.publishTime
+        (assetConfig) => assetConfig.currentPrice!.publishTime,
       );
       const priceIdsToUpdate = assetConfigsToUpdate.map((assetConfig) => assetConfig.priceId);
       const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
       const fee = (await this.pythContract.callStatic.getUpdateFee(updatePriceData)).toString();
       const callData = this.pythContract.interface.encodeFunctionData(
         'updatePriceFeedsIfNecessary',
-        [updatePriceData, priceIdsToUpdate, publishTimes]
+        [updatePriceData, priceIdsToUpdate, publishTimes],
       );
       try {
         const tx = await sendTransactionToPyth(this.sdk, this.pythNetworkAddress, callData, fee);
@@ -93,8 +93,8 @@ export class Updater {
           (a) =>
             `priceId: ${a.priceId}:  - current price ${a.currentPrice!.price}\n  - last price ${
               a.lastPrice!.price
-            } `
-        )}`
+            } `,
+        )}`,
       );
     }
     return null;
