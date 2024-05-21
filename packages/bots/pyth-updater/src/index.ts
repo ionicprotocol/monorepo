@@ -34,3 +34,12 @@ export const handler = async (
     }),
   };
 };
+// Function to trigger the test notification
+const triggerTestNotification = async (updater: Updater): Promise<void> => {
+  try {
+    await updater.sendTestNotification();
+    logger.info('Test notification sent successfully');
+  } catch (error) {
+    logger.error(`Error sending test notification: ${error}`);
+  }
+};

@@ -116,4 +116,25 @@ export class Updater {
       return null;
     }
   }
+  async sendTestNotification() {
+    const testAssetConfig = {
+      priceId: "testPriceId",
+      currentPrice: { price: 12345, publishTime: Date.now() },
+      lastPrice: { price: 54321, publishTime: Date.now() - 60000 },
+    };
+
+    try {
+      this.alert.sendPriceUpdateSuccess([testAssetConfig], {} as TransactionResponse);
+      this.sdk.logger.info('Test success notification sent');
+    } catch (e) {
+      this.sdk.logger.error(`Error sending test success notification: ${e}`);
+    }
+
+    try {
+      this.alert.sendPriceUpdateFailure([testAssetConfig], 'Test error message');
+      this.sdk.logger.info('Test failure notification sent');
+    } catch (e) {
+      this.sdk.logger.error(`Error sending test failure notification: ${e}`);
+    }
+  }
 }
