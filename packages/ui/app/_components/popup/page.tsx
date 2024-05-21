@@ -1,8 +1,8 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -26,6 +26,10 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
+import {
+  useHealthFactor,
+  useHealthFactorPrediction
+} from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
@@ -167,6 +171,30 @@ const Popup = ({
   );
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
+  const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
+  const {
+    data: predictedHealthFactor,
+    isLoading: isLoadingPredictedHealthFactor
+  } = useHealthFactorPrediction(
+    comptrollerAddress,
+    address ?? '',
+    selectedMarketData.cToken,
+    active === PopupMode.WITHDRAW
+      ? amountAsBInt
+      : parseUnits('0', selectedMarketData.underlyingDecimals),
+    active === PopupMode.BORROW
+      ? amountAsBInt
+      : parseUnits('0', selectedMarketData.underlyingDecimals),
+    active === PopupMode.REPAY
+      ? amountAsBInt
+      : parseUnits('0', selectedMarketData.underlyingDecimals)
+  );
+
+  console.log(
+    amountAsBInt.toString(),
+    formatEther(predictedHealthFactor ?? '0')
+  );
+
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
@@ -1152,6 +1180,24 @@ const Popup = ({
                       </ResultHandler>
                     </span>
                   </div>
+                  {/* <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
+                      </ResultHandler>
+                    </span>
+                  </div> */}
                   <div
                     className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                   />
@@ -1294,6 +1340,24 @@ const Popup = ({
                     </span>
                   </div>
                   <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
                     className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                   >
                     {transactionSteps.length > 0 ? (
@@ -1406,6 +1470,24 @@ const Popup = ({
                         width="16"
                       >
                         {updatedBorrowAPR?.toFixed(2)}%
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
                       </ResultHandler>
                     </span>
                   </div>
@@ -1535,6 +1617,24 @@ const Popup = ({
                         width="16"
                       >
                         <span>{updatedBorrowAPR?.toFixed(2)}%</span>
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
                       </ResultHandler>
                     </span>
                   </div>

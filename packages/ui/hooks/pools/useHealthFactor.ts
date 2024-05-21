@@ -61,6 +61,7 @@ export const useHealthFactorPrediction = (
     queryKey: [
       'healthFactor',
       'prediction',
+      pool,
       address,
       cTokenModify,
       redeemTokens,
