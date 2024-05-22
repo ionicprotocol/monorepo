@@ -50,6 +50,13 @@ export enum PopupMode {
   LOOP
 }
 
+export enum HFPStatus {
+  CRITICAL = 'CRITICAL',
+  NORMAL = 'NORMAL',
+  UNKNOWN = 'UNKNOWN',
+  WARNING = 'WARNING'
+}
+
 interface IPopup {
   closePopup: () => void;
   comptrollerAddress: string;
@@ -288,6 +295,25 @@ const Popup = ({
   );
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [loopOpen, setLoopOpen] = useState<boolean>(false);
+  const hfpStatus = useMemo<HFPStatus>(() => {
+    if (!predictedHealthFactor) {
+      return HFPStatus.UNKNOWN;
+    }
+
+    const predictedHealthFactorNumber = Number(
+      formatEther(predictedHealthFactor)
+    );
+
+    if (predictedHealthFactorNumber <= 1.1) {
+      return HFPStatus.CRITICAL;
+    }
+
+    if (predictedHealthFactorNumber <= 1.3) {
+      return HFPStatus.WARNING;
+    }
+
+    return HFPStatus.NORMAL;
+  }, [predictedHealthFactor]);
   const queryClient = useQueryClient();
 
   /**
@@ -1291,9 +1317,16 @@ const Popup = ({
                     handleUtilization={handleWithdrawUtilization}
                   />
 
-                  {currentUtilizationPercentage >= 100 && (
+                  {hfpStatus === HFPStatus.WARNING && (
                     <div className="text-lime text-xs text-center">
-                      Warning: Mind the Health Factor when max withdrawing
+                      Warning: You are close to the liquidation threshold and
+                      will need to manage your health factor.
+                    </div>
+                  )}
+
+                  {hfpStatus === HFPStatus.CRITICAL && (
+                    <div className="text-error text-xs text-center">
+                      Health factor too low.
                     </div>
                   )}
 
@@ -1364,10 +1397,19 @@ const Popup = ({
                     ) : (
                       <button
                         className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                          amount && amountAsBInt.gt('0')
+                          amount &&
+                          amountAsBInt.gt('0') &&
+                          !isLoadingPredictedHealthFactor &&
+                          hfpStatus !== HFPStatus.CRITICAL &&
+                          hfpStatus !== HFPStatus.UNKNOWN
                             ? 'bg-accent'
                             : 'bg-stone-500'
                         } `}
+                        disabled={
+                          isLoadingPredictedHealthFactor ||
+                          hfpStatus === HFPStatus.CRITICAL ||
+                          hfpStatus === HFPStatus.UNKNOWN
+                        }
                         onClick={withdrawAmount}
                       >
                         Withdraw {selectedMarketData.underlyingSymbol}
@@ -1401,10 +1443,16 @@ const Popup = ({
                     handleUtilization={handleBorrowUtilization}
                   />
 
-                  {currentUtilizationPercentage >= 70 && (
+                  {hfpStatus === HFPStatus.WARNING && (
                     <div className="text-lime text-xs text-center">
                       Warning: You are close to the liquidation threshold and
                       will need to manage your health factor.
+                    </div>
+                  )}
+
+                  {hfpStatus === HFPStatus.CRITICAL && (
+                    <div className="text-error text-xs text-center">
+                      Health factor too low.
                     </div>
                   )}
 
@@ -1547,10 +1595,18 @@ const Popup = ({
                             minBorrowAmount.minBorrowAsset ?? '0'
                           ) &&
                           maxBorrowAmount &&
-                          amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0')
+                          amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0') &&
+                          !isLoadingPredictedHealthFactor &&
+                          hfpStatus !== HFPStatus.CRITICAL &&
+                          hfpStatus !== HFPStatus.UNKNOWN
                             ? 'bg-accent'
                             : 'bg-stone-500'
                         } `}
+                        disabled={
+                          isLoadingPredictedHealthFactor ||
+                          hfpStatus === HFPStatus.CRITICAL ||
+                          hfpStatus === HFPStatus.UNKNOWN
+                        }
                         onClick={borrowAmount}
                       >
                         Borrow {selectedMarketData.underlyingSymbol}
