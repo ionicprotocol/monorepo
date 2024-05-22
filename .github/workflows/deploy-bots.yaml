@@ -38,8 +38,12 @@ jobs:
           submodules: false
       - name: Initialize
         run: git submodule update --init --recursive
-      - name: uodate
-        run: git submodule update --remote --merge
+      - name: Set up PAT
+        run: MY_PAT="${{ secrets.MY_PAT }}"
+      - name: update
+        run: |
+          git checkout "${{ github.ref_name }}"
+          git -c http.https://github.com.extraheader="Authorization: Basic ${MY_PAT}" submodule update --init --recusrive
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
