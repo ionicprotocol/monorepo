@@ -178,7 +178,7 @@ const multipliers: Record<
           ionic: 3
         },
         supply: {
-          ionic: 1.5
+          ionic: 3
         }
       },
       USDC: {
@@ -186,7 +186,7 @@ const multipliers: Record<
           ionic: 3
         },
         supply: {
-          ionic: 1.5
+          ionic: 3
         }
       },
       WETH: {
@@ -194,7 +194,7 @@ const multipliers: Record<
           ionic: 3
         },
         supply: {
-          ionic: 1.5
+          ionic: 3
         }
       },
       cbETH: {
@@ -202,14 +202,14 @@ const multipliers: Record<
           ionic: 3
         },
         supply: {
-          ionic: 1.5
+          ionic: 3
         }
       },
       ezETH: {
         borrow: undefined,
         supply: {
           eigenlayer: true,
-          ionic: 2,
+          ionic: 3,
           renzo: 2
         }
       },
@@ -218,7 +218,7 @@ const multipliers: Record<
           ionic: 3
         },
         supply: {
-          ionic: 1.5
+          ionic: 3
         }
       }
     }
