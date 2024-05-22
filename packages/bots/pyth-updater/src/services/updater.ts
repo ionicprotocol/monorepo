@@ -97,16 +97,26 @@ export class Updater {
         )}`
       );
 
-      // Send a dummy alert notification
+      // Constructing a dummy notification with proper Price type
       const dummyNotification = {
         priceId: 'dummyPriceId',
         currentPrice: {
           price: 0,
           publishTime: Math.floor(Date.now() / 1000),
+          conf: 0,
+          expo: 0,
+          getPriceAsNumberUnchecked: () => 0,
+          getConfAsNumberUnchecked: () => 0,
+          toJson: () => ({ price: 0, conf: 0, expo: 0, publishTime: Math.floor(Date.now() / 1000) }),
         },
         lastPrice: {
           price: 0,
           publishTime: Math.floor(Date.now() / 1000),
+          conf: 0,
+          expo: 0,
+          getPriceAsNumberUnchecked: () => 0,
+          getConfAsNumberUnchecked: () => 0,
+          toJson: () => ({ price: 0, conf: 0, expo: 0, publishTime: Math.floor(Date.now() / 1000) }),
         },
         configRefreshRateInSeconds: 60,
         validTimePeriodSeconds: 600,
