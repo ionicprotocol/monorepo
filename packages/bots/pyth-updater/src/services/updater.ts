@@ -96,10 +96,6 @@ export class Updater {
             } `
         )}`
       );
-
-      // Sending a random alert notification
-      const randomMessage = 'Random notification: No price feeds were updated.';
-      this.alert.sendPriceUpdateFailure([], randomMessage);
     }
     return null;
   }
