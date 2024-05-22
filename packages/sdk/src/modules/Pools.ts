@@ -19,7 +19,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { BigNumberish, CallOverrides, constants, utils } from "ethers";
+import { BigNumber, BigNumberish, CallOverrides, constants, utils } from "ethers";
 
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 import { PoolLens } from "../../typechain/PoolLens";
@@ -282,6 +282,30 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       const healthFactor = await poolLens.getHealthFactor(account, pool, { from: account });
 
       return healthFactor;
+    }
+
+    async getHealthFactorPrediction(
+      pool: string,
+      account: string,
+      cTokenModify: string,
+      redeemTokens: BigNumberish,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish
+    ): Promise<BigNumber> {
+      const poolLens = this.createPoolLens();
+      const predictedHealthFactor = await poolLens.getHealthFactorHypothetical(
+        pool,
+        account,
+        cTokenModify,
+        redeemTokens,
+        borrowAmount,
+        repayAmount,
+        {
+          from: account
+        }
+      );
+
+      return predictedHealthFactor;
     }
   };
 }
