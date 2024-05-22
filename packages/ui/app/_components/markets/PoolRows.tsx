@@ -427,8 +427,8 @@ const PoolRows = ({
                     multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
                       asset
                     ]?.supply?.etherfi
-                  }{' '}
-                  ether.fi Points
+                  }
+                  x ether.fi Points
                 </div>
                 <div className="flex">
                   <img
