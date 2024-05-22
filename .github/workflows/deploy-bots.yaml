@@ -39,7 +39,7 @@ jobs:
         
       - name: Update Submodules to latest
         run: |
-          git submodule update --init -recursive --remote 
+          git submodule update --init -recursive
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
