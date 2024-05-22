@@ -9,6 +9,8 @@ import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+// import { useAccount } from 'wagmi';
 
 type Multipliers = {
   eigenlayer?: boolean;
@@ -228,6 +230,7 @@ interface IRows {
   borrowAPR: string;
   borrowBalance: string;
   collateralFactor: number;
+  dropdownSelectedChain: number;
   logo: string;
   loopPossible: boolean;
   membership: boolean;
@@ -256,6 +259,7 @@ const PoolRows = ({
   totalSupplied,
   borrowBalance,
   collateralFactor,
+  dropdownSelectedChain,
   membership,
   totalBorrowing,
   supplyAPR,
@@ -268,18 +272,17 @@ const PoolRows = ({
   selectedPoolId
 }: IRows) => {
   const { address } = useMultiIonic();
-
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
-        membership && `border ${chainColors(selectedChain).border}`
+        membership && `border ${chainColors(dropdownSelectedChain).border}`
       }`}
     >
       {membership && (
         <span
           className={`absolute top-[-9px] right-[-15px] px-2 ${
-            chainColors(selectedChain).text
-          } ${chainColors(selectedChain).bg} rounded-lg`}
+            chainColors(dropdownSelectedChain).text
+          } ${chainColors(dropdownSelectedChain).bg} rounded-lg`}
         >
           Collateral
         </span>
@@ -336,8 +339,8 @@ const PoolRows = ({
         <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
           {supplyAPR}
           <span
-            className={`${chainColors(selectedChain).text} ${
-              chainColors(selectedChain).bg
+            className={`${chainColors(dropdownSelectedChain).text} ${
+              chainColors(dropdownSelectedChain).bg
             } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
           >
             + POINTS <i className="popover-hint">i</i>
@@ -347,12 +350,12 @@ const PoolRows = ({
           </span>
           <div
             className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-              chainColors(selectedChain).border
+              chainColors(dropdownSelectedChain).border
             } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
             Base APR: {supplyAPR}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              ?.ionic && (
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.supply?.ionic && (
               <>
                 <div className="flex pt-4">
                   <img
@@ -362,8 +365,9 @@ const PoolRows = ({
                   />{' '}
                   +{' '}
                   {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply?.ionic
+                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                      asset
+                    ]?.supply?.ionic
                   }
                   x Ionic Points
                 </div>
@@ -377,8 +381,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              ?.mode && (
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.supply?.mode && (
               <>
                 <div className="flex">
                   <img
@@ -388,14 +392,15 @@ const PoolRows = ({
                   />{' '}
                   +{' '}
                   {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply?.mode
+                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                      asset
+                    ]?.supply?.mode
                   }
                   x Mode Points
                 </div>
                 <div className="flex">
-                  {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-                    ?.mode && (
+                  {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.supply?.mode && (
                     <>
                       <img
                         alt=""
@@ -408,8 +413,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              ?.etherfi && (
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.supply?.etherfi && (
               <>
                 <div className="flex">
                   <img
@@ -419,8 +424,9 @@ const PoolRows = ({
                   />{' '}
                   +{' '}
                   {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply?.etherfi
+                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                      asset
+                    ]?.supply?.etherfi
                   }{' '}
                   ether.fi Points
                 </div>
@@ -434,8 +440,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              ?.renzo && (
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.supply?.renzo && (
               <>
                 <div className="flex">
                   <img
@@ -445,8 +451,9 @@ const PoolRows = ({
                   />{' '}
                   +{' '}
                   {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply?.renzo
+                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                      asset
+                    ]?.supply?.renzo
                   }
                   x Renzo Points
                 </div>
@@ -460,8 +467,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              ?.kelp && (
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.supply?.kelp && (
               <>
                 <div className="flex">
                   <img
@@ -471,8 +478,9 @@ const PoolRows = ({
                   />{' '}
                   +{' '}
                   {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.supply?.kelp
+                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                      asset
+                    ]?.supply?.kelp
                   }
                   x Kelp Miles
                 </div>
@@ -486,8 +494,8 @@ const PoolRows = ({
                 </div>
               </>
             )}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.supply
-              ?.eigenlayer && (
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.supply?.eigenlayer && (
               <div className="flex">
                 <img
                   alt=""
@@ -509,8 +517,8 @@ const PoolRows = ({
         <div className="popover-container flex lg:flex-col items-center cursor-pointer">
           {borrowAPR}
           <span
-            className={`${chainColors(selectedChain).text} ${
-              chainColors(selectedChain).bg
+            className={`${chainColors(dropdownSelectedChain).text} ${
+              chainColors(dropdownSelectedChain).bg
             } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
           >
             + POINTS <i className="popover-hint">i</i>
@@ -520,11 +528,12 @@ const PoolRows = ({
           </span>
           <div
             className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-              chainColors(selectedChain).border
+              chainColors(dropdownSelectedChain).border
             } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
           >
             Base APR: {borrowAPR}
-            {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow && (
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.borrow && (
               <>
                 <div className="flex pt-4">
                   <img
@@ -534,8 +543,9 @@ const PoolRows = ({
                   />{' '}
                   +{' '}
                   {
-                    multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                      ?.borrow?.ionic
+                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                      asset
+                    ]?.borrow?.ionic
                   }
                   x Ionic Points
                 </div>
@@ -547,8 +557,8 @@ const PoolRows = ({
                   />{' '}
                   + Turtle Ionic Points
                 </div>
-                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-                  ?.mode && (
+                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                  ?.borrow?.mode && (
                   <>
                     <div className="flex">
                       <img
@@ -558,8 +568,9 @@ const PoolRows = ({
                       />{' '}
                       +{' '}
                       {
-                        multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                          ?.borrow?.mode
+                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                          asset
+                        ]?.borrow?.mode
                       }
                       x Mode Points
                     </div>
@@ -573,8 +584,8 @@ const PoolRows = ({
                     </div>
                   </>
                 )}
-                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-                  ?.etherfi && (
+                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                  ?.borrow?.etherfi && (
                   <>
                     <div className="flex">
                       <img
@@ -584,8 +595,9 @@ const PoolRows = ({
                       />{' '}
                       +{' '}
                       {
-                        multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                          ?.borrow?.etherfi
+                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                          asset
+                        ]?.borrow?.etherfi
                       }
                       x ether.fi Points
                     </div>
@@ -599,8 +611,8 @@ const PoolRows = ({
                     </div>
                   </>
                 )}
-                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-                  ?.kelp && (
+                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                  ?.borrow?.kelp && (
                   <>
                     <div className="flex">
                       <img
@@ -610,8 +622,9 @@ const PoolRows = ({
                       />{' '}
                       +{' '}
                       {
-                        multipliers[selectedChain]?.[selectedPoolId]?.[asset]
-                          ?.borrow?.kelp
+                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                          asset
+                        ]?.borrow?.kelp
                       }
                       x Kelp Miles
                     </div>
@@ -625,8 +638,8 @@ const PoolRows = ({
                     </div>
                   </>
                 )}
-                {multipliers[selectedChain]?.[selectedPoolId]?.[asset]?.borrow
-                  ?.eigenlayer && (
+                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                  ?.borrow?.eigenlayer && (
                   <div className="flex">
                     <img
                       alt=""
@@ -654,20 +667,32 @@ const PoolRows = ({
           <>
             <button
               className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
-              onClick={() => {
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.SUPPLY);
+              onClick={async () => {
+                const result = await handleSwitchOriginChain(
+                  dropdownSelectedChain,
+                  selectedChain
+                );
+                if (result) {
+                  setSelectedSymbol(asset);
+                  setPopupMode(PopupMode.SUPPLY);
+                }
               }}
             >
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg ${chainColors(selectedChain).bg} ${
-                chainColors(selectedChain).text
+              className={`rounded-lg ${chainColors(dropdownSelectedChain).bg} ${
+                chainColors(dropdownSelectedChain).text
               } py-1.5 px-3 uppercase`}
-              onClick={() => {
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.BORROW);
+              onClick={async () => {
+                const result = await handleSwitchOriginChain(
+                  dropdownSelectedChain,
+                  selectedChain
+                );
+                if (result) {
+                  setSelectedSymbol(asset);
+                  setPopupMode(PopupMode.BORROW);
+                }
               }}
             >
               Borrow / Repay {loopPossible && '/ Loop'}

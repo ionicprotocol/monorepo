@@ -3,22 +3,21 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { useAccount } from 'wagmi';
 
 interface INetworkSelector {
   chainId?: string;
+  dropdownSelectedChain: number;
   newRef: any;
   open: boolean;
   setOpen: any;
 }
 
 export default function NetworkSelector({
+  dropdownSelectedChain,
   setOpen,
   open,
   newRef
 }: INetworkSelector) {
-  const { chain } = useAccount();
-
   const networkOptions = [
     {
       chain: 34443,
@@ -39,33 +38,36 @@ export default function NetworkSelector({
     }
     return { arrow: 'ffffff', bg: 'bg-primary', text: 'text-white' };
   };
-
   return (
     <div
-      className="w-full capitalize text-md font-bold relative  "
+      className="w-full capitalize text-md  relative font-bold"
       ref={newRef}
     >
       <div
         className={`   ${
-          chainColors(chain?.id).text
+          chainColors(dropdownSelectedChain).text
         } cursor-pointer my-2  w-full   flex  flex-col items-start justify-start order border-b-none border-stone-700  `}
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
-          className={`py-2 px-2 w-full relative items-center ${
-            chainColors(chain?.id).bg
-          } ${open ? 'rounded-t-md' : 'rounded-xl'} ${
-            chainColors(chain?.id).text
+          className={`py-2 px-2 w-full relative items-center border-2 border-stone-700 ${
+            chainColors(dropdownSelectedChain).bg
+          } ${open ? 'rounded-t-md' : 'rounded-xl '} ${
+            chainColors(dropdownSelectedChain).text
           }`}
         >
-          {chain?.id ? chain.name : 'Select Chain'}
+          {dropdownSelectedChain === networkOptions[1].chain
+            ? 'Base'
+            : dropdownSelectedChain === networkOptions[0].chain
+            ? 'Mode'
+            : 'Select Chain'}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
               open ? 'rotate-180' : 'rotate-0'
             } `}
             src={`https://img.icons8.com/ios/50/${
-              chainColors(chain?.id).arrow
+              chainColors(dropdownSelectedChain).arrow
             }/expand-arrow--v2.png`}
           />
         </div>
@@ -83,7 +85,7 @@ export default function NetworkSelector({
               key={idx}
             >
               {network.name}{' '}
-              {chain?.id == network.chain && (
+              {dropdownSelectedChain == network.chain && (
                 <img
                   alt="checkmark--v1"
                   className={`w-4 h-4 stroke-lime`}
