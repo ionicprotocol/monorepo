@@ -32,7 +32,7 @@ const multipliers: Record<
     '0': {
       'M-BTC': {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -42,7 +42,7 @@ const multipliers: Record<
       },
       STONE: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -52,7 +52,7 @@ const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -62,7 +62,7 @@ const multipliers: Record<
       },
       USDT: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -72,7 +72,7 @@ const multipliers: Record<
       },
       WBTC: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -82,7 +82,7 @@ const multipliers: Record<
       },
       WETH: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -103,7 +103,7 @@ const multipliers: Record<
         borrow: {
           eigenlayer: true,
           etherfi: 1,
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -116,7 +116,7 @@ const multipliers: Record<
       wrsETH: {
         borrow: {
           eigenlayer: true,
-          ionic: 2.5,
+          ionic: 3,
           kelp: 1,
           mode: 1
         },
@@ -131,7 +131,7 @@ const multipliers: Record<
     '1': {
       MODE: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -141,7 +141,7 @@ const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -151,7 +151,7 @@ const multipliers: Record<
       },
       USDT: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -161,7 +161,7 @@ const multipliers: Record<
       },
       WETH: {
         borrow: {
-          ionic: 2.5,
+          ionic: 3,
           mode: 1
         },
         supply: {
@@ -175,7 +175,7 @@ const multipliers: Record<
     '0': {
       AERO: {
         borrow: {
-          ionic: 2.5
+          ionic: 3
         },
         supply: {
           ionic: 1.5
@@ -183,7 +183,7 @@ const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionic: 2.5
+          ionic: 3
         },
         supply: {
           ionic: 1.5
@@ -191,7 +191,7 @@ const multipliers: Record<
       },
       WETH: {
         borrow: {
-          ionic: 2.5
+          ionic: 3
         },
         supply: {
           ionic: 1.5
@@ -199,7 +199,7 @@ const multipliers: Record<
       },
       cbETH: {
         borrow: {
-          ionic: 2.5
+          ionic: 3
         },
         supply: {
           ionic: 1.5
@@ -215,7 +215,7 @@ const multipliers: Record<
       },
       wstETH: {
         borrow: {
-          ionic: 2.5
+          ionic: 3
         },
         supply: {
           ionic: 1.5
