@@ -107,7 +107,12 @@ export class Updater {
           expo: 0,
           getPriceAsNumberUnchecked: () => 0,
           getConfAsNumberUnchecked: () => 0,
-          toJson: () => ({ price: 0, conf: 0, expo: 0, publishTime: Math.floor(Date.now() / 1000) }),
+          toJson: () => ({
+            price: 0,
+            conf: 0,
+            expo: 0,
+            publishTime: Math.floor(Date.now() / 1000),
+          }),
         },
         lastPrice: {
           price: 0,
@@ -116,7 +121,12 @@ export class Updater {
           expo: 0,
           getPriceAsNumberUnchecked: () => 0,
           getConfAsNumberUnchecked: () => 0,
-          toJson: () => ({ price: 0, conf: 0, expo: 0, publishTime: Math.floor(Date.now() / 1000) }),
+          toJson: () => ({
+            price: 0,
+            conf: 0,
+            expo: 0,
+            publishTime: Math.floor(Date.now() / 1000),
+          }),
         },
         configRefreshRateInSeconds: 60,
         validTimePeriodSeconds: 600,
