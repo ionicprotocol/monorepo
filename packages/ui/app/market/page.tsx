@@ -46,7 +46,7 @@ const pools = [
 
 export default function Market() {
   const searchParams = useSearchParams();
-  const qureychain = searchParams.get('chain');
+  const querychain = searchParams.get('chain');
   const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [dropdownSelectedChain, setDropdownSelectedChain] =
@@ -57,7 +57,7 @@ export default function Market() {
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
 
-  const chain = qureychain ? qureychain : 34443;
+  const chain = querychain ? querychain : 34443;
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
