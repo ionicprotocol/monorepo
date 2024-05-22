@@ -96,50 +96,9 @@ export class Updater {
             } `
         )}`
       );
-
-      // Constructing a dummy notification with proper Price type
-      const dummyNotification = {
-        priceId: 'dummyPriceId',
-        currentPrice: {
-          price: 0,
-          publishTime: Math.floor(Date.now() / 1000),
-          conf: 0,
-          expo: 0,
-          getPriceAsNumberUnchecked: () => 0,
-          getConfAsNumberUnchecked: () => 0,
-          toJson: () => ({
-            price: 0,
-            conf: 0,
-            expo: 0,
-            publishTime: Math.floor(Date.now() / 1000),
-          }),
-        },
-        lastPrice: {
-          price: 0,
-          publishTime: Math.floor(Date.now() / 1000),
-          conf: 0,
-          expo: 0,
-          getPriceAsNumberUnchecked: () => 0,
-          getConfAsNumberUnchecked: () => 0,
-          toJson: () => ({
-            price: 0,
-            conf: 0,
-            expo: 0,
-            publishTime: Math.floor(Date.now() / 1000),
-          }),
-        },
-        configRefreshRateInSeconds: 60,
-        validTimePeriodSeconds: 600,
-        deviationThresholdBps: 500,
-      };
-
-      this.alert.sendPriceUpdateSuccess([dummyNotification], {
-        hash: 'dummyTransactionHash',
-      } as TransactionResponse);
     }
     return null;
   }
-
   async forceUpdateFeeds(assetConfig: PythAssetConfig[]): Promise<TransactionResponse | null> {
     const priceIdsToUpdate = assetConfig.map((assetConfig) => assetConfig.priceId);
     const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
