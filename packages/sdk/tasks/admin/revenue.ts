@@ -41,7 +41,7 @@ async function createComptroller(
   return comptroller;
 }
 
-export default task("revenue:admin:calculate", "Calculate the fees accrued from 4626 Performance Fees").setAction(
+export default task("revenue:admin:calculate", "Calculate the fees accrued from Admin and Ionic Fees").setAction(
   async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
 
@@ -50,6 +50,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
 
     const { pools, mpo } = await setUpFeeCalculation(hre);
     let ionicFeeTotal = BigNumber.from(0);
+    let adminFeeTotal = BigNumber.from(0);
 
     for (const pool of pools) {
       const comptroller = await createComptroller(pool, deployer);
@@ -58,6 +59,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
       }
       const markets = await comptroller.callStatic.getAllMarkets();
       let poolIonicFeesTotal = BigNumber.from(0);
+      let poolAdminFeesTotal = BigNumber.from(0);
 
       for (const market of markets) {
         const cToken = sdk.createICErc20(market, deployer);
@@ -65,6 +67,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
         const underlyingPrice = await mpo.callStatic.getUnderlyingPrice(market);
 
         const ionicFee = await cToken.callStatic.totalIonicFees();
+        const adminFee = await cToken.callStatic.totalAdminFees();
 
         if (ionicFee.gt(0)) {
           const nativeFee = ionicFee.mul(underlyingPrice).div(BigNumber.from(10).pow(18));
@@ -82,18 +85,93 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
         } else {
           if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
         }
+
+        if (adminFee.gt(0)) {
+          const nativeFee = adminFee.mul(underlyingPrice).div(BigNumber.from(10).pow(18));
+          adminFeeTotal = adminFeeTotal.add(nativeFee);
+          poolAdminFeesTotal = poolAdminFeesTotal.add(nativeFee);
+
+          if (LOG)
+            console.log(
+              `Pool: ${pool.name} (${
+                pool.comptroller
+              }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${hre.ethers.utils.formatEther(
+                nativeFee
+              )}`
+            );
+        } else {
+          if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
+        }
       }
-      if (LOG)
+      if (LOG) {
         console.log(
           `Pool: ${pool.name} (${pool.comptroller}) - Total Ionic Fee: ${hre.ethers.utils.formatEther(
             poolIonicFeesTotal
           )}`
         );
+
+        console.log(
+          `Pool: ${pool.name} (${pool.comptroller}) - Total Admin Fee: ${hre.ethers.utils.formatEther(
+            poolAdminFeesTotal
+          )}`
+        );
+      }
     }
     console.log(`Total Ionic Fees: ${hre.ethers.utils.formatEther(ionicFeeTotal)}`);
+    console.log(`Total Admin Fees: ${hre.ethers.utils.formatEther(adminFeeTotal)}`);
+    console.log(`Total Fees: ${hre.ethers.utils.formatEther(ionicFeeTotal.add(adminFeeTotal))}`);
     return ionicFeeTotal;
   }
 );
+
+task("revenue:reserve:calculate", "Calculate the fees accrued towards Reserves").setAction(async (taskArgs, hre) => {
+  const { deployer } = await hre.ethers.getNamedSigners();
+
+  const ionicSdkModule = await import("../ionicSdk");
+  const sdk = await ionicSdkModule.getOrCreateIonic();
+
+  const { pools, mpo } = await setUpFeeCalculation(hre);
+  let reservesTotal = BigNumber.from(0);
+
+  for (const pool of pools) {
+    const comptroller = await createComptroller(pool, deployer);
+    if (comptroller === null) {
+      continue;
+    }
+    const markets = await comptroller.callStatic.getAllMarkets();
+    let poolReservesTotal = BigNumber.from(0);
+
+    for (const market of markets) {
+      const cToken = sdk.createICErc20(market, deployer);
+      const underlying = await cToken.callStatic.underlying();
+      const underlyingPrice = await mpo.callStatic.getUnderlyingPrice(market);
+
+      const totalReserves = await cToken.callStatic.totalReserves();
+
+      if (totalReserves.gt(0)) {
+        const nativeFee = totalReserves.mul(underlyingPrice).div(BigNumber.from(10).pow(18));
+        reservesTotal = reservesTotal.add(nativeFee);
+        poolReservesTotal = poolReservesTotal.add(nativeFee);
+
+        if (LOG)
+          console.log(
+            `Pool: ${pool.name} (${
+              pool.comptroller
+            }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${hre.ethers.utils.formatEther(nativeFee)}`
+          );
+      } else {
+        if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
+      }
+    }
+    if (LOG) {
+      console.log(
+        `Pool: ${pool.name} (${pool.comptroller}) - Total Reserves: ${hre.ethers.utils.formatEther(poolReservesTotal)}`
+      );
+    }
+  }
+  console.log(`Total Reserves: ${hre.ethers.utils.formatEther(reservesTotal)}`);
+  return reservesTotal;
+});
 
 task("revenue:4626:calculate", "Calculate the fees accrued from 4626 Performance Fees").setAction(
   async (taskArgs, hre) => {

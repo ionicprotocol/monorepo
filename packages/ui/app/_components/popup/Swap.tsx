@@ -20,9 +20,12 @@ import TransactionStepsHandler, {
 } from './TransactionStepsHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 export type SwapProps = {
   close: () => void;
+  dropdownSelectedChain: number;
+  selectedChain: number;
 };
 
 enum SwapType {
@@ -30,7 +33,11 @@ enum SwapType {
   WETH_ETH
 }
 
-export default function Swap({ close }: SwapProps) {
+export default function Swap({
+  close,
+  selectedChain,
+  dropdownSelectedChain
+}: SwapProps) {
   const { address, currentSdk } = useMultiIonic();
   const [amount, setAmount] = useState<string>();
   const [swapType, setSwapType] = useState<SwapType>(SwapType.ETH_WETH);
@@ -336,7 +343,15 @@ export default function Swap({ close }: SwapProps) {
               ) : (
                 <button
                   className={`px-6 btn-green`}
-                  onClick={() => swapAmount()}
+                  onClick={async () => {
+                    const result = await handleSwitchOriginChain(
+                      selectedChain,
+                      dropdownSelectedChain
+                    );
+                    if (result) {
+                      swapAmount();
+                    }
+                  }}
                 >
                   {swapType === SwapType.ETH_WETH ? 'WRAP' : 'UNWRAP'}
                 </button>
