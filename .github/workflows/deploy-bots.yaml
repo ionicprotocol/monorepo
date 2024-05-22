@@ -35,7 +35,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: uodate
+        run: git submodule update --remote --merge
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
