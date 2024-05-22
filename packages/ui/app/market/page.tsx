@@ -46,7 +46,7 @@ const pools = [
 
 export default function Market() {
   const searchParams = useSearchParams();
-  const chain = searchParams.get('chain');
+  const querychain = searchParams.get('chain');
   const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [dropdownSelectedChain, setDropdownSelectedChain] =
@@ -57,6 +57,7 @@ export default function Market() {
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
 
+  const chain = querychain ? querychain : 34443;
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
@@ -77,14 +78,16 @@ export default function Market() {
   }, [chain]);
 
   useEffect(() => {
-    if (selectedPool === pools[0].id && pool1Data) {
+    if (selectedPool === pools[0].id && +chain === 34443 && pool1Data) {
       setPoolData(pool1Data);
-    } else if (selectedPool === pools[1].id && pool2Data) {
+    }
+    if (selectedPool === pools[1].id && +chain === 34443 && pool2Data) {
       setPoolData(pool2Data);
-    } else if (selectedPool === pools[2].id && pool3Data) {
+    }
+    if (selectedPool === pools[2].id && +chain === 8453 && pool3Data) {
       setPoolData(pool3Data);
     }
-  }, [pool1Data, pool2Data, pool3Data, selectedPool]);
+  }, [pool1Data, pool2Data, pool3Data, selectedPool, chain]);
 
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
