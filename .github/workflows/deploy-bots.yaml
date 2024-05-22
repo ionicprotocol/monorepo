@@ -34,6 +34,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@master
+        with:
+          submodules: recursive
+        
+      - name: Update Submodules to latest
+        run: |
+          git submodule update --init -recursive --remote 
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
