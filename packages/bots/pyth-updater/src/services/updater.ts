@@ -96,9 +96,30 @@ export class Updater {
             } `
         )}`
       );
+
+      // Send a dummy alert notification
+      const dummyNotification = {
+        priceId: 'dummyPriceId',
+        currentPrice: {
+          price: 0,
+          publishTime: Math.floor(Date.now() / 1000),
+        },
+        lastPrice: {
+          price: 0,
+          publishTime: Math.floor(Date.now() / 1000),
+        },
+        configRefreshRateInSeconds: 60,
+        validTimePeriodSeconds: 600,
+        deviationThresholdBps: 500,
+      };
+
+      this.alert.sendPriceUpdateSuccess([dummyNotification], {
+        hash: 'dummyTransactionHash',
+      } as TransactionResponse);
     }
     return null;
   }
+
   async forceUpdateFeeds(assetConfig: PythAssetConfig[]): Promise<TransactionResponse | null> {
     const priceIdsToUpdate = assetConfig.map((assetConfig) => assetConfig.priceId);
     const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
