@@ -40,10 +40,12 @@ jobs:
         run: git submodule update --init --recursive
       - name: Set up PAT
         run: MY_PAT="${{ secrets.MY_PAT }}"
-      - name: update
+      - name: update submodules
         run: |
-          git checkout "${{ github.ref_name }}"
-          git -c http.https://github.com.extraheader="Authorization: Basic ${MY_PAT}" submodule update --init --recusrive
+          git checkout "${{ BRANCH_NAME }}"
+          git -c http.https://github.com.extraheader="Authorization: Basic ${MY_PAT}" submodule update --init --recusrive --remote
+        env:
+           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}   
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -67,7 +69,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Set up PAT
+        run: MY_PAT="${{ secrets.MY_PAT }}"
+      - name: update submodules
+        run: |
+          git checkout "${{ BRANCH_NAME }}"
+          git -c http.https://github.com.extraheader="Authorization: Basic ${MY_PAT}" submodule update --init --recusrive --remote     
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -107,7 +115,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Set up PAT
+        run: MY_PAT="${{ secrets.MY_PAT }}"
+      - name: update submodules
+        run: |
+          git checkout "${{ BRANCH_NAME }}"
+          git -c http.https://github.com.extraheader="Authorization: Basic ${MY_PAT}" submodule update --init --recusrive --remote     
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -151,7 +165,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Set up PAT
+        run: MY_PAT="${{ secrets.MY_PAT }}"
+      - name: update submodules
+        run: |
+          git checkout "${{ BRANCH_NAME }}"
+          git -c http.https://github.com.extraheader="Authorization: Basic ${MY_PAT}" submodule update --init --recusrive --remote          
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -195,7 +215,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Set up PAT
+        run: MY_PAT="${{ secrets.MY_PAT }}"
+      - name: update submodules
+        run: |
+          git checkout "${{ BRANCH_NAME }}"
+          git -c http.https://github.com.extraheader="Authorization: Basic ${MY_PAT}" submodule update --init --recusrive --remote          
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
