@@ -59,12 +59,13 @@ task("markets:deploy:modenative", "deploy mode native markets").setAction(async 
 
 task("markets:deploy:base", "deploy base markets").setAction(async (taskArgs, { run }) => {
   const symbols = [
-    { symbol: assetSymbols.AERO, cf: "65" },
-    { symbol: assetSymbols.cbETH, cf: "80" },
-    { symbol: assetSymbols.USDC, cf: "90" },
-    { symbol: assetSymbols.wstETH, cf: "82.5" },
-    { symbol: assetSymbols.ezETH, cf: "67.5" },
-    { symbol: assetSymbols.WETH, cf: "82.5" }
+    // { symbol: assetSymbols.AERO, cf: "65" },
+    // { symbol: assetSymbols.cbETH, cf: "80" },
+    // { symbol: assetSymbols.USDC, cf: "90" },
+    // { symbol: assetSymbols.wstETH, cf: "82.5" },
+    // { symbol: assetSymbols.ezETH, cf: "67.5" },
+    // { symbol: assetSymbols.WETH, cf: "82.5" },
+    { symbol: assetSymbols.weETH, cf: "0" }
   ];
 
   for (let i = 0; i < symbols.length; i++) {

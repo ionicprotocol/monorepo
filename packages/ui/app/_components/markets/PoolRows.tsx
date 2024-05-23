@@ -296,7 +296,7 @@ const PoolRows = ({
           className="h-7"
           src={logo}
         />
-        <h3 className={` `}>{getAssetName(asset)}</h3>
+        <h3 className={` `}>{getAssetName(asset, dropdownSelectedChain)}</h3>
       </div>
       <h3
         className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}

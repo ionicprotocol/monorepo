@@ -1,2 +1,4 @@
-export const getAssetName = (asset: string): string =>
-  asset === 'weETH' ? 'weETH (OLD)' : asset;
+import { mode } from 'viem/chains';
+
+export const getAssetName = (asset: string, chain: number): string =>
+  asset === 'weETH' && chain === mode.id ? 'weETH (OLD)' : asset;
