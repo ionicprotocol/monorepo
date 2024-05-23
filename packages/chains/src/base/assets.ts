@@ -10,6 +10,7 @@ export const ezETH = "0x2416092f143378750bb29b79eD961ab195CcEea5";
 export const AERO = "0x940181a94A35A4569E4529A3CDfB74e38FD98631";
 export const SNX = "0x22e6966B799c4D5B13BE962E1D117b56327FDa66";
 export const WBTC = "0x1ceA84203673764244E05693e42E6Ace62bE9BA5";
+export const weETH = "0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A";
 
 export const assets: SupportedAsset[] = [
   {
@@ -26,7 +27,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://explorer.mode.network", USDC)
+    extraDocs: defaultDocs("https://basescan.org", USDC)
   },
   {
     symbol: assetSymbols.wstETH,
@@ -34,7 +35,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Staked ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://explorer.mode.network", wstETH)
+    extraDocs: defaultDocs("https://basescan.org", wstETH)
   },
   {
     symbol: assetSymbols.cbETH,
@@ -42,7 +43,7 @@ export const assets: SupportedAsset[] = [
     name: "Coinbase Wrapped Staked ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://explorer.mode.network", cbETH)
+    extraDocs: defaultDocs("https://basescan.org", cbETH)
   },
   {
     symbol: assetSymbols.ezETH,
@@ -50,7 +51,7 @@ export const assets: SupportedAsset[] = [
     name: "Renzo Restaked ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://explorer.mode.network", ezETH)
+    extraDocs: defaultDocs("https://basescan.org", ezETH)
   },
   {
     symbol: assetSymbols.AERO,
@@ -58,7 +59,7 @@ export const assets: SupportedAsset[] = [
     name: "Aerodrome",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://explorer.mode.network", AERO)
+    extraDocs: defaultDocs("https://basescan.org", AERO)
   },
   {
     symbol: assetSymbols.SNX,
@@ -66,7 +67,7 @@ export const assets: SupportedAsset[] = [
     name: "Synthetix Network Token",
     decimals: 18,
     oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", SNX)
+    extraDocs: defaultDocs("https://basescan.org", SNX)
   },
   {
     symbol: assetSymbols.WBTC,
@@ -74,7 +75,15 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Bitcoin",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://explorer.mode.network", WBTC)
+    extraDocs: defaultDocs("https://basescan.org", WBTC)
+  },
+  {
+    symbol: assetSymbols.weETH,
+    underlying: weETH,
+    name: "Wrapped eETH",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://basescan.org", weETH)
   }
 ];
 
