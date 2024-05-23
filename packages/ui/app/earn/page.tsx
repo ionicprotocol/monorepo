@@ -67,7 +67,8 @@ export default function Earn() {
       setRows([...rows]);
     };
     populateVals();
-  }, [rows]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <>
       <h1 className="mb-4 text-center text-white/80 ">
