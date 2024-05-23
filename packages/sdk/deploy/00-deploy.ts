@@ -206,7 +206,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   if (fpd.transactionHash) await ethers.provider.waitForTransaction(fpd.transactionHash);
   console.log("PoolDirectory: ", fpd.address);
-  const fusePoolDirectory = await ethers.getContract("PoolDirectory", deployer);
 
   const comptroller = await ethers.getContract("Comptroller", deployer);
 
@@ -607,11 +606,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ///
 
   ////
-  //// CHAIN SPECIFIC DEPLOYMENT
-  console.log("Running deployment for chain: ", chainId);
-  if (deployFunc) {
-    await deployFunc({ run, ethers, getNamedAccounts, deployments });
-  }
   ////
   //// Configure Liquidator
   await configureIonicLiquidator({

@@ -6,6 +6,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
@@ -490,6 +491,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.SUPPLY}
+                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
@@ -564,6 +566,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
+                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}

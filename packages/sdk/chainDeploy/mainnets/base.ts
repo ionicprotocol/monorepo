@@ -61,6 +61,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     symbol: assetSymbols.ezETH,
     aggregator: "0x960BDD1dFD20d7c98fa482D793C3dedD73A113a3",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+  },
+  {
+    symbol: assetSymbols.weETH,
+    aggregator: "0xFC1415403EbB0c693f9a7844b92aD2Ff24775C65",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   }
 ];
 

@@ -38,6 +38,7 @@
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
     "deploy:mode": "hardhat --network mode deploy --tags prod --no-compile --gasprice 1000260",
     "deploy:base": "hardhat --network base deploy --tags prod --no-compile",
+    "deploy:base:chain-deploy": "hardhat --network base deploy --tags chain-deploy --no-compile",
     "deploy:hardhat": "hardhat --network hardhat deploy --tags prod --no-compile",
     "deploy:lens": "hardhat --network mode deploy --tags lens --no-compile --gasprice 1000260",
     "deploy:localhost": "hardhat --network localhost deploy --tags prod --no-compile",
