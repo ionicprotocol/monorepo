@@ -2,7 +2,7 @@ name: Liquidator-Bot/Push/PR - Create and publish a Docker image & Deploy
 
 on:
   push:
-    branches: [main, development, amish777-patch-1]
+    branches: [main, development]
     paths:
       - '.github/workflows/deploy-bots.yaml'
       - 'packages/bots/**'
@@ -271,8 +271,7 @@ jobs:
       #   run: make price-change-verifier-smoke-test
 
   terraform-deploy-bots:
-    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish777-patch-1'
-    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development'
     needs: [smoke-tests]
     name: Deploy bots to ECS
     env:
