@@ -58,7 +58,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -98,7 +102,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -142,7 +150,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -186,7 +198,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
