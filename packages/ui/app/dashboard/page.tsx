@@ -32,6 +32,7 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { base, mode } from 'viem/chains';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -490,6 +491,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.SUPPLY}
+                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
@@ -564,6 +566,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
+                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
