@@ -34,27 +34,22 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
   }
 });
 
-task("markets:deploy:optimismSepolia", "deploy optimism sepolia markets").setAction(async (taskArgs, { run }) => {
-  const symbols = [
-    // assetSymbols.WETH
-    // assetSymbols.USDC
-    assetSymbols.USDT,
-    assetSymbols.WBTC
-  ];
+task("markets:deploy:optimismSepolia", "Deploy optimism sepolia markets")
+  .addParam("underlying", "The address of the underlying asset")
+  .addParam("symbol", "The symbol for the new market token")
+  .addParam("name", "The name for the new market token")
+  .setAction(async (taskArgs, { run }) => {
+    const { underlying, symbol, name } = taskArgs;
 
-  for (let i = 0; i < symbols.length; i++) {
-    const symbol = symbols[i];
-    const asset = assetFilter(sepoliaAssets, symbol);
     await run("market:deploy", {
       signer: "deployer",
-      cf: "50",
-      underlying: asset.underlying,
-      comptroller: "0xf9F7412e8e4395EA91A8a557320013e081872054",
-      symbol: "ion" + asset.symbol,
-      name: `Ionic ${asset.name}`
+      cf: "50", // You might want to parameterize this as well if needed
+      underlying: underlying,
+      comptroller: "0x7288Bd4621F1AD56d05DD0e763BB7F0F00c5F11A",
+      symbol: "ion" + symbol,
+      name: `Ionic ${name}`
     });
-  }
-});
+  });
 
 task("market:deploy", "deploy market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
@@ -154,4 +149,33 @@ task("deploy:mock", "Deploys a mock ERC20 token")
     await mockERC20.deployed();
     await mockERC20.mint(addr, ethers.utils.parseUnits(amount, decimals));
     console.log(`MockERC20 deployed to: ${mockERC20.address}`);
+  });
+
+task("mintToken", "Mints tokens to a specified address")
+  .addParam("token", "The address of the token contract")
+  .addParam("to", "The address that will receive the tokens")
+  .addParam("amount", "The amount of tokens to mint")
+  .setAction(async (taskArgs, { ethers }) => {
+    const tokenAddress = taskArgs.token;
+    const toAddress = taskArgs.to;
+    const amount = taskArgs.amount;
+
+    // Get the signer to send transactions
+    const [signer] = await ethers.getSigners();
+
+    // Create a new contract instance with the signer
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      [
+        // ABI for the mint function
+        "function mint(address _account, uint256 _amount) public"
+      ],
+      signer
+    );
+
+    // Call the mint function
+    const transactionResponse = await tokenContract.mint(toAddress, amount);
+    await transactionResponse.wait();
+
+    console.log(`Tokens minted: ${amount} to ${toAddress}`);
   });

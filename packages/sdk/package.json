@@ -101,6 +101,7 @@
     "@ionicprotocol/chains": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
     "bad-words": "^3.0.4",
     "bufferutil": "^4.0.7",
     "ethereum-waffle": "^4.0.10",

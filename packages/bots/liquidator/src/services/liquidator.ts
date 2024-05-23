@@ -1,5 +1,9 @@
 import { IonicSdk } from "@ionicprotocol/sdk";
-import { LiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
+import {
+  LiquidatablePool,
+  PythLiquidatablePool,
+  BotType,
+} from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
 
 import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";
@@ -17,9 +21,13 @@ export class Liquidator {
     this.alert = new DiscordService(ionicSdk.chainId);
     this.email = new EmailService(ionicSdk.chainId);
   }
-  async fetchLiquidations(): Promise<LiquidatablePool[]> {
+
+  async fetchLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(botType: BotType): Promise<T[]> {
     try {
-      const [liquidatablePools, erroredPools] = await this.sdk.getPotentialLiquidations(config.excludedComptrollers);
+      const [liquidatablePools, erroredPools] = await this.sdk.getPotentialLiquidations<T>(
+        config.excludedComptrollers,
+        botType
+      );
       const filteredErroredPools = erroredPools.filter(
         (pool) => !Object.values(EXCLUDED_ERROR_CODES).includes(pool.error.code)
       );
@@ -30,7 +38,7 @@ export class Liquidator {
         logger.error(`Errored fetching liquidations from pools: ${msg}`);
         this.alert.sendLiquidationFetchingFailure(erroredPools, msg);
       }
-      return liquidatablePools;
+      return liquidatablePools as T[];
     } catch (error: any) {
       if (!Object.values(EXCLUDED_ERROR_CODES).includes(error.code)) {
         logger.error(`Error fetching liquidations: ${error}`);

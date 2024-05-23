@@ -1,5 +1,6 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-etherscan";
 import "@typechain/hardhat";
 import { config as dotEnvConfig } from "dotenv";
 import "hardhat-abi-exporter";
@@ -178,7 +179,7 @@ const config: HardhatUserConfig = {
     },
     optimismSepolia: {
       url: "https://opt-sepolia.g.alchemy.com/v2/kICdxhU4AsrkVaVnMBSszuDX309P9pMM",
-      accounts: [process.env.OPTIMISM_PK || ""],
+      accounts: [process.env.OPTIMISM_PK || "", process.env.BORROWER_PK || "", process.env.BORROWER_PK2 || ""],
       chainId: 11155420
     },
     mode: {
@@ -193,6 +194,21 @@ const config: HardhatUserConfig = {
   typechain: {
     outDir: "typechain",
     target: "ethers-v5"
+  },
+  etherscan: {
+    apiKey: {
+      optimismSepolia: process.env.ETHERSCAN_KEY || ""
+    },
+    customChains: [
+      {
+        network: "optimismSepolia",
+        chainId: 11155420,
+        urls: {
+          apiURL: "https://sepolia.optimism.io",
+          browserURL: "https://sepolia-optimistic.etherscan.io"
+        }
+      }
+    ]
   }
 };
 

@@ -9,18 +9,22 @@ import {
   LiquidatablePool,
   PoolUserStruct,
   PoolUserWithAssets,
-  PublicPoolUserWithData
+  PublicPoolUserWithData,
+  PythEncodedLiquidationTx,
+  PythLiquidatablePool,
+  BotType
 } from "./utils";
 
-import { getPotentialLiquidation } from "./index";
+import { getPotentialLiquidation, getPotentialPythLiquidation } from "./index";
 
-async function getLiquidatableUsers(
+async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatablePool>(
   sdk: IonicSdk,
   poolUsers: PoolUserStruct[],
   pool: PublicPoolUserWithData,
-  chainLiquidationConfig: ChainLiquidationConfig
-): Promise<Array<EncodedLiquidationTx>> {
-  const users: Array<EncodedLiquidationTx> = [];
+  chainLiquidationConfig: ChainLiquidationConfig,
+  botType: BotType
+): Promise<Array<T>> {
+  const users: Array<T> = [];
   for (const user of poolUsers) {
     const userAssets = await sdk.contracts.PoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
     const userWithAssets: PoolUserWithAssets = {
@@ -30,24 +34,37 @@ async function getLiquidatableUsers(
       assets: userAssets
     };
 
-    const encodedLiquidationTX = await getPotentialLiquidation(
-      sdk,
-      userWithAssets,
-      pool.closeFactor,
-      pool.liquidationIncentive,
-      chainLiquidationConfig
-    );
-    if (encodedLiquidationTX !== null) users.push(encodedLiquidationTX);
+    let encodedLiquidationTX;
+
+    if (botType == BotType.Standard) {
+      encodedLiquidationTX = await getPotentialLiquidation(
+        sdk,
+        userWithAssets,
+        pool.closeFactor,
+        pool.liquidationIncentive,
+        chainLiquidationConfig
+      );
+    } else {
+      encodedLiquidationTX = await getPotentialPythLiquidation(
+        sdk,
+        userWithAssets,
+        pool.closeFactor,
+        pool.liquidationIncentive,
+        chainLiquidationConfig
+      );
+    }
+    if (encodedLiquidationTX !== null) users.push(encodedLiquidationTX as T);
   }
   return users;
 }
 
-export default async function gatherLiquidations(
+export default async function gatherLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(
   sdk: IonicSdk,
   pools: Array<PublicPoolUserWithData>,
-  chainLiquidationConfig: ChainLiquidationConfig
-): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
-  const liquidations: Array<LiquidatablePool> = [];
+  chainLiquidationConfig: ChainLiquidationConfig,
+  botType: BotType
+): Promise<[Array<T>, Array<ErroredPool>]> {
+  const liquidations: Array<T> = [];
   const erroredPools: Array<ErroredPool> = [];
 
   for (const pool of pools) {
@@ -59,12 +76,12 @@ export default async function gatherLiquidations(
       return 0;
     });
     try {
-      const liquidatableUsers = await getLiquidatableUsers(sdk, poolUsers, pool, chainLiquidationConfig);
+      const liquidatableUsers = await getLiquidatableUsers<T>(sdk, poolUsers, pool, chainLiquidationConfig, botType);
       if (liquidatableUsers.length > 0) {
         liquidations.push({
           comptroller: pool.comptroller,
           liquidations: liquidatableUsers
-        });
+        } as unknown as T);
       }
     } catch (e) {
       erroredPools.push({

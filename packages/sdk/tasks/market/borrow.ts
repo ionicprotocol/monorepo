@@ -40,3 +40,31 @@ task("borrow", "Borrow assets")
       console.log("Transaction confirmed!");
     }
   });
+
+task("market:userHealth", "deploy market")
+  .addParam("signer", "Named account to use for tx", "deployer", types.string)
+  .addParam("comptroller", "Comptroller address", undefined, types.string)
+  .addParam("user", "User being queried", undefined, types.string)
+  .setAction(async (taskArgs, { ethers }) => {
+    const signer = await ethers.getNamedSigner(taskArgs.signer);
+    const ionicSdkModule = await import("../ionicSdk");
+    const sdk = await ionicSdkModule.getOrCreateIonic(signer);
+    const comptroller = sdk.createComptroller(taskArgs.comptroller, signer);
+
+    // Query account liquidity to check the user's financial health
+    const { error, liquidity, shortfall } = await comptroller.getAccountLiquidity(taskArgs.user);
+    if (!error.isZero()) {
+      console.error(`Error occurred: ${error.toString()}`);
+      return;
+    }
+
+    // Print the liquidity and shortfall details
+    console.log(`Liquidity: ${ethers.utils.formatEther(liquidity)} ETH`);
+    console.log(`Shortfall: ${ethers.utils.formatEther(shortfall)} ETH`);
+
+    if (shortfall.isZero()) {
+      console.log("User account is healthy.");
+    } else {
+      console.log("User account is at risk of liquidation.");
+    }
+  });

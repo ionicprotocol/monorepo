@@ -7,6 +7,9 @@ export { default as liquidateUnhealthyBorrows } from "./liquidateUnhealthyBorrow
 // * getPotentialLiquidation.ts
 export { default as getPotentialLiquidation } from "./getPotentialLiquidation";
 
+// * getPotentialPythLiquidation.ts
+export { default as getPotentialPythLiquidation } from "./getPotentialPythLiquidation";
+
 // * gatherLiquidations.ts
 export { default as gatherLiquidations } from "./gatherLiquidations";
 
