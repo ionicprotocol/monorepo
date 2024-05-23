@@ -6,6 +6,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
@@ -32,7 +33,6 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { base, mode } from 'viem/chains';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
