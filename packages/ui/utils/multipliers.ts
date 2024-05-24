@@ -137,7 +137,7 @@ export const multipliers: Record<
           kelp: 1,
           mode: 1
         },
-        market: 'wrseth_market',
+        market: 'wrsteth_market',
         multiplier: 3000,
         supply: {
           eigenlayer: true,

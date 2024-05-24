@@ -16,8 +16,12 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import {
   useGlobalRank,
   useLeaderboard,
-  usePointsForBorrow,
-  usePointsForSupply
+  usePointsForBorrowBaseMain,
+  usePointsForSupplyBaseMain,
+  usePointsForBorrowModeMain,
+  usePointsForSupplyModeMain,
+  usePointsForBorrowModeNative,
+  usePointsForSupplyModeNative
 } from '@ui/hooks/usePointsQueries';
 
 export default function Points() {
@@ -28,10 +32,30 @@ export default function Points() {
     chainId
   );
   const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
-  const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
-    usePointsForSupply();
-  const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
-    usePointsForBorrow();
+  const {
+    data: supplyPointsModeMain,
+    isLoading: isLoadingSupplyPointsModeMain
+  } = usePointsForSupplyModeMain();
+  const {
+    data: supplyPointsModeNative,
+    isLoading: isLoadingSupplyPointsModeNative
+  } = usePointsForSupplyModeNative();
+  const {
+    data: supplyPointsBaseMain,
+    isLoading: isLoadingSupplyPointsBaseMain
+  } = usePointsForSupplyBaseMain();
+  const {
+    data: borrowPointsModeMain,
+    isLoading: isLoadingBorrowPointsModeMain
+  } = usePointsForBorrowModeMain();
+  const {
+    data: borrowPointsModeNative,
+    isLoading: isLoadingBorrowPointsModeNative
+  } = usePointsForBorrowModeNative();
+  const {
+    data: borrowPointsBaseMain,
+    isLoading: isLoadingBorrowPointsBaseMain
+  } = usePointsForBorrowBaseMain();
   const {
     data: leaderboard,
     isLoading: isLoadingLeaderboard,
@@ -39,9 +63,9 @@ export default function Points() {
   } = useLeaderboard(leaderboardPage);
   const { data: globalRank } = useGlobalRank();
 
-  const summedSupplyPoints = useMemo<number>(() => {
-    if (supplyPoints) {
-      return supplyPoints.rows.reduce(
+  const summedSupplyPointsModeMain = useMemo<number>(() => {
+    if (supplyPointsModeMain) {
+      return supplyPointsModeMain.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -53,10 +77,10 @@ export default function Points() {
     }
 
     return 0;
-  }, [supplyPoints]);
-  const summedBorrowPoints = useMemo<number>(() => {
-    if (borrowPoints) {
-      return borrowPoints.rows.reduce(
+  }, [supplyPointsModeMain]);
+  const summedSupplyPointsModeNative = useMemo<number>(() => {
+    if (supplyPointsModeNative) {
+      return supplyPointsModeNative.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -68,10 +92,83 @@ export default function Points() {
     }
 
     return 0;
-  }, [borrowPoints]);
+  }, [supplyPointsModeNative]);
+  const summedSupplyPointsBaseMain = useMemo<number>(() => {
+    if (supplyPointsBaseMain) {
+      return supplyPointsBaseMain.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [supplyPointsBaseMain]);
+  const summedBorrowPointsModeMain = useMemo<number>(() => {
+    if (borrowPointsModeMain) {
+      return borrowPointsModeMain.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [borrowPointsModeMain]);
+  const summedBorrowPointsModeNative = useMemo<number>(() => {
+    if (borrowPointsModeNative) {
+      return borrowPointsModeNative.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [borrowPointsModeNative]);
+  const summedBorrowPointsBaseMain = useMemo<number>(() => {
+    if (borrowPointsBaseMain) {
+      return borrowPointsBaseMain.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [borrowPointsBaseMain]);
   const totalPoints = useMemo<number>(
-    () => summedBorrowPoints + summedSupplyPoints,
-    [summedBorrowPoints, summedSupplyPoints]
+    () =>
+      summedSupplyPointsModeMain +
+      summedSupplyPointsModeNative +
+      summedSupplyPointsBaseMain +
+      summedBorrowPointsModeMain +
+      summedBorrowPointsModeNative +
+      summedBorrowPointsBaseMain,
+    [
+      summedBorrowPointsModeMain,
+      summedBorrowPointsModeNative,
+      summedBorrowPointsBaseMain,
+      summedSupplyPointsModeMain,
+      summedSupplyPointsModeNative,
+      summedSupplyPointsBaseMain
+    ]
   );
 
   return (
@@ -94,7 +191,14 @@ export default function Points() {
           <ResultHandler
             center
             height="36"
-            isLoading={isLoadingBorrowPoints || isLoadingSupplyPoints}
+            isLoading={
+              isLoadingSupplyPointsModeMain ||
+              isLoadingSupplyPointsModeNative ||
+              isLoadingSupplyPointsBaseMain ||
+              isLoadingBorrowPointsModeMain ||
+              isLoadingBorrowPointsModeNative ||
+              isLoadingBorrowPointsBaseMain
+            }
             width="36"
           >
             <p className={`text-3xl font-bold text-white`}>
@@ -117,38 +221,58 @@ export default function Points() {
           </span>
         </p>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-        <div
-          className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
-        >
-          <p className={``}>Points for Supply</p>
-          <ResultHandler
-            height="15"
-            isLoading={isLoadingSupplyPoints}
-            width="15"
+
+        {[
+          {
+            loading: isLoadingSupplyPointsModeNative,
+            name: 'Mode Main Market',
+            points: summedSupplyPointsModeMain
+          }
+        ].map((a, i) => (
+          <div
+            className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
+            key={i}
           >
-            <p className={`text-white font-semibold`}>
-              {summedSupplyPoints.toLocaleString('en-US', {
-                maximumFractionDigits: 0
-              })}
-            </p>
-          </ResultHandler>
-        </div>
-        <div
-          className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
-        >
-          <p className={``}>Points for Borrow</p>
-          <ResultHandler
-            height="15"
-            isLoading={isLoadingBorrowPoints}
-            width="15"
+            <p className={``}>Points for Supply in {a.name}</p>
+            <ResultHandler
+              height="15"
+              isLoading={a.loading}
+              width="15"
+            >
+              <p className={`text-white font-semibold`}>
+                {a.points.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}
+              </p>
+            </ResultHandler>
+          </div>
+        ))}
+
+        {[
+          {
+            loading: isLoadingBorrowPointsModeNative,
+            name: 'Mode Main Market',
+            points: summedBorrowPointsModeMain
+          }
+        ].map((a, i) => (
+          <div
+            className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
+            key={i}
           >
-            <p className={`text-white font-semibold`}>
-              {summedBorrowPoints.toLocaleString('en-US', {
-                maximumFractionDigits: 0
-              })}
-            </p>
-          </ResultHandler>
-        </div>
+            <p className={``}>Points for Borrow in {a.name}</p>
+            <ResultHandler
+              height="15"
+              isLoading={a.loading}
+              width="15"
+            >
+              <p className={`text-white font-semibold`}>
+                {a.points.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}
+              </p>
+            </ResultHandler>
+          </div>
+        ))}
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <Link
           className={`w-full flex justify-center items-center rounded-md bg-neutral-500	text-black py-2 px-6 text-center text-xs mt-auto text-white`}
@@ -180,7 +304,14 @@ export default function Points() {
           <p className={``}>Total Points</p>
           <ResultHandler
             height="15"
-            isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
+            isLoading={
+              isLoadingSupplyPointsModeNative ||
+              isLoadingBorrowPointsModeNative ||
+              isLoadingSupplyPointsModeNative ||
+              isLoadingBorrowPointsModeNative ||
+              isLoadingSupplyPointsBaseMain ||
+              isLoadingBorrowPointsBaseMain
+            }
             width="15"
           >
             <p className={`text-white font-semibold`}>
@@ -195,13 +326,26 @@ export default function Points() {
           center
           isLoading={
             isLoadingMarketData ||
-            isLoadingSupplyPoints ||
-            isLoadingBorrowPoints
+            isLoadingSupplyPointsModeNative ||
+            isLoadingBorrowPointsModeNative ||
+            isLoadingSupplyPointsModeNative ||
+            isLoadingBorrowPointsModeNative ||
+            isLoadingSupplyPointsBaseMain ||
+            isLoadingBorrowPointsBaseMain
           }
         >
           <>
             <div className="w-full mb-2 md:mt-0">
-              <FlatMap rewardsData={[summedSupplyPoints, summedBorrowPoints]} />
+              <FlatMap
+                rewardsData={[
+                  summedSupplyPointsModeMain,
+                  summedSupplyPointsModeNative,
+                  summedSupplyPointsBaseMain,
+                  summedBorrowPointsModeMain,
+                  summedBorrowPointsModeNative,
+                  summedBorrowPointsBaseMain
+                ]}
+              />
             </div>
 
             <div
@@ -234,7 +378,7 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedSupplyPoints.toLocaleString('en-US', {
+                {summedSupplyPointsModeMain.toLocaleString('en-US', {
                   maximumFractionDigits: 0
                 })}
               </div>
@@ -242,7 +386,9 @@ export default function Points() {
                 color="#3bff89"
                 percent={
                   parseFloat(
-                    ((summedSupplyPoints / totalPoints) * 100).toFixed(1)
+                    ((summedSupplyPointsModeMain / totalPoints) * 100).toFixed(
+                      1
+                    )
                   ) || 0
                 }
               />
@@ -269,7 +415,7 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedBorrowPoints.toLocaleString('en-US', {
+                {summedBorrowPointsModeMain.toLocaleString('en-US', {
                   maximumFractionDigits: 0
                 })}
               </div>
@@ -277,7 +423,9 @@ export default function Points() {
                 color="#f3fa96"
                 percent={
                   parseFloat(
-                    ((summedBorrowPoints / totalPoints) * 100).toFixed(1)
+                    ((summedBorrowPointsModeMain / totalPoints) * 100).toFixed(
+                      1
+                    )
                   ) || 0
                 }
               />
