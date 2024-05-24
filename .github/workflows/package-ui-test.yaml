@@ -39,6 +39,8 @@ jobs:
 
       - name: Build `ui`
         run: yarn build:deploy:ui
+      - name: Build `functions`
+        run: yarn dev:functions      
 
       # - name: Lint `ui`
       #   run: yarn workspace @ionicprotocol/ui lint
