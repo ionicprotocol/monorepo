@@ -16,7 +16,7 @@ on:
 
 jobs:
   deploy-preview:
-    if: contains(github.event.pull_request.labels.*.name, 'preview')
+    if: contains(github.event.push_request.labels.*.name, 'preview')
     runs-on: ubuntu-latest
     env:
       NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
