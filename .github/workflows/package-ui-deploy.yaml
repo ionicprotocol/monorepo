@@ -42,12 +42,6 @@ jobs:
         env:
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Build UI
-        run: yarn workspace @ionicprotocol/ui build
-
-      - name: Build Functions
-        run: yarn workspace @ionicprotocol/functions build
-
       - name: Prepare Functions for Netlify
         run: |
           mkdir -p packages/functions/dist/functions/src/functions
