@@ -48,6 +48,7 @@ jobs:
         run: |
           netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
           netlify deploy --filter @ionicprotocol/ui --prod --build --context development
+          #function deployment
           netlify link --filter @ionicprotocol/functions --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
           netlify deploy --filter @ionicprotocol/functions --prod --build --context development
 
