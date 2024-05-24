@@ -9,6 +9,6 @@
     "isolatedModules": true,
     "outDir": "./dist"
   },
-  "include": ["src/**/*.ts", "src/functions/asset-total-apy-bscmodets"],
+  "include": ["src/**/*.ts", "src/functions/asset-total-apy-bscmodets", "src/functions/asset-tvl-mode"],
   "exclude": ["node_modules"]
 }
