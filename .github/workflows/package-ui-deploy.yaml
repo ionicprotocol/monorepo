@@ -45,9 +45,8 @@ jobs:
       - name: Prepare Functions for Netlify
         run: |
           mkdir -p packages/functions/dist/functions/src/functions
-          shopt -s extglob
-          cp -R packages/functions/dist/!(functions) packages/functions/dist/functions/src/functions/
-
+          rsync -a --exclude='functions' packages/functions/dist/ packages/functions/dist/functions/src/functions/
+          
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish-patch-3'
         run: |
