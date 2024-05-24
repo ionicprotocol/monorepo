@@ -1,79 +1,66 @@
-[[plugins]]
-package = "@netlify/plugin-nextjs"
+name: UI - deploy UI
 
-[build]
-base = "./"
-publish = "./packages/ui/.next"
-command = "yarn build:deploy:ui"
+on:
+  push:
+    branches: [main, development, amish-patch-3]
+    paths:
+      - 'packages/ui/**'
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - 'packages/functions/**'
+      - '.github/workflows/package-ui-deploy.yaml'
+      - 'yarn.lock'
+      - 'netlify.toml'
 
-[build.environment]
-YARN_CHECKSUM_BEHAVIOR = "update"
-SUPABASE_URL = "https://uoagtjstsdrjypxlkuzr.supabase.co"
-ICON_SERVER = "https://d1912tcoux65lj.cloudfront.net"
-PRODUCT_URL = 'https://app.ionic.money'
-FEATURE_CREATE_POOL = "0x2680D8f1ED3BEe1c731cFeedcDa2A74bB7317828,0x7dB8d33114462e032E5bf636D271f8680619Ba25,0xb6c11605e971ab46B9BE4fDC48C9650A257075db,0x9308dddeC9B5cCd8a2685A46E913C892FE31C826"
-FEATURE_DEPLOY_FLYWHEEL = "false"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: Update Submodules
+        run: git submodule update --remote --merge   
 
-[context.preview.environment]
-NEXT_PUBLIC_SHOW_TESTNETS = "true"
-BSC = "false"
-POLYGON = "false"
-ARBITRUM = "false"
-FANTOM = "false"
-ETHEREUM = "false"
-ZKEVM = "false"
-LINEA = "false"
-NEON = "false"
-# MODE = "true" # TODO
-IS_SENTRY_ENABLED = "false"
-IS_PRODUCTION = "false"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
 
-[context.development.environment]
-NEXT_PUBLIC_SHOW_TESTNETS = "true"
-BSC = "false"
-POLYGON = "false"
-ARBITRUM = "false"
-ETHEREUM = "false"
-ZKEVM = "false"
-LINEA = "false"
-# MODE = "true" # TODO
-NEON = "false"
-IS_SENTRY_ENABLED = "false"
-IS_PRODUCTION = "false"
-NODE_ENV = "production"
+      - name: Install `foundry`
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
 
-[context.production.environment]
-NEXT_PUBLIC_SHOW_TESTNETS = "false"
-BSC = "false"
-POLYGON = "false"
-ARBITRUM = "false"
-ETHEREUM = "false"
-ZKEVM = "false"
-LINEA = "false"
-# MODE = "true" # TODO
-NEON = "false"
-IS_SENTRY_ENABLED = "true"
-IS_PRODUCTION = "true"
-NODE_ENV = "production"
+      - name: Install `packages`
+        run: yarn install
+        env:
+          YARN_CHECKSUM_BEHAVIOR: update
 
-[functions]
-directory = "./packages/functions/dist/functions/src/functions"
-node_bundler = "esbuild"
+      - name: Build UI
+        run: yarn workspace @ionicprotocol/ui build
 
-[functions."plugin-rewards-*"]
-schedule = "@hourly"
+      - name: Build Functions
+        run: yarn workspace @ionicprotocol/functions build
 
-[functions."asset-apys-*"]
-schedule = "@hourly"
+      - name: Prepare Functions for Netlify
+        run: |
+          mkdir -p packages/functions/dist/functions/src/functions
+          cp -R packages/functions/dist/* packages/functions/dist/functions/src/functions/
 
-[functions."vault-data-*"]
-schedule = "@hourly"
+      - name: Deploy `Development`
+        if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish-patch-3'
+        run: |
+          netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context development
 
-[functions."asset-price-*"]
-schedule = "@hourly"
-
-[functions."asset-tvl-*"]
-schedule = "@hourly"
-
-[functions."asset-total-apy-*"]
-schedule = "@hourly"
+      - name: Deploy `Production`
+        if: github.ref == 'refs/heads/main'
+        run: |
+          netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID }}
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context production
