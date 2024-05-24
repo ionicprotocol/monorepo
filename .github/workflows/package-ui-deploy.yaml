@@ -24,7 +24,7 @@ jobs:
           submodules: false
       - name: Initialize
         run: git submodule update --init --recursive
-      - name: update
+      - name: Update Submodules
         run: git submodule update --remote --merge   
 
       - uses: actions/setup-node@v4
@@ -40,8 +40,18 @@ jobs:
       - name: Install `packages`
         run: yarn install
         env:
-          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build UI
+        run: yarn workspace @ionicprotocol/ui build
+
+      - name: Build Functions
+        run: yarn workspace @ionicprotocol/functions build
+
+      - name: Prepare Functions for Netlify
+        run: |
+          mkdir -p packages/functions/dist/functions/src/functions
+          cp -R packages/functions/dist/* packages/functions/dist/functions/src/functions/
 
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish-patch-3'
