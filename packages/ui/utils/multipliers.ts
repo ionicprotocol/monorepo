@@ -1,6 +1,7 @@
 import { base, mode } from 'viem/chains';
 
 export const SEASON_2_START_DATE = '2024-5-15';
+export const SEASON_2_BASE_START_DATE = '2024-5-20';
 
 export type Multipliers = {
   eigenlayer?: boolean;

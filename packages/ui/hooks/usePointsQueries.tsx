@@ -4,7 +4,7 @@ import { createConfig, getEnsName, http } from '@wagmi/core';
 import type { Address } from 'viem';
 import { base, mainnet, mode } from 'viem/chains';
 
-import { multipliers, SEASON_2_START_DATE } from '../utils/multipliers';
+import { multipliers, SEASON_2_START_DATE, SEASON_2_BASE_START_DATE } from '../utils/multipliers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { fetchData } from '@ui/utils/functions';
@@ -105,8 +105,8 @@ const getSupplyQuery = (
   ionMultiplier: number,
   marketName: string,
   startDate: string,
-  priceMultiplier = 1,
-  decimals = 18
+  priceMultiplier: number = 1,
+  decimals: number = 18
 ) => {
   return `
   WITH addresses AS (
@@ -218,8 +218,8 @@ const getBorrowQuery = (
   ionMultiplier: number,
   marketName: string,
   startDate: string,
-  priceMultiplier = 1,
-  decimals = 18
+  priceMultiplier: number = 1,
+  decimals: number = 18
 ) => {
   return `
   WITH addresses AS (
@@ -253,11 +253,11 @@ const getBorrowQuery = (
           SELECT 
             tx_from AS address, 
             DATE_BIN('1 hour', block_time, '2000-01-01') AS date, 
-            -method_repay_amount / POW(10, ${decimals}) AS tokens 
+            -event_repay_amount / POW(10, ${decimals}) AS tokens 
           FROM 
-            ${marketName}.repay_borrow_methods 
+            ${marketName}.repay_borrow_events 
           WHERE 
-            method_repay_amount < POW(10, 60) 
+            event_repay_amount < POW(10, 60) 
             AND tx_from IN (SELECT address FROM addresses)
           
           UNION ALL
@@ -311,7 +311,7 @@ const getBorrowQuery = (
       date >= '${startDate}T00:00:00'
   ) AS final 
   GROUP BY 
-    address;
+    address
   `;
 };
 
@@ -348,7 +348,7 @@ const usePointsForSupplyModeMain = () => {
 
       return {
         ...response[0].data,
-        rows: [[totalPoints]]
+        rows: [[points_per_market]]
       };
     },
     queryKey: ['points', 'supply', 'mode-main', address],
@@ -388,7 +388,7 @@ const usePointsForBorrowModeMain = () => {
 
       return {
         ...response[0].data,
-        rows: [[totalPoints]]
+        rows: [[points_per_market]]
       };
     },
     queryKey: ['points', 'borrow', 'mode-main', address],
@@ -489,7 +489,7 @@ const usePointsForSupplyBaseMain = () => {
                 address!.toLowerCase(),
                 asset.supply.ionic,
                 asset.market,
-                SEASON_2_START_DATE,
+                SEASON_2_BASE_START_DATE,
                 asset.multiplier,
                 asset.decimals
               )
@@ -529,7 +529,7 @@ const usePointsForBorrowBaseMain = () => {
                   address!.toLowerCase(),
                   asset.borrow!.ionic,
                   asset.market,
-                  SEASON_2_START_DATE,
+                  SEASON_2_BASE_START_DATE,
                   asset.multiplier,
                   asset.decimals
                 )
@@ -565,7 +565,7 @@ const useLeaderboard = (page: number) => {
     keepPreviousData: true,
     queryFn: async () => {
       const response = await supabase
-        .from('ranks')
+        .from('ranks_season2')
         .select('*')
         .order('rank', { ascending: true })
         .limit(pageSize)
@@ -599,13 +599,13 @@ const useGlobalRank = () => {
         return null;
       }
       const response = await supabase
-        .from('ranks')
+        .from('ranks_season2')
         .select('*')
         .eq('address', address.toLowerCase())
         .limit(1);
 
       const highest = await supabase
-        .from('ranks')
+        .from('ranks_season2')
         .select('*')
         .order('rank', { ascending: false })
         .limit(1);
