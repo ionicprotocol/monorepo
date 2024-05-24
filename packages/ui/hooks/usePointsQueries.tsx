@@ -366,17 +366,6 @@ const usePointsForBorrowModeMain = () => {
         Object.values(multipliers[mode.id]['0'])
           .filter((asset) => !!asset.borrow)
           .map((asset) => {
-            console.log(
-              'query: ',
-              getBorrowQuery(
-                address!.toLowerCase(),
-                asset.borrow!.ionic,
-                asset.market,
-                SEASON_2_START_DATE,
-                asset.multiplier,
-                asset.decimals
-              )
-            );
             return fetchData<QueryResponse, QueryData>(
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
               {
