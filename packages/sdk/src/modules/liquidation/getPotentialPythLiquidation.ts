@@ -2,14 +2,10 @@ import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
-import { IAlgebraFactory__factory } from "../../../typechain/factories/IAlgebraFactory__factory";
-import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import encodeLiquidatePythTx from "./encodeLiquidatePythTx";
-import { getFundingStrategiesAndDatas } from "./fundingStrategy";
-import { getRedemptionStrategiesAndDatas } from "./redemptionStrategy";
 import {
   PythEncodedLiquidationTx,
   PoolUserWithAssets,
@@ -17,24 +13,12 @@ import {
   SCALE_FACTOR_UNDERLYING_DECIMALS
 } from "./utils";
 
-import { estimateGas } from "./index";
-
-async function getLiquidationPenalty(collateralCToken: ICErc20, liquidationIncentive: BigNumber) {
-  const protocolSeizeShareMantissa = await collateralCToken.callStatic.protocolSeizeShareMantissa();
-  const feeSeizeShareMantissa = await collateralCToken.callStatic.feeSeizeShareMantissa();
-  const exchangeRate = await collateralCToken.callStatic.exchangeRateCurrent();
-  console.log("collateral exchange rate", utils.formatEther(exchangeRate));
-  console.log("liquidation incentive ", utils.formatEther(liquidationIncentive));
-  console.log("protocol seize  share ", utils.formatEther(protocolSeizeShareMantissa));
-  console.log("fee seize share ", utils.formatEther(feeSeizeShareMantissa));
-  return liquidationIncentive.add(protocolSeizeShareMantissa).add(feeSeizeShareMantissa);
-}
-
 export default async function getPotentialLiquidation(
   sdk: IonicSdk,
   borrower: PoolUserWithAssets,
   closeFactor: BigNumber,
   liquidationIncentive: BigNumber,
+  comptroller: string,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<PythEncodedLiquidationTx | null> {
   // Get debt and collateral
@@ -63,15 +47,6 @@ export default async function getPotentialLiquidation(
   )
     return null;
 
-  let exchangeToTokenAddress: string;
-
-  // Check SUPPORTED_OUTPUT_CURRENCIES: replace EXCHANGE_TO_TOKEN_ADDRESS with underlying collateral if underlying collateral is in SUPPORTED_OUTPUT_CURRENCIES
-  if (chainLiquidationConfig.SUPPORTED_OUTPUT_CURRENCIES.indexOf(borrower.collateral[0].underlyingToken) >= 0) {
-    exchangeToTokenAddress = borrower.collateral[0].underlyingToken;
-  } else {
-    exchangeToTokenAddress = sdk.chainSpecificAddresses.W_TOKEN;
-  }
-
   const debtAsset = borrower.debt[0];
   const collateralAsset = borrower.collateral[0];
 
@@ -79,183 +54,57 @@ export default async function getPotentialLiquidation(
   const debtAssetUnderlyingPrice = debtAsset.underlyingPrice;
   const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
   const debtAssetDecimals = debtAsset.underlyingDecimals;
-  const collateralAssetDecimals = collateralAsset.underlyingDecimals;
-  const debtAssetUnderlyingToken = debtAsset.underlyingToken;
-  // xcDOT: 10 decimals
-  const actualCollateral = collateralAsset.supplyBalance;
-
-  // Get liquidation amount
 
   // USDC: 6 decimals
   let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
-  // const penalty = await getLiquidationPenalty(sdk.createICErc20(collateralAsset.cToken), liquidationIncentive);
-  const penalty = liquidationIncentive;
-
-  sdk.logger.info(`Calculated repay amount: ${repayAmount.toString()}, with penalty: ${penalty.toString()}`);
+  // let repayAmount = BigNumber.from("3558550460587311386699");
 
   // Scale to 18 decimals
   let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
 
-  // 18 decimals
-  let seizeValue = liquidationValue.mul(utils.parseUnits("1.053376", 18)).div(SCALE_FACTOR_ONE_18_WEI);
+  const pool = sdk.createComptroller(comptroller);
+  const collateralCToken = sdk.createICErc20(collateralAsset.cToken);
 
-  // xcDOT: 10 decimals
-  let seizeAmount = seizeValue // 18 decimals
-    .mul(SCALE_FACTOR_ONE_18_WEI) // -> 36 decimals
-    .div(collateralAssetUnderlyingPrice) // -> 18 decimals
-    .div(SCALE_FACTOR_UNDERLYING_DECIMALS(collateralAsset)); // -> decimals
+  const seizeTokens = await pool.callStatic.liquidateCalculateSeizeTokens(
+    debtAsset.cToken,
+    collateralAsset.cToken,
+    repayAmount
+  );
+  const seizeTokenAmount = seizeTokens[1];
+  const protocolSeizeShareMantissa = await collateralCToken.callStatic.protocolSeizeShareMantissa();
+  const feeSeizeShareMantissa = await collateralCToken.callStatic.feeSeizeShareMantissa();
+  const exchangeRate = await collateralCToken.callStatic.exchangeRateCurrent();
 
-  sdk.logger.info(`Initial seize amount calculated: ${seizeAmount.toString()}`);
+  const protocolFee = seizeTokenAmount.mul(protocolSeizeShareMantissa).div(SCALE_FACTOR_ONE_18_WEI);
+  const seizeFee = seizeTokenAmount.mul(feeSeizeShareMantissa).div(SCALE_FACTOR_ONE_18_WEI);
 
-  // Check if actual collateral is too low to seize seizeAmount; if so, recalculate liquidation amount
+  const actualAmountSeized = seizeTokenAmount.sub(protocolFee).sub(seizeFee);
+  const underlyingAmountSeized = actualAmountSeized.mul(exchangeRate).div(SCALE_FACTOR_ONE_18_WEI);
 
-  if (seizeAmount.gt(actualCollateral)) {
-    // 10 decimals
-    seizeAmount = actualCollateral;
-    // 18 decimals
-    seizeValue = seizeAmount
-      // 28 decimals
-      .mul(collateralAssetUnderlyingPrice)
-      // 18 decimals
-      .div(BigNumber.from(10).pow(collateralAssetDecimals));
+  const underlyingAmountSeizedValue = underlyingAmountSeized
+    .mul(collateralAssetUnderlyingPrice)
+    .div(SCALE_FACTOR_ONE_18_WEI);
 
-    // 18 decimals
-    liquidationValue = seizeValue.mul(SCALE_FACTOR_ONE_18_WEI).div(penalty);
-    // 18 decimals
-    repayAmount = liquidationValue
-      .mul(SCALE_FACTOR_ONE_18_WEI)
-      .div(debtAssetUnderlyingPrice)
-      .div(SCALE_FACTOR_UNDERLYING_DECIMALS(debtAsset));
-  }
-
-  if (repayAmount.lte(BigNumber.from(0))) {
-    sdk.logger.info("Liquidation amount is zero, doing nothing");
-    return null;
-  }
-  // Depending on liquidation strategy
-  let debtFundingStrategies: string[] = [];
-  let debtFundingStrategiesData: BytesLike[] = [];
-  let flashSwapFundingToken = constants.AddressZero;
-
-  if (chainLiquidationConfig.LIQUIDATION_STRATEGY == LiquidationStrategy.UNISWAP) {
-    // chain some liquidation funding strategies
-    const fundingStrategiesAndDatas = await getFundingStrategiesAndDatas(sdk, debtAssetUnderlyingToken);
-    debtFundingStrategies = fundingStrategiesAndDatas.strategies;
-    debtFundingStrategiesData = fundingStrategiesAndDatas.datas;
-    flashSwapFundingToken = fundingStrategiesAndDatas.flashSwapFundingToken;
-
-    console.log("outputs", borrower.collateral[0].underlyingToken, flashSwapFundingToken);
-
-    //  chain some collateral redemption strategies
-    const [strategyAndData, tokenPath] = await getRedemptionStrategiesAndDatas(
-      sdk,
-      borrower.collateral[0].underlyingToken,
-      flashSwapFundingToken
-    );
-
-    let flashSwapPair: string;
-    let tokenA: string;
-    let tokenB: string;
-    if (sdk.chainId == 34443) {
-      const algebraFactory = IAlgebraFactory__factory.connect(
-        sdk.chainSpecificAddresses.UNISWAP_V3?.FACTORY || "0xC33Ce0058004d44E7e1F366E5797A578fDF38584",
-        sdk.provider
-      );
-
-      if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
-        tokenA = flashSwapFundingToken;
-        tokenB = sdk.chainConfig.chainAddresses.W_TOKEN;
-      } else {
-        // flashSwapFundingToken is the W_TOKEN
-        tokenA = flashSwapFundingToken;
-        tokenB = sdk.chainConfig.chainAddresses.STABLE_TOKEN;
-      }
-
-      flashSwapPair = await algebraFactory.callStatic.poolByPair(tokenA, tokenB);
-      if (flashSwapPair == constants.AddressZero || tokenPath.indexOf(flashSwapPair) > 0) {
-        // in case the Uniswap pair LP token is on the path of redemptions, we should use
-        // another pair because reentrancy checks prevent us from using the pair
-        // when inside the execution of a flash swap from the same pair
-        tokenA = flashSwapFundingToken;
-        tokenB = sdk.chainConfig.chainAddresses.W_BTC_TOKEN;
-        flashSwapPair = await algebraFactory.callStatic.poolByPair(tokenA, tokenB);
-      } else {
-        sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
-      }
-    } else {
-      const uniswapV2Factory = IUniswapV2Factory__factory.connect(
-        sdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-        sdk.provider
-      );
-
-      if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
-        flashSwapPair = await uniswapV2Factory.callStatic.getPair(
-          flashSwapFundingToken,
-          sdk.chainConfig.chainAddresses.W_TOKEN
-        );
-      } else {
-        // flashSwapFundingToken is the W_TOKEN
-        flashSwapPair = await uniswapV2Factory.callStatic.getPair(
-          flashSwapFundingToken,
-          sdk.chainConfig.chainAddresses.STABLE_TOKEN
-        );
-        if (tokenPath.indexOf(flashSwapPair) > 0) {
-          // in case the Uniswap pair LP token is on the path of redemptions, we should use
-          // another pair because reentrancy checks prevent us from using the pair
-          // when inside the execution of a flash swap from the same pair
-          flashSwapPair = await uniswapV2Factory.callStatic.getPair(
-            flashSwapFundingToken,
-            sdk.chainConfig.chainAddresses.W_BTC_TOKEN
-          );
-        } else {
-          sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
-        }
-      }
-    }
-    if (flashSwapPair == constants.AddressZero || tokenPath.indexOf(flashSwapPair) > 0) {
-      sdk.logger.error(`No good source for flash loan ${flashSwapPair}`);
-      return null;
-    }
-
-    let expectedGasAmount: BigNumber;
-    try {
-      expectedGasAmount = await estimateGas(
-        sdk,
-        borrower,
-        repayAmount,
-        strategyAndData,
-        flashSwapPair,
-        chainLiquidationConfig.LIQUIDATION_STRATEGY,
-        debtFundingStrategies,
-        debtFundingStrategiesData
-      );
-    } catch {
-      expectedGasAmount = BigNumber.from(750000);
-    }
-    // Get gas fee
-    const gasPrice = await sdk.provider.getGasPrice();
-    const expectedGasFee = gasPrice.mul(expectedGasAmount);
-
-    // calculate min profits
-    const minProfitAmountEth = expectedGasFee.add(chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
-
-    // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth).mul(SCALE_FACTOR_ONE_18_WEI).div(outputPrice);
-
-    if (seizeValue.lt(minProfitAmountEth)) {
-      sdk.logger.info(
-        `Seize amount of ${utils.formatEther(seizeValue)} less than min break even of ${utils.formatEther(
-          minProfitAmountEth
-        )}, doing nothing`
-      );
-      return null;
-    }
-  }
+  sdk.logger.info(`Calculated repay amount: ${repayAmount.toString()}`);
+  sdk.logger.info(`Seize Token Info ${seizeTokens[1].toString()}`);
+  sdk.logger.info(`collateral exchange rate ${utils.formatEther(exchangeRate)}`);
+  sdk.logger.info(`liquidation incentive ${utils.formatEther(liquidationIncentive)}`);
+  sdk.logger.info(`protocol seize  share ${utils.formatEther(protocolSeizeShareMantissa)}`);
+  sdk.logger.info(`fee seize share ${utils.formatEther(feeSeizeShareMantissa)}`);
+  sdk.logger.info(`protocol fee ${protocolFee.toString()}`);
+  sdk.logger.info(`size fee ${seizeFee.toString()}`);
+  sdk.logger.info(`actual amount seized ${actualAmountSeized.toString()}`);
+  sdk.logger.info(`underlying amount siezed ${underlyingAmountSeized.toString()}`);
 
   sdk.logger.info(
     `Transaction Details: Repay Token: ${debtAsset.underlyingToken}, Collateral Token: ${collateralAsset.underlyingToken}, ` +
-      `Repay Amount: ${utils.formatEther(repayAmount)}, Seized Collateral Amount: ${utils.formatEther(seizeAmount)}, ` +
-      `Repay Value: ${utils.formatEther(liquidationValue)} , Seized Collateral Value: ${utils.formatEther(seizeValue)} `
+      `Repay Amount: ${utils.formatEther(repayAmount)}, Seized Collateral Amount: ${utils.formatEther(
+        underlyingAmountSeized
+      )}, ` +
+      `Repay Value: ${utils.formatEther(liquidationValue)} , Seized Collateral Value: ${utils.formatEther(
+        underlyingAmountSeizedValue
+      )} `
   );
 
-  return await encodeLiquidatePythTx(borrower, repayAmount, seizeAmount);
+  return await encodeLiquidatePythTx(borrower, repayAmount, underlyingAmountSeized);
 }

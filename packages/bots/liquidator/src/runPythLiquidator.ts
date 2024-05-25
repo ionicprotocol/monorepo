@@ -14,10 +14,8 @@ import IonicLiquidatorABI from "../../../sdk/artifacts/IonicLiquidator.sol/Ionic
   const chainId: number = config.chainId;
   const provider = new JsonRpcProvider(config.rpcUrl);
   const ionicSdk = setUpSdk(chainId, provider);
-
   const abi = IonicLiquidatorABI.abi;
-  // const contractInterface = new ethers.utils.Interface(abi);
-  const ionicLiquidator = "0xA3B403E9F62Dc7456BaE19FC0Bdba6Fc66b4D315";
+  const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
 
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
 
@@ -59,11 +57,11 @@ import IonicLiquidatorABI from "../../../sdk/artifacts/IonicLiquidator.sol/Ionic
         abi,
         functionName: "safeLiquidate",
         args: [
-          "0xe8784a853584fcf267dff3c87dd519443b73105e",
-          "5100978162235747073472",
-          "0x13080cdb3e1eafd08b5a196821c324c8553e43de",
-          "0xacd8debc9c0b6250e30e4113e392bd9cd58b9936",
-          "0",
+          liquidation.args[0],
+          liquidation.args[1],
+          liquidation.args[2],
+          liquidation.args[3],
+          liquidation.args[4],
           true,
         ],
       });
@@ -89,17 +87,16 @@ import IonicLiquidatorABI from "../../../sdk/artifacts/IonicLiquidator.sol/Ionic
         buyTokens: [
           {
             token: liquidation.buyTokenUnderlying as `0x${string}`,
-            amount: BigInt("89554132877053445"),
+            amount: BigInt(liquidation.buyTokenAmount.toString()),
           },
         ],
         sellTokens: [
           {
             token: liquidation.sellTokenUnderlying as `0x${string}`,
-            amount: BigInt("5100978162235747073472"),
+            amount: BigInt(liquidation.sellTokenAmount.toString()),
           },
         ],
       };
-      console.log(opportunity);
 
       try {
         await client.submitOpportunity(opportunity);

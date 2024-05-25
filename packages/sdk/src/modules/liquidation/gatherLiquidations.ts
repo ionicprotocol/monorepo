@@ -50,6 +50,7 @@ async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatabl
         userWithAssets,
         pool.closeFactor,
         pool.liquidationIncentive,
+        pool.comptroller,
         chainLiquidationConfig
       );
     }
