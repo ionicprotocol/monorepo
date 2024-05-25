@@ -55,11 +55,8 @@ export default async function getPotentialLiquidation(
   const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
   const debtAssetDecimals = debtAsset.underlyingDecimals;
 
-  // USDC: 6 decimals
   let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
-  // let repayAmount = BigNumber.from("3558550460587311386699");
 
-  // Scale to 18 decimals
   let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
 
   const pool = sdk.createComptroller(comptroller);
