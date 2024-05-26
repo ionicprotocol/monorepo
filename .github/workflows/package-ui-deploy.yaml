@@ -41,17 +41,17 @@ jobs:
         run: yarn install
         env:
           YARN_CHECKSUM_BEHAVIOR: update
-
-      - name: Prepare Functions for Netlify
-        run: |
-          mkdir -p packages/functions/dist/functions/src/functions
-          rsync -a --exclude='functions' packages/functions/dist/ packages/functions/dist/functions/src/functions/
           
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish-patch-3'
         run: |
           netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
           netlify deploy --filter @ionicprotocol/ui --prod --build --context development
+      - name: Deploy `Development` Functions
+        if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish-patch-3'
+        run: |
+          netlify link --filter @ionicprotocol/functions --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
+          netlify deploy --filter @ionicprotocol/functions --prod --build --context development          
 
       - name: Deploy `Production`
         if: github.ref == 'refs/heads/main'
