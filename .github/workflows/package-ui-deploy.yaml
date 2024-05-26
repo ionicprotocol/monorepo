@@ -46,12 +46,7 @@ jobs:
         if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish-patch-3'
         run: |
           netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
-          netlify deploy --filter @ionicprotocol/ui --prod --build --context development
-      - name: Deploy `Development` Functions
-        if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/amish-patch-3'
-        run: |
-          netlify link --filter @ionicprotocol/functions --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
-          netlify deploy --filter @ionicprotocol/functions --prod --build --context development          
+          netlify deploy --filter @ionicprotocol/ui --prod --build --context development         
 
       - name: Deploy `Production`
         if: github.ref == 'refs/heads/main'
