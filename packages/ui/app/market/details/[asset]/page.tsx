@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable */
 'use client';
 //---------------------IMPORTS-------------------
 import {
@@ -14,7 +14,7 @@ import {
   Tooltip
 } from 'chart.js';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 
@@ -55,13 +55,16 @@ import {
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
+import { useStore } from 'ui/store/Store';
+
 const Asset = ({ params }: IProp) => {
   //here we need to make a api to get the data of a certain asset (we can also check the current user with the help of wagmi)
   //params.asset will be use to get the data of a certain asset
+
   const pathname = usePathname();
   // using mock data
   const assetdetails = {
-    asset: 'ETH',
+    asset: 'ETH', //
     bAPR: 8345,
     borrowingT: 435,
     cAPR: 25,
@@ -69,30 +72,35 @@ const Asset = ({ params }: IProp) => {
     lAPR: 45,
     lendingT: 65655
   };
-  const router = useRouter();
+
+  const passedData = useStore((state) => state.passedData);
 
   const searchParams = useSearchParams();
   const info = searchParams.get('info');
   return (
-    <div className={`pt-14 pb-10 `}>
+    <div className={` pb-10 `}>
       <div
         className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
       >
-        <div className={`flex items-center justify-center gap-2 py-3 pt-2 `}>
+        <div className={`flex items-center justify-center gap-1 py-3 pt-2 `}>
+          <Link
+            className={`w-full h-full`}
+            href={`/market`}
+          >
+            <img
+              alt="modlogo"
+              className={`h-5 cursor-pointer`}
+              src="/img/assets/back.png"
+            />
+          </Link>
           <img
-            alt="modlogo"
-            className={`h-5 cursor-pointer`}
-            onClick={() => router.back()}
-            src="/img/assets/back.png"
-          />
-          <img
-            alt={assetdetails.asset}
+            alt={params.asset}
             className={`w-8`}
-            src={`/img/logo/${assetdetails.asset}.png `}
+            src={`/img/symbols/32/color/${params.asset}.png`}
           />
-          <h1 className={`font-semibold`}>{assetdetails.asset}</h1>
+          <h1 className={`font-semibold`}>{params.asset}</h1>
           <img
-            alt="downarr"
+            alt="linkto"
             className={`w-4`}
             src="/img/assets/link.png"
           />
@@ -100,22 +108,22 @@ const Asset = ({ params }: IProp) => {
         <div className={`w-full flex items-center gap-4`}>
           <div className={`flex flex-col items-start justify-center  gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Lending Supply</p>
-            <p className={`font-semibold`}>${assetdetails.lendingT}</p>
+            <p className={`font-semibold`}>${passedData?.lendingSupply}</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Available APR</p>
-            <p className={`font-semibold`}>{assetdetails.lAPR}%</p>
+            <p className={`font-semibold`}>{passedData?.availableAPR}%</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Total Borrows</p>
-            <p className={`font-semibold`}>${assetdetails.borrowingT}</p>
+            <p className={`font-semibold`}>${passedData?.totalBorrows}</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Borrowing APR</p>
-            <p className={`font-semibold`}>{assetdetails.bAPR}%</p>
+            <p className={`font-semibold`}>{passedData?.borrowAPR}%</p>
             {/* this neeeds to be changed */}
           </div>
         </div>

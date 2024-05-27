@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+// import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 // import { mode } from 'viem/chains';
@@ -10,6 +12,7 @@ import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import { useStore } from 'ui/store/Store';
 // import { useAccount } from 'wagmi';
 
 type Multipliers = {
@@ -272,11 +275,28 @@ const PoolRows = ({
   selectedPoolId
 }: IRows) => {
   const { address } = useMultiIonic();
+  // const searchParams = useSearchParams();
+  // const querychain = searchParams.get('chain');
+  const router = useRouter();
+  // console.log(querychain);
+  const setPassedData = useStore((state) => state.setPassedData);
+  function sendPassedData() {
+    setPassedData({
+      availableAPR: parseInt(supplyAPR),
+      borrowAPR: parseInt(borrowAPR),
+      collateralAPR: collateralFactor,
+      lendingSupply: parseInt(supplyBalance),
+      totalBorrows: parseInt(totalBorrowing),
+      totalCollateral: 123456
+    });
+    router.push(`/market/details/${asset}`);
+  }
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
         membership && `border ${chainColors(dropdownSelectedChain).border}`
       }`}
+      onClick={() => sendPassedData()}
     >
       {membership && (
         <span
