@@ -22,6 +22,7 @@ import "./tasks/liquidation";
 import "./tasks/leverage/configurePair";
 
 import "./tasks/one-time";
+import "@openzeppelin/hardhat-upgrades";
 
 dotEnvConfig();
 
