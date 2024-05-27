@@ -105,7 +105,7 @@ export type QueryData = {
 };
 
 const getSupplyQuery = (
-  address: string,
+  address: string | undefined,
   ionMultiplier: number,
   marketName: string,
   startDate: string,
@@ -218,7 +218,7 @@ const getSupplyQuery = (
 };
 
 const getBorrowQuery = (
-  address: string,
+  address: string | undefined,
   ionMultiplier: number,
   marketName: string,
   startDate: string,
@@ -334,7 +334,7 @@ const usePointsForSupplyModeMain = () => {
             'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
             {
               query: getSupplyQuery(
-                address!.toLowerCase(),
+                address?.toLowerCase(),
                 asset.supply.ionic,
                 asset.market,
                 SEASON_2_START_DATE,
@@ -375,7 +375,7 @@ const usePointsForBorrowModeMain = () => {
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
               {
                 query: getBorrowQuery(
-                  address!.toLowerCase(),
+                  address?.toLowerCase(),
                   asset.borrow!.ionic,
                   asset.market,
                   SEASON_2_START_DATE,
@@ -414,7 +414,7 @@ const usePointsForSupplyModeNative = () => {
             'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
             {
               query: getSupplyQuery(
-                address!.toLowerCase(),
+                address?.toLowerCase(),
                 asset.supply.ionic,
                 asset.market,
                 SEASON_2_START_DATE,
@@ -455,7 +455,7 @@ const usePointsForBorrowModeNative = () => {
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
               {
                 query: getBorrowQuery(
-                  address!.toLowerCase(),
+                  address?.toLowerCase(),
                   asset.borrow!.ionic,
                   asset.market,
                   SEASON_2_START_DATE,
@@ -494,7 +494,7 @@ const usePointsForSupplyBaseMain = () => {
             'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
             {
               query: getSupplyQuery(
-                address!.toLowerCase(),
+                address?.toLowerCase(),
                 asset.supply.ionic,
                 asset.market,
                 SEASON_2_BASE_START_DATE,
@@ -535,7 +535,7 @@ const usePointsForBorrowBaseMain = () => {
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
               {
                 query: getBorrowQuery(
-                  address!.toLowerCase(),
+                  address?.toLowerCase(),
                   asset.borrow!.ionic,
                   asset.market,
                   SEASON_2_BASE_START_DATE,
