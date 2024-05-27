@@ -2,7 +2,9 @@ name: UI - deploy UI
 
 on:
   push:
-    branches: [main, development]
+    branches:
+      - main
+      - development
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
@@ -12,19 +14,17 @@ on:
       - '.github/workflows/package-ui-deploy.yaml'
       - 'yarn.lock'
       - 'netlify.toml'
+
   pull_request:
-    branches: [main, development]
-    paths:
-      - 'packages/ui/**'
-      - 'packages/sdk/**'
-      - 'packages/chains/**'
-      - 'packages/types/**'
-      - 'packages/functions/**'
-      - '.github/workflows/package-ui-deploy.yaml'
-      - 'yarn.lock'
-      - 'netlify.toml'
+    branches:
+      - main
+      - development
+    types:
+      - closed
+
 jobs:
   deploy:
+    if: ${{ github.event_name == 'push' ||  github.event.pull_request.merged) }}
     runs-on: ubuntu-latest
     env:
       NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
@@ -32,9 +32,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: false
+          
       - name: Initialize
         run: git submodule update --init --recursive
-      - name: update
+        
+      - name: Update submodules
         run: git submodule update --remote --merge   
 
       - uses: actions/setup-node@v4
