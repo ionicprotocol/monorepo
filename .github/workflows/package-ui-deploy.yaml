@@ -12,7 +12,17 @@ on:
       - '.github/workflows/package-ui-deploy.yaml'
       - 'yarn.lock'
       - 'netlify.toml'
-
+  pull_request:
+    branches: [main, development]
+    paths:
+      - 'packages/ui/**'
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - 'packages/functions/**'
+      - '.github/workflows/package-ui-deploy.yaml'
+      - 'yarn.lock'
+      - 'netlify.toml'
 jobs:
   deploy:
     runs-on: ubuntu-latest
