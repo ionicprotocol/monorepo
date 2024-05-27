@@ -1,6 +1,6 @@
 'use client';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-
+import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
@@ -61,7 +61,7 @@ export default function NetworkSelector({
             : dropdownSelectedChain === networkOptions[0].chain
             ? 'Mode'
             : 'Select Chain'}
-          <img
+          <Image
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
               open ? 'rotate-180' : 'rotate-0'
@@ -86,7 +86,7 @@ export default function NetworkSelector({
             >
               {network.name}{' '}
               {dropdownSelectedChain == network.chain && (
-                <img
+                <Image
                   alt="checkmark--v1"
                   className={`w-4 h-4 stroke-lime`}
                   src="https://img.icons8.com/ios-filled/50/000000/checkmark--v1.png"

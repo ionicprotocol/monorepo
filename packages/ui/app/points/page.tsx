@@ -17,10 +17,10 @@ import {
   useGlobalRank,
   useLeaderboard,
   usePointsForBorrowBaseMain,
-  usePointsForSupplyBaseMain,
   usePointsForBorrowModeMain,
-  usePointsForSupplyModeMain,
   usePointsForBorrowModeNative,
+  usePointsForSupplyBaseMain,
+  usePointsForSupplyModeMain,
   usePointsForSupplyModeNative
 } from '@ui/hooks/usePointsQueries';
 

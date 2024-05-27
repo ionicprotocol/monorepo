@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 
 export type EarnRow = {
@@ -30,7 +31,7 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             </span>
             <div className={` flex ml-auto md:ml-0 `}>
               {asset.map((coin: string, idx: number) => (
-                <img
+                <Image
                   alt="logos"
                   className={` w-5 h-5  top-0 left-0 ${
                     idx !== 0 && ' -translate-x-1'
@@ -63,7 +64,7 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             <span className="text-white/40 text-xs font-semibold md:hidden">
               NETWORK
             </span>
-            <img
+            <Image
               alt="logos"
               className={` w-5 h-5  md:mx-auto ml-auto top-0 left-0 `}
               src={`/img/logo/${network}.png`}
@@ -89,7 +90,7 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             >
               Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
               <div className="flex pt-4">
-                <img
+                <Image
                   alt=""
                   className="size-4 rounded mr-1"
                   src="/img/ionic-sq.png"
@@ -97,7 +98,7 @@ export default function EarnRows({ rows }: EarnRowsParams) {
                 + 3x Ionic Points
               </div>
               <div className="flex">
-                <img
+                <Image
                   alt=""
                   className="size-4 rounded mr-1"
                   src="/images/turtle-ionic.png"
@@ -122,7 +123,7 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             target="_blank"
           >
             <span>DEPOSIT</span>
-            <img
+            <Image
               alt="external-link"
               className={`w-3 h-3`}
               src="https://img.icons8.com/material-outlined/24/external-link.png"
