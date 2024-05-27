@@ -66,9 +66,11 @@ export default function NetworkSelector({
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
               open ? 'rotate-180' : 'rotate-0'
             } `}
+            height="50"
             src={`https://img.icons8.com/ios/50/${
               chainColors(dropdownSelectedChain).arrow
             }/expand-arrow--v2.png`}
+            width="50"
           />
         </div>
         <ul
@@ -89,7 +91,9 @@ export default function NetworkSelector({
                 <Image
                   alt="checkmark--v1"
                   className={`w-4 h-4 stroke-lime`}
+                  height="50"
                   src="https://img.icons8.com/ios-filled/50/000000/checkmark--v1.png"
+                  width="50"
                 />
               )}
             </Link>

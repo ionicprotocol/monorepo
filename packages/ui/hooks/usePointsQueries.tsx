@@ -4,7 +4,11 @@ import { createConfig, getEnsName, http } from '@wagmi/core';
 import type { Address } from 'viem';
 import { base, mainnet, mode } from 'viem/chains';
 
-import { multipliers, SEASON_2_START_DATE, SEASON_2_BASE_START_DATE } from '../utils/multipliers';
+import {
+  multipliers,
+  SEASON_2_BASE_START_DATE,
+  SEASON_2_START_DATE
+} from '../utils/multipliers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { fetchData } from '@ui/utils/functions';
@@ -348,10 +352,11 @@ const usePointsForSupplyModeMain = () => {
 
       return {
         ...response[0].data,
-        rows: [[points_per_market]]
+        rows: [[totalPoints]]
       };
     },
     queryKey: ['points', 'supply', 'mode-main', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -388,10 +393,11 @@ const usePointsForBorrowModeMain = () => {
 
       return {
         ...response[0].data,
-        rows: [[points_per_market]]
+        rows: [[totalPoints]]
       };
     },
     queryKey: ['points', 'borrow', 'mode-main', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -430,6 +436,7 @@ const usePointsForSupplyModeNative = () => {
       };
     },
     queryKey: ['points', 'supply', 'mode-native', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -470,6 +477,7 @@ const usePointsForBorrowModeNative = () => {
       };
     },
     queryKey: ['points', 'borrow', 'mode-native', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -508,6 +516,7 @@ const usePointsForSupplyBaseMain = () => {
       };
     },
     queryKey: ['points', 'supply', 'base-main', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -548,6 +557,7 @@ const usePointsForBorrowBaseMain = () => {
       };
     },
     queryKey: ['points', 'borrow', 'base-main', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -586,6 +596,7 @@ const useLeaderboard = (page: number) => {
       return data;
     },
     queryKey: ['points', 'leaderboard', page],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -616,6 +627,7 @@ const useGlobalRank = () => {
       };
     },
     queryKey: ['points', 'rank', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };

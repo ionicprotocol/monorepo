@@ -1,7 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { createClient } from '@supabase/supabase-js';
-import Image from 'next/image';
 import { useState } from 'react';
 import Confetti from 'react-confetti';
 import { useAccount, useSignMessage } from 'wagmi';
@@ -117,7 +117,7 @@ export default function Claim() {
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
             {[...Array(6)].map((_, index) => (
-              <Image
+              <img
                 alt={`Image ${index}`}
                 className="md:w-36 w-10  "
                 key={index}
@@ -142,7 +142,7 @@ export default function Claim() {
           <div
             className={`md:w-[30%] w-[70%] bg-grayone py-4 px-2 rounded-xl  flex flex-col items-center justify-center min-h-[20vh] relative`}
           >
-            <Image
+            <img
               alt="close"
               className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
               onClick={() => setPopup(false)}
@@ -175,7 +175,7 @@ export default function Claim() {
 
               {eligibility && eligibility === true ? (
                 <div className="flex flex-col my-auto items-center justify-center relative px-2">
-                  <Image
+                  <img
                     alt={`Image `}
                     className="md:w-6 w-6 mb-2 "
                     key={'id'}
@@ -205,7 +205,7 @@ export default function Claim() {
                 </div>
               ) : eligibility === false ? (
                 <div className="flex flex-col my-auto items-center justify-center ">
-                  <Image
+                  <img
                     alt={`Image `}
                     className="md:w-6 w-6  mb-2"
                     key={'id'}
