@@ -42,6 +42,8 @@ export default function Claim() {
   const [dropdownSelectedSeason, setDropdownSelectedSeason] =
     useState<number>(0);
   const [popup, setPopup] = useState<boolean>(false);
+  const [popupV2, setPopupV2] = useState<boolean>(false);
+  const [agreement, setAgreement] = useState(false);
   const account = useAccount();
   const { signMessageAsync } = useSignMessage();
 
@@ -129,12 +131,12 @@ export default function Claim() {
         <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wide md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
-            <button
+            {/* <button
               className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
               onClick={() => setPopup(true)}
             >
               Check Eligibility
-            </button>
+            </button> */}
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
             {[...Array(6)].map((_, index) => (
@@ -322,7 +324,10 @@ export default function Claim() {
                 <span className={` text-xs opacity-40`}>$1234</span>
               </div>
               <button
-                className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md`}
+                className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md ${
+                  dropdownSelectedSeason === 1 && 'opacity-40'
+                }`}
+                onClick={() => dropdownSelectedSeason === 0 && setPopupV2(true)}
               >
                 Claim
               </button>
@@ -333,6 +338,49 @@ export default function Claim() {
           </div>
         </div>
       </div>
+      {popupV2 && dropdownSelectedSeason === 0 && (
+        <div
+          className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
+        >
+          <div
+            className={`md:w-[30%] w-[70%] bg-grayone py-8 px-8 rounded-xl  flex flex-col items-center justify-center min-h-[20vh] relative text-center `}
+          >
+            <img
+              alt="close"
+              className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
+              onClick={() => setPopupV2(false)}
+              src="/img/assets/close.png"
+            />
+            <p className="w-full tracking-wide text-lg font-semibold mb-4">
+              You can now instantly claim 234 ION
+            </p>
+            <p className={`opacity-40 text-xs `}>
+              To receive the full Airdrop amount, please wait till the end of
+              the vesting period
+            </p>
+            <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
+              <div className={`flex w-full gap-2 mb-2`}>
+                <input
+                  className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#dffe00] checked:bg-[#dffe00] checked:before:bg-[#dffe00] hover:before:opacity-10`}
+                  id="checkme"
+                  onChange={(e) => setAgreement(e.target.checked)}
+                  type="checkbox"
+                />
+                <span>
+                  I understand and agree to forfeit Y vested $ION, in favour of
+                  instantly receiving tokens now
+                </span>
+              </div>
+              <button
+                className={`bg-[#dffe00] disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
+                disabled={!agreement}
+              >
+                Instant Claim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
