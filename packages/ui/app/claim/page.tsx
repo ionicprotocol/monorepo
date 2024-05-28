@@ -282,7 +282,9 @@ export default function Claim() {
               <span className={`opacity-40 text-xs self-start`}>
                 TOTAL TOKENS
               </span>
-              <div className={`flex items-center justify-start my-auto gap-2`}>
+              <div
+                className={`flex  relative items-center justify-start my-auto gap-2`}
+              >
                 <img
                   alt="ion logo"
                   className={`w-6 h-6`}
@@ -290,6 +292,11 @@ export default function Claim() {
                 />
                 {/* It will be dynamic */}
                 <span>8387 ION</span>
+                <span
+                  className={`absolute -bottom-5 text-xs opacity-40 left-7`}
+                >
+                  $1234
+                </span>
               </div>
             </div>
           </div>
@@ -301,14 +308,17 @@ export default function Claim() {
           <div
             className={`w-full flex items-start justify-start  my-auto gap-2 flex-col`}
           >
-            <div className={`flex items-start w-full justify-start`}>
+            <div className={`flex  items-start w-full justify-start  gap-2`}>
               <img
                 alt="ion logo"
                 className={`w-6 h-6`}
                 src="/img/symbols/32/color/ion.png"
               />{' '}
               {/* It will be dynamic */}
-              <span>8387 ION</span>
+              <div className={`flex flex-col items-start justify-start gap-y-1`}>
+                <span>8387 ION</span>
+                <span className={` text-xs opacity-40`}>$1234</span>
+              </div>
               <button
                 className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md`}
               >
