@@ -167,30 +167,29 @@ export default function Points() {
 
     return 0;
   }, [borrowPointsBaseMain]);
-  const { summedSupplyPointsMarkets, summedBorrowPointsMarkets, totalPoints } =
-    useMemo(() => {
-      const summedSupplyPointsMarkets =
-        summedSupplyPointsModeMain +
-        summedSupplyPointsModeNative +
-        summedSupplyPointsBaseMain;
-      const summedBorrowPointsMarkets =
-        summedBorrowPointsModeMain +
-        summedBorrowPointsModeNative +
-        summedBorrowPointsBaseMain;
+  const { totalPoints } = useMemo(() => {
+    const summedSupplyPointsMarkets =
+      summedSupplyPointsModeMain +
+      summedSupplyPointsModeNative +
+      summedSupplyPointsBaseMain;
+    const summedBorrowPointsMarkets =
+      summedBorrowPointsModeMain +
+      summedBorrowPointsModeNative +
+      summedBorrowPointsBaseMain;
 
-      return {
-        summedBorrowPointsMarkets,
-        summedSupplyPointsMarkets,
-        totalPoints: summedSupplyPointsMarkets + summedBorrowPointsMarkets
-      };
-    }, [
-      summedBorrowPointsModeMain,
-      summedBorrowPointsModeNative,
-      summedBorrowPointsBaseMain,
-      summedSupplyPointsModeMain,
-      summedSupplyPointsModeNative,
-      summedSupplyPointsBaseMain
-    ]);
+    return {
+      summedBorrowPointsMarkets,
+      summedSupplyPointsMarkets,
+      totalPoints: summedSupplyPointsMarkets + summedBorrowPointsMarkets
+    };
+  }, [
+    summedBorrowPointsModeMain,
+    summedBorrowPointsModeNative,
+    summedBorrowPointsBaseMain,
+    summedSupplyPointsModeMain,
+    summedSupplyPointsModeNative,
+    summedSupplyPointsBaseMain
+  ]);
 
   return (
     <div className="w-full lg:w-[70%] mx-auto">
