@@ -315,7 +315,9 @@ export default function Claim() {
                 src="/img/symbols/32/color/ion.png"
               />{' '}
               {/* It will be dynamic */}
-              <div className={`flex flex-col items-start justify-start gap-y-1`}>
+              <div
+                className={`flex flex-col items-start justify-start gap-y-1`}
+              >
                 <span>8387 ION</span>
                 <span className={` text-xs opacity-40`}>$1234</span>
               </div>
