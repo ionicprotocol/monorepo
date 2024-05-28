@@ -232,6 +232,11 @@ export default function Points() {
             loading: isLoadingSupplyPointsModeNative,
             name: 'Mode Native Market',
             points: summedSupplyPointsModeNative
+          },
+          {
+            loading: isLoadingSupplyPointsBaseMain,
+            name: 'Base Main Market',
+            points: summedSupplyPointsBaseMain
           }
         ].map((a, i) => (
           <div
@@ -263,6 +268,11 @@ export default function Points() {
             loading: isLoadingBorrowPointsModeNative,
             name: 'Mode Native Market',
             points: summedBorrowPointsModeNative
+          },
+          {
+            loading: isLoadingBorrowPointsBaseMain,
+            name: 'Base Main Market',
+            points: summedBorrowPointsBaseMain
           }
         ].map((a, i) => (
           <div
