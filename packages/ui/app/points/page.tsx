@@ -24,13 +24,27 @@ import {
   usePointsForSupplyModeNative
 } from '@ui/hooks/usePointsQueries';
 
+const pools: { [key: number]: { [key: number]: string } } = {
+  34443: {
+    0: 'Mode Main Market',
+    1: 'Mode Native Market'
+  },
+  8453: {
+    0: 'Base Main Market'
+  }
+};
+
 export default function Points() {
   const router = useRouter();
   const chainId = useChainId();
-  const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
-    '0',
-    chainId
-  );
+  const { data: modeMarketDataMain, isLoading: isLoadingModeMarketDataMain } =
+    useFusePoolData('0', chainId);
+  const {
+    data: modeMarketDataNative,
+    isLoading: isLoadingModeMarketDataNative
+  } = useFusePoolData('1', chainId);
+  const { data: baseMarketDataMain, isLoading: isLoadingBaseMarketDataMain } =
+    useFusePoolData('0', 8453);
   const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
   const {
     data: supplyPointsModeMain,
@@ -352,7 +366,9 @@ export default function Points() {
         <ResultHandler
           center
           isLoading={
-            isLoadingMarketData ||
+            isLoadingModeMarketDataMain ||
+            isLoadingModeMarketDataNative ||
+            isLoadingBaseMarketDataMain ||
             isLoadingSupplyPointsModeNative ||
             isLoadingBorrowPointsModeNative ||
             isLoadingSupplyPointsModeNative ||
@@ -383,76 +399,113 @@ export default function Points() {
               <h3 className={` `}>POINTS</h3>
               <h3 className={` `}>PERCENTAGE EARNINGS</h3>
             </div>
-            <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
-            >
+            {[
+              {
+                market: modeMarketDataMain,
+                points: summedSupplyPointsModeMain
+              },
+              {
+                market: modeMarketDataNative,
+                points: summedSupplyPointsModeNative
+              },
+              {
+                market: baseMarketDataMain,
+                points: summedSupplyPointsBaseMain
+              }
+            ].map(({ market, points }) => (
               <div
-                className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+                className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+                key={`supply-${market?.chainId}-${market?.id}`}
               >
-                <span
-                  className="h-4 w-4 rounded-full"
-                  style={{ backgroundColor: `#3bff89` }}
+                <div
+                  className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+                >
+                  <span
+                    className="h-4 w-4 rounded-full"
+                    style={{ backgroundColor: `#3bff89` }}
+                  />
+                  <span className={` `}>
+                    Supply - {market && pools[market.chainId][market.id]}
+                  </span>
+                </div>
+                <div className={`mb-2 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    AMOUNT:
+                  </span>
+                  ${millify(market?.totalSupplyBalanceFiat ?? 0)}
+                </div>
+                <div className={`mb-4 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    POINTS:
+                  </span>
+                  {points?.toLocaleString('en-US', {
+                    maximumFractionDigits: 0
+                  })}
+                </div>
+                <PercentMeter
+                  color="#3bff89"
+                  percent={
+                    parseFloat(
+                      (((points ?? 0) / totalPoints) * 100).toFixed(1)
+                    ) || 0
+                  }
                 />
-                <span className={` `}>Supply</span>
               </div>
-              <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  AMOUNT:
-                </span>
-                ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
-              </div>
-              <div className={`mb-4 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  POINTS:
-                </span>
-                {summedSupplyPointsMarkets.toLocaleString('en-US', {
-                  maximumFractionDigits: 0
-                })}
-              </div>
-              <PercentMeter
-                color="#3bff89"
-                percent={
-                  parseFloat(
-                    ((summedSupplyPointsMarkets / totalPoints) * 100).toFixed(1)
-                  ) || 0
-                }
-              />
-            </div>
-            <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
-            >
+            ))}
+
+            {[
+              {
+                market: modeMarketDataMain,
+                points: summedBorrowPointsModeMain
+              },
+              {
+                market: modeMarketDataNative,
+                points: summedBorrowPointsModeNative
+              },
+              {
+                market: baseMarketDataMain,
+                points: summedBorrowPointsBaseMain
+              }
+            ].map(({ market, points }) => (
               <div
-                className={`  flex gap-2 items-center justify-center  mb-2 md:mb-0`}
+                className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+                key={`borrow-${market?.chainId}-${market?.id}`}
               >
-                <span
-                  className="h-4 w-4 rounded-full"
-                  style={{ backgroundColor: `#f3fa96` }}
+                <div
+                  className={`  flex gap-2 items-center justify-center  mb-2 md:mb-0`}
+                >
+                  <span
+                    className="h-4 w-4 rounded-full"
+                    style={{ backgroundColor: `#f3fa96` }}
+                  />
+                  <span className={` `}>
+                    Borrow - {market && pools[market.chainId][market.id]}
+                  </span>
+                </div>
+                <div className={`mb-2 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    AMOUNT:
+                  </span>
+                  ${millify(market?.totalBorrowBalanceFiat ?? 0)}
+                </div>
+                <div className={`mb-4 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    POINTS:
+                  </span>
+                  {points?.toLocaleString('en-US', {
+                    maximumFractionDigits: 0
+                  })}
+                </div>
+                <PercentMeter
+                  color="#f3fa96"
+                  percent={
+                    parseFloat(
+                      (((points ?? 0) / totalPoints) * 100).toFixed(1)
+                    ) || 0
+                  }
                 />
-                <span className={` `}>Borrow</span>
               </div>
-              <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  AMOUNT:
-                </span>
-                ${millify(marketData?.totalBorrowBalanceFiat ?? 0)}
-              </div>
-              <div className={`mb-4 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  POINTS:
-                </span>
-                {summedBorrowPointsMarkets.toLocaleString('en-US', {
-                  maximumFractionDigits: 0
-                })}
-              </div>
-              <PercentMeter
-                color="#f3fa96"
-                percent={
-                  parseFloat(
-                    ((summedBorrowPointsMarkets / totalPoints) * 100).toFixed(1)
-                  ) || 0
-                }
-              />
-            </div>
+            ))}
           </>
         </ResultHandler>
       </div>
