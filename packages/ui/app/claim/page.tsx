@@ -1,12 +1,15 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { createClient } from '@supabase/supabase-js';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Confetti from 'react-confetti';
 import { useAccount, useSignMessage } from 'wagmi';
 
 // Create a single supabase client for interacting with your database
 
+import CountdownTimer from '../_components/claim/CountdownTimer';
+import SeasonSelector from '../_components/claim/SeasonSelector';
 import ConnectButton from '../_components/ConnectButton';
 import ResultHandler from '../_components/ResultHandler';
 
@@ -35,10 +38,29 @@ export default function Claim() {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [claimed, setClaimed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [dropdownSelectedSeason, setDropdownSelectedSeason] =
+    useState<number>(0);
   const [popup, setPopup] = useState<boolean>(false);
   const account = useAccount();
   const { signMessageAsync } = useSignMessage();
 
+  const newRef = useRef(null!);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const handleOutsideClick = (e: any) => {
+    //@ts-ignore
+    if (newRef.current && !newRef.current?.contains(e?.target)) {
+      setOpen(false);
+    }
+  };
   async function checkEligibility() {
     if (!account?.address) {
       throw new Error('No account address');
@@ -101,9 +123,9 @@ export default function Claim() {
 
   return (
     <div
-      className={`w-full bg-graylite dark:bg-grayone  flex overflow-x-hidden rounded-xl relative `}
+      className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
     >
-      <div className={`flex w-full  transition-all duration-500 ease-out `}>
+      <div className={`flex w-full transition-all duration-500 ease-out `}>
         <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wide md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
@@ -126,6 +148,7 @@ export default function Claim() {
           </div>
         </div>
       </div>
+
       {popup && (
         <div
           className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
@@ -231,6 +254,73 @@ export default function Claim() {
           </div>
         </div>
       )}
+      <div
+        className={`w-full  h-max grid md:grid-cols-2 grid-cols-1 gap-y-4 md:gap-y-0 gap-x-4 bg-darkone py-4`}
+      >
+        <div
+          className={`w-full min-h-40 rounded-xl bg-grayone py-2 px-4 flex flex-col `}
+        >
+          <p className={`font-semibold text-lg `}>General info</p>
+          <div className={` flex justify-between items-center gap-x-4 mt-8`}>
+            <div className={`flex flex-col w-full`}>
+              <span className={`opacity-40 text-xs `}>CHOOSE CAMPAIGN</span>
+              <SeasonSelector
+                dropdownSelectedSeason={dropdownSelectedSeason}
+                newRef={newRef}
+                open={open}
+                setDropdownSelectedSeason={setDropdownSelectedSeason}
+                setOpen={setOpen}
+              />
+            </div>
+            <div className={`flex flex-col w-full h-full`}>
+              <span className={`opacity-40 text-xs self-start`}>
+                VESTING PERIOD
+              </span>
+              <CountdownTimer dropdownSelectedSeason={dropdownSelectedSeason} />
+            </div>
+            <div className={`flex flex-col w-full h-full`}>
+              <span className={`opacity-40 text-xs self-start`}>
+                TOTAL TOKENS
+              </span>
+              <div className={`flex items-center justify-start my-auto gap-2`}>
+                <img
+                  alt="ion logo"
+                  className={`w-6 h-6`}
+                  src="/img/symbols/32/color/ion.png"
+                />
+                {/* It will be dynamic */}
+                <span>8387 ION</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className={`w-full min-h-40 rounded-xl bg-grayone py-2 px-4 flex flex-col items-start justify-start gap-0 `}
+        >
+          <p className={`font-semibold text-lg `}>Unlocked Tokens</p>
+          <div
+            className={`w-full flex items-start justify-start  my-auto gap-2 flex-col`}
+          >
+            <div className={`flex items-start w-full justify-start`}>
+              <img
+                alt="ion logo"
+                className={`w-6 h-6`}
+                src="/img/symbols/32/color/ion.png"
+              />{' '}
+              {/* It will be dynamic */}
+              <span>8387 ION</span>
+              <button
+                className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md`}
+              >
+                Claim
+              </button>
+            </div>
+            <p className={`opacity-40 text-xs text-start`}>
+              The tokens are gradually unlocked by 1% for 80 days (1% per day)
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
