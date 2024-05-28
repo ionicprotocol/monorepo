@@ -232,7 +232,7 @@ const getBorrowQuery = (
   )
   SELECT 
     address, 
-    SUM(points) AS points_per_market 
+    SUM(CASE WHEN points > 0 THEN points ELSE 0 END) AS points_per_market
   FROM (
     SELECT 
       address, 
