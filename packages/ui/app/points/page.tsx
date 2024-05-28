@@ -379,13 +379,14 @@ export default function Points() {
           <>
             <div className="w-full mb-2 md:mt-0">
               <FlatMap
+                colorData={['#3bff89', '#f3fa96']}
                 rewardsData={[
-                  summedSupplyPointsModeMain,
-                  summedSupplyPointsModeNative,
-                  summedSupplyPointsBaseMain,
-                  summedBorrowPointsModeMain,
-                  summedBorrowPointsModeNative,
-                  summedBorrowPointsBaseMain
+                  summedSupplyPointsModeMain +
+                    summedSupplyPointsModeNative +
+                    summedSupplyPointsBaseMain,
+                  summedBorrowPointsModeMain +
+                    summedBorrowPointsModeNative +
+                    summedBorrowPointsBaseMain
                 ]}
               />
             </div>
