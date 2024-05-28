@@ -341,12 +341,15 @@ const usePointsForSupplyModeMain = () => {
                 asset.multiplier,
                 asset.decimals
               )
+            },
+            {
+              method: 'POST'
             }
           );
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
@@ -382,12 +385,15 @@ const usePointsForBorrowModeMain = () => {
                   asset.multiplier,
                   asset.decimals
                 )
+              },
+              {
+                method: 'POST'
               }
             );
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
@@ -421,12 +427,15 @@ const usePointsForSupplyModeNative = () => {
                 asset.multiplier,
                 asset.decimals
               )
+            },
+            {
+              method: 'POST'
             }
           );
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
@@ -462,12 +471,15 @@ const usePointsForBorrowModeNative = () => {
                   asset.multiplier,
                   asset.decimals
                 )
+              },
+              {
+                method: 'POST'
               }
             );
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
@@ -501,12 +513,15 @@ const usePointsForSupplyBaseMain = () => {
                 asset.multiplier,
                 asset.decimals
               )
+            },
+            {
+              method: 'POST'
             }
           );
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
@@ -542,12 +557,15 @@ const usePointsForBorrowBaseMain = () => {
                   asset.multiplier,
                   asset.decimals
                 )
+              },
+              {
+                method: 'POST'
               }
             );
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
