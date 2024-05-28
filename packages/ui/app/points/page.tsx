@@ -153,23 +153,30 @@ export default function Points() {
 
     return 0;
   }, [borrowPointsBaseMain]);
-  const totalPoints = useMemo<number>(
-    () =>
-      summedSupplyPointsModeMain +
-      summedSupplyPointsModeNative +
-      summedSupplyPointsBaseMain +
-      summedBorrowPointsModeMain +
-      summedBorrowPointsModeNative +
-      summedBorrowPointsBaseMain,
-    [
+  const { summedSupplyPointsMarkets, summedBorrowPointsMarkets, totalPoints } =
+    useMemo(() => {
+      const summedSupplyPointsMarkets =
+        summedSupplyPointsModeMain +
+        summedSupplyPointsModeNative +
+        summedSupplyPointsBaseMain;
+      const summedBorrowPointsMarkets =
+        summedBorrowPointsModeMain +
+        summedBorrowPointsModeNative +
+        summedBorrowPointsBaseMain;
+
+      return {
+        summedBorrowPointsMarkets,
+        summedSupplyPointsMarkets,
+        totalPoints: summedSupplyPointsMarkets + summedBorrowPointsMarkets
+      };
+    }, [
       summedBorrowPointsModeMain,
       summedBorrowPointsModeNative,
       summedBorrowPointsBaseMain,
       summedSupplyPointsModeMain,
       summedSupplyPointsModeNative,
       summedSupplyPointsBaseMain
-    ]
-  );
+    ]);
 
   return (
     <div className="w-full lg:w-[70%] mx-auto">
@@ -398,7 +405,7 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedSupplyPointsModeMain.toLocaleString('en-US', {
+                {summedSupplyPointsMarkets.toLocaleString('en-US', {
                   maximumFractionDigits: 0
                 })}
               </div>
@@ -406,9 +413,7 @@ export default function Points() {
                 color="#3bff89"
                 percent={
                   parseFloat(
-                    ((summedSupplyPointsModeMain / totalPoints) * 100).toFixed(
-                      1
-                    )
+                    ((summedSupplyPointsMarkets / totalPoints) * 100).toFixed(1)
                   ) || 0
                 }
               />
@@ -435,7 +440,7 @@ export default function Points() {
                 <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                   POINTS:
                 </span>
-                {summedBorrowPointsModeMain.toLocaleString('en-US', {
+                {summedBorrowPointsMarkets.toLocaleString('en-US', {
                   maximumFractionDigits: 0
                 })}
               </div>
@@ -443,9 +448,7 @@ export default function Points() {
                 color="#f3fa96"
                 percent={
                   parseFloat(
-                    ((summedBorrowPointsModeMain / totalPoints) * 100).toFixed(
-                      1
-                    )
+                    ((summedBorrowPointsMarkets / totalPoints) * 100).toFixed(1)
                   ) || 0
                 }
               />
