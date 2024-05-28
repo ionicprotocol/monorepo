@@ -40,7 +40,7 @@ export default function Claim() {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [dropdownSelectedSeason, setDropdownSelectedSeason] =
-    useState<number>(0);
+    useState<number>(1);
   const [popup, setPopup] = useState<boolean>(false);
   const [popupV2, setPopupV2] = useState<boolean>(false);
   const [agreement, setAgreement] = useState(false);
@@ -325,9 +325,9 @@ export default function Claim() {
               </div>
               <button
                 className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md ${
-                  dropdownSelectedSeason === 1 && 'opacity-40'
+                  dropdownSelectedSeason === 0 && 'opacity-40'
                 }`}
-                onClick={() => dropdownSelectedSeason === 0 && setPopupV2(true)}
+                onClick={() => dropdownSelectedSeason === 1 && setPopupV2(true)}
               >
                 Claim
               </button>
@@ -338,7 +338,7 @@ export default function Claim() {
           </div>
         </div>
       </div>
-      {popupV2 && dropdownSelectedSeason === 0 && (
+      {popupV2 && dropdownSelectedSeason === 1 && (
         <div
           className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
         >
@@ -361,7 +361,7 @@ export default function Claim() {
             <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
               <div className={`flex w-full gap-2 mb-2`}>
                 <input
-                  className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-[#dffe00] checked:bg-[#dffe00] checked:before:bg-[#dffe00] hover:before:opacity-10`}
+                  className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
                   id="checkme"
                   onChange={(e) => setAgreement(e.target.checked)}
                   type="checkbox"
@@ -372,7 +372,7 @@ export default function Claim() {
                 </span>
               </div>
               <button
-                className={`bg-[#dffe00] disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
+                className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
                 disabled={!agreement}
               >
                 Instant Claim
