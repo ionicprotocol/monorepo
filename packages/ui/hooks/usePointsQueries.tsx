@@ -604,7 +604,8 @@ const useLeaderboard = (page: number) => {
         ? await Promise.all(
             response.data.map(async (row) => {
               const ens = await getEnsName(config, {
-                address: row.address as Address
+                address: row.address as Address,
+                chainId: config.chains[0].id
               });
               return { ...row, ens };
             })
