@@ -155,6 +155,7 @@ export const multipliers: Record<
           mode: 1
         },
         market: 'ionmode_modenative',
+        multiplier: 0.035,
         supply: {
           ionic: 3,
           mode: 3
