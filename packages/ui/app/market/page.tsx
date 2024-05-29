@@ -56,7 +56,6 @@ export default function Market() {
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
-
   const chain = querychain ? querychain : 34443;
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(

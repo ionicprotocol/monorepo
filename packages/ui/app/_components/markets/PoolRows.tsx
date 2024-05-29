@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 // import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+// import { useRouter } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 // import { mode } from 'viem/chains';
@@ -12,6 +13,7 @@ import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 import { useStore } from 'ui/store/Store';
 // import { useAccount } from 'wagmi';
 
@@ -275,418 +277,438 @@ const PoolRows = ({
   selectedPoolId
 }: IRows) => {
   const { address } = useMultiIonic();
+  // const btnref = useRef<boolean>();
   // const searchParams = useSearchParams();
   // const querychain = searchParams.get('chain');
-  const router = useRouter();
+  // const router = useRouter();
   // console.log(querychain);
   const setPassedData = useStore((state) => state.setPassedData);
   function sendPassedData() {
+    // console.log({totalBorrowing});
     setPassedData({
       availableAPR: parseInt(supplyAPR),
       borrowAPR: parseInt(borrowAPR),
       collateralAPR: collateralFactor,
       lendingSupply: parseInt(supplyBalance),
-      totalBorrows: parseInt(totalBorrowing),
+      totalBorrows: extractAndConvertStringTOValue(totalBorrowing).value2,
       totalCollateral: 123456
     });
-    router.push(`/market/details/${asset}`);
+    // console.log(e.currentTarget);
+    // if (btnref.current) return;
+    // router.push(`/market/details/${asset}`);
   }
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
-        membership && `border ${chainColors(dropdownSelectedChain).border}`
-      }`}
-      onClick={() => sendPassedData()}
+      className={`w-full h-full lg:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 `}
     >
-      {membership && (
-        <span
-          className={`absolute top-[-9px] right-[-15px] px-2 ${
-            chainColors(dropdownSelectedChain).text
-          } ${chainColors(dropdownSelectedChain).bg} rounded-lg`}
-        >
-          Collateral
-        </span>
-      )}
+      <Link
+        className={`w-full  lg:grid grid-cols-16 gap-x-1 col-span-16 py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative cursor-pointer ${
+          membership && `border ${chainColors(dropdownSelectedChain).border}`
+        }`}
+        href={`/market/details/${asset}`}
+        onClick={() => sendPassedData()}
+      >
+        {membership && (
+          <span
+            className={`absolute top-[-9px] right-[-15px] px-2 ${
+              chainColors(dropdownSelectedChain).text
+            } ${chainColors(dropdownSelectedChain).bg} rounded-lg`}
+          >
+            Collateral
+          </span>
+        )}
 
-      <div
-        className={`col-span-2 flex justify-center items-center mb-2 lg:mb-0  flex gap-2 items-center justify-center  `}
-      >
-        <img
-          alt={asset}
-          className="h-7"
-          src={logo}
-        />
-        <h3 className={` `}>{getAssetName(asset, dropdownSelectedChain)}</h3>
-      </div>
-      <h3
-        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-      >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          SUPPLY BALANCE:
-        </span>
-        {supplyBalance}
-      </h3>
-      <h3
-        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-      >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          TOTAL SUPPLIED:
-        </span>
-        {totalSupplied}
-      </h3>
-      <h3
-        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-      >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          BORROW BALANCE:
-        </span>
-        {borrowBalance}
-      </h3>
-      <h3
-        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-      >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          TOTAL BORROWING:
-        </span>
-        {totalBorrowing}
-      </h3>
-      <h3
-        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-      >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          SUPPLY APR:
-        </span>
-        <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
-          {supplyAPR}
-          <span
-            className={`${chainColors(dropdownSelectedChain).text} ${
-              chainColors(dropdownSelectedChain).bg
-            } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
-          >
-            + POINTS <i className="popover-hint">i</i>
-          </span>
-          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
-            + TURTLE <i className="popover-hint">i</i>
-          </span>
-          <div
-            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-              chainColors(dropdownSelectedChain).border
-            } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
-          >
-            Base APR: {supplyAPR}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.supply?.ionic && (
-              <>
-                <div className="flex pt-4">
-                  <img
-                    alt=""
-                    className="size-4 rounded mr-1"
-                    src="/img/ionic-sq.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                      asset
-                    ]?.supply?.ionic
-                  }
-                  x Ionic Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 rounded mr-1"
-                    src="/images/turtle-ionic.png"
-                  />{' '}
-                  + Turtle Ionic Points
-                </div>
-              </>
-            )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.supply?.mode && (
-              <>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                      asset
-                    ]?.supply?.mode
-                  }
-                  x Mode Points
-                </div>
-                <div className="flex">
-                  {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                    ?.supply?.mode && (
-                    <>
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/turtle-mode.png"
-                      />{' '}
-                      + Turtle Mode Points
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.supply?.etherfi && (
-              <>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/etherfi.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                      asset
-                    ]?.supply?.etherfi
-                  }
-                  x ether.fi Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/turtle-etherfi.png"
-                  />{' '}
-                  + Turtle ether.fi Points
-                </div>
-              </>
-            )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.supply?.renzo && (
-              <>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/renzo.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                      asset
-                    ]?.supply?.renzo
-                  }
-                  x Renzo Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/turtle-renzo.png"
-                  />{' '}
-                  + Turtle Renzo Points
-                </div>
-              </>
-            )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.supply?.kelp && (
-              <>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/kelpmiles.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                      asset
-                    ]?.supply?.kelp
-                  }
-                  x Kelp Miles
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/turtle-renzo.png"
-                  />{' '}
-                  + Turtle Kelp Points
-                </div>
-              </>
-            )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.supply?.eigenlayer && (
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 mr-1"
-                  src="/images/eigen.png"
-                />{' '}
-                + EigenLayer Points
-              </div>
-            )}
-          </div>
+        <div
+          className={`col-span-2 flex justify-center items-center mb-2 lg:mb-0  flex gap-2 items-center justify-center  `}
+        >
+          <img
+            alt={asset}
+            className="h-7"
+            src={logo}
+          />
+          <h3 className={` `}>{getAssetName(asset, dropdownSelectedChain)}</h3>
         </div>
-      </h3>
-      <h3
-        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
-      >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          BORROW APR:
-        </span>
-        <div className="popover-container flex lg:flex-col items-center cursor-pointer">
-          {borrowAPR}
-          <span
-            className={`${chainColors(dropdownSelectedChain).text} ${
-              chainColors(dropdownSelectedChain).bg
-            } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
-          >
-            + POINTS <i className="popover-hint">i</i>
+        <h3
+          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        >
+          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+            SUPPLY BALANCE:
           </span>
-          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
-            + TURTLE <i className="popover-hint">i</i>
+          {supplyBalance}
+        </h3>
+        <h3
+          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        >
+          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+            TOTAL SUPPLIED:
           </span>
-          <div
-            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-              chainColors(dropdownSelectedChain).border
-            } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
-          >
-            Base APR: {borrowAPR}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow && (
-              <>
-                <div className="flex pt-4">
-                  <img
-                    alt=""
-                    className="size-4 rounded mr-1"
-                    src="/img/ionic-sq.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                      asset
-                    ]?.borrow?.ionic
-                  }
-                  x Ionic Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 rounded mr-1"
-                    src="/images/turtle-ionic.png"
-                  />{' '}
-                  + Turtle Ionic Points
-                </div>
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.mode && (
-                  <>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
-                      />{' '}
-                      +{' '}
-                      {
-                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                          asset
-                        ]?.borrow?.mode
-                      }
-                      x Mode Points
-                    </div>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/turtle-mode.png"
-                      />{' '}
-                      + Turtle Mode Points
-                    </div>
-                  </>
-                )}
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.etherfi && (
-                  <>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/etherfi.png"
-                      />{' '}
-                      +{' '}
-                      {
-                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                          asset
-                        ]?.borrow?.etherfi
-                      }
-                      x ether.fi Points
-                    </div>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/turtle-etherfi.png"
-                      />{' '}
-                      + Turtle ether.fi Points
-                    </div>
-                  </>
-                )}
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.kelp && (
-                  <>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/kelpmiles.png"
-                      />{' '}
-                      +{' '}
-                      {
-                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                          asset
-                        ]?.borrow?.kelp
-                      }
-                      x Kelp Miles
-                    </div>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/turtle-renzo.png"
-                      />{' '}
-                      + Turtle Kelp Points
-                    </div>
-                  </>
-                )}
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.eigenlayer && (
+          {totalSupplied}
+        </h3>
+        <h3
+          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        >
+          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+            BORROW BALANCE:
+          </span>
+          {borrowBalance}
+        </h3>
+        <h3
+          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        >
+          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+            TOTAL BORROWING:
+          </span>
+          {totalBorrowing}
+        </h3>
+        <h3
+          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        >
+          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+            SUPPLY APR:
+          </span>
+          <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
+            {supplyAPR}
+            <span
+              className={`${chainColors(dropdownSelectedChain).text} ${
+                chainColors(dropdownSelectedChain).bg
+              } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+            >
+              + POINTS <i className="popover-hint">i</i>
+            </span>
+            <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+              + TURTLE <i className="popover-hint">i</i>
+            </span>
+            <div
+              className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
+                chainColors(dropdownSelectedChain).border
+              } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+            >
+              Base APR: {supplyAPR}
+              {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.ionic && (
+                <>
+                  <div className="flex pt-4">
+                    <img
+                      alt=""
+                      className="size-4 rounded mr-1"
+                      src="/img/ionic-sq.png"
+                    />{' '}
+                    +{' '}
+                    {
+                      multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                        asset
+                      ]?.supply?.ionic
+                    }
+                    x Ionic Points
+                  </div>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 rounded mr-1"
+                      src="/images/turtle-ionic.png"
+                    />{' '}
+                    + Turtle Ionic Points
+                  </div>
+                </>
+              )}
+              {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.mode && (
+                <>
                   <div className="flex">
                     <img
                       alt=""
                       className="size-4 mr-1"
-                      src="/images/eigen.png"
+                      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
                     />{' '}
-                    + EigenLayer Points
+                    +{' '}
+                    {
+                      multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                        asset
+                      ]?.supply?.mode
+                    }
+                    x Mode Points
                   </div>
-                )}
-              </>
-            )}
+                  <div className="flex">
+                    {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                      asset
+                    ]?.supply?.mode && (
+                      <>
+                        <img
+                          alt=""
+                          className="size-4 mr-1"
+                          src="/images/turtle-mode.png"
+                        />{' '}
+                        + Turtle Mode Points
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+              {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.etherfi && (
+                <>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 mr-1"
+                      src="/images/etherfi.png"
+                    />{' '}
+                    +{' '}
+                    {
+                      multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                        asset
+                      ]?.supply?.etherfi
+                    }
+                    x ether.fi Points
+                  </div>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 mr-1"
+                      src="/images/turtle-etherfi.png"
+                    />{' '}
+                    + Turtle ether.fi Points
+                  </div>
+                </>
+              )}
+              {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.renzo && (
+                <>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 mr-1"
+                      src="/images/renzo.png"
+                    />{' '}
+                    +{' '}
+                    {
+                      multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                        asset
+                      ]?.supply?.renzo
+                    }
+                    x Renzo Points
+                  </div>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 mr-1"
+                      src="/images/turtle-renzo.png"
+                    />{' '}
+                    + Turtle Renzo Points
+                  </div>
+                </>
+              )}
+              {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.kelp && (
+                <>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 mr-1"
+                      src="/images/kelpmiles.png"
+                    />{' '}
+                    +{' '}
+                    {
+                      multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                        asset
+                      ]?.supply?.kelp
+                    }
+                    x Kelp Miles
+                  </div>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 mr-1"
+                      src="/images/turtle-renzo.png"
+                    />{' '}
+                    + Turtle Kelp Points
+                  </div>
+                </>
+              )}
+              {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.eigenlayer && (
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 mr-1"
+                    src="/images/eigen.png"
+                  />{' '}
+                  + EigenLayer Points
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </h3>
-      <h3
-        className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        </h3>
+        <h3
+          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        >
+          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+            BORROW APR:
+          </span>
+          <div className="popover-container flex lg:flex-col items-center cursor-pointer">
+            {borrowAPR}
+            <span
+              className={`${chainColors(dropdownSelectedChain).text} ${
+                chainColors(dropdownSelectedChain).bg
+              } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+            >
+              + POINTS <i className="popover-hint">i</i>
+            </span>
+            <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+              + TURTLE <i className="popover-hint">i</i>
+            </span>
+            <div
+              className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
+                chainColors(dropdownSelectedChain).border
+              } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+            >
+              Base APR: {borrowAPR}
+              {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.borrow && (
+                <>
+                  <div className="flex pt-4">
+                    <img
+                      alt=""
+                      className="size-4 rounded mr-1"
+                      src="/img/ionic-sq.png"
+                    />{' '}
+                    +{' '}
+                    {
+                      multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                        asset
+                      ]?.borrow?.ionic
+                    }
+                    x Ionic Points
+                  </div>
+                  <div className="flex">
+                    <img
+                      alt=""
+                      className="size-4 rounded mr-1"
+                      src="/images/turtle-ionic.png"
+                    />{' '}
+                    + Turtle Ionic Points
+                  </div>
+                  {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.mode && (
+                    <>
+                      <div className="flex">
+                        <img
+                          alt=""
+                          className="size-4 mr-1"
+                          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
+                        />{' '}
+                        +{' '}
+                        {
+                          multipliers[dropdownSelectedChain]?.[
+                            selectedPoolId
+                          ]?.[asset]?.borrow?.mode
+                        }
+                        x Mode Points
+                      </div>
+                      <div className="flex">
+                        <img
+                          alt=""
+                          className="size-4 mr-1"
+                          src="/images/turtle-mode.png"
+                        />{' '}
+                        + Turtle Mode Points
+                      </div>
+                    </>
+                  )}
+                  {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.etherfi && (
+                    <>
+                      <div className="flex">
+                        <img
+                          alt=""
+                          className="size-4 mr-1"
+                          src="/images/etherfi.png"
+                        />{' '}
+                        +{' '}
+                        {
+                          multipliers[dropdownSelectedChain]?.[
+                            selectedPoolId
+                          ]?.[asset]?.borrow?.etherfi
+                        }
+                        x ether.fi Points
+                      </div>
+                      <div className="flex">
+                        <img
+                          alt=""
+                          className="size-4 mr-1"
+                          src="/images/turtle-etherfi.png"
+                        />{' '}
+                        + Turtle ether.fi Points
+                      </div>
+                    </>
+                  )}
+                  {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.kelp && (
+                    <>
+                      <div className="flex">
+                        <img
+                          alt=""
+                          className="size-4 mr-1"
+                          src="/images/kelpmiles.png"
+                        />{' '}
+                        +{' '}
+                        {
+                          multipliers[dropdownSelectedChain]?.[
+                            selectedPoolId
+                          ]?.[asset]?.borrow?.kelp
+                        }
+                        x Kelp Miles
+                      </div>
+                      <div className="flex">
+                        <img
+                          alt=""
+                          className="size-4 mr-1"
+                          src="/images/turtle-renzo.png"
+                        />{' '}
+                        + Turtle Kelp Points
+                      </div>
+                    </>
+                  )}
+                  {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.eigenlayer && (
+                    <div className="flex">
+                      <img
+                        alt=""
+                        className="size-4 mr-1"
+                        src="/images/eigen.png"
+                      />{' '}
+                      + EigenLayer Points
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </h3>
+        <h3
+          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        >
+          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+            COLLATERAL FACTOR:
+          </span>
+          {collateralFactor}%
+        </h3>
+        {/* <Link
+        href={`/market/details/${asset}`}
+        className={` w-[50%] mx-auto col-span-2 flex lg:block justify-center items-center rounded-lg border text-white border-white py-1.5 `}
+        >
+        Details
+      </Link> */}
+      </Link>
+      <div
+        className={` col-span-4 items-center justify-center gap-1 grid grid-cols-2 text-[10px] h-8 my-auto`}
+        // onClick={() => (btnref.current = true)}
+        // id="btnref"
       >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          COLLATERAL FACTOR:
-        </span>
-        {collateralFactor}%
-      </h3>
-      <div className={` col-span-4 flex items-center justify-center gap-3`}>
         {address ? (
           <>
             <button
-              className={`rounded-lg bg-accent text-black py-1.5 px-3 uppercase`}
+              className={`rounded-lg bg-accent text-black py-1.5 px-1 w-full h-full  uppercase`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
@@ -701,9 +723,11 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg ${chainColors(dropdownSelectedChain).bg} ${
+              className={`rounded-lg truncate w-full h-full ${
+                chainColors(dropdownSelectedChain).bg
+              } ${
                 chainColors(dropdownSelectedChain).text
-              } py-1.5 px-3 uppercase`}
+              } py-1.5 px-1 uppercase`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
@@ -724,12 +748,6 @@ const PoolRows = ({
           </div>
         )}
       </div>
-      {/* <Link
-        href={`/market/details/${asset}`}
-        className={` w-[50%] mx-auto col-span-2 flex lg:block justify-center items-center rounded-lg border text-white border-white py-1.5 `}
-      >
-        Details
-      </Link> */}
     </div>
   );
 };
