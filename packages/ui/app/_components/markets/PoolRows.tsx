@@ -345,9 +345,13 @@ const PoolRows = ({
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+          <a
+            className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1"
+            href="https://turtle.club/dashboard/?ref=IONIC"
+            target="_blank"
+          >
             + TURTLE <i className="popover-hint">i</i>
-          </span>
+          </a>
           <div
             className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
               chainColors(dropdownSelectedChain).border
@@ -523,9 +527,13 @@ const PoolRows = ({
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+          <a
+            className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1"
+            href="https://turtle.club/dashboard/?ref=IONIC"
+            target="_blank"
+          >
             + TURTLE <i className="popover-hint">i</i>
-          </span>
+          </a>
           <div
             className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
               chainColors(dropdownSelectedChain).border
