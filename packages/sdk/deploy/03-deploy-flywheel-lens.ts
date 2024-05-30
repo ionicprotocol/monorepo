@@ -1,8 +1,6 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import * as helpers from "@nomicfoundation/hardhat-network-helpers";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, ethers }) => {
-  await helpers.mine();
   console.log("Starting deployment of the IonicFlywheelLensRouter");
   const { deployer } = await getNamedAccounts();
 
