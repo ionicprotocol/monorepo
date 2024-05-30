@@ -6,7 +6,7 @@ interface IFlatMap {
 }
 const FlatMap = ({
   rewardsData = [10, 30, 30, 15, 5],
-  colorData = ['#3bff89ff', '#f3fa96ff', '#f29c3fff', '#ff3863ff', '#c768f2ff']
+  colorData = ['#3bff89ff', '#f3fa96', '#f3fa96', '#f3fa96', '#f3fa96']
 }: IFlatMap) => {
   const totalSum: number = rewardsData.reduce((acc, curr) => acc + curr, 0);
   function calculatePercentages(numbers: number[], total: number): number[] {
