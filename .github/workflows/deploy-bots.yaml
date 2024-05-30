@@ -86,6 +86,9 @@ jobs:
       - name: Lint `liquidator`
         run: yarn workspace @ionicprotocol/liquidator lint
 
+      - name: Lint `liquidator_base`
+        run: yarn workspace @ionicprotocol/liquidator_base lint  
+
       - name: Lint `oracles-monitor`
         run: yarn workspace @ionicprotocol/oracles-monitor lint
 
