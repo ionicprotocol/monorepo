@@ -45,6 +45,7 @@
     "build:liquidity-monitor": "yarn workspace @ionicprotocol/liquidity-monitor build",
     "build:pyth-updater": "yarn workspace @ionicprotocol/pyth-updater build",
     "build:deploy:liquidator": "yarn build:sdk && yarn build:liquidator",
+    "build:deploy:liquidator_base": "yarn build:sdk && yarn build:liquidator_base",
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
     "build:deploy:pyth-updater": "yarn build:sdk && yarn build:pyth-updater",
     "build:deploy:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && yarn build:functions",
