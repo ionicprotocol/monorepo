@@ -111,7 +111,7 @@ liquidator-base-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.base.org" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=8453 \
-				ghcr.io/ionicprotocol/ionic-liquidato-base:${IMAGE_TAG} packages/bots/liquidator_base/build/test/run.js
+				ghcr.io/ionicprotocol/ionic-liquidator-base:${IMAGE_TAG} packages/bots/liquidator_base/build/test/run.js
 pyth-smoke-test:
 	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
