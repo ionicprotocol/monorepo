@@ -87,7 +87,7 @@ jobs:
 
       - name: Lint `liquidator`
         run: yarn workspace @ionicprotocol/liquidator lint
-      ##base
+      ##base bot 
       - name: Lint `liquidator_base`
         run: yarn workspace @ionicprotocol/liquidator_base lint  
 
