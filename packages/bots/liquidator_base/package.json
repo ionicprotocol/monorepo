@@ -1,5 +1,5 @@
 {
-  "name": "@ionicprotocol/liquidator",
+  "name": "@ionicprotocol/liquidator_base",
   "version": "1.0.2",
   "description": "Liquidates unhealthy Midas pool loans.",
   "main": "index.js",
