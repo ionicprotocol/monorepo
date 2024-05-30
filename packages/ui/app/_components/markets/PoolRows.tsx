@@ -325,7 +325,7 @@ const PoolRows = ({
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >
-            +<span className={`underline`}>TURTLE</span>
+            +TURTLE
             <img
               alt="external-link"
               className={`w-2.5 h-2.5`}
