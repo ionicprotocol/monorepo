@@ -48,7 +48,7 @@ COPY packages/chains /tmp/build/packages/chains
 COPY packages/bots/liquidator_base /tmp/build/packages/bots/liquidator_base
 
 # ----- build -----
-RUN yarn build:deploy:liquidator
+RUN yarn build:deploy:liquidator_base
 
 # ----------------------------------------
 # Copy files to the deployment image.
