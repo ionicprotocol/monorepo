@@ -1994,6 +1994,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@ionicprotocol/liquidator_base@workspace:packages/bots/liquidator_base":
+  version: 0.0.0-use.local
+  resolution: "@ionicprotocol/liquidator_base@workspace:packages/bots/liquidator_base"
+  dependencies:
+    "@ethersproject/contracts": "npm:^5.6.0"
+    "@ethersproject/providers": "npm:^5.6.0"
+    "@ionicprotocol/chains": "workspace:*"
+    "@ionicprotocol/sdk": "workspace:*"
+    "@ionicprotocol/types": "workspace:*"
+    "@sendgrid/mail": "npm:^8.1.3"
+    "@types/aws-lambda": "npm:^8.10.110"
+    "@types/eslint": "npm:^8.4.3"
+    "@types/node": "npm:^18.0.0"
+    "@types/rimraf": "npm:^3"
+    "@typescript-eslint/eslint-plugin": "npm:^5.30.0"
+    "@typescript-eslint/parser": "npm:^5.30.0"
+    axios: "npm:^0.21.1"
+    discord-webhook-node: "npm:^1.1.8"
+    dotenv: "npm:^16.0.0"
+    eslint: "npm:8.18.0"
+    eslint-config-prettier: "npm:^8.5.0"
+    eslint-import-resolver-typescript: "npm:^3.1.2"
+    eslint-plugin-import: "npm:^2.26.0"
+    eslint-plugin-prettier: "npm:^4.2.1"
+    ethers: "npm:^5.6.5"
+    pino: "npm:^8.0.0"
+    pino-pretty: "npm:^9.1.1"
+    prettier: "npm:2.7.1"
+    rimraf: "npm:^3.0.2"
+    ts-node: "npm:^10.7.0"
+    ts-node-dev: "npm:^2.0.0"
+    typescript: "npm:4.7.4"
+  languageName: unknown
+  linkType: soft
+
 "@ionicprotocol/liquidity-monitor@workspace:packages/monitors/liquidity":
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/liquidity-monitor@workspace:packages/monitors/liquidity"
