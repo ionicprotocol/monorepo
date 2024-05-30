@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prod": "NODE_ENV=production node build/server.js",
+    "build:liquidator_base": "yarn workspace @ionicprotocol/liquidator_base run build",
+    "build:deploy:liquidator_base": "yarn build:sdk && yarn build:liquidator_base",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
     "staging": "NODE_ENV=staging node build/server.js",
