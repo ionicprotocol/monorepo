@@ -164,10 +164,10 @@ const PoolRows = ({
               + POINTS <i className="popover-hint">i</i>
             </span>
             <a
-            className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1"
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
+              className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1"
+              href="https://turtle.club/dashboard/?ref=IONIC"
+              target="_blank"
+            >
               + TURTLE <i className="popover-hint">i</i>
             </a>
             <div
@@ -347,10 +347,10 @@ const PoolRows = ({
               + POINTS <i className="popover-hint">i</i>
             </span>
             <a
-            className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1"
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
+              className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1"
+              href="https://turtle.club/dashboard/?ref=IONIC"
+              target="_blank"
+            >
               + TURTLE <i className="popover-hint">i</i>
             </a>
             <div
