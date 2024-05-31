@@ -109,7 +109,8 @@ export default function Claim() {
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wide md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
             <button
-              className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
+              className={`md:w-52 w-max disabled:opacity-40 bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
+              disabled={true}
               onClick={() => setPopup(true)}
             >
               Check Eligibility
