@@ -14,6 +14,7 @@ import {
   Tooltip
 } from 'chart.js';
 import Link from 'next/link';
+// import { Link } from '@tanstack/react-router'
 import { usePathname, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
@@ -145,7 +146,7 @@ const Asset = ({ params }: IProp) => {
             </Link>
             <Link
               className={` ${info ? null : 'text-white/40'}`}
-              href={`/market/details/${params.asset}?info=borrow`}
+              href={`/market/details/${params.asset}?info=BORROW`}
             >
               Borrow Info
             </Link>
@@ -160,14 +161,16 @@ const Asset = ({ params }: IProp) => {
               />
             </div>
 
-            <div
-              className={`w-[40%] flex gap-5 items-start justify-start border-r border-white/50`}
-            >
+            <div className={`w-[40%] flex gap-5 items-start justify-start `}>
               <div
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
-                <p className={`text-white/60 text-[10px]`}>TOTAL SUPPLIED</p>
-                <p className={`font-semibold`}>${assetdetails.borrowingT}</p>
+                <p className={`text-white/60 text-[10px]`}>
+                  TOTAL {info ? 'Borrowed' : 'Supplied'}
+                </p>
+                <p className={`font-semibold`}>
+                  ${info ? passedData?.totalBorrows : passedData?.lendingSupply}
+                </p>
                 <p className={`font-semibold text-[8px] text-white/30`}>
                   ${assetdetails.borrowingT} of ${assetdetails.borrowingT}
                 </p>
@@ -177,11 +180,13 @@ const Asset = ({ params }: IProp) => {
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
                 <p className={`text-white/60 text-[10px]`}>APR</p>
-                <p className={`font-semibold`}>${assetdetails.bAPR}</p>
+                <p className={`font-semibold`}>
+                  ${info ? passedData?.borrowAPR : passedData?.availableAPR}
+                </p>
                 {/* this neeeds to be changed */}
               </div>
             </div>
-            <div className={`w-[40%] flex gap-5 items-start justify-start`}>
+            {/* <div className={`w-[40%] flex gap-5 items-start justify-start`}>
               <div
                 className={`flex flex-col  items-center justify-center gap-y-1`}
               >
@@ -223,15 +228,20 @@ const Asset = ({ params }: IProp) => {
                   <p className={`font-semibold`}>{assetdetails.bAPR}% </p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
-          <div className={` w-full h-28`}>
+          <div className={`relative w-full h-28`}>
             <Line
               data={chartdata}
               options={chartoptions}
               updateMode="resize"
             />
+            <div
+              className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60  `}
+            >
+              <span>Comming Soon</span>
+            </div>
           </div>
         </div>
         <div
@@ -322,14 +332,19 @@ const Asset = ({ params }: IProp) => {
             className={`text-white/60 w-full flex flex-col items-start  text-xs `}
           >
             <p>Utilisation Rate</p>
-            <p className={`font-semibold text-lg text-white`}>65%</p>
+            <p className={`font-semibold text-lg text-white`}>--</p>
           </div>
-          <div className={` w-full h-28`}>
+          <div className={`relative w-full h-28`}>
             <Line
               data={chartdata2}
               options={chartoptions2}
               updateMode="resize"
             />
+            <div
+              className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60  `}
+            >
+              <span>Comming Soon</span>
+            </div>
           </div>
         </div>
       </div>

@@ -497,7 +497,7 @@ const PoolRows = ({
       </Link> */}
       </Link>
       <div
-        className={` col-span-4 items-center justify-center gap-1 grid grid-cols-2 text-[10px] h-8 my-auto`}
+        className={` col-span-4 items-center justify-center gap-1 grid grid-cols-2 font-semibold text-[10px] h-8 my-auto`}
         // onClick={() => (btnref.current = true)}
         // id="btnref"
       >
