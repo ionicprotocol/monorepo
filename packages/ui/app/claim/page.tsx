@@ -4,14 +4,23 @@
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useRef, useState } from 'react';
 import Confetti from 'react-confetti';
-import { useAccount, useSignMessage } from 'wagmi';
+import {
+  useAccount,
+  useChainId,
+  usePublicClient,
+  useSignMessage,
+  useWalletClient
+} from 'wagmi';
 
 // Create a single supabase client for interacting with your database
-
+// import { simulateContract } from 'viem/contract'
 import CountdownTimer from '../_components/claim/CountdownTimer';
 import SeasonSelector from '../_components/claim/SeasonSelector';
 import ConnectButton from '../_components/ConnectButton';
 import ResultHandler from '../_components/ResultHandler';
+import { claimAbi, claimContractAddress } from '../_constants/claim';
+
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 const supabase = createClient(
   'https://uoagtjstsdrjypxlkuzr.supabase.co',
@@ -35,6 +44,8 @@ type User = {
 
 export default function Claim() {
   const [eligibility, setEligibility] = useState<boolean | null>(null);
+  const [currentClaimable, setCurrentClaimable] = useState<number>(0);
+  const [eligibleForToken, setEligibleForToken] = useState<number>(0);
   const [user, setUser] = useState<User | undefined>(undefined);
   const [claimed, setClaimed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,8 +57,73 @@ export default function Claim() {
   const [agreement, setAgreement] = useState(false);
   const account = useAccount();
   const { signMessageAsync } = useSignMessage();
-
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const chainId = useChainId();
+  const { address, isConnected } = useAccount();
   const newRef = useRef(null!);
+
+  useEffect(() => {
+    async function getVested() {
+      try {
+        if (!isConnected) return;
+        await handleSwitchOriginChain(34443, chainId);
+        const totalTokenData = await publicClient?.readContract({
+          abi: claimAbi,
+          address: claimContractAddress,
+          args: [address],
+          functionName: 'vests'
+        });
+
+        const claimable = await publicClient?.readContract({
+          abi: claimAbi,
+          address: claimContractAddress,
+          args: [address],
+          functionName: 'claimable'
+        });
+
+        const total = totalTokenData as [bigint];
+
+        setCurrentClaimable(Number(claimable) as number);
+        setEligibleForToken(Number(total[0]));
+
+        // eslint-disable-next-line no-console
+        console.log(totalTokenData, claimable);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
+      }
+    }
+    getVested();
+  }, [address, chainId, isConnected, publicClient]);
+
+  async function claim() {
+    try {
+      if (!isConnected) return;
+      await handleSwitchOriginChain(34443, chainId);
+      //@ts-ignore
+      const { request } = await publicClient?.simulateContract({
+        abi: claimAbi,
+        account: walletClient?.account,
+        address: claimContractAddress,
+        args: [],
+        functionName: 'claim'
+      });
+
+      const tx = await walletClient?.writeContract(request);
+      // eslint-disable-next-line no-console
+      console.log('Transaction Hash --->>>', tx);
+      if (!tx) return;
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction --->>>', transaction);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
@@ -263,8 +339,10 @@ export default function Claim() {
           className={`w-full min-h-40 rounded-xl bg-grayone py-2 px-4 flex flex-col `}
         >
           <p className={`font-semibold text-lg `}>General info</p>
-          <div className={` flex justify-between items-center gap-x-4 mt-8`}>
-            <div className={`flex flex-col w-full`}>
+          <div
+            className={` grid grid-cols-5 justify-between items-center md:gap-x-6 gap-x-4 mt-8`}
+          >
+            <div className={`flex flex-col w-full  col-span-2`}>
               <span className={`opacity-40 text-xs `}>CHOOSE CAMPAIGN</span>
               <SeasonSelector
                 dropdownSelectedSeason={dropdownSelectedSeason}
@@ -274,18 +352,18 @@ export default function Claim() {
                 setOpen={setOpen}
               />
             </div>
-            <div className={`flex flex-col w-full h-full`}>
+            <div className={`flex flex-col w-full h-full col-span-1`}>
               <span className={`opacity-40 text-xs self-start`}>
                 VESTING PERIOD
               </span>
               <CountdownTimer dropdownSelectedSeason={dropdownSelectedSeason} />
             </div>
-            <div className={`flex flex-col w-full h-full`}>
+            <div className={`flex flex-col  w-full h-full col-span-2`}>
               <span className={`opacity-40 text-xs self-start`}>
                 TOTAL TOKENS
               </span>
               <div
-                className={`flex  relative items-center justify-start my-auto gap-2`}
+                className={`flex max-w-max relative items-center justify-start my-auto gap-2`}
               >
                 <img
                   alt="ion logo"
@@ -293,12 +371,15 @@ export default function Claim() {
                   src="/img/symbols/32/color/ion.png"
                 />
                 {/* It will be dynamic */}
-                <span>8387 ION</span>
-                <span
+                <span className={`truncate`}>
+                  {(eligibleForToken / 10 ** 18).toFixed(2)}
+                </span>
+                ION
+                {/* <span
                   className={`absolute -bottom-5 text-xs opacity-40 left-7`}
                 >
                   $1234
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
@@ -320,8 +401,8 @@ export default function Claim() {
               <div
                 className={`flex flex-col items-start justify-start gap-y-1`}
               >
-                <span>8387 ION</span>
-                <span className={` text-xs opacity-40`}>$1234</span>
+                <span>{(currentClaimable / 10 ** 18).toFixed(2)} ION</span>
+                {/* <span className={` text-xs opacity-40`}>$1234</span> */}
               </div>
               <button
                 className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md ${
@@ -352,7 +433,8 @@ export default function Claim() {
               src="/img/assets/close.png"
             />
             <p className="w-full tracking-wide text-lg font-semibold mb-4">
-              You can now instantly claim 234 ION
+              You can now instantly claim{' '}
+              {(currentClaimable / 10 ** 18).toFixed(2)} ION
             </p>
             <p className={`opacity-40 text-xs `}>
               To receive the full Airdrop amount, please wait till the end of
@@ -374,6 +456,7 @@ export default function Claim() {
               <button
                 className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
                 disabled={!agreement}
+                onClick={() => claim()}
               >
                 Instant Claim
               </button>

@@ -16,7 +16,7 @@ const CountdownTimer = ({ dropdownSelectedSeason }: IProp) => {
 
   const [timeLeft, setTimeLeft] = useState<ITime>(
     calculateTimeLeft(
-      dropdownSelectedSeason === 0 ? diffSeason1 : diffS1presale
+      dropdownSelectedSeason === 1 ? diffSeason1 : diffS1presale
     )
   );
 
@@ -24,7 +24,7 @@ const CountdownTimer = ({ dropdownSelectedSeason }: IProp) => {
     setTimeout(() => {
       setTimeLeft(
         calculateTimeLeft(
-          dropdownSelectedSeason === 0 ? diffSeason1 : diffS1presale
+          dropdownSelectedSeason === 1 ? diffSeason1 : diffS1presale
         )
       );
     }, 1000);
