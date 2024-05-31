@@ -126,9 +126,9 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           eigenlayer: true,
-          etherfi: 3,
+          etherfi: 2,
           ionic: 2,
-          mode: 3
+          mode: 2
         }
       },
       wrsETH: {
