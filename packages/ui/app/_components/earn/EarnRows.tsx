@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 export type EarnRow = {
@@ -31,15 +30,13 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             </span>
             <div className={` flex ml-auto md:ml-0 `}>
               {asset.map((coin: string, idx: number) => (
-                <Image
+                <img
                   alt="logos"
                   className={` w-5 h-5  top-0 left-0 ${
                     idx !== 0 && ' -translate-x-1'
                   } `}
-                  height="32"
                   key={idx}
                   src={`/img/symbols/32/color/${coin}.png`}
-                  width="32"
                 />
               ))}
             </div>
@@ -66,12 +63,10 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             <span className="text-white/40 text-xs font-semibold md:hidden">
               NETWORK
             </span>
-            <Image
+            <img
               alt="logos"
               className={` w-5 h-5  md:mx-auto ml-auto top-0 left-0 `}
-              height="20"
               src={`/img/logo/${network}.png`}
-              width="20"
             />
           </div>
           <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
@@ -94,22 +89,18 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             >
               Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
               <div className="flex pt-4">
-                <Image
+                <img
                   alt=""
                   className="size-4 rounded mr-1"
-                  height="20"
                   src="/img/ionic-sq.png"
-                  width="20"
                 />{' '}
                 + 3x Ionic Points
               </div>
               <div className="flex">
-                <Image
+                <img
                   alt=""
                   className="size-4 rounded mr-1"
-                  height="20"
                   src="/images/turtle-ionic.png"
-                  width="20"
                 />{' '}
                 + Turtle Ionic Points
               </div>
@@ -131,12 +122,10 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             target="_blank"
           >
             <span>DEPOSIT</span>
-            <Image
+            <img
               alt="external-link"
               className={`w-3 h-3`}
-              height="20"
               src="https://img.icons8.com/material-outlined/24/external-link.png"
-              width="20"
             />
           </Link>
         </div>
