@@ -4,7 +4,6 @@ import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 // import { mode } from 'viem/chains';
 
-import { multipliers } from '../../../utils/multipliers';
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
@@ -12,6 +11,219 @@ import { PopupMode } from '../popup/page';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 // import { useAccount } from 'wagmi';
+
+type Multipliers = {
+  eigenlayer?: boolean;
+  etherfi?: number;
+  ionic?: number;
+  kelp?: number;
+  mode?: number;
+  renzo?: number;
+};
+
+const multipliers: Record<
+  number,
+  Record<
+    string,
+    Record<string, Record<'borrow' | 'supply', Multipliers | undefined>>
+  >
+> = {
+  34443: {
+    '0': {
+      'M-BTC': {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      STONE: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 2,
+          mode: 2
+        }
+      },
+      USDC: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      USDT: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      WBTC: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      WETH: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      ezETH: {
+        borrow: undefined,
+        supply: {
+          eigenlayer: true,
+          ionic: 2,
+          mode: 2,
+          renzo: 2
+        }
+      },
+      'weETH.mode': {
+        borrow: {
+          eigenlayer: true,
+          etherfi: 1,
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          eigenlayer: true,
+          etherfi: 3,
+          ionic: 2,
+          mode: 3
+        }
+      },
+      wrsETH: {
+        borrow: {
+          eigenlayer: true,
+          ionic: 3,
+          kelp: 1,
+          mode: 1
+        },
+        supply: {
+          eigenlayer: true,
+          ionic: 2,
+          kelp: 2,
+          mode: 2
+        }
+      }
+    },
+    '1': {
+      MODE: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 3,
+          mode: 3
+        }
+      },
+      USDC: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      USDT: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      },
+      WETH: {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        supply: {
+          ionic: 1.5,
+          mode: 2
+        }
+      }
+    }
+  },
+  8453: {
+    '0': {
+      AERO: {
+        borrow: {
+          ionic: 3
+        },
+        supply: {
+          ionic: 3
+        }
+      },
+      USDC: {
+        borrow: {
+          ionic: 3
+        },
+        supply: {
+          ionic: 3
+        }
+      },
+      WETH: {
+        borrow: {
+          ionic: 3
+        },
+        supply: {
+          ionic: 3
+        }
+      },
+      cbETH: {
+        borrow: {
+          ionic: 3
+        },
+        supply: {
+          ionic: 3
+        }
+      },
+      ezETH: {
+        borrow: undefined,
+        supply: {
+          eigenlayer: true,
+          ionic: 3,
+          renzo: 2
+        }
+      },
+      wstETH: {
+        borrow: {
+          ionic: 3
+        },
+        supply: {
+          ionic: 3
+        }
+      }
+    }
+  }
+};
 
 interface IRows {
   asset: string;
@@ -133,18 +345,9 @@ const PoolRows = ({
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <a
-            className="text-darkone bg-accent rounded-lg flex items-center justify-center gap-0.5 w-20 ml-1 lg:ml-0 text-center mt-1"
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
-            + TURTLE
-            <img
-              alt="external-link"
-              className={`w-2.5 h-2.5`}
-              src="https://img.icons8.com/material-outlined/24/external-link.png"
-            />
-          </a>
+          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+            + TURTLE <i className="popover-hint">i</i>
+          </span>
           <div
             className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
               chainColors(dropdownSelectedChain).border
@@ -320,18 +523,9 @@ const PoolRows = ({
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <a
-            className="text-darkone bg-accent rounded-lg flex items-center justify-center gap-0.5 w-20 ml-1 lg:ml-0 text-center mt-1"
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
-            +TURTLE
-            <img
-              alt="external-link"
-              className={`w-2.5 h-2.5`}
-              src="https://img.icons8.com/material-outlined/24/external-link.png"
-            />
-          </a>
+          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+            + TURTLE <i className="popover-hint">i</i>
+          </span>
           <div
             className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
               chainColors(dropdownSelectedChain).border
