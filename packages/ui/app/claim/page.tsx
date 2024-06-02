@@ -178,7 +178,10 @@ export default function Claim() {
                 />
                 {/* It will be dynamic */}
                 <span className={`truncate`}>
-                  {Number(formatEther(eligibleForToken)).toFixed(2)}
+                  {Number(formatEther(eligibleForToken)).toLocaleString(
+                    undefined,
+                    { maximumFractionDigits: 0 }
+                  )}
                 </span>
                 ION
                 {/* <span
