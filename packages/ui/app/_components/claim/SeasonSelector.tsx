@@ -24,11 +24,11 @@ export default function SeasonSelector({
     {
       id: 0,
       name: 'S1 Pre-Sale'
-    },
-    {
-      id: 1,
-      name: 'Airdrop SZN 1'
     }
+    // {
+    //   id: 1,
+    //   name: 'Airdrop SZN 1'
+    // }
   ];
   return (
     <div
