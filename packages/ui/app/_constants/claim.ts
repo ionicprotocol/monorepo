@@ -1,5 +1,5 @@
 export const claimContractAddress =
-  '0xDA061A5D6fc9F3D40f6505ce38AEb8793A29eDE8';
+  '0x731D22ed440a5BCfC140440AF441B76Baa536821';
 
 export const claimAbi = [
   {
