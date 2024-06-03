@@ -12,13 +12,14 @@ import {
 
 // Create a single supabase client for interacting with your database
 // import { simulateContract } from 'viem/contract'
-import CountdownTimer from '../_components/claim/CountdownTimer';
-import SeasonSelector from '../_components/claim/SeasonSelector';
-import { claimAbi, claimContractAddress } from '../_constants/claim';
+import { claimAbi, claimContractAddress } from '../../constants/claim';
 import {
   PublicSaleAbi,
   PublicSaleContractAddress
-} from '../_constants/publicsale';
+} from '../../constants/publicsale';
+import CountdownTimer from '../_components/claim/CountdownTimer';
+import SeasonSelector from '../_components/claim/SeasonSelector';
+import ResultHandler from '../_components/ResultHandler';
 
 import { DROPDOWN } from '@ui/constants/index';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -35,6 +36,7 @@ export default function Claim() {
     BigInt(0)
   );
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
     useState<number>(DROPDOWN.AirdropSZN1);
   const [popupV2, setPopupV2] = useState<boolean>(false);
@@ -119,6 +121,7 @@ export default function Claim() {
         return;
       }
       await handleSwitchOriginChain(34443, chainId);
+      setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: claimAbi,
         account: walletClient?.account,
@@ -132,11 +135,18 @@ export default function Claim() {
       const transaction = await publicClient?.waitForTransactionReceipt({
         hash: tx
       });
+      setLoading(false);
+      setPopupV2(false);
       // eslint-disable-next-line no-console
       console.log('Transaction --->>>', transaction);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);
+      setLoading(false);
+      setPopupV2(false);
+    } finally {
+      setLoading(false);
+      setPopupV2(false);
     }
   }
   async function claimPublicSale() {
@@ -146,6 +156,7 @@ export default function Claim() {
         return;
       }
       await handleSwitchOriginChain(34443, chainId);
+      setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: PublicSaleAbi,
         account: walletClient?.account,
@@ -159,11 +170,18 @@ export default function Claim() {
       const transaction = await publicClient?.waitForTransactionReceipt({
         hash: tx
       });
+      setLoading(false);
+      setPopupV2(false);
       // eslint-disable-next-line no-console
       console.log('Transaction --->>>', transaction);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);
+      setLoading(false);
+      setPopupV2(false);
+    } finally {
+      setLoading(false);
+      setPopupV2(false);
     }
   }
 
@@ -300,15 +318,11 @@ export default function Claim() {
                 </span>
               </div>
               <button
-                className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md ${
-                  (dropdownSelectedCampaign === DROPDOWN.PublicSale ||
-                    currentClaimable === BigInt(0)) &&
-                  'opacity-40'
-                }`}
-                disabled={
-                  dropdownSelectedCampaign === DROPDOWN.PublicSale ||
-                  currentClaimable === BigInt(0)
-                }
+                className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md `}
+                // disabled={
+                //   dropdownSelectedCampaign === DROPDOWN.PublicSale ||
+                //   currentClaimable === BigInt(0)
+                // }
                 onClick={() => {
                   setPopupV2(true);
                 }}
@@ -338,69 +352,71 @@ export default function Claim() {
           </div>
         </div>
       </div>
-      {popupV2 && dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 && (
+      {popupV2 && (
         <div
           className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
         >
           <div
             className={`md:w-[30%] w-[70%] bg-grayone py-8 px-8 rounded-xl  flex flex-col items-center justify-center min-h-[20vh] relative text-center `}
           >
-            <img
-              alt="close"
-              className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
-              onClick={() => setPopupV2(false)}
-              src="/img/assets/close.png"
-            />
-            <p className="w-full tracking-wide text-lg font-semibold mb-4">
-              You can now instantly claim{' '}
-              {Number(
-                formatEther(
-                  dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                    ? currentClaimable
-                    : publicClaimable
-                )
-              ).toFixed(2)}{' '}
-              ION
-            </p>
-            <p className={`opacity-40 text-xs `}>
-              To receive the full Airdrop amount, please wait till the end of
-              the vesting period
-            </p>
-            <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
-              <div className={`flex w-full gap-2 mb-2`}>
-                <input
-                  className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
-                  id="checkme"
-                  onChange={(e) => setAgreement(e.target.checked)}
-                  type="checkbox"
-                />
-                <span>
-                  I understand and agree to forfeit{' '}
-                  {Number(
-                    formatEther(
-                      dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                        ? currentClaimable
-                        : publicClaimable
-                    )
-                  ).toFixed(2)}{' '}
-                  vested $ION, in favour of instantly receiving tokens now
-                </span>
+            <ResultHandler isLoading={loading}>
+              <img
+                alt="close"
+                className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
+                onClick={() => setPopupV2(false)}
+                src="/img/assets/close.png"
+              />
+              <p className="w-full tracking-wide text-lg font-semibold mb-4">
+                You can now instantly claim{' '}
+                {Number(
+                  formatEther(
+                    dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                      ? currentClaimable
+                      : publicClaimable
+                  )
+                ).toFixed(2)}{' '}
+                ION
+              </p>
+              <p className={`opacity-40 text-xs `}>
+                To receive the full Airdrop amount, please wait till the end of
+                the vesting period
+              </p>
+              <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
+                <div className={`flex w-full gap-2 mb-2`}>
+                  <input
+                    className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
+                    id="checkme"
+                    onChange={(e) => setAgreement(e.target.checked)}
+                    type="checkbox"
+                  />
+                  <span>
+                    I understand and agree to forfeit{' '}
+                    {Number(
+                      formatEther(
+                        dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                          ? currentClaimable
+                          : publicClaimable
+                      )
+                    ).toFixed(2)}{' '}
+                    vested $ION, in favour of instantly receiving tokens now
+                  </span>
+                </div>
+                <button
+                  className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
+                  disabled={!agreement}
+                  onClick={() => {
+                    if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
+                      claimAirdrop();
+                    }
+                    if (dropdownSelectedCampaign == DROPDOWN.PublicSale) {
+                      claimPublicSale();
+                    }
+                  }}
+                >
+                  Instant Claim
+                </button>
               </div>
-              <button
-                className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
-                disabled={!agreement}
-                onClick={() => {
-                  if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
-                    claimAirdrop();
-                  }
-                  if (dropdownSelectedCampaign == DROPDOWN.PublicSale) {
-                    claimPublicSale();
-                  }
-                }}
-              >
-                Instant Claim
-              </button>
-            </div>
+            </ResultHandler>
           </div>
         </div>
       )}
