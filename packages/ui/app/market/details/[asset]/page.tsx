@@ -16,7 +16,7 @@ import {
 import Link from 'next/link';
 // import { Link } from '@tanstack/react-router'
 import { usePathname, useSearchParams } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 
 //-------------------Interfaces------------
@@ -57,6 +57,8 @@ import {
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 import { useStore } from 'ui/store/Store';
+import { INFO } from '@ui/constants/index';
+import { PopupMode } from 'ui/app/_components/popup/page';
 
 const Asset = ({ params }: IProp) => {
   //here we need to make a api to get the data of a certain asset (we can also check the current user with the help of wagmi)
@@ -74,10 +76,40 @@ const Asset = ({ params }: IProp) => {
     lendingT: 65655
   };
 
-  const passedData = useStore((state) => state.passedData);
-
+  // const passedData = useStore((state) => state.passedData);
+  const [info, setInfo] = useState<number>(INFO.BORROW);
   const searchParams = useSearchParams();
-  const info = searchParams.get('info');
+  const availableAPR = searchParams.get('availableAPR');
+  const borrowAPR = searchParams.get('borrowAPR');
+  const collateralAPR = searchParams.get('collateralAPR');
+  const lendingSupply = searchParams.get('lendingSupply');
+  const totalBorrows = searchParams.get('totalBorrows');
+  const [popupMode, setPopupMode] = useState<PopupMode>();
+  // const info = searchParams.get('info');
+  // console.log(info);
+
+  // const [poolData, setPoolData] = useState<PoolData>();
+  // const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
+  //   pools[0].id,
+  //   pools[0].chain
+  // );
+  // const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
+  //   pools[1].id,
+  //   pools[1].chain
+  // );
+  // const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
+  //   pools[2].id,
+  //   pools[2].chain
+  // );
+
+  // const selectedMarketData = useMemo<MarketData | undefined>(
+  //   () =>
+  //     poolData?.assets.find(
+  //       (_asset) => _asset.underlyingSymbol === selectedSymbol
+  //     ),
+  //   [selectedSymbol, poolData]
+  // );
+
   return (
     <div className={` pb-10 `}>
       <div
@@ -109,22 +141,22 @@ const Asset = ({ params }: IProp) => {
         <div className={`w-full flex items-center gap-4`}>
           <div className={`flex flex-col items-start justify-center  gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Lending Supply</p>
-            <p className={`font-semibold`}>${passedData?.lendingSupply}</p>
+            <p className={`font-semibold`}>${lendingSupply}</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Available APR</p>
-            <p className={`font-semibold`}>{passedData?.availableAPR}%</p>
+            <p className={`font-semibold`}>{availableAPR}%</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Total Borrows</p>
-            <p className={`font-semibold`}>${passedData?.totalBorrows}</p>
+            <p className={`font-semibold`}>${totalBorrows}</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Borrowing APR</p>
-            <p className={`font-semibold`}>{passedData?.borrowAPR}%</p>
+            <p className={`font-semibold`}>{borrowAPR}%</p>
             {/* this neeeds to be changed */}
           </div>
         </div>
@@ -138,18 +170,23 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`flex  justify-center gap-4 px-4 py-2 font-bold text-base `}
           >
-            <Link
-              className={` ${info ? 'text-white/40' : null}`}
-              href={`/market/details/${params.asset}`}
+            <div
+              className={`cursor-pointer ${
+                info !== INFO.SUPPLY ? 'text-white/40' : null
+              }`}
+              onClick={() => setInfo(INFO.SUPPLY)}
+              // href={`${pathname}${params.asset}`}
             >
               Supply Info
-            </Link>
-            <Link
-              className={` ${info ? null : 'text-white/40'}`}
-              href={`/market/details/${params.asset}?info=BORROW`}
+            </div>
+            <div
+              className={` cursor-pointer ${
+                info !== INFO.BORROW ? 'text-white/40' : null
+              }`}
+              onClick={() => setInfo(INFO.BORROW)}
             >
               Borrow Info
-            </Link>
+            </div>
           </div>
 
           <div className={`w-full flex items-center justify-start gap-5`}>
@@ -166,10 +203,10 @@ const Asset = ({ params }: IProp) => {
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
                 <p className={`text-white/60 text-[10px]`}>
-                  TOTAL {info ? 'Borrowed' : 'Supplied'}
+                  TOTAL {info === INFO.BORROW ? 'Borrowed' : 'Supplied'}
                 </p>
                 <p className={`font-semibold`}>
-                  ${info ? passedData?.totalBorrows : passedData?.lendingSupply}
+                  ${info === INFO.BORROW ? totalBorrows : lendingSupply}
                 </p>
                 <p className={`font-semibold text-[8px] text-white/30`}>
                   ${assetdetails.borrowingT} of ${assetdetails.borrowingT}
@@ -181,7 +218,7 @@ const Asset = ({ params }: IProp) => {
               >
                 <p className={`text-white/60 text-[10px]`}>APR</p>
                 <p className={`font-semibold`}>
-                  ${info ? passedData?.borrowAPR : passedData?.availableAPR}
+                  ${info === INFO.BORROW ? borrowAPR : availableAPR}
                 </p>
                 {/* this neeeds to be changed */}
               </div>
@@ -263,7 +300,7 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
-            <span> 568793 USDC</span>
+            <span> {lendingSupply} USDC</span>
             <Link
               className={`rounded-lg bg-accent text-sm text-black py-1 px-3`}
               href={`${pathname}?popmode=SUPPLY`}
@@ -274,7 +311,7 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`text-white/60 w-full flex items-center justify-between text-[10px] `}
           >
-            $568793
+            ${lendingSupply}
           </div>
           <p
             className={`text-white/60 w-full flex items-center justify-between text-sm mt-3`}
@@ -284,7 +321,7 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
-            <span> 786 USDC</span>
+            <span> {totalBorrows} USDC</span>
             <Link
               className={`rounded-lg bg-graylite text-sm  text-white/50 py-1 px-3`}
               href={`${pathname}?popmode=BORROW`}
@@ -295,7 +332,7 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`text-white/60 w-full flex items-center justify-between text-[10px] `}
           >
-            $867
+            ${totalBorrows}
           </div>
           <div
             className={`flex my-4 items-center justify-center w-full py-2 px-3 rounded-xl border border-[#f3fa96ff] text-[#f3fa96ff]`}
@@ -349,6 +386,23 @@ const Asset = ({ params }: IProp) => {
         </div>
       </div>
       {/* {popmode && <Popup mode={popmode} />} */}
+      {/* {popupMode && selectedMarketData && poolData && (
+        <Popup
+          closePopup={() => setPopupMode(undefined)}
+          comptrollerAddress={poolData.comptroller}
+          loopMarkets={loopMarkets}
+          mode={popupMode}
+          selectedMarketData={selectedMarketData}
+        />
+      )}
+
+      {swapOpen && (
+        <Swap
+          close={() => setSwapOpen(false)}
+          dropdownSelectedChain={dropdownSelectedChain}
+          selectedChain={chainId}
+        />
+      )} */}
     </div>
   );
 };

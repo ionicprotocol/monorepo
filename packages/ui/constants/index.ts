@@ -27,7 +27,10 @@ export const LIQUIDATION_INCENTIVE = {
   MAX: 50,
   MIN: 0
 };
-
+export const INFO = {
+  BORROW: 0,
+  SUPPLY: 1
+};
 export const LOAN_TO_VALUE = {
   DEFAULT: 50,
   MAX: 90,

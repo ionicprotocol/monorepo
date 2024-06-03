@@ -14,7 +14,7 @@ import { PopupMode } from '../popup/page';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
-import { useStore } from 'ui/store/Store';
+// import { useStore } from 'ui/store/Store';
 // import { useAccount } from 'wagmi';
 
 type Multipliers = {
@@ -282,21 +282,21 @@ const PoolRows = ({
   // const querychain = searchParams.get('chain');
   // const router = useRouter();
   // console.log(querychain);
-  const setPassedData = useStore((state) => state.setPassedData);
-  function sendPassedData() {
-    // console.log({totalBorrowing});
-    setPassedData({
-      availableAPR: parseInt(supplyAPR),
-      borrowAPR: parseInt(borrowAPR),
-      collateralAPR: collateralFactor,
-      lendingSupply: parseInt(supplyBalance),
-      totalBorrows: extractAndConvertStringTOValue(totalBorrowing).value2,
-      totalCollateral: 123456
-    });
-    // console.log(e.currentTarget);
-    // if (btnref.current) return;
-    // router.push(`/market/details/${asset}`);
-  }
+  // const setPassedData = useStore((state) => state.setPassedData);
+  // function sendPassedData() {
+  //   // console.log({totalBorrowing});
+  //   setPassedData({
+  //     availableAPR: parseInt(supplyAPR),
+  //     borrowAPR: parseInt(borrowAPR),
+  //     collateralAPR: collateralFactor,
+  //     lendingSupply: parseInt(supplyBalance),
+  //     totalBorrows: extractAndConvertStringTOValue(totalBorrowing).value2,
+  //     totalCollateral: 123456
+  //   });
+  //   // console.log(e.currentTarget);
+  //   // if (btnref.current) return;
+  //   // router.push(`/market/details/${asset}`);
+  // }
   return (
     <div
       className={`w-full h-full lg:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 `}
@@ -305,8 +305,18 @@ const PoolRows = ({
         className={`w-full  lg:grid grid-cols-16 gap-x-1 col-span-16 py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative cursor-pointer ${
           membership && `border ${chainColors(dropdownSelectedChain).border}`
         }`}
-        href={`/market/details/${asset}`}
-        onClick={() => sendPassedData()}
+        href={{
+          pathname: `/market/details/${asset}`,
+          query: {
+            availableAPR: parseInt(supplyAPR),
+            borrowAPR: parseInt(borrowAPR),
+            collateralAPR: collateralFactor,
+            lendingSupply: parseInt(supplyBalance),
+            totalBorrows: extractAndConvertStringTOValue(totalBorrowing).value2,
+            totalCollateral: 123456
+          }
+        }}
+        // onClick={() => sendPassedData()}
       >
         {membership && (
           <span
@@ -319,7 +329,7 @@ const PoolRows = ({
         )}
 
         <div
-          className={`col-span-2 flex justify-center items-center mb-2 lg:mb-0  flex gap-2 items-center justify-center  `}
+          className={`col-span-2 mb-2 lg:mb-0  flex gap-2 items-center justify-center  `}
         >
           <img
             alt={asset}
