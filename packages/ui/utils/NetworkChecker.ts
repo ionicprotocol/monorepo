@@ -1,4 +1,5 @@
 import { switchChain } from '@wagmi/core';
+
 import { wagmiConfig } from './connectors';
 
 export const handleSwitchOriginChain = async (
@@ -12,7 +13,7 @@ export const handleSwitchOriginChain = async (
       });
       return true;
     }
-    if(selectedDropdownChain === walletsChain){
+    if (selectedDropdownChain === walletsChain) {
       return true;
     }
   } catch (err) {
