@@ -199,7 +199,18 @@ export default function Claim() {
       setOpen(false);
     }
   };
-
+  // console.log(
+  //   Number(
+  //     formatEther(
+  //       dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+  //         ? currentClaimable
+  //         : publicClaimable
+  //     )
+  //   ).toLocaleString(undefined, {
+  //     maximumFractionDigits: 2
+  //   }),
+  //   publicClaimable
+  // );
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
@@ -307,22 +318,22 @@ export default function Claim() {
                 <span>
                   {Number(
                     formatEther(
-                      dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                      dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
                         ? currentClaimable
                         : publicClaimable
                     )
                   ).toLocaleString(undefined, {
                     maximumFractionDigits: 2
                   })}{' '}
+                  {/* {Number(publicClaimable)} */}
                   ION
                 </span>
               </div>
               <button
-                className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md `}
-                // disabled={
-                //   dropdownSelectedCampaign === DROPDOWN.PublicSale ||
-                //   currentClaimable === BigInt(0)
-                // }
+                className={`bg-accent text-darkone py-1  ml-auto px-10 rounded-md disabled:opacity-40 `}
+                disabled={
+                  publicClaimable == BigInt(0) || currentClaimable === BigInt(0)
+                }
                 onClick={() => {
                   setPopupV2(true);
                 }}
