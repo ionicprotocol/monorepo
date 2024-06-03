@@ -331,9 +331,9 @@ export default function Claim() {
               </div>
               <button
                 className={`bg-accent text-darkone py-1  ml-auto px-10 rounded-md disabled:opacity-40 `}
-                disabled={
-                  publicClaimable == BigInt(0) || currentClaimable === BigInt(0)
-                }
+                // disabled={
+                //   publicClaimable == BigInt(0) || currentClaimable === BigInt(0)
+                // }
                 onClick={() => {
                   setPopupV2(true);
                 }}
