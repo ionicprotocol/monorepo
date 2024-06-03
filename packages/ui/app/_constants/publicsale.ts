@@ -1,7 +1,6 @@
-export const claimContractAddress =
-  '0xa7BC89F9Bcd2E6565c250182767f20e2aC89bc7B';
-
-export const claimAbi = [
+export const PublicSaleContractAddress =
+  '0x731D22ed440a5BCfC140440AF441B76Baa536821';
+export const PublicSaleAbi = [
   {
     inputs: [
       {
@@ -134,6 +133,25 @@ export const claimAbi = [
   {
     inputs: [],
     name: 'duration',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_user',
+        type: 'address'
+      }
+    ],
+    name: 'getClaimedAmount',
     outputs: [
       {
         internalType: 'uint256',
@@ -303,11 +321,6 @@ export const claimAbi = [
         internalType: 'uint256',
         name: 'claimedAmount',
         type: 'uint256'
-      },
-      {
-        internalType: 'bool',
-        name: 'isClaimed',
-        type: 'bool'
       }
     ],
     stateMutability: 'view',

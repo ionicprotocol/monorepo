@@ -15,16 +15,32 @@ import {
 import CountdownTimer from '../_components/claim/CountdownTimer';
 import SeasonSelector from '../_components/claim/SeasonSelector';
 import { claimAbi, claimContractAddress } from '../_constants/claim';
+import {
+  PublicSaleAbi,
+  PublicSaleContractAddress
+} from '../_constants/publicsale';
 
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+export const DropDown = {
+  AirdropSZN1: 1,
+  PublicSale: 0
+};
+
 export default function Claim() {
   const [currentClaimable, setCurrentClaimable] = useState(BigInt(0));
+  const [publicClaimable, setPublicClaimable] = useState(BigInt(0));
   const [eligibleForToken, setEligibleForToken] = useState(BigInt(0));
+  const [publicSaleEligibleToken, setPublicSaleEligibleToken] = useState(
+    BigInt(0)
+  );
   const [alreadyClaimed, setAlreadyClaimed] = useState(BigInt(0));
+  const [publicSaleAlreadyClaimed, setPublicSaleAlreadyClaimed] = useState(
+    BigInt(0)
+  );
   const [open, setOpen] = useState<boolean>(false);
-  const [dropdownSelectedSeason, setDropdownSelectedSeason] =
-    useState<number>(0);
+  const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
+    useState<number>(DropDown.AirdropSZN1);
   const [popupV2, setPopupV2] = useState<boolean>(false);
   const [agreement, setAgreement] = useState(false);
   const publicClient = usePublicClient();
@@ -59,7 +75,7 @@ export default function Claim() {
         setAlreadyClaimed(total[1]);
 
         // eslint-disable-next-line no-console
-        console.log(totalTokenData, claimable);
+        // console.log(totalTokenData, claimable);
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log(err);
@@ -68,7 +84,39 @@ export default function Claim() {
     getVested();
   }, [address, chainId, isConnected, publicClient]);
 
-  async function claim() {
+  useEffect(() => {
+    async function getPublicSale() {
+      try {
+        if (!isConnected) return;
+        await handleSwitchOriginChain(34443, chainId);
+        const totalTokenData = await publicClient?.readContract({
+          abi: PublicSaleAbi,
+          address: PublicSaleContractAddress,
+          args: [address],
+          functionName: 'vests'
+        });
+
+        const claimable = await publicClient?.readContract({
+          abi: PublicSaleAbi,
+          address: PublicSaleContractAddress,
+          args: [address],
+          functionName: 'claimable'
+        });
+
+        const total = totalTokenData as [bigint, bigint];
+        // console.log({ total, claimable }, claimable.toString());
+        setPublicClaimable(claimable as bigint);
+        setPublicSaleEligibleToken(total[0]);
+        setPublicSaleAlreadyClaimed(total[1]);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
+      }
+    }
+    getPublicSale();
+  }, [address, chainId, isConnected, publicClient]);
+
+  async function claimAirdrop() {
     try {
       if (!isConnected) {
         console.error('Not connected');
@@ -79,6 +127,33 @@ export default function Claim() {
         abi: claimAbi,
         account: walletClient?.account,
         address: claimContractAddress,
+        args: [],
+        functionName: 'claim'
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction Hash --->>>', tx);
+      if (!tx) return;
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction --->>>', transaction);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+    }
+  }
+  async function claimPublicSale() {
+    try {
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      await handleSwitchOriginChain(34443, chainId);
+      const tx = await walletClient!.writeContract({
+        abi: PublicSaleAbi,
+        account: walletClient?.account,
+        address: PublicSaleContractAddress,
         args: [],
         functionName: 'claim'
       });
@@ -151,10 +226,10 @@ export default function Claim() {
             <div className={`flex flex-col w-full  col-span-2`}>
               <span className={`opacity-40 text-xs `}>CHOOSE CAMPAIGN</span>
               <SeasonSelector
-                dropdownSelectedSeason={dropdownSelectedSeason}
+                dropdownSelectedCampaign={dropdownSelectedCampaign}
                 newRef={newRef}
                 open={open}
-                setDropdownSelectedSeason={setDropdownSelectedSeason}
+                setDropdownSelectedCampaign={setDropdownSelectedCampaign}
                 setOpen={setOpen}
               />
             </div>
@@ -162,7 +237,9 @@ export default function Claim() {
               <span className={`opacity-40 text-xs self-start`}>
                 VESTING PERIOD
               </span>
-              <CountdownTimer dropdownSelectedSeason={dropdownSelectedSeason} />
+              <CountdownTimer
+                dropdownSelectedCampaign={dropdownSelectedCampaign}
+              />
             </div>
             <div className={`flex flex-col  w-full h-full col-span-2`}>
               <span className={`opacity-40 text-xs self-start`}>
@@ -178,10 +255,13 @@ export default function Claim() {
                 />
                 {/* It will be dynamic */}
                 <span className={`truncate`}>
-                  {Number(formatEther(eligibleForToken)).toLocaleString(
-                    undefined,
-                    { maximumFractionDigits: 0 }
-                  )}
+                  {Number(
+                    formatEther(
+                      dropdownSelectedCampaign == DropDown.AirdropSZN1
+                        ? eligibleForToken
+                        : publicSaleEligibleToken
+                    )
+                  ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
                 ION
                 {/* <span
@@ -211,47 +291,58 @@ export default function Claim() {
                 className={`flex flex-col items-start justify-start gap-y-1`}
               >
                 <span>
-                  {Number(formatEther(currentClaimable)).toLocaleString(
-                    undefined,
-                    { maximumFractionDigits: 0 }
-                  )}{' '}
+                  {Number(
+                    formatEther(
+                      dropdownSelectedCampaign == DropDown.AirdropSZN1
+                        ? currentClaimable
+                        : publicClaimable
+                    )
+                  ).toLocaleString(undefined, {
+                    maximumFractionDigits: 2
+                  })}{' '}
                   ION
                 </span>
               </div>
               <button
                 className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md ${
-                  (dropdownSelectedSeason === 1 ||
+                  (dropdownSelectedCampaign === DropDown.PublicSale ||
                     currentClaimable === BigInt(0)) &&
                   'opacity-40'
                 }`}
+                disabled={
+                  dropdownSelectedCampaign === DropDown.PublicSale ||
+                  currentClaimable === BigInt(0)
+                }
                 onClick={() => {
-                  if (dropdownSelectedSeason === 0) {
-                    claim();
-                  } else {
-                    setPopupV2(true);
-                  }
+                  setPopupV2(true);
                 }}
               >
                 Claim
               </button>
             </div>
             <p className={`opacity-40 text-xs text-start`}>
-              {dropdownSelectedSeason === 0
+              {dropdownSelectedCampaign === DropDown.PublicSale
                 ? 'The tokens are linearly unlocked for 80 days (1% per day)'
                 : 'The tokens are fully unlocked on the last day of the vesting period'}
             </p>
 
             <p className={` text-xs text-start`}>
               Already claimed:{' '}
-              {Number(formatEther(alreadyClaimed)).toLocaleString(undefined, {
-                maximumFractionDigits: 0
+              {Number(
+                formatEther(
+                  dropdownSelectedCampaign == DropDown.AirdropSZN1
+                    ? alreadyClaimed
+                    : publicSaleAlreadyClaimed
+                )
+              ).toLocaleString(undefined, {
+                maximumFractionDigits: 2
               })}{' '}
               ION
             </p>
           </div>
         </div>
       </div>
-      {popupV2 && dropdownSelectedSeason === 1 && (
+      {popupV2 && dropdownSelectedCampaign === DropDown.AirdropSZN1 && (
         <div
           className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
         >
@@ -266,7 +357,14 @@ export default function Claim() {
             />
             <p className="w-full tracking-wide text-lg font-semibold mb-4">
               You can now instantly claim{' '}
-              {Number(formatEther(currentClaimable)).toFixed(2)} ION
+              {Number(
+                formatEther(
+                  dropdownSelectedCampaign == DropDown.AirdropSZN1
+                    ? currentClaimable
+                    : publicClaimable
+                )
+              ).toFixed(2)}{' '}
+              ION
             </p>
             <p className={`opacity-40 text-xs `}>
               To receive the full Airdrop amount, please wait till the end of
@@ -281,14 +379,28 @@ export default function Claim() {
                   type="checkbox"
                 />
                 <span>
-                  I understand and agree to forfeit Y vested $ION, in favour of
-                  instantly receiving tokens now
+                  I understand and agree to forfeit{' '}
+                  {Number(
+                    formatEther(
+                      dropdownSelectedCampaign == DropDown.AirdropSZN1
+                        ? currentClaimable
+                        : publicClaimable
+                    )
+                  ).toFixed(2)}{' '}
+                  vested $ION, in favour of instantly receiving tokens now
                 </span>
               </div>
               <button
                 className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
                 disabled={!agreement}
-                onClick={() => claim()}
+                onClick={() => {
+                  if (dropdownSelectedCampaign == DropDown.AirdropSZN1) {
+                    claimAirdrop();
+                  }
+                  if (dropdownSelectedCampaign == DropDown.PublicSale) {
+                    claimPublicSale();
+                  }
+                }}
               >
                 Instant Claim
               </button>
