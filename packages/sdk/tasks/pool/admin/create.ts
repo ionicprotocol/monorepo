@@ -3,17 +3,6 @@ import { task, types } from "hardhat/config";
 
 import { getPoolByName, logPoolData } from "../utils";
 
-task("pool:create:chapel").setAction(async ({}, { run, ethers }) => {
-  await run("pool:create", {
-    name: "IONIC Test BOMB Pool",
-    creator: "deployer",
-    priceOracle: "0xc625139B9471432Abea0F9f97A84611BCDC4cbdD", // MPO
-    closeFactor: "50",
-    liquidationIncentive: "8",
-    enforceWhitelist: "false"
-  });
-});
-
 task("pool:create:mode").setAction(async ({}, { run, ethers }) => {
   await run("pool:create", {
     name: "Mode Market",
@@ -25,11 +14,22 @@ task("pool:create:mode").setAction(async ({}, { run, ethers }) => {
   });
 });
 
-task("pool:create:sepolia").setAction(async ({}, { run, ethers }) => {
+task("pool:create:modenative").setAction(async ({}, { run, ethers }) => {
   await run("pool:create", {
-    name: "Sepolia Market 2",
+    name: "Mode Native Market",
     creator: "deployer",
-    priceOracle: "0x32E347Fb95b9a2e132BdBFfbAF06128582a519EE", // MPO
+    priceOracle: "0x2BAF3A2B667A5027a83101d218A9e8B73577F117", // MPO
+    closeFactor: "55",
+    liquidationIncentive: "17",
+    enforceWhitelist: "false"
+  });
+});
+
+task("pool:create:base").setAction(async ({}, { run }) => {
+  await run("pool:create", {
+    name: "Base Market",
+    creator: "deployer",
+    priceOracle: "0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4", // MPO
     closeFactor: "50",
     liquidationIncentive: "8",
     enforceWhitelist: "false"

@@ -1,6 +1,7 @@
-import { assetFilter, assetSymbols, MarketConfig, underlying } from "@ionicprotocol/types";
+import { assetFilter, assetSymbols, MarketConfig } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
+import { assets as baseAssets } from "../../../chains/src/base/assets";
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
 import { assets as sepoliaAssets } from "../../../chains/src/sepolia/assets";
 
@@ -16,8 +17,9 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
     // assetSymbols.UNI,
     // assetSymbols.WBTC
     // assetSymbols.AAVE
-    // assetSymbols.weETH,
-    assetSymbols.wrsETH
+    assetSymbols.weETH
+    // assetSymbols.wrsETH,
+    // assetSymbols.mBTC
   ];
 
   for (let i = 0; i < symbols.length; i++) {
@@ -50,6 +52,52 @@ task("markets:deploy:optimismSepolia", "Deploy optimism sepolia markets")
       name: `Ionic ${name}`
     });
   });
+task("markets:deploy:modenative", "deploy mode native markets").setAction(async (taskArgs, { run }) => {
+  const symbols = [
+    // { symbol: assetSymbols.WETH, cf: "82.5" },
+    // { symbol: assetSymbols.USDC, cf: "90" },
+    // { symbol: assetSymbols.USDT, cf: "90" },
+    { symbol: assetSymbols.MODE, cf: "35" }
+  ];
+
+  for (let i = 0; i < symbols.length; i++) {
+    const symbol = symbols[i];
+    const asset = assetFilter(modeAssets, symbol.symbol);
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: symbol.cf,
+      underlying: asset.underlying,
+      comptroller: "0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a",
+      symbol: "ion" + asset.symbol + ".modenative",
+      name: `Ionic ${asset.name} - Mode Native Market`
+    });
+  }
+});
+
+task("markets:deploy:base", "deploy base markets").setAction(async (taskArgs, { run }) => {
+  const symbols = [
+    // { symbol: assetSymbols.AERO, cf: "65" },
+    // { symbol: assetSymbols.cbETH, cf: "80" },
+    // { symbol: assetSymbols.USDC, cf: "90" },
+    // { symbol: assetSymbols.wstETH, cf: "82.5" },
+    // { symbol: assetSymbols.ezETH, cf: "67.5" },
+    // { symbol: assetSymbols.WETH, cf: "82.5" },
+    { symbol: assetSymbols.weETH, cf: "0" }
+  ];
+
+  for (let i = 0; i < symbols.length; i++) {
+    const symbol = symbols[i];
+    const asset = assetFilter(baseAssets, symbol.symbol);
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: symbol.cf,
+      underlying: asset.underlying,
+      comptroller: "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13",
+      symbol: "ion" + asset.symbol,
+      name: `Ionic ${asset.name}`
+    });
+  }
+});
 
 task("market:deploy", "deploy market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
@@ -104,8 +152,8 @@ task("market:deploy", "deploy market")
       deployArgs
     );
 
-    if (chainId == 34443) {
-      const gnosisContractAddress = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
+    if (chainId == 34443 && comptroller.address === "0xFB3323E24743Caf4ADD0fDCCFB268565c0685556") {
+      // const gnosisContractAddress = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
       const populatedTx = await comptroller.populateTransaction._deployMarket(
         delegateType,
         constructorData,

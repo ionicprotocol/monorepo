@@ -1,7 +1,7 @@
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
-import { mode } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 
-const chains = [mode] as const;
+const chains = [mode, base] as const;
 
 const metadata = {
   description: 'Ionic Web3Modal Sign In',

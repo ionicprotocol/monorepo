@@ -5,22 +5,27 @@ import type { Contract } from 'ethers';
 import { BigNumber } from 'ethers';
 import { formatEther, parseEther } from 'ethers/lib/utils.js';
 import Image from 'next/image';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { WETHAbi } from 'sdk/dist/cjs/src';
 import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
+import { mode } from 'viem/chains';
 import { useBalance } from 'wagmi';
 import type { GetBalanceData } from 'wagmi/query';
 
 import ConnectButton from '../ConnectButton';
 import ResultHandler from '../ResultHandler';
 
-import type { TransactionStep } from './TransactionStepsHandler';
-import TransactionStepsHandler from './TransactionStepsHandler';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './TransactionStepsHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 export type SwapProps = {
   close: () => void;
+  dropdownSelectedChain: number;
+  selectedChain: number;
 };
 
 enum SwapType {
@@ -28,7 +33,11 @@ enum SwapType {
   WETH_ETH
 }
 
-export default function Swap({ close }: SwapProps) {
+export default function Swap({
+  close,
+  selectedChain,
+  dropdownSelectedChain
+}: SwapProps) {
   const { address, currentSdk } = useMultiIonic();
   const [amount, setAmount] = useState<string>();
   const [swapType, setSwapType] = useState<SwapType>(SwapType.ETH_WETH);
@@ -67,40 +76,8 @@ export default function Swap({ close }: SwapProps) {
       currentSdk.signer
     );
   }, [address, currentSdk]);
-  const [transactionSteps, upsertTransactionStep] = useReducer(
-    (
-      prevState: TransactionStep[],
-      updatedStep:
-        | { index: number; transactionStep: TransactionStep }
-        | undefined
-    ): TransactionStep[] => {
-      if (!updatedStep) {
-        return [];
-      }
-
-      const currentSteps = prevState.slice();
-
-      currentSteps[updatedStep.index] = {
-        ...currentSteps[updatedStep.index],
-        ...updatedStep.transactionStep
-      };
-
-      if (
-        updatedStep.transactionStep.error &&
-        updatedStep.index + 1 < currentSteps.length
-      ) {
-        for (let i = updatedStep.index + 1; i < currentSteps.length; i++) {
-          currentSteps[i] = {
-            ...currentSteps[i],
-            error: true
-          };
-        }
-      }
-
-      return currentSteps;
-    },
-    []
-  );
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
   const amountAsBInt = useMemo<BigNumber>(
     () => parseEther(amount ?? '0'),
     [amount]
@@ -169,11 +146,6 @@ export default function Swap({ close }: SwapProps) {
   };
   const handleMax = (val: string) => {
     setAmount(val.trim());
-  };
-  const addStepsForAction = (steps: TransactionStep[]) => {
-    steps.forEach((step, i) =>
-      upsertTransactionStep({ index: i, transactionStep: step })
-    );
   };
   const swapAmount = async () => {
     if (amountAsBInt && amountAsBInt.gt('0') && WTokenContract) {
@@ -359,6 +331,7 @@ export default function Swap({ close }: SwapProps) {
               {transactionSteps.length > 0 ? (
                 <div className="flex justify-center text-left">
                   <TransactionStepsHandler
+                    chainId={currentSdk?.chainId || mode.id}
                     resetTransactionSteps={() => {
                       upsertTransactionStep(undefined);
                       refetchUsedQueries();
@@ -370,7 +343,15 @@ export default function Swap({ close }: SwapProps) {
               ) : (
                 <button
                   className={`px-6 btn-green`}
-                  onClick={() => swapAmount()}
+                  onClick={async () => {
+                    const result = await handleSwitchOriginChain(
+                      selectedChain,
+                      dropdownSelectedChain
+                    );
+                    if (result) {
+                      swapAmount();
+                    }
+                  }}
                 >
                   {swapType === SwapType.ETH_WETH ? 'WRAP' : 'UNWRAP'}
                 </button>

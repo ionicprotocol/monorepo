@@ -58,7 +58,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -98,7 +102,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -142,7 +150,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -186,7 +198,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+      - name: Initialize
+        run: git submodule update --init --recursive
+      - name: update submodules
+        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -237,6 +253,7 @@ jobs:
       LIQUIDATION_DISCORD_WEBHOOK_URL: ${{ secrets.LIQUIDATION_DISCORD_WEBHOOK_URL }}
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
 
     steps:
       - name: Checkout repository
@@ -252,6 +269,10 @@ jobs:
       - name: run smoke tests for liquidator bot
         working-directory: ./ops
         run: make liquidator-smoke-test
+
+      - name: run smoke tests for pyth-updater bot
+        working-directory: ./ops
+        run: make pyth-smoke-test  
 
       # - name: run smoke tests for feed verifier
       #   working-directory: ./ops
@@ -279,6 +300,7 @@ jobs:
       PYTH_UPDATER_DISCORD_WEBHOOK_URL: ${{ secrets.PYTH_UPDATER_DISCORD_WEBHOOK_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
     steps:
       - name: Checkout
         uses: actions/checkout@master

@@ -1,5 +1,6 @@
 import {
   arbitrum,
+  base,
   bsc,
   chainIdToConfig,
   chapel,
@@ -71,6 +72,10 @@ export function getEnabledChains() {
     enabledChains.push(SupportedChains.mode);
   }
 
+  if (config.isBaseEnabled) {
+    enabledChains.push(SupportedChains.base);
+  }
+
   return enabledChains;
 }
 
@@ -84,7 +89,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.arbitrum]: arbitrum.assets,
   [SupportedChains.linea]: linea.assets,
   [SupportedChains.zkevm]: zkevm.assets,
-  [SupportedChains.mode]: mode.assets
+  [SupportedChains.mode]: mode.assets,
+  [SupportedChains.base]: base.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -94,5 +100,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.chapel]: chapel.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.ethereum]: ethereum.deployedPlugins,
-  [SupportedChains.mode]: mode.deployedPlugins
+  [SupportedChains.mode]: mode.deployedPlugins,
+  [SupportedChains.base]: base.deployedPlugins
 };

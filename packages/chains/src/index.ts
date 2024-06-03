@@ -1,6 +1,7 @@
 import { ChainConfig } from "@ionicprotocol/types";
 
 import { default as arbitrum } from "./arbitrum";
+import { default as base } from "./base";
 import { default as bsc } from "./bsc";
 import { default as chapel } from "./chapel";
 import { default as ethereum } from "./ethereum";
@@ -12,7 +13,7 @@ import { default as polygon } from "./polygon";
 import { default as zkevm } from "./zkevm";
 import { default as sepolia } from "./sepolia";
 
-export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode, sepolia };
+export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode, base, sepolia };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -25,5 +26,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ethereum.chainId]: ethereum,
   [zkevm.chainId]: zkevm,
   [mode.chainId]: mode,
-  [sepolia.chainId]: sepolia
+  [sepolia.chainId]: sepolia,
+  [base.chainId]: base
 };

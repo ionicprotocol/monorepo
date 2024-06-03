@@ -19,3 +19,18 @@ module "mode_mainnet_liquidation_rpc_0" {
   timeout             = 700
   memory_size         = 512
 }
+module "mode_mainnet_pyth_rpc_0" {
+  source              = "../modules/lambda"
+  ecr_repository_name = local.pyth_updater_ecr_repository_name
+  docker_image_tag    = var.bots_image_tag
+  container_family    = "pyth-updater-rpc-0"
+  environment         = "mainnet"
+  chain_id            = local.mode_mainnet_chain_id
+  container_env_vars = merge(
+    local.pyth_updater_lambda_variables,
+    { WEB3_HTTP_PROVIDER_URL = local.mode_mainnet_rpc_0 }
+  )
+  schedule_expression = "rate(5 minutes)"
+  timeout             = 700
+  memory_size         = 512
+}

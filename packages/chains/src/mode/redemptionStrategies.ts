@@ -62,7 +62,67 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.WETH),
     strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.weETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.wrsETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.wrsETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.mBTC)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.mBTC),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.MODE)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.MODE),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.ION)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.ION),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.mBTC),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.mBTC)
   }
+  // ,{
+  //   inputToken: underlying(assets, assetSymbols.WETH),
+  //   strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+  //   outputToken: underlying(assets, assetSymbols.KIM)
+  // },
+  // {
+  //   inputToken: underlying(assets, assetSymbols.KIM),
+  //   strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+  //   outputToken: underlying(assets, assetSymbols.WETH)
+  // }
 ];
 
 export default redemptionStrategies;

@@ -1,5 +1,6 @@
 import {
   arbitrum,
+  base,
   bsc,
   chapel,
   ethereum,
@@ -19,7 +20,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { BigNumberish, CallOverrides, constants, utils } from "ethers";
+import { BigNumber, BigNumberish, CallOverrides, constants, utils } from "ethers";
 
 import { PoolDirectory } from "../../typechain/PoolDirectory";
 import { PoolLens } from "../../typechain/PoolLens";
@@ -45,7 +46,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ethereum]: ethereum.assets,
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
-  [SupportedChains.optimism_sepolia]: sepolia.assets
+  [SupportedChains.optimism_sepolia]: sepolia.assets,
+  [SupportedChains.base]: base.assets
 };
 
 export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
@@ -282,6 +284,30 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       const healthFactor = await poolLens.getHealthFactor(account, pool, { from: account });
 
       return healthFactor;
+    }
+
+    async getHealthFactorPrediction(
+      pool: string,
+      account: string,
+      cTokenModify: string,
+      redeemTokens: BigNumberish,
+      borrowAmount: BigNumberish,
+      repayAmount: BigNumberish
+    ): Promise<BigNumber> {
+      const poolLens = this.createPoolLens();
+      const predictedHealthFactor = await poolLens.getHealthFactorHypothetical(
+        pool,
+        account,
+        cTokenModify,
+        redeemTokens,
+        borrowAmount,
+        repayAmount,
+        {
+          from: account
+        }
+      );
+
+      return predictedHealthFactor;
     }
   };
 }

@@ -189,6 +189,11 @@ const config: HardhatUserConfig = {
       minGasPrice: 2e9,
       initialBaseFeePerGas: 2e9,
       gasMultiplier: 3
+    },
+    base: {
+      url: OVERRIDE_RPC_URL || `https://mainnet.base.org`,
+      accounts: { mnemonic },
+      chainId: 8453
     }
   },
   typechain: {

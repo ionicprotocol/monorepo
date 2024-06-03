@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "packageManager": "yarn@4.1.1",
+  "packageManager": "yarn@4.2.2",
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
@@ -26,6 +26,7 @@
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
     "@wagmi/core": "^2.2.1",
+    "react-confetti": "^6.1.0",
     "ts-node": "^10.9.1",
     "viem": "^2.7.16"
   },
@@ -47,7 +48,7 @@
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
     "build:deploy:pyth-updater": "yarn build:sdk && yarn build:pyth-updater",
     "build:deploy:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && yarn build:functions",
-    "dev:ui": "yarn workspace @ionicprotocol/sdk export:ganache; yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn workspace @ionicprotocol/ui dev",
+    "dev:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn workspace @ionicprotocol/ui dev",
     "dev:liquidator": "yarn workspace @ionicprotocol/liquidator dev",
     "dev:functions": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @ionicprotocol/sdk hardhat node --no-deploy",
