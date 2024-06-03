@@ -20,12 +20,8 @@ import {
   PublicSaleContractAddress
 } from '../_constants/publicsale';
 
+import { DROPDOWN } from '@ui/constants/index';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-
-export const DropDown = {
-  AirdropSZN1: 1,
-  PublicSale: 0
-};
 
 export default function Claim() {
   const [currentClaimable, setCurrentClaimable] = useState(BigInt(0));
@@ -40,7 +36,7 @@ export default function Claim() {
   );
   const [open, setOpen] = useState<boolean>(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
-    useState<number>(DropDown.AirdropSZN1);
+    useState<number>(DROPDOWN.AirdropSZN1);
   const [popupV2, setPopupV2] = useState<boolean>(false);
   const [agreement, setAgreement] = useState(false);
   const publicClient = usePublicClient();
@@ -257,7 +253,7 @@ export default function Claim() {
                 <span className={`truncate`}>
                   {Number(
                     formatEther(
-                      dropdownSelectedCampaign == DropDown.AirdropSZN1
+                      dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
                         ? eligibleForToken
                         : publicSaleEligibleToken
                     )
@@ -293,7 +289,7 @@ export default function Claim() {
                 <span>
                   {Number(
                     formatEther(
-                      dropdownSelectedCampaign == DropDown.AirdropSZN1
+                      dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
                         ? currentClaimable
                         : publicClaimable
                     )
@@ -305,12 +301,12 @@ export default function Claim() {
               </div>
               <button
                 className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md ${
-                  (dropdownSelectedCampaign === DropDown.PublicSale ||
+                  (dropdownSelectedCampaign === DROPDOWN.PublicSale ||
                     currentClaimable === BigInt(0)) &&
                   'opacity-40'
                 }`}
                 disabled={
-                  dropdownSelectedCampaign === DropDown.PublicSale ||
+                  dropdownSelectedCampaign === DROPDOWN.PublicSale ||
                   currentClaimable === BigInt(0)
                 }
                 onClick={() => {
@@ -321,7 +317,7 @@ export default function Claim() {
               </button>
             </div>
             <p className={`opacity-40 text-xs text-start`}>
-              {dropdownSelectedCampaign === DropDown.PublicSale
+              {dropdownSelectedCampaign === DROPDOWN.PublicSale
                 ? 'The tokens are linearly unlocked for 80 days (1% per day)'
                 : 'The tokens are fully unlocked on the last day of the vesting period'}
             </p>
@@ -330,7 +326,7 @@ export default function Claim() {
               Already claimed:{' '}
               {Number(
                 formatEther(
-                  dropdownSelectedCampaign == DropDown.AirdropSZN1
+                  dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
                     ? alreadyClaimed
                     : publicSaleAlreadyClaimed
                 )
@@ -342,7 +338,7 @@ export default function Claim() {
           </div>
         </div>
       </div>
-      {popupV2 && dropdownSelectedCampaign === DropDown.AirdropSZN1 && (
+      {popupV2 && dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 && (
         <div
           className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
         >
@@ -359,7 +355,7 @@ export default function Claim() {
               You can now instantly claim{' '}
               {Number(
                 formatEther(
-                  dropdownSelectedCampaign == DropDown.AirdropSZN1
+                  dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
                     ? currentClaimable
                     : publicClaimable
                 )
@@ -382,7 +378,7 @@ export default function Claim() {
                   I understand and agree to forfeit{' '}
                   {Number(
                     formatEther(
-                      dropdownSelectedCampaign == DropDown.AirdropSZN1
+                      dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
                         ? currentClaimable
                         : publicClaimable
                     )
@@ -394,10 +390,10 @@ export default function Claim() {
                 className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
                 disabled={!agreement}
                 onClick={() => {
-                  if (dropdownSelectedCampaign == DropDown.AirdropSZN1) {
+                  if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
                     claimAirdrop();
                   }
-                  if (dropdownSelectedCampaign == DropDown.PublicSale) {
+                  if (dropdownSelectedCampaign == DROPDOWN.PublicSale) {
                     claimPublicSale();
                   }
                 }}

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
-import { DropDown } from 'ui/app/claim/page';
+import { DROPDOWN } from '@ui/constants/index';
+
 interface ITime {
   days: number;
   hours: number;
@@ -18,7 +19,7 @@ const CountdownTimer = ({ dropdownSelectedCampaign }: IProp) => {
 
   const [timeLeft, setTimeLeft] = useState<ITime>(
     calculateTimeLeft(
-      dropdownSelectedCampaign === DropDown.AirdropSZN1
+      dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
         ? diffSeason1
         : diffS1presale
     )
@@ -28,7 +29,7 @@ const CountdownTimer = ({ dropdownSelectedCampaign }: IProp) => {
     setTimeout(() => {
       setTimeLeft(
         calculateTimeLeft(
-          dropdownSelectedCampaign === DropDown.AirdropSZN1
+          dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
             ? diffSeason1
             : diffS1presale
         )
