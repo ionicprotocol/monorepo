@@ -12,6 +12,8 @@ import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 // import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 // import { useStore } from 'ui/store/Store';
@@ -235,11 +237,14 @@ interface IRows {
   borrowAPR: string;
   borrowBalance: string;
   collateralFactor: number;
+  comptrollerAddress: string;
   dropdownSelectedChain: number;
   logo: string;
+  loopMarkets: LoopMarketData | undefined;
   loopPossible: boolean;
   membership: boolean;
   selectedChain: number;
+  selectedMarketData: MarketData | undefined;
   selectedPoolId: string;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
@@ -274,7 +279,10 @@ const PoolRows = ({
   setSelectedSymbol,
   setPopupMode,
   selectedChain,
-  selectedPoolId
+  selectedPoolId,
+  comptrollerAddress,
+  selectedMarketData,
+  loopMarkets
 }: IRows) => {
   const { address } = useMultiIonic();
   // const btnref = useRef<boolean>();
@@ -298,6 +306,8 @@ const PoolRows = ({
   //   // router.push(`/market/details/${asset}`);
   // }
   // console.log(totalBorrowing);
+  const selectedMarketDataPassing = JSON.stringify(selectedMarketData);
+  const loopMarketsPassing = JSON.stringify(loopMarkets);
   return (
     <div
       className={`w-full h-full lg:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 `}
@@ -312,7 +322,10 @@ const PoolRows = ({
             availableAPR: parseInt(supplyAPR),
             borrowAPR: parseInt(borrowAPR),
             collateralAPR: collateralFactor,
+            comptrollerAddress: comptrollerAddress,
             lendingSupply: parseInt(supplyBalance),
+            loopMarkets: loopMarketsPassing,
+            selectedMarketData: selectedMarketDataPassing,
             totalBorrows: totalBorrowing,
             totalCollateral: 123456
           }

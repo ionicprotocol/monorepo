@@ -401,14 +401,17 @@ export default function Market() {
                       (val ? Number(formatEther(val.collateralFactor)) : 0) *
                       100
                     }
+                    comptrollerAddress={poolData?.comptroller || ''}
                     dropdownSelectedChain={dropdownSelectedChain}
                     key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                    loopMarkets={loopMarkets}
                     loopPossible={
                       loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                     }
                     membership={val?.membership ?? false}
                     selectedChain={chainId}
+                    selectedMarketData={selectedMarketData}
                     selectedPoolId={selectedPool}
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
