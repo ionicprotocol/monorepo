@@ -394,7 +394,9 @@ export default function Claim() {
                       ? currentClaimable
                       : publicClaimable
                   )
-                ).toFixed(2)}{' '}
+                ).toLocaleString(undefined, {
+                  maximumFractionDigits: 2
+                })}{' '}
                 ION
               </p>
               <p className={`opacity-40 text-xs `}>
@@ -426,7 +428,9 @@ export default function Claim() {
                             : publicClaimable
                         )
                       )
-                    ).toFixed(2)}{' '}
+                    ).toLocaleString(undefined, {
+                      maximumFractionDigits: 2
+                    })}{' '}
                     vested $ION, in favour of instantly receiving tokens now
                   </span>
                 </div>
