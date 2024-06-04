@@ -264,9 +264,14 @@ export default function Claim() {
               <span className={`opacity-40 text-xs self-start`}>
                 VESTING PERIOD
               </span>
-              <CountdownTimer
-                dropdownSelectedCampaign={dropdownSelectedCampaign}
-              />
+              {haveClaimed &&
+              dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 ? (
+                <span className={`text-xs my-auto`}>Already Claimed</span>
+              ) : (
+                <CountdownTimer
+                  dropdownSelectedCampaign={dropdownSelectedCampaign}
+                />
+              )}
             </div>
             <div className={`flex flex-col  w-full h-full col-span-2`}>
               <span className={`opacity-40 text-xs self-start`}>
