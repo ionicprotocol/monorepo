@@ -323,8 +323,10 @@ const PoolRows = ({
             borrowAPR: parseInt(borrowAPR),
             collateralAPR: collateralFactor,
             comptrollerAddress: comptrollerAddress,
+            dropdownSelectedChain: dropdownSelectedChain,
             lendingSupply: parseInt(supplyBalance),
             loopMarkets: loopMarketsPassing,
+            selectedChain: selectedChain,
             selectedMarketData: selectedMarketDataPassing,
             totalBorrows: totalBorrowing,
             totalCollateral: 123456

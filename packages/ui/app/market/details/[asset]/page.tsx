@@ -58,9 +58,10 @@ import {
 
 import { useStore } from 'ui/store/Store';
 import { INFO } from '@ui/constants/index';
-import { PopupMode } from 'ui/app/_components/popup/page';
+import Popup, { PopupMode } from 'ui/app/_components/popup/page';
 import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import Swap from 'ui/app/_components/popup/Swap';
 
 const Asset = ({ params }: IProp) => {
   //here we need to make a api to get the data of a certain asset (we can also check the current user with the help of wagmi)
@@ -86,10 +87,22 @@ const Asset = ({ params }: IProp) => {
   const collateralAPR = searchParams.get('collateralAPR');
   const lendingSupply = searchParams.get('lendingSupply');
   const gettingBorrows = searchParams.get('totalBorrows');
+  const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
+  const selectedChain = searchParams.get('selectedChain');
+  const comptrollerAddress = searchParams.get('comptrollerAddress');
+  const passedSelectedMarketData = searchParams.get('selectedMarketData');
+  const passedPoolData = searchParams.get('poolData');
+  const passedLoopMarkets = searchParams.get('loopMarkets');
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   // if (!gettingBorrows) return;
-  const totalBorrows = extractAndConvertStringTOValue(gettingBorrows as string).value2;
+  const totalBorrows = extractAndConvertStringTOValue(
+    gettingBorrows as string
+  ).value2;
+  console.log(passedSelectedMarketData);
+  // const selectedMarketData = JSON.parse(passedSelectedMarketData as string);
+  // const poolData = JSON.parse(passedPoolData as string);
+  // const loopMarkets = JSON.parse(passedLoopMarkets as string);
   // const info = searchParams.get('info');
   // console.log(info);
 
@@ -330,16 +343,15 @@ const Asset = ({ params }: IProp) => {
             <div
               className={`rounded-lg bg-graylite text-sm  text-white/50 py-1 px-3`}
               // href={`${pathname}?popmode=BORROW`}
-              // onClick={async () => {
-              //   const result = await handleSwitchOriginChain(
-              //     dropdownSelectedChain,
-              //     selectedChain
-              //   );
-              //   if (result) {
-              //     setSelectedSymbol(asset);
-              //     setPopupMode(PopupMode.BORROW);
-              //   }
-              // }}
+              onClick={async () => {
+                const result = await handleSwitchOriginChain(
+                  Number(dropdownSelectedChain),
+                  Number(selectedChain)
+                );
+                if (result) {
+                  setPopupMode(PopupMode.BORROW);
+                }
+              }}
             >
               Borrow
             </div>
@@ -404,7 +416,7 @@ const Asset = ({ params }: IProp) => {
       {/* {popupMode && selectedMarketData && poolData && (
         <Popup
           closePopup={() => setPopupMode(undefined)}
-          comptrollerAddress={poolData.comptroller}
+          comptrollerAddress={comptrollerAddress as string}
           loopMarkets={loopMarkets}
           mode={popupMode}
           selectedMarketData={selectedMarketData}
@@ -414,8 +426,8 @@ const Asset = ({ params }: IProp) => {
       {swapOpen && (
         <Swap
           close={() => setSwapOpen(false)}
-          dropdownSelectedChain={dropdownSelectedChain}
-          selectedChain={chainId}
+          dropdownSelectedChain={Number(dropdownSelectedChain)}
+          selectedChain={Number(selectedChain)}
         />
       )} */}
     </div>
