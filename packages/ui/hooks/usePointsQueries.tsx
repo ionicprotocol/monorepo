@@ -8,7 +8,7 @@ import {
   multipliers,
   SEASON_2_BASE_START_DATE,
   SEASON_2_START_DATE
-} from '../utils/multipliers';
+} from '../../ui/utils/multipliers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { fetchData } from '@ui/utils/functions';
