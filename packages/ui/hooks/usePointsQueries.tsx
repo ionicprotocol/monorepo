@@ -2,7 +2,13 @@ import { createClient } from '@supabase/supabase-js';
 import { useQuery } from '@tanstack/react-query';
 import { createConfig, getEnsName, http } from '@wagmi/core';
 import type { Address } from 'viem';
-import { mainnet } from 'viem/chains';
+import { base, mainnet, mode } from 'viem/chains';
+
+import {
+  multipliers,
+  SEASON_2_BASE_START_DATE,
+  SEASON_2_START_DATE
+} from '../utils/multipliers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { fetchData } from '@ui/utils/functions';
@@ -98,98 +104,252 @@ export type QueryData = {
   query: string;
 };
 
+const getSupplyQuery = (
+  address: string | undefined,
+  ionMultiplier: number,
+  marketName: string,
+  startDate: string,
+  priceMultiplier: number = 1,
+  decimals: number = 18
+) => {
+  return `
+  WITH addresses AS (
+    SELECT address 
+    FROM (VALUES ('${address}')) s(address)
+  )
+  SELECT 
+    address, 
+    SUM(points) AS points_per_market 
+  FROM (
+    SELECT 
+      address, 
+      date, 
+      flow, 
+      cum_sum, 
+      LAG(cum_sum) OVER (PARTITION BY address ORDER BY address, date) * 
+      (EXTRACT(EPOCH FROM delta) / 86400) * ${ionMultiplier} * ${priceMultiplier} AS points 
+    FROM (
+      SELECT 
+        *, 
+        SUM(flow) OVER (PARTITION BY address ORDER BY address, date) AS cum_sum, 
+        date - LAG(date) OVER (PARTITION BY address ORDER BY address, date) AS delta 
+      FROM (
+        SELECT 
+          address, 
+          date, 
+          SUM(tokens) AS flow 
+        FROM (
+          SELECT 
+            event_from AS address, 
+            DATE_BIN('1 hour', block_time, '2000-1-1') AS date, 
+            -event_amount / POW(10, ${decimals}) / 5 AS tokens 
+          FROM 
+            ${marketName}.transfer_events 
+          WHERE 
+            event_from IN (SELECT * FROM addresses)
+          
+          UNION ALL
+          
+          SELECT 
+            event_to AS address, 
+            DATE_BIN('1 hour', block_time, '2000-1-1') AS date, 
+            event_amount / POW(10, ${decimals}) / 5 AS tokens 
+          FROM 
+            ${marketName}.transfer_events 
+          WHERE 
+            event_to IN (SELECT * FROM addresses)
+          
+          UNION ALL
+          
+          SELECT 
+            address, 
+            date, 
+            tokens 
+          FROM (
+            SELECT 
+              1 AS a, 
+              date_trunc('day', dd)::date AS date, 
+              0 AS tokens 
+            FROM 
+              generate_series('${startDate}'::timestamp, NOW()::timestamp, '1 day'::interval) AS dd
+          ) AS a 
+          JOIN (
+            SELECT 
+              1 AS a, 
+              address 
+            FROM 
+              addresses
+          ) AS b ON a.a = b.a
+          
+          UNION ALL
+          
+          SELECT 
+            address, 
+            date, 
+            tokens 
+          FROM (
+            SELECT 
+              1 AS a, 
+              DATE_BIN('1 hour', NOW(), '2000-1-1') AS date, 
+              0 AS tokens 
+          ) AS a 
+          JOIN (
+            SELECT 
+              1 AS a, 
+              address 
+            FROM 
+              addresses
+          ) AS b ON a.a = b.a
+        ) AS a 
+        GROUP BY 
+          address, 
+          date 
+        ORDER BY 
+          address, 
+          date
+      ) AS b
+    ) AS c 
+    WHERE 
+      date >= '${startDate}T00:00:00'
+  ) AS d 
+  GROUP BY 
+    address
+  `;
+};
+
+const getBorrowQuery = (
+  address: string | undefined,
+  ionMultiplier: number,
+  marketName: string,
+  startDate: string,
+  priceMultiplier: number = 1,
+  decimals: number = 18
+) => {
+  return `
+  WITH addresses AS (
+    SELECT address 
+    FROM (VALUES ('${address}')) s(address)
+  )
+  SELECT 
+    address, 
+    SUM(CASE WHEN points > 0 THEN points ELSE 0 END) AS points_per_market
+  FROM (
+    SELECT 
+      address, 
+      date, 
+      flow, 
+      cum_sum, 
+      LAG(cum_sum) OVER (PARTITION BY address ORDER BY address, date) * 
+      (EXTRACT(EPOCH FROM delta) / 86400) * ${ionMultiplier} * ${priceMultiplier} AS points 
+    FROM (
+      SELECT 
+        address, 
+        date, 
+        flow, 
+        SUM(flow) OVER (PARTITION BY address ORDER BY address, date) AS cum_sum, 
+        date - LAG(date) OVER (PARTITION BY address ORDER BY address, date) AS delta 
+      FROM (
+        SELECT 
+          address, 
+          date, 
+          SUM(tokens) AS flow 
+        FROM (
+          SELECT 
+            tx_from AS address, 
+            DATE_BIN('1 hour', block_time, '2000-01-01') AS date, 
+            -event_repay_amount / POW(10, ${decimals}) AS tokens 
+          FROM 
+            ${marketName}.repay_borrow_events 
+          WHERE 
+            event_repay_amount < POW(10, 60) 
+            AND tx_from IN (SELECT address FROM addresses)
+          
+          UNION ALL
+          
+          SELECT 
+            event_borrower AS address, 
+            DATE_BIN('1 hour', block_time, '2000-01-01') AS date, 
+            event_borrow_amount / POW(10, ${decimals}) AS tokens 
+          FROM 
+            ${marketName}.borrow_events 
+          WHERE 
+            event_borrower IN (SELECT address FROM addresses)
+          
+          UNION ALL
+          
+          SELECT 
+            addr.address, 
+            date_series.date, 
+            0 AS tokens 
+          FROM (
+            SELECT 
+              1 AS dummy, 
+              date_trunc('day', dd)::date AS date 
+            FROM 
+              generate_series('${startDate}'::timestamp, NOW()::timestamp, '1 day'::interval) AS dd
+          ) AS date_series 
+          JOIN addresses AS addr ON date_series.dummy = 1
+          
+          UNION ALL
+          
+          SELECT 
+            addr.address, 
+            current_hour.date, 
+            0 AS tokens 
+          FROM (
+            SELECT 
+              1 AS dummy, 
+              DATE_BIN('1 hour', NOW(), '2000-01-01') AS date 
+          ) AS current_hour 
+          JOIN addresses AS addr ON current_hour.dummy = 1
+        ) AS combined 
+        GROUP BY 
+          address, 
+          date 
+        ORDER BY 
+          address, 
+          date
+      ) AS grouped
+    ) AS calculated 
+    WHERE 
+      date >= '${startDate}T00:00:00'
+  ) AS final 
+  GROUP BY 
+    address
+  `;
+};
+
 /**
  * Get all supply points
  */
-const usePointsForSupply = () => {
+const usePointsForSupplyModeMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
     cacheTime: Infinity,
     queryFn: async () => {
-      const response = await Promise.all([
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT (SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2800 AS points, (Extract(epoch FROM (min5_slot - '2024-01-31')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM weth_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM weth_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-01-31'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d ) + ( SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) AS points, (Extract(epoch FROM (min5_slot - '2024-01-31')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 6) / 5 AS tokens FROM usdt_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 6) / 5 AS tokens FROM usdt_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-01-31'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d ) + ( SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) AS points, (Extract(epoch FROM (min5_slot - '2024-01-31')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 6) / 5 AS tokens FROM usdc_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 6) / 5 AS tokens FROM usdc_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-01-31'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d ) + ( SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 52000 AS points, (Extract(epoch FROM (min5_slot - '2024-01-31')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 8) / 5 AS tokens FROM wbtc_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 8) / 5 AS tokens FROM wbtc_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-01-31'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d ) AS points`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-03-08')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM ezeth_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM ezeth_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-08'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-03-14')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM weeth_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM weeth_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-14'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-03-26')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM ststone_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM ststone_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-26'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-04-18')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM wrsteth_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM wrsteth_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-04-18'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-04-23')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM weeth_market_new.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM weeth_market_new.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-04-23'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 * 52000 AS points, (Extract(epoch FROM (min5_slot - '2024-04-23')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM m_btc_market.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM m_btc_market.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-04-23'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM ionweth_modenative.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM ionweth_modenative.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 6) / 5 AS tokens FROM ionusdt_modenative.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 6) / 5 AS tokens FROM ionusdt_modenative.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 6) / 5 AS tokens FROM ionusdc_modenative.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 6) / 5 AS tokens FROM ionusdc_modenative.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        ),
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 * 0.05 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -event_amount / Pow(10, 18) / 5 AS tokens FROM ionmode_modenative.transfer_events WHERE event_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_amount / Pow(10, 18) / 5 AS tokens FROM ionmode_modenative.transfer_events WHERE event_to IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c) AS d`
-          },
-          { method: 'POST' }
-        )
-      ]);
-
+      const response = await Promise.all(
+        Object.values(multipliers[mode.id]['0']).map((asset) => {
+          return fetchData<QueryResponse, QueryData>(
+            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+            {
+              query: getSupplyQuery(
+                address?.toLowerCase(),
+                asset.supply.ionic,
+                asset.market,
+                SEASON_2_START_DATE,
+                asset.multiplier,
+                asset.decimals
+              )
+            },
+            {
+              method: 'POST'
+            }
+          );
+        })
+      );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
@@ -198,151 +358,42 @@ const usePointsForSupply = () => {
         rows: [[totalPoints]]
       };
     },
-    queryKey: ['points', 'supply', address],
+    queryKey: ['points', 'supply', 'mode-main', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
 
-/**
- * Get all borrow points
- */
-const usePointsForBorrow = () => {
+const usePointsForBorrowModeMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
     cacheTime: Infinity,
     queryFn: async () => {
-      const response = await Promise.all([
-        // WETH
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2800 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-02-14')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM weth_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM weth_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-02-14'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          {
-            method: 'POST'
-          }
-        ),
-        // WBTC
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 52000 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-02-14')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 8) AS tokens FROM wbtc_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 8) AS tokens FROM wbtc_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date AS min5_slot, 0 as tokens FROM generate_series( '2024-02-14'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          {
-            method: 'POST'
-          }
-        ),
-        // USDT
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-02-14')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 6) AS tokens FROM usdt_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 6) AS tokens FROM usdt_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date AS min5_slot, 0 as tokens FROM generate_series( '2024-02-14'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          {
-            method: 'POST'
-          }
-        ),
-        // USDC
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-02-14')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 6) AS tokens FROM usdc_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 6) AS tokens FROM usdc_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date AS min5_slot, 0 as tokens FROM generate_series( '2024-02-14'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          {
-            method: 'POST'
-          }
-        ),
-        // EZETH
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3300 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-03-08')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM ezeth_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM ezeth_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-08'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          {
-            method: 'POST'
-          }
-        ),
-        // weETH
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3300 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-03-14')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM weeth_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM weeth_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-14'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          {
-            method: 'POST'
-          }
-        ),
-        // stSTONE
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3300 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-03-26')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM ststone_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM ststone_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-03-26'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          {
-            method: 'POST'
-          }
-        ),
-        //wstETH
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3300 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-04-18')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM wrsteth_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM wrsteth_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-04-18'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          { method: 'POST' }
-        ),
-        //weETHnew
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3300 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-04-23')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM weeth_market_new.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM weeth_market_new.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-04-23'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          { method: 'POST' }
-        ),
-        // mBTC
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 52000 * 2 AS points, (Extract(epoch FROM (min5_slot - '2024-04-23')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM m_btc_market.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM m_btc_market.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series( '2024-04-23'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          { method: 'POST' }
-        ),
-        // ionWETH
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 * 3300 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM ionweth_modenative.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM ionweth_modenative.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          { method: 'POST' }
-        ),
-        // ionUSDC
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 6) AS tokens FROM ionusdc_modenative.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 6) AS tokens FROM ionusdc_modenative.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          { method: 'POST' }
-        ),
-        // ionUSDT
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 * 1 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 6) AS tokens FROM ionusdt_modenative.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 6) AS tokens FROM ionusdt_modenative.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          { method: 'POST' }
-        ),
-        // ionMODE
-        fetchData<QueryResponse, QueryData>(
-          'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-          {
-            query: `WITH addr AS (SELECT '${address?.toLowerCase()}') SELECT SUM(points * (-ln(days+1)+5.5)) AS total_points FROM ( SELECT min5_slot, flow, cum_sum, Lag(cum_sum) OVER (ORDER BY min5_slot) * (SELECT Extract(epoch FROM delta) / 86400) * 3 * 0.05 AS points, (Extract(epoch FROM (min5_slot - '2024-05-07')) / 86400) AS days FROM ( SELECT min5_slot, flow, Sum(flow) OVER ( ORDER BY min5_slot) AS cum_sum, min5_slot - Lag(min5_slot) OVER ( ORDER BY min5_slot) AS delta FROM ( SELECT min5_slot, Sum(tokens) AS flow FROM (SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , -method_repay_amount / Pow(10, 18) AS tokens FROM ionmode_modenative.repay_borrow_methods WHERE method_repay_amount<pow(10,60) AND tx_from IN (SELECT * FROM addr) UNION ALL SELECT Date_bin ('1 hour', block_time, '2000-1-1') AS min5_slot , event_borrow_amount / Pow(10, 18) AS tokens FROM ionmode_modenative.borrow_events WHERE event_borrower IN (SELECT * FROM addr) UNION ALL SELECT date_trunc('day', dd):: date, 0 as tokens FROM generate_series('2024-05-07'::timestamp, NOW()::timestamp, '1 day'::interval) dd UNION ALL SELECT Date_bin ('1 hour', NOW(), '2000-1-1') AS min5_slot, 0 AS tokens ) AS a GROUP BY min5_slot ORDER BY min5_slot) AS b) AS c ) AS d`
-          },
-          { method: 'POST' }
-        )
-      ]);
-
+      const response = await Promise.all(
+        Object.values(multipliers[mode.id]['0'])
+          .filter((asset) => !!asset.borrow)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getBorrowQuery(
+                  address?.toLowerCase(),
+                  asset.borrow!.ionic,
+                  asset.market,
+                  SEASON_2_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
+      );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][0],
+        (acc, current) => acc + current.data.rows[0][1],
         0
       );
 
@@ -351,7 +402,180 @@ const usePointsForBorrow = () => {
         rows: [[totalPoints]]
       };
     },
-    queryKey: ['points', 'borrow', address],
+    queryKey: ['points', 'borrow', 'mode-main', address],
+    refetchOnWindowFocus: false,
+    staleTime: Infinity
+  });
+};
+
+const usePointsForSupplyModeNative = () => {
+  const { address } = useMultiIonic();
+
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      const response = await Promise.all(
+        Object.values(multipliers[mode.id]['1']).map((asset) => {
+          return fetchData<QueryResponse, QueryData>(
+            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+            {
+              query: getSupplyQuery(
+                address?.toLowerCase(),
+                asset.supply.ionic,
+                asset.market,
+                SEASON_2_START_DATE,
+                asset.multiplier,
+                asset.decimals
+              )
+            },
+            {
+              method: 'POST'
+            }
+          );
+        })
+      );
+      const totalPoints = response.reduce(
+        (acc, current) => acc + current.data.rows[0][1],
+        0
+      );
+
+      return {
+        ...response[0].data,
+        rows: [[totalPoints]]
+      };
+    },
+    queryKey: ['points', 'supply', 'mode-native', address],
+    refetchOnWindowFocus: false,
+    staleTime: Infinity
+  });
+};
+
+const usePointsForBorrowModeNative = () => {
+  const { address } = useMultiIonic();
+
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      const response = await Promise.all(
+        Object.values(multipliers[mode.id]['1'])
+          .filter((asset) => !!asset.borrow)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getBorrowQuery(
+                  address?.toLowerCase(),
+                  asset.borrow!.ionic,
+                  asset.market,
+                  SEASON_2_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
+      );
+      const totalPoints = response.reduce(
+        (acc, current) => acc + current.data.rows[0][1],
+        0
+      );
+
+      return {
+        ...response[0].data,
+        rows: [[totalPoints]]
+      };
+    },
+    queryKey: ['points', 'borrow', 'mode-native', address],
+    refetchOnWindowFocus: false,
+    staleTime: Infinity
+  });
+};
+
+const usePointsForSupplyBaseMain = () => {
+  const { address } = useMultiIonic();
+
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      const response = await Promise.all(
+        Object.values(multipliers[base.id]['0']).map((asset) => {
+          return fetchData<QueryResponse, QueryData>(
+            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+            {
+              query: getSupplyQuery(
+                address?.toLowerCase(),
+                asset.supply.ionic,
+                asset.market,
+                SEASON_2_BASE_START_DATE,
+                asset.multiplier,
+                asset.decimals
+              )
+            },
+            {
+              method: 'POST'
+            }
+          );
+        })
+      );
+      const totalPoints = response.reduce(
+        (acc, current) => acc + current.data.rows[0][1],
+        0
+      );
+
+      return {
+        ...response[0].data,
+        rows: [[totalPoints]]
+      };
+    },
+    queryKey: ['points', 'supply', 'base-main', address],
+    refetchOnWindowFocus: false,
+    staleTime: Infinity
+  });
+};
+
+const usePointsForBorrowBaseMain = () => {
+  const { address } = useMultiIonic();
+
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      const response = await Promise.all(
+        Object.values(multipliers[base.id]['0'])
+          .filter((asset) => !!asset.borrow)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getBorrowQuery(
+                  address?.toLowerCase(),
+                  asset.borrow!.ionic,
+                  asset.market,
+                  SEASON_2_BASE_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
+      );
+      const totalPoints = response.reduce(
+        (acc, current) => acc + current.data.rows[0][1],
+        0
+      );
+
+      return {
+        ...response[0].data,
+        rows: [[totalPoints]]
+      };
+    },
+    queryKey: ['points', 'borrow', 'base-main', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -369,7 +593,7 @@ const useLeaderboard = (page: number) => {
     keepPreviousData: true,
     queryFn: async () => {
       const response = await supabase
-        .from('ranks')
+        .from('ranks_season2')
         .select('*')
         .order('rank', { ascending: true })
         .limit(pageSize)
@@ -380,7 +604,8 @@ const useLeaderboard = (page: number) => {
         ? await Promise.all(
             response.data.map(async (row) => {
               const ens = await getEnsName(config, {
-                address: row.address as Address
+                address: row.address as Address,
+                chainId: config.chains[0].id
               });
               return { ...row, ens };
             })
@@ -390,6 +615,7 @@ const useLeaderboard = (page: number) => {
       return data;
     },
     queryKey: ['points', 'leaderboard', page],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
@@ -403,13 +629,13 @@ const useGlobalRank = () => {
         return null;
       }
       const response = await supabase
-        .from('ranks')
+        .from('ranks_season2')
         .select('*')
         .eq('address', address.toLowerCase())
         .limit(1);
 
       const highest = await supabase
-        .from('ranks')
+        .from('ranks_season2')
         .select('*')
         .order('rank', { ascending: false })
         .limit(1);
@@ -420,13 +646,18 @@ const useGlobalRank = () => {
       };
     },
     queryKey: ['points', 'rank', address],
+    refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
 
 export {
-  usePointsForSupply,
-  usePointsForBorrow,
+  usePointsForSupplyBaseMain,
+  usePointsForSupplyModeMain,
+  usePointsForSupplyModeNative,
+  usePointsForBorrowBaseMain,
+  usePointsForBorrowModeMain,
+  usePointsForBorrowModeNative,
   useLeaderboard,
   useGlobalRank
 };
