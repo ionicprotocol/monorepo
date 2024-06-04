@@ -60,6 +60,7 @@ import { useStore } from 'ui/store/Store';
 import { INFO } from '@ui/constants/index';
 import { PopupMode } from 'ui/app/_components/popup/page';
 import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 const Asset = ({ params }: IProp) => {
   //here we need to make a api to get the data of a certain asset (we can also check the current user with the help of wagmi)
@@ -86,6 +87,7 @@ const Asset = ({ params }: IProp) => {
   const lendingSupply = searchParams.get('lendingSupply');
   const gettingBorrows = searchParams.get('totalBorrows');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [swapOpen, setSwapOpen] = useState<boolean>(false);
   // if (!gettingBorrows) return;
   const totalBorrows = extractAndConvertStringTOValue(gettingBorrows as string).value2;
   // const info = searchParams.get('info');
@@ -325,12 +327,22 @@ const Asset = ({ params }: IProp) => {
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
             <span> {totalBorrows} USDC</span>
-            <Link
+            <div
               className={`rounded-lg bg-graylite text-sm  text-white/50 py-1 px-3`}
-              href={`${pathname}?popmode=BORROW`}
+              // href={`${pathname}?popmode=BORROW`}
+              // onClick={async () => {
+              //   const result = await handleSwitchOriginChain(
+              //     dropdownSelectedChain,
+              //     selectedChain
+              //   );
+              //   if (result) {
+              //     setSelectedSymbol(asset);
+              //     setPopupMode(PopupMode.BORROW);
+              //   }
+              // }}
             >
               Borrow
-            </Link>
+            </div>
           </div>
           <div
             className={`text-white/60 w-full flex items-center justify-between text-[10px] `}
