@@ -31,12 +31,13 @@ export default function Claim() {
   const [publicSaleEligibleToken, setPublicSaleEligibleToken] = useState(
     BigInt(0)
   );
-  const [alreadyClaimed, setAlreadyClaimed] = useState(BigInt(0));
+  // const [alreadyClaimed, setAlreadyClaimed] = useState(BigInt(0));
   const [publicSaleAlreadyClaimed, setPublicSaleAlreadyClaimed] = useState(
     BigInt(0)
   );
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [haveClaimed, setHaveClaimed] = useState<boolean>(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
     useState<number>(DROPDOWN.AirdropSZN1);
   const [popupV2, setPopupV2] = useState<boolean>(false);
@@ -66,12 +67,12 @@ export default function Claim() {
           functionName: 'claimable'
         });
 
-        const total = totalTokenData as [bigint, bigint];
+        const total = totalTokenData as [bigint, bigint, boolean];
 
         setCurrentClaimable(claimable as bigint);
         setEligibleForToken(total[0]);
-        setAlreadyClaimed(total[1]);
-
+        // setAlreadyClaimed(total[1]);
+        setHaveClaimed(total[2]);
         // eslint-disable-next-line no-console
         // console.log(totalTokenData, claimable);
       } catch (err) {
@@ -211,7 +212,7 @@ export default function Claim() {
   //   }),
   //   publicClaimable
   // );
-
+  //  console.log(eligibleForToken ,  alreadyClaimed);
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
@@ -339,7 +340,7 @@ export default function Claim() {
                         ? currentClaimable
                         : publicClaimable
                     )
-                  ) == 0
+                  ) == 0 || haveClaimed == true
                     ? true
                     : false
                 }
@@ -356,19 +357,18 @@ export default function Claim() {
                 : 'The tokens are fully unlocked on the last day of the vesting period'}
             </p>
 
-            <p className={` text-xs text-start`}>
-              Already claimed:{' '}
-              {Number(
-                formatEther(
-                  dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                    ? alreadyClaimed
-                    : publicSaleAlreadyClaimed
-                )
-              ).toLocaleString(undefined, {
-                maximumFractionDigits: 2
-              })}{' '}
-              ION
-            </p>
+            {dropdownSelectedCampaign === DROPDOWN.PublicSale && (
+              <p className={` text-xs text-start`}>
+                Already claimed:{' '}
+                {Number(formatEther(publicSaleAlreadyClaimed)).toLocaleString(
+                  undefined,
+                  {
+                    maximumFractionDigits: 2
+                  }
+                )}{' '}
+                ION
+              </p>
+            )}
           </div>
         </div>
       </div>
