@@ -13,7 +13,7 @@ import { PopupMode } from '../popup/page';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
+// import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 // import { useStore } from 'ui/store/Store';
 // import { useAccount } from 'wagmi';
 
@@ -297,6 +297,7 @@ const PoolRows = ({
   //   // if (btnref.current) return;
   //   // router.push(`/market/details/${asset}`);
   // }
+  // console.log(totalBorrowing);
   return (
     <div
       className={`w-full h-full lg:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 `}
@@ -312,7 +313,7 @@ const PoolRows = ({
             borrowAPR: parseInt(borrowAPR),
             collateralAPR: collateralFactor,
             lendingSupply: parseInt(supplyBalance),
-            totalBorrows: extractAndConvertStringTOValue(totalBorrowing).value2,
+            totalBorrows: totalBorrowing,
             totalCollateral: 123456
           }
         }}

@@ -1,12 +1,14 @@
 export const extractAndConvertStringTOValue = (
-  input: string
+  input: string = '0 weETH / $0'
 ): { value1: number; value2: number } => {
   // Extract the numbers using regex
   const regex = /([\d,]+\.\d+)[^\d]+([\d,]+\.\d+)/;
   const matches = input.match(regex);
 
   if (!matches || matches.length < 3) {
-    throw new Error('The input string does not contain the expected format.');
+    // eslint-disable-next-line no-console
+    // console.log('The input string does not contain the expected format.');
+    return { value1: 0, value2: 0 };
   }
 
   // Remove commas and convert to numbers

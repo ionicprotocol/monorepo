@@ -59,6 +59,7 @@ import {
 import { useStore } from 'ui/store/Store';
 import { INFO } from '@ui/constants/index';
 import { PopupMode } from 'ui/app/_components/popup/page';
+import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 
 const Asset = ({ params }: IProp) => {
   //here we need to make a api to get the data of a certain asset (we can also check the current user with the help of wagmi)
@@ -83,8 +84,10 @@ const Asset = ({ params }: IProp) => {
   const borrowAPR = searchParams.get('borrowAPR');
   const collateralAPR = searchParams.get('collateralAPR');
   const lendingSupply = searchParams.get('lendingSupply');
-  const totalBorrows = searchParams.get('totalBorrows');
+  const gettingBorrows = searchParams.get('totalBorrows');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  // if (!gettingBorrows) return;
+  const totalBorrows = extractAndConvertStringTOValue(gettingBorrows as string).value2;
   // const info = searchParams.get('info');
   // console.log(info);
 
