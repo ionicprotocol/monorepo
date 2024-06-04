@@ -211,6 +211,7 @@ export default function Claim() {
   //   }),
   //   publicClaimable
   // );
+
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
@@ -331,9 +332,17 @@ export default function Claim() {
               </div>
               <button
                 className={`bg-accent text-darkone py-1  ml-auto px-10 rounded-md disabled:opacity-40 `}
-                // disabled={
-                //   publicClaimable == BigInt(0) || currentClaimable === BigInt(0)
-                // }
+                disabled={
+                  Number(
+                    formatEther(
+                      dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+                        ? currentClaimable
+                        : publicClaimable
+                    )
+                  ) == 0
+                    ? true
+                    : false
+                }
                 onClick={() => {
                   setPopupV2(true);
                 }}
