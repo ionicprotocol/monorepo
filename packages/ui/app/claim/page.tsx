@@ -411,11 +411,20 @@ export default function Claim() {
                   />
                   <span>
                     I understand and agree to forfeit{' '}
-                    {Number(
-                      formatEther(
-                        dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                          ? currentClaimable
-                          : publicClaimable
+                    {(
+                      Number(
+                        formatEther(
+                          dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                            ? eligibleForToken
+                            : publicSaleEligibleToken
+                        )
+                      ) -
+                      Number(
+                        formatEther(
+                          dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                            ? currentClaimable
+                            : publicClaimable
+                        )
                       )
                     ).toFixed(2)}{' '}
                     vested $ION, in favour of instantly receiving tokens now
