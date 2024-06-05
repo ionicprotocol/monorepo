@@ -72,7 +72,6 @@ const PoolRows = ({
   setSelectedSymbol,
   setPopupMode,
   selectedChain,
-  selectedSymbol,
   selectedPoolId,
   comptrollerAddress
 }: IRows) => {
