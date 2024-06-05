@@ -82,6 +82,8 @@
     /* Most modern browsers support this now. */
     color: rgb(255 255 255 / 0.5);
   }
+
+  
 }
 
 .bg-lime {
@@ -94,6 +96,10 @@
 
 .border-lime {
   border-color: #dffe00;
+}
+
+.border-mode {
+  border-color: #dffd04;
 }
 
 .text-xxs {

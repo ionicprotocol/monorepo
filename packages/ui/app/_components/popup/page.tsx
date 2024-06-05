@@ -1,8 +1,8 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -26,6 +26,10 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
+import {
+  useHealthFactor,
+  useHealthFactorPrediction
+} from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
@@ -44,6 +48,13 @@ export enum PopupMode {
   BORROW,
   REPAY,
   LOOP
+}
+
+export enum HFPStatus {
+  CRITICAL = 'CRITICAL',
+  NORMAL = 'NORMAL',
+  UNKNOWN = 'UNKNOWN',
+  WARNING = 'WARNING'
 }
 
 interface IPopup {
@@ -167,6 +178,25 @@ const Popup = ({
   );
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
+  const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
+  const {
+    data: predictedHealthFactor,
+    isLoading: isLoadingPredictedHealthFactor
+  } = useHealthFactorPrediction(
+    comptrollerAddress,
+    address ?? '',
+    selectedMarketData.cToken,
+    active === PopupMode.WITHDRAW
+      ? amountAsBInt
+      : parseUnits('0', selectedMarketData.underlyingDecimals),
+    active === PopupMode.BORROW
+      ? amountAsBInt
+      : parseUnits('0', selectedMarketData.underlyingDecimals),
+    active === PopupMode.REPAY
+      ? amountAsBInt
+      : parseUnits('0', selectedMarketData.underlyingDecimals)
+  );
+
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
@@ -265,6 +295,25 @@ const Popup = ({
   );
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [loopOpen, setLoopOpen] = useState<boolean>(false);
+  const hfpStatus = useMemo<HFPStatus>(() => {
+    if (!predictedHealthFactor) {
+      return HFPStatus.UNKNOWN;
+    }
+
+    const predictedHealthFactorNumber = Number(
+      formatEther(predictedHealthFactor)
+    );
+
+    if (predictedHealthFactorNumber <= 1.1) {
+      return HFPStatus.CRITICAL;
+    }
+
+    if (predictedHealthFactorNumber <= 1.3) {
+      return HFPStatus.WARNING;
+    }
+
+    return HFPStatus.NORMAL;
+  }, [predictedHealthFactor]);
   const queryClient = useQueryClient();
 
   /**
@@ -849,7 +898,9 @@ const Popup = ({
 
         currentTransactionStep++;
 
-        const isRepayingMax = amountAsBInt.gte(maxRepayAmount ?? '0');
+        const isRepayingMax = amountAsBInt.gte(
+          selectedMarketData.borrowBalance ?? '0'
+        );
         console.warn(
           'Repay params:',
           selectedMarketData.cToken,
@@ -860,7 +911,7 @@ const Popup = ({
         );
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
-          isRepayingMax,
+          false,
           isRepayingMax ? selectedMarketData.borrowBalance : amountAsBInt
         );
 
@@ -1150,6 +1201,24 @@ const Popup = ({
                       </ResultHandler>
                     </span>
                   </div>
+                  {/* <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
+                      </ResultHandler>
+                    </span>
+                  </div> */}
                   <div
                     className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                   />
@@ -1206,6 +1275,7 @@ const Popup = ({
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />
@@ -1246,6 +1316,20 @@ const Popup = ({
                     currentUtilizationPercentage={currentUtilizationPercentage}
                     handleUtilization={handleWithdrawUtilization}
                   />
+
+                  {hfpStatus === HFPStatus.WARNING && (
+                    <div className="text-lime text-xs text-center">
+                      Warning: You are close to the liquidation threshold and
+                      will need to manage your health factor.
+                    </div>
+                  )}
+
+                  {hfpStatus === HFPStatus.CRITICAL && (
+                    <div className="text-error text-xs text-center">
+                      Health factor too low.
+                    </div>
+                  )}
+
                   <div
                     className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                   />
@@ -1284,20 +1368,48 @@ const Popup = ({
                     </span>
                   </div>
                   <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
                     className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />
                     ) : (
                       <button
                         className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                          amount && amountAsBInt.gt('0')
+                          amount &&
+                          amountAsBInt.gt('0') &&
+                          !isLoadingPredictedHealthFactor &&
+                          hfpStatus !== HFPStatus.CRITICAL &&
+                          hfpStatus !== HFPStatus.UNKNOWN
                             ? 'bg-accent'
                             : 'bg-stone-500'
                         } `}
+                        disabled={
+                          isLoadingPredictedHealthFactor ||
+                          hfpStatus === HFPStatus.CRITICAL ||
+                          hfpStatus === HFPStatus.UNKNOWN
+                        }
                         onClick={withdrawAmount}
                       >
                         Withdraw {selectedMarketData.underlyingSymbol}
@@ -1331,10 +1443,16 @@ const Popup = ({
                     handleUtilization={handleBorrowUtilization}
                   />
 
-                  {currentUtilizationPercentage >= 70 && (
+                  {hfpStatus === HFPStatus.WARNING && (
                     <div className="text-lime text-xs text-center">
                       Warning: You are close to the liquidation threshold and
                       will need to manage your health factor.
+                    </div>
+                  )}
+
+                  {hfpStatus === HFPStatus.CRITICAL && (
+                    <div className="text-error text-xs text-center">
+                      Health factor too low.
                     </div>
                   )}
 
@@ -1399,6 +1517,24 @@ const Popup = ({
                     </span>
                   </div>
                   <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
                     className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
                   />
 
@@ -1445,6 +1581,7 @@ const Popup = ({
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />
@@ -1458,10 +1595,18 @@ const Popup = ({
                             minBorrowAmount.minBorrowAsset ?? '0'
                           ) &&
                           maxBorrowAmount &&
-                          amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0')
+                          amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0') &&
+                          !isLoadingPredictedHealthFactor &&
+                          hfpStatus !== HFPStatus.CRITICAL &&
+                          hfpStatus !== HFPStatus.UNKNOWN
                             ? 'bg-accent'
                             : 'bg-stone-500'
                         } `}
+                        disabled={
+                          isLoadingPredictedHealthFactor ||
+                          hfpStatus === HFPStatus.CRITICAL ||
+                          hfpStatus === HFPStatus.UNKNOWN
+                        }
                         onClick={borrowAmount}
                       >
                         Borrow {selectedMarketData.underlyingSymbol}
@@ -1497,14 +1642,16 @@ const Popup = ({
                   >
                     <span className={``}>CURRENTLY BORROWING</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${borrowBalanceFrom}`}
+                      <span className={`text-error`}>
+                        {`${borrowBalanceFrom}`}
+                      </span>
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingUpdatedAssets}
                         width="16"
                       >
-                        {borrowBalanceTo}
+                        <span className="text-accent">{borrowBalanceTo}</span>
                       </ResultHandler>
                     </span>
                   </div>
@@ -1513,14 +1660,32 @@ const Popup = ({
                   >
                     <span className={``}>Market Borrow Apr</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${borrowAPR?.toFixed(2)}%`}
+                      <span className="">{`${borrowAPR?.toFixed(2)}%`}</span>
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingUpdatedAssets}
                         width="16"
                       >
-                        {updatedBorrowAPR?.toFixed(2)}%
+                        <span>{updatedBorrowAPR?.toFixed(2)}%</span>
+                      </ResultHandler>
+                    </span>
+                  </div>
+                  <div
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
+                  >
+                    <span className={``}>Health Factor</span>
+                    <span className={`flex font-bold pl-2`}>
+                      {`${Number(healthFactor).toFixed(2)}`}
+                      <span className="mx-1">{`->`}</span>
+                      <ResultHandler
+                        height="16"
+                        isLoading={isLoadingPredictedHealthFactor}
+                        width="16"
+                      >
+                        {Number(
+                          formatEther(predictedHealthFactor ?? '0')
+                        ).toFixed(2)}
                       </ResultHandler>
                     </span>
                   </div>
@@ -1532,6 +1697,7 @@ const Popup = ({
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
+                        chainId={chainId}
                         resetTransactionSteps={resetTransactionSteps}
                         transactionSteps={transactionSteps}
                       />

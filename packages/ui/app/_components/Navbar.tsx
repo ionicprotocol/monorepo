@@ -4,16 +4,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+// import { base } from 'viem/chains';
+// import { useChainId } from 'wagmi';
 // import '@gasbot/widget/style.css';
 
 import ConnectButton from './ConnectButton';
-
+import DynamicSubNav from './DynamicSubNav';
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
+
   // const signer = useEthersSigner();
 
   // useEffect(()=>{
@@ -22,10 +25,7 @@ export default function Navbar() {
   // },[pathname])
   return (
     <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black">
-      <div className="absolute w-full top-full left-0 bg-lime text-center p-2 text-darkone text-sm font-medium">
-        Hello, Mode! Ionic is open for lending and borrowing! Supply assets to
-        earn Ionic points. Borrow to earn multiplied points!
-      </div>
+      <DynamicSubNav />
       <Link
         className={`flex items-center  md:pr-10  `}
         href={'/'}
@@ -100,7 +100,36 @@ export default function Navbar() {
               Dashboard
             </p>
           </Link>
-
+          <Link
+            className="relative"
+            href="/earn"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={` ${
+                pathname == '/earn' ? 'text-accent' : null
+              } hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              Earn
+            </p>
+          </Link>
+          <Link
+            className="relative"
+            href="/claim"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={` ${
+                pathname == '/claim' ? 'text-accent' : null
+              } hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              Claim
+            </p>
+          </Link>
           {/* <Gasbot.CustomRender
             limitDestination={34443}
             walletClientOrSigner={signer}
@@ -147,21 +176,6 @@ export default function Navbar() {
               className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Bridge
-            </p>
-          </Link>
-          <Link
-            className="relative"
-            href="/earn"
-          >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              NEW!
-            </span>
-            <p
-              className={` ${
-                pathname == '/earn' ? 'text-accent' : null
-              } hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
-            >
-              Earn
             </p>
           </Link>
         </div>

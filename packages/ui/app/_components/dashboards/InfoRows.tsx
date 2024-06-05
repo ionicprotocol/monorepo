@@ -18,6 +18,7 @@ export type InfoRowsProps = {
   logo: string;
   membership: boolean;
   mode: InfoMode;
+  selectedChain: number;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
@@ -31,7 +32,8 @@ const InfoRows = ({
   mode,
   setSelectedSymbol,
   setPopupMode,
-  apr
+  apr,
+  selectedChain
 }: InfoRowsProps) => {
   return (
     <div
@@ -51,7 +53,7 @@ const InfoRows = ({
           className="h-7"
           src={logo}
         />
-        <h3 className={` `}>{getAssetName(asset)}</h3>
+        <h3 className={` `}>{getAssetName(asset, selectedChain)}</h3>
       </div>
       <h3 className={`mb-2 lg:mb-0`}>
         <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">

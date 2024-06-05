@@ -6,6 +6,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
@@ -25,8 +26,8 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
-  usePointsForBorrow,
-  usePointsForSupply
+  usePointsForBorrowModeNative,
+  usePointsForSupplyModeNative
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
@@ -38,8 +39,10 @@ export default function Dashboard() {
   const chainId = useChainId();
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [poolMarket, setPoolMarket] = useState<string>('0');
+  const [selectedTab, setSelectedTab] = useState('');
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
-    '0',
+    poolMarket,
     chainId
   );
   const { data: positions, isLoading: isLoadingPositions } =
@@ -165,9 +168,9 @@ export default function Dashboard() {
     return healthData ?? '∞';
   }, [healthData, marketData]);
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
-    usePointsForSupply();
+    usePointsForSupplyModeNative();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
-    usePointsForBorrow();
+    usePointsForBorrowModeNative();
   const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
     useMaxBorrowAmounts(
       marketData?.assets ?? [],
@@ -396,6 +399,38 @@ export default function Dashboard() {
             </Link>
           </div>
         </div>
+        <div
+          className={`flex items-center justify-center text-sm gap-2 p-1 my-1`}
+        >
+          <button
+            className={`py-2 px-4 border rounded-xl   ${
+              poolMarket === '0' && selectedTab === 'MODE'
+                ? 'bg-lime text-black'
+                : ''
+            }`}
+            onClick={() => (setPoolMarket('0'), setSelectedTab('MODE'))}
+          >
+            Mode Main Market
+          </button>
+          <button
+            className={`py-2 px-4 border rounded-xl border-lime ${
+              poolMarket === '1' ? 'bg-lime text-black ' : ' '
+            }`}
+            onClick={() => setPoolMarket('1')}
+          >
+            Mode Native Market
+          </button>
+          <button
+            className={`py-2 px-4 border rounded-xl border-lime ${
+              poolMarket === '0' && selectedTab === 'BASE'
+                ? 'bg-lime text-black '
+                : ' '
+            }`}
+            onClick={() => (setPoolMarket('0'), setSelectedTab('BASE'))}
+          >
+            Base Market
+          </button>
+        </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
@@ -456,6 +491,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.SUPPLY}
+                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
@@ -530,6 +566,7 @@ export default function Dashboard() {
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
+                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       utilization={utilizations[i]}
