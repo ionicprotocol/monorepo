@@ -54,7 +54,7 @@ async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatabl
         chainLiquidationConfig
       );
     }
-    if (encodedLiquidationTX !== null) users.push(encodedLiquidationTX as T);
+    if (encodedLiquidationTX !== null) users.push(encodedLiquidationTX as unknown as T);
   }
   return users;
 }
