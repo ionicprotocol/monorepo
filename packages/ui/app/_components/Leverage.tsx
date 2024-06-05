@@ -39,7 +39,7 @@ export type LeverageProps = {
 };
 
 const ENABLED_LEVERAGE_SYMBOLS = ['USDT', 'USDC', 'WBTC', 'WETH'];
-const ENABLED_BORROW_SYMBOLS = ['USDC', 'USDT'];
+const ENABLED_SECONDARY_SYMBOLS = ['USDC', 'USDT'];
 
 export default function Leverage({ marketData }: LeverageProps) {
   const availableAssets = useMemo(
@@ -49,10 +49,11 @@ export default function Leverage({ marketData }: LeverageProps) {
       ),
     [marketData]
   );
-  const borrowAssets = useMemo(
+  const secondaryAssets = useMemo(
     () =>
       marketData.assets.filter(
-        (asset) => ENABLED_BORROW_SYMBOLS.indexOf(asset.underlyingSymbol) > -1
+        (asset) =>
+          ENABLED_SECONDARY_SYMBOLS.indexOf(asset.underlyingSymbol) > -1
       ),
     [marketData]
   );
@@ -62,34 +63,35 @@ export default function Leverage({ marketData }: LeverageProps) {
   const [selectedFundingAsset, setSelectedFundingAsset] = useState<MarketData>(
     availableAssets[0]
   );
-  const [selectedCollateralAsset, setSelectedCollateralAsset] =
-    useState<MarketData>(availableAssets[1]);
-  const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<MarketData>(
-    borrowAssets[0]
+  const [selectedPrimaryAsset, setSelectedPrimaryAsset] = useState<MarketData>(
+    availableAssets[1]
   );
+  const [selectedSecondaryAsset, setSelectedSecondaryAsset] =
+    useState<MarketData>(secondaryAssets[0]);
   const [fundingAmount, setFundingAmount] = useState<string>();
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
   const [leverageMode, setLeverageMode] = useState<LeverageMode>(
     LeverageMode.LONG
   );
-  const [borrowSelectOpen, setBorrowSelectOpen] = useState<boolean>(false);
+  const [secondarySelectOpen, setSecondarySelectOpen] =
+    useState<boolean>(false);
 
-  const { borrowAmount, debtValue, collateralAmount, positionValue } =
+  const { secondaryAmount, debtValue, primaryAmount, positionValue } =
     useMemo(() => {
-      const borrowToFundingRatio =
-        Number(formatEther(selectedBorrowAsset.underlyingPrice)) /
+      const secondaryToFundingRatio =
+        Number(formatEther(selectedSecondaryAsset.underlyingPrice)) /
         Number(formatEther(selectedFundingAsset.underlyingPrice));
-      const collateralToFundingRatio =
-        Number(formatEther(selectedCollateralAsset.underlyingPrice)) /
+      const primaryToFundingRatio =
+        Number(formatEther(selectedPrimaryAsset.underlyingPrice)) /
         Number(formatEther(selectedFundingAsset.underlyingPrice));
-      const borrowAmount = (
-        (Number(fundingAmount ?? '0') / borrowToFundingRatio) *
+      const secondaryAmount = (
+        (Number(fundingAmount ?? '0') / secondaryToFundingRatio) *
         currentLeverage
-      ).toFixed(Number(selectedBorrowAsset.underlyingDecimals.toString()));
-      const collateralAmount = (
-        (Number(fundingAmount ?? '0') / collateralToFundingRatio) *
+      ).toFixed(Number(selectedSecondaryAsset.underlyingDecimals.toString()));
+      const primaryAmount = (
+        (Number(fundingAmount ?? '0') / primaryToFundingRatio) *
         currentLeverage
-      ).toFixed(Number(selectedCollateralAsset.underlyingDecimals.toString()));
+      ).toFixed(Number(selectedPrimaryAsset.underlyingDecimals.toString()));
       const fundingValue = !!usdPrice
         ? Number(fundingAmount ?? '0') *
           usdPrice *
@@ -99,17 +101,17 @@ export default function Leverage({ marketData }: LeverageProps) {
       const debtValue = positionValue - fundingValue;
 
       return {
-        borrowAmount,
-        borrowToFundingRatio,
-        collateralAmount,
         debtValue,
-        positionValue
+        positionValue,
+        primaryAmount,
+        secondaryAmount,
+        secondaryToFundingRatio
       };
     }, [
       currentLeverage,
       fundingAmount,
-      selectedBorrowAsset,
-      selectedCollateralAsset,
+      selectedSecondaryAsset,
+      selectedPrimaryAsset,
       selectedFundingAsset,
       usdPrice
     ]);
@@ -118,20 +120,20 @@ export default function Leverage({ marketData }: LeverageProps) {
     isLoading: isLoadingLiquidationThreshold
   } = useLiquidationThreshold(
     leverageMode === LeverageMode.LONG
-      ? selectedCollateralAsset.underlyingToken
-      : selectedBorrowAsset.underlyingToken,
+      ? selectedPrimaryAsset.underlyingToken
+      : selectedSecondaryAsset.underlyingToken,
     leverageMode === LeverageMode.LONG
       ? parseUnits(
-          collateralAmount,
-          selectedCollateralAsset.underlyingDecimals
+          primaryAmount,
+          selectedPrimaryAsset.underlyingDecimals
         ).toString()
       : parseUnits(
-          borrowAmount,
-          selectedBorrowAsset.underlyingDecimals
+          secondaryAmount,
+          selectedSecondaryAsset.underlyingDecimals
         ).toString(),
     leverageMode === LeverageMode.LONG
-      ? selectedBorrowAsset.underlyingToken
-      : selectedCollateralAsset.underlyingToken,
+      ? selectedSecondaryAsset.underlyingToken
+      : selectedPrimaryAsset.underlyingToken,
     parseEther(currentLeverage.toString()).toString()
   );
 
@@ -153,21 +155,21 @@ export default function Leverage({ marketData }: LeverageProps) {
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
   const { data: maxLeverage } = useMaxLeverageAmount(
-    selectedCollateralAsset.cToken,
+    selectedPrimaryAsset.cToken,
     parseUnits(
-      collateralAmount,
-      selectedCollateralAsset.underlyingDecimals
+      primaryAmount,
+      selectedPrimaryAsset.underlyingDecimals
     ).toString(),
-    selectedBorrowAsset.cToken
+    selectedSecondaryAsset.cToken
   );
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
     availableAssets.map((asset) => asset.underlyingToken)
   );
   const currentPrimaryAssetPriceInUSD = useMemo(
     () =>
-      Number(formatEther(selectedCollateralAsset.underlyingPrice)) *
+      Number(formatEther(selectedPrimaryAsset.underlyingPrice)) *
       (usdPrice ?? 0),
-    [selectedCollateralAsset, usdPrice]
+    [selectedPrimaryAsset, usdPrice]
   );
   const currentLiquidationPriceInUSD = useMemo<string>(() => {
     if (!healthRatio || healthRatio === Infinity || healthRatio === 0) {
@@ -258,11 +260,11 @@ export default function Leverage({ marketData }: LeverageProps) {
 
       const tx = await levatoSdk.openPosition(
         leverageMode === LeverageMode.LONG
-          ? selectedCollateralAsset.underlyingToken
-          : selectedBorrowAsset.underlyingToken,
+          ? selectedPrimaryAsset.underlyingToken
+          : selectedSecondaryAsset.underlyingToken,
         leverageMode === LeverageMode.LONG
-          ? selectedBorrowAsset.underlyingToken
-          : selectedCollateralAsset.underlyingToken,
+          ? selectedSecondaryAsset.underlyingToken
+          : selectedPrimaryAsset.underlyingToken,
         amountAsBInt,
         selectedFundingAsset.underlyingToken,
         parseUnits(currentLeverage.toString()).toString(),
@@ -288,7 +290,7 @@ export default function Leverage({ marketData }: LeverageProps) {
       });
 
       toast.success(
-        `Opened position for ${selectedFundingAsset.underlyingSymbol}/${selectedBorrowAsset.underlyingSymbol}`
+        `Opened position for ${selectedFundingAsset.underlyingSymbol}/${selectedSecondaryAsset.underlyingSymbol}`
       );
     } catch (error) {
       console.error(error);
@@ -332,17 +334,15 @@ export default function Leverage({ marketData }: LeverageProps) {
       </div>
 
       <Amount
-        amount={collateralAmount}
+        amount={primaryAmount}
         availableAssets={availableAssets}
         handleInput={() => {}}
         isLoading={false}
         mainText={leverageMode === LeverageMode.LONG ? 'Long' : 'Short'}
         readonly
-        selectedMarketData={selectedCollateralAsset}
-        setSelectedAsset={(asset: MarketData) =>
-          setSelectedCollateralAsset(asset)
-        }
-        symbol={selectedCollateralAsset.underlyingSymbol}
+        selectedMarketData={selectedPrimaryAsset}
+        setSelectedAsset={(asset: MarketData) => setSelectedPrimaryAsset(asset)}
+        symbol={selectedPrimaryAsset.underlyingSymbol}
       />
 
       <div className="separator" />
@@ -411,17 +411,17 @@ export default function Leverage({ marketData }: LeverageProps) {
         <div className={`relative font-bold pl-2 text-white `}>
           <div
             className="flex items-center cursor-pointer"
-            onClick={() => setBorrowSelectOpen(!borrowSelectOpen)}
+            onClick={() => setSecondarySelectOpen(!secondarySelectOpen)}
           >
             <Image
               alt="link"
               className="mr-1"
               height="20"
-              src={`/img/symbols/32/color/${selectedBorrowAsset.underlyingSymbol.toLowerCase()}.png`}
+              src={`/img/symbols/32/color/${selectedSecondaryAsset.underlyingSymbol.toLowerCase()}.png`}
               width="20"
             />
 
-            {selectedBorrowAsset.underlyingSymbol}
+            {selectedSecondaryAsset.underlyingSymbol}
 
             <Image
               alt="link"
@@ -432,11 +432,11 @@ export default function Leverage({ marketData }: LeverageProps) {
           </div>
 
           <AssetsList
-            availableAssets={borrowAssets}
-            isOpen={borrowSelectOpen}
+            availableAssets={secondaryAssets}
+            isOpen={secondarySelectOpen}
             onChange={(asset) => {
-              setSelectedBorrowAsset(asset);
-              setBorrowSelectOpen(false);
+              setSelectedSecondaryAsset(asset);
+              setSecondarySelectOpen(false);
             }}
           />
         </div>
@@ -469,8 +469,8 @@ export default function Leverage({ marketData }: LeverageProps) {
           >
             {borrowRates?.get(
               leverageMode === LeverageMode.LONG
-                ? selectedCollateralAsset.underlyingToken
-                : selectedBorrowAsset.underlyingToken
+                ? selectedPrimaryAsset.underlyingToken
+                : selectedSecondaryAsset.underlyingToken
             )}
           </ResultHandler>
         </span>
