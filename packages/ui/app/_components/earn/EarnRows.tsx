@@ -81,9 +81,18 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             >
               + POINTS <i className="popover-hint">i</i>
             </span>
-            <span className="text-xs font-bold text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
-              + TURTLE <i className="popover-hint">i</i>
-            </span>
+            <a
+              className="text-xs font-bold text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1 flex items-center justify-center gap-1"
+              href="https://turtle.club/dashboard/?ref=IONIC"
+              target="_blank"
+            >
+              + TURTLE{' '}
+              <img
+                alt="external-link"
+                className={`w-3 h-3`}
+                src="https://img.icons8.com/material-outlined/24/external-link.png"
+              />
+            </a>
             <div
               className={`font-bold popover absolute w-[160px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
             >
