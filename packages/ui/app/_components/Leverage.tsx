@@ -1,14 +1,13 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber, constants } from 'ethers';
+import { constants } from 'ethers';
 import {
   formatEther,
   formatUnits,
   parseEther,
   parseUnits
 } from 'ethers/lib/utils';
-import millify from 'millify';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
