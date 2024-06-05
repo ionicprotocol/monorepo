@@ -309,12 +309,12 @@ export default function Claim() {
         <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wide md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
-            <button
+            {/* <button
               className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
               onClick={() => setPopup(true)}
             >
               Check Eligibility
-            </button>
+            </button> */}
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
             {[...Array(6)].map((_, index) => (
@@ -411,15 +411,18 @@ export default function Claim() {
                 className={`flex flex-col items-start justify-start gap-y-1`}
               >
                 <span>
-                  {Number(
-                    formatEther(
-                      dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
-                        ? currentClaimable
-                        : publicClaimable
-                    )
-                  ).toLocaleString(undefined, {
-                    maximumFractionDigits: 2
-                  })}{' '}
+                  {dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 &&
+                  haveClaimed
+                    ? 0
+                    : Number(
+                        formatEther(
+                          dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+                            ? currentClaimable
+                            : publicClaimable
+                        )
+                      ).toLocaleString(undefined, {
+                        maximumFractionDigits: 2
+                      })}{' '}
                   {/* {Number(publicClaimable)} */}
                   ION
                 </span>
@@ -433,7 +436,9 @@ export default function Claim() {
                         ? currentClaimable
                         : publicClaimable
                     )
-                  ) == 0 || haveClaimed == true
+                  ) == 0 ||
+                  (dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 &&
+                    haveClaimed == true)
                     ? true
                     : false
                 }
