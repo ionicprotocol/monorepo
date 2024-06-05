@@ -1,9 +1,8 @@
 'use client';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatEther, formatUnits } from 'ethers/lib/utils';
-import millify from 'millify';
 import Image from 'next/image';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useBalance, useChainId } from 'wagmi';
 

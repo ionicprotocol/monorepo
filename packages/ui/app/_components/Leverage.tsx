@@ -129,7 +129,7 @@ export default function Leverage({ marketData }: LeverageProps) {
   );
   const { healthRatio } = useMemo(() => {
     const healthRatio = !!liquidationThreshold
-      ? (positionValue / liquidationThreshold).toFixed(2)
+      ? positionValue / liquidationThreshold
       : 0.0;
 
     return { healthRatio };
@@ -155,6 +155,33 @@ export default function Leverage({ marketData }: LeverageProps) {
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
     availableAssets.map((asset) => asset.underlyingToken)
   );
+  const currentPrimaryAssetPriceInUSD = useMemo(
+    () =>
+      Number(formatEther(selectedCollateralAsset.underlyingPrice)) *
+      (usdPrice ?? 0),
+    [selectedCollateralAsset, usdPrice]
+  );
+  const currentLiquidationPriceInUSD = useMemo<string>(() => {
+    if (!healthRatio || healthRatio === Infinity || healthRatio === 0) {
+      return 'N/A';
+    }
+
+    return leverageMode === LeverageMode.LONG
+      ? `$${(currentPrimaryAssetPriceInUSD / healthRatio).toLocaleString(
+          'en-US',
+          {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+          }
+        )}`
+      : `$${(currentPrimaryAssetPriceInUSD * healthRatio).toLocaleString(
+          'en-US',
+          {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+          }
+        )}`;
+  }, [currentPrimaryAssetPriceInUSD, healthRatio, leverageMode]);
   const queryClient = useQueryClient();
 
   /**
@@ -449,6 +476,25 @@ export default function Leverage({ marketData }: LeverageProps) {
       <div
         className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
       >
+        <span className={``}>Entry price</span>
+        <span className={`font-bold pl-2 text-white`}>
+          <ResultHandler
+            height="16"
+            isLoading={isLoadingLiquidationThreshold}
+            width="16"
+          >
+            $
+            {currentPrimaryAssetPriceInUSD.toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2
+            })}
+          </ResultHandler>
+        </span>
+      </div>
+
+      <div
+        className={`flex w-full items-center justify-between mb-1 hint-text-uppercase`}
+      >
         <span className={``}>Liquidation threshold</span>
         <span className={`font-bold pl-2 text-white`}>
           <ResultHandler
@@ -456,7 +502,7 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingLiquidationThreshold}
             width="16"
           >
-            ${millify(liquidationThreshold ?? 0)}
+            {currentLiquidationPriceInUSD}
           </ResultHandler>
         </span>
       </div>
@@ -471,7 +517,7 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingLiquidationThreshold}
             width="16"
           >
-            {healthRatio}
+            {healthRatio.toFixed(2)}
           </ResultHandler>
         </span>
       </div>
