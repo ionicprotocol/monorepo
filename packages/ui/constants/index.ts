@@ -21,6 +21,11 @@ export const CLOSE_FACTOR = {
   MAX: 90,
   MIN: 5
 };
+
+export const DROPDOWN = {
+  AirdropSZN1: 1,
+  PublicSale: 0
+};
 export const pools = [
   {
     chain: 34443,
