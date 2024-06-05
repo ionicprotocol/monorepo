@@ -34,7 +34,7 @@ COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
 COPY packages/types/package.json /tmp/build/packages/types/
 COPY packages/chains/package.json /tmp/build/packages/chains/
-COPY packages/bots/liquidator_base/package.json /tmp/build/packages/bots/liquidator_base/
+COPY packages/bots/liquidator/package.json /tmp/build/packages/bots/liquidator/
 COPY yarn.lock /tmp/build/
 
 # ----- Install dependencies -----
@@ -45,10 +45,10 @@ RUN yarn install --inline-builds --mode=skip-build
 COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/types /tmp/build/packages/types
 COPY packages/chains /tmp/build/packages/chains
-COPY packages/bots/liquidator_base /tmp/build/packages/bots/liquidator_base
+COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
 
 # ----- build -----
-RUN yarn build:deploy:liquidator_base
+RUN yarn build:deploy:liquidator
 
 # ----------------------------------------
 # Copy files to the deployment image.
@@ -62,5 +62,5 @@ ENV NODE_ENV=production
 WORKDIR ${LAMBDA_TASK_ROOT}
 COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 
-CMD ["packages/bots/liquidator_base/build/src/index.handler"]
+CMD ["packages/bots/liquidator/build/src/index.handler"]
 
