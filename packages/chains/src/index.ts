@@ -10,8 +10,8 @@ import { default as linea } from "./linea";
 import { default as mode } from "./mode";
 import { default as neon } from "./neon";
 import { default as polygon } from "./polygon";
-import { default as zkevm } from "./zkevm";
 import { default as sepolia } from "./sepolia";
+import { default as zkevm } from "./zkevm";
 
 export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode, base, sepolia };
 
