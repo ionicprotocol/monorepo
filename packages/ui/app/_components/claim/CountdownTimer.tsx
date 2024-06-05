@@ -1,22 +1,27 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+import { DROPDOWN } from '@ui/constants/index';
+
 interface ITime {
   days: number;
   hours: number;
   minutes: number;
 }
 interface IProp {
-  dropdownSelectedSeason: number;
+  dropdownSelectedCampaign: number;
 }
 
-const CountdownTimer = ({ dropdownSelectedSeason }: IProp) => {
+const CountdownTimer = ({ dropdownSelectedCampaign }: IProp) => {
   const diffSeason1 = +new Date('2024-08-31T00:00:00+00:00') - +new Date();
   const diffS1presale = +new Date('2024-08-21T00:00:00+00:00') - +new Date();
 
   const [timeLeft, setTimeLeft] = useState<ITime>(
     calculateTimeLeft(
-      dropdownSelectedSeason === 1 ? diffSeason1 : diffS1presale
+      dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+        ? diffSeason1
+        : diffS1presale
     )
   );
 
@@ -24,11 +29,13 @@ const CountdownTimer = ({ dropdownSelectedSeason }: IProp) => {
     setTimeout(() => {
       setTimeLeft(
         calculateTimeLeft(
-          dropdownSelectedSeason === 1 ? diffSeason1 : diffS1presale
+          dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+            ? diffSeason1
+            : diffS1presale
         )
       );
     }, 1000);
-  }, [diffS1presale, diffSeason1, dropdownSelectedSeason]);
+  }, [diffS1presale, diffSeason1, dropdownSelectedCampaign]);
 
   function calculateTimeLeft(expiresAt: number) {
     let timeLeft: ITime = {

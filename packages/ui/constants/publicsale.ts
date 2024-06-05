@@ -1,7 +1,6 @@
-export const claimContractAddress =
+export const PublicSaleContractAddress =
   '0x731D22ed440a5BCfC140440AF441B76Baa536821';
-
-export const claimAbi = [
+export const PublicSaleAbi = [
   {
     inputs: [
       {
