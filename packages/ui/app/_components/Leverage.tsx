@@ -40,12 +40,20 @@ export type LeverageProps = {
 };
 
 const ENABLED_LEVERAGE_SYMBOLS = ['USDT', 'USDC', 'WBTC', 'WETH'];
+const ENABLED_BORROW_SYMBOLS = ['USDC', 'USDT'];
 
 export default function Leverage({ marketData }: LeverageProps) {
   const availableAssets = useMemo(
     () =>
       marketData.assets.filter(
         (asset) => ENABLED_LEVERAGE_SYMBOLS.indexOf(asset.underlyingSymbol) > -1
+      ),
+    [marketData]
+  );
+  const borrowAssets = useMemo(
+    () =>
+      marketData.assets.filter(
+        (asset) => ENABLED_BORROW_SYMBOLS.indexOf(asset.underlyingSymbol) > -1
       ),
     [marketData]
   );
@@ -58,7 +66,7 @@ export default function Leverage({ marketData }: LeverageProps) {
   const [selectedCollateralAsset, setSelectedCollateralAsset] =
     useState<MarketData>(availableAssets[1]);
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<MarketData>(
-    availableAssets[2]
+    borrowAssets[0]
   );
   const [fundingAmount, setFundingAmount] = useState<string>();
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
@@ -424,11 +432,7 @@ export default function Leverage({ marketData }: LeverageProps) {
           </div>
 
           <AssetsList
-            availableAssets={availableAssets.filter(
-              (asset) =>
-                asset.underlyingSymbol !==
-                selectedCollateralAsset.underlyingSymbol
-            )}
+            availableAssets={borrowAssets}
             isOpen={borrowSelectOpen}
             onChange={(asset) => {
               setSelectedBorrowAsset(asset);
