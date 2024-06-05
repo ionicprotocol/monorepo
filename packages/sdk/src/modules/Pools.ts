@@ -9,8 +9,8 @@ import {
   mode,
   neon,
   polygon,
-  zkevm,
-  sepolia
+  sepolia,
+  zkevm
 } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,

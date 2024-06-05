@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-import { PythEncodedLiquidationTx, PoolUserWithAssets } from "./utils";
+import { PoolUserWithAssets, PythEncodedLiquidationTx } from "./utils";
 
 export default async function encodeLiquidateTx(
   borrower: PoolUserWithAssets,

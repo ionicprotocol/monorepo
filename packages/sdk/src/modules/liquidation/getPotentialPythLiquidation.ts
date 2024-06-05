@@ -7,8 +7,8 @@ import { IonicSdk } from "../../IonicSdk";
 import { ChainLiquidationConfig } from "./config";
 import encodeLiquidatePythTx from "./encodeLiquidatePythTx";
 import {
-  PythEncodedLiquidationTx,
   PoolUserWithAssets,
+  PythEncodedLiquidationTx,
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS
 } from "./utils";
@@ -55,9 +55,9 @@ export default async function getPotentialLiquidation(
   const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
   const debtAssetDecimals = debtAsset.underlyingDecimals;
 
-  let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
+  const repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
 
-  let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
+  const liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
 
   const pool = sdk.createComptroller(comptroller);
   const collateralCToken = sdk.createICErc20(collateralAsset.cToken);

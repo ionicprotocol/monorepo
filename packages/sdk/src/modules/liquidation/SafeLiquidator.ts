@@ -6,7 +6,7 @@ import { CreateContractsModule } from "../CreateContracts";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
-import { EncodedLiquidationTx, ErroredPool, LiquidatablePool, PythLiquidatablePool, BotType } from "./utils";
+import { BotType, EncodedLiquidationTx, ErroredPool, LiquidatablePool, PythLiquidatablePool } from "./utils";
 
 import { gatherLiquidations, getAllPoolUsers } from "./index";
 

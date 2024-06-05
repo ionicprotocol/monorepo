@@ -4,6 +4,7 @@ import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import {
+  BotType,
   EncodedLiquidationTx,
   ErroredPool,
   LiquidatablePool,
@@ -11,8 +12,7 @@ import {
   PoolUserWithAssets,
   PublicPoolUserWithData,
   PythEncodedLiquidationTx,
-  PythLiquidatablePool,
-  BotType
+  PythLiquidatablePool
 } from "./utils";
 
 import { getPotentialLiquidation, getPotentialPythLiquidation } from "./index";
