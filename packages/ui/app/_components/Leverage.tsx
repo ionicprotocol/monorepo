@@ -230,7 +230,8 @@ export default function Leverage({ marketData }: LeverageProps) {
           : selectedCollateralAsset.underlyingToken,
         amountAsBInt,
         selectedFundingAsset.underlyingToken,
-        parseUnits(currentLeverage.toString()).toString()
+        parseUnits(currentLeverage.toString()).toString(),
+        leverageMode === LeverageMode.SHORT
       );
 
       upsertTransactionStep({
@@ -481,6 +482,7 @@ export default function Leverage({ marketData }: LeverageProps) {
         {transactionSteps.length > 0 ? (
           <div className="flex justify-center">
             <TransactionStepsHandler
+              chainId={chainId}
               resetTransactionSteps={() => {
                 queryClient.invalidateQueries(['positions']);
                 refetchBalance();
