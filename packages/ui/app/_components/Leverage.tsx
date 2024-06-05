@@ -1,7 +1,7 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { constants } from 'ethers';
+import { BigNumber, constants } from 'ethers';
 import {
   formatEther,
   formatUnits,
@@ -463,7 +463,7 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingBorrowRates}
             width="16"
           >
-            {borrowRates?.get(selectedBorrowAsset.underlyingToken)}
+            {borrowRates?.get(selectedCollateralAsset.underlyingToken)}
           </ResultHandler>
         </span>
       </div>
