@@ -85,7 +85,7 @@ export default function Leverage({ marketData }: LeverageProps) {
         Number(formatEther(selectedFundingAsset.underlyingPrice));
       const borrowAmount = (
         (Number(fundingAmount ?? '0') / borrowToFundingRatio) *
-        (currentLeverage - 1)
+        currentLeverage
       ).toFixed(Number(selectedBorrowAsset.underlyingDecimals.toString()));
       const collateralAmount = (
         (Number(fundingAmount ?? '0') / collateralToFundingRatio) *
@@ -135,6 +135,7 @@ export default function Leverage({ marketData }: LeverageProps) {
       : selectedCollateralAsset.underlyingToken,
     parseEther(currentLeverage.toString()).toString()
   );
+
   const { healthRatio } = useMemo(() => {
     const healthRatio = !!liquidationThreshold
       ? positionValue / liquidationThreshold
@@ -449,7 +450,11 @@ export default function Leverage({ marketData }: LeverageProps) {
       >
         <span className={``}>POSITION VALUE</span>
         <span className={`font-bold pl-2 text-white`}>
-          ${millify(positionValue)}
+          $
+          {positionValue.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+          })}
         </span>
       </div>
 
@@ -463,7 +468,11 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingBorrowRates}
             width="16"
           >
-            {borrowRates?.get(selectedCollateralAsset.underlyingToken)}
+            {borrowRates?.get(
+              leverageMode === LeverageMode.LONG
+                ? selectedCollateralAsset.underlyingToken
+                : selectedBorrowAsset.underlyingToken
+            )}
           </ResultHandler>
         </span>
       </div>
@@ -473,7 +482,11 @@ export default function Leverage({ marketData }: LeverageProps) {
       >
         <span className={``}>Debt value</span>
         <span className={`font-bold pl-2 text-white`}>
-          ${millify(debtValue)}
+          $
+          {debtValue.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+          })}
         </span>
       </div>
 
@@ -521,7 +534,7 @@ export default function Leverage({ marketData }: LeverageProps) {
             isLoading={isLoadingLiquidationThreshold}
             width="16"
           >
-            {healthRatio.toFixed(2)}
+            {healthRatio.toFixed(3)}
           </ResultHandler>
         </span>
       </div>
