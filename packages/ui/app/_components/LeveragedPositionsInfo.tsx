@@ -84,9 +84,9 @@ export default function LeveragedPositionsInfo() {
       <div
         className={`w-full gap-x-1 hidden lg:grid  grid-cols-15 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
       >
-        <div className={`col-span-3`}>LONG / SHORT</div>
+        <div className={`col-span-3`}>POSITION</div>
         <div className={`col-span-3`}>VALUE</div>
-        <div className={`col-span-3`}>LEVERAGE</div>
+        <div className={`col-span-3`}>PNL</div>
         {/* <div className={`col-span-3`}>PNL</div> */}
         <div className={`col-span-3`}>MARK/LIQ PRICE</div>
         <div className={`col-span-3`}>ACTIONS</div>
@@ -114,12 +114,16 @@ export default function LeveragedPositionsInfo() {
                 className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
               >
                 <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                  LONG / SHORT
+                  POSITION
                 </span>
                 <Image
                   alt="Alt"
                   height="16"
-                  src={`/img/symbols/32/color/${positionCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
+                  src={`/img/symbols/32/color/${
+                    position.isShort
+                      ? positionStableAsset.underlyingSymbol.toLowerCase()
+                      : positionCollateralAsset.underlyingSymbol.toLowerCase()
+                  }.png`}
                   style={{
                     display: 'inline-block',
                     position: 'relative',
@@ -128,20 +132,17 @@ export default function LeveragedPositionsInfo() {
                   }}
                   width="16"
                 />{' '}
-                {positionCollateralAsset.underlyingSymbol} /{' '}
-                <Image
-                  alt="Alt"
-                  height="16"
-                  src={`/img/symbols/32/color/${positionStableAsset.underlyingSymbol.toLowerCase()}.png`}
-                  style={{
-                    display: 'inline-block',
-                    position: 'relative',
-                    top: '-1px',
-                    verticalAlign: 'middle'
-                  }}
-                  width="16"
-                />{' '}
-                {positionStableAsset.underlyingSymbol}
+                {position.isShort
+                  ? positionStableAsset.underlyingSymbol
+                  : positionCollateralAsset.underlyingSymbol}
+                <span className="block">
+                  {Number(formatEther(position.leverageRatio)).toFixed(2)}x{' '}
+                  <span
+                    className={position.isShort ? 'text-error' : 'text-accent'}
+                  >
+                    {position.isShort ? 'Short' : 'Long'}
+                  </span>
+                </span>
               </div>
 
               <div
@@ -150,37 +151,22 @@ export default function LeveragedPositionsInfo() {
                 <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
                   VALUE
                 </span>
-                {Number(
-                  formatUnits(
-                    position.positionSupplyAmount,
-                    positionCollateralAsset.underlyingDecimals
-                  )
-                ).toFixed(3)}{' '}
-                <Image
-                  alt="Alt"
-                  height="16"
-                  src={`/img/symbols/32/color/${positionCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
-                  style={{
-                    display: 'inline-block',
-                    position: 'relative',
-                    top: '-1px',
-                    verticalAlign: 'middle'
-                  }}
-                  width="16"
-                />{' '}
                 $
-                {millify(
+                {(
                   Number(formatEther(position.positionValue)) * (usdPrice ?? 0)
-                )}
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2
+                })}
               </div>
 
               <div
                 className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
               >
                 <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                  LEVERAGE
+                  PNL
                 </span>
-                {Number(formatEther(position.leverageRatio)).toFixed(3)}x
+                $0.00
               </div>
 
               {/* <div
@@ -199,15 +185,32 @@ export default function LeveragedPositionsInfo() {
                   MARK/LIQ PRICE
                 </span>
                 $
-                {millify(
-                  Number(formatEther(positionCollateralAsset.underlyingPrice)) *
-                    (usdPrice ?? 0)
-                )}{' '}
+                {(
+                  Number(
+                    formatEther(
+                      position.isShort
+                        ? positionStableAsset.underlyingPrice
+                        : positionCollateralAsset.underlyingPrice
+                    )
+                  ) * (usdPrice ?? 0)
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2
+                })}{' '}
                 / $
-                {millify(
-                  Number(formatEther(position.liquidationPrice)) *
-                    (usdPrice ?? 0)
-                )}
+                {(
+                  Number(
+                    formatUnits(
+                      position.isShort
+                        ? position.borrowedLiquidationPrice
+                        : position.collateralLiquidationPrice,
+                      28 // 36 - usdc decimals (6)
+                    )
+                  ) * (usdPrice ?? 0)
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2
+                })}
               </div>
 
               <div
