@@ -24,12 +24,6 @@ export const useLiquidationThreshold = (
         borrowedAsset,
         leverageRatio
       );
-      console.log(
-        collateralAsset,
-        collateralAmount,
-        borrowedAsset,
-        leverageRatio
-      );
       const creditDelegatorUsdPrice =
         await levatoSdk.creditDelegatorContract.callStatic.getAssetPrice(
           '0xd988097fb8612cc24eeC14542bC03424c656005f'

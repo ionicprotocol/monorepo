@@ -554,15 +554,23 @@ export default function Leverage({ marketData }: LeverageProps) {
             />
           </div>
         ) : (
-          <button
-            className="btn-green"
-            disabled={
-              !fundingAmount || (!!fundingAmount && Number(fundingAmount) === 0)
-            }
-            onClick={openPosition}
-          >
-            OPEN POSITION
-          </button>
+          <>
+            <button
+              className="btn-green"
+              disabled={
+                !fundingAmount ||
+                (!!fundingAmount && Number(fundingAmount) === 0) ||
+                healthRatio < 1.1
+              }
+              onClick={openPosition}
+            >
+              OPEN POSITION
+            </button>
+
+            {healthRatio < 1.1 && (
+              <p className="mt-2 text-xs text-error">Health ratio too low</p>
+            )}
+          </>
         )}
       </div>
     </div>
