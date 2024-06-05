@@ -324,7 +324,7 @@ export default function Leverage({ marketData }: LeverageProps) {
         <div
           className={`rounded-xl transition-all cursor-pointer py-2 px-4 ${
             leverageMode === LeverageMode.SHORT
-              ? 'bg-darkone text-accent font-bold'
+              ? 'bg-darkone text-error font-bold'
               : 'text-white/40'
           }`}
           onClick={() => setLeverageMode(LeverageMode.SHORT)}
@@ -567,7 +567,7 @@ export default function Leverage({ marketData }: LeverageProps) {
               OPEN POSITION
             </button>
 
-            {healthRatio < 1.1 && (
+            {healthRatio < 1.1 && healthRatio !== 0 && (
               <p className="mt-2 text-xs text-error">Health ratio too low</p>
             )}
           </>
