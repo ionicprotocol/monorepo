@@ -13518,7 +13518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.6.5, ethers@npm:^5.7.0, ethers@npm:^5.7.2, ethers@npm:~5.7.0":
+"ethers@npm:5, ethers@npm:^5.6.5, ethers@npm:^5.7.0, ethers@npm:^5.7.2, ethers@npm:~5.7.0":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -19425,7 +19425,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:^14.1.4":
+"next@npm:^14.2.2":
   version: 14.2.3
   resolution: "next@npm:14.2.3"
   dependencies:
