@@ -570,6 +570,22 @@ export default function Leverage({ marketData }: LeverageProps) {
             {healthRatio < 1.1 && healthRatio !== 0 && (
               <p className="mt-2 text-xs text-error">Health ratio too low</p>
             )}
+
+            <p className="mt-4 text-xs">
+              Powered by{' '}
+              <a
+                href="https://app.levato.xyz/"
+                target="_blank"
+              >
+                <Image
+                  alt="Levato logo"
+                  className="m-auto"
+                  height="30"
+                  src="/img/levato-logo.png"
+                  width="90"
+                />
+              </a>
+            </p>
           </>
         )}
       </div>
