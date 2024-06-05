@@ -16,7 +16,7 @@ import {
 import Link from 'next/link';
 // import { Link } from '@tanstack/react-router'
 import { usePathname, useSearchParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 
 //-------------------Interfaces------------
@@ -55,33 +55,23 @@ import {
 //   { name: 'Group D', value: 200 }
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
+import { pools } from '@ui/constants/index';
 import { useStore } from 'ui/store/Store';
 import { INFO } from '@ui/constants/index';
 import Popup, { PopupMode } from 'ui/app/_components/popup/page';
 import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import Swap from 'ui/app/_components/popup/Swap';
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 
 const Asset = ({ params }: IProp) => {
-  //here we need to make a api to get the data of a certain asset (we can also check the current user with the help of wagmi)
-  //params.asset will be use to get the data of a certain asset
 
-  const pathname = usePathname();
-  // using mock data
-  const assetdetails = {
-    asset: 'ETH', //
-    bAPR: 8345,
-    borrowingT: 435,
-    cAPR: 25,
-    colleteralT: 454,
-    lAPR: 45,
-    lendingT: 65655
-  };
-
-  // const passedData = useStore((state) => state.passedData);
   const [info, setInfo] = useState<number>(INFO.BORROW);
   const searchParams = useSearchParams();
+
+  //URL passed Data ----------------------------
   const availableAPR = searchParams.get('availableAPR');
   const borrowAPR = searchParams.get('borrowAPR');
   const collateralAPR = searchParams.get('collateralAPR');
@@ -90,46 +80,72 @@ const Asset = ({ params }: IProp) => {
   const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
   const selectedChain = searchParams.get('selectedChain');
   const comptrollerAddress = searchParams.get('comptrollerAddress');
-  const passedSelectedMarketData = searchParams.get('selectedMarketData');
-  const passedPoolData = searchParams.get('poolData');
-  const passedLoopMarkets = searchParams.get('loopMarkets');
+  const pool = searchParams.get('pool');
+  const chain = searchParams.get('chain');
+  const selectedSymbol = searchParams.get('selectedSymbol');
+  //--------------------------------------------------------
+
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  // if (!gettingBorrows) return;
+  const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
+  const [selectedMarketData, setSelectedMarketData] = useState<
+    MarketData | undefined
+  >();
+
+  //Hooks -----------------------------------------------------
   const totalBorrows = extractAndConvertStringTOValue(
     gettingBorrows as string
   ).value2;
-  console.log(passedSelectedMarketData);
-  // const selectedMarketData = JSON.parse(passedSelectedMarketData as string);
-  // const poolData = JSON.parse(passedPoolData as string);
-  // const loopMarkets = JSON.parse(passedLoopMarkets as string);
-  // const info = searchParams.get('info');
-  // console.log(info);
+  
+  const [poolData, setPoolData] = useState<PoolData>();
+  const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
+    pools[0].id,
+    pools[0].chain
+  );
+  const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
+    pools[1].id,
+    pools[1].chain
+  );
+  const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
+    pools[2].id,
+    pools[2].chain
+  );
 
-  // const [poolData, setPoolData] = useState<PoolData>();
-  // const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
-  //   pools[0].id,
-  //   pools[0].chain
-  // );
-  // const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
-  //   pools[1].id,
-  //   pools[1].chain
-  // );
-  // const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
-  //   pools[2].id,
-  //   pools[2].chain
-  // );
+  useEffect(() => {
+    if (!chain) return;
+    if (selectedPool === pools[0].id && +chain === 34443 && pool1Data) {
+      setPoolData(pool1Data);
+    }
+    if (selectedPool === pools[1].id && +chain === 34443 && pool2Data) {
+      setPoolData(pool2Data);
+    }
+    if (selectedPool === pools[2].id && +chain === 8453 && pool3Data) {
+      setPoolData(pool3Data);
+    }
+  }, [pool1Data, pool2Data, pool3Data, selectedPool, chain]);
 
-  // const selectedMarketData = useMemo<MarketData | undefined>(
-  //   () =>
-  //     poolData?.assets.find(
-  //       (_asset) => _asset.underlyingSymbol === selectedSymbol
-  //     ),
-  //   [selectedSymbol, poolData]
-  // );
+  // const [selectedSymbol, setSelectedSymbol] = useState<string>();
+  useEffect(() => {
+    async function getmarketData() {
+      try {
+        const data = poolData?.assets.find(
+          (_asset) => _asset.underlyingSymbol === selectedSymbol
+        )
+        console.log(data);
+        setSelectedMarketData(data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getmarketData();
+  }, [selectedSymbol, poolData]);
+
+  const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
+    poolData?.assets.map((asset) => asset.cToken) ?? []
+  );
 
   return (
-    <div className={` pb-10 `}>
+    <div className={` pb-10 relative `}>
       <div
         className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
       >
@@ -227,7 +243,7 @@ const Asset = ({ params }: IProp) => {
                   ${info === INFO.BORROW ? totalBorrows : lendingSupply}
                 </p>
                 <p className={`font-semibold text-[8px] text-white/30`}>
-                  ${assetdetails.borrowingT} of ${assetdetails.borrowingT}
+                  ${totalBorrows} of ${totalBorrows}
                 </p>
                 {/* this neeeds to be changed */}
               </div>
@@ -319,12 +335,20 @@ const Asset = ({ params }: IProp) => {
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
             <span> {lendingSupply} USDC</span>
-            <Link
-              className={`rounded-lg bg-accent text-sm text-black py-1 px-3`}
-              href={`${pathname}?popmode=SUPPLY`}
+            <div
+              className={`rounded-lg bg-accent text-sm cursor-pointer text-black py-1 px-3`}
+              onClick={async () => {
+                const result = await handleSwitchOriginChain(
+                  Number(dropdownSelectedChain),
+                  Number(selectedChain)
+                );
+                if (result) {
+                  setPopupMode(PopupMode.SUPPLY);
+                }
+              }}
             >
               Supply
-            </Link>
+            </div>
           </div>
           <div
             className={`text-white/60 w-full flex items-center justify-between text-[10px] `}
@@ -341,8 +365,7 @@ const Asset = ({ params }: IProp) => {
           >
             <span> {totalBorrows} USDC</span>
             <div
-              className={`rounded-lg bg-graylite text-sm  text-white/50 py-1 px-3`}
-              // href={`${pathname}?popmode=BORROW`}
+              className={`rounded-lg bg-graylite text-sm cursor-pointer text-white/50 py-1 px-3`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   Number(dropdownSelectedChain),
@@ -412,8 +435,7 @@ const Asset = ({ params }: IProp) => {
           </div>
         </div>
       </div>
-      {/* {popmode && <Popup mode={popmode} />} */}
-      {/* {popupMode && selectedMarketData && poolData && (
+      {popupMode && selectedMarketData && poolData && (
         <Popup
           closePopup={() => setPopupMode(undefined)}
           comptrollerAddress={comptrollerAddress as string}
@@ -429,7 +451,7 @@ const Asset = ({ params }: IProp) => {
           dropdownSelectedChain={Number(dropdownSelectedChain)}
           selectedChain={Number(selectedChain)}
         />
-      )} */}
+      )}
     </div>
   );
 };

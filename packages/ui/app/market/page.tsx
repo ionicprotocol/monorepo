@@ -18,6 +18,7 @@ import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
 
+import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
@@ -26,23 +27,6 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 // import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 //@ts-ignore
-const pools = [
-  {
-    chain: 34443,
-    id: '0',
-    name: 'Main Market'
-  },
-  {
-    chain: 34443,
-    id: '1',
-    name: 'Native Market'
-  },
-  {
-    chain: 8453,
-    id: '0',
-    name: 'Main Market'
-  }
-];
 
 export default function Market() {
   const searchParams = useSearchParams();
@@ -397,6 +381,7 @@ export default function Market() {
                     } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
                       maximumFractionDigits: 2
                     })}`}
+                    chain={chain.toString()}
                     collateralFactor={
                       (val ? Number(formatEther(val.collateralFactor)) : 0) *
                       100
@@ -410,9 +395,11 @@ export default function Market() {
                       loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                     }
                     membership={val?.membership ?? false}
+                    pool={pool as string}
                     selectedChain={chainId}
                     selectedMarketData={selectedMarketData}
                     selectedPoolId={selectedPool}
+                    selectedSymbol={selectedSymbol as string}
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
                     supplyAPR={`${

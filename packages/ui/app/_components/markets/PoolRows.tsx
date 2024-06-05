@@ -24,6 +24,7 @@ interface IRows {
   asset: string;
   borrowAPR: string;
   borrowBalance: string;
+  chain: string;
   collateralFactor: number;
   comptrollerAddress: string;
   dropdownSelectedChain: number;
@@ -31,9 +32,11 @@ interface IRows {
   loopMarkets: LoopMarketData | undefined;
   loopPossible: boolean;
   membership: boolean;
+  pool: string;
   selectedChain: number;
   selectedMarketData: MarketData | undefined;
   selectedPoolId: string;
+  selectedSymbol: string;
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   supplyAPR: string;
@@ -56,6 +59,7 @@ const PoolRows = ({
   supplyBalance,
   totalSupplied,
   borrowBalance,
+  chain,
   collateralFactor,
   dropdownSelectedChain,
   membership,
@@ -64,13 +68,13 @@ const PoolRows = ({
   borrowAPR,
   logo,
   loopPossible,
+  pool,
   setSelectedSymbol,
   setPopupMode,
   selectedChain,
+  selectedSymbol,
   selectedPoolId,
-  comptrollerAddress,
-  selectedMarketData,
-  loopMarkets
+  comptrollerAddress
 }: IRows) => {
   const { address } = useMultiIonic();
   // const btnref = useRef<boolean>();
@@ -109,13 +113,16 @@ const PoolRows = ({
           query: {
             availableAPR: parseInt(supplyAPR),
             borrowAPR: parseInt(borrowAPR),
+            chain: chain,
             collateralAPR: collateralFactor,
             comptrollerAddress: comptrollerAddress,
             dropdownSelectedChain: dropdownSelectedChain,
             lendingSupply: parseInt(supplyBalance),
             // loopMarkets: loopMarketsPassing,
+            pool: pool,
             selectedChain: selectedChain,
             // selectedMarketData: selectedMarketDataPassing,
+            selectedSymbol: asset,
             totalBorrows: totalBorrowing,
             totalCollateral: 123456
           }
