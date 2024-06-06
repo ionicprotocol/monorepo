@@ -21,13 +21,15 @@ import {
   usePointsForBorrowModeNative,
   usePointsForSupplyBaseMain,
   usePointsForSupplyModeMain,
-  usePointsForSupplyModeNative
+  usePointsForSupplyModeNative,
+  usePointsForSupplyModeLp
 } from '@ui/hooks/usePointsQueries';
 
 const pools: { [key: number]: { [key: number]: string } } = {
   [mode.id]: {
     0: 'Mode Main Market',
-    1: 'Mode Native Market'
+    1: 'Mode Native Market',
+    2: 'Mode LP Market'
   },
   [base.id]: {
     0: 'Base Main Market'
@@ -42,6 +44,10 @@ export default function Points() {
     data: modeMarketDataNative,
     isLoading: isLoadingModeMarketDataNative
   } = useFusePoolData('1', mode.id);
+  const {
+    data: modeMarketDataLp,
+    isLoading: isLoadingModeMarketDataLp
+  } = useFusePoolData('2', mode.id);
   const { data: baseMarketDataMain, isLoading: isLoadingBaseMarketDataMain } =
     useFusePoolData('0', base.id);
   const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
@@ -53,6 +59,10 @@ export default function Points() {
     data: supplyPointsModeNative,
     isLoading: isLoadingSupplyPointsModeNative
   } = usePointsForSupplyModeNative();
+  const {
+    data: supplyPointsModeLp,
+    isLoading: isLoadingSupplyPointsModeLp
+  } = usePointsForSupplyModeLp();
   const {
     data: supplyPointsBaseMain,
     isLoading: isLoadingSupplyPointsBaseMain
@@ -94,6 +104,21 @@ export default function Points() {
   const summedSupplyPointsModeNative = useMemo<number>(() => {
     if (supplyPointsModeNative) {
       return supplyPointsModeNative.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [supplyPointsModeLp]);
+  const summedSupplyPointsModeLp = useMemo<number>(() => {
+    if (supplyPointsModeLp) {
+      return supplyPointsModeLp.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -170,6 +195,7 @@ export default function Points() {
     const summedSupplyPointsMarkets =
       summedSupplyPointsModeMain +
       summedSupplyPointsModeNative +
+      summedSupplyPointsModeLp +
       summedSupplyPointsBaseMain;
     const summedBorrowPointsMarkets =
       summedBorrowPointsModeMain +
@@ -187,6 +213,7 @@ export default function Points() {
     summedBorrowPointsBaseMain,
     summedSupplyPointsModeMain,
     summedSupplyPointsModeNative,
+    summedSupplyPointsModeLp,
     summedSupplyPointsBaseMain
   ]);
 
@@ -213,6 +240,7 @@ export default function Points() {
             isLoading={
               isLoadingSupplyPointsModeMain ||
               isLoadingSupplyPointsModeNative ||
+              isLoadingSupplyPointsModeLp ||
               isLoadingSupplyPointsBaseMain ||
               isLoadingBorrowPointsModeMain ||
               isLoadingBorrowPointsModeNative ||
@@ -251,6 +279,11 @@ export default function Points() {
             loading: isLoadingSupplyPointsModeNative,
             name: 'Mode Native Market',
             points: summedSupplyPointsModeNative
+          },
+          {
+            loading: isLoadingSupplyPointsModeLp,
+            name: 'Mode LP Market',
+            points: summedSupplyPointsModeLp
           },
           {
             loading: isLoadingSupplyPointsBaseMain,
@@ -348,6 +381,7 @@ export default function Points() {
               isLoadingBorrowPointsModeNative ||
               isLoadingSupplyPointsModeNative ||
               isLoadingBorrowPointsModeNative ||
+              isLoadingSupplyPointsModeLp ||
               isLoadingSupplyPointsBaseMain ||
               isLoadingBorrowPointsBaseMain
             }
@@ -366,11 +400,13 @@ export default function Points() {
           isLoading={
             isLoadingModeMarketDataMain ||
             isLoadingModeMarketDataNative ||
+            isLoadingModeMarketDataLp ||
             isLoadingBaseMarketDataMain ||
             isLoadingSupplyPointsModeNative ||
             isLoadingBorrowPointsModeNative ||
             isLoadingSupplyPointsModeNative ||
             isLoadingBorrowPointsModeNative ||
+            isLoadingSupplyPointsModeLp ||
             isLoadingSupplyPointsBaseMain ||
             isLoadingBorrowPointsBaseMain
           }
@@ -406,6 +442,10 @@ export default function Points() {
               {
                 market: modeMarketDataNative,
                 points: summedSupplyPointsModeNative
+              },
+              {
+                market: modeMarketDataLp,
+                points: summedSupplyPointsModeLp
               },
               {
                 market: baseMarketDataMain,

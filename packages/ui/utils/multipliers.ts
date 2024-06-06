@@ -197,6 +197,37 @@ export const multipliers: Record<
           mode: 2
         }
       }
+    },
+    '2': {
+      'ION-WETH': {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        market: 'ion_weth_pool',
+        multiplier: -120,
+        supply: {
+          ionic: 3,
+          mode: 3,
+          lp: true,
+          filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
+          filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
+        }
+      },
+      'ionUSDC-ionUSDT': {
+        borrow: {
+          ionic: 3,
+          mode: 1
+        },
+        decimals: 6,
+        market: 'iusdc_iusdt_pool',
+        multiplier: 10,
+        supply: {
+          ionic: 1.5,
+          mode: 2,
+          lp: true
+        }
+      }
     }
   },
   [base.id]: {

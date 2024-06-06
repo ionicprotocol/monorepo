@@ -110,8 +110,19 @@ const getSupplyQuery = (
   marketName: string,
   startDate: string,
   priceMultiplier: number = 1,
-  decimals: number = 18
+  decimals: number = 18,
+  lp: bool = false,
+  filterIn: string = "",
+  filterOut: string = ""
 ) => {
+  let amountColumn: string;
+  if (lp) {
+    amountColumn = "event_value";
+  }
+  else {
+    amountColumn = "event_amount";
+  }
+
   return `
   WITH addresses AS (
     SELECT address 
@@ -142,22 +153,22 @@ const getSupplyQuery = (
           SELECT 
             event_from AS address, 
             DATE_BIN('1 hour', block_time, '2000-1-1') AS date, 
-            -event_amount / POW(10, ${decimals}) / 5 AS tokens 
+            -${amountColumn} / POW(10, ${decimals}) / 5 AS tokens 
           FROM 
             ${marketName}.transfer_events 
           WHERE 
-            event_from IN (SELECT * FROM addresses)
+            event_from IN (SELECT * FROM addresses) ${filterIn}
           
           UNION ALL
           
           SELECT 
             event_to AS address, 
             DATE_BIN('1 hour', block_time, '2000-1-1') AS date, 
-            event_amount / POW(10, ${decimals}) / 5 AS tokens 
+            ${amountColumn} / POW(10, ${decimals}) / 5 AS tokens 
           FROM 
             ${marketName}.transfer_events 
           WHERE 
-            event_to IN (SELECT * FROM addresses)
+            event_to IN (SELECT * FROM addresses) ${filterOut}
           
           UNION ALL
           
@@ -494,6 +505,50 @@ const usePointsForBorrowModeNative = () => {
   });
 };
 
+const usePointsForSupplyModeLp = () => {
+  const { address } = useMultiIonic();
+
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      const response = await Promise.all(
+        Object.values(multipliers[mode.id]['2']).map((asset) => {
+          return fetchData<QueryResponse, QueryData>(
+            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+            {
+              query: getSupplyQuery(
+                address?.toLowerCase(),
+                asset.supply.ionic,
+                asset.market,
+                SEASON_2_START_DATE,
+                asset.multiplier,
+                asset.decimals,
+                asset.supply.lp,
+                asset.supply.filterIn,
+                asset.supply.filterOut
+              )
+            },
+            {
+              method: 'POST'
+            }
+          );
+        })
+      );
+      const totalPoints = response.reduce(
+        (acc, current) => acc + current.data.rows[0][1],
+        0
+      );
+  
+      return {
+        ...response[0].data,
+        rows: [[totalPoints]]
+      };
+    },
+    queryKey: ['points', 'supply', 'mode-lp', address],
+    refetchOnWindowFocus: false,
+    staleTime: Infinity
+  });
+};
 const usePointsForSupplyBaseMain = () => {
   const { address } = useMultiIonic();
 
@@ -655,6 +710,7 @@ export {
   usePointsForSupplyBaseMain,
   usePointsForSupplyModeMain,
   usePointsForSupplyModeNative,
+  usePointsForSupplyModeLp,
   usePointsForBorrowBaseMain,
   usePointsForBorrowModeMain,
   usePointsForBorrowModeNative,
