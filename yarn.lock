@@ -222,27 +222,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.19.4, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.23.1, @babel/runtime@npm:^7.23.2":
-  version: 7.24.6
-  resolution: "@babel/runtime@npm:7.24.6"
+"@babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.19.4, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.23.1, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.24.4":
+  version: 7.24.5
+  resolution: "@babel/runtime@npm:7.24.5"
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
   checksum: 10/e0f4f4d4503f7338749d1dd92361ad132d683bde64e6b61d6c855e100dcd01592295fcfdcc960c946b85ef7908dc2f501080da58447c05812cf3cd80c599bb62
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.24.6":
-  version: 7.24.7
-  resolution: "@babel/runtime@npm:7.24.7"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 10/7b77f566165dee62db3db0296e71d08cafda3f34e1b0dcefcd68427272e17c1704f4e4369bff76651b07b6e49d3ea5a0ce344818af9116e9292e4381e0918c76
-  languageName: node
-  linkType: hard
-
-"@babel/template@npm:^7.24.6":
-  version: 7.24.6
-  resolution: "@babel/template@npm:7.24.6"
+"@babel/template@npm:^7.22.15, @babel/template@npm:^7.24.0":
+  version: 7.24.0
+  resolution: "@babel/template@npm:7.24.0"
   dependencies:
     "@babel/code-frame": "npm:^7.23.5"
     "@babel/parser": "npm:^7.24.0"
@@ -361,9 +352,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinbase/wallet-sdk@npm:4.0.3":
-  version: 4.0.3
-  resolution: "@coinbase/wallet-sdk@npm:4.0.3"
+"@coinbase/wallet-sdk@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@coinbase/wallet-sdk@npm:4.0.0"
   dependencies:
     buffer: "npm:^6.0.3"
     clsx: "npm:^1.2.1"
@@ -371,7 +362,7 @@ __metadata:
     keccak: "npm:^3.0.3"
     preact: "npm:^10.16.0"
     sha.js: "npm:^2.4.11"
-  checksum: 10/fcea81c315726d648d3453ff7930d5175db641d05a7840f343d48ff6861215f2d531df5a1e5d4fa34addc10401b1033d7bc7b7b6c2c0eac2e9e4d08325f94a50
+  checksum: 10/4b1d22656acfcedc695010d985b58389fe07dc61a1ebd1af57a62f793d122155b591bb26658a7b3d3df3fa1e6b5f2c3d44123fe42c30a3e4f1a6330138142470
   languageName: node
   linkType: hard
 
@@ -6784,9 +6775,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.43.2, @supabase/supabase-js@npm:^2.43.4, @supabase/supabase-js@npm:^2.7.1":
-  version: 2.43.4
-  resolution: "@supabase/supabase-js@npm:2.43.4"
+"@supabase/supabase-js@npm:^2.39.7, @supabase/supabase-js@npm:^2.43.2, @supabase/supabase-js@npm:^2.7.1":
+  version: 2.43.2
+  resolution: "@supabase/supabase-js@npm:2.43.2"
   dependencies:
     "@supabase/auth-js": "npm:2.64.2"
     "@supabase/functions-js": "npm:2.3.1"
@@ -7859,11 +7850,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/connectors@npm:5.0.8":
-  version: 5.0.8
-  resolution: "@wagmi/connectors@npm:5.0.8"
+"@wagmi/connectors@npm:5.0.3":
+  version: 5.0.3
+  resolution: "@wagmi/connectors@npm:5.0.3"
   dependencies:
-    "@coinbase/wallet-sdk": "npm:4.0.3"
+    "@coinbase/wallet-sdk": "npm:4.0.0"
     "@metamask/sdk": "npm:0.20.3"
     "@safe-global/safe-apps-provider": "npm:0.18.1"
     "@safe-global/safe-apps-sdk": "npm:8.1.0"
@@ -7871,39 +7862,19 @@ __metadata:
     "@walletconnect/modal": "npm:2.6.2"
     cbw-sdk: "npm:@coinbase/wallet-sdk@3.9.3"
   peerDependencies:
-    "@wagmi/core": 2.10.5
+    "@wagmi/core": 2.10.3
     typescript: ">=5.0.4"
     viem: 2.x
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/b0340e71521a4259fef182642921759091af6e8649d5b0699b69d06250f9ac2e15803652baeb68c9e37678791544d78c8f1433c9b99745e8d19dc1c75258e212
+  checksum: 10/83afa209cc99f0f4261ede5b3aa432c3c5930c65fed8d0481f3f08a3e2fd67185779d4b7ce57d2c9116312c558c4605181f3130efb7e49e8cd7cb1f8ebe1959b
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:2.10.5":
-  version: 2.10.5
-  resolution: "@wagmi/core@npm:2.10.5"
-  dependencies:
-    eventemitter3: "npm:5.0.1"
-    mipd: "npm:0.0.5"
-    zustand: "npm:4.4.1"
-  peerDependencies:
-    "@tanstack/query-core": ">=5.0.0"
-    typescript: ">=5.0.4"
-    viem: 2.x
-  peerDependenciesMeta:
-    "@tanstack/query-core":
-      optional: true
-    typescript:
-      optional: true
-  checksum: 10/6447f85c31a7ebe3bbe751ce28fcf492ed85e1a8ab2fad301fe8906573a89c1338d51f5b3bc4ed2e0ace7118cb1c8de17c9c302c1c555500068bac7c79772a74
-  languageName: node
-  linkType: hard
-
-"@wagmi/core@npm:^2.2.1":
-  version: 2.10.4
-  resolution: "@wagmi/core@npm:2.10.4"
+"@wagmi/core@npm:2.10.3, @wagmi/core@npm:^2.2.1":
+  version: 2.10.3
+  resolution: "@wagmi/core@npm:2.10.3"
   dependencies:
     eventemitter3: "npm:5.0.1"
     mipd: "npm:0.0.5"
@@ -8294,41 +8265,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/common@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/common@npm:4.2.3"
+"@web3modal/common@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/common@npm:4.2.1"
   dependencies:
     bignumber.js: "npm:9.1.2"
     dayjs: "npm:1.11.10"
-  checksum: 10/d1082d5e54c512c709864161b6b1e483aa625fca05cc4f1c6c9bb960bd7886dfa2d9fecd701c57ad1c63f8c1dd324c08a6aa7687c7e379c544a26fdefd5a91bc
+  checksum: 10/638c1c75c843c2f6399ffda9882e765cc9cf4dc7fdc4d2a9591b5df856c55159056b955eeda0c10cc5e130687b32779d13f2faeec2ead703baba3ec9b6f57956
   languageName: node
   linkType: hard
 
-"@web3modal/core@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/core@npm:4.2.3"
+"@web3modal/core@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/core@npm:4.2.1"
   dependencies:
-    "@web3modal/common": "npm:4.2.3"
-    "@web3modal/wallet": "npm:4.2.3"
+    "@web3modal/common": "npm:4.2.1"
+    "@web3modal/wallet": "npm:4.2.1"
     valtio: "npm:1.11.2"
-  checksum: 10/2bbc3a79346228f0110ef06c27654000c57580d20c5df34c29a7119ff81f180eafdb028c7f07a7641a5143be0825d047303ed4bbd4fcd39aa38743c0d755cc0d
+  checksum: 10/2c5060a621706ddd4f706c1d32900cdb7f24c7bf7502614b14a56ddc07dfe5bec1a1a3d38e66420cc905ece62198f0d2d6d4adf84bbae981e7384dbb293ac63e
   languageName: node
   linkType: hard
 
-"@web3modal/polyfills@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/polyfills@npm:4.2.3"
+"@web3modal/polyfills@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/polyfills@npm:4.2.1"
   dependencies:
     buffer: "npm:6.0.3"
-  checksum: 10/400d8f68cad483d7b47d2df794cb195677027376dc2e062e8bbd46d2883798dd99b7705f44f2a035378268542b8dd2fd7d057ed1611994205213f06388d2d947
+  checksum: 10/5dd86cb768b5f333a8efff841e5c56c0f3e33d0589040b0d40042ef3e6c78c886012e9eae881aa743ec51f61bd055aeebb88f59a2ca53ec3948601d6c6250dcd
   languageName: node
   linkType: hard
 
-"@web3modal/scaffold-react@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/scaffold-react@npm:4.2.3"
+"@web3modal/scaffold-react@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/scaffold-react@npm:4.2.1"
   dependencies:
-    "@web3modal/scaffold": "npm:4.2.3"
+    "@web3modal/scaffold": "npm:4.2.1"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
@@ -8337,83 +8308,83 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/74fa188b71bb6865359c8fd3ceb0442e3cb5336a95e41738416baba395d5b1a79e868c060318f58475e643334f555a8780893f2acffb5a778d53ac0f7f9939ad
+  checksum: 10/a7122e11be9dd0a2805e8d062df5a621d2d1fe4a089f833f08535f5c7a6127dfa0a152841d58a2e35124d5fa50eb04cdc9b76cf4bbb0c60f9cb8272a8614110f
   languageName: node
   linkType: hard
 
-"@web3modal/scaffold-utils@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/scaffold-utils@npm:4.2.3"
+"@web3modal/scaffold-utils@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/scaffold-utils@npm:4.2.1"
   dependencies:
-    "@web3modal/core": "npm:4.2.3"
-    "@web3modal/polyfills": "npm:4.2.3"
+    "@web3modal/core": "npm:4.2.1"
+    "@web3modal/polyfills": "npm:4.2.1"
     valtio: "npm:1.11.2"
-  checksum: 10/99b36dc011a6c310528a9809481cb01a3739186d09f3e3acf718beb5d4d54466fdd67bed1a8698feda94c71435a1f8cad6296ee173c4d9a632bd4703892d7f28
+  checksum: 10/ab2861830c9a7e7972a7abb2f36265a91b68c7f30c5f756a1d9cfbcecadd9f6e9330920ab733244555213090bb6e21f98530ecf2d641710b959863af0690dfbf
   languageName: node
   linkType: hard
 
-"@web3modal/scaffold-vue@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/scaffold-vue@npm:4.2.3"
+"@web3modal/scaffold-vue@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/scaffold-vue@npm:4.2.1"
   dependencies:
-    "@web3modal/scaffold": "npm:4.2.3"
+    "@web3modal/scaffold": "npm:4.2.1"
   peerDependencies:
     vue: ">=3"
   peerDependenciesMeta:
     vue:
       optional: true
-  checksum: 10/c93d348bfc017a170aead416033ec86427a718415dda95a215838a6ebc393953a1795cdc85898c10d472dbbed7ff4e02d405ec184cb249fc345475e94bcbcc3c
+  checksum: 10/35d1d9e6719d8299c39db612db7b3913d18418f00e7867373647c372b9394b8b27cb7bfd6b4998d2e350a9bdf902f17c0ed4b424c99890d1016e823a54bb91ee
   languageName: node
   linkType: hard
 
-"@web3modal/scaffold@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/scaffold@npm:4.2.3"
+"@web3modal/scaffold@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/scaffold@npm:4.2.1"
   dependencies:
-    "@web3modal/common": "npm:4.2.3"
-    "@web3modal/core": "npm:4.2.3"
-    "@web3modal/siwe": "npm:4.2.3"
-    "@web3modal/ui": "npm:4.2.3"
-    "@web3modal/wallet": "npm:4.2.3"
+    "@web3modal/common": "npm:4.2.1"
+    "@web3modal/core": "npm:4.2.1"
+    "@web3modal/siwe": "npm:4.2.1"
+    "@web3modal/ui": "npm:4.2.1"
+    "@web3modal/wallet": "npm:4.2.1"
     lit: "npm:3.1.0"
-  checksum: 10/ddc7732cdee9375489dac89b42178be28779733b6286550d37ba8b1cebc48c82cc95eb8205685128e572bc67ea33f679f4e94edae3111fa301885f2ead0e5601
+  checksum: 10/db5a7803027b4ecdce594a69de30d72fa8bdc89a193b3150e04be82eb45e61847f329a2afd010a3536ed3d6c6a41a37922313552cda42f649409a75fdd8b9c49
   languageName: node
   linkType: hard
 
-"@web3modal/siwe@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/siwe@npm:4.2.3"
+"@web3modal/siwe@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/siwe@npm:4.2.1"
   dependencies:
     "@walletconnect/utils": "npm:2.12.0"
-    "@web3modal/core": "npm:4.2.3"
-    "@web3modal/scaffold-utils": "npm:4.2.3"
+    "@web3modal/core": "npm:4.2.1"
+    "@web3modal/scaffold-utils": "npm:4.2.1"
     lit: "npm:3.1.0"
     valtio: "npm:1.11.2"
-  checksum: 10/15396efa5767085093fed25cb8dafed8f7ee250e5b31de6838051e166f367f8bb19e8ae40f6c3a3fc1da9be7f83879a57f66547850214bc8580c53b81ae6928e
+  checksum: 10/ef610ee0f7d7b5395b8f80b7a155bf93cd93029b2dbca6b9f299ecac26bf68492e83a94e3572605afc9085e239219905b0e24b56aac9babecd65ac0ff78e0a46
   languageName: node
   linkType: hard
 
-"@web3modal/ui@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/ui@npm:4.2.3"
+"@web3modal/ui@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/ui@npm:4.2.1"
   dependencies:
     lit: "npm:3.1.0"
     qrcode: "npm:1.5.3"
-  checksum: 10/ae93b5921a85cf1d34452c1d730eaeb83a2617fa5442f66be106a0efa9b50f77d36078f4eb03805c291a66a28de2948492fa0263f7076ceaf2eaec2509b6ce60
+  checksum: 10/0a3cb1dc8f15248c38f909261df3a6332e40b038195dec4d1bbd18dd0d889fa009c184a6f2b17af9143874cdd575c3b13ced9b944967e1d94b3fe2f630f64afe
   languageName: node
   linkType: hard
 
-"@web3modal/wagmi@npm:^4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/wagmi@npm:4.2.3"
+"@web3modal/wagmi@npm:^4.1.9":
+  version: 4.2.1
+  resolution: "@web3modal/wagmi@npm:4.2.1"
   dependencies:
     "@walletconnect/ethereum-provider": "npm:2.13.0"
-    "@web3modal/polyfills": "npm:4.2.3"
-    "@web3modal/scaffold": "npm:4.2.3"
-    "@web3modal/scaffold-react": "npm:4.2.3"
-    "@web3modal/scaffold-utils": "npm:4.2.3"
-    "@web3modal/scaffold-vue": "npm:4.2.3"
-    "@web3modal/siwe": "npm:4.2.3"
+    "@web3modal/polyfills": "npm:4.2.1"
+    "@web3modal/scaffold": "npm:4.2.1"
+    "@web3modal/scaffold-react": "npm:4.2.1"
+    "@web3modal/scaffold-utils": "npm:4.2.1"
+    "@web3modal/scaffold-vue": "npm:4.2.1"
+    "@web3modal/siwe": "npm:4.2.1"
   peerDependencies:
     "@wagmi/connectors": ">=4"
     "@wagmi/core": ">=2.0.0"
@@ -8428,17 +8399,17 @@ __metadata:
       optional: true
     vue:
       optional: true
-  checksum: 10/2f9b9fcc26ff834c25ec304f85e9e9f68d009919e94e34ef3f3a05fe6430bebf7cb7307ec44006a7be5db160987f8309260230a887122e497ec3816ed72aae68
+  checksum: 10/516809ba8cd0d5c3ff99adf937741ac307267488fbd813f30f54a43cd93c7105987d9b9103827732427d06993a72abfb9f2220662d12fc5bc0177949b9541f3b
   languageName: node
   linkType: hard
 
-"@web3modal/wallet@npm:4.2.3":
-  version: 4.2.3
-  resolution: "@web3modal/wallet@npm:4.2.3"
+"@web3modal/wallet@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@web3modal/wallet@npm:4.2.1"
   dependencies:
-    "@web3modal/polyfills": "npm:4.2.3"
+    "@web3modal/polyfills": "npm:4.2.1"
     zod: "npm:3.22.4"
-  checksum: 10/9051c773948aabf5107164f3d226ad841457912519027f068158f2421c96cc45f11abe7a42a360a619187d891d778ec2eb6c67c4378a7527a82a1f7455ee447c
+  checksum: 10/3b9ada9de2f28a7bfe3ed66163d8be75cf118243d9dadfdaad6b644825e920c72accd9d724b84415fcc193ec5a817fd76cdbaf82bde2644fad5f1b2099f497ec
   languageName: node
   linkType: hard
 
@@ -25702,30 +25673,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.13.6":
-  version: 2.13.6
-  resolution: "viem@npm:2.13.6"
-  dependencies:
-    "@adraffy/ens-normalize": "npm:1.10.0"
-    "@noble/curves": "npm:1.2.0"
-    "@noble/hashes": "npm:1.3.2"
-    "@scure/bip32": "npm:1.3.2"
-    "@scure/bip39": "npm:1.2.1"
-    abitype: "npm:1.0.0"
-    isows: "npm:1.0.4"
-    ws: "npm:8.13.0"
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10/07eab04b27b4bdb9913408fec1c7bb00dfaf5bb1e81359dbcc772fe2c22db06ee94d152011c159654eb962fca54feec33facb5970454b7786e166a0cdabd9c1b
-  languageName: node
-  linkType: hard
-
-"viem@npm:^2.7.16":
-  version: 2.13.1
-  resolution: "viem@npm:2.13.1"
+"viem@npm:^2.7.16, viem@npm:^2.9.19":
+  version: 2.12.0
+  resolution: "viem@npm:2.12.0"
   dependencies:
     "@adraffy/ens-normalize": "npm:1.10.0"
     "@noble/curves": "npm:1.2.0"
@@ -25765,12 +25715,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^2.9.9":
-  version: 2.9.9
-  resolution: "wagmi@npm:2.9.9"
+"wagmi@npm:^2.5.20":
+  version: 2.9.4
+  resolution: "wagmi@npm:2.9.4"
   dependencies:
-    "@wagmi/connectors": "npm:5.0.8"
-    "@wagmi/core": "npm:2.10.5"
+    "@wagmi/connectors": "npm:5.0.3"
+    "@wagmi/core": "npm:2.10.3"
     use-sync-external-store: "npm:1.2.0"
   peerDependencies:
     "@tanstack/react-query": ">=5.0.0"
@@ -25780,7 +25730,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/fa4a8ee4e1043a7bf0f88343ed3639fde869cb8a8a1ff5bbb07bda6a958f83934af58a9516c8e30896a510e87f8f8b9f288f6cf42d7238f6a848395c9a4fbc4c
+  checksum: 10/ba7817447dffa25fe6c1adf23ec5378613d541e8a759a4f26b6b1bc4d0003a354e402bc805791058546241a0530197a4d038bbf3470dcb85afeba3f7366ed65e
   languageName: node
   linkType: hard
 
