@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { useChainId } from 'wagmi';
+import { base, mode } from 'viem/chains';
 
 import FlatMap from '../_components/points_comp/FlatMap';
 import PercentMeter from '../_components/points_comp/PercentMeter';
@@ -20,13 +20,26 @@ import {
   usePointsForSupply
 } from '@ui/hooks/usePointsQueries';
 
+const pools: { [key: number]: { [key: number]: string } } = {
+  [mode.id]: {
+    0: 'Mode Main Market',
+    1: 'Mode Native Market'
+  },
+  [base.id]: {
+    0: 'Base Main Market'
+  }
+};
+
 export default function Points() {
   const router = useRouter();
-  const chainId = useChainId();
-  const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
-    '0',
-    chainId
-  );
+  const { data: modeMarketDataMain, isLoading: isLoadingModeMarketDataMain } =
+    useFusePoolData('0', mode.id);
+  const {
+    data: modeMarketDataNative,
+    isLoading: isLoadingModeMarketDataNative
+  } = useFusePoolData('1', mode.id);
+  const { data: baseMarketDataMain, isLoading: isLoadingBaseMarketDataMain } =
+    useFusePoolData('0', base.id);
   const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
     usePointsForSupply();

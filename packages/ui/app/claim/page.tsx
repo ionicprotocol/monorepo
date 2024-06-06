@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { formatEther } from 'viem';
+import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -37,7 +38,7 @@ export default function Claim() {
     async function getVested() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(34443, chainId);
+        await handleSwitchOriginChain(mode.id, chainId);
         const totalTokenData = await publicClient?.readContract({
           abi: claimAbi,
           address: claimContractAddress,
@@ -68,13 +69,106 @@ export default function Claim() {
     getVested();
   }, [address, chainId, isConnected, publicClient]);
 
-  async function claim() {
+  useEffect(() => {
+    async function getPublicSale() {
+      try {
+        if (!isConnected) return;
+        await handleSwitchOriginChain(mode.id, chainId);
+        const totalTokenData = await publicClient?.readContract({
+          abi: PublicSaleAbi,
+          address: PublicSaleContractAddress,
+          args: [address],
+          functionName: 'vests'
+        });
+
+        const claimable = await publicClient?.readContract({
+          abi: PublicSaleAbi,
+          address: PublicSaleContractAddress,
+          args: [address],
+          functionName: 'claimable'
+        });
+
+        const total = totalTokenData as [bigint, bigint];
+        // console.log({ total, claimable }, claimable.toString());
+        setPublicClaimable(claimable as bigint);
+        setPublicSaleEligibleToken(total[0]);
+        setPublicSaleAlreadyClaimed(total[1]);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
+      }
+    }
+    getPublicSale();
+  }, [address, chainId, isConnected, publicClient]);
+
+  async function checkEligibility() {
+    if (!address) {
+      throw new Error('No account address');
+    }
+    setPopup(true);
+    setLoading(true);
+    try {
+      const { data: airdrop, error } = await supabase
+        .from('airdrop')
+        .select('*')
+        .ilike('user', address);
+      if (error) {
+        throw new Error('Error fetching user: ' + error);
+      }
+      const [_user]: User[] = airdrop;
+      if (!_user || BigInt(_user.ion_amount) === BigInt(0)) {
+        throw new Error('User not found or amount is 0');
+      }
+      setUser(_user);
+      setClaimed(_user.claimed);
+      // setting the wallet if it is eligible or not
+      setEligibility(true);
+    } catch (error) {
+      console.error('error: ', error);
+      setEligibility(false);
+    }
+    // the checking from the api will be done here
+
+    // the loading will be set here
+    setLoading(false);
+  }
+
+  async function claimTokens() {
+    setLoading(true);
+    try {
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const signature = await signMessageAsync({
+        message: claimMessage(user.nonce)
+      });
+      const res = await fetch(`${AIRDROP_URL}/airdrop`, {
+        body: JSON.stringify({ address, signature }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      });
+      const data = await res.json();
+      if (!data.res.data[0].claimed) {
+        throw new Error('Claim not updated in DB!');
+      }
+      setClaimed(true);
+    } catch (error) {
+      console.error('error: ', error);
+      setClaimed(false);
+    }
+    setLoading(false);
+  }
+
+  async function claimAirdrop() {
     try {
       if (!isConnected) {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(34443, chainId);
+      await handleSwitchOriginChain(mode.id, chainId);
+      setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: claimAbi,
         account: walletClient?.account,
@@ -93,6 +187,46 @@ export default function Claim() {
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);
+      setLoading(false);
+      setPopupV2(false);
+    } finally {
+      setLoading(false);
+      setPopupV2(false);
+    }
+  }
+  async function claimPublicSale() {
+    try {
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      await handleSwitchOriginChain(mode.id, chainId);
+      setLoading(true);
+      const tx = await walletClient!.writeContract({
+        abi: PublicSaleAbi,
+        account: walletClient?.account,
+        address: PublicSaleContractAddress,
+        args: [],
+        functionName: 'claim'
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction Hash --->>>', tx);
+      if (!tx) return;
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+      setLoading(false);
+      setPopupV2(false);
+      // eslint-disable-next-line no-console
+      console.log('Transaction --->>>', transaction);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+      setLoading(false);
+      setPopupV2(false);
+    } finally {
+      setLoading(false);
+      setPopupV2(false);
     }
   }
 
@@ -251,39 +385,199 @@ export default function Claim() {
           </div>
         </div>
       </div>
-      {popupV2 && dropdownSelectedSeason === 1 && (
+      {popup && (
+        <div
+          className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
+        >
+          {eligibility === true && popup === true && !claimed && (
+            <Confetti
+              gravity={0.06}
+              height={1080}
+              width={1420}
+              wind={0.01}
+            />
+          )}
+          <div
+            className={`md:w-[30%] w-[70%] bg-grayone py-4 px-2 rounded-xl  flex flex-col items-center justify-center min-h-[20vh] relative`}
+          >
+            <img
+              alt="close"
+              className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
+              onClick={() => setPopup(false)}
+              src="/img/assets/close.png"
+            />
+            <ResultHandler isLoading={loading}>
+              {eligibility === null && (
+                <div className="w-full px-2 mt-2 relative  items-center justify-center gap-x-2  cursor-pointer ">
+                  <p className="w-full tracking-wide mb-4">Check Eligibility</p>
+
+                  <div
+                    className={`bg-accent w-max my-2 rounded-xl overflow-hidden text-black`}
+                  >
+                    <ConnectButton />
+                  </div>
+
+                  <p className=" text-sm text-white/60 mt-3 mb-5 ">
+                    $ION airdrop will be send out to the confirmed eligible
+                    wallet addresses by the Ionic Team. Once you sign in with
+                    your wallet, no further actions needs to be taken
+                  </p>
+                  <button
+                    className={` w-full  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm  tracking-wide `}
+                    onClick={() => checkEligibility()}
+                  >
+                    Check
+                  </button>
+                </div>
+              )}
+
+              {eligibility && eligibility === true ? (
+                <div className="flex flex-col my-auto items-center justify-center relative px-2">
+                  <img
+                    alt={`Image `}
+                    className="md:w-6 w-6 mb-2 "
+                    key={'id'}
+                    src={'/img/success.png'}
+                  />
+                  <span className="text-center pb-6 font-semibold">
+                    Congratulations, you are eligible for the airdrop! Your
+                    allocation:
+                  </span>
+                  <span className="text-center pb-6 text-3xl">
+                    {Number(user?.ion_amount ?? '0').toLocaleString()} $ION
+                  </span>
+                  <span className="text-center text-white/60 text-sm pb-4">
+                    The first tranche of your $ION airdrop allocation (
+                    {Math.floor(
+                      Number(user?.ion_amount ?? '0') * AIRDROP_FIRST_TRANCHE
+                    ).toLocaleString()}{' '}
+                    $ION) + 1st month of vested ION will be distributed on July
+                    7th directly to your wallet address. The rest of the tokens
+                    are vested for 2 months and can be instantly claimed with a
+                    penalty.
+                  </span>
+                  <span className="text-center pb-5">
+                    Press the button below to sign a message and prove ownership
+                    of your address. After that, no further actions needed.
+                  </span>
+                </div>
+              ) : eligibility === false ? (
+                <div className="flex flex-col my-auto items-center justify-center ">
+                  <img
+                    alt={`Image `}
+                    className="md:w-6 w-6  mb-2"
+                    key={'id'}
+                    src={'/img/failure.png'}
+                  />
+                  <span className="text-center"> You are NOT eligible </span>
+                </div>
+              ) : null}
+            </ResultHandler>
+
+            {eligibility && eligibility ? (
+              <button
+                className={`mt-auto w-full ${
+                  claimed
+                    ? 'bg-graylite text-white'
+                    : 'bg-accent cursor-pointer text-darkone'
+                } rounded-lg py-2 px-6 text-sm `}
+                disabled={claimed}
+                onClick={() => claimTokens()}
+              >
+                {claimed ? 'Claimed' : 'Sign Using Your Wallet'}
+              </button>
+            ) : null}
+          </div>
+        </div>
+      )}
+      {popupV2 && (
         <div
           className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
         >
           <div
             className={`md:w-[30%] w-[70%] bg-grayone py-8 px-8 rounded-xl  flex flex-col items-center justify-center min-h-[20vh] relative text-center `}
           >
-            <img
-              alt="close"
-              className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
-              onClick={() => setPopupV2(false)}
-              src="/img/assets/close.png"
-            />
-            <p className="w-full tracking-wide text-lg font-semibold mb-4">
-              You can now instantly claim{' '}
-              {Number(formatEther(currentClaimable)).toFixed(2)} ION
-            </p>
-            <p className={`opacity-40 text-xs `}>
-              To receive the full Airdrop amount, please wait till the end of
-              the vesting period
-            </p>
-            <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
-              <div className={`flex w-full gap-2 mb-2`}>
-                <input
-                  className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
-                  id="checkme"
-                  onChange={(e) => setAgreement(e.target.checked)}
-                  type="checkbox"
-                />
-                <span>
-                  I understand and agree to forfeit Y vested $ION, in favour of
-                  instantly receiving tokens now
-                </span>
+            <ResultHandler isLoading={loading}>
+              <img
+                alt="close"
+                className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
+                onClick={() => setPopupV2(false)}
+                src="/img/assets/close.png"
+              />
+              <p className="w-full tracking-wide text-lg font-semibold mb-4">
+                You can{' '}
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                  ? 'now instantly'
+                  : ''}{' '}
+                claim{' '}
+                {Number(
+                  formatEther(
+                    dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                      ? currentClaimable
+                      : publicClaimable
+                  )
+                ).toLocaleString(undefined, {
+                  maximumFractionDigits: 2
+                })}{' '}
+                ION
+              </p>
+              <p className={`opacity-40 text-xs `}>
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                  ? 'To receive the full Airdrop amount, please wait till the end of the vesting period'
+                  : 'The rest of the tokens will be vested linearly.'}
+              </p>
+              <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 && (
+                  <div className={`flex w-full gap-2 mb-2`}>
+                    <input
+                      className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
+                      id="checkme"
+                      onChange={(e) => setAgreement(e.target.checked)}
+                      type="checkbox"
+                    />
+                    <span>
+                      I understand and agree to forfeit{' '}
+                      {(
+                        Number(
+                          formatEther(
+                            dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                              ? eligibleForToken
+                              : publicSaleEligibleToken
+                          )
+                        ) -
+                        Number(
+                          formatEther(
+                            dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                              ? currentClaimable
+                              : publicClaimable
+                          )
+                        )
+                      ).toLocaleString(undefined, {
+                        maximumFractionDigits: 2
+                      })}{' '}
+                      vested $ION, in favour of instantly receiving tokens now
+                    </span>
+                  </div>
+                )}
+                <button
+                  className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
+                  disabled={
+                    dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! &&
+                    agreement
+                  }
+                  onClick={() => {
+                    if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
+                      claimAirdrop();
+                    }
+                    if (dropdownSelectedCampaign == DROPDOWN.PublicSale) {
+                      claimPublicSale();
+                    }
+                  }}
+                >
+                  {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 &&
+                    'Instant'}{' '}
+                  Claim
+                </button>
               </div>
               <button
                 className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}

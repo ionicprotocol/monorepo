@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import React from 'react';
+import { base, mode } from 'viem/chains';
 
 interface INetworkSelector {
   chainId?: string;
@@ -20,20 +21,20 @@ export default function NetworkSelector({
 }: INetworkSelector) {
   const networkOptions = [
     {
-      chain: 34443,
+      chain: mode.id,
       name: 'Mode'
     },
     {
-      chain: 8453,
+      chain: base.id,
       name: 'Base'
     }
   ];
 
   const chainColors = (chainId?: number) => {
-    if (chainId === 34443) {
+    if (chainId === mode.id) {
       return { arrow: '000000', bg: 'bg-lime', text: 'text-darkone' };
     }
-    if (chainId === 8453) {
+    if (chainId === base.id) {
       return { arrow: 'ffffff', bg: 'bg-blue-600', text: 'text-white' };
     }
     return { arrow: 'ffffff', bg: 'bg-primary', text: 'text-white' };
