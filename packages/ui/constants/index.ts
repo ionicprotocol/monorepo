@@ -22,6 +22,24 @@ export const CLOSE_FACTOR = {
   MIN: 5
 };
 
+export const pools = [
+  {
+    chain: 34443,
+    id: '0',
+    name: 'Main Market'
+  },
+  {
+    chain: 34443,
+    id: '1',
+    name: 'Native Market'
+  },
+  {
+    chain: 8453,
+    id: '0',
+    name: 'Mode Market'
+  }
+];
+
 export const DROPDOWN = {
   AirdropSZN1: 1,
   PublicSale: 0

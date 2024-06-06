@@ -5,16 +5,19 @@ import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { base, mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
+// import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
+import Dropdown from '../_components/Dropdown';
 import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
+import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
@@ -36,20 +39,43 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
-  const chainId = useChainId();
+  // const chainId = useChainId();
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
+  const pool = searchParams.get('pool');
+  const chain = querychain ? querychain : 34443;
+  const [open, setOpen] = useState<boolean>(false);
+  const newRef = useRef(null!);
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
-  const [poolMarket, setPoolMarket] = useState<string>('0');
+  // const [poolMarket, setPoolMarket] = useState<string>('0');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTab, setSelectedTab] = useState('');
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const handleOutsideClick = (e: any) => {
+    //@ts-ignore
+    if (newRef.current && !newRef.current?.contains(e?.target)) {
+      setOpen(false);
+    }
+  };
+
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
-    poolMarket,
-    chainId
+    pool ? pool : pools[0].id,
+    +chain
   );
   const { data: positions, isLoading: isLoadingPositions } =
     usePositionsQuery();
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
-    [chainId]
+    [+chain]
   );
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
@@ -62,14 +88,14 @@ export default function Dashboard() {
             )
           : null
       ),
-      positions?.openPositions.map(() => chainId) ?? []
+      positions?.openPositions.map(() => +chain) ?? []
     );
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
       positions?.openPositions.map((position) => position.address) ?? []
     );
   const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
-    useTotalSupplyAPYs(marketData?.assets ?? [], chainId);
+    useTotalSupplyAPYs(marketData?.assets ?? [], +chain);
   const suppliedAssets = useMemo<MarketData[]>(
     () =>
       marketData?.assets.filter((asset) => asset.supplyBalanceFiat > 0) ?? [],
@@ -85,7 +111,7 @@ export default function Dashboard() {
   );
   const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
     if (marketData && assetsSupplyAprData && currentSdk) {
-      const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+      const blocksPerMinute = getBlockTimePerMinuteByChainId(+chain);
       let totalCollateral = 0;
       let avgCollateralApr = 0;
       let borrowApr = 0;
@@ -136,7 +162,7 @@ export default function Dashboard() {
     assetsSupplyAprData,
     borrowedAssets,
     currentSdk,
-    chainId,
+    chain,
     marketData,
     suppliedAssets
   ]);
@@ -152,10 +178,10 @@ export default function Dashboard() {
   const [loopOpen, setLoopOpen] = useState<boolean>(false);
   const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
     marketData?.comptroller,
-    chainId
+    +chain
   );
   const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
-    chainId.toString()
+    chain.toString()
   );
   const handledHealthData = useMemo<string>(() => {
     if (
@@ -175,7 +201,7 @@ export default function Dashboard() {
     useMaxBorrowAmounts(
       marketData?.assets ?? [],
       marketData?.comptroller ?? '',
-      chainId
+      +chain
     );
   const totalPoints = useMemo<number>(() => {
     if (supplyPoints && borrowPoints) {
@@ -399,7 +425,7 @@ export default function Dashboard() {
             </Link>
           </div>
         </div>
-        <div
+        {/* <div
           className={`flex items-center justify-center text-sm gap-2 p-1 my-1`}
         >
           <button
@@ -430,6 +456,17 @@ export default function Dashboard() {
           >
             Base Market
           </button>
+        </div> */}
+        <div className={`w-[20%] mb-2 `}>
+          <Dropdown
+            chainId={chain as string}
+            dropdownSelectedChain={+chain}
+            newRef={newRef}
+            open={open}
+            options={pools}
+            pool={pool || '0'}
+            setOpen={setOpen}
+          />
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
@@ -477,7 +514,7 @@ export default function Dashboard() {
                         currentSdk
                           ?.ratePerBlockToAPY(
                             asset?.supplyRatePerBlock ?? BigNumber.from(0),
-                            getBlockTimePerMinuteByChainId(chainId)
+                            getBlockTimePerMinuteByChainId(+chain)
                           )
                           .toFixed(2) ?? '0.00'
                       }%`}
@@ -552,7 +589,7 @@ export default function Dashboard() {
                         currentSdk
                           ?.ratePerBlockToAPY(
                             asset?.borrowRatePerBlock ?? BigNumber.from(0),
-                            getBlockTimePerMinuteByChainId(chainId)
+                            getBlockTimePerMinuteByChainId(+chain)
                           )
                           .toFixed(2) ?? '0.00'
                       }%`}
