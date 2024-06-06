@@ -12,6 +12,8 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useGetPositionsInfoQuery } from '@ui/hooks/levato/usePositionsInfo';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { usePositionsPnl } from '@ui/hooks/levato/usePositionsPnl';
+import { BigNumber } from 'ethers';
 
 export default function LeveragedPositionsInfo() {
   const { address } = useMultiIonic();
@@ -33,6 +35,7 @@ export default function LeveragedPositionsInfo() {
   const { levatoSdk } = useMultiIonic();
   const queryClient = useQueryClient();
   const { refetch: refetchBalance } = useBalance({ address });
+  const { data: positionsPnL } = usePositionsPnl();
 
   const handlePositionClosing = async (positionAddress: string) => {
     try {
@@ -99,6 +102,19 @@ export default function LeveragedPositionsInfo() {
           const positionStableAsset = marketData?.assets.find(
             (asset) => asset.underlyingToken === position.stableAsset
           );
+          const pnlData = positionsPnL?.get(position.positionAddress);
+          let pnl = BigNumber.from('0');
+
+          if (pnlData) {
+            const pnlAmount = BigNumber.from(pnlData.fundedCollateralAmount);
+            const fundingValue = position.collateralAssetPrice
+              .mul(pnlAmount)
+              .div(BigNumber.from('10').pow(BigNumber.from('18')));
+
+            pnl = fundingValue.sub(position.equityValue);
+          }
+
+          console.log(pnl.toString());
 
           if (!positionCollateralAsset || !positionStableAsset) {
             return <></>;
@@ -165,7 +181,7 @@ export default function LeveragedPositionsInfo() {
                 <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
                   PNL
                 </span>
-                $0.00
+                0.00
               </div>
 
               {/* <div
