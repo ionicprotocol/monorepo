@@ -55,6 +55,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
       throw `Error occurred during saving assets total apy to database: pools not found`;
     }
 
+    
     const allPluginRewards: PluginRewards[] = [];
     const totalAssets: NativePricedIonicAsset[] = [];
     const allFlywheelRewards: FlywheelMarketRewardsInfo[] = [];
@@ -122,7 +123,10 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
       chainId,
       provider,
     });
-
+    if (apyProviders.length === 0 ) {
+      console.error("No APY Providers available.");
+      return 0; 
+    }
     const assetInfos = await Promise.all(
       Object.entries(apyProviders).map(async ([assetAddress, assetAPYProvider]) => {
         return {
@@ -131,6 +135,8 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
         };
       }),
     );
+
+    
 
     await Promise.all(
       totalAssets.map(async (asset) => {
@@ -157,7 +163,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           if (assetInfos) {
             assetInfos.map((info) => {
               if (info.asset.toLowerCase() === asset.underlyingToken.toLowerCase()) {
-                info.rewards.map((reward) => {
+                info.rewards.map((reward : any) => {
                   if (reward.apy) {
                     compoundingApy += reward.apy * 100;
                   }
@@ -166,11 +172,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
             });
           }
 
-          if (compoundingApy) {
-            totalSupplyApy += compoundingApy;
-            result = { ...result, compoundingApy };
-          }
-
+        
           // get plugin rewards
           const flywheelRewards = allFlywheelRewards.find(
             (fwRewardsInfo) => fwRewardsInfo.market === asset.cToken,
@@ -256,26 +258,30 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     const rows = results
       .filter((r) => !!r)
       .map((r) => {
-        const { cTokenAddress, underlyingAddress, ...rest } = r;
+        const { cTokenAddress, underlyingAddress, borrowApy, supplyApy, totalSupplyApy, ...rest } = r;
         return {
           chain_id: chainId,
           ctoken_address: r.cTokenAddress.toLowerCase(),
           underlying_address: r.underlyingAddress.toLocaleLowerCase(),
-          info: {
-            ...rest,
-            createdAt: new Date().getTime(),
-          },
+          borrowApy: r.borrowApy,
+          supplyApy: r.supplyApy,
+          totalSupplyApy: r.totalSupplyApy,
         };
       });
-
-    const { error } = await supabase.from(environment.supabaseAssetTotalApyTableName).insert(rows);
-
-    if (error) {
-      throw `Error occurred during saving asset total apy to database: ${error.message}`;
+      let { error: error1 } = await supabase.from('asset-total-apy-development').insert(rows);
+      if (error1) {
+        throw new Error(`Error occurred during saving asset total apy to database (asset-total-apy-development): ${error1.message}`);
+      }
+  
+      // Insert into asset_total_apy_history
+      let { error: error2 } = await supabase.from('asset_total_apy_history').insert(rows);
+      if (error2) {
+        throw new Error(`Error occurred during saving asset total apy to database (asset_total_apy_history): ${error2.message}`);
+      }
+  
+    } catch (err) {
+      await functionsAlert('functions.asset-total-apy: Generic Error', JSON.stringify(err));
     }
-  } catch (err) {
-    await functionsAlert('Functions.asset-total-apy: Generic Error', JSON.stringify(err));
-  }
 };
 
 export const createAssetTotalApyHandler =
