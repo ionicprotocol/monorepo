@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useRef, useState } from 'react';
 import Confetti from 'react-confetti';
 import { formatEther } from 'viem';
+import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -80,7 +81,7 @@ export default function Claim() {
     async function getVested() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(34443, chainId);
+        await handleSwitchOriginChain(mode.id, chainId);
         const totalTokenData = await publicClient?.readContract({
           abi: claimAbi,
           address: claimContractAddress,
@@ -115,7 +116,7 @@ export default function Claim() {
     async function getPublicSale() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(34443, chainId);
+        await handleSwitchOriginChain(mode.id, chainId);
         const totalTokenData = await publicClient?.readContract({
           abi: PublicSaleAbi,
           address: PublicSaleContractAddress,
@@ -209,7 +210,7 @@ export default function Claim() {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(34443, chainId);
+      await handleSwitchOriginChain(mode.id, chainId);
       setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: claimAbi,
@@ -244,7 +245,7 @@ export default function Claim() {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(34443, chainId);
+      await handleSwitchOriginChain(mode.id, chainId);
       setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: PublicSaleAbi,
