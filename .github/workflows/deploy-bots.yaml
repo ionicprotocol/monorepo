@@ -85,6 +85,9 @@ jobs:
 
       - name: Lint `liquidator`
         run: yarn workspace @ionicprotocol/liquidator lint
+      ##base bot 
+      # - name: Lint `liquidator_base`
+      #   run: yarn workspace @ionicprotocol/liquidator_base lint  
 
       - name: Lint `oracles-monitor`
         run: yarn workspace @ionicprotocol/oracles-monitor lint
@@ -243,6 +246,7 @@ jobs:
         build-and-push-liquidator-image,
         build-and-push-oracles-monitor-image,
         build-and-push-pyth-updater-image,
+        # build-and-push-liquidator-base-image,
         lint-bots,
       ]
     env:
@@ -268,7 +272,7 @@ jobs:
 
       - name: run smoke tests for liquidator bot
         working-directory: ./ops
-        run: make liquidator-smoke-test
+        run: make liquidator-smoke-test  
 
       - name: run smoke tests for pyth-updater bot
         working-directory: ./ops
