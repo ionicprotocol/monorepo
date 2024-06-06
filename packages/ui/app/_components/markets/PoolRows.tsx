@@ -2,7 +2,7 @@
 'use client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
-// import { mode } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
@@ -33,10 +33,10 @@ interface IRows {
 }
 
 const chainColors = (chainId: number) => {
-  if (chainId === 34443) {
+  if (chainId === mode.id) {
     return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };
   }
-  if (chainId === 8453) {
+  if (chainId === base.id) {
     return { bg: 'bg-blue-600', border: 'border-blue-600', text: 'text-white' };
   }
   return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };

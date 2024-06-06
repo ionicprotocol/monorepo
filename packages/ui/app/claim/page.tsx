@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useRef, useState } from 'react';
 import Confetti from 'react-confetti';
 import { formatEther } from 'viem';
+import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -80,7 +81,7 @@ export default function Claim() {
     async function getVested() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(34443, chainId);
+        await handleSwitchOriginChain(mode.id, chainId);
         const totalTokenData = await publicClient?.readContract({
           abi: claimAbi,
           address: claimContractAddress,
@@ -115,7 +116,7 @@ export default function Claim() {
     async function getPublicSale() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(34443, chainId);
+        await handleSwitchOriginChain(mode.id, chainId);
         const totalTokenData = await publicClient?.readContract({
           abi: PublicSaleAbi,
           address: PublicSaleContractAddress,
@@ -209,7 +210,7 @@ export default function Claim() {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(34443, chainId);
+      await handleSwitchOriginChain(mode.id, chainId);
       setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: claimAbi,
@@ -244,7 +245,7 @@ export default function Claim() {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(34443, chainId);
+      await handleSwitchOriginChain(mode.id, chainId);
       setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: PublicSaleAbi,
@@ -536,10 +537,10 @@ export default function Claim() {
                     {Math.floor(
                       Number(user?.ion_amount ?? '0') * AIRDROP_FIRST_TRANCHE
                     ).toLocaleString()}{' '}
-                    $ION) will be distributed on May 30th directly to your
-                    wallet address. The rest of the tokens are vested for 3
-                    months. Details on vesting and instant claim will follow
-                    soon.
+                    $ION) + 1st month of vested ION will be distributed on July
+                    7th directly to your wallet address. The rest of the tokens
+                    are vested for 2 months and can be instantly claimed with a
+                    penalty.
                   </span>
                   <span className="text-center pb-5">
                     Press the button below to sign a message and prove ownership
@@ -590,7 +591,11 @@ export default function Claim() {
                 src="/img/assets/close.png"
               />
               <p className="w-full tracking-wide text-lg font-semibold mb-4">
-                You can now instantly claim{' '}
+                You can{' '}
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                  ? 'now instantly'
+                  : ''}{' '}
+                claim{' '}
                 {Number(
                   formatEther(
                     dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
@@ -603,43 +608,49 @@ export default function Claim() {
                 ION
               </p>
               <p className={`opacity-40 text-xs `}>
-                To receive the full Airdrop amount, please wait till the end of
-                the vesting period
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                  ? 'To receive the full Airdrop amount, please wait till the end of the vesting period'
+                  : 'The rest of the tokens will be vested linearly.'}
               </p>
               <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
-                <div className={`flex w-full gap-2 mb-2`}>
-                  <input
-                    className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
-                    id="checkme"
-                    onChange={(e) => setAgreement(e.target.checked)}
-                    type="checkbox"
-                  />
-                  <span>
-                    I understand and agree to forfeit{' '}
-                    {(
-                      Number(
-                        formatEther(
-                          dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                            ? eligibleForToken
-                            : publicSaleEligibleToken
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 && (
+                  <div className={`flex w-full gap-2 mb-2`}>
+                    <input
+                      className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
+                      id="checkme"
+                      onChange={(e) => setAgreement(e.target.checked)}
+                      type="checkbox"
+                    />
+                    <span>
+                      I understand and agree to forfeit{' '}
+                      {(
+                        Number(
+                          formatEther(
+                            dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                              ? eligibleForToken
+                              : publicSaleEligibleToken
+                          )
+                        ) -
+                        Number(
+                          formatEther(
+                            dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                              ? currentClaimable
+                              : publicClaimable
+                          )
                         )
-                      ) -
-                      Number(
-                        formatEther(
-                          dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                            ? currentClaimable
-                            : publicClaimable
-                        )
-                      )
-                    ).toLocaleString(undefined, {
-                      maximumFractionDigits: 2
-                    })}{' '}
-                    vested $ION, in favour of instantly receiving tokens now
-                  </span>
-                </div>
+                      ).toLocaleString(undefined, {
+                        maximumFractionDigits: 2
+                      })}{' '}
+                      vested $ION, in favour of instantly receiving tokens now
+                    </span>
+                  </div>
+                )}
                 <button
                   className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
-                  disabled={!agreement}
+                  disabled={
+                    dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! &&
+                    agreement
+                  }
                   onClick={() => {
                     if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
                       claimAirdrop();
@@ -649,7 +660,9 @@ export default function Claim() {
                     }
                   }}
                 >
-                  Instant Claim
+                  {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 &&
+                    'Instant'}{' '}
+                  Claim
                 </button>
               </div>
             </ResultHandler>
