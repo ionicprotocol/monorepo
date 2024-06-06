@@ -63,23 +63,28 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
 
-  const ffd = await deployments.deploy("FeeDistributor", {
-    from: deployer,
-    log: true,
-    proxy: {
-      proxyContract: "OpenZeppelinTransparentProxy",
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [ethers.utils.parseEther("0.1")]
-        }
-      },
-      owner: multisig
-    }
-  });
-  if (ffd.transactionHash) await ethers.provider.waitForTransaction(ffd.transactionHash);
+  let ffd;
+  try {
+    ffd = await deployments.deploy("FeeDistributor", {
+      from: deployer,
+      log: true,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [ethers.utils.parseEther("0.1")]
+          }
+        },
+        owner: multisig
+      }
+    });
+    if (ffd.transactionHash) await ethers.provider.waitForTransaction(ffd.transactionHash);
 
-  console.log("FeeDistributor: ", ffd.address);
+    console.log("FeeDistributor: ", ffd.address);
+  } catch (error) {
+    console.error("Could not deploy:", error);
+  }
   const fuseFeeDistributor = (await ethers.getContract("FeeDistributor", deployer)) as FeeDistributor;
 
   const ffdFee = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
@@ -187,25 +192,31 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     waitConfirmations: 1
   });
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
+
   ////
   //// FUSE CORE CONTRACTS
-  const fpd = await deployments.deploy("PoolDirectory", {
-    from: deployer,
-    log: true,
-    proxy: {
-      proxyContract: "OpenZeppelinTransparentProxy",
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [false, []]
-        }
+  let fpd;
+  try {
+    fpd = await deployments.deploy("PoolDirectory", {
+      from: deployer,
+      log: true,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [false, []]
+          }
+        },
+        owner: multisig
       },
-      owner: multisig
-    },
-    waitConfirmations: 1
-  });
-  if (fpd.transactionHash) await ethers.provider.waitForTransaction(fpd.transactionHash);
-  console.log("PoolDirectory: ", fpd.address);
+      waitConfirmations: 1
+    });
+    if (fpd.transactionHash) await ethers.provider.waitForTransaction(fpd.transactionHash);
+    console.log("PoolDirectory: ", fpd.address);
+  } catch (error) {
+    console.error("Could not deploy:", error);
+  }
 
   const comptroller = await ethers.getContract("Comptroller", deployer);
 
@@ -512,68 +523,80 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   console.log("FixedNativePriceOracle: ", fixedNativePO.address);
 
-  const simplePO = await deployments.deploy("SimplePriceOracle", {
-    from: deployer,
-    args: [],
-    log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: []
-        }
+  try {
+    const simplePO = await deployments.deploy("SimplePriceOracle", {
+      from: deployer,
+      args: [],
+      log: true,
+      proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: []
+          }
+        },
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: multisig
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: multisig
-    },
-    waitConfirmations: 1
-  });
-  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
-  console.log("SimplePriceOracle: ", simplePO.address);
+      waitConfirmations: 1
+    });
+    if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
+    console.log("SimplePriceOracle: ", simplePO.address);
+  } catch (error) {
+    console.error("Could not deploy:", error);
+  }
 
-  await deployments.deploy("MasterPriceOracle", {
-    from: deployer,
-    log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [
-            [constants.AddressZero, chainDeployParams.wtoken],
-            [fixedNativePO.address, fixedNativePO.address],
-            constants.AddressZero,
-            deployer,
-            true,
-            chainDeployParams.wtoken
-          ]
-        }
+  try {
+    await deployments.deploy("MasterPriceOracle", {
+      from: deployer,
+      log: true,
+      proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [
+              [constants.AddressZero, chainDeployParams.wtoken],
+              [fixedNativePO.address, fixedNativePO.address],
+              constants.AddressZero,
+              deployer,
+              true,
+              chainDeployParams.wtoken
+            ]
+          }
+        },
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: multisig
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: multisig
-    },
-    waitConfirmations: 1
-  });
-  console.log(
-    `Initialised MPO with for tokens: ${constants.AddressZero}: ${fixedNativePO.address}, ${chainDeployParams.wtoken}: ${fixedNativePO.address}`
-  );
+      waitConfirmations: 1
+    });
+    console.log(
+      `Initialised MPO with for tokens: ${constants.AddressZero}: ${fixedNativePO.address}, ${chainDeployParams.wtoken}: ${fixedNativePO.address}`
+    );
+  } catch (error) {
+    console.error("Could not deploy:", error);
+  }
 
   ////
   //// HELPERS - ADDRESSES PROVIDER
-  await deployments.deploy("AddressesProvider", {
-    from: deployer,
-    log: true,
-    proxy: {
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [deployer]
-        }
+  try {
+    await deployments.deploy("AddressesProvider", {
+      from: deployer,
+      log: true,
+      proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [deployer]
+          }
+        },
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: multisig
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: multisig
-    },
-    waitConfirmations: 1
-  });
+      waitConfirmations: 1
+    });
+  } catch (error) {
+    console.error("Could not deploy:", error);
+  }
 
   ////
   //// IRM MODELS
@@ -619,24 +642,28 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   // OPTIMIZED VAULTS
   // Deploy vaults registry
   if (chainId !== 1 && chainId !== 59144) {
-    console.log("Deploying the optimized APR vaults registry");
-    const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
-      from: deployer,
-      log: true,
-      proxy: {
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: []
-          }
+    try {
+      console.log("Deploying the optimized APR vaults registry");
+      const vaultsRegistry = await deployments.deploy("OptimizedVaultsRegistry", {
+        from: deployer,
+        log: true,
+        proxy: {
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: []
+            }
+          },
+          proxyContract: "OpenZeppelinTransparentProxy",
+          owner: multisig
         },
-        proxyContract: "OpenZeppelinTransparentProxy",
-        owner: multisig
-      },
-      waitConfirmations: 1
-    });
-    if (vaultsRegistry.transactionHash) await ethers.provider.waitForTransaction(vaultsRegistry.transactionHash);
-    console.log("OptimizedVaultsRegistry: ", vaultsRegistry.address);
+        waitConfirmations: 1
+      });
+      if (vaultsRegistry.transactionHash) await ethers.provider.waitForTransaction(vaultsRegistry.transactionHash);
+      console.log("OptimizedVaultsRegistry: ", vaultsRegistry.address);
+    } catch (error) {
+      console.error("Could not deploy:", error);
+    }
   }
   ////
 
@@ -792,12 +819,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
-  //// Configure Liquidators Registry
-  await configureLiquidatorsRegistry({
-    ethers,
-    getNamedAccounts,
-    chainId
-  });
+  try {
+    //// Configure Liquidators Registry
+    await configureLiquidatorsRegistry({
+      ethers,
+      getNamedAccounts,
+      chainId
+    });
+  } catch (error) {
+    console.error(error);
+  }
   ///
   ////
 
@@ -947,49 +978,57 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
 
     //// LEVERED POSITIONS LENS
-    const lpLens = await deployments.deploy("LeveredPositionsLens", {
-      from: deployer,
-      log: true,
-      waitConfirmations: 1,
-      proxy: {
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [leveredPositionFactory.address]
+    try {
+      const lpLens = await deployments.deploy("LeveredPositionsLens", {
+        from: deployer,
+        log: true,
+        waitConfirmations: 1,
+        proxy: {
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [leveredPositionFactory.address]
+            },
+            onUpgrade: {
+              methodName: "reinitialize",
+              args: [leveredPositionFactory.address]
+            }
           },
-          onUpgrade: {
-            methodName: "reinitialize",
-            args: [leveredPositionFactory.address]
-          }
-        },
-        proxyContract: "OpenZeppelinTransparentProxy",
-        owner: multisig
-      }
-    });
-    if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
-    console.log("LeveredPositionsLens: ", lpLens.address);
+          proxyContract: "OpenZeppelinTransparentProxy",
+          owner: multisig
+        }
+      });
+      if (lpLens.transactionHash) await ethers.provider.waitForTransaction(lpLens.transactionHash);
+      console.log("LeveredPositionsLens: ", lpLens.address);
+    } catch (error) {
+      console.error("Could not deploy:", error);
+    }
 
     //// AUTHORITIES REGISTRY
-    await deployments.deploy("AuthoritiesRegistry", {
-      from: deployer,
-      args: [],
-      log: true,
-      proxy: {
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [leveredPositionFactory.address]
+    try {
+      await deployments.deploy("AuthoritiesRegistry", {
+        from: deployer,
+        args: [],
+        log: true,
+        proxy: {
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [leveredPositionFactory.address]
+            },
+            onUpgrade: {
+              methodName: "reinitialize",
+              args: [leveredPositionFactory.address]
+            }
           },
-          onUpgrade: {
-            methodName: "reinitialize",
-            args: [leveredPositionFactory.address]
-          }
+          proxyContract: "OpenZeppelinTransparentProxy",
+          owner: multisig
         },
-        proxyContract: "OpenZeppelinTransparentProxy",
-        owner: multisig
-      },
-      waitConfirmations: 1
-    });
+        waitConfirmations: 1
+      });
+    } catch (error) {
+      console.error("Could not deploy:", error);
+    }
 
     const authoritiesRegistry = (await ethers.getContract("AuthoritiesRegistry", deployer)) as AuthoritiesRegistry;
 
@@ -1040,7 +1079,11 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   // upgrade any of the pools if necessary
   // the markets are also autoupgraded with this task
-  await run("pools:all:upgrade");
+  try {
+    await run("pools:all:upgrade");
+  } catch (error) {
+    console.error("Could not deploy:", error);
+  }
 
   const gasUsed = deployments.getGasUsed();
 

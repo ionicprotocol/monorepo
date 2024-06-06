@@ -22,6 +22,11 @@ export const CLOSE_FACTOR = {
   MIN: 5
 };
 
+export const DROPDOWN = {
+  AirdropSZN1: 1,
+  PublicSale: 0
+};
+
 export const LIQUIDATION_INCENTIVE = {
   DEFAULT: 8,
   MAX: 50,
