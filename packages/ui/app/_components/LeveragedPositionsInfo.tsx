@@ -1,6 +1,7 @@
 'use client';
 import { useQueryClient } from '@tanstack/react-query';
-import { formatEther, formatUnits } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
+import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -10,13 +11,15 @@ import ResultHandler from './ResultHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useGetPositionsInfoQuery } from '@ui/hooks/levato/usePositionsInfo';
+import { usePositionsPnl } from '@ui/hooks/levato/usePositionsPnl';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { usePositionsPnl } from '@ui/hooks/levato/usePositionsPnl';
-import { BigNumber } from 'ethers';
+import { useLevatoUsdPrice } from '@ui/hooks/levato/useLevatoUsdPrice';
+import { useChainConfig } from '@ui/hooks/useChainConfig';
 
 export default function LeveragedPositionsInfo() {
   const { address } = useMultiIonic();
+  const chainConfig = useChainConfig();
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
@@ -31,6 +34,9 @@ export default function LeveragedPositionsInfo() {
   );
   const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
     chainId.toString()
+  );
+  const { data: levatoUsdPrice } = useLevatoUsdPrice(
+    '0xd988097fb8612cc24eeC14542bC03424c656005f'
   );
   const { levatoSdk } = useMultiIonic();
   const queryClient = useQueryClient();
@@ -103,18 +109,32 @@ export default function LeveragedPositionsInfo() {
             (asset) => asset.underlyingToken === position.stableAsset
           );
           const pnlData = positionsPnL?.get(position.positionAddress);
-          let pnl = BigNumber.from('0');
+          let pnl = 0;
+          let displayPnl = Math.abs(pnl).toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+          });
 
-          if (pnlData) {
+          if (pnlData && levatoUsdPrice) {
             const pnlAmount = BigNumber.from(pnlData.fundedCollateralAmount);
             const fundingValue = position.collateralAssetPrice
               .mul(pnlAmount)
-              .div(BigNumber.from('10').pow(BigNumber.from('18')));
+              .div(parseEther('1'));
 
-            pnl = fundingValue.sub(position.equityValue);
+            pnl = Number(
+              formatUnits(
+                fundingValue
+                  .sub(position.equityValue)
+                  .mul(parseEther('1'))
+                  .div(levatoUsdPrice ?? '1'),
+                6
+              )
+            );
+            displayPnl = Math.abs(pnl).toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2
+            });
           }
-
-          console.log(pnl.toString());
 
           if (!positionCollateralAsset || !positionStableAsset) {
             return <></>;
@@ -181,7 +201,13 @@ export default function LeveragedPositionsInfo() {
                 <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
                   PNL
                 </span>
-                0.00
+                <span
+                  className={
+                    pnl !== 0 ? (pnl < 0 ? 'text-error' : 'text-accent') : ''
+                  }
+                >
+                  {pnl < 0 && '-'}${displayPnl}
+                </span>
               </div>
 
               {/* <div
