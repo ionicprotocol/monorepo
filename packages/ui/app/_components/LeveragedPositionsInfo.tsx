@@ -10,16 +10,14 @@ import { useBalance, useChainId } from 'wagmi';
 import ResultHandler from './ResultHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useLevatoUsdPrice } from '@ui/hooks/levato/useLevatoUsdPrice';
 import { useGetPositionsInfoQuery } from '@ui/hooks/levato/usePositionsInfo';
 import { usePositionsPnl } from '@ui/hooks/levato/usePositionsPnl';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useLevatoUsdPrice } from '@ui/hooks/levato/useLevatoUsdPrice';
-import { useChainConfig } from '@ui/hooks/useChainConfig';
 
 export default function LeveragedPositionsInfo() {
   const { address } = useMultiIonic();
-  const chainConfig = useChainConfig();
   const chainId = useChainId();
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     '0',
