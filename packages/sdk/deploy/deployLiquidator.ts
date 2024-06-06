@@ -1,7 +1,7 @@
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
-import { deployIonicLiquidator, configureIonicLiquidator } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
+import { configureIonicLiquidator, deployIonicLiquidator } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }) => {
   const chainId = parseInt(await getChainId());
@@ -12,8 +12,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const { config: chainDeployParams }: { config: ChainDeployConfig; deployFunc: any } = chainDeployConfig[chainId];
   console.log("chainDeployParams: ", chainDeployParams);
 
-  let liquidatorContractName;
-  liquidatorContractName = await deployIonicLiquidator({
+  const liquidatorContractName = await deployIonicLiquidator({
     run,
     ethers,
     getNamedAccounts,

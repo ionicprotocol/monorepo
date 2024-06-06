@@ -1,6 +1,5 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-etherscan";
 import "@typechain/hardhat";
 import { config as dotEnvConfig } from "dotenv";
 import "hardhat-abi-exporter";
@@ -199,21 +198,6 @@ const config: HardhatUserConfig = {
   typechain: {
     outDir: "typechain",
     target: "ethers-v5"
-  },
-  etherscan: {
-    apiKey: {
-      optimismSepolia: process.env.ETHERSCAN_KEY || ""
-    },
-    customChains: [
-      {
-        network: "optimismSepolia",
-        chainId: 11155420,
-        urls: {
-          apiURL: "https://sepolia.optimism.io",
-          browserURL: "https://sepolia-optimistic.etherscan.io"
-        }
-      }
-    ]
   }
 };
 
