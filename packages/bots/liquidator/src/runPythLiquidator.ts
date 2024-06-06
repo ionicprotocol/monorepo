@@ -1,14 +1,13 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
+import { BotType } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
+import { PythLiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
+import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
+import { encodeAbiParameters, encodeFunctionData } from "viem";
+import IonicLiquidatorABI from "../../../sdk/artifacts/IonicLiquidator.sol/IonicLiquidator.json";
 import config from "./config";
 import { logger } from "./logger";
 import { Liquidator } from "./services";
 import { setUpSdk } from "./utils";
-import { BotType } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
-import { PythLiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
-import { encodeFunctionData, encodeAbiParameters } from "viem";
-import { Client } from "@pythnetwork/express-relay-evm-js";
-import { OpportunityParams } from "@pythnetwork/express-relay-evm-js";
-import IonicLiquidatorABI from "../../../sdk/artifacts/IonicLiquidator.sol/IonicLiquidator.json";
 
 (async function () {
   const chainId: number = config.chainId;

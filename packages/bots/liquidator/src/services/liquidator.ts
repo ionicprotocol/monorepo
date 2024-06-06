@@ -1,8 +1,8 @@
 import { IonicSdk } from "@ionicprotocol/sdk";
 import {
+  BotType,
   LiquidatablePool,
   PythLiquidatablePool,
-  BotType,
 } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
 
 import config, { EXCLUDED_ERROR_CODES } from "../config";
