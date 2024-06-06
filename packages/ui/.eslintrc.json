@@ -22,13 +22,7 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": [
-    "@typescript-eslint",
-    "unused-imports",
-    "typescript-sort-keys",
-    "sort-keys",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "unused-imports", "prettier"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -58,7 +52,6 @@
     "react-hooks/exhaustive-deps": "error",
     "react-hooks/rules-of-hooks": "error",
     "react/display-name": "off",
-    "react/jsx-sort-props": "error",
     "react/prop-types": "off",
     "unused-imports/no-unused-imports": "error",
     "unused-imports/no-unused-vars": [
@@ -70,20 +63,6 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "typescript-sort-keys/interface": "error",
-    "typescript-sort-keys/string-enum": "error",
-    "sort-imports": [
-      "error",
-      {
-        "ignoreCase": true,
-        "ignoreDeclarationSort": true,
-        "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
-        "allowSeparatedGroups": false
-      }
-    ],
-    "sort-keys": 0, // disable default eslint sort-keys
-    "sort-keys/sort-keys-fix": 2,
     "comma-dangle": "off",
     "@next/next/no-document-import-in-page": "off"
   }
