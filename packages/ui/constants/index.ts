@@ -1,4 +1,5 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
+import { base, mode } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -24,17 +25,17 @@ export const CLOSE_FACTOR = {
 
 export const pools = [
   {
-    chain: 34443,
+    chain: mode.id,
     id: '0',
     name: 'Main Market'
   },
   {
-    chain: 34443,
+    chain: mode.id,
     id: '1',
     name: 'Native Market'
   },
   {
-    chain: 8453,
+    chain: base.id,
     id: '0',
     name: 'Mode Market'
   }

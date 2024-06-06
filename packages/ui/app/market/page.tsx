@@ -25,24 +25,6 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-const pools = [
-  {
-    chain: mode.id,
-    id: '0',
-    name: 'Main Market'
-  },
-  {
-    chain: mode.id,
-    id: '1',
-    name: 'Native Market'
-  },
-  {
-    chain: base.id,
-    id: '0',
-    name: 'Main Market'
-  }
-];
-
 export default function Market() {
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
