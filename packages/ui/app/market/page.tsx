@@ -112,11 +112,11 @@ export default function Market() {
 
   const networkOptionstest = [
     {
-      chain: 34443,
+      chain: mode.id,
       name: 'Mode'
     },
     {
-      chain: 8453,
+      chain: base.id,
       name: 'Base'
     }
   ];

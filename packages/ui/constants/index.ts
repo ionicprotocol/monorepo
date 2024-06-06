@@ -37,7 +37,7 @@ export const pools = [
   {
     chain: base.id,
     id: '0',
-    name: 'Mode Market'
+    name: 'Main Market'
   }
 ];
 
