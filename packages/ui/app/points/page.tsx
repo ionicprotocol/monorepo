@@ -16,8 +16,12 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import {
   useGlobalRank,
   useLeaderboard,
-  usePointsForBorrow,
-  usePointsForSupply
+  usePointsForBorrowBaseMain,
+  usePointsForBorrowModeMain,
+  usePointsForBorrowModeNative,
+  usePointsForSupplyBaseMain,
+  usePointsForSupplyModeMain,
+  usePointsForSupplyModeNative
 } from '@ui/hooks/usePointsQueries';
 
 const pools: { [key: number]: { [key: number]: string } } = {
@@ -41,10 +45,30 @@ export default function Points() {
   const { data: baseMarketDataMain, isLoading: isLoadingBaseMarketDataMain } =
     useFusePoolData('0', base.id);
   const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
-  const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
-    usePointsForSupply();
-  const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
-    usePointsForBorrow();
+  const {
+    data: supplyPointsModeMain,
+    isLoading: isLoadingSupplyPointsModeMain
+  } = usePointsForSupplyModeMain();
+  const {
+    data: supplyPointsModeNative,
+    isLoading: isLoadingSupplyPointsModeNative
+  } = usePointsForSupplyModeNative();
+  const {
+    data: supplyPointsBaseMain,
+    isLoading: isLoadingSupplyPointsBaseMain
+  } = usePointsForSupplyBaseMain();
+  const {
+    data: borrowPointsModeMain,
+    isLoading: isLoadingBorrowPointsModeMain
+  } = usePointsForBorrowModeMain();
+  const {
+    data: borrowPointsModeNative,
+    isLoading: isLoadingBorrowPointsModeNative
+  } = usePointsForBorrowModeNative();
+  const {
+    data: borrowPointsBaseMain,
+    isLoading: isLoadingBorrowPointsBaseMain
+  } = usePointsForBorrowBaseMain();
   const {
     data: leaderboard,
     isLoading: isLoadingLeaderboard,
@@ -52,9 +76,9 @@ export default function Points() {
   } = useLeaderboard(leaderboardPage);
   const { data: globalRank } = useGlobalRank();
 
-  const summedSupplyPoints = useMemo<number>(() => {
-    if (supplyPoints) {
-      return supplyPoints.rows.reduce(
+  const summedSupplyPointsModeMain = useMemo<number>(() => {
+    if (supplyPointsModeMain) {
+      return supplyPointsModeMain.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -66,10 +90,10 @@ export default function Points() {
     }
 
     return 0;
-  }, [supplyPoints]);
-  const summedBorrowPoints = useMemo<number>(() => {
-    if (borrowPoints) {
-      return borrowPoints.rows.reduce(
+  }, [supplyPointsModeMain]);
+  const summedSupplyPointsModeNative = useMemo<number>(() => {
+    if (supplyPointsModeNative) {
+      return supplyPointsModeNative.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -81,11 +105,90 @@ export default function Points() {
     }
 
     return 0;
-  }, [borrowPoints]);
-  const totalPoints = useMemo<number>(
-    () => summedBorrowPoints + summedSupplyPoints,
-    [summedBorrowPoints, summedSupplyPoints]
-  );
+  }, [supplyPointsModeNative]);
+  const summedSupplyPointsBaseMain = useMemo<number>(() => {
+    if (supplyPointsBaseMain) {
+      return supplyPointsBaseMain.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [supplyPointsBaseMain]);
+  const summedBorrowPointsModeMain = useMemo<number>(() => {
+    if (borrowPointsModeMain) {
+      return borrowPointsModeMain.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [borrowPointsModeMain]);
+  const summedBorrowPointsModeNative = useMemo<number>(() => {
+    if (borrowPointsModeNative) {
+      return borrowPointsModeNative.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [borrowPointsModeNative]);
+  const summedBorrowPointsBaseMain = useMemo<number>(() => {
+    if (borrowPointsBaseMain) {
+      return borrowPointsBaseMain.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [borrowPointsBaseMain]);
+  const { totalPoints } = useMemo(() => {
+    const summedSupplyPointsMarkets =
+      summedSupplyPointsModeMain +
+      summedSupplyPointsModeNative +
+      summedSupplyPointsBaseMain;
+    const summedBorrowPointsMarkets =
+      summedBorrowPointsModeMain +
+      summedBorrowPointsModeNative +
+      summedBorrowPointsBaseMain;
+
+    return {
+      summedBorrowPointsMarkets,
+      summedSupplyPointsMarkets,
+      totalPoints: summedSupplyPointsMarkets + summedBorrowPointsMarkets
+    };
+  }, [
+    summedBorrowPointsModeMain,
+    summedBorrowPointsModeNative,
+    summedBorrowPointsBaseMain,
+    summedSupplyPointsModeMain,
+    summedSupplyPointsModeNative,
+    summedSupplyPointsBaseMain
+  ]);
 
   return (
     <div className="w-full lg:w-[70%] mx-auto">
@@ -107,7 +210,14 @@ export default function Points() {
           <ResultHandler
             center
             height="36"
-            isLoading={isLoadingBorrowPoints || isLoadingSupplyPoints}
+            isLoading={
+              isLoadingSupplyPointsModeMain ||
+              isLoadingSupplyPointsModeNative ||
+              isLoadingSupplyPointsBaseMain ||
+              isLoadingBorrowPointsModeMain ||
+              isLoadingBorrowPointsModeNative ||
+              isLoadingBorrowPointsBaseMain
+            }
             width="36"
           >
             <p className={`text-3xl font-bold text-white`}>
@@ -130,38 +240,78 @@ export default function Points() {
           </span>
         </p>
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
-        <div
-          className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
-        >
-          <p className={``}>Points for Supply</p>
-          <ResultHandler
-            height="15"
-            isLoading={isLoadingSupplyPoints}
-            width="15"
+
+        {[
+          {
+            loading: isLoadingSupplyPointsModeMain,
+            name: 'Mode Main Market',
+            points: summedSupplyPointsModeMain
+          },
+          {
+            loading: isLoadingSupplyPointsModeNative,
+            name: 'Mode Native Market',
+            points: summedSupplyPointsModeNative
+          },
+          {
+            loading: isLoadingSupplyPointsBaseMain,
+            name: 'Base Main Market',
+            points: summedSupplyPointsBaseMain
+          }
+        ].map((a, i) => (
+          <div
+            className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
+            key={i}
           >
-            <p className={`text-white font-semibold`}>
-              {summedSupplyPoints.toLocaleString('en-US', {
-                maximumFractionDigits: 0
-              })}
-            </p>
-          </ResultHandler>
-        </div>
-        <div
-          className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
-        >
-          <p className={``}>Points for Borrow</p>
-          <ResultHandler
-            height="15"
-            isLoading={isLoadingBorrowPoints}
-            width="15"
+            <p className={``}>Points for Supply in {a.name}</p>
+            <ResultHandler
+              height="15"
+              isLoading={a.loading}
+              width="15"
+            >
+              <p className={`text-white font-semibold`}>
+                {a.points.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}
+              </p>
+            </ResultHandler>
+          </div>
+        ))}
+
+        {[
+          {
+            loading: isLoadingBorrowPointsModeMain,
+            name: 'Mode Main Market',
+            points: summedBorrowPointsModeMain
+          },
+          {
+            loading: isLoadingBorrowPointsModeNative,
+            name: 'Mode Native Market',
+            points: summedBorrowPointsModeNative
+          },
+          {
+            loading: isLoadingBorrowPointsBaseMain,
+            name: 'Base Main Market',
+            points: summedBorrowPointsBaseMain
+          }
+        ].map((a, i) => (
+          <div
+            className={` w-full flex items-center justify-between text-[10px]  text-white/50`}
+            key={i}
           >
-            <p className={`text-white font-semibold`}>
-              {summedBorrowPoints.toLocaleString('en-US', {
-                maximumFractionDigits: 0
-              })}
-            </p>
-          </ResultHandler>
-        </div>
+            <p className={``}>Points for Borrow in {a.name}</p>
+            <ResultHandler
+              height="15"
+              isLoading={a.loading}
+              width="15"
+            >
+              <p className={`text-white font-semibold`}>
+                {a.points.toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}
+              </p>
+            </ResultHandler>
+          </div>
+        ))}
         <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
         <Link
           className={`w-full flex justify-center items-center rounded-md bg-neutral-500	text-black py-2 px-6 text-center text-xs mt-auto text-white`}
@@ -193,7 +343,14 @@ export default function Points() {
           <p className={``}>Total Points</p>
           <ResultHandler
             height="15"
-            isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
+            isLoading={
+              isLoadingSupplyPointsModeNative ||
+              isLoadingBorrowPointsModeNative ||
+              isLoadingSupplyPointsModeNative ||
+              isLoadingBorrowPointsModeNative ||
+              isLoadingSupplyPointsBaseMain ||
+              isLoadingBorrowPointsBaseMain
+            }
             width="15"
           >
             <p className={`text-white font-semibold`}>
@@ -207,14 +364,30 @@ export default function Points() {
         <ResultHandler
           center
           isLoading={
-            isLoadingMarketData ||
-            isLoadingSupplyPoints ||
-            isLoadingBorrowPoints
+            isLoadingModeMarketDataMain ||
+            isLoadingModeMarketDataNative ||
+            isLoadingBaseMarketDataMain ||
+            isLoadingSupplyPointsModeNative ||
+            isLoadingBorrowPointsModeNative ||
+            isLoadingSupplyPointsModeNative ||
+            isLoadingBorrowPointsModeNative ||
+            isLoadingSupplyPointsBaseMain ||
+            isLoadingBorrowPointsBaseMain
           }
         >
           <>
             <div className="w-full mb-2 md:mt-0">
-              <FlatMap rewardsData={[summedSupplyPoints, summedBorrowPoints]} />
+              <FlatMap
+                colorData={['#3bff89', '#f3fa96']}
+                rewardsData={[
+                  summedSupplyPointsModeMain +
+                    summedSupplyPointsModeNative +
+                    summedSupplyPointsBaseMain,
+                  summedBorrowPointsModeMain +
+                    summedBorrowPointsModeNative +
+                    summedBorrowPointsBaseMain
+                ]}
+              />
             </div>
 
             <div
@@ -225,76 +398,113 @@ export default function Points() {
               <h3 className={` `}>POINTS</h3>
               <h3 className={` `}>PERCENTAGE EARNINGS</h3>
             </div>
-            <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
-            >
+            {[
+              {
+                market: modeMarketDataMain,
+                points: summedSupplyPointsModeMain
+              },
+              {
+                market: modeMarketDataNative,
+                points: summedSupplyPointsModeNative
+              },
+              {
+                market: baseMarketDataMain,
+                points: summedSupplyPointsBaseMain
+              }
+            ].map(({ market, points }) => (
               <div
-                className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+                className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+                key={`supply-${market?.chainId}-${market?.id}`}
               >
-                <span
-                  className="h-4 w-4 rounded-full"
-                  style={{ backgroundColor: `#3bff89` }}
+                <div
+                  className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+                >
+                  <span
+                    className="h-4 w-4 rounded-full"
+                    style={{ backgroundColor: `#3bff89` }}
+                  />
+                  <span className={` `}>
+                    Supply - {market && pools[market.chainId][market.id]}
+                  </span>
+                </div>
+                <div className={`mb-2 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    AMOUNT:
+                  </span>
+                  ${millify(market?.totalSupplyBalanceFiat ?? 0)}
+                </div>
+                <div className={`mb-4 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    POINTS:
+                  </span>
+                  {points?.toLocaleString('en-US', {
+                    maximumFractionDigits: 0
+                  })}
+                </div>
+                <PercentMeter
+                  color="#3bff89"
+                  percent={
+                    parseFloat(
+                      (((points ?? 0) / totalPoints) * 100).toFixed(1)
+                    ) || 0
+                  }
                 />
-                <span className={` `}>Supply</span>
               </div>
-              <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  AMOUNT:
-                </span>
-                ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
-              </div>
-              <div className={`mb-4 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  POINTS:
-                </span>
-                {summedSupplyPoints.toLocaleString('en-US', {
-                  maximumFractionDigits: 0
-                })}
-              </div>
-              <PercentMeter
-                color="#3bff89"
-                percent={
-                  parseFloat(
-                    ((summedSupplyPoints / totalPoints) * 100).toFixed(1)
-                  ) || 0
-                }
-              />
-            </div>
-            <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
-            >
+            ))}
+
+            {[
+              {
+                market: modeMarketDataMain,
+                points: summedBorrowPointsModeMain
+              },
+              {
+                market: modeMarketDataNative,
+                points: summedBorrowPointsModeNative
+              },
+              {
+                market: baseMarketDataMain,
+                points: summedBorrowPointsBaseMain
+              }
+            ].map(({ market, points }) => (
               <div
-                className={`  flex gap-2 items-center justify-center  mb-2 md:mb-0`}
+                className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+                key={`borrow-${market?.chainId}-${market?.id}`}
               >
-                <span
-                  className="h-4 w-4 rounded-full"
-                  style={{ backgroundColor: `#f3fa96` }}
+                <div
+                  className={`  flex gap-2 items-center justify-center  mb-2 md:mb-0`}
+                >
+                  <span
+                    className="h-4 w-4 rounded-full"
+                    style={{ backgroundColor: `#f3fa96` }}
+                  />
+                  <span className={` `}>
+                    Borrow - {market && pools[market.chainId][market.id]}
+                  </span>
+                </div>
+                <div className={`mb-2 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    AMOUNT:
+                  </span>
+                  ${millify(market?.totalBorrowBalanceFiat ?? 0)}
+                </div>
+                <div className={`mb-4 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    POINTS:
+                  </span>
+                  {points?.toLocaleString('en-US', {
+                    maximumFractionDigits: 0
+                  })}
+                </div>
+                <PercentMeter
+                  color="#f3fa96"
+                  percent={
+                    parseFloat(
+                      (((points ?? 0) / totalPoints) * 100).toFixed(1)
+                    ) || 0
+                  }
                 />
-                <span className={` `}>Borrow</span>
               </div>
-              <div className={`mb-2 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  AMOUNT:
-                </span>
-                ${millify(marketData?.totalBorrowBalanceFiat ?? 0)}
-              </div>
-              <div className={`mb-4 md:mb-0`}>
-                <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
-                  POINTS:
-                </span>
-                {summedBorrowPoints.toLocaleString('en-US', {
-                  maximumFractionDigits: 0
-                })}
-              </div>
-              <PercentMeter
-                color="#f3fa96"
-                percent={
-                  parseFloat(
-                    ((summedBorrowPoints / totalPoints) * 100).toFixed(1)
-                  ) || 0
-                }
-              />
-            </div>
+            ))}
           </>
         </ResultHandler>
       </div>

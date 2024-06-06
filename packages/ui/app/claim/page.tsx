@@ -1,38 +1,81 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { createClient } from '@supabase/supabase-js';
 import { useEffect, useRef, useState } from 'react';
+import Confetti from 'react-confetti';
 import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
   usePublicClient,
+  useSignMessage,
   useWalletClient
 } from 'wagmi';
 
 // Create a single supabase client for interacting with your database
 // import { simulateContract } from 'viem/contract'
+import { claimAbi, claimContractAddress } from '../../constants/claim';
+import {
+  PublicSaleAbi,
+  PublicSaleContractAddress
+} from '../../constants/publicsale';
 import CountdownTimer from '../_components/claim/CountdownTimer';
 import SeasonSelector from '../_components/claim/SeasonSelector';
-import { claimAbi, claimContractAddress } from '../_constants/claim';
+import ConnectButton from '../_components/ConnectButton';
+import ResultHandler from '../_components/ResultHandler';
 
+import { DROPDOWN } from '@ui/constants/index';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+const supabase = createClient(
+  'https://uoagtjstsdrjypxlkuzr.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
+);
+const claimMessage = (nonce: string) => `Welcome to the $ION Airdrop!
+Sign this message to prove you own this address!
+Nonce: ${nonce}`;
+
+const AIRDROP_URL = 'https://airdrop.ionic.ninja';
+const AIRDROP_FIRST_TRANCHE = 0.16;
+
+type User = {
+  claimed: boolean;
+  ion_amount: string;
+  nonce: string;
+  user: string;
+};
 
 export default function Claim() {
   const [currentClaimable, setCurrentClaimable] = useState(BigInt(0));
+  const [publicClaimable, setPublicClaimable] = useState(BigInt(0));
   const [eligibleForToken, setEligibleForToken] = useState(BigInt(0));
-  const [alreadyClaimed, setAlreadyClaimed] = useState(BigInt(0));
-  const [open, setOpen] = useState<boolean>(false);
-  const [dropdownSelectedSeason, setDropdownSelectedSeason] =
-    useState<number>(0);
-  const [popupV2, setPopupV2] = useState<boolean>(false);
+  const [publicSaleEligibleToken, setPublicSaleEligibleToken] = useState(
+    BigInt(0)
+  );
+  // const [alreadyClaimed, setAlreadyClaimed] = useState(BigInt(0));
+  const [publicSaleAlreadyClaimed, setPublicSaleAlreadyClaimed] = useState(
+    BigInt(0)
+  );
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [haveClaimed, setHaveClaimed] = useState(false);
+  const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
+    useState<number>(DROPDOWN.AirdropSZN1);
+  const [popup, setPopup] = useState(false);
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const [claimed, setClaimed] = useState<boolean>(false);
+  const [eligibility, setEligibility] = useState<boolean | null>(null);
+  const [popupV2, setPopupV2] = useState(false);
   const [agreement, setAgreement] = useState(false);
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
   const newRef = useRef(null!);
+
+  const { signMessageAsync } = useSignMessage();
 
   useEffect(() => {
     async function getVested() {
@@ -53,14 +96,14 @@ export default function Claim() {
           functionName: 'claimable'
         });
 
-        const total = totalTokenData as [bigint, bigint];
+        const total = totalTokenData as [bigint, bigint, boolean];
 
         setCurrentClaimable(claimable as bigint);
         setEligibleForToken(total[0]);
-        setAlreadyClaimed(total[1]);
-
+        // setAlreadyClaimed(total[1]);
+        setHaveClaimed(total[2]);
         // eslint-disable-next-line no-console
-        console.log(totalTokenData, claimable);
+        // console.log(totalTokenData, claimable);
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log(err);
@@ -182,6 +225,8 @@ export default function Claim() {
       const transaction = await publicClient?.waitForTransactionReceipt({
         hash: tx
       });
+      setLoading(false);
+      setPopupV2(false);
       // eslint-disable-next-line no-console
       console.log('Transaction --->>>', transaction);
     } catch (err) {
@@ -244,7 +289,19 @@ export default function Claim() {
       setOpen(false);
     }
   };
-
+  // console.log(
+  //   Number(
+  //     formatEther(
+  //       dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+  //         ? currentClaimable
+  //         : publicClaimable
+  //     )
+  //   ).toLocaleString(undefined, {
+  //     maximumFractionDigits: 2
+  //   }),
+  //   publicClaimable
+  // );
+  //  console.log(eligibleForToken ,  alreadyClaimed);
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
@@ -253,12 +310,12 @@ export default function Claim() {
         <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wide md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
-            {/* <button
+            <button
               className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
               onClick={() => setPopup(true)}
             >
               Check Eligibility
-            </button> */}
+            </button>
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
             {[...Array(6)].map((_, index) => (
@@ -285,10 +342,10 @@ export default function Claim() {
             <div className={`flex flex-col w-full  col-span-2`}>
               <span className={`opacity-40 text-xs `}>CHOOSE CAMPAIGN</span>
               <SeasonSelector
-                dropdownSelectedSeason={dropdownSelectedSeason}
+                dropdownSelectedCampaign={dropdownSelectedCampaign}
                 newRef={newRef}
                 open={open}
-                setDropdownSelectedSeason={setDropdownSelectedSeason}
+                setDropdownSelectedCampaign={setDropdownSelectedCampaign}
                 setOpen={setOpen}
               />
             </div>
@@ -296,7 +353,14 @@ export default function Claim() {
               <span className={`opacity-40 text-xs self-start`}>
                 VESTING PERIOD
               </span>
-              <CountdownTimer dropdownSelectedSeason={dropdownSelectedSeason} />
+              {haveClaimed &&
+              dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 ? (
+                <span className={`text-xs my-auto`}>Already Claimed</span>
+              ) : (
+                <CountdownTimer
+                  dropdownSelectedCampaign={dropdownSelectedCampaign}
+                />
+              )}
             </div>
             <div className={`flex flex-col  w-full h-full col-span-2`}>
               <span className={`opacity-40 text-xs self-start`}>
@@ -312,10 +376,13 @@ export default function Claim() {
                 />
                 {/* It will be dynamic */}
                 <span className={`truncate`}>
-                  {Number(formatEther(eligibleForToken)).toLocaleString(
-                    undefined,
-                    { maximumFractionDigits: 0 }
-                  )}
+                  {Number(
+                    formatEther(
+                      dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                        ? eligibleForToken
+                        : publicSaleEligibleToken
+                    )
+                  ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
                 ION
                 {/* <span
@@ -345,43 +412,62 @@ export default function Claim() {
                 className={`flex flex-col items-start justify-start gap-y-1`}
               >
                 <span>
-                  {Number(formatEther(currentClaimable)).toLocaleString(
-                    undefined,
-                    { maximumFractionDigits: 0 }
-                  )}{' '}
+                  {dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 &&
+                  haveClaimed
+                    ? 0
+                    : Number(
+                        formatEther(
+                          dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+                            ? currentClaimable
+                            : publicClaimable
+                        )
+                      ).toLocaleString(undefined, {
+                        maximumFractionDigits: 2
+                      })}{' '}
+                  {/* {Number(publicClaimable)} */}
                   ION
                 </span>
               </div>
               <button
-                className={`bg-accent text-darkone py-1 ml-auto px-10 rounded-md ${
-                  (dropdownSelectedSeason === 1 ||
-                    currentClaimable === BigInt(0)) &&
-                  'opacity-40'
-                }`}
+                className={`bg-accent text-darkone py-1  ml-auto px-10 rounded-md disabled:opacity-40 `}
+                disabled={
+                  Number(
+                    formatEther(
+                      dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
+                        ? currentClaimable
+                        : publicClaimable
+                    )
+                  ) == 0 ||
+                  (dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 &&
+                    haveClaimed == true)
+                    ? true
+                    : false
+                }
                 onClick={() => {
-                  if (dropdownSelectedSeason === 0) {
-                    claim();
-                  } else {
-                    setPopupV2(true);
-                  }
+                  setPopupV2(true);
                 }}
               >
                 Claim
               </button>
             </div>
             <p className={`opacity-40 text-xs text-start`}>
-              {dropdownSelectedSeason === 0
+              {dropdownSelectedCampaign === DROPDOWN.PublicSale
                 ? 'The tokens are linearly unlocked for 80 days (1% per day)'
                 : 'The tokens are fully unlocked on the last day of the vesting period'}
             </p>
 
-            <p className={` text-xs text-start`}>
-              Already claimed:{' '}
-              {Number(formatEther(alreadyClaimed)).toLocaleString(undefined, {
-                maximumFractionDigits: 0
-              })}{' '}
-              ION
-            </p>
+            {dropdownSelectedCampaign === DROPDOWN.PublicSale && (
+              <p className={` text-xs text-start`}>
+                Already claimed:{' '}
+                {Number(formatEther(publicSaleAlreadyClaimed)).toLocaleString(
+                  undefined,
+                  {
+                    maximumFractionDigits: 2
+                  }
+                )}{' '}
+                ION
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -579,14 +665,7 @@ export default function Claim() {
                   Claim
                 </button>
               </div>
-              <button
-                className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
-                disabled={!agreement}
-                onClick={() => claim()}
-              >
-                Instant Claim
-              </button>
-            </div>
+            </ResultHandler>
           </div>
         </div>
       )}

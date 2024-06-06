@@ -10,7 +10,6 @@ import {
   mode,
   neon,
   polygon,
-  sepolia,
   zkevm
 } from '@ionicprotocol/chains';
 import type {
@@ -91,8 +90,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.linea]: linea.assets,
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
-  [SupportedChains.base]: base.assets,
-  [SupportedChains.optimism_sepolia]: sepolia.assets
+  [SupportedChains.base]: base.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {

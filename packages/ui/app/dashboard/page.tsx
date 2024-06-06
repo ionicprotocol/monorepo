@@ -26,8 +26,8 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
-  usePointsForBorrow,
-  usePointsForSupply
+  usePointsForBorrowModeNative,
+  usePointsForSupplyModeNative
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
@@ -168,9 +168,9 @@ export default function Dashboard() {
     return healthData ?? '∞';
   }, [healthData, marketData]);
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
-    usePointsForSupply();
+    usePointsForSupplyModeNative();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
-    usePointsForBorrow();
+    usePointsForBorrowModeNative();
   const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
     useMaxBorrowAmounts(
       marketData?.assets ?? [],
