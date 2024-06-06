@@ -324,7 +324,7 @@ export default function Dashboard() {
             className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-3 flex flex-col items-center justify-start `}
           >
             <div className={`w-full flex justify-between  pb-6 items-center`}>
-              <span>NET APR</span>
+              <span>NET APR (All Pools)</span>
               <ResultHandler
                 height="24"
                 isLoading={isLoadingUserNetApr}
