@@ -1,0 +1,36 @@
+ethers.getSigners()
+ehters.getSigners()
+console.dir(await ethers.getSigners())
+console.dir(await ethers.getSigners)
+console.log(console.dir(await ethers.getSigners))
+console.log(await ethers.getSigners)
+await ethers.getSigners
+ethers.getSigners
+ethers.getContract
+getContractAt 
+hre.ethers
+ethers
+await getImplementationAddress();
+getImplementationAddress();
+}
+  console.log("Implementation Address:", implementationAddress);
+  const implementationAddress = await contract.implementation();
+  const contract = new ethers.Contract(proxyAddress, proxyABI, signer);
+  // Create the contract instance using the signer
+  ];
+    "function implementation() view returns (address)"
+  const proxyABI = [
+  const proxyAddress = '0x2BAF3A2B667A5027a83101d218A9e8B73577F117'; // Your proxy address
+  const [signer] = await ethers.getSigners(); // Get a signer
+async function getImplementationAddress() {
+const contract = new ethers.Contract(proxyAddress, proxyABI, ethers.provider);
+const proxyABI = ["function implementation() view returns (address)"];
+const proxyAddress = 0x2BAF3A2B667A5027a83101d218A9e8B73577F117
+// Substitute with your proxy's addressconst proxyAddress = '0xYourProxyAddress';// Using a basic ABI for demonstration. Your actual ABI/method might differ.const proxyABI = [  "function implementation() view returns (address)"];const contract = new ethers.Contract(proxyAddress, proxyABI, ethers.provider);const implementationAddress = await contract.implementation();console.log("Implementation Address:", implementationAddress);
+const implementationAddress = await contract.implementation();
+const contract = new ethers.Contract(proxyAddress, proxyABI, ethers.provider);
+];
+  "function implementation() view returns (address)"
+const proxyABI = [
+// Using a basic ABI for demonstration. Your actual ABI/method might differ.
+const proxyAddress = '0xYourProxyAddress';

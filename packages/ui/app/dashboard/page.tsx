@@ -26,8 +26,8 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
-  usePointsForBorrow,
-  usePointsForSupply
+  usePointsForBorrowModeNative,
+  usePointsForSupplyModeNative
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
@@ -168,9 +168,9 @@ export default function Dashboard() {
     return healthData ?? '∞';
   }, [healthData, marketData]);
   const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
-    usePointsForSupply();
+    usePointsForSupplyModeNative();
   const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
-    usePointsForBorrow();
+    usePointsForBorrowModeNative();
   const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
     useMaxBorrowAmounts(
       marketData?.assets ?? [],
@@ -324,7 +324,7 @@ export default function Dashboard() {
             className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-3 flex flex-col items-center justify-start `}
           >
             <div className={`w-full flex justify-between  pb-6 items-center`}>
-              <span>NET APR</span>
+              <span>NET APR (All Pools)</span>
               <ResultHandler
                 height="24"
                 isLoading={isLoadingUserNetApr}

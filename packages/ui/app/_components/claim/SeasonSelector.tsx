@@ -6,16 +6,16 @@ import React from 'react';
 
 interface INetworkSelector {
   // chainId?: string;
-  dropdownSelectedSeason: number;
+  dropdownSelectedCampaign: number;
   newRef: any;
   open: boolean;
-  setDropdownSelectedSeason: any;
+  setDropdownSelectedCampaign: any;
   setOpen: any;
 }
 
 export default function SeasonSelector({
-  dropdownSelectedSeason,
-  setDropdownSelectedSeason,
+  dropdownSelectedCampaign,
+  setDropdownSelectedCampaign,
   setOpen,
   open,
   newRef
@@ -24,11 +24,11 @@ export default function SeasonSelector({
     {
       id: 0,
       name: 'S1 Pre-Sale'
+    },
+    {
+      id: 1,
+      name: 'Airdrop SZN 1'
     }
-    // {
-    //   id: 1,
-    //   name: 'Airdrop SZN 1'
-    // }
   ];
   return (
     <div
@@ -44,7 +44,7 @@ export default function SeasonSelector({
             open ? 'rounded-t-md' : 'rounded-xl '
           }`}
         >
-          {seasonOptions[dropdownSelectedSeason].name}
+          {seasonOptions[dropdownSelectedCampaign].name}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -62,10 +62,10 @@ export default function SeasonSelector({
             <div
               className={`flex justify-between items-center p-2 mb-1 rounded-md `}
               key={idx}
-              onClick={() => setDropdownSelectedSeason(season.id)}
+              onClick={() => setDropdownSelectedCampaign(season.id)}
             >
               {season.name}{' '}
-              {dropdownSelectedSeason == season.id && (
+              {dropdownSelectedCampaign == season.id && (
                 <img
                   alt="checkmark--v1"
                   className={`w-4 h-4 stroke-lime`}
