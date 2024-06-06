@@ -3,7 +3,6 @@ locals {
   liquidator_ecr_repository_name      = "ionic-liquidator"
   oracles_monitor_ecr_repository_name = "ionic-oracles-monitor"
   pyth_updater_ecr_repository_name    = "ionic-pyth-updater"
-  liquidator_base_ecr_repository_name = "ionic-liquidator-base"
   shared_env_vars_lambda = {
     ETHEREUM_ADMIN_ACCOUNT     = var.ethereum_admin_account,
     ETHEREUM_ADMIN_PRIVATE_KEY = var.ethereum_admin_private_key,
