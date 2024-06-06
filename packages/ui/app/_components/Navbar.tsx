@@ -13,7 +13,6 @@ import { coinbaseWallet } from 'wagmi/connectors';
 
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
-import { BlueCreateWalletButton } from './navbar/BlueCreateWalletButton';
 import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";
