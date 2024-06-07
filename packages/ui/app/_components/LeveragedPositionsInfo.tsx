@@ -35,11 +35,12 @@ export default function LeveragedPositionsInfo() {
     () => (positionsData ? positionsData[0] : undefined),
     [positionsData]
   );
-  const { data: graphData } = usePositionsGraphInfo(
-    currentVisiblePositions?.map((position) =>
-      position.positionAddress.toLowerCase()
-    ) ?? []
-  );
+  const { data: graphData, isLoading: isLoadingGraphData } =
+    usePositionsGraphInfo(
+      currentVisiblePositions?.map((position) =>
+        position.positionAddress.toLowerCase()
+      ) ?? []
+    );
   const positionsCreatedData = useMemo(
     () => (graphData ? graphData[2].positionCreateds : undefined),
     [graphData]
@@ -93,7 +94,10 @@ export default function LeveragedPositionsInfo() {
     <ResultHandler
       center
       isLoading={
-        isLoadingPositionsData || isLoadingMarketData || isLoadingLevatoUsdPrice
+        isLoadingPositionsData ||
+        isLoadingMarketData ||
+        isLoadingLevatoUsdPrice ||
+        isLoadingGraphData
       }
     >
       <div
