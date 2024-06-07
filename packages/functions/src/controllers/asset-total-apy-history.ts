@@ -55,7 +55,6 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
       throw `Error occurred during saving assets total apy to database: pools not found`;
     }
 
-    
     const allPluginRewards: PluginRewards[] = [];
     const totalAssets: NativePricedIonicAsset[] = [];
     const allFlywheelRewards: FlywheelMarketRewardsInfo[] = [];
@@ -269,13 +268,21 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           totalSupplyApy: r.totalSupplyApy,
         };
       });
-      let { error: error1 } = await supabase.from('asset_total_apy_history').insert(rows);
-      if (error1) {
-        throw new Error(`Error occurred during saving asset total apy to database (asset-total-apy-development): ${error1.message}`);
-      }
-    } catch (err) {
-      await functionsAlert('functions.asset-total-apy: Generic Error', JSON.stringify(err));
+
+    console.log('Rows to be inserted:', rows); // Log the rows to be inserted
+
+    let { error: error1 } = await supabase.from('asset_total_apy_history').insert(rows);
+
+    if (error1) {
+      console.error('Supabase insertion error:', error1); // Log the Supabase insertion error
+      throw new Error(`Error occurred during saving asset total apy to database (asset_total_apy_history): ${error1.message}`);
     }
+
+    console.log('Data successfully inserted into Supabase'); // Log successful insertion
+  } catch (err) {
+    console.error('Error caught in catch block:', err); // Log the error
+    await functionsAlert('functions.asset-total-apy: Generic Error', JSON.stringify(err));
+  }
 };
 
 export const createAssetTotalApyHandler =
