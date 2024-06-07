@@ -43,6 +43,9 @@ export interface PluginRewards {
   rewards: Reward[];
 }
 
+console.log("supabase_key", environment.supabasePublicKey)
+
+
 export const updateAssetTotalApy = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];

@@ -38,9 +38,7 @@ jobs:
           version: nightly
 
       - name: Install `packages`
-        run: |
-         yarn install
-         yarn workspace @ionicprotocol/functions run build
+        run: yarn install
         env:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
@@ -48,7 +46,6 @@ jobs:
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/feature/historicdata'
         run: |
-          yarn workspace @ionicprotocol/functions run build
           netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
           netlify deploy --filter @ionicprotocol/ui --prod --build --context development
 
