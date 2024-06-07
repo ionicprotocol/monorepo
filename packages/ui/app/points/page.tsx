@@ -28,8 +28,7 @@ import {
 const pools: { [key: number]: { [key: number]: string } } = {
   [mode.id]: {
     0: 'Mode Main Market',
-    1: 'Mode Native Market',
-    2: 'Mode LP Market'
+    1: 'Mode Native Market'
   },
   [base.id]: {
     0: 'Base Main Market'
@@ -44,8 +43,6 @@ export default function Points() {
     data: modeMarketDataNative,
     isLoading: isLoadingModeMarketDataNative
   } = useFusePoolData('1', mode.id);
-  const { data: modeMarketDataLp, isLoading: isLoadingModeMarketDataLp } =
-    useFusePoolData('2', mode.id);
   const { data: baseMarketDataMain, isLoading: isLoadingBaseMarketDataMain } =
     useFusePoolData('0', base.id);
   const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
@@ -396,7 +393,6 @@ export default function Points() {
           isLoading={
             isLoadingModeMarketDataMain ||
             isLoadingModeMarketDataNative ||
-            isLoadingModeMarketDataLp ||
             isLoadingBaseMarketDataMain ||
             isLoadingSupplyPointsModeNative ||
             isLoadingBorrowPointsModeNative ||
@@ -438,10 +434,6 @@ export default function Points() {
               {
                 market: modeMarketDataNative,
                 points: summedSupplyPointsModeNative
-              },
-              {
-                market: modeMarketDataLp,
-                points: summedSupplyPointsModeLp
               },
               {
                 market: baseMarketDataMain,

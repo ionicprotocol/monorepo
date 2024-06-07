@@ -5,6 +5,7 @@ import type { Address } from 'viem';
 import { base, mainnet, mode } from 'viem/chains';
 
 import {
+  lpMultipliers,
   multipliers,
   SEASON_2_BASE_START_DATE,
   SEASON_2_START_DATE
@@ -111,16 +112,15 @@ const getSupplyQuery = (
   startDate: string,
   priceMultiplier: number = 1,
   decimals: number = 18,
-  lp: bool = false,
-  filterIn: string = "",
-  filterOut: string = ""
+  lp: boolean = false,
+  filterIn: string = '',
+  filterOut: string = ''
 ) => {
   let amountColumn: string;
   if (lp) {
-    amountColumn = "event_value";
-  }
-  else {
-    amountColumn = "event_amount";
+    amountColumn = 'event_value';
+  } else {
+    amountColumn = 'event_amount';
   }
 
   return `
@@ -512,20 +512,20 @@ const usePointsForSupplyModeLp = () => {
     cacheTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(multipliers[mode.id]['2']).map((asset) => {
+        Object.values(lpMultipliers).map((asset) => {
           return fetchData<QueryResponse, QueryData>(
             'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
             {
               query: getSupplyQuery(
                 address?.toLowerCase(),
-                asset.supply.ionic,
+                asset.ionMultiplier,
                 asset.market,
                 SEASON_2_START_DATE,
-                asset.multiplier,
+                asset.priceMultiplier,
                 asset.decimals,
-                asset.supply.lp,
-                asset.supply.filterIn,
-                asset.supply.filterOut
+                true,
+                asset.filterIn,
+                asset.filterOut
               )
             },
             {
@@ -538,7 +538,7 @@ const usePointsForSupplyModeLp = () => {
         (acc, current) => acc + current.data.rows[0][1],
         0
       );
-  
+
       return {
         ...response[0].data,
         rows: [[totalPoints]]
