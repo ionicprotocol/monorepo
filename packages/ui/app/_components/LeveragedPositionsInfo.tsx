@@ -1,7 +1,12 @@
 'use client';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
-import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils';
+import {
+  formatEther,
+  formatUnits,
+  parseEther,
+  parseUnits
+} from 'ethers/lib/utils';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -11,9 +16,8 @@ import ResultHandler from './ResultHandler';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useLevatoUsdPrice } from '@ui/hooks/levato/useLevatoUsdPrice';
+import { usePositionsGraphInfo } from '@ui/hooks/levato/usePositionsGraphInfo';
 import { useGetPositionsInfoQuery } from '@ui/hooks/levato/usePositionsInfo';
-import { usePositionsPnl } from '@ui/hooks/levato/usePositionsPnl';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 
 export default function LeveragedPositionsInfo() {
@@ -26,12 +30,19 @@ export default function LeveragedPositionsInfo() {
   const [closingPositions, setClosingPositions] = useState<string[]>([]);
   const { data: positionsData, isLoading: isLoadingPositionsData } =
     useGetPositionsInfoQuery();
+
   const currentVisiblePositions = useMemo(
     () => (positionsData ? positionsData[0] : undefined),
     [positionsData]
   );
-  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
-    chainId.toString()
+  const { data: graphData } = usePositionsGraphInfo(
+    currentVisiblePositions?.map((position) =>
+      position.positionAddress.toLowerCase()
+    ) ?? []
+  );
+  const positionsCreatedData = useMemo(
+    () => (graphData ? graphData[2].positionCreateds : undefined),
+    [graphData]
   );
   const { data: levatoUsdPrice } = useLevatoUsdPrice(
     '0xd988097fb8612cc24eeC14542bC03424c656005f'
@@ -39,7 +50,6 @@ export default function LeveragedPositionsInfo() {
   const { levatoSdk } = useMultiIonic();
   const queryClient = useQueryClient();
   const { refetch: refetchBalance } = useBalance({ address });
-  const { data: positionsPnL } = usePositionsPnl();
 
   const handlePositionClosing = async (positionAddress: string) => {
     try {
@@ -83,17 +93,15 @@ export default function LeveragedPositionsInfo() {
   return (
     <ResultHandler
       center
-      isLoading={
-        isLoadingPositionsData || isLoadingMarketData || isLoadingUSDPrice
-      }
+      isLoading={isLoadingPositionsData || isLoadingMarketData}
     >
       <div
-        className={`w-full gap-x-1 hidden lg:grid  grid-cols-15 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
+        className={`w-full gap-x-1 hidden lg:grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
       >
         <div className={`col-span-3`}>POSITION</div>
-        <div className={`col-span-3`}>VALUE</div>
+        <div className={`col-span-3`}>NET VALUE</div>
+        <div className={`col-span-3`}>ENTRY PRICE</div>
         <div className={`col-span-3`}>PNL</div>
-        {/* <div className={`col-span-3`}>PNL</div> */}
         <div className={`col-span-3`}>MARK/LIQ PRICE</div>
         <div className={`col-span-3`}>ACTIONS</div>
       </div>
@@ -106,41 +114,97 @@ export default function LeveragedPositionsInfo() {
           const positionStableAsset = marketData?.assets.find(
             (asset) => asset.underlyingToken === position.stableAsset
           );
-          const pnlData = positionsPnL?.get(position.positionAddress);
-          let pnl = 0;
-          let displayPnl = Math.abs(pnl).toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2
-          });
-
-          if (pnlData && levatoUsdPrice) {
-            const pnlAmount = BigNumber.from(pnlData.fundedCollateralAmount);
-            const fundingValue = position.collateralAssetPrice
-              .mul(pnlAmount)
-              .div(parseEther('1'));
-
-            pnl = Number(
-              formatUnits(
-                fundingValue
-                  .sub(position.equityValue)
-                  .mul(parseEther('1'))
-                  .div(levatoUsdPrice ?? '1'),
-                6
-              )
-            );
-            displayPnl = Math.abs(pnl).toLocaleString('en-US', {
-              maximumFractionDigits: 2,
-              minimumFractionDigits: 2
-            });
-          }
+          const positionCreatedData = positionsCreatedData?.find(
+            (positionGraphData) =>
+              positionGraphData.position ===
+              position.positionAddress.toLocaleLowerCase()
+          );
+          const usdcPriceOnCreation = positionCreatedData
+            ? BigNumber.from(positionCreatedData.usdcPriceOnCreation)
+            : levatoUsdPrice ?? BigNumber.from('1');
 
           if (!positionCollateralAsset || !positionStableAsset) {
             return <></>;
           }
 
+          const entryValue = Number(
+            formatUnits(
+              parseUnits(
+                '1',
+                position.isShort
+                  ? positionStableAsset.underlyingDecimals
+                  : positionCollateralAsset.underlyingDecimals
+              )
+                .mul(
+                  position.isShort
+                    ? position.borrowedPriceOnCreation
+                    : position.collateralPriceOnCreation
+                )
+                .div(usdcPriceOnCreation ?? '1'),
+              6
+            )
+          );
+
+          const marketValue = Number(
+            formatUnits(
+              parseUnits(
+                '1',
+                position.isShort
+                  ? positionStableAsset.underlyingDecimals
+                  : positionCollateralAsset.underlyingDecimals
+              )
+                .mul(
+                  position.isShort
+                    ? position.borrowedAssetPrice ?? 0
+                    : position.collateralAssetPrice ?? 0
+                )
+                .div(levatoUsdPrice ?? 1),
+              6
+            )
+          );
+
+          const liquidationValue = Number(
+            formatUnits(
+              parseUnits(
+                '1',
+                position.isShort
+                  ? positionStableAsset.underlyingDecimals
+                  : positionCollateralAsset.underlyingDecimals
+              )
+                .mul(
+                  position.isShort
+                    ? position.borrowedLiquidationPrice ?? 0
+                    : position.collateralLiquidationPrice ?? 0
+                )
+                .div(levatoUsdPrice ?? 1),
+              6
+            )
+          );
+          const currentNetValue = Number(
+            formatUnits(
+              parseEther('1')
+                .mul(position.equityValue)
+                .div(levatoUsdPrice ?? 1),
+              6
+            )
+          );
+          const positionRatio = marketValue / currentNetValue;
+          const initialPositionNetValue = entryValue / positionRatio;
+          const positionPnl = Number(
+            (
+              (position.isShort
+                ? initialPositionNetValue - currentNetValue
+                : currentNetValue - initialPositionNetValue) *
+              Number(formatEther(position.leverageRatio))
+            ).toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2
+            })
+          );
+
           return (
             <div
-              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-15  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative`}
+              className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-18  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative`}
               key={position.positionAddress}
             >
               <div
@@ -185,12 +249,25 @@ export default function LeveragedPositionsInfo() {
                   VALUE
                 </span>
                 $
-                {(
-                  Number(formatEther(position.positionValue)) * (usdPrice ?? 0)
-                ).toLocaleString('en-US', {
+                {currentNetValue.toLocaleString('en-US', {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 2
                 })}
+              </div>
+
+              <div
+                className={`col-span-3 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+              >
+                <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+                  ENTRY PRICE
+                </span>
+                <span>
+                  $
+                  {entryValue.toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                  })}
+                </span>
               </div>
 
               <div
@@ -201,10 +278,18 @@ export default function LeveragedPositionsInfo() {
                 </span>
                 <span
                   className={
-                    pnl !== 0 ? (pnl < 0 ? 'text-error' : 'text-accent') : ''
+                    positionPnl !== 0
+                      ? positionPnl < 0
+                        ? 'text-error'
+                        : 'text-accent'
+                      : ''
                   }
                 >
-                  {pnl < 0 && '-'}${displayPnl}
+                  {positionPnl < 0 && '-'}$
+                  {positionPnl.toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                  })}
                 </span>
               </div>
 
@@ -224,29 +309,12 @@ export default function LeveragedPositionsInfo() {
                   MARK/LIQ PRICE
                 </span>
                 $
-                {(
-                  Number(
-                    formatEther(
-                      position.isShort
-                        ? positionStableAsset.underlyingPrice
-                        : positionCollateralAsset.underlyingPrice
-                    )
-                  ) * (usdPrice ?? 0)
-                ).toLocaleString('en-US', {
+                {marketValue.toLocaleString('en-US', {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 2
                 })}{' '}
                 / $
-                {(
-                  Number(
-                    formatUnits(
-                      position.isShort
-                        ? position.borrowedLiquidationPrice
-                        : position.collateralLiquidationPrice,
-                      28 // 36 - usdc decimals (6)
-                    )
-                  ) * (usdPrice ?? 0)
-                ).toLocaleString('en-US', {
+                {liquidationValue.toLocaleString('en-US', {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 2
                 })}
