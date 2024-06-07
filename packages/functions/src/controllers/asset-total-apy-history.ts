@@ -43,8 +43,6 @@ export interface PluginRewards {
   rewards: Reward[];
 }
 
-console.log("supabase_key", environment.supabasePublicKey)
-
 
 export const updateAssetTotalApy = async (chainId: SupportedChains) => {
   try {
@@ -272,7 +270,6 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
         };
       });
 
-    console.log('Rows to be inserted:', rows); // Log the rows to be inserted
 
   let { error} = await supabase.from('asset_total_apy_history').insert(rows);
   if (error) {
