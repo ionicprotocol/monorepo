@@ -41,6 +41,9 @@
   .grid-cols-16 {
     grid-template-columns: repeat(16, minmax(0, 1fr));
   }
+  .grid-cols-15 {
+    grid-template-columns: repeat(15, minmax(0, 1fr));
+  }
   .grid-cols-13 {
     grid-template-columns: repeat(13, minmax(0, 1fr));
   }

@@ -88,7 +88,7 @@ function TransactionStepsHandler({
   chainId
 }: TransactionStepsHandlerProps) {
   return (
-    <div className="mx-auto text-sm">
+    <div className="mx-auto text-sm text-left">
       {transactionSteps.map((transactionStep, i) => (
         <div key={`transaction-step-${i}`}>
           <div

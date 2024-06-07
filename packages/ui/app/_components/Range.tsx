@@ -16,8 +16,8 @@ export default function Range({
   step
 }: CustomSliderProps) {
   const currentPercentage = useMemo<number>(
-    () => (currentValue / max) * 100,
-    [currentValue, max]
+    () => ((currentValue - min) / (max - min)) * 100,
+    [currentValue, max, min]
   );
 
   return (
