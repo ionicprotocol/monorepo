@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
+// import Dropdown from '../_components/Dropdown';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
 import type { PopupMode } from '../_components/popup/page';
@@ -18,30 +19,12 @@ import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
 
+import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-
-//@ts-ignore
-const pools = [
-  {
-    chain: mode.id,
-    id: '0',
-    name: 'Main Market'
-  },
-  {
-    chain: mode.id,
-    id: '1',
-    name: 'Native Market'
-  },
-  {
-    chain: base.id,
-    id: '0',
-    name: 'Main Market'
-  }
-];
 
 export default function Market() {
   const searchParams = useSearchParams();
@@ -128,6 +111,16 @@ export default function Market() {
     }
   };
 
+  // const networkOptionstest = [
+  //   {
+  //     chain: mode.id,
+  //     name: 'Mode'
+  //   },
+  //   {
+  //     chain: base.id,
+  //     name: 'Base'
+  //   }
+  // ];
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
@@ -141,6 +134,7 @@ export default function Market() {
               dropdownSelectedChain={dropdownSelectedChain}
               newRef={newRef}
               open={open}
+              // options={networkOptionstest}
               setOpen={setOpen}
             />
           </div>
