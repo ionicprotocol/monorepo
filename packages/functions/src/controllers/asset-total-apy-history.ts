@@ -274,15 +274,12 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
 
     console.log('Rows to be inserted:', rows); // Log the rows to be inserted
 
-  let { error: error1 } = await supabase.from('asset_total_apy_history').insert(rows);
-  if (error1) {
-    console.error('Supabase insertion error:', error1); // Log Supabase error
-    throw new Error(`Error occurred during saving asset total apy to database (asset_total_apy_history): ${error1.message}`);
+  let { error} = await supabase.from('asset_total_apy_history').insert(rows);
+  if (error) {
+    throw `Error occurred during saving asset history to database: ${error.message}`;
   }
-  console.log('Data successfully inserted into Supabase');
 } catch (err) {
-  console.error('Error caught in catch block:', err); // Log the error
-  await functionsAlert('functions.asset-total-apy: Generic Error', JSON.stringify(err));
+  await functionsAlert('Functions.asset-history: Generic Error', JSON.stringify(err));
 }
 };
 
