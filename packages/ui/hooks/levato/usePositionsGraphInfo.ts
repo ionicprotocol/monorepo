@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import {
+import type {
   AdjustedRatioQueryQuery,
   FundingQueryQuery,
   PositionClosedQueryQuery,
   PositionCreatedQueryQuery
 } from 'levato-sdk/dist/.graphclient';
+
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export const usePositionsGraphInfo = (positionAddresses: string[]) => {
   const { levatoSdk } = useMultiIonic();
