@@ -115,7 +115,7 @@ export default function Points() {
     }
 
     return 0;
-  }, [supplyPointsModeLp]);
+  }, [supplyPointsModeNative]);
   const summedSupplyPointsModeLp = useMemo<number>(() => {
     if (supplyPointsModeLp) {
       return supplyPointsModeLp.rows.reduce(
@@ -130,7 +130,7 @@ export default function Points() {
     }
 
     return 0;
-  }, [supplyPointsModeNative]);
+  }, [supplyPointsModeLp]);
   const summedSupplyPointsBaseMain = useMemo<number>(() => {
     if (supplyPointsBaseMain) {
       return supplyPointsBaseMain.rows.reduce(
