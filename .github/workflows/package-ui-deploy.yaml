@@ -39,6 +39,7 @@ jobs:
 
       - name: Install `packages`
         run: yarn install
+        run: yarn workspace @ionicprotocol/functions run build
         env:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
