@@ -7,11 +7,28 @@ import React, { useState } from 'react';
 // import { base } from 'viem/chains';
 // import { useChainId } from 'wagmi';
 // import '@gasbot/widget/style.css';
+import { http, createConfig } from 'wagmi';
+import { base } from 'wagmi/chains';
+import { coinbaseWallet } from 'wagmi/connectors';
 
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
+import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 // import { useStore } from "@/store/Store";
+
+export const config = createConfig({
+  chains: [base],
+  connectors: [
+    coinbaseWallet({
+      appName: 'Create Wagmi',
+      preference: 'smartWalletOnly'
+    })
+  ],
+  transports: {
+    [base.id]: http()
+  }
+});
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -181,6 +198,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center md:justify-center gap-4 my-auto uppercase connect-button">
+          <BlackCreateWalletButton />
           <ConnectButton />
 
           <div

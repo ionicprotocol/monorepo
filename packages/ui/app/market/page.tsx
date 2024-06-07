@@ -8,7 +8,7 @@ import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-// import { base, mode } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import NetworkSelector from '../_components/markets/NetworkSelector';
@@ -23,22 +23,21 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-// import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 //@ts-ignore
 const pools = [
   {
-    chain: 34443,
+    chain: mode.id,
     id: '0',
     name: 'Main Market'
   },
   {
-    chain: 34443,
+    chain: mode.id,
     id: '1',
     name: 'Native Market'
   },
   {
-    chain: 8453,
+    chain: base.id,
     id: '0',
     name: 'Main Market'
   }
@@ -49,15 +48,16 @@ export default function Market() {
   const querychain = searchParams.get('chain');
   const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const [dropdownSelectedChain, setDropdownSelectedChain] =
-    useState<number>(34443);
+  const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(
+    mode.id
+  );
   const [open, setOpen] = useState<boolean>(false);
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
 
-  const chain = querychain ? querychain : 34443;
+  const chain = querychain ? querychain : mode.id;
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
@@ -78,13 +78,13 @@ export default function Market() {
   }, [chain]);
 
   useEffect(() => {
-    if (selectedPool === pools[0].id && +chain === 34443 && pool1Data) {
+    if (selectedPool === pools[0].id && +chain === mode.id && pool1Data) {
       setPoolData(pool1Data);
     }
-    if (selectedPool === pools[1].id && +chain === 34443 && pool2Data) {
+    if (selectedPool === pools[1].id && +chain === mode.id && pool2Data) {
       setPoolData(pool2Data);
     }
-    if (selectedPool === pools[2].id && +chain === 8453 && pool3Data) {
+    if (selectedPool === pools[2].id && +chain === base.id && pool3Data) {
       setPoolData(pool3Data);
     }
   }, [pool1Data, pool2Data, pool3Data, selectedPool, chain]);
@@ -145,7 +145,7 @@ export default function Market() {
             />
           </div>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
-            {dropdownSelectedChain === 34443 && (
+            {dropdownSelectedChain === mode.id && (
               <>
                 <div
                   className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
