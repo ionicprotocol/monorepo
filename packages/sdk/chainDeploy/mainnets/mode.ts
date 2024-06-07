@@ -4,9 +4,9 @@ import { ethers } from "ethers";
 
 import { addRedstoneFallbacks } from "../helpers/oracles/redstoneFallbacks";
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
-import { deployAPI3PriceOracle } from "../helpers";
+import { deployChainlinkOracle } from "../helpers";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
-import { PythAsset, RedStoneAsset } from "../helpers/types";
+import { PythAsset, RedStoneAsset, ChainlinkAsset, ChainlinkFeedBaseCurrency } from "../helpers/types";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
@@ -14,6 +14,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenName: "Mode",
   nativeTokenSymbol: "ETH",
   stableToken: mode.chainAddresses.STABLE_TOKEN,
+  nativeTokenUsdChainlinkFeed: "0xa47Fd122b11CdD7aad7c3e8B740FB91D83Ce43D1",
   uniswap: {
     flashSwapFee: 30, // TODO set the correct fee
     hardcoded: [],
@@ -51,14 +52,16 @@ const pythAssets: PythAsset[] = [
   }
 ];
 
-const api3Assets: PythAsset[] = [
+const api3Assets: ChainlinkAsset[] = [
   {
-    underlying: underlying(mode.assets, assetSymbols.ezETH),
-    feed: "0x3621b06BfFE478eB481adf65bbF139A052Ed7321"
+    symbol: assetSymbols.ezETH,
+    aggregator: "0x3621b06BfFE478eB481adf65bbF139A052Ed7321",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   },
   {
-    underlying: underlying(mode.assets, assetSymbols.weETH),
-    feed: "0x672020bd166A51A79Ada022B51C974775d17e0f6"
+    symbol: assetSymbols.weETH,
+    aggregator: "0x672020bd166A51A79Ada022B51C974775d17e0f6",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   }
 ];
 
@@ -81,15 +84,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
   });
 
-  await deployAPI3PriceOracle({
+  await deployChainlinkOracle({
     run,
     ethers,
     getNamedAccounts,
     deployments,
     deployConfig,
-    api3Assets,
-    nativeTokenUsdFeed: "0xa47Fd122b11CdD7aad7c3e8B740FB91D83Ce43D1",
-    usdToken: mode.chainAddresses.STABLE_TOKEN
+    assets: mode.assets,
+    chainlinkAssets: api3Assets
   });
 
   await addRedstoneFallbacks({
