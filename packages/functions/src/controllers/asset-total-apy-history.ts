@@ -157,7 +157,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
             supplyApy,
           };
 
-          //get asset rewards
+          //get asset reward
           let compoundingApy = 0;
 
           if (assetInfos) {
