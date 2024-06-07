@@ -44,9 +44,8 @@ export default function LeveragedPositionsInfo() {
     () => (graphData ? graphData[2].positionCreateds : undefined),
     [graphData]
   );
-  const { data: levatoUsdPrice } = useLevatoUsdPrice(
-    '0xd988097fb8612cc24eeC14542bC03424c656005f'
-  );
+  const { data: levatoUsdPrice, isLoading: isLoadingLevatoUsdPrice } =
+    useLevatoUsdPrice('0xd988097fb8612cc24eeC14542bC03424c656005f');
   const { levatoSdk } = useMultiIonic();
   const queryClient = useQueryClient();
   const { refetch: refetchBalance } = useBalance({ address });
@@ -93,7 +92,9 @@ export default function LeveragedPositionsInfo() {
   return (
     <ResultHandler
       center
-      isLoading={isLoadingPositionsData || isLoadingMarketData}
+      isLoading={
+        isLoadingPositionsData || isLoadingMarketData || isLoadingLevatoUsdPrice
+      }
     >
       <div
         className={`w-full gap-x-1 hidden lg:grid  grid-cols-18 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
