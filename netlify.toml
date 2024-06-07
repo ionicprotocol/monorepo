@@ -4,8 +4,7 @@ package = "@netlify/plugin-nextjs"
 [build]
 base = "./"
 publish = "./packages/ui/.next"
-command = "yarn workspace:run:build"
-command = "yarn build:deploy:ui"
+command = "yarn workspace:run:build && yarn build:deploy:ui"
 
 [build.environment]
 YARN_CHECKSUM_BEHAVIOR = "update"
