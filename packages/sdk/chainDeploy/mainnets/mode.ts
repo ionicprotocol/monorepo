@@ -2,9 +2,9 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
+import { addRedstoneFallbacks } from "../helpers/oracles/redstoneFallbacks";
 import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
-import { deployRedStonePriceOracle } from "../helpers/oracles/redstone";
-import { deployRedStoneWeETHPriceOracle } from "../helpers/oracles/redstoneWeETH";
+import { deployAPI3PriceOracle } from "../helpers";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
 import { PythAsset, RedStoneAsset } from "../helpers/types";
 
@@ -51,21 +51,20 @@ const pythAssets: PythAsset[] = [
   }
 ];
 
-const redStoneAssets: RedStoneAsset[] = [
+const api3Assets: PythAsset[] = [
   {
-    underlying: underlying(mode.assets, assetSymbols.ezETH)
+    underlying: underlying(mode.assets, assetSymbols.ezETH),
+    feed: "0x3621b06BfFE478eB481adf65bbF139A052Ed7321"
+  },
+  {
+    underlying: underlying(mode.assets, assetSymbols.weETH),
+    feed: "0x672020bd166A51A79Ada022B51C974775d17e0f6"
   }
 ];
 
 const redStoneWrsETHAssets: RedStoneAsset[] = [
   {
     underlying: underlying(mode.assets, assetSymbols.wrsETH)
-  }
-];
-
-const redStoneWeETHAssets: RedStoneAsset[] = [
-  {
-    underlying: underlying(mode.assets, assetSymbols.weETH)
   }
 ];
 
@@ -82,14 +81,22 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
   });
 
-  await deployRedStonePriceOracle({
+  await deployAPI3PriceOracle({
     run,
-    deployConfig,
     ethers,
     getNamedAccounts,
     deployments,
-    redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
-    redStoneAssets
+    deployConfig,
+    api3Assets,
+    nativeTokenUsdFeed: "0xa47Fd122b11CdD7aad7c3e8B740FB91D83Ce43D1",
+    usdToken: mode.chainAddresses.STABLE_TOKEN
+  });
+
+  await addRedstoneFallbacks({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets: [...pythAssets, ...api3Assets]
   });
 
   await deployRedStoneWrsETHPriceOracle({
@@ -100,16 +107,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployments,
     redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
     redStoneAssets: redStoneWrsETHAssets
-  });
-
-  await deployRedStoneWeETHPriceOracle({
-    run,
-    deployConfig,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
-    redStoneAssets: redStoneWeETHAssets
   });
 
   const deployer = await ethers.getNamedSigner("deployer");

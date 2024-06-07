@@ -17,3 +17,21 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
     console.log(`Master Price Oracle updated for token ${underlyings.join(",")}`);
   }
 }
+
+export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCheck: string[], oracleAddress: string) {
+  const oracles: string[] = [];
+  const underlyings: string[] = [];
+  for (const underlying of underlyingsToCheck) {
+    const currentOracle = await mpo.callStatic.oracles(underlying);
+    if (currentOracle === constants.AddressZero || currentOracle !== oracleAddress) {
+      oracles.push(oracleAddress);
+      underlyings.push(underlying);
+    }
+  }
+
+  if (underlyings.length) {
+    const tx = await mpo.addFallbacks(underlyings, oracles);
+    await tx.wait();
+    console.log(`Master Price Oracle Fallback updated for token ${underlyings.join(",")}`);
+  }
+}
