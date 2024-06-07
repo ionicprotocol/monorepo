@@ -184,8 +184,6 @@ export default function Claim() {
       if (!user) {
         throw new Error('User not found');
       }
-      console.log('user.nonce: ', user.nonce);
-      console.log('claimMessage(user.nonce): ', claimMessage(user.nonce));
       const signature = await signMessageAsync({
         message: claimMessage(user.nonce)
       });
