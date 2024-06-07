@@ -44,10 +44,8 @@ export default function Points() {
     data: modeMarketDataNative,
     isLoading: isLoadingModeMarketDataNative
   } = useFusePoolData('1', mode.id);
-  const {
-    data: modeMarketDataLp,
-    isLoading: isLoadingModeMarketDataLp
-  } = useFusePoolData('2', mode.id);
+  const { data: modeMarketDataLp, isLoading: isLoadingModeMarketDataLp } =
+    useFusePoolData('2', mode.id);
   const { data: baseMarketDataMain, isLoading: isLoadingBaseMarketDataMain } =
     useFusePoolData('0', base.id);
   const [leaderboardPage, setLeaderboardPage] = useState<number>(0);
@@ -59,10 +57,8 @@ export default function Points() {
     data: supplyPointsModeNative,
     isLoading: isLoadingSupplyPointsModeNative
   } = usePointsForSupplyModeNative();
-  const {
-    data: supplyPointsModeLp,
-    isLoading: isLoadingSupplyPointsModeLp
-  } = usePointsForSupplyModeLp();
+  const { data: supplyPointsModeLp, isLoading: isLoadingSupplyPointsModeLp } =
+    usePointsForSupplyModeLp();
   const {
     data: supplyPointsBaseMain,
     isLoading: isLoadingSupplyPointsBaseMain
