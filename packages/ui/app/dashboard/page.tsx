@@ -5,13 +5,14 @@ import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { base, mode } from 'viem/chains';
 // import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
-import Dropdown from '../_components/Dropdown';
+import NetworkSelector from '../_components/markets/NetworkSelector';
+// import Dropdown from '../_components/Dropdown';
 import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
@@ -42,8 +43,9 @@ export default function Dashboard() {
   // const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
-  const pool = searchParams.get('pool');
+  const querypool = searchParams.get('pool');
   const chain = querychain ? querychain : 34443;
+  const pool = querypool ? querypool : '0';
   const [open, setOpen] = useState<boolean>(false);
   const newRef = useRef(null!);
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
@@ -51,6 +53,8 @@ export default function Dashboard() {
   // const [poolMarket, setPoolMarket] = useState<string>('0');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTab, setSelectedTab] = useState('');
+  // const [selectedPool, setSelectedPool] = useState(pool ? pool : '0');
+  const pathname = usePathname();
 
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
@@ -269,7 +273,7 @@ export default function Dashboard() {
 
     return marketData?.assets.map(() => '0.00%') ?? [];
   }, [borrowCaps, marketData]);
-
+  // const selectedPoolClass = 'rounded-md border-mode border-2';
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
@@ -457,8 +461,8 @@ export default function Dashboard() {
             Base Market
           </button>
         </div> */}
-        <div className={`w-[20%] mb-2 `}>
-          <Dropdown
+        <div className={`w-[20%]  `}>
+          {/* <Dropdown
             chainId={chain as string}
             dropdownSelectedChain={+chain}
             newRef={newRef}
@@ -466,7 +470,43 @@ export default function Dashboard() {
             options={pools}
             pool={pool || '0'}
             setOpen={setOpen}
+          /> */}
+          <NetworkSelector
+            chainId={chain as string}
+            dropdownSelectedChain={+chain}
+            newRef={newRef}
+            open={open}
+            // options={networkOptionstest}
+            setOpen={setOpen}
           />
+        </div>
+        <div className={`flex items-center justify-start w-max gap-2`}>
+          {pools.map(
+            (
+              poolx: { chain: number; id: string; name: string },
+              idx: number
+            ) => {
+              if (poolx.chain !== +chain) return;
+              return (
+                <Link
+                  className={` cursor-pointer py-2 px-4 rounded-lg ${
+                    pool === poolx.id
+                      ? `border ${
+                          +chain == base.id ? 'border-blue-600' : 'border-lime'
+                        }`
+                      : 'border border-stone-700'
+                  }`}
+                  href={`${pathname}?chain=${poolx.chain}${
+                    poolx.id ? `&pool=${poolx.id}` : ''
+                  }`}
+                  key={idx}
+                  // onClick={() => setSelectedPool(pools[0].id)}
+                >
+                  {poolx.name}
+                </Link>
+              );
+            }
+          )}
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>

@@ -3,6 +3,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React from 'react';
 import { base, mode } from 'viem/chains';
 
@@ -40,6 +41,7 @@ export default function NetworkSelector({
     }
     return { arrow: 'ffffff', bg: 'bg-primary', text: 'text-white' };
   };
+  const pathname = usePathname();
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -83,7 +85,7 @@ export default function NetworkSelector({
               className={`flex justify-between items-center p-2 mb-1 ${
                 chainColors(network.chain).text
               } rounded-md ${chainColors(network.chain).bg}`}
-              href={`/market?chain=${network.chain}`}
+              href={`${pathname}?chain=${network.chain}`}
               key={idx}
             >
               {network.name}{' '}

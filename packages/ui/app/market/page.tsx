@@ -11,7 +11,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import Dropdown from '../_components/Dropdown';
+// import Dropdown from '../_components/Dropdown';
+import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
@@ -110,16 +111,16 @@ export default function Market() {
     }
   };
 
-  const networkOptionstest = [
-    {
-      chain: mode.id,
-      name: 'Mode'
-    },
-    {
-      chain: base.id,
-      name: 'Base'
-    }
-  ];
+  // const networkOptionstest = [
+  //   {
+  //     chain: mode.id,
+  //     name: 'Mode'
+  //   },
+  //   {
+  //     chain: base.id,
+  //     name: 'Base'
+  //   }
+  // ];
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
@@ -128,12 +129,12 @@ export default function Market() {
         >
           <div className={`w-[20%] mb-2 `}>
             {' '}
-            <Dropdown
+            <NetworkSelector
               chainId={chain as string}
               dropdownSelectedChain={dropdownSelectedChain}
               newRef={newRef}
               open={open}
-              options={networkOptionstest}
+              // options={networkOptionstest}
               setOpen={setOpen}
             />
           </div>
