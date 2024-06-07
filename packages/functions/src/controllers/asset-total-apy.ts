@@ -269,7 +269,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           totalSupplyApy: r.totalSupplyApy,
         };
       });
-      let { error: error1 } = await supabase.from('asset-total-apy-development').insert(rows);
+      let { error: error1 } = await supabase.from(environment.supabaseAssetTotalApyTableName).insert(rows);
       if (error1) {
         throw new Error(`Error occurred during saving asset total apy to database (asset-total-apy-development): ${error1.message}`);
       }
