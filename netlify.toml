@@ -76,4 +76,7 @@ schedule = "@hourly"
 schedule = "@hourly"
 
 [functions."asset-total-apy-*"]
-schedule = "*/5 * * * *"
+schedule = "@hourly"
+
+[functions."asset-total-history-*"]
+schedule = "0 0 * * 0"
