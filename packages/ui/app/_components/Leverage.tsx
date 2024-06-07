@@ -2,12 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
-import {
-  formatEther,
-  formatUnits,
-  parseEther,
-  parseUnits
-} from 'ethers/lib/utils';
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -24,7 +19,6 @@ import ResultHandler from './ResultHandler';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowRates } from '@ui/hooks/levato/useBorrowRates';
-import { useLiquidationThreshold } from '@ui/hooks/levato/useLiquidationThreshold';
 import { useMaxLeverageAmount } from '@ui/hooks/levato/useMaxLeverageAmount';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
@@ -75,8 +69,13 @@ export default function Leverage({ marketData }: LeverageProps) {
   );
   const [secondarySelectOpen, setSecondarySelectOpen] =
     useState<boolean>(false);
-
-  const { secondaryAmount, debtValue, primaryAmount, positionValue } =
+  const currentPrimaryAssetPriceInUSD = useMemo(
+    () =>
+      Number(formatEther(selectedPrimaryAsset.underlyingPrice)) *
+      (usdPrice ?? 0),
+    [selectedPrimaryAsset, usdPrice]
+  );
+  const { debtValue, liquidationValue, primaryAmount, positionValue } =
     useMemo(() => {
       const secondaryToFundingRatio =
         Number(formatEther(selectedSecondaryAsset.underlyingPrice)) /
@@ -99,51 +98,41 @@ export default function Leverage({ marketData }: LeverageProps) {
         : 0;
       const positionValue = fundingValue * currentLeverage;
       const debtValue = positionValue - fundingValue;
+      const positionRatio = currentPrimaryAssetPriceInUSD / positionValue;
+      const liquidationValue =
+        leverageMode === LeverageMode.LONG
+          ? (debtValue + positionValue / 11) * positionRatio
+          : (positionValue + fundingValue - positionValue / 11) * positionRatio;
 
       return {
         debtValue,
+        liquidationValue,
+        netValue: fundingValue,
+        positionRatio,
         positionValue,
         primaryAmount,
         secondaryAmount,
         secondaryToFundingRatio
       };
     }, [
+      currentPrimaryAssetPriceInUSD,
       currentLeverage,
       fundingAmount,
+      leverageMode,
       selectedSecondaryAsset,
       selectedPrimaryAsset,
       selectedFundingAsset,
       usdPrice
     ]);
-  const {
-    data: liquidationThreshold,
-    isLoading: isLoadingLiquidationThreshold
-  } = useLiquidationThreshold(
-    leverageMode === LeverageMode.LONG
-      ? selectedPrimaryAsset.underlyingToken
-      : selectedSecondaryAsset.underlyingToken,
-    leverageMode === LeverageMode.LONG
-      ? parseUnits(
-          primaryAmount,
-          selectedPrimaryAsset.underlyingDecimals
-        ).toString()
-      : parseUnits(
-          secondaryAmount,
-          selectedSecondaryAsset.underlyingDecimals
-        ).toString(),
-    leverageMode === LeverageMode.LONG
-      ? selectedSecondaryAsset.underlyingToken
-      : selectedPrimaryAsset.underlyingToken,
-    parseEther(currentLeverage.toString()).toString()
-  );
 
   const { healthRatio } = useMemo(() => {
-    const healthRatio = !!liquidationThreshold
-      ? positionValue / liquidationThreshold
-      : 0.0;
+    const healthRatio =
+      leverageMode === LeverageMode.LONG
+        ? currentPrimaryAssetPriceInUSD / liquidationValue
+        : liquidationValue / currentPrimaryAssetPriceInUSD;
 
     return { healthRatio };
-  }, [liquidationThreshold, positionValue]);
+  }, [currentPrimaryAssetPriceInUSD, liquidationValue, leverageMode]);
   const {
     data: maxSupplyAmount,
     isLoading: isLoadingMaxSupplyAmount,
@@ -165,33 +154,7 @@ export default function Leverage({ marketData }: LeverageProps) {
   const { data: borrowRates, isLoading: isLoadingBorrowRates } = useBorrowRates(
     availableAssets.map((asset) => asset.underlyingToken)
   );
-  const currentPrimaryAssetPriceInUSD = useMemo(
-    () =>
-      Number(formatEther(selectedPrimaryAsset.underlyingPrice)) *
-      (usdPrice ?? 0),
-    [selectedPrimaryAsset, usdPrice]
-  );
-  const currentLiquidationPriceInUSD = useMemo<string>(() => {
-    if (!healthRatio || healthRatio === Infinity || healthRatio === 0) {
-      return 'N/A';
-    }
 
-    return leverageMode === LeverageMode.LONG
-      ? `$${(currentPrimaryAssetPriceInUSD / healthRatio).toLocaleString(
-          'en-US',
-          {
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2
-          }
-        )}`
-      : `$${(currentPrimaryAssetPriceInUSD * healthRatio).toLocaleString(
-          'en-US',
-          {
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2
-          }
-        )}`;
-  }, [currentPrimaryAssetPriceInUSD, healthRatio, leverageMode]);
   const queryClient = useQueryClient();
 
   /**
@@ -494,17 +457,11 @@ export default function Leverage({ marketData }: LeverageProps) {
       >
         <span className={``}>Entry price</span>
         <span className={`font-bold pl-2 text-white`}>
-          <ResultHandler
-            height="16"
-            isLoading={isLoadingLiquidationThreshold}
-            width="16"
-          >
-            $
-            {currentPrimaryAssetPriceInUSD.toLocaleString('en-US', {
-              maximumFractionDigits: 2,
-              minimumFractionDigits: 2
-            })}
-          </ResultHandler>
+          $
+          {currentPrimaryAssetPriceInUSD.toLocaleString('en-US', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+          })}
         </span>
       </div>
 
@@ -513,13 +470,13 @@ export default function Leverage({ marketData }: LeverageProps) {
       >
         <span className={``}>Liquidation threshold</span>
         <span className={`font-bold pl-2 text-white`}>
-          <ResultHandler
-            height="16"
-            isLoading={isLoadingLiquidationThreshold}
-            width="16"
-          >
-            {currentLiquidationPriceInUSD}
-          </ResultHandler>
+          $
+          {isNaN(liquidationValue)
+            ? '0.00'
+            : liquidationValue.toLocaleString('en-US', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+              })}
         </span>
       </div>
 
@@ -528,13 +485,7 @@ export default function Leverage({ marketData }: LeverageProps) {
       >
         <span className={``}>Health ratio</span>
         <span className={`font-bold pl-2 text-white`}>
-          <ResultHandler
-            height="16"
-            isLoading={isLoadingLiquidationThreshold}
-            width="16"
-          >
-            {healthRatio.toFixed(3)}
-          </ResultHandler>
+          {isNaN(healthRatio) ? 'N/A' : healthRatio.toFixed(3)}
         </span>
       </div>
 
