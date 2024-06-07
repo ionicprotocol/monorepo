@@ -7,6 +7,7 @@ export const useLevatoUsdPrice = (underlying: string) => {
   const { levatoSdk } = useMultiIonic();
 
   return useQuery({
+    enabled: !!levatoSdk,
     queryFn: async (): Promise<BigNumber> => {
       if (!levatoSdk) {
         throw new Error('Levato SDK not available!');

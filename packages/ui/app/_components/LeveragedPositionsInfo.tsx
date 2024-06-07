@@ -41,8 +41,13 @@ export default function LeveragedPositionsInfo() {
         position.positionAddress.toLowerCase()
       ) ?? []
     );
-  const positionsCreatedData = useMemo(
-    () => (graphData ? graphData[2].positionCreateds : undefined),
+  const { positionsCreatedData, positionsFundedData } = useMemo(
+    () => ({
+      positionsCreatedData: graphData
+        ? graphData[2].positionCreateds
+        : undefined,
+      positionsFundedData: graphData ? graphData[0].positionFundeds : undefined
+    }),
     [graphData]
   );
   const { data: levatoUsdPrice, isLoading: isLoadingLevatoUsdPrice } =
@@ -125,6 +130,11 @@ export default function LeveragedPositionsInfo() {
               positionGraphData.position ===
               position.positionAddress.toLocaleLowerCase()
           );
+          const positionFundedData = positionsFundedData?.find(
+            (positionGraphData) =>
+              positionGraphData.position ===
+              position.positionAddress.toLocaleLowerCase()
+          );
           const usdcPriceOnCreation = positionCreatedData
             ? BigNumber.from(positionCreatedData.usdcPriceOnCreation)
             : levatoUsdPrice ?? BigNumber.from('1');
@@ -150,7 +160,6 @@ export default function LeveragedPositionsInfo() {
               6
             )
           );
-
           const marketValue = Number(
             formatUnits(
               parseUnits(
@@ -168,7 +177,6 @@ export default function LeveragedPositionsInfo() {
               6
             )
           );
-
           const liquidationValue = Number(
             formatUnits(
               parseUnits(
@@ -196,12 +204,23 @@ export default function LeveragedPositionsInfo() {
           );
           const positionRatio = marketValue / currentNetValue;
           const initialPositionNetValue = entryValue / positionRatio;
+          const fundedValue = positionFundedData
+            ? Number(
+                formatUnits(
+                  BigNumber.from(positionFundedData.totalCollateralAmount)
+                    .mul(position.collateralPriceOnCreation)
+                    .div(usdcPriceOnCreation ?? '1'),
+                  8
+                )
+              )
+            : 0;
           const positionPnl = Number(
             (
               (position.isShort
                 ? initialPositionNetValue - currentNetValue
                 : currentNetValue - initialPositionNetValue) *
-              Number(formatEther(position.leverageRatio))
+                Number(formatEther(position.leverageRatio)) -
+              fundedValue
             ).toLocaleString('en-US', {
               maximumFractionDigits: 2,
               minimumFractionDigits: 2
@@ -292,7 +311,7 @@ export default function LeveragedPositionsInfo() {
                   }
                 >
                   {positionPnl < 0 && '-'}$
-                  {positionPnl.toLocaleString('en-US', {
+                  {Math.abs(positionPnl).toLocaleString('en-US', {
                     maximumFractionDigits: 2,
                     minimumFractionDigits: 2
                   })}
