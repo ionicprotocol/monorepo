@@ -97,6 +97,7 @@ export default function LeveragedPositionsInfo() {
         isLoadingPositionsData ||
         isLoadingMarketData ||
         isLoadingLevatoUsdPrice ||
+        !levatoUsdPrice ||
         isLoadingGraphData
       }
     >
