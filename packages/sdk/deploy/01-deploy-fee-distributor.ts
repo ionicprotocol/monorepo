@@ -1,4 +1,4 @@
-import { providers, utils } from "ethers";
+import { providers, utils, BigNumber } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { logTransaction } from "../chainDeploy/helpers/logging";
@@ -45,6 +45,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
+  const maxFeePerGas = feeData.maxFeePerGas || BigNumber.from("1500000000"); // default value if null
+  const maxPriorityFeePerGas = feeData.maxPriorityFeePerGas || BigNumber.from("1500000000"); // default value if null
 
   let ffd;
   try {
@@ -60,7 +62,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           }
         },
         owner: multisig
-      }
+      },
+      maxFeePerGas,
+      maxPriorityFeePerGas
     });
     if (ffd.transactionHash) await ethers.provider.waitForTransaction(ffd.transactionHash);
 
@@ -114,6 +118,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "fee-distributor"];
 
 export default func;

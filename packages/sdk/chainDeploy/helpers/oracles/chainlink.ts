@@ -6,6 +6,8 @@ import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
+// deployer vs multisig?
+const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
 export const deployChainlinkOracle = async ({
   ethers,
   getNamedAccounts,
@@ -32,7 +34,7 @@ export const deployChainlinkOracle = async ({
           args: [deployConfig.stableToken, deployConfig.nativeTokenUsdChainlinkFeed]
         }
       },
-      owner: deployer,
+      owner: multisig,
       proxyContract: "OpenZeppelinTransparentProxy"
     },
     waitConfirmations: 1

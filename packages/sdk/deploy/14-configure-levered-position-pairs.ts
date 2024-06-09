@@ -9,6 +9,6 @@ const func: DeployFunction = async ({ run, getChainId }) => {
   }
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "configure-pairs"];
 
 export default func;

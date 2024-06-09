@@ -260,6 +260,6 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
   }
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "market-setup"];
 
 export default func;

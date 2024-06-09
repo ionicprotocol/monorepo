@@ -15,6 +15,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   await deployIRMs({ run, ethers, getNamedAccounts, deployments, deployConfig: chainDeployParams });
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "deploy-irms"];
 
 export default func;

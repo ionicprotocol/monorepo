@@ -71,6 +71,11 @@ const redStoneWrsETHAssets: RedStoneAsset[] = [
   }
 ];
 
+const convertedApi3Assets: PythAsset[] = api3Assets.map((asset) => ({
+  underlying: underlying(mode.assets, asset.symbol),
+  feed: asset.aggregator
+}));
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   await deployPythPriceOracle({
     run,
@@ -98,7 +103,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     ethers,
     getNamedAccounts,
     deployments,
-    assets: [...pythAssets, ...api3Assets]
+    assets: [...pythAssets, ...convertedApi3Assets]
   });
 
   await deployRedStoneWrsETHPriceOracle({

@@ -25,6 +25,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (booster.newlyDeployed) await run("flywheels:booster:update");
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "deploy-flywheel"];
 
 export default func;

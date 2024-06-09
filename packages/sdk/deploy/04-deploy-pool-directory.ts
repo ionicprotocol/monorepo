@@ -27,6 +27,6 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
   }
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "deply-pool-directory"];
 
 export default func;

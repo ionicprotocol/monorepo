@@ -10,6 +10,6 @@ const func: DeployFunction = async ({ run, getChainId }) => {
   }
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "upgrade-pools"];
 
 export default func;

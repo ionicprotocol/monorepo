@@ -255,6 +255,6 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
   }
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "deploy-levered-positions"];
 
 export default func;
