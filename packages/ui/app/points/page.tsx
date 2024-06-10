@@ -55,10 +55,10 @@ export default function Points() {
     data: supplyPointsModeNative,
     isLoading: isLoadingSupplyPointsModeNative
   } = usePointsForSupplyModeNative();
-  const { data: pointsIonLp, isLoading: isLoadingPointsModeLp } =
-    usePointsForIonLp();
-  const { data: pointsSteerLp, isLoading: isLoadingSupplyPointsSteerLp } =
-    usePointsForSteerLp();
+  const { data: pointsIonLp, isLoading: isLoadingPointsIonLp 
+  } = usePointsForIonLp();
+  const { data: pointsSteerLp, isLoading: isLoadingPointsSteerLp
+  } = usePointsForSteerLp();
   const {
     data: supplyPointsBaseMain,
     isLoading: isLoadingSupplyPointsBaseMain
@@ -112,9 +112,9 @@ export default function Points() {
 
     return 0;
   }, [supplyPointsModeNative]);
-  const summedSupplyPointsIonLp = useMemo<number>(() => {
-    if (supplyPointsIonLp) {
-      return supplyPointsIonLp.rows.reduce(
+  const summedPointsIonLp = useMemo<number>(() => {
+    if (pointsIonLp) {
+      return pointsIonLp.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -126,10 +126,10 @@ export default function Points() {
     }
 
     return 0;
-  }, [supplyPointsIonLp]);
-  const summedSupplyPointsSteerLp = useMemo<number>(() => {
-    if (supplyPointsSteerLp) {
-      return supplyPointsSteerLp.rows.reduce(
+  }, [pointsIonLp]);
+  const summedPointsSteerLp = useMemo<number>(() => {
+    if (pointsSteerLp) {
+      return pointsSteerLp.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -141,7 +141,7 @@ export default function Points() {
     }
 
     return 0;
-  }, [supplyPointsSteerLp]);
+  }, [pointsSteerLp]);
   const summedSupplyPointsBaseMain = useMemo<number>(() => {
     if (supplyPointsBaseMain) {
       return supplyPointsBaseMain.rows.reduce(
@@ -206,8 +206,8 @@ export default function Points() {
     const summedSupplyPointsMarkets =
       summedSupplyPointsModeMain +
       summedSupplyPointsModeNative +
-      summedSupplyPointsIonLp +
-      summedSupplyPointsSteerLp +
+      summedPointsIonLp +
+      summedPointsSteerLp +
       summedSupplyPointsBaseMain;
     const summedBorrowPointsMarkets =
       summedBorrowPointsModeMain +
@@ -222,8 +222,8 @@ export default function Points() {
   }, [
     summedSupplyPointsModeMain,
     summedSupplyPointsModeNative,
-    summedSupplyPointsIonLp,
-    summedSupplyPointsSteerLp,
+    summedPointsIonLp,
+    summedPointsSteerLp,
     summedSupplyPointsBaseMain,
     summedBorrowPointsModeMain,
     summedBorrowPointsModeNative,
@@ -253,11 +253,12 @@ export default function Points() {
             isLoading={
               isLoadingSupplyPointsModeMain ||
               isLoadingSupplyPointsModeNative ||
-              isLoadingSupplyPointsModeLp ||
               isLoadingSupplyPointsBaseMain ||
               isLoadingBorrowPointsModeMain ||
               isLoadingBorrowPointsModeNative ||
-              isLoadingBorrowPointsBaseMain
+              isLoadingBorrowPointsBaseMain ||
+              isLoadingPointsIonLp ||
+              isLoadingPointsSteerLp
             }
             width="36"
           >
@@ -294,14 +295,19 @@ export default function Points() {
             points: summedSupplyPointsModeNative
           },
           {
-            loading: isLoadingSupplyPointsIonLp,
-            name: 'Mode LP Market',
-            points: summedSupplyPointsIonLp
-          },
-          {
             loading: isLoadingSupplyPointsBaseMain,
             name: 'Base Main Market',
             points: summedSupplyPointsBaseMain
+          },
+          {
+            loading: isLoadingPointsIonLp,
+            name: 'Ion LP',
+            points: summedPointsIonLp
+          },
+          {
+            loading: isLoadingPointsSteerLp,
+            name: 'Steer LP',
+            points: summedPointsSteerLp
           }
         ].map((a, i) => (
           <div
@@ -394,7 +400,8 @@ export default function Points() {
               isLoadingBorrowPointsModeNative ||
               isLoadingSupplyPointsModeNative ||
               isLoadingBorrowPointsModeNative ||
-              isLoadingSupplyPointsModeLp ||
+              isLoadingPointsIonLp ||
+              isLoadingPointsSteerLp ||
               isLoadingSupplyPointsBaseMain ||
               isLoadingBorrowPointsBaseMain
             }
@@ -418,7 +425,8 @@ export default function Points() {
             isLoadingBorrowPointsModeNative ||
             isLoadingSupplyPointsModeNative ||
             isLoadingBorrowPointsModeNative ||
-            isLoadingSupplyPointsModeLp ||
+            isLoadingPointsIonLp ||
+            isLoadingPointsSteerLp ||
             isLoadingSupplyPointsBaseMain ||
             isLoadingBorrowPointsBaseMain
           }
@@ -473,6 +481,58 @@ export default function Points() {
                   />
                   <span className={` `}>
                     Supply - {market && pools[market.chainId][market.id]}
+                  </span>
+                </div>
+                <div className={`mb-2 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    AMOUNT:
+                  </span>
+                  ${millify(market?.totalSupplyBalanceFiat ?? 0)}
+                </div>
+                <div className={`mb-4 md:mb-0`}>
+                  <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
+                    POINTS:
+                  </span>
+                  {points?.toLocaleString('en-US', {
+                    maximumFractionDigits: 0
+                  })}
+                </div>
+                <PercentMeter
+                  color="#3bff89"
+                  percent={
+                    parseFloat(
+                      (((points ?? 0) / totalPoints) * 100).toFixed(1)
+                    ) || 0
+                  }
+                />
+              </div>
+            ))}
+
+            {[
+              {
+                name: 'Ion',
+                market: pointsIonLp,
+                points: summedPointsIonLp
+              },
+              {
+                name: 'Steer',
+                market: pointsSteerLp,
+                points: summedPointsSteerLp
+              }
+            ].map(({ name, market, points }) => (
+              <div
+                className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
+                key={`supply-${market?.chainId}-${market?.id}`}
+              >
+                <div
+                  className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+                >
+                  <span
+                    className="h-4 w-4 rounded-full"
+                    style={{ backgroundColor: `#3bff89` }}
+                  />
+                  <span className={` `}>
+                    Supply - {name} LP
                   </span>
                 </div>
                 <div className={`mb-2 md:mb-0`}>

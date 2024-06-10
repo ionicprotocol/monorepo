@@ -272,12 +272,14 @@ export type LpMultipliers = {
   decimals?: number;
 };
 
-export const ionLPMultipliers: LpMultipliers = {
-  ionMultiplier: 3,
-  market: 'ion_weth_pool',
-  priceMultiplier: -120,
-  filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
-  filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
+export const ionLPMultipliers: Record<string, LpMultipliers> = {
+  'ION-WETH': {
+    ionMultiplier: 3,
+    market: 'ion_weth_pool',
+    priceMultiplier: -120,
+    filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
+    filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
+  }
 };
 
 export const steerLpMultipliers: Record<string, LpMultipliers> = {

@@ -513,28 +513,36 @@ const usePointsForIonLp = () => {
   return useQuery({
     cacheTime: Infinity,
     queryFn: async () => {
-      const response = await fetchData<QueryResponse, QueryData>(
-        'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-        {
-          query: getSupplyQuery(
-            address?.toLowerCase(),
-            ionLPMultipliers.ionMultiplier,
-            ionLPMultipliers.market,
-            SEASON_2_START_DATE,
-            ionLPMultipliers.priceMultiplier,
-            ionLPMultipliers.decimals,
-            true,
-            ionLPMultipliers.filterIn,
-            ionLPMultipliers.filterOut
-          )
-        },
-        {
-          method: 'POST'
-        }
+      const response = await Promise.all(
+        Object.values(ionLPMultipliers).map((asset) => {
+          return fetchData<QueryResponse, QueryData>(
+            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+            {
+              query: getSupplyQuery(
+                address?.toLowerCase(),
+                asset.ionMultiplier,
+                asset.market,
+                SEASON_2_START_DATE,
+                asset.priceMultiplier,
+                asset.decimals,
+                true,
+                asset.filterIn,
+                asset.filterOut
+              )
+            },
+            {
+              method: 'POST'
+            }
+          );
+        })
       );
-      const totalPoints = response.data.rows[0][1];
-
+      const totalPoints = response.reduce(
+        (acc, current) => acc + current.data.rows[0][1],
+        0
+      );
+      console.log(totalPoints);
       return {
+        ...response[0].data,
         rows: [[totalPoints]]
       };
     },
@@ -577,7 +585,7 @@ const usePointsForSteerLp = () => {
         (acc, current) => acc + current.data.rows[0][1],
         0
       );
-
+      console.log(totalPoints);
       return {
         ...response[0].data,
         rows: [[totalPoints]]
