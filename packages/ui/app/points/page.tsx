@@ -22,7 +22,8 @@ import {
   usePointsForSupplyBaseMain,
   usePointsForSupplyModeMain,
   usePointsForSupplyModeNative,
-  usePointsForSupplyModeLp
+  usePointsForIonLp,
+  usePointsForSteerLp
 } from '@ui/hooks/usePointsQueries';
 
 const pools: { [key: number]: { [key: number]: string } } = {
@@ -54,8 +55,10 @@ export default function Points() {
     data: supplyPointsModeNative,
     isLoading: isLoadingSupplyPointsModeNative
   } = usePointsForSupplyModeNative();
-  const { data: supplyPointsModeLp, isLoading: isLoadingSupplyPointsModeLp } =
-    usePointsForSupplyModeLp();
+  const { data: pointsIonLp, isLoading: isLoadingPointsModeLp } =
+    usePointsForIonLp();
+  const { data: pointsSteerLp, isLoading: isLoadingSupplyPointsSteerLp } =
+    usePointsForSteerLp();
   const {
     data: supplyPointsBaseMain,
     isLoading: isLoadingSupplyPointsBaseMain
@@ -109,9 +112,9 @@ export default function Points() {
 
     return 0;
   }, [supplyPointsModeNative]);
-  const summedSupplyPointsModeLp = useMemo<number>(() => {
-    if (supplyPointsModeLp) {
-      return supplyPointsModeLp.rows.reduce(
+  const summedSupplyPointsIonLp = useMemo<number>(() => {
+    if (supplyPointsIonLp) {
+      return supplyPointsIonLp.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -123,7 +126,22 @@ export default function Points() {
     }
 
     return 0;
-  }, [supplyPointsModeLp]);
+  }, [supplyPointsIonLp]);
+  const summedSupplyPointsSteerLp = useMemo<number>(() => {
+    if (supplyPointsSteerLp) {
+      return supplyPointsSteerLp.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [supplyPointsSteerLp]);
   const summedSupplyPointsBaseMain = useMemo<number>(() => {
     if (supplyPointsBaseMain) {
       return supplyPointsBaseMain.rows.reduce(
@@ -188,7 +206,8 @@ export default function Points() {
     const summedSupplyPointsMarkets =
       summedSupplyPointsModeMain +
       summedSupplyPointsModeNative +
-      summedSupplyPointsModeLp +
+      summedSupplyPointsIonLp +
+      summedSupplyPointsSteerLp +
       summedSupplyPointsBaseMain;
     const summedBorrowPointsMarkets =
       summedBorrowPointsModeMain +
@@ -201,13 +220,14 @@ export default function Points() {
       totalPoints: summedSupplyPointsMarkets + summedBorrowPointsMarkets
     };
   }, [
-    summedBorrowPointsModeMain,
-    summedBorrowPointsModeNative,
-    summedBorrowPointsBaseMain,
     summedSupplyPointsModeMain,
     summedSupplyPointsModeNative,
-    summedSupplyPointsModeLp,
-    summedSupplyPointsBaseMain
+    summedSupplyPointsIonLp,
+    summedSupplyPointsSteerLp,
+    summedSupplyPointsBaseMain,
+    summedBorrowPointsModeMain,
+    summedBorrowPointsModeNative,
+    summedBorrowPointsBaseMain
   ]);
 
   return (
@@ -274,9 +294,9 @@ export default function Points() {
             points: summedSupplyPointsModeNative
           },
           {
-            loading: isLoadingSupplyPointsModeLp,
+            loading: isLoadingSupplyPointsIonLp,
             name: 'Mode LP Market',
-            points: summedSupplyPointsModeLp
+            points: summedSupplyPointsIonLp
           },
           {
             loading: isLoadingSupplyPointsBaseMain,

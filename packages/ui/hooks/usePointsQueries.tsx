@@ -5,10 +5,12 @@ import type { Address } from 'viem';
 import { base, mainnet, mode } from 'viem/chains';
 
 import {
+  ionLPMultipliers,
   lpMultipliers,
   multipliers,
   SEASON_2_BASE_START_DATE,
-  SEASON_2_START_DATE
+  SEASON_2_START_DATE,
+  steerLpMultipliers
 } from '../../ui/utils/multipliers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -505,14 +507,51 @@ const usePointsForBorrowModeNative = () => {
   });
 };
 
-const usePointsForSupplyModeLp = () => {
+const usePointsForIonLp = () => {
+  const { address } = useMultiIonic();
+
+  return useQuery({
+    cacheTime: Infinity,
+    queryFn: async () => {
+      const response = await fetchData<QueryResponse, QueryData>(
+        'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+        {
+          query: getSupplyQuery(
+            address?.toLowerCase(),
+            ionLPMultipliers.ionMultiplier,
+            ionLPMultipliers.market,
+            SEASON_2_START_DATE,
+            ionLPMultipliers.priceMultiplier,
+            ionLPMultipliers.decimals,
+            true,
+            ionLPMultipliers.filterIn,
+            ionLPMultipliers.filterOut
+          )
+        },
+        {
+          method: 'POST'
+        }
+      );
+      const totalPoints = response.data.rows[0][1];
+
+      return {
+        rows: [[totalPoints]]
+      };
+    },
+    queryKey: ['points', 'supply', 'ion-lp', address],
+    refetchOnWindowFocus: false,
+    staleTime: Infinity
+  });
+};
+
+const usePointsForSteerLp = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
     cacheTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(lpMultipliers).map((asset) => {
+        Object.values(steerLpMultipliers).map((asset) => {
           return fetchData<QueryResponse, QueryData>(
             'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
             {
@@ -544,11 +583,12 @@ const usePointsForSupplyModeLp = () => {
         rows: [[totalPoints]]
       };
     },
-    queryKey: ['points', 'supply', 'mode-lp', address],
+    queryKey: ['points', 'supply', 'ion-lp', address],
     refetchOnWindowFocus: false,
     staleTime: Infinity
   });
 };
+
 const usePointsForSupplyBaseMain = () => {
   const { address } = useMultiIonic();
 
@@ -710,7 +750,8 @@ export {
   usePointsForSupplyBaseMain,
   usePointsForSupplyModeMain,
   usePointsForSupplyModeNative,
-  usePointsForSupplyModeLp,
+  usePointsForIonLp,
+  usePointsForSteerLp,
   usePointsForBorrowBaseMain,
   usePointsForBorrowModeMain,
   usePointsForBorrowModeNative,
