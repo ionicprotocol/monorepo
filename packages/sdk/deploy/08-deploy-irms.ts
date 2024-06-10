@@ -1,6 +1,7 @@
-import { deployIRMs } from "../chainDeploy/helpers";
 import { DeployFunction } from "hardhat-deploy/types";
+
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
+import { deployIRMs } from "../chainDeploy/helpers";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }) => {
   const chainId = parseInt(await getChainId());

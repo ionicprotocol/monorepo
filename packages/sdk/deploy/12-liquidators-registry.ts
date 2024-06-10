@@ -1,9 +1,9 @@
 import { constants, providers } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
-import { logTransaction } from "../chainDeploy/helpers/logging";
 
 import { chainDeployConfig } from "../chainDeploy";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
+import { logTransaction } from "../chainDeploy/helpers/logging";
 import { AddressesProvider } from "../typechain/AddressesProvider";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 

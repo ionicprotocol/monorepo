@@ -1,4 +1,5 @@
 import { DeployFunction } from "hardhat-deploy/types";
+
 import { chainDeployConfig } from "../chainDeploy";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }) => {

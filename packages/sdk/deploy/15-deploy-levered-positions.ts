@@ -1,11 +1,11 @@
-import { constants, providers, utils } from "ethers";
+import { constants, providers } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
-import { logTransaction } from "../chainDeploy/helpers/logging";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
+import { logTransaction } from "../chainDeploy/helpers/logging";
 import { AuthoritiesRegistry } from "../typechain/AuthoritiesRegistry";
-import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
+import { LeveredPositionFactory } from "../typechain/LeveredPositionFactory";
 import { LiquidatorsRegistry } from "../typechain/LiquidatorsRegistry";
 
 const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, getChainId }) => {
