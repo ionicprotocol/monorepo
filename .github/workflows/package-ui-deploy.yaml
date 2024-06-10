@@ -2,7 +2,7 @@ name: UI - deploy UI
 
 on:
   push:
-    branches: [main, development,]
+    branches: [main, development]
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
@@ -44,7 +44,7 @@ jobs:
           YARN_CHECKSUM_BEHAVIOR: update
 
       - name: Deploy `Development`
-        if: github.ref == 'refs/heads/development' 
+        if: github.ref == 'refs/heads/development'
         run: |
           netlify link --filter @ionicprotocol/ui --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
           netlify deploy --filter @ionicprotocol/ui --prod --build --context development

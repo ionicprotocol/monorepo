@@ -43,6 +43,7 @@ export interface PluginRewards {
   rewards: Reward[];
 }
 
+
 export const updateAssetTotalApy = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
@@ -55,7 +56,6 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
       throw `Error occurred during saving assets total apy to database: pools not found`;
     }
 
-    
     const allPluginRewards: PluginRewards[] = [];
     const totalAssets: NativePricedIonicAsset[] = [];
     const allFlywheelRewards: FlywheelMarketRewardsInfo[] = [];
@@ -158,7 +158,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
             supplyApy,
           };
 
-          //get asset rewards
+          //get asset reward
           let compoundingApy = 0;
 
           if (assetInfos) {
@@ -269,13 +269,15 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           totalSupplyApy: r.totalSupplyApy,
         };
       });
-      let { error: error1 } = await supabase.from(environment.supabaseAssetTotalApyTableName).insert(rows);
-      if (error1) {
-        throw new Error(`Error occurred during saving asset total apy to database (asset-total-apy-development): ${error1.message}`);
-      }
-    } catch (err) {
-      await functionsAlert('functions.asset-total-apy: Generic Error', JSON.stringify(err));
-    }
+
+
+  let { error} = await supabase.from('asset_total_apy_history').insert(rows);
+  if (error) {
+    throw `Error occurred during saving asset history to database: ${error.message}`;
+  }
+} catch (err) {
+  await functionsAlert('Functions.asset-history: Generic Error', JSON.stringify(err));
+}
 };
 
 export const createAssetTotalApyHandler =
