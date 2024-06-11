@@ -2,7 +2,6 @@
 'use client';
 // import Link from 'next/link';
 import Link from 'next/link';
-// import { useRouter } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 import { base, mode } from 'viem/chains';

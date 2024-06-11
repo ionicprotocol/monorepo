@@ -18,7 +18,8 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
-
+import { useBalance } from 'wagmi';
+import { useAccount } from 'wagmi';
 //-------------------Interfaces------------
 interface IProp {
   params: { asset: string };
@@ -67,7 +68,11 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 
 const Asset = ({ params }: IProp) => {
-
+  const { address: acc, isConnected } = useAccount();
+  const { data: balance } = useBalance({
+    address: acc
+  });
+  // console.log(data);
   const [info, setInfo] = useState<number>(INFO.BORROW);
   const searchParams = useSearchParams();
 
@@ -96,7 +101,7 @@ const Asset = ({ params }: IProp) => {
   const totalBorrows = extractAndConvertStringTOValue(
     gettingBorrows as string
   ).value2;
-  
+
   const [poolData, setPoolData] = useState<PoolData>();
   const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
     pools[0].id,
@@ -130,7 +135,7 @@ const Asset = ({ params }: IProp) => {
       try {
         const data = poolData?.assets.find(
           (_asset) => _asset.underlyingSymbol === selectedSymbol
-        )
+        );
         console.log(data);
         setSelectedMarketData(data);
       } catch (err) {
@@ -324,7 +329,10 @@ const Asset = ({ params }: IProp) => {
           >
             Wallet Info
           </p>
-          <p className={` font-semibold text-lg pt-1 `}>$786</p>
+          <p className={` font-semibold text-lg pt-1 `}>
+            {isConnected ? Number(balance?.formatted).toFixed(4) : 0}{' '}
+            {balance?.symbol}
+          </p>
           <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
           <p
             className={`text-white/60 w-full flex items-center justify-between text-sm mt-2`}

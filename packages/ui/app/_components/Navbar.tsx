@@ -45,7 +45,7 @@ export default function Navbar() {
       <DynamicSubNav />
       <Link
         className={`flex items-center  md:pr-10  `}
-        href={'/'}
+        href={'/market'}
       >
         <img
           alt="logo"
@@ -68,7 +68,7 @@ export default function Navbar() {
         >
           <Link
             className="relative mb-2 md:mb-0"
-            href={'/'}
+            href={'/market'}
           >
             <p
               className={`${

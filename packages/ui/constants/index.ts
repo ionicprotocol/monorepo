@@ -45,23 +45,23 @@ export const DROPDOWN = {
   AirdropSZN1: 1,
   PublicSale: 0
 };
-export const pools = [
-  {
-    chain: 34443,
-    id: '0',
-    name: 'Main Market'
-  },
-  {
-    chain: 34443,
-    id: '1',
-    name: 'Native Market'
-  },
-  {
-    chain: 8453,
-    id: '0',
-    name: 'Main Market'
-  }
-];
+// export const pools = [
+//   {
+//     chain: 34443,
+//     id: '0',
+//     name: 'Main Market'
+//   },
+//   {
+//     chain: 34443,
+//     id: '1',
+//     name: 'Native Market'
+//   },
+//   {
+//     chain: 8453,
+//     id: '0',
+//     name: 'Main Market'
+//   }
+// ];
 export const LIQUIDATION_INCENTIVE = {
   DEFAULT: 8,
   MAX: 50,
