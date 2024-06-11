@@ -50,6 +50,11 @@ export enum PopupMode {
   LOOP
 }
 
+export interface ITotalAcrossChain {
+  borrowcap: number;
+  marketcap: number;
+  supplycap: number;
+}
 export enum HFPStatus {
   CRITICAL = 'CRITICAL',
   NORMAL = 'NORMAL',
