@@ -274,7 +274,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
         throw new Error(`Error occurred during saving asset total apy to database (asset-total-apy-development): ${error1.message}`);
       }
     } catch (err) {
-      await functionsAlert('functions.asset-total-apy: Generic Error', JSON.stringify(err));
+      await functionsAlert('functions.asset-total-apy: Generic Error testing 2', JSON.stringify(err));
     }
 };
 

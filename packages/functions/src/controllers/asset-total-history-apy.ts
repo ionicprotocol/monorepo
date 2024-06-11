@@ -249,7 +249,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
         } catch (exception) {
           console.error(exception);
           await functionsAlert(
-            `Functions.asset-total-apy: CToken '${asset.cToken}' / Chain '${chainId}'`,
+            `Functions.asset-total-history-apy: CToken '${asset.cToken}' / Chain '${chainId}'`,
             JSON.stringify(exception),
           );
         }
@@ -276,7 +276,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     throw `Error occurred during saving asset history to database: ${error.message}`;
   }
 } catch (err) {
-  await functionsAlert('Functions.asset-history: Generic Error', JSON.stringify(err));
+  await functionsAlert('Functions.asset-history: Generic Error testing 1', JSON.stringify(err));
 }
 };
 
