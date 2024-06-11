@@ -25,12 +25,12 @@ const providerMap: ProviderMapForChain = {
 export async function getAPYProviders(
   chainId: SupportedChains,
   initObj: APYProviderInitObject
-): Promise<ProviderMap> {
+): Promise<ProviderMap | ''>  {
   const providersOfChain = providerMap[chainId];
 
   if (!providersOfChain) {
     console.info(`No APY Providers available for ${chainId}`);
-    throw new Error(`No APY Providers available for ${chainId}`);
+    return {};
   }
 
   await Promise.all(

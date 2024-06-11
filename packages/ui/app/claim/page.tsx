@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useRef, useState } from 'react';
 import Confetti from 'react-confetti';
 import { formatEther } from 'viem';
+import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -33,7 +34,9 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
 );
 const claimMessage = (nonce: string) => `Welcome to the $ION Airdrop!
+
 Sign this message to prove you own this address!
+
 Nonce: ${nonce}`;
 
 const AIRDROP_URL = 'https://airdrop.ionic.ninja';
@@ -80,7 +83,7 @@ export default function Claim() {
     async function getVested() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(34443, chainId);
+        await handleSwitchOriginChain(mode.id, chainId);
         const totalTokenData = await publicClient?.readContract({
           abi: claimAbi,
           address: claimContractAddress,
@@ -115,7 +118,7 @@ export default function Claim() {
     async function getPublicSale() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(34443, chainId);
+        await handleSwitchOriginChain(mode.id, chainId);
         const totalTokenData = await publicClient?.readContract({
           abi: PublicSaleAbi,
           address: PublicSaleContractAddress,
@@ -209,7 +212,7 @@ export default function Claim() {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(34443, chainId);
+      await handleSwitchOriginChain(mode.id, chainId);
       setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: claimAbi,
@@ -244,7 +247,7 @@ export default function Claim() {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(34443, chainId);
+      await handleSwitchOriginChain(mode.id, chainId);
       setLoading(true);
       const tx = await walletClient!.writeContract({
         abi: PublicSaleAbi,
@@ -309,12 +312,12 @@ export default function Claim() {
         <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wide md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
-            {/* <button
+            <button
               className={`md:w-52 w-max  bg-accent text-darkone rounded-lg py-2 px-6  cursor-pointer text-sm md:mt-4 mt-2`}
               onClick={() => setPopup(true)}
             >
               Check Eligibility
-            </button> */}
+            </button>
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
             {[...Array(6)].map((_, index) => (
@@ -536,10 +539,10 @@ export default function Claim() {
                     {Math.floor(
                       Number(user?.ion_amount ?? '0') * AIRDROP_FIRST_TRANCHE
                     ).toLocaleString()}{' '}
-                    $ION) will be distributed on May 30th directly to your
-                    wallet address. The rest of the tokens are vested for 3
-                    months. Details on vesting and instant claim will follow
-                    soon.
+                    $ION) + 1st month of vested ION will be distributed on July
+                    7th directly to your wallet address. The rest of the tokens
+                    are vested for 2 months and can be instantly claimed with a
+                    penalty.
                   </span>
                   <span className="text-center pb-5">
                     Press the button below to sign a message and prove ownership
@@ -590,7 +593,11 @@ export default function Claim() {
                 src="/img/assets/close.png"
               />
               <p className="w-full tracking-wide text-lg font-semibold mb-4">
-                You can now instantly claim{' '}
+                You can{' '}
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                  ? 'now instantly'
+                  : ''}{' '}
+                claim{' '}
                 {Number(
                   formatEther(
                     dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
@@ -603,43 +610,49 @@ export default function Claim() {
                 ION
               </p>
               <p className={`opacity-40 text-xs `}>
-                To receive the full Airdrop amount, please wait till the end of
-                the vesting period
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                  ? 'To receive the full Airdrop amount, please wait till the end of the vesting period'
+                  : 'The rest of the tokens will be vested linearly.'}
               </p>
               <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
-                <div className={`flex w-full gap-2 mb-2`}>
-                  <input
-                    className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
-                    id="checkme"
-                    onChange={(e) => setAgreement(e.target.checked)}
-                    type="checkbox"
-                  />
-                  <span>
-                    I understand and agree to forfeit{' '}
-                    {(
-                      Number(
-                        formatEther(
-                          dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                            ? eligibleForToken
-                            : publicSaleEligibleToken
+                {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 && (
+                  <div className={`flex w-full gap-2 mb-2`}>
+                    <input
+                      className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
+                      id="checkme"
+                      onChange={(e) => setAgreement(e.target.checked)}
+                      type="checkbox"
+                    />
+                    <span>
+                      I understand and agree to forfeit{' '}
+                      {(
+                        Number(
+                          formatEther(
+                            dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                              ? eligibleForToken
+                              : publicSaleEligibleToken
+                          )
+                        ) -
+                        Number(
+                          formatEther(
+                            dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
+                              ? currentClaimable
+                              : publicClaimable
+                          )
                         )
-                      ) -
-                      Number(
-                        formatEther(
-                          dropdownSelectedCampaign == DROPDOWN.AirdropSZN1
-                            ? currentClaimable
-                            : publicClaimable
-                        )
-                      )
-                    ).toLocaleString(undefined, {
-                      maximumFractionDigits: 2
-                    })}{' '}
-                    vested $ION, in favour of instantly receiving tokens now
-                  </span>
-                </div>
+                      ).toLocaleString(undefined, {
+                        maximumFractionDigits: 2
+                      })}{' '}
+                      vested $ION, in favour of instantly receiving tokens now
+                    </span>
+                  </div>
+                )}
                 <button
                   className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
-                  disabled={!agreement}
+                  disabled={
+                    dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! &&
+                    agreement
+                  }
                   onClick={() => {
                     if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
                       claimAirdrop();
@@ -649,7 +662,9 @@ export default function Claim() {
                     }
                   }}
                 >
-                  Instant Claim
+                  {dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 &&
+                    'Instant'}{' '}
+                  Claim
                 </button>
               </div>
             </ResultHandler>

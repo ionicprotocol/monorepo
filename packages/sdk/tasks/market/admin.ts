@@ -154,10 +154,12 @@ task("markets:all:pause", "Pauses borrowing on a market")
       const markets = await poolExtension.callStatic.getAllMarkets();
 
       await hre.run("markets:borrow-pause", {
-        markets: markets.join(",")
+        markets: markets.join(","),
+        paused: taskArgs.paused
       });
       await hre.run("market:mint-pause", {
-        markets: markets.join(",")
+        markets: markets.join(","),
+        paused: taskArgs.paused
       });
     }
   });
