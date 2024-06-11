@@ -276,7 +276,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     throw `Error occurred during saving asset history to database: ${error.message}`;
   }
 } catch (err) {
-  await functionsAlert('Functions.asset-history: Generic Error testing 1', JSON.stringify(err));
+  await functionsAlert('Functions.asset-history: Generic Error', JSON.stringify(err));
 }
 };
 
