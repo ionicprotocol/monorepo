@@ -282,7 +282,7 @@ export const ionLPMultipliers: Record<string, LpMultipliers> = {
   }
 };
 
-export const steerLpMultipliers: Record<string, LpMultipliers> = {
+export const steerLPMultipliers: Record<string, LpMultipliers> = {
   'ionUSDC-ionUSDT': {
     ionMultiplier: 1.5,
     market: 'iusdc_iusdt_pool',

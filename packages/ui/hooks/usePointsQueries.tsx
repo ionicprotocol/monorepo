@@ -6,11 +6,10 @@ import { base, mainnet, mode } from 'viem/chains';
 
 import {
   ionLPMultipliers,
-  lpMultipliers,
+  steerLPMultipliers,
   multipliers,
   SEASON_2_BASE_START_DATE,
-  SEASON_2_START_DATE,
-  steerLpMultipliers
+  SEASON_2_START_DATE
 } from '../../ui/utils/multipliers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -127,105 +126,105 @@ const getSupplyQuery = (
 
   return `
   WITH addresses AS (
-    SELECT address 
+    SELECT address
     FROM (VALUES ('${address}')) s(address)
   )
-  SELECT 
-    address, 
-    SUM(points) AS points_per_market 
+  SELECT
+    address,
+    SUM(points) AS points_per_market
   FROM (
-    SELECT 
-      address, 
-      date, 
-      flow, 
-      cum_sum, 
-      LAG(cum_sum) OVER (PARTITION BY address ORDER BY address, date) * 
-      (EXTRACT(EPOCH FROM delta) / 86400) * ${ionMultiplier} * ${priceMultiplier} AS points 
+    SELECT
+      address,
+      date,
+      flow,
+      cum_sum,
+      LAG(cum_sum) OVER (PARTITION BY address ORDER BY address, date) *
+      (EXTRACT(EPOCH FROM delta) / 86400) * ${ionMultiplier} * ${priceMultiplier} AS points
     FROM (
-      SELECT 
-        *, 
-        SUM(flow) OVER (PARTITION BY address ORDER BY address, date) AS cum_sum, 
-        date - LAG(date) OVER (PARTITION BY address ORDER BY address, date) AS delta 
+      SELECT
+        *,
+        SUM(flow) OVER (PARTITION BY address ORDER BY address, date) AS cum_sum,
+        date - LAG(date) OVER (PARTITION BY address ORDER BY address, date) AS delta
       FROM (
-        SELECT 
-          address, 
-          date, 
-          SUM(tokens) AS flow 
+        SELECT
+          address,
+          date,
+          SUM(tokens) AS flow
         FROM (
-          SELECT 
-            event_from AS address, 
-            DATE_BIN('1 hour', block_time, '2000-1-1') AS date, 
-            -${amountColumn} / POW(10, ${decimals}) / 5 AS tokens 
-          FROM 
-            ${marketName}.transfer_events 
-          WHERE 
+          SELECT
+            event_from AS address,
+            DATE_BIN('1 hour', block_time, '2000-1-1') AS date,
+            -${amountColumn} / POW(10, ${decimals}) / 5 AS tokens
+          FROM
+            ${marketName}.transfer_events
+          WHERE
             event_from IN (SELECT * FROM addresses) ${filterIn}
-          
+
           UNION ALL
-          
-          SELECT 
-            event_to AS address, 
-            DATE_BIN('1 hour', block_time, '2000-1-1') AS date, 
-            ${amountColumn} / POW(10, ${decimals}) / 5 AS tokens 
-          FROM 
-            ${marketName}.transfer_events 
-          WHERE 
+
+          SELECT
+            event_to AS address,
+            DATE_BIN('1 hour', block_time, '2000-1-1') AS date,
+            ${amountColumn} / POW(10, ${decimals}) / 5 AS tokens
+          FROM
+            ${marketName}.transfer_events
+          WHERE
             event_to IN (SELECT * FROM addresses) ${filterOut}
-          
+
           UNION ALL
-          
-          SELECT 
-            address, 
-            date, 
-            tokens 
+
+          SELECT
+            address,
+            date,
+            tokens
           FROM (
-            SELECT 
-              1 AS a, 
-              date_trunc('day', dd)::date AS date, 
-              0 AS tokens 
-            FROM 
+            SELECT
+              1 AS a,
+              date_trunc('day', dd)::date AS date,
+              0 AS tokens
+            FROM
               generate_series('${startDate}'::timestamp, NOW()::timestamp, '1 day'::interval) AS dd
-          ) AS a 
+          ) AS a
           JOIN (
-            SELECT 
-              1 AS a, 
-              address 
-            FROM 
+            SELECT
+              1 AS a,
+              address
+            FROM
               addresses
           ) AS b ON a.a = b.a
-          
+
           UNION ALL
-          
-          SELECT 
-            address, 
-            date, 
-            tokens 
+
+          SELECT
+            address,
+            date,
+            tokens
           FROM (
-            SELECT 
-              1 AS a, 
-              DATE_BIN('1 hour', NOW(), '2000-1-1') AS date, 
-              0 AS tokens 
-          ) AS a 
+            SELECT
+              1 AS a,
+              DATE_BIN('1 hour', NOW(), '2000-1-1') AS date,
+              0 AS tokens
+          ) AS a
           JOIN (
-            SELECT 
-              1 AS a, 
-              address 
-            FROM 
+            SELECT
+              1 AS a,
+              address
+            FROM
               addresses
           ) AS b ON a.a = b.a
-        ) AS a 
-        GROUP BY 
-          address, 
-          date 
-        ORDER BY 
-          address, 
+        ) AS a
+        GROUP BY
+          address,
+          date
+        ORDER BY
+          address,
           date
       ) AS b
-    ) AS c 
-    WHERE 
+    ) AS c
+    WHERE
       date >= '${startDate}T00:00:00'
-  ) AS d 
-  GROUP BY 
+  ) AS d
+  GROUP BY
     address
   `;
 };
@@ -240,94 +239,94 @@ const getBorrowQuery = (
 ) => {
   return `
   WITH addresses AS (
-    SELECT address 
+    SELECT address
     FROM (VALUES ('${address}')) s(address)
   )
-  SELECT 
-    address, 
+  SELECT
+    address,
     SUM(CASE WHEN points > 0 THEN points ELSE 0 END) AS points_per_market
   FROM (
-    SELECT 
-      address, 
-      date, 
-      flow, 
-      cum_sum, 
-      LAG(cum_sum) OVER (PARTITION BY address ORDER BY address, date) * 
-      (EXTRACT(EPOCH FROM delta) / 86400) * ${ionMultiplier} * ${priceMultiplier} AS points 
+    SELECT
+      address,
+      date,
+      flow,
+      cum_sum,
+      LAG(cum_sum) OVER (PARTITION BY address ORDER BY address, date) *
+      (EXTRACT(EPOCH FROM delta) / 86400) * ${ionMultiplier} * ${priceMultiplier} AS points
     FROM (
-      SELECT 
-        address, 
-        date, 
-        flow, 
-        SUM(flow) OVER (PARTITION BY address ORDER BY address, date) AS cum_sum, 
-        date - LAG(date) OVER (PARTITION BY address ORDER BY address, date) AS delta 
+      SELECT
+        address,
+        date,
+        flow,
+        SUM(flow) OVER (PARTITION BY address ORDER BY address, date) AS cum_sum,
+        date - LAG(date) OVER (PARTITION BY address ORDER BY address, date) AS delta
       FROM (
-        SELECT 
-          address, 
-          date, 
-          SUM(tokens) AS flow 
+        SELECT
+          address,
+          date,
+          SUM(tokens) AS flow
         FROM (
-          SELECT 
-            tx_from AS address, 
-            DATE_BIN('1 hour', block_time, '2000-01-01') AS date, 
-            -event_repay_amount / POW(10, ${decimals}) AS tokens 
-          FROM 
-            ${marketName}.repay_borrow_events 
-          WHERE 
-            event_repay_amount < POW(10, 60) 
+          SELECT
+            tx_from AS address,
+            DATE_BIN('1 hour', block_time, '2000-01-01') AS date,
+            -event_repay_amount / POW(10, ${decimals}) AS tokens
+          FROM
+            ${marketName}.repay_borrow_events
+          WHERE
+            event_repay_amount < POW(10, 60)
             AND tx_from IN (SELECT address FROM addresses)
-          
+
           UNION ALL
-          
-          SELECT 
-            event_borrower AS address, 
-            DATE_BIN('1 hour', block_time, '2000-01-01') AS date, 
-            event_borrow_amount / POW(10, ${decimals}) AS tokens 
-          FROM 
-            ${marketName}.borrow_events 
-          WHERE 
+
+          SELECT
+            event_borrower AS address,
+            DATE_BIN('1 hour', block_time, '2000-01-01') AS date,
+            event_borrow_amount / POW(10, ${decimals}) AS tokens
+          FROM
+            ${marketName}.borrow_events
+          WHERE
             event_borrower IN (SELECT address FROM addresses)
-          
+
           UNION ALL
-          
-          SELECT 
-            addr.address, 
-            date_series.date, 
-            0 AS tokens 
+
+          SELECT
+            addr.address,
+            date_series.date,
+            0 AS tokens
           FROM (
-            SELECT 
-              1 AS dummy, 
-              date_trunc('day', dd)::date AS date 
-            FROM 
+            SELECT
+              1 AS dummy,
+              date_trunc('day', dd)::date AS date
+            FROM
               generate_series('${startDate}'::timestamp, NOW()::timestamp, '1 day'::interval) AS dd
-          ) AS date_series 
+          ) AS date_series
           JOIN addresses AS addr ON date_series.dummy = 1
-          
+
           UNION ALL
-          
-          SELECT 
-            addr.address, 
-            current_hour.date, 
-            0 AS tokens 
+
+          SELECT
+            addr.address,
+            current_hour.date,
+            0 AS tokens
           FROM (
-            SELECT 
-              1 AS dummy, 
-              DATE_BIN('1 hour', NOW(), '2000-01-01') AS date 
-          ) AS current_hour 
+            SELECT
+              1 AS dummy,
+              DATE_BIN('1 hour', NOW(), '2000-01-01') AS date
+          ) AS current_hour
           JOIN addresses AS addr ON current_hour.dummy = 1
-        ) AS combined 
-        GROUP BY 
-          address, 
-          date 
-        ORDER BY 
-          address, 
+        ) AS combined
+        GROUP BY
+          address,
+          date
+        ORDER BY
+          address,
           date
       ) AS grouped
-    ) AS calculated 
-    WHERE 
+    ) AS calculated
+    WHERE
       date >= '${startDate}T00:00:00'
-  ) AS final 
-  GROUP BY 
+  ) AS final
+  GROUP BY
     address
   `;
 };
@@ -540,7 +539,7 @@ const usePointsForIonLp = () => {
         (acc, current) => acc + current.data.rows[0][1],
         0
       );
-      console.log(totalPoints);
+
       return {
         ...response[0].data,
         rows: [[totalPoints]]
@@ -559,7 +558,7 @@ const usePointsForSteerLp = () => {
     cacheTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(steerLpMultipliers).map((asset) => {
+        Object.values(steerLPMultipliers).map((asset) => {
           return fetchData<QueryResponse, QueryData>(
             'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
             {
@@ -570,9 +569,7 @@ const usePointsForSteerLp = () => {
                 SEASON_2_START_DATE,
                 asset.priceMultiplier,
                 asset.decimals,
-                true,
-                asset.filterIn,
-                asset.filterOut
+                true
               )
             },
             {
@@ -585,7 +582,7 @@ const usePointsForSteerLp = () => {
         (acc, current) => acc + current.data.rows[0][1],
         0
       );
-      console.log(totalPoints);
+
       return {
         ...response[0].data,
         rows: [[totalPoints]]

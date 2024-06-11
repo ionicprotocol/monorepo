@@ -55,7 +55,7 @@ export default function Points() {
     data: supplyPointsModeNative,
     isLoading: isLoadingSupplyPointsModeNative
   } = usePointsForSupplyModeNative();
-  const { data: pointsIonLp, isLoading: isLoadingPointsIonLp 
+  const { data: pointsIonLp, isLoading: isLoadingPointsIonLp
   } = usePointsForIonLp();
   const { data: pointsSteerLp, isLoading: isLoadingPointsSteerLp
   } = usePointsForSteerLp();
@@ -396,8 +396,8 @@ export default function Points() {
           <ResultHandler
             height="15"
             isLoading={
-              isLoadingSupplyPointsModeNative ||
-              isLoadingBorrowPointsModeNative ||
+              isLoadingSupplyPointsModeMain ||
+              isLoadingBorrowPointsModeMain ||
               isLoadingSupplyPointsModeNative ||
               isLoadingBorrowPointsModeNative ||
               isLoadingPointsIonLp ||
@@ -421,8 +421,6 @@ export default function Points() {
             isLoadingModeMarketDataMain ||
             isLoadingModeMarketDataNative ||
             isLoadingBaseMarketDataMain ||
-            isLoadingSupplyPointsModeNative ||
-            isLoadingBorrowPointsModeNative ||
             isLoadingSupplyPointsModeNative ||
             isLoadingBorrowPointsModeNative ||
             isLoadingPointsIonLp ||
@@ -473,7 +471,7 @@ export default function Points() {
                 key={`supply-${market?.chainId}-${market?.id}`}
               >
                 <div
-                  className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+                  className={`flex gap-2 items-center justify-center mb-2 md:mb-0`}
                 >
                   <span
                     className="h-4 w-4 rounded-full"
@@ -522,10 +520,10 @@ export default function Points() {
             ].map(({ name, market, points }) => (
               <div
                 className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
-                key={`supply-${market?.chainId}-${market?.id}`}
+                key={`supply-mode-${name}`}
               >
                 <div
-                  className={`  flex gap-2 items-center justify-center mb-2 md:mb-0`}
+                  className={`flex gap-2 items-center justify-center mb-2 md:mb-0`}
                 >
                   <span
                     className="h-4 w-4 rounded-full"
@@ -579,7 +577,7 @@ export default function Points() {
                 key={`borrow-${market?.chainId}-${market?.id}`}
               >
                 <div
-                  className={`  flex gap-2 items-center justify-center  mb-2 md:mb-0`}
+                  className={`flex gap-2 items-center justify-center  mb-2 md:mb-0`}
                 >
                   <span
                     className="h-4 w-4 rounded-full"
