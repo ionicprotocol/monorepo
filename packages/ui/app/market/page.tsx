@@ -14,7 +14,7 @@ import { useChainId } from 'wagmi';
 // import Dropdown from '../_components/Dropdown';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
-import type { PopupMode } from '../_components/popup/page';
+import type { ITotalAcrossChain, PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
@@ -35,6 +35,7 @@ export default function Market() {
     mode.id
   );
   const [open, setOpen] = useState<boolean>(false);
+  const [totalCaps, setTotalCaps] = useState<ITotalAcrossChain>();
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
@@ -54,6 +55,75 @@ export default function Market() {
     pools[2].id,
     pools[2].chain
   );
+
+  useEffect(() => {
+    if (!isLoadingPool1Data && !isLoadingPool2Data && !isLoadingPool3Data) {
+      const allData = [pool1Data, pool2Data, pool3Data];
+      const filtered = allData.filter(
+        (data) => data && data.chainId === +chain
+      );
+      //------------------------------------------
+
+      const totalMarketCap = filtered
+        .map((data) => {
+          if (!data) return;
+          const total = (
+            data?.totalSuppliedFiat + data?.totalBorrowedFiat
+          ).toFixed(2);
+          return total;
+        })
+        .reduce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (accumulator: number, currentValue: any) => {
+            return accumulator + Number(currentValue);
+          },
+          0
+        );
+      //------------------------------------------
+      const totalSupply = filtered
+        .map((data) => {
+          if (!data) return;
+          const total = data.totalSuppliedFiat?.toFixed(2);
+          return total;
+        })
+        .reduce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (accumulator: number, currentValue: any) => {
+            return accumulator + Number(currentValue);
+          },
+          0
+        );
+      //------------------------------------------
+      const totalBorrow = filtered
+        .map((data) => {
+          if (!data) return;
+          const total = data.totalBorrowedFiat?.toFixed(2);
+          return total;
+        })
+        .reduce(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (accumulator: number, currentValue: any) => {
+            return accumulator + Number(currentValue);
+          },
+          0
+        );
+      // console.log(totalSum);
+      // setTotalPoolsData(filtered);
+      setTotalCaps({
+        borrowcap: totalBorrow,
+        marketcap: totalMarketCap,
+        supplycap: totalSupply
+      });
+    }
+  }, [
+    pool1Data,
+    pool2Data,
+    pool3Data,
+    isLoadingPool1Data,
+    isLoadingPool2Data,
+    isLoadingPool3Data,
+    chain
+  ]);
 
   useEffect(() => {
     if (!chain) return;
@@ -232,6 +302,71 @@ export default function Market() {
                 </div>
               </div>
             )}
+
+            {
+              <ResultHandler
+                isLoading={
+                  isLoadingPool1Data || isLoadingPool2Data || isLoadingPool3Data
+                }
+              >
+                {/* <div className={` w-14 h-14`}>
+                      <Doughnut
+                        data={donutdata}
+                        options={donutoptions}
+                        updateMode="resize"
+                      />
+                    </div> */}
+                <div
+                  className={` md:mx-20 w-max h-max flex flex-col flex-wrap gap-1 items-start justify-between my-auto `}
+                >
+                  <div
+                    className={` w-full gap-6 flex items-center  justify-between`}
+                  >
+                    <p className={`text-white/60 text-[10px] text-center`}>
+                      Total Market Capital Across Chain
+                    </p>
+                    <p className={`font-semibold`}>
+                      $
+                      {totalCaps?.marketcap.toLocaleString('en-US', {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                    {/* this neeeds to be changed */}
+                  </div>
+                  <div
+                    className={` w-full flex items-center gap-6  justify-between`}
+                  >
+                    <p className={`text-white/60 text-[10px] text-center`}>
+                      Total Available Across Chain
+                    </p>
+                    <p className={`font-semibold`}>
+                      $
+                      {totalCaps?.supplycap.toLocaleString('en-US', {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                    {/* this neeeds to be changed */}
+                  </div>
+                  <div
+                    className={`w-full flex items-center gap-6  justify-between`}
+                  >
+                    <p className={`text-white/60 text-[10px] text-center`}>
+                      Total Borrows Across Chain
+                    </p>
+                    <p className={`font-semibold`}>
+                      $
+                      {totalCaps?.borrowcap.toLocaleString('en-US', {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2
+                      })}
+                    </p>
+                    {/* this neeeds to be changed */}
+                  </div>
+                </div>
+              </ResultHandler>
+            }
           </div>
 
           <ResultHandler
