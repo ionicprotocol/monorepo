@@ -44,7 +44,8 @@
     "deploy:localhost": "hardhat --network localhost deploy --tags prod --no-compile",
     "deploy:localeth": "hardhat --network localeth deploy --tags prod --no-compile",
     "forge": "forge",
-    "hardhat": "hardhat"
+    "hardhat": "hardhat",
+    "test:integration": "ts-node tests-integration/index.ts"
   },
   "keywords": [],
   "author": "Ionic Protocol",

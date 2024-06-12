@@ -19320,7 +19320,7 @@ __metadata:
     "@wagmi/core": "npm:^2.2.1"
     netlify-cli: "npm:^16.3.1"
     react-confetti: "npm:^6.1.0"
-    ts-node: "npm:^10.9.1"
+    ts-node: "npm:^10.9.2"
     typescript: "npm:^5.2.2"
     viem: "npm:^2.7.16"
   languageName: unknown
@@ -24764,7 +24764,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.4.0, ts-node@npm:^10.7.0, ts-node@npm:^10.8.1, ts-node@npm:^10.9.1":
+"ts-node@npm:^10.4.0, ts-node@npm:^10.7.0, ts-node@npm:^10.8.1, ts-node@npm:^10.9.1, ts-node@npm:^10.9.2":
   version: 10.9.2
   resolution: "ts-node@npm:10.9.2"
   dependencies:
