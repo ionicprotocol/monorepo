@@ -48,28 +48,37 @@ export const deployPythPriceOracle = async ({
 
   const pythOracle = (await ethers.getContract("PythPriceOracle", deployer)) as PythPriceOracle;
   if (pythAssets.length > 0) {
-    const tx = await pythOracle.populateTransaction.setPriceFeeds(
-      pythAssets.map((f) => f.underlying),
-      pythAssets.map((f) => f.feed)
-    );
-
-    addTransaction({
-      to: tx.to,
-      value: tx.value ? tx.value.toString() : "0",
-      data: null,
-      contractMethod: {
-        inputs: [
-          { internalType: "address[]", name: "underlyings", type: "address[]" },
-          { internalType: "bytes32[]", name: "feeds", type: "bytes32[]" }
-        ],
-        name: "setPriceFeeds",
-        payable: false
-      },
-      contractInputsValues: {
-        underlyings: pythAssets.map((f) => f.underlying),
-        feeds: pythAssets.map((f) => f.feed)
-      }
-    });
+    if ((await pythOracle.owner()).toLowerCase() === deployer.address) {
+      const tx = await pythOracle.setPriceFeeds(
+        pythAssets.map((f) => f.underlying),
+        pythAssets.map((f) => f.feed)
+      );
+      await tx.wait();
+      console.log(`Set ${pythAssets.length}  price feeds for PythPriceOracle at ${tx.hash}`);
+    } else {
+      const tx = await pythOracle.populateTransaction.setPriceFeeds(
+        pythAssets.map((f) => f.underlying),
+        pythAssets.map((f) => f.feed)
+      );
+      addTransaction({
+        to: tx.to,
+        value: tx.value ? tx.value.toString() : "0",
+        data: null,
+        contractMethod: {
+          inputs: [
+            { internalType: "address[]", name: "underlyings", type: "address[]" },
+            { internalType: "bytes32[]", name: "feeds", type: "bytes32[]" }
+          ],
+          name: "setPriceFeeds",
+          payable: false
+        },
+        contractInputsValues: {
+          underlyings: pythAssets.map((f) => f.underlying),
+          feeds: pythAssets.map((f) => f.feed)
+        }
+      });
+      console.log(`Logged tx to set ${pythAssets.length} price feeds for PythPriceOracle `);
+    }
   }
 
   const underlyings = pythAssets.map((f) => f.underlying);
