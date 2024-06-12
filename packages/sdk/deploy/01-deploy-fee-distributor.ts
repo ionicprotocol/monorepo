@@ -1,9 +1,9 @@
 import { providers, utils, BigNumber } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
-import { logTransaction } from "../chainDeploy/helpers/logging";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
+import { logTransaction } from "../chainDeploy/helpers/logging";
 import { FeeDistributor } from "../typechain/FeeDistributor.sol/FeeDistributor";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }) => {

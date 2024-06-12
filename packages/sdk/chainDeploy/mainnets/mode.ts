@@ -2,11 +2,10 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
+import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
 import { addRedstoneFallbacks } from "../helpers/oracles/redstoneFallbacks";
-import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
-import { deployChainlinkOracle } from "../helpers";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
-import { PythAsset, RedStoneAsset, ChainlinkAsset, ChainlinkFeedBaseCurrency } from "../helpers/types";
+import { ChainlinkAsset, ChainlinkFeedBaseCurrency, PythAsset, RedStoneAsset } from "../helpers/types";
 
 import { writeTransactionsToFile } from "../helpers/logging";
 

@@ -1,7 +1,7 @@
 import { constants } from "ethers";
-import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
-
 import { DeployFunction } from "hardhat-deploy/types";
+
+import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 
 const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, getChainId }) => {
   const chainId = parseInt(await getChainId());
