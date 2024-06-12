@@ -5,6 +5,7 @@ import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
+import { addTransaction } from "../logging";
 
 // deployer vs multisig?
 const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
@@ -17,7 +18,7 @@ export const deployChainlinkOracle = async ({
   chainlinkAssets
 }: ChainlinkDeployFnParams): Promise<{ cpo: any; chainLinkv2: any }> => {
   const { deployer } = await getNamedAccounts();
-  let tx: providers.TransactionResponse;
+  let tx;
 
   //// Chainlink Oracle
 
@@ -48,25 +49,59 @@ export const deployChainlinkOracle = async ({
   const chainLinkv2 = await ethers.getContract("ChainlinkPriceOracleV2", deployer);
   if (usdBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.USD;
-    tx = await chainLinkv2.setPriceFeeds(
+    tx = await chainLinkv2.populateTransaction.setPriceFeeds(
       usdBasedFeeds.map((c) => underlying(assets, c.symbol)),
       usdBasedFeeds.map((c) => c.aggregator),
       feedCurrency
     );
-    console.log(`Set ${usdBasedFeeds.length} USD price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
-    await tx.wait();
-    console.log(`Set ${usdBasedFeeds.length} USD price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
+    addTransaction({
+      to: tx.to,
+      value: tx.value ? tx.value.toString() : "0",
+      data: null,
+      contractMethod: {
+        inputs: [
+          { internalType: "address[]", name: "underlyings", type: "address[]" },
+          { internalType: "address[]", name: "feeds", type: "address[]" },
+          { internalType: "uint8", name: "baseCurrency", type: "uint8" }
+        ],
+        name: "setPriceFeeds",
+        payable: false
+      },
+      contractInputsValues: {
+        underlyings: usdBasedFeeds.map((c) => underlying(assets, c.symbol)),
+        feeds: usdBasedFeeds.map((c) => c.aggregator),
+        baseCurrency: feedCurrency
+      }
+    });
+    console.log(`Set ${usdBasedFeeds.length} USD price feeds for ChainlinkPriceOracleV2`);
   }
   if (ethBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.ETH;
-    tx = await chainLinkv2.setPriceFeeds(
+    tx = await chainLinkv2.populateTransaction.setPriceFeeds(
       ethBasedFeeds.map((c) => underlying(assets, c.symbol)),
       ethBasedFeeds.map((c) => c.aggregator),
       feedCurrency
     );
-    console.log(`Set ${ethBasedFeeds.length} native price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
-    await tx.wait();
-    console.log(`Set ${ethBasedFeeds.length} native price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
+    addTransaction({
+      to: tx.to,
+      value: tx.value ? tx.value.toString() : "0",
+      data: null,
+      contractMethod: {
+        inputs: [
+          { internalType: "address[]", name: "underlyings", type: "address[]" },
+          { internalType: "address[]", name: "feeds", type: "address[]" },
+          { internalType: "uint8", name: "baseCurrency", type: "uint8" }
+        ],
+        name: "setPriceFeeds",
+        payable: false
+      },
+      contractInputsValues: {
+        underlyings: ethBasedFeeds.map((c) => underlying(assets, c.symbol)),
+        feeds: ethBasedFeeds.map((c) => c.aggregator),
+        baseCurrency: feedCurrency
+      }
+    });
+    console.log(`Set ${ethBasedFeeds.length} native price feeds for ChainlinkPriceOracleV2`);
   }
 
   const underlyings = chainlinkAssets.map((c) => underlying(assets, c.symbol));
@@ -79,9 +114,25 @@ export const deployChainlinkOracle = async ({
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const chainLinkv2Address = await addressesProvider.callStatic.getAddress("ChainlinkPriceOracleV2");
   if (chainLinkv2Address !== chainLinkv2.address) {
-    tx = await addressesProvider.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
-    await tx.wait();
-    console.log("setAddress ChainlinkPriceOracleV2: ", tx.hash);
+    tx = await addressesProvider.populateTransaction.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
+    addTransaction({
+      to: tx.to,
+      value: tx.value ? tx.value.toString() : "0",
+      data: tx.data,
+      contractMethod: {
+        inputs: [
+          { internalType: "string", name: "id", type: "address" },
+          { internalType: "address", name: "newAddress", type: "address" }
+        ],
+        name: "setAddress",
+        payable: false
+      },
+      contractInputsValues: {
+        id: "ChainlinkPriceOracleV2",
+        newAddress: chainLinkv2.address
+      }
+    });
+    console.log("setAddress ChainlinkPriceOracleV2");
   }
 
   return { cpo: cpo, chainLinkv2: chainLinkv2 };

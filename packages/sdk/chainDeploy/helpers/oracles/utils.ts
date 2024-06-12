@@ -1,4 +1,5 @@
 import { constants, Contract } from "ethers";
+import { addTransaction } from "../logging";
 
 export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: string[], oracleAddress: string) {
   const oracles: string[] = [];
@@ -12,9 +13,27 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
   }
 
   if (underlyings.length) {
-    const tx = await mpo.add(underlyings, oracles);
-    await tx.wait();
-    console.log(`Master Price Oracle updated for token ${underlyings.join(",")}`);
+    const tx = await mpo.populateTransaction.add(underlyings, oracles);
+
+    addTransaction({
+      to: tx.to,
+      value: tx.value ? tx.value.toString() : "0",
+      data: tx.data,
+      contractMethod: {
+        inputs: [
+          { internalType: "address[]", name: "underlyings", type: "address[]" },
+          { internalType: "address[]", name: "_oracles", type: "address[]" }
+        ],
+        name: "add",
+        payable: false
+      },
+      contractInputsValues: {
+        underlyings: underlyings,
+        _oracles: oracles
+      }
+    });
+
+    console.log(`Transaction for Master Price Oracle update for tokens ${underlyings.join(",")} added to log.`);
   }
 }
 
@@ -30,8 +49,26 @@ export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCh
   }
 
   if (underlyings.length) {
-    const tx = await mpo.addFallbacks(underlyings, oracles);
-    await tx.wait();
-    console.log(`Master Price Oracle Fallback updated for token ${underlyings.join(",")}`);
+    const tx = await mpo.populateTransaction.addFallbacks(underlyings, oracles);
+    addTransaction({
+      to: tx.to,
+      value: tx.value ? tx.value.toString() : "0",
+      data: tx.data,
+      contractMethod: {
+        inputs: [
+          { internalType: "address[]", name: "underlyings", type: "address[]" },
+          { internalType: "address[]", name: "_oracles", type: "address[]" }
+        ],
+        name: "addFallbacks",
+        payable: false
+      },
+      contractInputsValues: {
+        underlyings: underlyings,
+        _oracles: oracles
+      }
+    });
+    console.log(
+      `Transaction for Master Price Oracle update fallbacks for tokens ${underlyings.join(",")} added to log.`
+    );
   }
 }

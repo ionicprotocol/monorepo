@@ -8,6 +8,8 @@ import { deployChainlinkOracle } from "../helpers";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
 import { PythAsset, RedStoneAsset, ChainlinkAsset, ChainlinkFeedBaseCurrency } from "../helpers/types";
 
+import { writeTransactionsToFile } from "../helpers/logging";
+
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
   cgId: mode.specificParams.cgId,
@@ -127,4 +129,5 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     await ethers.provider.waitForTransaction(algebraSwapLiquidator.transactionHash);
   }
   console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
+  await writeTransactionsToFile();
 };
