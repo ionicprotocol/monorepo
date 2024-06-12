@@ -31,7 +31,11 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrowModeNative,
-  usePointsForSupplyModeNative
+  usePointsForSupplyModeNative,
+  usePointsForBorrowBaseMain,
+  usePointsForBorrowModeMain,
+  usePointsForSupplyBaseMain,
+  usePointsForSupplyModeMain
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
@@ -197,10 +201,18 @@ export default function Dashboard() {
 
     return healthData ?? '∞';
   }, [healthData, marketData]);
-  const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
+  const { data: supplyPointsNative, isLoading: isLoadingSupplyPointsNative } =
     usePointsForSupplyModeNative();
-  const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
+  const { data: borrowPointsNative, isLoading: isLoadingBorrowPointsNative } =
     usePointsForBorrowModeNative();
+  const { data: borrowPointsBase, isLoading: isLoadingBorrowPointsBase } =
+    usePointsForBorrowBaseMain();
+  const { data: borrowPointsMain, isLoading: isLoadingBorrowPointsMain } =
+    usePointsForBorrowModeMain();
+  const { data: supplyPointsBase, isLoading: isLoadingSupplyPointsBase } =
+    usePointsForSupplyBaseMain();
+  const { data: supplyPointsMain, isLoading: isLoadingSupplyPointsMain } =
+    usePointsForSupplyModeMain();
   const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
     useMaxBorrowAmounts(
       marketData?.assets ?? [],
@@ -208,9 +220,9 @@ export default function Dashboard() {
       +chain
     );
   const totalPoints = useMemo<number>(() => {
-    if (supplyPoints && borrowPoints) {
+    if (supplyPointsNative && borrowPointsNative && borrowPointsBase && borrowPointsMain && supplyPointsBase && supplyPointsMain) {
       return (
-        supplyPoints.rows.reduce(
+        supplyPointsNative.rows.reduce(
           (accumulator, current) =>
             accumulator +
             current.reduce(
@@ -220,7 +232,47 @@ export default function Dashboard() {
             ),
           0
         ) +
-        borrowPoints.rows.reduce(
+        borrowPointsNative.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        borrowPointsBase.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        borrowPointsMain.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        supplyPointsBase.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        supplyPointsMain.rows.reduce(
           (accumulator, current) =>
             accumulator +
             current.reduce(
@@ -234,7 +286,7 @@ export default function Dashboard() {
     }
 
     return 0;
-  }, [borrowPoints, supplyPoints]);
+  }, [supplyPointsNative, borrowPointsNative, borrowPointsBase, borrowPointsMain, supplyPointsBase, supplyPointsMain]);
   const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
     const healthDataAsNumber = parseFloat(healthData ?? '0');
@@ -411,7 +463,7 @@ export default function Dashboard() {
               <span>TOTAL POINTS</span>
               <ResultHandler
                 height="24"
-                isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
+                isLoading={isLoadingSupplyPointsNative || isLoadingBorrowPointsNative || isLoadingBorrowPointsBase || isLoadingBorrowPointsMain || isLoadingSupplyPointsBase || isLoadingSupplyPointsMain}
                 width="24"
               >
                 <span>
