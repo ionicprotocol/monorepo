@@ -77,7 +77,7 @@ export const deployPythPriceOracle = async ({
           feeds: pythAssets.map((f) => f.feed)
         }
       });
-      console.log(`Logged tx to set ${pythAssets.length} price feeds for PythPriceOracle `);
+      console.log(`Logged Transaction to set ${pythAssets.length} price feeds for PythPriceOracle `);
     }
   }
 

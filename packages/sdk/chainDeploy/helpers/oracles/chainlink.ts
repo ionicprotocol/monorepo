@@ -83,13 +83,13 @@ export const deployChainlinkOracle = async ({
           baseCurrency: feedCurrency
         }
       });
-      console.log(`Logged tx to set ${usdBasedFeeds.length} USD price feeds for ChainlinkPriceOracleV2`);
+      console.log(`Logged Transaction to set ${usdBasedFeeds.length} USD price feeds for ChainlinkPriceOracleV2`);
     }
   }
   if (ethBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.ETH;
     if ((await chainLinkv2.owner()).toLowerCase() === deployer.address) {
-      tx = await chainLinkv2.populateTransaction.setPriceFeeds(
+      tx = await chainLinkv2.setPriceFeeds(
         ethBasedFeeds.map((c) => underlying(assets, c.symbol)),
         ethBasedFeeds.map((c) => c.aggregator),
         feedCurrency
@@ -121,7 +121,7 @@ export const deployChainlinkOracle = async ({
           baseCurrency: feedCurrency
         }
       });
-      console.log(`Logged tx to set ${usdBasedFeeds.length} USD price feeds for ChainlinkPriceOracleV2`);
+      console.log(`Logged Transaction to set ${ethBasedFeeds.length} ETH price feeds for ChainlinkPriceOracleV2`);
     }
   }
 
@@ -129,8 +129,6 @@ export const deployChainlinkOracle = async ({
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
   await addUnderlyingsToMpo(mpo, underlyings, chainLinkv2.address);
-
-  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const chainLinkv2Address = await addressesProvider.callStatic.getAddress("ChainlinkPriceOracleV2");
@@ -147,7 +145,7 @@ export const deployChainlinkOracle = async ({
         data: null,
         contractMethod: {
           inputs: [
-            { internalType: "string", name: "id", type: "address" },
+            { internalType: "string", name: "id", type: "string" },
             { internalType: "address", name: "newAddress", type: "address" }
           ],
           name: "setAddress",
@@ -158,7 +156,7 @@ export const deployChainlinkOracle = async ({
           newAddress: chainLinkv2.address
         }
       });
-      console.log("setAddress ChainlinkPriceOracleV2");
+      console.log("Logged Transaction to setAddress ChainlinkPriceOracleV2 on AddressProvider");
     }
   }
 

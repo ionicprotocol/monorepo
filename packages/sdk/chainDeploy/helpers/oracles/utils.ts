@@ -39,7 +39,7 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
         }
       });
 
-      console.log(`Transaction for Master Price Oracle update for tokens ${underlyings.join(",")} added to log.`);
+      console.log(`Logged Transaction for Master Price Oracle update for tokens ${underlyings.join(",")}`);
     }
   }
 }
@@ -81,9 +81,7 @@ export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCh
           _oracles: oracles
         }
       });
-      console.log(
-        `Transaction for Master Price Oracle update fallbacks for tokens ${underlyings.join(",")} added to log.`
-      );
+      console.log(`Logged Transaction for Master Price Oracle update fallbacks for tokens ${underlyings.join(",")}.`);
     }
   }
 }
