@@ -19,7 +19,7 @@
     "postbuild": "du -sk dist/cjs; du -sk dist/esm",
     "clean": "rm -rf dist; rm -rf ./typechain; rm -rf ./artifacts; rm -rf ./abis",
     "artifacts": "echo '> Gathering artifacts...'; bash ./scripts/move-artifacts.sh",
-    "typechain": "echo '> Creating typechain types...'; [ ! -d ./typechain ] && typechain --target ethers-v5 --out-dir './typechain' './artifacts/**/*.json' --show-stack-traces",
+    "typechain": "rm -rf artifacts/build-info && echo '> Creating typechain types...'; [ ! -d ./typechain ] && typechain --target ethers-v5 --out-dir './typechain' './artifacts/**/*.json' --show-stack-traces",
     "build:forge": "echo '> Building contracts...'; cd lib/contracts && forge install && forge build --sizes",
     "build:sdk": "echo '> Compiling SDK...'; yarn run build:esm && yarn run build:cjs",
     "build:esm": "echo '> Compiling ESM SDK Module...'; tsc -p tsconfig-sdk.json",
