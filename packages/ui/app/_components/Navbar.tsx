@@ -180,6 +180,16 @@ export default function Navbar() {
               Bridge
             </p>
           </Link>
+          <Link
+            className="relative"
+            href="/stake"
+          >
+            <p
+              className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              Stake
+            </p>
+          </Link>
         </div>
 
         <div className="flex items-center md:justify-center gap-4 my-auto uppercase connect-button">
