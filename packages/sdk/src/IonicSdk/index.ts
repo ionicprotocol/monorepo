@@ -55,22 +55,31 @@ import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
 import AnkrBNBInterestRateModel from "./irm/AnkrBNBInterestRateModel";
 import AnkrFTMInterestRateModel from "./irm/AnkrFTMInterestRateModel";
 import JumpRateModel from "./irm/JumpRateModel";
-import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import { getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import {
+  addressesProviderAbi,
+  feeDistributorAbi,
+  ionicFlywheelLensRouterAbi,
+  ionicLiquidatorAbi,
+  poolDirectoryAbi,
+  poolLensAbi,
+  poolLensSecondaryAbi
+} from "../generated";
+import { Address, getContract, GetContractReturnType, PublicClient, WalletClient } from "viem";
 
 utils.Logger.setLogLevel(LogLevel.OFF);
-
-export type SupportedProvider = JsonRpcProvider | Web3Provider;
-export type SupportedSigners = Signer | SignerWithAddress;
+export type SupportedProvider = PublicClient;
+export type SupportedSigners = WalletClient;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
 export type StaticContracts = {
-  FeeDistributor: FeeDistributor;
-  IonicFlywheelLensRouter: IonicFlywheelLensRouter;
-  PoolDirectory: PoolDirectory;
-  PoolLens: PoolLens;
-  PoolLensSecondary: PoolLensSecondary;
-  IonicLiquidator: ILiquidator;
-  AddressesProvider: AddressesProvider;
-  [contractName: string]: Contract;
+  FeeDistributor: GetContractReturnType<typeof feeDistributorAbi>;
+  IonicFlywheelLensRouter: GetContractReturnType<typeof ionicFlywheelLensRouterAbi>;
+  PoolDirectory: GetContractReturnType<typeof poolDirectoryAbi>;
+  PoolLens: GetContractReturnType<typeof poolLensAbi>;
+  PoolLensSecondary: GetContractReturnType<typeof poolLensSecondaryAbi>;
+  IonicLiquidator: GetContractReturnType<typeof ionicLiquidatorAbi>;
+  AddressesProvider: GetContractReturnType<typeof addressesProviderAbi>;
+  [contractName: string]: GetContractReturnType;
 };
 
 export interface Logger {
@@ -84,8 +93,8 @@ export interface Logger {
 
 export class IonicBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
-  public _provider: SupportedProvider;
-  public _signer: SupportedSigners | null;
+  public _publicClient: PublicClient;
+  public _walletClient: WalletClient | null;
   static isSupportedProvider(provider: unknown): provider is SupportedProvider {
     return SignerWithAddress.isSigner(provider) || Signer.isSigner(provider);
   }
@@ -112,15 +121,15 @@ export class IonicBase {
 
   public logger: Logger;
 
-  public get provider(): SupportedProvider {
-    return this._provider;
+  public get publicClient(): SupportedProvider {
+    return this._publicClient;
   }
 
-  public get signer() {
-    if (!this._signer) {
-      throw new Error("No Signer available.");
+  public get walletClient() {
+    if (!this._walletClient) {
+      throw new Error("No Wallet Client available.");
     }
-    return this._signer;
+    return this._walletClient;
   }
 
   public set contracts(newContracts: Partial<StaticContracts>) {
@@ -129,11 +138,11 @@ export class IonicBase {
 
   public get contracts(): StaticContracts {
     return {
-      PoolDirectory: new Contract(
-        this.chainDeployment.PoolDirectory.address,
-        PoolDirectoryArtifact.abi,
-        this.provider
-      ) as PoolDirectory,
+      PoolDirectory: getContract({
+        abi: poolDirectoryAbi,
+        address: this.chainDeployment.PoolDirectory.address as Address,
+        client: this.publicClient
+      }),
       PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensArtifact.abi, this.provider) as PoolLens,
       PoolLensSecondary: new Contract(
         this.chainDeployment.PoolLensSecondary.address,
