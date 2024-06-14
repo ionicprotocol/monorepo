@@ -50,7 +50,7 @@ export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCh
   const oracles: string[] = [];
   const underlyings: string[] = [];
   for (const underlying of underlyingsToCheck) {
-    const currentOracle = await mpo.callStatic.oracles(underlying);
+    const currentOracle = await mpo.callStatic.fallbackOracles(underlying);
     if (currentOracle === constants.AddressZero || currentOracle !== oracleAddress) {
       oracles.push(oracleAddress);
       underlyings.push(underlying);

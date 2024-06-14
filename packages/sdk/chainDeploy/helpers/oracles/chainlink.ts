@@ -6,6 +6,7 @@ import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 import { addTransaction } from "../logging";
+import { ChainlinkAsset } from "../types";
 
 // deployer vs multisig?
 const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
@@ -43,10 +44,24 @@ export const deployChainlinkOracle = async ({
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("ChainlinkPriceOracleV2: ", cpo.address);
 
-  const usdBasedFeeds = chainlinkAssets.filter((asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.USD);
-  const ethBasedFeeds = chainlinkAssets.filter((asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.ETH);
-
   const chainLinkv2 = await ethers.getContract("ChainlinkPriceOracleV2", deployer);
+
+  const chainlinkAssetsToChange: ChainlinkAsset[] = [];
+  for (const asset of chainlinkAssets) {
+    const underlyingAsset = underlying(assets, asset.symbol);
+    const currentPriceFeed = await chainLinkv2.priceFeeds(underlyingAsset);
+    if (currentPriceFeed !== asset.aggregator) {
+      chainlinkAssetsToChange.push(asset);
+    }
+  }
+
+  const usdBasedFeeds = chainlinkAssetsToChange.filter(
+    (asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.USD
+  );
+  const ethBasedFeeds = chainlinkAssetsToChange.filter(
+    (asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.ETH
+  );
+
   if (usdBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.USD;
 

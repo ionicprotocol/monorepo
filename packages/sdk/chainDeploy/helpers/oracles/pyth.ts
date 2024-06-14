@@ -2,7 +2,7 @@ import { providers } from "ethers";
 
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { PythPriceOracle } from "../../../typechain/PythPriceOracle";
-import { PythDeployFnParams } from "../types";
+import { PythAsset, PythDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 import { addTransaction } from "../logging";
@@ -47,18 +47,26 @@ export const deployPythPriceOracle = async ({
   console.log("PythPriceOracle: ", pyth.address);
 
   const pythOracle = (await ethers.getContract("PythPriceOracle", deployer)) as PythPriceOracle;
-  if (pythAssets.length > 0) {
+
+  const pythAssetsToChange: PythAsset[] = [];
+  for (const pythAsset of pythAssets) {
+    const currentPriceFeed = await pythOracle.priceFeedIds(pythAsset.underlying);
+    if (currentPriceFeed !== pythAsset.feed) {
+      pythAssetsToChange.push(pythAsset);
+    }
+  }
+  if (pythAssetsToChange.length > 0) {
     if ((await pythOracle.owner()).toLowerCase() === deployer.address) {
       const tx = await pythOracle.setPriceFeeds(
-        pythAssets.map((f) => f.underlying),
-        pythAssets.map((f) => f.feed)
+        pythAssetsToChange.map((f) => f.underlying),
+        pythAssetsToChange.map((f) => f.feed)
       );
       await tx.wait();
-      console.log(`Set ${pythAssets.length}  price feeds for PythPriceOracle at ${tx.hash}`);
+      console.log(`Set ${pythAssetsToChange.length}  price feeds for PythPriceOracle at ${tx.hash}`);
     } else {
       const tx = await pythOracle.populateTransaction.setPriceFeeds(
-        pythAssets.map((f) => f.underlying),
-        pythAssets.map((f) => f.feed)
+        pythAssetsToChange.map((f) => f.underlying),
+        pythAssetsToChange.map((f) => f.feed)
       );
       addTransaction({
         to: tx.to,
@@ -73,11 +81,11 @@ export const deployPythPriceOracle = async ({
           payable: false
         },
         contractInputsValues: {
-          underlyings: pythAssets.map((f) => f.underlying),
-          feeds: pythAssets.map((f) => f.feed)
+          underlyings: pythAssetsToChange.map((f) => f.underlying),
+          feeds: pythAssetsToChange.map((f) => f.feed)
         }
       });
-      console.log(`Logged Transaction to set ${pythAssets.length} price feeds for PythPriceOracle `);
+      console.log(`Logged Transaction to set ${pythAssetsToChange.length} price feeds for PythPriceOracle `);
     }
   }
 
