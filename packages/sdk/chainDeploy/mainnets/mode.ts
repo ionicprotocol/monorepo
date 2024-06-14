@@ -53,12 +53,12 @@ const pythAssets: PythAsset[] = [
 const api3Assets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.ezETH,
-    aggregator: "0x3621b06BfFE478eB481adf65bbF139A052Ed7321",
+    aggregator: "0x85baF4a3d1494576d0941a146E24a8690Efa87D5",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   },
   {
     symbol: assetSymbols.weETH,
-    aggregator: "0x672020bd166A51A79Ada022B51C974775d17e0f6",
+    aggregator: "0x95a02CBb3f19D88b228858A48cFade87fd337c22",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   }
 ];
