@@ -93,16 +93,16 @@ const redemptionStrategies: RedemptionStrategy[] = [
     strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
   },
-  {
-    inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.ION)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.ION),
-    strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WETH)
-  },
+  // {
+  //   inputToken: underlying(assets, assetSymbols.WETH),
+  //   strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+  //   outputToken: underlying(assets, assetSymbols.ION)
+  // },
+  // {
+  //   inputToken: underlying(assets, assetSymbols.ION),
+  //   strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
+  //   outputToken: underlying(assets, assetSymbols.WETH)
+  // },
   {
     inputToken: underlying(assets, assetSymbols.mBTC),
     strategy: RedemptionStrategyContract.AlgebraSwapLiquidator,
