@@ -74,7 +74,7 @@ export const chartoptions = {
     title: {
       display: true,
       position: 'top' as const,
-      text: 'Supply APR'
+      text: 'Borrow/Supply APY'
     }
   },
   responsive: true,
@@ -120,6 +120,22 @@ export const chartoptions2 = {
 
 const x = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 const y = [87, -73, 24, 45, 75, -44, 76];
+
+export function getChartData(x: string[], y: number[]) {
+  const chartdata = {
+    datasets: [
+      {
+        backgroundColor: '#3bff8910',
+        borderColor: '#3bff89ff',
+        data: y,
+        fill: true,
+        label: 'APY'
+      }
+    ],
+    labels: x
+  };
+  return chartdata;
+}
 
 export const chartdata = {
   datasets: [

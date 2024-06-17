@@ -45,6 +45,7 @@ import {
   chartdata2,
   chartoptions,
   chartoptions2,
+  getChartData,
   donutdata,
   donutoptions
 } from '../../../_constants/mock';
@@ -67,6 +68,11 @@ import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 
+interface IGraph {
+  borrowAtY: number[];
+  supplyAtY: number[];
+  valAtX: string[];
+}
 const Asset = ({ params }: IProp) => {
   const { address: acc, isConnected } = useAccount();
   const { data: balance } = useBalance({
@@ -96,7 +102,11 @@ const Asset = ({ params }: IProp) => {
   const [selectedMarketData, setSelectedMarketData] = useState<
     MarketData | undefined
   >();
-
+  const [graph, setGraph] = useState<IGraph>({
+    borrowAtY: [1, 0.1, 0.7, 0.3],
+    supplyAtY: [1, 0.7, 0.2, 0.5],
+    valAtX: ['a', 'b', 'c', 'd']
+  });
   //Hooks -----------------------------------------------------
   const totalBorrows = extractAndConvertStringTOValue(
     gettingBorrows as string
@@ -116,6 +126,97 @@ const Asset = ({ params }: IProp) => {
     pools[2].chain
   );
 
+  /*
+borrowApy
+: 
+0.6306738432027004
+chain_id
+: 
+34443
+created_at
+: 
+"2024-06-06T15:09:48.103634+00:00"
+ctoken_address
+: 
+"0xdb8ee6d1114021a94a045956bbeecf35d13a30f2"
+id
+: 
+1
+supplyApy
+: 
+0.015372485289621984
+totalSupplyApy
+: 
+0.015372485289621984
+underlying_address
+: 
+"0x4200000000000000000000000000000000000006"
+*/
+
+  function extractTime(isoTimestamp: number) {
+    // Parse the ISO 8601 timestamp
+    let date = new Date(isoTimestamp);
+    // Extract the time component and format it
+    let hours = String(date.getUTCHours()).padStart(2, '0');
+    let minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    let seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+    // Combine to get the full time string
+    let timeStr = `${hours}:${minutes}`;
+    return timeStr;
+  }
+
+  useEffect(() => {
+    const SUPABASE_CLIENT_ANON_KEY =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
+    async function fetchData() {
+      try {
+        const response = await fetch(
+          'https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/asset_total_apy_history?ctoken_address=eq.0xdb8ee6d1114021a94a045956bbeecf35d13a30f2&select=*',
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              apikey: SUPABASE_CLIENT_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_CLIENT_ANON_KEY}`
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+        let borrowAtY: number[] = [];
+        let supplyAtY: number[] = [];
+        let valAtX: string[] = [];
+        data.forEach((val: { borrowApy: number }) =>
+          borrowAtY.push(Number(val.borrowApy.toFixed(4)))
+        );
+        data.forEach((val: { supplyApy: number }) =>
+          supplyAtY.push(Number(val.supplyApy.toFixed(4)))
+        );
+        data.forEach((val: { created_at: number }) =>
+          valAtX.push(extractTime(val.created_at))
+        );
+        console.log();
+        console.log(valAtX);
+        setGraph({
+          borrowAtY,
+          supplyAtY,
+          valAtX
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    // Call the function to fetch data
+    fetchData();
+  }, []);
   useEffect(() => {
     if (!chain) return;
     if (selectedPool === pools[0].id && +chain === 34443 && pool1Data) {
@@ -309,15 +410,18 @@ const Asset = ({ params }: IProp) => {
 
           <div className={`relative w-full h-28`}>
             <Line
-              data={chartdata}
+              data={getChartData(
+                graph.valAtX,
+                info === INFO.BORROW ? graph.borrowAtY : graph.supplyAtY
+              )}
               options={chartoptions}
               updateMode="resize"
             />
-            <div
+            {/* <div
               className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60  `}
             >
               <span>Comming Soon</span>
-            </div>
+            </div> */}
           </div>
         </div>
         <div
