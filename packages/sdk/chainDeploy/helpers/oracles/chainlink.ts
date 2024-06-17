@@ -65,7 +65,7 @@ export const deployChainlinkOracle = async ({
   if (usdBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.USD;
 
-    if ((await chainLinkv2.owner()).toLowerCase() === deployer.address) {
+    if ((await chainLinkv2.owner()).toLowerCase() === deployer.address.toLowerCase()) {
       tx = await chainLinkv2.setPriceFeeds(
         usdBasedFeeds.map((c) => underlying(assets, c.symbol)),
         usdBasedFeeds.map((c) => c.aggregator),
@@ -103,7 +103,7 @@ export const deployChainlinkOracle = async ({
   }
   if (ethBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.ETH;
-    if ((await chainLinkv2.owner()).toLowerCase() === deployer.address) {
+    if ((await chainLinkv2.owner()).toLowerCase() === deployer.address.toLowerCase()) {
       tx = await chainLinkv2.setPriceFeeds(
         ethBasedFeeds.map((c) => underlying(assets, c.symbol)),
         ethBasedFeeds.map((c) => c.aggregator),
