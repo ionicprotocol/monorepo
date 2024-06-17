@@ -15,7 +15,7 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
   }
 
   if (underlyings.length) {
-    if ((await mpo.callStatic.admin()).toLowerCase() === deployer) {
+    if ((await mpo.callStatic.admin()).toLowerCase() === deployer.toLowerCase()) {
       const tx = await mpo.add(underlyings, oracles);
       await tx.wait();
       console.log(`Master Price Oracle updated oracles for tokens ${underlyings.join(",")} at ${tx.hash}`);
@@ -58,7 +58,7 @@ export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCh
   }
 
   if (underlyings.length) {
-    if ((await mpo.callStatic.admin()).toLowerCase() === deployer) {
+    if ((await mpo.callStatic.admin()).toLowerCase() === deployer.toLowerCase()) {
       const tx = await mpo.addFallbacks(underlyings, oracles);
       await tx.wait();
       console.log(`Master Price Oracle updated fallbacks for tokens ${underlyings.join(",")} at tx ${tx.hash}.`);
