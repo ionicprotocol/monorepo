@@ -493,7 +493,7 @@ const Asset = ({ params }: IProp) => {
             <div
               className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60  `}
             >
-              <span>Comming Soon</span>
+              <span>Coming Soon</span>
             </div>
           </div>
         </div>
