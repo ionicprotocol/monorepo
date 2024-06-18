@@ -112,46 +112,10 @@ const Asset = ({ params }: IProp) => {
     gettingBorrows as string
   ).value2;
 
-  const [poolData, setPoolData] = useState<PoolData>();
-  const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
-    pools[0].id,
-    pools[0].chain
+  const { data: poolData, isLoading: isLoadingPool1Data } = useFusePoolData(
+    pool as string,
+    Number(chain)
   );
-  const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
-    pools[1].id,
-    pools[1].chain
-  );
-  const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
-    pools[2].id,
-    pools[2].chain
-  );
-
-  /*
-borrowApy
-: 
-0.6306738432027004
-chain_id
-: 
-34443
-created_at
-: 
-"2024-06-06T15:09:48.103634+00:00"
-ctoken_address
-: 
-"0xdb8ee6d1114021a94a045956bbeecf35d13a30f2"
-id
-: 
-1
-supplyApy
-: 
-0.015372485289621984
-totalSupplyApy
-: 
-0.015372485289621984
-underlying_address
-: 
-"0x4200000000000000000000000000000000000006"
-*/
 
   function extractTime(isoTimestamp: number) {
     // Parse the ISO 8601 timestamp
@@ -159,7 +123,7 @@ underlying_address
     // Extract the time component and format it
     let hours = String(date.getUTCHours()).padStart(2, '0');
     let minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    let seconds = String(date.getUTCSeconds()).padStart(2, '0');
+    let seconds = String(date.getUTCSeconds()).padStart(2, '0');  
 
     // Combine to get the full time string
     let timeStr = `${hours}:${minutes}`;
@@ -217,20 +181,7 @@ underlying_address
     // Call the function to fetch data
     fetchData();
   }, []);
-  useEffect(() => {
-    if (!chain) return;
-    if (selectedPool === pools[0].id && +chain === 34443 && pool1Data) {
-      setPoolData(pool1Data);
-    }
-    if (selectedPool === pools[1].id && +chain === 34443 && pool2Data) {
-      setPoolData(pool2Data);
-    }
-    if (selectedPool === pools[2].id && +chain === 8453 && pool3Data) {
-      setPoolData(pool3Data);
-    }
-  }, [pool1Data, pool2Data, pool3Data, selectedPool, chain]);
 
-  // const [selectedSymbol, setSelectedSymbol] = useState<string>();
   useEffect(() => {
     async function getmarketData() {
       try {

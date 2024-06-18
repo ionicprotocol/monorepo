@@ -406,7 +406,7 @@ export default function Market() {
                       loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                     }
                     membership={val?.membership ?? false}
-                    pool={pool as string}
+                    pool={selectedPool}
                     selectedChain={chainId}
                     selectedMarketData={selectedMarketData}
                     selectedPoolId={selectedPool}
