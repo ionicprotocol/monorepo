@@ -67,6 +67,13 @@ import Swap from 'ui/app/_components/popup/Swap';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
+import millify from 'millify';
+import { formatEther, formatUnits } from 'viem';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
+import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
+import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
+import { NativePricedIonicAsset } from 'types/dist';
 
 interface IGraph {
   borrowAtY: number[];
@@ -85,7 +92,7 @@ const Asset = ({ params }: IProp) => {
   //URL passed Data ----------------------------
   const availableAPR = searchParams.get('availableAPR');
   const borrowAPR = searchParams.get('borrowAPR');
-  const collateralAPR = searchParams.get('collateralAPR');
+  const gettingtotalSupplied = searchParams.get('totalSupplied');
   const lendingSupply = searchParams.get('lendingSupply');
   const gettingBorrows = searchParams.get('totalBorrows');
   const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
@@ -110,7 +117,10 @@ const Asset = ({ params }: IProp) => {
   //Hooks -----------------------------------------------------
   const totalBorrows = extractAndConvertStringTOValue(
     gettingBorrows as string
-  ).value2;
+  ).value1;
+  const totalSupplied = extractAndConvertStringTOValue(
+    gettingtotalSupplied as string
+  ).value1;
 
   const { data: poolData, isLoading: isLoadingPool1Data } = useFusePoolData(
     pool as string,
@@ -123,7 +133,7 @@ const Asset = ({ params }: IProp) => {
     // Extract the time component and format it
     let hours = String(date.getUTCHours()).padStart(2, '0');
     let minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    let seconds = String(date.getUTCSeconds()).padStart(2, '0');  
+    let seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
     // Combine to get the full time string
     let timeStr = `${hours}:${minutes}`;
@@ -133,6 +143,7 @@ const Asset = ({ params }: IProp) => {
   useEffect(() => {
     const SUPABASE_CLIENT_ANON_KEY =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
+    // console.log(process.env.SUPABASE_CLIENT_ANON_KEY);
     async function fetchData() {
       try {
         const response = await fetch(
@@ -158,10 +169,10 @@ const Asset = ({ params }: IProp) => {
         let supplyAtY: number[] = [];
         let valAtX: string[] = [];
         data.forEach((val: { borrowApy: number }) =>
-          borrowAtY.push(Number(val.borrowApy.toFixed(4)))
+          borrowAtY.push(Number(val.borrowApy.toFixed(4)) * 100)
         );
         data.forEach((val: { supplyApy: number }) =>
-          supplyAtY.push(Number(val.supplyApy.toFixed(4)))
+          supplyAtY.push(Number(val.supplyApy.toFixed(4)) * 100)
         );
         data.forEach((val: { created_at: number }) =>
           valAtX.push(extractTime(val.created_at))
@@ -200,6 +211,84 @@ const Asset = ({ params }: IProp) => {
   const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
     poolData?.assets.map((asset) => asset.cToken) ?? []
   );
+  // Borrow cap numbers -----------------
+  const { data: borrowCap } = useBorrowCapsDataForAsset(
+    selectedMarketData?.cToken as string,
+    Number(chain)
+  );
+  const { data: usdPrice } = useUsdPrice(chain as string);
+
+  const pricePerSingleAsset = useMemo<number>(
+    () =>
+      parseFloat(
+        formatEther(
+          selectedMarketData?.underlyingPrice?.toBigInt() || BigInt(0)
+        )
+      ) * (usdPrice ?? 0),
+    [selectedMarketData, usdPrice]
+  );
+  const borrowCapAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          borrowCap?.totalBorrowCap.toBigInt() || BigInt(0),
+          selectedMarketData?.underlyingDecimals.toNumber() || 0
+        )
+      ),
+    [borrowCap, selectedMarketData?.underlyingDecimals]
+  );
+
+  const borrowCapAsFiat = useMemo<number>(
+    () => pricePerSingleAsset * borrowCapAsNumber,
+    [pricePerSingleAsset, borrowCapAsNumber]
+  );
+
+  // Supply cap number ----------------------------
+
+  const { data: supplyCap } = useSupplyCapsDataForAsset(
+    comptrollerAddress as string,
+    selectedMarketData?.cToken as string,
+    Number(chain)
+  );
+  const supplyCapAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          supplyCap?.supplyCaps.toBigInt() || BigInt(0),
+          selectedMarketData?.underlyingDecimals.toNumber() || 0
+        )
+      ),
+    [supplyCap, selectedMarketData?.underlyingDecimals]
+  );
+  const supplyCapAsFiat = useMemo<number>(
+    () => pricePerSingleAsset * supplyCapAsNumber,
+    [pricePerSingleAsset, supplyCapAsNumber]
+  );
+  const totalSupplyAsNumber = useMemo<number>(
+    () =>
+      parseFloat(
+        formatUnits(
+          selectedMarketData?.totalSupply.toBigInt() || BigInt(0),
+          selectedMarketData?.underlyingDecimals.toNumber() || 0
+        )
+      ),
+    [selectedMarketData?.totalSupply, selectedMarketData?.underlyingDecimals]
+  );
+  // const maxSupplyAmount = useMemo(() => {
+  //   if (!comptrollerAddress && !selectedMarketData) return ;
+  //   const { data: maxSupplyAmountnum, isLoading: isLoadingMaxSupply } =
+  //     useMaxSupplyAmount(
+  //       //@ts-ignore
+  //       selectedMarketData,
+  //       selectedMarketData?.cToken || "",
+  //       chain
+  //     );
+  //   return maxSupplyAmountnum;
+  // }, [selectedMarketData, comptrollerAddress, chain]);
+  
+  // const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
+  // //@ts-ignore
+  // useMaxSupplyAmount(selectedMarketData, selectedMarketData?.cToken , chain);
 
   return (
     <div className={` pb-10 relative `}>
@@ -242,7 +331,9 @@ const Asset = ({ params }: IProp) => {
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Total Borrows</p>
-            <p className={`font-semibold`}>${totalBorrows}</p>
+            <p className={`font-semibold`}>
+              {totalBorrows} {selectedSymbol}
+            </p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
@@ -297,10 +388,24 @@ const Asset = ({ params }: IProp) => {
                   TOTAL {info === INFO.BORROW ? 'Borrowed' : 'Supplied'}
                 </p>
                 <p className={`font-semibold`}>
-                  ${info === INFO.BORROW ? totalBorrows : lendingSupply}
+                  {info === INFO.BORROW ? totalBorrows : totalSupplied}{' '}
+                  {selectedSymbol}
                 </p>
                 <p className={`font-semibold text-[8px] text-white/30`}>
-                  ${totalBorrows} of ${totalBorrows}
+                  $
+                  {millify(
+                    Math.round(
+                      info === INFO.BORROW
+                        ? (selectedMarketData?.totalBorrowFiat as number)
+                        : (selectedMarketData?.totalSupplyFiat as number)
+                    )
+                  )}{' '}
+                  of $
+                  {millify(
+                    Math.round(
+                      info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
+                    )
+                  )}
                 </p>
                 {/* this neeeds to be changed */}
               </div>
@@ -309,7 +414,7 @@ const Asset = ({ params }: IProp) => {
               >
                 <p className={`text-white/60 text-[10px]`}>APR</p>
                 <p className={`font-semibold`}>
-                  ${info === INFO.BORROW ? borrowAPR : availableAPR}
+                  {info === INFO.BORROW ? borrowAPR : availableAPR}%
                 </p>
                 {/* this neeeds to be changed */}
               </div>
@@ -385,8 +490,11 @@ const Asset = ({ params }: IProp) => {
             Wallet Info
           </p>
           <p className={` font-semibold text-lg pt-1 `}>
-            {isConnected ? Number(balance?.formatted).toFixed(4) : 0}{' '}
-            {balance?.symbol}
+            {/* {formatUnits(
+              maxSupplyAmount?.bigNumber.toBigInt() || BigInt(0),
+              selectedMarketData?.underlyingDecimals.toNumber() || 0
+            )} */}
+            
           </p>
           <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
           <p
@@ -397,7 +505,10 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
-            <span> {lendingSupply} USDC</span>
+            <span>
+              {' '}
+              {lendingSupply} {selectedSymbol}
+            </span>
             <div
               className={`rounded-lg bg-accent text-sm cursor-pointer text-black py-1 px-3`}
               onClick={async () => {
@@ -426,7 +537,10 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
-            <span> {totalBorrows} USDC</span>
+            <span>
+              {' '}
+              {totalBorrows} {selectedSymbol}
+            </span>
             <div
               className={`rounded-lg bg-graylite text-sm cursor-pointer text-white/50 py-1 px-3`}
               onClick={async () => {
@@ -445,7 +559,7 @@ const Asset = ({ params }: IProp) => {
           <div
             className={`text-white/60 w-full flex items-center justify-between text-[10px] `}
           >
-            ${totalBorrows}
+            ${extractAndConvertStringTOValue(gettingBorrows as string).value2}
           </div>
           <div
             className={`flex my-4 items-center justify-center w-full py-2 px-3 rounded-xl border border-[#f3fa96ff] text-[#f3fa96ff]`}

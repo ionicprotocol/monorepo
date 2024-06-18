@@ -122,6 +122,7 @@ const PoolRows = ({
             // selectedMarketData: selectedMarketDataPassing,
             selectedSymbol: asset,
             totalBorrows: totalBorrowing,
+            totalSupplied: totalSupplied,
             totalCollateral: 123456
           }
         }}
