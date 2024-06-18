@@ -1,12 +1,10 @@
 import { underlying } from "@ionicprotocol/types";
-import { providers } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
-import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
+import { addTransaction } from "../logging";
+import { ChainlinkAsset, ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
-import { addTransaction } from "../logging";
-import { ChainlinkAsset } from "../types";
 
 // deployer vs multisig?
 const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";

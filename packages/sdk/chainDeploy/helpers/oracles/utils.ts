@@ -1,9 +1,13 @@
 import { constants, Contract } from "ethers";
+
 import { addTransaction } from "../logging";
 
-export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: string[], oracleAddress: string) {
-  const hre = require("hardhat");
-  const { deployer } = await hre.getNamedAccounts();
+export async function addUnderlyingsToMpo(
+  mpo: Contract,
+  underlyingsToCheck: string[],
+  oracleAddress: string,
+  deployer: string
+) {
   const oracles: string[] = [];
   const underlyings: string[] = [];
   for (const underlying of underlyingsToCheck) {
@@ -44,9 +48,12 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
   }
 }
 
-export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCheck: string[], oracleAddress: string) {
-  const hre = require("hardhat");
-  const { deployer } = await hre.getNamedAccounts();
+export async function addUnderlyingsToMpoFallback(
+  mpo: Contract,
+  underlyingsToCheck: string[],
+  oracleAddress: string,
+  deployer: string
+) {
   const oracles: string[] = [];
   const underlyings: string[] = [];
   for (const underlying of underlyingsToCheck) {
