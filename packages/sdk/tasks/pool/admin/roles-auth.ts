@@ -1,5 +1,7 @@
+import { BigNumber } from "ethers";
 import { task, types } from "hardhat/config";
 
+import { IonicComptroller } from "../../../typechain";
 import { Comptroller } from "../../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../../typechain/ComptrollerFirstExtension";
 import { PoolDirectory } from "../../../typechain/PoolDirectory";
@@ -36,10 +38,10 @@ task("pool:pause:guardian", "Set pause guardian on all pools")
 
     for (const pool of poolData) {
       const poolExtension = (await hre.ethers.getContractAt(
-        "ComptrollerFirstExtension",
+        "IonicComptroller",
         pool.comptroller,
         admin
-      )) as ComptrollerFirstExtension;
+      )) as IonicComptroller;
 
       const currentPauseGuardian = await poolExtension.callStatic.pauseGuardian();
       console.log(`pool ${pool.comptroller} guardian ${currentPauseGuardian}`);
@@ -47,9 +49,22 @@ task("pool:pause:guardian", "Set pause guardian on all pools")
         console.log("Guardian already set to the new guardian. Skipping.");
         continue;
       }
-
-      const tx = await poolExtension._setPauseGuardian(taskArgs.guardian);
-      await tx.wait();
-      console.log(`Set the pause guardian on pool ${pool.comptroller} to ${taskArgs.guardian}: ${tx.hash}`);
+      const owner = await poolExtension.callStatic.admin();
+      if (owner.toLowerCase() !== admin.address.toLowerCase()) {
+        console.log(`Admin ${admin.address} is not the owner of pool ${pool.comptroller}. Printing data.`);
+        const data = await poolExtension.populateTransaction._setPauseGuardian(taskArgs.guardian);
+        console.log("data: ", data);
+      } else {
+        const result = await poolExtension.callStatic._setPauseGuardian(taskArgs.guardian);
+        if (result.eq(BigNumber.from(0))) {
+          const tx = await poolExtension._setPauseGuardian(taskArgs.guardian);
+          await tx.wait();
+          console.log(`Set the pause guardian on pool ${pool.comptroller} to ${taskArgs.guardian}: ${tx.hash}`);
+        } else {
+          console.log("result: ", result.toString());
+          console.log(`Failed to set the pause guardian on pool ${pool.comptroller} to ${taskArgs.guardian}`);
+        }
+      }
+      // await tx.wait();
     }
   });
