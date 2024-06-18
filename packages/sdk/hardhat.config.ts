@@ -75,7 +75,8 @@ const config: HardhatUserConfig = {
     bob: { default: 2 },
     rando: { default: 3 },
     multisig: {
-      34443: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2"
+      34443: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
+      8453: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   networks: {
