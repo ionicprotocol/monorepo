@@ -1,9 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
-import { Widget } from '../_components/stake/Widget';
+const Widget = dynamic(() => import('../_components/stake/Widget'), {
+  ssr: false
+});
+
+// import { Widget } from '../_components/stake/Widget';
 
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
@@ -186,3 +191,5 @@ export default function Stake() {
     </main>
   );
 }
+
+// export default dynamic(() => Promise.resolve(Stake), { ssr: false });
