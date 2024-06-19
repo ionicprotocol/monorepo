@@ -76,6 +76,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { NativePricedIonicAsset } from 'types/dist';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 
 interface IGraph {
   borrowAtY: number[];
@@ -330,6 +331,17 @@ const Asset = ({ params }: IProp) => {
   // const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
   // //@ts-ignore
   // useMaxSupplyAmount(selectedMarketData, selectedMarketData?.cToken , chain);
+  // if (selectedMarketData){}
+  // const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
+  //  //@ts-ignore
+  //   useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chain);
+    
+  // const gotMaxBorrowAmount = useMemo<string>(()=>{
+  //   console.log(selectedMarketData)
+  //   return formatUnits(
+  //   maxBorrowAmount?.bigNumber.toBigInt() || BigInt(0),
+  //   selectedMarketData?.underlyingDecimals.toNumber() || 0
+  // )},[selectedMarketData, comptrollerAddress , chain])
 
   return (
     <div className={` pb-10 relative `}>
@@ -362,7 +374,9 @@ const Asset = ({ params }: IProp) => {
         <div className={`w-full flex items-center gap-4`}>
           <div className={`flex flex-col items-start justify-center  gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Total Supply</p>
-            <p className={`font-semibold`}>{totalSupplied} {selectedSymbol}</p>
+            <p className={`font-semibold`}>
+              {totalSupplied} {selectedSymbol}
+            </p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
@@ -540,10 +554,8 @@ const Asset = ({ params }: IProp) => {
             Wallet Info
           </p>
           <p className={` font-semibold text-lg pt-1 `}>
-            {/* {formatUnits(
-              maxSupplyAmount?.bigNumber.toBigInt() || BigInt(0),
-              selectedMarketData?.underlyingDecimals.toNumber() || 0
-            )} */}
+            {isConnected ? Number(balance?.formatted).toFixed(4) : 0}{' '}
+            {balance?.symbol}
           </p>
           <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
           <p
@@ -587,8 +599,9 @@ const Asset = ({ params }: IProp) => {
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
             <span>
-              {' '}
-              {totalBorrows} {selectedSymbol}
+              {/* {' '}
+              {totalBorrows} {selectedSymbol} */}
+              {/* {gotMaxBorrowAmount} */}
             </span>
             <div
               className={`rounded-lg bg-graylite text-sm cursor-pointer text-white/50 py-1 px-3`}
