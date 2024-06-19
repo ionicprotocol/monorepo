@@ -5,7 +5,7 @@ export const logTransaction = (description: string, data: string) => {
   console.log(`Data: ${data}`);
 };
 
-let transactions: any[] = [];
+const transactions: any[] = [];
 
 export const addTransaction = (tx: any) => {
   transactions.push(tx);

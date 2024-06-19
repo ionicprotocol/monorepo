@@ -1,12 +1,10 @@
 import { underlying } from "@ionicprotocol/types";
-import { providers } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
-import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
+import { addTransaction } from "../logging";
+import { ChainlinkAsset, ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
-import { addTransaction } from "../logging";
-import { ChainlinkAsset } from "../types";
 
 // deployer vs multisig?
 const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
@@ -65,7 +63,7 @@ export const deployChainlinkOracle = async ({
   if (usdBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.USD;
 
-    if ((await chainLinkv2.owner()).toLowerCase() === deployer.address) {
+    if ((await chainLinkv2.owner()).toLowerCase() === deployer.toLowerCase()) {
       tx = await chainLinkv2.setPriceFeeds(
         usdBasedFeeds.map((c) => underlying(assets, c.symbol)),
         usdBasedFeeds.map((c) => c.aggregator),
@@ -103,7 +101,7 @@ export const deployChainlinkOracle = async ({
   }
   if (ethBasedFeeds.length > 0) {
     const feedCurrency = ChainlinkFeedBaseCurrency.ETH;
-    if ((await chainLinkv2.owner()).toLowerCase() === deployer.address) {
+    if ((await chainLinkv2.owner()).toLowerCase() === deployer.toLowerCase()) {
       tx = await chainLinkv2.setPriceFeeds(
         ethBasedFeeds.map((c) => underlying(assets, c.symbol)),
         ethBasedFeeds.map((c) => c.aggregator),
@@ -148,7 +146,7 @@ export const deployChainlinkOracle = async ({
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const chainLinkv2Address = await addressesProvider.callStatic.getAddress("ChainlinkPriceOracleV2");
   if (chainLinkv2Address !== chainLinkv2.address) {
-    if ((await addressesProvider.owner()).toLowerCase() === deployer.address) {
+    if ((await addressesProvider.owner()).toLowerCase() === deployer.toLowerCase()) {
       tx = await addressesProvider.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
       await tx.wait();
       console.log(`setAddress ChainlinkPriceOracleV2 at ${tx.hash}`);

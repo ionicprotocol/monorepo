@@ -1,9 +1,13 @@
 import { constants, Contract } from "ethers";
+
 import { addTransaction } from "../logging";
 
-export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: string[], oracleAddress: string) {
-  const hre = require("hardhat");
-  const { deployer } = await hre.getNamedAccounts();
+export async function addUnderlyingsToMpo(
+  mpo: Contract,
+  underlyingsToCheck: string[],
+  oracleAddress: string,
+  deployer: string
+) {
   const oracles: string[] = [];
   const underlyings: string[] = [];
   for (const underlying of underlyingsToCheck) {
@@ -15,7 +19,7 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
   }
 
   if (underlyings.length) {
-    if ((await mpo.callStatic.admin()).toLowerCase() === deployer) {
+    if ((await mpo.callStatic.admin()).toLowerCase() === deployer.toLowerCase()) {
       const tx = await mpo.add(underlyings, oracles);
       await tx.wait();
       console.log(`Master Price Oracle updated oracles for tokens ${underlyings.join(",")} at ${tx.hash}`);
@@ -44,9 +48,12 @@ export async function addUnderlyingsToMpo(mpo: Contract, underlyingsToCheck: str
   }
 }
 
-export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCheck: string[], oracleAddress: string) {
-  const hre = require("hardhat");
-  const { deployer } = await hre.getNamedAccounts();
+export async function addUnderlyingsToMpoFallback(
+  mpo: Contract,
+  underlyingsToCheck: string[],
+  oracleAddress: string,
+  deployer: string
+) {
   const oracles: string[] = [];
   const underlyings: string[] = [];
   for (const underlying of underlyingsToCheck) {
@@ -58,7 +65,7 @@ export async function addUnderlyingsToMpoFallback(mpo: Contract, underlyingsToCh
   }
 
   if (underlyings.length) {
-    if ((await mpo.callStatic.admin()).toLowerCase() === deployer) {
+    if ((await mpo.callStatic.admin()).toLowerCase() === deployer.toLowerCase()) {
       const tx = await mpo.addFallbacks(underlyings, oracles);
       await tx.wait();
       console.log(`Master Price Oracle updated fallbacks for tokens ${underlyings.join(",")} at tx ${tx.hash}.`);

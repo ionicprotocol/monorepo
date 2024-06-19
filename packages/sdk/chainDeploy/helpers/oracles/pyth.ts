@@ -1,11 +1,9 @@
-import { providers } from "ethers";
-
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { PythPriceOracle } from "../../../typechain/PythPriceOracle";
+import { addTransaction } from "../logging";
 import { PythAsset, PythDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
-import { addTransaction } from "../logging";
 
 const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
 export const deployPythPriceOracle = async ({
