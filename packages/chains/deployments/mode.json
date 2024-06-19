@@ -77,6 +77,9 @@
     "FixedNativePriceOracle": {
       "address": "0x1D7669b6BDfdb83066dd7C0aDa4B630b25cBc28a"
     },
+    "GlobalPauser": {
+      "address": "0x5d498338C6e38555020fb24b977f5e2817A50E3F"
+    },
     "IonicFlywheelLensRouter": {
       "address": "0x79eb8e77dA2621Bd368f4cb41F328529B6f5db70"
     },
