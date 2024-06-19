@@ -205,7 +205,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionaero',
+        market: 'ionaero_base',
+        multiplier: 1.15,
         supply: {
           ionic: 3
         }
@@ -214,7 +215,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionusdc',
+        market: 'ionusdc_base',
         supply: {
           ionic: 3
         }
@@ -223,7 +224,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionweth',
+        market: 'ionweth_base',
         multiplier: 3000,
         supply: {
           ionic: 3
@@ -233,7 +234,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ioncbeth',
+        market: 'ioncbeth_base',
         multiplier: 3000,
         supply: {
           ionic: 3
@@ -241,7 +242,7 @@ export const multipliers: Record<
       },
       ezETH: {
         borrow: undefined,
-        market: 'base_ionezeth',
+        market: 'ionezeth_base',
         multiplier: 3000,
         supply: {
           eigenlayer: true,
@@ -253,7 +254,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionwsteth',
+        market: 'ionwsteth_base',
         multiplier: 3000,
         supply: {
           ionic: 3

@@ -69,6 +69,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 };
 
-func.tags = ["prod", "lens"];
+func.tags = ["prod", "deploy-lens"];
 
 export default func;

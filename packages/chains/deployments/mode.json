@@ -38,6 +38,15 @@
     "CTokenFirstExtension": {
       "address": "0xF4090e9cC87e0A5C269F7D99f8AbE12c134ea2d4"
     },
+    "ChainlinkPriceOracleV2": {
+      "address": "0xACea9bfBD6A1DA56a27bada1a8D0e5bb35bFF4E7"
+    },
+    "ChainlinkPriceOracleV2_Implementation": {
+      "address": "0x8396a1dDCbF262EeEACB84c7E9ff6DF474701614"
+    },
+    "ChainlinkPriceOracleV2_Proxy": {
+      "address": "0xACea9bfBD6A1DA56a27bada1a8D0e5bb35bFF4E7"
+    },
     "Comptroller": {
       "address": "0xa855F8697D82F840c511433A36f7c60efF6c6BE7"
     },
@@ -67,6 +76,9 @@
     },
     "FixedNativePriceOracle": {
       "address": "0x1D7669b6BDfdb83066dd7C0aDa4B630b25cBc28a"
+    },
+    "GlobalPauser": {
+      "address": "0x5d498338C6e38555020fb24b977f5e2817A50E3F"
     },
     "IonicFlywheelLensRouter": {
       "address": "0x79eb8e77dA2621Bd368f4cb41F328529B6f5db70"
@@ -123,7 +135,7 @@
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
     },
     "MasterPriceOracle_Implementation": {
-      "address": "0x4e7676B20B86Beea9c197bE756361680FaE3C9AE"
+      "address": "0x707a1B661569EBF98DA3A115bA20a3D2EE40229F"
     },
     "MasterPriceOracle_Proxy": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
