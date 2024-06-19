@@ -11,6 +11,20 @@ export const donutdata = {
   labels: ['Lend', 'Total']
 };
 
+export function getDonutData(ofdata: number, total: number) {
+  const data2 = total - ofdata;
+  const donutdata = {
+    datasets: [
+      {
+        backgroundColor: ['#3bff89ff', '#34363dff'],
+        // label: 'My First Dataset',
+        data: [ofdata, data2]
+      }
+    ],
+    labels: ['Provided', 'Total']
+  };
+  return donutdata;
+}
 export const donutoptions = {
   elements: {
     arc: {

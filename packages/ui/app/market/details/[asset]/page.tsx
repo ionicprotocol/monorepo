@@ -47,7 +47,8 @@ import {
   chartoptions2,
   getChartData,
   donutdata,
-  donutoptions
+  donutoptions,
+  getDonutData
 } from '../../../_constants/mock';
 
 // const data = [
@@ -286,7 +287,7 @@ const Asset = ({ params }: IProp) => {
   //     );
   //   return maxSupplyAmountnum;
   // }, [selectedMarketData, comptrollerAddress, chain]);
-  
+
   // const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
   // //@ts-ignore
   // useMaxSupplyAmount(selectedMarketData, selectedMarketData?.cToken , chain);
@@ -321,12 +322,12 @@ const Asset = ({ params }: IProp) => {
         </div>
         <div className={`w-full flex items-center gap-4`}>
           <div className={`flex flex-col items-start justify-center  gap-y-1`}>
-            <p className={`text-white/60 text-[10px]`}>Lending Supply</p>
-            <p className={`font-semibold`}>${lendingSupply}</p>
+            <p className={`text-white/60 text-[10px]`}>Total Supply</p>
+            <p className={`font-semibold`}>${totalSupplied}</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
-            <p className={`text-white/60 text-[10px]`}>Available APR</p>
+            <p className={`text-white/60 text-[10px]`}>Supply APY</p>
             <p className={`font-semibold`}>{availableAPR}%</p>
             {/* this neeeds to be changed */}
           </div>
@@ -375,7 +376,16 @@ const Asset = ({ params }: IProp) => {
           <div className={`w-full flex items-center justify-start gap-5`}>
             <div className={` w-14 h-14`}>
               <Doughnut
-                data={donutdata}
+                data={getDonutData(
+                  Math.round(
+                    info === INFO.BORROW
+                      ? (selectedMarketData?.totalBorrowFiat as number)
+                      : (selectedMarketData?.totalSupplyFiat as number)
+                  ),
+                  Math.round(
+                    info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
+                  )
+                )}
                 options={donutoptions}
                 updateMode="resize"
               />
@@ -495,7 +505,6 @@ const Asset = ({ params }: IProp) => {
               maxSupplyAmount?.bigNumber.toBigInt() || BigInt(0),
               selectedMarketData?.underlyingDecimals.toNumber() || 0
             )} */}
-            
           </p>
           <div className={` w-full h-[1px]  bg-white/30 mx-auto my-3`} />
           <p
