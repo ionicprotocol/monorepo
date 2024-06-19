@@ -29,7 +29,7 @@ export default function Stake() {
             <div
               className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40`}
             >
-              <span> Deposite </span>
+              <span> Deposit </span>
               <div>
                 {' '}
                 ION Balance : 00.00
@@ -57,7 +57,7 @@ export default function Stake() {
             <div
               className={`flex w-full mt-4 items-center justify-between text-[11px] text-white/40`}
             >
-              <span> Deposite </span>
+              <span> Deposit </span>
               <div>
                 {' '}
                 WETH Balance : 00.00
