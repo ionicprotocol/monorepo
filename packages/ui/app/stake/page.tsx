@@ -1,11 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { useState } from 'react';
+
+import { Widget } from '../_components/stake/Widget';
+
 export default function Stake() {
+  const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
   return (
     <main className={``}>
-      <div className="w-full flex items-center justify-center min-h-screen transition-all duration-200 ease-linear bg-black dark:bg-black">
-        <div className={`md:w-[60%] w-[90%] mx-auto grid grid-cols-2 gap-4`}>
+      <div className="w-full flex items-center justify-center py-20 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
+        {widgetPopup && <Widget close={() => setWidgetPopup(false)} />}
+
+        <div className={`md:w-[50%] w-[90%] mx-auto grid grid-cols-2 gap-4`}>
           <div
             className={`bg-grayone col-span-2 flex flex-col items-center justify-center py-4 px-8 rounded-xl gap-y-3 `}
           >
@@ -20,6 +27,7 @@ export default function Stake() {
             </h1>
             <button
               className={` py-1.5 text-sm text-black w-full bg-accent rounded-md`}
+              onClick={() => setWidgetPopup(true)}
             >
               Buy ION Tokens
             </button>
