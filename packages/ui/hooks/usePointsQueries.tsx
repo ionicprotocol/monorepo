@@ -257,11 +257,11 @@ const getBorrowQuery = (
           SELECT 
             tx_from AS address, 
             DATE_BIN('1 hour', block_time, '2000-01-01') AS date, 
-            -event_repay_amount / POW(10, ${decimals}) AS tokens 
+            -method_repay_amount / POW(10, ${decimals}) AS tokens 
           FROM 
-            ${marketName}.repay_borrow_events 
+            ${marketName}.repay_borrow_methods 
           WHERE 
-            event_repay_amount < POW(10, 60) 
+            method_repay_amount < POW(10, 60) 
             AND tx_from IN (SELECT address FROM addresses)
           
           UNION ALL
