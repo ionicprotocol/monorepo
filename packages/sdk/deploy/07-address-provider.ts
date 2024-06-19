@@ -1,24 +1,31 @@
 import { DeployFunction } from "hardhat-deploy/types";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments }) => {
-  console.log("Starting deployment of the Master Price Oracle");
   const { deployer, multisig } = await getNamedAccounts();
 
+  ////
+  //// HELPERS - ADDRESSES PROVIDER
   try {
-    const masterPO = await deployments.deploy("MasterPriceOracle", {
+    await deployments.deploy("AddressesProvider", {
       from: deployer,
       log: true,
       proxy: {
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [deployer]
+          }
+        },
         proxyContract: "OpenZeppelinTransparentProxy",
         owner: multisig
-      }
+      },
+      waitConfirmations: 1
     });
-    console.log("Master Price Oracle deployed at:", masterPO.address);
   } catch (error) {
-    console.error("Could not deploy MPO:", error);
+    console.error("Could not deploy:", error);
   }
 };
 
-func.tags = ["MasterPriceOracleDeployment"];
+func.tags = ["prod", "deploy-ap"];
 
 export default func;

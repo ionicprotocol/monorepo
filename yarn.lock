@@ -2489,7 +2489,7 @@ __metadata:
     "@ionicprotocol/chains": "workspace:*"
     "@ionicprotocol/types": "workspace:*"
     "@nomicfoundation/hardhat-ethers": "npm:^3.0.0"
-    "@nomicfoundation/hardhat-network-helpers": "npm:^1.0.10"
+    "@nomicfoundation/hardhat-network-helpers": "npm:^1.0.11"
     "@nomicfoundation/hardhat-verify": "npm:^2.0.0"
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": "npm:^2.0.6"
@@ -4557,14 +4557,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/hardhat-network-helpers@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "@nomicfoundation/hardhat-network-helpers@npm:1.0.10"
+"@nomicfoundation/hardhat-network-helpers@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "@nomicfoundation/hardhat-network-helpers@npm:1.0.11"
   dependencies:
     ethereumjs-util: "npm:^7.1.4"
   peerDependencies:
     hardhat: ^2.9.5
-  checksum: 10/38953777f69fea6c82a6df0f5de5c52afd797aae9d9d38d710dc19a4a0ef6bba2b4320db6050e04e94fb4bb0ce4cf81a2911a4da5097e0ca6fc1017ca77c3bb9
+  checksum: 10/ebf11dc9f6e2c1059eb9e3e5f6c78dd2e78e0b7364521dd492576cad5be1855934246d4b1e4945faf98f456299ff2f704b61eead8ab62d9376eeb098da4e2fe1
   languageName: node
   linkType: hard
 

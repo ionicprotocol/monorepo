@@ -56,7 +56,7 @@ export default function Dashboard() {
   const [popupMode, setPopupMode] = useState<PopupMode>();
   // const [poolMarket, setPoolMarket] = useState<string>('0');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedTab, setSelectedTab] = useState('');
+  const [selectedTab] = useState('');
   // const [selectedPool, setSelectedPool] = useState(pool ? pool : '0');
   const pathname = usePathname();
 

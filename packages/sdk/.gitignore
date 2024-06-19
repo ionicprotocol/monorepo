@@ -8,4 +8,4 @@ lib/contracts/out
 lib/contracts/typechain
 cache/hardhat-network-fork/
 transaction_log.json
-
+transactions.json
