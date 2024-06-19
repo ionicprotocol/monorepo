@@ -1,8 +1,25 @@
 'use client';
 
 import { LiFiWidget } from '@lifi/widget';
+import type { WidgetConfig } from '@lifi/widget';
 
-import { widgetConfig } from 'ui/app/_constants/mock';
+const widgetConfig: WidgetConfig = {
+  toChain: 34443,
+  fromChain: 1,
+  fromToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  toToken: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
+  containerStyle: {
+    border: '1px solid #3bff89ff',
+    borderRadius: '16px'
+  },
+  theme: {
+    palette: {
+      primary: { main: '#3bff89' }
+    }
+  },
+  // theme : { palette : "grey"},
+  integrator: 'Ionic Money'
+};
 
 interface IProps {
   close: () => void;

@@ -1,7 +1,5 @@
 //----------donut chart
 
-import type { WidgetConfig } from '@lifi/widget';
-
 export const donutdata = {
   datasets: [
     {
@@ -161,22 +159,4 @@ export const chartdata2 = {
     // },
   ],
   labels: x1
-};
-
-export const widgetConfig: WidgetConfig = {
-  toChain: 34443,
-  fromChain: 1,
-  fromToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  toToken: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
-  containerStyle: {
-    border: '1px solid #3bff89ff',
-    borderRadius: '16px'
-  },
-  theme: {
-    palette: {
-      primary: { main: '#3bff89' }
-    }
-  },
-  // theme : { palette : "grey"},
-  integrator: 'Ionic Money'
 };
