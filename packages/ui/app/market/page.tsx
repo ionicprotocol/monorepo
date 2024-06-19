@@ -392,19 +392,26 @@ export default function Market() {
                     } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
                       maximumFractionDigits: 2
                     })}`}
+                    chain={chain.toString()}
                     collateralFactor={
                       (val ? Number(formatEther(val.collateralFactor)) : 0) *
                       100
                     }
+                    cTokenAddress={val.cToken}
+                    comptrollerAddress={poolData?.comptroller || ''}
                     dropdownSelectedChain={dropdownSelectedChain}
                     key={idx}
                     logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                    loopMarkets={loopMarkets}
                     loopPossible={
                       loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                     }
                     membership={val?.membership ?? false}
+                    pool={selectedPool}
                     selectedChain={chainId}
+                    selectedMarketData={selectedMarketData}
                     selectedPoolId={selectedPool}
+                    selectedSymbol={selectedSymbol as string}
                     setPopupMode={setPopupMode}
                     setSelectedSymbol={setSelectedSymbol}
                     supplyAPR={`${
