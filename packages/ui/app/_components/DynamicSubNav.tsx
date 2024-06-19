@@ -19,7 +19,7 @@ function DynamicSubNav() {
     >
       Hello, {+chainId === base.id ? 'Base' : 'Mode'}! Season 2 is LIVE - New
       multipliers, new ways to earn points! See your Season 1 $ION eligibility
-      on the Claim page (Open till 6th of June).
+      on the Claim page (Open till 6th of July).
     </div>
   );
 }

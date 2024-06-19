@@ -34,7 +34,9 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
 );
 const claimMessage = (nonce: string) => `Welcome to the $ION Airdrop!
+
 Sign this message to prove you own this address!
+
 Nonce: ${nonce}`;
 
 const AIRDROP_URL = 'https://airdrop.ionic.ninja';
@@ -649,7 +651,7 @@ export default function Claim() {
                   className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
                   disabled={
                     dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! &&
-                    agreement
+                    !agreement
                   }
                   onClick={() => {
                     if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
