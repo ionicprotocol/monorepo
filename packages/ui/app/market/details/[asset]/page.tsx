@@ -362,7 +362,7 @@ const Asset = ({ params }: IProp) => {
         <div className={`w-full flex items-center gap-4`}>
           <div className={`flex flex-col items-start justify-center  gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Total Supply</p>
-            <p className={`font-semibold`}>${totalSupplied}</p>
+            <p className={`font-semibold`}>{totalSupplied} {selectedSymbol}</p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
