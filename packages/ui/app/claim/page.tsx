@@ -651,7 +651,7 @@ export default function Claim() {
                   className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
                   disabled={
                     dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! &&
-                    agreement
+                    !agreement
                   }
                   onClick={() => {
                     if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {

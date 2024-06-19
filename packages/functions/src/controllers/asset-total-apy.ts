@@ -271,7 +271,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
       });
       let { error: error1 } = await supabase.from(environment.supabaseAssetTotalApyTableName).insert(rows);
       if (error1) {
-        throw new Error(`Error occurred during saving asset total apy to database (asset-total-apy-development): ${error1.message}`);
+        throw new Error(`Error occurred during saving asset total apy to database (asset-total-apy): ${error1.message}`);
       }
     } catch (err) {
       await functionsAlert('functions.asset-total-apy: Generic Error', JSON.stringify(err));
