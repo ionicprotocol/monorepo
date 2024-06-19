@@ -11,10 +11,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
 
-  let MIN_BORROW_USD;
-  if (chainId === 97 || chainId == 245022934) MIN_BORROW_USD = 0.1;
-  else if (chainId == 34443) MIN_BORROW_USD = 4;
-  else MIN_BORROW_USD = 100;
+  const MIN_BORROW_USD = 0.1;
 
   const { deployer, multisig } = await getNamedAccounts();
   console.log("deployer: ", deployer);
@@ -77,7 +74,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const ffdFee = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
   console.log(`ffd fee ${ffdFee}`);
   if (ffdFee.isZero()) {
-    if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Set Default Interest Fee Rate",
         fuseFeeDistributor.interface.encodeFunctionData("_setDefaultInterestFeeRate", [ethers.utils.parseEther("0.1")])
@@ -98,7 +95,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     const currentMinBorrow = await fuseFeeDistributor.callStatic.minBorrowEth();
     const currentMinBorrowPercent = currentMinBorrow.mul(100).div(minBorrow);
     if (currentMinBorrowPercent.gt(102) || currentMinBorrowPercent.lt(98)) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Pool Limits",
           fuseFeeDistributor.interface.encodeFunctionData("_setPoolLimits", [minBorrow, ethers.constants.MaxUint256])

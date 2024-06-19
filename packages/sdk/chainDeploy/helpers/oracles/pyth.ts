@@ -5,7 +5,6 @@ import { PythAsset, PythDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
-const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
 export const deployPythPriceOracle = async ({
   ethers,
   getNamedAccounts,
@@ -35,7 +34,7 @@ export const deployPythPriceOracle = async ({
           args: [pythAddress, nativeTokenUsdFeed, usdToken]
         }
       },
-      owner: multisig,
+      owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy"
     },
     waitConfirmations: 1
@@ -54,7 +53,7 @@ export const deployPythPriceOracle = async ({
     }
   }
   if (pythAssetsToChange.length > 0) {
-    if ((await pythOracle.owner()).toLowerCase() === deployer.address) {
+    if ((await pythOracle.owner()).toLowerCase() === deployer) {
       const tx = await pythOracle.setPriceFeeds(
         pythAssetsToChange.map((f) => f.underlying),
         pythAssetsToChange.map((f) => f.feed)
@@ -88,7 +87,7 @@ export const deployPythPriceOracle = async ({
   }
 
   const underlyings = pythAssets.map((f) => f.underlying);
-  await addUnderlyingsToMpo(mpo, underlyings, pythOracle.address);
+  await addUnderlyingsToMpo(mpo, underlyings, pythOracle.address, deployer);
 
   return { pythOracle };
 };

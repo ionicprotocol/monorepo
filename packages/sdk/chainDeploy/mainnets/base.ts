@@ -1,8 +1,8 @@
 import { base } from "@ionicprotocol/chains";
-import { assetSymbols } from "@ionicprotocol/types";
+import { assetSymbols, ChainlinkFeedBaseCurrency } from "@ionicprotocol/types";
 
 import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
-import { ChainlinkAsset, ChainlinkFeedBaseCurrency } from "../helpers/types";
+import { ChainlinkAsset } from "../helpers/types";
 
 const assets = base.assets;
 

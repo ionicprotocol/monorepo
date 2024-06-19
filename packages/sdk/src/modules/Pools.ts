@@ -8,6 +8,7 @@ import {
   linea,
   mode,
   neon,
+  optimism,
   polygon,
   zkevm
 } from "@ionicprotocol/chains";
@@ -45,7 +46,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ethereum]: ethereum.assets,
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
-  [SupportedChains.base]: base.assets
+  [SupportedChains.base]: base.assets,
+  [SupportedChains.optimism]: optimism.assets
 };
 
 export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {

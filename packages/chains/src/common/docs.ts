@@ -47,6 +47,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
     [SupportedChains.base]: {
       swapName: "Uniswap",
       swapAddress: "https://app.uniswap.org/?chain=base"
+    },
+    [SupportedChains.optimism]: {
+      swapName: "Uniswap",
+      swapAddress: "https://app.uniswap.org/?chain=optimism"
     }
   }[chainId];
 
