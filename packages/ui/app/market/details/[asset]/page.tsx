@@ -14,6 +14,7 @@ import {
   Tooltip
 } from 'chart.js';
 import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
 // import { Link } from '@tanstack/react-router'
 import { usePathname, useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -81,6 +82,12 @@ interface IGraph {
   supplyAtY: number[];
   valAtX: string[];
 }
+
+const supabase = createClient(
+  'https://uoagtjstsdrjypxlkuzr.supabase.co/',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
+);
+
 const Asset = ({ params }: IProp) => {
   const { address: acc, isConnected } = useAccount();
   const { data: balance } = useBalance({
@@ -147,34 +154,31 @@ const Asset = ({ params }: IProp) => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
     // console.log(process.env.SUPABASE_CLIENT_ANON_KEY);
     async function fetchData() {
+      console.log(cTokenAddress);
       try {
-        const response = await fetch(
-          `https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/asset_total_apy_history?ctoken_address=eq.${cTokenAddress}&select=*`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              apikey: SUPABASE_CLIENT_ANON_KEY,
-              Authorization: `Bearer ${SUPABASE_CLIENT_ANON_KEY}`
-            }
-          }
-        );
+        const { data, error } = await supabase
+          .from('asset_total_apy_history')
+          .select('*')
+          .ilike(
+            'ctoken_address',
+            '0xdb8ee6d1114021a94a045956bbeecf35d13a30f2' as string
+          );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        if (error) {
+          throw new Error(`HTTP error! Status: ${error.message}`);
         }
 
-        const data = await response.json();
+        // const data = await history?.json();
 
         console.log(data);
         let borrowAtY: number[] = [];
         let supplyAtY: number[] = [];
         let valAtX: string[] = [];
         data.forEach((val: { borrowApy: number }) =>
-          borrowAtY.push(Number(val.borrowApy.toFixed(4)) * 100)
+          borrowAtY.push(Number(val.borrowApy.toFixed(4)))
         );
         data.forEach((val: { supplyApy: number }) =>
-          supplyAtY.push(Number(val.supplyApy.toFixed(4)) * 100)
+          supplyAtY.push(Number(val.supplyApy.toFixed(4)))
         );
         data.forEach((val: { created_at: number }) =>
           valAtX.push(extractTime(val.created_at))
