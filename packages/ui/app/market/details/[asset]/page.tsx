@@ -119,9 +119,9 @@ const Asset = ({ params }: IProp) => {
     MarketData | undefined
   >();
   const [graph, setGraph] = useState<IGraph>({
-    borrowAtY: [1, 0.1, 0.7, 0.3],
-    supplyAtY: [1, 0.7, 0.2, 0.5],
-    valAtX: ['a', 'b', 'c', 'd']
+    borrowAtY: [0.4, 0.1, 0.4, 0.3, 0.4, 0.5, 0.3, 0.6, 0.2],
+    supplyAtY: [0.2, 0.7, 0.2, 0.5, 0.4, 0.3, 0.4, 0.5, 0.3],
+    valAtX: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
   });
   //Hooks -----------------------------------------------------
   const totalBorrows = extractAndConvertStringTOValue(
@@ -139,14 +139,21 @@ const Asset = ({ params }: IProp) => {
   function extractTime(isoTimestamp: number) {
     // Parse the ISO 8601 timestamp
     let date = new Date(isoTimestamp);
+    // Extract the date, month, and year
+    let day = String(date.getUTCDate()).padStart(2, '0');
+    let month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    let year = date.getUTCFullYear();
+
     // Extract the time component and format it
     let hours = String(date.getUTCHours()).padStart(2, '0');
     let minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    let seconds = String(date.getUTCSeconds()).padStart(2, '0');
+    // let seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
     // Combine to get the full time string
     let timeStr = `${hours}:${minutes}`;
-    return timeStr;
+    let dateStr = `${day}-${month}-${year}`;
+
+    return { timeStr, dateStr };
   }
 
   useEffect(() => {
@@ -159,10 +166,7 @@ const Asset = ({ params }: IProp) => {
         const { data, error } = await supabase
           .from('asset_total_apy_history')
           .select('*')
-          .ilike(
-            'ctoken_address',
-            '0xdb8ee6d1114021a94a045956bbeecf35d13a30f2' as string
-          );
+          .ilike('ctoken_address', cTokenAddress as string);
 
         if (error) {
           throw new Error(`HTTP error! Status: ${error.message}`);
@@ -171,20 +175,51 @@ const Asset = ({ params }: IProp) => {
         // const data = await history?.json();
 
         console.log(data);
+        let borrowOBJAtY: { apy: number; createdAt: string }[] = [];
         let borrowAtY: number[] = [];
+        let supplyOBJAtY: { apy: number; createdAt: string }[] = [];
         let supplyAtY: number[] = [];
         let valAtX: string[] = [];
-        data.forEach((val: { borrowApy: number }) =>
-          borrowAtY.push(Number(val.borrowApy.toFixed(4)))
-        );
-        data.forEach((val: { supplyApy: number }) =>
-          supplyAtY.push(Number(val.supplyApy.toFixed(4)))
-        );
-        data.forEach((val: { created_at: number }) =>
-          valAtX.push(extractTime(val.created_at))
-        );
+        //filteriing and pusing borrowapy of each date-----------------------------
+        data.forEach((val: { borrowApy: number; created_at: number }) => {
+          if (
+            extractTime(val.created_at).dateStr ===
+            borrowOBJAtY[borrowOBJAtY.length - 1]?.createdAt
+          )
+            return;
+          borrowOBJAtY.push({
+            apy: Number(val.borrowApy.toFixed(4)),
+            createdAt: extractTime(val.created_at).dateStr
+          });
+        });
+        borrowOBJAtY.forEach((val) => borrowAtY.push(val.apy));
+
+        //filteriing and pusing supplyapy of each date-------------------------
+        data.forEach((val: { supplyApy: number; created_at: number }) => {
+          if (
+            extractTime(val.created_at).dateStr ===
+            supplyOBJAtY[supplyOBJAtY.length - 1]?.createdAt
+          )
+            return;
+          supplyOBJAtY.push({
+            apy: Number(val.supplyApy.toFixed(4)),
+            createdAt: extractTime(val.created_at).dateStr
+          });
+        });
+        supplyOBJAtY.forEach((val) => supplyAtY.push(val.apy));
+
+        //filtering data basedon date------------------------------------
+        // data.forEach((val: { created_at: number }) => {
+        //   if (
+        //     extractTime(val.created_at).dateStr ===
+        //     borrowOBJAtY[borrowOBJAtY.length - 1]?.createdAt
+        //   )
+        //     return;
+        //   valAtX.push(extractTime(val.created_at).dateStr);
+        // });
+        supplyOBJAtY.forEach((val) => valAtX.push(val.createdAt));
         console.log();
-        console.log(valAtX);
+        // console.log(valAtX);
         setGraph({
           borrowAtY,
           supplyAtY,
