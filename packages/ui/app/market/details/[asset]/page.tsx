@@ -98,6 +98,7 @@ const Asset = ({ params }: IProp) => {
   const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
   const selectedChain = searchParams.get('selectedChain');
   const comptrollerAddress = searchParams.get('comptrollerAddress');
+  const cTokenAddress = searchParams.get('cTokenAddress');
   const pool = searchParams.get('pool');
   const chain = searchParams.get('chain');
   const selectedSymbol = searchParams.get('selectedSymbol');
@@ -147,7 +148,7 @@ const Asset = ({ params }: IProp) => {
     async function fetchData() {
       try {
         const response = await fetch(
-          'https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/asset_total_apy_history?ctoken_address=eq.0xdb8ee6d1114021a94a045956bbeecf35d13a30f2&select=*',
+          `https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/asset_total_apy_history?ctoken_address=eq.${cTokenAddress}&select=*`,
           {
             method: 'GET',
             headers: {

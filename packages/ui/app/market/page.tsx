@@ -397,6 +397,7 @@ export default function Market() {
                       (val ? Number(formatEther(val.collateralFactor)) : 0) *
                       100
                     }
+                    cTokenAddress={val.cToken}
                     comptrollerAddress={poolData?.comptroller || ''}
                     dropdownSelectedChain={dropdownSelectedChain}
                     key={idx}

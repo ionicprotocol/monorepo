@@ -26,6 +26,7 @@ interface IRows {
   chain: string;
   collateralFactor: number;
   comptrollerAddress: string;
+  cTokenAddress: string;
   dropdownSelectedChain: number;
   logo: string;
   loopMarkets: LoopMarketData | undefined;
@@ -60,6 +61,7 @@ const PoolRows = ({
   borrowBalance,
   chain,
   collateralFactor,
+  cTokenAddress,
   dropdownSelectedChain,
   membership,
   totalBorrowing,
@@ -113,8 +115,9 @@ const PoolRows = ({
             borrowAPR: parseInt(borrowAPR),
             chain: chain,
             collateralAPR: collateralFactor,
-            comptrollerAddress: comptrollerAddress,
-            dropdownSelectedChain: dropdownSelectedChain,
+            comptrollerAddress,
+            cTokenAddress,
+            dropdownSelectedChain,
             lendingSupply: parseInt(supplyBalance),
             // loopMarkets: loopMarketsPassing,
             pool: pool,
@@ -122,7 +125,7 @@ const PoolRows = ({
             // selectedMarketData: selectedMarketDataPassing,
             selectedSymbol: asset,
             totalBorrows: totalBorrowing,
-            totalSupplied: totalSupplied,
+            totalSupplied,
             totalCollateral: 123456
           }
         }}
