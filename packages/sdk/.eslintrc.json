@@ -31,7 +31,7 @@
       {
         "ignoreCase": true,
         "ignoreDeclarationSort": true,
-        "ignoreMemberSort": false,
+        "ignoreMemberSort": true,
         "memberSyntaxSortOrder": ["none", "all", "multiple", "single"],
         "allowSeparatedGroups": false
       }

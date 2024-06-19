@@ -1,8 +1,7 @@
-import { providers } from "ethers";
-
 import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
 import { PythPriceOracle } from "../../../typechain/PythPriceOracle";
-import { PythDeployFnParams } from "../types";
+import { addTransaction } from "../logging";
+import { PythAsset, PythDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
@@ -46,17 +45,50 @@ export const deployPythPriceOracle = async ({
   console.log("PythPriceOracle: ", pyth.address);
 
   const pythOracle = (await ethers.getContract("PythPriceOracle", deployer)) as PythPriceOracle;
-  if (pythAssets.length > 0) {
-    const tx: providers.TransactionResponse = await pythOracle.setPriceFeeds(
-      pythAssets.map((f) => f.underlying),
-      pythAssets.map((f) => f.feed)
-    );
-    console.log(`Set price feeds for PythPriceOracle: ${tx.hash}`);
-    await tx.wait();
-    console.log(`Set price feeds for PythPriceOracle mined: ${tx.hash}`);
+
+  const pythAssetsToChange: PythAsset[] = [];
+  for (const pythAsset of pythAssets) {
+    const currentPriceFeed = await pythOracle.priceFeedIds(pythAsset.underlying);
+    if (currentPriceFeed !== pythAsset.feed) {
+      pythAssetsToChange.push(pythAsset);
+    }
+  }
+  if (pythAssetsToChange.length > 0) {
+    if ((await pythOracle.owner()).toLowerCase() === deployer.address) {
+      const tx = await pythOracle.setPriceFeeds(
+        pythAssetsToChange.map((f) => f.underlying),
+        pythAssetsToChange.map((f) => f.feed)
+      );
+      await tx.wait();
+      console.log(`Set ${pythAssetsToChange.length}  price feeds for PythPriceOracle at ${tx.hash}`);
+    } else {
+      const tx = await pythOracle.populateTransaction.setPriceFeeds(
+        pythAssetsToChange.map((f) => f.underlying),
+        pythAssetsToChange.map((f) => f.feed)
+      );
+      addTransaction({
+        to: tx.to,
+        value: tx.value ? tx.value.toString() : "0",
+        data: null,
+        contractMethod: {
+          inputs: [
+            { internalType: "address[]", name: "underlyings", type: "address[]" },
+            { internalType: "bytes32[]", name: "feeds", type: "bytes32[]" }
+          ],
+          name: "setPriceFeeds",
+          payable: false
+        },
+        contractInputsValues: {
+          underlyings: pythAssetsToChange.map((f) => f.underlying),
+          feeds: pythAssetsToChange.map((f) => f.feed)
+        }
+      });
+      console.log(`Logged Transaction to set ${pythAssetsToChange.length} price feeds for PythPriceOracle `);
+    }
   }
 
   const underlyings = pythAssets.map((f) => f.underlying);
   await addUnderlyingsToMpo(mpo, underlyings, pythOracle.address);
+
   return { pythOracle };
 };
