@@ -1,5 +1,6 @@
-import { Liquidator } from "./services";
 import { BotType, LiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
+
+import { Liquidator } from "./services";
 
 // Liquidate unhealthy borrows and repeat every LIQUIDATION_INTERVAL_SECONDS
 async function liquidatePositions(liquidator: Liquidator) {
