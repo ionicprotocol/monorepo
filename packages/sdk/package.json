@@ -33,7 +33,7 @@
     "export:all": "npm run export:mode && npm run export:base && npm run export:optimism",
     "export:mode": "hardhat export --network mode --export ../chains/deployments/mode.json",
     "export:base": "hardhat export --network base --export ../chains/deployments/base.json",
-    "export:optimism": "hardhat export --network base --export ../chains/deployments/optimism.json",
+    "export:optimism": "hardhat export --network optimism --export ../chains/deployments/optimism.json",
     "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
