@@ -53,13 +53,13 @@ export const deployPythPriceOracle = async ({
     }
   }
   if (pythAssetsToChange.length > 0) {
-    if ((await pythOracle.owner()).toLowerCase() === deployer) {
+    if ((await pythOracle.owner()).toLowerCase() === deployer.toLowerCase()) {
       const tx = await pythOracle.setPriceFeeds(
         pythAssetsToChange.map((f) => f.underlying),
         pythAssetsToChange.map((f) => f.feed)
       );
       await tx.wait();
-      console.log(`Set ${pythAssetsToChange.length}  price feeds for PythPriceOracle at ${tx.hash}`);
+      console.log(`Set ${pythAssetsToChange.length} price feeds for PythPriceOracle at ${tx.hash}`);
     } else {
       const tx = await pythOracle.populateTransaction.setPriceFeeds(
         pythAssetsToChange.map((f) => f.underlying),
