@@ -2441,6 +2441,7 @@ __metadata:
   resolution: "@ionicprotocol/ui@workspace:packages/ui"
   dependencies:
     "@gasbot/widget": "npm:^0.4.7"
+    "@lifi/widget": "npm:^2.10.2"
     "@netlify/plugin-nextjs": "npm:4"
     "@sentry/nextjs": "npm:^7.48.0"
     "@supabase/supabase-js": "npm:^2.43.4"
@@ -20567,7 +20568,6 @@ __metadata:
   resolution: "monorepo@workspace:."
   dependencies:
     "@istanbuljs/nyc-config-typescript": "npm:^1.0.2"
-    "@lifi/widget": "npm:^2.10.2"
     "@resolver-engine/core": "npm:^0.3.3"
     "@tsconfig/recommended": "npm:^1.0.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.6.0"
