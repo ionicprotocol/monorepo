@@ -92,7 +92,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
-  [SupportedChains.sepolia]: sepolia.assets
+  [SupportedChains.optimism_sepolia]: sepolia.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
