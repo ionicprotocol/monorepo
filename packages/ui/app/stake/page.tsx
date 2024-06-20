@@ -12,10 +12,14 @@ const Widget = dynamic(() => import('../_components/stake/Widget'), {
 
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
+
   return (
     <main className={``}>
       <div className="w-full flex items-center justify-center py-20 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
-        {widgetPopup && <Widget close={() => setWidgetPopup(false)} />}
+        <Widget
+          close={() => setWidgetPopup(false)}
+          open={widgetPopup}
+        />
 
         <div className={`md:w-[50%] w-[90%] mx-auto grid grid-cols-2 gap-4`}>
           <div
