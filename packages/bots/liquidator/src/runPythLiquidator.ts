@@ -12,6 +12,7 @@ import { setUpSdk } from "./utils";
 
 (async function () {
   const chainId: number = config.chainId;
+  const chainName: string = config.chainName;
   const provider = new JsonRpcProvider(config.rpcUrl);
   const ionicSdk = setUpSdk(chainId, provider);
   const abi = IonicLiquidatorABI.abi;
@@ -79,7 +80,7 @@ import { setUpSdk } from "./utils";
       );
 
       const opportunity: OpportunityParams = {
-        chainId: "op_sepolia",
+        chainId: chainName,
         targetContract: ionicLiquidator,
         targetCalldata: calldata as `0x${string}`,
         permissionKey: permissionKey as `0x${string}`,
