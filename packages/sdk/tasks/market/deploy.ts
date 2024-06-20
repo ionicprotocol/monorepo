@@ -3,6 +3,8 @@ import { task, types } from "hardhat/config";
 
 import { assets as baseAssets } from "../../../chains/src/base/assets";
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
+import { assets as optimismAssets } from "../../../chains/src/optimism/assets";
+import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
 
 task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {
   const symbols = [
@@ -82,6 +84,33 @@ task("markets:deploy:base", "deploy base markets").setAction(async (taskArgs, { 
   }
 });
 
+task("markets:deploy:optimism:main", "deploy op main market").setAction(async (_, { ethers, run }) => {
+  const COMPTROLLER = "0xaFB4A254D125B0395610fdc8f1D022936c7b166B";
+  for (const asset of optimismAssets) {
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: asset.initialCf,
+      underlying: asset.underlying,
+      comptroller: "0xaFB4A254D125B0395610fdc8f1D022936c7b166B",
+      symbol: "ion" + asset.symbol,
+      name: `Ionic ${asset.name}`
+    });
+    const pool = (await ethers.getContractAt("IonicComptroller", COMPTROLLER)) as IonicComptroller;
+    const cToken = await pool.cTokensByUnderlying(asset.underlying);
+    console.log("cToken: ", cToken);
+
+    await run("market:set-supply-cap", {
+      market: cToken,
+      maxSupply: asset.initialSupplyCap
+    });
+
+    await run("market:set-borrow-cap", {
+      market: cToken,
+      maxBorrow: asset.initialBorrowCap
+    });
+  }
+});
+
 task("market:deploy", "deploy market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
   .addParam("cf", "Collateral factor", "80", types.string)
@@ -89,6 +118,8 @@ task("market:deploy", "deploy market")
   .addParam("comptroller", "Comptroller address", undefined, types.string)
   .addParam("symbol", "CToken symbol", undefined, types.string)
   .addParam("name", "CToken name", undefined, types.string)
+  .addOptionalParam("initialSupplyCap", "Initial supply cap", undefined, types.string)
+  .addOptionalParam("initialBorrowCap", "Initial borrow cap", undefined, types.string)
   .setAction(async (taskArgs, { ethers, getChainId }) => {
     const chainId = await getChainId();
     const signer = await ethers.getNamedSigner(taskArgs.signer);

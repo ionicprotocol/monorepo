@@ -23,6 +23,9 @@ export type SupportedAsset = {
   simplePriceOracleAssetPrice?: BigNumber;
   originalSymbol?: string;
   oracleSpecificParams?: ChainlinkSpecificParams | PythSpecificParams;
+  initialCf?: string;
+  initialBorrowCap?: string;
+  initialSupplyCap?: string;
 };
 export type BlockExplorer = {
   name: string;
