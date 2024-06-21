@@ -3,6 +3,23 @@
 
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import { mode } from 'viem/chains';
+import {
+  useAccount,
+  useChainId,
+  usePublicClient,
+  useWalletClient
+} from 'wagmi';
+
+import {
+  LiquidityContractAbi,
+  LiquidityContractAddress
+} from '@ui/constants/lp';
+import {
+  StakingContractAbi,
+  StakingContractAddress
+} from '@ui/constants/staking';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 const Widget = dynamic(() => import('../_components/stake/Widget'), {
   ssr: false
@@ -12,6 +29,68 @@ const Widget = dynamic(() => import('../_components/stake/Widget'), {
 
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+
+  async function addLiquidity() {
+    try {
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      await handleSwitchOriginChain(mode.id, chainId);
+      const tx = await walletClient!.writeContract({
+        abi: LiquidityContractAbi,
+        account: walletClient?.account,
+        address: LiquidityContractAddress,
+        args: [],
+        functionName: 'addLiquidity'
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction Hash --->>>', tx);
+      if (!tx) return;
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction --->>>', transaction);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+    } finally {
+    }
+  }
+
+  async function stakingAsset() {
+    try {
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      await handleSwitchOriginChain(mode.id, chainId);
+      const tx = await walletClient!.writeContract({
+        abi: StakingContractAbi,
+        account: walletClient?.account,
+        address: StakingContractAddress,
+        args: [],
+        functionName: 'deposit'
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction Hash --->>>', tx);
+      if (!tx) return;
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction --->>>', transaction);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+    } finally {
+    }
+  }
 
   return (
     <main className={``}>
@@ -123,6 +202,7 @@ export default function Stake() {
             </div>
             <button
               className={`flex items-center justify-center  py-1.5 mt-8 mb-4 text-sm text-black w-full bg-accent rounded-md`}
+              onClick={() => addLiquidity()}
             >
               <img
                 alt="lock--v1"
@@ -185,6 +265,7 @@ export default function Stake() {
             </div>
             <button
               className={`flex items-center justify-center  py-1.5 mt-6 mb-4 text-sm text-black w-full bg-accent rounded-md`}
+              onClick={() => stakingAsset()}
             >
               Stake
             </button>
