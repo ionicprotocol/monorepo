@@ -319,27 +319,46 @@ export default function Dashboard() {
 
     return 'text-error';
   }, [handledHealthData, healthData]);
-  const utilizations = useMemo<string[]>(() => {
-    if (borrowCaps && marketData) {
-      return borrowCaps.map((borrowCap, i) => {
-        const totalBorrow = marketData.assets[i].borrowBalance.add(
-          borrowCap?.bigNumber ?? '0'
-        );
 
-        return `${
-          totalBorrow.lte('0') || marketData.assets[i].borrowBalance.lte(0)
-            ? '0.00'
-            : (
-                100 /
-                totalBorrow.div(marketData.assets[i].borrowBalance).toNumber()
-              ).toFixed(2)
-        }%`;
-      });
-    }
+  // CURRENTLY UNUSED, NEED TO CHECK THIS
+  // const utilizations = useMemo<string[]>(() => {
+  //   if (borrowCaps && marketData) {
+  //     return borrowCaps.map((borrowCap, i) => {
+  //       const totalBorrow = marketData.assets[i].borrowBalance.add(
+  //         borrowCap?.bigNumber ?? '0'
+  //       );
 
-    return marketData?.assets.map(() => '0.00%') ?? [];
-  }, [borrowCaps, marketData]);
-  // const selectedPoolClass = 'rounded-md border-mode border-2';
+  //       return `${
+  //         totalBorrow.lte('0') ||
+  //         marketData.assets[i].borrowBalance.lte(0) ||
+  //         Number(
+  //           formatUnits(
+  //             marketData.assets[i].borrowBalance,
+  //             marketData.assets[i].underlyingDecimals
+  //           )
+  //         ) <= 0
+  //           ? '0.00'
+  //           : (
+  //               100 /
+  //               (Number(
+  //                 formatUnits(
+  //                   totalBorrow,
+  //                   marketData.assets[i].underlyingDecimals
+  //                 )
+  //               ) /
+  //                 Number(
+  //                   formatUnits(
+  //                     marketData.assets[i].borrowBalance,
+  //                     marketData.assets[i].underlyingDecimals
+  //                   )
+  //                 ))
+  //             ).toFixed(2)
+  //       }%`;
+  //     });
+  //   }
+  //   return marketData?.assets.map(() => '0.00%') ?? [];
+  // }, [borrowCaps, marketData]);
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
