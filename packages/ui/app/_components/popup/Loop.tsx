@@ -673,7 +673,7 @@ export default function Loop({
       ).gte(amountAsBInt);
 
       if (!hasApprovedEnough) {
-        const tx = await token.approve(factory.address, constants.MaxUint256);
+        const tx = await token.approve(factory.address, amountAsBInt);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -823,10 +823,7 @@ export default function Loop({
       ).gte(amountAsBInt);
 
       if (!hasApprovedEnough) {
-        const tx = await token.approve(
-          currentPosition.address,
-          constants.MaxUint256
-        );
+        const tx = await token.approve(currentPosition.address, amountAsBInt);
 
         upsertTransactionStep({
           index: currentTransactionStep,
