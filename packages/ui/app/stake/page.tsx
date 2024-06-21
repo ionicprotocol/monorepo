@@ -34,6 +34,19 @@ export default function Stake() {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
+  const temporaryArgs = {
+    token: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
+    stable: false,
+    //@ts-ignore
+    amountTokonDesired: 20075338509533417529735n,
+    //@ts-ignore
+    amounTokenMin: 19071571584056746653248n,
+    //@ts-ignore
+    amountETHMin: 133898491919691498n,
+    to: '0x5a9e792143bf2708b4765c144451dca54f559a19',
+    deadline: 1718881843
+  };
+
   async function addLiquidity() {
     try {
       if (!isConnected) {
@@ -45,8 +58,16 @@ export default function Stake() {
         abi: LiquidityContractAbi,
         account: walletClient?.account,
         address: LiquidityContractAddress,
-        args: [],
-        functionName: 'addLiquidity'
+        args: [
+          temporaryArgs.token,
+          temporaryArgs.stable,
+          temporaryArgs.amountTokonDesired,
+          temporaryArgs.amounTokenMin,
+          temporaryArgs.amountETHMin,
+          temporaryArgs.to,
+          temporaryArgs.deadline
+        ],
+        functionName: 'addLiquidityETH'
       });
       // eslint-disable-next-line no-console
       console.log('Transaction Hash --->>>', tx);
@@ -74,7 +95,8 @@ export default function Stake() {
         abi: StakingContractAbi,
         account: walletClient?.account,
         address: StakingContractAddress,
-        args: [],
+        //@ts-ignore
+        args: [77380419677738983956n],
         functionName: 'deposit'
       });
       // eslint-disable-next-line no-console
