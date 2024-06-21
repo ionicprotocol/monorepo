@@ -20,8 +20,14 @@ const widgetConfig: WidgetConfig = {
       borderRadius: '16px'
     }
   },
+  sdkConfig: {
+    routeOptions: {
+      maxPriceImpact: 0.4, // increases threshold to 40%
+      slippage: 0.005
+    }
+  },
   // theme : { palette : "grey"},
-  integrator: 'Ionic Money',
+  integrator: 'ionic.money',
   appearance: 'dark'
 };
 
