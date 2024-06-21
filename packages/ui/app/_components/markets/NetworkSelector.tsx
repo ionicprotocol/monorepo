@@ -1,12 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { pools } from '@ui/constants/index';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
+import { pools } from '@ui/constants/index';
 interface INetworkSelector {
   chainId?: string;
   dropdownSelectedChain: number;
