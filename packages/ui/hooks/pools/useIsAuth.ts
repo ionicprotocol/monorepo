@@ -14,17 +14,17 @@ export const useIsAuth = (
   const sdk = useSdk(chainId);
   const { address } = useMultiIonic();
 
-  return useQuery(
-    ['useIsAuth', sdk?.chainId, pool, role, address],
-    async () => {
+  return useQuery({
+    queryKey: ['useIsAuth', sdk?.chainId, pool, role, address],
+
+    queryFn: async () => {
       if (sdk && pool && role && address && market) {
         return await sdk.isAuth(pool, market, role, address);
       }
 
       return null;
     },
-    {
-      enabled: !!pool && !!role && !!chainId && !!address && !!market
-    }
-  );
+
+    enabled: !!pool && !!role && !!chainId && !!address && !!market
+  });
 };

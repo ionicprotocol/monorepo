@@ -9,9 +9,10 @@ export const useFlywheelsForPool = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  const queryResult = useQuery(
-    ['useFlywheelsForPool', sdk?.chainId, comptrollerAddress],
-    async () => {
+  const queryResult = useQuery({
+    queryKey: ['useFlywheelsForPool', sdk?.chainId, comptrollerAddress],
+
+    queryFn: async () => {
       if (!comptrollerAddress || !sdk) return [];
 
       const flywheelCores = await sdk.getFlywheelsByPool(comptrollerAddress);
@@ -83,11 +84,10 @@ export const useFlywheelsForPool = (
 
       return flywheels;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!comptrollerAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!comptrollerAddress && !!sdk,
+    staleTime: Infinity
+  });
   return queryResult;
 };

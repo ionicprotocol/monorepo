@@ -3,9 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const useBorrowAssets = (assets: MarketData[]) => {
-  const response = useQuery(
-    ['useBorrowAssets', assets.map((asset) => asset.cToken)],
-    () => {
+  const response = useQuery({
+    queryKey: ['useBorrowAssets', assets.map((asset) => asset.cToken)],
+
+    queryFn: () => {
       return assets
         .filter((asset) => !asset.isBorrowPaused)
         .map((asset) => {
@@ -18,10 +19,9 @@ export const useBorrowAssets = (assets: MarketData[]) => {
           };
         });
     },
-    {
-      enabled: assets.length > 0
-    }
-  );
+
+    enabled: assets.length > 0
+  });
 
   return response.data ?? [];
 };

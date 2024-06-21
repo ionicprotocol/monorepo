@@ -37,19 +37,19 @@ export const getAnkrBNBApr = async (poolChainId: number, sdk: IonicSdk) => {
 export const useAnkrBNBApr = (isEnabled: boolean, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useAnkrBNBApr', sdk?.chainId, poolChainId, isEnabled],
-    async () => {
+  return useQuery({
+    queryKey: ['useAnkrBNBApr', sdk?.chainId, poolChainId, isEnabled],
+
+    queryFn: async () => {
       if (poolChainId && sdk && isEnabled) {
         return await getAnkrBNBApr(poolChainId, sdk);
       }
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!poolChainId && isEnabled,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!poolChainId && isEnabled,
+    staleTime: Infinity
+  });
 };

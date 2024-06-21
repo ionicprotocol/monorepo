@@ -8,9 +8,10 @@ export const useIsUpgradeable = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  const { data } = useQuery(
-    ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
-    async () => {
+  const { data } = useQuery({
+    queryKey: ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
@@ -31,8 +32,9 @@ export const useIsUpgradeable = (
         return null;
       }
     },
-    { enabled: !!comptrollerAddress && !!sdk }
-  );
+
+    enabled: !!comptrollerAddress && !!sdk
+  });
 
   return data;
 };

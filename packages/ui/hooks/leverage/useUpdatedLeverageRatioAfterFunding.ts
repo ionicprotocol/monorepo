@@ -11,14 +11,15 @@ export function useUpdatedLeverageRatioAfterFunding(
 ) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useUpdatedLeverageRatioAfterFunding',
       positionAddress,
       amount,
       sdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && amount && positionAddress) {
         const ratio = await sdk
           .getLeverageRatioAfterFunding(positionAddress, amount)
@@ -41,10 +42,9 @@ export function useUpdatedLeverageRatioAfterFunding(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!amount && !!positionAddress,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!amount && !!positionAddress,
+    staleTime: Infinity
+  });
 }

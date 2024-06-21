@@ -32,8 +32,8 @@ const useUpdatedUserAssets = <T extends MarketData>({
     }
   }, [usdPrices, poolChainId]);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useUpdatedUserAssets',
       currentChain?.id,
       mode,
@@ -43,7 +43,8 @@ const useUpdatedUserAssets = <T extends MarketData>({
       usdPrice,
       currentSdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (!assets || !assets.length || !usdPrice || !currentSdk) return [];
 
       const resAssets = await currentSdk
@@ -74,12 +75,11 @@ const useUpdatedUserAssets = <T extends MarketData>({
 
       return assetsWithPrice;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!assets && !!usdPrice && !!currentSdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!assets && !!usdPrice && !!currentSdk,
+    staleTime: Infinity
+  });
 };
 
 export default useUpdatedUserAssets;

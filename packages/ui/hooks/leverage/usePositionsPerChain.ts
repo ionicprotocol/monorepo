@@ -14,7 +14,7 @@ export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
   const positionQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
-        cacheTime: Infinity,
+        gcTime: Infinity,
         enabled: !!chainId && !!address,
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));

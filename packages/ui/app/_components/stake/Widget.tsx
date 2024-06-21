@@ -11,13 +11,13 @@ const widgetConfig: WidgetConfig = {
   fromChain: 34443,
   fromToken: '0x0000000000000000000000000000000000000000',
   toToken: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
-  containerStyle: {
-    border: '1px solid #3bff89ff',
-    borderRadius: '16px'
-  },
   theme: {
     palette: {
       primary: { main: '#3bff89' }
+    },
+    container: {
+      border: '1px solid #3bff89ff',
+      borderRadius: '16px'
     }
   },
   // theme : { palette : "grey"},

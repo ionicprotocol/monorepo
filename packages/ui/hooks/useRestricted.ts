@@ -12,9 +12,16 @@ export const useRestricted = (
   const sdk = useSdk(poolChainId);
   const { address } = useMultiIonic();
 
-  return useQuery(
-    ['useRestricted', comptrollerAddress, debtCeilings, sdk?.chainId, address],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'useRestricted',
+      comptrollerAddress,
+      debtCeilings,
+      sdk?.chainId,
+      address
+    ],
+
+    queryFn: async () => {
       const restricted: DebtCeilingPerCollateralType[] = [];
 
       if (
@@ -58,15 +65,16 @@ export const useRestricted = (
 
       return restricted;
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!comptrollerAddress &&
-        !!debtCeilings &&
-        debtCeilings.length > 0 &&
-        !!address &&
-        !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!comptrollerAddress &&
+      !!debtCeilings &&
+      debtCeilings.length > 0 &&
+      !!address &&
+      !!sdk,
+
+    staleTime: Infinity
+  });
 };

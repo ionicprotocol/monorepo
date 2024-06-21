@@ -10,13 +10,14 @@ export const useBorrowAPYs = (
 ) => {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useBorrowAPYs',
       { chain: sdk?.chainId },
       { assets: assets.map((a) => a.cToken).sort() }
     ],
-    () => {
+
+    queryFn: () => {
       if (!sdk || !assets || !chainId) return null;
 
       const result: { [market: string]: number } = {};
@@ -41,10 +42,9 @@ export const useBorrowAPYs = (
 
       return result;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!assets && !!chainId,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!assets && !!chainId,
+    staleTime: Infinity
+  });
 };
