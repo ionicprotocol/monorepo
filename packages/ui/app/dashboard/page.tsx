@@ -28,7 +28,7 @@ import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
+// import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrowModeNative,
   usePointsForSupplyModeNative,
@@ -213,12 +213,13 @@ export default function Dashboard() {
     usePointsForSupplyBaseMain();
   const { data: supplyPointsMain, isLoading: isLoadingSupplyPointsMain } =
     usePointsForSupplyModeMain();
-  const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
-    useMaxBorrowAmounts(
-      marketData?.assets ?? [],
-      marketData?.comptroller ?? '',
-      +chain
-    );
+  // for utilization:
+  // const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
+  //   useMaxBorrowAmounts(
+  //     marketData?.assets ?? [],
+  //     marketData?.comptroller ?? '',
+  //     +chain
+  //   );
   const totalPoints = useMemo<number>(() => {
     if (
       supplyPointsNative &&
@@ -608,9 +609,8 @@ export default function Dashboard() {
           <ResultHandler
             center
             isLoading={
-              isLoadingMarketData ||
-              isLoadingAssetsSupplyAprData ||
-              isLoadingBorrowCaps
+              isLoadingMarketData || isLoadingAssetsSupplyAprData
+              // || isLoadingBorrowCaps
             }
           >
             <>
@@ -624,7 +624,7 @@ export default function Dashboard() {
                     <h3 className={` `}>SUPPLY APR</h3>
                   </div>
 
-                  {suppliedAssets.map((asset, i) => (
+                  {suppliedAssets.map((asset) => (
                     <InfoRows
                       amount={`${
                         asset.supplyBalanceNative
@@ -684,9 +684,8 @@ export default function Dashboard() {
           <ResultHandler
             center
             isLoading={
-              isLoadingMarketData ||
-              isLoadingAssetsSupplyAprData ||
-              isLoadingBorrowCaps
+              isLoadingMarketData || isLoadingAssetsSupplyAprData
+              // || isLoadingBorrowCaps
             }
           >
             <>
@@ -700,7 +699,7 @@ export default function Dashboard() {
                     <h3 className={` `}>BORROW APR</h3>
                   </div>
 
-                  {borrowedAssets.map((asset, i) => (
+                  {borrowedAssets.map((asset) => (
                     <InfoRows
                       amount={`${
                         asset.borrowBalanceFiat
