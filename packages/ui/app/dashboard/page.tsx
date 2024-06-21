@@ -663,7 +663,8 @@ export default function Dashboard() {
                       selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      utilization={utilizations[i]}
+                      // utilization={utilizations[i]}
+                      utilization="0.00%"
                     />
                   ))}
                 </>
@@ -738,7 +739,8 @@ export default function Dashboard() {
                       selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      utilization={utilizations[i]}
+                      // utilization={utilizations[i]}
+                      utilization="0.00%"
                     />
                   ))}
                 </>
