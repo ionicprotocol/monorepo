@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { type BigNumber, constants } from 'ethers';
+import { type BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Image from 'next/image';
