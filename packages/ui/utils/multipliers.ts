@@ -263,3 +263,31 @@ export const multipliers: Record<
     }
   }
 };
+
+export type LpMultipliers = {
+  ionMultiplier: number;
+  market: string;
+  priceMultiplier: number;
+  filterIn?: string;
+  filterOut?: string;
+  decimals?: number;
+};
+
+export const ionLPMultipliers: Record<string, LpMultipliers> = {
+  'ION-WETH': {
+    ionMultiplier: 3,
+    market: 'ion_weth_pool',
+    priceMultiplier: -120,
+    filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
+    filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
+  }
+};
+
+export const steerLPMultipliers: Record<string, LpMultipliers> = {
+  'ionUSDC-ionUSDT': {
+    ionMultiplier: 1.5,
+    market: 'iusdc_iusdt_pool',
+    priceMultiplier: 10,
+    decimals: 6
+  }
+};
