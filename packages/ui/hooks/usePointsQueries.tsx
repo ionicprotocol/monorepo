@@ -266,14 +266,14 @@ const getBorrowQuery = (
           date,
           SUM(tokens) AS flow
         FROM (
-          SELECT
-            tx_from AS address,
-            DATE_BIN('1 hour', block_time, '2000-01-01') AS date,
-            -event_repay_amount / POW(10, ${decimals}) AS tokens
-          FROM
-            ${marketName}.repay_borrow_events
-          WHERE
-            event_repay_amount < POW(10, 60)
+          SELECT 
+            tx_from AS address, 
+            DATE_BIN('1 hour', block_time, '2000-01-01') AS date, 
+            -method_repay_amount / POW(10, ${decimals}) AS tokens 
+          FROM 
+            ${marketName}.repay_borrow_methods 
+          WHERE 
+            method_repay_amount < POW(10, 60) 
             AND tx_from IN (SELECT address FROM addresses)
 
           UNION ALL

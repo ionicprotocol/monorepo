@@ -1095,6 +1095,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log(`total $ value gas used for deployments ${(gasPrice.toNumber() * gasUsed * cgPrice) / 1e18}`);
 };
 
-func.tags = ["prod"];
+func.tags = ["big-one"];
 
 export default func;

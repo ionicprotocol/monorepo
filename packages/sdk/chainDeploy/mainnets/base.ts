@@ -39,7 +39,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.cbETH,
-    aggregator: "0x960BDD1dFD20d7c98fa482D793C3dedD73A113a3",
+    aggregator: "0x806b4Ac04501c29769051e42783cF04dCE41440b",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   },
   {
@@ -59,7 +59,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.ezETH,
-    aggregator: "0x960BDD1dFD20d7c98fa482D793C3dedD73A113a3",
+    aggregator: "0xC4300B7CF0646F0Fe4C5B2ACFCCC4dCA1346f5d8",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
   },
   {
