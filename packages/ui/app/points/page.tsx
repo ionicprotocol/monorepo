@@ -55,10 +55,10 @@ export default function Points() {
     data: supplyPointsModeNative,
     isLoading: isLoadingSupplyPointsModeNative
   } = usePointsForSupplyModeNative();
-  const { data: pointsIonLp, isLoading: isLoadingPointsIonLp
-  } = usePointsForIonLp();
-  const { data: pointsSteerLp, isLoading: isLoadingPointsSteerLp
-  } = usePointsForSteerLp();
+  const { data: pointsIonLp, isLoading: isLoadingPointsIonLp } =
+    usePointsForIonLp();
+  const { data: pointsSteerLp, isLoading: isLoadingPointsSteerLp } =
+    usePointsForSteerLp();
   const {
     data: supplyPointsBaseMain,
     isLoading: isLoadingSupplyPointsBaseMain
@@ -529,9 +529,7 @@ export default function Points() {
                     className="h-4 w-4 rounded-full"
                     style={{ backgroundColor: `#3bff89` }}
                   />
-                  <span className={` `}>
-                    Supply - {name} LP
-                  </span>
+                  <span className={` `}>Supply - {name} LP</span>
                 </div>
                 <div className={`mb-2 md:mb-0`}>
                   <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
