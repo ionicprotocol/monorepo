@@ -510,7 +510,7 @@ const usePointsForIonLp = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(ionLPMultipliers).map((asset) => {
@@ -555,7 +555,7 @@ const usePointsForSteerLp = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(steerLPMultipliers).map((asset) => {
