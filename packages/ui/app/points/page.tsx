@@ -36,6 +36,13 @@ const pools: { [key: number]: { [key: number]: string } } = {
   }
 };
 
+const colors = {
+  supply: '#40798C',
+  borrow: '#f3fa96',
+  ionLp: '#3bff89',
+  steerLp: '#7D98A1'
+};
+
 export default function Points() {
   const router = useRouter();
   const { data: modeMarketDataMain, isLoading: isLoadingModeMarketDataMain } =
@@ -432,14 +439,21 @@ export default function Points() {
           <>
             <div className="w-full mb-2 md:mt-0">
               <FlatMap
-                colorData={['#3bff89', '#f3fa96']}
+                colorData={[
+                  colors.supply,
+                  colors.borrow,
+                  colors.ionLp,
+                  colors.steerLp
+                ]}
                 rewardsData={[
                   summedSupplyPointsModeMain +
                     summedSupplyPointsModeNative +
                     summedSupplyPointsBaseMain,
                   summedBorrowPointsModeMain +
                     summedBorrowPointsModeNative +
-                    summedBorrowPointsBaseMain
+                    summedBorrowPointsBaseMain,
+                  summedPointsIonLp,
+                  summedPointsSteerLp
                 ]}
               />
             </div>
@@ -475,7 +489,7 @@ export default function Points() {
                 >
                   <span
                     className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: `#3bff89` }}
+                    style={{ backgroundColor: colors.supply }}
                   />
                   <span className={` `}>
                     Supply - {market && pools[market.chainId][market.id]}
@@ -496,7 +510,7 @@ export default function Points() {
                   })}
                 </div>
                 <PercentMeter
-                  color="#3bff89"
+                  color={colors.supply}
                   percent={
                     parseFloat(
                       (((points ?? 0) / totalPoints) * 100).toFixed(1)
@@ -510,14 +524,16 @@ export default function Points() {
               {
                 name: 'Ion',
                 market: pointsIonLp,
-                points: summedPointsIonLp
+                points: summedPointsIonLp,
+                backgroundColor: colors.ionLp
               },
               {
                 name: 'Steer',
                 market: pointsSteerLp,
-                points: summedPointsSteerLp
+                points: summedPointsSteerLp,
+                backgroundColor: colors.steerLp
               }
-            ].map(({ name, market, points }) => (
+            ].map(({ name, points, backgroundColor }) => (
               <div
                 className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-4  py-5 text-xs text-white/80 font-semibold text-center items-center `}
                 key={`supply-mode-${name}`}
@@ -527,7 +543,7 @@ export default function Points() {
                 >
                   <span
                     className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: `#3bff89` }}
+                    style={{ backgroundColor }}
                   />
                   <span className={` `}>Supply - {name} LP</span>
                 </div>
@@ -535,7 +551,7 @@ export default function Points() {
                   <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
                     AMOUNT:
                   </span>
-                  ${millify(market?.totalSupplyBalanceFiat ?? 0)}
+                  N/A
                 </div>
                 <div className={`mb-4 md:mb-0`}>
                   <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
@@ -546,7 +562,7 @@ export default function Points() {
                   })}
                 </div>
                 <PercentMeter
-                  color="#3bff89"
+                  color={backgroundColor}
                   percent={
                     parseFloat(
                       (((points ?? 0) / totalPoints) * 100).toFixed(1)
@@ -579,7 +595,7 @@ export default function Points() {
                 >
                   <span
                     className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: `#f3fa96` }}
+                    style={{ backgroundColor: colors.borrow }}
                   />
                   <span className={` `}>
                     Borrow - {market && pools[market.chainId][market.id]}
@@ -600,7 +616,7 @@ export default function Points() {
                   })}
                 </div>
                 <PercentMeter
-                  color="#f3fa96"
+                  color={colors.borrow}
                   percent={
                     parseFloat(
                       (((points ?? 0) / totalPoints) * 100).toFixed(1)
