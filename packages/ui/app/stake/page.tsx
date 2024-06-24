@@ -2,7 +2,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { formatEther, parseUnits } from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
@@ -10,6 +11,8 @@ import {
   usePublicClient,
   useWalletClient
 } from 'wagmi';
+
+import MaxDeposit from '../_components/stake/MaxDeposit';
 
 import {
   LiquidityContractAbi,
@@ -30,42 +33,91 @@ const Widget = dynamic(() => import('../_components/stake/Widget'), {
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
   const chainId = useChainId();
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+  const [maxDeposit, setMaxDeposit] = useState<{ ion: string; eth: string }>({
+    ion: '',
+    eth: ''
+  });
 
-  const temporaryArgs = {
-    token: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
-    stable: false,
-    //@ts-ignore
-    amountTokonDesired: 20075338509533417529735n,
-    //@ts-ignore
-    amounTokenMin: 19071571584056746653248n,
-    //@ts-ignore
-    amountETHMin: 133898491919691498n,
-    to: '0x5a9e792143bf2708b4765c144451dca54f559a19',
-    deadline: 1718881843
-  };
+  useMemo(async () => {
+    try {
+      const reserves = (await publicClient?.readContract({
+        abi: LiquidityContractAbi,
+        address: LiquidityContractAddress,
+        args: [
+          '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
+          '0x4200000000000000000000000000000000000006',
+          false
+        ],
+        functionName: 'getReserves'
+      })) as bigint[];
+
+      if (maxDeposit.ion && reserves) {
+        const ethVal =
+          (parseUnits(maxDeposit?.ion, 18) * reserves[1]) / reserves[0];
+        setMaxDeposit((p) => {
+          return { ...p, eth: formatEther(ethVal) || '' };
+        });
+      } else {
+        setMaxDeposit((p) => {
+          return { ...p, eth: '' };
+        });
+      }
+
+      // return gettingReserves;
+      // const quoteLiquidity = await publicClient?.readContract({
+      //   abi: LiquidityContractAbi,
+      //   address: LiquidityContractAddress,
+      //   args: [
+      //     parseUnits(maxDeposit?.ion, 18),
+      //     parseUnits(gettingReserves[0], 18),
+      //     parseUnits(gettingReserves[1], 18)
+      //   ],
+      //   functionName: 'quoteLiquidity'
+      // });
+      //eslint-disable-next-line no-console
+      // console.log(typeof reserves);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+    }
+  }, [maxDeposit.ion, publicClient]);
 
   async function addLiquidity() {
     try {
+      const args = {
+        token: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
+        stable: false,
+        amountTokenDesired: parseUnits(maxDeposit?.ion, 18),
+        amounTokenMin: parseUnits(
+          (+maxDeposit?.ion - +maxDeposit?.ion * 0.05).toString(),
+          18
+        ),
+        amountETHMin: parseUnits(maxDeposit?.eth, 18),
+        to: address,
+        deadline: Math.floor((Date.now() + 3600000) / 1000)
+      };
+
       if (!isConnected) {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(mode.id, chainId);
+      const switched = await handleSwitchOriginChain(mode.id, chainId);
+      if (!switched) return;
       const tx = await walletClient!.writeContract({
         abi: LiquidityContractAbi,
         account: walletClient?.account,
         address: LiquidityContractAddress,
         args: [
-          temporaryArgs.token,
-          temporaryArgs.stable,
-          temporaryArgs.amountTokonDesired,
-          temporaryArgs.amounTokenMin,
-          temporaryArgs.amountETHMin,
-          temporaryArgs.to,
-          temporaryArgs.deadline
+          args.token,
+          args.stable,
+          args.amountTokenDesired,
+          args.amounTokenMin,
+          args.amountETHMin,
+          args.to,
+          args.deadline
         ],
         functionName: 'addLiquidityETH'
       });
@@ -142,68 +194,28 @@ export default function Stake() {
               Buy ION Tokens
             </button>
           </div>
-          <div className={`w-full h-full bg-grayone px-4 rounded-xl py-2`}>
+          <div className={`w-full h-max bg-grayone px-4 rounded-xl py-2`}>
             <h1 className={` text-lg`}>Step 2. LP your ION Tokens</h1>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40`}
-            >
-              <span> Deposit </span>
-              <div>
-                {' '}
-                ION Balance : 00.00
-                <button className={`text-accent ml-2`}>MAX</button>
-              </div>
-            </div>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-md `}
-            >
-              <input
-                className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
-                placeholder={`0.0`}
-                type="number"
-                // value={}
-              />
-              <div className=" flex items-center justify-center">
-                <img
-                  alt="ion logo"
-                  className={`w-5 h-5 inline-block mx-1`}
-                  src="/img/symbols/32/color/ion.png"
-                />
-                <button className={` mx-2`}>ION</button>
-              </div>
-            </div>
-            <div
-              className={`flex w-full mt-4 items-center justify-between text-[11px] text-white/40`}
-            >
-              <span> Deposit </span>
-              <div>
-                {' '}
-                WETH Balance : 00.00
-                <button className={`text-accent ml-2`}>MAX</button>
-              </div>
-            </div>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-md `}
-            >
-              <input
-                className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
-                placeholder={`0.0`}
-                type="number"
-                // value={}
-              />
-              <div className=" flex items-center justify-center">
-                <img
-                  alt="ion logo"
-                  className={`w-5 h-5 inline-block mx-1`}
-                  src="/img/logo/ETH.png"
-                />
-                <button className={` mx-2`}>WETH</button>
-              </div>
-            </div>
+            <MaxDeposit
+              amount={maxDeposit.ion}
+              tokenName={'ion'}
+              token={'0x18470019bf0e94611f15852f7e93cf5d65bc34ca'}
+              handleInput={(val?: string) =>
+                setMaxDeposit((p) => {
+                  return { ...p, ion: val || '' };
+                })
+              }
+            />
+            <MaxDeposit
+              amount={maxDeposit.eth}
+              tokenName={'eth'}
+              token={'0x0000000000000000000000000000000000000000'}
+            />
+
             {/* liner */}
 
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
-            <h1> Expected LP </h1>
+            {/* <h1> Expected LP </h1>
             <div
               className={`flex w-full mt-2 items-center justify-between text-md `}
             >
@@ -219,9 +231,9 @@ export default function Stake() {
                   className={`w-5 h-5 inline-block mx-1`}
                   src="/img/symbols/32/color/ion.png"
                 />
-                <button className={` mx-2`}>ION/WETH</button>
+                <button className={` mx-2`}>ION/ETH</button>
               </div>
-            </div>
+            </div> */}
             <button
               className={`flex items-center justify-center  py-1.5 mt-8 mb-4 text-sm text-black w-full bg-accent rounded-md`}
               onClick={() => addLiquidity()}
