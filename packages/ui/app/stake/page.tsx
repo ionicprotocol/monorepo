@@ -11,6 +11,8 @@ import {
   useWalletClient
 } from 'wagmi';
 
+import MaxDeposit from '../_components/stake/MaxDeposit';
+
 import {
   LiquidityContractAbi,
   LiquidityContractAddress
@@ -33,6 +35,10 @@ export default function Stake() {
   const { isConnected } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+  const [maxDeposit, setMaxDeposit] = useState<{ ion: string; eth: string }>({
+    ion: '0',
+    eth: '0'
+  });
 
   const temporaryArgs = {
     token: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
@@ -142,68 +148,33 @@ export default function Stake() {
               Buy ION Tokens
             </button>
           </div>
-          <div className={`w-full h-full bg-grayone px-4 rounded-xl py-2`}>
+          <div className={`w-full h-max bg-grayone px-4 rounded-xl py-2`}>
             <h1 className={` text-lg`}>Step 2. LP your ION Tokens</h1>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40`}
-            >
-              <span> Deposit </span>
-              <div>
-                {' '}
-                ION Balance : 00.00
-                <button className={`text-accent ml-2`}>MAX</button>
-              </div>
-            </div>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-md `}
-            >
-              <input
-                className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
-                placeholder={`0.0`}
-                type="number"
-                // value={}
-              />
-              <div className=" flex items-center justify-center">
-                <img
-                  alt="ion logo"
-                  className={`w-5 h-5 inline-block mx-1`}
-                  src="/img/symbols/32/color/ion.png"
-                />
-                <button className={` mx-2`}>ION</button>
-              </div>
-            </div>
-            <div
-              className={`flex w-full mt-4 items-center justify-between text-[11px] text-white/40`}
-            >
-              <span> Deposit </span>
-              <div>
-                {' '}
-                WETH Balance : 00.00
-                <button className={`text-accent ml-2`}>MAX</button>
-              </div>
-            </div>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-md `}
-            >
-              <input
-                className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
-                placeholder={`0.0`}
-                type="number"
-                // value={}
-              />
-              <div className=" flex items-center justify-center">
-                <img
-                  alt="ion logo"
-                  className={`w-5 h-5 inline-block mx-1`}
-                  src="/img/logo/ETH.png"
-                />
-                <button className={` mx-2`}>WETH</button>
-              </div>
-            </div>
+            <MaxDeposit
+              amount={maxDeposit.ion}
+              tokenName={'ion'}
+              token={'0x18470019bf0e94611f15852f7e93cf5d65bc34ca'}
+              handleInput={(val?: string) =>
+                setMaxDeposit((p) => {
+                  return { ...p, ion: val || '' };
+                })
+              }
+            />
+            <MaxDeposit
+              amount={maxDeposit.eth}
+              tokenName={'eth'}
+              token={'0x0000000000000000000000000000000000000000'}
+              handleInput={(val?: string) =>
+                setMaxDeposit((p) => {
+                  return { ...p, eth: val || '' };
+                })
+              }
+            />
+
             {/* liner */}
 
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
-            <h1> Expected LP </h1>
+            {/* <h1> Expected LP </h1>
             <div
               className={`flex w-full mt-2 items-center justify-between text-md `}
             >
@@ -219,9 +190,9 @@ export default function Stake() {
                   className={`w-5 h-5 inline-block mx-1`}
                   src="/img/symbols/32/color/ion.png"
                 />
-                <button className={` mx-2`}>ION/WETH</button>
+                <button className={` mx-2`}>ION/ETH</button>
               </div>
-            </div>
+            </div> */}
             <button
               className={`flex items-center justify-center  py-1.5 mt-8 mb-4 text-sm text-black w-full bg-accent rounded-md`}
               onClick={() => addLiquidity()}
