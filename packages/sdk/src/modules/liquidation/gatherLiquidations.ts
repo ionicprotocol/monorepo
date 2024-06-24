@@ -70,7 +70,9 @@ export default async function gatherLiquidations(
       erroredPools.push({
         msg: "Error while fetching liquidatable users " + (e as Error).stack,
         comptroller: pool.comptroller,
-        error: e
+        error: {
+          chainLiquidationConfig
+        }
       });
     }
   }
