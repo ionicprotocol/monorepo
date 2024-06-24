@@ -28,7 +28,7 @@ import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
+// import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrowModeNative,
   usePointsForSupplyModeNative,
@@ -213,12 +213,13 @@ export default function Dashboard() {
     usePointsForSupplyBaseMain();
   const { data: supplyPointsMain, isLoading: isLoadingSupplyPointsMain } =
     usePointsForSupplyModeMain();
-  const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
-    useMaxBorrowAmounts(
-      marketData?.assets ?? [],
-      marketData?.comptroller ?? '',
-      +chain
-    );
+  // for utilization:
+  // const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
+  //   useMaxBorrowAmounts(
+  //     marketData?.assets ?? [],
+  //     marketData?.comptroller ?? '',
+  //     +chain
+  //   );
   const totalPoints = useMemo<number>(() => {
     if (
       supplyPointsNative &&
@@ -319,27 +320,46 @@ export default function Dashboard() {
 
     return 'text-error';
   }, [handledHealthData, healthData]);
-  const utilizations = useMemo<string[]>(() => {
-    if (borrowCaps && marketData) {
-      return borrowCaps.map((borrowCap, i) => {
-        const totalBorrow = marketData.assets[i].borrowBalance.add(
-          borrowCap?.bigNumber ?? '0'
-        );
 
-        return `${
-          totalBorrow.lte('0') || marketData.assets[i].borrowBalance.lte(0)
-            ? '0.00'
-            : (
-                100 /
-                totalBorrow.div(marketData.assets[i].borrowBalance).toNumber()
-              ).toFixed(2)
-        }%`;
-      });
-    }
+  // CURRENTLY UNUSED, NEED TO CHECK THIS
+  // const utilizations = useMemo<string[]>(() => {
+  //   if (borrowCaps && marketData) {
+  //     return borrowCaps.map((borrowCap, i) => {
+  //       const totalBorrow = marketData.assets[i].borrowBalance.add(
+  //         borrowCap?.bigNumber ?? '0'
+  //       );
 
-    return marketData?.assets.map(() => '0.00%') ?? [];
-  }, [borrowCaps, marketData]);
-  // const selectedPoolClass = 'rounded-md border-mode border-2';
+  //       return `${
+  //         totalBorrow.lte('0') ||
+  //         marketData.assets[i].borrowBalance.lte(0) ||
+  //         Number(
+  //           formatUnits(
+  //             marketData.assets[i].borrowBalance,
+  //             marketData.assets[i].underlyingDecimals
+  //           )
+  //         ) <= 0
+  //           ? '0.00'
+  //           : (
+  //               100 /
+  //               (Number(
+  //                 formatUnits(
+  //                   totalBorrow,
+  //                   marketData.assets[i].underlyingDecimals
+  //                 )
+  //               ) /
+  //                 Number(
+  //                   formatUnits(
+  //                     marketData.assets[i].borrowBalance,
+  //                     marketData.assets[i].underlyingDecimals
+  //                   )
+  //                 ))
+  //             ).toFixed(2)
+  //       }%`;
+  //     });
+  //   }
+  //   return marketData?.assets.map(() => '0.00%') ?? [];
+  // }, [borrowCaps, marketData]);
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
@@ -583,9 +603,8 @@ export default function Dashboard() {
           <ResultHandler
             center
             isLoading={
-              isLoadingMarketData ||
-              isLoadingAssetsSupplyAprData ||
-              isLoadingBorrowCaps
+              isLoadingMarketData || isLoadingAssetsSupplyAprData
+              // || isLoadingBorrowCaps
             }
           >
             <>
@@ -599,7 +618,7 @@ export default function Dashboard() {
                     <h3 className={` `}>SUPPLY APR</h3>
                   </div>
 
-                  {suppliedAssets.map((asset, i) => (
+                  {suppliedAssets.map((asset) => (
                     <InfoRows
                       amount={`${
                         asset.supplyBalanceNative
@@ -638,7 +657,8 @@ export default function Dashboard() {
                       selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      utilization={utilizations[i]}
+                      // utilization={utilizations[i]}
+                      utilization="0.00%"
                     />
                   ))}
                 </>
@@ -658,9 +678,8 @@ export default function Dashboard() {
           <ResultHandler
             center
             isLoading={
-              isLoadingMarketData ||
-              isLoadingAssetsSupplyAprData ||
-              isLoadingBorrowCaps
+              isLoadingMarketData || isLoadingAssetsSupplyAprData
+              // || isLoadingBorrowCaps
             }
           >
             <>
@@ -674,7 +693,7 @@ export default function Dashboard() {
                     <h3 className={` `}>BORROW APR</h3>
                   </div>
 
-                  {borrowedAssets.map((asset, i) => (
+                  {borrowedAssets.map((asset) => (
                     <InfoRows
                       amount={`${
                         asset.borrowBalanceFiat
@@ -713,7 +732,8 @@ export default function Dashboard() {
                       selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      utilization={utilizations[i]}
+                      // utilization={utilizations[i]}
+                      utilization="0.00%"
                     />
                   ))}
                 </>
