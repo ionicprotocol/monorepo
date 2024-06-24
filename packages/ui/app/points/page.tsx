@@ -40,7 +40,7 @@ const colors = {
   supply: '#40798C',
   borrow: '#f3fa96',
   ionLp: '#3bff89',
-  steerLp: '#7D98A1'
+  steerLp: '#FF5666'
 };
 
 export default function Points() {
