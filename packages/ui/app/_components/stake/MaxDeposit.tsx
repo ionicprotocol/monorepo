@@ -9,7 +9,7 @@ interface IMaxDeposit {
   amount: string;
   tokenName?: string;
   token?: `0x${string}`;
-  handleInput: (val?: string) => void;
+  handleInput?: (val?: string) => void;
 }
 function MaxDeposit({
   amount,
@@ -31,9 +31,11 @@ function MaxDeposit({
       Number(e.target.value) > Number(formatUnits(data?.value, data?.decimals))
     )
       return;
+    if (!handleInput) return;
     handleInput(e.target.value);
   }
   function handleMax(val: string) {
+    if (!handleInput) return;
     handleInput(val);
   }
   return (
@@ -52,23 +54,26 @@ function MaxDeposit({
                 maximumFractionDigits: 2
               })
             : '0'}
-          <button
-            className={`text-accent ml-2`}
-            onClick={() =>
-              handleMax(data ? formatUnits(data?.value, data?.decimals) : '0')
-            }
-          >
-            MAX
-          </button>
+          {handleInput && (
+            <button
+              className={`text-accent ml-2`}
+              onClick={() =>
+                handleMax(data ? formatUnits(data?.value, data?.decimals) : '0')
+              }
+            >
+              MAX
+            </button>
+          )}
         </div>
       </div>
       <div className={`flex w-full mt-2 items-center justify-between text-md `}>
         <input
-          className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-max trucnate`}
+          className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto block w-max trucnate`}
           placeholder={`0.0`}
           type="number"
           value={amount}
           onChange={(e) => handlInpData(e)}
+          disabled={handleInput ? false : true}
         />
         <div className="ml-auto flex items-center justify-center">
           <img

@@ -114,7 +114,7 @@ export default function Widget({ close, open }: IProps) {
               close();
           }}
         >
-          {widgetStatus ? 'Step 1' + widgetStatus.toLowerCase() : 'Lets Start'}{' '}
+          {widgetStatus ? 'Step 1 ' + widgetStatus.toLowerCase() : 'Lets Start'}{' '}
           {widgetStatus === 'COMPLETED' && '🎉'}{' '}
           {widgetStatus === 'FAIL' && '😵'} {widgetStatus === 'START' && '🤠'}{' '}
           {widgetStatus === 'LOSS' && '📉'}
