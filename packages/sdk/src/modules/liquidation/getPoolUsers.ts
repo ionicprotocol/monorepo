@@ -169,7 +169,11 @@ async function getFusePoolUsers(
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
+
+  // Log the total borrowers count
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
+  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toString()}`);
+
   const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
   const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
 
