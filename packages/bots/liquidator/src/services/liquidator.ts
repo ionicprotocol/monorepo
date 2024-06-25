@@ -25,7 +25,10 @@ export class Liquidator {
       );
       if (filteredErroredPools.length > 0) {
         const msg = erroredPools
-          .map((pool) => `Comptroller: ${pool.comptroller} - msg: ${pool.msg} ${JSON.stringify(pool.error.stack)}`)
+          .map(
+            (pool) =>
+              `Comptroller: ${pool.comptroller} - msg: ${pool.msg} ${JSON.stringify(pool.error.chainLiquidationConfig)}`
+          )
           .join("\n");
         logger.error(`Errored fetching liquidations from pools: ${msg}`);
         this.alert.sendLiquidationFetchingFailure(erroredPools, msg);
