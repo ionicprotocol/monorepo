@@ -199,7 +199,8 @@ export enum assetSymbols {
   MODE = "MODE",
   ION = "ION",
   KIM = "KIM",
-
+  IONWETH = "ION-WETH",
+  IUSDCIUSDT = "ionUSDC-ionUSDT",
   // base
   AERO = "AERO",
 

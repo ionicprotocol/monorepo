@@ -88,7 +88,9 @@ export default async function gatherLiquidations<T extends LiquidatablePool | Py
       erroredPools.push({
         msg: "Error while fetching liquidatable users " + (e as Error).stack,
         comptroller: pool.comptroller,
-        error: e
+        error: {
+          chainLiquidationConfig
+        }
       });
     }
   }
