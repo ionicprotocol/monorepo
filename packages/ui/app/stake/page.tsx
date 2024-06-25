@@ -14,6 +14,7 @@ import {
 
 import MaxDeposit from '../_components/stake/MaxDeposit';
 
+import { ApprovalAbi, ApprovalContractAddress } from '@ui/constants/approve';
 import {
   LiquidityContractAbi,
   LiquidityContractAddress
@@ -106,6 +107,24 @@ export default function Stake() {
       }
       const switched = await handleSwitchOriginChain(mode.id, chainId);
       if (!switched) return;
+      //approving first ...
+
+      const approval = await walletClient!.writeContract({
+        abi: ApprovalAbi,
+        account: walletClient?.account,
+        address: ApprovalContractAddress,
+        args: [address, args.amountTokenDesired],
+        functionName: 'approve'
+      });
+
+      // console.log(approval);
+
+      const appr = await publicClient?.waitForTransactionReceipt({
+        hash: approval
+      });
+      // eslint-disable-next-line no-console
+      console.log({ appr });
+
       const tx = await walletClient!.writeContract({
         abi: LiquidityContractAbi,
         account: walletClient?.account,
@@ -133,6 +152,7 @@ export default function Stake() {
       // eslint-disable-next-line no-console
       console.log(err);
     } finally {
+      // Transaction Hash after running addLiquidityEth after approving --->>> 0xa003f3ef182c2e1ecc7c857b35a76d97ea05ab4fbf1e25037d7c0e5ffdc606a1
     }
   }
 
