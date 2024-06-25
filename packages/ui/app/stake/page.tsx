@@ -3,7 +3,7 @@
 
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
-import { formatEther, parseUnits } from 'viem';
+import { formatEther, parseEther, parseUnits } from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
@@ -91,10 +91,9 @@ export default function Stake() {
         token: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
         stable: false,
         amountTokenDesired: parseUnits(maxDeposit?.ion, 18),
-        amounTokenMin: parseUnits(
-          (+maxDeposit?.ion - +maxDeposit?.ion * 0.05).toString(),
-          18
-        ),
+        amounTokenMin:
+          parseEther(maxDeposit?.ion) -
+          (parseEther(maxDeposit?.ion) * BigInt(5)) / BigInt(100),
         amountETHMin: parseUnits(maxDeposit?.eth, 18),
         to: address,
         deadline: Math.floor((Date.now() + 3600000) / 1000)
@@ -119,7 +118,8 @@ export default function Stake() {
           args.to,
           args.deadline
         ],
-        functionName: 'addLiquidityETH'
+        functionName: 'addLiquidityETH',
+        value: parseUnits(maxDeposit?.eth, 18)
       });
       // eslint-disable-next-line no-console
       console.log('Transaction Hash --->>>', tx);
