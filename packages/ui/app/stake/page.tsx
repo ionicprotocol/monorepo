@@ -273,11 +273,20 @@ export default function Stake() {
             <div className="flex items-center w-full mt-3 text-xs gap-2">
               <img
                 alt="ion logo"
-                className={`w-6 h-6 inline-block mx-1`}
-                src="/img/logo/MODE.png"
+                className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
+                src="/img/symbols/32/color/velo.png"
               />
-              <span>Mode Points SZN 2</span>
-              <span className="text-accent ml-auto">2x</span>
+              <span>Velodrome APY</span>
+              <span className="text-accent ml-auto">35%</span>
+            </div>
+            <div className="flex items-center w-full mt-3 text-xs gap-2">
+              <img
+                alt="ion logo"
+                className={`w-6 h-6 inline-block mx-1`}
+                src="/img/logo/ION.png"
+              />
+              <span>Ionic Points</span>
+              <span className="text-accent ml-auto">3x</span>
             </div>
             <div className="flex items-center w-full mt-3 text-xs gap-2">
               <img
@@ -285,17 +294,8 @@ export default function Stake() {
                 className={`w-6 h-6 inline-block mx-1`}
                 src="/img/logo/MODE.png"
               />
-              <span>Mode Points SZN 2</span>
-              <span className="text-accent ml-auto">2x</span>
-            </div>
-            <div className="flex items-center w-full mt-3 text-xs gap-2">
-              <img
-                alt="ion logo"
-                className={`w-6 h-6 inline-block mx-1`}
-                src="/img/logo/MODE.png"
-              />
-              <span>Mode Points SZN 2</span>
-              <span className="text-accent ml-auto">2x</span>
+              <span>Mode Points</span>
+              <span className="text-accent ml-auto">1x</span>
             </div>
             <button
               className={`flex items-center justify-center  py-1.5 mt-6 mb-4 text-sm text-black w-full bg-accent rounded-md`}
