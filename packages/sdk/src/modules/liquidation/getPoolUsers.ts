@@ -1,4 +1,4 @@
-import { performance } from "perf_hooks";
+// import { performance } from "perf_hooks";
 
 import { BigNumber, ethers } from "ethers";
 
@@ -6,6 +6,22 @@ import { PoolLens } from "../../../typechain/PoolLens";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
+let performance: any;
+
+if (typeof window === "undefined") {
+  // Running in Node.js environment
+  import("perf_hooks")
+    .then(({ performance: nodePerformance }) => {
+      performance = nodePerformance;
+    })
+    .catch((err) => {
+      console.error("Failed to load perf_hooks:", err);
+      // Handle error as needed
+    });
+} else {
+  // Running in browser environment
+  performance = window.performance;
+}
 
 function getUserTotals(assets: PoolLens.PoolAssetStructOutput[]): {
   totalBorrow: BigNumber;
