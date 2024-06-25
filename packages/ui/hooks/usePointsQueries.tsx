@@ -588,7 +588,7 @@ const usePointsForSteerLp = () => {
         rows: [[totalPoints]]
       };
     },
-    queryKey: ['points', 'supply', 'ion-lp', address],
+    queryKey: ['points', 'supply', 'steer-lp', address],
     refetchOnWindowFocus: false,
     staleTime: Infinity
   });
