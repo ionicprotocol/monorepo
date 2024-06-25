@@ -229,6 +229,8 @@ export default async function getAllFusePoolUsers(
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
 
+  let totalUsersProcessed = 0; // Track total users processed
+
   const startTime = performance.now();
 
   const poolPromises = allPools.map(async (pool) => {
@@ -242,6 +244,7 @@ export default async function getAllFusePoolUsers(
           try {
             const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(sdk, comptroller, maxHealth);
             fusePoolUsers.push(poolUserParams);
+            totalUsersProcessed += poolUserParams.users.length; // Add number of users processed from this pool
           } catch (e) {
             const msg = `Error getting pool users for ${comptroller}: ${e}`;
             erroredPools.push({ comptroller, msg, error: e });
@@ -261,6 +264,7 @@ export default async function getAllFusePoolUsers(
   const endTime = performance.now();
 
   console.log(`Total time taken to read all users: ${endTime - startTime} milliseconds`);
+  console.log(`Total users processed: ${totalUsersProcessed}`); // Log total users processed
 
   return [fusePoolUsers, erroredPools];
 }
