@@ -14,7 +14,6 @@ import {
 
 import MaxDeposit from '../_components/stake/MaxDeposit';
 
-import { ApprovalAbi, ApprovalContractAddress } from '@ui/constants/approve';
 import {
   LiquidityContractAbi,
   LiquidityContractAddress
