@@ -146,7 +146,7 @@ export default async function getAllFusePoolUsers(
   const endTime = performance.now();
 
   console.log(`Total time taken to read all users: ${(endTime - startTime).toFixed(2)} milliseconds`);
-  console.log(`Total users processed: ${fusePoolUsers.reduce((sum, pool) => sum + pool.users.length, 0)}`);
+  // console.log(`Total users processed: ${fusePoolUsers.reduce((sum, pool) => sum + pool.users.length, 0)}`);
 
   return [fusePoolUsers, erroredPools];
 }
