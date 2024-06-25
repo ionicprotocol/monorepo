@@ -1,5 +1,6 @@
+import { performance } from "perf_hooks";
+
 import { BigNumber, ethers } from "ethers";
-import { performance } from 'perf_hooks';
 
 import { PoolLens } from "../../../typechain/PoolLens";
 import { IonicSdk } from "../../IonicSdk";
@@ -36,11 +37,7 @@ function getPositionHealth(totalBorrow: BigNumber, totalCollateral: BigNumber): 
 
 const PAGE_SIZE = 300;
 
-async function getFusePoolUsers(
-  sdk: IonicSdk,
-  comptroller: string,
-  maxHealth: BigNumber
-): Promise<PoolUserStruct[]> {
+async function getFusePoolUsers(sdk: IonicSdk, comptroller: string, maxHealth: BigNumber): Promise<PoolUserStruct[]> {
   const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
@@ -113,11 +110,13 @@ export default async function getAllFusePoolUsers(
       try {
         const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
         if (hasShortfall.length > 0) {
-          const users = hasShortfall.map((user) => `- user: ${user.user}, shortfall: ${ethers.utils.formatEther(user.shortfall)}\n`);
+          const users = hasShortfall.map(
+            (user) => `- user: ${user.user}, shortfall: ${ethers.utils.formatEther(user.shortfall)}\n`
+          );
           sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
           try {
             const poolUserParams: PoolUserStruct[] = await getFusePoolUsers(sdk, comptroller, maxHealth);
-            const comptrollerInstance = sdk.createComptroller(comptroller);  // Defined here
+            const comptrollerInstance = sdk.createComptroller(comptroller); // Defined here
             fusePoolUsers.push({
               comptroller,
               users: poolUserParams,
@@ -137,7 +136,9 @@ export default async function getAllFusePoolUsers(
       }
 
       const poolEndTime = performance.now();
-      console.log(`Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`);
+      console.log(
+        `Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`
+      );
     }
   });
 
@@ -150,8 +151,6 @@ export default async function getAllFusePoolUsers(
 
   return [fusePoolUsers, erroredPools];
 }
-
-
 
 // import { BigNumber, ethers } from "ethers";
 

@@ -22,7 +22,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
     ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
       // const [poolWithUsers, erroredPools] = await getAllPoolUsers(
-      const [poolWithUsers, erroredPools] = await getAllFusePoolUsers(  
+      const [poolWithUsers, erroredPools] = await getAllFusePoolUsers(
         this as unknown as IonicSdk,
         maxHealthFactor,
         excludedComptrollers
