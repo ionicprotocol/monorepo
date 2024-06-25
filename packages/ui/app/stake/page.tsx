@@ -3,7 +3,7 @@
 
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
-import { formatEther, parseEther, parseUnits } from 'viem';
+import { erc20Abi, formatEther, parseEther, parseUnits } from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
@@ -109,10 +109,10 @@ export default function Stake() {
       //approving first ...
 
       const approval = await walletClient!.writeContract({
-        abi: ApprovalAbi,
+        abi: erc20Abi,
         account: walletClient?.account,
-        address: ApprovalContractAddress,
-        args: [address, args.amountTokenDesired],
+        address: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
+        args: [LiquidityContractAddress, args.amountTokenDesired],
         functionName: 'approve'
       });
 
