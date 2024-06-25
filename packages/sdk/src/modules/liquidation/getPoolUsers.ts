@@ -40,11 +40,11 @@ async function getFusePoolUsers(
   sdk: IonicSdk,
   comptroller: string,
   maxHealth: BigNumber
-): Promise<PublicPoolUserWithData> {
+): Promise<PoolUserStruct[]> {
   const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
-  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toNumber()}`); // Print borrower count for the current pool
+  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toNumber()}`);
 
   const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
   const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
@@ -64,18 +64,13 @@ async function getFusePoolUsers(
     }
   });
 
-  return {
-    comptroller,
-    users: poolUsers,
-    closeFactor: await comptrollerInstance.callStatic.closeFactorMantissa(),
-    liquidationIncentive: await comptrollerInstance.callStatic.liquidationIncentiveMantissa()
-  };
+  return poolUsers;
 }
 
 async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: string) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
-  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toNumber()}`); // Print borrower count for the current pool
+  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toNumber()}`);
 
   const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
   const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
@@ -121,8 +116,14 @@ export default async function getAllFusePoolUsers(
           const users = hasShortfall.map((user) => `- user: ${user.user}, shortfall: ${ethers.utils.formatEther(user.shortfall)}\n`);
           sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
           try {
-            const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(sdk, comptroller, maxHealth);
-            fusePoolUsers.push(poolUserParams);
+            const poolUserParams: PoolUserStruct[] = await getFusePoolUsers(sdk, comptroller, maxHealth);
+            const comptrollerInstance = sdk.createComptroller(comptroller);  // Defined here
+            fusePoolUsers.push({
+              comptroller,
+              users: poolUserParams,
+              closeFactor: await comptrollerInstance.callStatic.closeFactorMantissa(),
+              liquidationIncentive: await comptrollerInstance.callStatic.liquidationIncentiveMantissa()
+            });
           } catch (e) {
             const msg = `Error getting pool users for ${comptroller}: ${e}`;
             erroredPools.push({ comptroller, msg, error: e });
@@ -145,9 +146,13 @@ export default async function getAllFusePoolUsers(
   const endTime = performance.now();
 
   console.log(`Total time taken to read all users: ${(endTime - startTime).toFixed(2)} milliseconds`);
+  console.log(`Total users processed: ${fusePoolUsers.reduce((sum, pool) => sum + pool.users.length, 0)}`);
 
   return [fusePoolUsers, erroredPools];
 }
+
+
+
 // import { BigNumber, ethers } from "ethers";
 
 // import { PoolLens } from "../../../typechain/PoolLens";
