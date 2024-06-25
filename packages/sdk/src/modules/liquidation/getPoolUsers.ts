@@ -169,10 +169,8 @@ async function getFusePoolUsers(
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
-
-  // Log the total borrowers count
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
-  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toString()}`);
+  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toNumber()}`); // Print borrower count for the current pool
 
   const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
   const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
@@ -203,6 +201,8 @@ async function getFusePoolUsers(
 async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: string) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
+  console.log(`Total borrowers count for ${comptroller}: ${borrowersCount.toNumber()}`); // Print borrower count for the current pool
+
   const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
   const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
 
@@ -233,13 +233,14 @@ export default async function getAllFusePoolUsers(
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
 
-  let totalUsersProcessed = 0; // Track total users processed
-
   const startTime = performance.now();
 
   const poolPromises = allPools.map(async (pool) => {
     const { comptroller, name } = pool;
     if (!excludedComptrollers.includes(comptroller)) {
+      const poolStartTime = performance.now();
+      console.log(`Processing pool ${name} (${comptroller})...`);
+
       try {
         const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
         if (hasShortfall.length > 0) {
@@ -248,7 +249,6 @@ export default async function getAllFusePoolUsers(
           try {
             const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(sdk, comptroller, maxHealth);
             fusePoolUsers.push(poolUserParams);
-            totalUsersProcessed += poolUserParams.users.length; // Add number of users processed from this pool
           } catch (e) {
             const msg = `Error getting pool users for ${comptroller}: ${e}`;
             erroredPools.push({ comptroller, msg, error: e });
@@ -260,6 +260,9 @@ export default async function getAllFusePoolUsers(
         const msg = `Error getting shortfalled users for pool ${name} (${comptroller}): ${e}`;
         erroredPools.push({ comptroller, msg, error: e });
       }
+
+      const poolEndTime = performance.now();
+      console.log(`Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`);
     }
   });
 
@@ -267,8 +270,7 @@ export default async function getAllFusePoolUsers(
 
   const endTime = performance.now();
 
-  console.log(`Total time taken to read all users: ${endTime - startTime} milliseconds`);
-  console.log(`Total users processed: ${totalUsersProcessed}`); // Log total users processed
+  console.log(`Total time taken to read all users: ${(endTime - startTime).toFixed(2)} milliseconds`);
 
   return [fusePoolUsers, erroredPools];
 }
