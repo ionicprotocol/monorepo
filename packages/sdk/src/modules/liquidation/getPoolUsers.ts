@@ -125,7 +125,7 @@
 //   return [fusePoolUsers, erroredPools];
 // }
 import { BigNumber, ethers } from "ethers";
-import { performance } from 'perf_hooks';  // Import performance from perf_hooks
+import { performance } from 'perf_hooks';
 
 import { PoolLens } from "../../../typechain/PoolLens";
 import { IonicSdk } from "../../IonicSdk";
@@ -172,18 +172,22 @@ async function getFusePoolUsers(
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
   const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
   const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
-  for (const user of users) {
-    const assets = await sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
-      from: user
-    });
 
+  const assetsPromises = users.map((user) =>
+    sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, { from: user })
+  );
+
+  const assetsResults = await Promise.all(assetsPromises);
+
+  assetsResults.forEach((assets, index) => {
     const { totalBorrow, totalCollateral } = getUserTotals(assets);
     const health = getPositionHealth(totalBorrow, totalCollateral);
 
     if (maxHealth.gt(health)) {
-      poolUsers.push({ account: user, totalBorrow, totalCollateral, health });
+      poolUsers.push({ account: users[index], totalBorrow, totalCollateral, health });
     }
-  }
+  });
+
   return {
     comptroller,
     users: poolUsers,
@@ -197,20 +201,21 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: string) {
   const borrowersCount = await comptrollerInstance.callStatic.getAllBorrowersCount();
   const randomPage = Math.round(Math.random() * borrowersCount.div(PAGE_SIZE).toNumber());
   const [_totalPages, users] = await comptrollerInstance.callStatic.getPaginatedBorrowers(randomPage, PAGE_SIZE);
-  const promises = users.map((user) => {
-    return comptrollerInstance.callStatic.getAccountLiquidity(user);
-  });
-  const allResults = await Promise.all(promises.map((p) => p.catch((e) => e)));
 
-  const validResults = allResults.filter((r) => !(r instanceof Error));
-  const erroredResults = allResults.filter((r) => r instanceof Error);
+  const liquidityPromises = users.map((user) => comptrollerInstance.callStatic.getAccountLiquidity(user));
+
+  const liquidityResults = await Promise.all(liquidityPromises.map((p) => p.catch((e) => e)));
+  const validResults = liquidityResults.filter((r) => !(r instanceof Error));
+  const erroredResults = liquidityResults.filter((r) => r instanceof Error);
 
   if (erroredResults.length > 0) {
     sdk.logger.error("Errored results", { erroredResults });
   }
+
   const results = validResults.map((r, i) => {
     return { user: users[i], collateralValue: r[1], liquidity: r[2], shortfall: r[3] };
   });
+
   const minimumTransactionCost = await sdk.provider.getGasPrice().then((g) => g.mul(BigNumber.from(500000)));
   return results.filter((user) => user.shortfall.gt(minimumTransactionCost));
 }
@@ -224,17 +229,15 @@ export default async function getAllFusePoolUsers(
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
 
-  const startTime = performance.now();  // Start time
+  const startTime = performance.now();
 
-  for (const pool of allPools) {
+  const poolPromises = allPools.map(async (pool) => {
     const { comptroller, name } = pool;
     if (!excludedComptrollers.includes(comptroller)) {
       try {
         const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
         if (hasShortfall.length > 0) {
-          const users = hasShortfall.map((user) => {
-            return `- user: ${user.user}, shortfall: ${ethers.utils.formatEther(user.shortfall)}\n`;
-          });
+          const users = hasShortfall.map((user) => `- user: ${user.user}, shortfall: ${ethers.utils.formatEther(user.shortfall)}\n`);
           sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
           try {
             const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(sdk, comptroller, maxHealth);
@@ -251,12 +254,13 @@ export default async function getAllFusePoolUsers(
         erroredPools.push({ comptroller, msg, error: e });
       }
     }
-  }
+  });
 
-  const endTime = performance.now();  // End time
+  await Promise.all(poolPromises);
+
+  const endTime = performance.now();
 
   console.log(`Total time taken to read all users: ${endTime - startTime} milliseconds`);
 
   return [fusePoolUsers, erroredPools];
 }
-
