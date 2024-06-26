@@ -28,10 +28,14 @@ import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
+// import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrowModeNative,
-  usePointsForSupplyModeNative
+  usePointsForSupplyModeNative,
+  usePointsForBorrowBaseMain,
+  usePointsForBorrowModeMain,
+  usePointsForSupplyBaseMain,
+  usePointsForSupplyModeMain
 } from '@ui/hooks/usePointsQueries';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
@@ -52,7 +56,7 @@ export default function Dashboard() {
   const [popupMode, setPopupMode] = useState<PopupMode>();
   // const [poolMarket, setPoolMarket] = useState<string>('0');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedTab, setSelectedTab] = useState('');
+  const [selectedTab] = useState('');
   // const [selectedPool, setSelectedPool] = useState(pool ? pool : '0');
   const pathname = usePathname();
 
@@ -197,20 +201,36 @@ export default function Dashboard() {
 
     return healthData ?? '∞';
   }, [healthData, marketData]);
-  const { data: supplyPoints, isLoading: isLoadingSupplyPoints } =
+  const { data: supplyPointsNative, isLoading: isLoadingSupplyPointsNative } =
     usePointsForSupplyModeNative();
-  const { data: borrowPoints, isLoading: isLoadingBorrowPoints } =
+  const { data: borrowPointsNative, isLoading: isLoadingBorrowPointsNative } =
     usePointsForBorrowModeNative();
-  const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
-    useMaxBorrowAmounts(
-      marketData?.assets ?? [],
-      marketData?.comptroller ?? '',
-      +chain
-    );
+  const { data: borrowPointsBase, isLoading: isLoadingBorrowPointsBase } =
+    usePointsForBorrowBaseMain();
+  const { data: borrowPointsMain, isLoading: isLoadingBorrowPointsMain } =
+    usePointsForBorrowModeMain();
+  const { data: supplyPointsBase, isLoading: isLoadingSupplyPointsBase } =
+    usePointsForSupplyBaseMain();
+  const { data: supplyPointsMain, isLoading: isLoadingSupplyPointsMain } =
+    usePointsForSupplyModeMain();
+  // for utilization:
+  // const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
+  //   useMaxBorrowAmounts(
+  //     marketData?.assets ?? [],
+  //     marketData?.comptroller ?? '',
+  //     +chain
+  //   );
   const totalPoints = useMemo<number>(() => {
-    if (supplyPoints && borrowPoints) {
+    if (
+      supplyPointsNative &&
+      borrowPointsNative &&
+      borrowPointsBase &&
+      borrowPointsMain &&
+      supplyPointsBase &&
+      supplyPointsMain
+    ) {
       return (
-        supplyPoints.rows.reduce(
+        supplyPointsNative.rows.reduce(
           (accumulator, current) =>
             accumulator +
             current.reduce(
@@ -220,7 +240,47 @@ export default function Dashboard() {
             ),
           0
         ) +
-        borrowPoints.rows.reduce(
+        borrowPointsNative.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        borrowPointsBase.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        borrowPointsMain.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        supplyPointsBase.rows.reduce(
+          (accumulator, current) =>
+            accumulator +
+            current.reduce(
+              (innerAccumulator, innerCurrent) =>
+                innerAccumulator + innerCurrent,
+              0
+            ),
+          0
+        ) +
+        supplyPointsMain.rows.reduce(
           (accumulator, current) =>
             accumulator +
             current.reduce(
@@ -234,7 +294,14 @@ export default function Dashboard() {
     }
 
     return 0;
-  }, [borrowPoints, supplyPoints]);
+  }, [
+    supplyPointsNative,
+    borrowPointsNative,
+    borrowPointsBase,
+    borrowPointsMain,
+    supplyPointsBase,
+    supplyPointsMain
+  ]);
   const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
     const healthDataAsNumber = parseFloat(healthData ?? '0');
@@ -253,27 +320,46 @@ export default function Dashboard() {
 
     return 'text-error';
   }, [handledHealthData, healthData]);
-  const utilizations = useMemo<string[]>(() => {
-    if (borrowCaps && marketData) {
-      return borrowCaps.map((borrowCap, i) => {
-        const totalBorrow = marketData.assets[i].borrowBalance.add(
-          borrowCap?.bigNumber ?? '0'
-        );
 
-        return `${
-          totalBorrow.lte('0') || marketData.assets[i].borrowBalance.lte(0)
-            ? '0.00'
-            : (
-                100 /
-                totalBorrow.div(marketData.assets[i].borrowBalance).toNumber()
-              ).toFixed(2)
-        }%`;
-      });
-    }
+  // CURRENTLY UNUSED, NEED TO CHECK THIS
+  // const utilizations = useMemo<string[]>(() => {
+  //   if (borrowCaps && marketData) {
+  //     return borrowCaps.map((borrowCap, i) => {
+  //       const totalBorrow = marketData.assets[i].borrowBalance.add(
+  //         borrowCap?.bigNumber ?? '0'
+  //       );
 
-    return marketData?.assets.map(() => '0.00%') ?? [];
-  }, [borrowCaps, marketData]);
-  // const selectedPoolClass = 'rounded-md border-mode border-2';
+  //       return `${
+  //         totalBorrow.lte('0') ||
+  //         marketData.assets[i].borrowBalance.lte(0) ||
+  //         Number(
+  //           formatUnits(
+  //             marketData.assets[i].borrowBalance,
+  //             marketData.assets[i].underlyingDecimals
+  //           )
+  //         ) <= 0
+  //           ? '0.00'
+  //           : (
+  //               100 /
+  //               (Number(
+  //                 formatUnits(
+  //                   totalBorrow,
+  //                   marketData.assets[i].underlyingDecimals
+  //                 )
+  //               ) /
+  //                 Number(
+  //                   formatUnits(
+  //                     marketData.assets[i].borrowBalance,
+  //                     marketData.assets[i].underlyingDecimals
+  //                   )
+  //                 ))
+  //             ).toFixed(2)
+  //       }%`;
+  //     });
+  //   }
+  //   return marketData?.assets.map(() => '0.00%') ?? [];
+  // }, [borrowCaps, marketData]);
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
@@ -411,7 +497,14 @@ export default function Dashboard() {
               <span>TOTAL POINTS</span>
               <ResultHandler
                 height="24"
-                isLoading={isLoadingSupplyPoints || isLoadingBorrowPoints}
+                isLoading={
+                  isLoadingSupplyPointsNative ||
+                  isLoadingBorrowPointsNative ||
+                  isLoadingBorrowPointsBase ||
+                  isLoadingBorrowPointsMain ||
+                  isLoadingSupplyPointsBase ||
+                  isLoadingSupplyPointsMain
+                }
                 width="24"
               >
                 <span>
@@ -516,9 +609,8 @@ export default function Dashboard() {
           <ResultHandler
             center
             isLoading={
-              isLoadingMarketData ||
-              isLoadingAssetsSupplyAprData ||
-              isLoadingBorrowCaps
+              isLoadingMarketData || isLoadingAssetsSupplyAprData
+              // || isLoadingBorrowCaps
             }
           >
             <>
@@ -532,7 +624,7 @@ export default function Dashboard() {
                     <h3 className={` `}>SUPPLY APR</h3>
                   </div>
 
-                  {suppliedAssets.map((asset, i) => (
+                  {suppliedAssets.map((asset) => (
                     <InfoRows
                       amount={`${
                         asset.supplyBalanceNative
@@ -571,7 +663,8 @@ export default function Dashboard() {
                       selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      utilization={utilizations[i]}
+                      // utilization={utilizations[i]}
+                      utilization="0.00%"
                     />
                   ))}
                 </>
@@ -591,9 +684,8 @@ export default function Dashboard() {
           <ResultHandler
             center
             isLoading={
-              isLoadingMarketData ||
-              isLoadingAssetsSupplyAprData ||
-              isLoadingBorrowCaps
+              isLoadingMarketData || isLoadingAssetsSupplyAprData
+              // || isLoadingBorrowCaps
             }
           >
             <>
@@ -607,7 +699,7 @@ export default function Dashboard() {
                     <h3 className={` `}>BORROW APR</h3>
                   </div>
 
-                  {borrowedAssets.map((asset, i) => (
+                  {borrowedAssets.map((asset) => (
                     <InfoRows
                       amount={`${
                         asset.borrowBalanceFiat
@@ -646,7 +738,8 @@ export default function Dashboard() {
                       selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      utilization={utilizations[i]}
+                      // utilization={utilizations[i]}
+                      utilization="0.00%"
                     />
                   ))}
                 </>

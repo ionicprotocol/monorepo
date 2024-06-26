@@ -205,7 +205,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionaero',
+        market: 'ionaero_base',
+        multiplier: 1.15,
         supply: {
           ionic: 3
         }
@@ -214,7 +215,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionusdc',
+        market: 'ionusdc_base',
         supply: {
           ionic: 3
         }
@@ -223,7 +224,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionweth',
+        market: 'ionweth_base',
         multiplier: 3000,
         supply: {
           ionic: 3
@@ -233,7 +234,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ioncbeth',
+        market: 'ioncbeth_base',
         multiplier: 3000,
         supply: {
           ionic: 3
@@ -241,7 +242,7 @@ export const multipliers: Record<
       },
       ezETH: {
         borrow: undefined,
-        market: 'base_ionezeth',
+        market: 'ionezeth_base',
         multiplier: 3000,
         supply: {
           eigenlayer: true,
@@ -253,12 +254,40 @@ export const multipliers: Record<
         borrow: {
           ionic: 3
         },
-        market: 'base_ionwsteth',
+        market: 'ionwsteth_base',
         multiplier: 3000,
         supply: {
           ionic: 3
         }
       }
     }
+  }
+};
+
+export type LpMultipliers = {
+  ionMultiplier: number;
+  market: string;
+  priceMultiplier: number;
+  filterIn?: string;
+  filterOut?: string;
+  decimals?: number;
+};
+
+export const ionLPMultipliers: Record<string, LpMultipliers> = {
+  'ION-WETH': {
+    ionMultiplier: 3,
+    market: 'ion_weth_pool',
+    priceMultiplier: -120,
+    filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
+    filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
+  }
+};
+
+export const steerLPMultipliers: Record<string, LpMultipliers> = {
+  'ionUSDC-ionUSDT': {
+    ionMultiplier: 1.5,
+    market: 'iusdc_iusdt_pool',
+    priceMultiplier: 10,
+    decimals: 6
   }
 };
