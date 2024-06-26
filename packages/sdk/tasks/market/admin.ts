@@ -16,7 +16,7 @@ export default task("market:unsupport", "Unsupport a market")
     const ionicSdkModule = await import("../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic();
 
-    const comptroller = await sdk.createComptroller(pool, signer);
+    const comptroller = sdk.createComptroller(pool, signer);
     const tx = await comptroller._unsupportMarket(market);
     const receipt: TransactionReceipt = await tx.wait();
     console.log("Unsupported market with status:", receipt.status);

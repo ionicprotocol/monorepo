@@ -206,8 +206,11 @@ export enum assetSymbols {
   KIM = "KIM",
   IONWETH = "ION-WETH",
   IUSDCIUSDT = "ionUSDC-ionUSDT",
+
   // base
   AERO = "AERO",
+  bsdETH = "bsdETH",
+  eUSD = "eUSD",
 
   // optimism
   OP = "OP",
@@ -417,7 +420,6 @@ export enum assetSymbols {
   triCrypto = "triCrypto",
 
   // Mainnet
-  eUSD = "eUSD",
   realYieldUSD = "realYieldUSD",
   realYieldETH = "realYieldETH",
   ethBtcTrend = "ethBtcTrend",

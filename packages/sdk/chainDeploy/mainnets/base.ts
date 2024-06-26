@@ -1,5 +1,5 @@
 import { base } from "@ionicprotocol/chains";
-import { assetSymbols, ChainlinkFeedBaseCurrency } from "@ionicprotocol/types";
+import { ChainlinkSpecificParams, OracleTypes } from "@ionicprotocol/types";
 
 import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
 import { ChainlinkAsset } from "../helpers/types";
@@ -26,48 +26,13 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenUsdChainlinkFeed: base.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED
 };
 
-const chainlinkAssets: ChainlinkAsset[] = [
-  {
-    symbol: assetSymbols.USDC,
-    aggregator: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.wstETH,
-    aggregator: "0xa669E5272E60f78299F4824495cE01a3923f4380",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
-  },
-  {
-    symbol: assetSymbols.cbETH,
-    aggregator: "0x806b4Ac04501c29769051e42783cF04dCE41440b",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
-  },
-  {
-    symbol: assetSymbols.AERO,
-    aggregator: "0x4EC5970fC728C5f65ba413992CD5fF6FD70fcfF0",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.SNX,
-    aggregator: "0xe3971Ed6F1A5903321479Ef3148B5950c0612075",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.WBTC,
-    aggregator: "0xCCADC697c55bbB68dc5bCdf8d3CBe83CdD4E071E",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-  },
-  {
-    symbol: assetSymbols.ezETH,
-    aggregator: "0xC4300B7CF0646F0Fe4C5B2ACFCCC4dCA1346f5d8",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
-  },
-  {
-    symbol: assetSymbols.weETH,
-    aggregator: "0xFC1415403EbB0c693f9a7844b92aD2Ff24775C65",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
-  }
-];
+const chainlinkAssets: ChainlinkAsset[] = base.assets
+  .filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2)
+  .map((asset) => ({
+    aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator,
+    feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
+    symbol: asset.symbol
+  }));
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
