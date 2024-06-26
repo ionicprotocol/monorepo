@@ -12,6 +12,7 @@ import {
   useWalletClient
 } from 'wagmi';
 
+import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 
 import {
@@ -32,6 +33,10 @@ const Widget = dynamic(() => import('../_components/stake/Widget'), {
 
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
+  // const [step1Loading, setStep1Loading] = useState<boolean>(false);
+  const [step2Loading, setStep2Loading] = useState<boolean>(false);
+  const [step3Loading, setStep3Loading] = useState<boolean>(false);
+
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -40,6 +45,7 @@ export default function Stake() {
     ion: '',
     eth: ''
   });
+  const [maxLp, setMaxLp] = useState<string>('');
 
   useMemo(async () => {
     try {
@@ -114,7 +120,7 @@ export default function Stake() {
         args: [LiquidityContractAddress, args.amountTokenDesired],
         functionName: 'approve'
       });
-
+      setStep2Loading(true);
       // console.log(approval);
 
       const appr = await publicClient?.waitForTransactionReceipt({
@@ -147,27 +153,58 @@ export default function Stake() {
       });
       // eslint-disable-next-line no-console
       console.log('Transaction --->>>', transaction);
+      setStep2Loading(false);
+      setMaxDeposit((p) => {
+        return { ...p, ion: '' };
+      });
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);
+      setStep2Loading(false);
+      setMaxDeposit((p) => {
+        return { ...p, ion: '' };
+      });
     } finally {
-      // Transaction Hash after running addLiquidityEth after approving --->>> 0xa003f3ef182c2e1ecc7c857b35a76d97ea05ab4fbf1e25037d7c0e5ffdc606a1
+      setStep2Loading(false);
+      setMaxDeposit((p) => {
+        return { ...p, ion: '' };
+      });
     }
   }
 
   async function stakingAsset() {
     try {
+      const args = {
+        lpToken: parseUnits(maxLp, 18)
+      };
+
       if (!isConnected) {
         console.error('Not connected');
         return;
       }
-      await handleSwitchOriginChain(mode.id, chainId);
+      const switched = await handleSwitchOriginChain(mode.id, chainId);
+      if (!switched && maxLp == '0') return;
+
+      const approval = await walletClient!.writeContract({
+        abi: erc20Abi,
+        account: walletClient?.account,
+        address: '0xC6A394952c097004F83d2dfB61715d245A38735a',
+        args: [StakingContractAddress, args.lpToken],
+        functionName: 'approve'
+      });
+
+      setStep3Loading(true);
+      const appr = await publicClient?.waitForTransactionReceipt({
+        hash: approval
+      });
+      // eslint-disable-next-line no-console
+      console.log({ appr });
+
       const tx = await walletClient!.writeContract({
         abi: StakingContractAbi,
         account: walletClient?.account,
         address: StakingContractAddress,
-        //@ts-ignore
-        args: [77380419677738983956n],
+        args: [args.lpToken, address],
         functionName: 'deposit'
       });
       // eslint-disable-next-line no-console
@@ -176,12 +213,19 @@ export default function Stake() {
       const transaction = await publicClient?.waitForTransactionReceipt({
         hash: tx
       });
+
+      setStep3Loading(false);
+      setMaxLp('');
       // eslint-disable-next-line no-console
       console.log('Transaction --->>>', transaction);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);
+      setStep3Loading(false);
+      setMaxLp('');
     } finally {
+      setStep3Loading(false);
+      setMaxLp('');
     }
   }
 
@@ -257,35 +301,30 @@ export default function Stake() {
               className={`flex items-center justify-center  py-1.5 mt-8 mb-4 text-sm text-black w-full bg-accent rounded-md`}
               onClick={() => addLiquidity()}
             >
-              <img
-                alt="lock--v1"
-                className={`w-4 h-4 inline-block mx-2`}
-                src="https://img.icons8.com/ios/50/lock--v1.png"
-              />
-              Provide Liquidity
+              <ResultHandler
+                isLoading={step2Loading}
+                height="20"
+                width="20"
+                color={'#000000'}
+              >
+                <img
+                  alt="lock--v1"
+                  className={`w-4 h-4 inline-block mx-2`}
+                  src="https://img.icons8.com/ios/50/lock--v1.png"
+                />
+                Provide Liquidity
+              </ResultHandler>
             </button>
           </div>
           <div className={`w-full h-full bg-grayone px-4 rounded-xl py-2`}>
             <h1 className={` text-lg`}>Step 3. Stake your LP</h1>
             <h1 className={`text-[12px] text-white/40 mt-2`}> Stake </h1>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-md `}
-            >
-              <input
-                className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
-                placeholder={`0.0`}
-                type="number"
-                // value={}
-              />
-              <div className=" flex items-center justify-center">
-                <img
-                  alt="ion logo"
-                  className={`w-5 h-5 inline-block mx-1`}
-                  src="/img/symbols/32/color/ion.png"
-                />
-                <button className={` mx-2`}>ION/WETH</button>
-              </div>
-            </div>
+            <MaxDeposit
+              amount={maxLp}
+              tokenName={'ion/eth'}
+              token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
+              handleInput={(val?: string) => setMaxLp(val as string)}
+            />
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <h1 className={` mt-2`}>You will get </h1>
             {/* this will get repeated */}
@@ -320,7 +359,14 @@ export default function Stake() {
               className={`flex items-center justify-center  py-1.5 mt-6 mb-4 text-sm text-black w-full bg-accent rounded-md`}
               onClick={() => stakingAsset()}
             >
-              Stake
+              <ResultHandler
+                isLoading={step3Loading}
+                height="20"
+                width="20"
+                color={'#000000'}
+              >
+                Stake
+              </ResultHandler>
             </button>
           </div>
           {/* this will get repeated */}

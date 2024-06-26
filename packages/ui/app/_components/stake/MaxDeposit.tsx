@@ -24,6 +24,7 @@ function MaxDeposit({
     address,
     token: hooktoken
   });
+
   // console.log(data);
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     if (
@@ -68,7 +69,7 @@ function MaxDeposit({
       </div>
       <div className={`flex w-full mt-2 items-center justify-between text-md `}>
         <input
-          className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto block w-max trucnate`}
+          className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto block w-full trucnate`}
           placeholder={`0.0`}
           type="number"
           value={amount}
@@ -80,6 +81,10 @@ function MaxDeposit({
             alt="ion logo"
             className={`w-5 h-5 inline-block ml-4`}
             src={`/img/logo/${tokenName.toUpperCase()}.png`}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null; // prevents looping
+              currentTarget.src = '/img/logo/ION.png';
+            }}
           />
           <button className={` mx-2`}>{tokenName.toUpperCase()}</button>
         </div>
