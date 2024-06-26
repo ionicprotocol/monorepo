@@ -2208,6 +2208,7 @@ __metadata:
     lint-staged: "npm:14.0.1"
     mocha: "npm:^10.2.0"
     nyc: "npm:^15.1.0"
+    perf_hooks: "npm:^0.0.1"
     prettier: "npm:3.0.3"
     prettier-plugin-solidity: "npm:1.1.3"
     sinon: "npm:^15.2.0"
@@ -19321,6 +19322,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^6.6.0"
     "@wagmi/core": "npm:^2.2.1"
     netlify-cli: "npm:^16.3.1"
+    perf_hooks: "npm:^0.0.1"
     react-confetti: "npm:^6.1.0"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.2.2"
@@ -21016,6 +21018,13 @@ __metadata:
   version: 1.2.0
   resolution: "pend@npm:1.2.0"
   checksum: 10/6c72f5243303d9c60bd98e6446ba7d30ae29e3d56fdb6fae8767e8ba6386f33ee284c97efe3230a0d0217e2b1723b8ab490b1bbf34fcbb2180dbc8a9de47850d
+  languageName: node
+  linkType: hard
+
+"perf_hooks@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "perf_hooks@npm:0.0.1"
+  checksum: 10/a38f6397943cd55b7780e1ae504f187d218a4c986afcdd674a68fc4937aa415f29e3e007c26e498b55e277052f1bee3028b348ce7509ad1a47c2e8d0d381bd87
   languageName: node
   linkType: hard
 
