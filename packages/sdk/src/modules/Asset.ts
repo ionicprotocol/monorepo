@@ -1,6 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { FundOperationMode, MarketConfig, NativePricedIonicAsset } from "@ionicprotocol/types";
-import { BigNumber, constants, ethers, utils } from "ethers";
 
 import CErc20DelegatorArtifact from "../../artifacts/CErc20Delegator.sol/CErc20Delegator.json";
 import { COMPTROLLER_ERROR_CODES } from "../IonicSdk/config";

@@ -1,5 +1,3 @@
-import { LogLevel } from "@ethersproject/logger";
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import {
   ChainAddresses,
   ChainConfig,
@@ -12,31 +10,30 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber, Contract, Signer, utils } from "ethers";
+import {
+  Address,
+  encodeAbiParameters,
+  getContract,
+  GetContractReturnType,
+  keccak256,
+  parseAbiParameters,
+  PublicClient,
+  WalletClient
+} from "viem";
 
-import AddressesProviderArtifact from "../../artifacts/AddressesProvider.sol/AddressesProvider.json";
-import CTokenFirstExtensionArtifact from "../../artifacts/CTokenFirstExtension.sol/CTokenFirstExtension.json";
-import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
-import FeeDistributorArtifact from "../../artifacts/FeeDistributor.sol/FeeDistributor.json";
-import IonicERC4626Artifact from "../../artifacts/IonicERC4626.sol/IonicERC4626.json";
-import IonicFlywheelLensRouterArtifact from "../../artifacts/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter.json";
-import IonicLiquidatorArtifact from "../../artifacts/IonicLiquidator.sol/IonicLiquidator.json";
-import PoolDirectoryArtifact from "../../artifacts/PoolDirectory.sol/PoolDirectory.json";
-import PoolLensArtifact from "../../artifacts/PoolLens.sol/PoolLens.json";
-import PoolLensSecondaryArtifact from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
-import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
-import { AddressesProvider } from "../../typechain/AddressesProvider";
-import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
-import { EIP20Interface } from "../../typechain/EIP20Interface";
-import { FeeDistributor } from "../../typechain/FeeDistributor.sol/FeeDistributor";
-import { ILiquidator } from "../../typechain/ILiquidator";
-import { IonicERC4626 as IonicERC4626 } from "../../typechain/IonicERC4626";
-import { IonicFlywheelLensRouter as IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
-import { PoolDirectory } from "../../typechain/PoolDirectory";
-import { PoolLens } from "../../typechain/PoolLens";
-import { PoolLensSecondary } from "../../typechain/PoolLensSecondary.sol/PoolLensSecondary";
-import { Unitroller } from "../../typechain/Unitroller";
+import {
+  addressesProviderAbi,
+  cTokenFirstExtensionAbi,
+  eip20InterfaceAbi,
+  feeDistributorAbi,
+  ionicErc4626Abi,
+  ionicFlywheelLensRouterAbi,
+  ionicLiquidatorAbi,
+  poolDirectoryAbi,
+  poolLensAbi,
+  poolLensSecondaryAbi,
+  unitrollerAbi
+} from "../generated";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -50,35 +47,18 @@ import { withPools } from "../modules/Pools";
 import { withVaults } from "../modules/Vaults";
 
 import { CTOKEN_ERROR_CODES } from "./config";
-import AdjustableAnkrBNBIrm from "./irm/AdjustableAnkrBNBIrm";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
-import AnkrBNBInterestRateModel from "./irm/AnkrBNBInterestRateModel";
-import AnkrFTMInterestRateModel from "./irm/AnkrFTMInterestRateModel";
 import JumpRateModel from "./irm/JumpRateModel";
 import { getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
-import {
-  addressesProviderAbi,
-  feeDistributorAbi,
-  ionicFlywheelLensRouterAbi,
-  ionicLiquidatorAbi,
-  poolDirectoryAbi,
-  poolLensAbi,
-  poolLensSecondaryAbi
-} from "../generated";
-import { Address, getContract, GetContractReturnType, PublicClient, WalletClient } from "viem";
 
-utils.Logger.setLogLevel(LogLevel.OFF);
-export type SupportedProvider = PublicClient;
-export type SupportedSigners = WalletClient;
-export type SignerOrProvider = SupportedSigners | SupportedProvider;
 export type StaticContracts = {
-  FeeDistributor: GetContractReturnType<typeof feeDistributorAbi>;
-  IonicFlywheelLensRouter: GetContractReturnType<typeof ionicFlywheelLensRouterAbi>;
-  PoolDirectory: GetContractReturnType<typeof poolDirectoryAbi>;
-  PoolLens: GetContractReturnType<typeof poolLensAbi>;
-  PoolLensSecondary: GetContractReturnType<typeof poolLensSecondaryAbi>;
-  IonicLiquidator: GetContractReturnType<typeof ionicLiquidatorAbi>;
-  AddressesProvider: GetContractReturnType<typeof addressesProviderAbi>;
+  FeeDistributor: GetContractReturnType<typeof feeDistributorAbi, PublicClient>;
+  IonicFlywheelLensRouter: GetContractReturnType<typeof ionicFlywheelLensRouterAbi, PublicClient>;
+  PoolDirectory: GetContractReturnType<typeof poolDirectoryAbi, PublicClient>;
+  PoolLens: GetContractReturnType<typeof poolLensAbi, PublicClient>;
+  PoolLensSecondary: GetContractReturnType<typeof poolLensSecondaryAbi, PublicClient>;
+  IonicLiquidator: GetContractReturnType<typeof ionicLiquidatorAbi, PublicClient>;
+  AddressesProvider: GetContractReturnType<typeof addressesProviderAbi, PublicClient>;
   [contractName: string]: GetContractReturnType;
 };
 
@@ -95,15 +75,6 @@ export class IonicBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public _publicClient: PublicClient;
   public _walletClient: WalletClient | null;
-  static isSupportedProvider(provider: unknown): provider is SupportedProvider {
-    return SignerWithAddress.isSigner(provider) || Signer.isSigner(provider);
-  }
-  static isSupportedSigner(signer: unknown): signer is SupportedSigners {
-    return SignerWithAddress.isSigner(signer) || Signer.isSigner(signer);
-  }
-  static isSupportedSignerOrProvider(signerOrProvider: unknown): signerOrProvider is SignerOrProvider {
-    return IonicBase.isSupportedSigner(signerOrProvider) || IonicBase.isSupportedProvider(signerOrProvider);
-  }
 
   public _contracts: StaticContracts | undefined;
   public chainConfig: ChainConfig;
@@ -121,7 +92,7 @@ export class IonicBase {
 
   public logger: Logger;
 
-  public get publicClient(): SupportedProvider {
+  public get publicClient(): PublicClient {
     return this._publicClient;
   }
 
@@ -137,72 +108,73 @@ export class IonicBase {
   }
 
   public get contracts(): StaticContracts {
+    getContract({
+      abi: poolDirectoryAbi,
+      address: this.chainDeployment.PoolDirectory.address as Address,
+      client: { public: this.publicClient, wallet: this.walletClient }
+    });
     return {
       PoolDirectory: getContract({
         abi: poolDirectoryAbi,
         address: this.chainDeployment.PoolDirectory.address as Address,
-        client: this.publicClient
+        client: { public: this.publicClient, wallet: this.walletClient }
       }),
-      PoolLens: new Contract(this.chainDeployment.PoolLens.address, PoolLensArtifact.abi, this.provider) as PoolLens,
-      PoolLensSecondary: new Contract(
-        this.chainDeployment.PoolLensSecondary.address,
-        PoolLensSecondaryArtifact.abi,
-        this.provider
-      ) as PoolLensSecondary,
-      IonicLiquidator: new Contract(
-        this.chainId == 34443
-          ? this.chainDeployment.IonicUniV3Liquidator.address
-          : this.chainDeployment.IonicLiquidator.address,
-        IonicLiquidatorArtifact.abi,
-        this.provider
-      ) as ILiquidator,
-      FeeDistributor: new Contract(
-        this.chainDeployment.FeeDistributor.address,
-        FeeDistributorArtifact.abi,
-        this.provider
-      ) as FeeDistributor,
-      IonicFlywheelLensRouter: new Contract(
-        this.chainDeployment.IonicFlywheelLensRouter.address,
-        IonicFlywheelLensRouterArtifact.abi,
-        this.provider
-      ) as IonicFlywheelLensRouter,
-      AddressesProvider: new Contract(
-        this.chainDeployment.AddressesProvider.address,
-        AddressesProviderArtifact.abi,
-        this.provider
-      ) as AddressesProvider,
+      PoolLens: getContract({
+        abi: poolLensAbi,
+        address: this.chainDeployment.PoolLens.address as Address,
+        client: { public: this.publicClient, wallet: this.walletClient }
+      }),
+      PoolLensSecondary: getContract({
+        abi: poolLensSecondaryAbi,
+        address: this.chainDeployment.PoolLensSecondary.address as Address,
+        client: { public: this.publicClient, wallet: this.walletClient }
+      }),
+      IonicLiquidator: getContract({
+        abi: ionicLiquidatorAbi,
+        address: this.chainDeployment.IonicLiquidator.address as Address,
+        client: { public: this.publicClient, wallet: this.walletClient }
+      }),
+      FeeDistributor: getContract({
+        abi: feeDistributorAbi,
+        address: this.chainDeployment.FeeDistributor.address as Address,
+        client: { public: this.publicClient, wallet: this.walletClient }
+      }),
+      IonicFlywheelLensRouter: getContract({
+        abi: ionicFlywheelLensRouterAbi,
+        address: this.chainDeployment.IonicFlywheelLensRouter.address as Address,
+        client: { public: this.publicClient, wallet: this.walletClient }
+      }),
+      AddressesProvider: getContract({
+        abi: addressesProviderAbi,
+        address: this.chainDeployment.AddressesProvider.address as Address,
+        client: { public: this.publicClient, wallet: this.walletClient }
+      }),
       ...this._contracts
     };
   }
 
-  setSigner(signer: Signer) {
-    this._provider = signer.provider as SupportedProvider;
-    this._signer = signer;
+  setWalletClient(walletClient: WalletClient) {
+    this._walletClient = walletClient;
+    return this;
+  }
+
+  removeWalletClient(publicClient: PublicClient) {
+    this._publicClient = publicClient;
+    this._walletClient = null;
 
     return this;
   }
 
-  removeSigner(provider: SupportedProvider) {
-    this._provider = provider;
-    this._signer = null;
-
-    return this;
-  }
-
-  constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig, logger: Logger = console) {
+  constructor(
+    publicClient: PublicClient,
+    walletClient: WalletClient | undefined,
+    chainConfig: ChainConfig,
+    logger: Logger = console
+  ) {
     this.logger = logger;
-    if (!signerOrProvider) throw Error("No Provider or Signer");
 
-    if (SignerWithAddress.isSigner(signerOrProvider) || Signer.isSigner(signerOrProvider)) {
-      this._provider = signerOrProvider.provider as any;
-      this._signer = signerOrProvider;
-    } else if (JsonRpcProvider.isProvider(signerOrProvider) || Web3Provider.isProvider(signerOrProvider)) {
-      this._provider = signerOrProvider;
-      this._signer = signerOrProvider.getSigner ? signerOrProvider.getSigner() : null;
-    } else {
-      this.logger.warn(`Incompatible Provider or Signer: signerOrProvider`);
-      throw Error("Signer or Provider not compatible");
-    }
+    this._publicClient = publicClient;
+    this._walletClient = walletClient || null;
 
     this.chainConfig = chainConfig;
     this.chainId = chainConfig.chainId;
@@ -229,66 +201,76 @@ export class IonicBase {
   async deployPool(
     poolName: string,
     enforceWhitelist: boolean,
-    closeFactor: BigNumber,
-    liquidationIncentive: BigNumber,
-    priceOracle: string, // Contract address
-    whitelist: string[] // An array of whitelisted addresses
+    closeFactor: bigint,
+    liquidationIncentive: bigint,
+    priceOracle: Address, // Contract address
+    whitelist: Address[] // An array of whitelisted addresses
   ): Promise<[string, string, string, number?]> {
     try {
       // Deploy Comptroller implementation if necessary
-      const implementationAddress = this.chainDeployment.Comptroller.address;
+      const implementationAddress = this.chainDeployment.Comptroller.address as Address;
 
       // Register new pool with PoolDirectory
-      const contract = this.contracts.PoolDirectory.connect(this.signer);
-
-      const deployTx = await contract.deployPool(
-        poolName,
-        implementationAddress,
-        new utils.AbiCoder().encode(["address"], [this.chainDeployment.FeeDistributor.address]),
-        enforceWhitelist,
-        closeFactor,
-        liquidationIncentive,
-        priceOracle
+      const deployTx = await this.contracts.PoolDirectory.write.deployPool(
+        [
+          poolName,
+          implementationAddress,
+          encodeAbiParameters(parseAbiParameters("address"), [this.chainDeployment.FeeDistributor.address as Address]),
+          enforceWhitelist,
+          closeFactor,
+          liquidationIncentive,
+          priceOracle
+        ],
+        { account: this.walletClient.account!.address, chain: this.walletClient.chain }
       );
-      const deployReceipt = await deployTx.wait();
+
+      const deployReceipt = await this.publicClient.waitForTransactionReceipt({ hash: deployTx });
+
       this.logger.info(`Deployment of pool ${poolName} succeeded!`, deployReceipt.status);
 
       let poolId: number | undefined;
       try {
         // Latest Event is PoolRegistered which includes the poolId
-        const registerEvent = deployReceipt.events?.pop();
-        poolId =
-          registerEvent && registerEvent.args && registerEvent.args[0]
-            ? (registerEvent.args[0] as BigNumber).toNumber()
-            : undefined;
+        const registerEvent = (
+          await this.contracts.PoolDirectory.getEvents.PoolRegistered({
+            blockHash: deployReceipt.blockHash
+          })
+        ).pop();
+        poolId = registerEvent && registerEvent.args.index ? Number(registerEvent.args.index.toString()) : undefined;
       } catch (e) {
         this.logger.warn("Unable to retrieve pool ID from receipt events", e);
       }
-      const [, existingPools] = await contract.callStatic.getActivePools();
+      const [, existingPools] = await this.contracts.PoolDirectory.read.getActivePools();
       // Compute Unitroller address
-      const addressOfSigner = await this.signer.getAddress();
+      const addressOfSigner = this.walletClient.account!.address;
       const poolAddress = getPoolAddress(
         addressOfSigner,
         poolName,
-        existingPools.length,
-        this.chainDeployment.FeeDistributor.address,
-        this.chainDeployment.PoolDirectory.address
+        BigInt(existingPools.length),
+        this.chainDeployment.FeeDistributor.address as Address,
+        this.chainDeployment.PoolDirectory.address as Address
       );
 
       // Accept admin status via Unitroller
-      const unitroller = getPoolUnitroller(poolAddress, this.signer);
-      const acceptTx = await unitroller._acceptAdmin();
-      const acceptReceipt = await acceptTx.wait();
+      const unitroller = getPoolUnitroller(poolAddress, this.walletClient!);
+      const acceptTx = await unitroller.write._acceptAdmin({
+        account: this.walletClient.account!.address,
+        chain: this.walletClient.chain
+      });
+      const acceptReceipt = await this.publicClient.waitForTransactionReceipt({ hash: acceptTx });
       this.logger.info(`Accepted admin status for admin: ${acceptReceipt.status}`);
 
       // Whitelist
       this.logger.info(`enforceWhitelist: ${enforceWhitelist}`);
       if (enforceWhitelist) {
-        const comptroller = getPoolComptroller(poolAddress, this.signer);
+        const comptroller = getPoolComptroller(poolAddress, this.walletClient);
 
         // Was enforced by pool deployment, now just add addresses
-        const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
-        const whitelistReceipt = await whitelistTx.wait();
+        const whitelistTx = await comptroller.write._setWhitelistStatuses(
+          [whitelist, Array(whitelist.length).fill(true)],
+          { account: this.walletClient.account!.address, chain: this.walletClient.chain }
+        );
+        const whitelistReceipt = await this.publicClient.waitForTransactionReceipt({ hash: whitelistTx });
         this.logger.info(`Whitelist updated: ${whitelistReceipt.status}`);
       }
 
@@ -298,16 +280,17 @@ export class IonicBase {
     }
   }
 
-  async identifyInterestRateModel(interestRateModelAddress: string): Promise<InterestRateModel> {
+  async identifyInterestRateModel(interestRateModelAddress: Address): Promise<InterestRateModel> {
     // Get interest rate model type from runtime bytecode hash and init class
     const interestRateModels: { [key: string]: any } = {
       JumpRateModel: JumpRateModel,
-      AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
-      AnkrFTMInterestRateModel: AnkrFTMInterestRateModel,
-      AdjustableJumpRateModel: AdjustableJumpRateModel,
-      AdjustableAnkrBNBIrm: AdjustableAnkrBNBIrm
+      AdjustableJumpRateModel: AdjustableJumpRateModel
     };
-    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
+    const bytecode = await this.publicClient.getBytecode({ address: interestRateModelAddress });
+    if (!bytecode) {
+      throw Error("Bytecode not found");
+    }
+    const runtimeBytecodeHash = keccak256(bytecode);
 
     let irmModel = null;
 
@@ -323,24 +306,24 @@ export class IonicBase {
     return irmModel;
   }
 
-  async getInterestRateModel(assetAddress: string): Promise<InterestRateModel> {
+  async getInterestRateModel(assetAddress: Address): Promise<InterestRateModel> {
     // Get interest rate model address from asset address
-    const assetContract = getContract(
-      assetAddress,
-      CTokenFirstExtensionArtifact.abi,
-      this.provider
-    ) as CTokenFirstExtension;
-    const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
+    const assetContract = getContract({
+      address: assetAddress,
+      abi: cTokenFirstExtensionAbi,
+      client: { public: this.publicClient, wallet: this.walletClient }
+    });
+    const interestRateModelAddress = await assetContract.read.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
     if (!interestRateModel) {
       throw Error(`No Interest Rate Model found for asset: ${assetAddress}`);
     }
-    await interestRateModel.init(interestRateModelAddress, assetAddress, this.provider);
+    await interestRateModel.init(interestRateModelAddress, assetAddress, this.publicClient);
     return interestRateModel;
   }
 
-  getPriceOracle(oracleAddress: string): string {
+  getPriceOracle(oracleAddress: Address): string {
     let oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
 
     if (!oracle) {
@@ -350,20 +333,28 @@ export class IonicBase {
     return oracle;
   }
 
-  getEIP20TokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, EIP20InterfaceArtifact.abi, signerOrProvider) as EIP20Interface;
+  getEIP20TokenInstance(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+    return getContract({ address, abi: eip20InterfaceAbi, client: { public: publicClient, wallet: walletClient } });
   }
 
-  getUnitrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, UnitrollerArtifact.abi, signerOrProvider) as Unitroller;
+  getUnitrollerInstance(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+    return getContract({ address, abi: unitrollerAbi, client: { public: publicClient, wallet: walletClient } });
   }
 
-  getPoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(this.chainDeployment.PoolDirectory.address, PoolDirectoryArtifact.abi, signerOrProvider);
+  getPoolDirectoryInstance(publicClient = this.publicClient, walletClient = this.walletClient) {
+    return getContract({
+      address: this.chainDeployment.PoolDirectory.address as Address,
+      abi: poolDirectoryAbi,
+      client: { public: publicClient, wallet: walletClient }
+    });
   }
 
-  getErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, IonicERC4626Artifact.abi, signerOrProvider) as IonicERC4626;
+  getErc4626PluginInstance(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+    return getContract({
+      address,
+      abi: ionicErc4626Abi,
+      client: { public: publicClient, wallet: walletClient }
+    });
   }
 }
 

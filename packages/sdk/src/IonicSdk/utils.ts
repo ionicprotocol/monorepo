@@ -1,11 +1,21 @@
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import Filter from "bad-words";
-import { Contract, Signer, utils } from "ethers";
+import {
+  Address,
+  encodeAbiParameters,
+  parseAbiParameters,
+  getContractAddress,
+  Hex,
+  keccak256,
+  encodePacked,
+  Hash,
+  GetContractReturnType,
+  getContract,
+  WalletClient,
+  PublicClient
+} from "viem";
 
-import ComptrollerArtifact from "../../artifacts/Comptroller.sol/Comptroller.json";
 import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
-import { Comptroller } from "../../typechain/Comptroller";
-import { Unitroller } from "../../typechain/Unitroller";
+import { ionicComptrollerAbi, unitrollerAbi } from "../generated";
 
 export function filterOnlyObjectProperties(obj: any) {
   return Object.fromEntries(Object.entries(obj).filter(([k]) => isNaN(k as any))) as any;
@@ -18,38 +28,42 @@ export const filterPoolName = (name: string) => {
   return filter.clean(name);
 };
 
-export const getSaltsHash = (from: string, poolName: string, blockNumber: number): string => {
-  return utils.solidityKeccak256(["address", "string", "uint"], [from, poolName, blockNumber]);
+export const getSaltsHash = (from: Address, poolName: string, blockNumber: bigint): Hash => {
+  return keccak256(encodePacked(["address", "string", "uint"], [from, poolName, blockNumber]));
 };
 
-export const getBytecodeHash = (feeDistributorAddress: string): string => {
-  return utils.keccak256(
-    UnitrollerArtifact.bytecode.object + new utils.AbiCoder().encode(["address"], [feeDistributorAddress]).slice(2)
+export const getBytecodeHash = (feeDistributorAddress: Address): Hash => {
+  return keccak256(
+    ((UnitrollerArtifact.bytecode.object as Hex) +
+      encodeAbiParameters(parseAbiParameters("address"), [feeDistributorAddress]).slice(2)) as Hex
   );
 };
 
 export const getPoolAddress = (
-  from: string,
+  from: Address,
   poolName: string,
-  marketsCounter: number,
-  feeDistributorAddress: string,
-  poolDirectoryAddress: string
-): string => {
-  return utils.getCreate2Address(
-    poolDirectoryAddress,
-    getSaltsHash(from, poolName, marketsCounter),
-    getBytecodeHash(feeDistributorAddress)
-  );
+  marketsCounter: bigint,
+  feeDistributorAddress: Address,
+  poolDirectoryAddress: Address
+): Address => {
+  return getContractAddress({
+    bytecode: getBytecodeHash(feeDistributorAddress),
+    from: poolDirectoryAddress,
+    opcode: "CREATE2",
+    salt: getSaltsHash(from, poolName, marketsCounter)
+  });
 };
 
-export const getPoolUnitroller = (poolAddress: string, signer?: Signer): Unitroller => {
-  return new Contract(poolAddress, UnitrollerArtifact.abi, signer) as Unitroller;
+export const getPoolUnitroller = (
+  poolAddress: Address,
+  walletClient: WalletClient
+): GetContractReturnType<typeof unitrollerAbi, PublicClient> => {
+  return getContract({ address: poolAddress, abi: unitrollerAbi, client: walletClient });
 };
 
-export const getPoolComptroller = (poolAddress: string, signer?: Signer): Comptroller => {
-  return new Contract(poolAddress, ComptrollerArtifact.abi, signer) as Comptroller;
-};
-
-export const getContract = (address: string, abi: any, providerOrSigner: Web3Provider | JsonRpcProvider | Signer) => {
-  return new Contract(address, abi, providerOrSigner);
+export const getPoolComptroller = (
+  poolAddress: Address,
+  walletClient: WalletClient
+): GetContractReturnType<typeof ionicComptrollerAbi, PublicClient> => {
+  return getContract({ address: poolAddress, abi: ionicComptrollerAbi, client: walletClient });
 };

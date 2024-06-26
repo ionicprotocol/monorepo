@@ -1,4 +1,5 @@
 import { Contract, ContractInterface } from "ethers";
+import { Abi, Address, getContract, GetContractReturnType, PublicClient, WalletClient } from "viem";
 
 import { IonicBaseConstructor } from "..";
 import AuthoritiesRegistryArtifact from "../../artifacts/AuthoritiesRegistry.sol/AuthoritiesRegistry.json";
@@ -43,29 +44,40 @@ import { PoolLens } from "../../typechain/PoolLens";
 import { PoolLensSecondary } from "../../typechain/PoolLensSecondary.sol/PoolLensSecondary";
 import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
 import { Unitroller } from "../../typechain/Unitroller";
-import { SignerOrProvider } from "../IonicSdk";
+import { ionicComptrollerAbi, unitrollerAbi } from "../generated";
 
 type OptimizedAPRVaultWithExtensions = OptimizedAPRVaultFirstExtension & OptimizedAPRVaultSecondExtension;
 
 export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
-    createContractInstance<T extends Contract>(abi: ContractInterface) {
-      return (address: string, signerOrProvider: SignerOrProvider = this.signer) =>
-        new Contract(address, abi, signerOrProvider) as T;
+    createContractInstance<T extends Abi>(abi: Abi) {
+      return (
+        address: Address,
+        publicClient = this.publicClient,
+        walletClient = this.walletClient
+      ): GetContractReturnType<T, WalletClient> =>
+        getContract({
+          address,
+          abi,
+          client: { public: publicClient, wallet: walletClient }
+        });
     }
 
-    createUnitroller = this.createContractInstance<Unitroller>(UnitrollerArtifact.abi);
-    createIonicFlywheel = this.createContractInstance<IonicFlywheel>(IonicFlywheelArtifact.abi);
+    createUnitroller = this.createContractInstance<typeof unitrollerAbi>(unitrollerAbi);
+    createIonicFlywheel = this.createContractInstance<typeof ionicFlywheelAbi>(ionicFlywheelAbi);
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsArtifact.abi);
     createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelArtifact.abi);
 
-    createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
+    createComptroller(comptrollerAddress: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
       if (this.chainDeployment.ComptrollerFirstExtension) {
-        return new Contract(
-          comptrollerAddress,
-          [...IonicComptrollerArtifact.abi],
-          signerOrProvider
-        ) as IonicComptroller;
+        return getContract({
+          address: comptrollerAddress,
+          abi: ionicComptrollerAbi,
+          client: {
+            public: publicClient,
+            wallet: walletClient
+          }
+        });
       }
 
       return new Contract(comptrollerAddress, IonicComptrollerArtifact.abi, signerOrProvider) as IonicComptroller;
