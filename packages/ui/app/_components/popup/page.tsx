@@ -14,6 +14,7 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
+import LifiChains from './LifiChains';
 import Loop from './Loop';
 import SliderComponent from './Slider';
 import Tab from './Tab';
@@ -1137,6 +1138,7 @@ const Popup = ({
                 {/* SUPPLY-Collateral section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <div className={`min-w-full py-5 px-[6%] h-min `}>
+                  <LifiChains />
                   <Amount
                     amount={amount}
                     handleInput={(val?: string) => setAmount(val)}
