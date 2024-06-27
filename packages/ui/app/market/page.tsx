@@ -278,100 +278,116 @@ export default function Market() {
           >
             <>
               {assets &&
-                assets.map((val: MarketData, idx: number) => (
-                  <PoolRows
-                    asset={val.underlyingSymbol}
-                    borrowAPR={`${
-                      currentSdk
-                        ?.ratePerBlockToAPY(
-                          val?.borrowRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(chainId)
-                        )
-                        .toFixed(2) ?? '0.00'
-                    }%`}
-                    borrowBalance={`${
-                      val.borrowBalanceNative
-                        ? parseFloat(
-                            formatUnits(
-                              val.borrowBalance,
-                              val.underlyingDecimals
-                            )
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                    collateralFactor={
-                      (val ? Number(formatEther(val.collateralFactor)) : 0) *
-                      100
-                    }
-                    dropdownSelectedChain={dropdownSelectedChain}
-                    key={idx}
-                    logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
-                    loopPossible={
-                      loopMarkets ? loopMarkets[val.cToken].length > 0 : false
-                    }
-                    membership={val?.membership ?? false}
-                    selectedChain={chainId}
-                    selectedPoolId={selectedPool}
-                    setPopupMode={setPopupMode}
-                    setSelectedSymbol={setSelectedSymbol}
-                    supplyAPR={`${
-                      currentSdk
-                        ?.ratePerBlockToAPY(
-                          val?.supplyRatePerBlock ?? BigNumber.from(0),
-                          getBlockTimePerMinuteByChainId(chainId)
-                        )
-                        .toFixed(2) ?? '0.00'
-                    }%`}
-                    supplyBalance={`${
-                      val.supplyBalanceNative
-                        ? parseFloat(
-                            formatUnits(
-                              val.supplyBalance,
-                              val.underlyingDecimals
-                            )
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                    totalBorrowing={`${
-                      val.totalBorrowNative
-                        ? parseFloat(
-                            formatUnits(val.totalBorrow, val.underlyingDecimals)
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.totalBorrowFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                    totalSupplied={`${
-                      val.totalSupplyNative
-                        ? parseFloat(
-                            formatUnits(val.totalSupply, val.underlyingDecimals)
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.totalSupplyFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                  />
-                ))}
+                assets
+                  .sort(
+                    (a, b) =>
+                      pools[dropdownSelectedChain].pools[
+                        +selectedPool
+                      ].assets.indexOf(a.underlyingSymbol) -
+                      pools[dropdownSelectedChain].pools[
+                        +selectedPool
+                      ].assets.indexOf(b.underlyingSymbol)
+                  )
+                  .map((val: MarketData, idx: number) => (
+                    <PoolRows
+                      asset={val.underlyingSymbol}
+                      borrowAPR={`${
+                        currentSdk
+                          ?.ratePerBlockToAPY(
+                            val?.borrowRatePerBlock ?? BigNumber.from(0),
+                            getBlockTimePerMinuteByChainId(chainId)
+                          )
+                          .toFixed(2) ?? '0.00'
+                      }%`}
+                      borrowBalance={`${
+                        val.borrowBalanceNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.borrowBalance,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      collateralFactor={
+                        (val ? Number(formatEther(val.collateralFactor)) : 0) *
+                        100
+                      }
+                      dropdownSelectedChain={dropdownSelectedChain}
+                      key={idx}
+                      logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                      loopPossible={
+                        loopMarkets ? loopMarkets[val.cToken].length > 0 : false
+                      }
+                      membership={val?.membership ?? false}
+                      selectedChain={chainId}
+                      selectedPoolId={selectedPool}
+                      setPopupMode={setPopupMode}
+                      setSelectedSymbol={setSelectedSymbol}
+                      supplyAPR={`${
+                        currentSdk
+                          ?.ratePerBlockToAPY(
+                            val?.supplyRatePerBlock ?? BigNumber.from(0),
+                            getBlockTimePerMinuteByChainId(chainId)
+                          )
+                          .toFixed(2) ?? '0.00'
+                      }%`}
+                      supplyBalance={`${
+                        val.supplyBalanceNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.supplyBalance,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      totalBorrowing={`${
+                        val.totalBorrowNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.totalBorrow,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.totalBorrowFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      totalSupplied={`${
+                        val.totalSupplyNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.totalSupply,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.totalSupplyFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                    />
+                  ))}
             </>
           </ResultHandler>
         </div>
