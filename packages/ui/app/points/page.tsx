@@ -40,7 +40,7 @@ const colors = {
   supply: '#40798C',
   borrow: '#f3fa96',
   ionLp: '#3bff89',
-  steerLp: '#FF5666'
+  steerLp: '#dc97ff'
 };
 
 export default function Points() {
@@ -452,8 +452,8 @@ export default function Points() {
                   summedBorrowPointsModeMain +
                     summedBorrowPointsModeNative +
                     summedBorrowPointsBaseMain,
-                  summedPointsIonLp,
-                  summedPointsSteerLp
+                  +summedPointsIonLp,
+                  +summedPointsSteerLp
                 ]}
               />
             </div>
