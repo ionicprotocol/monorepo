@@ -17,6 +17,8 @@ export const handleSwitchOriginChain = async (
       return true;
     }
   } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log(err);
     return false;
   }
 };

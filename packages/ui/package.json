@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gasbot/widget": "^0.4.7",
+    "@lifi/sdk": "^3.0.0",
     "@netlify/plugin-nextjs": "4",
     "@sentry/nextjs": "^7.48.0",
     "@supabase/supabase-js": "^2.43.4",
