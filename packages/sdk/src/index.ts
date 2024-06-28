@@ -1,6 +1,7 @@
 export { default as IonicSdk } from "./IonicSdk";
 export { default as ERC20Abi } from "../artifacts/EIP20Interface.sol/EIP20Interface.json";
 export { default as WETHAbi } from "../artifacts/WETH.sol/WETH.json";
+export * from "./generated";
 
 import { IonicBase } from "./IonicSdk";
 import JumpRateModel from "./IonicSdk/irm/JumpRateModel";

@@ -1,10 +1,10 @@
-import { TransactionResponse } from '@ethersproject/providers';
 import { SupportedChains } from '@ionicprotocol/types';
 import { MessageBuilder, Webhook } from 'discord-webhook-node';
 
 import config from '../config/service';
 import { logger } from '../logger';
 import { AssetConfigWithPrice } from '../utils';
+import { TransactionReceipt } from 'viem';
 
 export class DiscordService {
   chainId: SupportedChains;
@@ -22,7 +22,7 @@ export class DiscordService {
     return new MessageBuilder().addField(
       'Chain',
       `Chain ID: ${SupportedChains[this.chainId]}`,
-      true
+      true,
     );
   }
 
@@ -43,14 +43,14 @@ export class DiscordService {
         assetConfigsToUpdate
           .map((a) => (a.lastPrice ? a.lastPrice!.price.toString() : ''))
           .join(', '),
-        true
+        true,
       )
       .addField(
         'Current Prices',
         assetConfigsToUpdate
           .map((a) => (a.currentPrice ? a.currentPrice!.price.toString() : ''))
           .join(', '),
-        true
+        true,
       )
       // Max limit of embed size
       .setDescription(`${msg.slice(0, 2000)}... (truncated, check AWS Logs) @everyone`)
@@ -61,11 +61,11 @@ export class DiscordService {
 
   public async sendPriceUpdateSuccess(
     assetConfigsToUpdate: AssetConfigWithPrice[],
-    tx: TransactionResponse
+    tx: TransactionReceipt,
   ) {
     const embed = this.create()
       .setTitle(`price update succeeded for ${assetConfigsToUpdate.length} priceIds`)
-      .setDescription(`Tx Hash: ${tx.hash}`)
+      .setDescription(`Tx Hash: ${tx.transactionHash}`)
       .setTimestamp()
       .setColor(this.infoColor);
     await this.send(embed);

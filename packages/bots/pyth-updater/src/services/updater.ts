@@ -1,9 +1,14 @@
-import { TransactionResponse } from '@ethersproject/providers';
 import { IonicSdk } from '@ionicprotocol/sdk';
-import { IPyth } from '@ionicprotocol/sdk/typechain/IPyth';
 import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
-import PythAbi from '@pythnetwork/pyth-sdk-solidity/abis/IPyth.json';
-import { Contract, ethers } from 'ethers';
+import {
+  Address,
+  encodeFunctionData,
+  getContract,
+  GetContractReturnType,
+  parseAbi,
+  PublicClient,
+  TransactionReceipt,
+} from 'viem';
 
 import config from '../config/service';
 import { PythAssetConfig } from '../types';
@@ -12,76 +17,87 @@ import sendTransactionToPyth, {
   getLastPrices,
   priceFeedNeedsUpdate,
 } from '../utils';
+import { pythAbi } from '../pythAbi';
 
 import { DiscordService } from './discord';
 
+const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
-  pythPriceOracle: Contract;
-  pythNetworkAddress: string = ethers.constants.AddressZero;
+  pythPriceOracle: GetContractReturnType<typeof pythPriceOracleAbi, PublicClient>;
+  pythNetworkAddress: Address;
   connection: EvmPriceServiceConnection;
   assetConfigs: PythAssetConfig[] = [];
-  pythContract: IPyth = {} as IPyth;
+  pythContract: GetContractReturnType<typeof pythAbi, PublicClient> = {} as GetContractReturnType<
+    typeof pythAbi,
+    PublicClient
+  >;
 
   constructor(ionicSdk: IonicSdk) {
     this.sdk = ionicSdk;
     this.alert = new DiscordService(ionicSdk.chainId);
-    this.pythPriceOracle = new Contract(
-      this.sdk.chainDeployment.PythPriceOracle.address,
-      ['function PYTH() external view returns (address) '],
-      this.sdk.provider
-    );
+    this.pythPriceOracle = getContract({
+      address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
+      abi: pythPriceOracleAbi,
+      client: this.sdk.publicClient,
+    });
     this.connection = new EvmPriceServiceConnection(config.priceServiceEndpoint);
   }
 
   async init(assetConfigs: PythAssetConfig[]) {
-    this.pythNetworkAddress = await this.pythPriceOracle.callStatic.PYTH();
+    this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
     this.assetConfigs = assetConfigs;
-    this.pythContract = new Contract(this.pythNetworkAddress, PythAbi, this.sdk.provider) as IPyth;
+    this.pythContract = getContract({
+      address: this.pythNetworkAddress,
+      abi: pythAbi,
+      client: this.sdk.walletClient,
+    });
     return this;
   }
 
-  async updateFeeds(): Promise<TransactionResponse | null> {
+  async updateFeeds(): Promise<TransactionReceipt | null> {
     const configWithCurrentPrices = await getCurrentPrices(
       this.sdk,
       this.assetConfigs,
-      this.connection
+      this.connection,
     );
     if (configWithCurrentPrices === undefined) {
       this.sdk.logger.error(
-        `Error fetching current priceFeeds for priceIds: ${this.assetConfigs.map((a) => a.priceId)}`
+        `Error fetching current priceFeeds for priceIds: ${this.assetConfigs.map((a) => a.priceId)}`,
       );
       return null;
     }
     const configWithLastPrices = await getLastPrices(
       this.sdk,
       configWithCurrentPrices,
-      this.pythContract
+      this.pythContract,
     );
     this.sdk.logger.debug(
       `currentPrices: ${JSON.stringify(
-        configWithCurrentPrices.map((c) => c.currentPrice?.price)
-      )}\nlastPrices: ${JSON.stringify(configWithLastPrices.map((l) => l.lastPrice?.price))}`
+        configWithCurrentPrices.map((c) => c.currentPrice?.price),
+      )}\nlastPrices: ${JSON.stringify(configWithLastPrices.map((l) => l.lastPrice?.price))}`,
     );
     const assetConfigsToUpdate = configWithLastPrices.filter((configWithLastPrice) =>
-      priceFeedNeedsUpdate(this.sdk, configWithLastPrice)
+      priceFeedNeedsUpdate(this.sdk, configWithLastPrice),
     );
     if (assetConfigsToUpdate.length > 0) {
-      const publishTimes = assetConfigsToUpdate.map(
-        (assetConfig) => assetConfig.currentPrice!.publishTime
+      const publishTimes = assetConfigsToUpdate.map((assetConfig) =>
+        BigInt(assetConfig.currentPrice!.publishTime),
       );
       const priceIdsToUpdate = assetConfigsToUpdate.map((assetConfig) => assetConfig.priceId);
       const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
-      const fee = (await this.pythContract.callStatic.getUpdateFee(updatePriceData)).toString();
-      const callData = this.pythContract.interface.encodeFunctionData(
-        'updatePriceFeedsIfNecessary',
-        [updatePriceData, priceIdsToUpdate, publishTimes]
-      );
+      const fee = await this.pythContract.read.getUpdateFee([updatePriceData]);
+      const callData = encodeFunctionData({
+        abi: pythAbi,
+        functionName: 'updatePriceFeedsIfNecessary',
+        args: [updatePriceData, priceIdsToUpdate, publishTimes],
+      });
       try {
         const tx = await sendTransactionToPyth(this.sdk, this.pythNetworkAddress, callData, fee);
-        this.alert.sendPriceUpdateSuccess(assetConfigsToUpdate, tx);
-        return tx;
+        const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx });
+        this.alert.sendPriceUpdateSuccess(assetConfigsToUpdate, receipt);
+        return receipt;
       } catch (e) {
         this.sdk.logger.error(`Error sending transaction to Pyth: ${e}`);
         this.alert.sendPriceUpdateFailure(assetConfigsToUpdate, JSON.stringify(e));
@@ -93,23 +109,26 @@ export class Updater {
           (a) =>
             `priceId: ${a.priceId}:  - current price ${a.currentPrice!.price}\n  - last price ${
               a.lastPrice!.price
-            } `
-        )}`
+            } `,
+        )}`,
       );
     }
     return null;
   }
-  async forceUpdateFeeds(assetConfig: PythAssetConfig[]): Promise<TransactionResponse | null> {
+  async forceUpdateFeeds(assetConfig: PythAssetConfig[]): Promise<TransactionReceipt | null> {
     const priceIdsToUpdate = assetConfig.map((assetConfig) => assetConfig.priceId);
     const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
-    const fee = (await this.pythContract.callStatic.getUpdateFee(updatePriceData)).toString();
-    const callData = this.pythContract.interface.encodeFunctionData('updatePriceFeeds', [
-      updatePriceData,
-    ]);
+    const fee = await this.pythContract.read.getUpdateFee([updatePriceData]);
+    const callData = encodeFunctionData({
+      abi: pythAbi,
+      functionName: 'updatePriceFeeds',
+      args: [updatePriceData],
+    });
     try {
       const tx = await sendTransactionToPyth(this.sdk, this.pythNetworkAddress, callData, fee);
-      this.alert.sendPriceUpdateSuccess(assetConfig, tx);
-      return tx;
+      const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx });
+      this.alert.sendPriceUpdateSuccess(assetConfig, receipt);
+      return receipt;
     } catch (e) {
       this.sdk.logger.error(`Error sending transaction to Pyth: ${e}`);
       this.alert.sendPriceUpdateFailure(assetConfig, JSON.stringify(e));
