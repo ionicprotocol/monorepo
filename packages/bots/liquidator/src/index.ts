@@ -1,6 +1,7 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
-import { Wallet } from "ethers";
+import { createPublicClient, createWalletClient, Hex, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { mode } from "viem/chains";
 
 import config from "./config";
 import liquidatePositions from "./liquidatePositions";
@@ -12,8 +13,18 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
 
-  const provider = new JsonRpcProvider(config.rpcUrl);
-  const signer = new Wallet(config.adminPrivateKey, provider);
+  const account = privateKeyToAccount(config.adminPrivateKey as Hex);
+
+  const client = createPublicClient({
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
+
+  const walletClient = createWalletClient({
+    account,
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
 
   const sdk = setUpSdk(config.chainId, signer);
 

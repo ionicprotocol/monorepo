@@ -1,33 +1,65 @@
-import { Address, getContract, GetContractReturnType, PublicClient } from "viem";
+import { Address, getContract, GetContractReturnType, Hex, PublicClient } from "viem";
 
-import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
-import IonicFlywheelArtifact from "../../artifacts/IonicFlywheel.sol/IonicFlywheel.json";
-import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
-import { IonicFlywheel } from "../../typechain/IonicFlywheel";
-import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
 import { flywheelStaticRewardsAbi, ionicFlywheelAbi } from "../generated";
 
 import { CreateContractsModule } from "./CreateContracts";
 
 export interface FlywheelClaimableRewards {
-  flywheel: string;
-  rewardToken: string;
+  rewardToken: Address;
   amount: bigint;
 }
 
 export type FlywheelMarketRewardsInfo = {
-  market: string;
+  market: Address;
   underlyingPrice?: bigint;
   rewardsInfo: {
-    rewardToken: string;
-    flywheel: string;
+    rewardToken: Address;
+    flywheel: Address;
     rewardSpeedPerSecondPerToken?: bigint;
     rewardTokenPrice?: bigint;
     formattedAPR?: bigint;
   }[];
 };
 
-export function withFlywheel<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface IFlywheel {
+  getFlywheelMarketRewardsByPools(pools: Address[]): Promise<FlywheelMarketRewardsInfo[][]>;
+  getFlywheelMarketRewardsByPool(pool: Address): Promise<FlywheelMarketRewardsInfo[]>;
+  getFlywheelsByPool(poolAddress: Address): Promise<GetContractReturnType<typeof ionicFlywheelAbi, PublicClient>[]>;
+  getFlywheelRewardsInfos(flywheelAddress: Address): Promise<Record<string, any>>;
+  getFlywheelsByPool(poolAddress: Address): Promise<GetContractReturnType<typeof ionicFlywheelAbi, PublicClient>[]>;
+  getFlywheelRewardsInfos(flywheelAddress: Address): Promise<Record<string, any>>;
+  getFlywheelMarketRewardsByPoolWithAPR(pool: Address): Promise<FlywheelMarketRewardsInfo[]>;
+  getFlywheelRewardsInfoForMarket(flywheelAddress: Address, marketAddress: Address): Promise<any>;
+  getFlywheelClaimableRewardsForMarket(
+    poolAddress: Address,
+    market: Address,
+    account: Address
+  ): Promise<FlywheelClaimableRewards[]>;
+  getFlywheelClaimableRewardsByMarkets(
+    poolAddress: Address,
+    markets: Address[],
+    account: Address
+  ): Promise<FlywheelClaimableRewards[]>;
+  getFlywheelClaimableRewardsForPool(poolAddress: Address, account: Address): Promise<FlywheelClaimableRewards[]>;
+  getAllFlywheelClaimableRewards(account: Address): Promise<FlywheelClaimableRewards[]>;
+  getFlywheelEnabledMarkets(flywheelAddress: Address): Promise<Address[]>;
+  setStaticRewardInfo(staticRewardsAddress: Address, marketAddress: Address, rewardInfo: any): Promise<Address>;
+  setFlywheelRewards(flywheelAddress: Address, rewardsAddress: Address): Promise<Address>;
+  addMarketForRewardsToFlywheelCore(flywheelCoreAddress: Address, marketAddress: Address): Promise<Address>;
+  addStrategyForRewardsToFlywheelCore(flywheelCoreAddress: Address, marketAddress: Address): Promise<Address>;
+  addFlywheelCoreToComptroller(flywheelCoreAddress: Address, comptrollerAddress: Address): Promise<Address>;
+  claimRewardsForMarket(market: Address, flywheels: Address[]): Promise<Hex>;
+  claimRewardsForMarkets(markets: Address[], flywheels: Address[]): Promise<Hex>;
+  claimRewardsForPool(poolAddress: Address): Promise<Hex>;
+  claimRewardsForRewardToken(rewardToken: Address): Promise<Hex>;
+  claimAllRewards(): Promise<Hex>;
+}
+
+export function withFlywheel<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): IFlywheel;
+} & TBase {
   return class Flywheel extends Base {
     /** READ */
     async getFlywheelMarketRewardsByPools(pools: Address[]) {
@@ -229,11 +261,11 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     /** WRITE */
-    getFlywheelEnabledMarkets(flywheelAddress: Address) {
-      return this.createIonicFlywheel(flywheelAddress).read.getAllStrategies();
+    async getFlywheelEnabledMarkets(flywheelAddress: Address): Promise<Address[]> {
+      return (await this.createIonicFlywheel(flywheelAddress).read.getAllStrategies()) as Address[];
     }
 
-    setStaticRewardInfo(staticRewardsAddress: Address, marketAddress: Address, rewardInfo: any) {
+    setStaticRewardInfo(staticRewardsAddress: Address, marketAddress: Address, rewardInfo: any): Promise<Address> {
       const staticRewardsInstance = this.createFlywheelStaticRewards(
         staticRewardsAddress,
         this.publicClient,
@@ -245,7 +277,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       });
     }
 
-    setFlywheelRewards(flywheelAddress: Address, rewardsAddress: Address) {
+    setFlywheelRewards(flywheelAddress: Address, rewardsAddress: Address): Promise<Address> {
       const flywheelCoreInstance = this.createIonicFlywheel(flywheelAddress, this.publicClient, this.walletClient);
       return flywheelCoreInstance.write.setFlywheelRewards([rewardsAddress], {
         account: this.walletClient.account!.address,
@@ -253,7 +285,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       });
     }
 
-    addMarketForRewardsToFlywheelCore(flywheelCoreAddress: Address, marketAddress: Address) {
+    addMarketForRewardsToFlywheelCore(flywheelCoreAddress: Address, marketAddress: Address): Promise<Address> {
       return this.addStrategyForRewardsToFlywheelCore(flywheelCoreAddress, marketAddress);
     }
 
@@ -279,7 +311,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param flywheels available flywheels addresses which market could have
       @return contract transaction
     */
-    async claimRewardsForMarket(market: Address, flywheels: Address[]) {
+    async claimRewardsForMarket(market: Address, flywheels: Address[]): Promise<Hex> {
       const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
       const account = this.walletClient.account!.address;
 
@@ -297,7 +329,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param flywheels available flywheels addresses which markets could have
       @return contract transaction
     */
-    async claimRewardsForMarkets(markets: Address[], flywheels: Address[]) {
+    async claimRewardsForMarkets(markets: Address[], flywheels: Address[]): Promise<Hex> {
       const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
       const account = this.walletClient.account!.address;
 
@@ -314,7 +346,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param poolAddress pool address
       @return contract transaction
     */
-    async claimRewardsForPool(poolAddress: Address) {
+    async claimRewardsForPool(poolAddress: Address): Promise<Hex> {
       const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
       const account = this.walletClient.account!.address;
 
@@ -331,7 +363,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param rewardToken reward token address
       @return contract transaction
     */
-    async claimRewardsForRewardToken(rewardToken: Address) {
+    async claimRewardsForRewardToken(rewardToken: Address): Promise<Hex> {
       const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
       const account = this.walletClient.account!.address;
 
@@ -347,7 +379,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @notice claim all rewards
       @return contract transaction
     */
-    async claimAllRewards() {
+    async claimAllRewards(): Promise<Hex> {
       const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
       const account = this.walletClient.account!.address;
 

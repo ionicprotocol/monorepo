@@ -59,7 +59,27 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.base]: base.assets
 };
 
-export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface IIonicPools {
+  fetchPoolData(poolId: string): Promise<IonicPoolData | null>;
+  fetchPoolsManual(): Promise<(IonicPoolData | null)[] | undefined>;
+  fetchPools({ filter, options }: { filter: string | null; options: { from: Address } }): Promise<IonicPoolData[]>;
+  isAuth(pool: Address, market: Address, role: Roles, user: Address): Promise<boolean>;
+  getHealthFactor(account: Address, pool: Address): Promise<bigint>;
+  getHealthFactorPrediction(
+    pool: Address,
+    account: Address,
+    cTokenModify: Address,
+    redeemTokens: bigint,
+    borrowAmount: bigint,
+    repayAmount: bigint
+  ): Promise<bigint>;
+}
+
+export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): IIonicPools;
+} & TBase {
   return class IonicPools extends Base {
     async fetchPoolData(poolId: string): Promise<IonicPoolData | null> {
       const [comptroller, _unfiliteredName, creator, blockPosted, timestampPosted] =

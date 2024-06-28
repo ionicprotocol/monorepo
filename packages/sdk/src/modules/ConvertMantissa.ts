@@ -3,7 +3,16 @@ import { formatUnits } from "viem";
 import { IonicBaseConstructor } from "..";
 
 const daysPerYear = 365;
-export function withConvertMantissa<TBase extends IonicBaseConstructor>(Base: TBase) {
+
+export interface IConvertMantissa {
+  ratePerBlockToAPY(ratePerBlock: bigint, blocksPerMin: number): number;
+}
+
+export function withConvertMantissa<TBase extends IonicBaseConstructor>(
+  Base: TBase
+): {
+  new (...args: any[]): IConvertMantissa;
+} & TBase {
   return class ConvertMantissa extends Base {
     /**
      * Directly taken from the compound.finance docs:

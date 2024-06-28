@@ -9,7 +9,22 @@ import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "./utils";
 
 import { gatherLiquidations, getAllPoolUsers } from "./index";
 
-export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TBase) {
+export interface ISafeLiquidator {
+  getPotentialLiquidations(
+    excludedComptrollers?: Array<string>,
+    maxHealthFactor?: bigint,
+    configOverrides?: ChainLiquidationConfig
+  ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]>;
+  liquidatePositions(
+    liquidatablePool: LiquidatablePool
+  ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]>;
+}
+
+export function withSafeLiquidator<TBase extends CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): ISafeLiquidator;
+} & TBase {
   return class SafeLiquidator extends Base {
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 

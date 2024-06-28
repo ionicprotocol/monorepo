@@ -18,8 +18,23 @@ import { withCreateContracts } from "./CreateContracts";
 import { withFlywheel } from "./Flywheel";
 
 type IonicBaseConstructorWithModules = ReturnType<typeof withCreateContracts> & ReturnType<typeof withFlywheel>;
+export interface IPoolAsset {
+  deployAsset(config: MarketConfig): Promise<[string, string, TransactionReceipt]>;
+  validateConfiguration(config: MarketConfig): Promise<void>;
+  deployMarket(config: MarketConfig): Promise<[string, string, TransactionReceipt]>;
+  getUpdatedAssets(
+    mode: FundOperationMode,
+    index: number,
+    assets: NativePricedIonicAsset[],
+    amount: bigint
+  ): Promise<NativePricedIonicAsset[]>;
+}
 
-export function withAsset<TBase extends IonicBaseConstructorWithModules>(Base: TBase) {
+export function withAsset<TBase extends IonicBaseConstructorWithModules>(
+  Base: TBase
+): {
+  new (...args: any[]): IPoolAsset;
+} & TBase {
   return class PoolAsset extends Base {
     public COMPTROLLER_ERROR_CODES: Array<string> = COMPTROLLER_ERROR_CODES;
 

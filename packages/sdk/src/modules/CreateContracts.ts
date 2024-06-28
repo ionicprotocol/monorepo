@@ -1,4 +1,4 @@
-import { Abi, Address, getContract, GetContractReturnType, WalletClient } from "viem";
+import { Abi, Address, getContract, GetContractReturnType, PublicClient, WalletClient } from "viem";
 
 import { IonicBaseConstructor } from "..";
 import {
@@ -25,7 +25,117 @@ import {
   unitrollerAbi
 } from "../generated";
 
-export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TBase) {
+export interface ICreateContracts {
+  createContractInstance<T extends Abi>(
+    abi: T
+  ): (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<T, WalletClient>;
+  createUnitroller: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof unitrollerAbi, WalletClient>;
+  createIonicFlywheel: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof ionicFlywheelAbi, WalletClient>;
+  createFlywheelStaticRewards: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof flywheelStaticRewardsAbi, WalletClient>;
+  createJumpRateModel: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof jumpRateModelAbi, WalletClient>;
+  createComptroller: (
+    comptrollerAddress: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof ionicComptrollerAbi, WalletClient>;
+  createICErc20: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof icErc20Abi, WalletClient>;
+  createICErc20PluginRewards: (
+    cTokenAddress: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof icErc20PluginRewardsAbi, WalletClient>;
+  createMasterPriceOracle: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof masterPriceOracleAbi, WalletClient>;
+  createCompoundMarketERC4626: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof compoundMarketErc4626Abi, WalletClient>;
+  createOptimizedAPRVault: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof optimizedAprVaultFirstExtensionAbi, WalletClient>;
+  createOptimizedAPRVaultSecond: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof optimizedAprVaultSecondExtensionAbi, WalletClient>;
+  createOptimizedVaultsRegistry: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof optimizedVaultsRegistryAbi, WalletClient>;
+  createIonicFlywheelLensRouter: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof ionicFlywheelLensRouterAbi, WalletClient>;
+  createLeveredPositionFactory: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof iLeveredPositionFactoryAbi, WalletClient>;
+  createLeveredPosition: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof leveredPositionAbi, WalletClient>;
+  createLeveredPositionLens: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof leveredPositionsLensAbi, WalletClient>;
+  createPoolLens: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof poolLensAbi, WalletClient>;
+  createPoolLensSecondary: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof poolLensSecondaryAbi, WalletClient>;
+  createILiquidatorsRegistry: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof iLiquidatorsRegistryAbi, WalletClient>;
+  createAuthoritiesRegistry: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof authoritiesRegistryAbi, WalletClient>;
+  createPoolRolesAuthority: (
+    poolAuthAddress: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof poolRolesAuthorityAbi, WalletClient>;
+}
+
+export function withCreateContracts<TBase extends IonicBaseConstructor>(
+  Base: TBase
+): {
+  new (...args: any[]): ICreateContracts;
+} & TBase {
   return class CreateContracts extends Base {
     createContractInstance<T extends Abi>(abi: Abi) {
       return (

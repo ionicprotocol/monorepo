@@ -11,7 +11,58 @@ import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther } from "vie
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
 
-export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface ILeverage {
+  getAllLeveredPositions(account: Address): Promise<{ openPositions: OpenPosition[]; newPositions: NewPosition[] }>;
+  getPositionsByAccount(
+    account: Address
+  ): Promise<{ collateralMarket: Address; borrowMarket: Address; position: Address; isClosed: boolean }[]>;
+  getPositionSupplyApy(cTokenAddress: Address, amount: bigint): Promise<bigint>;
+  getPositionBorrowApr(
+    collateralMarket: Address,
+    borrowMarket: Address,
+    leverageRatio: bigint,
+    amount: bigint
+  ): Promise<bigint>;
+  leveredFactoryApprove(collateralUnderlying: Address): Promise<Hex>;
+  leveredPositionApprove(positionAddress: Address, collateralUnderlying: Address): Promise<Hex>;
+  createAndFundPosition(
+    collateralMarket: Address,
+    borrowMarket: Address,
+    fundingAsset: Address,
+    fundingAmount: bigint
+  ): Promise<Hex>;
+  createAndFundPositionAtRatio(
+    collateralMarket: Address,
+    borrowMarket: Address,
+    fundingAsset: Address,
+    fundingAmount: bigint,
+    leverageRatio: bigint
+  ): Promise<Hex>;
+  getRangeOfLeverageRatio(address: Address): Promise<[bigint, bigint]>;
+  isPositionClosed(address: Address): Promise<boolean>;
+  closeLeveredPosition(address: Address, withdrawTo?: Address): Promise<Hex | null>;
+  adjustLeverageRatio(address: Address, ratio: number): Promise<Hex>;
+  fundPosition(positionAddress: Address, underlyingToken: Address, amount: bigint): Promise<Hex>;
+  getNetAPY(
+    supplyApy: bigint,
+    supplyAmount: bigint,
+    collateralMarket: Address,
+    borrowableMarket: Address,
+    leverageRatio: bigint
+  ): Promise<bigint>;
+  getCurrentLeverageRatio(positionAddress: Address): Promise<bigint>;
+  getEquityAmount(positionAddress: Address): Promise<bigint>;
+  removeClosedPosition(positionAddress: Address): Promise<Hex>;
+  getPositionInfo(positionAddress: Address, supplyApy: bigint): Promise<PositionInfo>;
+  getNetApyForPositionAfterFunding(positionAddress: Address, supplyApy: bigint, newFunding: bigint): Promise<bigint>;
+  getLeverageRatioAfterFunding(positionAddress: Address, newFunding: bigint): Promise<bigint>;
+}
+
+export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): ILeverage;
+} & TBase {
   return class Leverage extends Base {
     async getAllLeveredPositions(
       account: Address

@@ -2525,6 +2525,7 @@ __metadata:
     ts-node: "npm:^10.7.0"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:4.7.4"
+    viem: "npm:^2.16.3"
   languageName: unknown
   linkType: soft
 

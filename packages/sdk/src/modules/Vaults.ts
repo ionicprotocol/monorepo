@@ -5,13 +5,28 @@ import {
   SupportedChains,
   VaultData
 } from "@ionicprotocol/types";
-import { BigNumber, utils } from "ethers";
-import { Address, erc20Abi, getContract, maxUint256 } from "viem";
+import { Address, erc20Abi, formatUnits, getContract, Hex, maxUint256 } from "viem";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
 
-export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface IVaults {
+  getAllVaults(): Promise<VaultData[]>;
+  getClaimableRewardsForVaults(account: Address): Promise<FlywheelRewardsInfoForVault[]>;
+  vaultApprove(vault: Address, asset: Address): Promise<Hex>;
+  vaultDeposit(vault: Address, amount: bigint): Promise<{ tx: Hex }>;
+  vaultWithdraw(vault: Address, amount: bigint): Promise<{ tx: Hex }>;
+  getUpdatedVault(mode: FundOperationMode, vault: VaultData, amount: bigint): Promise<VaultData>;
+  getMaxWithdrawVault(vault: Address): Promise<bigint>;
+  getMaxDepositVault(vault: Address): Promise<bigint>;
+  claimRewardsForVault(vault: Address): Promise<{ tx: Hex }>;
+}
+
+export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): IVaults;
+} & TBase {
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
       if (this.chainId === SupportedChains.chapel || this.chainId === SupportedChains.polygon) {
@@ -36,8 +51,8 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
 
               const underlyingPrice = await mpo.read.price([data.asset]);
               const totalSupplyNative =
-                Number(utils.formatUnits(data.estimatedTotalAssets, data.assetDecimals)) *
-                Number(utils.formatUnits(underlyingPrice, 18));
+                Number(formatUnits(data.estimatedTotalAssets, data.assetDecimals)) *
+                Number(formatUnits(underlyingPrice, 18));
 
               return {
                 vault: data.vault,
@@ -146,7 +161,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       return { tx };
     }
 
-    async vaultWithdraw(vault: Address, amount: BigNumber) {
+    async vaultWithdraw(vault: Address, amount: bigint) {
       const tx = await this.walletClient.writeContract({
         address: vault,
         abi: ["function withdraw(uint256)"],
@@ -166,7 +181,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       if (mode === FundOperationMode.SUPPLY) {
         const totalSupply = vault.totalSupply + amount;
         const totalSupplyNative =
-          Number(utils.formatUnits(totalSupply, vault.decimals)) * Number(utils.formatUnits(vault.underlyingPrice, 18));
+          Number(formatUnits(totalSupply, vault.decimals)) * Number(formatUnits(vault.underlyingPrice, 18));
         const supplyApy = await optimizedAPRVault.read.supplyAPY([amount]);
         updatedVault = {
           ...vault,
@@ -177,7 +192,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       } else if (mode === FundOperationMode.WITHDRAW) {
         const totalSupply = vault.totalSupply - amount;
         const totalSupplyNative =
-          Number(utils.formatUnits(totalSupply, vault.decimals)) * Number(utils.formatUnits(vault.underlyingPrice, 18));
+          Number(formatUnits(totalSupply, vault.decimals)) * Number(formatUnits(vault.underlyingPrice, 18));
         const supplyApy = await optimizedAPRVault.read.supplyAPY([amount]);
         updatedVault = {
           ...vault,

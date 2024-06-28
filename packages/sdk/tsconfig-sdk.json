@@ -10,7 +10,7 @@
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": false,
     "outDir": "./dist/esm",
-    "declaration": false,
+    "declaration": true,
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false
   },

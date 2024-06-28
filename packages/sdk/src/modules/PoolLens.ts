@@ -3,7 +3,16 @@ import { SupportedAsset } from "@ionicprotocol/types";
 
 import { IonicBaseConstructor } from "..";
 
-export function withPoolLens<TBase extends IonicBaseConstructor>(Base: TBase) {
+export interface IPoolLens {
+  getTotalValueLocked(whitelistedAdmin?: boolean): Promise<{ totalSupply: bigint; totalBorrow: bigint }>;
+  getLiveAssets(): Promise<Set<SupportedAsset>>;
+}
+
+export function withPoolLens<TBase extends IonicBaseConstructor>(
+  Base: TBase
+): {
+  new (...args: any[]): IPoolLens;
+} & TBase {
   return class PoolLens extends Base {
     /**
      * @returns the TVL on current chain in native asset value

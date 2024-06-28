@@ -7,7 +7,28 @@ import { icErc20Abi, ionicComptrollerAbi } from "../generated";
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
 
-export function withFundOperations<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface IFundOperations {
+  fetchGasForCall(
+    amount: bigint,
+    address: Address
+  ): Promise<{ gasWEI: bigint; gasPrice: bigint; estimatedGas: bigint }>;
+  approve(cTokenAddress: Address, underlyingTokenAddress: Address): Promise<any>;
+  enterMarkets(cTokenAddress: Address, comptrollerAddress: Address): Promise<any>;
+  mint(cTokenAddress: Address, amount: bigint): Promise<any>;
+  repay(cTokenAddress: Address, isRepayingMax: boolean, amount: bigint): Promise<any>;
+  borrow(cTokenAddress: Address, amount: bigint): Promise<any>;
+  withdraw(cTokenAddress: Address, amount: bigint): Promise<any>;
+  swap(inputToken: Address, amount: bigint, outputToken: Address): Promise<any>;
+  approveLiquidatorsRegistry(underlying: Address): Promise<any>;
+  getSwapTokens(outputToken: Address): Promise<any>;
+  getAmountOutAndSlippageOfSwap(inputToken: Address, amount: bigint, outputToken: Address): Promise<any>;
+}
+
+export function withFundOperations<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): IFundOperations;
+} & TBase {
   return class FundOperations extends Base {
     async fetchGasForCall(amount: bigint, address: Address) {
       const estimatedGas =
