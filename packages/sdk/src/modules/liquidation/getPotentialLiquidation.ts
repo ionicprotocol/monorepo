@@ -1,8 +1,6 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { Address, formatEther, getContract, GetContractReturnType, Hex, PublicClient, zeroAddress } from "viem";
 
-import { IAlgebraFactory__factory } from "../../../typechain/factories/IAlgebraFactory__factory";
-import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
 import { iAlgebraFactoryAbi, icErc20Abi, iUniswapV2FactoryAbi } from "../../generated";
 import { IonicSdk } from "../../IonicSdk";
 

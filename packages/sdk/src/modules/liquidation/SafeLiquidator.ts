@@ -18,6 +18,7 @@ export interface ISafeLiquidator {
   liquidatePositions(
     liquidatablePool: LiquidatablePool
   ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]>;
+  chainLiquidationConfig: ChainLiquidationConfig;
 }
 
 export function withSafeLiquidator<TBase extends CreateContractsModule>(

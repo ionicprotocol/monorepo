@@ -34,16 +34,9 @@
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
-    "eslint": "^8.23.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-prettier": "^4.2.1",
     "lint-staged": "13.0.3",
     "nyc": "^15.1.0",
-    "prettier": "2.7.1",
-    "sinon": "^14.0.0",
-    "ts-mocha": "^10.0.0",
-    "ts-node": "^10.8.1",
-    "typescript": "^4.8.2"
+    "sinon": "^14.0.0"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.1",

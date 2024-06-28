@@ -1,63 +1,38 @@
-import { TransactionRequest, TransactionResponse } from "@ethersproject/providers";
-import { ERC20Abi, IonicSdk } from "@ionicprotocol/sdk";
+import { IonicSdk } from "@ionicprotocol/sdk";
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { BigNumber, constants, Contract, Wallet } from "ethers";
+import { getContract, zeroAddress, erc20Abi, Address, maxUint256 } from "viem";
 
-import config from "../config";
 import { Liquidator } from "../services";
-
-import { fetchGasLimitForTransaction } from ".";
 
 export default async function approveTokensToSafeLiquidator(liquidator: Liquidator) {
   const { chainLiquidationConfig, logger } = liquidator.sdk;
   if (chainLiquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT) {
     for (const tokenAddress of chainLiquidationConfig.SUPPORTED_OUTPUT_CURRENCIES) {
-      if (tokenAddress !== constants.AddressZero) {
+      if (tokenAddress !== zeroAddress) {
         logger.info(`Sending approve transaction for ${tokenAddress}`);
-        await approveTokenToSafeLiquidator(liquidator.sdk, tokenAddress);
+        await approveTokenToSafeLiquidator(liquidator.sdk, tokenAddress as Address);
         logger.info(`Approve transaction for ${tokenAddress} sent`);
       }
     }
   }
 }
 
-async function approveTokenToSafeLiquidator(ionicSdk: IonicSdk, erc20Address: string) {
+async function approveTokenToSafeLiquidator(ionicSdk: IonicSdk, erc20Address: Address) {
   // Build data
-  const signer = new Wallet(config.adminPrivateKey, ionicSdk.provider);
-  let token = new Contract(erc20Address, ERC20Abi.abi, signer);
-
-  token = await token.connect(signer);
-  const txCount = await ionicSdk.provider.getTransactionCount(config.adminAccount);
-
-  const data = token.interface.encodeFunctionData("approve", [
-    ionicSdk.contracts.IonicLiquidator.address,
-    constants.MaxUint256,
-  ]);
-
-  // Build transaction
-  const tx = {
-    from: config.adminAccount,
-    to: erc20Address,
-    value: BigNumber.from(0),
-    data: data,
-    nonce: txCount,
-  };
-  const gasLimit = await fetchGasLimitForTransaction(ionicSdk, "approve", tx);
-  const txRequest: TransactionRequest = {
-    ...tx,
-    gasLimit: gasLimit,
-  };
+  const token = getContract({ address: erc20Address, abi: erc20Abi, client: ionicSdk.walletClient });
 
   if (process.env.NODE_ENV !== "production")
     ionicSdk.logger.info("Signing and sending approval transaction for: " + erc20Address);
 
   // send transaction
-  let sentTx: TransactionResponse;
+  let sentTx;
   try {
-    sentTx = await signer.sendTransaction(txRequest);
-    await sentTx.wait();
-    const receipt = await sentTx.wait();
-    if (receipt.status === 0) {
+    sentTx = await token.write.approve([ionicSdk.contracts.IonicLiquidator.address, maxUint256], {
+      account: ionicSdk.walletClient.account!.address,
+      chain: ionicSdk.walletClient.chain,
+    });
+    const receipt = await ionicSdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
+    if (receipt.status === "reverted") {
       throw `Error sending approve transaction for ${erc20Address}`;
     }
   } catch (error) {

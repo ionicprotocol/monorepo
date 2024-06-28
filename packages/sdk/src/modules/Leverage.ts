@@ -328,9 +328,15 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         let tx: Hex;
 
         if (withdrawTo) {
-          tx = await leveredPosition["closePosition(address)"](withdrawTo);
+          tx = await leveredPosition.write.closePosition([withdrawTo], {
+            account: this.walletClient.account!.address,
+            chain: this.walletClient.chain
+          });
         } else {
-          tx = await leveredPosition["closePosition()"]();
+          tx = await leveredPosition.write.closePosition({
+            account: this.walletClient.account!.address,
+            chain: this.walletClient.chain
+          });
         }
 
         return tx;

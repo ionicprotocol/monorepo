@@ -6,7 +6,6 @@ import {
   DeployedPlugins,
   FundingStrategy,
   InterestRateModel,
-  OracleTypes,
   RedemptionStrategy,
   SupportedAsset,
   SupportedChains

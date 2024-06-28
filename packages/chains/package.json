@@ -24,15 +24,6 @@
   "keywords": [],
   "author": "Ionic Protocol",
   "license": "ISC",
-  "devDependencies": {
-    "eslint": "^8.45.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-prettier": "^5.0.0",
-    "prettier": "3.0.0",
-    "ts-node": "^10.9.1",
-    "tsup": "^7.1.0",
-    "typescript": "^5.1.6"
-  },
   "dependencies": {
     "@ionicprotocol/types": "workspace:*",
     "ethers": "^5.7.2",

@@ -26,7 +26,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
     transport: http(config.rpcUrl),
   });
 
-  const sdk = setUpSdk(config.chainId, signer);
+  const sdk = setUpSdk(config.chainId, client, walletClient);
 
   const liquidator = new Liquidator(sdk);
 

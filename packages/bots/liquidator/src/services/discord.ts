@@ -1,7 +1,7 @@
-import { TransactionResponse } from "@ethersproject/providers";
 import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicprotocol/sdk/src/modules/liquidation/utils";
 import { SupportedChains } from "@ionicprotocol/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
+import {TransactionReceipt} from "viem"
 
 import config from "../config";
 import { logger } from "../logger";
@@ -89,7 +89,7 @@ export class DiscordService {
       }
     }
   }
-  public async sendLiquidationSuccess(txs: Array<TransactionResponse>, msg: string) {
+  public async sendLiquidationSuccess(txs: Array<TransactionReceipt>, msg: string) {
     const embed = this.create()
       .setTitle(`${txs.length} liquidation(s) succeded`)
       .setDescription(msg)
