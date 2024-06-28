@@ -1,29 +1,26 @@
-import { BytesLike } from "ethers";
+import { Address, Hex } from "viem";
 
 import { IonicSdk } from "../../IonicSdk";
 
 export type StrategiesAndDatas = {
-  strategies: string[];
-  datas: BytesLike[];
+  strategies: Address[];
+  datas: Hex[];
 };
 
 export const getRedemptionStrategiesAndDatas = async (
   sdk: IonicSdk,
-  inputToken: string,
-  expectedOutputToken: string
+  inputToken: Address,
+  expectedOutputToken: Address
 ): Promise<[StrategiesAndDatas, string[]]> => {
   const liquidatorsRegistry = sdk.createILiquidatorsRegistry();
-  const [strategies, datas, tokenPath] = await liquidatorsRegistry.callStatic.getRedemptionStrategies(
-    inputToken,
-    expectedOutputToken
-  );
+  const [strategies, datas] = await liquidatorsRegistry.read.getRedemptionStrategies([inputToken, expectedOutputToken]);
 
   return [
     {
-      strategies,
-      datas
+      strategies: strategies as Address[],
+      datas: datas as Hex[]
     },
-    tokenPath || [] // TODO fix
+    [] // TODO fix
   ];
 };
 

@@ -19,16 +19,29 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
+import { Address, formatUnits, getAbiItem, maxUint256, toFunctionHash, zeroAddress } from "viem";
 
-import { AddressZero, filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
+import { icErc20Abi } from "../generated";
+import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
-import { Address, formatEther, formatUnits } from "viem";
 
 export type LensPoolsWithData = [
   ids: bigint[],
-  ionicPools: PoolDirectory.PoolStructOutput[],
-  ionicPoolsData: PoolLens.IonicPoolDataStructOutput[],
+  ionicPools: {
+    name: string;
+    creator: Address;
+    comptroller: Address;
+    blockPosted: bigint;
+    timestampPosted: bigint;
+  }[],
+  ionicPoolsData: {
+    totalSupply: bigint;
+    totalBorrow: bigint;
+    underlyingTokens: Address[];
+    underlyingSymbols: string[];
+    whitelistedAdmin: boolean;
+  }[],
   errors: boolean[]
 ];
 
@@ -51,7 +64,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
     async fetchPoolData(poolId: string): Promise<IonicPoolData | null> {
       const [comptroller, _unfiliteredName, creator, blockPosted, timestampPosted] =
         await this.contracts.PoolDirectory.read.pools([BigInt(poolId)]);
-      if (comptroller === AddressZero) {
+      if (comptroller === zeroAddress) {
         return null;
       }
       const name = filterPoolName(_unfiliteredName);
@@ -207,50 +220,45 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       const isVerifiedPools = filter === "verified-pools";
       const isUnverifiedPools = filter === "unverified-pools";
 
-      const createdPools = isCreatedPools
-        ? (await this.contracts.PoolLens.simulate.getPoolsByAccountWithData([options.from])).result
-        : [];
-      const verifiedPools = isVerifiedPools
-        ? await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([true])
-        : [];
-      const unverfiedPools = isUnverifiedPools
-        ? await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([false])
-        : [];
-      const allPools = !filter ? (await this.contracts.PoolLens.simulate.getPublicPoolsWithData()).result : [];
+      const _poolIds: bigint[] = [];
+      if (isCreatedPools) {
+        const res = await this.contracts.PoolLens.simulate.getPoolsByAccountWithData([options.from]);
+        _poolIds.concat(res.result[0]);
+      } else if (isVerifiedPools) {
+        const res = await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([true]);
+        _poolIds.concat(res[0]);
+      } else if (isUnverifiedPools) {
+        const res = await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([false]);
+        _poolIds.concat(res[0]);
+      } else {
+        const res = await this.contracts.PoolLens.simulate.getPublicPoolsWithData();
+        _poolIds.concat(res.result[0]);
+      }
 
-      const _whitelistedPools = (
+      const _whitelistedPoolIds = (
         await this.contracts.PoolLens.simulate.getWhitelistedPoolsByAccountWithData([options.from])
-      ).result;
-
-      const _pools = [...createdPools, ...verifiedPools, ...unverfiedPools, ...allPools];
+      ).result[0];
 
       const pools = await Promise.all(
-        _pools.map(async (poolData) => {
-          return await Promise.all(
-            poolData.map((_id) => {
-              return this.fetchPoolData(_id.toString());
-            })
-          );
+        _poolIds.concat(_whitelistedPoolIds).map(async (_id) => {
+          return this.fetchPoolData(_id.toString());
         })
       );
 
-      const whitelistedPools = _whitelistedPools.
+      const filteredPools = pools.filter((pool) => !_whitelistedPoolIds.includes(BigInt(pool?.id ?? maxUint256)));
 
-      const whitelistedIds = whitelistedPools.map((pool) => pool?.id);
-      const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));
-
-      return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as IonicPoolData[];
+      return filteredPools.filter((p) => !!p) as IonicPoolData[];
     }
 
-    async isAuth(pool: string, market: string, role: Roles, user: string) {
+    async isAuth(pool: Address, market: Address, role: Roles, user: Address) {
       if (this.chainId === SupportedChains.neon) {
         return true;
       }
 
       const authRegistry = this.createAuthoritiesRegistry();
-      const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
+      const poolAuthAddress = await authRegistry.read.poolsAuthorities([pool]);
 
-      if (poolAuthAddress === constants.AddressZero) {
+      if (poolAuthAddress === zeroAddress) {
         console.log(`Pool authority for pool ${pool} does not exist`);
 
         return false;
@@ -260,44 +268,38 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 
       if (role === Roles.SUPPLIER_ROLE) {
         // let's check if it's public
-        const cToken = this.createICErc20(market);
-        const func = cToken.interface.getFunction("mint");
-        const selectorHash = cToken.interface.getSighash(func);
-        const isPublic = await poolAuth.callStatic.isCapabilityPublic(market, selectorHash);
+        const func = getAbiItem({ abi: icErc20Abi, name: "mint" });
+        const selectorHash = toFunctionHash(func);
+        const isPublic = await poolAuth.read.isCapabilityPublic([market, selectorHash]);
 
         if (isPublic) {
           return true;
         }
       }
 
-      return await poolAuth.callStatic.doesUserHaveRole(user, role);
+      return await poolAuth.read.doesUserHaveRole([user, role]);
     }
 
-    async getHealthFactor(account: string, pool: string) {
+    async getHealthFactor(account: Address, pool: Address) {
       const poolLens = this.createPoolLens();
-      const healthFactor = await poolLens.getHealthFactor(account, pool, { from: account });
+      const healthFactor = await poolLens.read.getHealthFactor([account, pool], { account });
 
       return healthFactor;
     }
 
     async getHealthFactorPrediction(
-      pool: string,
-      account: string,
-      cTokenModify: string,
-      redeemTokens: BigNumberish,
-      borrowAmount: BigNumberish,
-      repayAmount: BigNumberish
-    ): Promise<BigNumber> {
+      pool: Address,
+      account: Address,
+      cTokenModify: Address,
+      redeemTokens: bigint,
+      borrowAmount: bigint,
+      repayAmount: bigint
+    ): Promise<bigint> {
       const poolLens = this.createPoolLens();
-      const predictedHealthFactor = await poolLens.getHealthFactorHypothetical(
-        pool,
-        account,
-        cTokenModify,
-        redeemTokens,
-        borrowAmount,
-        repayAmount,
+      const predictedHealthFactor = await poolLens.read.getHealthFactorHypothetical(
+        [pool, account, cTokenModify, redeemTokens, borrowAmount, repayAmount],
         {
-          from: account
+          account
         }
       );
 

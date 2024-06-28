@@ -6,6 +6,7 @@ import {
   DeployedPlugins,
   FundingStrategy,
   InterestRateModel,
+  OracleTypes,
   RedemptionStrategy,
   SupportedAsset,
   SupportedChains
@@ -78,7 +79,7 @@ export class IonicBase {
 
   public _contracts: StaticContracts | undefined;
   public chainConfig: ChainConfig;
-  public availableOracles: Array<Address>;
+  public availableOracles: Array<string>;
   public chainId: SupportedChains;
   public chainDeployment: ChainDeployment;
   public chainSpecificAddresses: ChainAddresses;
@@ -281,7 +282,7 @@ export class IonicBase {
       JumpRateModel: JumpRateModel,
       AdjustableJumpRateModel: AdjustableJumpRateModel
     };
-    const bytecode = await this.publicClient.getBytecode({ address: interestRateModelAddress });
+    const bytecode = await this.publicClient.getCode({ address: interestRateModelAddress });
     if (!bytecode) {
       throw Error("Bytecode not found");
     }
@@ -314,7 +315,7 @@ export class IonicBase {
     if (!interestRateModel) {
       throw Error(`No Interest Rate Model found for asset: ${assetAddress}`);
     }
-    await interestRateModel.init(interestRateModelAddress, assetAddress, this.publicClient);
+    await interestRateModel.init(interestRateModelAddress, assetAddress, this.publicClient as any);
     return interestRateModel;
   }
 
@@ -332,11 +333,18 @@ export class IonicBase {
     return getContract({ address, abi: eip20InterfaceAbi, client: { public: publicClient, wallet: walletClient } });
   }
 
-  getUnitrollerInstance(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+  getUnitrollerInstance(
+    address: Address,
+    publicClient = this.publicClient,
+    walletClient = this.walletClient
+  ): GetContractReturnType<typeof unitrollerAbi, PublicClient> {
     return getContract({ address, abi: unitrollerAbi, client: { public: publicClient, wallet: walletClient } });
   }
 
-  getPoolDirectoryInstance(publicClient = this.publicClient, walletClient = this.walletClient) {
+  getPoolDirectoryInstance(
+    publicClient = this.publicClient,
+    walletClient = this.walletClient
+  ): GetContractReturnType<typeof poolDirectoryAbi, PublicClient> {
     return getContract({
       address: this.chainDeployment.PoolDirectory.address as Address,
       abi: poolDirectoryAbi,
@@ -344,7 +352,11 @@ export class IonicBase {
     });
   }
 
-  getErc4626PluginInstance(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+  getErc4626PluginInstance(
+    address: Address,
+    publicClient = this.publicClient,
+    walletClient = this.walletClient
+  ): GetContractReturnType<typeof ionicErc4626Abi, PublicClient> {
     return getContract({
       address,
       abi: ionicErc4626Abi,

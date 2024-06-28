@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "packageManager": "yarn@4.3.0",
+  "packageManager": "yarn@4.3.1",
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
@@ -24,10 +24,8 @@
   },
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
-    "@wagmi/core": "^2.2.1",
     "react-confetti": "^6.1.0",
-    "ts-node": "^10.9.2",
-    "viem": "^2.7.16"
+    "ts-node": "^10.9.2"
   },
   "resolutions": {
     "@types/react": "^17.0.15"

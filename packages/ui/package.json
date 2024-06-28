@@ -28,7 +28,7 @@
     "react-hot-toast": "^2.4.1",
     "react-loader-spinner": "^6.1.6",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "viem": "^2.15.1",
+    "viem": "^2.16.3",
     "wagmi": "^2.10.2",
     "zustand": "^4.5.2"
   },

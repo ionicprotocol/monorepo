@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "lib": ["ES2019", "DOM"],
+    "target": "es2020",
+    "lib": ["es2020", "DOM"],
     "module": "ES2020",
     "strict": true,
     "esModuleInterop": true,
@@ -10,7 +10,7 @@
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": false,
     "outDir": "./dist/esm",
-    "declaration": true,
+    "declaration": false,
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false
   },

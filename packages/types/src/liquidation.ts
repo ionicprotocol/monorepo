@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import { FundingStrategyContract, LiquidationStrategy, RedemptionStrategyContract } from "./enums";
 
@@ -10,39 +10,39 @@ export type LiquidationDefaults = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
   SUPPORTED_INPUT_CURRENCIES: Array<string>;
   LIQUIDATION_STRATEGY: LiquidationStrategy;
-  MINIMUM_PROFIT_NATIVE: BigNumber;
+  MINIMUM_PROFIT_NATIVE: bigint;
   LIQUIDATION_INTERVAL_SECONDS: number;
   jarvisPools: Array<JarvisLiquidityPool>;
   balancerPools: Array<BalancerSwapPool>;
 };
 
 export type RedemptionStrategy = {
-  inputToken: string;
-  outputToken: string;
+  inputToken: Address;
+  outputToken: Address;
   strategy: RedemptionStrategyContract;
 };
 
 export type FundingStrategy = {
-  inputToken: string;
-  outputToken: string;
+  inputToken: Address;
+  outputToken: Address;
   strategy: FundingStrategyContract;
 };
 
 export type JarvisLiquidityPool = {
   expirationTime: number;
-  liquidityPoolAddress: string;
-  syntheticToken: string;
-  collateralToken: string;
+  liquidityPoolAddress: Address;
+  syntheticToken: Address;
+  collateralToken: Address;
 };
 
 export type CurveSwapPool = {
-  poolAddress: string;
-  coins: string[];
+  poolAddress: Address;
+  coins: Address[];
 };
 
 export type BalancerSwapPool = {
-  poolAddress: string;
-  underlyingTokens: string[];
+  poolAddress: Address;
+  underlyingTokens: Address[];
 };
 
 export type SaddlePool = CurveSwapPool;

@@ -1,9 +1,9 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { BigNumber, BytesLike, constants, utils } from "ethers";
+import { Address, formatEther, getContract, GetContractReturnType, Hex, PublicClient, zeroAddress } from "viem";
 
-import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
 import { IAlgebraFactory__factory } from "../../../typechain/factories/IAlgebraFactory__factory";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
+import { iAlgebraFactoryAbi, icErc20Abi, iUniswapV2FactoryAbi } from "../../generated";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
@@ -19,17 +19,20 @@ import {
 
 import { estimateGas } from "./index";
 
-async function getLiquidationPenalty(collateralCToken: ICErc20, liquidationIncentive: BigNumber) {
-  const protocolSeizeShareMantissa = await collateralCToken.callStatic.protocolSeizeShareMantissa();
-  const feeSeizeShareMantissa = await collateralCToken.callStatic.feeSeizeShareMantissa();
-  return liquidationIncentive.add(protocolSeizeShareMantissa).add(feeSeizeShareMantissa);
+async function getLiquidationPenalty(
+  collateralCToken: GetContractReturnType<typeof icErc20Abi, PublicClient>,
+  liquidationIncentive: bigint
+) {
+  const protocolSeizeShareMantissa = await collateralCToken.read.protocolSeizeShareMantissa();
+  const feeSeizeShareMantissa = await collateralCToken.read.feeSeizeShareMantissa();
+  return liquidationIncentive + protocolSeizeShareMantissa + feeSeizeShareMantissa;
 }
 
 export default async function getPotentialLiquidation(
   sdk: IonicSdk,
   borrower: PoolUserWithAssets,
-  closeFactor: BigNumber,
-  liquidationIncentive: BigNumber,
+  closeFactor: bigint,
+  liquidationIncentive: bigint,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<EncodedLiquidationTx | null> {
   // Get debt and collateral
@@ -37,10 +40,10 @@ export default async function getPotentialLiquidation(
 
   for (let asset of borrower.assets!) {
     asset = { ...asset };
-    asset.borrowBalanceWei = asset.borrowBalance.mul(asset.underlyingPrice).div(SCALE_FACTOR_ONE_18_WEI);
-    asset.supplyBalanceWei = asset.supplyBalance.mul(asset.underlyingPrice).div(SCALE_FACTOR_ONE_18_WEI);
-    if (asset.borrowBalance.gt(0)) borrower.debt.push(asset);
-    if (asset.membership && asset.supplyBalance.gt(0)) borrower.collateral.push(asset);
+    asset.borrowBalanceWei = (asset.borrowBalance * asset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
+    asset.supplyBalanceWei = (asset.supplyBalance * asset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
+    if (asset.borrowBalance > 0n) borrower.debt.push(asset);
+    if (asset.membership && asset.supplyBalance > 0) borrower.collateral.push(asset);
   }
 
   if (!borrower.collateral!.length) {
@@ -58,13 +61,13 @@ export default async function getPotentialLiquidation(
   )
     return null;
 
-  let exchangeToTokenAddress: string;
+  let exchangeToTokenAddress: Address;
 
   // Check SUPPORTED_OUTPUT_CURRENCIES: replace EXCHANGE_TO_TOKEN_ADDRESS with underlying collateral if underlying collateral is in SUPPORTED_OUTPUT_CURRENCIES
   if (chainLiquidationConfig.SUPPORTED_OUTPUT_CURRENCIES.indexOf(borrower.collateral[0].underlyingToken) >= 0) {
     exchangeToTokenAddress = borrower.collateral[0].underlyingToken;
   } else {
-    exchangeToTokenAddress = sdk.chainSpecificAddresses.W_TOKEN;
+    exchangeToTokenAddress = sdk.chainSpecificAddresses.W_TOKEN as Address;
   }
 
   const debtAsset = borrower.debt[0];
@@ -86,7 +89,7 @@ export default async function getPotentialLiquidation(
   const penalty = await getLiquidationPenalty(sdk.createICErc20(collateralAsset.cToken), liquidationIncentive);
 
   // Scale to 18 decimals
-  let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
+  let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(10n ** BigInt(debtAssetDecimals));
 
   // 18 decimals
   let seizeValue = liquidationValue.mul(penalty).div(SCALE_FACTOR_ONE_18_WEI);
@@ -107,7 +110,7 @@ export default async function getPotentialLiquidation(
       // 28 decimals
       .mul(collateralAssetUnderlyingPrice)
       // 18 decimals
-      .div(BigNumber.from(10).pow(collateralAssetDecimals));
+      .div(10n ** BigInt(collateralAssetDecimals));
 
     // 18 decimals
     liquidationValue = seizeValue.mul(SCALE_FACTOR_ONE_18_WEI).div(penalty);
@@ -118,14 +121,14 @@ export default async function getPotentialLiquidation(
       .div(SCALE_FACTOR_UNDERLYING_DECIMALS(debtAsset));
   }
 
-  if (repayAmount.lte(BigNumber.from(0))) {
+  if (repayAmount <= 0n) {
     sdk.logger.info("Liquidation amount is zero, doing nothing");
     return null;
   }
   // Depending on liquidation strategy
-  let debtFundingStrategies: string[] = [];
-  let debtFundingStrategiesData: BytesLike[] = [];
-  let flashSwapFundingToken = constants.AddressZero;
+  let debtFundingStrategies: Address[] = [];
+  let debtFundingStrategiesData: Hex[] = [];
+  let flashSwapFundingToken: Address = zeroAddress;
 
   if (chainLiquidationConfig.LIQUIDATION_STRATEGY == LiquidationStrategy.UNISWAP) {
     // chain some liquidation funding strategies
@@ -142,71 +145,74 @@ export default async function getPotentialLiquidation(
     flashSwapFundingToken
   );
 
-  let flashSwapPair: string;
-  let tokenA: string;
-  let tokenB: string;
+  let flashSwapPair: Address;
+  let tokenA: Address;
+  let tokenB: Address;
   if (sdk.chainId == 34443) {
-    const algebraFactory = IAlgebraFactory__factory.connect(
-      sdk.chainSpecificAddresses.UNISWAP_V3?.FACTORY || "0xC33Ce0058004d44E7e1F366E5797A578fDF38584",
-      sdk.provider
-    );
+    const algebraFactory = getContract({
+      address:
+        (sdk.chainSpecificAddresses.UNISWAP_V3?.FACTORY as Address) || "0xC33Ce0058004d44E7e1F366E5797A578fDF38584",
+      abi: iAlgebraFactoryAbi,
+      client: sdk.publicClient
+    });
 
     if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
       tokenA = flashSwapFundingToken;
-      tokenB = sdk.chainConfig.chainAddresses.W_TOKEN;
+      tokenB = sdk.chainConfig.chainAddresses.W_TOKEN as Address;
     } else {
       // flashSwapFundingToken is the W_TOKEN
       tokenA = flashSwapFundingToken;
-      tokenB = sdk.chainConfig.chainAddresses.STABLE_TOKEN;
+      tokenB = sdk.chainConfig.chainAddresses.STABLE_TOKEN as Address;
     }
 
-    flashSwapPair = await algebraFactory.callStatic.poolByPair(tokenA, tokenB);
-    if (flashSwapPair == constants.AddressZero || tokenPath.indexOf(flashSwapPair) > 0) {
+    flashSwapPair = await algebraFactory.read.poolByPair([tokenA, tokenB]);
+    if (flashSwapPair == zeroAddress || tokenPath.indexOf(flashSwapPair) > 0) {
       // in case the Uniswap pair LP token is on the path of redemptions, we should use
       // another pair because reentrancy checks prevent us from using the pair
       // when inside the execution of a flash swap from the same pair
       tokenA = flashSwapFundingToken;
-      tokenB = sdk.chainConfig.chainAddresses.W_BTC_TOKEN;
-      flashSwapPair = await algebraFactory.callStatic.poolByPair(tokenA, tokenB);
+      tokenB = sdk.chainConfig.chainAddresses.W_BTC_TOKEN as Address;
+      flashSwapPair = await algebraFactory.read.poolByPair([tokenA, tokenB]);
     } else {
       sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
     }
   } else {
-    const uniswapV2Factory = IUniswapV2Factory__factory.connect(
-      sdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-      sdk.provider
-    );
+    const uniswapV2Factory = getContract({
+      address: sdk.chainSpecificAddresses.UNISWAP_V2_FACTORY as Address,
+      abi: iUniswapV2FactoryAbi,
+      client: sdk.publicClient
+    });
 
     if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
-      flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+      flashSwapPair = await uniswapV2Factory.read.getPair([
         flashSwapFundingToken,
-        sdk.chainConfig.chainAddresses.W_TOKEN
-      );
+        sdk.chainConfig.chainAddresses.W_TOKEN as Address
+      ]);
     } else {
       // flashSwapFundingToken is the W_TOKEN
-      flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+      flashSwapPair = await uniswapV2Factory.read.getPair([
         flashSwapFundingToken,
-        sdk.chainConfig.chainAddresses.STABLE_TOKEN
-      );
+        sdk.chainConfig.chainAddresses.STABLE_TOKEN as Address
+      ]);
       if (tokenPath.indexOf(flashSwapPair) > 0) {
         // in case the Uniswap pair LP token is on the path of redemptions, we should use
         // another pair because reentrancy checks prevent us from using the pair
         // when inside the execution of a flash swap from the same pair
-        flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+        flashSwapPair = await uniswapV2Factory.read.getPair([
           flashSwapFundingToken,
-          sdk.chainConfig.chainAddresses.W_BTC_TOKEN
-        );
+          sdk.chainConfig.chainAddresses.W_BTC_TOKEN as Address
+        ]);
       } else {
         sdk.logger.info(`flash swap pair ${flashSwapPair} is not on the token path ${tokenPath}`);
       }
     }
   }
-  if (flashSwapPair == constants.AddressZero || tokenPath.indexOf(flashSwapPair) > 0) {
+  if (flashSwapPair === zeroAddress || tokenPath.indexOf(flashSwapPair) > 0) {
     sdk.logger.error(`No good source for flash loan ${flashSwapPair}`);
     return null;
   }
 
-  let expectedGasAmount: BigNumber;
+  let expectedGasAmount: bigint;
   try {
     expectedGasAmount = await estimateGas(
       sdk,
@@ -219,20 +225,20 @@ export default async function getPotentialLiquidation(
       debtFundingStrategiesData
     );
   } catch {
-    expectedGasAmount = BigNumber.from(750000);
+    expectedGasAmount = 750000n;
   }
   // Get gas fee
-  const gasPrice = await sdk.provider.getGasPrice();
-  const expectedGasFee = gasPrice.mul(expectedGasAmount);
+  const gasPrice = await sdk.publicClient.getGasPrice();
+  const expectedGasFee = gasPrice * expectedGasAmount;
 
   // calculate min profits
-  const minProfitAmountEth = expectedGasFee.add(chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
+  const minProfitAmountEth = expectedGasFee + chainLiquidationConfig.MINIMUM_PROFIT_NATIVE;
 
   // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth).mul(SCALE_FACTOR_ONE_18_WEI).div(outputPrice);
 
   if (seizeValue.lt(minProfitAmountEth)) {
     sdk.logger.info(
-      `Seize amount of ${utils.formatEther(seizeValue)} less than min break even of ${utils.formatEther(
+      `Seize amount of ${formatEther(seizeValue)} less than min break even of ${formatEther(
         minProfitAmountEth
       )}, doing nothing`
     );

@@ -17,6 +17,7 @@ import {
   leveredPositionsLensAbi,
   masterPriceOracleAbi,
   optimizedAprVaultFirstExtensionAbi,
+  optimizedAprVaultSecondExtensionAbi,
   optimizedVaultsRegistryAbi,
   poolLensAbi,
   poolLensSecondaryAbi,
@@ -108,6 +109,21 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TB
       return getContract({
         address,
         abi: optimizedAprVaultFirstExtensionAbi,
+        client: {
+          public: publicClient,
+          wallet: walletClient
+        }
+      });
+    }
+
+    createOptimizedAPRVaultSecond(
+      address: Address,
+      publicClient = this.publicClient,
+      walletClient = this.walletClient
+    ) {
+      return getContract({
+        address,
+        abi: optimizedAprVaultSecondExtensionAbi,
         client: {
           public: publicClient,
           wallet: walletClient

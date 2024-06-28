@@ -1,6 +1,6 @@
 import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
-import { Address, erc20Abi, getContract, parseUnits } from "viem";
+import { Address, erc20Abi, getContract, maxUint256, parseUnits } from "viem";
 
 import { icErc20Abi, ionicComptrollerAbi } from "../generated";
 
@@ -32,8 +32,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         abi: erc20Abi,
         client: { public: this.publicClient, wallet: this.walletClient }
       });
-      const max = 2n ** 256n - 1n;
-      const tx = await token.write.approve([cTokenAddress, max], {
+      const tx = await token.write.approve([cTokenAddress, maxUint256], {
         account: this.walletClient.account!.address,
         chain: this.walletClient.chain
       });
@@ -82,14 +81,13 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
     }
 
     async repay(cTokenAddress: Address, isRepayingMax: boolean, amount: bigint) {
-      const max = 2n ** 256n - 1n;
       const cToken = getContract({
         address: cTokenAddress,
         abi: icErc20Abi,
         client: { public: this.publicClient, wallet: this.walletClient }
       });
 
-      const response = await cToken.simulate.repayBorrow([isRepayingMax ? max : amount], {
+      const response = await cToken.simulate.repayBorrow([isRepayingMax ? maxUint256 : amount], {
         account: this.walletClient.account!.address
       });
 
@@ -98,7 +96,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         return { errorCode };
       }
 
-      const tx = await cToken.write.repayBorrow([isRepayingMax ? max : amount], {
+      const tx = await cToken.write.repayBorrow([isRepayingMax ? maxUint256 : amount], {
         account: this.walletClient.account!.address,
         chain: this.walletClient.chain
       });
@@ -172,10 +170,10 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         abi: erc20Abi,
         client: { public: this.publicClient, wallet: this.walletClient }
       });
-      const tx = await token.write.approve(
-        [this.chainDeployment.LiquidatorsRegistry.address as Address, 2n ** 256n - 1n],
-        { account: this.walletClient.account!.address, chain: this.walletClient.chain }
-      );
+      const tx = await token.write.approve([this.chainDeployment.LiquidatorsRegistry.address as Address, maxUint256], {
+        account: this.walletClient.account!.address,
+        chain: this.walletClient.chain
+      });
 
       return tx;
     }

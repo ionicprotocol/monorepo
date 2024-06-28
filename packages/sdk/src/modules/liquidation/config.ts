@@ -1,5 +1,4 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { BigNumber } from "ethers";
 
 import { IonicBase } from "../../IonicSdk";
 
@@ -7,7 +6,7 @@ export type ChainLiquidationConfig = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
   SUPPORTED_INPUT_CURRENCIES: Array<string>;
   LIQUIDATION_STRATEGY: LiquidationStrategy;
-  MINIMUM_PROFIT_NATIVE: BigNumber;
+  MINIMUM_PROFIT_NATIVE: bigint;
   LIQUIDATION_INTERVAL_SECONDS: number;
 };
 
@@ -23,7 +22,7 @@ export const getChainLiquidationConfig = (sdk: IonicBase): ChainLiquidationConfi
       ? (process.env.LIQUIDATION_STRATEGY as LiquidationStrategy)
       : sdk.liquidationConfig.LIQUIDATION_STRATEGY,
     MINIMUM_PROFIT_NATIVE: process.env.MINIMUM_PROFIT_NATIVE
-      ? BigNumber.from(process.env.MINIMUM_PROFIT_NATIVE)
+      ? BigInt(process.env.MINIMUM_PROFIT_NATIVE)
       : sdk.liquidationConfig.MINIMUM_PROFIT_NATIVE,
     LIQUIDATION_INTERVAL_SECONDS: process.env.LIQUIDATION_INTERVAL_SECONDS
       ? parseInt(process.env.LIQUIDATION_INTERVAL_SECONDS)

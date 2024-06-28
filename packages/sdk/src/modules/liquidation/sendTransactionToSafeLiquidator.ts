@@ -1,6 +1,6 @@
-import { TransactionRequest } from "@ethersproject/providers";
-import { BigNumber, Wallet } from "ethers";
+import { Address, encodeFunctionData, SendTransactionReturnType, TransactionReceipt, TransactionRequest } from "viem";
 
+import { ionicLiquidatorAbi } from "../../generated";
 import { IonicBase } from "../../IonicSdk";
 
 import { fetchGasLimitForTransaction, fetchGasPrice } from "./utils";
@@ -9,16 +9,17 @@ export default async function sendTransactionToSafeLiquidator(
   sdk: IonicBase,
   method: string | any,
   params: Array<any> | any,
-  value: number | BigNumber
-) {
+  value: bigint
+): Promise<TransactionReceipt> {
   // Build data
-  const data = sdk.contracts.IonicLiquidator.interface.encodeFunctionData(method, params);
-  const txCount = await sdk.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!);
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, sdk.provider);
+  const data = encodeFunctionData({ abi: ionicLiquidatorAbi, functionName: method, args: params });
+  const txCount = await sdk.publicClient.getTransactionCount({
+    address: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address
+  });
 
   // Build transaction
   const tx = {
-    from: process.env.ETHEREUM_ADMIN_ACCOUNT,
+    from: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address,
     to: sdk.contracts.IonicLiquidator.address,
     value: value,
     data: data,
@@ -29,23 +30,27 @@ export default async function sendTransactionToSafeLiquidator(
   const gasPrice = await fetchGasPrice(sdk, method);
   const txRequest: TransactionRequest = {
     ...tx,
-    gasLimit,
+    gas: gasLimit,
     gasPrice
   };
 
   sdk.logger.info("Signing and sending", method, "transaction:", tx);
 
-  let sentTx;
+  let sentTx: SendTransactionReturnType;
   // Sign transaction
   // Send transaction
   try {
-    sentTx = await signer.sendTransaction(txRequest);
-    const receipt = await sentTx.wait();
-    if (receipt.status === 0) {
+    sentTx = await sdk.walletClient.sendTransaction({
+      ...txRequest,
+      account: sdk.walletClient.account!.address,
+      chain: sdk.walletClient.chain
+    });
+    const receipt = await sdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
+    if (receipt.status === "reverted") {
       throw `Error sending ${method} transaction: Transaction reverted with status 0`;
     }
-    sdk.logger.info("Successfully sent", method, "transaction hash:", sentTx.hash);
-    return sentTx;
+    sdk.logger.info("Successfully sent", method, "transaction hash:", sentTx);
+    return receipt;
   } catch (error) {
     throw `Error sending ${method}, transaction: ${error}`;
   }

@@ -1,10 +1,15 @@
-import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo, SupportedChains } from "@ionicprotocol/types";
-
-import EIP20InterfaceABI from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
+import {
+  LeveredBorrowable,
+  MarketRewardsInfoStructOutput,
+  NewPosition,
+  OpenPosition,
+  PositionInfo,
+  SupportedChains
+} from "@ionicprotocol/types";
+import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther } from "viem";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
-import { Address, erc20Abi, getContract, Hex, parseEther } from "viem";
 
 export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Leverage extends Base {
@@ -94,7 +99,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                           : collateralAsset.symbol
                         : collateralsymbols[index],
                       supplyRatePerBlock: supplyRatePerBlock[index],
-                      reward,
+                      reward: reward as {
+                        underlyingPrice: bigint;
+                        market: Address;
+                        rewardsInfo: MarketRewardsInfoStructOutput[];
+                      },
                       pool: poolOfMarket[index],
                       plugin: this.marketToPlugin[collateralCToken],
                       underlyingPrice: collateralUnderlyingPrices[index]
@@ -119,7 +128,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                       : collateralAsset.symbol
                     : collateralsymbols[index],
                   supplyRatePerBlock: supplyRatePerBlock[index],
-                  reward,
+                  reward: reward as {
+                    underlyingPrice: bigint;
+                    market: Address;
+                    rewardsInfo: MarketRewardsInfoStructOutput[];
+                  },
                   pool: poolOfMarket[index],
                   plugin: this.marketToPlugin[collateralCToken],
                   underlyingPrice: collateralUnderlyingPrices[index]
@@ -185,7 +198,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     async leveredFactoryApprove(collateralUnderlying: Address) {
       const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient });
       const tx = await token.write.approve(
-        [this.chainDeployment.LeveredPositionFactory.address as Address, 2n ** 256n - 1n],
+        [this.chainDeployment.LeveredPositionFactory.address as Address, maxUint256],
         {
           account: this.walletClient.account!.address,
           chain: this.walletClient.chain
@@ -198,7 +211,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     async leveredPositionApprove(positionAddress: Address, collateralUnderlying: Address) {
       const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient });
 
-      const tx = await token.write.approve([positionAddress, 2n ** 256n - 1n], {
+      const tx = await token.write.approve([positionAddress, maxUint256], {
         account: this.walletClient.account!.address,
         chain: this.walletClient.chain
       });

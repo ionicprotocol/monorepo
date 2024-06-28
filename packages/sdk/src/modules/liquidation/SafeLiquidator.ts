@@ -1,5 +1,4 @@
-import { TransactionResponse } from "@ethersproject/providers";
-import { BigNumber, utils } from "ethers";
+import { parseEther, TransactionReceipt } from "viem";
 
 import { IonicSdk } from "../..";
 import { CreateContractsModule } from "../CreateContracts";
@@ -16,7 +15,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
 
     async getPotentialLiquidations(
       excludedComptrollers: Array<string> = [],
-      maxHealthFactor: BigNumber = utils.parseEther("1"),
+      maxHealthFactor: bigint = parseEther("1"),
       configOverrides?: ChainLiquidationConfig
     ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
@@ -45,7 +44,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
     }
     async liquidatePositions(
       liquidatablePool: LiquidatablePool
-    ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionResponse>]> {
+    ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]> {
       const [erroredLiquidations, succeededLiquidations] = await liquidateUnhealthyBorrows(this, liquidatablePool);
       return [erroredLiquidations, succeededLiquidations];
     }
