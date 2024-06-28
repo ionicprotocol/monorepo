@@ -237,9 +237,11 @@ export default function Stake() {
           open={widgetPopup}
         />
 
-        <div className={`md:w-[50%] w-[90%] mx-auto grid grid-cols-2 gap-4`}>
+        <div
+          className={`md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-2 gap-4`}
+        >
           <div
-            className={`bg-grayone col-span-2 flex flex-col items-center justify-center py-4 px-8 rounded-xl gap-y-3 `}
+            className={`bg-grayone col-span-2 flex flex-col items-center justify-center py-4 px-8 rounded-xl gap-y-3  col-start-1 row-start-1 `}
           >
             <h1 className={` text-lg`}>
               Step 1. Buy
@@ -257,7 +259,9 @@ export default function Stake() {
               Buy ION Tokens
             </button>
           </div>
-          <div className={`w-full h-max bg-grayone px-4 rounded-xl py-2`}>
+          <div
+            className={`w-full h-max bg-grayone px-4 rounded-xl py-2 col-start-1 col-span-1 row-start-2 `}
+          >
             <h1 className={` text-lg`}>Step 2. LP your ION Tokens</h1>
             <MaxDeposit
               amount={maxDeposit.ion}
@@ -278,25 +282,7 @@ export default function Stake() {
             {/* liner */}
 
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
-            {/* <h1> Expected LP </h1>
-            <div
-              className={`flex w-full mt-2 items-center justify-between text-md `}
-            >
-              <input
-                className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
-                placeholder={`0.0`}
-                type="number"
-                // value={}
-              />
-              <div className=" flex items-center justify-center">
-                <img
-                  alt="ion logo"
-                  className={`w-5 h-5 inline-block mx-1`}
-                  src="/img/symbols/32/color/ion.png"
-                />
-                <button className={` mx-2`}>ION/ETH</button>
-              </div>
-            </div> */}
+
             <button
               className={`flex items-center justify-center  py-1.5 mt-8 mb-4 text-sm text-black w-full bg-accent rounded-md`}
               onClick={() => addLiquidity()}
@@ -316,7 +302,20 @@ export default function Stake() {
               </ResultHandler>
             </button>
           </div>
-          <div className={`w-full h-full bg-grayone px-4 rounded-xl py-2`}>
+
+          <div
+            className={`w-full h-min bg-grayone px-4 rounded-xl py-6 row-start-3 col-start-1 col-span-1`}
+          >
+            <h1 className={` text-lg`}>Available to stake</h1>
+            <MaxDeposit
+              tokenName={'ion/eth'}
+              token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
+              fetchOwn={true}
+            />
+          </div>
+          <div
+            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 col-start-2 row-start-2 row-span-2`}
+          >
             <h1 className={` text-lg`}>Step 3. Stake your LP</h1>
             <h1 className={`text-[12px] text-white/40 mt-2`}> Stake </h1>
             <MaxDeposit
@@ -335,7 +334,7 @@ export default function Stake() {
                 src="/img/symbols/32/color/velo.png"
               />
               <span>Velodrome APY</span>
-              <span className="text-accent ml-auto">35%</span>
+              <span className="text-accent ml-auto">-</span>
             </div>
             <div className="flex items-center w-full mt-3 text-xs gap-2">
               <img
@@ -353,7 +352,7 @@ export default function Stake() {
                 src="/img/logo/MODE.png"
               />
               <span>Mode Points</span>
-              <span className="text-accent ml-auto">1x</span>
+              <span className="text-accent ml-auto">2x</span>
             </div>
             <button
               className={`flex items-center justify-center  py-1.5 mt-6 mb-4 text-sm text-black w-full bg-accent rounded-md`}

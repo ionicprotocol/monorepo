@@ -6,23 +6,28 @@ import { formatUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 
 interface IMaxDeposit {
-  amount: string;
+  amount?: string;
   tokenName?: string;
   token?: `0x${string}`;
   handleInput?: (val?: string) => void;
+  fetchOwn?: boolean;
 }
 function MaxDeposit({
   amount,
   tokenName = 'eth',
   token,
-  handleInput
+  handleInput,
+  fetchOwn = false
 }: IMaxDeposit) {
   const { address } = useAccount();
   const hooktoken =
     token === '0x0000000000000000000000000000000000000000' ? undefined : token;
   const { data } = useBalance({
     address,
-    token: hooktoken
+    token: hooktoken,
+    query: {
+      refetchInterval: 5000
+    }
   });
 
   // console.log(data);
@@ -42,7 +47,9 @@ function MaxDeposit({
   return (
     <>
       <div
-        className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40`}
+        className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40 ${
+          !fetchOwn ? 'flex' : 'hidden'
+        }`}
       >
         <span> Deposit </span>
         <div>
@@ -52,7 +59,7 @@ function MaxDeposit({
             ? parseFloat(
                 formatUnits(data?.value, data?.decimals)
               ).toLocaleString('en-US', {
-                maximumFractionDigits: 2
+                maximumFractionDigits: 3
               })
             : '0'}
           {handleInput && (
@@ -72,7 +79,16 @@ function MaxDeposit({
           className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto block w-full trucnate`}
           placeholder={`0.0`}
           type="number"
-          value={amount}
+          value={
+            fetchOwn
+              ? data &&
+                parseFloat(
+                  formatUnits(data?.value, data?.decimals)
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 3
+                })
+              : amount
+          }
           onChange={(e) => handlInpData(e)}
           disabled={handleInput ? false : true}
         />
