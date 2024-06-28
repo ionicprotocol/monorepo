@@ -39,6 +39,8 @@ export const getBytecodeHash = (feeDistributorAddress: Address): Hash => {
   );
 };
 
+export const AddressZero = "0x0000000000000000000000000000000000000000";
+
 export const getPoolAddress = (
   from: Address,
   poolName: string,

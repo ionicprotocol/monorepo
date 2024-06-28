@@ -1,44 +1,45 @@
-import { BigNumber, Contract } from "ethers";
+import { Address, getContract, GetContractReturnType, PublicClient } from "viem";
 
 import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
 import IonicFlywheelArtifact from "../../artifacts/IonicFlywheel.sol/IonicFlywheel.json";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { IonicFlywheel } from "../../typechain/IonicFlywheel";
 import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
+import { flywheelStaticRewardsAbi, ionicFlywheelAbi } from "../generated";
 
 import { CreateContractsModule } from "./CreateContracts";
 
 export interface FlywheelClaimableRewards {
   flywheel: string;
   rewardToken: string;
-  amount: BigNumber;
+  amount: bigint;
 }
 
 export type FlywheelMarketRewardsInfo = {
   market: string;
-  underlyingPrice?: BigNumber;
+  underlyingPrice?: bigint;
   rewardsInfo: {
     rewardToken: string;
     flywheel: string;
-    rewardSpeedPerSecondPerToken?: BigNumber;
-    rewardTokenPrice?: BigNumber;
-    formattedAPR?: BigNumber;
+    rewardSpeedPerSecondPerToken?: bigint;
+    rewardTokenPrice?: bigint;
+    formattedAPR?: bigint;
   }[];
 };
 
 export function withFlywheel<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Flywheel extends Base {
     /** READ */
-    async getFlywheelMarketRewardsByPools(pools: string[]) {
+    async getFlywheelMarketRewardsByPools(pools: Address[]) {
       return Promise.all(pools.map((pool) => this.getFlywheelMarketRewardsByPool(pool)));
     }
 
-    async getFlywheelMarketRewardsByPool(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
+    async getFlywheelMarketRewardsByPool(pool: Address): Promise<FlywheelMarketRewardsInfo[]> {
       const [flywheelsOfPool, marketsOfPool] = await Promise.all([
         this.getFlywheelsByPool(pool),
-        this.createComptroller(pool, this.provider).callStatic.getAllMarkets()
+        this.createComptroller(pool, this.publicClient, this.walletClient).read.getAllMarkets()
       ]);
-      const strategiesOfFlywheels = await Promise.all(flywheelsOfPool.map((fw) => fw.callStatic.getAllStrategies()));
+      const strategiesOfFlywheels = await Promise.all(flywheelsOfPool.map((fw) => fw.read.getAllStrategies()));
 
       const rewardTokens: string[] = [];
       const marketRewardsInfo = await Promise.all(
@@ -49,7 +50,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
               .filter((_, fwIndex) => strategiesOfFlywheels[fwIndex].includes(market))
               // TODO also check marketState?
               .map(async (fw) => {
-                const rewardToken = await fw.callStatic.rewardToken();
+                const rewardToken = await fw.read.rewardToken();
                 rewardTokens.push(rewardToken);
                 return {
                   rewardToken,
@@ -67,17 +68,23 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       return marketRewardsInfo;
     }
 
-    async getFlywheelsByPool(poolAddress: string): Promise<IonicFlywheel[]> {
-      const pool = this.createComptroller(poolAddress, this.provider);
-      const allRewardDistributors = await pool.callStatic.getRewardsDistributors();
+    async getFlywheelsByPool(
+      poolAddress: Address
+    ): Promise<GetContractReturnType<typeof ionicFlywheelAbi, PublicClient>[]> {
+      const pool = this.createComptroller(poolAddress, this.publicClient, this.walletClient);
+      const allRewardDistributors = await pool.read.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
-        return new Contract(address, IonicFlywheelArtifact.abi, this.provider) as IonicFlywheel;
+        return getContract({
+          address,
+          abi: ionicFlywheelAbi,
+          client: { public: this.publicClient, wallet: this.walletClient }
+        });
       });
 
       const filterList = await Promise.all(
         instances.map(async (instance) => {
           try {
-            return await instance.callStatic.isFlywheel();
+            return await instance.read.isFlywheel();
           } catch (error) {
             return false;
           }
@@ -87,48 +94,50 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       return instances.filter((_, index) => filterList[index]);
     }
 
-    async getFlywheelRewardsInfos(flywheelAddress: string) {
-      const flywheelCoreInstance = new Contract(
-        flywheelAddress,
-        IonicFlywheelArtifact.abi,
-        this.provider
-      ) as IonicFlywheel;
+    async getFlywheelRewardsInfos(flywheelAddress: Address) {
+      const flywheelCoreInstance: GetContractReturnType<typeof ionicFlywheelAbi, PublicClient> = getContract({
+        address: flywheelAddress,
+        abi: ionicFlywheelAbi,
+        client: this.publicClient
+      });
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
-        flywheelCoreInstance.callStatic.flywheelRewards(),
-        flywheelCoreInstance.callStatic.getAllStrategies()
+        flywheelCoreInstance.read.flywheelRewards(),
+        flywheelCoreInstance.read.getAllStrategies()
       ]);
-      const fwStatic = new Contract(fwStaticAddress, FlywheelStaticRewardsArtifact.abi, this.provider);
+      const fwStatic = getContract({
+        address: fwStaticAddress,
+        abi: flywheelStaticRewardsAbi,
+        client: this.publicClient
+      });
       const rewardsInfos: Record<string, any> = {};
       await Promise.all(
         enabledMarkets.map(async (m) => {
-          rewardsInfos[m] = await fwStatic.callStatic.rewardsInfo(m);
+          rewardsInfos[m] = await fwStatic.read.rewardsInfo([m]);
         })
       );
       return rewardsInfos;
     }
 
-    async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
-      const marketRewards = await (
-        this.contracts.IonicFlywheelLensRouter as IonicFlywheelLensRouter
-      ).callStatic.getPoolMarketRewardsInfo(pool);
+    async getFlywheelMarketRewardsByPoolWithAPR(pool: Address): Promise<FlywheelMarketRewardsInfo[]> {
+      const marketRewards = await this.contracts.IonicFlywheelLensRouter.simulate.getPoolMarketRewardsInfo([pool]);
 
-      const adaptedMarketRewards = marketRewards
+      const adaptedMarketRewards = marketRewards.result
         .map((marketReward) => ({
           underlyingPrice: marketReward.underlyingPrice,
           market: marketReward.market,
-          rewardsInfo: marketReward.rewardsInfo.filter((info) => info.rewardSpeedPerSecondPerToken.gt(0))
+          rewardsInfo: marketReward.rewardsInfo.filter((info) => info.rewardSpeedPerSecondPerToken > BigInt(0))
         }))
         .filter((marketReward) => marketReward.rewardsInfo.length > 0);
       return adaptedMarketRewards;
     }
 
-    async getFlywheelRewardsInfoForMarket(flywheelAddress: string, marketAddress: string) {
-      const fwCoreInstance = this.createIonicFlywheel(flywheelAddress, this.provider);
-      const fwRewardsAddress = await fwCoreInstance.callStatic.flywheelRewards();
-      const fwRewardsInstance = this.createFlywheelStaticRewards(fwRewardsAddress, this.provider);
+    async getFlywheelRewardsInfoForMarket(flywheelAddress: Address, marketAddress: Address) {
+      const fwCoreInstance = this.createIonicFlywheel(flywheelAddress, this.publicClient);
+      const fwRewardsAddress = await fwCoreInstance.read.flywheelRewards();
+      const fwRewardsInstance = this.createFlywheelStaticRewards(fwRewardsAddress, this.publicClient);
       const [marketState, rewardsInfo] = await Promise.all([
-        fwCoreInstance.callStatic.marketState(marketAddress),
-        fwRewardsInstance.callStatic.rewardsInfo(marketAddress)
+        fwCoreInstance.read.marketState([marketAddress]),
+        fwRewardsInstance.read.rewardsInfo([marketAddress])
       ]);
       return {
         enabled: marketState[1] > 0,
@@ -137,21 +146,22 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getFlywheelClaimableRewardsForMarket(
-      poolAddress: string,
-      market: string,
-      account: string
+      poolAddress: Address,
+      market: Address,
+      account: Address
     ): Promise<FlywheelClaimableRewards[]> {
-      const pool = this.createComptroller(poolAddress, this.provider);
-      const rewardDistributors = await pool.callStatic.getRewardsDistributors();
+      const pool = this.createComptroller(poolAddress, this.publicClient);
+      const rewardDistributors = await pool.read.getRewardsDistributors();
 
       const fwLensRouter = this.createIonicFlywheelLensRouter();
 
-      const [_flywheels, rewardTokens, rewards] = await fwLensRouter.callStatic.claimRewardsForMarket(
+      const result = await fwLensRouter.simulate.claimRewardsForMarket([
         account,
         market,
         rewardDistributors,
         Array.from(rewardDistributors, () => true)
-      );
+      ]);
+      const [_flywheels, rewardTokens, rewards] = result.result;
 
       return _flywheels.map((flywheel, i) => {
         return {
@@ -163,21 +173,22 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getFlywheelClaimableRewardsByMarkets(
-      poolAddress: string,
-      markets: string[],
-      account: string
+      poolAddress: Address,
+      markets: Address[],
+      account: Address
     ): Promise<FlywheelClaimableRewards[]> {
-      const pool = this.createComptroller(poolAddress, this.provider);
-      const rewardDistributors = await pool.callStatic.getRewardsDistributors();
+      const pool = this.createComptroller(poolAddress, this.publicClient);
+      const rewardDistributors = await pool.read.getRewardsDistributors();
 
       const fwLensRouter = this.createIonicFlywheelLensRouter();
 
-      const [_flywheels, rewardTokens, rewards] = await fwLensRouter.callStatic.claimRewardsForMarkets(
+      const result = await fwLensRouter.simulate.claimRewardsForMarkets([
         account,
         markets,
         rewardDistributors,
         Array.from(rewardDistributors, () => true)
-      );
+      ]);
+      const [_flywheels, rewardTokens, rewards] = result.result;
 
       return _flywheels.map((flywheel, i) => {
         return {
@@ -188,13 +199,11 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       });
     }
 
-    async getFlywheelClaimableRewardsForPool(poolAddress: string, account: string) {
+    async getFlywheelClaimableRewardsForPool(poolAddress: Address, account: Address) {
       const fwLensRouter = this.createIonicFlywheelLensRouter();
 
-      const [_flywheels, rewardTokens, rewards] = await fwLensRouter.callStatic.claimRewardsForPool(
-        account,
-        poolAddress
-      );
+      const result = await fwLensRouter.simulate.claimRewardsForPool([account, poolAddress]);
+      const [_flywheels, rewardTokens, rewards] = result.result;
 
       return _flywheels.map((flywheel, i) => {
         return {
@@ -205,10 +214,11 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       });
     }
 
-    async getAllFlywheelClaimableRewards(account: string) {
+    async getAllFlywheelClaimableRewards(account: Address) {
       const fwLensRouter = this.createIonicFlywheelLensRouter();
 
-      const [rewardTokens, rewards] = await fwLensRouter.callStatic.claimAllRewardTokens(account);
+      const result = await fwLensRouter.simulate.claimAllRewardTokens([account]);
+      const [rewardTokens, rewards] = result.result;
 
       return rewardTokens.map((rewardToken, i) => {
         return {
@@ -219,36 +229,48 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     /** WRITE */
-    getFlywheelEnabledMarkets(flywheelAddress: string) {
-      return this.createIonicFlywheel(flywheelAddress).callStatic.getAllStrategies();
+    getFlywheelEnabledMarkets(flywheelAddress: Address) {
+      return this.createIonicFlywheel(flywheelAddress).read.getAllStrategies();
     }
 
-    setStaticRewardInfo(
-      staticRewardsAddress: string,
-      marketAddress: string,
-      rewardInfo: FlywheelStaticRewards.RewardsInfoStruct
-    ) {
-      const staticRewardsInstance = this.createFlywheelStaticRewards(staticRewardsAddress, this.signer);
-      return staticRewardsInstance.functions.setRewardsInfo(marketAddress, rewardInfo);
+    setStaticRewardInfo(staticRewardsAddress: Address, marketAddress: Address, rewardInfo: any) {
+      const staticRewardsInstance = this.createFlywheelStaticRewards(
+        staticRewardsAddress,
+        this.publicClient,
+        this.walletClient
+      );
+      return staticRewardsInstance.write.setRewardsInfo([marketAddress, rewardInfo], {
+        account: this.walletClient.account!.address,
+        chain: this.walletClient.chain
+      });
     }
 
-    setFlywheelRewards(flywheelAddress: string, rewardsAddress: string) {
-      const flywheelCoreInstance = this.createIonicFlywheel(flywheelAddress, this.signer);
-      return flywheelCoreInstance.functions.setFlywheelRewards(rewardsAddress);
+    setFlywheelRewards(flywheelAddress: Address, rewardsAddress: Address) {
+      const flywheelCoreInstance = this.createIonicFlywheel(flywheelAddress, this.publicClient, this.walletClient);
+      return flywheelCoreInstance.write.setFlywheelRewards([rewardsAddress], {
+        account: this.walletClient.account!.address,
+        chain: this.walletClient.chain
+      });
     }
 
-    addMarketForRewardsToFlywheelCore(flywheelCoreAddress: string, marketAddress: string) {
+    addMarketForRewardsToFlywheelCore(flywheelCoreAddress: Address, marketAddress: Address) {
       return this.addStrategyForRewardsToFlywheelCore(flywheelCoreAddress, marketAddress);
     }
 
-    addStrategyForRewardsToFlywheelCore(flywheelCoreAddress: string, marketAddress: string) {
-      const flywheelCoreInstance = this.createIonicFlywheel(flywheelCoreAddress, this.signer);
-      return flywheelCoreInstance.functions.addStrategyForRewards(marketAddress);
+    addStrategyForRewardsToFlywheelCore(flywheelCoreAddress: Address, marketAddress: Address) {
+      const flywheelCoreInstance = this.createIonicFlywheel(flywheelCoreAddress, this.publicClient, this.walletClient);
+      return flywheelCoreInstance.write.addStrategyForRewards([marketAddress], {
+        account: this.walletClient.account!.address,
+        chain: this.walletClient.chain
+      });
     }
 
-    addFlywheelCoreToComptroller(flywheelCoreAddress: string, comptrollerAddress: string) {
-      const comptrollerInstance = this.createComptroller(comptrollerAddress, this.signer);
-      return comptrollerInstance.functions._addRewardsDistributor(flywheelCoreAddress);
+    addFlywheelCoreToComptroller(flywheelCoreAddress: Address, comptrollerAddress: Address) {
+      const comptrollerInstance = this.createComptroller(comptrollerAddress, this.publicClient, this.walletClient);
+      return comptrollerInstance.write._addRewardsDistributor([flywheelCoreAddress], {
+        account: this.walletClient.account!.address,
+        chain: this.walletClient.chain
+      });
     }
 
     /**
@@ -257,15 +279,13 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param flywheels available flywheels addresses which market could have
       @return contract transaction
     */
-    async claimRewardsForMarket(market: string, flywheels: string[]) {
-      const fwLensRouter = this.createIonicFlywheelLensRouter(this.signer);
-      const account = await this.signer.getAddress();
+    async claimRewardsForMarket(market: Address, flywheels: Address[]) {
+      const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
+      const account = this.walletClient.account!.address;
 
-      const tx = await fwLensRouter.claimRewardsForMarket(
-        account,
-        market,
-        flywheels,
-        Array.from(flywheels, () => true)
+      const tx = await fwLensRouter.write.claimRewardsForMarket(
+        [account, market, flywheels, Array.from(flywheels, () => true)],
+        { account, chain: this.walletClient.chain }
       );
 
       return tx;
@@ -277,15 +297,13 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param flywheels available flywheels addresses which markets could have
       @return contract transaction
     */
-    async claimRewardsForMarkets(markets: string[], flywheels: string[]) {
-      const fwLensRouter = this.createIonicFlywheelLensRouter(this.signer);
-      const account = await this.signer.getAddress();
+    async claimRewardsForMarkets(markets: Address[], flywheels: Address[]) {
+      const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
+      const account = this.walletClient.account!.address;
 
-      const tx = await fwLensRouter.claimRewardsForMarkets(
-        account,
-        markets,
-        flywheels,
-        Array.from(flywheels, () => true)
+      const tx = await fwLensRouter.write.claimRewardsForMarkets(
+        [account, markets, flywheels, Array.from(flywheels, () => true)],
+        { account, chain: this.walletClient.chain }
       );
 
       return tx;
@@ -296,11 +314,14 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param poolAddress pool address
       @return contract transaction
     */
-    async claimRewardsForPool(poolAddress: string) {
-      const fwLensRouter = this.createIonicFlywheelLensRouter(this.signer);
-      const account = await this.signer.getAddress();
+    async claimRewardsForPool(poolAddress: Address) {
+      const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
+      const account = this.walletClient.account!.address;
 
-      const tx = await fwLensRouter.claimRewardsForPool(account, poolAddress);
+      const tx = await fwLensRouter.write.claimRewardsForPool([account, poolAddress], {
+        account,
+        chain: this.walletClient.chain
+      });
 
       return tx;
     }
@@ -310,11 +331,14 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @param rewardToken reward token address
       @return contract transaction
     */
-    async claimRewardsForRewardToken(rewardToken: string) {
-      const fwLensRouter = this.createIonicFlywheelLensRouter(this.signer);
-      const account = await this.signer.getAddress();
+    async claimRewardsForRewardToken(rewardToken: Address) {
+      const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
+      const account = this.walletClient.account!.address;
 
-      const tx = await fwLensRouter.claimRewardsOfRewardToken(account, rewardToken);
+      const tx = await fwLensRouter.write.claimRewardsOfRewardToken([account, rewardToken], {
+        account,
+        chain: this.walletClient.chain
+      });
 
       return tx;
     }
@@ -324,10 +348,10 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
       @return contract transaction
     */
     async claimAllRewards() {
-      const fwLensRouter = this.createIonicFlywheelLensRouter(this.signer);
-      const account = await this.signer.getAddress();
+      const fwLensRouter = this.createIonicFlywheelLensRouter(this.publicClient, this.walletClient);
+      const account = this.walletClient.account!.address;
 
-      const tx = await fwLensRouter.claimAllRewardTokens(account);
+      const tx = await fwLensRouter.write.claimAllRewardTokens([account], { account, chain: this.walletClient.chain });
 
       return tx;
     }

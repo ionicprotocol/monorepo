@@ -19,16 +19,14 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { BigNumber, BigNumberish, CallOverrides, constants, utils } from "ethers";
 
-import { PoolDirectory } from "../../typechain/PoolDirectory";
-import { PoolLens } from "../../typechain/PoolLens";
-import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
+import { AddressZero, filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
+import { Address, formatEther, formatUnits } from "viem";
 
 export type LensPoolsWithData = [
-  ids: BigNumberish[],
+  ids: bigint[],
   ionicPools: PoolDirectory.PoolStructOutput[],
   ionicPoolsData: PoolLens.IonicPoolDataStructOutput[],
   errors: boolean[]
@@ -50,22 +48,16 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
 
 export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class IonicPools extends Base {
-    async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<IonicPoolData | null> {
-      const {
-        comptroller,
-        name: _unfiliteredName,
-        creator,
-        blockPosted,
-        timestampPosted
-      } = await this.contracts.PoolDirectory.callStatic.pools(Number(poolId), overrides);
-      if (comptroller === constants.AddressZero) {
+    async fetchPoolData(poolId: string): Promise<IonicPoolData | null> {
+      const [comptroller, _unfiliteredName, creator, blockPosted, timestampPosted] =
+        await this.contracts.PoolDirectory.read.pools([BigInt(poolId)]);
+      if (comptroller === AddressZero) {
         return null;
       }
       const name = filterPoolName(_unfiliteredName);
 
-      const assets: NativePricedIonicAsset[] = (
-        await this.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
-      ).map(filterOnlyObjectProperties);
+      const res = await this.contracts.PoolLens.simulate.getPoolAssetsWithData([comptroller as Address]);
+      const assets: NativePricedIonicAsset[] = res.result.map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
       let totalAvailableLiquidityNative = 0;
@@ -99,20 +91,19 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
           asset.originalSymbol = _asset.originalSymbol ? _asset.originalSymbol : undefined;
         }
 
-        asset.netSupplyBalance = asset.supplyBalance.gt(asset.borrowBalance)
-          ? asset.supplyBalance.sub(asset.borrowBalance)
-          : constants.Zero;
+        asset.netSupplyBalance =
+          asset.supplyBalance > asset.borrowBalance ? asset.supplyBalance - asset.borrowBalance : 0n;
         asset.netSupplyBalanceNative =
-          Number(utils.formatUnits(asset.netSupplyBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.netSupplyBalance, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         asset.supplyBalanceNative =
-          Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         asset.borrowBalanceNative =
-          Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         if (asset.membership) {
           totalCollateralSupplyBalanceNative += asset.supplyBalanceNative;
@@ -121,11 +112,11 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
         asset.totalSupplyNative =
-          Number(utils.formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
         asset.totalBorrowNative =
-          Number(utils.formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         if (asset.totalSupplyNative === 0) {
           asset.utilization = 0;
@@ -137,8 +128,8 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         totalBorrowedNative += asset.totalBorrowNative;
 
         const assetLiquidityNative =
-          Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.liquidity, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
         asset.liquidityNative = assetLiquidityNative;
 
         totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidityNative;
@@ -169,7 +160,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         chainId: this.chainId,
         assets,
         creator,
-        comptroller,
+        comptroller: comptroller as Address,
         name,
         totalLiquidityNative,
         totalAvailableLiquidityNative,
@@ -186,8 +177,8 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       };
     }
 
-    async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(IonicPoolData | null)[] | undefined> {
-      const [poolIndexes, pools] = await this.contracts.PoolDirectory.callStatic.getActivePools(overrides);
+    async fetchPoolsManual(): Promise<(IonicPoolData | null)[] | undefined> {
+      const [poolIndexes, pools] = await this.contracts.PoolDirectory.read.getActivePools();
 
       if (!pools.length || !poolIndexes.length) {
         return undefined;
@@ -195,7 +186,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 
       const poolData = await Promise.all(
         poolIndexes.map((poolId) => {
-          return this.fetchPoolData(poolId.toString(), overrides).catch((error) => {
+          return this.fetchPoolData(poolId.toString()).catch((error) => {
             this.logger.error(`Pool ID ${poolId} wasn't able to be fetched from PoolLens without error.`, error);
             return null;
           });
@@ -210,35 +201,40 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       options
     }: {
       filter: string | null;
-      options: { from: string };
+      options: { from: Address };
     }): Promise<IonicPoolData[]> {
       const isCreatedPools = filter === "created-pools";
       const isVerifiedPools = filter === "verified-pools";
       const isUnverifiedPools = filter === "unverified-pools";
 
-      const req = isCreatedPools
-        ? this.contracts.PoolLens.callStatic.getPoolsByAccountWithData(options.from)
-        : isVerifiedPools
-        ? this.contracts.PoolDirectory.callStatic.getPublicPoolsByVerification(true)
-        : isUnverifiedPools
-        ? this.contracts.PoolDirectory.callStatic.getPublicPoolsByVerification(false)
-        : this.contracts.PoolLens.callStatic.getPublicPoolsWithData();
+      const createdPools = isCreatedPools
+        ? (await this.contracts.PoolLens.simulate.getPoolsByAccountWithData([options.from])).result
+        : [];
+      const verifiedPools = isVerifiedPools
+        ? await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([true])
+        : [];
+      const unverfiedPools = isUnverifiedPools
+        ? await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([false])
+        : [];
+      const allPools = !filter ? (await this.contracts.PoolLens.simulate.getPublicPoolsWithData()).result : [];
 
-      const whitelistedPoolsRequest = this.contracts.PoolLens.callStatic.getWhitelistedPoolsByAccountWithData(
-        options.from
-      );
+      const _whitelistedPools = (
+        await this.contracts.PoolLens.simulate.getWhitelistedPoolsByAccountWithData([options.from])
+      ).result;
 
-      const responses = await Promise.all([req, whitelistedPoolsRequest]);
+      const _pools = [...createdPools, ...verifiedPools, ...unverfiedPools, ...allPools];
 
-      const [pools, whitelistedPools] = await Promise.all(
-        responses.map(async (poolData) => {
+      const pools = await Promise.all(
+        _pools.map(async (poolData) => {
           return await Promise.all(
-            poolData[0].map((_id) => {
+            poolData.map((_id) => {
               return this.fetchPoolData(_id.toString());
             })
           );
         })
       );
+
+      const whitelistedPools = _whitelistedPools.
 
       const whitelistedIds = whitelistedPools.map((pool) => pool?.id);
       const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));

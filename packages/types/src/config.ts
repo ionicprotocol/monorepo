@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import { ChainDeployment } from "./chain";
 
@@ -6,18 +6,18 @@ export type OracleConfig = ChainDeployment;
 export type IrmConfig = OracleConfig;
 
 export interface MarketConfig {
-  underlying: string;
-  comptroller: string;
+  underlying: Address;
+  comptroller: Address;
   adminFee: number;
   collateralFactor: number;
-  interestRateModel: string; // TODO: Use an Enum here, similar to Contract, resolve address inside the function
+  interestRateModel: Address; // TODO: Use an Enum here, similar to Contract, resolve address inside the function
   reserveFactor: number;
   // TODO we are not yet able to create a Plugin with a Market via the UI
-  plugin?: string;
+  plugin?: Address;
 
   // REFACTOR below:
   bypassPriceFeedCheck: boolean;
-  feeDistributor: string; // TODO: Remove this? We should always use our Fee Distributor!
+  feeDistributor: Address; // TODO: Remove this? We should always use our Fee Distributor!
   symbol: string; // TODO: Same as name
   name: string; // TODO: Make optional, should be set inside SDK for default value mToken or so
 }
@@ -28,7 +28,7 @@ export type RewardsDistributorConfig = {
 };
 
 export type InterestRateModelParams = {
-  blocksPerYear?: BigNumber;
+  blocksPerYear?: bigint;
   baseRatePerYear?: string;
   multiplierPerYear?: string;
   jumpMultiplierPerYear?: string;

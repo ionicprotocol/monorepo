@@ -78,13 +78,13 @@ export class IonicBase {
 
   public _contracts: StaticContracts | undefined;
   public chainConfig: ChainConfig;
-  public availableOracles: Array<string>;
+  public availableOracles: Array<Address>;
   public chainId: SupportedChains;
   public chainDeployment: ChainDeployment;
   public chainSpecificAddresses: ChainAddresses;
   public chainSpecificParams: ChainParams;
   public deployedPlugins: DeployedPlugins;
-  public marketToPlugin: Record<string, string>;
+  public marketToPlugin: Record<Address, Address>;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: RedemptionStrategy[];
@@ -108,11 +108,6 @@ export class IonicBase {
   }
 
   public get contracts(): StaticContracts {
-    getContract({
-      abi: poolDirectoryAbi,
-      address: this.chainDeployment.PoolDirectory.address as Address,
-      client: { public: this.publicClient, wallet: this.walletClient }
-    });
     return {
       PoolDirectory: getContract({
         abi: poolDirectoryAbi,

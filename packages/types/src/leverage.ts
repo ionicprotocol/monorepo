@@ -1,46 +1,46 @@
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import { SupportedChains } from "./enums";
 
 export interface MarketRewardsInfoStructOutput {
-  rewardSpeedPerSecondPerToken: BigNumber;
-  rewardTokenPrice: BigNumber;
-  formattedAPR: BigNumber;
-  flywheel: string;
-  rewardToken: string;
+  rewardSpeedPerSecondPerToken: bigint;
+  rewardTokenPrice: bigint;
+  formattedAPR: bigint;
+  flywheel: Address;
+  rewardToken: Address;
 }
 
 export interface LeveredBorrowable {
-  cToken: string;
-  underlyingToken: string;
+  cToken: Address;
+  underlyingToken: Address;
   underlyingDecimals: number;
-  underlyingPrice: BigNumber;
+  underlyingPrice: bigint;
   symbol: string;
-  rate: BigNumber;
+  rate: bigint;
 }
 
 export interface LeveredCollateral {
-  cToken: string;
-  underlyingToken: string;
-  underlyingDecimals: BigNumber;
+  cToken: Address;
+  underlyingToken: Address;
+  underlyingDecimals: bigint;
   symbol: string;
-  supplyRatePerBlock: BigNumber;
-  totalSupplied: BigNumber;
-  pool: string;
-  plugin?: string;
+  supplyRatePerBlock: bigint;
+  totalSupplied: bigint;
+  pool: Address;
+  plugin?: Address;
   reward?: {
-    underlyingPrice: BigNumber;
-    market: string;
+    underlyingPrice: bigint;
+    market: Address;
     rewardsInfo: MarketRewardsInfoStructOutput[];
   };
-  underlyingPrice: BigNumber;
+  underlyingPrice: bigint;
 }
 
 export interface OpenPosition {
   chainId: SupportedChains;
   collateral: LeveredCollateral;
   borrowable: LeveredBorrowable;
-  address: string;
+  address: Address;
   isClosed: boolean;
 }
 
@@ -51,23 +51,23 @@ export interface NewPosition {
 }
 
 export interface PositionInfo {
-  positionSupplyAmount: BigNumber;
-  positionValue: BigNumber;
-  debtAmount: BigNumber;
-  debtValue: BigNumber;
-  equityValue: BigNumber;
-  equityAmount: BigNumber;
-  currentApy: BigNumber;
-  debtRatio: BigNumber;
-  liquidationThreshold: BigNumber;
-  safetyBuffer: BigNumber;
-  collateralAssetPrice: BigNumber;
-  borrowedAssetPrice: BigNumber;
+  positionSupplyAmount: bigint;
+  positionValue: bigint;
+  debtAmount: bigint;
+  debtValue: bigint;
+  equityValue: bigint;
+  equityAmount: bigint;
+  currentApy: bigint;
+  debtRatio: bigint;
+  liquidationThreshold: bigint;
+  safetyBuffer: bigint;
+  collateralAssetPrice: bigint;
+  borrowedAssetPrice: bigint;
 }
 
-export type LeveragePoolConfig = { pool: string; pairs: LeveragePair[] };
+export type LeveragePoolConfig = { pool: Address; pairs: LeveragePair[] };
 
 type LeveragePair = {
-  borrow: string;
-  collateral: string;
+  borrow: Address;
+  collateral: Address;
 };
