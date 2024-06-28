@@ -1,13 +1,4 @@
 export enum SupportedChains {
-  ethereum = 1,
-  bsc = 56,
-  chapel = 97,
-  ganache = 1337,
-  neon = 245022934,
-  polygon = 137,
-  arbitrum = 42161,
-  linea = 59144,
-  zkevm = 1101,
   mode = 34443,
   base = 8453
 }

@@ -67,143 +67,139 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     async getAllLeveredPositions(
       account: Address
     ): Promise<{ openPositions: OpenPosition[]; newPositions: NewPosition[] }> {
-      if (this.chainId === SupportedChains.chapel || SupportedChains.polygon) {
-        try {
-          const openPositions: OpenPosition[] = [];
-          const newPositions: NewPosition[] = [];
+      try {
+        const openPositions: OpenPosition[] = [];
+        const newPositions: NewPosition[] = [];
 
-          const leveredPositionLens = this.createLeveredPositionLens();
-          const ionicFlywheelLensRouter = this.createIonicFlywheelLensRouter();
-          const [
-            poolOfMarket,
-            collateralCTokens,
-            collateralUnderlyings,
-            collateralUnderlyingPrices,
-            ,
-            collateralsymbols,
-            collateralDecimals,
-            collateralTotalSupplys,
-            supplyRatePerBlock
-          ] = await leveredPositionLens.read.getCollateralMarkets();
-          const positions = await this.getPositionsByAccount(account);
+        const leveredPositionLens = this.createLeveredPositionLens();
+        const ionicFlywheelLensRouter = this.createIonicFlywheelLensRouter();
+        const [
+          poolOfMarket,
+          collateralCTokens,
+          collateralUnderlyings,
+          collateralUnderlyingPrices,
+          ,
+          collateralsymbols,
+          collateralDecimals,
+          collateralTotalSupplys,
+          supplyRatePerBlock
+        ] = await leveredPositionLens.read.getCollateralMarkets();
+        const positions = await this.getPositionsByAccount(account);
 
-          const rewards = await ionicFlywheelLensRouter.simulate.getMarketRewardsInfo([collateralCTokens]);
+        const rewards = await ionicFlywheelLensRouter.simulate.getMarketRewardsInfo([collateralCTokens]);
 
-          await Promise.all(
-            collateralCTokens.map(async (collateralCToken, index) => {
-              const collateralAsset = ChainSupportedAssets[this.chainId].find(
-                (asset) => asset.underlying === collateralUnderlyings[index]
+        await Promise.all(
+          collateralCTokens.map(async (collateralCToken, index) => {
+            const collateralAsset = ChainSupportedAssets[this.chainId].find(
+              (asset) => asset.underlying === collateralUnderlyings[index]
+            );
+            const [
+              borrowableMarkets,
+              borrowableUnderlyings,
+              borrowableUnderlyingPrices,
+              ,
+              borrowableSymbols,
+              borrowableRates,
+              borrowableDecimals
+            ] = await leveredPositionLens.read.getBorrowableMarketsAndRates([collateralCToken]);
+
+            // get rewards
+            const reward = rewards.result.find((rw) => rw.market === collateralCToken);
+
+            //get borrowable asset
+            const leveredBorrowable: LeveredBorrowable[] = [];
+            borrowableMarkets.map((borrowableMarket, i) => {
+              const borrowableAsset = ChainSupportedAssets[this.chainId].find(
+                (asset) => asset.underlying === borrowableUnderlyings[i]
               );
-              const [
-                borrowableMarkets,
-                borrowableUnderlyings,
-                borrowableUnderlyingPrices,
-                ,
-                borrowableSymbols,
-                borrowableRates,
-                borrowableDecimals
-              ] = await leveredPositionLens.read.getBorrowableMarketsAndRates([collateralCToken]);
+              const position = positions.find(
+                (pos) =>
+                  pos.collateralMarket === collateralCToken && pos.borrowMarket === borrowableMarket && !pos.isClosed
+              );
 
-              // get rewards
-              const reward = rewards.result.find((rw) => rw.market === collateralCToken);
-
-              //get borrowable asset
-              const leveredBorrowable: LeveredBorrowable[] = [];
-              borrowableMarkets.map((borrowableMarket, i) => {
-                const borrowableAsset = ChainSupportedAssets[this.chainId].find(
-                  (asset) => asset.underlying === borrowableUnderlyings[i]
-                );
-                const position = positions.find(
-                  (pos) =>
-                    pos.collateralMarket === collateralCToken && pos.borrowMarket === borrowableMarket && !pos.isClosed
-                );
-
-                const borrowable = {
-                  underlyingDecimals: borrowableDecimals[i],
-                  cToken: borrowableMarket,
-                  underlyingToken: borrowableUnderlyings[i],
-                  underlyingPrice: borrowableUnderlyingPrices[i],
-                  symbol: borrowableAsset
+              const borrowable = {
+                underlyingDecimals: borrowableDecimals[i],
+                cToken: borrowableMarket,
+                underlyingToken: borrowableUnderlyings[i],
+                underlyingPrice: borrowableUnderlyingPrices[i],
+                symbol: borrowableAsset
+                  ? borrowableAsset.originalSymbol
                     ? borrowableAsset.originalSymbol
-                      ? borrowableAsset.originalSymbol
-                      : borrowableAsset.symbol
-                    : borrowableSymbols[i],
-                  rate: borrowableRates[i]
-                };
+                    : borrowableAsset.symbol
+                  : borrowableSymbols[i],
+                rate: borrowableRates[i]
+              };
 
-                leveredBorrowable.push({
-                  ...borrowable
-                });
-                if (position) {
-                  openPositions.push({
-                    chainId: this.chainId,
-                    collateral: {
-                      cToken: collateralCToken,
-                      underlyingToken: collateralUnderlyings[index],
-                      underlyingDecimals: collateralAsset
-                        ? BigInt(collateralAsset.decimals)
-                        : BigInt(collateralDecimals[index]),
-                      totalSupplied: collateralTotalSupplys[index],
-                      symbol: collateralAsset
-                        ? collateralAsset.originalSymbol
-                          ? collateralAsset.originalSymbol
-                          : collateralAsset.symbol
-                        : collateralsymbols[index],
-                      supplyRatePerBlock: supplyRatePerBlock[index],
-                      reward: reward as {
-                        underlyingPrice: bigint;
-                        market: Address;
-                        rewardsInfo: MarketRewardsInfoStructOutput[];
-                      },
-                      pool: poolOfMarket[index],
-                      plugin: this.marketToPlugin[collateralCToken],
-                      underlyingPrice: collateralUnderlyingPrices[index]
-                    },
-                    borrowable,
-                    address: position.position,
-                    isClosed: position.isClosed
-                  });
-                }
+              leveredBorrowable.push({
+                ...borrowable
               });
-
-              newPositions.push({
-                chainId: this.chainId,
-                collateral: {
-                  cToken: collateralCToken,
-                  underlyingToken: collateralUnderlyings[index],
-                  underlyingDecimals: BigInt(collateralAsset ? collateralAsset.decimals : collateralDecimals[index]),
-                  totalSupplied: collateralTotalSupplys[index],
-                  symbol: collateralAsset
-                    ? collateralAsset.originalSymbol
+              if (position) {
+                openPositions.push({
+                  chainId: this.chainId,
+                  collateral: {
+                    cToken: collateralCToken,
+                    underlyingToken: collateralUnderlyings[index],
+                    underlyingDecimals: collateralAsset
+                      ? BigInt(collateralAsset.decimals)
+                      : BigInt(collateralDecimals[index]),
+                    totalSupplied: collateralTotalSupplys[index],
+                    symbol: collateralAsset
                       ? collateralAsset.originalSymbol
-                      : collateralAsset.symbol
-                    : collateralsymbols[index],
-                  supplyRatePerBlock: supplyRatePerBlock[index],
-                  reward: reward as {
-                    underlyingPrice: bigint;
-                    market: Address;
-                    rewardsInfo: MarketRewardsInfoStructOutput[];
+                        ? collateralAsset.originalSymbol
+                        : collateralAsset.symbol
+                      : collateralsymbols[index],
+                    supplyRatePerBlock: supplyRatePerBlock[index],
+                    reward: reward as {
+                      underlyingPrice: bigint;
+                      market: Address;
+                      rewardsInfo: MarketRewardsInfoStructOutput[];
+                    },
+                    pool: poolOfMarket[index],
+                    plugin: this.marketToPlugin[collateralCToken],
+                    underlyingPrice: collateralUnderlyingPrices[index]
                   },
-                  pool: poolOfMarket[index],
-                  plugin: this.marketToPlugin[collateralCToken],
-                  underlyingPrice: collateralUnderlyingPrices[index]
+                  borrowable,
+                  address: position.position,
+                  isClosed: position.isClosed
+                });
+              }
+            });
+
+            newPositions.push({
+              chainId: this.chainId,
+              collateral: {
+                cToken: collateralCToken,
+                underlyingToken: collateralUnderlyings[index],
+                underlyingDecimals: BigInt(collateralAsset ? collateralAsset.decimals : collateralDecimals[index]),
+                totalSupplied: collateralTotalSupplys[index],
+                symbol: collateralAsset
+                  ? collateralAsset.originalSymbol
+                    ? collateralAsset.originalSymbol
+                    : collateralAsset.symbol
+                  : collateralsymbols[index],
+                supplyRatePerBlock: supplyRatePerBlock[index],
+                reward: reward as {
+                  underlyingPrice: bigint;
+                  market: Address;
+                  rewardsInfo: MarketRewardsInfoStructOutput[];
                 },
-                borrowable: leveredBorrowable
-              });
-            })
-          );
+                pool: poolOfMarket[index],
+                plugin: this.marketToPlugin[collateralCToken],
+                underlyingPrice: collateralUnderlyingPrices[index]
+              },
+              borrowable: leveredBorrowable
+            });
+          })
+        );
 
-          return { newPositions, openPositions };
-        } catch (error) {
-          this.logger.error(`get levered positions error in chain ${this.chainId}:  ${error}`);
+        return { newPositions, openPositions };
+      } catch (error) {
+        this.logger.error(`get levered positions error in chain ${this.chainId}:  ${error}`);
 
-          throw Error(
-            `Getting levered position failed in chain ${this.chainId}: ` +
-              (error instanceof Error ? error.message : error)
-          );
-        }
-      } else {
-        return { newPositions: [], openPositions: [] };
+        throw Error(
+          `Getting levered position failed in chain ${this.chainId}: ` +
+            (error instanceof Error ? error.message : error)
+        );
       }
     }
 

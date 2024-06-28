@@ -1,7 +1,7 @@
 import { assetSymbols, ChainAddresses, underlying } from "@ionicprotocol/types";
-import { ethers } from "ethers";
 
 import { assets } from "./assets";
+import { zeroAddress } from "viem";
 
 const chainAddresses: ChainAddresses = {
   PAIR_INIT_HASH: "", // TODO is this used anywhere?
@@ -16,7 +16,7 @@ const chainAddresses: ChainAddresses = {
   UNISWAP_V3_ROUTER: "0xAc48FcF1049668B285f3dC72483DF5Ae2162f7e8", // kim v4
   W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
   W_TOKEN: underlying(assets, assetSymbols.WETH),
-  W_TOKEN_USD_CHAINLINK_PRICE_FEED: ethers.constants.AddressZero
+  W_TOKEN_USD_CHAINLINK_PRICE_FEED: zeroAddress
 };
 
 export default chainAddresses;

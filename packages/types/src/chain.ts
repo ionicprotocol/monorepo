@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import { IrmTypes, OracleTypes, SupportedChains } from "./enums";
 import { LeveragePoolConfig } from "./leverage";
@@ -7,13 +7,13 @@ import { DeployedPlugins } from "./plugin";
 
 export type SupportedAsset = {
   symbol: string;
-  underlying: string;
+  underlying: Address;
   name: string;
   decimals: number;
   extraDocs?: string;
   disabled?: boolean;
   oracle?: OracleTypes;
-  simplePriceOracleAssetPrice?: BigNumber;
+  simplePriceOracleAssetPrice?: bigint;
   originalSymbol?: string;
 };
 export type BlockExplorer = {
@@ -52,7 +52,7 @@ export interface ChainMetadata {
   };
   wrappedNativeCurrency: {
     symbol: string;
-    address: string;
+    address: Address;
     name: string;
     decimals: number;
     color: string;
@@ -63,7 +63,7 @@ export interface ChainMetadata {
 }
 
 export type ChainParams = {
-  blocksPerYear: BigNumber;
+  blocksPerYear: bigint;
   cgId: string;
   metadata: ChainMetadata;
 };

@@ -1,16 +1,4 @@
-import {
-  arbitrum,
-  base,
-  bsc,
-  chapel,
-  ethereum,
-  ganache,
-  linea,
-  mode,
-  neon,
-  polygon,
-  zkevm
-} from "@ionicprotocol/chains";
+import { base, mode } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -46,15 +34,6 @@ export type LensPoolsWithData = [
 ];
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
-  [SupportedChains.bsc]: bsc.assets,
-  [SupportedChains.polygon]: polygon.assets,
-  [SupportedChains.ganache]: ganache.assets,
-  [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.neon]: neon.assets,
-  [SupportedChains.arbitrum]: arbitrum.assets,
-  [SupportedChains.linea]: linea.assets,
-  [SupportedChains.ethereum]: ethereum.assets,
-  [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets
 };
@@ -271,10 +250,6 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
     }
 
     async isAuth(pool: Address, market: Address, role: Roles, user: Address) {
-      if (this.chainId === SupportedChains.neon) {
-        return true;
-      }
-
       const authRegistry = this.createAuthoritiesRegistry();
       const poolAuthAddress = await authRegistry.read.poolsAuthorities([pool]);
 
