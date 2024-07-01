@@ -106,13 +106,17 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       return { gasWEI, gasPrice, estimatedGas };
     }
 
-    async approve(cTokenAddress: Address, underlyingTokenAddress: Address) {
+    async approve(cTokenAddress: Address, underlyingTokenAddress: Address, approveAmount?: bigint) {
+      let _approveAmount = approveAmount;
+      if (!approveAmount) {
+        _approveAmount = maxUint256;
+      }
       const token = getContract({
         address: underlyingTokenAddress,
         abi: erc20Abi,
         client: { public: this.publicClient, wallet: this.walletClient }
       });
-      const tx = await token.write.approve([cTokenAddress, maxUint256], {
+      const tx = await token.write.approve([cTokenAddress, _approveAmount!], {
         account: this.walletClient.account!.address,
         chain: this.walletClient.chain
       });

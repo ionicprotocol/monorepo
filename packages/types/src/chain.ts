@@ -1,9 +1,16 @@
 import { Address } from "viem";
 
-import { IrmTypes, OracleTypes, SupportedChains } from "./enums";
+import { ChainlinkFeedBaseCurrency, IrmTypes, OracleTypes, SupportedChains } from "./enums";
 import { LeveragePoolConfig } from "./leverage";
 import { FundingStrategy, LiquidationDefaults, RedemptionStrategy } from "./liquidation";
 import { DeployedPlugins } from "./plugin";
+
+export type ChainlinkSpecificParams = {
+  aggregator: string;
+  feedBaseCurrency: ChainlinkFeedBaseCurrency;
+};
+
+export type PythSpecificParams = { feed: string };
 
 export type SupportedAsset = {
   symbol: string;
@@ -15,6 +22,10 @@ export type SupportedAsset = {
   oracle?: OracleTypes;
   simplePriceOracleAssetPrice?: bigint;
   originalSymbol?: string;
+  oracleSpecificParams?: ChainlinkSpecificParams | PythSpecificParams;
+  initialCf?: string;
+  initialBorrowCap?: string;
+  initialSupplyCap?: string;
 };
 export type BlockExplorer = {
   name: string;

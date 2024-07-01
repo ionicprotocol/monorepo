@@ -1,4 +1,4 @@
-import { base, chainIdToConfig, mode } from '@ionicprotocol/chains';
+import { base, chainIdToConfig, mode, optimism } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -61,15 +61,21 @@ export function getEnabledChains() {
     enabledChains.push(vBase);
   }
 
+  if (config.isOptimismEnabled) {
+    enabledChains.push(SupportedChains.optimism);
+  }
+
   return enabledChains;
 }
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
-  [SupportedChains.base]: base.assets
+  [SupportedChains.base]: base.assets,
+  [SupportedChains.optimism]: optimism.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.mode]: mode.deployedPlugins,
-  [SupportedChains.base]: base.deployedPlugins
+  [SupportedChains.base]: base.deployedPlugins,
+  [SupportedChains.optimism]: optimism.deployedPlugins
 };

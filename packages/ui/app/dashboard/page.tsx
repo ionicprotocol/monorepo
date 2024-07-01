@@ -81,7 +81,7 @@ export default function Dashboard() {
   };
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
-    pool ? pool : pools[0].id,
+    pool ? pool : pools[+chain].pools[0].id,
     +chain
   );
   const { data: positions, isLoading: isLoadingPositions } =
@@ -579,32 +579,26 @@ export default function Dashboard() {
           />
         </div>
         <div className={`flex items-center justify-start w-max gap-2`}>
-          {pools.map(
-            (
-              poolx: { chain: number; id: string; name: string },
-              idx: number
-            ) => {
-              if (poolx.chain !== +chain) return;
-              return (
-                <Link
-                  className={` cursor-pointer py-2 px-4 rounded-lg ${
-                    pool === poolx.id
-                      ? `border ${
-                          +chain == base.id ? 'border-blue-600' : 'border-lime'
-                        }`
-                      : 'border border-stone-700'
-                  }`}
-                  href={`${pathname}?chain=${poolx.chain}${
-                    poolx.id ? `&pool=${poolx.id}` : ''
-                  }`}
-                  key={idx}
-                  // onClick={() => setSelectedPool(pools[0].id)}
-                >
-                  {poolx.name}
-                </Link>
-              );
-            }
-          )}
+          {pools[+chain].pools.map((poolx, idx) => {
+            return (
+              <Link
+                className={` cursor-pointer py-2 px-4 rounded-lg ${
+                  pool === poolx.id
+                    ? `border ${
+                        +chain == base.id ? 'border-blue-600' : 'border-lime'
+                      }`
+                    : 'border border-stone-700'
+                }`}
+                href={`${pathname}?chain=${chain}${
+                  poolx.id ? `&pool=${poolx.id}` : ''
+                }`}
+                key={idx}
+                // onClick={() => setSelectedPool(pools[0].id)}
+              >
+                {poolx.name}
+              </Link>
+            );
+          })}
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>

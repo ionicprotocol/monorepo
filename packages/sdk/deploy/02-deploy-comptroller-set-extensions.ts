@@ -41,7 +41,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
       latestComptrollerImplementation === constants.AddressZero ||
       latestComptrollerImplementation !== comptroller.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest Comptroller Implementation",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestComptrollerImplementation", [
@@ -63,7 +63,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
     }
   } else {
     // on the first deploy to a chain
-    if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if (multisig && (await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Set Latest Comptroller Implementation",
         fuseFeeDistributor.interface.encodeFunctionData("_setLatestComptrollerImplementation", [
@@ -80,7 +80,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
 
   const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
   if (comptrollerExtensions.length == 0 || comptrollerExtensions[1] != compFirstExtension.address) {
-    if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if (multisig && (await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Set Comptroller Extensions",
         fuseFeeDistributor.interface.encodeFunctionData("_setComptrollerExtensions", [

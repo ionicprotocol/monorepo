@@ -681,7 +681,7 @@ export default function Loop({
         amountAsBInt;
 
       if (!hasApprovedEnough) {
-        const tx = await token.write.approve([factory.address, maxUint256], {
+        const tx = await token.write.approve([factory.address, amountAsBInt], {
           account: currentSdk.walletClient.account!.address,
           chain: currentSdk.walletClient.chain
         });
@@ -836,7 +836,7 @@ export default function Loop({
 
       if (!hasApprovedEnough) {
         const tx = await token.write.approve(
-          [currentPosition.address, maxUint256],
+          [currentPosition.address, amountAsBInt],
           {
             account: currentSdk.walletClient.account!.address,
             chain: currentSdk.walletClient.chain

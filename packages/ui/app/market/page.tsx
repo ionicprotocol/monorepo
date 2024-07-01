@@ -6,7 +6,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { base, mode } from 'viem/chains';
+import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 // import Dropdown from '../_components/Dropdown';
@@ -21,7 +21,7 @@ import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { formatEther, formatUnits } from 'viem';
 
@@ -37,21 +37,14 @@ export default function Market() {
   const { currentSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
-  const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
+  const [selectedPool, setSelectedPool] = useState(
+    pool ? pool : pools[mode.id].pools[0].id
+  );
 
   const chain = querychain ? querychain : mode.id;
-  const [poolData, setPoolData] = useState<PoolData>();
-  const { data: pool1Data, isLoading: isLoadingPool1Data } = useFusePoolData(
-    pools[0].id,
-    pools[0].chain
-  );
-  const { data: pool2Data, isLoading: isLoadingPool2Data } = useFusePoolData(
-    pools[1].id,
-    pools[1].chain
-  );
-  const { data: pool3Data, isLoading: isLoadingPool3Data } = useFusePoolData(
-    pools[2].id,
-    pools[2].chain
+  const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
+    selectedPool,
+    +chain
   );
 
   useEffect(() => {
@@ -59,25 +52,9 @@ export default function Market() {
     setDropdownSelectedChain(+chain);
   }, [chain]);
 
-  useEffect(() => {
-    if (selectedPool === pools[0].id && +chain === mode.id && pool1Data) {
-      setPoolData(pool1Data);
-    }
-    if (selectedPool === pools[1].id && +chain === mode.id && pool2Data) {
-      setPoolData(pool2Data);
-    }
-    if (selectedPool === pools[2].id && +chain === base.id && pool3Data) {
-      setPoolData(pool3Data);
-    }
-  }, [pool1Data, pool2Data, pool3Data, selectedPool, chain]);
-
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
-  );
-  const dataIsLoading = useMemo<boolean>(
-    () => isLoadingPool1Data || isLoadingPool2Data || isLoadingPool3Data,
-    [isLoadingPool1Data, isLoadingPool2Data, isLoadingPool3Data]
   );
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -90,8 +67,6 @@ export default function Market() {
   const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
     poolData?.assets.map((asset) => asset.cToken) ?? []
   );
-
-  const selectedPoolClass = 'rounded-md border-mode border-2';
 
   const newRef = useRef(null!);
 
@@ -138,109 +113,47 @@ export default function Market() {
             />
           </div>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
-            {dropdownSelectedChain === mode.id && (
-              <>
-                <div
-                  className={`flex flex-col cursor-pointer  py-2 md:px-4 ${
-                    selectedPool === pools[0].id
-                      ? selectedPoolClass
-                      : 'rounded-md border-stone-700 border-2'
-                  }`}
-                  onClick={() => setSelectedPool(pools[0].id)}
-                >
+            {Object.entries(pools)
+              .filter(
+                ([chainId]) => chainId === dropdownSelectedChain.toString()
+              )
+              .map(([, chainData], chainIdx) =>
+                chainData.pools.map((pool, poolIdx) => (
                   <div
-                    className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
+                    key={`${chainIdx}-${poolIdx}`}
+                    className={`flex flex-col cursor-pointer py-2 md:px-4 ${
+                      selectedPool === pool.id
+                        ? 'rounded-md border-2 ' + chainData.border
+                        : 'rounded-md border-stone-700 border-2'
+                    }`}
+                    onClick={() => setSelectedPool(pool.id)}
                   >
-                    <img
-                      alt="modlogo"
-                      className={`w-8`}
-                      src="/img/logo/MODE.png"
-                    />
-                    <h1 className={`font-semibold`}>{pools[0].name}</h1>
-                  </div>
-                  <div className="flex items-center justify-center pb-2">
-                    {pool1Data?.assets.map((val, idx) => (
+                    <div
+                      className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
+                    >
                       <img
                         alt="modlogo"
-                        className={`w-6`}
-                        key={idx}
-                        src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                        className={`w-8`}
+                        src={chainData.logo}
                       />
-                    ))}
+                      <h1 className={`font-semibold`}>{pool.name}</h1>
+                    </div>
+                    <div className="flex items-center justify-center pb-2">
+                      {pool.assets.map((val, idx) => (
+                        <img
+                          alt="modlogo"
+                          className={`w-6`}
+                          key={idx}
+                          src={`/img/symbols/32/color/${val.toLowerCase()}.png`}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div
-                  className={`flex flex-col cursor-pointer py-2 md:px-4 ${
-                    selectedPool === pools[1].id
-                      ? selectedPoolClass
-                      : 'rounded-md border-stone-700 border-2'
-                  }`}
-                  onClick={() => setSelectedPool(pools[1].id)}
-                >
-                  <div
-                    className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
-                  >
-                    <img
-                      alt="modlogo"
-                      className={`w-8`}
-                      src="/img/logo/MODE.png"
-                    />
-                    <h1 className={`font-semibold`}>{pools[1].name}</h1>
-                  </div>
-                  <div className="flex items-center justify-center pb-2">
-                    {pool2Data?.assets.map((val, idx) => (
-                      <img
-                        alt="modlogo"
-                        className={`w-6`}
-                        key={idx}
-                        src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
-                      />
-                    ))}
-                  </div>
-                </div>{' '}
-              </>
-            )}
-            {dropdownSelectedChain === 8453 && (
-              <div
-                className={`flex flex-col cursor-pointer py-2 md:px-4 ${
-                  selectedPool === '0'
-                    ? 'border-blue-600 border-2 rounded-md'
-                    : 'rounded-md border-stone-700 border-2'
-                }`}
-                onClick={() => setSelectedPool(pools[2].id)}
-              >
-                <div
-                  className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 cursor-pointer`}
-                >
-                  <img
-                    alt="modlogo"
-                    className={`w-8`}
-                    src="/img/logo/BASE.png"
-                  />
-                  <h1 className={`font-semibold`}>{pools[2].name}</h1>
-                </div>
-                <div className="flex items-center justify-center pb-2">
-                  {pool3Data?.assets.map((val, idx) => (
-                    <img
-                      alt="modlogo"
-                      className={`w-6`}
-                      key={idx}
-                      src={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+                ))
+              )}
           </div>
 
-          <ResultHandler
-            isLoading={
-              isLoadingPool1Data ||
-              isLoadingPool2Data ||
-              isLoadingPool3Data ||
-              isLoadingLoopMarkets
-            }
-          >
+          <ResultHandler isLoading={isLoadingPoolData || isLoadingLoopMarkets}>
             <div className={`w-full flex flex-wrap items-center gap-4`}>
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
@@ -360,104 +273,120 @@ export default function Market() {
           </div>
           <ResultHandler
             center
-            isLoading={dataIsLoading}
+            isLoading={isLoadingPoolData}
           >
             <>
               {assets &&
-                assets.map((val: MarketData, idx: number) => (
-                  <PoolRows
-                    asset={val.underlyingSymbol}
-                    borrowAPR={`${
-                      currentSdk
-                        ?.ratePerBlockToAPY(
-                          val?.borrowRatePerBlock ?? 0n,
-                          getBlockTimePerMinuteByChainId(chainId)
-                        )
-                        .toFixed(2) ?? '0.00'
-                    }%`}
-                    borrowBalance={`${
-                      val.borrowBalanceNative
-                        ? parseFloat(
-                            formatUnits(
-                              val.borrowBalance,
-                              val.underlyingDecimals
-                            )
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                    collateralFactor={
-                      (val ? Number(formatEther(val.collateralFactor)) : 0) *
-                      100
-                    }
-                    dropdownSelectedChain={dropdownSelectedChain}
-                    key={idx}
-                    logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
-                    loopPossible={
-                      loopMarkets ? loopMarkets[val.cToken].length > 0 : false
-                    }
-                    membership={val?.membership ?? false}
-                    selectedChain={chainId}
-                    selectedPoolId={selectedPool}
-                    setPopupMode={setPopupMode}
-                    setSelectedSymbol={setSelectedSymbol}
-                    supplyAPR={`${
-                      currentSdk
-                        ?.ratePerBlockToAPY(
-                          val?.supplyRatePerBlock ?? 0n,
-                          getBlockTimePerMinuteByChainId(chainId)
-                        )
-                        .toFixed(2) ?? '0.00'
-                    }%`}
-                    supplyBalance={`${
-                      val.supplyBalanceNative
-                        ? parseFloat(
-                            formatUnits(
-                              val.supplyBalance,
-                              val.underlyingDecimals
-                            )
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                    totalBorrowing={`${
-                      val.totalBorrowNative
-                        ? parseFloat(
-                            formatUnits(val.totalBorrow, val.underlyingDecimals)
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.totalBorrowFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                    totalSupplied={`${
-                      val.totalSupplyNative
-                        ? parseFloat(
-                            formatUnits(val.totalSupply, val.underlyingDecimals)
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })
-                        : '0'
-                    } ${
-                      val.underlyingSymbol
-                    } / $${val.totalSupplyFiat.toLocaleString('en-US', {
-                      maximumFractionDigits: 2
-                    })}`}
-                  />
-                ))}
+                assets
+                  .sort(
+                    (a, b) =>
+                      pools[dropdownSelectedChain].pools[
+                        +selectedPool
+                      ].assets.indexOf(a.underlyingSymbol) -
+                      pools[dropdownSelectedChain].pools[
+                        +selectedPool
+                      ].assets.indexOf(b.underlyingSymbol)
+                  )
+                  .map((val: MarketData, idx: number) => (
+                    <PoolRows
+                      asset={val.underlyingSymbol}
+                      borrowAPR={`${
+                        currentSdk
+                          ?.ratePerBlockToAPY(
+                            val?.borrowRatePerBlock ?? 0n,
+                            getBlockTimePerMinuteByChainId(chainId)
+                          )
+                          .toFixed(2) ?? '0.00'
+                      }%`}
+                      borrowBalance={`${
+                        val.borrowBalanceNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.borrowBalance,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      collateralFactor={
+                        (val ? Number(formatEther(val.collateralFactor)) : 0) *
+                        100
+                      }
+                      dropdownSelectedChain={dropdownSelectedChain}
+                      key={idx}
+                      logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                      loopPossible={
+                        loopMarkets ? loopMarkets[val.cToken].length > 0 : false
+                      }
+                      membership={val?.membership ?? false}
+                      selectedChain={chainId}
+                      selectedPoolId={selectedPool}
+                      setPopupMode={setPopupMode}
+                      setSelectedSymbol={setSelectedSymbol}
+                      supplyAPR={`${
+                        currentSdk
+                          ?.ratePerBlockToAPY(
+                            val?.supplyRatePerBlock ?? 0n,
+                            getBlockTimePerMinuteByChainId(chainId)
+                          )
+                          .toFixed(2) ?? '0.00'
+                      }%`}
+                      supplyBalance={`${
+                        val.supplyBalanceNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.supplyBalance,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      totalBorrowing={`${
+                        val.totalBorrowNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.totalBorrow,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.totalBorrowFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                      totalSupplied={`${
+                        val.totalSupplyNative
+                          ? parseFloat(
+                              formatUnits(
+                                val.totalSupply,
+                                val.underlyingDecimals
+                              )
+                            ).toLocaleString('en-US', {
+                              maximumFractionDigits: 2
+                            })
+                          : '0'
+                      } ${
+                        val.underlyingSymbol
+                      } / $${val.totalSupplyFiat.toLocaleString('en-US', {
+                        maximumFractionDigits: 2
+                      })}`}
+                    />
+                  ))}
             </>
           </ResultHandler>
         </div>
