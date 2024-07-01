@@ -2391,9 +2391,13 @@ __metadata:
     chai-as-promised: "npm:^7.1.1"
     chai-subset: "npm:^1.6.0"
     decimal.js: "npm:^10.4.0"
+    eslint: "npm:^8.23.0"
+    eslint-plugin-import: "npm:^2.26.0"
+    eslint-plugin-prettier: "npm:^4.2.1"
     lint-staged: "npm:13.0.3"
     node-cache: "npm:^5.1.2"
     nyc: "npm:^15.1.0"
+    prettier: "npm:2.7.1"
     sinon: "npm:^14.0.0"
     utf-8-validate: "npm:^5.0.9"
     viem: "npm:^2.16.5"
@@ -13471,7 +13475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:^2.27.5, eslint-plugin-import@npm:^2.29.1":
+"eslint-plugin-import@npm:^2.26.0, eslint-plugin-import@npm:^2.27.5, eslint-plugin-import@npm:^2.29.1":
   version: 2.29.1
   resolution: "eslint-plugin-import@npm:2.29.1"
   dependencies:
@@ -13495,6 +13499,21 @@ __metadata:
   peerDependencies:
     eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8
   checksum: 10/5865f05c38552145423c535326ec9a7113ab2305c7614c8b896ff905cfabc859c8805cac21e979c9f6f742afa333e6f62f812eabf891a7e8f5f0b853a32593c1
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-prettier@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "eslint-plugin-prettier@npm:4.2.1"
+  dependencies:
+    prettier-linter-helpers: "npm:^1.0.0"
+  peerDependencies:
+    eslint: ">=7.28.0"
+    prettier: ">=2.0.0"
+  peerDependenciesMeta:
+    eslint-config-prettier:
+      optional: true
+  checksum: 10/d387f85dd1bfcb6bc6b794845fee6afb9ebb2375653de6bcde6e615892fb97f85121a7c012a4651b181fc09953bdf54c9bc70cab7ad297019d89ae87dd007e28
   languageName: node
   linkType: hard
 
@@ -13535,7 +13554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.45.0":
+"eslint@npm:^8.23.0, eslint@npm:^8.45.0":
   version: 8.57.0
   resolution: "eslint@npm:8.57.0"
   dependencies:
@@ -21101,6 +21120,15 @@ __metadata:
   dependencies:
     fast-diff: "npm:^1.1.2"
   checksum: 10/00ce8011cf6430158d27f9c92cfea0a7699405633f7f1d4a45f07e21bf78e99895911cbcdc3853db3a824201a7c745bd49bfea8abd5fb9883e765a90f74f8392
+  languageName: node
+  linkType: hard
+
+"prettier@npm:2.7.1":
+  version: 2.7.1
+  resolution: "prettier@npm:2.7.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 10/9d29f81c1a470efca6851cd926a3e132a8d9c9d290c3d084c917c1c5aad5c392551406cf6012c724a136bd15911ede5eadc255d121c2761813b33a541a9c34c6
   languageName: node
   linkType: hard
 
