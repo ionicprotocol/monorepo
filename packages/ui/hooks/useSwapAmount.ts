@@ -1,19 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { type BigNumber, constants } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { Address } from 'viem';
 
 export interface SwapTokenType {
-  underlyingDecimals: BigNumber;
+  underlyingDecimals: bigint;
   underlyingSymbol: string;
   underlyingToken: string;
 }
 
 export function useSwapAmount(
-  inputToken?: string,
-  amount?: BigNumber,
-  outputToken?: string,
-  balance?: BigNumber | null
+  inputToken?: Address,
+  amount?: bigint,
+  outputToken?: Address,
+  balance?: bigint | null
 ) {
   const { address, currentSdk } = useMultiIonic();
 
@@ -28,22 +28,22 @@ export function useSwapAmount(
     ],
     async () => {
       if (
+        amount &&
         currentSdk &&
         inputToken &&
-        amount?.gt(constants.Zero) &&
+        amount > 0n &&
         outputToken &&
         address &&
         balance &&
-        balance.gte(amount)
+        balance >= amount
       ) {
         try {
           const token = currentSdk.getEIP20TokenInstance(inputToken);
-          const hasApprovedEnough = (
-            await token.callStatic.allowance(
+          const hasApprovedEnough =
+            (await token.read.allowance([
               address,
-              currentSdk.chainDeployment.LiquidatorsRegistry.address
-            )
-          ).gte(amount);
+              currentSdk.chainDeployment.LiquidatorsRegistry.address as Address
+            ])) >= amount;
 
           if (!hasApprovedEnough) {
             await currentSdk.approveLiquidatorsRegistry(inputToken);

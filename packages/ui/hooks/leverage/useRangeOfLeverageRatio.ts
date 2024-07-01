@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { constants, utils } from 'ethers';
+import { Address, formatEther, formatUnits } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
+export function useRangeOfLeverageRatio(address?: Address, chainId?: number) {
   const sdk = useSdk(chainId);
 
   return useQuery(
@@ -19,12 +19,12 @@ export function useRangeOfLeverageRatio(address?: string, chainId?: number) {
               e
             );
 
-            return [constants.Zero, constants.Zero];
+            return [0n, 0n];
           });
 
         return {
-          max: Number(Number(utils.formatUnits(maxBignum)).toFixed(3)),
-          min: Number(Number(utils.formatUnits(minBignum)).toFixed(3))
+          max: Number(Number(formatEther(maxBignum)).toFixed(3)),
+          min: Number(Number(formatEther(minBignum)).toFixed(3))
         };
       } else {
         return null;

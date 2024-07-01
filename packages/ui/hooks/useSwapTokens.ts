@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export interface SwapTokenType {
-  underlyingDecimals: BigNumber;
+  underlyingDecimals: bigint;
   underlyingSymbol: string;
   underlyingToken: string;
 }
 
-export function useSwapTokens(outputToken: string, chainId: number) {
+export function useSwapTokens(outputToken: Address, chainId: number) {
   const sdk = useSdk(chainId);
 
   return useQuery<SwapTokenType[] | null>(
@@ -22,7 +22,7 @@ export function useSwapTokens(outputToken: string, chainId: number) {
           return tokens.map((token) => {
             return {
               ...token,
-              underlyingDecimals: BigNumber.from(token.underlyingDecimals)
+              underlyingDecimals: BigInt(token.underlyingDecimals)
             };
           });
         } catch (e) {

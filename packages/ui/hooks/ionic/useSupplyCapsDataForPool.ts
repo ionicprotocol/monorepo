@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export interface SupplyCapsDataForPoolType {
   cTokenAddress: string;
-  nonWhitelistedTotalSupply: BigNumber;
-  supplyCaps: BigNumber;
+  nonWhitelistedTotalSupply: bigint;
+  supplyCaps: bigint;
 }
 
 export const useSupplyCapsDataForPool = (
-  comptrollerAddress?: string,
+  comptrollerAddress?: Address,
   poolChainId?: number
 ) => {
   const sdk = useSdk(poolChainId);
@@ -23,9 +23,9 @@ export const useSupplyCapsDataForPool = (
           const res: SupplyCapsDataForPoolType[] = [];
 
           const supplyCapsData =
-            await sdk.contracts.PoolLens.callStatic.getSupplyCapsDataForPool(
+            await sdk.contracts.PoolLens.read.getSupplyCapsDataForPool([
               comptrollerAddress
-            );
+            ]);
 
           if (supplyCapsData) {
             supplyCapsData[0].map((data, i) => {
@@ -58,8 +58,8 @@ export const useSupplyCapsDataForPool = (
 };
 
 export const useSupplyCapsDataForAsset = (
-  comptrollerAddress?: string,
-  cTokenAddress?: string,
+  comptrollerAddress?: Address,
+  cTokenAddress?: Address,
   poolChainId?: number
 ) => {
   const { data: supplyCapsDataForPool } = useSupplyCapsDataForPool(

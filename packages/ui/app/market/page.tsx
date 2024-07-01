@@ -4,8 +4,6 @@
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
-import { BigNumber } from 'ethers';
-import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { base, mode } from 'viem/chains';
@@ -25,6 +23,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { formatEther, formatUnits } from 'viem';
 
 export default function Market() {
   const searchParams = useSearchParams();
@@ -371,7 +370,7 @@ export default function Market() {
                     borrowAPR={`${
                       currentSdk
                         ?.ratePerBlockToAPY(
-                          val?.borrowRatePerBlock ?? BigNumber.from(0),
+                          val?.borrowRatePerBlock ?? 0n,
                           getBlockTimePerMinuteByChainId(chainId)
                         )
                         .toFixed(2) ?? '0.00'
@@ -410,7 +409,7 @@ export default function Market() {
                     supplyAPR={`${
                       currentSdk
                         ?.ratePerBlockToAPY(
-                          val?.supplyRatePerBlock ?? BigNumber.from(0),
+                          val?.supplyRatePerBlock ?? 0n,
                           getBlockTimePerMinuteByChainId(chainId)
                         )
                         .toFixed(2) ?? '0.00'

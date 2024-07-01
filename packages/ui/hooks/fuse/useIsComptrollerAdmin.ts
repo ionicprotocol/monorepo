@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useIsComptrollerAdmin = (
-  comptrollerAddress?: string,
+  comptrollerAddress?: Address,
   poolChainId?: number
 ): boolean => {
   const { address } = useMultiIonic();
@@ -18,7 +19,7 @@ export const useIsComptrollerAdmin = (
       try {
         const comptroller = sdk.createComptroller(comptrollerAddress);
 
-        return await comptroller.callStatic.admin();
+        return await comptroller.read.admin();
       } catch (e) {
         console.warn(
           `Checking comptroller admin error: `,

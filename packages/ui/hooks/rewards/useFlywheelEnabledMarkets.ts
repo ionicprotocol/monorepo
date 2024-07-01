@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
+export const useFlywheelEnabledMarkets = (flywheelAddress: Address) => {
   const { currentSdk } = useMultiIonic();
 
   return useQuery(

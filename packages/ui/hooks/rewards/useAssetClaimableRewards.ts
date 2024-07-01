@@ -1,14 +1,14 @@
 import type { IonicSdk } from '@ionicprotocol/sdk';
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
-import { constants } from 'ethers';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useAssetClaimableRewards = (
-  marketAddress: string,
-  poolAddress: string,
+  marketAddress: Address,
+  poolAddress: Address,
   poolChainId?: number
 ) => {
   const { address } = useMultiIonic();
@@ -31,7 +31,7 @@ export const useAssetClaimableRewards = (
             address
           );
 
-          return rewards.filter((reward) => reward.amount.gt(constants.Zero));
+          return rewards.filter((reward) => reward.amount > 0n);
         } catch (e) {
           console.warn('Getting market claimable rewards error: ', {
             address,
@@ -55,10 +55,10 @@ export const useAssetClaimableRewards = (
 };
 
 export const getAssetsClaimableRewards = async (
-  poolAddress: string,
-  assetsAddress: string[],
+  poolAddress: Address,
+  assetsAddress: Address[],
   sdk: IonicSdk,
-  address: string
+  address: Address
 ) => {
   const allRewards = await Promise.all(
     assetsAddress.map(async (assetAddress) => {
@@ -93,8 +93,8 @@ export const useAssetsClaimableRewards = ({
   assetsAddress,
   poolChainId
 }: {
-  assetsAddress: string[];
-  poolAddress: string;
+  assetsAddress: Address[];
+  poolAddress: Address;
   poolChainId: number;
 }) => {
   const { address } = useMultiIonic();

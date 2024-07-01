@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { Address } from 'viem';
 
-export const useTotalReserves = (cTokenAddress?: string, chainId?: number) => {
+export const useTotalReserves = (cTokenAddress?: Address, chainId?: number) => {
   const sdk = useSdk(chainId);
 
   return useQuery(
@@ -12,7 +13,7 @@ export const useTotalReserves = (cTokenAddress?: string, chainId?: number) => {
         try {
           const cToken = sdk.createICErc20(cTokenAddress);
           const [totalReserves] = await Promise.all([
-            cToken.callStatic.totalReserves()
+            cToken.read.totalReserves()
           ]);
 
           return totalReserves;

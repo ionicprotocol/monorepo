@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { formatUnits } from 'viem';
 
 export const useBorrowLimitTotal = (
   assets: MarketData[],
@@ -44,9 +44,7 @@ export const useBorrowLimitTotal = (
         ) {
           _maxBorrow +=
             asset.supplyBalanceNative *
-            parseFloat(
-              utils.formatUnits(asset.collateralFactor, DEFAULT_DECIMALS)
-            ) *
+            parseFloat(formatUnits(asset.collateralFactor, DEFAULT_DECIMALS)) *
             usdPrice;
         }
       }

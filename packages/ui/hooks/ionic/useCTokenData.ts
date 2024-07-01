@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const useCTokenData = (
-  comptrollerAddress?: string,
-  cTokenAddress?: string,
+  comptrollerAddress?: Address,
+  cTokenAddress?: Address,
   poolChainId?: number
 ) => {
   const sdk = useSdk(poolChainId);
@@ -25,13 +26,13 @@ export const useCTokenData = (
             supplyCap,
             borrowCap
           ] = await Promise.all([
-            cToken.callStatic.adminFeeMantissa(),
-            cToken.callStatic.reserveFactorMantissa(),
-            cToken.callStatic.interestRateModel(),
-            cToken.callStatic.decimals(),
-            comptroller.callStatic.markets(cTokenAddress),
-            comptroller.callStatic.supplyCaps(cTokenAddress),
-            comptroller.callStatic.borrowCaps(cTokenAddress)
+            cToken.read.adminFeeMantissa(),
+            cToken.read.reserveFactorMantissa(),
+            cToken.read.interestRateModel(),
+            cToken.read.decimals(),
+            comptroller.read.markets([cTokenAddress]),
+            comptroller.read.supplyCaps([cTokenAddress]),
+            comptroller.read.borrowCaps([cTokenAddress])
           ]);
 
           return {

@@ -1,8 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
-export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
+export const useOracle = (
+  underlyingAddress?: Address,
+  poolChainId?: number
+) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
@@ -10,8 +14,11 @@ export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
     async () => {
       if (underlyingAddress && sdk) {
         try {
-          const mpo = sdk.createMasterPriceOracle(sdk.provider);
-          const oracle = await mpo.callStatic.oracles(underlyingAddress);
+          const mpo = sdk.createMasterPriceOracle(
+            sdk.publicClient,
+            sdk.walletClient
+          );
+          const oracle = await mpo.read.oracles([underlyingAddress]);
 
           return oracle;
         } catch (e) {

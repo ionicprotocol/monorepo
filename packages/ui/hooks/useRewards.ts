@@ -3,7 +3,7 @@ import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/F
 import type { FlywheelReward, Reward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { utils } from 'ethers';
+import { Address, formatUnits } from 'viem';
 
 // import type { RewardsResponse } from '../pages/api/rewards';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,10 +22,7 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
-export const fetchFlywheelRewards = async (
-  comptroller: string,
-  sdk: IonicSdk
-) => {
+export const fetchFlywheelRewards = async (comptroller: Address, sdk: IonicSdk) => {
   let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
   let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
 
@@ -51,7 +48,7 @@ export const fetchFlywheelRewards = async (
   return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
 };
 
-export function useFlywheelRewards(comptroller?: string, chainId?: number) {
+export function useFlywheelRewards(comptroller?: Address, chainId?: number) {
   const sdk = useSdk(chainId);
 
   return useQuery(
@@ -126,7 +123,7 @@ export const fetchRewards = async (
             ) {
               allRewards.push({
                 apy: info.formattedAPR
-                  ? parseFloat(utils.formatUnits(info.formattedAPR, 18))
+                  ? parseFloat(formatUnits(info.formattedAPR, 18))
                   : undefined,
                 flywheel: info.flywheel,
                 token: info.rewardToken,
@@ -188,7 +185,7 @@ export function useRewardsForMarket({
 }: {
   asset: Pick<MarketData, 'cToken' | 'plugin'>;
   chainId: number;
-  poolAddress: string;
+  poolAddress: Address;
 }) {
   const { data: flywheelRewards } = useFlywheelRewards(poolAddress, chainId);
 

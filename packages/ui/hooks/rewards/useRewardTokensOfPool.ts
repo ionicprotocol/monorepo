@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useRewardTokensOfPool = (
-  poolAddress?: string,
+  poolAddress?: Address,
   chainId?: number
 ) => {
   const sdk = useSdk(chainId);

@@ -2,10 +2,10 @@ import type {
   NativePricedIonicAsset,
   IonicPoolData as SDKFusePoolData
 } from '@ionicprotocol/types';
-import type { BigNumber } from 'ethers';
+import { Address } from 'viem';
 
-export type MidasApiTokenData = {
-  address: string;
+export type IonicApiTokenData = {
+  address: Address;
   color: string;
   decimals: number;
   logoURL: string;
@@ -14,11 +14,11 @@ export type MidasApiTokenData = {
   symbol: string;
 };
 
-export type TokensDataMap = { [address: string]: MidasApiTokenData };
+export type TokensDataMap = { [address: Address]: IonicApiTokenData };
 
 export interface MarketData extends NativePricedIonicAsset {
   borrowBalanceFiat: number;
-  exchangeRate: BigNumber;
+  exchangeRate: bigint;
   liquidityFiat: number;
   netSupplyBalanceFiat: number;
   supplyBalanceFiat: number;

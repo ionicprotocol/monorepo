@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export function useMaxDepositVault(vault: string) {
+export function useMaxDepositVault(vault: Address) {
   const { currentSdk, address } = useMultiIonic();
 
   return useQuery(

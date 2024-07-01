@@ -1,12 +1,18 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { type BigNumber, constants } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { OpenPosition } from 'types/dist';
 import { useBalance, useChainId } from 'wagmi';
+import {
+  Address,
+  formatEther,
+  formatUnits,
+  maxUint256,
+  parseEther,
+  parseUnits
+} from 'viem';
 
 import Modal from '../Modal';
 import Range from '../Range';
@@ -30,11 +36,12 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { parse } from 'path';
 
 export type LoopProps = {
-  borrowableAssets: string[];
+  borrowableAssets: Address[];
   closeLoop: () => void;
-  comptrollerAddress: string;
+  comptrollerAddress: Address;
   currentBorrowAsset?: MarketData;
   isOpen: boolean;
   selectedCollateralAsset: MarketData;
@@ -220,7 +227,7 @@ function SupplyActions({
     if (utilizationPercentage >= 100) {
       setAmount(
         formatUnits(
-          maxSupplyAmount?.bigNumber ?? '0',
+          maxSupplyAmount?.bigNumber ?? 0n,
           parseInt(selectedCollateralAsset.underlyingDecimals.toString())
         )
       );
@@ -290,7 +297,7 @@ function SupplyActions({
             isLoading={isLoadingMaxSupply}
             mainText="AMOUNT TO DEPOSIT"
             max={formatUnits(
-              maxSupplyAmount?.bigNumber ?? '0',
+              maxSupplyAmount?.bigNumber ?? 0n,
               selectedCollateralAsset.underlyingDecimals
             )}
             selectedMarketData={selectedCollateralAsset}
@@ -456,7 +463,7 @@ export default function Loop({
 }: LoopProps) {
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
-  const amountAsBInt = useMemo<BigNumber>(
+  const amountAsBInt = useMemo<bigint>(
     () => parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals),
     [amount, selectedCollateralAsset]
   );
@@ -477,7 +484,7 @@ export default function Loop({
     );
   }, [positions, selectedBorrowAsset, selectedCollateralAsset]);
   const { data: currentPositionLeverageRatio } = useCurrentLeverageRatio(
-    currentPosition?.address ?? '',
+    currentPosition?.address ?? ('' as Address),
     chainId
   );
   const collateralsAPR = usePositionsSupplyApy(
@@ -486,10 +493,10 @@ export default function Loop({
   );
   const { data: positionInfo, isFetching: isFetchingPositionInfo } =
     usePositionInfo(
-      currentPosition?.address ?? '',
+      currentPosition?.address ?? ('' as Address),
       collateralsAPR &&
         collateralsAPR[selectedCollateralAsset.cToken] !== undefined
-        ? parseUnits(
+        ? parseEther(
             collateralsAPR[selectedCollateralAsset.cToken].totalApy.toFixed(18)
           )
         : undefined,
@@ -498,12 +505,12 @@ export default function Loop({
   const { data: positionNetApy, isFetching: isFetchingPositionNetApy } =
     useGetNetApy(
       selectedCollateralAsset.cToken,
-      selectedBorrowAsset?.cToken ?? '',
+      selectedBorrowAsset?.cToken ?? ('' as Address),
       positionInfo?.equityAmount,
       currentPositionLeverageRatio,
       collateralsAPR &&
         collateralsAPR[selectedCollateralAsset.cToken] !== undefined
-        ? parseUnits(
+        ? parseEther(
             collateralsAPR[selectedCollateralAsset.cToken].totalApy.toFixed(18)
           )
         : undefined,
@@ -512,9 +519,9 @@ export default function Loop({
   const [currentLeverage, setCurrentLeverage] = useState<number>(1);
   const { data: borrowApr } = useGetPositionBorrowApr({
     amount: amountAsBInt,
-    borrowMarket: selectedBorrowAsset?.cToken ?? '',
+    borrowMarket: selectedBorrowAsset?.cToken ?? ('' as Address),
     collateralMarket: selectedCollateralAsset.cToken,
-    leverage: parseUnits(currentLeverage.toString())
+    leverage: parseEther(currentLeverage.toString())
   });
 
   const {
@@ -532,28 +539,28 @@ export default function Loop({
   } = useMemo(() => {
     const selectedCollateralAssetUSDPrice =
       (usdPrice ?? 0) *
-      parseFloat(formatUnits(selectedCollateralAsset.underlyingPrice));
+      parseFloat(formatEther(selectedCollateralAsset.underlyingPrice));
     const selectedBorrowAssetUSDPrice =
       usdPrice && selectedBorrowAsset
         ? (usdPrice ?? 0) *
-          parseFloat(formatUnits(selectedBorrowAsset.underlyingPrice))
+          parseFloat(formatEther(selectedBorrowAsset.underlyingPrice))
         : 0;
     const positionValue =
-      Number(formatUnits(positionInfo?.positionSupplyAmount ?? '0')) *
+      Number(formatEther(positionInfo?.positionSupplyAmount ?? 0n)) *
       (selectedCollateralAssetUSDPrice ?? 0);
     const liquidationValue =
-      positionValue * Number(formatUnits(positionInfo?.safetyBuffer ?? '0'));
+      positionValue * Number(formatEther(positionInfo?.safetyBuffer ?? 0n));
     const healthRatio = positionValue / liquidationValue - 1;
     const borrowedToCollateralRatio =
       selectedBorrowAssetUSDPrice / selectedCollateralAssetUSDPrice;
     const borrowedAssetAmount = Number(
       formatUnits(
-        positionInfo?.debtAmount ?? '0',
-        currentPosition?.borrowable.underlyingDecimals
+        positionInfo?.debtAmount ?? 0n,
+        currentPosition?.borrowable.underlyingDecimals ?? 18
       )
     );
     const projectedCollateral = formatUnits(
-      positionInfo?.equityAmount.add(amountAsBInt) ?? '0',
+      positionInfo?.equityAmount ?? 0n + amountAsBInt,
       selectedCollateralAsset.underlyingDecimals
     );
     const projectedCollateralValue =
@@ -665,25 +672,29 @@ export default function Loop({
     try {
       const token = currentSdk.getEIP20TokenInstance(
         selectedCollateralAsset.underlyingToken,
-        currentSdk.signer
+        currentSdk.publicClient as any,
+        currentSdk.walletClient
       );
       const factory = currentSdk.createLeveredPositionFactory();
-      const hasApprovedEnough = (
-        await token.callStatic.allowance(address, factory.address)
-      ).gte(amountAsBInt);
+      const hasApprovedEnough =
+        (await token.read.allowance([address, factory.address])) >=
+        amountAsBInt;
 
       if (!hasApprovedEnough) {
-        const tx = await token.approve(factory.address, constants.MaxUint256);
+        const tx = await token.write.approve([factory.address, maxUint256], {
+          account: currentSdk.walletClient.account!.address,
+          chain: currentSdk.walletClient.chain
+        });
 
         upsertTransactionStep({
           index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
-            txHash: tx.hash
+            txHash: tx
           }
         });
 
-        await tx.wait();
+        await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
       }
 
       upsertTransactionStep({
@@ -698,21 +709,21 @@ export default function Loop({
 
       const tx = await currentSdk.createAndFundPositionAtRatio(
         selectedCollateralAsset.cToken,
-        selectedBorrowAsset?.cToken ?? '',
+        selectedBorrowAsset?.cToken ?? ('' as Address),
         selectedCollateralAsset.underlyingToken,
         amountAsBInt,
-        parseUnits(currentLeverage.toString())
+        parseEther(currentLeverage.toString())
       );
 
       upsertTransactionStep({
         index: currentTransactionStep,
         transactionStep: {
           ...transactionSteps[currentTransactionStep],
-          txHash: tx.hash
+          txHash: tx
         }
       });
 
-      await tx.wait();
+      await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
 
       setAmount('0');
 
@@ -752,7 +763,7 @@ export default function Loop({
 
     try {
       const tx = await currentSdk?.adjustLeverageRatio(
-        currentPosition?.address ?? '',
+        currentPosition?.address ?? ('' as Address),
         currentLeverage
       );
 
@@ -764,11 +775,11 @@ export default function Loop({
         index: currentTransactionStep,
         transactionStep: {
           ...transactionSteps[currentTransactionStep],
-          txHash: tx.hash
+          txHash: tx
         }
       });
 
-      await tx.wait();
+      await currentSdk?.publicClient.waitForTransactionReceipt({ hash: tx });
 
       upsertTransactionStep({
         index: currentTransactionStep,
@@ -816,27 +827,31 @@ export default function Loop({
     try {
       const token = currentSdk.getEIP20TokenInstance(
         selectedCollateralAsset.underlyingToken,
-        currentSdk.signer
+        currentSdk.publicClient as any,
+        currentSdk.walletClient
       );
-      const hasApprovedEnough = (
-        await token.callStatic.allowance(address, currentPosition.address)
-      ).gte(amountAsBInt);
+      const hasApprovedEnough =
+        (await token.read.allowance([address, currentPosition.address])) >=
+        amountAsBInt;
 
       if (!hasApprovedEnough) {
-        const tx = await token.approve(
-          currentPosition.address,
-          constants.MaxUint256
+        const tx = await token.write.approve(
+          [currentPosition.address, maxUint256],
+          {
+            account: currentSdk.walletClient.account!.address,
+            chain: currentSdk.walletClient.chain
+          }
         );
 
         upsertTransactionStep({
           index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
-            txHash: tx.hash
+            txHash: tx
           }
         });
 
-        await tx.wait();
+        await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
       }
 
       upsertTransactionStep({
@@ -859,11 +874,11 @@ export default function Loop({
         index: currentTransactionStep,
         transactionStep: {
           ...transactionSteps[currentTransactionStep],
-          txHash: tx.hash
+          txHash: tx
         }
       });
 
-      await tx.wait();
+      await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
 
       setAmount('0');
 
@@ -903,7 +918,7 @@ export default function Loop({
 
     try {
       const tx = await currentSdk?.closeLeveredPosition(
-        currentPosition?.address ?? ''
+        currentPosition?.address ?? ('' as Address)
       );
 
       if (!tx) {
@@ -914,11 +929,11 @@ export default function Loop({
         index: currentTransactionStep,
         transactionStep: {
           ...transactionSteps[currentTransactionStep],
-          txHash: tx.hash
+          txHash: tx
         }
       });
 
-      await tx.wait();
+      await currentSdk?.publicClient.waitForTransactionReceipt({ hash: tx });
 
       upsertTransactionStep({
         index: currentTransactionStep,
@@ -1043,8 +1058,8 @@ export default function Loop({
               nativeAmount={
                 currentPosition
                   ? formatUnits(
-                      positionInfo?.equityAmount ?? '0',
-                      currentPosition.collateral.underlyingDecimals
+                      positionInfo?.equityAmount ?? 0n,
+                      Number(currentPosition.collateral.underlyingDecimals)
                     )
                   : '0'
               }
@@ -1053,7 +1068,7 @@ export default function Loop({
               usdAmount={millify(
                 Number(
                   formatUnits(
-                    positionInfo?.equityAmount ?? '0',
+                    positionInfo?.equityAmount ?? 0n,
                     selectedCollateralAsset.underlyingDecimals
                   )
                 ) * selectedCollateralAssetUSDPrice
@@ -1066,13 +1081,13 @@ export default function Loop({
 
             <LoopInfoDisplay
               aprPercentage={`
-                  ${Number(formatUnits(borrowApr ?? '0')).toFixed(2)}
+                  ${Number(formatEther(borrowApr ?? 0n)).toFixed(2)}
                   %
               `}
               aprText={'Borrow APR'}
               isLoading={isFetchingPositionInfo}
               nativeAmount={borrowedAssetAmount.toFixed(
-                selectedBorrowAsset?.underlyingDecimals.toNumber() ?? 18
+                selectedBorrowAsset?.underlyingDecimals ?? 18
               )}
               symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
               title={'My Borrow'}

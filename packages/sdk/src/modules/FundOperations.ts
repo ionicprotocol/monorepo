@@ -1,6 +1,6 @@
 import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
-import { Address, erc20Abi, getContract, maxUint256, parseUnits } from "viem";
+import { Address, erc20Abi, getContract, Hex, maxUint256, parseUnits } from "viem";
 
 import { icErc20Abi, ionicComptrollerAbi } from "../generated";
 
@@ -12,16 +12,75 @@ export interface IFundOperations {
     amount: bigint,
     address: Address
   ): Promise<{ gasWEI: bigint; gasPrice: bigint; estimatedGas: bigint }>;
-  approve(cTokenAddress: Address, underlyingTokenAddress: Address): Promise<any>;
-  enterMarkets(cTokenAddress: Address, comptrollerAddress: Address): Promise<any>;
-  mint(cTokenAddress: Address, amount: bigint): Promise<any>;
-  repay(cTokenAddress: Address, isRepayingMax: boolean, amount: bigint): Promise<any>;
-  borrow(cTokenAddress: Address, amount: bigint): Promise<any>;
-  withdraw(cTokenAddress: Address, amount: bigint): Promise<any>;
-  swap(inputToken: Address, amount: bigint, outputToken: Address): Promise<any>;
-  approveLiquidatorsRegistry(underlying: Address): Promise<any>;
-  getSwapTokens(outputToken: Address): Promise<any>;
-  getAmountOutAndSlippageOfSwap(inputToken: Address, amount: bigint, outputToken: Address): Promise<any>;
+  approve(cTokenAddress: Address, underlyingTokenAddress: Address): Promise<Hex>;
+  enterMarkets(cTokenAddress: Address, comptrollerAddress: Address): Promise<Hex>;
+  mint(
+    cTokenAddress: Address,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  repay(
+    cTokenAddress: Address,
+    isRepayingMax: boolean,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  borrow(
+    cTokenAddress: Address,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  withdraw(
+    cTokenAddress: Address,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  swap(inputToken: Address, amount: bigint, outputToken: Address): Promise<Hex>;
+  approveLiquidatorsRegistry(underlying: Address): Promise<Hex>;
+  getSwapTokens(outputToken: Address): Promise<
+    {
+      underlyingToken: `0x${string}`;
+      underlyingSymbol: string;
+      underlyingDecimals: number;
+    }[]
+  >;
+  getAmountOutAndSlippageOfSwap(
+    inputToken: Address,
+    amount: bigint,
+    outputToken: Address
+  ): Promise<{ outputAmount: bigint; slippage: bigint }>;
 }
 
 export function withFundOperations<TBase extends CreateContractsModule = CreateContractsModule>(
@@ -218,11 +277,12 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
     async getAmountOutAndSlippageOfSwap(inputToken: Address, amount: bigint, outputToken: Address) {
       const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
 
-      return (
+      const [outputAmount, slippage] = (
         await iLiquidatorsRegistry.simulate.amountOutAndSlippageOfSwap([inputToken, amount, outputToken], {
           account: this.walletClient.account!.address
         })
       ).result;
+      return { outputAmount, slippage };
     }
   };
 }

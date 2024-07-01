@@ -1,13 +1,14 @@
 import type { Roles } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '../ionic/useSdk';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export const useIsAuth = (
-  pool?: string,
-  market?: string,
+  pool?: Address,
+  market?: Address,
   role?: Roles,
   chainId?: number
 ) => {

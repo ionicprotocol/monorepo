@@ -1,12 +1,10 @@
 import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
-import { constants } from 'ethers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 interface AllRewardsType {
-  amount: BigNumber;
+  amount: bigint;
   chainId: SupportedChains;
   rewardToken: string;
 }
@@ -35,7 +33,7 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
                   return [];
                 });
               rewards.map((reward) => {
-                if (reward.amount.gt(constants.Zero)) {
+                if (reward.amount > 0n) {
                   allRewards.push({
                     amount: reward.amount,
                     chainId,

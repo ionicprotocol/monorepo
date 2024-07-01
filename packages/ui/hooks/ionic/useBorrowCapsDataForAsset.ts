@@ -1,28 +1,37 @@
 import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
-export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: string[]) => {
+export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: Address[]) => {
   const cTokenToBorrowCaps: {
-    [cToken: string]: {
-      borrowCapsPerCollateral: BigNumber[];
-      collateral: string[];
+    [cToken: Address]: {
+      borrowCapsPerCollateral: bigint[];
+      collateral: Address[];
       collateralBlacklisted: boolean[];
-      nonWhitelistedTotalBorrows: BigNumber;
-      totalBorrowCap: BigNumber;
+      nonWhitelistedTotalBorrows: bigint;
+      totalBorrowCap: bigint;
     };
   } = {};
 
   await Promise.all(
     cTokens.map(async (cToken) => {
-      const borrowCaps =
-        await sdk.contracts.PoolLens.callStatic.getBorrowCapsDataForAsset(
-          cToken
-        );
+      const [
+        collateral,
+        borrowCapsPerCollateral,
+        collateralBlacklisted,
+        totalBorrowCap,
+        nonWhitelistedTotalBorrows
+      ] = await sdk.contracts.PoolLens.read.getBorrowCapsDataForAsset([cToken]);
 
-      cTokenToBorrowCaps[cToken] = borrowCaps;
+      cTokenToBorrowCaps[cToken] = {
+        collateral: collateral as Address[],
+        borrowCapsPerCollateral: borrowCapsPerCollateral as bigint[],
+        collateralBlacklisted: collateralBlacklisted as boolean[],
+        totalBorrowCap,
+        nonWhitelistedTotalBorrows
+      };
     })
   );
 
@@ -30,7 +39,7 @@ export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: string[]) => {
 };
 
 export const useBorrowCapsDataForAsset = (
-  cTokenAddress?: string,
+  cTokenAddress?: Address,
   poolChainId?: number
 ) => {
   const sdk = useSdk(poolChainId);
@@ -62,10 +71,7 @@ export const useBorrowCapsDataForAsset = (
   );
 };
 
-export const useBorrowCapsForAssets = (
-  cTokens?: string[],
-  poolChainId?: number
-) => {
+export const useBorrowCapsForAssets = (cTokens?: Address[], poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(

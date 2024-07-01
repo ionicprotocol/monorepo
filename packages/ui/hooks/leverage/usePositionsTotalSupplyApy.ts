@@ -1,8 +1,6 @@
-import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { getAnkrBNBApr } from '@ui/hooks/useAnkrBNBApr';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -38,7 +36,6 @@ export const usePositionsTotalSupplyApy = (
             const sdk = getSdk(chainId);
 
             if (sdk && asset) {
-              const ankrBNBApr = getAnkrBNBApr(chainId, sdk);
               const apy =
                 sdk.ratePerBlockToAPY(
                   asset.supplyRatePerBlock,
@@ -46,13 +43,6 @@ export const usePositionsTotalSupplyApy = (
                 ) / 100;
 
               let marketTotalAPY = apy;
-
-              if (
-                asset.underlyingSymbol === assetSymbols.ankrBNB &&
-                ankrBNBApr
-              ) {
-                marketTotalAPY += Number(ankrBNBApr) / 100;
-              }
 
               if (allRewards && allRewards[asset.cToken]) {
                 marketTotalAPY += allRewards[asset.cToken].reduce(

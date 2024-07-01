@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
 export const useExtraPoolInfo = (
-  comptrollerAddress?: string,
+  comptrollerAddress?: Address,
   poolChainId?: number
 ) => {
   const { address } = useMultiIonic();
@@ -29,21 +30,21 @@ export const useExtraPoolInfo = (
           pendingAdmin,
           oracle
         ] = await Promise.all([
-          sdk.contracts.PoolLensSecondary.callStatic.getPoolOwnership(
+          sdk.contracts.PoolLensSecondary.read.getPoolOwnership([
             comptrollerAddress
-          ),
-          comptroller.callStatic.closeFactorMantissa(),
-          comptroller.callStatic.liquidationIncentiveMantissa(),
-          comptroller.callStatic
+          ]),
+          comptroller.read.closeFactorMantissa(),
+          comptroller.read.liquidationIncentiveMantissa(),
+          comptroller.read
             .enforceWhitelist()
             .then((x: boolean) => x)
             .catch(() => false),
-          comptroller.callStatic
+          comptroller.read
             .getWhitelist()
-            .then((x: string[]) => x)
+            .then((x: readonly Address[]) => x)
             .catch(() => []),
-          comptroller.callStatic.pendingAdmin(),
-          comptroller.callStatic
+          comptroller.read.pendingAdmin(),
+          comptroller.read
             .oracle()
             .then((oracleAddress) => sdk.getPriceOracle(oracleAddress))
         ]);

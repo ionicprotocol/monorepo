@@ -5,7 +5,9 @@ import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 export const useTotalSupplyAndBorrowBalance = () => {
   const enabledChains = useEnabledChains();
-  const { allPools } = useCrossPools([...enabledChains]);
+  const { allPools } = useCrossPools([
+    ...enabledChains.map((chain) => chain.id)
+  ]);
 
   return useQuery(
     [

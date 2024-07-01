@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber, BigNumberish } from 'ethers';
-import { constants, utils } from 'ethers';
+import { Address, formatEther, maxUint256 } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 
-export const useHealthFactor = (pool?: string, chainId?: number) => {
+export const useHealthFactor = (pool?: Address, chainId?: number) => {
   const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
 
@@ -15,11 +14,11 @@ export const useHealthFactor = (pool?: string, chainId?: number) => {
       if (sdk && pool && address) {
         const healthFactor = await sdk.getHealthFactor(address, pool);
 
-        if (healthFactor.eq(constants.MaxUint256)) {
+        if (healthFactor === maxUint256) {
           return '-1';
         }
 
-        return Number(utils.formatUnits(healthFactor)).toFixed(2);
+        return Number(formatEther(healthFactor)).toFixed(2);
       }
 
       return null;
@@ -31,18 +30,18 @@ export const useHealthFactor = (pool?: string, chainId?: number) => {
 };
 
 export const useHealthFactorPrediction = (
-  pool: string,
-  account: string,
-  cTokenModify: string,
-  redeemTokens: BigNumberish,
-  borrowAmount: BigNumberish,
-  repayAmount: BigNumberish
+  pool: Address,
+  account: Address,
+  cTokenModify: Address,
+  redeemTokens: bigint,
+  borrowAmount: bigint,
+  repayAmount: bigint
 ) => {
   const { address, currentSdk } = useMultiIonic();
 
   return useQuery({
     enabled: !!address && !!currentSdk,
-    queryFn: async (): Promise<BigNumber> => {
+    queryFn: async (): Promise<bigint> => {
       if (!currentSdk || !address) {
         throw new Error('Error while predicting health factor!');
       }

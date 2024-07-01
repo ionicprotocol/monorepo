@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
+import { Address, formatUnits } from 'viem';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -13,13 +12,13 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 export interface Cap {
   tokenCap: number;
   type: 'borrow' | 'supply';
-  underlyingCap: BigNumber;
+  underlyingCap: bigint;
   usdCap: number;
 }
 
 interface UseBorrowCapParams {
   chainId: number;
-  comptroller: string;
+  comptroller: Address;
   market: MarketData;
 }
 export const useBorrowCap = ({
@@ -66,28 +65,23 @@ export const useBorrowCap = ({
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [borrowCap, isBorrowCapWhitelist] = await Promise.all([
-            comptroller.callStatic.borrowCaps(market.cToken),
-            comptroller.callStatic.isBorrowCapWhitelisted(
-              market.cToken,
-              address
-            )
+            comptroller.read.borrowCaps([market.cToken]),
+            comptroller.read.isBorrowCapWhitelisted([market.cToken, address])
           ]);
 
-          if (isBorrowCapWhitelist || borrowCap.eq(constants.Zero)) {
+          if (isBorrowCapWhitelist || borrowCap === 0n) {
             return null;
           } else {
-            const whitelistedTotalBorrows = market.totalBorrow.sub(
-              borrowCapsDataForAsset.nonWhitelistedTotalBorrows
-            );
-            const underlyingCap = borrowCap.add(whitelistedTotalBorrows);
+            const whitelistedTotalBorrows =
+              market.totalBorrow -
+              borrowCapsDataForAsset.nonWhitelistedTotalBorrows;
+            const underlyingCap = borrowCap + whitelistedTotalBorrows;
             const tokenCap = Number(
-              utils.formatUnits(underlyingCap, market.underlyingDecimals)
+              formatUnits(underlyingCap, market.underlyingDecimals)
             );
             const usdCap =
               tokenCap *
-              Number(
-                utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)
-              ) *
+              Number(formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
 
             return { tokenCap, type: 'borrow', underlyingCap, usdCap };

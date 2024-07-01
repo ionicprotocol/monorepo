@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export type LoopMarketData = {
-  [key: string]: string[];
+  [key: Address]: Address[];
 };
 
-export const useLoopMarkets = (collateralMarkets: string[]) => {
+export const useLoopMarkets = (collateralMarkets: Address[]) => {
   const { currentSdk } = useMultiIonic();
 
   return useQuery({
@@ -18,13 +19,14 @@ export const useLoopMarkets = (collateralMarkets: string[]) => {
       const factory = currentSdk?.createLeveredPositionFactory();
       const markets = await Promise.all(
         collateralMarkets.map((collateralMarket) =>
-          factory.callStatic.getBorrowableMarketsByCollateral(collateralMarket)
+          factory.read.getBorrowableMarketsByCollateral([collateralMarket])
         )
       );
       const data: LoopMarketData = {};
 
       collateralMarkets.forEach(
-        (collateralMarket, i) => (data[collateralMarket] = markets[i])
+        (collateralMarket, i) =>
+          (data[collateralMarket] = markets[i] as Address[])
       );
 
       return data;

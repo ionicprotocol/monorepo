@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 export type UseGetPositionBorrowAprParams = {
-  amount: BigNumber;
-  borrowMarket: string;
-  collateralMarket: string;
-  leverage: BigNumber;
+  amount: bigint;
+  borrowMarket: Address;
+  collateralMarket: Address;
+  leverage: bigint;
 };
 
 export const useGetPositionBorrowApr = ({

@@ -2,13 +2,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
-import type { BigNumber } from 'ethers';
-import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
 import { useChainId } from 'wagmi';
+import { Address, formatEther, formatUnits, parseUnits } from 'viem';
 
 import ResultHandler from '../ResultHandler';
 
@@ -59,7 +58,7 @@ export enum HFPStatus {
 
 interface IPopup {
   closePopup: () => void;
-  comptrollerAddress: string;
+  comptrollerAddress: Address;
   loopMarkets?: LoopMarketData;
   mode?: PopupMode;
   selectedMarketData: MarketData;
@@ -91,7 +90,7 @@ const Popup = ({
     () =>
       parseFloat(
         formatUnits(
-          supplyCap?.supplyCaps ?? '0',
+          supplyCap?.supplyCaps ?? 0n,
           selectedMarketData.underlyingDecimals
         )
       ),
@@ -119,7 +118,7 @@ const Popup = ({
     () =>
       parseFloat(
         formatUnits(
-          borrowCap?.totalBorrowCap ?? '0',
+          borrowCap?.totalBorrowCap ?? 0n,
           selectedMarketData.underlyingDecimals
         )
       ),
@@ -168,7 +167,7 @@ const Popup = ({
   );
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
-  const amountAsBInt = useMemo<BigNumber>(
+  const amountAsBInt = useMemo<bigint>(
     () =>
       parseUnits(
         amount?.toString() ?? '0',
@@ -184,7 +183,7 @@ const Popup = ({
     isLoading: isLoadingPredictedHealthFactor
   } = useHealthFactorPrediction(
     comptrollerAddress,
-    address ?? '',
+    address ?? ('' as Address),
     selectedMarketData.cToken,
     active === PopupMode.WITHDRAW
       ? amountAsBInt
@@ -291,7 +290,7 @@ const Popup = ({
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
   const [enableCollateral, setEnableCollateral] = useState<boolean>(
-    selectedMarketData.membership && selectedMarketData.supplyBalance.gt('0')
+    selectedMarketData.membership && selectedMarketData.supplyBalance > 0n
   );
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [loopOpen, setLoopOpen] = useState<boolean>(false);
@@ -356,7 +355,7 @@ const Popup = ({
       case PopupMode.WITHDRAW: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxWithdrawAmount && maxWithdrawAmount.gt(0)
+          (maxWithdrawAmount && maxWithdrawAmount > 0n
             ? Number(formatEther(maxWithdrawAmount))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -378,7 +377,7 @@ const Popup = ({
       case PopupMode.REPAY: {
         const div =
           Number(formatEther(amountAsBInt)) /
-          (maxRepayAmount && maxRepayAmount.gt(0)
+          (maxRepayAmount && maxRepayAmount > 0n
             ? Number(formatEther(maxRepayAmount))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
@@ -443,7 +442,7 @@ const Popup = ({
     if (utilizationPercentage >= 100) {
       setAmount(
         formatUnits(
-          maxSupplyAmount?.bigNumber ?? '0',
+          maxSupplyAmount?.bigNumber ?? 0n,
           parseInt(selectedMarketData.underlyingDecimals.toString())
         )
       );
@@ -462,7 +461,7 @@ const Popup = ({
     if (utilizationPercentage >= 100) {
       setAmount(
         formatUnits(
-          maxWithdrawAmount ?? '0',
+          maxWithdrawAmount ?? 0n,
           parseInt(selectedMarketData.underlyingDecimals.toString())
         )
       );
@@ -475,7 +474,7 @@ const Popup = ({
         (utilizationPercentage / 100) *
         parseFloat(
           formatUnits(
-            maxWithdrawAmount ?? '0',
+            maxWithdrawAmount ?? 0n,
             selectedMarketData.underlyingDecimals
           ) ?? '0.0'
         )
@@ -487,7 +486,7 @@ const Popup = ({
     if (utilizationPercentage >= 100) {
       setAmount(
         formatUnits(
-          maxBorrowAmount?.bigNumber ?? '0',
+          maxBorrowAmount?.bigNumber ?? 0n,
           parseInt(selectedMarketData.underlyingDecimals.toString())
         )
       );
@@ -506,7 +505,7 @@ const Popup = ({
     if (utilizationPercentage >= 100) {
       setAmount(
         formatUnits(
-          maxRepayAmount ?? '0',
+          maxRepayAmount ?? 0n,
           parseInt(selectedMarketData.underlyingDecimals.toString())
         )
       );
@@ -519,7 +518,7 @@ const Popup = ({
         (utilizationPercentage / 100) *
         parseFloat(
           formatUnits(
-            maxRepayAmount ?? '0',
+            maxRepayAmount ?? 0n,
             selectedMarketData.underlyingDecimals
           ) ?? '0.0'
         )
@@ -558,9 +557,9 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amountAsBInt.gt('0') &&
+      amountAsBInt > 0n &&
       maxSupplyAmount &&
-      amountAsBInt.lte(maxSupplyAmount.bigNumber)
+      amountAsBInt <= maxSupplyAmount.bigNumber
     ) {
       let currentTransactionStep = 0;
       addStepsForAction([
@@ -588,11 +587,12 @@ const Popup = ({
       try {
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
-          currentSdk.signer
+          currentSdk.publicClient as any,
+          currentSdk.walletClient
         );
-        const hasApprovedEnough = (
-          await token.callStatic.allowance(address, selectedMarketData.cToken)
-        ).gte(amountAsBInt);
+        const hasApprovedEnough =
+          (await token.read.allowance([address, selectedMarketData.cToken])) >=
+          amountAsBInt;
 
         if (!hasApprovedEnough) {
           const tx = await currentSdk.approve(
@@ -604,11 +604,11 @@ const Popup = ({
             index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
-              txHash: tx.hash
+              txHash: tx
             }
           });
 
-          await tx.wait();
+          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
         }
 
         upsertTransactionStep({
@@ -631,11 +631,11 @@ const Popup = ({
             index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
-              txHash: tx.hash
+              txHash: tx
             }
           });
 
-          await tx.wait();
+          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
 
           upsertTransactionStep({
             index: currentTransactionStep,
@@ -663,11 +663,14 @@ const Popup = ({
           index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
-            txHash: tx?.hash
+            txHash: tx
           }
         });
 
-        await tx?.wait();
+        tx &&
+          (await currentSdk.publicClient.waitForTransactionReceipt({
+            hash: tx
+          }));
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -700,7 +703,7 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amountAsBInt.gt('0') &&
+      amountAsBInt > 0n &&
       maxWithdrawAmount
     ) {
       const currentTransactionStep = 0;
@@ -736,11 +739,14 @@ const Popup = ({
           index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
-            txHash: tx?.hash
+            txHash: tx
           }
         });
 
-        await tx?.wait();
+        tx &&
+          (await currentSdk.publicClient.waitForTransactionReceipt({
+            hash: tx
+          }));
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -775,11 +781,11 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amountAsBInt.gt('0') &&
+      amountAsBInt > 0n &&
       minBorrowAmount &&
-      amountAsBInt.gte(minBorrowAmount.minBorrowAsset ?? '0') &&
+      amountAsBInt >= (minBorrowAmount.minBorrowAsset ?? 0n) &&
       maxBorrowAmount &&
-      amountAsBInt.lte(maxBorrowAmount.bigNumber)
+      amountAsBInt <= maxBorrowAmount.bigNumber
     ) {
       const currentTransactionStep = 0;
       addStepsForAction([
@@ -806,11 +812,14 @@ const Popup = ({
           index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
-            txHash: tx?.hash
+            txHash: tx
           }
         });
 
-        await tx?.wait();
+        tx &&
+          (await currentSdk.publicClient.waitForTransactionReceipt({
+            hash: tx
+          }));
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -845,7 +854,7 @@ const Popup = ({
       currentSdk &&
       address &&
       amount &&
-      amountAsBInt.gt('0') &&
+      amountAsBInt > 0n &&
       currentBorrowAmountAsFloat
     ) {
       let currentTransactionStep = 0;
@@ -865,11 +874,12 @@ const Popup = ({
       try {
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
-          currentSdk.signer
+          currentSdk.publicClient as any,
+          currentSdk.walletClient
         );
-        const hasApprovedEnough = (
-          await token.callStatic.allowance(address, selectedMarketData.cToken)
-        ).gte(amountAsBInt);
+        const hasApprovedEnough =
+          (await token.read.allowance([address, selectedMarketData.cToken])) >=
+          amountAsBInt;
 
         if (!hasApprovedEnough) {
           const tx = await currentSdk.approve(
@@ -881,11 +891,11 @@ const Popup = ({
             index: currentTransactionStep,
             transactionStep: {
               ...transactionSteps[currentTransactionStep],
-              txHash: tx.hash
+              txHash: tx
             }
           });
 
-          await tx.wait();
+          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
         }
 
         upsertTransactionStep({
@@ -898,9 +908,8 @@ const Popup = ({
 
         currentTransactionStep++;
 
-        const isRepayingMax = amountAsBInt.gte(
-          selectedMarketData.borrowBalance ?? '0'
-        );
+        const isRepayingMax =
+          amountAsBInt >= (selectedMarketData.borrowBalance ?? 0n);
         console.warn(
           'Repay params:',
           selectedMarketData.cToken,
@@ -925,11 +934,14 @@ const Popup = ({
           index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
-            txHash: tx?.hash
+            txHash: tx
           }
         });
 
-        await tx?.wait();
+        tx &&
+          (await currentSdk.publicClient.waitForTransactionReceipt({
+            hash: tx
+          }));
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -956,7 +968,7 @@ const Popup = ({
 
   const handleCollateralToggle = async () => {
     if (!transactionSteps.length) {
-      if (currentSdk && selectedMarketData.supplyBalance.gt('0')) {
+      if (currentSdk && selectedMarketData.supplyBalance > 0n) {
         const currentTransactionStep = 0;
 
         try {
@@ -966,15 +978,19 @@ const Popup = ({
             case true:
               const comptrollerContract = currentSdk.createComptroller(
                 comptrollerAddress,
-                currentSdk.signer
+                currentSdk.publicClient,
+                currentSdk.walletClient
               );
 
-              const exitCode = await comptrollerContract.callStatic.exitMarket(
-                selectedMarketData.cToken
-              );
+              const exitCode = (
+                await comptrollerContract.simulate.exitMarket(
+                  [selectedMarketData.cToken],
+                  { account: currentSdk.walletClient.account?.address }
+                )
+              ).result;
 
-              if (!exitCode.eq('0')) {
-                toast.error(errorCodeToMessage(exitCode.toNumber()));
+              if (exitCode !== 0n) {
+                toast.error(errorCodeToMessage(Number(exitCode)));
 
                 return;
               }
@@ -996,19 +1012,25 @@ const Popup = ({
                 }
               });
 
-              tx = await comptrollerContract.exitMarket(
-                selectedMarketData.cToken
+              tx = await comptrollerContract.write.exitMarket(
+                [selectedMarketData.cToken],
+                {
+                  account: currentSdk.walletClient.account!.address,
+                  chain: currentSdk.walletClient.chain
+                }
               );
 
               upsertTransactionStep({
                 index: currentTransactionStep,
                 transactionStep: {
                   ...transactionSteps[currentTransactionStep],
-                  txHash: tx.hash
+                  txHash: tx
                 }
               });
 
-              await tx.wait();
+              await currentSdk.publicClient.waitForTransactionReceipt({
+                hash: tx
+              });
 
               setEnableCollateral(false);
 
@@ -1049,11 +1071,13 @@ const Popup = ({
                 index: currentTransactionStep,
                 transactionStep: {
                   ...transactionSteps[currentTransactionStep],
-                  txHash: tx.hash
+                  txHash: tx
                 }
               });
 
-              await tx.wait();
+              await currentSdk.publicClient.waitForTransactionReceipt({
+                hash: tx
+              });
 
               setEnableCollateral(true);
 
@@ -1142,7 +1166,7 @@ const Popup = ({
                     handleInput={(val?: string) => setAmount(val)}
                     isLoading={isLoadingMaxSupply}
                     max={formatUnits(
-                      maxSupplyAmount?.bigNumber ?? '0',
+                      maxSupplyAmount?.bigNumber ?? 0n,
                       selectedMarketData.underlyingDecimals
                     )}
                     selectedMarketData={selectedMarketData}
@@ -1214,7 +1238,7 @@ const Popup = ({
                         width="16"
                       >
                         {Number(
-                          formatEther(predictedHealthFactor ?? '0')
+                          formatEther(predictedHealthFactor ?? 0n)
                         ).toFixed(2)}
                       </ResultHandler>
                     </span>
@@ -1283,7 +1307,7 @@ const Popup = ({
                       <>
                         <button
                           className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                            amount && amountAsBInt.gt('0')
+                            amount && amountAsBInt > 0n
                               ? 'bg-accent'
                               : 'bg-stone-500'
                           } `}
@@ -1306,7 +1330,7 @@ const Popup = ({
                     hintText="Max Withdraw"
                     isLoading={isLoadingMaxWithdrawAmount}
                     max={formatUnits(
-                      maxWithdrawAmount ?? '0',
+                      maxWithdrawAmount ?? 0n,
                       selectedMarketData.underlyingDecimals
                     )}
                     selectedMarketData={selectedMarketData}
@@ -1380,7 +1404,7 @@ const Popup = ({
                         width="16"
                       >
                         {Number(
-                          formatEther(predictedHealthFactor ?? '0')
+                          formatEther(predictedHealthFactor ?? 0n)
                         ).toFixed(2)}
                       </ResultHandler>
                     </span>
@@ -1398,7 +1422,7 @@ const Popup = ({
                       <button
                         className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
                           amount &&
-                          amountAsBInt.gt('0') &&
+                          amountAsBInt > 0n &&
                           !isLoadingPredictedHealthFactor &&
                           hfpStatus !== HFPStatus.CRITICAL &&
                           hfpStatus !== HFPStatus.UNKNOWN
@@ -1432,7 +1456,7 @@ const Popup = ({
                     hintText="Max Borrow Amount"
                     isLoading={isLoadingMaxBorrowAmount}
                     max={formatUnits(
-                      maxBorrowAmount?.bigNumber ?? '0',
+                      maxBorrowAmount?.bigNumber ?? 0n,
                       selectedMarketData.underlyingDecimals
                     )}
                     selectedMarketData={selectedMarketData}
@@ -1465,7 +1489,7 @@ const Popup = ({
                     <span className={``}>MIN BORROW</span>
                     <span className={`font-bold pl-2`}>
                       {formatUnits(
-                        minBorrowAmount?.minBorrowAsset ?? '0',
+                        minBorrowAmount?.minBorrowAsset ?? 0n,
                         selectedMarketData.underlyingDecimals
                       )}
                       {/* this will be dynamic */}
@@ -1529,7 +1553,7 @@ const Popup = ({
                         width="16"
                       >
                         {Number(
-                          formatEther(predictedHealthFactor ?? '0')
+                          formatEther(predictedHealthFactor ?? 0n)
                         ).toFixed(2)}
                       </ResultHandler>
                     </span>
@@ -1589,13 +1613,12 @@ const Popup = ({
                       <button
                         className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
                           amount &&
-                          amountAsBInt.gt('0') &&
+                          amountAsBInt > 0n &&
                           minBorrowAmount &&
-                          amountAsBInt.gte(
-                            minBorrowAmount.minBorrowAsset ?? '0'
-                          ) &&
+                          amountAsBInt >=
+                            (minBorrowAmount.minBorrowAsset ?? 0n) &&
                           maxBorrowAmount &&
-                          amountAsBInt.lte(maxBorrowAmount?.bigNumber ?? '0') &&
+                          amountAsBInt <= (maxBorrowAmount?.bigNumber ?? 0n) &&
                           !isLoadingPredictedHealthFactor &&
                           hfpStatus !== HFPStatus.CRITICAL &&
                           hfpStatus !== HFPStatus.UNKNOWN
@@ -1624,7 +1647,7 @@ const Popup = ({
                     hintText={'Max Repay Amount'}
                     isLoading={isLoadingMaxRepayAmount}
                     max={formatUnits(
-                      maxRepayAmount ?? '0',
+                      maxRepayAmount ?? 0n,
                       selectedMarketData.underlyingDecimals
                     )}
                     selectedMarketData={selectedMarketData}
@@ -1684,7 +1707,7 @@ const Popup = ({
                         width="16"
                       >
                         {Number(
-                          formatEther(predictedHealthFactor ?? '0')
+                          formatEther(predictedHealthFactor ?? 0n)
                         ).toFixed(2)}
                       </ResultHandler>
                     </span>
@@ -1705,7 +1728,7 @@ const Popup = ({
                       <button
                         className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
                           amount &&
-                          amountAsBInt.gt('0') &&
+                          amountAsBInt > 0n &&
                           currentBorrowAmountAsFloat
                             ? 'bg-accent'
                             : 'bg-stone-500'

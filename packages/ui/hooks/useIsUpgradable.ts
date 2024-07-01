@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export const useIsUpgradeable = (comptrollerAddress: string) => {
+export const useIsUpgradeable = (comptrollerAddress: Address) => {
   const { currentSdk, currentChain } = useMultiIonic();
 
   const { data } = useQuery(
@@ -18,7 +19,7 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
           const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
           const isUpgradeable: boolean =
-            await comptroller.callStatic.adminHasRights();
+            await comptroller.read.adminHasRights();
 
           return isUpgradeable;
         } catch (e) {

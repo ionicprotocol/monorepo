@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -6,7 +7,7 @@ import type { DebtCeilingPerCollateralType } from '@ui/hooks/useDebtCeilingForAs
 
 export const useRestricted = (
   poolChainId: number,
-  comptrollerAddress: string,
+  comptrollerAddress: Address,
   debtCeilings: DebtCeilingPerCollateralType[] | null | undefined
 ) => {
   const sdk = useSdk(poolChainId);
@@ -27,23 +28,26 @@ export const useRestricted = (
         try {
           const comptroller = sdk.createComptroller(
             comptrollerAddress,
-            sdk.provider
+            sdk.publicClient,
+            sdk.walletClient
           );
 
           await Promise.all(
             debtCeilings.map(async (debtCeiling) => {
               const [isAssetBlacklistWhitelist, isDebtCeilingWhitelist] =
                 await Promise.all([
-                  comptroller.callStatic.isBlacklistBorrowingAgainstCollateralWhitelisted(
-                    debtCeiling.asset.cToken,
-                    debtCeiling.collateralAsset.cToken,
-                    address
+                  comptroller.read.isBlacklistBorrowingAgainstCollateralWhitelisted(
+                    [
+                      debtCeiling.asset.cToken,
+                      debtCeiling.collateralAsset.cToken,
+                      address
+                    ]
                   ),
-                  comptroller.callStatic.isBorrowCapForCollateralWhitelisted(
+                  comptroller.read.isBorrowCapForCollateralWhitelisted([
                     debtCeiling.asset.cToken,
                     debtCeiling.collateralAsset.cToken,
                     address
-                  )
+                  ])
                 ]);
 
               if (!isAssetBlacklistWhitelist && !isDebtCeilingWhitelist) {

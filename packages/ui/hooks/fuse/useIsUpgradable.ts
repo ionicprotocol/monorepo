@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useIsUpgradeable = (
-  comptrollerAddress: string,
-  poolChainId: number
-) => {
+export const useIsUpgradeable = (comptrollerAddress: Address, poolChainId: number) => {
   const sdk = useSdk(poolChainId);
 
   const { data } = useQuery(
@@ -15,7 +13,7 @@ export const useIsUpgradeable = (
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const isUpgradeable: boolean =
-            await comptroller.callStatic.adminHasRights();
+            await comptroller.read.adminHasRights();
 
           return isUpgradeable;
         } catch (e) {

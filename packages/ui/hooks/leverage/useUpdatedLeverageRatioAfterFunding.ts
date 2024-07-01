@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
-import { utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { Address, formatEther } from 'viem';
 
 export function useUpdatedLeverageRatioAfterFunding(
-  positionAddress: string,
-  amount: BigNumber | null | undefined,
+  positionAddress: Address,
+  amount: bigint | null | undefined,
   chainId?: number
 ) {
   const sdk = useSdk(chainId);
@@ -36,7 +35,7 @@ export function useUpdatedLeverageRatioAfterFunding(
             return null;
           });
 
-        return ratio ? Number(utils.formatUnits(ratio)) : null;
+        return ratio ? Number(formatEther(ratio)) : null;
       } else {
         return null;
       }

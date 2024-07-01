@@ -1,8 +1,8 @@
 import type { VaultApy } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { BigNumber, constants, utils } from 'ethers';
 import { useMemo } from 'react';
+import { Address, formatEther, formatUnits } from 'viem';
 
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -15,9 +15,11 @@ export type VaultInfo = {
   xAxis: number;
 }[];
 
-export function useVaultApyInfo(vaultAddress: string, chainId: number) {
+export function useVaultApyInfo(vaultAddress: Address, chainId: number) {
   const enabledChains = useEnabledChains();
-  const { vaultsPerChain } = useVaultsPerChain([...enabledChains]);
+  const { vaultsPerChain } = useVaultsPerChain([
+    ...enabledChains.map((chain) => chain.id)
+  ]);
 
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
@@ -52,23 +54,23 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
             });
 
           const maxSupply = _vaultInfo.reduce((_max, info) => {
-            if (BigNumber.from(info.totalSupply).gt(_max)) {
-              _max = BigNumber.from(info.totalSupply);
+            if (BigInt(info.totalSupply) > _max) {
+              _max = BigInt(info.totalSupply);
             }
 
             return _max;
-          }, constants.Zero);
+          }, 0n);
 
           return _vaultInfo.map((info) => {
             const supplyApy = Number((Number(info.supplyApy) * 100).toFixed(2));
             const totalSupplyRated =
-              (Number(utils.formatUnits(info.totalSupply)) /
-                Number(utils.formatUnits(maxSupply))) *
+              (Number(formatEther(BigInt(info.totalSupply))) /
+                Number(formatEther(maxSupply))) *
               100;
 
             const totalSupplyUsd =
-              Number(utils.formatUnits(info.totalSupply, vault.decimals)) *
-              Number(utils.formatUnits(vault.underlyingPrice, 18)) *
+              Number(formatUnits(BigInt(info.totalSupply), vault.decimals)) *
+              Number(formatUnits(vault.underlyingPrice, 18)) *
               usdPrice;
 
             return {

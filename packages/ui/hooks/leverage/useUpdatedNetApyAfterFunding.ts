@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
-import { utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { Address, formatEther } from 'viem';
 
 export function useUpdatedNetApyAfterFunding(
-  positionAddress: string,
-  amount: BigNumber | null | undefined,
-  supplyApy?: BigNumber,
+  positionAddress: Address,
+  amount: bigint | null | undefined,
+  supplyApy?: bigint,
   chainId?: number
 ) {
   const sdk = useSdk(chainId);
@@ -39,7 +38,7 @@ export function useUpdatedNetApyAfterFunding(
             return null;
           });
 
-        return netApy ? Number(utils.formatUnits(netApy)) * 100 : null;
+        return netApy ? Number(formatEther(netApy)) * 100 : null;
       } else {
         return null;
       }

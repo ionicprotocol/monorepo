@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
+import { Address, parseEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 export function useAssetChartData(
-  interestRateModelAddress: string,
+  interestRateModelAddress: Address,
   reserveFactor: number,
   adminFee: number,
   poolChainId: number
@@ -47,15 +47,15 @@ export function useAssetChartData(
           interestRateModelAddress,
           // reserve factor
           // reserveFactor * 1e16,
-          utils.parseEther((reserveFactor / 100).toString()),
+          parseEther((reserveFactor / 100).toString()),
 
           // admin fee
           // adminFee * 1e16,
-          utils.parseEther((adminFee / 100).toString()),
+          parseEther((adminFee / 100).toString()),
 
           // hardcoded 10% Fuse fee
-          utils.parseEther((10 / 100).toString()),
-          sdk.provider
+          parseEther((10 / 100).toString()),
+          sdk.publicClient
         );
 
         return convertIRMtoCurve(sdk, interestRateModel, sdk.chainId);

@@ -1,11 +1,12 @@
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const usePoolClaimableRewards = (
-  poolAddress: string,
+  poolAddress: Address,
   poolChainId?: number
 ) => {
   const { address } = useMultiIonic();
@@ -21,7 +22,7 @@ export const usePoolClaimableRewards = (
             address
           );
 
-          return rewards.filter((reward) => reward.amount.gt(0));
+          return rewards.filter((reward) => reward.amount > 0n);
         } catch (e) {
           console.warn(
             'Getting pool claimable rewards error: ',

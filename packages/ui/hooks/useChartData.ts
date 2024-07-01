@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
-export function useChartData(market: string, poolChainId: number) {
+export function useChartData(market: Address, poolChainId: number) {
   const sdk = useSdk(poolChainId);
 
   return useQuery(

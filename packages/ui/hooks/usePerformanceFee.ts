@@ -1,12 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
+import { Address, formatEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const usePerformanceFee = (
-  poolChainId: number,
-  pluginAddress?: string
-) => {
+export const usePerformanceFee = (poolChainId: number, pluginAddress?: Address) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
@@ -15,10 +12,9 @@ export const usePerformanceFee = (
       if (sdk && pluginAddress) {
         try {
           const pluginContract = sdk.getErc4626PluginInstance(pluginAddress);
-          const performanceFee =
-            await pluginContract.callStatic.performanceFee();
+          const performanceFee = await pluginContract.read.performanceFee();
 
-          return Number(utils.formatUnits(performanceFee)) * 100;
+          return Number(formatEther(performanceFee)) * 100;
         } catch (e) {
           console.warn(
             `Getting performance fee error: `,

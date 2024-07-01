@@ -1,6 +1,6 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { constants, utils } from 'ethers';
+import { Address, formatUnits } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -19,7 +19,7 @@ export const useDebtCeilingForAssetForCollateral = ({
 }: {
   assets: NativePricedIonicAsset[];
   collaterals: NativePricedIonicAsset[];
-  comptroller: string;
+  comptroller: Address;
   poolChainId: number;
 }) => {
   const sdk = useSdk(poolChainId);
@@ -40,7 +40,8 @@ export const useDebtCeilingForAssetForCollateral = ({
       const debtCeilingPerCollateral: DebtCeilingPerCollateralType[] = [];
       const comptroller = sdk.createComptroller(
         comptrollerAddress,
-        sdk.provider
+        sdk.publicClient,
+        sdk.walletClient
       );
 
       await Promise.all(
@@ -50,10 +51,10 @@ export const useDebtCeilingForAssetForCollateral = ({
               if (asset.cToken !== collateralAsset.cToken) {
                 try {
                   const isInBlackList =
-                    await comptroller.callStatic.borrowingAgainstCollateralBlacklist(
+                    await comptroller.read.borrowingAgainstCollateralBlacklist([
                       asset.cToken,
                       collateralAsset.cToken
-                    );
+                    ]);
 
                   if (isInBlackList) {
                     debtCeilingPerCollateral.push({
@@ -63,20 +64,17 @@ export const useDebtCeilingForAssetForCollateral = ({
                     });
                   } else {
                     const debtCeiling =
-                      await comptroller.callStatic.borrowCapForCollateral(
+                      await comptroller.read.borrowCapForCollateral([
                         asset.cToken,
                         collateralAsset.cToken
-                      );
+                      ]);
 
-                    if (debtCeiling.gt(constants.Zero)) {
+                    if (debtCeiling > 0n) {
                       debtCeilingPerCollateral.push({
                         asset,
                         collateralAsset,
                         debtCeiling: Number(
-                          utils.formatUnits(
-                            debtCeiling,
-                            asset.underlyingDecimals
-                          )
+                          formatUnits(debtCeiling, asset.underlyingDecimals)
                         )
                       });
                     }

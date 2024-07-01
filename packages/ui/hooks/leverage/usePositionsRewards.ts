@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
@@ -6,7 +7,7 @@ import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export function useFlywheelRewardsForPositions(
-  pools?: string[],
+  pools?: Address[],
   chainIds?: number[]
 ) {
   const { getSdk } = useMultiIonic();
@@ -50,7 +51,7 @@ export function useFlywheelRewardsForPositions(
 export function useRewardsForPositions(
   assets: Pick<MarketData, 'cToken' | 'plugin'>[],
   chainIds: number[],
-  pools: string[]
+  pools: Address[]
 ) {
   const { data: flywheelRewards } = useFlywheelRewardsForPositions(
     pools,

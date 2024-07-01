@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { Flywheel } from '@ui/types/ComponentPropsType';
+import { Address } from 'viem';
 
-export const useFlywheel = (flywheelAddress?: string) => {
+export const useFlywheel = (flywheelAddress?: Address) => {
   const { currentSdk } = useMultiIonic();
 
   return useQuery(
@@ -16,7 +17,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
       // TODO add function to FlywheelLensRouter to get all info in one call
       const [booster, rewards, markets, owner, rewardToken] = await Promise.all(
         [
-          flywheel.callStatic.flywheelBooster().catch((e) => {
+          flywheel.read.flywheelBooster().catch((e) => {
             console.warn(
               `Getting flywheel booster error: `,
               { chainId: currentSdk.chainId, flywheelAddress },
@@ -25,7 +26,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
 
             return '';
           }),
-          flywheel.callStatic.flywheelRewards().catch((e) => {
+          flywheel.read.flywheelRewards().catch((e) => {
             console.warn(
               `Getting flywheel rewards error: `,
               { chainId: currentSdk.chainId, flywheelAddress },
@@ -34,7 +35,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
 
             return '';
           }),
-          flywheel.callStatic.getAllStrategies().catch((e) => {
+          flywheel.read.getAllStrategies().catch((e) => {
             console.warn(
               `Getting flywheel all strategies error: `,
               { chainId: currentSdk.chainId, flywheelAddress },
@@ -43,7 +44,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
 
             return [] as string[];
           }),
-          flywheel.callStatic.owner().catch((e) => {
+          flywheel.read.owner().catch((e) => {
             console.warn(
               `Getting flywheel owner error: `,
               { chainId: currentSdk.chainId, flywheelAddress },
@@ -52,7 +53,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
 
             return '';
           }),
-          flywheel.callStatic.rewardToken().catch((e) => {
+          flywheel.read.rewardToken().catch((e) => {
             console.warn(
               `Getting flywheel rewardToken error: `,
               { chainId: currentSdk.chainId, flywheelAddress },

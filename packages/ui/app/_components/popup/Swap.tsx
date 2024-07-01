@@ -1,13 +1,8 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import type { Contract } from 'ethers';
-import { BigNumber } from 'ethers';
-import { formatEther, parseEther } from 'ethers/lib/utils.js';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
-import { WETHAbi } from 'sdk/dist/cjs/src';
-import { getContract } from 'sdk/dist/cjs/src/IonicSdk/utils';
 import { mode } from 'viem/chains';
 import { useBalance } from 'wagmi';
 import type { GetBalanceData } from 'wagmi/query';
@@ -21,6 +16,15 @@ import TransactionStepsHandler, {
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import {
+  Address,
+  formatEther,
+  getContract,
+  GetContractReturnType,
+  parseEther,
+  PublicClient
+} from 'viem';
+import { wethAbi } from 'sdk/src';
 
 export type SwapProps = {
   close: () => void;
@@ -60,25 +64,30 @@ export default function Swap({
         return undefined;
     }
   }, [ethBalance, wethBalance, swapType]);
-  const currentUsedBalanceAsBigInt = useMemo<BigNumber>(
-    () => BigNumber.from(currentUsedBalance?.value.toString() ?? '0'),
+  const currentUsedBalanceAsBigInt = useMemo<bigint>(
+    () => currentUsedBalance?.value ?? 0n,
     [currentUsedBalance]
   );
   const queryClient = useQueryClient();
-  const WTokenContract = useMemo<Contract | undefined>(() => {
+  const WTokenContract = useMemo<
+    GetContractReturnType<typeof wethAbi, PublicClient> | undefined
+  >(() => {
     if (!currentSdk || !address) {
       return;
     }
 
-    return getContract(
-      currentSdk.chainSpecificAddresses.W_TOKEN,
-      WETHAbi.abi,
-      currentSdk.signer
-    );
+    return getContract({
+      address: currentSdk.chainSpecificAddresses.W_TOKEN as Address,
+      abi: wethAbi,
+      client: {
+        public: currentSdk.publicClient,
+        wallet: currentSdk.walletClient
+      }
+    });
   }, [address, currentSdk]);
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
-  const amountAsBInt = useMemo<BigNumber>(
+  const amountAsBInt = useMemo<bigint>(
     () => parseEther(amount ?? '0'),
     [amount]
   );
@@ -136,7 +145,7 @@ export default function Swap({
       return;
     }
 
-    if (newAmount && currentUsedBalanceAsBigInt.lt(parseEther(newAmount))) {
+    if (newAmount && currentUsedBalanceAsBigInt < parseEther(newAmount)) {
       setAmount(formatEther(currentUsedBalanceAsBigInt));
 
       return;
@@ -148,7 +157,7 @@ export default function Swap({
     setAmount(val.trim());
   };
   const swapAmount = async () => {
-    if (amountAsBInt && amountAsBInt.gt('0') && WTokenContract) {
+    if (amountAsBInt && amountAsBInt > 0n && WTokenContract) {
       const currentTransactionStep = 0;
 
       addStepsForAction([
@@ -165,20 +174,25 @@ export default function Swap({
       try {
         const tx =
           swapType === SwapType.ETH_WETH
-            ? await WTokenContract.deposit({
+            ? await WTokenContract.write.deposit({
+                account: currentSdk!.walletClient.account!.address,
+                chain: currentSdk!.walletClient.chain,
                 value: amountAsBInt
               })
-            : await WTokenContract.withdraw(amountAsBInt);
+            : await WTokenContract.write.withdraw([amountAsBInt], {
+                account: currentSdk!.walletClient.account!.address,
+                chain: currentSdk!.walletClient.chain
+              });
 
         upsertTransactionStep({
           index: currentTransactionStep,
           transactionStep: {
             ...transactionSteps[currentTransactionStep],
-            txHash: tx.hash
+            txHash: tx
           }
         });
 
-        await tx.wait();
+        await currentSdk?.publicClient.waitForTransactionReceipt({ hash: tx });
 
         upsertTransactionStep({
           index: currentTransactionStep,

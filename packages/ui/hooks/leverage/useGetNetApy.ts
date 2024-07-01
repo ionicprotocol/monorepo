@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
 import { utils } from 'ethers';
+import { Address, parseEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useGetNetApy(
-  collateralMarket: string,
-  borrowableMarket: string,
-  amount: BigNumber | null | undefined,
+  collateralMarket: Address,
+  borrowableMarket: Address,
+  amount: bigint | null | undefined,
   leverageRatio: number | null | undefined,
-  supplyApy?: BigNumber,
+  supplyApy?: bigint,
   chainId?: number
 ) {
   const sdk = useSdk(chainId);
@@ -32,7 +32,7 @@ export function useGetNetApy(
             amount,
             collateralMarket,
             borrowableMarket,
-            utils.parseUnits(leverageRatio.toString())
+            parseEther(leverageRatio.toString())
           )
           .catch((e) => {
             console.warn(

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
+import { Address, formatEther, formatUnits } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export function useCurrentLeverageRatio(position: string, chainId?: number) {
+export function useCurrentLeverageRatio(position: Address, chainId?: number) {
   const sdk = useSdk(chainId);
 
   return useQuery(
@@ -24,7 +24,7 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
           });
 
         if (currentLeverageRatio) {
-          return Number(utils.formatUnits(currentLeverageRatio));
+          return Number(formatEther(currentLeverageRatio));
         }
 
         return null;
@@ -40,7 +40,7 @@ export function useCurrentLeverageRatio(position: string, chainId?: number) {
   );
 }
 
-export const useCurrentLeverageRatios = (positionAddresses: string[]) => {
+export const useCurrentLeverageRatios = (positionAddresses: Address[]) => {
   const { currentSdk } = useMultiIonic();
 
   return useQuery({
@@ -57,7 +57,7 @@ export const useCurrentLeverageRatios = (positionAddresses: string[]) => {
       );
 
       return positionsLoopValues.map((loopValue) =>
-        Number(utils.formatUnits(loopValue))
+        Number(formatEther(loopValue))
       );
     },
     queryKey: ['positions', 'leverage', ...positionAddresses]

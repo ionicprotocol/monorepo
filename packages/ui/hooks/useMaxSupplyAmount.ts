@@ -1,7 +1,7 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber, constants, utils } from 'ethers';
 import { useBalance } from 'wagmi';
+import { Address, formatUnits } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -12,7 +12,7 @@ export function useMaxSupplyAmount(
     NativePricedIonicAsset,
     'cToken' | 'underlyingDecimals' | 'underlyingToken'
   >,
-  comptrollerAddress: string,
+  comptrollerAddress: Address,
   chainId: number
 ) {
   const { address } = useMultiIonic();
@@ -41,23 +41,22 @@ export function useMaxSupplyAmount(
     async () => {
       if (sdk && address && supplyCapsDataForAsset && balanceData) {
         try {
-          const tokenBalance = BigNumber.from(balanceData.value.toString());
+          const tokenBalance = balanceData.value;
 
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isWhitelisted] = await Promise.all([
-            comptroller.callStatic.supplyCaps(asset.cToken),
-            comptroller.callStatic.isSupplyCapWhitelisted(asset.cToken, address)
+            comptroller.read.supplyCaps([asset.cToken]),
+            comptroller.read.isSupplyCapWhitelisted([asset.cToken, address])
           ]);
 
-          let bigNumber: BigNumber;
+          let bigNumber: bigint;
 
           // if address isn't in supply cap whitelist and asset has supply cap
-          if (!isWhitelisted && supplyCap.gt(constants.Zero)) {
-            const availableCap = supplyCap.sub(
-              supplyCapsDataForAsset.nonWhitelistedTotalSupply
-            );
+          if (!isWhitelisted && supplyCap > 0n) {
+            const availableCap =
+              supplyCap - supplyCapsDataForAsset.nonWhitelistedTotalSupply;
 
-            if (availableCap.lte(tokenBalance)) {
+            if (availableCap <= tokenBalance) {
               bigNumber = availableCap;
             } else {
               bigNumber = tokenBalance;
@@ -68,9 +67,7 @@ export function useMaxSupplyAmount(
 
           return {
             bigNumber: bigNumber,
-            number: Number(
-              utils.formatUnits(bigNumber, asset.underlyingDecimals)
-            )
+            number: Number(formatUnits(bigNumber, asset.underlyingDecimals))
           };
         } catch (e) {
           console.warn(

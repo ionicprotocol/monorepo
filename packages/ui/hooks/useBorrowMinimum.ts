@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { parseUnits } from 'viem';
 
 export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
   const { currentSdk } = useMultiIonic();
@@ -21,8 +22,8 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
     [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],
     async () => {
       if (currentSdk) {
-        return await currentSdk.contracts.FeeDistributor.callStatic
-          .getMinBorrowEth(asset.cToken)
+        return await currentSdk.contracts.FeeDistributor.read
+          .getMinBorrowEth([asset.cToken])
           .catch((e) => {
             console.warn(
               `Getting min borrow eth error: `,
@@ -53,9 +54,9 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
     }
 
     return {
-      minBorrowAsset: response.data
-        .mul(utils.parseUnits('1', asset.underlyingDecimals))
-        .div(asset.underlyingPrice),
+      minBorrowAsset:
+        (response.data * parseUnits('1', asset.underlyingDecimals)) /
+        asset.underlyingPrice,
       minBorrowNative: response.data,
       minBorrowUSD: Number(utils.formatUnits(response.data, 18)) * usdPrice
     };

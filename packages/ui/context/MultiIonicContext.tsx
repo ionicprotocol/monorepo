@@ -5,7 +5,6 @@ import { IonicSdk } from '@ionicprotocol/sdk';
 import Security from '@ionicprotocol/security';
 import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
-import type { providers } from 'ethers';
 import type { Dispatch, ReactNode } from 'react';
 import {
   createContext,
@@ -15,12 +14,16 @@ import {
   useMemo,
   useState
 } from 'react';
-import type { Chain } from 'viem';
-import { useAccount, useDisconnect } from 'wagmi';
+import { createPublicClient, http, type Chain, type WalletClient } from 'viem';
+import {
+  useAccount,
+  useDisconnect,
+  usePublicClient,
+  useWalletClient
+} from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 
 export interface MultiIonicContextData {
   address?: `0x${string}`;
@@ -40,7 +43,7 @@ export interface MultiIonicContextData {
   setAddress: Dispatch<`0x${string}`>;
   setGlobalLoading: Dispatch<boolean>;
   setIsSidebarCollapsed: Dispatch<boolean>;
-  signer?: providers.JsonRpcSigner;
+  walletClient?: WalletClient;
 }
 
 export const MultiIonicContext = createContext<
@@ -60,7 +63,7 @@ export const MultiIonicProvider = (
 
   // const { address, isConnecting, isReconnecting, isConnected } = useAccount();
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
-  const signer = useEthersSigner();
+  const walletClient = useWalletClient();
   const { disconnect } = useDisconnect();
   const [address, setAddress] = useState<`0x${string}` | undefined>();
   const [currentChain, setCurrentChain] = useState<
@@ -76,25 +79,22 @@ export const MultiIonicProvider = (
     const _sdks: IonicSdk[] = [];
     const _securities: Security[] = [];
     const _chainIds: SupportedChains[] = [];
-    enabledChains.map((chainId) => {
-      const config = chainIdToConfig[chainId];
-      _sdks.push(
-        new IonicSdk(
-          new JsonRpcProvider(
-            config.specificParams.metadata.rpcUrls.default.http[0]
-          ),
-          config
-        )
-      );
-      _securities.push(
-        new Security(
-          chainId,
-          new JsonRpcProvider(
-            config.specificParams.metadata.rpcUrls.default.http[0]
-          )
-        )
-      );
-      _chainIds.push(chainId);
+    enabledChains.map((chain) => {
+      const config = chainIdToConfig[chain.id];
+      const client = createPublicClient({
+        chain,
+        transport: http(config.specificParams.metadata.rpcUrls.default.http[0])
+      });
+      _sdks.push(new IonicSdk(client as any, walletClient as any, config));
+      // _securities.push(
+      //   new Security(
+      //     chain.id,
+      //     new JsonRpcProvider(
+      //       config.specificParams.metadata.rpcUrls.default.http[0]
+      //     )
+      //   )
+      // );
+      _chainIds.push(chain.id);
     });
 
     return [_sdks, _securities, _chainIds.sort()];
@@ -120,23 +120,26 @@ export const MultiIonicProvider = (
   );
 
   useEffect(() => {
-    if (currentSdk && signer) {
-      currentSdk.setSigner(signer);
+    if (currentSdk && walletClient) {
+      currentSdk.setWalletClient(walletClient as any);
     }
-  }, [signer, currentSdk]);
+  }, [walletClient, currentSdk]);
 
   useEffect(() => {
-    if (sdks.length > 0 && !signer) {
+    if (sdks.length > 0 && !walletClient) {
       sdks.map((sdk) => {
         const config = chainIdToConfig[sdk.chainId];
-        sdk.removeSigner(
-          new JsonRpcProvider(
-            config.specificParams.metadata.rpcUrls.default.http[0]
-          )
+        sdk.removeWalletClient(
+          createPublicClient({
+            chain,
+            transport: http(
+              config.specificParams.metadata.rpcUrls.default.http[0]
+            )
+          })
         );
       });
     }
-  }, [signer, sdks]);
+  }, [walletClient, sdks]);
 
   useEffect(() => {
     if (wagmiAddress) {
@@ -188,7 +191,7 @@ export const MultiIonicProvider = (
       setAddress,
       setGlobalLoading,
       setIsSidebarCollapsed,
-      signer
+      walletClient
     };
   }, [
     sdks,
@@ -203,14 +206,14 @@ export const MultiIonicProvider = (
     address,
     disconnect,
     isConnected,
-    signer,
+    walletClient,
     setAddress,
     isSidebarCollapsed,
     setIsSidebarCollapsed
   ]);
 
   return (
-    <MultiIonicContext.Provider value={value}>
+    <MultiIonicContext.Provider value={value as any}>
       {children}
     </MultiIonicContext.Provider>
   );

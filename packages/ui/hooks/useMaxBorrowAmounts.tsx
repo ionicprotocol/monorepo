@@ -1,7 +1,6 @@
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
-import { constants, utils } from 'ethers';
+import { Address, formatUnits } from 'viem';
 
 import { useBorrowCapsForAssets } from './ionic/useBorrowCapsDataForAsset';
 
@@ -10,7 +9,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export function useMaxBorrowAmounts(
   assets: NativePricedIonicAsset[],
-  comptrollerAddress: string,
+  comptrollerAddress: Address,
   chainId: number
 ) {
   const { address } = useMultiIonic();
@@ -27,8 +26,7 @@ export function useMaxBorrowAmounts(
       ...cTokenAddresses,
       comptrollerAddress,
       sdk?.chainId,
-      address,
-      borrowCapsDataForAssets?.nonWhitelistedTotalBorrows
+      address
     ],
     async () => {
       if (sdk && address && borrowCapsDataForAssets) {
@@ -46,30 +44,29 @@ export function useMaxBorrowAmounts(
           }
 
           try {
-            const maxBorrow =
-              (await sdk.contracts.PoolLensSecondary.callStatic.getMaxBorrow(
+            const maxBorrow = (
+              await sdk.contracts.PoolLensSecondary.simulate.getMaxBorrow([
                 address,
                 asset.cToken
-              )) as BigNumber;
+              ])
+            ).result;
 
             const comptroller = sdk.createComptroller(comptrollerAddress);
             const [borrowCap, isWhitelisted] = await Promise.all([
-              comptroller.callStatic.borrowCaps(asset.cToken),
-              comptroller.callStatic.isBorrowCapWhitelisted(
-                asset.cToken,
-                address
-              )
+              comptroller.read.borrowCaps([asset.cToken]),
+              comptroller.read.isBorrowCapWhitelisted([asset.cToken, address])
             ]);
 
-            let bigNumber: BigNumber;
+            let bigNumber: bigint;
 
             // if address isn't in borrw cap whitelist and asset has borrow cap
-            if (!isWhitelisted && borrowCap.gt(constants.Zero)) {
-              const availableCap = borrowCap.sub(
-                borrowCapsDataForAssets[asset.cToken].nonWhitelistedTotalBorrows
-              );
+            if (!isWhitelisted && borrowCap > 0n) {
+              const availableCap =
+                borrowCap -
+                borrowCapsDataForAssets[asset.cToken]
+                  .nonWhitelistedTotalBorrows;
 
-              if (availableCap.lte(maxBorrow)) {
+              if (availableCap <= maxBorrow) {
                 bigNumber = availableCap;
               } else {
                 bigNumber = maxBorrow;
@@ -80,9 +77,7 @@ export function useMaxBorrowAmounts(
 
             borrowCapsData.push({
               bigNumber: bigNumber,
-              number: Number(
-                utils.formatUnits(bigNumber, asset.underlyingDecimals)
-              )
+              number: Number(formatUnits(bigNumber, asset.underlyingDecimals))
             });
           } catch (e) {
             console.warn(

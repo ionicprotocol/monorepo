@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { constants, utils } from 'ethers';
 import { useMemo } from 'react';
+import { Address, formatUnits } from 'viem';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -12,7 +12,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseSupplyCapParams {
   chainId: number;
-  comptroller: string;
+  comptroller: Address;
   market: Pick<
     MarketData,
     'cToken' | 'totalSupply' | 'underlyingDecimals' | 'underlyingPrice'
@@ -57,28 +57,23 @@ export const useSupplyCap = ({
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
           const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
-            comptroller.callStatic.supplyCaps(market.cToken),
-            comptroller.callStatic.isSupplyCapWhitelisted(
-              market.cToken,
-              address
-            )
+            comptroller.read.supplyCaps([market.cToken]),
+            comptroller.read.isSupplyCapWhitelisted([market.cToken, address])
           ]);
 
-          if (isSupplyCapWhitelist || supplyCap.eq(constants.Zero)) {
+          if (isSupplyCapWhitelist || supplyCap === 0n) {
             return null;
           } else {
-            const whitelistedTotalSupply = market.totalSupply.sub(
-              supplyCapsDataForAsset.nonWhitelistedTotalSupply
-            );
-            const underlyingCap = supplyCap.add(whitelistedTotalSupply);
+            const whitelistedTotalSupply =
+              market.totalSupply -
+              supplyCapsDataForAsset.nonWhitelistedTotalSupply;
+            const underlyingCap = supplyCap + whitelistedTotalSupply;
             const tokenCap = Number(
-              utils.formatUnits(underlyingCap, market.underlyingDecimals)
+              formatUnits(underlyingCap, market.underlyingDecimals)
             );
             const usdCap =
               tokenCap *
-              Number(
-                utils.formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)
-              ) *
+              Number(formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
               usdPrice;
 
             return { tokenCap, type: 'supply', underlyingCap, usdCap };
