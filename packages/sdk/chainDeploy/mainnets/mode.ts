@@ -1,5 +1,5 @@
 import { mode } from "@ionicprotocol/chains";
-import { assetSymbols, underlying } from "@ionicprotocol/types";
+import { assetSymbols, ChainlinkFeedBaseCurrency, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
@@ -7,7 +7,7 @@ import { writeTransactionsToFile } from "../helpers/logging";
 import { addRedstoneFallbacks } from "../helpers/oracles/redstoneFallbacks";
 import { addRedstoneWeETHFallbacks } from "../helpers/oracles/redstoneWeETHFallbacks";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
-import { ChainlinkAsset, ChainlinkFeedBaseCurrency, PythAsset, RedStoneAsset } from "../helpers/types";
+import { ChainlinkAsset, PythAsset, RedStoneAsset } from "../helpers/types";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),

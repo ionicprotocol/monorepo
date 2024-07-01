@@ -9,6 +9,7 @@ import {
   linea,
   mode,
   neon,
+  optimism,
   polygon,
   zkevm
 } from '@ionicprotocol/chains';
@@ -76,6 +77,10 @@ export function getEnabledChains() {
     enabledChains.push(SupportedChains.base);
   }
 
+  if (config.isOptimismEnabled) {
+    enabledChains.push(SupportedChains.optimism);
+  }
+
   return enabledChains;
 }
 
@@ -90,7 +95,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.linea]: linea.assets,
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
-  [SupportedChains.base]: base.assets
+  [SupportedChains.base]: base.assets,
+  [SupportedChains.optimism]: optimism.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -101,5 +107,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
   [SupportedChains.ethereum]: ethereum.deployedPlugins,
   [SupportedChains.mode]: mode.deployedPlugins,
-  [SupportedChains.base]: base.deployedPlugins
+  [SupportedChains.base]: base.deployedPlugins,
+  [SupportedChains.optimism]: optimism.deployedPlugins
 };

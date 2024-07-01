@@ -1,25 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { NON_BORROWABLE_SYMBOLS } from '../constants';
-
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-
-const assetsSortingOrder = [
-  'wrsETH',
-  'ezETH',
-  'weETH.mode',
-  'STONE',
-  'M-BTC',
-  'WETH',
-  'WBTC',
-  'USDC',
-  'USDT',
-  'weETH'
-];
 
 export const useFusePoolData = (
   poolId: string,
@@ -63,45 +48,19 @@ export const useFusePoolData = (
         if (response === null) {
           return null;
         }
-        const assetsWithPrice: MarketData[] = [];
         const { assets } = response;
         const excludedAssetsIndexes: number[] = [];
 
-        if (assets && assets.length !== 0) {
-          const unsortedAssets: MarketData[] = [];
-
-          assets.map((asset) => {
-            const indexOfAssetInSort = assetsSortingOrder.findIndex(
-              (symbol) => symbol === asset.underlyingSymbol
-            );
-
-            if (indexOfAssetInSort === -1) {
-              unsortedAssets.push({
-                ...asset,
-                borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
-                liquidityFiat: asset.liquidityNative * usdPrice,
-                netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
-                supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
-                totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-                totalSupplyFiat: asset.totalSupplyNative * usdPrice
-              });
-
-              return;
-            }
-
-            assetsWithPrice[indexOfAssetInSort] = {
-              ...asset,
-              borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
-              liquidityFiat: asset.liquidityNative * usdPrice,
-              netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
-              supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
-              totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-              totalSupplyFiat: asset.totalSupplyNative * usdPrice
-            };
-          });
-
-          assetsWithPrice.push(...unsortedAssets);
-        }
+        const assetsWithPrice =
+          assets?.map((asset) => ({
+            ...asset,
+            borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
+            liquidityFiat: asset.liquidityNative * usdPrice,
+            netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
+            supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
+            totalBorrowFiat: asset.totalBorrowNative * usdPrice,
+            totalSupplyFiat: asset.totalSupplyNative * usdPrice
+          })) ?? [];
 
         const adaptedFusePoolData: PoolData = {
           ...response,

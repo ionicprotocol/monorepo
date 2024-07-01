@@ -59,7 +59,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
     // CErc20Delegate
     const erc20DelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Del.address);
     if (erc20DelExtensions.length == 0 || erc20DelExtensions[0] != erc20Del.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20Delegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -80,7 +80,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
     }
     const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(1);
     if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if (multisig && (await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20Delegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [
@@ -105,7 +105,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
       erc20PluginDel.address
     );
     if (erc20PluginDelExtensions.length == 0 || erc20PluginDelExtensions[0] != erc20PluginDel.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if (multisig && (await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20PluginDelegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -127,7 +127,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
 
     const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(2);
     if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if (multisig && (await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20PluginDelegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [
@@ -154,7 +154,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
       erc20RewardsDel.address
     );
     if (erc20RewardsDelExtensions.length == 0 || erc20RewardsDelExtensions[0] != erc20RewardsDel.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20RewardsDelegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -178,7 +178,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
       latestCErc20RewardsDelegate === constants.AddressZero ||
       latestCErc20RewardsDelegate !== erc20RewardsDel.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20RewardsDelegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [
@@ -208,7 +208,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
       erc20PluginRewardsDelExtensions.length == 0 ||
       erc20PluginRewardsDelExtensions[0] != erc20PluginRewardsDel.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20PluginRewardsDelegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -232,7 +232,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments }) =
       latestCErc20PluginRewardsDelegate === constants.AddressZero ||
       latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20PluginRewardsDelegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [

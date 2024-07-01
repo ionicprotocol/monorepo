@@ -2,12 +2,12 @@
 'use client';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
-import { base, mode } from 'viem/chains';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
+import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -32,15 +32,6 @@ interface IRows {
   totalSupplied: string;
 }
 
-const chainColors = (chainId: number) => {
-  if (chainId === mode.id) {
-    return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };
-  }
-  if (chainId === base.id) {
-    return { bg: 'bg-blue-600', border: 'border-blue-600', text: 'text-white' };
-  }
-  return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };
-};
 const PoolRows = ({
   asset,
   supplyBalance,
@@ -63,14 +54,12 @@ const PoolRows = ({
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
-        membership && `border ${chainColors(dropdownSelectedChain).border}`
+        membership && `border ${pools[dropdownSelectedChain].border}`
       }`}
     >
       {membership && (
         <span
-          className={`absolute top-[-9px] right-[-15px] px-2 ${
-            chainColors(dropdownSelectedChain).text
-          } ${chainColors(dropdownSelectedChain).bg} rounded-lg`}
+          className={`absolute top-[-9px] right-[-15px] px-2 ${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg`}
         >
           Collateral
         </span>
@@ -127,9 +116,7 @@ const PoolRows = ({
         <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
           {supplyAPR}
           <span
-            className={`${chainColors(dropdownSelectedChain).text} ${
-              chainColors(dropdownSelectedChain).bg
-            } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
@@ -146,9 +133,7 @@ const PoolRows = ({
             />
           </a>
           <div
-            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-              chainColors(dropdownSelectedChain).border
-            } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
             Base APR: {supplyAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -314,9 +299,7 @@ const PoolRows = ({
         <div className="popover-container flex lg:flex-col items-center cursor-pointer">
           {borrowAPR}
           <span
-            className={`${chainColors(dropdownSelectedChain).text} ${
-              chainColors(dropdownSelectedChain).bg
-            } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
@@ -333,9 +316,7 @@ const PoolRows = ({
             />
           </a>
           <div
-            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-              chainColors(dropdownSelectedChain).border
-            } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
           >
             Base APR: {borrowAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -487,9 +468,7 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg ${chainColors(dropdownSelectedChain).bg} ${
-                chainColors(dropdownSelectedChain).text
-              } py-1.5 px-3 uppercase`}
+              className={`rounded-lg ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
