@@ -26,12 +26,8 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
   await liquidatePositions(liquidator);
 
   // Send heartbeat to Better Stack
-  try {
-    await axios.get(HEARTBEAT_API_URL);
-    sdk.logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
-  } catch (error: any) {
-    sdk.logger.error(`Error sending heartbeat to ${HEARTBEAT_API_URL}: ${error.message}`);
-  }
+  await axios.get(HEARTBEAT_API_URL);
+  sdk.logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
 
   return {
     statusCode: 200,
