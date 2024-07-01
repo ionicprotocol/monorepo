@@ -26,7 +26,7 @@ function MaxDeposit({
     address,
     token: hooktoken,
     query: {
-      refetchInterval: 5000
+      refetchInterval: 6000
     }
   });
 
