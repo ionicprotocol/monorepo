@@ -11,13 +11,13 @@ import {
 } from 'viem';
 
 import config from '../config/service';
+import { pythAbi } from '../pythAbi';
 import { PythAssetConfig } from '../types';
 import sendTransactionToPyth, {
   getCurrentPrices,
   getLastPrices,
   priceFeedNeedsUpdate,
 } from '../utils';
-import { pythAbi } from '../pythAbi';
 
 import { DiscordService } from './discord';
 
