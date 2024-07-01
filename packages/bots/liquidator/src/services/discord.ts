@@ -1,7 +1,7 @@
 import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicprotocol/sdk/src/modules/liquidation/utils";
 import { SupportedChains } from "@ionicprotocol/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
-import {TransactionReceipt} from "viem"
+import { TransactionReceipt } from "viem";
 
 import config from "../config";
 import { logger } from "../logger";

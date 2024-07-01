@@ -32,7 +32,7 @@ import { setUpSdk } from "../src/utils";
 
   for (const liquidatablePool of liquidatablePools) {
     logger.info(
-      `Liquidating pool: ${liquidatablePool.comptroller} -- ${liquidatablePool.liquidations.length} liquidations found`,
+      `Liquidating pool: ${liquidatablePool.comptroller} -- ${liquidatablePool.liquidations.length} liquidations found`
     );
     await liquidator.liquidate(liquidatablePool);
   }

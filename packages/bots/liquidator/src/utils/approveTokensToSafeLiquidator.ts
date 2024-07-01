@@ -1,6 +1,6 @@
 import { IonicSdk } from "@ionicprotocol/sdk";
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { getContract, zeroAddress, erc20Abi, Address, maxUint256 } from "viem";
+import { Address, erc20Abi, getContract, maxUint256, zeroAddress } from "viem";
 
 import { Liquidator } from "../services";
 
