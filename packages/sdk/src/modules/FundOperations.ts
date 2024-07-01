@@ -12,7 +12,7 @@ export interface IFundOperations {
     amount: bigint,
     address: Address
   ): Promise<{ gasWEI: bigint; gasPrice: bigint; estimatedGas: bigint }>;
-  approve(cTokenAddress: Address, underlyingTokenAddress: Address): Promise<Hex>;
+  approve(cTokenAddress: Address, underlyingTokenAddress: Address, approveAmount?: bigint): Promise<Hex>;
   enterMarkets(cTokenAddress: Address, comptrollerAddress: Address): Promise<Hex>;
   mint(
     cTokenAddress: Address,

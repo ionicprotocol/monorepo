@@ -2369,6 +2369,7 @@ __metadata:
     ts-mocha: "npm:^10.0.0"
     ts-node: "npm:^10.9.2"
     typechain: "npm:^8.3.2"
+    typescript: "npm:^5.5.2"
     utf-8-validate: "npm:^6.0.4"
     viem: "npm:^2.16.3"
   languageName: unknown

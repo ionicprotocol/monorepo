@@ -88,7 +88,8 @@
     "sinon-chai": "^3.7.0",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.2",
-    "typechain": "^8.3.2"
+    "typechain": "^8.3.2",
+    "typescript": "^5.5.2"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.1",
