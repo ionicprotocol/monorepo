@@ -63,7 +63,7 @@ export const MultiIonicProvider = (
 
   // const { address, isConnecting, isReconnecting, isConnected } = useAccount();
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
-  const walletClient = useWalletClient();
+  const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
   const [address, setAddress] = useState<`0x${string}` | undefined>();
   const [currentChain, setCurrentChain] = useState<
@@ -85,7 +85,7 @@ export const MultiIonicProvider = (
         chain,
         transport: http(config.specificParams.metadata.rpcUrls.default.http[0])
       });
-      _sdks.push(new IonicSdk(client as any, walletClient as any, config));
+      _sdks.push(new IonicSdk(client as any, walletClient, config));
       // _securities.push(
       //   new Security(
       //     chain.id,

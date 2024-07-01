@@ -68,7 +68,9 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       }
       const name = filterPoolName(_unfiliteredName);
 
-      const res = await this.contracts.PoolLens.simulate.getPoolAssetsWithData([comptroller as Address]);
+      const res = await this.contracts.PoolLens.simulate.getPoolAssetsWithData([comptroller as Address], {
+        account: this.walletClient.account?.address
+      });
       const assets: NativePricedIonicAsset[] = res.result
         .map(filterOnlyObjectProperties)
         .map(
