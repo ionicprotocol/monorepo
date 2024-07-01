@@ -9,6 +9,8 @@ import { logger } from './logger';
 import { Updater } from './services';
 import { setUpSdk } from './utils';
 
+export const HEARTBEAT_API_URL =
+  'https://uptime.betterstack.com/api/v1/heartbeat/uyh4vHjKRS6oKAoL4KTqwbVY';
 export const handler = async (
   event: APIGatewayEvent,
   context: Context
@@ -17,8 +19,6 @@ export const handler = async (
   logger.info(`Context: ${JSON.stringify(context)}`);
   logger.info(`Started`);
 
-  const HEARTBEAT_API_URL =
-    'https://uptime.betterstack.com/api/v1/heartbeat/uyh4vHjKRS6oKAoL4KTqwbVY';
   const provider = new JsonRpcProvider(config.rpcUrl);
   const signer = new Wallet(config.adminPrivateKey, provider);
 

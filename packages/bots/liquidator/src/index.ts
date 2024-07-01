@@ -9,10 +9,10 @@ import { logger } from "./logger";
 import { Liquidator } from "./services";
 import { setUpSdk } from "./utils";
 
+export const HEARTBEAT_API_URL = "https://uptime.betterstack.com/api/v1/heartbeat/3cfTEExZhuh6d4h7TFPp3r1e";
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
-  const HEARTBEAT_API_URL = "https://uptime.betterstack.com/api/v1/heartbeat/3cfTEExZhuh6d4h7TFPp3r1e";
   const provider = new JsonRpcProvider(config.rpcUrl);
   const signer = new Wallet(config.adminPrivateKey, provider);
 
