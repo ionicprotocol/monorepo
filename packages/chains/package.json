@@ -11,17 +11,15 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "/dist/",
-    "**/*.ts",
-    "**/*.json"
+    "/dist/"
   ],
   "scripts": {
     "prune": "node ./scripts/prune.js ./deployments/*.json",
     "build": "echo '> Bundling `@ionicprotocol/chains`...' && yarn run prune && tsup ./src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf dist",
     "prettier:ts": "prettier --write 'src/**/*.ts'",
-    "lint": "eslint . -c eslint.config.js",
-    "lint-fix": "eslint . -c eslint.config.js --fix"
+    "lint": "eslint . -c .eslintrc.json --ext ts,json",
+    "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json"
   },
   "keywords": [],
   "author": "Ionic Protocol",
@@ -32,13 +30,11 @@
     "viem": "^2.16.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.6.0",
-    "@types/eslint__js": "^8.42.3",
-    "eslint": "^9.6.0",
+    "eslint": "^8.45.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "globals": "^15.7.0",
-    "prettier": "^3.3.2",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "3.0.0",
     "typescript": "^5.5.2",
     "typescript-eslint": "^7.14.1"
   }

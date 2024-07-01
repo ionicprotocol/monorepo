@@ -1,7 +1,7 @@
 import { assetSymbols, ChainAddresses, underlying } from "@ionicprotocol/types";
+import { zeroAddress } from "viem";
 
 import { assets } from "./assets";
-import { zeroAddress } from "viem";
 
 const chainAddresses: ChainAddresses = {
   PAIR_INIT_HASH: "", // TODO is this used anywhere?
