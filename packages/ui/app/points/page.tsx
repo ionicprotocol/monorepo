@@ -39,8 +39,8 @@ const pools: { [key: number]: { [key: number]: string } } = {
 const colors = {
   supply: '#40798C',
   borrow: '#f3fa96',
-  ionLp: '#3bff89',
-  steerLp: '#FF5666'
+  ionLp: '#3bff89ff',
+  steerLp: '#dc97ff'
 };
 
 export default function Points() {
@@ -240,9 +240,7 @@ export default function Points() {
   return (
     <div className="w-full lg:w-[70%] mx-auto">
       <div className=" flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl">
-        <div
-          className={`flex items-center text-xl justify-center gap-2 py-3 pt-2 `}
-        >
+        <div className={`flex items-center text-xl justify-center gap-2 py-3 `}>
           <img
             alt="modlogo"
             className={`w-5 cursor-pointer`}
@@ -452,8 +450,8 @@ export default function Points() {
                   summedBorrowPointsModeMain +
                     summedBorrowPointsModeNative +
                     summedBorrowPointsBaseMain,
-                  summedPointsIonLp,
-                  summedPointsSteerLp
+                  +summedPointsIonLp,
+                  +summedPointsSteerLp
                 ]}
               />
             </div>
@@ -687,8 +685,8 @@ export default function Points() {
               </ResultHandler>
             </div>
             {leaderboard &&
-              //@ts-ignore
-              leaderboard.map((val, idx) => (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              leaderboard.map((val: any, idx) => (
                 <div
                   className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl ${
                     idx + 1 < leaderboard.length ? 'mb-3' : ''
@@ -696,7 +694,7 @@ export default function Points() {
                   key={idx}
                 >
                   <div className={``}>
-                    <span className={``}>{val.rank}</span>
+                    <span className={``}>{val?.rank}</span>
                   </div>
                   <div
                     className={`col-span-2 cursor-pointer hover:text-blue-600`}
@@ -705,13 +703,13 @@ export default function Points() {
                       href={`https://modescan.io/address/${val.address}`}
                       target="_blank"
                     >
-                      {val.ens ?? val.address}
+                      {val?.ens ?? val.address}
                     </a>
                   </div>
                   <div className={``}>
                     <span className={``}>
-                      {val.points
-                        ? val.points.toLocaleString('en-US', {
+                      {val?.points
+                        ? val?.points.toLocaleString('en-US', {
                             maximumFractionDigits: 0
                           })
                         : 'N/A'}
