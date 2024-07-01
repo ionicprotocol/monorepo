@@ -7,3 +7,5 @@ deployments.json
 abis/
 typechain/
 artifacts/
+src/generated.ts
+
