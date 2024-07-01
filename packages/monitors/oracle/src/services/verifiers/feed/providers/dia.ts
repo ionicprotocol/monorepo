@@ -15,7 +15,7 @@ export async function verifyDiaOraclePriceFeed({
   const diaFeed = new Contract(
     feed,
     ["function getValue(string memory key) external view returns (uint128, uint128)"],
-    ionicSdk.provider
+    ionicSdk.provider,
   );
   const [price, timestamp] = await diaFeed.callStatic.getValue(key);
   const updatedAtts = timestamp.toNumber();

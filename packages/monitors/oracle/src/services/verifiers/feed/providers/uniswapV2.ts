@@ -5,7 +5,7 @@ import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams 
 
 export async function verifyUniswapV2PriceFeed(
   { ionicSdk, underlyingOracle, asset }: VerifyFeedParams,
-  config: FeedVerifierConfig
+  config: FeedVerifierConfig,
 ): Promise<PriceFeedValidity> {
   logger.debug(`Verifying Uniswap Twap oracle for ${asset.underlying}`);
 
@@ -13,7 +13,7 @@ export async function verifyUniswapV2PriceFeed(
   const uniswapV2Factory = new Contract(
     ionicSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
     ["function getPair(address tokenA, address tokenB) view returns (address)"],
-    ionicSdk.provider
+    ionicSdk.provider,
   );
   const pair = await uniswapV2Factory.getPair(asset.underlying, baseToken);
 
@@ -23,14 +23,14 @@ export async function verifyUniswapV2PriceFeed(
     [
       "function workable(address[] calldata pairs, address[] calldata baseTokens, uint256[] calldata minPeriods, uint256[] calldata deviationThresholds) external view returns (bool[] memory) ",
     ],
-    ionicSdk.provider
+    ionicSdk.provider,
   );
 
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],
     [baseToken],
     [BigNumber.from(config.defaultMaxObservationDelay)],
-    [utils.parseEther(asset.deviationThreshold.toString())]
+    [utils.parseEther(asset.deviationThreshold.toString())],
   );
   if (workable[0]) {
     logger.warn(`Pair is in workable = ${workable[0]} state, this is likely not a good sign`);

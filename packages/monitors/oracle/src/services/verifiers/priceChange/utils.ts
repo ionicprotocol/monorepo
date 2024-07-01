@@ -6,7 +6,7 @@ import { AssetPriceCache, PriceChangeKind, PriceChangeVerifierAsset, PriceChange
 export async function observationUpdatable(
   kind: PriceChangeKind,
   assetPriceCache: AssetPriceCache,
-  config: PriceChangeVerifierConfig
+  config: PriceChangeVerifierConfig,
 ) {
   const currentTs = Date.now();
 
@@ -33,7 +33,7 @@ export async function updateCache(
   kind: PriceChangeKind,
   assetPriceCache: AssetPriceCache,
   delta: number,
-  mpoPrice: BigNumber
+  mpoPrice: BigNumber,
 ) {
   if (kind === PriceChangeKind.SHORT) {
     const values = {

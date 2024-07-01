@@ -10,7 +10,7 @@ export { verifyPriceValue } from "./price";
 export async function verifyProviderFeed(
   oracle: OracleTypes,
   config: FeedVerifierConfig,
-  args: VerifyFeedParams
+  args: VerifyFeedParams,
 ): Promise<PriceFeedInvalidity | true> {
   switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
