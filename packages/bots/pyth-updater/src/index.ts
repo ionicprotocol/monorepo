@@ -31,9 +31,9 @@ export const handler = async (
   await updater.updateFeeds();
   try {
     await axios.get(HEARTBEAT_API_URL);
-    logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
+    sdk.logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
   } catch (error: any) {
-    logger.error(`Error sending heartbeat to ${HEARTBEAT_API_URL}: ${error.message}`);
+    sdk.logger.error(`Error sending heartbeat to ${HEARTBEAT_API_URL}: ${error.message}`);
   }
 
   return {
