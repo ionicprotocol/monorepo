@@ -22,15 +22,18 @@ export const handler = async (
   const provider = new JsonRpcProvider(config.rpcUrl);
   const signer = new Wallet(config.adminPrivateKey, provider);
 
+  
+
   const sdk = setUpSdk(config.chainId, signer);
   const assetConfig = chainIdToConfig[config.chainId];
   const updater = await new Updater(sdk).init(assetConfig);
 
   sdk.logger.info(`Starting update loop bot on chain: ${config.chainId}`);
   sdk.logger.info(`Config for bot: ${JSON.stringify(config)}`);
-  await updater.updateFeeds();
   await axios.get(HEARTBEAT_API_URL);
-  sdk.logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
+  logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
+  await updater.updateFeeds();
+  
 
   return {
     statusCode: 200,
