@@ -2287,6 +2287,7 @@ __metadata:
     nyc: "npm:^15.1.0"
     sinon: "npm:^14.0.0"
     utf-8-validate: "npm:^5.0.9"
+    viem: "npm:^2.16.5"
   languageName: unknown
   linkType: soft
 
@@ -24176,7 +24177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:2.x, viem@npm:^2.16.3":
+"viem@npm:2.x, viem@npm:^2.16.3, viem@npm:^2.16.5":
   version: 2.16.5
   resolution: "viem@npm:2.16.5"
   dependencies:

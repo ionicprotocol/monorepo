@@ -45,8 +45,8 @@
     "@types/node-cache": "^4.2.5",
     "axios": "^0.27.2",
     "decimal.js": "^10.4.0",
-    "ethers": "^5.7.0",
     "node-cache": "^5.1.2",
-    "utf-8-validate": "^5.0.9"
+    "utf-8-validate": "^5.0.9",
+    "viem": "^2.16.5"
   }
 }
