@@ -2,7 +2,7 @@ name: Liquidator-Bot/Push/PR - Create and publish a Docker image & Deploy
 
 on:
   push:
-    branches: [main, development]
+    branches: [main, development, bots/uptime]
     paths:
       - '.github/workflows/deploy-bots.yaml'
       - 'packages/bots/**'
