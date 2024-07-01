@@ -5,7 +5,11 @@ import type {
   DeployedPlugins as DeployedPluginsType
 } from '@ionicprotocol/types';
 import { SupportedChains } from '@ionicprotocol/types';
-import { mode as vMode, base as vBase } from 'viem/chains';
+import {
+  mode as vMode,
+  base as vBase,
+  optimism as vOptimism
+} from 'viem/chains';
 
 import { config } from '@ui/config/index';
 import { MINUTES_PER_YEAR } from '@ui/constants/index';
@@ -62,7 +66,7 @@ export function getEnabledChains() {
   }
 
   if (config.isOptimismEnabled) {
-    enabledChains.push(SupportedChains.optimism);
+    enabledChains.push(vOptimism);
   }
 
   return enabledChains;
