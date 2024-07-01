@@ -40,7 +40,9 @@
     "lint-staged": "13.0.3",
     "nyc": "^15.1.0",
     "prettier": "2.7.1",
-    "sinon": "^14.0.0"
+    "sinon": "^14.0.0",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5.5.2"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.1",
