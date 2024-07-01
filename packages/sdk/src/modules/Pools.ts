@@ -61,7 +61,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 } & TBase {
   return class IonicPools extends Base {
     async fetchPoolData(poolId: string): Promise<IonicPoolData | null> {
-      const [comptroller, _unfiliteredName, creator, blockPosted, timestampPosted] =
+      const [_unfiliteredName, creator, comptroller, blockPosted, timestampPosted] =
         await this.contracts.PoolDirectory.read.pools([BigInt(poolId)]);
       if (comptroller === zeroAddress) {
         return null;
@@ -69,7 +69,12 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       const name = filterPoolName(_unfiliteredName);
 
       const res = await this.contracts.PoolLens.simulate.getPoolAssetsWithData([comptroller as Address]);
-      const assets: NativePricedIonicAsset[] = res.result.map(filterOnlyObjectProperties);
+      const assets: NativePricedIonicAsset[] = res.result
+        .map(filterOnlyObjectProperties)
+        .map(
+          (asset: NativePricedIonicAsset) =>
+            ({ ...asset, underlyingDecimals: Number(asset.underlyingDecimals) }) as NativePricedIonicAsset
+        );
 
       let totalLiquidityNative = 0;
       let totalAvailableLiquidityNative = 0;
