@@ -8,9 +8,10 @@ export const useHealthFactor = (pool?: Address, chainId?: number) => {
   const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useHealthFactor', sdk?.chainId, pool],
-    async () => {
+  return useQuery({
+    queryKey: ['useHealthFactor', sdk?.chainId, pool],
+
+    queryFn: async () => {
       if (sdk && pool && address) {
         const healthFactor = await sdk.getHealthFactor(address, pool);
 
@@ -23,10 +24,9 @@ export const useHealthFactor = (pool?: Address, chainId?: number) => {
 
       return null;
     },
-    {
-      enabled: !!pool && !!chainId && !!address
-    }
-  );
+
+    enabled: !!pool && !!chainId && !!address
+  });
 };
 
 export const useHealthFactorPrediction = (

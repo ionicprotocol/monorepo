@@ -11,15 +11,16 @@ export const useIsEditableAdmin = (
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
   const { currentChain } = useMultiIonic();
 
-  const { data } = useQuery(
-    [
+  const { data } = useQuery({
+    queryKey: [
       'useIsEditableAdmin',
       comptrollerAddress,
       poolInfo?.isPowerfulAdmin,
       currentChain?.id,
       poolChainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (
         comptrollerAddress &&
         poolInfo?.isPowerfulAdmin &&
@@ -31,14 +32,13 @@ export const useIsEditableAdmin = (
         return null;
       }
     },
-    {
-      enabled:
-        !!comptrollerAddress &&
-        !!poolInfo?.isPowerfulAdmin &&
-        !!currentChain?.id &&
-        !!poolChainId
-    }
-  );
+
+    enabled:
+      !!comptrollerAddress &&
+      !!poolInfo?.isPowerfulAdmin &&
+      !!currentChain?.id &&
+      !!poolChainId
+  });
 
   return data;
 };

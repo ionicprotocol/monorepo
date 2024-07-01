@@ -7,9 +7,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export function useCurrentLeverageRatio(position: Address, chainId?: number) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useCurrentLeverageRatio', sdk?.chainId, position],
-    async () => {
+  return useQuery({
+    queryKey: ['useCurrentLeverageRatio', sdk?.chainId, position],
+
+    queryFn: async () => {
       if (sdk) {
         const currentLeverageRatio = await sdk
           .getCurrentLeverageRatio(position)
@@ -32,12 +33,11 @@ export function useCurrentLeverageRatio(position: Address, chainId?: number) {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!position,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!position,
+    staleTime: Infinity
+  });
 }
 
 export const useCurrentLeverageRatios = (positionAddresses: Address[]) => {

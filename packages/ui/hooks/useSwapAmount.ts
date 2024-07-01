@@ -17,8 +17,8 @@ export function useSwapAmount(
 ) {
   const { address, currentSdk } = useMultiIonic();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useSwapAmount',
       inputToken,
       amount,
@@ -26,7 +26,8 @@ export function useSwapAmount(
       currentSdk?.chainId,
       address
     ],
-    async () => {
+
+    queryFn: async () => {
       if (
         amount &&
         currentSdk &&
@@ -77,11 +78,12 @@ export function useSwapAmount(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!inputToken && !!amount && !!outputToken && !!currentSdk && !!address,
+
+    staleTime: Infinity
+  });
 }

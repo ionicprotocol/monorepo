@@ -1,6 +1,4 @@
-import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import type { UseAssetsData } from '@ui/hooks/useAssets';
@@ -18,21 +16,17 @@ export const useTotalSupplyAPYs = (
   assetInfos?: UseAssetsData
 ) => {
   const sdk = useSdk(chainId);
-  const isEnabled = useMemo(() => {
-    return !!assets.find(
-      (asset) => asset.underlyingSymbol === assetSymbols.ankrBNB
-    );
-  }, [assets]);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useTotalSupplyAPYs',
       { chain: sdk?.chainId },
       { assets: assets.map((a) => a.cToken).sort() },
       { rewards: allRewards ? Object.keys(allRewards).sort() : undefined },
       { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined }
     ],
-    async () => {
+
+    queryFn: async () => {
       if (!sdk || !assets || !chainId) return null;
 
       const result: { [market: string]: { apy: number; totalApy: number } } =
@@ -65,10 +59,9 @@ export const useTotalSupplyAPYs = (
 
       return result;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!assets && !!chainId,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!assets && !!chainId,
+    staleTime: Infinity
+  });
 };

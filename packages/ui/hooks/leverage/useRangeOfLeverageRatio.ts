@@ -6,9 +6,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export function useRangeOfLeverageRatio(address?: Address, chainId?: number) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useRangeOfLeverageRatio', address, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useRangeOfLeverageRatio', address, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk && address) {
         const [minBignum, maxBignum] = await sdk
           .getRangeOfLeverageRatio(address)
@@ -30,10 +31,9 @@ export function useRangeOfLeverageRatio(address?: Address, chainId?: number) {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!address && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!address && !!sdk,
+    staleTime: Infinity
+  });
 }

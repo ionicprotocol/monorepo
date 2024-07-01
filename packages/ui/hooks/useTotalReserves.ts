@@ -6,9 +6,10 @@ import { Address } from 'viem';
 export const useTotalReserves = (cTokenAddress?: Address, chainId?: number) => {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useTotalReserves', cTokenAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useTotalReserves', cTokenAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (cTokenAddress && sdk) {
         try {
           const cToken = sdk.createICErc20(cTokenAddress);
@@ -30,8 +31,7 @@ export const useTotalReserves = (cTokenAddress?: Address, chainId?: number) => {
         return null;
       }
     },
-    {
-      enabled: !!cTokenAddress && !!sdk
-    }
-  );
+
+    enabled: !!cTokenAddress && !!sdk
+  });
 };

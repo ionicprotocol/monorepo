@@ -51,21 +51,21 @@ export const fetchFlywheelRewards = async (comptroller: Address, sdk: IonicSdk) 
 export function useFlywheelRewards(comptroller?: Address, chainId?: number) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useFlywheelRewards', chainId, comptroller],
-    async () => {
+  return useQuery({
+    queryKey: ['useFlywheelRewards', chainId, comptroller],
+
+    queryFn: async () => {
       if (chainId && sdk && comptroller) {
         return await fetchFlywheelRewards(comptroller, sdk);
       }
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!comptroller && !!chainId,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!comptroller && !!chainId,
+    staleTime: Infinity
+  });
 }
 
 export const fetchRewards = async (
@@ -151,14 +151,15 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
     chainId
   );
 
-  return useQuery<UseRewardsData>(
-    [
+  return useQuery({
+    queryKey: [
       'useRewards',
       chainId,
       poolData?.assets.map((asset) => [asset.cToken, asset.plugin]),
       flywheelRewards
     ],
-    async () => {
+
+    queryFn: async () => {
       if (chainId && poolData && flywheelRewards) {
         return await fetchRewards(
           poolData.assets,
@@ -170,12 +171,11 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
 
       return {};
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!poolData && !!flywheelRewards,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!poolData && !!flywheelRewards,
+    staleTime: Infinity
+  });
 }
 
 export function useRewardsForMarket({
@@ -189,9 +189,10 @@ export function useRewardsForMarket({
 }) {
   const { data: flywheelRewards } = useFlywheelRewards(poolAddress, chainId);
 
-  return useQuery<UseRewardsData>(
-    ['useRewardsForMarket', chainId, asset, flywheelRewards],
-    async () => {
+  return useQuery({
+    queryKey: ['useRewardsForMarket', chainId, asset, flywheelRewards],
+
+    queryFn: async () => {
       if (chainId && asset && flywheelRewards) {
         return await fetchRewards(
           [asset],
@@ -203,10 +204,9 @@ export function useRewardsForMarket({
 
       return {};
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!asset && !!poolAddress,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!asset && !!poolAddress,
+    staleTime: Infinity
+  });
 }

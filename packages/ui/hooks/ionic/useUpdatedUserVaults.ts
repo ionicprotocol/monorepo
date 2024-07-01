@@ -26,9 +26,10 @@ export const useUpdatedUserVault = ({
     }
   }, [usdPrices, vault.chainId]);
 
-  return useQuery(
-    ['useUpdatedUserVault', mode, vault, amount, usdPrice, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useUpdatedUserVault', mode, vault, amount, usdPrice, sdk?.chainId],
+
+    queryFn: async () => {
       if (!vault || !usdPrice || !sdk) return null;
 
       return await sdk.getUpdatedVault(mode, vault, amount).catch((e) => {
@@ -37,6 +38,7 @@ export const useUpdatedUserVault = ({
         return null;
       });
     },
-    { enabled: !!vault && !!usdPrice && !!sdk }
-  );
+
+    enabled: !!vault && !!usdPrice && !!sdk
+  });
 };

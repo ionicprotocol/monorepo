@@ -11,15 +11,16 @@ export function useUpdatedNetApyAfterFunding(
 ) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useUpdatedNetApyAfterFunding',
       positionAddress,
       supplyApy,
       amount,
       sdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && supplyApy !== undefined && amount && positionAddress) {
         const netApy = await sdk
           .getNetApyForPositionAfterFunding(positionAddress, supplyApy, amount)
@@ -43,11 +44,11 @@ export function useUpdatedNetApyAfterFunding(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!sdk && supplyApy !== undefined && !!amount && !!positionAddress,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled: !!sdk && supplyApy !== undefined && !!amount && !!positionAddress,
+
+    staleTime: Infinity
+  });
 }

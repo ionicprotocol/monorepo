@@ -6,9 +6,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export const usePerformanceFee = (poolChainId: number, pluginAddress?: Address) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['usePerformanceFee', pluginAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['usePerformanceFee', pluginAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk && pluginAddress) {
         try {
           const pluginContract = sdk.getErc4626PluginInstance(pluginAddress);
@@ -28,10 +29,9 @@ export const usePerformanceFee = (poolChainId: number, pluginAddress?: Address) 
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!pluginAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!pluginAddress && !!sdk,
+    staleTime: Infinity
+  });
 };

@@ -29,8 +29,8 @@ export function useHistoryData(
     }
   }, [usdPrices, chainId]);
 
-  return useQuery<ChartData[] | null>(
-    [
+  return useQuery({
+    queryKey: [
       'useHistoryData',
       mode,
       chainId,
@@ -39,7 +39,8 @@ export function useHistoryData(
       milliSeconds,
       usdPrice
     ],
-    async () => {
+
+    queryFn: async () => {
       if (
         mode &&
         chainId &&
@@ -102,15 +103,16 @@ export function useHistoryData(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!mode &&
-        !!chainId &&
-        !!underlyingAddress &&
-        !!cTokenAddress &&
-        !!milliSeconds,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!mode &&
+      !!chainId &&
+      !!underlyingAddress &&
+      !!cTokenAddress &&
+      !!milliSeconds,
+
+    staleTime: Infinity
+  });
 }

@@ -6,9 +6,14 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 export const useFlywheelEnabledMarkets = (flywheelAddress: Address) => {
   const { currentSdk } = useMultiIonic();
 
-  return useQuery(
-    ['useFlywheelEnabledMarkets', flywheelAddress, currentSdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'useFlywheelEnabledMarkets',
+      flywheelAddress,
+      currentSdk?.chainId
+    ],
+
+    queryFn: async () => {
       if (flywheelAddress && currentSdk) {
         return await currentSdk
           .getFlywheelEnabledMarkets(flywheelAddress)
@@ -25,10 +30,9 @@ export const useFlywheelEnabledMarkets = (flywheelAddress: Address) => {
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!flywheelAddress && !!currentSdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!flywheelAddress && !!currentSdk,
+    staleTime: Infinity
+  });
 };

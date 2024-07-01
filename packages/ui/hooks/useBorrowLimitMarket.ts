@@ -28,8 +28,8 @@ export const useBorrowLimitMarket = (
     market: asset
   });
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useBorrowLimitMarket',
       poolChainId,
       asset,
@@ -38,7 +38,8 @@ export const useBorrowLimitMarket = (
       usdPrice,
       borrowCaps
     ],
-    () => {
+
+    queryFn: () => {
       if (!usdPrice) return undefined;
 
       let _maxBorrow = 0;
@@ -66,6 +67,9 @@ export const useBorrowLimitMarket = (
         ? borrowCaps.usdCap
         : _maxBorrow;
     },
-    { cacheTime: Infinity, enabled: !!usdPrice, staleTime: Infinity }
-  );
+
+    gcTime: Infinity,
+    enabled: !!usdPrice,
+    staleTime: Infinity
+  });
 };

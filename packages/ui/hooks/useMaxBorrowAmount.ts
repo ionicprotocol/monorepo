@@ -18,8 +18,8 @@ export function useMaxBorrowAmount(
     chainId
   );
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useMaxBorrowAmount',
       asset.cToken,
       comptrollerAddress,
@@ -27,7 +27,8 @@ export function useMaxBorrowAmount(
       address,
       borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
     ],
-    async () => {
+
+    queryFn: async () => {
       if (
         sdk &&
         address &&
@@ -87,15 +88,16 @@ export function useMaxBorrowAmount(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!address &&
-        !!asset &&
-        !!sdk &&
-        !!comptrollerAddress &&
-        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!address &&
+      !!asset &&
+      !!sdk &&
+      !!comptrollerAddress &&
+      !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+
+    staleTime: Infinity
+  });
 }

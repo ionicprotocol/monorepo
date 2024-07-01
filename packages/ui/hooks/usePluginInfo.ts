@@ -6,9 +6,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export const usePluginInfo = (poolChainId: number, pluginAddress?: Address) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['usePluginInfo', pluginAddress, sdk?.chainId],
-    () => {
+  return useQuery({
+    queryKey: ['usePluginInfo', pluginAddress, sdk?.chainId],
+
+    queryFn: () => {
       if (sdk) {
         return pluginAddress && sdk.deployedPlugins[pluginAddress]
           ? sdk.deployedPlugins[pluginAddress]
@@ -23,10 +24,9 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: Address) => {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!pluginAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!pluginAddress && !!sdk,
+    staleTime: Infinity
+  });
 };

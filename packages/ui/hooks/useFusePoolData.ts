@@ -35,8 +35,8 @@ export const useFusePoolData = (
     }
   }, [usdPrices, poolChainId]);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useFusePoolData',
       poolId,
       address,
@@ -44,7 +44,8 @@ export const useFusePoolData = (
       usdPrice,
       excludeNonBorrowable
     ],
-    async () => {
+
+    queryFn: async () => {
       if (usdPrice && sdk?.chainId && poolId) {
         const response = await sdk.fetchPoolData(poolId).catch((e) => {
           console.warn(
@@ -125,10 +126,9 @@ export const useFusePoolData = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!poolId && !!usdPrice && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!poolId && !!usdPrice && !!sdk,
+    staleTime: Infinity
+  });
 };

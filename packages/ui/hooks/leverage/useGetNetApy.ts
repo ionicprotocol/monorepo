@@ -14,8 +14,8 @@ export function useGetNetApy(
 ) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useGetNetApy',
       supplyApy,
       amount,
@@ -24,7 +24,8 @@ export function useGetNetApy(
       leverageRatio,
       sdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && supplyApy !== undefined && amount && leverageRatio) {
         const netApy = await sdk
           .getNetAPY(
@@ -55,10 +56,9 @@ export function useGetNetApy(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
+    staleTime: Infinity
+  });
 }

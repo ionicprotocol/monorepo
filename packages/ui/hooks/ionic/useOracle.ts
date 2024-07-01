@@ -9,9 +9,10 @@ export const useOracle = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useOracle', underlyingAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useOracle', underlyingAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (underlyingAddress && sdk) {
         try {
           const mpo = sdk.createMasterPriceOracle(
@@ -34,8 +35,7 @@ export const useOracle = (
         return null;
       }
     },
-    {
-      enabled: !!underlyingAddress && !!sdk
-    }
-  );
+
+    enabled: !!underlyingAddress && !!sdk
+  });
 };

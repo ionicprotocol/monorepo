@@ -7,9 +7,10 @@ import { Address } from 'viem';
 export const useFlywheel = (flywheelAddress?: Address) => {
   const { currentSdk } = useMultiIonic();
 
-  return useQuery(
-    ['useFlywheel', currentSdk?.chainId, flywheelAddress],
-    async () => {
+  return useQuery({
+    queryKey: ['useFlywheel', currentSdk?.chainId, flywheelAddress],
+
+    queryFn: async () => {
       if (!flywheelAddress || !currentSdk) return null;
 
       const flywheel = currentSdk.createIonicFlywheel(flywheelAddress);
@@ -74,11 +75,10 @@ export const useFlywheel = (flywheelAddress?: Address) => {
         rewards
       } as Flywheel;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!flywheelAddress && !!currentSdk,
-      initialData: undefined,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!flywheelAddress && !!currentSdk,
+    initialData: undefined,
+    staleTime: Infinity
+  });
 };

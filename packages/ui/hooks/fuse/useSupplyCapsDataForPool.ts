@@ -15,9 +15,10 @@ export const useSupplyCapsDataForPool = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useSupplyCapsDataForPool', comptrollerAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useSupplyCapsDataForPool', comptrollerAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (comptrollerAddress && sdk) {
         try {
           const res: SupplyCapsDataForPoolType[] = [];
@@ -51,12 +52,11 @@ export const useSupplyCapsDataForPool = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!comptrollerAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!comptrollerAddress && !!sdk,
+    staleTime: Infinity
+  });
 };
 
 export const useSupplyCapsDataForAsset = (
@@ -69,15 +69,16 @@ export const useSupplyCapsDataForAsset = (
     poolChainId
   );
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useSupplyCapsDataForAsset',
       supplyCapsDataForPool?.sort((a, b) =>
         a.cTokenAddress.localeCompare(b.cTokenAddress)
       ),
       cTokenAddress
     ],
-    () => {
+
+    queryFn: () => {
       if (supplyCapsDataForPool && cTokenAddress) {
         const res = supplyCapsDataForPool.find(
           (data) => data.cTokenAddress === cTokenAddress
@@ -92,10 +93,9 @@ export const useSupplyCapsDataForAsset = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!supplyCapsDataForPool && !!cTokenAddress,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!supplyCapsDataForPool && !!cTokenAddress,
+    staleTime: Infinity
+  });
 };

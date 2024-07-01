@@ -97,6 +97,7 @@
     "bufferutil": "^4.0.8",
     "ethereum-waffle": "^4.0.10",
     "ethers": "^5.7.2",
+    "perf_hooks": "^0.0.1",
     "utf-8-validate": "^6.0.4",
     "viem": "^2.16.3"
   }

@@ -39,8 +39,8 @@ export const useSupplyCap = ({
     chainId
   );
 
-  return useQuery<Cap | null | undefined>(
-    [
+  return useQuery({
+    queryKey: [
       'useSupplyCap',
       comptrollerAddress,
       sdk?.chainId,
@@ -52,7 +52,8 @@ export const useSupplyCap = ({
       address,
       supplyCapsDataForAsset
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && usdPrice && market && address && supplyCapsDataForAsset) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
@@ -90,15 +91,12 @@ export const useSupplyCap = ({
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!sdk &&
-        !!usdPrice &&
-        !!market &&
-        !!address &&
-        !!supplyCapsDataForAsset,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!sdk && !!usdPrice && !!market && !!address && !!supplyCapsDataForAsset,
+
+    staleTime: Infinity
+  });
 };

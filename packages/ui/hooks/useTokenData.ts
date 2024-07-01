@@ -75,9 +75,10 @@ export const useTokenData = (address: string, chainId?: number) => {
     return undefined;
   }, [address]);
 
-  return useQuery<TokenData | null>(
-    ['useTokenData', chainId, validAddress],
-    async () => {
+  return useQuery({
+    queryKey: ['useTokenData', chainId, validAddress],
+
+    queryFn: async () => {
       if (chainId && validAddress) {
         const res = await fetchTokenData([validAddress], chainId);
 
@@ -86,6 +87,9 @@ export const useTokenData = (address: string, chainId?: number) => {
         return null;
       }
     },
-    { cacheTime: Infinity, enabled: !!chainId, staleTime: Infinity }
-  );
+
+    gcTime: Infinity,
+    enabled: !!chainId,
+    staleTime: Infinity
+  });
 };

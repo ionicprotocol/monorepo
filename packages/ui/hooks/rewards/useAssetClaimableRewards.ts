@@ -14,15 +14,16 @@ export const useAssetClaimableRewards = (
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
-  return useQuery<FlywheelClaimableRewards[] | null | undefined>(
-    [
+  return useQuery({
+    queryKey: [
       'useAssetClaimableRewards',
       poolAddress,
       marketAddress,
       address,
       sdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && poolAddress && marketAddress && address) {
         try {
           const rewards = await sdk.getFlywheelClaimableRewardsForMarket(
@@ -46,12 +47,11 @@ export const useAssetClaimableRewards = (
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!poolAddress && !!marketAddress && !!address && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!poolAddress && !!marketAddress && !!address && !!sdk,
+    staleTime: Infinity
+  });
 };
 
 export const getAssetsClaimableRewards = async (
@@ -100,17 +100,16 @@ export const useAssetsClaimableRewards = ({
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
-  return useQuery<
-    { [key: string]: FlywheelClaimableRewards[] } | null | undefined
-  >(
-    [
+  return useQuery({
+    queryKey: [
       'useAssetsClaimableRewards',
       poolAddress,
       assetsAddress,
       address,
       sdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && address) {
         return await getAssetsClaimableRewards(
           poolAddress,
@@ -122,10 +121,9 @@ export const useAssetsClaimableRewards = ({
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!poolAddress && !!address && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!poolAddress && !!address && !!sdk,
+    staleTime: Infinity
+  });
 };

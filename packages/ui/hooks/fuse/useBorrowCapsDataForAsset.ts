@@ -9,9 +9,10 @@ export const useBorrowCapsDataForAsset = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useBorrowCapsDataForAsset', cTokenAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useBorrowCapsDataForAsset', cTokenAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (cTokenAddress && sdk) {
         try {
           const [
@@ -44,10 +45,9 @@ export const useBorrowCapsDataForAsset = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!cTokenAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!cTokenAddress && !!sdk,
+    staleTime: Infinity
+  });
 };

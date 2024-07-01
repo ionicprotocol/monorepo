@@ -6,9 +6,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export const useIsUpgradeable = (comptrollerAddress: Address, poolChainId: number) => {
   const sdk = useSdk(poolChainId);
 
-  const { data } = useQuery(
-    ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
-    async () => {
+  const { data } = useQuery({
+    queryKey: ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
@@ -29,12 +30,11 @@ export const useIsUpgradeable = (comptrollerAddress: Address, poolChainId: numbe
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!comptrollerAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!comptrollerAddress && !!sdk,
+    staleTime: Infinity
+  });
 
   return data;
 };

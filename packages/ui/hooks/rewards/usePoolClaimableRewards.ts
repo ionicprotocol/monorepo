@@ -12,9 +12,10 @@ export const usePoolClaimableRewards = (
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
-  return useQuery<FlywheelClaimableRewards[] | null | undefined>(
-    ['usePoolClaimableRewards', poolAddress, address, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['usePoolClaimableRewards', poolAddress, address, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk && poolAddress && address) {
         try {
           const rewards = await sdk.getFlywheelClaimableRewardsForPool(
@@ -40,10 +41,9 @@ export const usePoolClaimableRewards = (
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!poolAddress && !!address && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!poolAddress && !!address && !!sdk,
+    staleTime: Infinity
+  });
 };

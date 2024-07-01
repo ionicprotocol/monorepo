@@ -20,15 +20,16 @@ export function useMaxBorrowAmounts(
     chainId
   );
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useMaxBorrowAmount',
       ...cTokenAddresses,
       comptrollerAddress,
       sdk?.chainId,
       address
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && address && borrowCapsDataForAssets) {
         const borrowCapsData = [];
 
@@ -95,15 +96,16 @@ export function useMaxBorrowAmounts(
 
       return [];
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!address &&
-        !!assets &&
-        !!sdk &&
-        !!comptrollerAddress &&
-        !!borrowCapsDataForAssets,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!address &&
+      !!assets &&
+      !!sdk &&
+      !!comptrollerAddress &&
+      !!borrowCapsDataForAssets,
+
+    staleTime: Infinity
+  });
 }

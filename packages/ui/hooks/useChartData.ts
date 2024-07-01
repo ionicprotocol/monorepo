@@ -7,9 +7,10 @@ import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 export function useChartData(market: Address, poolChainId: number) {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useChartData', market, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useChartData', market, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk) {
         const interestRateModel = await sdk
           .getInterestRateModel(market)
@@ -32,10 +33,9 @@ export function useChartData(market: Address, poolChainId: number) {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!market,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!market,
+    staleTime: Infinity
+  });
 }

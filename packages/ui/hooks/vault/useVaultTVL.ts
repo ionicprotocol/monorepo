@@ -31,14 +31,15 @@ export const useVaultTVL = () => {
   const { sdks } = useMultiIonic();
   const { data: prices, isLoading, error } = useAllUsdPrices();
 
-  return useQuery<CrossChainVaultTVL | null | undefined>(
-    [
+  return useQuery({
+    queryKey: [
       'useVaultTVL',
       prices && Object.values(prices).sort(),
       isLoading,
       sdks.map((sdk) => sdk.chainId).sort()
     ],
-    async () => {
+
+    queryFn: async () => {
       if (!isLoading && error) throw new Error('Could not get USD price');
       if (!isLoading && prices) {
         const chainVaultTVLs: CrossChainVaultTVL = new Map();
@@ -68,10 +69,9 @@ export const useVaultTVL = () => {
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!prices && !isLoading,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!prices && !isLoading,
+    staleTime: Infinity
+  });
 };

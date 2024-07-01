@@ -1,4 +1,4 @@
-import { parseEther, TransactionReceipt } from "viem";
+import { Address, parseEther, TransactionReceipt } from "viem";
 
 import { IonicSdk } from "../..";
 import { CreateContractsModule } from "../CreateContracts";
@@ -7,7 +7,8 @@ import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
 import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "./utils";
 
-import { gatherLiquidations, getAllPoolUsers } from "./index";
+// import { gatherLiquidations, getAllPoolUsers } from "./index";
+import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
 export interface ISafeLiquidator {
   getPotentialLiquidations(
@@ -30,12 +31,13 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 
     async getPotentialLiquidations(
-      excludedComptrollers: Array<string> = [],
+      excludedComptrollers: Array<Address> = [],
       maxHealthFactor: bigint = parseEther("1"),
       configOverrides?: ChainLiquidationConfig
     ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
-      const [poolWithUsers, erroredPools] = await getAllPoolUsers(
+      // const [poolWithUsers, erroredPools] = await getAllPoolUsers(
+      const [poolWithUsers, erroredPools] = await getAllFusePoolUsers(
         this as unknown as IonicSdk,
         maxHealthFactor,
         excludedComptrollers

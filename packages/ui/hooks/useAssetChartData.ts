@@ -12,15 +12,16 @@ export function useAssetChartData(
 ) {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useAssetChartData',
       interestRateModelAddress,
       adminFee,
       reserveFactor,
       sdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk) {
         const interestRateModel = await sdk
           .identifyInterestRateModel(interestRateModelAddress)
@@ -63,15 +64,16 @@ export function useAssetChartData(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!interestRateModelAddress &&
-        !!adminFee.toString() &&
-        !!reserveFactor.toString() &&
-        !!sdk &&
-        !!poolChainId,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!interestRateModelAddress &&
+      !!adminFee.toString() &&
+      !!reserveFactor.toString() &&
+      !!sdk &&
+      !!poolChainId,
+
+    staleTime: Infinity
+  });
 }

@@ -27,8 +27,8 @@ export function useMaxSupplyAmount(
     token: asset.underlyingToken as `0x${string}`
   });
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useMaxSupplyAmount',
       asset.underlyingToken,
       asset.cToken,
@@ -38,7 +38,8 @@ export function useMaxSupplyAmount(
       address,
       supplyCapsDataForAsset
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && address && supplyCapsDataForAsset && balanceData) {
         try {
           const tokenBalance = balanceData.value;
@@ -82,11 +83,12 @@ export function useMaxSupplyAmount(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!address && !!asset && !!sdk && !!comptrollerAddress && !!balanceData,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!address && !!asset && !!sdk && !!comptrollerAddress && !!balanceData,
+
+    staleTime: Infinity
+  });
 }

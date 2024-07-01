@@ -16,7 +16,7 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const poolsQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
-        cacheTime: Infinity,
+        gcTime: Infinity,
         enabled: !!chainId && !!prices && !!prices[chainId.toString()],
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
