@@ -1,12 +1,12 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
 import { createPublicClient, createWalletClient, Hex, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { base, mode, optimism } from "viem/chains";
 
 import { assets, configs, verifiers } from "./config";
 import { baseConfig } from "./config/variables";
 import { logger, setUpSdk } from "./logger";
 import { BatchVerifier } from "./services/verifier";
-import { privateKeyToAccount } from "viem/accounts";
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   logger.info(`Event: ${JSON.stringify(event)}`);
