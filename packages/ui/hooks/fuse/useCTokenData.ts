@@ -50,7 +50,7 @@
 //     }
 //   },
 //   {
-//     cacheTime: Infinity,
+//     gcTime: Infinity,
 //     enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk,
 //     staleTime: Infinity
 //   }

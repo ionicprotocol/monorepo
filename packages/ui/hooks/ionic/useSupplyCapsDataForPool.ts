@@ -15,9 +15,10 @@ export const useSupplyCapsDataForPool = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useSupplyCapsDataForPool', comptrollerAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useSupplyCapsDataForPool', comptrollerAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (comptrollerAddress && sdk) {
         try {
           const res: SupplyCapsDataForPoolType[] = [];
@@ -51,10 +52,9 @@ export const useSupplyCapsDataForPool = (
         return null;
       }
     },
-    {
-      enabled: !!comptrollerAddress && !!sdk
-    }
-  );
+
+    enabled: !!comptrollerAddress && !!sdk
+  });
 };
 
 export const useSupplyCapsDataForAsset = (
@@ -67,15 +67,16 @@ export const useSupplyCapsDataForAsset = (
     poolChainId
   );
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useSupplyCapsDataForAsset',
       supplyCapsDataForPool?.sort((a, b) =>
         a.cTokenAddress.localeCompare(b.cTokenAddress)
       ),
       cTokenAddress
     ],
-    () => {
+
+    queryFn: () => {
       if (supplyCapsDataForPool && cTokenAddress) {
         const res = supplyCapsDataForPool.find(
           (data) => data.cTokenAddress === cTokenAddress
@@ -90,8 +91,7 @@ export const useSupplyCapsDataForAsset = (
         return null;
       }
     },
-    {
-      enabled: !!supplyCapsDataForPool && !!cTokenAddress
-    }
-  );
+
+    enabled: !!supplyCapsDataForPool && !!cTokenAddress
+  });
 };

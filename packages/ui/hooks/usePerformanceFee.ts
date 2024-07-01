@@ -9,9 +9,10 @@ export const usePerformanceFee = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['usePerformanceFee', pluginAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['usePerformanceFee', pluginAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk && pluginAddress) {
         try {
           const pluginContract = sdk.getErc4626PluginInstance(pluginAddress);
@@ -32,10 +33,9 @@ export const usePerformanceFee = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!pluginAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!pluginAddress && !!sdk,
+    staleTime: Infinity
+  });
 };

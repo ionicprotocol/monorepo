@@ -5,9 +5,10 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 export function useEquityAmount(position: string, chainId?: number) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useEquityAmount', sdk?.chainId, position],
-    async () => {
+  return useQuery({
+    queryKey: ['useEquityAmount', sdk?.chainId, position],
+
+    queryFn: async () => {
       if (sdk) {
         const baseCollateral = await sdk
           .getEquityAmount(position)
@@ -26,10 +27,9 @@ export function useEquityAmount(position: string, chainId?: number) {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk,
+    staleTime: Infinity
+  });
 }

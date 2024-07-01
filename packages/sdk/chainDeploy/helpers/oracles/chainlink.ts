@@ -1,13 +1,12 @@
-import { underlying } from "@ionicprotocol/types";
+import { ChainlinkFeedBaseCurrency, underlying } from "@ionicprotocol/types";
+import { ContractTransaction, PopulatedTransaction } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { addTransaction } from "../logging";
-import { ChainlinkAsset, ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
+import { ChainlinkAsset, ChainlinkDeployFnParams } from "../types";
 
 import { addUnderlyingsToMpo } from "./utils";
 
-// deployer vs multisig?
-const multisig = "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2";
 export const deployChainlinkOracle = async ({
   ethers,
   getNamedAccounts,
@@ -34,7 +33,7 @@ export const deployChainlinkOracle = async ({
           args: [deployConfig.stableToken, deployConfig.nativeTokenUsdChainlinkFeed]
         }
       },
-      owner: multisig,
+      owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy"
     },
     waitConfirmations: 1
@@ -141,7 +140,7 @@ export const deployChainlinkOracle = async ({
   const underlyings = chainlinkAssets.map((c) => underlying(assets, c.symbol));
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
-  await addUnderlyingsToMpo(mpo, underlyings, chainLinkv2.address);
+  await addUnderlyingsToMpo(mpo, underlyings, chainLinkv2.address, deployer);
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const chainLinkv2Address = await addressesProvider.callStatic.getAddress("ChainlinkPriceOracleV2");

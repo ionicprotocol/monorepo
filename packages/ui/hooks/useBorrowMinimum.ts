@@ -17,9 +17,10 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
     }
   }, [usdPrices, poolChainId]);
 
-  const response = useQuery(
-    [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],
-    async () => {
+  const response = useQuery({
+    queryKey: [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],
+
+    queryFn: async () => {
       if (currentSdk) {
         return await currentSdk.contracts.FeeDistributor.callStatic
           .getMinBorrowEth(asset.cToken)
@@ -36,12 +37,11 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!currentSdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!currentSdk,
+    staleTime: Infinity
+  });
 
   const data = useMemo(() => {
     if (!response.data || !usdPrice) {

@@ -6,9 +6,10 @@ import type { Flywheel } from '@ui/types/ComponentPropsType';
 export const useFlywheel = (flywheelAddress?: string) => {
   const { currentSdk } = useMultiIonic();
 
-  return useQuery(
-    ['useFlywheel', currentSdk?.chainId, flywheelAddress],
-    async () => {
+  return useQuery({
+    queryKey: ['useFlywheel', currentSdk?.chainId, flywheelAddress],
+
+    queryFn: async () => {
       if (!flywheelAddress || !currentSdk) return null;
 
       const flywheel = currentSdk.createIonicFlywheel(flywheelAddress);
@@ -73,11 +74,10 @@ export const useFlywheel = (flywheelAddress?: string) => {
         rewards
       } as Flywheel;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!flywheelAddress && !!currentSdk,
-      initialData: undefined,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!flywheelAddress && !!currentSdk,
+    initialData: undefined,
+    staleTime: Infinity
+  });
 };

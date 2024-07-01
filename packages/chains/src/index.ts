@@ -9,10 +9,11 @@ import { default as ganache } from "./ganache";
 import { default as linea } from "./linea";
 import { default as mode } from "./mode";
 import { default as neon } from "./neon";
+import { default as optimism } from "./optimism";
 import { default as polygon } from "./polygon";
 import { default as zkevm } from "./zkevm";
 
-export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode, base };
+export { bsc, polygon, arbitrum, ethereum, chapel, ganache, neon, linea, zkevm, mode, base, optimism };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -25,5 +26,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ethereum.chainId]: ethereum,
   [zkevm.chainId]: zkevm,
   [mode.chainId]: mode,
-  [base.chainId]: base
+  [base.chainId]: base,
+  [optimism.chainId]: optimism
 };

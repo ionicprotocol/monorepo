@@ -1,5 +1,5 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
-import { base, mode } from 'viem/chains';
+import { base, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -10,36 +10,97 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
 export const ABILLY = 1e9;
 
-export const MIDAS_DOCS_URL = 'https://docs.midascapital.xyz/';
-export const MIDAS_SECURITY_DOCS_URL =
-  'https://docs.midascapital.xyz/security/security-outline/4626-strategy-risk-scoring';
-export const MIDAS_DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
-export const MIDAS_TELEGRAM_URL = 'https://t.me/midascapitaltg';
-export const MIDAS_TWITTER_URL = 'https://twitter.com/MidasCapitalxyz';
-
 export const CLOSE_FACTOR = {
   DEFAULT: 50,
   MAX: 90,
   MIN: 5
 };
 
-export const pools = [
-  {
-    chain: mode.id,
-    id: '0',
-    name: 'Main Market'
+type PoolParams = {
+  arrow: string;
+  bg: string;
+  text: string;
+  name: string;
+  border: string;
+  logo: string;
+  pools: {
+    id: string;
+    name: string;
+    assets: string[];
+  }[];
+};
+
+export const pools: Record<number, PoolParams> = {
+  [mode.id]: {
+    arrow: '000000',
+    bg: 'bg-lime',
+    text: 'text-darkone',
+    name: 'Mode',
+    border: 'border-mode',
+    logo: '/img/logo/MODE.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: [
+          'wrsETH',
+          'ezETH',
+          'weETH.mode',
+          'STONE',
+          'M-BTC',
+          'WETH',
+          'WBTC',
+          'USDC',
+          'USDT'
+        ]
+      },
+      {
+        id: '1',
+        name: 'Native Market',
+        assets: ['MODE', 'WETH', 'USDC', 'USDT']
+      }
+    ]
   },
-  {
-    chain: mode.id,
-    id: '1',
-    name: 'Native Market'
+  [base.id]: {
+    name: 'Base',
+    arrow: 'ffffff',
+    bg: 'bg-blue-600',
+    text: 'text-white',
+    border: 'border-blue-600',
+    logo: '/img/logo/BASE.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: [
+          'ezETH',
+          'WETH',
+          'AERO',
+          'wstETH',
+          'weETH',
+          'USDC',
+          'cbETH',
+          'eUSD'
+        ]
+      }
+    ]
   },
-  {
-    chain: base.id,
-    id: '0',
-    name: 'Main Market'
+  [optimism.id]: {
+    name: 'Optimism',
+    arrow: 'ffffff',
+    bg: 'bg-optimism',
+    text: 'text-white',
+    border: 'border-optimism',
+    logo: '/img/logo/OPTIMISM.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: ['USDC', 'USDT', 'WETH', 'OP', 'wstETH', 'SNX', 'WBTC', 'LUSD']
+      }
+    ]
   }
-];
+};
 
 export const DROPDOWN = {
   AirdropSZN1: 1,

@@ -48,7 +48,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
   const currentLRExtensions = await liquidatorsRegistry.callStatic._listExtensions();
   if (currentLRExtensions.length == 0) {
-    if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Register First Liquidators Registry Extension",
         liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -61,7 +61,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
       await tx.wait();
       console.log(`registered the first liquidators registry extension ${liquidatorsRegistryExtensionDep.address}`);
     }
-    if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Register Second Liquidators Registry Extension",
         liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -81,7 +81,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
     }
   } else {
     if (currentLRExtensions.length == 1) {
-      if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Replace Liquidators Registry First Extension",
           liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -99,7 +99,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
           `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
         );
       }
-      if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Register Second Liquidators Registry Extension",
           liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -126,7 +126,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
           currentLRExtensions[1] != liquidatorsRegistryExtensionDep.address ||
           currentLRExtensions[0] != liquidatorsRegistrySecondExtensionDep.address
         ) {
-          if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+          if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
             logTransaction(
               "Replace Liquidators Registry First Extension",
               liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -144,7 +144,7 @@ const func: DeployFunction = async ({ ethers, getNamedAccounts, deployments, get
               `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
             );
           }
-          if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+          if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
             logTransaction(
               "Replace Liquidators Registry Second Extension",
               liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
