@@ -30,10 +30,10 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
                 : poolSort(
                     pools.map(
                       (p) =>
-                        ({
+                        (({
                           ...p,
                           chainId: Number(sdk.chainId)
-                        }) as IonicPoolData
+                        }) as IonicPoolData)
                     )
                   );
 

@@ -25,8 +25,8 @@ export const useDebtCeilingForAssetForCollateral = ({
   const sdk = useSdk(poolChainId);
   const { address } = useMultiIonic();
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useDebtCeilingForAssetForCollateral',
       poolChainId,
       assets.map((asset) => asset.cToken).sort(),
@@ -34,7 +34,8 @@ export const useDebtCeilingForAssetForCollateral = ({
       comptrollerAddress,
       address
     ],
-    async () => {
+
+    queryFn: async () => {
       if (!sdk || collaterals.length === 0 || !address) return null;
 
       const debtCeilingPerCollateral: DebtCeilingPerCollateralType[] = [];
@@ -100,10 +101,9 @@ export const useDebtCeilingForAssetForCollateral = ({
 
       return debtCeilingPerCollateral;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && collaterals.length > 0 && !!address,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && collaterals.length > 0 && !!address,
+    staleTime: Infinity
+  });
 };

@@ -5,9 +5,10 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 export function useMaxDepositVault(vault: string) {
   const { currentSdk, address } = useMultiIonic();
 
-  return useQuery(
-    ['useMaxDepositVault', vault, currentSdk?.chainId, address],
-    async () => {
+  return useQuery({
+    queryKey: ['useMaxDepositVault', vault, currentSdk?.chainId, address],
+
+    queryFn: async () => {
       if (currentSdk && address && vault) {
         const maxDepositVault = await currentSdk
           .getMaxDepositVault(vault)
@@ -26,10 +27,9 @@ export function useMaxDepositVault(vault: string) {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!address && !!vault && !!currentSdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!address && !!vault && !!currentSdk,
+    staleTime: Infinity
+  });
 }

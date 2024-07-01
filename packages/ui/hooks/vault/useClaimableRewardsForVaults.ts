@@ -9,9 +9,10 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 export const useClaimableRewardsForVaults = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiIonic();
 
-  return useQuery<FlywheelRewardsInfoForVault[] | null | undefined>(
-    ['useClaimableRewardsForVaults', address],
-    async () => {
+  return useQuery({
+    queryKey: ['useClaimableRewardsForVaults', address],
+
+    queryFn: async () => {
       const res: FlywheelRewardsInfoForVault[] = [];
 
       await Promise.all(
@@ -38,10 +39,9 @@ export const useClaimableRewardsForVaults = (chainIds: SupportedChains[]) => {
 
       return res;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!address,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!address,
+    staleTime: Infinity
+  });
 };

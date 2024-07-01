@@ -43,19 +43,19 @@ export function useTokenBalance(
 
   const addressToCheck = customAddress ?? address;
 
-  return useQuery(
-    ['TokenBalance', tokenAddress, addressToCheck, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['TokenBalance', tokenAddress, addressToCheck, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk && tokenAddress && chainId) {
         return await fetchTokenBalance(tokenAddress, sdk, addressToCheck);
       } else {
         return null;
       }
     },
-    {
-      // cacheTime: Infinity,
-      enabled: !!tokenAddress && !!addressToCheck && !!sdk
-      // staleTime: Infinity,
-    }
-  );
+
+    // gcTime: Infinity,
+    // staleTime: Infinity,
+    enabled: !!tokenAddress && !!addressToCheck && !!sdk
+  });
 }

@@ -13,9 +13,10 @@ interface Price {
 export function useAllUsdPrices() {
   const chainIds = getSupportedChainIds();
 
-  return useQuery(
-    ['useAllUsdPrices', ...chainIds.sort()],
-    async () => {
+  return useQuery({
+    queryKey: ['useAllUsdPrices', ...chainIds.sort()],
+
+    queryFn: async () => {
       const prices: Record<string, Price> = {};
 
       await Promise.all(
@@ -57,30 +58,29 @@ export function useAllUsdPrices() {
 
       return prices;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!chainIds && chainIds.length > 0,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!chainIds && chainIds.length > 0,
+    staleTime: Infinity
+  });
 }
 
 export function useUsdPrice(chainId: string) {
   const { data: usdPrices } = useAllUsdPrices();
 
-  return useQuery(
-    ['useUsdPrice', chainId, usdPrices],
-    async () => {
+  return useQuery({
+    queryKey: ['useUsdPrice', chainId, usdPrices],
+
+    queryFn: async () => {
       if (usdPrices && usdPrices[chainId]) {
         return usdPrices[chainId].value;
       } else {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!chainId && !!usdPrices,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!chainId && !!usdPrices,
+    staleTime: Infinity
+  });
 }

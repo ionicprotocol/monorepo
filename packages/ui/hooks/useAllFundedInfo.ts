@@ -50,14 +50,15 @@ export function useAllFundedInfo() {
   const { poolsPerChain } = useCrossFusePools([...enabledChains]);
   const { getSdk, address } = useMultiIonic();
 
-  return useQuery<resQuery | null>(
-    [
+  return useQuery({
+    queryKey: [
       'useAllFundedInfo',
       enabledChains,
       Object.values(poolsPerChain).map((query) => query.data),
       address
     ],
-    async () => {
+
+    queryFn: async () => {
       if (poolsPerChain && enabledChains.length > 0) {
         const fundedAssets: FundedAsset[] = [];
         let allClaimableRewards: {
@@ -254,10 +255,9 @@ export function useAllFundedInfo() {
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: enabledChains.length > 0 && !!poolsPerChain,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: enabledChains.length > 0 && !!poolsPerChain,
+    staleTime: Infinity
+  });
 }
