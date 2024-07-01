@@ -16,6 +16,10 @@ import Navbar from './_components/Navbar';
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
 import { projectId, wagmiConfig } from '@ui/utils/connectors';
 
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 // Create the new web3 modal
 createWeb3Modal({
   projectId,
