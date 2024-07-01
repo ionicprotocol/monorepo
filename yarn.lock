@@ -2301,7 +2301,10 @@ __metadata:
     pino: "npm:^8.0.0"
     pino-pretty: "npm:^9.1.1"
     prettier: "npm:3.3.2"
+    rimraf: "npm:^5.0.7"
     sinon: "npm:^14.0.0"
+    typescript: "npm:^5.5.2"
+    viem: "npm:^2.16.5"
   languageName: unknown
   linkType: soft
 

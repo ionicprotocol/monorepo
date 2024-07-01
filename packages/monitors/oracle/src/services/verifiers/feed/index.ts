@@ -1,9 +1,7 @@
+import { chainlinkPriceOracleV2Abi, diaPriceOracleAbi, uniswapTwapPriceOracleV2Abi } from "@ionicprotocol/sdk";
 import { OracleTypes } from "@ionicprotocol/types";
-import { Contract } from "ethers";
+import { getContract, GetContractReturnType, PublicClient } from "viem";
 
-import { abi as ChainlinkPriceOracleV2ABI } from "../../../../../../sdk/artifacts/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
-import { abi as DiaPriceOracleABI } from "../../../../../../sdk/artifacts/DiaPriceOracle.sol/DiaPriceOracle.json";
-import { abi as UniswapTwapPriceOracleV2ABI } from "../../../../../../sdk/artifacts/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
 import { logger } from "../../../logger";
 import {
   FeedVerifierAsset,
@@ -18,7 +16,10 @@ import { AbstractOracleVerifier } from "../base";
 import { verifyProviderFeed } from "./providers";
 
 export class FeedVerifier extends AbstractOracleVerifier {
-  underlyingOracle: Contract;
+  underlyingOracle: GetContractReturnType<
+    typeof chainlinkPriceOracleV2Abi | typeof diaPriceOracleAbi | typeof uniswapTwapPriceOracleV2Abi,
+    PublicClient
+  >;
   config: FeedVerifierConfig;
   asset: FeedVerifierAsset;
 
@@ -31,17 +32,29 @@ export class FeedVerifier extends AbstractOracleVerifier {
     this.oracleType = this.asset.oracle;
 
     try {
-      const oracleAddress = await this.mpo.callStatic.oracles(this.asset.underlying);
-      const { provider } = this.sdk;
+      const oracleAddress = await this.mpo.read.oracles([this.asset.underlying]);
+      const { publicClient } = this.sdk;
       switch (this.oracleType) {
         case OracleTypes.ChainlinkPriceOracleV2:
-          this.underlyingOracle = new Contract(oracleAddress, ChainlinkPriceOracleV2ABI, provider);
+          this.underlyingOracle = getContract({
+            address: oracleAddress,
+            abi: chainlinkPriceOracleV2Abi,
+            client: publicClient,
+          }) as any;
           break;
         case OracleTypes.DiaPriceOracle:
-          this.underlyingOracle = new Contract(oracleAddress, DiaPriceOracleABI, provider);
+          this.underlyingOracle = getContract({
+            address: oracleAddress,
+            abi: diaPriceOracleAbi,
+            client: publicClient,
+          }) as any;
           break;
         case OracleTypes.UniswapTwapPriceOracleV2:
-          this.underlyingOracle = new Contract(oracleAddress, UniswapTwapPriceOracleV2ABI, provider);
+          this.underlyingOracle = getContract({
+            address: oracleAddress,
+            abi: uniswapTwapPriceOracleV2Abi,
+            client: publicClient,
+          }) as any;
           break;
         default:
           throw new Error(`Oracle type ${this.oracleType} not supported`);
@@ -62,7 +75,7 @@ export class FeedVerifier extends AbstractOracleVerifier {
     const { sdk, asset, underlyingOracle } = this;
     const feedArgs: VerifyFeedParams = {
       ionicSdk: sdk,
-      underlyingOracle: underlyingOracle,
+      underlyingOracle: underlyingOracle as any,
       asset,
     };
     return await this.verifyFeedValidity(this.oracleType, feedArgs);

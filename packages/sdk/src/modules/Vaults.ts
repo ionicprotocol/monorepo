@@ -25,7 +25,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       return [];
     }
 
-    async getClaimableRewardsForVaults(account: Address): Promise<FlywheelRewardsInfoForVault[]> {
+    async getClaimableRewardsForVaults(): Promise<FlywheelRewardsInfoForVault[]> {
       return [];
     }
 

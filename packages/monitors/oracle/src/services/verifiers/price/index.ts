@@ -1,5 +1,3 @@
-import { BigNumber } from "ethers";
-
 import { logger } from "../../../logger";
 import {
   OracleFailure,
@@ -13,13 +11,13 @@ import { AbstractOracleVerifier } from "../base";
 import { verifyPriceValue } from "../feed/providers";
 
 export class PriceVerifier extends AbstractOracleVerifier {
-  mpoPrice: BigNumber;
+  mpoPrice: bigint;
   config: PriceVerifierConfig;
   asset: PriceVerifierAsset;
 
   async initMpoPrice(): Promise<[PriceVerifier, VerifierInitValidity]> {
     try {
-      this.mpoPrice = await this.mpo.callStatic.price(this.asset.underlying);
+      this.mpoPrice = await this.mpo.read.price([this.asset.underlying]);
       return [this, null];
     } catch (e) {
       const msg = `Failed to fetch price for ${this.asset.symbol} (${this.asset.underlying})`;

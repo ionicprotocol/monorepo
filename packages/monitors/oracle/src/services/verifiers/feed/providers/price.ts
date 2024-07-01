@@ -1,5 +1,5 @@
 import { SupportedChains } from "@ionicprotocol/types";
-import { utils } from "ethers";
+import { formatEther } from "viem";
 
 import { logger } from "../../../../logger";
 import { InvalidReason, PriceFeedValidity, VerifyPriceParams } from "../../../../types";
@@ -19,7 +19,7 @@ export async function verifyPriceValue({ ionicSdk, asset, mpoPrice }: VerifyPric
     };
   }
 
-  const assetPriceUSD = parseFloat(utils.formatEther(mpoPrice)) * wrappedNativeTokenPriceUSD;
+  const assetPriceUSD = parseFloat(formatEther(mpoPrice)) * wrappedNativeTokenPriceUSD;
   const priceDiff = Math.abs(assetPriceUSD - tokenPriceUSD);
   const priceDiffPercent = (priceDiff / assetPriceUSD) * 100;
   logger.info(`Price difference for asset is ${priceDiffPercent}%`);

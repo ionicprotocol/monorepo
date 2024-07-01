@@ -3,8 +3,7 @@ import {
   MarketRewardsInfoStructOutput,
   NewPosition,
   OpenPosition,
-  PositionInfo,
-  SupportedChains
+  PositionInfo
 } from "@ionicprotocol/types";
 import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther } from "viem";
 

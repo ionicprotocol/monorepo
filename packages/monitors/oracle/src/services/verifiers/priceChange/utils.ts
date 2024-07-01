@@ -1,4 +1,4 @@
-import { BigNumber, utils } from "ethers";
+import { formatEther } from "viem";
 
 import { updateAssetPriceCacheData } from "../../../controllers";
 import { AssetPriceCache, PriceChangeKind, PriceChangeVerifierAsset, PriceChangeVerifierConfig } from "../../../types";
@@ -15,12 +15,12 @@ export async function observationUpdatable(
   return currentTs - new Date(observation).getTime() > config.priceDeviationPeriods[kind];
 }
 
-export function calculateDelta(kind: PriceChangeKind, assetPriceCache: AssetPriceCache, mpoPrice: BigNumber): number {
+export function calculateDelta(kind: PriceChangeKind, assetPriceCache: AssetPriceCache, mpoPrice: bigint): number {
   const observationValue =
     kind === PriceChangeKind.SHORT
       ? assetPriceCache.first_observation_value_ether
       : assetPriceCache.second_observation_value_ether;
-  const mpoPriceFloat = parseFloat(utils.formatEther(mpoPrice));
+  const mpoPriceFloat = parseFloat(formatEther(mpoPrice));
   return ((mpoPriceFloat - observationValue) * 100) / observationValue;
 }
 
@@ -33,13 +33,13 @@ export async function updateCache(
   kind: PriceChangeKind,
   assetPriceCache: AssetPriceCache,
   delta: number,
-  mpoPrice: BigNumber,
+  mpoPrice: bigint,
 ) {
   if (kind === PriceChangeKind.SHORT) {
     const values = {
       ...assetPriceCache,
       first_observation_ts: new Date().toISOString(),
-      first_observation_value_ether: parseFloat(utils.formatEther(mpoPrice)),
+      first_observation_value_ether: parseFloat(formatEther(mpoPrice)),
       first_observation_deviation: delta,
     };
     await updateAssetPriceCacheData(values);
@@ -47,7 +47,7 @@ export async function updateCache(
     const values = {
       ...assetPriceCache,
       second_observation_ts: new Date().toISOString(),
-      second_observation_value_ether: parseFloat(utils.formatEther(mpoPrice)),
+      second_observation_value_ether: parseFloat(formatEther(mpoPrice)),
       second_observation_deviation: delta,
     };
     await updateAssetPriceCacheData(values);
