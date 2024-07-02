@@ -9,7 +9,7 @@ import {
   encodePacked,
   Hash,
   GetContractReturnType,
-  getContract,
+  getContract as vGetContract,
   WalletClient,
   PublicClient
 } from "viem";
@@ -67,3 +67,5 @@ export const getPoolComptroller = (
 ): GetContractReturnType<typeof ionicComptrollerAbi, PublicClient> => {
   return getContract({ address: poolAddress, abi: ionicComptrollerAbi, client: walletClient });
 };
+
+export const getContract = vGetContract;

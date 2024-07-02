@@ -13,7 +13,6 @@ import {
 import {
   Address,
   encodeAbiParameters,
-  getContract,
   GetContractReturnType,
   keccak256,
   parseAbiParameters,
@@ -49,7 +48,7 @@ import { withVaults } from "../modules/Vaults";
 import { CTOKEN_ERROR_CODES } from "./config";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
 import JumpRateModel from "./irm/JumpRateModel";
-import { getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 export type StaticContracts = {
   FeeDistributor: GetContractReturnType<typeof feeDistributorAbi, PublicClient>;
