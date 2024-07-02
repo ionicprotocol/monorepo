@@ -97,6 +97,16 @@ const redemptionStrategies: RedemptionStrategy[] = [
     inputToken: underlying(assets, assetSymbols.WETH),
     strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
     outputToken: underlying(assets, assetSymbols.eUSD)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.bsdETH),
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.WETH)
+  },
+  {
+    inputToken: underlying(assets, assetSymbols.WETH),
+    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    outputToken: underlying(assets, assetSymbols.bsdETH)
   }
 ];
 
