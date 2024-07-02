@@ -107,6 +107,23 @@ task("market:set-caps:base", "Sets caps on a market").setAction(async (_, { ethe
   }
 });
 
+task("market:set-cf:base", "Sets caps on a market").setAction(async (_, { ethers, run }) => {
+  const COMPTROLLER = "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13";
+  for (const asset of baseAssets) {
+    const pool = (await ethers.getContractAt("IonicComptroller", COMPTROLLER)) as IonicComptroller;
+    const cToken = await pool.cTokensByUnderlying(asset.underlying);
+    console.log("cToken: ", cToken);
+    if (asset.initialCf) {
+      await run("market:set:ltv", {
+        marketAddress: cToken,
+        ltv: asset.initialCf
+      });
+    } else {
+      console.log("No CF available for ", asset.symbol);
+    }
+  }
+});
+
 task("markets:deploy:optimism:main", "deploy op main market").setAction(async (_, { ethers, run }) => {
   const COMPTROLLER = "0xaFB4A254D125B0395610fdc8f1D022936c7b166B";
   for (const asset of optimismAssets) {
