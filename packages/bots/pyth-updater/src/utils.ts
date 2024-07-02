@@ -11,8 +11,8 @@ import {
 } from 'viem';
 
 import { logger } from './logger';
-import { PythAssetConfig } from './types';
 import { pythAbi } from './pythAbi';
+import { PythAssetConfig } from './types';
 
 export interface PythConfigStorage {
   timestamp: number;

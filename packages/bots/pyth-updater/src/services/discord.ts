@@ -1,10 +1,10 @@
 import { SupportedChains } from '@ionicprotocol/types';
 import { MessageBuilder, Webhook } from 'discord-webhook-node';
+import { TransactionReceipt } from 'viem';
 
 import config from '../config/service';
 import { logger } from '../logger';
 import { AssetConfigWithPrice } from '../utils';
-import { TransactionReceipt } from 'viem';
 
 export class DiscordService {
   chainId: SupportedChains;
