@@ -1,8 +1,9 @@
 import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
-import { Address, erc20Abi, getContract, Hex, maxUint256, parseUnits } from "viem";
+import { Address, erc20Abi, Hex, maxUint256, parseUnits } from "viem";
 
 import { icErc20Abi, ionicComptrollerAbi } from "../generated";
+import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
@@ -156,7 +157,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       });
 
       if (response.result !== 0n) {
-        const errorCode = parseInt(response.toString());
+        const errorCode = Number(response.result);
         return { errorCode };
       }
 
@@ -176,7 +177,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       });
 
       if (response.result !== 0n) {
-        const errorCode = parseInt(response.toString());
+        const errorCode = Number(response.result);
         return { errorCode };
       }
 
@@ -203,8 +204,8 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         account: address
       });
 
-      if (response.toString() !== "0") {
-        const errorCode = parseInt(response.toString());
+      if (response.result !== 0n) {
+        const errorCode = Number(response.result);
         return { errorCode };
       }
       const tx = await cToken.write.borrow([amount], {
@@ -228,7 +229,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       });
 
       if (response.result !== 0n) {
-        const errorCode = parseInt(response.toString());
+        const errorCode = Number(response.result);
         return { errorCode };
       }
       const tx = await cToken.write.redeemUnderlying([amount], {

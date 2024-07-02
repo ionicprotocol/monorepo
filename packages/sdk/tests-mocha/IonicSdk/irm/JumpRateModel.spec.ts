@@ -1,50 +1,47 @@
-import { BigNumber, constants, Contract, providers } from "ethers";
-import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
+import { describe } from "mocha";
+import { stub } from "sinon";
+import { PublicClient } from "viem";
 
 import JumpRateModel from "../../../src/IonicSdk/irm/JumpRateModel";
 import * as utilsFns from "../../../src/IonicSdk/utils";
 import { expect } from "../../globalTestHook";
-import { mkAddress } from "../../helpers";
+import { mkAddress, stubbedContract, stubbedPublicClient } from "../../helpers";
 
 describe("JumpRateModel", () => {
   let jumpRateModel: JumpRateModel;
-  let mockProvider: any;
+  let mockPublicClient: PublicClient;
 
   beforeEach(() => {
     jumpRateModel = new JumpRateModel();
-    mockProvider = createStubInstance(providers.Web3Provider);
+    mockPublicClient = stubbedPublicClient;
 
     jumpRateModel.initialized = false;
-    jumpRateModel.baseRatePerBlock = constants.Zero;
-    jumpRateModel.multiplierPerBlock = constants.Zero;
-    jumpRateModel.jumpMultiplierPerBlock = constants.Zero;
-    jumpRateModel.kink = constants.Zero;
-    jumpRateModel.reserveFactorMantissa = constants.Zero;
+    jumpRateModel.baseRatePerBlock = 0n;
+    jumpRateModel.multiplierPerBlock = 0n;
+    jumpRateModel.jumpMultiplierPerBlock = 0n;
+    jumpRateModel.kink = 0n;
+    jumpRateModel.reserveFactorMantissa = 0n;
   });
 
   describe("init", () => {
-    let mockJumpRateModelContract: SinonStubbedInstance<Contract>;
-    let mockcTokenContract: SinonStubbedInstance<Contract>;
+    let mockJumpRateModelContract;
+    let mockcTokenContract;
 
     beforeEach(() => {
-      mockJumpRateModelContract = createStubInstance(Contract);
-      mockcTokenContract = createStubInstance(Contract);
+      mockJumpRateModelContract = { ...stubbedContract };
+      mockJumpRateModelContract.read = {
+        baseRatePerBlock: stub().resolves(1n),
+        multiplierPerBlock: stub().resolves(1n),
+        jumpMultiplierPerBlock: stub().resolves(2n),
+        kink: stub().resolves(2n)
+      };
 
-      Object.defineProperty(mockJumpRateModelContract, "callStatic", {
-        value: {
-          baseRatePerBlock: () => Promise.resolve(constants.One),
-          multiplierPerBlock: () => Promise.resolve(constants.One),
-          jumpMultiplierPerBlock: () => Promise.resolve(constants.Two),
-          kink: () => Promise.resolve(constants.Two)
-        }
-      });
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          reserveFactorMantissa: () => Promise.resolve(constants.One),
-          adminFeeMantissa: () => Promise.resolve(constants.Two),
-          ionicFeeMantissa: () => Promise.resolve(constants.One)
-        }
-      });
+      mockcTokenContract = { ...stubbedContract };
+      mockcTokenContract.read = {
+        reserveFactorMantissa: stub().resolves(1n),
+        adminFeeMantissa: stub().resolves(2n),
+        ionicFeeMantissa: stub().resolves(1n)
+      };
 
       stub(utilsFns, "getContract")
         .onFirstCall()
@@ -57,53 +54,57 @@ describe("JumpRateModel", () => {
       const modelAddress = mkAddress("0xabc");
       const assetAddress = mkAddress("0x123");
 
-      await jumpRateModel.init(modelAddress, assetAddress, mockProvider);
+      await jumpRateModel.init(modelAddress, assetAddress, mockPublicClient);
       expect(jumpRateModel.initialized).to.equal(true);
-      expect(jumpRateModel.reserveFactorMantissa.toNumber()).to.equal(4);
+      expect(jumpRateModel.reserveFactorMantissa).to.equal(4n);
     });
   });
 
   describe("_init", () => {
-    let getJumpRateModelContractStub: SinonStub;
-    let mockJumpRateModelContract: SinonStubbedInstance<Contract>;
+    let getJumpRateModelContractStub;
+    let mockJumpRateModelContract;
 
     beforeEach(() => {
-      mockJumpRateModelContract = createStubInstance(Contract);
+      mockJumpRateModelContract = stubbedContract;
 
-      Object.defineProperty(mockJumpRateModelContract, "callStatic", {
-        value: {
-          baseRatePerBlock: () => Promise.resolve(constants.One),
-          multiplierPerBlock: () => Promise.resolve(constants.One),
-          jumpMultiplierPerBlock: () => Promise.resolve(constants.Two),
-          kink: () => Promise.resolve(constants.Two)
-        }
-      });
+      mockJumpRateModelContract.read = {
+        baseRatePerBlock: () => Promise.resolve(1n),
+        multiplierPerBlock: () => Promise.resolve(1n),
+        jumpMultiplierPerBlock: () => Promise.resolve(2n),
+        kink: () => Promise.resolve(2n)
+      };
 
       getJumpRateModelContractStub = stub(utilsFns, "getContract").returns(mockJumpRateModelContract);
     });
 
     it("model should be initiated from given Mantissas", async () => {
       const modelAddress = mkAddress("0xabc");
-      const reserveFactorMantissa = constants.Two;
-      const adminFeeMantissa = constants.One;
-      const ionicFeeMantissa = constants.Two;
+      const reserveFactorMantissa = 2n;
+      const adminFeeMantissa = 1n;
+      const ionicFeeMantissa = 2n;
 
-      await jumpRateModel._init(modelAddress, reserveFactorMantissa, adminFeeMantissa, ionicFeeMantissa, mockProvider);
+      await jumpRateModel._init(
+        modelAddress,
+        reserveFactorMantissa,
+        adminFeeMantissa,
+        ionicFeeMantissa,
+        mockPublicClient
+      );
       expect(getJumpRateModelContractStub).to.be.calledOnce;
       expect(jumpRateModel.initialized).to.equal(true);
-      expect(jumpRateModel.reserveFactorMantissa.toNumber()).to.equal(5);
+      expect(jumpRateModel.reserveFactorMantissa).to.equal(5n);
     });
   });
 
   describe("__init", () => {
     it("model should be initiated from block, mantissa and kink", async () => {
-      const baseRatePerBlock = constants.Two;
-      const multiplierPerBlock = constants.Two;
-      const jumpMultiplierPerBlock = constants.Two;
-      const kink = constants.Two;
-      const reserveFactorMantissa = constants.One;
-      const adminFeeMantissa = constants.One;
-      const ionicFeeMantissa = constants.Two;
+      const baseRatePerBlock = 2n;
+      const multiplierPerBlock = 2n;
+      const jumpMultiplierPerBlock = 2n;
+      const kink = 2n;
+      const reserveFactorMantissa = 1n;
+      const adminFeeMantissa = 1n;
+      const ionicFeeMantissa = 2n;
 
       await jumpRateModel.__init(
         baseRatePerBlock,
@@ -115,22 +116,22 @@ describe("JumpRateModel", () => {
         ionicFeeMantissa
       );
       expect(jumpRateModel.initialized).to.equal(true);
-      expect(jumpRateModel.multiplierPerBlock.toNumber()).to.equal(2);
-      expect(jumpRateModel.jumpMultiplierPerBlock.toNumber()).to.equal(2);
-      expect(jumpRateModel.kink.toNumber()).to.equal(2);
-      expect(jumpRateModel.reserveFactorMantissa.toNumber()).to.equal(4);
+      expect(jumpRateModel.multiplierPerBlock).to.equal(2n);
+      expect(jumpRateModel.jumpMultiplierPerBlock).to.equal(2n);
+      expect(jumpRateModel.kink).to.equal(2n);
+      expect(jumpRateModel.reserveFactorMantissa).to.equal(4n);
     });
   });
 
   describe("getBorrowRate", () => {
-    let utilizationRate: BigNumber;
+    let utilizationRate: bigint;
 
     beforeEach(() => {
-      utilizationRate = constants.One;
-      jumpRateModel.baseRatePerBlock = constants.One;
-      jumpRateModel.multiplierPerBlock = constants.One;
-      jumpRateModel.jumpMultiplierPerBlock = constants.One;
-      jumpRateModel.reserveFactorMantissa = constants.One;
+      utilizationRate = 1n;
+      jumpRateModel.baseRatePerBlock = 1n;
+      jumpRateModel.multiplierPerBlock = 1n;
+      jumpRateModel.jumpMultiplierPerBlock = 1n;
+      jumpRateModel.reserveFactorMantissa = 1n;
     });
 
     it("should throw error when model is not initialized", async () => {
@@ -139,31 +140,31 @@ describe("JumpRateModel", () => {
 
     it("should utilization is less than kink", async () => {
       jumpRateModel.initialized = true;
-      jumpRateModel.kink = constants.Two;
+      jumpRateModel.kink = 2n;
       const result = jumpRateModel.getBorrowRate(utilizationRate);
-      expect(result.toNumber()).to.equal(1);
+      expect(result).to.equal(1n);
     });
 
     it("should utilization is greater than kink", async () => {
       jumpRateModel.initialized = true;
-      jumpRateModel.kink = constants.One;
-      utilizationRate = constants.Two;
+      jumpRateModel.kink = 1n;
+      utilizationRate = 2n;
       const result = jumpRateModel.getBorrowRate(utilizationRate);
-      expect(result.toNumber()).to.equal(1);
+      expect(result).to.equal(1n);
     });
   });
 
   describe("getSupplyRate", () => {
-    let utilizationRate: BigNumber;
+    let utilizationRate: bigint;
 
     beforeEach(() => {
-      utilizationRate = constants.One;
-      jumpRateModel.baseRatePerBlock = constants.One;
-      jumpRateModel.multiplierPerBlock = constants.One;
-      jumpRateModel.jumpMultiplierPerBlock = constants.One;
-      jumpRateModel.reserveFactorMantissa = constants.One;
-      jumpRateModel.kink = constants.One;
-      utilizationRate = constants.Two;
+      utilizationRate = 1n;
+      jumpRateModel.baseRatePerBlock = 1n;
+      jumpRateModel.multiplierPerBlock = 1n;
+      jumpRateModel.jumpMultiplierPerBlock = 1n;
+      jumpRateModel.reserveFactorMantissa = 1n;
+      jumpRateModel.kink = 1n;
+      utilizationRate = 2n;
     });
 
     it("should throw error when model is not initialized", async () => {
@@ -173,7 +174,7 @@ describe("JumpRateModel", () => {
     it("should get supply when model is initialized", async () => {
       jumpRateModel.initialized = true;
       const result = jumpRateModel.getSupplyRate(utilizationRate);
-      expect(result.toNumber()).to.equal(0);
+      expect(result).to.equal(0n);
     });
   });
 });

@@ -1,57 +1,51 @@
-import { ganache } from "@ionicprotocol/chains";
 import axios from "axios";
-import { BigNumber, Contract, providers, Signer } from "ethers";
-import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
+import { describe } from "mocha";
+import { SinonStub, stub } from "sinon";
+import { Address, Hex, PublicClient, WalletClient } from "viem";
 
 import { IonicSdk } from "../../src/IonicSdk/index";
 import * as utilsFns from "../../src/IonicSdk/utils";
 import * as FundOperationsModule from "../../src/modules/FundOperations";
 import { expect } from "../globalTestHook";
-import { mkAddress } from "../helpers";
+import { mkAddress, mockChainConfig, stubbedContract, stubbedWalletClient } from "../helpers";
 
-describe("FundOperation", () => {
+describe.only("FundOperation", () => {
   const FundOperations = FundOperationsModule.withFundOperations(IonicSdk);
   let fundOperations: InstanceType<typeof FundOperations>;
   let axiosStub: SinonStub;
+  let mockPublicClient: PublicClient;
+  let mockWalletClient: WalletClient;
 
   beforeEach(() => {
-    const mockSigner = createStubInstance(Signer);
-    (mockSigner as any).getAddress = () => Promise.resolve(mkAddress("0xabcd"));
+    mockWalletClient = stubbedWalletClient;
+    mockPublicClient = stubbedWalletClient as any;
 
-    const mockProvider = createStubInstance(providers.Web3Provider);
-    (mockProvider as any)._isProvider = true;
-    (mockProvider as any)._isSigner = false;
-    (mockProvider as any).getSigner = () => mockSigner;
-    (mockProvider as any).getCode = (address: string) => address;
-    (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
-    (mockProvider as any).provider = mockProvider;
+    mockPublicClient.getCode = ({ address }: { address: Address }) => Promise.resolve(address as Hex);
+    mockPublicClient.estimateGas = stub().returns(3n);
 
-    fundOperations = new FundOperations(mockProvider, ganache);
+    fundOperations = new FundOperations(mockPublicClient, mockWalletClient, mockChainConfig);
   });
 
   describe("fetchGasForCall", () => {
     it("calculate correct gas fee", async () => {
-      const gasPriceAvg = 5;
+      const gasPriceAvg = 5n;
       axiosStub = stub(axios, "get").resolves({ data: { average: gasPriceAvg } });
 
-      const { gasWEI, gasPrice, estimatedGas } = await fundOperations.fetchGasForCall(
-        BigNumber.from(1),
-        mkAddress("0x123")
-      );
+      const { gasWEI, gasPrice, estimatedGas } = await fundOperations.fetchGasForCall(1n, mkAddress("0x123"));
 
       expect(axiosStub).be.calledOnce;
-      expect(estimatedGas.toNumber()).to.be.equal(9);
-      expect(gasPrice.toNumber()).to.be.equal(gasPriceAvg * 1000000000);
-      expect(gasWEI.toNumber()).to.be.equal(9 * gasPriceAvg * 1000000000);
+      expect(estimatedGas).to.be.equal(9n);
+      expect(gasPrice).to.be.equal(gasPriceAvg * 1000000000n);
+      expect(gasWEI).to.be.equal(9n * gasPriceAvg * 1000000000n);
     });
   });
 
   describe("approve", async () => {
     it("allow Ionic to use tokens", async () => {
-      const mockTokenContract: SinonStubbedInstance<Contract> = createStubInstance(Contract);
+      const mockTokenContract: any = stubbedContract;
       const maxApproveStub = stub().resolves("txId");
 
-      mockTokenContract.approve = maxApproveStub;
+      mockTokenContract.write.approve = maxApproveStub;
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract);
 
@@ -64,10 +58,10 @@ describe("FundOperation", () => {
 
   describe("enterMarkets", async () => {
     it("allows supplied assets to be used as collateral", async () => {
-      const mockComptrollerContract: SinonStubbedInstance<Contract> = createStubInstance(Contract);
+      const mockComptrollerContract: any = stubbedContract;
       const enterMarketStub = stub().resolves("txId");
 
-      mockComptrollerContract.enterMarkets = enterMarketStub;
+      mockComptrollerContract.write.enterMarkets = enterMarketStub;
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockComptrollerContract);
 
@@ -79,52 +73,36 @@ describe("FundOperation", () => {
   });
 
   describe("mint", async () => {
-    let mockcTokenContract: SinonStubbedInstance<Contract>;
-    let mintResponse = 0;
+    const mockcTokenContract: any = stubbedContract;
+
+    let mintResponse = 0n;
 
     beforeEach(() => {
-      mockcTokenContract = createStubInstance(Contract);
-      mockcTokenContract.mint = stub().resolves("txId");
+      mockcTokenContract.write.mint = stub().resolves("txId");
     });
 
     it("Mint success", async () => {
-      Object.defineProperty(mockcTokenContract, "estimateGas", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse))
-        }
-      });
+      mockcTokenContract.estimateGas.mint = stub().resolves(mintResponse);
 
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse))
-        }
-      });
+      mockcTokenContract.simulate.mint = stub().resolves({ result: mintResponse });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.mint(mkAddress("0xabc"), BigNumber.from(3));
+      const { tx, errorCode } = await fundOperations.mint(mkAddress("0xabc"), 3n);
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
 
     it("Mint fail", async () => {
-      mintResponse = 2;
-      Object.defineProperty(mockcTokenContract, "estimateGas", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse))
-        }
-      });
+      mintResponse = 2n;
+      mockcTokenContract.estimateGas.mint = stub().resolves(mintResponse);
 
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse))
-        }
-      });
+      mockcTokenContract.simulate.mint = stub().resolves({ result: mintResponse });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.mint(mkAddress("0xabc"), BigNumber.from(5));
+      const { tx, errorCode } = await fundOperations.mint(mkAddress("0xabc"), 5n);
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);
@@ -132,64 +110,47 @@ describe("FundOperation", () => {
   });
 
   describe("repay", async () => {
-    let mockTokenContract: SinonStubbedInstance<Contract>;
-    let mockcTokenContract: SinonStubbedInstance<Contract>;
+    let mockTokenContract;
+    let mockcTokenContract;
     const maxApproveStub = stub().resolves();
 
     beforeEach(() => {
-      mockTokenContract = createStubInstance(Contract);
-      mockTokenContract.approve = maxApproveStub;
+      mockTokenContract = { ...stubbedContract };
+      mockTokenContract.write.approve = maxApproveStub;
+      mockTokenContract.read.allowance = stub().resolves(4n);
 
-      Object.defineProperty(mockTokenContract, "callStatic", {
-        value: {
-          allowance: stub().resolves(BigNumber.from(4))
-        }
-      });
-
-      mockcTokenContract = createStubInstance(Contract);
-      mockcTokenContract.repayBorrow = stub().resolves("txId");
+      mockcTokenContract = { ...stubbedContract };
+      mockcTokenContract.write.repayBorrow = stub().resolves("txId");
     });
 
     it("Repaying max", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          repayBorrow: stub().resolves(BigNumber.from(0))
-        }
-      });
+      mockcTokenContract.simulate.repayBorrow = stub().resolves({ result: 0n });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), true, BigNumber.from(3));
+      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), true, 3n);
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
 
     it("Not repaying max", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          repayBorrow: stub().resolves(BigNumber.from(0))
-        }
-      });
+      mockcTokenContract.simulate.repayBorrow = stub().resolves({ result: 0n });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), false, BigNumber.from(3));
+      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), false, 3n);
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
 
     it("repay fail", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          repayBorrow: stub().resolves(BigNumber.from(2))
-        }
-      });
+      mockcTokenContract.simulate.repayBorrow = stub().resolves({ result: 2n });
 
       stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), false, BigNumber.from(5));
+      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), false, 5n);
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);
@@ -197,48 +158,32 @@ describe("FundOperation", () => {
   });
 
   describe("borrow", async () => {
-    let mockcTokenContract: SinonStubbedInstance<Contract>;
+    let mockcTokenContract;
 
     beforeEach(() => {
-      mockcTokenContract = createStubInstance(Contract);
-      mockcTokenContract.borrow = stub().resolves("txId");
+      mockcTokenContract = { ...stubbedContract };
+      mockcTokenContract.write.borrow = stub().resolves("txId");
     });
 
     it("success", async () => {
-      Object.defineProperty(mockcTokenContract, "estimateGas", {
-        value: {
-          borrow: stub().resolves(BigNumber.from(0))
-        }
-      });
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          borrow: stub().resolves(BigNumber.from(0))
-        }
-      });
+      mockcTokenContract.estimateGas.borrow = stub().resolves(0n);
+      mockcTokenContract.simulate.borrow = stub().resolves({ result: 0n });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), BigNumber.from(3));
+      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), 3n);
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
 
     it("fail", async () => {
-      Object.defineProperty(mockcTokenContract, "estimateGas", {
-        value: {
-          borrow: stub().resolves(BigNumber.from(2))
-        }
-      });
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          borrow: stub().resolves(BigNumber.from(2))
-        }
-      });
+      mockcTokenContract.estimateGas.borrow = stub().resolves(2n);
+      mockcTokenContract.simulate.borrow = stub().resolves({ result: 2n });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), BigNumber.from(5));
+      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), 5n);
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);
@@ -246,38 +191,30 @@ describe("FundOperation", () => {
   });
 
   describe("withdraw", async () => {
-    let mockcTokenContract: SinonStubbedInstance<Contract>;
+    let mockcTokenContract;
 
     beforeEach(() => {
-      mockcTokenContract = createStubInstance(Contract);
-      mockcTokenContract.redeemUnderlying = stub().resolves("txId");
+      mockcTokenContract = stubbedContract;
+      mockcTokenContract.write.redeemUnderlying = stub().resolves("txId");
     });
 
     it("success", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          redeemUnderlying: stub().resolves(BigNumber.from(0))
-        }
-      });
+      mockcTokenContract.simulate.redeemUnderlying = stub().resolves({ result: 0n });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(3));
+      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), 3n);
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
 
     it("fail", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          redeemUnderlying: stub().resolves(BigNumber.from(2))
-        }
-      });
+      mockcTokenContract.simulate.redeemUnderlying = stub().resolves({ result: 2n });
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(5));
+      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), 5n);
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);

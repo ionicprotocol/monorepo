@@ -1,48 +1,30 @@
-import { ChainConfig, InterestRateModel } from "@ionicprotocol/types";
+import { InterestRateModel } from "@ionicprotocol/types";
 import { describe } from "mocha";
-import { restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
+import { restore, SinonStub, stub } from "sinon";
 import {
   Address,
   encodeAbiParameters,
   GetContractReturnType,
   parseAbiParameters,
   PublicClient,
-  TransactionReceipt,
   WalletClient
 } from "viem";
 
 import JumpRateModelArtifact from "../../artifacts/JumpRateModel.sol/JumpRateModel.json";
-import { ionicComptrollerAbi, poolDirectoryAbi, unitrollerAbi } from "../../src";
+import { ionicComptrollerAbi, poolDirectoryAbi, unitrollerAbi } from "../../src/generated";
 import { IonicBase } from "../../src/IonicSdk/index";
 import JumpRateModel from "../../src/IonicSdk/irm/JumpRateModel";
 import * as utilsFns from "../../src/IonicSdk/utils";
 import { expect } from "../globalTestHook";
-import { mkAddress, mkBytes32 } from "../helpers";
-
-const stubbedContract = { address: mkAddress(), abi: [], read: {}, write: {} };
-
-const stubbedWalletClient = { account: { address: mkAddress("0xabcd") }, chain: 42069 } as unknown as WalletClient;
-
-const stubbedPublicClient = {} as unknown as PublicClient;
-
-const mockChainConfig: ChainConfig = {
-  deployedPlugins: {},
-  chainDeployments: {
-    FeeDistributor: { abi: [], address: mkAddress("0xfcc") },
-    IonicFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
-    PoolDirectory: { abi: [], address: mkAddress("0xacc") },
-    PoolLens: { abi: [], address: mkAddress("0xbcc") },
-    PoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
-    IonicLiquidator: { abi: [], address: mkAddress("0xecc") },
-    JumpRateModel: { abi: [], address: mkAddress("0xaac") },
-    AddressesProvider: { abi: [], address: mkAddress("0xaad") }
-  },
-  oracles: []
-} as unknown as ChainConfig;
-
-const mockReceipt = {
-  status: "success"
-} as TransactionReceipt;
+import {
+  mkAddress,
+  mkBytes32,
+  mockChainConfig,
+  mockReceipt,
+  stubbedContract,
+  stubbedPublicClient,
+  stubbedWalletClient
+} from "../helpers";
 
 describe("Ionic Index", () => {
   let ionicBase: IonicBase;
