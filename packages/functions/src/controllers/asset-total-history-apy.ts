@@ -19,8 +19,7 @@ import { pluginsOfChain } from '../data/plugins';
 import { getAPYProviders as getPluginAPYProviders } from '../providers/rewards/plugins';
 import axios from 'axios';
 
-export const HEARTBEAT_API_URL = 'https://uptime.betterstack.com/api/v1/heartbeat/b3r1x2tQTC9XhkAcTDr5KFJa';
-
+export const HEARTBEAT_API_URL = environment.uptimeTotalHistoryApyApi;
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
 
