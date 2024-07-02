@@ -59,9 +59,9 @@ task("markets:deploy:modenative", "deploy mode native markets").setAction(async 
   }
 });
 
-task("markets:deploy:base", "deploy base markets").setAction(async (_, { run }) => {
+task("markets:deploy:base", "deploy base markets").setAction(async (_, { run, ethers }) => {
   const comptroller = "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13";
-  for (const asset of baseAssets.filter((asset) => asset.symbol === assetSymbols.eUSD)) {
+  for (const asset of baseAssets.filter((asset) => asset.symbol === assetSymbols.bsdETH)) {
     await run("market:deploy", {
       signer: "deployer",
       cf: "0", // set initial cf to 0

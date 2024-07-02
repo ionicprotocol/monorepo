@@ -20,7 +20,7 @@ export const SNX = "0x22e6966B799c4D5B13BE962E1D117b56327FDa66";
 export const WBTC = "0x1ceA84203673764244E05693e42E6Ace62bE9BA5";
 export const weETH = "0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A";
 export const eUSD = "0xcfa3ef56d303ae4faaba0592388f19d7c3399fb4";
-// export const bsdETH = "0xcb327b99ff831bf8223cced12b1338ff3aa322ff";
+export const bsdETH = "0xcb327b99ff831bf8223cced12b1338ff3aa322ff";
 
 export const assets: SupportedAsset[] = [
   {
@@ -140,6 +140,20 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://basescan.org", eUSD),
     initialSupplyCap: parseEther(String(10_000_000)).toString(),
     initialBorrowCap: parseEther(String(8_000_000)).toString()
+  },
+  {
+    symbol: assetSymbols.bsdETH,
+    underlying: bsdETH,
+    name: "Based ETH",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xC49F0Dd98F38C525A7ce15E73E60675456F3a161",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+    },
+    extraDocs: defaultDocs("https://basescan.org", bsdETH),
+    initialSupplyCap: parseEther(String(6_500)).toString(),
+    initialBorrowCap: parseEther(String(5_200)).toString()
   }
 ];
 
