@@ -9,8 +9,7 @@ import { logger } from './logger';
 import { Updater } from './services';
 import { setUpSdk } from './utils';
 
-export const HEARTBEAT_API_URL =
-  'https://uptime.betterstack.com/api/v1/heartbeat/uyh4vHjKRS6oKAoL4KTqwbVY';
+export const HEARTBEAT_API_URL: any = process.env.UPTIME_PYTH_UPDATER_API;
 export const handler = async (
   event: APIGatewayEvent,
   context: Context
