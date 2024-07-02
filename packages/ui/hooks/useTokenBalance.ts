@@ -1,22 +1,24 @@
 import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber, constants } from 'ethers';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const fetchTokenBalance = async (
-  tokenAddress: string,
+  tokenAddress: Address,
   sdk: IonicSdk,
-  address?: string
-): Promise<BigNumber> => {
-  let balance = constants.Zero;
+  address?: Address
+): Promise<bigint> => {
+  let balance = 0n;
 
   try {
     if (!address) {
-      balance = BigNumber.from(0);
-    } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
-      balance = await sdk.provider.getBalance(address);
+      balance = 0n;
+    } else if (
+      tokenAddress === ('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS' as Address)
+    ) {
+      balance = await sdk.publicClient.getBalance({ address });
     } else {
       // const contract = sdk.createCTokenWithExtensions(tokenAddress);
       // balance = await sdk.provider.;
@@ -34,9 +36,9 @@ export const fetchTokenBalance = async (
 };
 
 export function useTokenBalance(
-  tokenAddress?: string,
+  tokenAddress?: Address,
   chainId?: number,
-  customAddress?: string
+  customAddress?: Address
 ) {
   const { address } = useMultiIonic();
   const sdk = useSdk(chainId);

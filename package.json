@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "packageManager": "yarn@4.3.0",
+  "packageManager": "yarn@4.3.1",
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
@@ -16,22 +16,17 @@
   ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
-    "@tsconfig/recommended": "^1.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.6.0",
-    "@typescript-eslint/parser": "^6.6.0",
-    "netlify-cli": "^16.3.1",
-    "typescript": "^5.2.2"
+    "@tsconfig/recommended": "^1.0.6",
+    "@types/node": "^20.14.9",
+    "@types/rimraf": "^3",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "netlify-cli": "^17.30.0",
+    "typescript": "^5.5.2"
   },
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
-    "@wagmi/core": "^2.2.1",
-    "perf_hooks": "^0.0.1",
-    "react-confetti": "^6.1.0",
-    "ts-node": "^10.9.1",
-    "viem": "^2.7.16"
-  },
-  "resolutions": {
-    "@types/react": "^17.0.15"
+    "tsup": "^8.1.0"
   },
   "scripts": {
     "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/sdk build",

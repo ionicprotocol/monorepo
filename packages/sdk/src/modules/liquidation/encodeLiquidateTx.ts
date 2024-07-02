@@ -1,5 +1,5 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import { IonicBase } from "../../IonicSdk";
 
@@ -10,10 +10,10 @@ export default async function encodeLiquidateTx(
   sdk: IonicBase,
   liquidationStrategy: LiquidationStrategy,
   borrower: PoolUserWithAssets,
-  exchangeToTokenAddress: string,
+  exchangeToTokenAddress: Address,
   strategiesAndDatas: StrategiesAndDatas,
-  liquidationAmount: BigNumber,
-  flashSwapPair: string,
+  liquidationAmount: bigint,
+  flashSwapPair: Address,
   debtFundingStrategies: any[],
   debtFundingStrategiesData: any[]
 ): Promise<EncodedLiquidationTx> {
@@ -42,7 +42,7 @@ export default async function encodeLiquidateTx(
           strategiesAndDatas.strategies,
           strategiesAndDatas.datas
         ],
-        value: BigNumber.from(0)
+        value: 0n
       };
     case LiquidationStrategy.UNISWAP:
       return {
@@ -63,7 +63,7 @@ export default async function encodeLiquidateTx(
             debtFundingStrategiesData
           }
         ],
-        value: BigNumber.from(0)
+        value: 0n
       };
   }
 }

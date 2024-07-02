@@ -16,8 +16,8 @@ export function useMaxWithdrawAmount(
 
     queryFn: async () => {
       if (sdk && address) {
-        const maxRedeem = await sdk.contracts.PoolLensSecondary.callStatic
-          .getMaxRedeem(address, asset.cToken, { from: address })
+        const maxRedeem = await sdk.contracts.PoolLensSecondary.simulate
+          .getMaxRedeem([address, asset.cToken], { account: address })
           .catch((e) => {
             console.warn(
               `Getting max withdraw amount error: `,
@@ -26,7 +26,8 @@ export function useMaxWithdrawAmount(
             );
 
             return null;
-          });
+          })
+          .then((result) => result?.result);
 
         return maxRedeem;
       } else {

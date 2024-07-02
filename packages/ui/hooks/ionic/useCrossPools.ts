@@ -24,7 +24,7 @@ export const useCrossPools = (chainIds: SupportedChains[]) => {
             const _allPools: IonicPoolData[] = [];
 
             try {
-              const pools = await sdk.fetchPoolsManual({ from: address });
+              const pools = await sdk.fetchPoolsManual();
               const visiblePools: IonicPoolData[] = !pools
                 ? []
                 : poolSort(

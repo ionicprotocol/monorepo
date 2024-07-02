@@ -1,14 +1,14 @@
 import type { IonicSdk } from '@ionicprotocol/sdk';
 import type { PositionInfo } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const getPositionInfo = async (
-  position: string,
-  supplyApy: BigNumber,
+  position: Address,
+  supplyApy: bigint,
   sdk: IonicSdk
 ) => {
   const info = await sdk.getPositionInfo(position, supplyApy).catch((e) => {
@@ -25,8 +25,8 @@ export const getPositionInfo = async (
 };
 
 export function usePositionInfo(
-  position: string,
-  supplyApy?: BigNumber,
+  position: Address,
+  supplyApy?: bigint,
   chainId?: number
 ) {
   const sdk = useSdk(chainId);
@@ -49,8 +49,8 @@ export function usePositionInfo(
 }
 
 export function usePositionsInfo(
-  positions: string[],
-  totalApys?: (BigNumber | null)[],
+  positions: Address[],
+  totalApys?: (bigint | null)[],
   chainIds?: number[]
 ) {
   const { getSdk } = useMultiIonic();

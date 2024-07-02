@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
+import { Address, PublicClient } from "viem";
 
 export type Artifact = {
   abi: Array<object>;
@@ -11,8 +11,6 @@ export type Artifact = {
     sourceMap: string;
   };
 };
-
-export type TxOptions = Overrides & { from?: string | Promise<string> };
 
 export type MinifiedContracts = {
   [key: string]: {
@@ -31,31 +29,27 @@ export type MinifiedCompoundContracts = {
 export type MinifiedOraclesContracts = MinifiedCompoundContracts;
 
 export interface InterestRateModel {
-  init(
-    interestRateModelAddress: string,
-    assetAddress: string,
-    provider: providers.Web3Provider | providers.JsonRpcProvider
-  ): Promise<void>;
+  init(interestRateModelAddress: Address, assetAddress: Address, client: PublicClient): Promise<void>;
 
   _init(
-    interestRateModelAddress: string,
-    reserveFactorMantissa: BigNumberish,
-    adminFeeMantissa: BigNumberish,
-    ionicFeeMantissa: BigNumberish,
-    provider: providers.Web3Provider | providers.JsonRpcProvider
+    interestRateModelAddress: Address,
+    reserveFactorMantissa: bigint,
+    adminFeeMantissa: bigint,
+    ionicFeeMantissa: bigint,
+    client: PublicClient
   ): Promise<void>;
 
   __init(
-    baseRatePerBlock: BigNumberish,
-    multiplierPerBlock: BigNumberish,
-    jumpMultiplierPerBlock: BigNumberish,
-    kink: BigNumberish,
-    reserveFactorMantissa: BigNumberish,
-    adminFeeMantissa: BigNumberish,
-    ionicFeeMantissa: BigNumberish
+    baseRatePerBlock: bigint,
+    multiplierPerBlock: bigint,
+    jumpMultiplierPerBlock: bigint,
+    kink: bigint,
+    reserveFactorMantissa: bigint,
+    adminFeeMantissa: bigint,
+    ionicFeeMantissa: bigint
   ): Promise<void>;
 
-  getBorrowRate(utilizationRate: BigNumber): BigNumber;
+  getBorrowRate(utilizationRate: bigint): bigint;
 
-  getSupplyRate(utilizationRate: BigNumber): BigNumber;
+  getSupplyRate(utilizationRate: bigint): bigint;
 }

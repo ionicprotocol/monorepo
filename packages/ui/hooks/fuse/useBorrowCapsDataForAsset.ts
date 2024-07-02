@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useBorrowCapsDataForAsset = (
-  cTokenAddress: string,
+  cTokenAddress: Address,
   poolChainId?: number
 ) => {
   const sdk = useSdk(poolChainId);
@@ -14,12 +15,23 @@ export const useBorrowCapsDataForAsset = (
     queryFn: async () => {
       if (cTokenAddress && sdk) {
         try {
-          const borrowCapsData =
-            await sdk.contracts.PoolLens.callStatic.getBorrowCapsDataForAsset(
-              cTokenAddress
-            );
+          const [
+            collateral,
+            borrowCapsPerCollateral,
+            collateralBlacklisted,
+            totalBorrowCap,
+            nonWhitelistedTotalBorrows
+          ] = await sdk.contracts.PoolLens.read.getBorrowCapsDataForAsset([
+            cTokenAddress
+          ]);
 
-          return borrowCapsData;
+          return {
+            collateral,
+            borrowCapsPerCollateral,
+            collateralBlacklisted,
+            totalBorrowCap,
+            nonWhitelistedTotalBorrows
+          };
         } catch (e) {
           console.warn(
             `Getting borrow caps error: `,

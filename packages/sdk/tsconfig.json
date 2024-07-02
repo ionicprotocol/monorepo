@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "allowJs": true,
-    "target": "ES2015",
+    "target": "ES2020",
     "rootDirs": ["./src", "./tests", "./tasks"],
     "composite": true
   },

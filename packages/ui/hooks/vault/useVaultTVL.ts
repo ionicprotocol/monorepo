@@ -1,21 +1,21 @@
 import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { constants, utils } from 'ethers';
+import { formatUnits } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
-export const fetchVaultNumberTVL = async (midasSdk: IonicSdk) => {
-  const optimizedVaultsRegistry = midasSdk.createOptimizedVaultsRegistry();
-  const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
+export const fetchVaultNumberTVL = async (ionicSdk: IonicSdk) => {
+  const optimizedVaultsRegistry = ionicSdk.createOptimizedVaultsRegistry();
+  const vaultsData = await optimizedVaultsRegistry.read.getVaultsData();
   const tvlNative = vaultsData.reduce(
-    (tvl, vault) => (tvl = tvl.add(vault.estimatedTotalAssets)),
-    constants.Zero
+    (tvl, vault) => (tvl = tvl + vault.estimatedTotalAssets),
+    0n
   );
   const decimals =
-    midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
+    ionicSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
-  return Number(utils.formatUnits(tvlNative, decimals));
+  return Number(formatUnits(tvlNative, decimals));
 };
 
 type CrossChainVaultTVL = Map<

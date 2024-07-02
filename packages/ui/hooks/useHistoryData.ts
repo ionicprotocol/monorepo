@@ -7,14 +7,15 @@ import type {
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
+import { Address } from 'viem';
 
 import { APY, PRICE, TVL } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export function useHistoryData(
   mode: string,
-  underlyingAddress: string,
-  cTokenAddress: string,
+  underlyingAddress: Address,
+  cTokenAddress: Address,
   chainId: number,
   milliSeconds: number
 ) {

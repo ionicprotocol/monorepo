@@ -1,5 +1,4 @@
-import { TransactionResponse } from "@ethersproject/providers";
-import { BigNumber, utils } from "ethers";
+import { Address, parseEther, TransactionReceipt } from "viem";
 
 import { IonicSdk } from "../..";
 import { CreateContractsModule } from "../CreateContracts";
@@ -11,13 +10,29 @@ import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "./utils";
 // import { gatherLiquidations, getAllPoolUsers } from "./index";
 import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
-export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TBase) {
+export interface ISafeLiquidator {
+  getPotentialLiquidations(
+    excludedComptrollers?: Array<string>,
+    maxHealthFactor?: bigint,
+    configOverrides?: ChainLiquidationConfig
+  ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]>;
+  liquidatePositions(
+    liquidatablePool: LiquidatablePool
+  ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]>;
+  chainLiquidationConfig: ChainLiquidationConfig;
+}
+
+export function withSafeLiquidator<TBase extends CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): ISafeLiquidator;
+} & TBase {
   return class SafeLiquidator extends Base {
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 
     async getPotentialLiquidations(
-      excludedComptrollers: Array<string> = [],
-      maxHealthFactor: BigNumber = utils.parseEther("1"),
+      excludedComptrollers: Array<Address> = [],
+      maxHealthFactor: bigint = parseEther("1"),
       configOverrides?: ChainLiquidationConfig
     ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
@@ -47,7 +62,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
     }
     async liquidatePositions(
       liquidatablePool: LiquidatablePool
-    ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionResponse>]> {
+    ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]> {
       const [erroredLiquidations, succeededLiquidations] = await liquidateUnhealthyBorrows(this, liquidatablePool);
       return [erroredLiquidations, succeededLiquidations];
     }

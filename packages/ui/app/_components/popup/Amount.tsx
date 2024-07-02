@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { parseUnits } from 'ethers/lib/utils.js';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 
 import ResultHandler from '../ResultHandler';
 
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { parseUnits } from 'viem';
 
 interface IAmount {
   amount?: string;
@@ -59,18 +59,15 @@ const Amount = ({
     if (
       newAmount &&
       newAmount.length >
-        selectedMarketData.underlyingDecimals.toNumber() +
-          1 +
-          numbersBeforeSeparator
+        selectedMarketData.underlyingDecimals + 1 + numbersBeforeSeparator
     ) {
       return;
     }
 
     if (
       newAmount &&
-      parseUnits(max, selectedMarketData.underlyingDecimals).lt(
+      parseUnits(max, selectedMarketData.underlyingDecimals) <
         parseUnits(newAmount, selectedMarketData.underlyingDecimals)
-      )
     ) {
       handleInput(max);
 

@@ -7,7 +7,7 @@ export const insertAssetPriceCacheData = async (
   asset: Omit<
     AssetPriceCache,
     "first_observation_ts" | "second_observation_ts" | "first_observation_deviation" | "second_observation_deviation"
-  >
+  >,
 ) => {
   logger.info(`Inserting asset price cache data: ${JSON.stringify(asset)}`);
   const supabase = getSupabaseClient();

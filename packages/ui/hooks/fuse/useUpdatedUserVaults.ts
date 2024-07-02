@@ -1,13 +1,12 @@
 import type { FundOperationMode, VaultData } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 interface UseUpdatedUserVaultResult {
-  amount: BigNumber;
+  amount: bigint;
   mode: FundOperationMode;
   vault: VaultData;
 }

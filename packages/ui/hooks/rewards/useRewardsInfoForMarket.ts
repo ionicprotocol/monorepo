@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useRewardsInfoForMarket = (
-  flywheelAddress?: string,
-  marketAddress?: string,
+  flywheelAddress?: Address,
+  marketAddress?: Address,
   poolChainId?: number
 ) => {
   const sdk = useSdk(poolChainId);

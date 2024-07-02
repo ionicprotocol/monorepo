@@ -1,70 +1,85 @@
-import { IonicSdk } from "@ionicprotocol/sdk";
-import { IonicComptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/ComptrollerInterface.sol/IonicComptroller";
+import { icErc20Abi, ionicComptrollerAbi, IonicSdk } from "@ionicprotocol/sdk";
 import { SupportedAsset } from "@ionicprotocol/types";
-import { constants, Contract, logger, Signer } from "ethers";
+import { Address, GetContractReturnType, PublicClient, WalletClient, zeroAddress } from "viem";
 
 export class AdminService {
-  admin: Signer;
-  adminAddress: string;
+  admin: WalletClient;
+  publicClient: PublicClient;
+  adminAddress: Address;
   sdk: IonicSdk;
   asset: SupportedAsset;
 
   constructor(sdk: IonicSdk, asset: SupportedAsset) {
     this.asset = asset;
-    this.admin = sdk.signer;
+    this.admin = sdk.walletClient;
     this.sdk = sdk;
   }
   async init(): Promise<AdminService> {
-    this.adminAddress = await this.admin.getAddress();
+    this.adminAddress = this.admin.account!.address;
     return this;
   }
 
-  async pauseAllPools(pools: Array<IonicComptroller>) {
+  async pauseAllPools(pools: Array<GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>>) {
     for (const pool of pools) {
-      const cTokenAddress = await pool.callStatic.cTokensByUnderlying(this.asset.underlying);
-      const cToken = this.sdk.createICErc20(cTokenAddress, this.admin);
+      const cTokenAddress = await pool.read.cTokensByUnderlying([this.asset.underlying]);
+      const cToken = this.sdk.createICErc20(cTokenAddress, this.publicClient, this.admin);
       await this.pauseMarketActivity(pool, cToken);
     }
   }
 
-  private async getPauseGuardian(pool: IonicComptroller) {
-    return await pool.callStatic.pauseGuardian();
+  private async getPauseGuardian(pool: GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>) {
+    return await pool.read.pauseGuardian();
   }
-  private async setPauseGuardian(pool: IonicComptroller) {
-    const tx = await pool._setPauseGuardian(this.adminAddress);
-    await tx.wait();
-    logger.info(`Set the pause guardian to ${this.adminAddress}`);
+  private async setPauseGuardian(pool: GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>) {
+    const tx = await pool.write._setPauseGuardian([this.adminAddress], {
+      account: this.admin.account!.address,
+      chain: this.admin.chain,
+    });
+    await this.publicClient.waitForTransactionReceipt({ hash: tx });
+    console.log(`Set the pause guardian to ${this.adminAddress}`);
   }
 
-  async pauseMarketActivity(pool: IonicComptroller, cToken: Contract) {
+  async pauseMarketActivity(
+    pool: GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>,
+    cToken: GetContractReturnType<typeof icErc20Abi, PublicClient>,
+  ) {
     const pauseGuardian = await this.getPauseGuardian(pool);
-    if (pauseGuardian === constants.AddressZero) {
+    if (pauseGuardian === zeroAddress) {
       await this.setPauseGuardian(pool);
     }
     await this.pauseMintActivity(pool, cToken);
     await this.pauseBorrowActivity(pool);
   }
 
-  async pauseMintActivity(pool: IonicComptroller, cToken: Contract) {
-    const isPaused: boolean = await pool.callStatic.mintGuardianPaused(cToken.address);
+  async pauseMintActivity(
+    pool: GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>,
+    cToken: GetContractReturnType<typeof icErc20Abi, PublicClient>,
+  ) {
+    const isPaused: boolean = await pool.read.mintGuardianPaused([cToken.address]);
     if (!isPaused) {
-      const tx = await pool._setMintPaused(cToken.address, true);
-      await tx.wait();
-      logger.warn(`Market mint pause tx ${tx.hash}`);
+      const tx = await pool.write._setMintPaused([cToken.address, true], {
+        account: this.admin.account!.address,
+        chain: this.admin.chain,
+      });
+      await this.publicClient.waitForTransactionReceipt({ hash: tx });
+      console.warn(`Market mint pause tx ${tx}`);
     } else {
-      logger.info(`Minting already paused`);
+      console.log(`Minting already paused`);
     }
   }
-  async pauseBorrowActivity(pool: IonicComptroller) {
-    const markets = await this.sdk.createComptroller(pool.address).callStatic.getAllMarkets();
+  async pauseBorrowActivity(pool: GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>) {
+    const markets = await this.sdk.createComptroller(pool.address).read.getAllMarkets();
     for (const market of markets) {
-      const isPaused: boolean = await pool.callStatic.borrowGuardianPaused(market);
+      const isPaused: boolean = await pool.read.borrowGuardianPaused([market]);
       if (!isPaused) {
-        const tx = await pool._setBorrowPaused(market, true);
-        await tx.wait();
-        logger.warn(`Market borrow pause tx ${tx.hash}`);
+        const tx = await pool.write._setBorrowPaused([market, true], {
+          account: this.admin.account!.address,
+          chain: this.admin.chain,
+        });
+        await this.publicClient.waitForTransactionReceipt({ hash: tx });
+        console.warn(`Market borrow pause tx ${tx}`);
       } else {
-        logger.info(`Borrowing already paused`);
+        console.info(`Borrowing already paused`);
       }
     }
   }

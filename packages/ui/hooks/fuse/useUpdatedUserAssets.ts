@@ -1,6 +1,5 @@
 import type { FundOperationMode } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -9,7 +8,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 // TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
 interface UseUpdatedUserAssetsResult<T> {
-  amount: BigNumber;
+  amount: bigint;
   assets: Array<T> | undefined;
   index: number;
   mode: FundOperationMode;
