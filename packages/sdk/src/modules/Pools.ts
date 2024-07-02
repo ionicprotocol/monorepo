@@ -99,7 +99,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         asset.isSupplyPaused = asset.mintGuardianPaused;
         asset.plugin = this.marketToPlugin[asset.cToken];
 
-        const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+        const _asset = (ChainSupportedAssets[this.chainId as SupportedChains] ?? []).find(
           (ass) => ass.underlying === asset.underlyingToken
         );
 
@@ -227,19 +227,19 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       const isVerifiedPools = filter === "verified-pools";
       const isUnverifiedPools = filter === "unverified-pools";
 
-      const _poolIds: bigint[] = [];
+      let _poolIds: bigint[] = [];
       if (isCreatedPools) {
         const res = await this.contracts.PoolLens.simulate.getPoolsByAccountWithData([options.from]);
-        _poolIds.concat(res.result[0]);
+        _poolIds = _poolIds.concat(res.result[0]);
       } else if (isVerifiedPools) {
         const res = await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([true]);
-        _poolIds.concat(res[0]);
+        _poolIds = _poolIds.concat(res[0]);
       } else if (isUnverifiedPools) {
         const res = await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([false]);
-        _poolIds.concat(res[0]);
+        _poolIds = _poolIds.concat(res[0]);
       } else {
         const res = await this.contracts.PoolLens.simulate.getPublicPoolsWithData();
-        _poolIds.concat(res.result[0]);
+        _poolIds = _poolIds.concat(res.result[0]);
       }
 
       const _whitelistedPoolIds = (

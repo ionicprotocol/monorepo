@@ -7,9 +7,9 @@ import { IonicSdk } from "../../src/IonicSdk/index";
 import * as utilsFns from "../../src/IonicSdk/utils";
 import * as FundOperationsModule from "../../src/modules/FundOperations";
 import { expect } from "../globalTestHook";
-import { mkAddress, mockChainConfig, stubbedContract, stubbedWalletClient } from "../helpers";
+import { mkAddress, mockChainConfig, stubbedContract, stubbedPublicClient, stubbedWalletClient } from "../helpers";
 
-describe.only("FundOperation", () => {
+describe("FundOperation", () => {
   const FundOperations = FundOperationsModule.withFundOperations(IonicSdk);
   let fundOperations: InstanceType<typeof FundOperations>;
   let axiosStub: SinonStub;
@@ -18,7 +18,7 @@ describe.only("FundOperation", () => {
 
   beforeEach(() => {
     mockWalletClient = stubbedWalletClient;
-    mockPublicClient = stubbedWalletClient as any;
+    mockPublicClient = stubbedPublicClient;
 
     mockPublicClient.getCode = ({ address }: { address: Address }) => Promise.resolve(address as Hex);
     mockPublicClient.estimateGas = stub().returns(3n);

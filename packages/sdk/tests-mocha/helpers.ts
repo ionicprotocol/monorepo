@@ -53,7 +53,8 @@ export const mockChainConfig: ChainConfig = {
     LIQUIDATION_INTERVAL_SECONDS: 5,
     jarvisPools: [],
     balancerPools: []
-  }
+  },
+  assets: []
 } as unknown as ChainConfig;
 
 export const mockReceipt = {

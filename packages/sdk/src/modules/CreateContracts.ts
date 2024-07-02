@@ -1,4 +1,4 @@
-import { Abi, Address, getContract, GetContractReturnType, PublicClient, WalletClient } from "viem";
+import { Abi, Address, GetContractReturnType, PublicClient, WalletClient } from "viem";
 
 import { IonicBaseConstructor } from "..";
 import {
@@ -24,6 +24,7 @@ import {
   poolRolesAuthorityAbi,
   unitrollerAbi
 } from "../generated";
+import { getContract } from "../IonicSdk/utils";
 
 export interface ICreateContracts {
   createContractInstance<T extends Abi>(
