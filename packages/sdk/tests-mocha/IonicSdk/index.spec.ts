@@ -1,6 +1,5 @@
-import { ganache } from "@ionicprotocol/chains";
-import { BigNumber, constants, Contract, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
+import { GetContractReturnType, TransactionReceipt, getContract } from "viem";
 
 import JumpRateModelArtifact from "../../artifacts/JumpRateModel.sol/JumpRateModel.json";
 import { IonicBase } from "../../src/IonicSdk/index";
@@ -10,14 +9,19 @@ import { Comptroller, PoolDirectory, Unitroller } from "../../typechain";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
-const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [constants.Two] }] as any, blockNumber: 1 };
+const mockReceipt: Partial<TransactionReceipt> = {
+  status: "success",
+  blockNumber: 1n
+};
+
+const mockContract = createStubInstance();
 
 describe("Ionic Index", () => {
   let ionicBase: IonicBase;
-  let mockContract: SinonStubbedInstance<Contract>;
+  let mockContract: SinonStubbedInstance<GetContractReturnType>;
 
   beforeEach(() => {
-    mockContract = createStubInstance(Contract);
+    mockContract = createStubInstance();
     mockContract.connect.returns(mockContract);
     Object.defineProperty(mockContract, "callStatic", {
       value: {
