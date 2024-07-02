@@ -19,6 +19,9 @@ WORKDIR /tmp/build
 
 ARG TEMP_DEPS_DIR
 
+ARG UPTIME_PYTH_UPDATER_API
+ENV UPTIME_PYTH_UPDATER_API=$UPTIME_PYTH_UPDATER_API
+
 # ----- Copy only the files that affect yarn install -----
 # Allows docker to use cache and skip install if dependencies are unchanged.
 # Assumes that ./packages/*/package.json files have been copied to TEMP_DEPS_DIR

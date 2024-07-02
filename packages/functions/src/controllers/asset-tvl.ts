@@ -8,7 +8,7 @@ import { chainIdToConfig } from '@ionicprotocol/chains';
 import { utils } from 'ethers';
 import axios from 'axios';
 
-export const HEARTBEAT_API_URL = 'https://uptime.betterstack.com/api/v1/heartbeat/WZEGR7y6eXKjL7tzJXgQybdz';
+export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
 export const updateAssetTvl = async (chainId: SupportedChains) => {
   try {

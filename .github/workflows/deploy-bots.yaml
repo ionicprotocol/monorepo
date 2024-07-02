@@ -26,7 +26,8 @@ on:
 
 env:
   IMAGE_TAG: ${{ github.sha }}
-
+  UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+  UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 jobs:
   terraform-infra:
     runs-on: ubuntu-latest
@@ -139,7 +140,7 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
-          docker build -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg UPTIME_LIQUIDATOR_API=${{ secrets.UPTIME_LIQUIDATOR_API }} -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
 
@@ -235,7 +236,7 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
-          docker build -f docker/pyth-updater/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg UPTIME_PYTH_UPDATER_API=${{ secrets.UPTIME_PYTH_UPDATER_API }} -f docker/pyth-updater/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
 
