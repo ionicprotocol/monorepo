@@ -102,6 +102,8 @@ jobs:
     env:
       REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
       REPOSITORY: ionic-liquidator
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
       - uses: actions/checkout@v4
@@ -198,6 +200,8 @@ jobs:
     env:
       REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
       REPOSITORY: ionic-pyth-updater
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
       - uses: actions/checkout@v4
@@ -259,6 +263,8 @@ jobs:
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
       - name: Checkout repository
