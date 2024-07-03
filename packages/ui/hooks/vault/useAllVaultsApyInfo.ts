@@ -28,9 +28,16 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
     }
   }, [usdPrices, chainId]);
 
-  return useQuery<VaultInfo | null>(
-    ['useVaultApyInfo', chainId, vaultAddress, vaultsPerChain, usdPrice],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'useVaultApyInfo',
+      chainId,
+      vaultAddress,
+      vaultsPerChain,
+      usdPrice
+    ],
+
+    queryFn: async () => {
       const data = vaultsPerChain[chainId].data;
 
       if (data && data.length > 0 && usdPrice) {
@@ -85,10 +92,9 @@ export function useVaultApyInfo(vaultAddress: string, chainId: number) {
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: Object.keys(vaultsPerChain).length > 0,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: Object.keys(vaultsPerChain).length > 0,
+    staleTime: Infinity
+  });
 }

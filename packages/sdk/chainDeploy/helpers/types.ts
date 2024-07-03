@@ -2,11 +2,6 @@ import { assetSymbols, SupportedAsset } from "@ionicprotocol/types";
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
-export enum ChainlinkFeedBaseCurrency {
-  ETH,
-  USD
-}
-
 export type TokenPair = {
   token: string;
   baseToken: string;

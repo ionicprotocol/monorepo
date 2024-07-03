@@ -18,9 +18,10 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
     }
   }, [usdPrices, poolChainId]);
 
-  return useQuery(
-    ['usePoolData', poolId, address, sdk?.chainId, usdPrice],
-    async () => {
+  return useQuery({
+    queryKey: ['usePoolData', poolId, address, sdk?.chainId, usdPrice],
+
+    queryFn: async () => {
       if (usdPrice && sdk?.chainId && poolId) {
         const response = await sdk
           .fetchPoolData(poolId, { from: address })
@@ -73,8 +74,7 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
         return null;
       }
     },
-    {
-      enabled: !!poolId && !!poolChainId && !!usdPrice && !!sdk
-    }
-  );
+
+    enabled: !!poolId && !!poolChainId && !!usdPrice && !!sdk
+  });
 };

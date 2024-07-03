@@ -6,6 +6,9 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
 import { chainIdToConfig } from '@ionicprotocol/chains';
 import { utils } from 'ethers';
+import axios from 'axios';
+
+export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
 export const updateAssetTvl = async (chainId: SupportedChains) => {
   try {
@@ -79,6 +82,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
           createdAt: new Date().getTime(),
         },
       }));
+    await axios.get(HEARTBEAT_API_URL);    
 
     const { error } = await supabase.from(environment.supabaseAssetTvlTableName).insert(rows);
 

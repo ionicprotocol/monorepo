@@ -21,7 +21,7 @@
 //       }
 //     },
 //     {
-//       cacheTime: Infinity,
+//       gcTime: Infinity,
 //       enabled: !!cTokenAddress && !!sdk,
 //       staleTime: Infinity
 //     }

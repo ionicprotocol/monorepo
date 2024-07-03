@@ -56,7 +56,7 @@
 //       return null;
 //     },
 //     {
-//       cacheTime: Infinity,
+//       gcTime: Infinity,
 //       enabled: !!prices && !isLoading,
 //       staleTime: Infinity
 //     }
