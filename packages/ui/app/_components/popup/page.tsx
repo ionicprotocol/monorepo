@@ -5,6 +5,7 @@ import { utils } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
+import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
@@ -14,8 +15,8 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
-import InstantSupply from './InstantSupply';
-import LifiChains from './LifiChains';
+// import InstantSupply from './InstantSupply';
+// import LifiChains from './LifiChains';
 import Loop from './Loop';
 import SliderComponent from './Slider';
 import Tab from './Tab';
@@ -44,12 +45,17 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
+const InstantSupply = dynamic(() => import('../markets/InstantSupply'), {
+  ssr: false
+});
+
 export enum PopupMode {
   SUPPLY = 1,
   WITHDRAW,
   BORROW,
   REPAY,
-  LOOP
+  LOOP,
+  INSTANTSUPPLY
 }
 
 export enum HFPStatus {
@@ -147,6 +153,7 @@ const Popup = ({
   );
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
     useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
+  // console.log(maxSupplyAmount);
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
     chainId
@@ -168,11 +175,11 @@ const Popup = ({
       value,
     '0'
   );
-  const [selectedAssetAmount, setSelectedAssetAmount] = useReducer(
-    (_: string | undefined, value: string | undefined): string | undefined =>
-      value,
-    '0'
-  );
+  // const [selectedAssetAmount, setSelectedAssetAmount] = useReducer(
+  //   (_: string | undefined, value: string | undefined): string | undefined =>
+  //     value,
+  //   '0'
+  // );
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
   const amountAsBInt = useMemo<BigNumber>(
@@ -349,7 +356,7 @@ const Popup = ({
    */
   useEffect(() => {
     switch (active) {
-      case PopupMode.SUPPLY: {
+      case PopupMode.SUPPLY || PopupMode.INSTANTSUPPLY: {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxSupplyAmount?.bigNumber && maxSupplyAmount.number > 0
@@ -414,7 +421,7 @@ const Popup = ({
     upsertTransactionStep(undefined);
 
     switch (active) {
-      case PopupMode.SUPPLY:
+      case PopupMode.SUPPLY || PopupMode.INSTANTSUPPLY:
         slide.current.style.transform = 'translateX(0%)';
 
         setCurrentFundOperation(FundOperationMode.SUPPLY);
@@ -1097,24 +1104,6 @@ const Popup = ({
     }
   };
 
-  const [open, setOpen] = useState<boolean>(false);
-  const newRef = useRef(null!);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
-
   return (
     <>
       <div
@@ -1158,48 +1147,38 @@ const Popup = ({
             className={`w-full transition-all duration-300 ease-linear h-min  flex`}
             ref={slide}
           >
+            {mode === PopupMode.INSTANTSUPPLY && (
+              <div className="w-full flex flex-col items-center justify-center pb-6">
+                {transactionSteps.length > 0 ? (
+                  <TransactionStepsHandler
+                    chainId={chainId}
+                    resetTransactionSteps={resetTransactionSteps}
+                    transactionSteps={transactionSteps}
+                  />
+                ) : (
+                  <>
+                    <InstantSupply
+                      toToken={selectedMarketData?.cToken}
+                      handleInput={(val?: string) => setAmount(val)}
+                      handleUtilization={() =>
+                        setCurrentUtilizationPercentage(100)
+                      }
+                      handleCollateralToggle={async () => {
+                        await handleCollateralToggle();
+                      }}
+                      startSupply={() => supplyAmount()}
+                    />
+                  </>
+                )}
+              </div>
+            )}
+
             {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
               <>
                 {/* ---------------------------------------------------------------------------- */}
                 {/* SUPPLY-Collateral section */}
                 {/* ---------------------------------------------------------------------------- */}
                 <div className={`min-w-full py-5 px-[6%] h-min `}>
-                  <LifiChains />
-                  <div
-                    className={`w-full flex items-center justify-between text-xs text-white/50 pt-3 pb-1 `}
-                  >
-                    <span>CONVERSION RATE</span>
-                    <span>0.0056</span>
-                  </div>
-
-                  <div
-                    className={`w-full flex items-center justify-between text-xs text-white/50 mb-3`}
-                  >
-                    <span>Fees</span>
-                    <span>56</span>
-                  </div>
-
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <InstantSupply
-                    amount={selectedAssetAmount}
-                    handleInput={(val?: string) => setSelectedAssetAmount(val)}
-                    newRef={newRef}
-                    open={open}
-                    setOpen={() => setOpen((prevState) => !prevState)}
-                  />
-                  {/* <Amount
-                    amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
-                    isLoading={isLoadingMaxSupply}
-                    max={formatUnits(
-                      maxSupplyAmount?.bigNumber ?? '0',
-                      selectedMarketData.underlyingDecimals
-                    )}
-                    selectedMarketData={selectedMarketData}
-                    symbol={selectedMarketData.underlyingSymbol}
-                  /> */}
                   <Amount
                     amount={amount}
                     handleInput={(val?: string) => setAmount(val)}

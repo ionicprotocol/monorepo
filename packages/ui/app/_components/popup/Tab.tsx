@@ -8,7 +8,9 @@ interface IMode {
 const Tab = ({ loopPossible, mode, setActive, active }: IMode) => {
   return (
     <div
-      className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 flex text-center gap-x-1 text-xs items-center justify-center`}
+      className={`w-[94%] mx-auto rounded-lg bg-grayone ${
+        mode === PopupMode.INSTANTSUPPLY && 'hidden'
+      }py-1 flex text-center gap-x-1 text-xs items-center justify-center`}
     >
       {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
         <>
