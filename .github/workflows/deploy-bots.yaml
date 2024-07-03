@@ -263,6 +263,8 @@ jobs:
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
       - name: Checkout repository
