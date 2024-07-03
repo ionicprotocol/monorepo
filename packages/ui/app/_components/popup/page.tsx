@@ -14,6 +14,7 @@ import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
+import InstantSupply from './InstantSupply';
 import LifiChains from './LifiChains';
 import Loop from './Loop';
 import SliderComponent from './Slider';
@@ -163,6 +164,11 @@ const Popup = ({
   const [active, setActive] = useState<PopupMode>(mode);
   const slide = useRef<HTMLDivElement>(null!);
   const [amount, setAmount] = useReducer(
+    (_: string | undefined, value: string | undefined): string | undefined =>
+      value,
+    '0'
+  );
+  const [selectedAssetAmount, setSelectedAssetAmount] = useReducer(
     (_: string | undefined, value: string | undefined): string | undefined =>
       value,
     '0'
@@ -1089,6 +1095,24 @@ const Popup = ({
     }
   };
 
+  const [open, setOpen] = useState<boolean>(false);
+  const newRef = useRef(null!);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const handleOutsideClick = (e: any) => {
+    //@ts-ignore
+    if (newRef.current && !newRef.current?.contains(e?.target)) {
+      setOpen(false);
+    }
+  };
+
   return (
     <>
       <div
@@ -1139,6 +1163,41 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 <div className={`min-w-full py-5 px-[6%] h-min `}>
                   <LifiChains />
+                  <div
+                    className={`w-full flex items-center justify-between text-xs text-white/50 pt-3 pb-1 `}
+                  >
+                    <span>CONVERSION RATE</span>
+                    <span>0.0056</span>
+                  </div>
+
+                  <div
+                    className={`w-full flex items-center justify-between text-xs text-white/50 mb-3`}
+                  >
+                    <span>Fees</span>
+                    <span>56</span>
+                  </div>
+
+                  <div
+                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
+                  />
+                  <InstantSupply
+                    amount={selectedAssetAmount}
+                    handleInput={(val?: string) => setSelectedAssetAmount(val)}
+                    newRef={newRef}
+                    open={open}
+                    setOpen={() => setOpen((prevState) => !prevState)}
+                  />
+                  {/* <Amount
+                    amount={amount}
+                    handleInput={(val?: string) => setAmount(val)}
+                    isLoading={isLoadingMaxSupply}
+                    max={formatUnits(
+                      maxSupplyAmount?.bigNumber ?? '0',
+                      selectedMarketData.underlyingDecimals
+                    )}
+                    selectedMarketData={selectedMarketData}
+                    symbol={selectedMarketData.underlyingSymbol}
+                  /> */}
                   <Amount
                     amount={amount}
                     handleInput={(val?: string) => setAmount(val)}

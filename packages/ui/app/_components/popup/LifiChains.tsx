@@ -29,8 +29,8 @@ export default function LifiChains() {
   return (
     <div
       className={` flex  ${
-        showMore === false ? 'justify-evenly' : 'justify-start'
-      } w-full flex-wrap gap-2 mb-4 mt-2 `}
+        showMore === false ? 'justify-start' : 'justify-start'
+      } w-full flex-wrap  gap-2 mb-4 mt-2 items-center `}
     >
       {lifiChains &&
         lifiChains.map((chn, idx) => {
@@ -52,36 +52,39 @@ export default function LifiChains() {
             </div>
           );
         })}
-      {lifiChains &&
-        lifiChains?.map((chainlifi, idx) => {
-          if (showMore === false && idx >= 10) return;
-          if (chainlifi.id === +chainId) return;
-          return (
-            <div
-              key={idx}
-              className={` cursor-pointer  flex items-center justify-center  `}
-              onClick={async () => {
-                await handleSwitchOriginChain(chainlifi.id, +chainId);
-              }}
-            >
-              <img
-                src={chainlifi.logoURI}
-                alt="logo"
-                className={` h-7 w-7 rounded-md`}
-              />
-            </div>
-          );
-        })}
+      {lifiChains && (
+        <>
+          {lifiChains?.map((chainlifi, idx) => {
+            if (showMore === false && idx >= 13) return;
+            if (chainlifi.id === +chainId) return;
+            return (
+              <div
+                key={idx}
+                className={` cursor-pointer  flex items-center justify-center  `}
+                onClick={async () => {
+                  await handleSwitchOriginChain(chainlifi.id, +chainId);
+                }}
+              >
+                <img
+                  src={chainlifi.logoURI}
+                  alt="logo"
+                  className={` h-7 w-7 rounded-md`}
+                />
+              </div>
+            );
+          })}
 
-      <div
-        onClick={() => setShowMore((p) => !p)}
-        className={` h-8 ${
-          showMore === false ? 'w-8' : 'w-max px-3 py-1'
-        } rounded-md bg-grayone flex  items-center justify-center text-sm text-white/60 text-center cursor-pointer`}
-      >
-        {' '}
-        {showMore === false ? '+12' : 'Show Less'}
-      </div>
+          <div
+            onClick={() => setShowMore((p) => !p)}
+            className={` h-8 ${
+              showMore === false ? 'w-8' : 'w-max px-3 py-1'
+            } rounded-md bg-grayone flex  items-center justify-center text-sm text-white/60 text-center cursor-pointer`}
+          >
+            {' '}
+            {showMore === false ? '+9' : 'Show Less'}
+          </div>
+        </>
+      )}
     </div>
   );
 }
