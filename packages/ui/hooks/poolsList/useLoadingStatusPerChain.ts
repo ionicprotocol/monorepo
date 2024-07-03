@@ -5,12 +5,13 @@ import type { PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 export const useLoadingStatusPerChain = (
   poolsPerChain: PoolsPerChainStatus
 ) => {
-  const response = useQuery(
-    [
+  const response = useQuery({
+    queryKey: [
       'poolsLoadingStatusPerChain',
       Object.values(poolsPerChain).map((pools) => pools.isLoading)
     ],
-    () => {
+
+    queryFn: () => {
       const _loadingStatusPerChain: { [chainId: string]: boolean } = {};
 
       Object.entries(poolsPerChain).map(([chainId, pools]) => {
@@ -19,10 +20,9 @@ export const useLoadingStatusPerChain = (
 
       return _loadingStatusPerChain;
     },
-    {
-      enabled: Object.values(poolsPerChain).length > 0
-    }
-  );
+
+    enabled: Object.values(poolsPerChain).length > 0
+  });
 
   return response.data ?? {};
 };

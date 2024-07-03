@@ -2,13 +2,7 @@ import { linea } from "@ionicprotocol/chains";
 import { assetSymbols, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
-import {
-  ChainDeployConfig,
-  deployAlgebraPriceOracle,
-  deployKyberSwapPriceOracle,
-  deployPythPriceOracle,
-  deployUmbrellaOracle
-} from "../helpers";
+import { ChainDeployConfig, deployKyberSwapPriceOracle, deployUmbrellaOracle } from "../helpers";
 import { ConcentratedLiquidityOracleConfig, UmbrellaAsset } from "../helpers/types";
 
 const assets = linea.assets;

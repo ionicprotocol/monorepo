@@ -26,8 +26,12 @@
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
     "@wagmi/core": "^2.2.1",
+    "eslint": "^9.6.0",
+    "eslint-config-prettier": "^9.1.0",
+    "perf_hooks": "^0.0.1",
     "react-confetti": "^6.1.0",
     "ts-node": "^10.9.1",
+    "tsc": "^2.0.4",
     "viem": "^2.7.16"
   },
   "resolutions": {

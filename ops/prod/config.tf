@@ -1,4 +1,3 @@
-
 locals {
   liquidator_ecr_repository_name      = "ionic-liquidator"
   oracles_monitor_ecr_repository_name = "ionic-oracles-monitor"
@@ -9,22 +8,29 @@ locals {
     SUPABASE_URL               = "https://uoagtjstsdrjypxlkuzr.supabase.co",
     SUPABASE_KEY               = var.supabase_key,
     NODE_ENV                   = "production",
+    UPTIME_LIQUIDATOR_API      = var.uptime_liquidator_api,
+    UPTIME_PYTH_UPDATER_API    = var.uptime_pyth_updater_api,
   }
 }
-
 
 locals {
   liquidation_variables = merge(
     local.shared_env_vars_lambda,
-    { DISCORD_WEBHOOK_URL = var.liquidation_discord_webhook_url },
-    { SENDGRID_API_KEY = var.liquidation_sendgrid_api_key },
-    { SENDGRID_EMAIL_TO = var.liquidation_sendgrid_email_to }
+    {
+      DISCORD_WEBHOOK_URL = var.liquidation_discord_webhook_url,
+      SENDGRID_API_KEY    = var.liquidation_sendgrid_api_key,
+      SENDGRID_EMAIL_TO   = var.liquidation_sendgrid_email_to,
+      UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
+    }
   )
   liquidation_base_variables = merge(
     local.shared_env_vars_lambda,
-    { DISCORD_WEBHOOK_URL = var.liquidation_discord_webhook_url },
-    { SENDGRID_API_KEY = var.liquidation_sendgrid_api_key },
-    { SENDGRID_EMAIL_TO = var.liquidation_sendgrid_email_to }
+    {
+      DISCORD_WEBHOOK_URL = var.liquidation_discord_webhook_url,
+      SENDGRID_API_KEY    = var.liquidation_sendgrid_api_key,
+      SENDGRID_EMAIL_TO   = var.liquidation_sendgrid_email_to,
+      UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
+    }
   )
   oracle_price_change_verifier_lambda_variables = merge(
     local.shared_env_vars_lambda,
@@ -43,6 +49,9 @@ locals {
   )
   pyth_updater_lambda_variables = merge(
     local.shared_env_vars_lambda,
-    { DISCORD_WEBHOOK_URL = var.pyth_updater_discord_webhook_url }
+    { DISCORD_WEBHOOK_URL = var.pyth_updater_discord_webhook_url, 
+     UPTIME_PYTH_UPDATER_API = var.uptime_pyth_updater_api,
+   },
+    
   )
 }

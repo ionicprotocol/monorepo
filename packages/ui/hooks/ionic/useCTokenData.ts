@@ -9,9 +9,10 @@ export const useCTokenData = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useCTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useCTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (comptrollerAddress && cTokenAddress && sdk) {
         try {
           const comptroller = sdk.createComptroller(comptrollerAddress);
@@ -56,8 +57,7 @@ export const useCTokenData = (
         return null;
       }
     },
-    {
-      enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk
-    }
-  );
+
+    enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk
+  });
 };

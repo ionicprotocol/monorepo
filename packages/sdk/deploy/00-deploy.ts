@@ -85,7 +85,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const ffdFee = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
   console.log(`ffd fee ${ffdFee}`);
   if (ffdFee.isZero()) {
-    if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Set Default Interest Fee Rate",
         fuseFeeDistributor.interface.encodeFunctionData("_setDefaultInterestFeeRate", [ethers.utils.parseEther("0.1")])
@@ -106,7 +106,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     const currentMinBorrow = await fuseFeeDistributor.callStatic.minBorrowEth();
     const currentMinBorrowPercent = currentMinBorrow.mul(100).div(minBorrow);
     if (currentMinBorrowPercent.gt(102) || currentMinBorrowPercent.lt(98)) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Pool Limits",
           fuseFeeDistributor.interface.encodeFunctionData("_setPoolLimits", [minBorrow, ethers.constants.MaxUint256])
@@ -219,7 +219,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       latestComptrollerImplementation === constants.AddressZero ||
       latestComptrollerImplementation !== comptroller.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest Comptroller Implementation",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestComptrollerImplementation", [
@@ -241,7 +241,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   } else {
     // on the first deploy to a chain
-    if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Set Latest Comptroller Implementation",
         fuseFeeDistributor.interface.encodeFunctionData("_setLatestComptrollerImplementation", [
@@ -258,7 +258,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
   if (comptrollerExtensions.length == 0 || comptrollerExtensions[1] != compFirstExtension.address) {
-    if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Set Comptroller Extensions",
         fuseFeeDistributor.interface.encodeFunctionData("_setComptrollerExtensions", [
@@ -284,7 +284,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     // CErc20Delegate
     const erc20DelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Del.address);
     if (erc20DelExtensions.length == 0 || erc20DelExtensions[0] != erc20Del.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20Delegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -305,7 +305,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
     const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(1);
     if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20Delegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [
@@ -330,7 +330,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       erc20PluginDel.address
     );
     if (erc20PluginDelExtensions.length == 0 || erc20PluginDelExtensions[0] != erc20PluginDel.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20PluginDelegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -352,7 +352,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
     const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(2);
     if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20PluginDelegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [
@@ -379,7 +379,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       erc20RewardsDel.address
     );
     if (erc20RewardsDelExtensions.length == 0 || erc20RewardsDelExtensions[0] != erc20RewardsDel.address) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20RewardsDelegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -403,7 +403,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       latestCErc20RewardsDelegate === constants.AddressZero ||
       latestCErc20RewardsDelegate !== erc20RewardsDel.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20RewardsDelegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [
@@ -433,7 +433,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       erc20PluginRewardsDelExtensions.length == 0 ||
       erc20PluginRewardsDelExtensions[0] != erc20PluginRewardsDel.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set CErc20PluginRewardsDelegate Extensions",
           fuseFeeDistributor.interface.encodeFunctionData("_setCErc20DelegateExtensions", [
@@ -457,7 +457,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       latestCErc20PluginRewardsDelegate === constants.AddressZero ||
       latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
     ) {
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set Latest CErc20PluginRewardsDelegate",
           fuseFeeDistributor.interface.encodeFunctionData("_setLatestCErc20Delegate", [
@@ -671,7 +671,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const liquidatorsRegistry = (await ethers.getContract("LiquidatorsRegistry", deployer)) as LiquidatorsRegistry;
   const currentLRExtensions = await liquidatorsRegistry.callStatic._listExtensions();
   if (currentLRExtensions.length == 0) {
-    if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Register First Liquidators Registry Extension",
         liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -684,7 +684,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       await tx.wait();
       console.log(`registered the first liquidators registry extension ${liquidatorsRegistryExtensionDep.address}`);
     }
-    if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+    if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
       logTransaction(
         "Register Second Liquidators Registry Extension",
         liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -704,7 +704,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   } else {
     if (currentLRExtensions.length == 1) {
-      if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Replace Liquidators Registry First Extension",
           liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -722,7 +722,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
         );
       }
-      if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Register Second Liquidators Registry Extension",
           liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -749,7 +749,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
           currentLRExtensions[1] != liquidatorsRegistryExtensionDep.address ||
           currentLRExtensions[0] != liquidatorsRegistrySecondExtensionDep.address
         ) {
-          if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+          if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
             logTransaction(
               "Replace Liquidators Registry First Extension",
               liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -767,7 +767,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
               `replaced the liquidators registry first extension ${currentLRExtensions[0]} with the new ${liquidatorsRegistryExtensionDep.address}`
             );
           }
-          if ((await liquidatorsRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+          if ((await liquidatorsRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
             logTransaction(
               "Replace Liquidators Registry Second Extension",
               liquidatorsRegistry.interface.encodeFunctionData("_registerExtension", [
@@ -841,7 +841,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("currentLPFExtensions: ", currentLPFExtensions.join(", "));
 
     if (currentLPFExtensions.length == 1) {
-      if ((await leveredPositionFactory.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await leveredPositionFactory.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Replace LeveredPositionFactory First Extension",
           leveredPositionFactory.interface.encodeFunctionData("_registerExtension", [
@@ -854,7 +854,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         await tx.wait();
         console.log("replaced the LeveredPositionFactory first extension: ", tx.hash);
       }
-      if ((await leveredPositionFactory.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await leveredPositionFactory.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Register LeveredPositionFactory Second Extension",
           leveredPositionFactory.interface.encodeFunctionData("_registerExtension", [
@@ -870,7 +870,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     } else if (currentLPFExtensions.length == 2) {
       if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
         console.log(`replacing ${currentLPFExtensions[0]} with ${lpfExt1Dep.address}`);
-        if ((await leveredPositionFactory.owner()).toLowerCase() === multisig.toLowerCase()) {
+        if ((await leveredPositionFactory.owner()).toLowerCase() !== deployer.toLowerCase()) {
           logTransaction(
             "Replace LeveredPositionFactory First Extension",
             leveredPositionFactory.interface.encodeFunctionData("_registerExtension", [
@@ -886,7 +886,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       }
       if (lpfExt2Dep.address.toLowerCase() != currentLPFExtensions[1].toLowerCase()) {
         console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt2Dep.address}`);
-        if ((await leveredPositionFactory.owner()).toLowerCase() === multisig.toLowerCase()) {
+        if ((await leveredPositionFactory.owner()).toLowerCase() !== deployer.toLowerCase()) {
           logTransaction(
             "Replace LeveredPositionFactory Second Extension",
             leveredPositionFactory.interface.encodeFunctionData("_registerExtension", [
@@ -902,7 +902,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       }
     } else if (currentLPFExtensions.length == 0) {
       console.log(`no LeveredPositionFactory extensions configured, adding them`);
-      if ((await leveredPositionFactory.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await leveredPositionFactory.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Register LeveredPositionFactory First Extension",
           leveredPositionFactory.interface.encodeFunctionData("_registerExtension", [
@@ -915,7 +915,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         await tx.wait();
         console.log("registered the LeveredPositionFactory first extension: ", tx.hash);
       }
-      if ((await leveredPositionFactory.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await leveredPositionFactory.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Register LeveredPositionFactory Second Extension",
           leveredPositionFactory.interface.encodeFunctionData("_registerExtension", [
@@ -934,7 +934,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
     const lr = await leveredPositionFactory.callStatic.liquidatorsRegistry();
     if (lr.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
-      if ((await leveredPositionFactory.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await leveredPositionFactory.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set LiquidatorsRegistry Address",
           leveredPositionFactory.interface.encodeFunctionData("_setLiquidatorsRegistry", [liquidatorsRegistry.address])
@@ -996,7 +996,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     const ffdAuthRegistry = await fuseFeeDistributor.callStatic.authoritiesRegistry();
     if (ffdAuthRegistry.toLowerCase() != authoritiesRegistry.address.toLowerCase()) {
       // set the address in the FFD
-      if ((await fuseFeeDistributor.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await fuseFeeDistributor.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set AuthoritiesRegistry in FeeDistributor",
           fuseFeeDistributor.interface.encodeFunctionData("reinitialize", [authoritiesRegistry.address])
@@ -1010,7 +1010,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     const leveredPosFactoryAr = await authoritiesRegistry.callStatic.leveredPositionsFactory();
     if (leveredPosFactoryAr.toLowerCase() != leveredPositionFactory.address.toLowerCase()) {
       // set the address in the AR
-      if ((await authoritiesRegistry.owner()).toLowerCase() === multisig.toLowerCase()) {
+      if ((await authoritiesRegistry.owner()).toLowerCase() !== deployer.toLowerCase()) {
         logTransaction(
           "Set LeveredPositionsFactory in AuthoritiesRegistry",
           authoritiesRegistry.interface.encodeFunctionData("reinitialize", [leveredPositionFactory.address])

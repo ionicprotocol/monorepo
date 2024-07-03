@@ -5,9 +5,10 @@ import { useSdk } from '@ui/hooks/ionic/useSdk';
 export const useTotalReserves = (cTokenAddress?: string, chainId?: number) => {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useTotalReserves', cTokenAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useTotalReserves', cTokenAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (cTokenAddress && sdk) {
         try {
           const cToken = sdk.createICErc20(cTokenAddress);
@@ -29,8 +30,7 @@ export const useTotalReserves = (cTokenAddress?: string, chainId?: number) => {
         return null;
       }
     },
-    {
-      enabled: !!cTokenAddress && !!sdk
-    }
-  );
+
+    enabled: !!cTokenAddress && !!sdk
+  });
 };

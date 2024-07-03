@@ -31,21 +31,21 @@ export function usePositionInfo(
 ) {
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['usePositionInfo', sdk?.chainId, position, supplyApy],
-    async () => {
+  return useQuery({
+    queryKey: ['usePositionInfo', sdk?.chainId, position, supplyApy],
+
+    queryFn: async () => {
       if (sdk && supplyApy) {
         return await getPositionInfo(position, supplyApy, sdk);
       } else {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!position && !!supplyApy && !!chainId,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!position && !!supplyApy && !!chainId,
+    staleTime: Infinity
+  });
 }
 
 export function usePositionsInfo(
@@ -55,9 +55,10 @@ export function usePositionsInfo(
 ) {
   const { getSdk } = useMultiIonic();
 
-  return useQuery(
-    ['usePositionsInfo', positions, totalApys, chainIds],
-    async () => {
+  return useQuery({
+    queryKey: ['usePositionsInfo', positions, totalApys, chainIds],
+
+    queryFn: async () => {
       if (chainIds && chainIds.length > 0 && totalApys) {
         const res: { [position: string]: PositionInfo } = {};
 
@@ -82,10 +83,9 @@ export function usePositionsInfo(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!positions && !!totalApys && !!chainIds,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!positions && !!totalApys && !!chainIds,
+    staleTime: Infinity
+  });
 }

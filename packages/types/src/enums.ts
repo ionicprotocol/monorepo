@@ -10,7 +10,8 @@ export enum SupportedChains {
   zkevm = 1101,
   mode = 34443,
   optimism_sepolia = 11155420,
-  base = 8453
+  base = 8453,
+  optimism = 10
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -185,6 +186,11 @@ export enum assetOriginalSymbols {
   "vAMM-TNGBL/USDR" = "TNGBL/USDR Pearl Variable LP"
 }
 
+export enum ChainlinkFeedBaseCurrency {
+  ETH,
+  USD
+}
+
 export enum assetSymbols {
   // mode
   WETH = "WETH",
@@ -201,8 +207,15 @@ export enum assetSymbols {
   KIM = "KIM",
   IONWETH = "ION-WETH",
   IUSDCIUSDT = "ionUSDC-ionUSDT",
+
   // base
   AERO = "AERO",
+  bsdETH = "bsdETH",
+  eUSD = "eUSD",
+
+  // optimism
+  OP = "OP",
+  LUSD = "LUSD",
 
   // legacy
   DAI = "DAI",
@@ -408,7 +421,6 @@ export enum assetSymbols {
   triCrypto = "triCrypto",
 
   // Mainnet
-  eUSD = "eUSD",
   realYieldUSD = "realYieldUSD",
   realYieldETH = "realYieldETH",
   ethBtcTrend = "ethBtcTrend",

@@ -15,8 +15,8 @@ export const usePoolDetails = (
     if (sdk?.chainId) return getBlockTimePerMinuteByChainId(sdk.chainId);
   }, [sdk?.chainId]);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'usePoolDetails',
       assets
         ?.sort((assetA, assetB) =>
@@ -31,7 +31,8 @@ export const usePoolDetails = (
         ),
       sdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (assets && assets.length && sdk && blocksPerMinute) {
         try {
           let mostSuppliedAsset = assets[0];
@@ -73,10 +74,9 @@ export const usePoolDetails = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!assets && assets.length > 0 && !!sdk && !!blocksPerMinute,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!assets && assets.length > 0 && !!sdk && !!blocksPerMinute,
+    staleTime: Infinity
+  });
 };

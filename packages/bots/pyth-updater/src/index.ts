@@ -1,5 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import axios from 'axios';
 import { Wallet } from 'ethers';
 
 import { chainIdToConfig } from './config';
@@ -8,6 +9,16 @@ import { logger } from './logger';
 import { Updater } from './services';
 import { setUpSdk } from './utils';
 
+const HEARTBEAT_API_URL: any = process.env.UPTIME_PYTH_UPDATER_API;
+
+if (typeof HEARTBEAT_API_URL === 'undefined') {
+  logger.error('Error: UPTIME_PYTH_UPDATER_API environment variable is undefined');
+} else if (typeof HEARTBEAT_API_URL !== 'string') {
+  logger.error('Error: UPTIME_PYTH_UPDATER_API environment variable is not a string');
+} else {
+  logger.info(`UPTIME_PYTH_UPDATER_API is set to: ${HEARTBEAT_API_URL}`);
+}
+logger.info(`UPTIME_PYTH_UPDATER_API is set to: ${HEARTBEAT_API_URL}`);
 export const handler = async (
   event: APIGatewayEvent,
   context: Context
@@ -25,6 +36,8 @@ export const handler = async (
 
   sdk.logger.info(`Starting update loop bot on chain: ${config.chainId}`);
   sdk.logger.info(`Config for bot: ${JSON.stringify(config)}`);
+  await axios.get(HEARTBEAT_API_URL);
+  logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
   await updater.updateFeeds();
 
   return {

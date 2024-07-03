@@ -8,6 +8,7 @@ import {
   linea,
   mode,
   neon,
+  optimism,
   polygon,
   sepolia,
   zkevm
@@ -47,7 +48,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.optimism_sepolia]: sepolia.assets,
-  [SupportedChains.base]: base.assets
+  [SupportedChains.base]: base.assets,
+  [SupportedChains.optimism]: optimism.assets
 };
 
 export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {

@@ -3,9 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const useAllPoolsData = (allPools: PoolData[]) => {
-  const response = useQuery(
-    ['useAllPoolsData', allPools.map((pool) => pool.comptroller)],
-    () => {
+  const response = useQuery({
+    queryKey: ['useAllPoolsData', allPools.map((pool) => pool.comptroller)],
+
+    queryFn: () => {
       return allPools.map((pool) => {
         return {
           assets: pool,
@@ -18,10 +19,9 @@ export const useAllPoolsData = (allPools: PoolData[]) => {
         };
       });
     },
-    {
-      enabled: allPools.length > 0
-    }
-  );
+
+    enabled: allPools.length > 0
+  });
 
   return response.data ?? [];
 };

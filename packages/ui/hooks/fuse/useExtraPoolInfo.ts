@@ -10,9 +10,10 @@ export const useExtraPoolInfo = (
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
-    async () => {
+  return useQuery({
+    queryKey: ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
+
+    queryFn: async () => {
       if (!comptrollerAddress || !sdk) {
         return null;
       }
@@ -71,10 +72,9 @@ export const useExtraPoolInfo = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
+    staleTime: Infinity
+  });
 };

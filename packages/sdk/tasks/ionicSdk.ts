@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { base, bsc, ganache, mode, sepolia } from "@ionicprotocol/chains";
+import { base, bsc, ganache, mode, optimism, sepolia } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -192,6 +192,9 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.optimism_sepolia:
         chainConfig = sepolia;
+        break;
+      case SupportedChains.optimism:
+        chainConfig = optimism;
         break;
       default:
         throw new Error("Chain not supported");

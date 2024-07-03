@@ -6,9 +6,10 @@ export interface UseAssetsData {
   [asset: string]: AssetReward[];
 }
 export function useAssets(chainIds?: number[]) {
-  return useQuery<UseAssetsData>(
-    ['useAssetsAPI', chainIds?.sort()],
-    async () => {
+  return useQuery({
+    queryKey: ['useAssetsAPI', chainIds?.sort()],
+
+    queryFn: async () => {
       let assetsRewards: UseAssetsData = {};
 
       if (chainIds && chainIds.length > 0) {
@@ -25,10 +26,9 @@ export function useAssets(chainIds?: number[]) {
 
       return assetsRewards;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!chainIds && chainIds.length > 0,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!chainIds && chainIds.length > 0,
+    staleTime: Infinity
+  });
 }

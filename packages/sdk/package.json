@@ -30,13 +30,14 @@
     "test:bsc": "SIMULATION=true FORK_RPC_URL=${FORK_RPC_URL} FORK_CHAIN_ID=56 hardhat test --no-compile",
     "test:forge": "cd lib/contracts && forge test",
     "export": "hardhat export --export-all ./deployments.json",
-    "export:all": "npm run export:mode && npm run export:base",
+    "export:all": "npm run export:mode && npm run export:base && npm run export:optimism",
     "export:mode": "hardhat export --network mode --export ../chains/deployments/mode.json",
     "export:zkevm": "hardhat export --network zkevm --export ../chains/deployments/zkevm.json",
     "export:chapel": "hardhat export --network chapel --export ../chains/deployments/chapel.json",
     "export:ganache": "hardhat export --network localhost --export ../chains/deployments/ganache.json",
     "export:optimismSepolia": "hardhat export --network optimismSepolia --export ../chains/deployments/optimismSepolia.json",
     "export:base": "hardhat export --network base --export ../chains/deployments/base.json",
+    "export:optimism": "hardhat export --network optimism --export ../chains/deployments/optimism.json",
     "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
@@ -100,6 +101,7 @@
     "bufferutil": "^4.0.7",
     "ethereum-waffle": "^4.0.10",
     "ethers": "^5.7.2",
+    "perf_hooks": "^0.0.1",
     "utf-8-validate": "^6.0.3"
   }
 }

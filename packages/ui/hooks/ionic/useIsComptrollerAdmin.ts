@@ -10,9 +10,10 @@ export const useIsComptrollerAdmin = (
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['isComptrollerAdmin', comptrollerAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['isComptrollerAdmin', comptrollerAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (!comptrollerAddress || !sdk) return null;
 
       try {
@@ -29,6 +30,7 @@ export const useIsComptrollerAdmin = (
         return null;
       }
     },
-    { enabled: !!comptrollerAddress && !!sdk }
-  );
+
+    enabled: !!comptrollerAddress && !!sdk
+  });
 };

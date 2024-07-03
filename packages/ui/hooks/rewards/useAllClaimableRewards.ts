@@ -14,9 +14,10 @@ interface AllRewardsType {
 export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiIonic();
 
-  return useQuery(
-    ['useAllClaimableRewards', chainIds, address],
-    async () => {
+  return useQuery({
+    queryKey: ['useAllClaimableRewards', chainIds, address],
+
+    queryFn: async () => {
       if (chainIds.length > 0 && address) {
         const allRewards: AllRewardsType[] = [];
 
@@ -52,10 +53,9 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!address || chainIds.length > 0,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!address || chainIds.length > 0,
+    staleTime: Infinity
+  });
 };

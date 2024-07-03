@@ -5,9 +5,10 @@ import { useSdk } from '@ui/hooks/ionic/useSdk';
 export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useOracle', underlyingAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useOracle', underlyingAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (underlyingAddress && sdk) {
         try {
           const mpo = sdk.createMasterPriceOracle(sdk.provider);
@@ -27,8 +28,7 @@ export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
         return null;
       }
     },
-    {
-      enabled: !!underlyingAddress && !!sdk
-    }
-  );
+
+    enabled: !!underlyingAddress && !!sdk
+  });
 };

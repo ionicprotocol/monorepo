@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { createConfig, getEnsName, http } from '@wagmi/core';
 import type { Address } from 'viem';
 import { base, mainnet, mode } from 'viem/chains';
@@ -338,7 +338,7 @@ const usePointsForSupplyModeMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['0']).map((asset) => {
@@ -380,7 +380,7 @@ const usePointsForBorrowModeMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['0'])
@@ -424,7 +424,7 @@ const usePointsForSupplyModeNative = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['1']).map((asset) => {
@@ -466,7 +466,7 @@ const usePointsForBorrowModeNative = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['1'])
@@ -510,7 +510,7 @@ const usePointsForIonLp = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(ionLPMultipliers).map((asset) => {
@@ -555,7 +555,7 @@ const usePointsForSteerLp = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(steerLPMultipliers).map((asset) => {
@@ -598,7 +598,7 @@ const usePointsForSupplyBaseMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[base.id]['0']).map((asset) => {
@@ -640,7 +640,7 @@ const usePointsForBorrowBaseMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[base.id]['0'])
@@ -689,8 +689,8 @@ const useLeaderboard = (page: number) => {
   const pageSize = 50;
 
   return useQuery({
-    cacheTime: Infinity,
-    keepPreviousData: true,
+    gcTime: Infinity,
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       const response = await supabase
         .from('ranks_season2')
@@ -702,7 +702,7 @@ const useLeaderboard = (page: number) => {
       // get ENS address
       const data = response.data
         ? await Promise.all(
-            response.data.map(async (row) => {
+            response.data.map(async (row: { address: string }) => {
               const ens = await getEnsName(config, {
                 address: row.address as Address,
                 chainId: config.chains[0].id
@@ -723,7 +723,7 @@ const useLeaderboard = (page: number) => {
 const useGlobalRank = () => {
   const { address } = useMultiIonic();
   return useQuery({
-    cacheTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       if (!address) {
         return null;

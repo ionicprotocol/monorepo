@@ -43,8 +43,8 @@ export const useBorrowCap = ({
     chainId
   );
 
-  return useQuery<Cap | null | undefined>(
-    [
+  return useQuery({
+    queryKey: [
       'useBorrowCap',
       comptrollerAddress,
       sdk?.chainId,
@@ -55,7 +55,8 @@ export const useBorrowCap = ({
       borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
       address
     ],
-    async () => {
+
+    queryFn: async () => {
       if (
         sdk &&
         usdPrice &&
@@ -105,15 +106,16 @@ export const useBorrowCap = ({
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!sdk &&
-        !!usdPrice &&
-        !!market &&
-        !!address &&
-        !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!sdk &&
+      !!usdPrice &&
+      !!market &&
+      !!address &&
+      !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+
+    staleTime: Infinity
+  });
 };
