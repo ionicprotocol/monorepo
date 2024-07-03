@@ -14207,7 +14207,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^9.0.0":
+"eslint-config-prettier@npm:^9.0.0, eslint-config-prettier@npm:^9.1.0":
   version: 9.1.0
   resolution: "eslint-config-prettier@npm:9.1.0"
   peerDependencies:
@@ -20546,6 +20546,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^6.6.0"
     "@wagmi/core": "npm:^2.2.1"
     eslint: "npm:^9.6.0"
+    eslint-config-prettier: "npm:^9.1.0"
     netlify-cli: "npm:^16.3.1"
     perf_hooks: "npm:^0.0.1"
     react-confetti: "npm:^6.1.0"
