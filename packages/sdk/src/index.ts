@@ -6,6 +6,10 @@ export * from "./generated";
 import { IonicBase } from "./IonicSdk";
 import JumpRateModel from "./IonicSdk/irm/JumpRateModel";
 
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 export { filterOnlyObjectProperties } from "./IonicSdk/utils";
 
 export type { ChainLiquidationConfig } from "./modules/liquidation/config";
