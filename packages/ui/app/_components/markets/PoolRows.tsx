@@ -97,7 +97,7 @@ const PoolRows = ({
     >
       <Link
         className={`w-full  lg:grid grid-cols-16 gap-x-1 col-span-16 py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative cursor-pointer ${
-          membership && `border ${chainColors(dropdownSelectedChain).border}`
+          membership && `border ${pools[dropdownSelectedChain].border}`
         }`}
         href={{
           pathname: `/market/details/${asset}`,
@@ -124,9 +124,9 @@ const PoolRows = ({
       >
         {membership && (
           <span
-            className={`absolute top-[-9px] right-[-15px] px-2 ${
-              chainColors(dropdownSelectedChain).text
-            } ${chainColors(dropdownSelectedChain).bg} rounded-lg`}
+            className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
+              membership && `border ${pools[dropdownSelectedChain].border}`
+            }`}
           >
             Collateral
           </span>
@@ -183,9 +183,7 @@ const PoolRows = ({
           <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
             {supplyAPR}
             <span
-              className={`${chainColors(dropdownSelectedChain).text} ${
-                chainColors(dropdownSelectedChain).bg
-              } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+              className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
             >
               + POINTS <i className="popover-hint">i</i>
             </span>
@@ -204,9 +202,7 @@ const PoolRows = ({
               </a>
             </span>
             <div
-              className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-                chainColors(dropdownSelectedChain).border
-              } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+              className={`popover absolute w-[170px] top-full p-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
             >
               Base APR: {supplyAPR}
               {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -373,9 +369,7 @@ const PoolRows = ({
           <div className="popover-container flex lg:flex-col items-center cursor-pointer">
             {borrowAPR}
             <span
-              className={`${chainColors(dropdownSelectedChain).text} ${
-                chainColors(dropdownSelectedChain).bg
-              } rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+              className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
             >
               + POINTS <i className="popover-hint">i</i>
             </span>
@@ -394,9 +388,7 @@ const PoolRows = ({
               </a>
             </span>
             <div
-              className={`popover absolute w-[170px] top-full p-2 mt-1 border ${
-                chainColors(dropdownSelectedChain).border
-              } rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+              className={`popover absolute w-[170px] top-full p-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
             >
               Base APR: {borrowAPR}
               {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -551,11 +543,7 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg truncate w-full h-full ${
-                chainColors(dropdownSelectedChain).bg
-              } ${
-                chainColors(dropdownSelectedChain).text
-              } py-1.5 px-1 uppercase`}
+              className={`rounded-lg ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
