@@ -86,8 +86,9 @@ export class Updater {
         BigInt(assetConfig.currentPrice!.publishTime),
       );
       const priceIdsToUpdate = assetConfigsToUpdate.map((assetConfig) => assetConfig.priceId);
-      const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
-      const fee = await this.pythContract.read.getUpdateFee([updatePriceData] as [Address[]]);
+      const updatePriceData: Address[] =
+        await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
+      const fee = await this.pythContract.read.getUpdateFee([updatePriceData]);
       const callData = encodeFunctionData({
         abi: pythAbi,
         functionName: 'updatePriceFeedsIfNecessary',
@@ -117,7 +118,8 @@ export class Updater {
   }
   async forceUpdateFeeds(assetConfig: PythAssetConfig[]): Promise<TransactionReceipt | null> {
     const priceIdsToUpdate = assetConfig.map((assetConfig) => assetConfig.priceId);
-    const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
+    const updatePriceData: Address[] =
+      await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
     const fee = await this.pythContract.read.getUpdateFee([updatePriceData]);
     const callData = encodeFunctionData({
       abi: pythAbi,
