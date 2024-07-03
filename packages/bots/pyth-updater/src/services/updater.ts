@@ -87,7 +87,7 @@ export class Updater {
       );
       const priceIdsToUpdate = assetConfigsToUpdate.map((assetConfig) => assetConfig.priceId);
       const updatePriceData = await this.connection.getPriceFeedsUpdateData(priceIdsToUpdate);
-      const fee = await this.pythContract.read.getUpdateFee([updatePriceData]);
+      const fee = await this.pythContract.read.getUpdateFee([updatePriceData] as [Address[]]);
       const callData = encodeFunctionData({
         abi: pythAbi,
         functionName: 'updatePriceFeedsIfNecessary',

@@ -1,18 +1,17 @@
+import type { OpenPosition } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import millify from 'millify';
 import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { OpenPosition } from 'types/dist';
-import { useBalance, useChainId } from 'wagmi';
 import {
-  Address,
+  type Address,
   formatEther,
   formatUnits,
-  maxUint256,
   parseEther,
   parseUnits
 } from 'viem';
+import { useBalance, useChainId } from 'wagmi';
 
 import Modal from '../Modal';
 import Range from '../Range';
@@ -36,7 +35,6 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { parse } from 'path';
 
 export type LoopProps = {
   borrowableAssets: Address[];

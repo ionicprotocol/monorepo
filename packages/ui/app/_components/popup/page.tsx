@@ -1,13 +1,12 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
+import { FundOperationMode } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
-import { utils } from 'ethers';
 import millify from 'millify';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { FundOperationMode } from 'types/dist';
+import { type Address, formatEther, formatUnits, parseUnits } from 'viem';
 import { useChainId } from 'wagmi';
-import { Address, formatEther, formatUnits, parseUnits } from 'viem';
 
 import ResultHandler from '../ResultHandler';
 
@@ -233,37 +232,37 @@ const Popup = ({
           selectedMarketData.borrowRatePerBlock,
           blocksPerMinute
         ),
-        borrowBalanceFrom: utils.commify(
-          utils.formatUnits(
+        borrowBalanceFrom: Number(
+          formatUnits(
             selectedMarketData.borrowBalance,
             selectedMarketData.underlyingDecimals
           )
-        ),
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
         borrowBalanceTo: updatedAsset
-          ? utils.commify(
-              utils.formatUnits(
+          ? Number(
+              formatUnits(
                 updatedAsset.borrowBalance,
                 updatedAsset.underlyingDecimals
               )
-            )
+            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
           : undefined,
         supplyAPY: currentSdk.ratePerBlockToAPY(
           selectedMarketData.supplyRatePerBlock,
           blocksPerMinute
         ),
-        supplyBalanceFrom: utils.commify(
-          utils.formatUnits(
+        supplyBalanceFrom: Number(
+          formatUnits(
             selectedMarketData.supplyBalance,
             selectedMarketData.underlyingDecimals
           )
-        ),
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
         supplyBalanceTo: updatedAsset
-          ? utils.commify(
-              utils.formatUnits(
+          ? Number(
+              formatUnits(
                 updatedAsset.supplyBalance,
                 updatedAsset.underlyingDecimals
               )
-            )
+            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
           : undefined,
         totalBorrows: updatedAssets?.reduce(
           (acc, cur) => acc + cur.borrowBalanceFiat,

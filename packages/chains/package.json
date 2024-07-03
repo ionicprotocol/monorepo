@@ -30,7 +30,7 @@
     "viem": "^2.16.5"
   },
   "devDependencies": {
-    "eslint": "^8.45.0",
+    "eslint": "^8",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^5.0.0",

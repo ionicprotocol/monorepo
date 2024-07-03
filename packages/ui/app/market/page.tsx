@@ -1,11 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-// import { Listbox, Transition } from '@headlessui/react';
-// import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { formatEther, formatUnits } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
@@ -23,7 +21,6 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { formatEther, formatUnits } from 'viem';
 
 export default function Market() {
   const searchParams = useSearchParams();

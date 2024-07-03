@@ -34,7 +34,7 @@
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
-    "eslint": "^8.23.0",
+    "eslint": "^8",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "lint-staged": "13.0.3",

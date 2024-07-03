@@ -2,11 +2,11 @@
 'use client';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
+import { parseUnits } from 'viem';
 
 import ResultHandler from '../ResultHandler';
 
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { parseUnits } from 'viem';
 
 interface IAmount {
   amount?: string;

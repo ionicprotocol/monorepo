@@ -5,12 +5,11 @@ import millify from 'millify';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 import { base, mode } from 'viem/chains';
-// import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
-// import Dropdown from '../_components/Dropdown';
 import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
@@ -26,7 +25,6 @@ import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-// import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrowModeNative,
   usePointsForSupplyModeNative,
@@ -39,13 +37,6 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import {
-  Address,
-  formatEther,
-  formatUnits,
-  parseEther,
-  parseUnits
-} from 'viem';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
