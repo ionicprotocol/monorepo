@@ -21,12 +21,15 @@
     "@types/rimraf": "^3",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
+    "eslint": "^9.6.0",
+    "eslint-config-prettier": "^9.1.0",
     "netlify-cli": "^17.30.0",
+    "ts-node": "^10.9.1",
+    "tsup": "^8.1.0",
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "@resolver-engine/core": "^0.3.3",
-    "tsup": "^8.1.0"
+    "@resolver-engine/core": "^0.3.3"
   },
   "scripts": {
     "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/sdk build",
