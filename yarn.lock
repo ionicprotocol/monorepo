@@ -1245,10 +1245,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint-community/regexpp@npm:^4.10.0, @eslint-community/regexpp@npm:^4.5.1, @eslint-community/regexpp@npm:^4.6.1":
+"@eslint-community/regexpp@npm:^4.10.0":
   version: 4.11.0
   resolution: "@eslint-community/regexpp@npm:4.11.0"
   checksum: 10/f053f371c281ba173fe6ee16dbc4fe544c84870d58035ccca08dba7f6ce1830d895ce3237a0db89ba37616524775dca82f1c502066b58e2d5712d7f87f5ba17c
+  languageName: node
+  linkType: hard
+
+"@eslint-community/regexpp@npm:^4.5.1, @eslint-community/regexpp@npm:^4.6.1":
+  version: 4.10.1
+  resolution: "@eslint-community/regexpp@npm:4.10.1"
+  checksum: 10/54f13817caf90545502d7a19e1b61df79087aee9584342ffc558b6d067530764a47f1c484f493f43e2c70cfdff59ccfd5f26df2af298c4ad528469e599bd1d53
   languageName: node
   linkType: hard
 
@@ -9182,6 +9189,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"abitype@npm:1.0.4":
+  version: 1.0.4
+  resolution: "abitype@npm:1.0.4"
+  peerDependencies:
+    typescript: ">=5.0.4"
+    zod: ^3 >=3.22.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+    zod:
+      optional: true
+  checksum: 10/816fcf4a7c2043f71707a97075b5df3ca0cb818b68e3df9ae393ed86631201da6e54f9b2ffb192f7c8e0229a97854881300422e33b4b876a38912d3e7ab37b9b
+  languageName: node
+  linkType: hard
+
 "abitype@npm:1.0.5, abitype@npm:^1.0.4":
   version: 1.0.5
   resolution: "abitype@npm:1.0.5"
@@ -15928,7 +15950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:7.0.5, https-proxy-agent@npm:^7.0.1":
+"https-proxy-agent@npm:7.0.5":
   version: 7.0.5
   resolution: "https-proxy-agent@npm:7.0.5"
   dependencies:
@@ -15945,6 +15967,16 @@ __metadata:
     agent-base: "npm:6"
     debug: "npm:4"
   checksum: 10/f0dce7bdcac5e8eaa0be3c7368bb8836ed010fb5b6349ffb412b172a203efe8f807d9a6681319105ea1b6901e1972c7b5ea899672a7b9aad58309f766dcbe0df
+  languageName: node
+  linkType: hard
+
+"https-proxy-agent@npm:^7.0.1":
+  version: 7.0.4
+  resolution: "https-proxy-agent@npm:7.0.4"
+  dependencies:
+    agent-base: "npm:^7.0.2"
+    debug: "npm:4"
+  checksum: 10/405fe582bba461bfe5c7e2f8d752b384036854488b828ae6df6a587c654299cbb2c50df38c4b6ab303502c3c5e029a793fbaac965d1e86ee0be03faceb554d63
   languageName: node
   linkType: hard
 
@@ -25257,7 +25289,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:2.x, viem@npm:^2.16.2, viem@npm:^2.16.3, viem@npm:^2.16.5":
+"viem@npm:2.x, viem@npm:^2.16.3, viem@npm:^2.16.5":
   version: 2.16.5
   resolution: "viem@npm:2.16.5"
   dependencies:
@@ -25296,6 +25328,27 @@ __metadata:
     typescript:
       optional: true
   checksum: 10/2007a8a674301d790b3172a0a84bd1659f76332ac13a78d695f7cee0602388103a07b2d6a3fc46b4f27582f8b506f7c1f90f13c5e21e464daffc6cccb14fbc3a
+  languageName: node
+  linkType: hard
+
+"viem@npm:^2.16.2":
+  version: 2.16.3
+  resolution: "viem@npm:2.16.3"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:1.10.0"
+    "@noble/curves": "npm:1.2.0"
+    "@noble/hashes": "npm:1.3.2"
+    "@scure/bip32": "npm:1.3.2"
+    "@scure/bip39": "npm:1.2.1"
+    abitype: "npm:1.0.4"
+    isows: "npm:1.0.4"
+    ws: "npm:8.17.1"
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10/52948f2b23ab717b6368effefc0790b658e5d84e041aef273e806221adcab6e6b32fd95620fea8e66ea9dcf639af15099d60775ec25fad4bd430991556a774d8
   languageName: node
   linkType: hard
 
