@@ -39,8 +39,8 @@ const pools: { [key: number]: { [key: number]: string } } = {
 const colors = {
   supply: '#40798C',
   borrow: '#f3fa96',
-  ionLp: '#3bff89',
-  steerLp: '#FF5666'
+  ionLp: '#3bff89ff',
+  steerLp: '#dc97ff'
 };
 
 export default function Points() {
@@ -240,9 +240,7 @@ export default function Points() {
   return (
     <div className="w-full lg:w-[70%] mx-auto">
       <div className=" flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl">
-        <div
-          className={`flex items-center text-xl justify-center gap-2 py-3 pt-2 `}
-        >
+        <div className={`flex items-center text-xl justify-center gap-2 py-3 `}>
           <img
             alt="modlogo"
             className={`w-5 cursor-pointer`}
@@ -452,8 +450,8 @@ export default function Points() {
                   summedBorrowPointsModeMain +
                     summedBorrowPointsModeNative +
                     summedBorrowPointsBaseMain,
-                  summedPointsIonLp,
-                  summedPointsSteerLp
+                  +summedPointsIonLp,
+                  +summedPointsSteerLp
                 ]}
               />
             </div>
@@ -687,6 +685,7 @@ export default function Points() {
               </ResultHandler>
             </div>
             {leaderboard &&
+              //@ts-ignore
               leaderboard.map((val, idx) => (
                 <div
                   className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl ${
