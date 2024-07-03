@@ -1,17 +1,22 @@
 import { SupportedChains } from '@ionicprotocol/types';
 import { Handler } from '@netlify/functions';
-import { ethers } from 'ethers';
+
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { rpcUrls } from '../data/rpcs';
 import { getAPYProviders } from '../providers/rewards/assets';
+import { createPublicClient, http } from 'viem';
+import { chainIdtoChain } from 'chains/dist';
 
 export const updateAssetApy = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const publicClient = createPublicClient({
+      chain: chainIdtoChain[chainId],
+      transport: http(rpcUrl),
+    });
     const apyProviders = await getAPYProviders(chainId, {
       chainId: chainId,
-      provider,
+      publicClient,
     });
 
     const results = await Promise.all(
@@ -24,10 +29,10 @@ export const updateAssetApy = async (chainId: SupportedChains, rpcUrl: string) =
         } catch (exception) {
           await functionsAlert(
             `Functions.asset-rewards: Asset '${assetAddress}' / Chain '${chainId}'`,
-            JSON.stringify(exception)
+            JSON.stringify(exception),
           );
         }
-      })
+      }),
     );
 
     const rows = results

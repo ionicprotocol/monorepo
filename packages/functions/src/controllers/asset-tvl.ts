@@ -4,21 +4,23 @@ import { environment, supabase } from '../config';
 import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
-import { chainIdToConfig } from '@ionicprotocol/chains';
+import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import { utils } from 'ethers';
 import axios from 'axios';
+import { createPublicClient, http } from 'viem';
 
 export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
 export const updateAssetTvl = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
-    const sdk = new IonicSdk(
-      new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
-      config
-    );
+    const publicClient = createPublicClient({
+      chain: chainIdtoChain[chainId],
+      transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
+    });
+    const sdk = new IonicSdk(publicClient, undefined, config);
 
-    const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.callStatic.getActivePools();
+    const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.read.getActivePools();
 
     if (!pools.length || !poolIndexes.length) {
       throw `Error occurred during saving assets tvl to database: pools not found`;
@@ -35,20 +37,23 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
     await Promise.all(
       pools.map(async ({ comptroller }) => {
         const assets: NativePricedIonicAsset[] = (
-          await sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller).catch(() => [])
+          await sdk.contracts.PoolLens.simulate
+            .getPoolAssetsWithData([comptroller])
+            .then((r) => r.result)
+            .catch(() => [])
         ).map(filterOnlyObjectProperties);
 
         totalAssets.push(...assets);
-      })
+      }),
     );
 
     await Promise.all(
       totalAssets.map(async (asset) => {
         try {
           const cTokenContract = sdk.createICErc20(asset.cToken);
-          const tvlUnderlyingBig = await cTokenContract.callStatic.getTotalUnderlyingSupplied();
+          const tvlUnderlyingBig = await cTokenContract.read.getTotalUnderlyingSupplied();
           const tvlUnderlying = Number(
-            utils.formatUnits(tvlUnderlyingBig, asset.underlyingDecimals)
+            utils.formatUnits(tvlUnderlyingBig, asset.underlyingDecimals),
           );
           const tvlNative =
             Number(utils.formatUnits(tvlUnderlyingBig, asset.underlyingDecimals)) *
@@ -64,10 +69,10 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
           console.error(exception);
           await functionsAlert(
             `Functions.asset-tvl: CToken '${asset.cToken}' / Chain '${chainId}'`,
-            JSON.stringify(exception)
+            JSON.stringify(exception),
           );
         }
-      })
+      }),
     );
 
     const rows = results
@@ -82,7 +87,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
           createdAt: new Date().getTime(),
         },
       }));
-    await axios.get(HEARTBEAT_API_URL);    
+    await axios.get(HEARTBEAT_API_URL);
 
     const { error } = await supabase.from(environment.supabaseAssetTvlTableName).insert(rows);
 

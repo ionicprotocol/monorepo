@@ -1,35 +1,34 @@
 import { SupportedChains } from '@ionicprotocol/types';
-import { ethers, utils } from 'ethers';
+import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
+import { IonicSdk, optimizedVaultsRegistryAbi } from '@ionicprotocol/sdk';
+import { Address, createPublicClient, formatEther, getContract, http } from 'viem';
+import { Handler } from '@netlify/functions';
+
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { chainIdToConfig } from '@ionicprotocol/chains';
-import { IonicSdk } from '@ionicprotocol/sdk';
-import { OptimizedVaultsRegistry } from '@ionicprotocol/sdk/typechain/OptimizedVaultsRegistry';
-import { abi as OptimizedVaultsRegistryABI } from '@ionicprotocol/sdk/artifacts/OptimizedVaultsRegistry.sol/OptimizedVaultsRegistry.json';
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { Handler } from '@netlify/functions';
 
 export const updateVaultData = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
-    const sdk = new IonicSdk(
-      new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
-      config,
-    );
-    const optimizedVaultsRegistry = new ethers.Contract(
-      sdk.chainDeployment.OptimizedVaultsRegistry.address,
-      OptimizedVaultsRegistryABI,
-      sdk.provider,
-    ) as OptimizedVaultsRegistry;
+    const publicClient = createPublicClient({
+      chain: chainIdtoChain[chainId],
+      transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
+    });
+    const sdk = new IonicSdk(publicClient, undefined, config);
+    const optimizedVaultsRegistry = getContract({
+      address: sdk.chainDeployment.OptimizedVaultsRegistry.address as Address,
+      abi: optimizedVaultsRegistryAbi,
+      client: publicClient,
+    });
 
-    const vaultsData = await optimizedVaultsRegistry.callStatic.getVaultsData();
+    const vaultsData = await optimizedVaultsRegistry.read.getVaultsData();
 
     const results = vaultsData.map((data) => {
       return {
         vault: data.vault,
         info: {
           totalSupply: data.estimatedTotalAssets.toString(),
-          supplyApy: utils.formatUnits(data.apr),
+          supplyApy: formatEther(data.apr),
         },
       };
     });

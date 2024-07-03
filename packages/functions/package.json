@@ -3,6 +3,9 @@
   "version": "0.0.3",
   "private": true,
   "dependencies": {
+    "@ionicprotocol/chains": "workspace:*",
+    "@ionicprotocol/sdk": "workspace:*",
+    "@ionicprotocol/types": "workspace:*",
     "@supabase/supabase-js": "^2.7.1",
     "axios": "^1.3.2",
     "dotenv": "^16.0.3",

@@ -1,10 +1,10 @@
 import { AbstractPlugin, Reward, SupportedChains } from '@ionicprotocol/types';
-import { ethers } from 'ethers';
+import { PublicClient } from 'viem';
 export interface APYProviderInitObject {
   chainId: SupportedChains;
-  provider: ethers.providers.JsonRpcProvider;
+  publicClient: PublicClient;
 }
 export abstract class AbstractPluginAPYProvider {
-  abstract init({ chainId, provider }: APYProviderInitObject): Promise<void>;
+  abstract init({ chainId, publicClient }: APYProviderInitObject): Promise<void>;
   abstract getApy(pluginAddress: string, pluginData: AbstractPlugin): Promise<Reward[]>;
 }

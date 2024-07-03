@@ -1,11 +1,13 @@
 import { SupportedChains } from '@ionicprotocol/types';
+import { chainIdtoChain } from '@ionicprotocol/chains';
 import { Handler } from '@netlify/functions';
-import { ethers } from 'ethers';
+
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { pluginsOfChain } from '../data/plugins';
 import { rpcUrls } from '../data/rpcs';
 import { getAPYProviders } from '../providers/rewards/plugins';
+import { createPublicClient, http } from 'viem';
 
 export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
@@ -16,10 +18,13 @@ export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: stri
       return;
     }
 
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const publicClient = createPublicClient({
+      chain: chainIdtoChain[chainId],
+      transport: http(rpcUrl),
+    });
     const apyProviders = await getAPYProviders({
       chainId: chainId,
-      provider,
+      publicClient,
     });
 
     const results = await Promise.all(
@@ -29,7 +34,7 @@ export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: stri
           if (!apyProvider) {
             await functionsAlert(
               `Functions.plugin-rewards: Plugin '${pluginAddress}' (${pluginData.strategy}) / Chain '${chainId}'`,
-              `No APYProvider available for: '${pluginData.strategy}' of ${pluginAddress}`
+              `No APYProvider available for: '${pluginData.strategy}' of ${pluginAddress}`,
             );
             return undefined;
           }
@@ -43,10 +48,10 @@ export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: stri
           console.error(exception);
           await functionsAlert(
             `Functions.plugin-rewards: Plugin '${pluginAddress}' (${pluginData.strategy}) / Chain '${chainId}'`,
-            JSON.stringify(exception)
+            JSON.stringify(exception),
           );
         }
-      })
+      }),
     );
 
     const rows = results

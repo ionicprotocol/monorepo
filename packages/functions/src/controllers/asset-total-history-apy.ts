@@ -6,22 +6,22 @@ import {
   Strategy,
   FlywheelReward,
 } from '@ionicprotocol/types';
+import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
+import { Handler } from '@netlify/functions';
+import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
+import { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
+import axios from 'axios';
+
+import { getAPYProviders as getAssetAPYProviders } from '../providers/rewards/assets';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { Handler } from '@netlify/functions';
-import { chainIdToConfig } from '@ionicprotocol/chains';
-import { BigNumber, Contract, ethers, utils } from 'ethers';
-import { getAPYProviders as getAssetAPYProviders } from '../providers/rewards/assets';
-import { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
 import { pluginsOfChain } from '../data/plugins';
 import { getAPYProviders as getPluginAPYProviders } from '../providers/rewards/plugins';
-import axios from 'axios';
+import { createPublicClient, formatUnits, http } from 'viem';
 
 export const HEARTBEAT_API_URL = environment.uptimeTotalHistoryApyApi;
 
-export const MINUTES_PER_YEAR = 24 * 365 * 60;
+export const MINUTES_PER_YEAR = BigInt(24 * 365 * 60);
 
 export const aprDays = 7;
 
@@ -46,14 +46,16 @@ export interface PluginRewards {
   rewards: Reward[];
 }
 
-
 export const updateAssetTotalApy = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
-    const provider = new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]);
-    const sdk = new IonicSdk(provider, config);
+    const publicClient = createPublicClient({
+      chain: chainIdtoChain[chainId],
+      transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
+    });
+    const sdk = new IonicSdk(publicClient, undefined, config);
 
-    const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.callStatic.getActivePools();
+    const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.read.getActivePools();
 
     if (!pools.length || !poolIndexes.length) {
       throw `Error occurred during saving assets total apy to database: pools not found`;
@@ -70,7 +72,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     if (plugins) {
       const apyProviders = await getPluginAPYProviders({
         chainId: chainId,
-        provider,
+        publicClient,
       });
 
       const _pluginRewards = await Promise.all(
@@ -99,7 +101,10 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     await Promise.all(
       pools.map(async ({ comptroller }) => {
         const [_assets, flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-          sdk.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller).catch(() => []),
+          sdk.contracts.PoolLens.simulate
+            .getPoolAssetsWithData([comptroller])
+            .then((r) => r.result)
+            .catch(() => []),
           sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller).catch((exception) => {
             console.error('Unable to get onchain Flywheel Rewards with APY', exception);
             return [];
@@ -124,12 +129,11 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
 
     const apyProviders = await getAssetAPYProviders(chainId, {
       chainId,
-      provider,
-      
+      publicClient,
     });
-    if (apyProviders.length === 0 ) {
-      console.error("No APY Providers available.");
-      return 0; 
+    if (apyProviders.length === 0) {
+      console.error('No APY Providers available.');
+      return 0;
     }
     const assetInfos = await Promise.all(
       Object.entries(apyProviders).map(async ([assetAddress, assetAPYProvider]) => {
@@ -140,8 +144,6 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
       }),
     );
 
-    
-
     await Promise.all(
       totalAssets.map(async (asset) => {
         try {
@@ -149,7 +151,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           //get supplyAPY
           const supplyApy = sdk.ratePerBlockToAPY(
             asset.supplyRatePerBlock,
-            config.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber(),
+            Number(config.specificParams.blocksPerYear / MINUTES_PER_YEAR),
           );
 
           totalSupplyApy += supplyApy;
@@ -167,7 +169,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           if (assetInfos) {
             assetInfos.map((info) => {
               if (info.asset.toLowerCase() === asset.underlyingToken.toLowerCase()) {
-                info.rewards.map((reward : any) => {
+                info.rewards.map((reward: any) => {
                   if (reward.apy) {
                     compoundingApy += reward.apy * 100;
                   }
@@ -176,7 +178,6 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
             });
           }
 
-        
           // get plugin rewards
           const flywheelRewards = allFlywheelRewards.find(
             (fwRewardsInfo) => fwRewardsInfo.market === asset.cToken,
@@ -207,7 +208,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
               if (!flywheelsInPluginResponse.includes(info.flywheel.toLowerCase())) {
                 allRewards.push({
                   apy: info.formattedAPR
-                    ? parseFloat(utils.formatUnits(info.formattedAPR, 18))
+                    ? parseFloat(formatUnits(info.formattedAPR, 18))
                     : undefined,
                   flywheel: info.flywheel,
                   token: info.rewardToken,
@@ -237,10 +238,10 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           //get borrowApy
           let borrowApy = 0;
 
-          if (!asset.borrowGuardianPaused || !asset.totalBorrow.isZero()) {
+          if (!asset.borrowGuardianPaused || asset.totalBorrow !== 0n) {
             borrowApy = sdk.ratePerBlockToAPY(
               asset.borrowRatePerBlock,
-              config.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber(),
+              Number(config.specificParams.blocksPerYear / MINUTES_PER_YEAR),
             );
           }
 
@@ -262,7 +263,8 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
     const rows = results
       .filter((r) => !!r)
       .map((r) => {
-        const { cTokenAddress, underlyingAddress, borrowApy, supplyApy, totalSupplyApy, ...rest } = r;
+        const { cTokenAddress, underlyingAddress, borrowApy, supplyApy, totalSupplyApy, ...rest } =
+          r;
         return {
           chain_id: chainId,
           ctoken_address: r.cTokenAddress.toLowerCase(),
@@ -272,16 +274,15 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           totalSupplyApy: r.totalSupplyApy,
         };
       });
-    await axios.get(HEARTBEAT_API_URL);  
+    await axios.get(HEARTBEAT_API_URL);
 
-
-  let { error} = await supabase.from('asset_total_apy_history').insert(rows);
-  if (error) {
-    throw `Error occurred during saving asset history to database: ${error.message}`;
+    let { error } = await supabase.from('asset_total_apy_history').insert(rows);
+    if (error) {
+      throw `Error occurred during saving asset history to database: ${error.message}`;
+    }
+  } catch (err) {
+    await functionsAlert('Functions.asset-history: Generic Error', JSON.stringify(err));
   }
-} catch (err) {
-  await functionsAlert('Functions.asset-history: Generic Error', JSON.stringify(err));
-}
 };
 
 export const createAssetTotalApyHandler =

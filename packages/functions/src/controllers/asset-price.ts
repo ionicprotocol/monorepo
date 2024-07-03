@@ -1,24 +1,33 @@
 import { SupportedChains } from '@ionicprotocol/types';
-import { BigNumber, constants, utils } from 'ethers';
-import { functionsAlert } from '../alert';
-import { environment, supabase } from '../config';
 import { IonicSdk } from '@ionicprotocol/sdk';
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
-import { chainIdToConfig } from '@ionicprotocol/chains';
+import { chainIdToConfig, chainIdtoChain } from '@ionicprotocol/chains';
 import axios from 'axios';
+import { createPublicClient, createWalletClient, formatEther, http } from 'viem';
 
-export const HEARTBEAT_API_URL =environment.uptimeAssetPriceApi;
+import { environment, supabase } from '../config';
+import { functionsAlert } from '../alert';
+import { privateKeyToAccount } from 'viem/accounts';
+
+export const HEARTBEAT_API_URL = environment.uptimeAssetPriceApi;
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
 
 export const updateAssetPrice = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
-    const sdk = new IonicSdk(
-      new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
-      config
-    );
+    const publicClient = createPublicClient({
+      chain: chainIdtoChain[chainId],
+      transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
+    });
+    const account = privateKeyToAccount('0x...');
+    const walletClient = createWalletClient({
+      chain: chainIdtoChain[chainId],
+      transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
+      account,
+    });
+
+    const sdk = new IonicSdk(publicClient, walletClient, config);
     const mpo = sdk.createMasterPriceOracle();
 
     //get USD price
@@ -41,8 +50,8 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
     const results = await Promise.all(
       config.assets.map(async (asset) => {
         try {
-          const underlyingPrice = await mpo.callStatic.price(asset.underlying);
-          const underlyingPriceNum = Number(utils.formatUnits(underlyingPrice));
+          const underlyingPrice = await mpo.read.price([asset.underlying]);
+          const underlyingPriceNum = Number(formatEther(underlyingPrice));
           const usdPrice = underlyingPriceNum * price;
           return {
             chainId,
@@ -54,10 +63,10 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
           console.error(exception);
           await functionsAlert(
             `Functions.asset-price: Asset '${asset.name}(${asset.underlying})' / Chain '${chainId}'`,
-            JSON.stringify(exception)
+            JSON.stringify(exception),
           );
         }
-      })
+      }),
     );
 
     const rows = results
