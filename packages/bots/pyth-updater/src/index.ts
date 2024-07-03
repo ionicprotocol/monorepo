@@ -10,14 +10,12 @@ import { logger } from './logger';
 import { Updater } from './services';
 import { setUpSdk } from './utils';
 
-const HEARTBEAT_API_URL: string | undefined = process.env.UPTIME_PYTH_UPDATER_API;
+const HEARTBEAT_API_URL: any = process.env.UPTIME_PYTH_UPDATER_API;
 
 if (typeof HEARTBEAT_API_URL === 'undefined') {
   logger.error('Error: UPTIME_PYTH_UPDATER_API environment variable is undefined');
-  throw new Error('UPTIME_PYTH_UPDATER_API environment variable is undefined');
 } else if (typeof HEARTBEAT_API_URL !== 'string') {
   logger.error('Error: UPTIME_PYTH_UPDATER_API environment variable is not a string');
-  throw new Error('UPTIME_PYTH_UPDATER_API environment variable is not a string');
 } else {
   logger.info(`UPTIME_PYTH_UPDATER_API is set to: ${HEARTBEAT_API_URL}`);
 }

@@ -27,6 +27,8 @@
     "ts-node": "^10.9.1",
     "tsup": "^8.1.0",
     "typescript": "^5.5.3"
+    "tsc": "^2.0.4",
+    "viem": "^2.7.16"
   },
   "dependencies": {
     "@resolver-engine/core": "^0.3.3"
