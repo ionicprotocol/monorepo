@@ -19595,7 +19595,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^6"
     eslint: "npm:^9.6.0"
     eslint-config-prettier: "npm:^9.1.0"
-    netlify-cli: "npm:^17.30.0"
+    netlify-cli: "npm:^17.32.0"
     ts-node: "npm:^10.9.1"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.5.3"
@@ -19774,9 +19774,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"netlify-cli@npm:^17.30.0":
-  version: 17.31.0
-  resolution: "netlify-cli@npm:17.31.0"
+"netlify-cli@npm:^17.32.0":
+  version: 17.32.0
+  resolution: "netlify-cli@npm:17.32.0"
   dependencies:
     "@bugsnag/js": "npm:7.23.0"
     "@fastify/static": "npm:7.0.4"
@@ -19881,7 +19881,6 @@ __metadata:
     terminal-link: "npm:3.0.0"
     through2-filter: "npm:4.0.0"
     through2-map: "npm:4.0.0"
-    to-readable-stream: "npm:3.0.0"
     toml: "npm:3.0.0"
     tomlify-j0.4: "npm:3.0.0"
     ulid: "npm:2.3.0"
@@ -19895,7 +19894,7 @@ __metadata:
   bin:
     netlify: bin/run.js
     ntl: bin/run.js
-  checksum: 10/566dd977c0e23d976ea68a96313959198f66867e0579c69dd7b848a05cdfe01dedcf5fc180146510dd7d2711b9778fc93c8bcef3497aed1e78c5e3c227545497
+  checksum: 10/0c66ca7708d533b9e97c9582a4efb254b96e4fd9555490f5d85f5de42624781dad723216f0a73f8563ffccf6a595228b82463ad66b41ebb96af98638feb8ce22
   languageName: node
   linkType: hard
 
@@ -24953,13 +24952,6 @@ __metadata:
   version: 2.0.0
   resolution: "to-fast-properties@npm:2.0.0"
   checksum: 10/be2de62fe58ead94e3e592680052683b1ec986c72d589e7b21e5697f8744cdbf48c266fa72f6c15932894c10187b5f54573a3bcf7da0bfd964d5caf23d436168
-  languageName: node
-  linkType: hard
-
-"to-readable-stream@npm:3.0.0":
-  version: 3.0.0
-  resolution: "to-readable-stream@npm:3.0.0"
-  checksum: 10/ef93cd1ae209ec6d50afc356c421618d6d146f6ccbdeb75ece1a13d2dd00d5d41015c50f42246b38a13f2f25c2d7ad2897da366f2c1a18aa1a84b6d5fbdb9b5b
   languageName: node
   linkType: hard
 
