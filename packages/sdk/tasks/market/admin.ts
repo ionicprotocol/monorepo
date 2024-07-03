@@ -16,7 +16,7 @@ export default task("market:unsupport", "Unsupport a market")
     const ionicSdkModule = await import("../ionicSdk");
     const sdk = await ionicSdkModule.getOrCreateIonic();
 
-    const comptroller = await sdk.createComptroller(pool, signer);
+    const comptroller = sdk.createComptroller(pool, signer);
     const tx = await comptroller._unsupportMarket(market);
     const receipt: TransactionReceipt = await tx.wait();
     console.log("Unsupported market with status:", receipt.status);
@@ -24,7 +24,7 @@ export default task("market:unsupport", "Unsupport a market")
 
 task("market:set:ltv", "Set the LTV (loan to value / collateral factor) of a market")
   .addParam("marketAddress", "Address of the market", undefined, types.string)
-  .addParam("ltv", "The LTV as a floating point value between 0 and 1", undefined, types.float)
+  .addParam("ltv", "The LTV as a floating point value between 0 and 1", undefined, types.string)
   .setAction(async ({ marketAddress, ltv }, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 

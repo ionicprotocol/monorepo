@@ -5,9 +5,10 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 export function useMaxWithdrawVault(vault: string) {
   const { currentSdk, address } = useMultiIonic();
 
-  return useQuery(
-    ['useMaxWithdrawVault', vault, currentSdk?.chainId, address],
-    async () => {
+  return useQuery({
+    queryKey: ['useMaxWithdrawVault', vault, currentSdk?.chainId, address],
+
+    queryFn: async () => {
       if (currentSdk && address && vault) {
         const maxWithdrawVault = await currentSdk
           .getMaxWithdrawVault(vault)
@@ -26,10 +27,9 @@ export function useMaxWithdrawVault(vault: string) {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!address && !!vault && !!currentSdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!address && !!vault && !!currentSdk,
+    staleTime: Infinity
+  });
 }

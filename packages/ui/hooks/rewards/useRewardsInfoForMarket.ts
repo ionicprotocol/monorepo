@@ -9,9 +9,15 @@ export const useRewardsInfoForMarket = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useRewardsInfoForMarket', flywheelAddress, marketAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: [
+      'useRewardsInfoForMarket',
+      flywheelAddress,
+      marketAddress,
+      sdk?.chainId
+    ],
+
+    queryFn: async () => {
       if (flywheelAddress && marketAddress && sdk) {
         return await sdk
           .getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress)
@@ -28,10 +34,9 @@ export const useRewardsInfoForMarket = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!flywheelAddress && !!marketAddress && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!flywheelAddress && !!marketAddress && !!sdk,
+    staleTime: Infinity
+  });
 };

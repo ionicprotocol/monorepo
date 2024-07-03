@@ -3,14 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 export const useLendingAssets = (assets: MarketData[]) => {
-  const response = useQuery(
-    [
+  const response = useQuery({
+    queryKey: [
       'useLendingAssets',
       assets.map(
         (asset) => asset.cToken + asset.supplyBalance + asset.totalSupply
       )
     ],
-    () => {
+
+    queryFn: () => {
       return assets
         .filter((asset) => !asset.isSupplyPaused)
         .map((asset) => {
@@ -25,10 +26,9 @@ export const useLendingAssets = (assets: MarketData[]) => {
           };
         });
     },
-    {
-      enabled: assets.length > 0
-    }
-  );
+
+    enabled: assets.length > 0
+  });
 
   return response.data ?? [];
 };

@@ -35,9 +35,10 @@ export const useBorrowCapsDataForAsset = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useBorrowCapsDataForAsset', cTokenAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useBorrowCapsDataForAsset', cTokenAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (cTokenAddress && sdk) {
         try {
           const borrowCaps = await fetchBorrowCaps(sdk, [cTokenAddress]);
@@ -56,10 +57,9 @@ export const useBorrowCapsDataForAsset = (
         return null;
       }
     },
-    {
-      enabled: !!cTokenAddress && !!sdk
-    }
-  );
+
+    enabled: !!cTokenAddress && !!sdk
+  });
 };
 
 export const useBorrowCapsForAssets = (
@@ -68,9 +68,10 @@ export const useBorrowCapsForAssets = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useBorrowCapsForAssets', cTokens, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useBorrowCapsForAssets', cTokens, sdk?.chainId],
+
+    queryFn: async () => {
       if (cTokens && cTokens.length > 0 && sdk) {
         try {
           return await fetchBorrowCaps(sdk, cTokens);
@@ -87,8 +88,7 @@ export const useBorrowCapsForAssets = (
         return null;
       }
     },
-    {
-      enabled: !!cTokens && cTokens.length > 0 && !!sdk
-    }
-  );
+
+    enabled: !!cTokens && cTokens.length > 0 && !!sdk
+  });
 };

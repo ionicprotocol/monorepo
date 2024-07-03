@@ -1,5 +1,5 @@
 import { arbitrum } from "@ionicprotocol/chains";
-import { assetSymbols, underlying } from "@ionicprotocol/types";
+import { assetSymbols, ChainlinkFeedBaseCurrency, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import {
@@ -12,7 +12,6 @@ import {
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
-  ChainlinkFeedBaseCurrency,
   ConcentratedLiquidityOracleConfig,
   CurvePoolConfig
 } from "../helpers/types";

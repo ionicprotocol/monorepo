@@ -11,9 +11,10 @@ export function useFlywheelRewardsForPositions(
 ) {
   const { getSdk } = useMultiIonic();
 
-  return useQuery(
-    ['useFlywheelRewardsForPositions', pools, chainIds],
-    async () => {
+  return useQuery({
+    queryKey: ['useFlywheelRewardsForPositions', pools, chainIds],
+
+    queryFn: async () => {
       if (
         chainIds &&
         pools &&
@@ -34,17 +35,18 @@ export function useFlywheelRewardsForPositions(
 
       return null;
     },
-    {
-      cacheTime: Infinity,
-      enabled:
-        !!pools &&
-        !!chainIds &&
-        pools.length > 0 &&
-        chainIds.length > 0 &&
-        pools.length === chainIds.length,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+
+    enabled:
+      !!pools &&
+      !!chainIds &&
+      pools.length > 0 &&
+      chainIds.length > 0 &&
+      pools.length === chainIds.length,
+
+    staleTime: Infinity
+  });
 }
 
 export function useRewardsForPositions(
@@ -57,9 +59,10 @@ export function useRewardsForPositions(
     chainIds
   );
 
-  return useQuery<UseRewardsData>(
-    ['useRewardsForMarket', chainIds, assets, flywheelRewards],
-    async () => {
+  return useQuery({
+    queryKey: ['useRewardsForMarket', chainIds, assets, flywheelRewards],
+
+    queryFn: async () => {
       if (chainIds && assets && flywheelRewards) {
         let rewards: UseRewardsData = {};
 
@@ -83,10 +86,9 @@ export function useRewardsForPositions(
 
       return {};
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!assets && !!pools && !!chainIds,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!assets && !!pools && !!chainIds,
+    staleTime: Infinity
+  });
 }

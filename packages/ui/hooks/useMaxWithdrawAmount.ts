@@ -11,9 +11,10 @@ export function useMaxWithdrawAmount(
   const { address } = useMultiIonic();
   const sdk = useSdk(chainId);
 
-  return useQuery(
-    ['useMaxWithdrawAmount', asset.cToken, sdk?.chainId, address],
-    async () => {
+  return useQuery({
+    queryKey: ['useMaxWithdrawAmount', asset.cToken, sdk?.chainId, address],
+
+    queryFn: async () => {
       if (sdk && address) {
         const maxRedeem = await sdk.contracts.PoolLensSecondary.callStatic
           .getMaxRedeem(address, asset.cToken, { from: address })
@@ -32,10 +33,9 @@ export function useMaxWithdrawAmount(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!address && !!asset && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!address && !!asset && !!sdk,
+    staleTime: Infinity
+  });
 }

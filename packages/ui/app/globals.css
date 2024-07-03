@@ -87,6 +87,10 @@
   background: #dffe00;
 }
 
+.bg-optimism {
+  background: #df1515;
+}
+
 .text-lime {
   color: #dffe00;
 }
@@ -97,6 +101,10 @@
 
 .border-mode {
   border-color: #dffd04;
+}
+
+.border-optimism {
+  border-color: #df1515;
 }
 
 .text-xxs {

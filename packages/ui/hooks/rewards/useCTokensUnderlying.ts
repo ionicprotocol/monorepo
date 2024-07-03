@@ -34,7 +34,7 @@
 //       return _map;
 //     },
 //     {
-//       cacheTime: Infinity,
+//       gcTime: Infinity,
 //       enabled: cTokenAddresses.length > 0 && !!currentSdk,
 //       staleTime: Infinity
 //     }

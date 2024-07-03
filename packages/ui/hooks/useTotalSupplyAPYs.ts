@@ -27,8 +27,8 @@ export const useTotalSupplyAPYs = (
 
   const { data: ankrBNBApr } = useAnkrBNBApr(isEnabled, chainId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useTotalSupplyAPYs',
       { chain: sdk?.chainId },
       { assets: assets.map((a) => a.cToken).sort() },
@@ -36,7 +36,8 @@ export const useTotalSupplyAPYs = (
       { assetInfos: assetInfos ? Object.keys(assetInfos).sort() : undefined },
       ankrBNBApr
     ],
-    async () => {
+
+    queryFn: async () => {
       if (!sdk || !assets || !chainId) return null;
 
       const result: { [market: string]: { apy: number; totalApy: number } } =
@@ -73,10 +74,9 @@ export const useTotalSupplyAPYs = (
 
       return result;
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!sdk && !!assets && !!chainId,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!sdk && !!assets && !!chainId,
+    staleTime: Infinity
+  });
 };
