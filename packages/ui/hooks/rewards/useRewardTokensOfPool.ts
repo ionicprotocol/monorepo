@@ -8,9 +8,10 @@ export const useRewardTokensOfPool = (
 ) => {
   const sdk = useSdk(chainId);
 
-  const { data } = useQuery(
-    ['useRewardTokensOfPool', sdk?.chainId, poolAddress],
-    async () => {
+  const { data } = useQuery({
+    queryKey: ['useRewardTokensOfPool', sdk?.chainId, poolAddress],
+
+    queryFn: async () => {
       if (poolAddress && sdk) {
         try {
           const rewards = await sdk.getFlywheelMarketRewardsByPool(poolAddress);
@@ -32,13 +33,12 @@ export const useRewardTokensOfPool = (
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!poolAddress && !!sdk,
-      placeholderData: [],
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!poolAddress && !!sdk,
+    placeholderData: [],
+    staleTime: Infinity
+  });
 
   return data || [];
 };

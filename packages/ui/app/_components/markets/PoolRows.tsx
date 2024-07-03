@@ -4,12 +4,12 @@
 import Link from 'next/link';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
-import { base, mode } from 'viem/chains';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
+import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -45,15 +45,6 @@ interface IRows {
   totalSupplied: string;
 }
 
-const chainColors = (chainId: number) => {
-  if (chainId === mode.id) {
-    return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };
-  }
-  if (chainId === base.id) {
-    return { bg: 'bg-blue-600', border: 'border-blue-600', text: 'text-white' };
-  }
-  return { bg: 'bg-lime', border: 'border-lime', text: 'text-darkone' };
-};
 const PoolRows = ({
   asset,
   supplyBalance,

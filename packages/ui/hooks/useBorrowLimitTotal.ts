@@ -20,8 +20,8 @@ export const useBorrowLimitTotal = (
     }
   }, [usdPrices, poolChainId]);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useBorrowLimitTotal',
       {
         assets
@@ -31,7 +31,8 @@ export const useBorrowLimitTotal = (
       },
       { usdPrice }
     ],
-    () => {
+
+    queryFn: () => {
       if (!usdPrice) return undefined;
 
       let _maxBorrow = 0;
@@ -53,6 +54,9 @@ export const useBorrowLimitTotal = (
 
       return _maxBorrow;
     },
-    { cacheTime: Infinity, enabled: !!usdPrice, staleTime: Infinity }
-  );
+
+    gcTime: Infinity,
+    enabled: !!usdPrice,
+    staleTime: Infinity
+  });
 };

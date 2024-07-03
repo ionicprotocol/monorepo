@@ -34,10 +34,13 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       return { gasWEI, gasPrice, estimatedGas };
     }
 
-    async approve(cTokenAddress: string, underlyingTokenAddress: string) {
+    async approve(cTokenAddress: string, underlyingTokenAddress: string, approveAmount?: BigNumber) {
+      let _approveAmount = approveAmount;
+      if (!approveAmount) {
+        _approveAmount = constants.MaxUint256;
+      }
       const token = getContract(underlyingTokenAddress, EIP20InterfaceArtifact.abi, this.signer);
-      const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
-      const tx = await token.approve(cTokenAddress, max);
+      const tx = await token.approve(cTokenAddress, _approveAmount);
       return tx;
     }
 

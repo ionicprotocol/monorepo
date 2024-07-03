@@ -2,7 +2,9 @@
 
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { base, mode } from 'viem/chains';
+import { mode } from 'viem/chains';
+
+import { pools } from '@ui/constants/index';
 
 function DynamicSubNav() {
   const router = useRouter();
@@ -12,12 +14,12 @@ function DynamicSubNav() {
 
   return (
     <div
-      className={`${
-        +chainId === base.id ? 'bg-blue-600 text-white' : 'bg-lime text-darkone'
-      } absolute w-full top-full left-0 text-center p-2 text-sm font-medium cursor-pointer`}
+      className={`${`${pools[+chainId].bg ?? pools[mode.id].bg} ${
+        pools[+chainId].text ?? pools[mode.id].text
+      }`} absolute w-full top-full left-0 text-center p-2 text-sm font-medium cursor-pointer`}
       onClick={() => router.push('/points')}
     >
-      Hello, {+chainId === base.id ? 'Base' : 'Mode'}! Season 2 is LIVE - New
+      Hello, {pools[+chainId].name ?? 'Mode'}! Season 2 is LIVE - New
       multipliers, new ways to earn points! See your Season 1 $ION eligibility
       on the Claim page (Open till 6th of July).
     </div>

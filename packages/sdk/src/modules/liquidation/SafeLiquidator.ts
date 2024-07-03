@@ -8,7 +8,8 @@ import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
 import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "./utils";
 
-import { gatherLiquidations, getAllPoolUsers } from "./index";
+// import { gatherLiquidations, getAllPoolUsers } from "./index";
+import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
 export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TBase) {
   return class SafeLiquidator extends Base {
@@ -20,7 +21,8 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
       configOverrides?: ChainLiquidationConfig
     ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
-      const [poolWithUsers, erroredPools] = await getAllPoolUsers(
+      // const [poolWithUsers, erroredPools] = await getAllPoolUsers(
+      const [poolWithUsers, erroredPools] = await getAllFusePoolUsers(
         this as unknown as IonicSdk,
         maxHealthFactor,
         excludedComptrollers

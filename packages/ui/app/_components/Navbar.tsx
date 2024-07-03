@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 // import { useChainId } from 'wagmi';
 // import '@gasbot/widget/style.css';
 import { http, createConfig } from 'wagmi';
-import { base } from 'wagmi/chains';
+import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
 import ConnectButton from './ConnectButton';
@@ -18,7 +18,7 @@ import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
 // import { useStore } from "@/store/Store";
 
 export const config = createConfig({
-  chains: [base],
+  chains: [base, mode],
   connectors: [
     coinbaseWallet({
       appName: 'Create Wagmi',
@@ -26,7 +26,8 @@ export const config = createConfig({
     })
   ],
   transports: {
-    [base.id]: http()
+    [base.id]: http(),
+    [mode.id]: http()
   }
 });
 
@@ -79,6 +80,19 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
+            className="relative"
+            href="/stake"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              Stake
+            </p>
+          </Link>
+          <Link
             className="relative mb-2 md:mb-0"
             href={'/points'}
           >
@@ -106,9 +120,6 @@ export default function Navbar() {
             className="relative"
             href="/earn"
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              NEW!
-            </span>
             <p
               className={` ${
                 pathname == '/earn' ? 'text-accent' : null
@@ -121,9 +132,6 @@ export default function Navbar() {
             className="relative"
             href="/claim"
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              NEW!
-            </span>
             <p
               className={` ${
                 pathname == '/claim' ? 'text-accent' : null
@@ -178,6 +186,20 @@ export default function Navbar() {
               className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Bridge
+            </p>
+          </Link>
+          <Link
+            className="relative"
+            href="https://bridge.connext.network/ION-from-mode-to-base?symbol=ION"
+            target="_blank"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              xION
             </p>
           </Link>
         </div>

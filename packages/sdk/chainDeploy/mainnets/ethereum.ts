@@ -1,5 +1,5 @@
 import { ethereum } from "@ionicprotocol/chains";
-import { assetSymbols, underlying } from "@ionicprotocol/types";
+import { assetSymbols, ChainlinkFeedBaseCurrency, underlying } from "@ionicprotocol/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../typechain/AddressesProvider";
@@ -22,7 +22,6 @@ import {
   BalancerStableLpAsset,
   ChainDeployFnParams,
   ChainlinkAsset,
-  ChainlinkFeedBaseCurrency,
   ConcentratedLiquidityOracleConfig,
   CurveV2OracleConfig,
   DiaAsset,

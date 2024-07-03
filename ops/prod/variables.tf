@@ -50,3 +50,11 @@ variable "liquidation_sendgrid_email_to" {
 variable "supabase_key" {
   type = string
 }
+
+variable "uptime_liquidator_api" {
+  type = string
+}
+
+variable "uptime_pyth_updater_api" {
+  type = string
+}

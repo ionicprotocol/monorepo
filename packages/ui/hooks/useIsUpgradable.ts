@@ -5,14 +5,15 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 export const useIsUpgradeable = (comptrollerAddress: string) => {
   const { currentSdk, currentChain } = useMultiIonic();
 
-  const { data } = useQuery(
-    [
+  const { data } = useQuery({
+    queryKey: [
       'useIsUpgradeable',
       currentChain?.id,
       comptrollerAddress,
       currentSdk?.chainId
     ],
-    async () => {
+
+    queryFn: async () => {
       if (currentSdk) {
         try {
           const comptroller = currentSdk.createComptroller(comptrollerAddress);
@@ -34,12 +35,11 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
+    staleTime: Infinity
+  });
 
   return data;
 };

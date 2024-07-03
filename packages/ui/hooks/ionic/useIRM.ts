@@ -5,9 +5,10 @@ import { useSdk } from '@ui/hooks/ionic/useSdk';
 export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
 
-  return useQuery(
-    ['useIRM', cTokenAddress, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useIRM', cTokenAddress, sdk?.chainId],
+
+    queryFn: async () => {
       if (cTokenAddress && sdk) {
         try {
           const cToken = sdk.createICErc20(cTokenAddress);
@@ -28,8 +29,7 @@ export const useIRM = (cTokenAddress?: string, poolChainId?: number) => {
         return null;
       }
     },
-    {
-      enabled: !!cTokenAddress && !!sdk
-    }
-  );
+
+    enabled: !!cTokenAddress && !!sdk
+  });
 };

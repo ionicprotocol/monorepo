@@ -17,15 +17,16 @@ export function useMaxRepayAmount(
     token: asset.underlyingToken as `0x${string}`
   });
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useMaxRepayAmount',
       asset.underlyingToken,
       asset.borrowBalance,
       sdk?.chainId,
       address
     ],
-    async () => {
+
+    queryFn: async () => {
       if (sdk && address && balanceData) {
         const balance = BigNumber.from(balanceData.value.toString());
         const debt = asset.borrowBalance;
@@ -35,10 +36,9 @@ export function useMaxRepayAmount(
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!address && !!asset && !!sdk && !!balanceData,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!address && !!asset && !!sdk && !!balanceData,
+    staleTime: Infinity
+  });
 }

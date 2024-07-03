@@ -7,8 +7,8 @@ export const useTotalSupplyAndBorrowBalance = () => {
   const enabledChains = useEnabledChains();
   const { allPools } = useCrossPools([...enabledChains]);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'useTotalSupplyAndBorrowBalance',
       allPools
         ?.map(
@@ -19,7 +19,8 @@ export const useTotalSupplyAndBorrowBalance = () => {
         )
         .sort()
     ],
-    () => {
+
+    queryFn: () => {
       if (allPools && allPools.length > 0) {
         const totalSupplyBalance = allPools.reduce(
           (res, pool) => res + pool.totalSupplyBalanceFiat,
@@ -35,8 +36,7 @@ export const useTotalSupplyAndBorrowBalance = () => {
 
       return null;
     },
-    {
-      enabled: !!allPools && allPools.length > 0
-    }
-  );
+
+    enabled: !!allPools && allPools.length > 0
+  });
 };

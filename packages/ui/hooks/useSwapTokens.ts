@@ -12,9 +12,10 @@ export interface SwapTokenType {
 export function useSwapTokens(outputToken: string, chainId: number) {
   const sdk = useSdk(chainId);
 
-  return useQuery<SwapTokenType[] | null>(
-    ['useSwapTokens', outputToken, sdk?.chainId],
-    async () => {
+  return useQuery({
+    queryKey: ['useSwapTokens', outputToken, sdk?.chainId],
+
+    queryFn: async () => {
       if (sdk) {
         try {
           const tokens = await sdk.getSwapTokens(outputToken);
@@ -38,10 +39,9 @@ export function useSwapTokens(outputToken: string, chainId: number) {
         return null;
       }
     },
-    {
-      cacheTime: Infinity,
-      enabled: !!outputToken && !!sdk,
-      staleTime: Infinity
-    }
-  );
+
+    gcTime: Infinity,
+    enabled: !!outputToken && !!sdk,
+    staleTime: Infinity
+  });
 }

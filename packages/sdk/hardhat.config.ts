@@ -1,3 +1,4 @@
+import { optimism } from "@ionicprotocol/chains";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
@@ -76,7 +77,7 @@ const config: HardhatUserConfig = {
     rando: { default: 3 },
     multisig: {
       34443: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
-      8453: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      10: ""
     }
   },
   networks: {
@@ -114,6 +115,11 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || `https://mainnet.base.org`,
       accounts: { mnemonic },
       chainId: 8453
+    },
+    optimism: {
+      url: OVERRIDE_RPC_URL || optimism.specificParams.metadata.rpcUrls.default.http[0],
+      accounts: { mnemonic },
+      chainId: 10
     }
   },
   typechain: {

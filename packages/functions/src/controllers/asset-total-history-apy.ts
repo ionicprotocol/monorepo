@@ -17,6 +17,9 @@ import { getAPYProviders as getAssetAPYProviders } from '../providers/rewards/as
 import { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
 import { pluginsOfChain } from '../data/plugins';
 import { getAPYProviders as getPluginAPYProviders } from '../providers/rewards/plugins';
+import axios from 'axios';
+
+export const HEARTBEAT_API_URL = environment.uptimeTotalHistoryApyApi;
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
 
@@ -269,6 +272,7 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
           totalSupplyApy: r.totalSupplyApy,
         };
       });
+    await axios.get(HEARTBEAT_API_URL);  
 
 
   let { error} = await supabase.from('asset_total_apy_history').insert(rows);
