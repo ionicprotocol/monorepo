@@ -12,14 +12,15 @@ import { setUpSdk } from './utils';
 const HEARTBEAT_API_URL: string | undefined = process.env.UPTIME_PYTH_UPDATER_API;
 
 if (typeof HEARTBEAT_API_URL === 'undefined') {
-  logger.error('Error: UPTIME_LIQUIDATOR_API environment variable is undefined');
-  throw new Error('UPTIME_LIQUIDATOR_API environment variable is undefined');
+  logger.error('Error: UPTIME_PYTH_UPDATER_API environment variable is undefined');
+  throw new Error('UPTIME_PYTH_UPDATER_API environment variable is undefined');
 } else if (typeof HEARTBEAT_API_URL !== 'string') {
-  logger.error('Error: UPTIME_LIQUIDATOR_API environment variable is not a string');
-  throw new Error('UPTIME_LIQUIDATOR_API environment variable is not a string');
+  logger.error('Error: UPTIME_PYTH_UPDATER_API environment variable is not a string');
+  throw new Error('UPTIME_PYTH_UPDATER_API environment variable is not a string');
 } else {
-  logger.info(`UPTIME_LIQUIDATOR_API is set to: ${HEARTBEAT_API_URL}`);
+  logger.info(`UPTIME_PYTH_UPDATER_API is set to: ${HEARTBEAT_API_URL}`);
 }
+logger.info(`UPTIME_PYTH_UPDATER_API is set to: ${HEARTBEAT_API_URL}`);
 export const handler = async (
   event: APIGatewayEvent,
   context: Context
