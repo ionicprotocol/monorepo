@@ -42,7 +42,7 @@
     "prettier": "2.7.1",
     "sinon": "^14.0.0",
     "ts-mocha": "^10.0.0",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.1",
