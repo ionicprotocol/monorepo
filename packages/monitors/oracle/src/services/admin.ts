@@ -11,7 +11,7 @@ export class AdminService {
 
   constructor(sdk: IonicSdk, asset: SupportedAsset) {
     this.asset = asset;
-    this.admin = sdk.walletClient;
+    this.admin = sdk.walletClient!;
     this.sdk = sdk;
   }
   async init(): Promise<AdminService> {
