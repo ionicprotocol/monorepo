@@ -316,26 +316,26 @@ export default function Market() {
                         maximumFractionDigits: 2
                       })}`}
                       chain={chain.toString()}
-                    collateralFactor={
+                      collateralFactor={
                         (val ? Number(formatEther(val.collateralFactor)) : 0) *
                         100
                       }
                       cTokenAddress={val.cToken}
-                    comptrollerAddress={poolData?.comptroller || ''}
-                    dropdownSelectedChain={dropdownSelectedChain}
+                      comptrollerAddress={poolData?.comptroller || ''}
+                      dropdownSelectedChain={dropdownSelectedChain}
                       key={idx}
                       logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                       loopMarkets={loopMarkets}
-                    loopPossible={
+                      loopPossible={
                         loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                       }
                       membership={val?.membership ?? false}
                       pool={selectedPool}
-                    selectedChain={chainId}
+                      selectedChain={chainId}
                       selectedMarketData={selectedMarketData}
-                    selectedPoolId={selectedPool}
+                      selectedPoolId={selectedPool}
                       selectedSymbol={selectedSymbol as string}
-                    setPopupMode={setPopupMode}
+                      setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       supplyAPR={`${
                         currentSdk

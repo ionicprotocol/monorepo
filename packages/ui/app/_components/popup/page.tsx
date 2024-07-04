@@ -178,6 +178,9 @@ const Popup = ({
   );
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
+
+  // const setBorrow = useStore((state) => state.setBorrowAmount);
+
   const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
   const {
     data: predictedHealthFactor,
@@ -371,7 +374,11 @@ const Popup = ({
             ? Number(formatEther(maxBorrowAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
-
+        // setBorrow(
+        //   maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
+        //     ? formatEther(maxBorrowAmount?.bigNumber)
+        //     : ''
+        // );
         break;
       }
 
@@ -399,6 +406,7 @@ const Popup = ({
     maxRepayAmount,
     maxSupplyAmount,
     maxWithdrawAmount
+    // setBorrow
   ]);
 
   useEffect(() => {

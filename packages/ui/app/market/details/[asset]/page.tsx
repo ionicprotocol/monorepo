@@ -21,6 +21,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { useBalance } from 'wagmi';
 import { useAccount } from 'wagmi';
+// import { useGetMaxBorrow } from 'ui/app/util/utils';
 //-------------------Interfaces------------
 interface IProp {
   params: { asset: string };
@@ -77,6 +78,7 @@ import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPo
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { NativePricedIonicAsset } from 'types/dist';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
 
 interface IGraph {
   borrowAtY: number[];
@@ -115,7 +117,7 @@ const Asset = ({ params }: IProp) => {
 
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
+  // const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
   const [selectedMarketData, setSelectedMarketData] = useState<
     MarketData | undefined
   >();
@@ -162,7 +164,6 @@ const Asset = ({ params }: IProp) => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
     // console.log(process.env.SUPABASE_CLIENT_ANON_KEY);
     async function fetchData() {
-      console.log(cTokenAddress);
       try {
         const { data, error } = await supabase
           .from('asset_total_apy_history')
@@ -175,7 +176,6 @@ const Asset = ({ params }: IProp) => {
 
         // const data = await history?.json();
 
-        console.log(data);
         let borrowOBJAtY: { apy: number; createdAt: string }[] = [];
         let borrowAtY: number[] = [];
         let supplyOBJAtY: { apy: number; createdAt: string }[] = [];
@@ -241,7 +241,6 @@ const Asset = ({ params }: IProp) => {
         const data = poolData?.assets.find(
           (_asset) => _asset.underlyingSymbol === selectedSymbol
         );
-        console.log(data);
         setSelectedMarketData(data);
       } catch (err) {
         console.log(err);
@@ -316,26 +315,16 @@ const Asset = ({ params }: IProp) => {
       ),
     [selectedMarketData?.totalSupply, selectedMarketData?.underlyingDecimals]
   );
-  // const maxSupplyAmount = useMemo(() => {
-  //   if (!comptrollerAddress && !selectedMarketData) return ;
-  //   const { data: maxSupplyAmountnum, isLoading: isLoadingMaxSupply } =
-  //     useMaxSupplyAmount(
-  //       //@ts-ignore
-  //       selectedMarketData,
-  //       selectedMarketData?.cToken || "",
-  //       chain
-  //     );
-  //   return maxSupplyAmountnum;
-  // }, [selectedMarketData, comptrollerAddress, chain]);
 
-  // const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
-  // //@ts-ignore
-  // useMaxSupplyAmount(selectedMarketData, selectedMarketData?.cToken , chain);
-  // if (selectedMarketData){}
-  // const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
-  //  //@ts-ignore
-  //   useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chain);
-    
+  const { address } = useAccount();
+  const { data: availableToSupply } = useBalance({
+    address,
+    token: selectedMarketData?.underlyingToken as `0x${string}`,
+    query: {
+      refetchInterval: 6000
+    }
+  });
+
   // const gotMaxBorrowAmount = useMemo<string>(()=>{
   //   console.log(selectedMarketData)
   //   return formatUnits(
@@ -343,6 +332,7 @@ const Asset = ({ params }: IProp) => {
   //   selectedMarketData?.underlyingDecimals.toNumber() || 0
   // )},[selectedMarketData, comptrollerAddress , chain])
 
+  // const getBorrowAmount = useStore((state) => state.borrowAmount);
   return (
     <div className={` pb-10 relative `}>
       <div
@@ -568,7 +558,14 @@ const Asset = ({ params }: IProp) => {
           >
             <span>
               {' '}
-              {lendingSupply} {selectedSymbol}
+              {availableToSupply &&
+                Number(formatEther(availableToSupply?.value))?.toLocaleString(
+                  'en-US',
+                  {
+                    maximumFractionDigits: 7
+                  }
+                )}{' '}
+              {selectedSymbol}
             </span>
             <div
               className={`rounded-lg bg-accent text-sm cursor-pointer text-black py-1 px-3`}
@@ -585,11 +582,15 @@ const Asset = ({ params }: IProp) => {
               Supply
             </div>
           </div>
-          <div
+          {/* <div
             className={`text-white/60 w-full flex items-center justify-between text-[10px] `}
           >
-            ${lendingSupply}
-          </div>
+            $
+            {selectedMarketData &&
+              selectedMarketData?.netSupplyBalanceFiat.toLocaleString('en-US', {
+                maximumFractionDigits: 4
+              })}
+          </div> */}
           <p
             className={`text-white/60 w-full flex items-center justify-between text-sm mt-3`}
           >
@@ -599,9 +600,14 @@ const Asset = ({ params }: IProp) => {
             className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
           >
             <span>
-              {/* {' '}
-              {totalBorrows} {selectedSymbol} */}
-              {/* {gotMaxBorrowAmount} */}
+              {selectedMarketData && comptrollerAddress && chain && (
+                <BorrowAmount
+                  selectedMarketData={selectedMarketData}
+                  comptrollerAddress={comptrollerAddress}
+                  chain={Number(chain)}
+                />
+              )}{' '}
+              {selectedSymbol}
             </span>
             <div
               className={`rounded-lg bg-graylite text-sm cursor-pointer text-white/50 py-1 px-3`}
@@ -618,11 +624,17 @@ const Asset = ({ params }: IProp) => {
               Borrow
             </div>
           </div>
-          <div
+          {/* <div
             className={`text-white/60 w-full flex items-center justify-between text-[10px] `}
           >
-            ${extractAndConvertStringTOValue(gettingBorrows as string).value2}
-          </div>
+            $
+            {selectedMarketData &&
+              formatUnits(
+                selectedMarketData?.underlyingPrice,
+                Number(selectedMarketData.underlyingDecimals)
+              )}{' '}
+            per {selectedSymbol}
+          </div> */}
           <div
             className={`flex my-4 items-center justify-center w-full py-2 px-3 rounded-xl border border-[#f3fa96ff] text-[#f3fa96ff]`}
           >
