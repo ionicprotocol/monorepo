@@ -670,8 +670,7 @@ export default function Loop({
     try {
       const token = currentSdk.getEIP20TokenInstance(
         selectedCollateralAsset.underlyingToken,
-        currentSdk.publicClient as any,
-        currentSdk.walletClient
+        currentSdk.publicClient as any
       );
       const factory = currentSdk.createLeveredPositionFactory();
       const hasApprovedEnough =
@@ -680,8 +679,8 @@ export default function Loop({
 
       if (!hasApprovedEnough) {
         const tx = await token.write.approve([factory.address, amountAsBInt], {
-          account: currentSdk.walletClient.account!.address,
-          chain: currentSdk.walletClient.chain
+          account: currentSdk.walletClient!.account!.address,
+          chain: currentSdk.walletClient!.chain
         });
 
         upsertTransactionStep({
@@ -825,8 +824,7 @@ export default function Loop({
     try {
       const token = currentSdk.getEIP20TokenInstance(
         selectedCollateralAsset.underlyingToken,
-        currentSdk.publicClient as any,
-        currentSdk.walletClient
+        currentSdk.publicClient as any
       );
       const hasApprovedEnough =
         (await token.read.allowance([address, currentPosition.address])) >=
@@ -836,8 +834,8 @@ export default function Loop({
         const tx = await token.write.approve(
           [currentPosition.address, amountAsBInt],
           {
-            account: currentSdk.walletClient.account!.address,
-            chain: currentSdk.walletClient.chain
+            account: currentSdk.walletClient!.account!.address,
+            chain: currentSdk.walletClient!.chain
           }
         );
 
