@@ -37,7 +37,7 @@ export const handler = async (
   sdk.logger.info(`Starting update loop bot on chain: ${config.chainId}`);
   sdk.logger.info(`Config for bot: ${JSON.stringify(config)}`);
   await axios.get(HEARTBEAT_API_URL);
-  logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
+  logger.info(`Heartbeat successfully sent`);
   await updater.updateFeeds();
 
   return {
