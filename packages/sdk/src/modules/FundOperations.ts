@@ -115,11 +115,11 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const token = getContract({
         address: underlyingTokenAddress,
         abi: erc20Abi,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       });
       const tx = await token.write.approve([cTokenAddress, _approveAmount!], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
       return tx;
     }
@@ -128,11 +128,11 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const comptrollerInstance = getContract({
         address: comptrollerAddress,
         abi: ionicComptrollerAbi,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.walletClient!
       });
       const tx = await comptrollerInstance.write.enterMarkets([[cTokenAddress]], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
       return tx;
     }
@@ -141,9 +141,9 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const cToken = getContract({
         address: cTokenAddress,
         abi: icErc20Abi,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.walletClient!
       });
-      const address = this.walletClient.account!.address;
+      const address = this.walletClient!.account!.address;
       // add 10% to default estimated gas
       const gasLimit =
         ((await cToken.estimateGas.mint([amount], {
@@ -161,7 +161,11 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         return { errorCode };
       }
 
-      const tx = await cToken.write.mint([amount], { gas: gasLimit, account: address, chain: this.walletClient.chain });
+      const tx = await cToken.write.mint([amount], {
+        gas: gasLimit,
+        account: address,
+        chain: this.walletClient!.chain
+      });
       return { tx, errorCode: null };
     }
 
@@ -169,11 +173,11 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const cToken = getContract({
         address: cTokenAddress,
         abi: icErc20Abi,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.walletClient!
       });
 
       const response = await cToken.simulate.repayBorrow([isRepayingMax ? maxUint256 : amount], {
-        account: this.walletClient.account!.address
+        account: this.walletClient!.account!.address
       });
 
       if (response.result !== 0n) {
@@ -182,8 +186,8 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       }
 
       const tx = await cToken.write.repayBorrow([isRepayingMax ? maxUint256 : amount], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return { tx, errorCode: null };
@@ -193,10 +197,10 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const cToken = getContract({
         address: cTokenAddress,
         abi: icErc20Abi,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.walletClient!
       });
 
-      const address = this.walletClient.account!.address;
+      const address = this.walletClient!.account!.address;
       // add 20% to default estimated gas
       const gasLimit = ((await cToken.estimateGas.borrow([amount], { account: address })) * 12n) / 10n;
       const response = await cToken.simulate.borrow([amount], {
@@ -211,7 +215,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const tx = await cToken.write.borrow([amount], {
         gas: gasLimit,
         account: address,
-        chain: this.walletClient.chain
+        chain: this.walletClient!.chain
       });
 
       return { tx, errorCode: null };
@@ -221,11 +225,11 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const cToken = getContract({
         address: cTokenAddress,
         abi: icErc20Abi,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.walletClient!
       });
 
       const response = await cToken.simulate.redeemUnderlying([amount], {
-        account: this.walletClient.account!.address
+        account: this.walletClient!.account!.address
       });
 
       if (response.result !== 0n) {
@@ -233,19 +237,19 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         return { errorCode };
       }
       const tx = await cToken.write.redeemUnderlying([amount], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return { tx, errorCode: null };
     }
 
     async swap(inputToken: Address, amount: bigint, outputToken: Address) {
-      const iLiquidatorsRegistry = this.createILiquidatorsRegistry(this.publicClient, this.walletClient);
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
 
       return await iLiquidatorsRegistry.write.amountOutAndSlippageOfSwap([inputToken, amount, outputToken], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
     }
 
@@ -253,11 +257,11 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const token = getContract({
         address: underlying,
         abi: erc20Abi,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.walletClient!
       });
       const tx = await token.write.approve([this.chainDeployment.LiquidatorsRegistry.address as Address, maxUint256], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return tx;
@@ -284,7 +288,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
 
       const [outputAmount, slippage] = (
         await iLiquidatorsRegistry.simulate.amountOutAndSlippageOfSwap([inputToken, amount, outputToken], {
-          account: this.walletClient.account!.address
+          account: this.walletClient!.account!.address
         })
       ).result;
       return { outputAmount, slippage };

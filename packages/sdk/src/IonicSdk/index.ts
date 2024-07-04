@@ -96,10 +96,10 @@ export class IonicBase {
   }
 
   public get walletClient() {
-    if (!this._walletClient) {
-      throw new Error("No Wallet Client available.");
-    }
-    return this._walletClient;
+    // if (!this._walletClient) {
+    //   throw new Error("No Wallet Client available.");
+    // }
+    return this._walletClient ?? undefined;
   }
 
   public set contracts(newContracts: Partial<StaticContracts>) {
@@ -111,37 +111,37 @@ export class IonicBase {
       PoolDirectory: getContract({
         abi: poolDirectoryAbi,
         address: this.chainDeployment.PoolDirectory.address as Address,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       }),
       PoolLens: getContract({
         abi: poolLensAbi,
         address: this.chainDeployment.PoolLens.address as Address,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       }),
       PoolLensSecondary: getContract({
         abi: poolLensSecondaryAbi,
         address: this.chainDeployment.PoolLensSecondary.address as Address,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       }),
       IonicLiquidator: getContract({
         abi: ionicLiquidatorAbi,
         address: this.chainDeployment.IonicLiquidator.address as Address,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       }),
       FeeDistributor: getContract({
         abi: feeDistributorAbi,
         address: this.chainDeployment.FeeDistributor.address as Address,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       }),
       IonicFlywheelLensRouter: getContract({
         abi: ionicFlywheelLensRouterAbi,
         address: this.chainDeployment.IonicFlywheelLensRouter.address as Address,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       }),
       AddressesProvider: getContract({
         abi: addressesProviderAbi,
         address: this.chainDeployment.AddressesProvider.address as Address,
-        client: { public: this.publicClient, wallet: this.walletClient }
+        client: this.publicClient
       }),
       ...this._contracts
     };
@@ -215,7 +215,7 @@ export class IonicBase {
           liquidationIncentive,
           priceOracle
         ],
-        { account: this.walletClient.account!.address, chain: this.walletClient.chain }
+        { account: this.walletClient!.account!.address, chain: this.walletClient!.chain }
       );
 
       const deployReceipt = await this.publicClient.waitForTransactionReceipt({ hash: deployTx });
@@ -236,7 +236,7 @@ export class IonicBase {
       }
       const [, existingPools] = await this.contracts.PoolDirectory.read.getActivePools();
       // Compute Unitroller address
-      const addressOfSigner = this.walletClient.account!.address;
+      const addressOfSigner = this.walletClient!.account!.address;
       const poolAddress = getPoolAddress(
         addressOfSigner,
         poolName,
@@ -248,8 +248,8 @@ export class IonicBase {
       // Accept admin status via Unitroller
       const unitroller = getPoolUnitroller(poolAddress, this.walletClient!);
       const acceptTx = await unitroller.write._acceptAdmin({
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
       const acceptReceipt = await this.publicClient.waitForTransactionReceipt({ hash: acceptTx });
       this.logger.info(`Accepted admin status for admin: ${acceptReceipt.status}`);
@@ -257,12 +257,12 @@ export class IonicBase {
       // Whitelist
       this.logger.info(`enforceWhitelist: ${enforceWhitelist}`);
       if (enforceWhitelist) {
-        const comptroller = getPoolComptroller(poolAddress, this.walletClient);
+        const comptroller = getPoolComptroller(poolAddress, this.walletClient!);
 
         // Was enforced by pool deployment, now just add addresses
         const whitelistTx = await comptroller.write._setWhitelistStatuses(
           [whitelist, Array(whitelist.length).fill(true)],
-          { account: this.walletClient.account!.address, chain: this.walletClient.chain }
+          { account: this.walletClient!.account!.address, chain: this.walletClient!.chain }
         );
         const whitelistReceipt = await this.publicClient.waitForTransactionReceipt({ hash: whitelistTx });
         this.logger.info(`Whitelist updated: ${whitelistReceipt.status}`);
@@ -327,38 +327,35 @@ export class IonicBase {
     return oracle;
   }
 
-  getEIP20TokenInstance(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
-    return getContract({ address, abi: eip20InterfaceAbi, client: { public: publicClient, wallet: walletClient } });
+  getEIP20TokenInstance(address: Address, publicClient = this.publicClient) {
+    return getContract({ address, abi: eip20InterfaceAbi, client: publicClient });
   }
 
   getUnitrollerInstance(
     address: Address,
-    publicClient = this.publicClient,
-    walletClient = this.walletClient
+    publicClient = this.publicClient
   ): GetContractReturnType<typeof unitrollerAbi, PublicClient> {
-    return getContract({ address, abi: unitrollerAbi, client: { public: publicClient, wallet: walletClient } });
+    return getContract({ address, abi: unitrollerAbi, client: publicClient });
   }
 
   getPoolDirectoryInstance(
-    publicClient = this.publicClient,
-    walletClient = this.walletClient
+    publicClient = this.publicClient
   ): GetContractReturnType<typeof poolDirectoryAbi, PublicClient> {
     return getContract({
       address: this.chainDeployment.PoolDirectory.address as Address,
       abi: poolDirectoryAbi,
-      client: { public: publicClient, wallet: walletClient }
+      client: publicClient
     });
   }
 
   getErc4626PluginInstance(
     address: Address,
-    publicClient = this.publicClient,
-    walletClient = this.walletClient
+    publicClient = this.publicClient
   ): GetContractReturnType<typeof ionicErc4626Abi, PublicClient> {
     return getContract({
       address,
       abi: ionicErc4626Abi,
-      client: { public: publicClient, wallet: walletClient }
+      client: publicClient
     });
   }
 }

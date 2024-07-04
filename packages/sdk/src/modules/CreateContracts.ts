@@ -29,11 +29,7 @@ import { getContract } from "../IonicSdk/utils";
 export interface ICreateContracts {
   createContractInstance<T extends Abi>(
     abi: T
-  ): (
-    address: Address,
-    publicClient?: PublicClient,
-    walletClient?: WalletClient
-  ) => GetContractReturnType<T, WalletClient>;
+  ): (address: Address, publicClient?: PublicClient) => GetContractReturnType<T, WalletClient>;
   createUnitroller: (
     address: Address,
     publicClient?: PublicClient,
@@ -109,10 +105,7 @@ export interface ICreateContracts {
     publicClient?: PublicClient,
     walletClient?: WalletClient
   ) => GetContractReturnType<typeof leveredPositionsLensAbi, WalletClient>;
-  createPoolLens: (
-    publicClient?: PublicClient,
-    walletClient?: WalletClient
-  ) => GetContractReturnType<typeof poolLensAbi, WalletClient>;
+  createPoolLens: (publicClient?: PublicClient) => GetContractReturnType<typeof poolLensAbi, WalletClient>;
   createPoolLensSecondary: (
     publicClient?: PublicClient,
     walletClient?: WalletClient
@@ -147,7 +140,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
         getContract({
           address,
           abi,
-          client: { public: publicClient, wallet: walletClient }
+          client: walletClient ?? publicClient
         }) as unknown as GetContractReturnType<T, WalletClient>;
     }
 
@@ -161,10 +154,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: comptrollerAddress,
         abi: ionicComptrollerAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -172,10 +162,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address,
         abi: icErc20Abi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -187,10 +174,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: cTokenAddress,
         abi: icErc20PluginRewardsAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -198,10 +182,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.MasterPriceOracle.address as Address,
         abi: masterPriceOracleAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -209,10 +190,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address,
         abi: compoundMarketErc4626Abi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -220,10 +198,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address,
         abi: optimizedAprVaultFirstExtensionAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -235,10 +210,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address,
         abi: optimizedAprVaultSecondExtensionAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -246,10 +218,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.OptimizedVaultsRegistry.address as Address,
         abi: optimizedVaultsRegistryAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -257,10 +226,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.IonicFlywheelLensRouter.address as Address,
         abi: ionicFlywheelLensRouterAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -268,10 +234,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.LeveredPositionFactory.address as Address,
         abi: iLeveredPositionFactoryAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -279,10 +242,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address,
         abi: leveredPositionAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -290,10 +250,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.LeveredPositionsLens.address as Address,
         abi: leveredPositionsLensAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -301,10 +258,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.PoolLens.address as Address,
         abi: poolLensAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -312,10 +266,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.PoolLensSecondary.address as Address,
         abi: poolLensSecondaryAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -323,10 +274,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.LiquidatorsRegistry.address as Address,
         abi: iLiquidatorsRegistryAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -334,10 +282,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.AuthoritiesRegistry.address as Address,
         abi: authoritiesRegistryAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
 
@@ -349,10 +294,7 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: poolAuthAddress,
         abi: poolRolesAuthorityAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient
-        }
+        client: walletClient ?? publicClient
       });
     }
   };

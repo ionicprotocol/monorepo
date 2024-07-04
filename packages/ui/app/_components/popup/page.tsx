@@ -874,8 +874,7 @@ const Popup = ({
       try {
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
-          currentSdk.publicClient as any,
-          currentSdk.walletClient
+          currentSdk.publicClient as any
         );
         const hasApprovedEnough =
           (await token.read.allowance([address, selectedMarketData.cToken])) >=
@@ -979,14 +978,13 @@ const Popup = ({
             case true:
               const comptrollerContract = currentSdk.createComptroller(
                 comptrollerAddress,
-                currentSdk.publicClient,
-                currentSdk.walletClient
+                currentSdk.publicClient
               );
 
               const exitCode = (
                 await comptrollerContract.simulate.exitMarket(
                   [selectedMarketData.cToken],
-                  { account: currentSdk.walletClient.account?.address }
+                  { account: currentSdk.walletClient!.account!.address }
                 )
               ).result;
 
@@ -1016,8 +1014,8 @@ const Popup = ({
               tx = await comptrollerContract.write.exitMarket(
                 [selectedMarketData.cToken],
                 {
-                  account: currentSdk.walletClient.account!.address,
-                  chain: currentSdk.walletClient.chain
+                  account: currentSdk.walletClient!.account!.address,
+                  chain: currentSdk.publicClient.chain
                 }
               );
 

@@ -242,12 +242,12 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     }
 
     async leveredFactoryApprove(collateralUnderlying: Address) {
-      const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient });
+      const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient! });
       const tx = await token.write.approve(
         [this.chainDeployment.LeveredPositionFactory.address as Address, maxUint256],
         {
-          account: this.walletClient.account!.address,
-          chain: this.walletClient.chain
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
         }
       );
 
@@ -255,11 +255,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     }
 
     async leveredPositionApprove(positionAddress: Address, collateralUnderlying: Address) {
-      const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient });
+      const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient! });
 
       const tx = await token.write.approve([positionAddress, maxUint256], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return tx;
@@ -271,13 +271,13 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       fundingAsset: Address,
       fundingAmount: bigint
     ) {
-      const leveredPositionFactory = this.createLeveredPositionFactory(this.publicClient, this.walletClient);
+      const leveredPositionFactory = this.createLeveredPositionFactory();
 
       return await leveredPositionFactory.write.createAndFundPosition(
         [collateralMarket, borrowMarket, fundingAsset, fundingAmount],
         {
-          account: this.walletClient.account!.address,
-          chain: this.walletClient.chain
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
         }
       );
     }
@@ -289,13 +289,13 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       fundingAmount: bigint,
       leverageRatio: bigint
     ) {
-      const leveredPositionFactory = this.createLeveredPositionFactory(this.publicClient, this.walletClient);
+      const leveredPositionFactory = this.createLeveredPositionFactory();
 
       return await leveredPositionFactory.write.createAndFundPositionAtRatio(
         [collateralMarket, borrowMarket, fundingAsset, fundingAmount, leverageRatio],
         {
-          account: this.walletClient.account!.address,
-          chain: this.walletClient.chain
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
         }
       );
     }
@@ -317,20 +317,20 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
 
     async closeLeveredPosition(address: Address, withdrawTo?: Address) {
       const isPositionClosed = await this.isPositionClosed(address);
-      const leveredPosition = this.createLeveredPosition(address, this.publicClient, this.walletClient);
+      const leveredPosition = this.createLeveredPosition(address, this.publicClient);
 
       if (!isPositionClosed) {
         let tx: Hex;
 
         if (withdrawTo) {
           tx = await leveredPosition.write.closePosition([withdrawTo], {
-            account: this.walletClient.account!.address,
-            chain: this.walletClient.chain
+            account: this.walletClient!.account!.address,
+            chain: this.walletClient!.chain
           });
         } else {
           tx = await leveredPosition.write.closePosition({
-            account: this.walletClient.account!.address,
-            chain: this.walletClient.chain
+            account: this.walletClient!.account!.address,
+            chain: this.walletClient!.chain
           });
         }
 
@@ -341,22 +341,22 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     }
 
     async adjustLeverageRatio(address: Address, ratio: number) {
-      const leveredPosition = this.createLeveredPosition(address, this.publicClient, this.walletClient);
+      const leveredPosition = this.createLeveredPosition(address, this.publicClient);
 
       const tx = await leveredPosition.write.adjustLeverageRatio([parseEther(ratio.toString())], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return tx;
     }
 
     async fundPosition(positionAddress: Address, underlyingToken: Address, amount: bigint) {
-      const leveredPosition = this.createLeveredPosition(positionAddress, this.publicClient, this.walletClient);
+      const leveredPosition = this.createLeveredPosition(positionAddress, this.publicClient);
 
       const tx = await leveredPosition.write.fundPosition([underlyingToken, amount], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return tx;
@@ -393,11 +393,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
     }
 
     async removeClosedPosition(positionAddress: Address) {
-      const leveredPositionFactory = this.createLeveredPositionFactory(this.publicClient, this.walletClient);
+      const leveredPositionFactory = this.createLeveredPositionFactory();
 
       const tx = await leveredPositionFactory.write.removeClosedPosition([positionAddress], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return tx;

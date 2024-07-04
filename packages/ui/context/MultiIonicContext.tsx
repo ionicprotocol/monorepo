@@ -1,8 +1,7 @@
 'use client';
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk } from '@ionicprotocol/sdk';
-import Security from '@ionicprotocol/security';
+import type Security from '@ionicprotocol/security';
 import type { SupportedChains } from '@ionicprotocol/types';
 import * as Sentry from '@sentry/browser';
 import type { Dispatch, ReactNode } from 'react';
@@ -15,12 +14,7 @@ import {
   useState
 } from 'react';
 import { createPublicClient, http, type Chain, type WalletClient } from 'viem';
-import {
-  useAccount,
-  useDisconnect,
-  usePublicClient,
-  useWalletClient
-} from 'wagmi';
+import { useAccount, useDisconnect, useWalletClient } from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
@@ -81,11 +75,13 @@ export const MultiIonicProvider = (
     const _chainIds: SupportedChains[] = [];
     enabledChains.map((chain) => {
       const config = chainIdToConfig[chain.id];
+      const _walletClient =
+        chain.id === walletClient?.chain.id ? walletClient : undefined;
       const client = createPublicClient({
         chain,
         transport: http(config.specificParams.metadata.rpcUrls.default.http[0])
       });
-      _sdks.push(new IonicSdk(client as any, walletClient, config));
+      _sdks.push(new IonicSdk(client as any, _walletClient, config));
       // _securities.push(
       //   new Security(
       //     chain.id,
@@ -98,7 +94,7 @@ export const MultiIonicProvider = (
     });
 
     return [_sdks, _securities, _chainIds.sort()];
-  }, [enabledChains]);
+  }, [enabledChains, walletClient]);
 
   const currentSdk = useMemo(() => {
     if (chain) {
@@ -139,7 +135,7 @@ export const MultiIonicProvider = (
         );
       });
     }
-  }, [walletClient, sdks]);
+  }, [walletClient, sdks, chain]);
 
   useEffect(() => {
     if (wagmiAddress) {

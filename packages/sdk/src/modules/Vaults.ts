@@ -30,36 +30,36 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
     }
 
     async vaultApprove(vault: Address, asset: Address) {
-      const token = getContract({ address: asset, abi: erc20Abi, client: this.walletClient });
+      const token = getContract({ address: asset, abi: erc20Abi, client: this.publicClient });
       const tx = await token.write.approve([vault, maxUint256], {
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return tx;
     }
 
     async vaultDeposit(vault: Address, amount: bigint) {
-      const tx = await this.walletClient.writeContract({
+      const tx = await this.walletClient!.writeContract({
         address: vault,
         abi: ["function deposit(uint256)"],
         functionName: "deposit",
         args: [amount],
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return { tx };
     }
 
     async vaultWithdraw(vault: Address, amount: bigint) {
-      const tx = await this.walletClient.writeContract({
+      const tx = await this.walletClient!.writeContract({
         address: vault,
         abi: ["function withdraw(uint256)"],
         functionName: "deposit",
         args: [amount],
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return { tx };
@@ -97,22 +97,22 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
     }
 
     async getMaxWithdrawVault(vault: Address) {
-      const optimizedAPRVault = this.createOptimizedAPRVaultSecond(vault, this.publicClient, this.walletClient);
+      const optimizedAPRVault = this.createOptimizedAPRVaultSecond(vault, this.publicClient);
 
-      return await optimizedAPRVault.read.maxWithdraw([this.walletClient.account!.address]);
+      return await optimizedAPRVault.read.maxWithdraw([this.walletClient!.account!.address]);
     }
 
     async getMaxDepositVault(vault: Address) {
-      const optimizedAPRVault = this.createOptimizedAPRVaultSecond(vault, this.publicClient, this.walletClient);
+      const optimizedAPRVault = this.createOptimizedAPRVaultSecond(vault, this.publicClient);
 
-      return await optimizedAPRVault.read.maxDeposit([this.walletClient.account!.address]);
+      return await optimizedAPRVault.read.maxDeposit([this.walletClient!.account!.address]);
     }
 
     async claimRewardsForVault(vault: Address) {
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.publicClient, this.walletClient);
+      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.publicClient);
       const tx = await optimizedAPRVault.write.claimRewards({
-        account: this.walletClient.account!.address,
-        chain: this.walletClient.chain
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
       });
 
       return { tx };

@@ -86,7 +86,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(
       const adminFeeBN = parseEther((config.adminFee / 100).toString());
       const collateralFactorBN = parseEther((config.collateralFactor / 100).toString());
 
-      const comptroller = this.createComptroller(config.comptroller as Address, this.publicClient, this.walletClient);
+      const comptroller = this.createComptroller(config.comptroller as Address);
 
       // Use Default CErc20Delegate
       const implementationAddress = this.chainDeployment.CErc20Delegate.address;
@@ -122,7 +122,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(
       // Make actual Transaction
       const tx = await comptroller.write._deployMarket(
         [delegateType, constructorData, implementationData, collateralFactorBN],
-        { account: this.walletClient.account!.address, chain: this.walletClient.chain }
+        { account: this.walletClient!.account!.address, chain: this.walletClient!.chain }
       );
 
       // Recreate Address of Deployed Market
