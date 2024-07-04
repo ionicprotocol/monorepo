@@ -135,10 +135,10 @@ export default async function sendTransactionToPyth(
 
   let sentTx;
   try {
-    sentTx = await sdk.walletClient.sendTransaction({
+    sentTx = await sdk.walletClient!.sendTransaction({
       ...txRequest,
-      account: sdk.walletClient.account!.address,
-      chain: sdk.walletClient.chain,
+      account: sdk.walletClient!.account!.address,
+      chain: sdk.walletClient!.chain,
     });
     const receipt = await sdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
     if (receipt.status === 'reverted') {

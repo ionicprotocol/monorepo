@@ -51,7 +51,7 @@ export class Updater {
     this.pythContract = getContract({
       address: this.pythNetworkAddress,
       abi: pythAbi,
-      client: this.sdk.walletClient,
+      client: this.sdk.publicClient,
     });
     return this;
   }
