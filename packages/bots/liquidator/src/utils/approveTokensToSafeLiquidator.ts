@@ -19,7 +19,7 @@ export default async function approveTokensToSafeLiquidator(liquidator: Liquidat
 
 async function approveTokenToSafeLiquidator(ionicSdk: IonicSdk, erc20Address: Address) {
   // Build data
-  const token = getContract({ address: erc20Address, abi: erc20Abi, client: ionicSdk.walletClient });
+  const token = getContract({ address: erc20Address, abi: erc20Abi, client: ionicSdk.publicClient });
 
   if (process.env.NODE_ENV !== "production")
     ionicSdk.logger.info("Signing and sending approval transaction for: " + erc20Address);
@@ -28,8 +28,8 @@ async function approveTokenToSafeLiquidator(ionicSdk: IonicSdk, erc20Address: Ad
   let sentTx;
   try {
     sentTx = await token.write.approve([ionicSdk.contracts.IonicLiquidator.address, maxUint256], {
-      account: ionicSdk.walletClient.account!.address,
-      chain: ionicSdk.walletClient.chain,
+      account: ionicSdk.walletClient!.account!.address,
+      chain: ionicSdk.walletClient!.chain,
     });
     const receipt = await ionicSdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
     if (receipt.status === "reverted") {
