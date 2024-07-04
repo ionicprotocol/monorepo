@@ -7,7 +7,7 @@ import { ChainlinkAsset } from "../helpers/types";
 const assets = base.assets;
 
 export const deployConfig: ChainDeployConfig = {
-  blocksPerYear: base.specificParams.blocksPerYear.toNumber(),
+  blocksPerYear: Number(base.specificParams.blocksPerYear),
   cgId: base.specificParams.cgId,
   nativeTokenName: "Base",
   nativeTokenSymbol: "ETH",

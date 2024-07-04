@@ -7,7 +7,7 @@ import { ChainlinkAsset, PythAsset } from "../helpers/types";
 const assets = optimism.assets;
 
 export const deployConfig: ChainDeployConfig = {
-  blocksPerYear: optimism.specificParams.blocksPerYear.toNumber(),
+  blocksPerYear: Number(optimism.specificParams.blocksPerYear),
   cgId: optimism.specificParams.cgId,
   nativeTokenName: "Base",
   nativeTokenSymbol: "ETH",

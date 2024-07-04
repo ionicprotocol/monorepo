@@ -1,11 +1,7 @@
-import { bsc, polygon } from "@ionicprotocol/chains";
 import { underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
-const underlyingsMapping = {
-  [bsc.chainId]: bsc.assets,
-  [polygon.chainId]: polygon.assets
-};
+const underlyingsMapping = {};
 
 task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywheels")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
@@ -33,7 +29,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     const underlyingAddress = underlying(underlyings, symbol);
     const marketAddress = await sdk
       .createComptroller(comptroller, signer)
-      .callStatic.cTokensByUnderlying(underlyingAddress);
+      .read.cTokensByUnderlying([underlyingAddress]);
     const cToken = await sdk.createICErc20PluginRewards(marketAddress, signer);
 
     console.log({ marketAddress });
@@ -88,7 +84,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     for (const [idx, rewardToken] of rewardTokens.entries()) {
       console.log(`Setting up market for reward token: ${rewardToken}, fwAddress: ${fwAddresses[idx]}`);
       const flywheel = sdk.createIonicFlywheel(fwAddresses[idx]);
-      const tokenRewards = await flywheel.callStatic.flywheelRewards();
+      const tokenRewards = await flywheel.read.flywheelRewards();
       console.log(`token rewards ${tokenRewards}`);
 
       // Step 1: Approve fwc Rewards to get rewardTokens from it (!IMPORTANT to use "approve(address,address)", it has two approve functions)
@@ -98,7 +94,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
 
       // Step 2: enable marketAddress on flywheels
       try {
-        const fwAddTx = await flywheel.addStrategyForRewards(marketAddress);
+        const fwAddTx = await flywheel.write.addStrategyForRewards([marketAddress]);
         const feAddTxResult = await fwAddTx.wait(2);
         console.log("enabled market on FW with status: ", feAddTxResult.status);
       } catch (e) {

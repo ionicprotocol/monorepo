@@ -10,7 +10,7 @@ import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsE
 import { ChainlinkAsset, PythAsset, RedStoneAsset } from "../helpers/types";
 
 export const deployConfig: ChainDeployConfig = {
-  blocksPerYear: mode.specificParams.blocksPerYear.toNumber(),
+  blocksPerYear: Number(mode.specificParams.blocksPerYear),
   cgId: mode.specificParams.cgId,
   nativeTokenName: "Mode",
   nativeTokenSymbol: "ETH",
