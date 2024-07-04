@@ -79,10 +79,7 @@ export default function Swap({
     return getContract({
       address: currentSdk.chainSpecificAddresses.W_TOKEN as Address,
       abi: wethAbi,
-      client: {
-        public: currentSdk.publicClient,
-        wallet: currentSdk.walletClient
-      }
+      client: currentSdk.walletClient!
     });
   }, [address, currentSdk]);
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
@@ -175,13 +172,13 @@ export default function Swap({
         const tx =
           swapType === SwapType.ETH_WETH
             ? await WTokenContract.write.deposit({
-                account: currentSdk!.walletClient.account!.address,
-                chain: currentSdk!.walletClient.chain,
+                account: currentSdk!.walletClient!.account!.address,
+                chain: currentSdk!.walletClient!.chain,
                 value: amountAsBInt
               })
             : await WTokenContract.write.withdraw([amountAsBInt], {
-                account: currentSdk!.walletClient.account!.address,
-                chain: currentSdk!.walletClient.chain
+                account: currentSdk!.walletClient!.account!.address,
+                chain: currentSdk!.walletClient!.chain
               });
 
         upsertTransactionStep({
