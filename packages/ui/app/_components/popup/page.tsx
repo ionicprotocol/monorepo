@@ -586,8 +586,7 @@ const Popup = ({
       try {
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
-          currentSdk.publicClient as any,
-          currentSdk.walletClient
+          currentSdk.publicClient as any
         );
         const hasApprovedEnough =
           (await token.read.allowance([address, selectedMarketData.cToken])) >=
