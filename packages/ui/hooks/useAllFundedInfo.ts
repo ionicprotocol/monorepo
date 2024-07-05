@@ -1,11 +1,8 @@
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
-import type { SupportedChains } from '@ionicprotocol/types';
-import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Address, formatEther } from 'viem';
+import { type Address } from 'viem';
 
-import { aprDays } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
@@ -14,10 +11,7 @@ import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
 import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import {
-  ChainSupportedAssets,
-  getBlockTimePerMinuteByChainId
-} from '@ui/utils/networkData';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export interface FundedAsset extends MarketData {
   chainId: string;

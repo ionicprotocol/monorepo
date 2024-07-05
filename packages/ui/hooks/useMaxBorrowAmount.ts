@@ -38,7 +38,7 @@ export function useMaxBorrowAmount(
           const maxBorrow = (
             await sdk.contracts.PoolLensSecondary.simulate.getMaxBorrow(
               [address, asset.cToken],
-              { account: sdk?.walletClient.account?.address }
+              { account: sdk!.walletClient!.account!.address }
             )
           ).result;
 
