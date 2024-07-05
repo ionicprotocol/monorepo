@@ -4,7 +4,7 @@
 [build]
   base = "./"
   publish = "./packages/ui/.next"
-  command = "next build ./packages/ui"
+  command = "yarn build:deploy:ui" # Ensure this script is correctly defined in package.json
 
 [dev]
   command = "next dev ./packages/ui"
