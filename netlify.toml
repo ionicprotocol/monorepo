@@ -1,5 +1,5 @@
 [build]
-  command = "yarn build:deploy:ui"
+  command = "yarn build"
   publish = "packages/ui/.next"
 
 [[plugins]]
@@ -56,30 +56,23 @@
   directory = "./packages/functions/dist/functions/src/functions"
   node_bundler = "esbuild"
 
-[[functions]]
-  name = "plugin-rewards-*"
+[functions.plugin-rewards-*]
   schedule = "@hourly"
 
-[[functions]]
-  name = "asset-apys-*"
+[functions.asset-apys-*]
   schedule = "@hourly"
 
-[[functions]]
-  name = "vault-data-*"
+[functions.vault-data-*]
   schedule = "@hourly"
 
-[[functions]]
-  name = "asset-price-*"
+[functions.asset-price-*]
   schedule = "@hourly"
 
-[[functions]]
-  name = "asset-tvl-*"
+[functions.asset-tvl-*]
   schedule = "@hourly"
 
-[[functions]]
-  name = "asset-total-apy-*"
+[functions.asset-total-apy-*]
   schedule = "@hourly"
 
-[[functions]]
-  name = "asset-total-history-*"
+[functions.asset-total-history-*]
   schedule = "0 0 * * *"
